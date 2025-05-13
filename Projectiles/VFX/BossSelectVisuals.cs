@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Projectiles.VFX
@@ -429,6 +430,13 @@ namespace tsorcRevamp.Projectiles.VFX
             if (id == NPCID.WallofFlesh)
             {
                 spawnOffset = new Vector2(-1000, 200);
+            }
+
+            // The Witchking must spawn lower in order to avoid getting stuck in the lava/room above.
+            if (id == ModContent.NPCType<Witchking>())
+            {
+                spawnOffset.X -= 200;
+                spawnOffset.Y += 250;
             }
 
             //The "Prime Intro" NPC must be spawned instead of prime itself for its intro to work properly on the adventure map

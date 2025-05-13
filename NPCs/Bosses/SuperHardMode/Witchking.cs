@@ -26,9 +26,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float customAi1;
         float customspawn1;
         bool chargeDamageFlag = false;
-        int blackBreathDamage = 27;
+        int teleporting = 0;
         float lifeThreshold = 80f;
         bool beingPulled = false;
+        bool lastStand = false;
+        const int TIME_BEFORE_STORMBALL = 520;
 
         int frameCount = 0;
 
@@ -58,10 +60,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             AnimationType = NPCID.PossessedArmor;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Witchking.DespawnHandler"), Color.Purple, DustID.PurpleTorch);
 
+            // Allows the witchking to properly spawn in the arena
             NPC.lavaImmune = true;
 
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 75, 8, SoundID.Item20);
-            UsefulFunctions.AddAttack(NPC, 700, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 95, 0, SoundID.Item100, needsLineOfSight: false);
+            UsefulFunctions.AddAttack(NPC, TIME_BEFORE_STORMBALL, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 95, 0, SoundID.Item100, needsLineOfSight: false);
         }
 
         int chargeTelegraphTimer = 0;
@@ -76,36 +79,44 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            if (NPC.justHit && Main.rand.NextBool(12))
+            // Only apply this effect around every 12 hits
+            if (!NPC.justHit || !Main.rand.NextBool(12))
+                return;
+            
+            // If the player is close enough, get knocked back
+            if (NPC.Distance(player.Center) < 250)
             {
-                tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
-
-            }
-            if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(12))//
-            {
-                NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
+                NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); // was 6 and 3
                 float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, -6f);
                 NPC.velocity.X = v;
                 NPC.netUpdate = true;
             }
-
+            else
+            {
+                tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
+                teleporting = 60;
+            }
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            if (Main.rand.NextBool(8) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackIndex == 0)
+            // Only apply this effect around every 20 hits
+            if (!NPC.justHit || !Main.rand.NextBool(20))
+                return;
+
+            
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackIndex != 0)
+            {
+                tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
+                teleporting = 60;
+            }
+            else // Get knocked back
             {
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 70f;
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 4f);
 
                 NPC.netUpdate = true;
-
-            }
-
-            if (NPC.justHit && Main.rand.NextBool(25))
-            {
-                tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
             }
         }
 
@@ -119,14 +130,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
             {
                 defenseBroken = true;
+
+                // If the Witchking's life drops below 10%, his shields go back up again.
+                if (!lastStand && NPC.lifeMax > NPC.life * 10 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    defenseBroken = false;
+                    lastStand = true;
+
+                    NPC.DelBuff(NPC.FindBuffIndex(ModContent.BuffType<Buffs.DispelShadow>()));
+                    UsefulFunctions.BroadcastText("With a desperate scream the Witchking restores his shields, taking his final stand!", Color.Purple);
+                }
             }
 
-            // charge forward code 
-            if (Main.rand.NextBool(400) && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                chargeDamageFlag = true;
-
-            }
             // SCREAM BABY!!!
             if (lifeThreshold > 0f && NPC.life < (int)((float)NPC.lifeMax * lifeThreshold / 100f))
             {
@@ -183,10 +198,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 beingPulled = Pull();
             }
 
+            // Storm Ball 
+            if (Main.rand.NextBool(350) && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                chargeDamageFlag = true;
+            }
+
+            // SHRINKING CIRCLE DUST
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= TIME_BEFORE_STORMBALL - 120 && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackIndex == 1)
+            {
+                UsefulFunctions.DustRing(NPC.Center, TIME_BEFORE_STORMBALL - NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer, DustID.CrystalSerpent, 12, 4);
+                Lighting.AddLight(NPC.Center, Color.Blue.ToVector3() * 5);
+            }
+
+            // White flash before the stormball
             if (chargeDamageFlag == true)
             {
                 chargeTelegraphTimer++;
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); // Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(2))
                 {
                     int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1f);
@@ -194,7 +223,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Main.dust[pink].noGravity = true;
                 }
 
-                if (chargeTelegraphTimer >= 120 && chargeTelegraphTimer <= 130)
+                if (chargeTelegraphTimer >= 80 && chargeTelegraphTimer <= 90)
                 {
 
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -205,8 +234,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     NPC.netUpdate = true;
                 }
-
-                if (chargeTelegraphTimer > 130)
+                if (chargeTelegraphTimer > 90)
                 {
                     chargeDamageFlag = false;
                     chargeTelegraphTimer = 0;
@@ -236,30 +264,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 520 && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackIndex == 1)//SHRINKING CIRCLE DUST
-            {
-                UsefulFunctions.DustRing(NPC.Center, 700 - NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer, DustID.CrystalSerpent, 12, 4);
-                Lighting.AddLight(NPC.Center, Color.Blue.ToVector3() * 5);
-            }
-
-            //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
-            //(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
-            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 109 && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackIndex == 0)
-            {
-                if (Main.rand.NextBool(9))
-                {
-                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 110;
-                }
-                else
-                {
-                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
-                }
-            }
-
-
-
-
             if (customAi1 >= 2000f)
             {
                 if ((customspawn1 < 36) && Main.rand.NextBool(50))
@@ -275,13 +279,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
                     }
                 }
-
-
             }
         }
 
         public bool Pull()
         {
+            // Pulling the user in while a teleport is active is unfair
+            if (teleporting > 0)
+            {
+                --teleporting;
+                return true;
+            }
+
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 // Skip over invalid players
@@ -298,7 +307,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // A negative yDiff = the player is above the witchking
                 float yDiff = player.Center.Y - NPC.Center.Y;
 
-                /*
+                /* // Debug code
                 if (frameCount % 60 == 0)
                 {
                     Main.NewText("Pullx = " + string.Format("{0:N3}", -1f * xDiff) + "yDiff = " + string.Format("{0:N3}", -1f * yDiff), Color.White);
@@ -346,7 +355,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             frameCount++;
 
             const int pullTimeInSeconds = 30;
-            return frameCount < pullTimeInSeconds * 60;
+
+            // The witchking's final pull does not give way until death.
+            return frameCount < pullTimeInSeconds * 60 || lastStand;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -371,7 +382,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (recievedBrokenDef == true)
             {
                 defenseBroken = true;
-                NPC.defense = 0;
+                // NPC.defense = 0; // This line of code appears to cause a net exclusive bug where the witchking has no defense if their barrier is dispelled.
             }
         }
 
@@ -382,7 +393,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
             }
-            if (!defenseBroken)
+            if (!defenseBroken || lastStand)
             {
                 spriteBatch.End();
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -398,11 +409,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            if (//item.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() see artorias for an explanation
-                item.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>())
-            {
-                defenseBroken = true;
-            }
             if (!defenseBroken)
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Witchking.Immune"), true, false);
@@ -411,10 +417,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if (projectile.type == ModContent.ProjectileType<BarrowBladeProjectile>())
-            {
-                defenseBroken = true;
-            }
             if (!defenseBroken)
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Witchking.Immune"), true, false);
