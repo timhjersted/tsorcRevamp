@@ -208,6 +208,7 @@ namespace tsorcRevamp
             ShadowTempleEvent,
             ShadowTempleEvent2,
             MoltenSkyTempleEvent,
+            MoltenSkyTempleEvent2,
             SandstormElementalEvent,
             KingSlime2Event,
             JungleMimicEvent,
@@ -518,7 +519,7 @@ namespace tsorcRevamp
             //GOBLIN AMBUSH 1 - RIGHT OF WORLD SPAWN
             List<int> GoblinAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.AbandonedStump>(), NPCID.GoblinSorcerer, NPCID.GoblinScout };
             List<Vector2> GoblinAmbush1EnemyLocations = new List<Vector2>() { new Vector2(5012, 851), new Vector2(5013, 823), new Vector2(5049f, 839) };
-            ScriptedEvent GoblinAmbush1 = new ScriptedEvent(new Vector2(5028, 837), 18, GoblinAmbush1EnemyTypeList, GoblinAmbush1EnemyLocations, default, true, false, false, LangUtils.GetTextValue("Events.GoblinAmbush1"), Color.Red, false);
+            ScriptedEvent GoblinAmbush1 = new ScriptedEvent(new Vector2(5028, 837), 18, GoblinAmbush1EnemyTypeList, GoblinAmbush1EnemyLocations, default, true, false, false, LangUtils.GetTextValue("Events.GoblinAmbush1"), Color.Red, false, OnlyAdventureMapCondition);
             GoblinAmbush1.SetCustomStats(400, null, null); //I haven't set this one to save so players can farm the goblin scout and tattered cloth if they really feel the need to
             GoblinAmbush1.SetCustomDrops(new List<int>() { ItemID.TatteredCloth }, new List<int>() { 1 }, true);
 
@@ -590,6 +591,9 @@ namespace tsorcRevamp
             ScriptedEvent MoltenSkyTempleEvent = new ScriptedEvent(new Vector2(1040, 1865), 25, NPCID.CultistDragonHead, 15, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Blue);
             MoltenSkyTempleEvent.SetCustomStats(25000, null, null, 10000);
 
+            //Molten Sky Temple second event
+            ScriptedEvent MoltenSkyTempleEvent2 = new ScriptedEvent(new Vector2(90, 1893), 30, NPCID.MourningWood, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction);
+
             ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
@@ -615,8 +619,8 @@ namespace tsorcRevamp
 
             ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
 
-            ScriptedEvent FoundryEvent2 = new ScriptedEvent(new Vector2(5801, 1381), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Yellow, false, RemixMapCondition);
-            
+            ScriptedEvent FoundryEvent2 = new ScriptedEvent(new Vector2(5801, 1381), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Yellow, false, RemixMapCondition); 
+
             ScriptedEvent FrozenCathedralEvent = new ScriptedEvent(new Vector2(7635, 1735), 65, NPCID.IceQueen, 67, true, true, false, LangUtils.GetTextValue("Events.FrozenCathedralEvent"), Color.Cyan, false, RemixMapCondition, SetNightCustomAction);
             FrozenCathedralEvent.SetCustomStats(null, null, null, 10000);
 
@@ -624,7 +628,7 @@ namespace tsorcRevamp
 
             List<int> FrozenCathedralEvent2EnemyTypeList = new List<int>() { NPCID.MourningWood, NPCID.MourningWood };
             List<Vector2> FrozenCathedralEvent2EnemyLocations = new List<Vector2>() { new Vector2(7189, 1650), new Vector2(7164, 1650) };
-            ScriptedEvent FrozenCathedralEvent2 = new ScriptedEvent(new Vector2(7177, 1650), 35, FrozenCathedralEvent2EnemyTypeList, FrozenCathedralEvent2EnemyLocations, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction); //
+            ScriptedEvent FrozenCathedralEvent2 = new ScriptedEvent(new Vector2(7177, 1650), 35, FrozenCathedralEvent2EnemyTypeList, FrozenCathedralEvent2EnemyLocations, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction); 
 
             ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, OnlyAdventureMapCondition, SetNightCustomAction);
             GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
@@ -728,7 +732,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.AshCavernRightside, AshCavernRightside },
                 {ScriptedEventType.ShadowTempleEvent, ShadowTempleEvent }, 
                 {ScriptedEventType.ShadowTempleEvent2, ShadowTempleEvent2 }, 
-                {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent }, 
+                {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent },
+                {ScriptedEventType.MoltenSkyTempleEvent2, MoltenSkyTempleEvent2 },  
                 {ScriptedEventType.SandstormElementalEvent, SandstormElementalEvent },
                 {ScriptedEventType.JungleMimicEvent, JungleMimicEvent },
                 {ScriptedEventType.BloodBossEvent1, BloodBossEvent1 },

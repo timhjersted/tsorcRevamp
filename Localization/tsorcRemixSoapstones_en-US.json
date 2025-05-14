@@ -2,7 +2,14 @@
   "text": "- You have discovered the lair of the Lich King, the Earth Fiend Spirit -",
   "tileX": 58,
   "tileY": 1911,
-  "textWidth": 320,
+  "textWidth": 320, 
+  "style": 1
+}
+{
+  "text": "You pull the lever and hear a gate opening to the East that appears to be the entrance to the Lich King's lair.",
+  "tileX": 227,
+  "tileY": 1796,
+  "textWidth": 320, 
   "style": 1
 }
 {

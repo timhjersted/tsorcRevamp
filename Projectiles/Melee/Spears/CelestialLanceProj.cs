@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
                     Vector2 starVelocity = Vector2.Normalize(new Vector2(velX, velY)) * 10f; 
                     starVelocity.Y += Main.rand.Next(-40, 41) * 0.02f; 
 
-                    int starDamage = damageDone / 2; 
+                    int starDamage = damageDone * 4; //don't ask why imo
 
                     int starType;
                     switch (Main.rand.Next(3)) 
