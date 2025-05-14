@@ -26,11 +26,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float customAi1;
         float customspawn1;
         bool chargeDamageFlag = false;
-        int teleporting = 0;
         float lifeThreshold = 80f;
         bool beingPulled = false;
         bool lastStand = false;
-        const int TIME_BEFORE_STORMBALL = 520;
+        const int TIME_BEFORE_STORMBALL = 300;
+        const int TIME_BEFORE_FIREBALL = 120;
+        const int TIME_BEFORE_SUMMON = 20 * 60;
 
         int frameCount = 0;
 
@@ -63,7 +64,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // Allows the witchking to properly spawn in the arena
             NPC.lavaImmune = true;
 
-            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 75, 8, SoundID.Item20);
+            UsefulFunctions.AddAttack(NPC, TIME_BEFORE_FIREBALL, ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 75, 8, SoundID.Item20);
             UsefulFunctions.AddAttack(NPC, TIME_BEFORE_STORMBALL, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 95, 0, SoundID.Item100, needsLineOfSight: false);
         }
 
@@ -94,7 +95,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             else
             {
                 tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
-                teleporting = 60;
             }
         }
 
@@ -108,11 +108,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackIndex != 0)
             {
                 tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
-                teleporting = 60;
             }
             else // Get knocked back
             {
-                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 70f;
+                float projTimer = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer;
+                // Reduce the time before the next fireball by 70f
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = Math.Min(projTimer + 70f, TIME_BEFORE_FIREBALL - 5f);
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 4f);
 
@@ -250,23 +251,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
                     Player player = Main.player[i];
+
                     if (NPC.Distance(player.Center) < 600)
                     {
-                        player.AddBuff(BuffID.Slow, 60, false);
-                        player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
+                        player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 20, false);
+                        player.AddBuff(BuffID.Slow, 20, false);
                     }
                     if (NPC.Distance(player.Center) < 200)
                     {
-                        player.AddBuff(BuffID.Silenced, 180, false);
+                        player.AddBuff(BuffID.Silenced, 20, false);
                         player.AddBuff(BuffID.Bleeding, 600, false);
                         player.AddBuff(ModContent.BuffType<TornWings>(), 20, false);
                     }
                 }
             }
 
-            if (customAi1 >= 2000f)
+            if (customAi1 >= TIME_BEFORE_SUMMON)
             {
-                if ((customspawn1 < 36) && Main.rand.NextBool(50))
+                if ((customspawn1 < 36) && Main.rand.NextBool(20 + (int)lifeThreshold / 2))
                 { //was 2 and 900
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -284,13 +286,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public bool Pull()
         {
-            // Pulling the user in while a teleport is active is unfair
-            if (teleporting > 0)
-            {
-                --teleporting;
-                return true;
-            }
-
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 // Skip over invalid players
@@ -320,8 +315,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Will range from 1 - 5 in practice, 5 being the lowest threshold before the witchking dies
                 float strength = (100f - lifeThreshold) / 20f;
 
+
+
                 // The pull gets stronger as the witchking is lower on life and the player is further away
-                player.velocity.X -= (xDiff / 4000f + strength * .052f * xSign) * (1 + strength * .13f);
+                player.velocity.X -= (xDiff / 4000f + strength * .050f * xSign) * (1 + strength * .115f);
 
                 // Only apply a Y velocity if the player is currently midair - prevents no jump bug along with torn wings
                 if (player.velocity.Y != 0f)

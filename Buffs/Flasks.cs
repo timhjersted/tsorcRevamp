@@ -17,13 +17,6 @@ namespace tsorcRevamp.Buffs
         public static float NanitesFlaskCrit = 14f;
         public override void Update(int type, Player player, ref int buffIndex)
         {
-            // Clear flask buffs when the player dies.
-            if (player.dead)
-            {
-                player.ClearBuff(type);
-                return;
-            }
-
             if (type == BuffID.WeaponImbuePoison)
             {
                 player.GetDamage(DamageClass.Melee) += PoisonFlaskDMG / 100f;
