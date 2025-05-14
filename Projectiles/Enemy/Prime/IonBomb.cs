@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             if (DetonationProgress == 30 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 240, 25);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 120, 25);
                 float randomRadius = 200;
 
                 if (Projectile.ai[1] == 1)
@@ -64,8 +64,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
                 }
 
                 newCenter = Main.player[(int)Projectile.ai[0]].Center + Main.rand.NextVector2CircularEdge(randomRadius, randomRadius);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), newCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 60, 25);
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), newCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 120, 25);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), newCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 240, 25);
             }
 
             if (DetonationProgress == 40 && Main.netMode != NetmodeID.MultiplayerClient)
@@ -98,9 +98,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 45);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 30);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 300, 20);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 450, 45);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 300, 30);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 150, 20);
 
                 float rotation = Main.rand.NextFloat(0, MathHelper.TwoPi);
                 for (int i = 0; i < 4; i++)

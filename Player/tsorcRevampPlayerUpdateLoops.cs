@@ -2251,7 +2251,7 @@ namespace tsorcRevamp
                 if (Main.LocalPlayer.ZoneJungle && !Main.LocalPlayer.ZoneDungeon && !Main.LocalPlayer.ZoneOverworldHeight && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
                 {
                     Player.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 5*60, false);
-                    Player.AddBuff(BuffID.Weak, 5*60);
+                    Player.AddBuff(BuffID.Weak, 5*30);
                 }
 
                 if (Main.LocalPlayer.ZoneSnow && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.LocalPlayer.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
@@ -2269,9 +2269,9 @@ namespace tsorcRevamp
 
                     if (!SeathIsAlive)
                     {
-                        Player.AddBuff(BuffID.WaterCandle, 5*60);
+                        Player.AddBuff(BuffID.WitheredArmor, 5*60);
                         Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 5*60, false);
-                        Player.AddBuff(BuffID.Chilled, 3*60);
+                        Player.AddBuff(BuffID.Chilled, 5*30);
                     }
                 }
             }
