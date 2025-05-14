@@ -84,7 +84,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             
             // If the player is close enough, get knocked back
-            if (NPC.Distance(player.Center) < 250)
+            if (NPC.Distance(player.Center) < 200)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); // was 6 and 3
                 float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, -6f);
