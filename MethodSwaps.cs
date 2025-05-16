@@ -3245,11 +3245,12 @@ namespace tsorcRevamp
         {
             bool BossZen = false;
 
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player player in Main.ActivePlayers)
             {
-                if (!Main.player[i].active || Main.player[i].dead)
-                { continue; }
-                if (Main.player[i].HasBuff(ModContent.BuffType<Buffs.BossZenBuff>()))
+                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+                // If any player has the boss zen buff (and the config enables boss zen)
+                if (modPlayer.BossZenBuff)
                 {
                     BossZen = true;
                     break;

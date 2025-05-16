@@ -1419,19 +1419,30 @@ namespace tsorcRevamp
             return false;
         }
 
+        // Determines if the full 'get' function needs to be called.
+        public static bool BossAliveLazyEvalFlag = false;
+        private static bool BossAliveInternal = false;
         public static bool BossAlive
         {
             get
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                if (BossAliveLazyEvalFlag)
+                    return BossAliveInternal;
+
+                BossAliveInternal = false;
+                foreach (NPC npc in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Main.npc[i].boss)
+                    if (npc.boss)
                     {
-                        return true;
+                        BossAliveInternal = true;
+                        break;
                     }
                 }
 
-                return false;
+                // **OPTOMIZATION** Lets the variable know it was updated so the mod doesn't call this loop over and over
+                BossAliveLazyEvalFlag = true;
+
+                return BossAliveInternal;
             }
         }
 

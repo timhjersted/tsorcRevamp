@@ -120,15 +120,7 @@ namespace tsorcRevamp.Tiles
 
                 player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
 
-                bool bossActive = false;
-                for (int n = 0; n < Main.maxNPCs; n++)
-                {
-                    if (Main.npc[n].active && Main.npc[n].boss)
-                    {
-                        bossActive = true;
-                        break;
-                    }
-                }
+                bool bossActive = tsorcRevampWorld.BossAlive;
 
                 if (player.velocity != Vector2.Zero)
                 {

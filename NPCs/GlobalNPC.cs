@@ -622,44 +622,49 @@ namespace tsorcRevamp.NPCs
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
+            // Added these intermediate variables to fix the spawn rate
+            // Without them, the spawn rate changes will mostly be ignored by the conversion back to int
+            // on every if statement assignment
+            float trueSpawnRate = (float)spawnRate;
+            float trueMaxSpawns = (float)maxSpawns;
+
             //reduces max spawns by 30% and rate by 50% until player exceeds 160 health
             if (player.statLifeMax2 <= 160)
             {
-                spawnRate = (int)(spawnRate * 1.5f);
-                maxSpawns = (int)(maxSpawns * 0.7f);
+                trueSpawnRate = trueSpawnRate * 1.5f;
+                trueMaxSpawns = trueMaxSpawns * 0.7f;
             }
             //reduces max spawns by 20% and spawn rate by 40% after 160 health
             if (player.statLifeMax2 > 160 && player.statLifeMax2 <= 200)
             {
-                spawnRate = (int)(spawnRate * 1.4f);
-                maxSpawns = (int)(maxSpawns * 0.8f);
+                trueSpawnRate = trueSpawnRate * 1.4f;
+                trueMaxSpawns = trueMaxSpawns * 0.8f;
             }
             //reduces max spawns by 10% and spawn rate by 30% from 200-400 health
             if (player.statLifeMax2 > 200 && player.statLifeMax2 <= 400)
             {
-                spawnRate = (int)(spawnRate * 1.3f);
-                maxSpawns = (int)(maxSpawns * 0.9f);
+                trueSpawnRate = trueSpawnRate * 1.3f;
+                trueMaxSpawns = trueMaxSpawns * 0.9f;
             }
             //only reduces spawn rate by 20% above 400 health
             if (player.statLifeMax2 > 400)
             {
-                spawnRate = (int)(spawnRate * 1.2f);
+                trueSpawnRate = trueSpawnRate * 1.2f;
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || tsorcRevampWorld.BossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
+            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
             {
-                spawnRate = 9999999;//Higher is less spawns
-                maxSpawns = 0;
+                trueSpawnRate = 9999999;//Higher is less spawns
+                trueMaxSpawns = 0;
             }
-
 
             //Peace candles do not activate if there is a) an invasion and b) the player is near the center of the world.
             if ((Main.invasionType == 0 || player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000))
             {
                 if (player.HasBuff(BuffID.PeaceCandle))
                 {
-                    spawnRate = 9999999;
-                    maxSpawns = 0;
+                    trueSpawnRate = 9999999;
+                    trueMaxSpawns = 0;
                 }
             }
             else
@@ -668,22 +673,24 @@ namespace tsorcRevamp.NPCs
                 {
                     player.buffImmune[BuffID.PeaceCandle] = true;
                     player.ZonePeaceCandle = false;
-                    spawnRate /= 2;
-                    maxSpawns *= 3;
+                    trueSpawnRate /= 2;
+                    trueMaxSpawns *= 3;
                 }
             }
 
             if (player.ZoneTowerSolar || player.ZoneTowerNebula || player.ZoneTowerStardust || player.ZoneTowerVortex)
             {
-                spawnRate /= 2;
-                maxSpawns = (int)(maxSpawns * 1.5);
+                trueSpawnRate /= 2;
+                trueMaxSpawns = trueMaxSpawns * 1.5f;
             }
 
             if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
             {
-                spawnRate /= 10; //Origin of the Abyss. All spawns blocked other than Humanity Phantoms
+                trueSpawnRate /= 10; //Origin of the Abyss. All spawns blocked other than Humanity Phantoms
             }
 
+            spawnRate = (int)Math.Round(trueSpawnRate);
+            maxSpawns = (int)Math.Round(trueMaxSpawns);
         }
 
         //vanilla npc changes moved to separate file

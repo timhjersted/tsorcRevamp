@@ -299,7 +299,14 @@ namespace tsorcRevamp
         public static Dictionary<int, float> DamageDir;
 
         public bool GiveBossZen;
-        public bool BossZenBuff;
+        private bool BossZenInternal = false;
+        public bool BossZenBuff 
+        {
+            get { return BossZenInternal; }
+            // Boss Zen internal is only set to true if the config setting is enabled.
+            // This overrides all the instances where the player is directly acessed to apply boss zen
+            set { BossZenInternal = ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig && value; } 
+        }
 
         public bool MagicWeapon;
         public bool GreatMagicWeapon;
@@ -397,6 +404,9 @@ namespace tsorcRevamp
 
         public override void ResetEffects()
         {
+            // Re-evaluate if any boss is alive once per tick
+            tsorcRevampWorld.BossAliveLazyEvalFlag = false;
+
             BeastMode1 = false;
             SilverSerpentRing = false;
             SoulSerpentRing = false;
@@ -572,7 +582,7 @@ namespace tsorcRevamp
                 Player.ClearBuff(BuffID.QueenSlimeMount);
             }
 
-            if (tsorcRevampWorld.BossAlive)
+            if (tsorcRevampWorld.BossAlive && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig)
             {
                 Player.AddBuff(ModContent.BuffType<Buffs.BossZenBuff>(), 5);
             }
@@ -1549,10 +1559,11 @@ namespace tsorcRevamp
             }
             #endregion
             #region boss zen
-            GiveBossZen = CheckBossZen();
-            if (GiveBossZen && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig)
+            if (tsorcRevampWorld.BossAlive)
             {
-                Player.AddBuff(ModContent.BuffType<BossZenBuff>(), 2, false);
+                if (ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig)
+                    Player.AddBuff(ModContent.BuffType<BossZenBuff>(), 2, false);
+
                 if (Player.position.Y < 3200)
                 {
                     Player.AddBuff(ModContent.BuffType<GravityField>(), 2, false);

@@ -1701,18 +1701,6 @@ namespace tsorcRevamp
             Player.AddBuff(ModContent.BuffType<Invincible>(), 360);
         }
 
-        public static bool CheckBossZen()
-        {
-            for (int i = 0; i < 200; i++)
-            {
-                if (Main.npc[i].active && Main.npc[i].boss)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk)
         {
             int playerTileXLeft = (int)(Position.X / 16f) - 1;
