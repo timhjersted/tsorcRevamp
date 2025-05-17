@@ -402,6 +402,13 @@ namespace tsorcRevamp
 
         public float CursePositiveStatsMultiplier;
 
+        // Right click structure buffs
+        public bool HadBuffBewitched;
+        public bool HadBuffClairvoyance;
+        public bool HadBuffSharpened;
+        public bool HadBuffAmmoBox;
+        public bool HadBuffStrategist;
+
         public override void ResetEffects()
         {
             // Re-evaluate if any boss is alive once per tick

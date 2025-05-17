@@ -545,6 +545,14 @@ namespace tsorcRevamp
             if (Player.whoAmI == Main.myPlayer)
             {                
                 DeathText = PickDeathText();
+
+                tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
+
+                modPlayer.HadBuffAmmoBox = Player.HasBuff(BuffID.AmmoBox);
+                modPlayer.HadBuffBewitched = Player.HasBuff(BuffID.Bewitched);
+                modPlayer.HadBuffSharpened = Player.HasBuff(BuffID.Sharpened);
+                modPlayer.HadBuffStrategist = Player.HasBuff(BuffID.WarTable);
+                modPlayer.HadBuffClairvoyance = Player.HasBuff(BuffID.Clairvoyance);
             }
             if (PhoenixSkull && !Player.HasBuff(ModContent.BuffType<PhoenixRebirthCooldown>()))
             {
@@ -1699,6 +1707,29 @@ namespace tsorcRevamp
             Player.statLife = Player.statLifeMax2;
             if (BearerOfTheCurse) Player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
             Player.AddBuff(ModContent.BuffType<Invincible>(), 360);
+
+            tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
+
+            if (modPlayer.HadBuffAmmoBox)
+            {
+                Player.AddBuff(BuffID.AmmoBox, 1);
+            }
+            if (modPlayer.HadBuffBewitched)
+            {
+                Player.AddBuff(BuffID.Bewitched, 1);
+            }
+            if (modPlayer.HadBuffClairvoyance)
+            {
+                Player.AddBuff(BuffID.Clairvoyance, 1);
+            }
+            if (modPlayer.HadBuffSharpened) 
+            {
+                Player.AddBuff(BuffID.Sharpened, 1);
+            }
+            if (modPlayer.HadBuffStrategist)
+            {
+                Player.AddBuff(BuffID.WarTable, 1);
+            }
         }
 
         public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk)
