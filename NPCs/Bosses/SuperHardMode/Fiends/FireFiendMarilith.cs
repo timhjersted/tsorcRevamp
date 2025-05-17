@@ -143,15 +143,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     {
                         Main.player[i].AddBuff(BuffID.OnFire, 180);
 
-                        bool hasCovenant = false;
-                        for (int j = 3; j < 8 + Main.player[i].GetAmountOfExtraAccessorySlotsToShow(); j++)
-                        {
-                            if (Main.player[i].armor[j].type == ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
-                            {
-                                hasCovenant = true;
-                                break;
-                            }
-                        }
+                        bool hasCovenant = Main.player[i].GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss;
 
                         if (!hasCovenant && !displayedWarning)
                         {

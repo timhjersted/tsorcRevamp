@@ -31,6 +31,7 @@ using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Items.Accessories.Defensive;
 
 namespace tsorcRevamp
 {
@@ -723,14 +724,7 @@ namespace tsorcRevamp
             {
 
                 //does the player have a covenant of artorias
-                for (int i = 3; i < (8 + Player.extraAccessorySlots); i++)
-                {
-                    if (Player.armor[i].type == ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
-                    {
-                        hasCoA = true;
-                        break;
-                    }
-                }
+                hasCoA = Player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss;
 
                 //if they do, and the shader is inactive
                 if (hasCoA && !(Filters.Scene["tsorcRevamp:TheAbyss"].Active))
