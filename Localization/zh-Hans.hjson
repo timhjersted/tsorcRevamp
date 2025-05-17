@@ -393,6 +393,7 @@ Mods: {
 
 		DropRules: {
 			SHMOnly: "[c/ff9999:仅在击败阿卓迪斯之后掉落]"
+			// AbyssOnly: "[c/ff9999: Only drops while The Covenant of Artorias is equipped]"
 			FirstBagOnly: "[c/ff9999: 只能从第一个打开的特定袋子中掉落]"
 			BotCOnly: "[c/ff9999: 只有玩家是被诅咒者时掉落]"
 			FirstBagBotCOnly: "[c/ff9999: 当玩家是被诅咒者时，只能从第一个打开的特定袋子中掉落]"

@@ -84,6 +84,7 @@ namespace tsorcRevamp
         public class tsorcItemDropRuleConditions
         {
             public static IItemDropRuleCondition SuperHardmodeRule;
+            public static IItemDropRuleCondition AbyssRule;
             public static IItemDropRuleCondition FirstBagRule;
             public static IItemDropRuleCondition CursedRule;
             public static IItemDropRuleCondition FirstBagCursedRule;
@@ -351,6 +352,7 @@ namespace tsorcRevamp
         {
             #region tsorcItemDropRuleConditions class
             tsorcItemDropRuleConditions.SuperHardmodeRule = new SuperHardmodeRule();
+            tsorcItemDropRuleConditions.AbyssRule = new WithinTheAbyssRule();
             tsorcItemDropRuleConditions.FirstBagRule = new FirstBagRule();
             tsorcItemDropRuleConditions.CursedRule = new CursedRule();
             tsorcItemDropRuleConditions.FirstBagCursedRule = new FirstBagCursedRule();

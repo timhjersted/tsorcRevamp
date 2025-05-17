@@ -89,8 +89,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
-        {
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<WhiteTitanite>(), 4, 1, 2, 50));
+        { 
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<WhiteTitanite>(), 4, 1, 2, 50));
         }
     }
 }

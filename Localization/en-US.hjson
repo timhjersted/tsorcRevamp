@@ -393,6 +393,7 @@ Mods: {
 
 		DropRules: {
 			SHMOnly: "[c/ff9999:Only drops in Super Hardmode]"
+			AbyssOnly: "[c/ff9999: Only drops while The Covenant of Artorias is equipped]"
 			FirstBagOnly: "[c/ff9999: Only drops from the first opened specific Bag]"
 			BotCOnly: "[c/ff9999: Only drops when the player is a Bearer of the Curse]"
 			FirstBagBotCOnly: "[c/ff9999: Only drops from the first opened specific Bag while the player is a Bearer of the Curse]"
