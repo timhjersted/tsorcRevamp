@@ -409,10 +409,14 @@ namespace tsorcRevamp
         public bool HadBuffAmmoBox;
         public bool HadBuffStrategist;
 
+        public bool EnterTheAbyss = false;
+
         public override void ResetEffects()
         {
             // Re-evaluate if any boss is alive once per tick
             tsorcRevampWorld.BossAliveLazyEvalFlag = false;
+
+            EnterTheAbyss = false;
 
             BeastMode1 = false;
             SilverSerpentRing = false;

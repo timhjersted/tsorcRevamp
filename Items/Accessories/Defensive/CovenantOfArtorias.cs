@@ -46,6 +46,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[BuffID.Oiled] = true;
             player.buffImmune[ModContent.BuffType<Crippled>()] = true;
             player.buffImmune[ModContent.BuffType<DarkInferno>()] = true;
+            player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss = true;
         }
 
 

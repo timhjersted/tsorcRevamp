@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 foreach (int id in tsorcRevampWorld.PreHardmodeBossIDs.Keys)
                 {
                     PreHardmodeDownedBosses.Add(new NPC());
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == NPCID.EaterofWorldsHead && NPC.downedBoss2) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == NPCID.EaterofWorldsHead && NPC.downedBoss2) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
                         PreHardmodeDownedBosses[PreHardmodeDownedBosses.Count - 1].SetDefaults(id);
                     }
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 {
                     HardmodeDownedBosses.Add(new NPC());
 
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>() && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>() && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
                         //Draw golems head instead of its body
                         int newID = id;
@@ -74,7 +74,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 foreach (int id in tsorcRevampWorld.SHMBossIDs.Keys)
                 {
                     SHMDownedBosses.Add(new NPC());
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
                         int newID = id;
                         if (newID == NPCID.MoonLordCore)

@@ -1228,15 +1228,12 @@ namespace tsorcRevamp
 
 
             bool charm = false;
-            foreach (Player p in Main.player)
+            foreach (Player player in Main.ActivePlayers)
             {
-                for (int i = 3; i <= 8 + p.extraAccessorySlots; i++)
+                if (player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
                 {
-                    if (p.armor[i].type == ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
-                    {
-                        charm = true;
-                        break;
-                    }
+                    charm = true;
+                    break;
                 }
             }
             if (charm)
