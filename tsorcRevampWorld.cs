@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Enums;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -42,6 +43,51 @@ namespace tsorcRevamp
 
         public static Vector2 AbyssPortalLocation;
 
+        public class WorldState
+        {
+            public bool bloodMoon = false;
+            public int moonPhase = 0;
+            public bool dayTime = false;
+            public double time = 0.0;
+            public bool stored = false;
+
+            public void StoreWorldState(bool bloodMoon, int moonPhase, bool dayTime, double time)
+            {
+                if (stored)
+                {
+                    return;
+                }
+
+                this.bloodMoon = bloodMoon;
+                this.moonPhase = moonPhase;
+                this.dayTime = dayTime;
+                this.time = time;
+                stored = true;
+            }
+
+            public void RevertWorldState()
+            {
+                if (!stored)
+                {
+                    return;
+                }
+
+                Main.bloodMoon = bloodMoon;
+                Main.moonPhase = moonPhase;
+                Main.dayTime = dayTime;
+                Main.time = time;
+                stored = false;
+
+                if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer)
+                {
+                    //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
+                    NetMessage.SendData(MessageID.WorldData);
+                }
+            }
+        }
+
+        public static WorldState beforeAbyss;
+
         public override void OnWorldLoad()
         {
             DownedBetsy = false;
@@ -58,6 +104,7 @@ namespace tsorcRevamp
             tsorcScriptedEvents.InitializeScriptedEvents();
             MapMarkers = new();
             BossIDsAndCoordinatesInternal = null;
+            beforeAbyss = new();
 
             PopulatePairedBosses();
         }
@@ -1226,7 +1273,6 @@ namespace tsorcRevamp
                 tsorcScriptedEvents.ScriptedEventCheck();
             }
 
-
             bool charm = false;
             foreach (Player player in Main.ActivePlayers)
             {
@@ -1238,17 +1284,26 @@ namespace tsorcRevamp
             }
             if (charm)
             {
+                beforeAbyss.StoreWorldState(Main.bloodMoon, Main.moonPhase, Main.dayTime, Main.time);
+
                 Main.bloodMoon = true;
                 Main.moonPhase = 0;
                 Main.dayTime = false;
                 Main.time = 16240.0;
+
                 if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer)
                 {
                     //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
                     NetMessage.SendData(MessageID.WorldData);
                 }
-
             }
+            // Revert back to whatever time it was before the ring was equipped.
+            // This does nothing if nothing was stored
+            else 
+            {
+                beforeAbyss.RevertWorldState();
+            }
+            
             if (!Main.dedServ)
             {
                 if (SuperHardMode)
