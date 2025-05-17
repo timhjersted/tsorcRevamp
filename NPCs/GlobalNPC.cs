@@ -405,17 +405,6 @@ namespace tsorcRevamp.NPCs
             int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
             int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
 
-            if (tsorcRevampWorld.TheEnd)
-            {
-                pool.Clear(); //stop NPC spawns in The End 
-            }
-
-            if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.StarlitHeavenWallpaper)
-            {
-                pool.Clear();
-                pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
-            }
-
             //VANILLA AND SOME MOD NPC SPAWN EDITS
 
             //PRE-HARD MODE
@@ -617,6 +606,19 @@ namespace tsorcRevamp.NPCs
                 {
                     pool.Remove(id);
                 }
+            }
+
+            Player player = spawnInfo.Player;
+
+            if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
+            {
+                pool.Clear();
+                pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
+            }
+
+            if (tsorcRevampWorld.TheEnd)
+            {
+                pool.Clear(); //stop NPC spawns in The End 
             }
         }
 
