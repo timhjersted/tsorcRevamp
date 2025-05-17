@@ -29,6 +29,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 6000; //life / 2.5 : was 1875 but with way more health 
             NPC.knockBackResist = 0.01f;
             NPC.scale = 1f;
+            NPC.lavaImmune = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.noGravity = true;

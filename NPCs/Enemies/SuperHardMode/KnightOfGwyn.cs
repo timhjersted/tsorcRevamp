@@ -25,6 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.damage = 90;
             NPC.defense = 60;
             NPC.height = 40;
+            NPC.lavaImmune = true;
             NPC.width = 30;
             NPC.lifeMax = 18000;
             NPC.scale = 1.2f;

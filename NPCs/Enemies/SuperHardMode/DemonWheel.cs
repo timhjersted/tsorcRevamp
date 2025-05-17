@@ -26,6 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 1000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.lavaImmune = true;
             NPC.lifeMax = 1000;
             NPC.alpha = 100;
             NPC.scale = 1.2f;

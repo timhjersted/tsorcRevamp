@@ -26,6 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.height = 40;
             NPC.width = 20;
             NPC.damage = 73;
+            NPC.lavaImmune = true;
             NPC.defense = 50;
             NPC.timeLeft = 22000;
             NPC.lifeMax = 5000; // was 7100, toning down to increase spawn rates, now also in desert

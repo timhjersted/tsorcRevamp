@@ -43,6 +43,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.lavaImmune = true;
             NPC.HitSound = SoundID.NPCHit1;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.HumanityPhantomBanner>();

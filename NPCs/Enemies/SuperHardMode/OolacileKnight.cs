@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 20000; // was 2875 with 7k health
+            NPC.lavaImmune = true;
             NPC.knockBackResist = 0f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.OolacileKnightBanner>();
