@@ -10855,6 +10855,11 @@ Mods: {
 					Tooltip: ""
 					Label: Debug Mode
 				}
+
+				DisableModWingsFallControlDuringFlight: {
+					Tooltip: ""
+					Label: Disable Mod Wings Fall Control During Flight
+				}
 			}
 		}
 

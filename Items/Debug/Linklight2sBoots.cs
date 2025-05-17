@@ -92,7 +92,7 @@ namespace tsorcRevamp.Items.Debug
                 return;
             }
             player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 3;
-            if (player.TryingToHoverDown && !player.merman)
+            if (player.TryingToHoverDown)
             {
                 if (player.controlJump)
                 {

@@ -78,6 +78,15 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             {
                 player.velocity.Y = 1f;
             }
+
+            // Fall faster if player holds down
+            if (player.TryingToHoverDown && !player.controlJump &&
+                !ModContent.GetInstance<tsorcRevampConfig>().DisableModWingsFallControlDuringFlight)
+            {
+                player.gravity += 0.15f;
+                player.maxFallSpeed += 15f;
+            }
+
             player.wingTime = 999999999;
             //player.GetWingStats(22);
             player.jumpBoost = true;
@@ -89,6 +98,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             player.buffImmune[BuffID.OnFire] = true;
             player.nightVision = true;
             player.AddBuff(BuffID.Hunter, 1);
+
             if (Main.netMode != NetmodeID.MultiplayerClient && player.whoAmI == Main.myPlayer)
             {
                 if (tsorcRevamp.WingsOfSeath.JustReleased)

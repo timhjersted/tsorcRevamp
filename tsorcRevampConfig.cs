@@ -50,6 +50,10 @@ namespace tsorcRevamp
 
         [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
+        public bool DisableModWingsFallControlDuringFlight { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
         public bool DebugMode { get; set; }
 
         [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Visual")]

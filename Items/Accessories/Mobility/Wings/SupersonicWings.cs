@@ -79,6 +79,14 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             {
                 player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 2;
 
+                // Fall faster if player holds down
+                if (player.TryingToHoverDown && !player.controlJump &&
+                    !ModContent.GetInstance<tsorcRevampConfig>().DisableModWingsFallControlDuringFlight)
+                {
+                    player.gravity += 0.05f;
+                    player.maxFallSpeed += 5f;
+                }
+
 
                 /** W1K's original code
                 if (player.controlLeft) {
