@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
     class MechaDragonBody3 : ModNPC
     {
         public static int[] bodyTypes;
-        public int Timer = -1000;
+        public int Timer = -120;
         int HostileFreezeBoltDamage = 18;
         public override void SetStaticDefaults()
         {

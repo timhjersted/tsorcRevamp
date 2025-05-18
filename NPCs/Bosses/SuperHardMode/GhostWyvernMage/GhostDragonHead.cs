@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.alpha = 100;
             NPC.value = 660000;
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
-            UsefulFunctions.AddAttack(NPC, 1500, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, SoundID.Item17, stopBeforeFiring: false, needsLineOfSight: false, condition: (NPC npc) => { return npc.Distance(Main.player[npc.target].Center) > 700 && Main.rand.NextBool(200); });
+            UsefulFunctions.AddAttack(NPC, 1000, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, SoundID.Item17, stopBeforeFiring: false, needsLineOfSight: false, condition: (NPC npc) => { return npc.Distance(Main.player[npc.target].Center) > 700 && Main.rand.NextBool(200); });
         }
         int lightningDamage = 50;
 

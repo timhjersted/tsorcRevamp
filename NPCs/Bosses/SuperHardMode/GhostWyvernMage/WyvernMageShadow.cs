@@ -1,7 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -22,6 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
         }
+
         public override void SetDefaults()
         {
             NPC.npcSlots = 10;
@@ -32,7 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.height = 44;
             NPC.scale = 1.15f;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 100000;
+            NPC.lifeMax = 150000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.noGravity = false;
@@ -44,216 +47,501 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.width = 28;
             NPC.knockBackResist = 0f;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.WyvernMageShadow.DespawnHandler"), Color.DarkCyan, DustID.Demonite);
+            nextWarpPoint = Main.rand.NextVector2CircularEdge(320, 320);
         }
 
+        int frozenSawDamage = 45;
+        int lightningDamage = 60;
+        int plasmaDamage = 44;
+        int lifeTimer = 0;
+        int holdTimer = 0;
+        int lightningDelayTimer = -1;
+        Vector2 delayedTargetPosition;
+        int deathTimer = 0;
         int mageShadowTimer = 0;
-        int frozenSawDamage = 45; // 28
-        int lightningDamage = 60; // 34
-        int Timer2 = -Main.rand.Next(200);
+
+        // When this hits 5, the boss fires an orb and resets it back to 0. Only happens right at the start of its teleport.
+        public int OrbTimer
+        {
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
+        }
+
+        // When this hits 200 (120 if dragon is dead) the boss teleports
+        public int TeleportTimer
+        {
+            get => (int)NPC.ai[1];
+            set => NPC.ai[1] = value;
+        }
+
+        // Counts up each time the boss fires an orb.
+        public int ShotCount
+        {
+            get => (int)NPC.ai[2];
+            set => NPC.ai[2] = value;
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {
+            target.AddBuff(BuffID.WitheredWeapon, 3 * 60, false);
+            target.AddBuff(BuffID.WitheredArmor, 3 * 60, false);
+        }
 
         #region AI
         NPCDespawnHandler despawnHandler;
+        bool dragonAliveLastFrame = true;
+        int phaseTransitionTimer = 0;
+        float spawnDelay = 60;
+        float zapTimer = 45;
+        bool initialized = false;
+        int normalAttackCounter = 0;
+        Vector2 nextWarpPoint;
+        int teleportCooldown = 180;
+        int nextAttackType = 0;
+        float auraBonus;
+        int expandRadius = 0;
+        public static Effect effect;
+
         public override void AI()
         {
+            Lighting.AddLight(NPC.Center, Color.BlueViolet.ToVector3() * 2f);
+            Main.dayTime = false;
+            Main.time = 3000;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
-            NPC.ai[0]++; // Timer Scythe
-
-            NPC.ai[1]++; // Timer Teleport
-
-
-            // npc.ai[2]++; // Shots
-
-            if (NPC.life > NPC.lifeMax / 200 * 15)
+            if (!initialized)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.PurpleTorch, NPC.velocity.X, NPC.velocity.Y, 150, Color.Purple, 1f);
-                Main.dust[dust].noGravity = true;
-            }
-            else if (NPC.life <= NPC.lifeMax / 200 * 15)
-            {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.PurpleTorch, NPC.velocity.X, NPC.velocity.Y, 100, Color.BlueViolet, 2f);
-                Main.dust[dust].noGravity = true;
+                nextWarpPoint = Main.rand.NextVector2CircularEdge(640, 440) + NPC.Center;
+                initialized = true;
             }
 
-            if (NPC.ai[0] >= 37 && NPC.ai[2] < 3)
+            if (deathTimer > 0)
             {
-                float num48 = 4f;
-                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                int type = ModContent.ProjectileType<Projectiles.Enemy.FrozenSawII>();
-                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                deathTimer++;
+                NPC.noGravity = true;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, frozenSawDamage, 0f, Main.myPlayer);
+                    int rand = Main.rand.Next(10);
+                    if (rand == 0)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
+                    }
+                    if (rand == 1)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.BlueViolet));
+                    }
+                    if (rand == 2)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(new Color(0, 30, 255)));
+                    }
                 }
 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                NPC.ai[0] = 0;
-                NPC.ai[2]++;
+                if (deathTimer == 120)
+                {
+                    for (int i = 0; i < 16; i++)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0.7f, 0.7f).RotatedBy(MathHelper.PiOver2 * Main.rand.Next(0, 4)), ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), 0, 0f, Main.myPlayer);
+                    }
+                }
+
+                if (deathTimer > 180)
+                {
+                    NPC.StrikeNPC(NPC.CalculateHitInfo(999999, 1, true, 0), false, false);
+                }
+
+                return;
             }
 
+            Player player = Main.player[NPC.target];
+            if (holdTimer > 1)
+            {
+                holdTimer--;
+            }
 
+            if (NPC.life < NPC.lifeMax / 2)
+            {
+                player.AddBuff(BuffID.Chilled, 30, false);
+                player.AddBuff(BuffID.Ichor, 30, false);
 
+                if (holdTimer <= 0)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMage.FrostWave"), 235, 199, 23);
+                    holdTimer = 12000;
+                }
+            }
 
+            OrbTimer++;
+            TeleportTimer++;
 
-            if (NPC.ai[1] >= 10)
+            bool dragonAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
+
+            if (dragonAlive)
+            {
+                NPC.defense = 40;
+            }
+
+            if (dragonAliveLastFrame && !dragonAlive)
+            {
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMage.DragonDead"), 235, 199, 23);
+                phaseTransitionTimer = 1;
+            }
+            dragonAliveLastFrame = dragonAlive;
+
+            if (phaseTransitionTimer > 0 && phaseTransitionTimer < 360)
+            {
+                if (phaseTransitionTimer == 300)
+                {
+                    Vector2 spawnVec = new Vector2(500, 0);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        auraBonus = 1.8f;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            spawnVec = spawnVec.RotatedBy(MathHelper.PiOver2);
+                            Vector2 aimVec = -Vector2.Normalize(spawnVec);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnVec, aimVec, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                        }
+                    }
+                }
+                phaseTransitionTimer++;
+                OrbTimer++;
+                return;
+            }
+
+            int transparency = 100;
+            if (!dragonAlive)
+            {
+                NPC.defense = 0;
+                transparency += 50;
+            }
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, transparency, Color.Black, 1f);
+            Main.dust[dust].noGravity = true;
+
+            if (nextAttackType == 0)
+            {
+                if ((OrbTimer >= 4 && ShotCount < 5) || (ShotCount < 7 && !dragonAlive))
+                {
+                    auraBonus = 1;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 startPos = NPC.Center;
+                        float speed;
+                        float startRotation;
+
+                        if (dragonAlive)
+                        {
+                            speed = 4;
+                            startRotation = MathHelper.ToRadians(-15);
+                        }
+                        else
+                        {
+                            speed = 3f;
+                            startRotation = MathHelper.ToRadians(-60);
+                        }
+
+                        Vector2 projVelocity = UsefulFunctions.Aim(startPos, Main.player[NPC.target].Center, speed);
+                        projVelocity = projVelocity.RotatedBy(startRotation + MathHelper.ToRadians(15) * ShotCount);
+
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSawII>(), frozenSawDamage, 0f, Main.myPlayer);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                    OrbTimer = 0;
+                    ShotCount++;
+                }
+
+                if (TeleportTimer % 6 == 0 && TeleportTimer < 180 && TeleportTimer > 60 && !dragonAlive)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        {
+                            Vector2 spawnPos = Main.player[NPC.target].Center;
+                            spawnPos.Y += -550;
+                            spawnPos.X += Main.rand.Next(-50, 50);
+                            Vector2 projVel = UsefulFunctions.Aim(spawnPos, Main.player[NPC.target].Center, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                        }
+                    }
+                }
+            }
+            else if (nextAttackType == 1)
+            {
+                if (TeleportTimer == 35)
+                {
+                    auraBonus = 1;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 projVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
+                        if (dragonAlive)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                        }
+                        else
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(-0.15f) * 4, ModContent.ProjectileType<Projectiles.Enemy.Okiku.CrazyOrb>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(0.15f) * 4, ModContent.ProjectileType<Projectiles.Enemy.Okiku.CrazyOrb>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                        }
+                    }
+                }
+
+                if (TeleportTimer % 45 == 0 && !dragonAlive)
+                {
+                    auraBonus = 0.5f;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Vector2 projVel = new Vector2(Main.rand.NextFloat(-.3f, .3f), 5);
+                            Vector2 spawnPos = Main.player[NPC.target].Center;
+                            spawnPos.Y += -600;
+                            spawnPos.X += -800 + (250 * i);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Enemy.FrozenSawII>(), frozenSawDamage, 0f, Main.myPlayer);
+                        }
+                    }
+                }
+            }
+            else if (nextAttackType == 2)
+            {
+                zapTimer--;
+                Vector2 spawnPos = Main.rand.NextVector2CircularEdge(1500, 1500) + NPC.Center;
+                Vector2 projVel = UsefulFunctions.Aim(spawnPos, NPC.Center, 9);
+                projVel = projVel.RotatedBy(-.25 + 2f * (teleportCooldown - TeleportTimer) / 600);
+                if (TeleportTimer < 400)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Ice5Icicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                    }
+                }
+
+                if (zapTimer <= 0 && TeleportTimer > 90)
+                {
+                    auraBonus = .8f;
+                    zapTimer = Main.rand.Next(35, 60);
+                    projVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                    }
+                }
+            }
+
+            if (TeleportTimer >= 10)
             {
                 NPC.velocity.X *= 0.77f;
                 NPC.velocity.Y *= 0.27f;
             }
 
-            if ((NPC.ai[1] >= 500 && NPC.life > NPC.lifeMax / 8) || (NPC.ai[1] >= 250 && NPC.life <= NPC.lifeMax / 8))
+            if (TeleportTimer >= teleportCooldown)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-                for (int i = 0; i < 10; i++)
-                {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
-                    Main.dust[dust].noGravity = false;
-                }
-                NPC.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
-                NPC.ai[2] = 0;
-                NPC.ai[1] = 0;
-
-
-                Player Pt = Main.player[NPC.target];
-                Vector2 NC = NPC.position + new Vector2(NPC.width / 2, NPC.height / 2);
-                Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
-                NPC.position.X = Pt.position.X + (float)((600 * Math.Cos(NPC.ai[3])) * -1);
-                NPC.position.Y = Pt.position.Y - 45 + (float)((30 * Math.Sin(NPC.ai[3])) * -1);
-
-                float MinDIST = 600f;
-                float MaxDIST = 900f;
-                Vector2 Diff = NPC.position - Pt.position;
-                if (Diff.Length() > MaxDIST)
-                {
-                    Diff *= MaxDIST / Diff.Length();
-                }
-                if (Diff.Length() < MinDIST)
-                {
-                    Diff *= MinDIST / Diff.Length();
-                }
-                NPC.position = Pt.position + Diff;
-
-                NC = NPC.position + new Vector2(NPC.width / 2, NPC.height / 2);
-
-                float rotation = (float)Math.Atan2(NC.Y - PtC.Y, NC.X - PtC.X);
-                NPC.velocity.X = (float)(Math.Cos(rotation) * 13) * -1;
-                NPC.velocity.Y = (float)(Math.Sin(rotation) * 13) * -1;
-
+                WyvernMageTeleport();
             }
 
-
-            Timer2++;
-            if (Timer2 >= 60)
-            {
-
-
-                bool clearSpace = true;
-                for (int i = 0; i < 15; i++)
-                {
-                    if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i))
-                    {
-                        clearSpace = false;
-                    }
-                }
-
-                if (clearSpace)
-                {
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
-
-
-                    speed.Y += Main.rand.NextFloat(-2f, -6f);
-                    //speed += Main.rand.NextVector2Circular(-10, -8);
-                    if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.rand.NextBool(2))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, 80, 0f, Main.myPlayer);
-                            }
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, PitchVariance = 1f }, NPC.Center);
-                        }
-
-                        if (Timer2 >= 250)
-                        {
-
-                            if (Main.rand.NextBool(2))
-                            {
-                                float num48 = 2f;
-                                Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 220 + (NPC.height / 2));
-                                float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-                                float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-                                if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                                {
-
-                                    float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                                    num51 = num48 / num51;
-                                    speedX *= num51;
-                                    speedY *= num51;
-                                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                                    {
-                                        int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();//44;//0x37; //14;
-                                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
-                                        Main.projectile[num54].timeLeft = 250;
-                                    }
-                                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
-
-                                    NPC.ai[3] = 0;
-                                }
-                            }
-
-                            Timer2 = -300;
-                        }
-                    }
-                }
-                else
-                {
-                    Timer2 = -100;
-                }
-
-            }
-
-
-            NPC.ai[3]++;
             mageShadowTimer++;
-
-            if (NPC.ai[3] >= 100) //how often the attack can happen in frames per second
+            if (mageShadowTimer >= 1000 && Main.netMode != NetmodeID.MultiplayerClient)
             {
+                int Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[NPC.target].position.X - 676 - NPC.width / 2, (int)Main.player[NPC.target].position.Y - 16 - NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
+                Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+                Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[NPC.target].position.X + 676 - NPC.width / 2, (int)Main.player[NPC.target].position.Y - 16 - NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
+                Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
 
-                if (mageShadowTimer >= 700 && Main.netMode != NetmodeID.MultiplayerClient) //700 was 900
+                if (Main.netMode == NetmodeID.Server)
                 {
-
-                    int Paraspawn = 0;
-                    Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
-                    Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
-                    Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
-                    Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
-
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
-                    }
-
-                    mageShadowTimer = 0;
-
+                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
                 }
-                NPC.ai[3] = 0;
 
+                mageShadowTimer = 0;
             }
 
-            NPC.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
-            if (NPC.ai[3] >= 800)
+            if (TeleportTimer == 10)
             {
-                if (NPC.ai[1] == 0) NPC.ai[1] = 1;
-                else NPC.ai[1] = 0;
+                if (NPC.life <= 12000 && lifeTimer < 1 || NPC.life <= 7000 && lifeTimer < 2)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMage.Archdeacons"), 175, 75, 255);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int Paraspawn = 0;
+                        Vector2 spawnLoc = Main.player[NPC.target].Center;
+
+                        if (Collision.CanHitLine(spawnLoc, 1, 1, spawnLoc + new Vector2(636, 0), 1, 1))
+                        {
+                            Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnLoc.X + 636, (int)spawnLoc.Y, ModContent.NPCType<Enemies.Archdeacon>(), 0);
+                            Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
+                            }
+                        }
+                        if (Collision.CanHitLine(spawnLoc, 1, 1, spawnLoc + new Vector2(-636, 0), 1, 1))
+                        {
+                            Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnLoc.X - 636, (int)spawnLoc.Y, ModContent.NPCType<Enemies.Archdeacon>(), 0);
+                            Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
+                            }
+                        }
+                    }
+
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    lifeTimer++;
+                }
             }
         }
 
         #endregion
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.WriteVector2(nextWarpPoint);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            nextWarpPoint = reader.ReadVector2();
+        }
+
+        public void WyvernMageTeleport()
+        {
+            if (nextWarpPoint != Vector2.Zero)
+            {
+                Vector2 diff = nextWarpPoint - NPC.Center;
+                float length = diff.Length();
+                diff.Normalize();
+                Vector2 offset = Vector2.Zero;
+
+                for (int i = 0; i < length; i++)
+                {
+                    offset += diff;
+                    if (Main.rand.NextBool(2))
+                    {
+                        Vector2 dustPoint = offset;
+                        dustPoint.X += Main.rand.NextFloat(-NPC.width / 2, NPC.width / 2);
+                        dustPoint.Y += Main.rand.NextFloat(-NPC.height / 2, NPC.height / 2);
+                        if (Main.rand.NextBool())
+                        {
+                            Dust.NewDustPerfect(NPC.Center + dustPoint, 71, diff * 5, 200, default, 0.8f).noGravity = true;
+                        }
+                        else
+                        {
+                            Dust.NewDustPerfect(NPC.Center + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
+                        }
+                    }
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), nextWarpPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                }
+
+                NPC.Center = nextWarpPoint;
+            }
+
+            NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 13);
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+            TeleportTimer = 0;
+            ShotCount = 0;
+
+            nextAttackType = Main.rand.Next(2);
+
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()))
+            {
+                teleportCooldown = 210;
+
+                nextAttackType = Main.rand.Next(100);
+                if (nextAttackType < 40)
+                {
+                    nextAttackType = 0;
+                    normalAttackCounter++;
+                }
+                if (nextAttackType >= 40 && nextAttackType < 80)
+                {
+                    nextAttackType = 1;
+                    normalAttackCounter++;
+                }
+                if (nextAttackType >= 80 || normalAttackCounter > 5)
+                {
+                    normalAttackCounter = 0;
+                    nextAttackType = 2;
+                    teleportCooldown = 600;
+                }
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
+                Main.dust[dust].noGravity = false;
+            }
+
+            int warpHorizontalMax = 640;
+            int warpVerticalMax = 440;
+
+            if (nextAttackType == 2)
+            {
+                warpHorizontalMax = 400;
+                warpVerticalMax = 10;
+            }
+
+            int checks = 0;
+            while (checks < 15)
+            {
+                checks++;
+                nextWarpPoint = Main.rand.NextVector2CircularEdge(warpHorizontalMax, warpVerticalMax);
+                if (Collision.CanHit(Main.player[NPC.target].Center + nextWarpPoint, 1, 1, Main.player[NPC.target].Center, 1, 1) || Collision.CanHitLine(Main.player[NPC.target].Center + nextWarpPoint, 1, 1, Main.player[NPC.target].Center, 1, 1))
+                {
+                    nextWarpPoint = Main.player[NPC.target].Center + nextWarpPoint;
+                    break;
+                }
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), nextWarpPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: teleportCooldown);
+            }
+
+            NPC.netUpdate = true;
+        }
+
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
+        {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()))
+            {
+                modifiers.FinalDamage *= 0.25f;
+            }
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()))
+            {
+                modifiers.FinalDamage *= 0.25f;
+            }
+        }
+
+        public override bool CheckDead()
+        {
+            if (deathTimer == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Shatter);
+                deathTimer++;
+                NPC.life = 1;
+                NPC.dontTakeDamage = true;
+            }
+
+            if (deathTimer > 180)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public override void FindFrame(int currentFrame)
         {
-
             if ((NPC.velocity.X > -9 && NPC.velocity.X < 9) && (NPC.velocity.Y > -9 && NPC.velocity.Y < 9))
             {
                 NPC.frameCounter = 0;
@@ -293,6 +581,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             }
         }
 
+        public override bool CheckActive()
+        {
+            return false;
+        }
+
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.SuperHealingPotion;
@@ -308,7 +601,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 2, 4));
         }
 
-        #region Gore
         public override void OnKill()
         {
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -321,19 +613,95 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 3").Type, 1f);
             }
         }
-        #endregion
 
-        public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            auraBonus *= 0.9f;
+
+            Color rgbColor = Color.Red;
+            if (nextAttackType == 0)
+            {
+                expandRadius = 0;
+            }
+            if (nextAttackType == 1)
+            {
+                expandRadius = 0;
+                rgbColor = Color.OrangeRed;
+            }
+            if (nextAttackType == 2)
+            {
+                if (expandRadius < 1000)
+                {
+                    expandRadius += 2;
+                }
+                rgbColor = new Color(255, 30, 255);
+            }
+
+            if (dragonAliveLastFrame)
+            {
+                rgbColor = Color.Purple;
+            }
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            float effectIntensity = 0;
+            if (!dragonAliveLastFrame)
+            {
+                effectIntensity = 1;
+                int effectTimer = 1;
+                if (effectTimer > 540)
+                {
+                    effectIntensity = 1f - ((effectTimer - 540f) / 60f);
+                }
+
+                if (effectTimer < 20)
+                {
+                    effectIntensity = effectTimer / 20f;
+                }
+            }
+
+            float timeFactor = 1;
+            float scaleFactor = 4;
+
+            if (effect == null)
+            {
+                effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            float colorIntensity = 0.25f;
+            if (phaseTransitionTimer > 1)
+            {
+                colorIntensity = (.6f * ((float)phaseTransitionTimer) / 360f) + auraBonus;
+                rgbColor = Color.Lerp(Color.Gray, rgbColor, colorIntensity);
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, 150 + expandRadius / 4 + (int)(70 * (effectIntensity + auraBonus)), 150 + expandRadius / 4 + (int)(70 * (effectIntensity + auraBonus)));
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseVoronoi.Width);
+            effect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4() * colorIntensity * 0.5f * (6 + (expandRadius / 500f)));
+            effect.Parameters["ringProgress"].SetValue(0.4f + .25f * effectIntensity + (expandRadius / 2500f));
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            effect.Parameters["scaleFactor"].SetValue(scaleFactor);
+
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseVoronoi, NPC.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, NPC.scale, SpriteEffects.None, 0);
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+
             GhostDragonHead.GhostEffect(NPC, spriteBatch, ref texture, 0.9f);
             return true;
         }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            //GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture, 0.5f);
         }
 
+        public static Texture2D texture;
     }
 
     public class GhostWyvernMageDropCondition : IItemDropRuleCondition
