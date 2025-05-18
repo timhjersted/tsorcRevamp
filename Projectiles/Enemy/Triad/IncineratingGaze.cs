@@ -191,11 +191,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                                 Rectangle randBox = Main.player[i].Hitbox;
                                 randBox.X += (int)Main.rand.NextFloat(-16, 16);
                                 randBox.Y += (int)Main.rand.NextFloat(-16, 16);
-                                CombatText.NewText(randBox, Color.OrangeRed, 999999999, true);
+                                CombatText.NewText(randBox, Color.OrangeRed, 20, true);
                             }
                             Main.player[i].immune = false;
-                            Main.player[i].statLife -= 999999999;
-                            Main.player[i].KillMe(PlayerDeathReason.ByProjectile(999, Projectile.whoAmI), 999999999, 0);
+                            Main.player[i].statLife -= 20;
+                            Main.player[i].Hurt(PlayerDeathReason.ByProjectile(2, Projectile.whoAmI), 20, 0);
                         }
                     }
                 }

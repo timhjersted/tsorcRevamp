@@ -413,11 +413,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                 }
 
-                if (MoveTimer % 200 == 30 && MoveTimer < 750)
+                if (MoveTimer % 250 == 30 && MoveTimer < 750)
                 {
                     StartAura(400);
                 }
-                if (MoveTimer % 200 == 60)
+                if (MoveTimer % 250 == 60)
                 {
                     if (aimingDown)
                     {
@@ -432,7 +432,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         rotationTarget *= -1;
                     }
                 }
-                if (MoveTimer % 200 == 30 && MoveTimer < 750)
+                if (MoveTimer % 250 == 30 && MoveTimer < 750)
                 {
                     baseFade = 0.3f;
                     baseRadius = 0.3f;
@@ -443,7 +443,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     aimingDown = !aimingDown;
                 }
 
-                if (MoveTimer % 200 < 120 && MoveTimer % 200 > 60 && MoveTimer < 850 && MoveTimer % 9 == 0)
+                if (MoveTimer % 250 < 120 && MoveTimer % 250 > 60 && MoveTimer < 850 && MoveTimer % 9 == 0)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
