@@ -10268,6 +10268,16 @@ Mods: {
 				DisplayName3: Fleeing Fungi
 			}
 
+			MiakodaNPC: {
+				DisplayName: Miakoda
+				Name1: Miakoda
+				Button1: Help
+				Button2: Chat
+				Quote1: Hey, listen! At least that's what I would say if I were 95 years younger...
+				Quote2Part1: "How may I be of assistance to you, "
+				Quote2Part2: ?
+			}
+
 			ShamanElder: {
 				DisplayName: Shaman Elder
 				Name1: Alo
