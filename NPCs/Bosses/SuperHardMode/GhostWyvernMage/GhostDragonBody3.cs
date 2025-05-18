@@ -10,6 +10,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
     class GhostDragonBody3 : ModNPC
     {
+        public int Timer = -60;
         public override void SetStaticDefaults()
         {
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
@@ -18,6 +19,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<MorgulPoisoning>()] = true;
@@ -48,8 +52,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         {
             return false;
         }
-        int Timer = -Main.rand.Next(800);
-        int Timer2 = -Main.rand.Next(200);
 
         public override bool CheckActive()
         {
@@ -65,8 +67,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<GhostDragonHead>(), bodyTypes, ModContent.NPCType<GhostDragonTail>(), 23, -2f, 15f, 0.23f, true, false);
 
             Timer++;
-            Timer2++;
-
+            
             if (!Main.npc[(int)NPC.ai[1]].active)
             {
                 NPC.life = 0;
@@ -76,18 +77,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.active = false;
             }
 
-            if (Timer >= 0)
+            if (Timer >= 360)
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.Server)
                 {
-                    float num48 = 1f;
+                    float num48 = 6f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2));
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    //int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.VortexLightning, fireDamage, 0f, Main.myPlayer); //ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>()
-                    int num55 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), fireDamage, 0f, Main.myPlayer); //ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>()
-                    Timer = -6000;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), fireDamage, 0f, Main.myPlayer);
+                    }
+                    Timer = 0;
                 }
+
+                //npc.netUpdate=true;
             }
         }
 

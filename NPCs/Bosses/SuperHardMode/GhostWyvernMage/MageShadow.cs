@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.defense = 56;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 1000;
+            NPC.lifeMax = 1500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.noGravity = false;
@@ -153,8 +153,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             Timer2++;
             if (Timer2 >= 120)
             {
-
-
                 bool clearSpace = true;
                 for (int i = 0; i < 15; i++)
                 {
@@ -182,41 +180,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                         }
-
-                        if (Timer2 >= 400)
-                        {
-                            Timer2 = -100;
-
-                            if (Main.rand.NextBool(2))
-                            {
-                                float num48 = 2f;
-                                Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 220 + (NPC.height / 2));
-                                float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-                                float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-                                if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                                {
-                                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                                    {
-                                        float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                                        num51 = num48 / num51;
-                                        speedX *= num51;
-                                        speedY *= num51;
-                                        int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();//44;//0x37; //14;
-                                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
-                                        Main.projectile[num54].timeLeft = 250;
-                                    }
-                                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
-                                    NPC.ai[3] = 0;
-                                }
-                            }
-                        }
                     }
                 }
                 else
                 {
                     Timer2 = -100;
                 }
-
             }
 
 

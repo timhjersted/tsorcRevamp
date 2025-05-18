@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MagmaStone);
-            recipe.AddIngredient(ItemID.HellstoneBar);
+            recipe.AddIngredient(ItemID.HellstoneBar, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 
