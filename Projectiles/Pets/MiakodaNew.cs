@@ -2,12 +2,15 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Friendly;
 
 namespace tsorcRevamp.Projectiles.Pets
 {
     class MiakodaNew : ModProjectile
     {
-
+        public bool spawned = false;
+        public int count = 0;
+        public static Vector2 offset = new Vector2(25f, -40f);
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("New Moon Miakoda");
@@ -28,13 +31,58 @@ namespace tsorcRevamp.Projectiles.Pets
             Projectile.tileCollide = false;
             AIType = ProjectileID.BabyHornet;
             Projectile.scale = 0.85f;
-            DrawOffsetX = -8;
+            //DrawOffsetX = -8;
         }
 
         public override bool PreAI()
         {
             Player player = Main.player[Projectile.owner];
+
+            Vector2 targetLocation = new Vector2(player.Center.X + offset.X, player.Center.Y + offset.Y);
+            Vector2 toTarget = targetLocation - Projectile.position;
+            float distance1 = (player.Center - Projectile.Center).Length();
+
             player.hornet = false;
+
+            AIType = ProjectileID.BabyHornet;
+
+            // If you're close enough to the player and they're standing still
+            if (Main.myPlayer == player.whoAmI && distance1 < 150f && player.velocity.X == 0 && player.velocity.Y == 0)
+            {
+                float distance2 = toTarget.Length();
+
+                // Fly towards the preset position
+                Vector2 movement = toTarget * 0.02f;
+                Projectile.velocity.X += movement.X;
+                Projectile.velocity.Y += movement.Y;
+
+                // If close enough, spawn npc and slow down movement a little more.
+                if (distance2 < 20f)
+                {
+                    // And the npc hasn't been spawned
+                    if (!spawned)
+                    {
+                        count++;
+                        if (count > 30)
+                        {
+                            NPC.NewNPC(player.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y, ModContent.NPCType<MiakodaNPC>());
+                            count = 0;
+                            spawned = true;
+                        }
+                    }
+                    else
+                    {
+                        Projectile.velocity.X *= 0.5f;
+                        Projectile.velocity.Y *= 0.5f;
+                    }
+
+                    return true;
+                }
+
+                Projectile.velocity *= 0.85f;
+            }
+
+            spawned = false;
 
             return true;
         }
@@ -56,6 +104,14 @@ namespace tsorcRevamp.Projectiles.Pets
                 Projectile.position = idlePosition;
                 Projectile.velocity *= 0.1f;
                 Projectile.netUpdate = true;
+            }
+
+            // The npc is spawned, teleport over the npc to hide it.
+            if (spawned)
+            {
+                Vector2 targetLocation = new Vector2(player.Center.X + offset.X, player.Center.Y + offset.Y);
+                Projectile.position = targetLocation;
+                Projectile.direction = 1;
             }
 
             if (player.dead)
