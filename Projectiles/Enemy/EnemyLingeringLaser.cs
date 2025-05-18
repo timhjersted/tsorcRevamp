@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             LaserSound = SoundID.Item12 with { Volume = 0.5f };
 
             LaserDebuffs = new List<int>(ModContent.BuffType<Buffs.ThermalRise>()); //Lasers inflict thermal rise on hit, to give people a chance to recover from running out of flight time
-            DebuffTimers = new List<int>(300);
+            DebuffTimers = new List<int>(420);
 
             CastLight = false; //Literally the biggest performance hit of all of this lmfao
 
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                         float point = 0;
                         if (Collision.CheckAABBvLineCollision(Main.player[i].Hitbox.TopLeft(), Main.player[i].Hitbox.Size(), origin, origin + Projectile.velocity * Distance, 120, ref point))
                         {
-                            Main.player[i].AddBuff(ModContent.BuffType<Buffs.ThermalRise>(), 220);
+                            Main.player[i].AddBuff(ModContent.BuffType<Buffs.ThermalRise>(), 320);
                         }
                     }
                 }
