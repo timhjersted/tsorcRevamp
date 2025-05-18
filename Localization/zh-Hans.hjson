@@ -10255,9 +10255,59 @@ Mods: {
 				// Name1: Miakoda
 				// Button1: Help
 				// Button2: Chat
-				// Quote1: Hey, listen! At least that's what I would say if I were 95 years younger...
+				// Quote1: Hey, listen! ... At least that's what I might say if I were 95 years younger...
 				// Quote2Part1: "How may I be of assistance to you, "
 				// Quote2Part2: ?
+				/* Quote3:
+					'''
+					Its been decades since I was sealed away into this little doll.
+					I don't know how you humans live like this, trapped in the same shape day after day!
+					If you have the dark souls to spare, I'd appreciate a change of pace!
+					''' */
+				/* Quote4:
+					'''
+					Those Dark Souls that you so thoughtlessly collect; to Humans their power is a curse rather than a boon.
+					While gathering them may grant you the power of old, using them consigns you to the same fate as those you slaughter.
+					You too one day will become a Dark Soul. At that time my debt to you will be repaid.
+					''' */
+				/* FullMoonForm:
+					'''
+					I drink in the light of the full moon. 
+					Under its gaze all wounds shall be healed.
+					''' */
+				/* CrescentMoonForm:
+					'''
+					The moon... It shifts. Light warps into a cutting crescent.
+					This distortion will follow your blade.
+					''' */
+				/* NewMoonForm:
+					'''
+					Empty, so empty. The moon yearns for what it cannot have.
+					Fight quickly, for the moon will shield you in your time of need and devour that which is otherwise lost.
+					''' */
+				/* LunaticCultist:
+					'''
+					Have you seen that acursed man, that raving lunatic!?
+					He shackled me into this doll just because I refused to serve that God of his... 
+					It calls itself The Moon Lord? Only in its dreams!
+					''' */
+				// BrotherNotRescued: "I could sense an Aura similar to yours right after you freed me from Skeletron! "
+				// BrotherNotRescued2: ", you should go and find them in the depths of the Dungeon."
+				// HMWifeNotRescued: ...I see. Not only did that man slaughter your village, but he also imprisoned your wife!
+				// HMWifeNotRescued2: "I dare not say what this might mean. "
+				/* HMWifeNotRescued3:
+					'''
+					, you must ensure great caution in whatever you do.
+					The MindFlayer King, his ambitions... They are truly darker than they appear on the surface.
+					''' */
+				/* WifeRescued:
+					'''
+					You truly astound me human. To think that, after you saved your mate, you immediately left to go and kill Attraides!
+					Don't you see? That evil one, he manipulates you. Your friend, Aaron, laced with the magic to unleash hell upon the world.
+					Your brother, convinently armed with the knowledge of your wife's survival.
+					And your poor wife, who after enduring so much is able to tell you of the knowledge he so desperately sought.
+					I fear of what may come if you keep playing into his schemes...
+					''' */
 			}
 
 			ShamanElder: {

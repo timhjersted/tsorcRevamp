@@ -6,7 +6,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.Utilities;
+using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.Projectiles.Pets;
 
 namespace tsorcRevamp.NPCs.Friendly
@@ -58,16 +60,73 @@ namespace tsorcRevamp.NPCs.Friendly
         public override string GetChat()
         {
             WeightedRandom<string> chat = new WeightedRandom<string>();
+            Player player = Main.player[Main.myPlayer];
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote1"));
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2Part1") + Main.LocalPlayer.name + Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2Part2"));
-            /*
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2Part1") + player.name + Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2Part2"));
+
+            if (modPlayer.MiakodaCrescent)
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CrescentMoonForm"));
+            }
+            else if (modPlayer.MiakodaFull)
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.FullMoonForm"));
+            }
+            else if (modPlayer.MiakodaNew)
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NewMoonForm"));
+            }
+
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote3"));
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote4"));
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote5"));
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote6"));
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote7"));
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote8"));
-            */
+
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.CultistBoss)))
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.LunaticCultist"));
+            }
+
+            // Hardmode only chat from here on
+            if (!Main.hardMode)
+            {
+                return chat;
+            }
+
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<TheHunter>())))
+            {
+                chat.Add(
+                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued") + "\n" +
+                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued2") + 
+                    player.name +
+                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued3")
+                    );
+            }
+            else if (!tsorcRevampWorld.SuperHardMode)
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescued"));
+            }
+
+            return chat;
+        }
+
+        public string GetHelp()
+        {
+            WeightedRandom<string> chat = new WeightedRandom<string>();
+            Player player = Main.player[Main.myPlayer];
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+            if (false)
+            {
+                
+            }
+            else
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp") +
+                    player.name +
+                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp2"));
+            }
+
             return chat;
         }
 
@@ -85,8 +144,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
             else
             {
-                Main.npcChatText = GetChat(); // Placeholder
-                // TODO: Logic for Miakoda hints
+                Main.npcChatText = GetHelp(); 
             }
         }
         public override bool CanChat()
