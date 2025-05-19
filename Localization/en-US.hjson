@@ -8200,11 +8200,7 @@ Mods: {
 
 			MiakodaCrescent: {
 				DisplayName: Miakoda - Crescent Moon Form
-				Description:
-					'''
-					An ancient being freed from Skeletron.
-					It is said to possess a divine smile
-					'''
+				Description: An ancient being freed from Skeletron.
 			}
 
 			MiakodaFull: {
@@ -10274,8 +10270,7 @@ Mods: {
 				Button1: Help
 				Button2: Chat
 				Quote1: Hey, listen! ... At least that's what I might say if I were 95 years younger...
-				Quote2Part1: "How may I be of assistance to you, "
-				Quote2Part2: ?
+				Quote2: How may I be of assistance to you, {0}?
 				Quote3:
 					'''
 					Its been decades since I was sealed away into this little doll.
@@ -10309,13 +10304,11 @@ Mods: {
 					He shackled me into this doll just because I refused to serve that God of his... 
 					It calls itself The Moon Lord? Only in its dreams!
 					'''
-				BrotherNotRescued: "I could sense an Aura similar to yours right after you freed me from Skeletron! "
-				BrotherNotRescued2: ", you should go and find them in the depths of the Dungeon."
-				HMWifeNotRescued: ...I see. Not only did that man slaughter your village, but he also imprisoned your wife!
-				HMWifeNotRescued2: "I dare not say what this might mean. "
-				HMWifeNotRescued3:
+				BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of the Dungeon.
+				HMWifeNotRescued:
 					'''
-					, you must ensure great caution in whatever you do.
+					...I see. Not only did that man slaughter your village, but he also imprisoned your wife!
+					I dare not say what this might mean. {0}, you must ensure great caution in whatever you do.
 					The MindFlayer King, his ambitions... They are truly darker than they appear on the surface.
 					'''
 				WifeRescued:
@@ -10326,8 +10319,7 @@ Mods: {
 					And your poor wife, who after enduring so much is able to tell you of the knowledge he so desperately sought.
 					I fear of what may come if you keep playing into his schemes...
 					'''
-				CannotHelp: "You have done well, "
-				CannotHelp2: ", I have no more advice to offer you."
+				CannotHelp: You have done well, {0}, I have no more advice to offer you.
 			}
 
 			ShamanElder: {
@@ -10410,7 +10402,7 @@ Mods: {
 				SandboxSHMQuote3:
 					'''
 					Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge.
-					To find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops.
+					To find him, you must seek out the [c/383838:Witchking] and restore the dark ring he drops.
 					He will sometimes appear at night, and more often deeper\nunderground, especially in dungeons.
 					The most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.
 					'''

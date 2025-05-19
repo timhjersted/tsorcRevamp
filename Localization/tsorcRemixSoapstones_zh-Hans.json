@@ -34,6 +34,13 @@
 "style": 1
 }
 {
+  "text": "You pull the lever and hear a gate opening to the East that appears to be the entrance to the Lich King's lair.",
+  "tileX": 227,
+  "tileY": 1796,
+  "textWidth": 320, 
+  "style": 1
+}
+{
   "text": "- 你找到了 ??? - --NEWLINE  --NEWLINE Miakoda：\u0022抱歉瑞德，我不认识这地方，这的科技和环境似乎不属于我们的世界\u0022",
   "tileX": 229,
   "tileY": 152,
@@ -1427,6 +1434,20 @@
   "style": 1
 }
 {
+  "text": "你的家人都不见了，但你希望他们还活着。 --NEWLINE   --NEWLINE \u0022也许他们到了村里…\u0022",
+  "tileX": 4671,
+  "tileY": 852,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "你注意到这座营地是新设立的，此处本是埃什峰村的领地 --NEWLINE   --NEWLINE 自遭阿卓迪斯袭击后便被废弃，如今成了顿兰德人的栖身之所 --NEWLINE   --NEWLINE 你想起这些部族对你怀有敌意…",
+  "tileX": 4730,
+  "tileY": 853,
+  "textWidth": 440,
+  "style": 1
+}
+{
   "text": "向下是直线下降，但你认为你能成功。 --NEWLINE   --NEWLINE 你突然为你关于父亲的记忆不断消逝感到惊讶。 --NEWLINE   --NEWLINE 想到他已经去世，你感到十分悲伤，但你也很感激，回忆起他在夏天教你如何攀爬山崖。",
   "tileX": 4746,
   "tileY": 1482,
@@ -1441,13 +1462,6 @@
   "style": 1
 }
 {
-  "text": "你的家人都不见了，但你希望他们还活着。 --NEWLINE   --NEWLINE \u0022也许他们到了村里…\u0022",
-  "tileX": 4776,
-  "tileY": 867,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "- 这道门守护着通往魔古尔洞穴的被遗忘之路 - --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022神庙蜥蜴砖门靠近地球熔化的核心， --NEWLINE   --NEWLINE 守护着我不知道该如何描述的东西……某种容器，或运输工具……\u0022 --NEWLINE   --NEWLINE 你试着画一个粗略的草图，并在上面画一座通往遗忘之城的塔作为参考点…",
   "tileX": 4791,
   "tileY": 1907,
@@ -1455,10 +1469,10 @@
   "style": 1
 }
 {
-  "text": "你家的余烬在风中毕剥作响。 --NEWLINE   --NEWLINE 你的作品和画作被毁了，妻子被抓走了。你低头看了看你们两人的破相框。 --NEWLINE   --NEWLINE 你的心紧绷，愤怒和悲伤的阵痛抽打着你的心。这一生有什么意义？ --NEWLINE   --NEWLINE 这短暂的生命追求纯真的快乐，心灵的安慰与爱，食物和安全？ --NEWLINE   --NEWLINE 这是成功和认可的附属品吗？现在这些都不重要了—— --NEWLINE   --NEWLINE 所有这些都是你留下的，现在只剩大火烧成的灰烬。",
-  "tileX": 4808,
-  "tileY": 864,
-  "textWidth": 560,
+  "text": "按左Alt翻滚可在躲避伤害的同时躲避敌人。 --NEWLINE   --NEWLINE 可以在设置中的控制选项，更改模组新增功能绑定的快捷键。 --NEWLINE   --NEWLINE 左移或右移也值得一试，找到适合你的方法。这对您的旅程至关重要。",
+  "tileX": 4795,
+  "tileY": 851,
+  "textWidth": 500,
   "style": 1
 }
 {
@@ -1470,8 +1484,8 @@
 }
 {
   "text": "你兄弟以利亚和博迪的房子。",
-  "tileX": 4837,
-  "tileY": 867,
+  "tileX": 4842,
+  "tileY": 855,
   "textWidth": 220,
   "style": 1
 }
@@ -1497,20 +1511,6 @@
   "style": 1
 }
 {
-  "text": "按左Alt翻滚可在躲避伤害的同时躲避敌人。 --NEWLINE   --NEWLINE 可以在设置中的控制选项，更改模组新增功能绑定的快捷键。 --NEWLINE   --NEWLINE 左移或右移也值得一试，找到适合你的方法。这对您的旅程至关重要。",
-  "tileX": 4855,
-  "tileY": 866,
-  "textWidth": 500,
-  "style": 1
-}
-{
-  "text": "你父母的房子",
-  "tileX": 4880,
-  "tileY": 863,
-  "textWidth": 110,
-  "style": 1
-}
-{
   "text": "击败骷髅王并在附近的德鲁伊家休息后，你回到这里，凝视下面的黑暗。 --NEWLINE   --NEWLINE \u0022这一定是前进的道路\u0022你想，但你看不到壁架之外的任何东西。 --NEWLINE   --NEWLINE 深吸一口气，你跳进未知世界。",
   "tileX": 4888,
   "tileY": 1407,
@@ -1518,23 +1518,30 @@
   "style": 1
 }
 {
+  "text": "你父母的房子",
+  "tileX": 4905,
+  "tileY": 850,
+  "textWidth": 110,
+  "style": 1
+}
+{
   "text": "你在失去知觉之前的最后记忆： --NEWLINE   --NEWLINE 一支举着阿卓迪斯旗帜的军队袭击并纵火烧毁了你的家。 --NEWLINE   --NEWLINE 你冲到你家人的房子里寻找幸存者。",
-  "tileX": 4902,
-  "tileY": 867,
+  "tileX": 4909,
+  "tileY": 854,
   "textWidth": 400,
   "style": 1
 }
 {
   "text": "你的心沉了下去——你旁边的两座墓碑上没有碑文 --NEWLINE   --NEWLINE 这些一定是在埋葬你的时候挖的…",
-  "tileX": 4911,
-  "tileY": 867,
+  "tileX": 4917,
+  "tileY": 854,
   "textWidth": 370,
   "style": 1
 }
 {
   "text": "你醒来时咳着黑色的血块，有人认为你已经死去，遂将你埋在这里 --NEWLINE   --NEWLINE 你的心跳开始加速，手在黑暗中挣扎，寻找任何能帮你出去的东西 --NEWLINE   --NEWLINE 你感觉到背后有东西，发现了背包中你父亲遗留的破碎镐子…",
-  "tileX": 4919,
-  "tileY": 873,
+  "tileX": 4922,
+  "tileY": 860,
   "textWidth": 520,
   "style": 1
 }
@@ -1553,10 +1560,10 @@
   "style": 1
 }
 {
-  "text": "向西<--- --NEWLINE 埃什峰村 --NEWLINE   --NEWLINE 向东---> --NEWLINE 奥里德部落的雨林 --NEWLINE 丛林废墟 --NEWLINE 黑曜石火山 --NEWLINE 未知之地",
-  "tileX": 4944,
-  "tileY": 859,
-  "textWidth": 150,
+  "text": "你家的余烬在风中毕剥作响。 --NEWLINE   --NEWLINE 你的作品和画作被毁了，妻子被抓走了。你低头看了看你们两人的破相框。 --NEWLINE   --NEWLINE 你的心紧绷，愤怒和悲伤的阵痛抽打着你的心。这一生有什么意义？ --NEWLINE   --NEWLINE 这短暂的生命追求纯真的快乐，心灵的安慰与爱，食物和安全？ --NEWLINE   --NEWLINE 这是成功和认可的附属品吗？现在这些都不重要了—— --NEWLINE   --NEWLINE 所有这些都是你留下的，现在只剩大火烧成的灰烬。",
+  "tileX": 4976,
+  "tileY": 846,
+  "textWidth": 560,
   "style": 1
 }
 {
@@ -1571,6 +1578,20 @@
   "tileX": 5002,
   "tileY": 1741,
   "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "这座标志埃什峰青翠平原与丛林分界的东方巨塔，历经多次袭击后已成废墟。 --NEWLINE   --NEWLINE 如今塔中偶尔盘踞着哥布林，它们始终为争夺这片领土而战……",
+  "tileX": 5028,
+  "tileY": 831,
+  "textWidth": 550,
+  "style": 1
+}
+{
+  "text": "向西<--- --NEWLINE 埃什峰村 --NEWLINE   --NEWLINE 向东---> --NEWLINE 奥里德部落的雨林 --NEWLINE 丛林废墟 --NEWLINE 黑曜石火山 --NEWLINE 未知之地",
+  "tileX": 5054,
+  "tileY": 831,
+  "textWidth": 150,
   "style": 1
 }
 {
@@ -2057,7 +2078,7 @@
   "style": 1
 }
 {
-  "text": "这扇门被居住在山顶的飞龙法师封住了。 --NEWLINE   --NEWLINE Miakoda告诉你，在这扇门的后面是冻洋。",
+  "text": "- 你发现了祖灵之巢 - --NEWLINE   --NEWLINE 这头来自冻土的神秘生灵，世人对其知之甚少。 --NEWLINE   --NEWLINE 它栖居群山之下，镇守着通往冰封之海的入口。 --NEWLINE   --NEWLINE 传说中，无数试图东行的旅人葬身其爪，骸骨堆砌成巢……",
   "tileX": 7219,
   "tileY": 773,
   "textWidth": 320,
@@ -2067,7 +2088,7 @@
   "text": "一个蓝色的小魔法符号出现了，对你说：\u0022瑞德，是你吗？我是Araz。 --NEWLINE   --NEWLINE 我是你父亲的一位老朋友。在你家被袭击后不久，阿卓迪斯就把我俘虏了。\u0022 --NEWLINE   --NEWLINE \u0022我要带你离开这里，等着！\u0022",
   "tileX": 7298,
   "tileY": 568,
-  "textWidth": 580,
+  "textWidth": 430,
   "style": 1
 }
 {
@@ -2148,7 +2169,7 @@
   "style": 1
 }
 {
-  "text": "你俯瞰下面，看到云中一个青翠的岛屿。",
+  "text": "你俯瞰下面，看到云中一座雪白的岛屿。",
   "tileX": 7887,
   "tileY": 147,
   "textWidth": 290,
@@ -2211,7 +2232,7 @@
   "style": 1
 }
 {
-  "text": "\u0022保护石不只被施了两次魔法，还有第三此。 --NEWLINE   --NEWLINE 第一次是为了创造保护石，我用它来换取你父亲的位置， --NEWLINE   --NEWLINE 第二次是为了把亚伦的生命绑定在石头上， --NEWLINE   --NEWLINE 第三次是为了释放世界上有史以来最强大的毁灭力量。\u0022",
+  "text": "\u0022保护石不只被施了两次魔法，还有第三次。 --NEWLINE   --NEWLINE 第一次是为了创造保护石，我用它来换取你父亲的位置， --NEWLINE   --NEWLINE 第二次是为了把亚伦的生命绑定在石头上， --NEWLINE   --NEWLINE 第三次是为了释放世界上有史以来最强大的毁灭力量。\u0022",
   "tileX": 8166,
   "tileY": 1645,
   "textWidth": 420,

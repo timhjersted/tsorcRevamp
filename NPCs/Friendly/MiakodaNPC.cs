@@ -22,6 +22,7 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             Main.npcFrameCount[NPC.type] = 8;
             NPCID.Sets.AttackType[NPC.type] = -1; // Miakoda shouldn't attack
+            NPCID.Sets.NoTownNPCHappiness[Type] = true;
         }
 
         public override bool UsesPartyHat()
@@ -38,7 +39,8 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void SetDefaults()
         {
             NPC.friendly = true;
-            //NPC.townNPC = true;
+            NPC.townNPC = true;
+            TownNPCStayingHomeless = true;
             NPC.width = 18;
             NPC.height = 16;
             NPC.damage = 0;
@@ -64,7 +66,7 @@ namespace tsorcRevamp.NPCs.Friendly
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote1"));
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2Part1") + player.name + Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2Part2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2", player.name));
 
             if (modPlayer.MiakodaCrescent)
             {
@@ -96,11 +98,7 @@ namespace tsorcRevamp.NPCs.Friendly
             if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<TheHunter>())))
             {
                 chat.Add(
-                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued") + "\n" +
-                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued2") + 
-                    player.name +
-                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued3")
-                    );
+                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued", player.name));
             }
             else if (!tsorcRevampWorld.SuperHardMode)
             {
@@ -122,9 +120,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
             else
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp") +
-                    player.name +
-                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp2"));
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp", player.name));
             }
 
             return chat;

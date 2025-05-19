@@ -393,7 +393,7 @@ Mods: {
 
 		DropRules: {
 			SHMOnly: "[c/ff9999:仅在击败阿卓迪斯之后掉落]"
-			// AbyssOnly: "[c/ff9999: Only drops while The Covenant of Artorias is equipped]"
+			AbyssOnly: "[c/ff9999: 仅在装备亚尔特留斯之约时掉落]"
 			FirstBagOnly: "[c/ff9999: 只能从第一个打开的特定袋子中掉落]"
 			BotCOnly: "[c/ff9999: 只有玩家是被诅咒者时掉落]"
 			FirstBagBotCOnly: "[c/ff9999: 当玩家是被诅咒者时，只能从第一个打开的特定袋子中掉落]"
@@ -1935,7 +1935,7 @@ Mods: {
 				Tooltip:
 					'''
 					一种专门用于清除迷失的、被遗忘灵魂的箭...
-					对这些敌人造成8倍伤害
+					对这些敌人造成5倍伤害
 					穿透一次
 					'''
 			}
@@ -3121,11 +3121,12 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
-					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
-					{$CommonItemTooltip.SetBonus}增强了巫师王之剑
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1} 
+					{$CommonItemTooltip.SetBonus}{$Items.WitchkingRobe.Keybind1}WitchScream{$Items.WitchkingRobe.Keybind2}
+					降低受影响敌人的伤害、防御与速度，并在短时间内对其持续造成显著伤害
 					'''
-				// Keybind1: "Press "
-				// Keybind2: " to let out a terrifying scream that affects enemies in a radius"
+				Keybind1: "按 "
+				Keybind2: " 释放巫师尖啸来削弱附近的敌人"
 			}
 
 			SymbolOfAvarice: {
@@ -3133,7 +3134,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.SoulDrops}
-					但是其上烙印的诅咒也会 [c/FF0000:蚕食你的生命].
+					但是其上烙印的诅咒也会[c/FF0000:蚕食你的生命]
 					'''
 			}
 
@@ -3153,7 +3154,7 @@ Mods: {
 					无鳞冰龙希斯的灵魂
 					火焰时代黎明时发现的领主灵魂碎片
 					希斯与葛温结盟对抗龙群，因此他被授予公爵，
-					被皇室接受，并被赐予一个伟大灵魂的碎片.
+					被皇室接受，并被赐予一个伟大灵魂的碎片
 					'''
 			}
 
@@ -3359,7 +3360,7 @@ Mods: {
 					请记住，这场战斗并不轻松...
 					物品不被消耗，所以你可以重复挑战直到胜利
 					'''
-				Summon: 骷髅王已苏醒
+				Summon: 骷髅王已苏醒！
 				Wrong: 这个物品只能在晚上的远古神庙废墟使用...
 				WrongTime: 这个物品只能在晚上使用...
 			}
@@ -3414,18 +3415,18 @@ Mods: {
 					召唤大地恶魔—巫妖王 
 					物品不被消耗
 					'''
-				Summon: 大地恶魔—巫妖王从地面上出现
+				Summon: 大地恶魔—巫妖王从地面上出现！
 			}
 
 			DyingFireCrystal: {
 				DisplayName: 消逝火晶
 				Tooltip:
 					'''
-					逐渐消逝的火焰水晶.
+					逐渐消逝的火焰水晶
 					召唤火焰恶魔—玛瑞里斯 
 					物品不被消耗
 					'''
-				Summon: 火焰恶魔—玛瑞里斯从黑暗的火焰柱中爆发
+				Summon: 火焰恶魔—玛瑞里斯从黑暗的火焰柱中爆发！
 			}
 
 			DyingWaterCrystal: {
@@ -3436,18 +3437,18 @@ Mods: {
 					召唤水之恶魔—克拉肯
 					物品不被消耗
 					'''
-				Summon: 水之恶魔—克拉肯从深处出现
+				Summon: 水之恶魔—克拉肯从深处出现！
 			}
 
 			DyingDarkCrystal: {
-				// DisplayName: Dying Dark Crystal
-				/* Tooltip:
+				DisplayName: 消逝黯晶
+				Tooltip:
 					'''
-					The fading Crystal of Darkness. 
-					Will summon Chaos.
-					Item is non-consumable
-					''' */
-				// Summon: Chaos reincarnates from the shadows!
+					逐渐消逝的黑黯水晶
+					召唤「混沌」
+					物品不被消耗
+					'''
+				Summon: 混沌自阴影中重生！
 			}
 
 			FieryEgg: {
@@ -3518,7 +3519,7 @@ Mods: {
 				Tooltip:
 					'''
 					用于迎接终结
-					阿卓迪斯笑了：“好吧，瑞德，我现在要结束这一场游戏了。面对我！”
+					阿卓迪斯笑了：[c/ff08ff:“好吧，瑞德，我现在要结束这一场游戏了。面对我！”]
 					'''
 			}
 
@@ -3529,7 +3530,12 @@ Mods: {
 
 			SerrisBait: {
 				DisplayName: 赛里斯诱饵
-				Tooltip: 召唤赛里斯
+				Tooltip:
+					'''
+					可吸引并召唤赛里斯—一位数百年前坠毁于沙漠的远古异星来客
+					因其危险特性与独特体质，曾被阿崔迪斯囚禁于高塔之下
+					其躯体亦被用于研发尖端科技
+					'''
 			}
 
 			StoneOfSeath: {
@@ -3546,12 +3552,12 @@ Mods: {
 			}
 
 			MasterRing: {
-				// DisplayName: Master Ring
-				/* Tooltip:
+				DisplayName: 大师之戒
+				Tooltip:
 					'''
-					This ring leads to damnation for those tempted by its treacherous and evil power.
-					Summons the Witchking who will answer the call of the ring.
-					''' */
+					此戒乃堕落之引，凡受其邪恶魔力蛊惑者，必遭永劫
+					可召唤巫师王，彼当应戒律之召而至
+					'''
 			}
 
 			TomeOfSlograAndGaibon: {
@@ -3682,10 +3688,10 @@ Mods: {
 			}
 
 			BrokenDarkMagicRing: {
-				DisplayName: 破损的奇怪魔法戒指
+				DisplayName: 破损的黑魔法戒指
 				Tooltip:
 					'''
-					奇怪的魔法戒指碎裂成了两半...
+					黑魔法戒指碎裂成了两半...
 					Miakoda: "为了恢复它的魔力
 					你需要 5 个白钛矿和 1000 黑暗之魂
 					为了找到需要的东西，我们要去探索邪恶群落和地牢"
@@ -4455,7 +4461,7 @@ Mods: {
 				DisplayName: 圣战神剂
 				Tooltip:
 					'''
-					会让你立于不败之地
+					会让你短暂立于不败之地
 					效果结束后 {0} 秒内不能再次使用
 					{$CommonItemTooltip.Limited}
 					'''
@@ -7405,7 +7411,11 @@ Mods: {
 
 			DarkMagicRing: {
 				DisplayName: 黑魔法之戒
-				Tooltip: 用于召唤巫师王的黑暗古物
+				Tooltip:
+					'''
+					一枚暗黑魔戒，Miakoda曾告诫你此物可召唤深渊行者—亚尔特留斯
+					身为葛温麾下四骑士之一，这位神圣战士拥有钢铁般不屈的意志
+					'''
 			}
 
 			TheMachineTrophy: {
@@ -7459,7 +7469,11 @@ Mods: {
 
 			BewitchedTitanite: {
 				DisplayName: 魅钛矿
-				Tooltip: ""
+				Tooltip:
+					'''
+					一种被魔古尔邪术腐化的钛石
+					其映照灵魂，散发出诡谲暗影
+					'''
 			}
 
 			TheMachineRelic: {
@@ -7794,58 +7808,58 @@ Mods: {
 			}
 
 			WitchkingMace: {
-				// DisplayName: Witchking Mace
-				// Tooltip: Inflicts 1 random whip debuff each hit
+				DisplayName: 巫师王权杖
+				Tooltip: 每次攻击随机施加1个鞭子减益
 			}
 
 			TaintedBow: {
-				// Tooltip: ""
-				// DisplayName: Tainted Bow
+				Tooltip: ""
+				DisplayName: 堕落之弓
 			}
 
 			Linklight2sHat: {
-				// DisplayName: Linklight2s Hat
-				// Tooltip: For testing purposes only.
+				DisplayName: Linklight2s Hat
+				Tooltip: 仅限测试
 			}
 
 			Linklight2sPants: {
-				// DisplayName: Linklight2s Pants
-				// Tooltip: For testing purposes only.
+				DisplayName: Linklight2s Pants
+				Tooltip: 仅限测试
 			}
 
 			Linklight2sShirt: {
-				// DisplayName: Linklight2s Shirt
-				// Tooltip: For testing purposes only.
+				DisplayName: Linklight2s Shirt
+				Tooltip: 仅限测试
 			}
 
 			Linklight2sBoots: {
-				// DisplayName: Linklight2s Boots
-				// Tooltip: For testing purposes only.
+				DisplayName: Linklight2s Boots
+				Tooltip: 仅限测试
 			}
 
 			Linklight2sSword: {
-				// DisplayName: Linklight2s Sword
-				// Tooltip: For testing purposes only.
+				DisplayName: Linklight2s Sword
+				Tooltip: 仅限测试
 			}
 
 			WrathOfThePhoenix: {
-				// Tooltip: For testing purposes only.
-				// DisplayName: Wrath of the Phoenix
+				Tooltip: 仅限测试
+				DisplayName: Wrath of the Phoenix
 			}
 
 			TeleportationRod: {
-				// DisplayName: Teleportation Rod
-				// Tooltip: ""
+				DisplayName: 传送魔棒
+				Tooltip: ""
 			}
 
 			EchoGoggles: {
-				// DisplayName: Echo Goggles
-				/* Tooltip:
+				DisplayName: 回声护目镜
+				Tooltip:
 					'''
-					The Spectres residing within gain power from dark souls.
-					Echo Vision is now granted even from the vanity slot.
-					The truth will never escape your sight.
-					''' */
+					栖宿其中的幽魂可从黑暗之魂中汲取力量
+					在时装栏中也生效
+					真相永无遁形
+					'''
 			}
 		}
 
@@ -8019,8 +8033,8 @@ Mods: {
 			}
 
 			WitchkingsGrasp: {
-				// DisplayName: The Witchking's Grasp
-				// Description: You will not escape.
+				DisplayName: 巫师王之钩
+				Description: 你无法逃脱
 			}
 
 			WeightOfShadow: {
@@ -8182,11 +8196,7 @@ Mods: {
 
 			MiakodaCrescent: {
 				DisplayName: Miakoda - 峨眉月状态
-				Description:
-					'''
-					一个被从骷髅王禁锢中释放出来的远古存在，指引你的旅程...
-					据说它有神圣的微笑
-					'''
+				Description: 一个被从骷髅王禁锢中释放出来的远古存在，指引你的旅程...
 			}
 
 			MiakodaFull: {
@@ -8813,13 +8823,13 @@ Mods: {
 			}
 
 			WitchkingMaceDebuff: {
-				// Description: Mods.tsorcRevamp.Buffs.WitchkingMaceDebuff.Description
-				// DisplayName: Witchking Mace Debuff
+				Description: ""
+				DisplayName: 巫师王权记
 			}
 
 			WitchkingCurse: {
-				// Description: Mods.tsorcRevamp.Buffs.WitchkingCurse.Description
-				// DisplayName: Witchking Curse
+				Description: ""
+				DisplayName: 巫师王诅咒
 			}
 		}
 
@@ -9463,12 +9473,12 @@ Mods: {
 			DragoonLightning.DisplayName: Dragoon Lightning
 			SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
 			Icicle2.DisplayName: 霜灾魔杖
-			// ShadowBreath.DisplayName: Shadow Breath
-			// FrostFireBall.DisplayName: Frost Fire Ball
-			// DrakarthusProjectile.DisplayName: Drakarthus Projectile
-			// HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
-			// DivineBoltProjectile.DisplayName: Divine Bolt Projectile
-			// WitchkingMaceProjectile.DisplayName: Witchking Mace Projectile
+			ShadowBreath.DisplayName: Shadow Breath
+			FrostFireBall.DisplayName: Frost Fire Ball
+			DrakarthusProjectile.DisplayName: Drakarthus Projectile
+			HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
+			DivineBoltProjectile.DisplayName: Divine Bolt Projectile
+			WitchkingMaceProjectile.DisplayName: Witchking Mace Projectile
 		}
 
 		NPCs: {
@@ -10256,8 +10266,7 @@ Mods: {
 				// Button1: Help
 				// Button2: Chat
 				// Quote1: Hey, listen! ... At least that's what I might say if I were 95 years younger...
-				// Quote2Part1: "How may I be of assistance to you, "
-				// Quote2Part2: ?
+				// Quote2: How may I be of assistance to you, {0}?
 				/* Quote3:
 					'''
 					Its been decades since I was sealed away into this little doll.
@@ -10291,13 +10300,11 @@ Mods: {
 					He shackled me into this doll just because I refused to serve that God of his... 
 					It calls itself The Moon Lord? Only in its dreams!
 					''' */
-				// BrotherNotRescued: "I could sense an Aura similar to yours right after you freed me from Skeletron! "
-				// BrotherNotRescued2: ", you should go and find them in the depths of the Dungeon."
-				// HMWifeNotRescued: ...I see. Not only did that man slaughter your village, but he also imprisoned your wife!
-				// HMWifeNotRescued2: "I dare not say what this might mean. "
-				/* HMWifeNotRescued3:
+				// BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of the Dungeon.
+				/* HMWifeNotRescued:
 					'''
-					, you must ensure great caution in whatever you do.
+					...I see. Not only did that man slaughter your village, but he also imprisoned your wife!
+					I dare not say what this might mean. {0}, you must ensure great caution in whatever you do.
 					The MindFlayer King, his ambitions... They are truly darker than they appear on the surface.
 					''' */
 				/* WifeRescued:
@@ -10308,6 +10315,7 @@ Mods: {
 					And your poor wife, who after enduring so much is able to tell you of the knowledge he so desperately sought.
 					I fear of what may come if you keep playing into his schemes...
 					''' */
+				// CannotHelp: You have done well, {0}, I have no more advice to offer you.
 			}
 
 			ShamanElder: {
@@ -10390,7 +10398,7 @@ Mods: {
 				SandboxSHMQuote3:
 					'''
 					然而没有一些情报，就不可能打败[c/ffbf00:亚尔特留斯]。
-					要找到他，你必须找到[c/383838:巫师王]并拿到他掉落的奇怪戒指。
+					要找到他，你必须找到[c/383838:巫师王]并拿到他掉落的黑魔法戒指。
 					他有时会出现在夜间，更经常出现在地下，尤其是地牢里，
 					然而，找到他最可靠的方法是自己佩戴亚尔特留斯之约戒指进入深渊。
 					'''
@@ -10598,7 +10606,7 @@ Mods: {
 			AbyssFracture.DisplayName: 破碎深渊
 			AbyssCataclysm.DisplayName: 深渊风暴
 			AttraidiesShield.DisplayName: 阿卓迪斯护盾
-			// LichKingDisciple.DisplayName: Lich King Disciple
+			LichKingDisciple.DisplayName: 巫妖王信徒
 		}
 
 		Prefixes: {
@@ -10646,7 +10654,7 @@ Mods: {
 			Shunpo.DisplayName: 瞬步
 			"Necromancers Spell.DisplayName": 巫妖王之咒
 			"Krakens Cast.DisplayName": 海妖之怒
-			// "Witchking Scream.DisplayName": Witchking Scream
+			"Witchking Scream.DisplayName": 巫师尖啸
 		}
 
 		InfoDisplays: {
@@ -10895,13 +10903,13 @@ Mods: {
 				}
 
 				DebugMode: {
-					// Tooltip: ""
-					// Label: Debug Mode
+					Tooltip: ""
+					Label: Debug模式
 				}
 
 				DisableModWingsFallControlDuringFlight: {
-					// Tooltip: ""
-					// Label: Disable Mod Wings Fall Control During Flight
+					Tooltip: ""
+					Label: 禁用模组翅膀的加速下落
 				}
 			}
 		}
@@ -10909,7 +10917,7 @@ Mods: {
 		Conditions: {
 			AdventureModeDisabled: 仅限沙盒模式
 			AdventureModeEnabled: 仅限冒险模式
-			// DebugModeEnabled: For testing-only
+			DebugModeEnabled: 仅限开发者测试
 			BotCEnabled: 仅限被诅咒者
 			SorrowDowned: 击败悲伤
 			HunterDowned: 击败猎手
