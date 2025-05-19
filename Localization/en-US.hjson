@@ -10304,7 +10304,7 @@ Mods: {
 					He shackled me into this doll just because I refused to serve that God of his... 
 					It calls itself The Moon Lord? Only in its dreams!
 					'''
-				BrotherNotRescued: "I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of The Forgotten City."
+				BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of The Forgotten City.
 				JungleWyvern:
 					'''
 					An ancient beast guards The Forgotten City. 
@@ -10345,7 +10345,7 @@ Mods: {
 					To get through, you must find the keys scattered throughout The Underworld. They will open the pathway to deeper within.
 					'''
 				BeforeRageBiomeHint: PlaceHolderText
-				CannotHelp: "You have done well, {0}, I have no more advice to offer you."
+				CannotHelp: You have done well, {0}, I have no more advice to offer you.
 			}
 
 			ShamanElder: {

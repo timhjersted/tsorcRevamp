@@ -14,6 +14,7 @@ using tsorcRevamp.NPCs.Bosses.JungleWyvern;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.Projectiles.Pets;
 using System.Collections;
+using rail;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -44,8 +45,10 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void SetDefaults()
         {
             NPC.friendly = true;
-            NPC.townNPC = true;
-            TownNPCStayingHomeless = true;
+            // These two variables cause Miakoda to show up on the map when I run the despawn code
+            // They don't affect anything related to her function so I've commented them out
+            // NPC.townNPC = true;
+            // TownNPCStayingHomeless = true;
             NPC.width = 18;
             NPC.height = 16;
             NPC.damage = 0;

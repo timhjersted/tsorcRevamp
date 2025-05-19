@@ -10300,7 +10300,19 @@ Mods: {
 					He shackled me into this doll just because I refused to serve that God of his... 
 					It calls itself The Moon Lord? Only in its dreams!
 					''' */
-				// BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of the Dungeon.
+				// BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of The Forgotten City.
+				/* JungleWyvern:
+					'''
+					An ancient beast guards The Forgotten City. 
+					It holds a Ring that was enchanted with powerful revitalizing magic.
+					Those who wear it are fabled to possess unending stamina and unparalleled grace.
+					You should go and wield its powers for yourself.
+					''' */
+				/* JungleWyvernBiomeHint:
+					'''
+					The Forgotten City is to the left and down from where you fought The Last of the Dead, Skeletron.
+					We should go there next and see what we can find.
+					''' */
 				/* HMWifeNotRescued:
 					'''
 					...I see. Not only did that man slaughter your village, but he also imprisoned your wife!
@@ -10315,6 +10327,20 @@ Mods: {
 					And your poor wife, who after enduring so much is able to tell you of the knowledge he so desperately sought.
 					I fear of what may come if you keep playing into his schemes...
 					''' */
+				/* WallofFleshBiomeHint:
+					'''
+					Deep under the Forgotten City lies a land corrupted by the Flame of the Abyss, The Underworld.
+					It is said that this is where the Witch of Izalith mistakenly created this evil that seeks to consume all.
+					You wish murder on that Betrayer, Aaron, yes? Find this land and offer up that Stone of Protection he so mockingly gave to you at an Altar somewhere deep within.
+					He shall be butchered like a chicken by the Power of Chaos.
+					''' */
+				// WallofFleshJungleLeverHint: There should be another way up into The Forgotten City that opens the final gate from The Underworld.
+				/* WallofFleshHellLeversHint:
+					'''
+					The Underworld is said to have been locked by the Knights of Gwyn after they drove back the Abyss.
+					To get through, you must find the keys scattered throughout The Underworld. They will open the pathway to deeper within.
+					''' */
+				// BeforeRageBiomeHint: PlaceHolderText
 				// CannotHelp: You have done well, {0}, I have no more advice to offer you.
 			}
 
