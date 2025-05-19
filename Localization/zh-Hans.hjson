@@ -10266,7 +10266,11 @@ Mods: {
 				// Button1: Help
 				// Button2: Chat
 				// Quote1: Hey, listen! ... At least that's what I might say if I were 95 years younger...
-				// Quote2: How may I be of assistance to you, {0}?
+				/* Quote2:
+					'''
+					These items you sometimes find {0}, that appear useless... don't be so quick to assume.
+					If it can be crafted into something new with dark souls, it may be worth investigating its hidden potential...
+					''' */
 				/* Quote3:
 					'''
 					Its been decades since I was sealed away into this little doll.
@@ -10340,7 +10344,49 @@ Mods: {
 					The Underworld is said to have been locked by the Knights of Gwyn after they drove back the Abyss.
 					To get through, you must find the keys scattered throughout The Underworld. They will open the pathway to deeper within.
 					''' */
-				// BeforeRageBiomeHint: PlaceHolderText
+				/* SolidWallsHiddenPathsHint:
+					'''
+					Keep an eye out for hidden paths within the world. Most are adorned with Crystals - a consequence of the buried power accumulated within.
+					However some mischevious spirits harvest the crystals for themselves and obscure the path with illusionary magic. 
+					They cannot fool a keen and courageous explorer. Walk up to any suspicious walls and press up against them - their magic will not withstand such a test.
+					''' */
+				/* ProjectileHiddenPathsHint:
+					'''
+					If you see a gate that isn't locked behind levers, switches, or key, do not fret! Those methods are more recent, yes, but there might be another way.
+					The people of Izalith lived underground, they were known for their whismical mastery of magic. 
+					Some of their tunnels were only acessible by striking a teal plate, usually hidden around a couple of corners or above the gate.
+					They were quite adamant about using controllable magic to access these paths, but a poorly hidden one could be struck by a bow and arrow too.
+					''' */
+				/* BreakableBlocksHint:
+					'''
+					Your pickaxe is a useful tool, capable of tearing down thin walls with ease. 
+					There are certain materials however I think you could destroy without having to worry about thickness.
+					Sand, Slush, and Transparent Ice should be easy to tunnel through freely.
+					''' */
+				/* RageBiomeHint:
+					'''
+					Many creatures have come into this world ever since you broke the wall. You must slay them before this world devolves into chaos.
+					Seek out the Hallowed Caverns. Using the Molten Pickaxe dropped by The Wall, break the colbalt gates.
+					The spirits tell me of an evil beast, The Rage, has made that lair its den.
+					''' */
+				/* RageEscapeHell:
+					'''
+					Well done {0}! Defeating that abomination might have created some issues, however. I can sense great magic warping the world.
+					No... This must have been a trap. Go to the east side of the underworld; you should be able to walk over the hell stone bridge now. 
+					I can feel our path leads us there.
+					''' */
+				/* RageDeeperHint:
+					'''
+					The spirits of the cavern move through the Hallow, gathering beneath hidden depths to resist a formidable adversary.
+					Go deeper into the Hallow. The Rage awaits beneath our feet.
+					''' */
+				// FrozenOceanBiomeHint: PlaceHolderText
+				/* ShadowKeyHint:
+					'''
+					Certain chests require a certain kind of key, given only to those aknowledged by Skeletron, the first of the dead.
+					While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean. 
+					I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...
+					''' */
 				// CannotHelp: You have done well, {0}, I have no more advice to offer you.
 			}
 

@@ -21,6 +21,7 @@ using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Damage;
 using tsorcRevamp.Items.Armors.Melee;
+using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.ItemCrates;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
@@ -404,6 +405,7 @@ namespace tsorcRevamp.NPCs
         {
             int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
             int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
+            Player player = spawnInfo.Player;
 
             //VANILLA AND SOME MOD NPC SPAWN EDITS
 
@@ -581,11 +583,17 @@ namespace tsorcRevamp.NPCs
                 }
             }            
 
-            Player thisPlayer = spawnInfo.Player;
             bool invasion = Main.invasionType != 0;
-            if (thisPlayer.Center.X > 82016 || thisPlayer.Center.X < 74560 || thisPlayer.Center.Y > 16000)
+            if (player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000)
             {
                 invasion = false;
+            }
+
+            // TODO: Find map coordinates, this is debug mode only for now
+            if (tsorcRevampWorld.RemixMap && UsefulFunctions.PlayerInZone(in player, 10, 10, 10, 10) && (ModContent.GetInstance<tsorcRevampConfig>().DebugMode || player.HasItemInInventoryOrOpenVoidBag(ModContent.ItemType<DebugTome>())))
+            {
+                // Main.invasionType = 3; // Pirate invasion
+                // pool.Clear(); // Populate pool with pirate NPCs if the invasion type doesn't make the pirates active.
             }
 
             if (spawnInfo.Player.ZoneTowerSolar || spawnInfo.Player.ZoneTowerNebula || spawnInfo.Player.ZoneTowerStardust || spawnInfo.Player.ZoneTowerVortex || spawnInfo.Player.ZoneOldOneArmy || invasion)
@@ -607,8 +615,6 @@ namespace tsorcRevamp.NPCs
                     pool.Remove(id);
                 }
             }
-
-            Player player = spawnInfo.Player;
 
             if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
             {

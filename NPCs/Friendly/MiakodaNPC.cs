@@ -21,6 +21,9 @@ namespace tsorcRevamp.NPCs.Friendly
     [AutoloadHead]
     class MiakodaNPC : ModNPC
     {
+        // Miakoda Full moon form maybe increase life regen as well as flat heal
+        // Miakoda Cresent moon form maybe increase crit chance as well as flat dmg buff
+
         public Vector2 lastPlayerPos;
         public static Vector2 offSet = new Vector2(30.2f, -19f);
         public List<string> alreadySaid;
@@ -86,6 +89,9 @@ namespace tsorcRevamp.NPCs.Friendly
             Player player = Main.player[Main.myPlayer];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+            // TODO: Focus on adding lore behind biomes, Attraides, and bosses.
+            // Also talk about hidden sub areas that may be difficult to find.
+
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote1"));
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2", player.name));
 
@@ -110,10 +116,19 @@ namespace tsorcRevamp.NPCs.Friendly
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.LunaticCultist"));
             }
 
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ProjectileHiddenPathsHint"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
+
             // Hardmode only chat from here on
             if (!Main.hardMode)
             {
                 return chat[Main.rand.Next(chat.Count)];
+            }
+
+            if (!player.HasItemInInventoryOrOpenVoidBag(ItemID.ShadowKey))
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
             }
 
             // The hunter guards the gate to your wife
@@ -141,6 +156,7 @@ namespace tsorcRevamp.NPCs.Friendly
             Player player = Main.player[Main.myPlayer];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+            // Progressive, each if statement is mutually exclusive and tied to different areas of the story.
             // The player just freed Miakoda
             if (!BossDefeated(ModContent.NPCType<JungleWyvernHead>()))
             {
@@ -162,7 +178,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshHellLeversHint"));
                 }
                 // The player is above hell, looking for switches.
-                else if ((player.ZoneJungle || player.ZoneDungeon) && tsorcRevampWorld.EnteredHell) 
+                else if ((player.ZoneJungle || player.ZoneDungeon) && tsorcRevampWorld.EnteredHell)
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshJungleLeverHint"));
                 }
@@ -170,13 +186,32 @@ namespace tsorcRevamp.NPCs.Friendly
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshBiomeHint"));
 
             }
+            // The player recently killed the Wall of Flesh and activated HardMode
             else if (!BossDefeated(ModContent.NPCType<TheRage>()))
             {
+                if (!player.ZoneHallow)
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageBiomeHint"));
+                }
+                else
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageDeeperHint"));
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+                }
 
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageEscapeHell", player.name));
             }
-            else if (!BossDefeated(ModContent.NPCType<WyvernMage>()))
+            // The player is on their way to the Frozen ocean, either through the secret path from the hallow or through the Wyvern Mage's fortress
+            else if (!BossDefeated(ModContent.NPCType<TheSorrow>()))
             {
-                
+                if (player.ZoneHallow)
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+                }
+
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
             }
 
             // If the help chat is empty

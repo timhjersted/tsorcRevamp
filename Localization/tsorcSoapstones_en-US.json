@@ -1154,11 +1154,11 @@
   "style": 1
 }
 {
-  "text": "\u0022Miakoda, in your travels, have you ever come across a Shadow Key?\u0022 --NEWLINE  --NEWLINE \u0022Before I was imprisoned by Skeletron, I once obtained one from deep below the Frozen Ocean. I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...\u0022",
-  "tileX": 4236,
-  "tileY": 1749,
-  "textWidth": 320,
-  "style": 1
+    "text": "\u0022Miakoda, in your travels, have you ever come across a Shadow Key?\u0022 --NEWLINE  --NEWLINE \u0022While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean. I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...\u0022",
+    "tileX": 4236,
+    "tileY": 1749,
+    "textWidth": 320,
+    "style": 1
 }
 {
   "text": "Here lies Melania of Farron.  --NEWLINE  --NEWLINE Not a mage, but well known for using the Farron Dart spell as a tool rather than a weapon. --NEWLINE  --NEWLINE Long may she rest.",
@@ -1875,7 +1875,7 @@
   "style": 1
 }
 {
-  "text": "Miakoda: \u0022This purple hallowed grass on the walls is highly intelligent. It may lead us somewhere interesting...\u0022",
+  "text": "Miakoda: \u0022This purple hallowed moss on the walls is highly intelligent. It may lead us somewhere interesting...\u0022",
   "tileX": 5939,
   "tileY": 1259,
   "textWidth": 320,
