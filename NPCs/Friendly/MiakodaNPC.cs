@@ -116,8 +116,7 @@ namespace tsorcRevamp.NPCs.Friendly
             // The hunter guards the gate to your wife
             if (!BossDefeated(ModContent.NPCType<TheHunter>()))
             {
-                chat.Add(
-                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued", player.name));
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued", player.name));
             }
             // Foreshadow the consequences of killing Attraides
             else if (!tsorcRevampWorld.SuperHardMode)
@@ -142,11 +141,7 @@ namespace tsorcRevamp.NPCs.Friendly
             // The player just freed Miakoda
             if (!BossDefeated(ModContent.NPCType<JungleWyvernHead>()))
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BrotherNotRescued") +
-                    player.name +
-                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BrotherNotRescued2")
-                    );
-
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BrotherNotRescued", player.name));
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.JungleWyvern"));
 
                 // If the player isn't in The Forgotten City

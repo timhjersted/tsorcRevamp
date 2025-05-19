@@ -10304,8 +10304,7 @@ Mods: {
 					He shackled me into this doll just because I refused to serve that God of his... 
 					It calls itself The Moon Lord? Only in its dreams!
 					'''
-				BrotherNotRescued: "I could sense an Aura similar to yours right after you freed me from Skeletron! "
-				BrotherNotRescued2: ", you should go and find them in the depths of The Forgotten City."
+				BrotherNotRescued: "I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of The Forgotten City."
 				JungleWyvern:
 					'''
 					An ancient beast guards The Forgotten City. 
@@ -10315,12 +10314,10 @@ Mods: {
 					'''
 				JungleWyvernBiomeHint:
 					'''
-					The Forgotten City is to the left of where you fought The Last of the Dead, Skeletron.
+					The Forgotten City is to the left and down from where you fought The Last of the Dead, Skeletron.
 					We should go there next and see what we can find.
 					'''
-				HMWifeNotRescued: ...I see. Not only did that man slaughter your village, but he also imprisoned your wife!
-				HMWifeNotRescued2: "I dare not say what this might mean. "
-				HMWifeNotRescued3:
+				HMWifeNotRescued:
 					'''
 					...I see. Not only did that man slaughter your village, but he also imprisoned your wife!
 					I dare not say what this might mean. {0}, you must ensure great caution in whatever you do.
@@ -10348,8 +10345,7 @@ Mods: {
 					To get through, you must find the keys scattered throughout The Underworld. They will open the pathway to deeper within.
 					'''
 				BeforeRageBiomeHint: PlaceHolderText
-				CannotHelp: "You have done well, "
-				CannotHelp2: ", I have no more advice to offer you."
+				CannotHelp: "You have done well, {0}, I have no more advice to offer you."
 			}
 
 			ShamanElder: {
