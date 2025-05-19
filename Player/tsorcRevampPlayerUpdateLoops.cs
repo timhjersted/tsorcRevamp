@@ -895,6 +895,11 @@ namespace tsorcRevamp
                 Main.dust[dust].noGravity = true;
             }
 
+            if (!tsorcRevampWorld.EnteredHell && Player.ZoneUnderworldHeight)
+            {
+                tsorcRevampWorld.EnteredHell = true;
+            }
+
             //--------------------
 
             //TODO REMOVE WHEN FINALIZED

@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -9,7 +10,10 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.NPCs.Bosses.JungleWyvern;
+using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.Projectiles.Pets;
+using System.Collections;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -18,6 +22,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public Vector2 lastPlayerPos;
         public static Vector2 offSet = new Vector2(30.2f, -19f);
+        public List<string> alreadySaid;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
@@ -46,13 +51,14 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.damage = 0;
             NPC.defense = 1000;
             NPC.noGravity = true;
-            NPC.lifeMax = 10000;
+            NPC.lifeMax = 100;
             NPC.lavaImmune = true;
             NPC.noTileCollide = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
             NPC.scale = 0.7f;
+            alreadySaid = new List<string>();
 
             lastPlayerPos = Main.player[Main.myPlayer].position;
 
@@ -61,7 +67,19 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override string GetChat()
         {
-            WeightedRandom<string> chat = new WeightedRandom<string>();
+            string help = GetHelp();
+
+            if (!alreadySaid.Contains(help))
+            {
+                alreadySaid.Add(help);
+            }
+
+            return help;
+        }
+
+        public string GetChat2()
+        {
+            List<string> chat = new List<string>();
             Player player = Main.player[Main.myPlayer];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
@@ -84,7 +102,7 @@ namespace tsorcRevamp.NPCs.Friendly
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote3"));
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote4"));
 
-            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.CultistBoss)))
+            if (!BossDefeated(NPCID.CultistBoss))
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.LunaticCultist"));
             }
@@ -92,38 +110,84 @@ namespace tsorcRevamp.NPCs.Friendly
             // Hardmode only chat from here on
             if (!Main.hardMode)
             {
-                return chat;
+                return chat[Main.rand.Next(chat.Count)];
             }
 
-            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<TheHunter>())))
+            // The hunter guards the gate to your wife
+            if (!BossDefeated(ModContent.NPCType<TheHunter>()))
             {
                 chat.Add(
                     Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued", player.name));
             }
+            // Foreshadow the consequences of killing Attraides
             else if (!tsorcRevampWorld.SuperHardMode)
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescued"));
             }
 
-            return chat;
+            return chat[Main.rand.Next(chat.Count)];
+        }
+
+        public static bool BossDefeated(int npcType)
+        {
+            return tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(npcType));
         }
 
         public string GetHelp()
         {
-            WeightedRandom<string> chat = new WeightedRandom<string>();
+            List<string> chat = new List<string>();
             Player player = Main.player[Main.myPlayer];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (false)
+            // The player just freed Miakoda
+            if (!BossDefeated(ModContent.NPCType<JungleWyvernHead>()))
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BrotherNotRescued") +
+                    player.name +
+                    Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BrotherNotRescued2")
+                    );
+
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.JungleWyvern"));
+
+                // If the player isn't in The Forgotten City
+                if (!player.ZoneDungeon)
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.JungleWyvernBiomeHint"));
+                }
+            }
+            // The player recently spoke with their brother, Elijah, and should be on their way to The Wall of Flesh.
+            else if (!Main.hardMode && !tsorcRevampWorld.TheEnd)
+            {
+                // The player is currently in hell.
+                if (player.ZoneUnderworldHeight)
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshHellLeversHint"));
+                }
+                // The player is above hell, looking for switches.
+                else if ((player.ZoneJungle || player.ZoneDungeon) && tsorcRevampWorld.EnteredHell) 
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshJungleLeverHint"));
+                }
+
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshBiomeHint"));
+
+            }
+            else if (!BossDefeated(ModContent.NPCType<TheRage>()))
+            {
+
+            }
+            else if (!BossDefeated(ModContent.NPCType<WyvernMage>()))
             {
                 
             }
-            else
+
+            // If the help chat is empty
+            if (chat.Count == 0)
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp", player.name));
             }
 
-            return chat;
+            return chat[Main.rand.Next(chat.Count)];
         }
 
         public override void SetChatButtons(ref string button, ref string button2)
@@ -134,21 +198,41 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void OnChatButtonClicked(bool button, ref string shopName)
         {
+            string message;
+
             if (button)
             {
-                Main.npcChatText = GetChat();
+                message = GetHelp();
+                
+                // Try saying something unique
+                for (int i = 0; i < 25 && alreadySaid.Contains(message); i++)
+                {
+                    message = GetHelp();
+                }
             }
             else
             {
-                Main.npcChatText = GetHelp(); 
+                message = GetChat2();
+
+                // Try saying something unique
+                for (int i = 0; i < 25 && alreadySaid.Contains(message); i++)
+                {
+                    message = GetChat2();
+                }
             }
+
+            if (!alreadySaid.Contains(message))
+            {
+                alreadySaid.Add(message);
+            }
+
+            Main.npcChatText = message;
         }
         public override bool CanChat()
         {
             return true;
         }
 
-        // Unfortunately Proj Array positions are not guarunteed to remain the same so this loop has to run every time.
         public void SetPos()
         {
             Player player = Main.player[Main.myPlayer];

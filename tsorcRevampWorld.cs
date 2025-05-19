@@ -33,6 +33,7 @@ namespace tsorcRevamp
         public static bool CustomMap;
         public static bool OnlyAdventureMap;
         public static bool RemixMap;
+        public static bool EnteredHell;
 
         public static List<int> PairedBosses;
 
@@ -96,6 +97,7 @@ namespace tsorcRevamp
             CustomMap = false;
             OnlyAdventureMap = false;
             RemixMap = false;
+            EnteredHell = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -129,6 +131,8 @@ namespace tsorcRevamp
                 world_state.Add("RemixMap");
             if (OnlyAdventureMap)
                 world_state.Add("OnlyAdventureMap");
+            if (EnteredHell)
+                world_state.Add("EnteredHell");
 
             if (DownedBetsy)
             {
@@ -159,6 +163,7 @@ namespace tsorcRevamp
             CustomMap = worldStateList.Contains("CustomMap");
             RemixMap = worldStateList.Contains("RemixMap");
             OnlyAdventureMap = worldStateList.Contains("OnlyAdventureMap");
+            EnteredHell = worldStateList.Contains("EnteredHell");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)
