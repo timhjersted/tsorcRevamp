@@ -277,9 +277,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                         }
                         else
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(-0.15f) * 4, ModContent.ProjectileType<Projectiles.Enemy.Okiku.CrazyOrb>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(-0.15f) * 4, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), frozenSawDamage, 0f, Main.myPlayer, 1);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(0.15f) * 4, ModContent.ProjectileType<Projectiles.Enemy.Okiku.CrazyOrb>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(0.15f) * 4, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), frozenSawDamage, 0f, Main.myPlayer, 1);
                         }
                     }
                 }

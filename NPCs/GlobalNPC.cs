@@ -590,10 +590,10 @@ namespace tsorcRevamp.NPCs
             }
 
             // TODO: Find map coordinates, this is debug mode only for now
-            if (tsorcRevampWorld.RemixMap && UsefulFunctions.PlayerInZone(in player, 10, 10, 10, 10) && (ModContent.GetInstance<tsorcRevampConfig>().DebugMode || player.HasItemInInventoryOrOpenVoidBag(ModContent.ItemType<DebugTome>())))
+            if (tsorcRevampWorld.RemixMap && UsefulFunctions.PlayerInZone(in player, 169, 696, 755, 886))
             {
-                // Main.invasionType = 3; // Pirate invasion
-                // pool.Clear(); // Populate pool with pirate NPCs if the invasion type doesn't make the pirates active.
+                Main.invasionType = 3; // Pirate invasion
+                pool.Clear(); // Populate pool with pirate NPCs if the invasion type doesn't make the pirates active.
             }
 
             if (spawnInfo.Player.ZoneTowerSolar || spawnInfo.Player.ZoneTowerNebula || spawnInfo.Player.ZoneTowerStardust || spawnInfo.Player.ZoneTowerVortex || spawnInfo.Player.ZoneOldOneArmy || invasion)
