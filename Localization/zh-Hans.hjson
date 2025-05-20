@@ -10298,6 +10298,13 @@ Mods: {
 					Empty, so empty. The moon yearns for what it cannot have.
 					Fight quickly, for the moon will shield you in your time of need and devour that which is otherwise lost.
 					''' */
+				/* ArazSuspicion:
+					'''
+					That Wizard you found in the Wyvern Mage Fortress... I doubt the truth of his words.
+					The Elemental Crests, they are a cornerstone to the natural magic that flows through the world.
+					Why now are they inscribed with riddles, inscribed with human magic?
+					Moreover how would their combination weaken the Mindflayer King? 
+					''' */
 				/* LunaticCultist:
 					'''
 					Have you seen that acursed man, that raving lunatic!?
@@ -10325,10 +10332,10 @@ Mods: {
 					''' */
 				/* WifeRescued:
 					'''
-					You truly astound me human. To think that, after you saved your mate, you immediately left her to go and try to kill Attraides!
-					Don't you see? That evil one, he manipulates you. Your friend, Aaron, laced with the magic to unleash hell upon the world.
+					That evil one, he manipulates you. Your friend, Aaron, laced with the magic to unleash hell upon the world.
 					Your brother, convinently armed with the knowledge of your wife's survival.
 					And your poor wife, who after enduring so much is able to tell you of the knowledge he so desperately sought.
+					Gather the crests, but do not offer them up to summon The Mindflayer King. 
 					I fear of what may come if you keep playing into his schemes...
 					''' */
 				/* WallofFleshBiomeHint:
@@ -10352,10 +10359,10 @@ Mods: {
 					''' */
 				/* ProjectileHiddenPathsHint:
 					'''
-					If you see a gate that isn't locked behind levers, switches, or key, do not fret! Those methods are more recent, yes, but there might be another way.
+					If you see a gate that isn't locked behind levers, switches, or key, do not fret! There might be another way.
 					The people of Izalith lived underground, they were known for their whismical mastery of magic. 
 					Some of their tunnels were only acessible by striking a teal plate, usually hidden around a couple of corners or above the gate.
-					They were quite adamant about using controllable magic to access these paths, but a poorly hidden one could be struck by a bow and arrow too.
+					They took pride in using controllable magic to access these paths, but a poorly hidden one could be struck by a bow and arrow too.
 					''' */
 				/* BreakableBlocksHint:
 					'''
@@ -10363,15 +10370,28 @@ Mods: {
 					There are certain materials however I think you could destroy without having to worry about thickness.
 					Sand, Slush, and Transparent Ice should be easy to tunnel through freely.
 					''' */
+				/* ShadowKeyHint:
+					'''
+					Certain chests require a certain kind of key, given only to those aknowledged by Skeletron, the first of the dead.
+					While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean. 
+					I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...
+					''' */
+				/* HardmodeLore:
+					'''
+					After you sliced through the wall that seperated the mortal realm from the supernatural, 8 beings of great power awakened from their slumber.
+					They have linked themselves to the elements, feeding on the world to grow ever stronger. 
+					Their combined power burdens the First Flame, and if they remain awake this Era will soon be plunged into eternal darkness.
+					You must find The Awakened, slaughter them, and gather their elemental crests. 
+					Their remains hold the key to heal this shattered realm.
+					''' */
 				/* RageBiomeHint:
 					'''
-					Many creatures have come into this world ever since you broke the wall. You must slay them before this world devolves into chaos.
-					Seek out the Hallowed Caverns. Using the Molten Pickaxe dropped by The Wall, break the colbalt gates.
-					The spirits tell me of an evil beast, The Rage, has made that lair its den.
+					Seek out the Hallowed Caverns. Using the Molten Pickaxe dropped by The Wall, break down the colbalt gates.
+					The spirits tell me The First of The Awakened, The Rage, has made that lair its den.
 					''' */
 				/* RageEscapeHell:
 					'''
-					Well done {0}! Defeating that abomination might have created some issues, however. I can sense great magic warping the world.
+					Well done {0}! Defeating that abomination had consequences, however. I can sense great magic penetrating this realm.
 					No... This must have been a trap. Go to the east side of the underworld; you should be able to walk over the hell stone bridge now. 
 					I can feel our path leads us there.
 					''' */
@@ -10380,14 +10400,20 @@ Mods: {
 					The spirits of the cavern move through the Hallow, gathering beneath hidden depths to resist a formidable adversary.
 					Go deeper into the Hallow. The Rage awaits beneath our feet.
 					''' */
-				// FrozenOceanBiomeHint: PlaceHolderText
-				/* ShadowKeyHint:
+				/* SorrowBiomeHint:
 					'''
-					Certain chests require a certain kind of key, given only to those aknowledged by Skeletron, the first of the dead.
-					While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean. 
-					I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...
+					Our journey takes us further East. The next of the Awakened, The Sorrow, took nest deep below the Frozen Ocean.
+					The Wyvern Mage, ally of the Mindflayer King, occupies a mountain fortress shrouded in many magics.
+					The spirits can tell me no more. I fear this is a death trap {0}... There must be another way.
 					''' */
+				/* SorrowEastHint:
+					'''
+					I underestimated you {0}! You made it past the secret magic of the Wyvern Mage and cleared a path towards the Frozen Ocean!
+					All that is left is to head to the east and dive deep beneath the waters, The Sorrow awaits us.
+					''' */
+				// SorrowDeeperHint: We should explore deep into the Ocean. I feel an icy power radiating within its depths.
 				// CannotHelp: You have done well, {0}, I have no more advice to offer you.
+				// ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
 			}
 
 			ShamanElder: {

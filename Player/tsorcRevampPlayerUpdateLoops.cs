@@ -412,13 +412,17 @@ namespace tsorcRevamp
 
         public bool EnterTheAbyss = false;
 
+        public int positionCount = 0;
+
         public override void ResetEffects()
         {
             // Re-evaluate if any boss is alive once per tick
-            tsorcRevampWorld.BossAliveLazyEvalFlag = false;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                tsorcRevampWorld.ResetBossAlive();
+            }
 
             EnterTheAbyss = false;
-
             BeastMode1 = false;
             SilverSerpentRing = false;
             SoulSerpentRing = false;
@@ -898,6 +902,24 @@ namespace tsorcRevamp
             if (!tsorcRevampWorld.EnteredHell && Player.ZoneUnderworldHeight)
             {
                 tsorcRevampWorld.EnteredHell = true;
+            }
+
+            /*
+            if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode) 
+            { 
+                positionCount++;
+                if (positionCount > 60 * 5)
+                {
+                    positionCount = 0;
+                    string text = "Player position: X = " + ((int)Player.position.X / 16).ToString() + ", Y = " + ((int)Player.position.Y / 16).ToString();
+                    UsefulFunctions.BroadcastText(text);
+                }
+            }
+            */
+
+            if (!tsorcRevampWorld.TalkedToAraz && UsefulFunctions.PlayerInZone(Player, 7290, 7340, 590, 610)) 
+            {
+                tsorcRevampWorld.TalkedToAraz = true;
             }
 
             //--------------------

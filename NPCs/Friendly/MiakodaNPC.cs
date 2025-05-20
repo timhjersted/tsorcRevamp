@@ -16,6 +16,96 @@ using tsorcRevamp.Projectiles.Pets;
 using System.Collections;
 using rail;
 
+// Increases the likelihood of every dialogue option offered after the first by 10% stacking, this way more relevant dialogue is usually said first.
+public class WeightedDialogue
+{
+    public readonly List<Tuple<string, double>> elements;
+    public readonly UnifiedRandom random;
+    public bool needsRefresh = true;
+    private double _totalWeight;
+    private double _weight;
+    private double _weightIncrease;
+
+    public WeightedDialogue(double weight = 1, double weightIncrease = 0.1)
+    {
+        random = new UnifiedRandom();
+        elements = new List<Tuple<string, double>>();
+        _weight = weight;
+        _weightIncrease = weightIncrease;
+    }
+
+    public void Add(string element, double weight = 0)
+    {
+        if (weight == 0)
+        {
+            weight = _weight;
+        }
+
+        elements.Add(new Tuple<string, double>(element, weight));
+        needsRefresh = true;
+        _weight += _weightIncrease;
+    }
+
+    public string Get()
+    {
+        if (needsRefresh)
+            CalculateTotalWeight();
+
+        double num = random.NextDouble();
+        num *= _totalWeight;
+        foreach (Tuple<string, double> element in elements)
+        {
+            if (num > element.Item2)
+            {
+                num -= element.Item2;
+                continue;
+            }
+
+            return element.Item1;
+        }
+
+        return default(string);
+    }
+
+    public List<string> GetList()
+    {
+        List<string> list = new List<string>();
+
+        foreach (Tuple<string, double> element in elements)
+        {
+            list.Add(element.Item1);
+        }
+
+        return list;
+    }
+
+    public static explicit operator List<string> (WeightedDialogue dialogue)
+    {
+        return dialogue.GetList();
+    }
+
+    public void CalculateTotalWeight()
+    {
+        _totalWeight = 0.0;
+        foreach (Tuple<string, double> element in elements)
+        {
+            _totalWeight += element.Item2;
+        }
+
+        needsRefresh = false;
+    }
+
+    public void Clear()
+    {
+        elements.Clear();
+    }
+
+    public static implicit operator string(WeightedDialogue weightedRandom)
+    {
+        return weightedRandom.Get();
+    }
+}
+
 namespace tsorcRevamp.NPCs.Friendly
 {
     [AutoloadHead]
@@ -27,6 +117,7 @@ namespace tsorcRevamp.NPCs.Friendly
         public Vector2 lastPlayerPos;
         public static Vector2 offSet = new Vector2(30.2f, -19f);
         public List<string> alreadySaid;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
@@ -71,19 +162,37 @@ namespace tsorcRevamp.NPCs.Friendly
             SetPos();
         }
 
-        public override string GetChat()
+        public string PickMessage(List<string> chat)
         {
-            string help = GetHelp();
+            string message = "Error: Something went wrong when retrieving dialogue.";
+            WeightedDialogue uniqueMsg = new WeightedDialogue();
 
-            if (!alreadySaid.Contains(help))
+            foreach (string msg in chat)
             {
-                alreadySaid.Add(help);
+                if (!alreadySaid.Contains(msg))
+                {
+                    uniqueMsg.Add(msg);
+                }
             }
 
-            return help;
+            if (uniqueMsg.GetList().Count > 0)
+            {
+                message = uniqueMsg;
+                alreadySaid.Add(message);
+            }
+            else 
+            {
+                Player player = Main.player[Main.myPlayer];
+                message = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ExhaustedDialogue", player.name);
+                alreadySaid.Clear();
+            }
+
+            return message;
         }
 
-        public string GetChat2()
+        // The order is important here, the messages added later on in the function are weighted higher than the ones added first
+        // Add them later on if you want them to be more likely to be immediately seen by the player upon talking with Miakoda
+        public override string GetChat()
         {
             List<string> chat = new List<string>();
             Player player = Main.player[Main.myPlayer];
@@ -93,7 +202,6 @@ namespace tsorcRevamp.NPCs.Friendly
             // Also talk about hidden sub areas that may be difficult to find.
 
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote1"));
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2", player.name));
 
             if (modPlayer.MiakodaCrescent)
             {
@@ -108,41 +216,41 @@ namespace tsorcRevamp.NPCs.Friendly
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NewMoonForm"));
             }
 
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote3"));
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote4"));
-
-            if (!BossDefeated(NPCID.CultistBoss))
+            if (!BossDefeated(NPCID.CultistBoss) && Main.hardMode)
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.LunaticCultist"));
             }
+
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2", player.name));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote4"));
 
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ProjectileHiddenPathsHint"));
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
 
-            // Hardmode only chat from here on
-            if (!Main.hardMode)
+            if (tsorcRevampWorld.TalkedToAraz && tsorcRevampWorld.HardModeNotSHM)
             {
-                return chat[Main.rand.Next(chat.Count)];
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ArazSuspicion"));
             }
 
-            if (!player.HasItemInInventoryOrOpenVoidBag(ItemID.ShadowKey))
+            if (!player.HasItemInAnyInventory(ItemID.ShadowKey) && Main.hardMode)
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
             }
 
             // The hunter guards the gate to your wife
-            if (!BossDefeated(ModContent.NPCType<TheHunter>()))
+            if (!BossDefeated(ModContent.NPCType<TheHunter>()) && tsorcRevampWorld.HardModeNotSHM)
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued", player.name));
             }
             // Foreshadow the consequences of killing Attraides
-            else if (!tsorcRevampWorld.SuperHardMode)
+            else if (tsorcRevampWorld.HardModeNotSHM)
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescued"));
             }
 
-            return chat[Main.rand.Next(chat.Count)];
+            return PickMessage(chat);
         }
 
         public static bool BossDefeated(int npcType)
@@ -172,6 +280,8 @@ namespace tsorcRevamp.NPCs.Friendly
             // The player recently spoke with their brother, Elijah, and should be on their way to The Wall of Flesh.
             else if (!Main.hardMode && !tsorcRevampWorld.TheEnd)
             {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshBiomeHint"));
+
                 // The player is currently in hell.
                 if (player.ZoneUnderworldHeight)
                 {
@@ -182,13 +292,12 @@ namespace tsorcRevamp.NPCs.Friendly
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshJungleLeverHint"));
                 }
-
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshBiomeHint"));
-
             }
             // The player recently killed the Wall of Flesh and activated HardMode
             else if (!BossDefeated(ModContent.NPCType<TheRage>()))
             {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageEscapeHell", player.name));
+
                 if (!player.ZoneHallow)
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageBiomeHint"));
@@ -199,19 +308,37 @@ namespace tsorcRevamp.NPCs.Friendly
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
                 }
-
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageEscapeHell", player.name));
             }
             // The player is on their way to the Frozen ocean, either through the secret path from the hallow or through the Wyvern Mage's fortress
             else if (!BossDefeated(ModContent.NPCType<TheSorrow>()))
             {
-                if (player.ZoneHallow)
+                if (player.ZoneHallow || player.ZoneSnow)
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
                 }
 
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
+
+                // Player is at frozen ocean
+                if (player.position.X > 7510)
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowDeeperHint"));
+                }
+                // The player has not arrived at the frozen ocean yet nor defeated the wyvern mage
+                else if (!BossDefeated(ModContent.NPCType<WyvernMage>()))
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowBiomeHint", player.name));
+                }
+                else 
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowEastHint", player.name));
+                }
+            }
+            // The player has to head over to the western side of the world to find The Hunter.
+            else if (!BossDefeated(ModContent.NPCType<TheHunter>()))
+            {
+
             }
 
             // If the help chat is empty
@@ -220,7 +347,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp", player.name));
             }
 
-            return chat[Main.rand.Next(chat.Count)];
+            return PickMessage(chat);
         }
 
         public override void SetChatButtons(ref string button, ref string button2)
@@ -236,27 +363,10 @@ namespace tsorcRevamp.NPCs.Friendly
             if (button)
             {
                 message = GetHelp();
-                
-                // Try saying something unique
-                for (int i = 0; i < 25 && alreadySaid.Contains(message); i++)
-                {
-                    message = GetHelp();
-                }
             }
             else
             {
-                message = GetChat2();
-
-                // Try saying something unique
-                for (int i = 0; i < 25 && alreadySaid.Contains(message); i++)
-                {
-                    message = GetChat2();
-                }
-            }
-
-            if (!alreadySaid.Contains(message))
-            {
-                alreadySaid.Add(message);
+                message = GetChat();
             }
 
             Main.npcChatText = message;

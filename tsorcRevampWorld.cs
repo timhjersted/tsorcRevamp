@@ -34,6 +34,7 @@ namespace tsorcRevamp
         public static bool OnlyAdventureMap;
         public static bool RemixMap;
         public static bool EnteredHell;
+        public static bool TalkedToAraz;
 
         public static List<int> PairedBosses;
 
@@ -43,6 +44,12 @@ namespace tsorcRevamp
         public static Dictionary<Vector2, int> MapMarkers;
 
         public static Vector2 AbyssPortalLocation;
+
+        // Returns if the game is in hardmode but before killing attraides
+        public static bool HardModeNotSHM
+        {
+            get { return Main.hardMode && !SuperHardMode && !TheEnd; }
+        }
 
         public class WorldState
         {
@@ -98,6 +105,7 @@ namespace tsorcRevamp
             OnlyAdventureMap = false;
             RemixMap = false;
             EnteredHell = false;
+            TalkedToAraz = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -133,6 +141,8 @@ namespace tsorcRevamp
                 world_state.Add("OnlyAdventureMap");
             if (EnteredHell)
                 world_state.Add("EnteredHell");
+            if (TalkedToAraz)
+                world_state.Add("TalkedToAraz");
 
             if (DownedBetsy)
             {
@@ -164,6 +174,7 @@ namespace tsorcRevamp
             RemixMap = worldStateList.Contains("RemixMap");
             OnlyAdventureMap = worldStateList.Contains("OnlyAdventureMap");
             EnteredHell = worldStateList.Contains("EnteredHell");
+            TalkedToAraz = worldStateList.Contains("TalkedToAraz");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)
@@ -1477,8 +1488,10 @@ namespace tsorcRevamp
         }
 
         // Determines if the full 'get' function needs to be called.
-        public static bool BossAliveLazyEvalFlag = false;
         private static bool BossAliveInternal = false;
+        private static bool BossAliveLazyEvalFlag = false;
+
+        public static void ResetBossAlive() { BossAliveLazyEvalFlag = false; }
         public static bool BossAlive
         {
             get
