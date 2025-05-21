@@ -146,10 +146,12 @@ namespace tsorcRevamp.Items.VanillaItems
                     tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, 25 + tsorcGlobalBuff.IceBarrierResistBonus)));
                 }
             }
+            /*
             if (item.type == ItemID.WaterWalkingBoots)
             {
                 tooltips.Add(new TooltipLine(Mod, "LavaWalk", LangUtils.GetTextValue("Items.VanillaItems.WaterWalkingBoots")));
             }
+            */
         }
         public override void AddRecipes()
         {

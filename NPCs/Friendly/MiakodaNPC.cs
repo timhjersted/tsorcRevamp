@@ -15,13 +15,14 @@ using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.Projectiles.Pets;
 using System.Collections;
 using rail;
+using Steamworks;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
     // Increases the likelihood of every dialogue option offered after the first by 10% stacking, this way more relevant dialogue is usually said first.
     public class AutoWeightedDialogue
     {
-        public readonly List<Tuple<List<string>, double>> elements;
+        public List<Tuple<List<string>, double>> elements;
         public readonly UnifiedRandom random;
         public bool needsRefresh = true;
         private double _totalWeight;
@@ -38,14 +39,21 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public int Count { get { return elements.Count; } }
 
-        public void Add(string element, double weight = 0)
+        public AutoWeightedDialogue Add(string element, double weight = 0)
         {
             List<string> strList = new List<string>();
             strList.Add(element);
             Add(strList, weight);
+            return this;
         }
 
-        public void Add(List<string> element, double weight = 0)
+        public AutoWeightedDialogue Remove(int index)
+        {
+            elements.RemoveAt(index);
+            return this;
+        }
+
+        public AutoWeightedDialogue Add(List<string> element, double weight = 0)
         {
             if (weight == 0)
             {
@@ -55,6 +63,8 @@ namespace tsorcRevamp.NPCs.Friendly
             elements.Add(new Tuple<List<string>, double>(element, weight));
             needsRefresh = true;
             _weight += _weightIncrease;
+
+            return this;
         }
 
 
@@ -102,9 +112,10 @@ namespace tsorcRevamp.NPCs.Friendly
             needsRefresh = false;
         }
 
-        public void Clear()
+        public AutoWeightedDialogue Clear()
         {
             elements.Clear();
+            return this;
         }
 
         public static implicit operator string(AutoWeightedDialogue weightedRandom)
@@ -140,7 +151,7 @@ namespace tsorcRevamp.NPCs.Friendly
             return dialogue._dialogue;
         }
 
-        public void Add(string message)
+        public DialogueHandler Add(string message)
         {
             if (_dialogueResetFlag)
             {
@@ -152,6 +163,8 @@ namespace tsorcRevamp.NPCs.Friendly
                 _dialogueInternal = new List<string>();
 
             _dialogueInternal.Add(message);
+
+            return this;
         }
     }
 
@@ -273,9 +286,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.LunaticCultist"));
             }
 
-            // Miakoda introduction as the guide for the mod
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote1"));
-
             // Form change explainations
             if (modPlayer.MiakodaCrescent)
             {
@@ -289,6 +299,9 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NewMoonForm"));
             }
+
+            // Miakoda introduction as the guide for the mod
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote1"));
 
             // Dark soul curse lore
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote4"));
@@ -317,7 +330,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 // Foreshadow the consequences of killing Attraides
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescuedPart1"));
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescuedPart2"));
-
                 chat.Add(dialogue);
             }
 
