@@ -482,6 +482,7 @@ Mods: {
 					OnUseText3: The Triad only awakens at night...
 				}
 
+				WaterWalkingBoots: Also provides the ability to walk on lava
 				ChlorophyteMaskSet:
 					'''
 					Summons a powerful leaf crystal to shoot at nearby enemies
@@ -10438,7 +10439,6 @@ Mods: {
 					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
 					It will be dangerous {0}, be safe.
 					'''
-
 				CannotHelp: You have done well, {0}, I have no more advice to offer you.
 				ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
 			}

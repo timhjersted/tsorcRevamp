@@ -482,6 +482,7 @@ Mods: {
 					OnUseText3: 三子魔眼只在晚上醒来..
 				}
 
+				// WaterWalkingBoots: Also provides the ability to walk on lava
 				ChlorophyteMaskSet:
 					'''
 					召唤强大的叶状水晶射向附近的敌人
@@ -10325,7 +10326,7 @@ Mods: {
 					''' */
 				/* JungleWyvernBiomeHint:
 					'''
-					The Forgotten City is to the left and down from where you fought The Last of the Dead, Skeletron.
+					The Forgotten City is to the left and down from where you fought The First of the Dead, Skeletron.
 					We should go there next and see what we can find.
 					''' */
 				/* HMWifeNotRescued:
@@ -10418,10 +10419,21 @@ Mods: {
 				// SorrowDeeperHint: We should explore deep into the Ocean. I feel an icy power radiating within its depths.
 				/* HunterBiomeHint:
 					'''
-					Beneath the burning sun, black smoke with a violet glow illuminates the path. Hearing that, I can only think of the tribe living within the Western Desert.
-					The Orspeak built underneath the desert to escape the harsh sunlight above; their walls were adorned in soft purple lighting.
+					Beneath the burning sun, black smoke with a violet glow illuminates the path. Hearing that, I can only think of the tribe that once lived within the Western Desert.
 					To get there, you must travel past the Adamantine gates of the Corruption to seek their prior dwellings.
-					Unfortunately, they were one of the first to fall against the Abyss. Stay safe {0}, it will be dangerous.
+					''' */
+				/* HunterBiomeHint2:
+					'''
+					The Orspeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
+					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
+					If you don't have a way to cross lava, delving deep into their tunnels would be a fool's errand.
+					Maybe we can find something to help further to the west!
+					''' */
+				/* HunterBiomeHint3:
+					'''
+					The Orspeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
+					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
+					It will be dangerous {0}, be safe.
 					''' */
 				// CannotHelp: You have done well, {0}, I have no more advice to offer you.
 				// ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
@@ -10764,7 +10776,7 @@ Mods: {
 			"Necromancers Spell.DisplayName": 巫妖王之咒
 			"Krakens Cast.DisplayName": 海妖之怒
 			"Witchking Scream.DisplayName": 巫师尖啸
-			// "Print Position.DisplayName": Print Position
+			// "Print Position.DisplayName": Print Position (Debug Mode Only)
 		}
 
 		InfoDisplays: {

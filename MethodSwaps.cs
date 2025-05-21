@@ -1462,6 +1462,12 @@ namespace tsorcRevamp
                 self.GetCritChance(DamageClass.Summon) += SummonerEdits.ScarabSummonCritChance;
                 modPlayer.PapyrusScarab = true;
             }
+            // Lets player walk on Lava as well.
+            if (currentItem.type == ItemID.WaterWalkingBoots) 
+            {
+                self.waterWalk = true;
+                self.waterWalk2 = true;
+            }
             orig(self, currentItem, hideVisual);
         }
 
