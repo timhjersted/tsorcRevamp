@@ -16,98 +16,145 @@ using tsorcRevamp.Projectiles.Pets;
 using System.Collections;
 using rail;
 
-// Increases the likelihood of every dialogue option offered after the first by 10% stacking, this way more relevant dialogue is usually said first.
-public class WeightedDialogue
-{
-    public readonly List<Tuple<string, double>> elements;
-    public readonly UnifiedRandom random;
-    public bool needsRefresh = true;
-    private double _totalWeight;
-    private double _weight;
-    private double _weightIncrease;
-
-    public WeightedDialogue(double weight = 1, double weightIncrease = 0.1)
-    {
-        random = new UnifiedRandom();
-        elements = new List<Tuple<string, double>>();
-        _weight = weight;
-        _weightIncrease = weightIncrease;
-    }
-
-    public void Add(string element, double weight = 0)
-    {
-        if (weight == 0)
-        {
-            weight = _weight;
-        }
-
-        elements.Add(new Tuple<string, double>(element, weight));
-        needsRefresh = true;
-        _weight += _weightIncrease;
-    }
-
-    public string Get()
-    {
-        if (needsRefresh)
-            CalculateTotalWeight();
-
-        double num = random.NextDouble();
-        num *= _totalWeight;
-        foreach (Tuple<string, double> element in elements)
-        {
-            if (num > element.Item2)
-            {
-                num -= element.Item2;
-                continue;
-            }
-
-            return element.Item1;
-        }
-
-        return default(string);
-    }
-
-    public List<string> GetList()
-    {
-        List<string> list = new List<string>();
-
-        foreach (Tuple<string, double> element in elements)
-        {
-            list.Add(element.Item1);
-        }
-
-        return list;
-    }
-
-    public static explicit operator List<string> (WeightedDialogue dialogue)
-    {
-        return dialogue.GetList();
-    }
-
-    public void CalculateTotalWeight()
-    {
-        _totalWeight = 0.0;
-        foreach (Tuple<string, double> element in elements)
-        {
-            _totalWeight += element.Item2;
-        }
-
-        needsRefresh = false;
-    }
-
-    public void Clear()
-    {
-        elements.Clear();
-    }
-
-    public static implicit operator string(WeightedDialogue weightedRandom)
-    {
-        return weightedRandom.Get();
-    }
-}
-
 namespace tsorcRevamp.NPCs.Friendly
 {
+    // Increases the likelihood of every dialogue option offered after the first by 10% stacking, this way more relevant dialogue is usually said first.
+    public class AutoWeightedDialogue
+    {
+        public readonly List<Tuple<List<string>, double>> elements;
+        public readonly UnifiedRandom random;
+        public bool needsRefresh = true;
+        private double _totalWeight;
+        private double _weight;
+        private double _weightIncrease;
+
+        public AutoWeightedDialogue(double weight = 1, double weightIncrease = 0.1)
+        {
+            random = new UnifiedRandom();
+            elements = new List<Tuple<List<string>, double>>();
+            _weight = weight;
+            _weightIncrease = weightIncrease;
+        }
+
+        public int Count { get { return elements.Count; } }
+
+        public void Add(string element, double weight = 0)
+        {
+            List<string> strList = new List<string>();
+            strList.Add(element);
+            Add(strList, weight);
+        }
+
+        public void Add(List<string> element, double weight = 0)
+        {
+            if (weight == 0)
+            {
+                weight = _weight;
+            }
+
+            elements.Add(new Tuple<List<string>, double>(element, weight));
+            needsRefresh = true;
+            _weight += _weightIncrease;
+        }
+
+
+        public string Get()
+        {
+            List<string> element = GetDialogue();
+            string message = "";
+
+            if (element.Count > 0)
+                message = element[0];
+
+            return message;
+        }
+
+        // Returns a random dialogue option from the options provided
+        public List<string> GetDialogue()
+        {
+            if (needsRefresh)
+                CalculateTotalWeight();
+
+            double num = random.NextDouble();
+            num *= _totalWeight;
+            foreach (Tuple<List<string>, double> element in elements)
+            {
+                if (num > element.Item2)
+                {
+                    num -= element.Item2;
+                    continue;
+                }
+
+                return element.Item1;
+            }
+
+            return new List<string>();
+        }
+
+        public void CalculateTotalWeight()
+        {
+            _totalWeight = 0.0;
+            foreach (Tuple<List<string>, double> element in elements)
+            {
+                _totalWeight += element.Item2;
+            }
+
+            needsRefresh = false;
+        }
+
+        public void Clear()
+        {
+            elements.Clear();
+        }
+
+        public static implicit operator string(AutoWeightedDialogue weightedRandom)
+        {
+            return weightedRandom.Get();
+        }
+
+        public static implicit operator List<string>(AutoWeightedDialogue weightedRandom)
+        {
+            return weightedRandom.GetDialogue();
+        }
+    }
+
+    // Resets dialogue when acessed. This is meant for multipart messages that need to be added as a single list<string>
+    class DialogueHandler
+    {
+        List<string> _dialogueInternal = null;
+        bool _dialogueResetFlag = false;
+
+        List<string> _dialogue
+        {
+            get
+            {
+                _dialogueResetFlag = true;
+                return _dialogueInternal;
+            }
+        }
+
+        public DialogueHandler() { }
+
+        public static implicit operator List<string>(DialogueHandler dialogue)
+        {
+            return dialogue._dialogue;
+        }
+
+        public void Add(string message)
+        {
+            if (_dialogueResetFlag)
+            {
+                _dialogueInternal = null;
+                _dialogueResetFlag = false;
+            }
+
+            if (_dialogueInternal == null)
+                _dialogueInternal = new List<string>();
+
+            _dialogueInternal.Add(message);
+        }
+    }
+
     [AutoloadHead]
     class MiakodaNPC : ModNPC
     {
@@ -117,6 +164,11 @@ namespace tsorcRevamp.NPCs.Friendly
         public Vector2 lastPlayerPos;
         public static Vector2 offSet = new Vector2(30.2f, -19f);
         public List<string> alreadySaid;
+        public List<string> nextMessage;
+
+        // For use when adding a multipart message to an AutoWeightedDialogue
+        public DialogueHandler dialogue;
+        public bool helpButtonPressed;
 
         public override void SetStaticDefaults()
         {
@@ -156,53 +208,75 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.knockBackResist = 0f;
             NPC.scale = 0.7f;
             alreadySaid = new List<string>();
+            nextMessage = new List<string>();
+            dialogue = new DialogueHandler();
+            helpButtonPressed = false;
 
             lastPlayerPos = Main.player[Main.myPlayer].position;
 
             SetPos();
         }
 
-        public string PickMessage(List<string> chat)
+        // Picks a message from the dialogue given based on whether or not it was already said
+        // Also properly handles when a message needs to be sent in parts by adding the additional messages to nextMessage.
+        public string PickMessage(AutoWeightedDialogue chat)
         {
-            string message = "Error: Something went wrong when retrieving dialogue.";
-            WeightedDialogue uniqueMsg = new WeightedDialogue();
+            List<string> message;
+            AutoWeightedDialogue uniqueMsg = new AutoWeightedDialogue();
 
-            foreach (string msg in chat)
+            foreach (Tuple<List<string>, double> msg in chat.elements)
             {
-                if (!alreadySaid.Contains(msg))
+                if (!alreadySaid.Contains(msg.Item1[0]))
                 {
-                    uniqueMsg.Add(msg);
+                    uniqueMsg.Add(msg.Item1);
                 }
             }
 
-            if (uniqueMsg.GetList().Count > 0)
+            if (uniqueMsg.Count > 0)
             {
                 message = uniqueMsg;
-                alreadySaid.Add(message);
+                alreadySaid.Add(message[0]);
+
+                // Adds extended dialogue to the list
+                for (int i = 1; i < message.Count; i++)
+                {
+                    nextMessage.Add(message[i]);
+                }
             }
+            // No unique messages, restart logic
             else 
             {
                 Player player = Main.player[Main.myPlayer];
-                message = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ExhaustedDialogue", player.name);
+                message = new List<string>();
+                message.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ExhaustedDialogue", player.name));
                 alreadySaid.Clear();
             }
 
-            return message;
+            return message[0];
         }
 
         // The order is important here, the messages added later on in the function are weighted higher than the ones added first
         // Add them later on if you want them to be more likely to be immediately seen by the player upon talking with Miakoda
         public override string GetChat()
         {
-            List<string> chat = new List<string>();
+            AutoWeightedDialogue chat = new AutoWeightedDialogue();
             Player player = Main.player[Main.myPlayer];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             // TODO: Focus on adding lore behind biomes, Attraides, and bosses.
             // Also talk about hidden sub areas that may be difficult to find.
 
+            // Least likely quote, have Mikoda complain about the lunatic cultist
+            // Might remove or change later.
+            if (!BossDefeated(NPCID.CultistBoss))
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.LunaticCultist"));
+            }
+
+            // Miakoda introduction as the guide for the mod
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote1"));
 
+            // Form change explainations
             if (modPlayer.MiakodaCrescent)
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CrescentMoonForm"));
@@ -216,38 +290,63 @@ namespace tsorcRevamp.NPCs.Friendly
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NewMoonForm"));
             }
 
-            if (!BossDefeated(NPCID.CultistBoss) && Main.hardMode)
-            {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.LunaticCultist"));
-            }
-
+            // Dark soul curse lore
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote4"));
+            // Form change hint
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote3"));
+            // Dark souls item crafting emphasis
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2", player.name));
 
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ProjectileHiddenPathsHint"));
+            // Projectiles can open hidden paths reminder
+            dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ProjectileHiddenPathsHintPart1"));
+            dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ProjectileHiddenPathsHintPart2"));
+            chat.Add(dialogue);
+
+            // Explain conditions to break blocks
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+            // Explain certain secret passages
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
 
+            // Musings from Miakoda relevant to before the wife is saved
+            if (!BossDefeated(ModContent.NPCType<TheHunter>()) && Main.hardMode)
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued", player.name));
+            }
+            else if (tsorcRevampWorld.HardModeNotSHM)
+            {
+                // Foreshadow the consequences of killing Attraides
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescuedPart1"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescuedPart2"));
+
+                chat.Add(dialogue);
+            }
+
+            // Lore of the crests, foreshadowing
             if (tsorcRevampWorld.TalkedToAraz && tsorcRevampWorld.HardModeNotSHM)
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ArazSuspicion"));
             }
 
-            if (!player.HasItemInAnyInventory(ItemID.ShadowKey) && Main.hardMode)
+            // Introducing the awakened bosses from hardmode
+            if (tsorcRevampWorld.HardModeNotSHM)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HardmodeLorePart1"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HardmodeLorePart2"));
+                chat.Add(dialogue);
             }
 
-            // The hunter guards the gate to your wife
-            if (!BossDefeated(ModContent.NPCType<TheHunter>()) && tsorcRevampWorld.HardModeNotSHM)
+            // Lore relevant to the first three hardmode bosses - the Wings of the Awakened
+            if (!BossDefeated(ModContent.NPCType<TheHunter>()) && Main.hardMode)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued", player.name));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3WingsLorePart1"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3WingsLorePart2"));
+                chat.Add(dialogue);
             }
-            // Foreshadow the consequences of killing Attraides
-            else if (tsorcRevampWorld.HardModeNotSHM)
+
+            // Player doesn't have a shadow key but can get one
+            if (!player.HasItemInAnyInventory(ItemID.ShadowKey) && BossDefeated(ModContent.NPCType<TheRage>()))
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescued"));
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
             }
 
             return PickMessage(chat);
@@ -258,9 +357,12 @@ namespace tsorcRevamp.NPCs.Friendly
             return tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(npcType));
         }
 
+        // The order is important here, the messages added later on in the function are weighted higher than the ones added first
+        // Add them later on if you want them to be more likely to be immediately seen by the player upon talking with Miakoda
+
         public string GetHelp()
         {
-            List<string> chat = new List<string>();
+            AutoWeightedDialogue chat = new AutoWeightedDialogue();
             Player player = Main.player[Main.myPlayer];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
@@ -280,7 +382,9 @@ namespace tsorcRevamp.NPCs.Friendly
             // The player recently spoke with their brother, Elijah, and should be on their way to The Wall of Flesh.
             else if (!Main.hardMode && !tsorcRevampWorld.TheEnd)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshBiomeHint"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshBiomeHintPart1"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshBiomeHintPart2"));
+                chat.Add(dialogue);
 
                 // The player is currently in hell.
                 if (player.ZoneUnderworldHeight)
@@ -318,17 +422,20 @@ namespace tsorcRevamp.NPCs.Friendly
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
                 }
 
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
+                if (!player.HasItemInAnyInventory(ItemID.ShadowKey))
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
 
                 // Player is at frozen ocean
-                if (player.position.X > 7510)
+                if ((int)player.position.X / 16 > 7510)
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowDeeperHint"));
                 }
                 // The player has not arrived at the frozen ocean yet nor defeated the wyvern mage
                 else if (!BossDefeated(ModContent.NPCType<WyvernMage>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowBiomeHint", player.name));
+                    dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowBiomeHintPart1"));
+                    dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowBiomeHintPart2", player.name));
+                    chat.Add(dialogue);
                 }
                 else 
                 {
@@ -343,24 +450,32 @@ namespace tsorcRevamp.NPCs.Friendly
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint"));
                 }
-                else
                 // Player is at the Desert
-                // The player cannot walk on lava
-                if (!player.waterWalk2)
+                else
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint2"));
-
-                    // The player is looking for a way to walk on lava
-                    if ((int)player.position.X / 16 < 1240)
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+                    // The player cannot walk on lava
+                    if (!(player.waterWalk && player.waterWalk2 || player.fireWalk))
                     {
-                        
+                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint2"));
+
+                        // The player is looking for a way to walk on lava
+                        if ((int)player.position.X / 16 < 1240)
+                        {
+                            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.FireWalkHint"));
+                        }
+                    }
+                    // The player is ready to traverse the lava spike area to fight the hunter
+                    else
+                    {
+                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint3", player.name));
+                    }
+                    // The player is very close to the hunter's location
+                    if (player.ZoneJungle || player.ZoneGlowshroom)
+                    {
+                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterClose", player.name));
                     }
                 }
-                else
-                {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint3", player.name));
-                }
-
             }
 
             // If the help chat is empty
@@ -374,23 +489,61 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void SetChatButtons(ref string button, ref string button2)
         {
-            button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Button1");
-            button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Button2");
+            if (nextMessage.Count > 0)
+            {
+                // Switch the continue button to be the button the player originally pressed
+                if (helpButtonPressed)
+                {
+                    button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NextButtonContinue");
+                    button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NextButtonExit");
+                }
+                else
+                {
+                    button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NextButtonExit");
+                    button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NextButtonContinue");
+                }
+            }
+            else // Default buttons
+            {
+                button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ButtonHelp");
+                button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ButtonChat");
+            }
         }
 
         public override void OnChatButtonClicked(bool button, ref string shopName)
         {
             string message;
 
-            if (button)
+            // There is dialogue in the queue
+            if (nextMessage.Count > 0)
+            {
+                // Exit dialogue pressed
+                if (button && !helpButtonPressed)
+                {
+                    nextMessage.Clear();
+                    message = GetChat();
+                }
+                // Continue pressed
+                else
+                {
+                    message = nextMessage[0];
+                    nextMessage.RemoveAt(0);
+                }
+            }
+            // Help pressed
+            else if (button)
             {
                 message = GetHelp();
+                helpButtonPressed = true;
             }
+            // Chat pressed
             else
             {
                 message = GetChat();
+                helpButtonPressed = false;
             }
 
+            // Display the message 
             Main.npcChatText = message;
         }
         public override bool CanChat()
@@ -413,6 +566,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             SetPos();
 
+            // Despawn Miakoda
             if (lastPlayerPos != player.position)
             {
                 NPC.timeLeft = 0;

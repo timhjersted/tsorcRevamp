@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.BossItems
@@ -46,7 +47,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 return false;
             }
-            if (tsorcRevampWorld.NewSlain == null || tsorcRevampWorld.NewSlain.Keys.Count == 0)
+            if (tsorcRevampWorld.NewSlain == null || (tsorcRevampWorld.NewSlain.Keys.Count == 0 && !(ModContent.GetInstance<tsorcRevampConfig>().DebugMode || player.HasItem(ModContent.ItemType<DebugTome>()))))
             {
                 UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.None"));
                 return false;

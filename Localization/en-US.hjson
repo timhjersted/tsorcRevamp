@@ -10268,8 +10268,10 @@ Mods: {
 			MiakodaNPC: {
 				DisplayName: Miakoda
 				Name1: Miakoda
-				Button1: Help
-				Button2: Chat
+				ButtonHelp: Help
+				ButtonChat: Chat
+				NextButtonExit: Exit
+				NextButtonContinue: Continue
 				Quote1:
 					'''
 					I was once the Spirit of the Moon, free, unshackled. Even though now I'm limited to this doll, my connections to the spirits of the world remain.
@@ -10294,39 +10296,37 @@ Mods: {
 					'''
 				FullMoonForm:
 					'''
-					I drink in the light of the full moon. 
-					Under its gaze all wounds shall be healed.
+					As a spirit of the Full Moon, I drink its light.
+					Under the gaze of the Moon all wounds shall be healed.
 					'''
 				CrescentMoonForm:
 					'''
 					The moon... It shifts. Light warps into a cutting crescent.
-					This distortion will follow your blade.
+					As an embodiment of the crescent, I shall guide its distortion to follow your blade.
 					'''
 				NewMoonForm:
 					'''
 					Empty, so empty. The moon yearns for what it cannot have.
 					Fight quickly, for the moon will shield you in your time of need and devour that which is otherwise lost.
+					With it, I shall fill your coffers.
 					'''
 				ArazSuspicion:
 					'''
 					That Wizard you found in the Wyvern Mage Fortress... I doubt the truth of his words.
 					The Elemental Crests, they are a cornerstone to the natural magic that flows through the world.
-					Why now are they inscribed with riddles, inscribed with human magic?
-					Moreover how would their combination weaken the Mindflayer King? 
+					Why now are they inscribed with riddles, inscribed with human magic? Moreover how would their combination weaken the Mindflayer King?
 					'''
 				LunaticCultist:
 					'''
 					Have you seen that acursed man, that raving lunatic!?
-					He shackled me into this doll just because I refused to serve that God of his... 
+					He shackled me into this doll just because I refused to serve that God of his...
 					It calls itself The Moon Lord? Only in its dreams!
 					'''
 				BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of The Forgotten City.
 				JungleWyvern:
 					'''
-					An ancient beast guards The Forgotten City. 
-					It holds a Ring that was enchanted with powerful revitalizing magic.
-					Those who wear it are fabled to possess unending stamina and unparalleled grace.
-					You should go and wield its powers for yourself.
+					An ancient beast guards The Forgotten City. It holds a Ring that was enchanted with powerful revitalizing magic.
+					Those who wear it are fabled to possess unending stamina and unparalleled grace! You should go and wield its powers for yourself.
 					'''
 				JungleWyvernBiomeHint:
 					'''
@@ -10339,19 +10339,26 @@ Mods: {
 					I dare not say what this might mean. {0}, you must ensure great caution in whatever you do.
 					The MindFlayer King, his ambitions... They are truly darker than they appear on the surface.
 					'''
-				WifeRescued:
+				WifeRescuedPart1:
 					'''
-					That evil one, he manipulates you. Your friend, Aaron, laced with the magic to unleash hell upon the world.
+					That evil one, he manipulates you. Your old friend, Aaron, mind controlled and laced with the magic to unleash hell upon the world.
 					Your brother, convinently armed with the knowledge of your wife's survival.
 					And your poor wife, who after enduring so much is able to tell you of the knowledge he so desperately sought.
-					Gather the crests, but do not offer them up to summon The Mindflayer King. 
+					'''
+				WifeRescuedPart2:
+					'''
+					Gather the crests, but do not offer them up to summon The Mindflayer King.
+					The revenge you seek is not worth it!
 					I fear of what may come if you keep playing into his schemes...
 					'''
-				WallofFleshBiomeHint:
+				WallofFleshBiomeHintPart1:
 					'''
 					Deep under the Forgotten City lies a land corrupted by the Flame of the Abyss, The Underworld.
 					It is said that this is where the Witch of Izalith mistakenly created this evil that seeks to consume all.
-					You wish murder on that Betrayer, Aaron, yes? Find this land and offer up that Stone of Protection he so mockingly gave to you at an Altar somewhere deep within.
+					'''
+				WallofFleshBiomeHintPart2:
+					'''
+					You wish murder on the betrayer, Aaron, yes? Find this land and offer up that Stone of Protection he so mockingly gave to you at an Altar somewhere deep within.
 					He shall be butchered like a chicken by the Power of Chaos.
 					'''
 				WallofFleshJungleLeverHint: There should be another way up into The Forgotten City that opens the final gate from The Underworld.
@@ -10363,35 +10370,53 @@ Mods: {
 				SolidWallsHiddenPathsHint:
 					'''
 					Keep an eye out for hidden paths within the world. Most are adorned with Crystals - a consequence of the buried power accumulated within.
-					However some mischevious spirits harvest the crystals for themselves and obscure the path with illusionary magic. 
+					However some mischevious spirits harvest the crystals for themselves and obscure the path with illusionary magic.
 					They cannot fool a keen and courageous explorer. Walk up to any suspicious walls and press up against them - their magic will not withstand such a test.
 					'''
-				ProjectileHiddenPathsHint:
+				ProjectileHiddenPathsHintPart1:
 					'''
-					If you see a gate that isn't locked behind levers, switches, or key, do not fret! There might be another way.
-					The people of Izalith lived underground, they were known for their whismical mastery of magic. 
-					Some of their tunnels were only acessible by striking a teal plate, usually hidden around a couple of corners or above the gate.
-					They took pride in using controllable magic to access these paths, but a poorly hidden one could be struck by a bow and arrow too.
+					If you see a gate that isn't locked behind levers, switches, or key, do not fret! There might be another way!
+					The most ancient of hidden paths were constructed by the people of Izalith.
+					They lived underground and were known for their whismical mastery of magic.
+					'''
+				ProjectileHiddenPathsHintPart2:
+					'''
+					Their tunnels were only acessible by striking a teal plate, usually hidden around a couple of corners or above the gate.
+					They took pride in using controllable magic to access these paths, but a poorly hidden one could be struck by a mundane projectile too.
 					'''
 				BreakableBlocksHint:
 					'''
-					Your pickaxe is a useful tool, capable of tearing down thin walls with ease. 
+					Your pickaxe is a useful tool, capable of tearing down thin walls with ease.
 					There are certain materials however I think you could destroy without having to worry about thickness.
 					Sand, Slush, and Transparent Ice should be easy to tunnel through freely.
 					'''
 				ShadowKeyHint:
 					'''
 					Certain chests require a certain kind of key, given only to those aknowledged by Skeletron, the first of the dead.
-					While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean. 
+					While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean.
 					I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...
 					'''
-				HardmodeLore:
+				HardmodeLorePart1:
 					'''
 					After you sliced through the wall that seperated the mortal realm from the supernatural, 8 beings of great power awakened from their slumber.
-					They have linked themselves to the elements, feeding on the world to grow ever stronger. 
+					They have linked themselves to the elements, feeding on the world to grow ever stronger.
+					'''
+				HardmodeLorePart2:
+					'''
 					Their combined power burdens the First Flame, and if they remain awake this Era will soon be plunged into eternal darkness.
-					You must find The Awakened, slaughter them, and gather their elemental crests. 
-					Their remains hold the key to heal this shattered realm.
+					You must find The Awakened, defeat them in battle, and gather their elemental crests. The remains hold the key to heal this shattered realm.
+					'''
+				3WingsLorePart1:
+					'''
+					Do you wish to know more about The Awakened? I will start with the first of the Awakened, the Three Wings.
+					The Rage is the Legendary Phoenix, embodiment of Anger, Passion, and Fire. It possesses the Legendary Power of Rebirth. Even when slain, it will immediately begin the cycle of life renewed as an Egg.
+					The Sorrow is the embodiment of Sadness, Despair, and Water. Not much is known about this Wing, except it is adorned by a golden hairpin that it protects with its life.
+					'''
+				3WingsLorePart2:
+					'''
+					The Hunter is the strongest of The Three Wings, embodiment of Pride and the Law of the Jungle. Its contempt prevades the world, limiting the ability of flight for all those it deems as prey.
+					If any of them take enough damage, their natural defenses will activate. This will enrage them and increase the damage of all their attacks!
+					Be cautious, all of them are formidable adversaires.
 					'''
 				RageBiomeHint:
 					'''
@@ -10401,7 +10426,7 @@ Mods: {
 				RageEscapeHell:
 					'''
 					Well done {0}! Defeating that abomination had consequences, however. I can sense great magic penetrating this realm.
-					No... This must have been a trap. Go to the east side of the underworld; you should be able to walk over the hell stone bridge now. 
+					No... This must have been a trap. Go to the east side of the underworld; you should be able to walk over the hell stone bridge now.
 					I can feel our path leads us there.
 					'''
 				RageDeeperHint:
@@ -10409,11 +10434,15 @@ Mods: {
 					The spirits of the cavern move through the Hallow, gathering beneath hidden depths to resist a formidable adversary.
 					Go deeper into the Hallow. The Rage awaits beneath our feet.
 					'''
-				SorrowBiomeHint:
+				SorrowBiomeHintPart1:
 					'''
 					Our journey takes us further East. The next of the Awakened, The Sorrow, took nest deep below the Frozen Ocean.
-					The Wyvern Mage, ally of the Mindflayer King, occupies a mountain fortress shrouded in many magics.
-					The spirits can tell me no more. I fear this is a death trap {0}... There must be another way.
+					Unfortunately our way forward is currently barricaded.
+					'''
+				SorrowBiomeHintPart2:
+					'''
+					The Wyvern Mage, ally of the Mindflayer King, occupies a mountain fortress shrouded in invisible death that stands between us and the Eastern Ocean.
+					The spirits can tell me no more. I fear this is a death trap, {0}... There must be another way through the mountain.
 					'''
 				SorrowEastHint:
 					'''
@@ -10438,6 +10467,16 @@ Mods: {
 					The Orspeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
 					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
 					It will be dangerous {0}, be safe.
+					'''
+				FireWalkHint:
+					'''
+					You should dive into the Nora Sea. Before it was washed away by a tidal storm, there used to be a town there.
+					I'm sure Nora would bless an adventurer courageous enough to explore its depths with the ability to walk on Water and Fire like he did for the people who lived there long ago.
+					'''
+				HunterClose:
+					'''
+					Keep going {0}, I can feel it, we are close! Be cautious however, The Hunter is the strongest of the three wings.
+					I can feel the presence of another beast as well - it won't be alone.
 					'''
 				CannotHelp: You have done well, {0}, I have no more advice to offer you.
 				ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
