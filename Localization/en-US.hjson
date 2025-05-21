@@ -10269,11 +10269,15 @@ Mods: {
 				Name1: Miakoda
 				Button1: Help
 				Button2: Chat
-				Quote1: Hey, listen! ... At least that's what I might say if I were 95 years younger...
+				Quote1:
+					'''
+					I was once the Spirit of the Moon, free, unshackled. Even though now I'm limited to this doll, my connections to the spirits of the world remain.
+					If you ever need a helping hand on your journey, feel free to just ask. I can give you a couple of tips or guide you to where you need to go next.
+					'''
 				Quote2:
 					'''
 					These items you sometimes find {0}, that appear useless... don't be so quick to assume.
-					If it can be crafted into something new with dark souls, it may be worth investigating its hidden potential...
+					If it can be crafted into something new with dark souls, it may be worth investigating its hidden potential.
 					'''
 				Quote3:
 					'''
@@ -10325,7 +10329,7 @@ Mods: {
 					'''
 				JungleWyvernBiomeHint:
 					'''
-					The Forgotten City is to the left and down from where you fought The Last of the Dead, Skeletron.
+					The Forgotten City is to the left and down from where you fought The First of the Dead, Skeletron.
 					We should go there next and see what we can find.
 					'''
 				HMWifeNotRescued:
@@ -10413,9 +10417,28 @@ Mods: {
 				SorrowEastHint:
 					'''
 					I underestimated you {0}! You made it past the secret magic of the Wyvern Mage and cleared a path towards the Frozen Ocean!
-					All that is left is to head to the east and dive deep beneath the waters, The Sorrow awaits us.
+					All that is left is to head a little further east and dive deep beneath the waters: The Sorrow awaits us.
 					'''
 				SorrowDeeperHint: We should explore deep into the Ocean. I feel an icy power radiating within its depths.
+				HunterBiomeHint:
+					'''
+					Beneath the burning sun, black smoke with a violet glow illuminates the path. Hearing that, I can only think of the tribe that once lived within the Western Desert.
+					To get there, you must travel past the Adamantine gates of the Corruption to seek their prior dwellings.
+					'''
+				HunterBiomeHint2:
+					'''
+					The Orspeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
+					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
+					If you don't have a way to cross lava, delving deep into their tunnels would be a fool's errand.
+					Maybe we can find something to help further to the west!
+					'''
+				HunterBiomeHint3:
+					'''
+					The Orspeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
+					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
+					It will be dangerous {0}, be safe.
+					'''
+
 				CannotHelp: You have done well, {0}, I have no more advice to offer you.
 				ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
 			}
@@ -10757,6 +10780,7 @@ Mods: {
 			"Necromancers Spell.DisplayName": Necromancers Spell
 			"Krakens Cast.DisplayName": Krakens Cast
 			"Witchking Scream.DisplayName": Witchking Scream
+			"Print Position.DisplayName": Print Position (Debug Mode Only)
 		}
 
 		InfoDisplays: {

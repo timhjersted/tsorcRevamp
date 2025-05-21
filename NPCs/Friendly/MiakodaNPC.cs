@@ -221,9 +221,9 @@ namespace tsorcRevamp.NPCs.Friendly
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.LunaticCultist"));
             }
 
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2", player.name));
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote3"));
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote4"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2", player.name));
 
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ProjectileHiddenPathsHint"));
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
@@ -338,6 +338,28 @@ namespace tsorcRevamp.NPCs.Friendly
             // The player has to head over to the western side of the world to find The Hunter.
             else if (!BossDefeated(ModContent.NPCType<TheHunter>()))
             {
+                // Player is to the East of the Desert
+                if ((int)player.position.X / 16 > 2700)
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint"));
+                }
+                else
+                // Player is at the Desert
+                // The player cannot walk on lava
+                if (!player.waterWalk2)
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint2"));
+
+                    // The player is looking for a way to walk on lava
+                    if ((int)player.position.X / 16 < 1240)
+                    {
+                        
+                    }
+                }
+                else
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint3", player.name));
+                }
 
             }
 

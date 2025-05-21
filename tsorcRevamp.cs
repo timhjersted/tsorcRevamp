@@ -113,6 +113,7 @@ namespace tsorcRevamp
         public static ModKeybind WolfRing;
         public static ModKeybind WingsOfSeath;
         public static ModKeybind Shunpo;
+        public static ModKeybind PrintPosition;
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         internal bool UICooldown = false;
@@ -247,6 +248,7 @@ namespace tsorcRevamp
             KrakensCast = KeybindLoader.RegisterKeybind(this, "Krakens Cast", Microsoft.Xna.Framework.Input.Keys.V);
             Shunpo = KeybindLoader.RegisterKeybind(this, "Shunpo", Microsoft.Xna.Framework.Input.Keys.V);
             //SwordflipKey = KeybindLoader.RegisterKeybind(this, "Sword Flip", Microsoft.Xna.Framework.Input.Keys.P);
+            PrintPosition = KeybindLoader.RegisterKeybind(this, "Print Position", Microsoft.Xna.Framework.Input.Keys.P);
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulCoin>(), 99999L));
 
@@ -1453,6 +1455,7 @@ namespace tsorcRevamp
             WolfRing = null;
             WingsOfSeath = null;
             Shunpo = null;
+            PrintPosition = null;
             KillAllowed = null;
             PlaceAllowed = null;
             Unbreakable = null;

@@ -10265,11 +10265,15 @@ Mods: {
 				// Name1: Miakoda
 				// Button1: Help
 				// Button2: Chat
-				// Quote1: Hey, listen! ... At least that's what I might say if I were 95 years younger...
+				/* Quote1:
+					'''
+					I was once the Spirit of the Moon, free, unshackled. Even though now I'm limited to this doll, my connections to the spirits of the world remain.
+					If you ever need a helping hand on your journey, feel free to just ask. I can give you a couple of tips or guide you to where you need to go next.
+					''' */
 				/* Quote2:
 					'''
 					These items you sometimes find {0}, that appear useless... don't be so quick to assume.
-					If it can be crafted into something new with dark souls, it may be worth investigating its hidden potential...
+					If it can be crafted into something new with dark souls, it may be worth investigating its hidden potential.
 					''' */
 				/* Quote3:
 					'''
@@ -10409,9 +10413,16 @@ Mods: {
 				/* SorrowEastHint:
 					'''
 					I underestimated you {0}! You made it past the secret magic of the Wyvern Mage and cleared a path towards the Frozen Ocean!
-					All that is left is to head to the east and dive deep beneath the waters, The Sorrow awaits us.
+					All that is left is to head a little further east and dive deep beneath the waters: The Sorrow awaits us.
 					''' */
 				// SorrowDeeperHint: We should explore deep into the Ocean. I feel an icy power radiating within its depths.
+				/* HunterBiomeHint:
+					'''
+					Beneath the burning sun, black smoke with a violet glow illuminates the path. Hearing that, I can only think of the tribe living within the Western Desert.
+					The Orspeak built underneath the desert to escape the harsh sunlight above; their walls were adorned in soft purple lighting.
+					To get there, you must travel past the Adamantine gates of the Corruption to seek their prior dwellings.
+					Unfortunately, they were one of the first to fall against the Abyss. Stay safe {0}, it will be dangerous.
+					''' */
 				// CannotHelp: You have done well, {0}, I have no more advice to offer you.
 				// ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
 			}
@@ -10753,6 +10764,7 @@ Mods: {
 			"Necromancers Spell.DisplayName": 巫妖王之咒
 			"Krakens Cast.DisplayName": 海妖之怒
 			"Witchking Scream.DisplayName": 巫师尖啸
+			// "Print Position.DisplayName": Print Position
 		}
 
 		InfoDisplays: {

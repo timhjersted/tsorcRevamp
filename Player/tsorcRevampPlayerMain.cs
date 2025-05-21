@@ -1324,6 +1324,13 @@ namespace tsorcRevamp
         {
             Player player = Main.player[Main.myPlayer];
             Vector2 unitVectorTowardsMouse = player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * player.direction);
+
+            if (tsorcRevamp.PrintPosition.JustPressed && ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            {
+                string text = "Player position: X = " + ((int)Player.position.X / 16).ToString() + ", Y = " + ((int)Player.position.Y / 16).ToString();
+                UsefulFunctions.BroadcastText(text);
+            }
+
             if (tsorcRevamp.toggleDragoonBoots.JustPressed)
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
