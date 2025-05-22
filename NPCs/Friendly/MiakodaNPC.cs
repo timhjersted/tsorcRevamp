@@ -182,6 +182,8 @@ namespace tsorcRevamp.NPCs.Friendly
         // For use when adding a multipart message to an AutoWeightedDialogue
         public DialogueHandler dialogue;
         public bool helpButtonPressed;
+        // Don't allow multi-message dialogue for the first chat message or after exit is pressed.
+        public bool longDialogueAllowed;
 
         public override void SetStaticDefaults()
         {
@@ -224,6 +226,7 @@ namespace tsorcRevamp.NPCs.Friendly
             nextMessage = new List<string>();
             dialogue = new DialogueHandler();
             helpButtonPressed = false;
+            longDialogueAllowed = false;
 
             lastPlayerPos = Main.player[Main.myPlayer].position;
 
@@ -241,7 +244,10 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 if (!alreadySaid.Contains(msg.Item1[0]))
                 {
-                    uniqueMsg.Add(msg.Item1);
+                    if (longDialogueAllowed || msg.Item1.Count == 1)
+                    {
+                        uniqueMsg.Add(msg.Item1);
+                    }
                 }
             }
 
@@ -467,7 +473,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
                     // The player cannot walk on lava
-                    if (!(player.waterWalk && player.waterWalk2 || player.fireWalk))
+                    if (!(player.waterWalk && player.waterWalk2))
                     {
                         chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint2"));
 
@@ -488,6 +494,11 @@ namespace tsorcRevamp.NPCs.Friendly
                         chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterClose", player.name));
                     }
                 }
+            }
+            // Player has 
+            else if (!BossDefeated(NPCID.TheDestroyer))
+            {
+                // 
             }
 
             // If the help chat is empty
@@ -533,6 +544,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (button && !helpButtonPressed)
                 {
                     nextMessage.Clear();
+                    longDialogueAllowed = false;
                     message = GetChat();
                 }
                 // Continue pressed
@@ -554,6 +566,8 @@ namespace tsorcRevamp.NPCs.Friendly
                 message = GetChat();
                 helpButtonPressed = false;
             }
+
+            longDialogueAllowed = true;
 
             // Display the message 
             Main.npcChatText = message;
