@@ -301,12 +301,12 @@ namespace tsorcRevamp
 
         public bool GiveBossZen;
         private bool BossZenInternal = false;
-        public bool BossZenBuff 
+        public bool BossZenBuff
         {
             get { return BossZenInternal; }
             // Boss Zen internal is only set to true if the config setting is enabled.
             // This overrides all the instances where the player is directly acessed to apply boss zen
-            set { BossZenInternal = ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig && value; } 
+            set { BossZenInternal = ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig && value; }
         }
 
         public bool MagicWeapon;
@@ -410,7 +410,12 @@ namespace tsorcRevamp
         public bool HadBuffAmmoBox;
         public bool HadBuffStrategist;
 
-        public bool EnterTheAbyss = false;
+        public bool EnterTheAbyss;
+
+        // 3 seconds until sinking
+        public int LavaWalkTimer = 60 * 3;
+        public int LavaWalkCount = 0;
+        public bool WaterWalkingBoots;
 
         public override void ResetEffects()
         {
@@ -437,7 +442,7 @@ namespace tsorcRevamp
             UndeadTalisman = false;
 
             SteraksGage = false;
-            InfinityEdge = false; 
+            InfinityEdge = false;
             LudensTempest = false;
             Goredrinker = false;
 
@@ -476,7 +481,7 @@ namespace tsorcRevamp
             CelestialCloak = false;
 
             CanUseItemsWhileDodging = false;
-            
+
             Witch = false;
 
             Lich = false;
@@ -489,7 +494,7 @@ namespace tsorcRevamp
 
             WaspPower = false;
             DemonPower = false;
-            
+
             HollowSoldierAgility = false;
             SmoughShieldSkills = false;
             BurdenOfSmough = false;
@@ -521,7 +526,7 @@ namespace tsorcRevamp
             MagicWeapon = false;
             GreatMagicWeapon = false;
             CrystalMagicWeapon = false;
-            ReboundProjectile =false;
+            ReboundProjectile = false;
 
             ShadowmoonCloak = false;
             manaShield = 0;
@@ -571,6 +576,7 @@ namespace tsorcRevamp
             CurrentAuraState = tsorcAuraState.None;
 
             gilled = false;
+            WaterWalkingBoots = false;
         }
         public override void PreUpdate()
         {
@@ -851,20 +857,20 @@ namespace tsorcRevamp
 
             if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.PinkDungeonSlab)
             {
-                Player.AddBuff(BuffID.Darkness, 5*60);
-                Player.AddBuff(BuffID.WitheredArmor, 5*60);
+                Player.AddBuff(BuffID.Darkness, 5 * 60);
+                Player.AddBuff(BuffID.WitheredArmor, 5 * 60);
             }
 
             if (tsorcRevampWorld.SuperHardMode && Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.HeavenforgeBrickWall)
             {
-                Player.AddBuff(BuffID.Darkness, 5*60);
-                Player.AddBuff(BuffID.WitheredArmor, 5*60); 
+                Player.AddBuff(BuffID.Darkness, 5 * 60);
+                Player.AddBuff(BuffID.WitheredArmor, 5 * 60);
             }
 
             if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.StarRoyaleBrickWall)
             {
-                Player.AddBuff(BuffID.Darkness, 5*60);
-                Player.AddBuff(BuffID.WitheredArmor, 5*60);
+                Player.AddBuff(BuffID.Darkness, 5 * 60);
+                Player.AddBuff(BuffID.WitheredArmor, 5 * 60);
             }
 
             if (Player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0)
@@ -876,7 +882,7 @@ namespace tsorcRevamp
                 {
                     int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>(), damage, 0, Player.whoAmI);
                     Main.projectile[p].originalDamage = damage;
-                }    
+                }
             }
 
             if (Player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>()] == 0)
@@ -902,7 +908,7 @@ namespace tsorcRevamp
                 tsorcRevampWorld.EnteredHell = true;
             }
 
-            if (!tsorcRevampWorld.TalkedToAraz && UsefulFunctions.PlayerInZone(Player, 7290, 7340, 590, 610)) 
+            if (!tsorcRevampWorld.TalkedToAraz && UsefulFunctions.PlayerInZone(Player, 7290, 7340, 590, 610))
             {
                 tsorcRevampWorld.TalkedToAraz = true;
             }
@@ -1362,7 +1368,7 @@ namespace tsorcRevamp
             {
                 // Should allow for a single jump, just nothing while midair.
 
-                Player.wingTime = 0; 
+                Player.wingTime = 0;
                 Player.moveSpeed *= 0.8f;
 
                 Player.canRocket = false;
@@ -1515,7 +1521,7 @@ namespace tsorcRevamp
                 }
 
                 Vector2 centerOffset = new Vector2(Player.Center.X + 2 - Player.width / 2, Player.Center.Y + 6 - Player.height / 2);
-                const float circleRadius = 150f; 
+                const float circleRadius = 150f;
                 const int dustType = 235;
                 const int particleCount = 30;
 
@@ -1693,7 +1699,7 @@ namespace tsorcRevamp
                 Player.statLifeMax2 += (int)(Player.statLifeMax2 * Items.Accessories.Defensive.Rings.ZirconRing.MaxLifeIncrease / 100f);
             }
 
-                if (CurseActive || powerfulCurseActive)
+            if (CurseActive || powerfulCurseActive)
             {
                 AddCurseStats();
                 //liferegen is in updateliferegen function
@@ -1719,6 +1725,85 @@ namespace tsorcRevamp
                         other.velocity = newVec * other.velocity.Length();
 
                         CombatText.NewText(playerRect, Color.White, LangUtils.GetTextValue("UI.Rebound"));
+                    }
+                }
+            }
+
+            if (WaterWalkingBoots)
+            {
+                if (LavaWalkCount < LavaWalkTimer)
+                {
+                    Player.waterWalk = true;
+                    Player.waterWalk2 = true;
+                }
+
+                bool walkingOnLava = false;
+                bool onSolidGround = false;
+                bool insideLava = false;
+
+                int startX = (int)(Player.position.X / 16f) - 1;
+                int endX = (int)((Player.position.X + (float)Player.width) / 16f) + 1;
+
+                int startY = (int)(Player.position.Y / 16f);
+                int endY = (int)((Player.position.Y + (float)Player.height) / 16f) + 1;
+
+                startX = Utils.Clamp(startX, 0, Main.maxTilesX - 1);
+                endX = Utils.Clamp(endX, 0, Main.maxTilesX - 1);
+
+                startY = Utils.Clamp(startY, 0, Main.maxTilesY - 1);
+                endY = Utils.Clamp(endY, 0, Main.maxTilesY - 1);
+
+                for (int x = startX; x < endX; x++)
+                {
+                    for (int y = startY; y < endY; y++)
+                    {
+                        Tile tileBelow = Framing.GetTileSafely(x, y);
+                        Tile tileOnPlayer = Framing.GetTileSafely(x, y - 1);
+
+                        if (Player.velocity.Y == 0)
+                        {
+                            if (tileBelow.LiquidType == LiquidID.Lava)
+                            {
+                                walkingOnLava = true;
+                            }
+                            // Player is standing on something that isnt lava
+                            else
+                            {
+                                onSolidGround = true;
+                            }
+                        }
+                        if (tileOnPlayer.LiquidType == LiquidID.Lava)
+                        {
+                            insideLava = true;
+                        }
+                    }
+                }
+
+                Vector2 offset = new Vector2(0, 16);
+
+                offset.X += Main.rand.Next(-8, 9);
+                offset.Y += Main.rand.Next(-1, 2);
+
+                // Player is touching lava / walking on it, increase the lava count
+                if ((walkingOnLava || insideLava && !onSolidGround) && LavaWalkCount < LavaWalkTimer)
+                {
+                    LavaWalkCount++;
+
+                    // If the time remaining is greater than 25%, generate a dust visual for the player.
+                    if (Main.rand.Next(5) == 0 && LavaWalkTimer - LavaWalkCount > (int)(LavaWalkTimer * .25f))
+                    {
+                        Dust.NewDustPerfect(Player.Center + offset, DustID.RedTorch);
+                    }
+                }
+                // Regenerate the lava count slower than it was used
+                if (LavaWalkCount > 0 && !(insideLava || walkingOnLava) && Main.rand.Next(2) == 0)
+                {
+                    LavaWalkCount--;
+
+                    // More dust if the boots are almost fully regened
+                    if (Main.rand.Next(5) == 0 || LavaWalkCount < LavaWalkTimer / 20)
+                    {
+                        Dust.NewDustPerfect(Player.Center + offset, DustID.BlueTorch);
                     }
                 }
             }

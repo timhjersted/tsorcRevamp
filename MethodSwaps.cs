@@ -1463,13 +1463,10 @@ namespace tsorcRevamp
                 modPlayer.PapyrusScarab = true;
             }
             // Lets player walk on Lava as well.
-            /*
             if (currentItem.type == ItemID.WaterWalkingBoots) 
             {
-                self.waterWalk = true;
-                self.waterWalk2 = true;
+                modPlayer.WaterWalkingBoots = true;
             }
-            */
             orig(self, currentItem, hideVisual);
         }
 
