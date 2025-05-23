@@ -133,14 +133,17 @@ namespace tsorcRevamp.NPCs.Friendly
     class DialogueHandler
     {
         List<string> _dialogueInternal = null;
-        bool _dialogueResetFlag = false;
-
         List<string> _dialogue
         {
             get
             {
-                _dialogueResetFlag = true;
-                return _dialogueInternal;
+                List<string> dialogue = _dialogueInternal;
+                _dialogueInternal = null;
+
+                if (dialogue == null)
+                    dialogue = new List<string>();
+
+                return dialogue;
             }
         }
 
@@ -153,12 +156,6 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public DialogueHandler Add(string message)
         {
-            if (_dialogueResetFlag)
-            {
-                _dialogueInternal = null;
-                _dialogueResetFlag = false;
-            }
-
             if (_dialogueInternal == null)
                 _dialogueInternal = new List<string>();
 
@@ -495,7 +492,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     }
                 }
             }
-            // Player has 
+            // Player is looking for the temple of the destroyer
             else if (!BossDefeated(NPCID.TheDestroyer))
             {
                 // 

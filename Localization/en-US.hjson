@@ -482,7 +482,7 @@ Mods: {
 					OnUseText3: The Triad only awakens at night...
 				}
 
-				WaterWalkingBoots: Also provides the ability to walk on lava
+				WaterWalkingBoots: Also provides the ability to temporarily walk on lava
 				ChlorophyteMaskSet:
 					'''
 					Summons a powerful leaf crystal to shoot at nearby enemies
