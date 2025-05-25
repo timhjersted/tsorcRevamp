@@ -7866,6 +7866,11 @@ Mods: {
 					The truth will never escape your sight.
 					'''
 			}
+
+			SpearOfMage: {
+				Tooltip: ""
+				DisplayName: Enigma Spear of Mage
+			}
 		}
 
 		Buffs: {
@@ -9484,6 +9489,11 @@ Mods: {
 			HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
 			DivineBoltProjectile.DisplayName: Divine Bolt Projectile
 			WitchkingMaceProjectile.DisplayName: Witchking Mace Projectile
+			SpearOfMage.DisplayName: Spear Of Mage
+			RedLightning.DisplayName: Red Lightning
+			PurpleMagicProj.DisplayName: Purple Magic Proj
+			GhostWyvernProj.DisplayName: Ghost Wyvern Proj
+			RedRainProj.DisplayName: Red Rain Proj
 		}
 
 		NPCs: {

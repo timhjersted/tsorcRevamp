@@ -680,7 +680,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             for (int i = 0; i < 100; i++)
             {
-                int dust = Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 89, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 9f);
+                int dust = Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 89, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 6f);
                 Main.dust[dust].noGravity = true;
             }
             for (int i = 0; i < 100; i++)

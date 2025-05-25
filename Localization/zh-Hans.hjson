@@ -7862,6 +7862,11 @@ Mods: {
 					真相永无遁形
 					'''
 			}
+
+			SpearOfMage: {
+				// Tooltip: ""
+				// DisplayName: Spear Of Mage
+			}
 		}
 
 		Buffs: {
@@ -9480,6 +9485,11 @@ Mods: {
 			HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
 			DivineBoltProjectile.DisplayName: Divine Bolt Projectile
 			WitchkingMaceProjectile.DisplayName: Witchking Mace Projectile
+			// SpearOfMage.DisplayName: Spear Of Mage
+			// RedLightning.DisplayName: Red Lightning
+			// PurpleMagicProj.DisplayName: Purple Magic Proj
+			// GhostWyvernProj.DisplayName: Ghost Wyvern Proj
+			// RedRainProj.DisplayName: Red Rain Proj
 		}
 
 		NPCs: {

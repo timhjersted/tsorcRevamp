@@ -6,16 +6,15 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class EnchantedThrowingSpear : ModProjectile
+    class SpearOfMage : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 3;
         }
         public override void SetDefaults()
         {
-            Projectile.width = 45;
-            Projectile.height = 45;
+            Projectile.width = 22;
+            Projectile.height = 138;
             Projectile.timeLeft = 120;
             Projectile.light = 0.5f;
             Projectile.friendly = true;
@@ -49,16 +48,5 @@ namespace tsorcRevamp.Projectiles
             }
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90f); //simplified rotation code (no trig!)
         }
-        public override void OnKill(int timeLeft)
-        {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-            for (int i = 0; i < 10; i++)
-            {
-                Vector2 projPosition = new Vector2(Projectile.position.X, Projectile.position.Y);
-                Dust.NewDust(projPosition, Projectile.width, Projectile.height, 15, 0f, 0f, 0, default, 1f);
-            }
-        }
-
     }
-
 }

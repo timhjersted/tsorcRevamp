@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Armors
         //It's set up like this to enable mix and matching (and to keep all its stat changes in one place)
         public static void ApplyDragoonSetBonus(Player player)
         {
-            player.lavaImmune = true;
+            player.lavaRose = true;
             player.fireWalk = true;
             player.breath = 9999999;
             player.waterWalk = true;

@@ -31,6 +31,7 @@ using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
 using tsorcRevamp.Projectiles.Enemy.Triad;
+using tsorcRevamp.Projectiles.Enemy.WyvernMage;
 using tsorcRevamp.Projectiles.Magic;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.UI;
@@ -1706,6 +1707,14 @@ namespace tsorcRevamp
                     {
                         //I really should just make one "Lightning" class that all these inherit from
                         //But also ¯\_(ツ)_/¯
+                        if (Main.projectile[i].ModProjectile is RedLightning)
+                        {
+                            RedLightning lightning = (RedLightning)Main.projectile[i].ModProjectile;
+                            if (lightning.lightningTarget == null && lightning.branches != null)
+                            {
+                                lightning.CreateRenderTarget();
+                            }
+                        }
                         if (Main.projectile[i].ModProjectile is MarilithLightning)
                         {
                             MarilithLightning lightning = (MarilithLightning)Main.projectile[i].ModProjectile;

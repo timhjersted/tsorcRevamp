@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Armors
             player.pStone = true;
             player.lifeRegen += LifeRegen;
         }
-
+ 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
             return body.type == ModContent.ItemType<DragoonArmor2>() && legs.type == ModContent.ItemType<DragoonGreaves2>();

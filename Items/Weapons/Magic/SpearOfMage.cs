@@ -6,7 +6,7 @@ using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class EnchantedThrowingSpear : ModItem
+    public class SpearOfMage : ModItem
     {
 
         public override void SetStaticDefaults()
@@ -15,14 +15,14 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void SetDefaults()
         {
-            Item.shootSpeed = 13f;
-            Item.damage = 43;
+            Item.shootSpeed = 16f;
+            Item.damage = 66;
             Item.knockBack = 9f;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 20;
-            Item.useTime = 20;
-            Item.width = 64;
-            Item.height = 64;
+            Item.useAnimation = 35;
+            Item.useTime = 35;
+            Item.width = 30;
+            Item.height = 84;
             Item.rare = ItemRarityID.LightRed;
 
             Item.consumable = false;
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
             Item.UseSound = SoundID.Item1;
             Item.value = PriceByRarity.LightRed_4;
-            Item.shoot = ModContent.ProjectileType<Projectiles.EnchantedThrowingSpear>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.SpearOfMage>();
         }
 
         public override void AddRecipes()

@@ -161,14 +161,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gaibon>()))));
 
-
-
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.EnchantedThrowingSpear>())
-            {
-                shopCustomPrice = 2200,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.JungleWyvern.JungleWyvernHead>()))));
-
             shop.Add(new Item(ModContent.ItemType<Items.Ammo.PowerBolt>())
             {
                 shopCustomPrice = 1,

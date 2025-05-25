@@ -3666,6 +3666,7 @@ namespace tsorcRevamp
             RedLaserTransparent,
             LightrifleFire,
             Lightning,
+            RedLightning,
             BulletHellLaser,
             HeavenPiercerGlowmask,
             SoapstoneMessage,
@@ -3723,6 +3724,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.RedLaserTransparent, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser", AssetRequestMode.ImmediateLoad)}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
                 {TransparentTextureType.LightrifleFire, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Magic/LightrifleFire", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.Lightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.RedLightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/WyvernMage/RedLightning", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.BulletHellLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Gwyn/BulletHellLaser", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.HeavenPiercerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/HeavenPiercerGlowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.SoapstoneMessage, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Tiles/SoapstoneMessage_1", AssetRequestMode.ImmediateLoad)},
