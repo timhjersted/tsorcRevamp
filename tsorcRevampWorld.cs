@@ -35,6 +35,10 @@ namespace tsorcRevamp
         public static bool RemixMap;
         public static bool EnteredHell;
         public static bool TalkedToAraz;
+        public static bool EnteredRuinsOfElengad;
+        public static bool EnteredRuinsOfSerris;
+        public static bool EnteredShadowTemple;
+        public static bool EnteredFloodedMachineTemple;
 
         public static List<int> PairedBosses;
 
@@ -106,6 +110,9 @@ namespace tsorcRevamp
             RemixMap = false;
             EnteredHell = false;
             TalkedToAraz = false;
+            EnteredRuinsOfElengad = false;
+            EnteredRuinsOfSerris = false;
+            EnteredFloodedMachineTemple = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -143,6 +150,14 @@ namespace tsorcRevamp
                 world_state.Add("EnteredHell");
             if (TalkedToAraz)
                 world_state.Add("TalkedToAraz");
+            if (EnteredRuinsOfElengad)
+                world_state.Add("EnteredRuinsOfElengad");
+            if (EnteredRuinsOfSerris)
+                world_state.Add("EnteredRuinsOfSerris");
+            if (EnteredShadowTemple)
+                world_state.Add("EnteredShadowTemple");
+            if (EnteredFloodedMachineTemple)
+                world_state.Add("EnteredFloodedMachineTemple");
 
             if (DownedBetsy)
             {
@@ -175,6 +190,10 @@ namespace tsorcRevamp
             OnlyAdventureMap = worldStateList.Contains("OnlyAdventureMap");
             EnteredHell = worldStateList.Contains("EnteredHell");
             TalkedToAraz = worldStateList.Contains("TalkedToAraz");
+            EnteredRuinsOfElengad = worldStateList.Contains("EnteredRuinsOfElengad");
+            EnteredRuinsOfSerris = worldStateList.Contains("EnteredRuinsOfSerris");
+            EnteredShadowTemple = worldStateList.Contains("EnteredShadowTemple");
+            EnteredFloodedMachineTemple = worldStateList.Contains("EnteredFloodedMachineTemple");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)
