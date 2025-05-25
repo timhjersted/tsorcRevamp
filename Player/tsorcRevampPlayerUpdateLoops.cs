@@ -913,6 +913,26 @@ namespace tsorcRevamp
                 tsorcRevampWorld.TalkedToAraz = true;
             }
 
+            if (!tsorcRevampWorld.EnteredRuinsOfElengad && (UsefulFunctions.PlayerInZone(Player, 1630, 1660, 950, 980) || UsefulFunctions.PlayerInZone(Player, 920, 950, 1030, 1060)))
+            {
+                tsorcRevampWorld.EnteredRuinsOfElengad = true;
+            }
+
+            if (!tsorcRevampWorld.EnteredRuinsOfSerris && UsefulFunctions.PlayerInZone(Player, 1420, 1460, 920, 940))
+            {
+                tsorcRevampWorld.EnteredRuinsOfSerris = true;
+            }
+
+            if (!tsorcRevampWorld.EnteredShadowTemple && UsefulFunctions.PlayerInZone(Player, 1890, 1930, 1080, 1120))
+            {
+                tsorcRevampWorld.EnteredShadowTemple = true;
+            }
+
+            if (!tsorcRevampWorld.EnteredFloodedMachineTemple && UsefulFunctions.PlayerInZone(Player, 4600, 4620, 1080, 1110))
+            {
+                tsorcRevampWorld.EnteredFloodedMachineTemple = true;
+            }
+            
             //--------------------
 
             //TODO REMOVE WHEN FINALIZED
@@ -1784,8 +1804,13 @@ namespace tsorcRevamp
                 offset.X += Main.rand.Next(-8, 9);
                 offset.Y += Main.rand.Next(-1, 2);
 
-                // Player is touching lava / walking on it, increase the lava count
-                if ((walkingOnLava || insideLava && !onSolidGround) && LavaWalkCount < LavaWalkTimer)
+                // Increase timer above max if player is floating in Lava
+                if ((insideLava && !walkingOnLava) && LavaWalkCount < (int)(LavaWalkTimer * 1.5f))
+                {
+                    LavaWalkCount++;
+                }
+                // Player is walking on lava, increase the lava count
+                if ((walkingOnLava && !onSolidGround) && LavaWalkCount < LavaWalkTimer)
                 {
                     LavaWalkCount++;
 

@@ -10416,7 +10416,7 @@ Mods: {
 					''' */
 				/* RageBiomeHint:
 					'''
-					Seek out the Hallowed Caverns. Using the Molten Pickaxe dropped by The Wall, break down the colbalt gates.
+					Seek out the Hallowed Caverns. Using the Molten Pickaxe dropped by The Wall, break down the colbalt gates to the east.
 					The spirits tell me The First of The Awakened, The Rage, has made that lair its den.
 					''' */
 				/* RageEscapeHell:
@@ -10449,30 +10449,68 @@ Mods: {
 				/* HunterBiomeHint:
 					'''
 					Beneath the burning sun, black smoke with a violet glow illuminates the path. Hearing that, I can only think of the tribe that once lived within the Western Desert.
-					To get there, you must travel past the Adamantine gates of the Corruption to seek their prior dwellings.
+					To get there, you must travel West past the Adamantine gates of the Corruption to seek their prior dwellings.
 					''' */
-				/* HunterBiomeHint2:
+				/* HunterElengadRuinHint:
 					'''
 					The Orspeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
 					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
 					If you don't have a way to cross lava, delving deep into their tunnels would be a fool's errand.
-					Maybe we can find something to help further to the west!
 					''' */
-				/* HunterBiomeHint3:
+				/* HunterElengadRuinReady:
 					'''
-					The Orspeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
-					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
+					With the ability to walk across Lava unscathed, you are now ready to delve into the Elengad Ruins and hunt the final wing of The Awakened, The Hunter.
 					It will be dangerous {0}, be safe.
 					''' */
 				/* FireWalkHint:
 					'''
-					You should dive into the Nora Sea. Before it was washed away by a tidal storm, there used to be a town there.
+					It seems dangerous to explore the Elengad ruins now, {0}.
+					You should explore further west and dive into the Nora Sea. Before it was washed away by a tidal storm, there used to be a town there.
 					I'm sure Nora would bless an adventurer courageous enough to explore its depths with the ability to walk on Water and Fire like he did for the people who lived there long ago.
 					''' */
 				/* HunterClose:
 					'''
 					Keep going {0}, I can feel it, we are close! Be cautious however, The Hunter is the strongest of the three wings.
 					I can feel the presence of another beast as well - it won't be alone.
+					''' */
+				/* TempleOfSerris:
+					'''
+					The Hidden Temple of Serris...? I last heard about it from a brave soul who dared to delve deep into the Shadow Labrynth. 
+					It is said that earning the recognition of Serris will grant one access to the depths of the Labrynth. 
+					We don't need to go there yet, {0}. This path does not lead to the Hunter.
+					''' */
+				/* DestroyerFromSerris:
+					'''
+					It is said that earning the recognition of Serris will grant one access to the depths of the Labrynth. 
+					The path opened by defeating Serris-X should be somewhere to the east of the Serris ruins, underneath a pool of water.
+					''' */
+				/* DestroyerFromHunter:
+					'''
+					A small sandy cave atop a hill... I'm sure we passed one before {0}, when we were traveling West from the corruption.
+					This one seems easy!
+					''' */
+				/* DestroyerLabrynthGates:
+					'''
+					The Shadow Labrynth is full of gates that require using a switch, lever, or wall-mounted plate to pass through.
+					The one who can navigate the Labrynth is said to earn the right of awakening The Destroyer of Worlds.
+					Unfortunately, it is now one of the awakened. You must destroy before our time runs out.
+					''' */
+				/* DestroyerLabrynthSecretPaths:
+					'''
+					The spirits tell me of two hidden shortcuts within this Labrynth, both shrouded in secrecy. 
+					The first is within an Ancient Greek Cave said to possess a golden mirror that protects against the Serpent's Gaze.
+					The second is beyond a gate near the maw of the Labrynth. It is gaurded by both the Serpent and the Wraith of Shadow.
+					''' */
+				/* DestroyerLabrynthLayout:
+					'''
+					The Shadow Labrynth is said to contain three trials that test those who seek the Destroyer.
+					The Trial of Fire, Water, and Flight. One must master all three before being deemed worthy of its presence.
+					I can only imagine what lies deep within its depths, but I'm sure you can handle it {0}!
+					''' */
+				/* MachineTempleLocationHint:
+					'''
+					Below a broken, familiar bridge huh. {0}, these riddles seem to be tailored to you personally.
+					Maybe you should have a look around your Father's village. It's surely somewhere nearby.
 					''' */
 				// CannotHelp: You have done well, {0}, I have no more advice to offer you.
 				// ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.

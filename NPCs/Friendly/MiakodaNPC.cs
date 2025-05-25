@@ -16,6 +16,8 @@ using tsorcRevamp.Projectiles.Pets;
 using System.Collections;
 using rail;
 using Steamworks;
+using tsorcRevamp.NPCs.Bosses.Serris;
+using tsorcRevamp.NPCs.Bosses.PrimeV2;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -374,7 +376,6 @@ namespace tsorcRevamp.NPCs.Friendly
 
         // The order is important here, the messages added later on in the function are weighted higher than the ones added first
         // Add them later on if you want them to be more likely to be immediately seen by the player upon talking with Miakoda
-
         public string GetHelp()
         {
             AutoWeightedDialogue chat = new AutoWeightedDialogue();
@@ -383,7 +384,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             // Progressive, each if statement is mutually exclusive and tied to different areas of the story.
             // The player just freed Miakoda
-            if (!BossDefeated(ModContent.NPCType<JungleWyvernHead>()))
+            if (!BossDefeated(ModContent.NPCType<JungleWyvernHead>()) && !tsorcRevampWorld.EnteredHell)
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BrotherNotRescued", player.name));
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.JungleWyvern"));
@@ -415,28 +416,39 @@ namespace tsorcRevamp.NPCs.Friendly
             // The player recently killed the Wall of Flesh and activated HardMode
             else if (!BossDefeated(ModContent.NPCType<TheRage>()))
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageEscapeHell", player.name));
+                // The player is speaking to Miakoda while in hell directly after the wall of flesh
+                if (player.ZoneUnderworldHeight && !BossDefeated(NPCID.QueenSlimeBoss))
+                {
+                    // Tell them about the intended progression escape through the jungle
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageEscapeHell", player.name));
+                }
 
+                // Generic hint about the hallow if the player isn't within it
                 if (!player.ZoneHallow)
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageBiomeHint"));
                 }
                 else
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageDeeperHint"));
+                    // Hidden paths present in the hallow lead to underneath the frozen ocean 
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+
+                    // The player is within the hallow, hint the direction to go
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageDeeperHint"));
                 }
             }
             // The player is on their way to the Frozen ocean, either through the secret path from the hallow or through the Wyvern Mage's fortress
             else if (!BossDefeated(ModContent.NPCType<TheSorrow>()))
             {
+                // Hidden paths present in the hallow lead to underneath the frozen ocean
                 if (player.ZoneHallow || player.ZoneSnow)
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
                 }
 
+                // Tell the player about shadow key locations if they don't have one.
                 if (!player.HasItemInAnyInventory(ItemID.ShadowKey))
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
 
@@ -452,7 +464,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowBiomeHintPart2", player.name));
                     chat.Add(dialogue);
                 }
-                else 
+                else // The player defeated the wyvern mage, only the sorrow is left
                 {
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowEastHint", player.name));
                 }
@@ -460,42 +472,96 @@ namespace tsorcRevamp.NPCs.Friendly
             // The player has to head over to the western side of the world to find The Hunter.
             else if (!BossDefeated(ModContent.NPCType<TheHunter>()))
             {
-                // Player is to the East of the Desert
-                if ((int)player.position.X / 16 > 2700)
-                {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint"));
-                }
                 // Player is at the Desert
-                else
+                if ((int)player.position.X / 16 < 2700)
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
-                    // The player cannot walk on lava
-                    if (!(player.waterWalk && player.waterWalk2))
+                    // If the player has found the ruins that lead to the hunter
+                    if (tsorcRevampWorld.EnteredRuinsOfElengad)
                     {
-                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint2"));
-
-                        // The player is looking for a way to walk on lava
-                        if ((int)player.position.X / 16 < 1240)
+                        // If the player cannot walk on lava
+                        if (!((player.waterWalk && player.lavaImmune) || player.waterWalk2))
                         {
-                            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.FireWalkHint"));
+                            // Hint at exploring further west
+                            // Tell them about the water walking boots
+                            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.FireWalkHint", player.name));
+                        }
+                        else if (!(player.ZoneJungle || player.ZoneGlowshroom))
+                        {
+                            // The player is ready to traverse the lava spike area to fight the hunter
+                            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterElengadRuinReady", player.name));
+                        }
+                        else
+                        {
+                            // The player is very close to the hunter's location
+                            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterClose", player.name));
                         }
                     }
-                    // The player is ready to traverse the lava spike area to fight the hunter
+                    // The player has yet to find The Ruins of Elengad
                     else
                     {
-                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint3", player.name));
-                    }
-                    // The player is very close to the hunter's location
-                    if (player.ZoneJungle || player.ZoneGlowshroom)
-                    {
-                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterClose", player.name));
+                        // Sand blocks need to be mined to enter the ruins
+                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+
+                        // Tell the player about the ruins
+                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterElengadRuinHint"));
                     }
                 }
+                else // The player is not within the western desert
+                {
+                    // Tell them to go past the corruption to the desert
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint"));
+                }
+                // The player has found a secret underground area, but not the ruins leading to the hunter
+                if (tsorcRevampWorld.EnteredRuinsOfSerris)
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.TempleOfSerris", player.name));
+                }
             }
-            // Player is looking for the temple of the destroyer
+            // The Destroyer is next, onto the Shadow Temple.
             else if (!BossDefeated(NPCID.TheDestroyer))
             {
-                // 
+                // The player needs to find the shadow temple entrance.
+                if (!tsorcRevampWorld.EnteredShadowTemple)
+                {
+                    // Tell the player about the sandy cave entrance.
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerFromHunter"));
+
+                    // The player defeated the optional boss, the entrance to the Shadow temple is closer
+                    if (BossDefeated(ModContent.NPCType<SerrisX>()))
+                    {
+                        // Tell the player about the underwater entrance
+                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerFromSerris"));
+                    }
+                }
+                // Shadow temple progression hints
+                else
+                {
+                    // Sand block paths serve as a shortcut through the entire dungeon
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+
+                    // A reminder about puzzle solving for the labrynth
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerLabrynthGates"));
+
+                    // Hidden shortcuts hint
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerLabrynthSecretPaths"));
+
+                    // Shadow Labrynth Layout
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerLabrynthLayout", player.name));
+                }
+            }
+            // Flooded Machine Temple
+            else if (!BossDefeated(ModContent.NPCType<TheMachine>()))
+            {
+                // The player has not found the Flooded Machine Temple
+                if (!tsorcRevampWorld.EnteredFloodedMachineTemple)
+                {
+                    // Hint at the location
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.MachineTempleLocationHint", player.name));
+                }
+                else // The player has found the Flooded Machine Temple
+                {
+
+                }
             }
 
             // If the help chat is empty
@@ -534,6 +600,8 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             string message;
 
+            longDialogueAllowed = true;
+
             // There is dialogue in the queue
             if (nextMessage.Count > 0)
             {
@@ -554,17 +622,15 @@ namespace tsorcRevamp.NPCs.Friendly
             // Help pressed
             else if (button)
             {
-                message = GetHelp();
                 helpButtonPressed = true;
+                message = GetHelp();
             }
             // Chat pressed
             else
             {
-                message = GetChat();
                 helpButtonPressed = false;
+                message = GetChat();
             }
-
-            longDialogueAllowed = true;
 
             // Display the message 
             Main.npcChatText = message;
