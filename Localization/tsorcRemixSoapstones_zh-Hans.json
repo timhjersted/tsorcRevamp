@@ -34,10 +34,10 @@
 "style": 1
 }
 {
-  "text": "你拉动杠杆，听到东侧的一扇大门打开，似乎是巫妖王巢穴的入口",
+  "text": "You pull the lever and hear a gate opening to the East that appears to be the entrance to the Lich King's lair.",
   "tileX": 227,
   "tileY": 1796,
-  "textWidth": 480, 
+  "textWidth": 320, 
   "style": 1
 }
 {
@@ -293,7 +293,7 @@
   "style": 1
 }
 {
-  "text": "埃伦加德沙漠遗迹 --NEWLINE   --NEWLINE 你曾经听说过一个叫奥斯匹克的民族的故事， --NEWLINE   --NEWLINE 他们在烈日下的沙漠深处建立了自己的文明，通过隧道网络连接起来。 --NEWLINE   --NEWLINE 没有人知道他们为什么选择这样一个不适宜居住的地方， --NEWLINE   --NEWLINE 但一些人相信，一种神秘的能量在这个地方的下方生长。",
+  "text": "埃伦加德沙漠遗址 --NEWLINE   --NEWLINE 你曾经听说过一个叫奥斯匹克的民族的故事， --NEWLINE   --NEWLINE 他们在烈日下的沙漠深处建立了自己的文明，通过隧道网络连接起来。 --NEWLINE   --NEWLINE 没有人知道他们为什么选择这样一个不适宜居住的地方， --NEWLINE   --NEWLINE 但一些人相信，一种神秘的能量在这个地方的下方生长。",
   "tileX": 1723,
   "tileY": 804,
   "textWidth": 520,
@@ -363,17 +363,10 @@
   "style": 1
 }
 {
-  "text": "- 你抵达了埃伦加德大沙漠 - --NEWLINE   --NEWLINE 回首望向神庙建筑，Miakoda问道： --NEWLINE   --NEWLINE \u0022你认为这些柱子的方向和排列有什么特殊意义吗？\u0022",
+  "text": "- 你抵达了伊伦加德大沙漠 - --NEWLINE   --NEWLINE 回首望向神庙建筑，Miakoda问道： --NEWLINE   --NEWLINE \u0022你认为这些柱子的方向和排列有什么特殊意义吗？\u0022",
   "tileX": 2033,
   "tileY": 860,
   "textWidth": 400,
-  "style": 1
-}
-{
-  "text": "瑞德：",
-  "tileX": 2063,
-  "tileY": 1886,
-  "textWidth": 60,
   "style": 1
 }
 {
@@ -440,7 +433,7 @@
   "style": 1
 }
 {
-  "text": "- 你发现了菌丝林莽 - --NEWLINE   --NEWLINE \u0022如果我没记错的话，这里就是蘑菇人生活的地方……\u0022",
+  "text": "- 你发现了菌丝林 - --NEWLINE   --NEWLINE \u0022如果我没记错的话，这里就是蘑菇人生活的地方……\u0022",
   "tileX": 2654,
   "tileY": 673,
   "textWidth": 390,
@@ -458,13 +451,6 @@
   "tileX": 2846,
   "tileY": 1647,
   "textWidth": 390,
-  "style": 1
-}
-{
-  "text": "- 你发现了圣所之眼，三子魔眼的宏伟观星台 -",
-  "tileX": 2880,
-  "tileY": 241,
-  "textWidth": 320,
   "style": 1
 }
 {
@@ -496,8 +482,8 @@
   "style": 1
 }
 {
-  "text": "向西<---  --NEWLINE 猩红之丘 --NEWLINE 菌丝林莽--NEWLINE 埃伦加德沙漠遗迹 --NEWLINE 未知之地 --NEWLINE   --NEWLINE 向东--> --NEWLINE 阿拉齐姆双峰 --NEWLINE 埃什峰村",
-  "tileX": 3011,
+  "text": "向西<--- --NEWLINE 埃伦加德沙漠遗址 --NEWLINE 未知之地 --NEWLINE   --NEWLINE 向东--> --NEWLINE 阿拉齐姆双峰 --NEWLINE 村庄 --NEWLINE 奥里德部落的雨林",
+  "tileX": 3009,
   "tileY": 348,
   "textWidth": 150,
   "style": 1
@@ -587,7 +573,7 @@
   "style": 1
 }
 {
-  "text": " - 你找到了三子守望者的圣殿 - --NEWLINE   --NEWLINE \u0022我需要一些可以打破叶绿的东西…\u0022",
+  "text": " - 你找到了三子神殿 - --NEWLINE   --NEWLINE \u0022我需要一些可以打破叶绿的东西…\u0022",
   "tileX": 3316,
   "tileY": 238,
   "textWidth": 260,
@@ -888,7 +874,7 @@
   "style": 1
 }
 {
-  "text": "<<西边<< --NEWLINE 阿拉齐姆山洞 --NEWLINE 大峡谷 --NEWLINE 腐化神殿 --NEWLINE 埃伦加德沙漠遗迹 --NEWLINE 未知之地 --NEWLINE   --NEWLINE <^西北<^ --NEWLINE 阿拉齐姆双峰 --NEWLINE 巫师的住所",
+  "text": "<<西边<< --NEWLINE 阿拉齐姆山洞 --NEWLINE 大峡谷 --NEWLINE 腐化神殿 --NEWLINE 埃伦加德沙漠遗址 --NEWLINE 未知之地 --NEWLINE   --NEWLINE <^西北<^ --NEWLINE 阿拉齐姆双峰 --NEWLINE 巫师的住所",
   "tileX": 4017,
   "tileY": 710,
   "textWidth": 160,
@@ -1427,10 +1413,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了樱花空岛 - --NEWLINE   --NEWLINE 漂浮于平原之上的樱岛群，花云缭绕，瑰丽非凡。 --NEWLINE   --NEWLINE 曾有独行忍者栖居于此，而今其身形已与凝胶融为一体，游荡于浮岛之间。",
+  "text": "- 你发现了秋之空岛 - --NEWLINE   --NEWLINE 这些悬浮于村庄之上的小岛永远地停留在了秋天，这使得它们壮丽非凡。 --NEWLINE   --NEWLINE 然而，一些凝胶生物已在此定居，将其视为自己的领地。",
   "tileX": 4651,
   "tileY": 650,
-  "textWidth": 540,
+  "textWidth": 520,
   "style": 1
 }
 {
