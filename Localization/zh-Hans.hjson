@@ -482,7 +482,7 @@ Mods: {
 					OnUseText3: 三子魔眼只在晚上醒来..
 				}
 
-				// WaterWalkingBoots: Also provides the ability to temporarily walk on lava
+				WaterWalkingBoots: 同时提供在岩浆上行走的能力
 				ChlorophyteMaskSet:
 					'''
 					召唤强大的叶状水晶射向附近的敌人
@@ -7119,7 +7119,7 @@ Mods: {
 					'''
 					按[c/ff00ff:特殊能力键]获得增益，允许你[c/ff00ff:冲刺三次]
 					增益{$CommonItemTooltip.SecondDuration@9}，{$CommonItemTooltip.Cooldown@10}
-					[c/ff00ff:冲刺产生的][c/87cefa:追踪火焰][c/ff00ff:命中敌人时不恢复魔力，激活[c/ff00ff:特殊能力] 消耗 {11} 魔力]
+					[c/ff00ff:冲刺产生的][c/87cefa:追踪火焰][c/ff00ff:命中敌人时不恢复魔力，激活特殊能力消耗 {11} 魔力]
 					[c/ff7f50:爱心]每次攻击造成 {4} 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}
 					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}% ({$CommonItemTooltip.SecondDuration@12})
 					[c/87cefa:追踪火焰]优先攻击[c/ff7f50:割裂]的敌人
@@ -7864,8 +7864,8 @@ Mods: {
 			}
 
 			SpearOfMage: {
-				// Tooltip: ""
-				// DisplayName: Spear Of Mage
+				Tooltip: ""
+				DisplayName: 奥术之矛
 			}
 		}
 
@@ -9484,12 +9484,12 @@ Mods: {
 			DrakarthusProjectile.DisplayName: Drakarthus Projectile
 			HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
 			DivineBoltProjectile.DisplayName: Divine Bolt Projectile
-			WitchkingMaceProjectile.DisplayName: Witchking Mace Projectile
-			// SpearOfMage.DisplayName: Spear Of Mage
-			// RedLightning.DisplayName: Red Lightning
-			// PurpleMagicProj.DisplayName: Purple Magic Proj
-			// GhostWyvernProj.DisplayName: Ghost Wyvern Proj
-			// RedRainProj.DisplayName: Red Rain Proj
+			WitchkingMaceProjectile.DisplayName: 巫师王权记
+			SpearOfMage.DisplayName: 奥术之矛
+			 RedLightning.DisplayName: Red Lightning
+			 PurpleMagicProj.DisplayName: Purple Magic Proj
+			 GhostWyvernProj.DisplayName: Ghost Wyvern Proj
+			 RedRainProj.DisplayName: Red Rain Proj
 		}
 
 		NPCs: {
@@ -10272,258 +10272,260 @@ Mods: {
 			}
 
 			MiakodaNPC: {
-				// DisplayName: Miakoda
-				// Name1: Miakoda
-				// ButtonHelp: Help
-				// ButtonChat: Chat
-				// NextButtonExit: Exit
-				// NextButtonContinue: Continue
-				/* Quote1:
+				DisplayName: Miakoda
+				Name1: Miakoda
+				ButtonHelp: 交谈
+				ButtonChat: 帮助
+				NextButtonExit: 退出
+				NextButtonContinue: 继续
+				Quote1:
 					'''
-					I was once the Spirit of the Moon, free, unshackled. Even though now I'm limited to this doll, my connections to the spirits of the world remain.
-					If you ever need a helping hand on your journey, feel free to just ask. I can give you a couple of tips or guide you to where you need to go next.
-					''' */
-				/* Quote2:
+					吾曾为月灵，自由无拘束。纵使如今困于此偶，与世间精灵之联结犹存
+					若旅程中需援手，尽管开口。吾可予你数则指引，或示以前路方向
 					'''
-					These items you sometimes find {0}, that appear useless... don't be so quick to assume.
-					If it can be crafted into something new with dark souls, it may be worth investigating its hidden potential.
-					''' */
-				/* Quote3:
+				Quote2:
 					'''
-					Its been decades since I was sealed away into this little doll.
-					I don't know how you humans live like this, trapped in the same shape day after day!
-					If you have the dark souls to spare, I'd appreciate a change of pace!
-					''' */
-				/* Quote4:
+					{0}，别急着对你偶尔发现的那些杂物下结论，它们看似无用...
+					但如果能用黑暗之魂将其锻造，或许值得探究其隐藏的潜力
 					'''
-					Those Dark Souls that you so thoughtlessly collect; to Humans their power is a curse rather than a boon.
-					While gathering them may grant you the power of old, using them consigns you to the same fate as those you slaughter.
-					You too one day will become a Dark Soul. At that time my debt to you will be repaid.
-					''' */
-				/* FullMoonForm:
+				Quote3:
 					'''
-					As a spirit of the Full Moon, I drink its light.
-					Under the gaze of the Moon all wounds shall be healed.
-					''' */
-				/* CrescentMoonForm:
+					我被封印进这个玩偶已有数十年了...
+					真不懂你们泰拉人怎能日复一日困在同一副躯壳里活着！
+					如果你有富余的黑暗之魂，可否给我这躯体换点新花样？
 					'''
-					The moon... It shifts. Light warps into a cutting crescent.
-					As an embodiment of the crescent, I shall guide its distortion to follow your blade.
-					''' */
-				/* NewMoonForm:
+				Quote4:
 					'''
-					Empty, so empty. The moon yearns for what it cannot have.
-					Fight quickly, for the moon will shield you in your time of need and devour that which is otherwise lost.
-					With it, I shall fill your coffers.
-					''' */
-				/* ArazSuspicion:
+					你随手收集的那些暗黑灵魂，对泰拉人而言是诅咒而非恩赐
+					聚其力或可重获古老威能，然用之则必步所屠者之后尘
+					终有一日，你亦将沦为暗黑灵魂。届时，我对你的债便算偿清
 					'''
-					That Wizard you found in the Wyvern Mage Fortress... I doubt the truth of his words.
-					The Elemental Crests, they are a cornerstone to the natural magic that flows through the world.
-					Why now are they inscribed with riddles, inscribed with human magic? Moreover how would their combination weaken the Mindflayer King?
-					''' */
-				/* LunaticCultist:
+				FullMoonForm:
 					'''
-					Have you seen that acursed man, that raving lunatic!?
-					He shackled me into this doll just because I refused to serve that God of his...
-					It calls itself The Moon Lord? Only in its dreams!
-					''' */
-				// BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of The Forgotten City.
-				/* JungleWyvern:
+					我啜饮满月之光
+					其凝视之下，一切创伤皆得愈疗
 					'''
-					An ancient beast guards The Forgotten City. It holds a Ring that was enchanted with powerful revitalizing magic.
-					Those who wear it are fabled to possess unending stamina and unparalleled grace! You should go and wield its powers for yourself.
-					''' */
-				/* JungleWyvernBiomeHint:
+				CrescentMoonForm:
 					'''
-					The Forgotten City is to the left and down from where you fought The First of the Dead, Skeletron.
-					We should go there next and see what we can find.
-					''' */
-				/* HMWifeNotRescued:
+					峨眉月轮流转，辉光凝为利刃之弧
+					此扭曲之力将随你剑锋所指
 					'''
-					...I see. Not only did that man slaughter your village, but he also imprisoned your wife!
-					I dare not say what this might mean. {0}, you must ensure great caution in whatever you do.
-					The MindFlayer King, his ambitions... They are truly darker than they appear on the surface.
-					''' */
-				/* WifeRescuedPart1:
+				NewMoonForm:
 					'''
-					That evil one, he manipulates you. Your old friend, Aaron, mind controlled and laced with the magic to unleash hell upon the world.
-					Your brother, convinently armed with the knowledge of your wife's survival.
-					And your poor wife, who after enduring so much is able to tell you of the knowledge he so desperately sought.
-					''' */
-				/* WifeRescuedPart2:
+					虚无，尽是虚无。皓月渴求不可得之物
+					速战速决吧！危难之际，新月将予庇佑，并吞噬本将湮灭之物
+					藉此力，我将充盈你的库藏
 					'''
-					Gather the crests, but do not offer them up to summon The Mindflayer King.
-					The revenge you seek is not worth it!
-					I fear of what may come if you keep playing into his schemes...
-					''' */
-				/* WallofFleshBiomeHintPart1:
+				ArazSuspicion:
 					'''
-					Deep under the Forgotten City lies a land corrupted by the Flame of the Abyss, The Underworld.
-					It is said that this is where the Witch of Izalith mistakenly created this evil that seeks to consume all.
-					''' */
-				/* WallofFleshBiomeHintPart2:
+					你在飞龙法师堡垒遇到的那个巫师...我怀疑他所言非实
+					八块元素之冠乃维系世间自然魔力的基石，
+					为何如今其上铭刻的尽是谜题与人类法术？更蹊跷的是，集齐元素之冠竟能削弱夺心魔之王？
 					'''
-					You wish murder on the betrayer, Aaron, yes? Find this land and offer up that Stone of Protection he so mockingly gave to you at an Altar somewhere deep within.
-					He shall be butchered like a chicken by the Power of Chaos.
-					''' */
-				// WallofFleshJungleLeverHint: There should be another way up into The Forgotten City that opens the final gate from The Underworld.
-				/* WallofFleshHellLeversHint:
+				LunaticCultist:
 					'''
-					The Underworld is said to have been locked by the Knights of Gwyn after they drove back the Abyss.
-					To get through, you must find the keys scattered throughout The Underworld. They will open the pathway to deeper within.
-					''' */
-				/* SolidWallsHiddenPathsHint:
+					见过那疯子没？那个癫狂的孽障！
+					就因我拒绝侍奉他口中之神，他便将我禁锢于此玩偶...
+					“月亮领主”？不过是它痴人说梦的自封！
 					'''
-					Keep an eye out for hidden paths within the world. Most are adorned with Crystals - a consequence of the buried power accumulated within.
-					However some mischevious spirits harvest the crystals for themselves and obscure the path with illusionary magic.
-					They cannot fool a keen and courageous explorer. Walk up to any suspicious walls and press up against them - their magic will not withstand such a test.
-					''' */
-				/* ProjectileHiddenPathsHintPart1:
+				BrotherNotRescued: "{0}，我刚从骷髅王手中脱困时，感知到与你相似的气息！速去遗忘之城深处寻他"
+				JungleWyvern:
 					'''
-					If you see a gate that isn't locked behind levers, switches, or key, do not fret! There might be another way!
-					The most ancient of hidden paths were constructed by the people of Izalith.
-					They lived underground and were known for their whismical mastery of magic.
-					''' */
-				/* ProjectileHiddenPathsHintPart2:
+					一头古兽镇守着遗忘之城，它拥有一枚附有强效复苏魔法的戒指
+					传说佩戴者可获无穷耐力与绝世身姿，你当亲往夺取此力
 					'''
-					Their tunnels were only acessible by striking a teal plate, usually hidden around a couple of corners or above the gate.
-					They took pride in using controllable magic to access these paths, but a poorly hidden one could be struck by a mundane projectile too.
-					''' */
-				/* BreakableBlocksHint:
+				JungleWyvernBiomeHint:
 					'''
-					Your pickaxe is a useful tool, capable of tearing down thin walls with ease.
-					There are certain materials however I think you could destroy without having to worry about thickness.
-					Sand, Slush, and Transparent Ice should be easy to tunnel through freely.
-					''' */
-				/* ShadowKeyHint:
+					遗忘之城在你和死者之首骷髅王的战场的左下方
+					我们下一步便去那里一探究竟
 					'''
-					Certain chests require a certain kind of key, given only to those aknowledged by Skeletron, the first of the dead.
-					While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean.
-					I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...
-					''' */
-				/* HardmodeLorePart1:
+				HMWifeNotRescued:
 					'''
-					After you sliced through the wall that seperated the mortal realm from the supernatural, 8 beings of great power awakened from their slumber.
-					They have linked themselves to the elements, feeding on the world to grow ever stronger.
-					''' */
-				/* HardmodeLorePart2:
+					我明白了...那人不仅屠尽你村庄，还囚禁你妻子！
+					此中深意我不敢妄言，{0}，你行事必须万分谨慎
+					夺心魔王的野心...远比表露出来的更险恶
 					'''
-					Their combined power burdens the First Flame, and if they remain awake this Era will soon be plunged into eternal darkness.
-					You must find The Awakened, defeat them in battle, and gather their elemental crests. The remains hold the key to heal this shattered realm.
-					''' */
-				/* 3WingsLorePart1:
+				WifeRescuedPart1:
 					'''
-					Do you wish to know more about The Awakened? I will start with the first of the Awakened, the Three Wings.
-					The Rage is the Legendary Phoenix, embodiment of Anger, Passion, and Fire. It possesses the Legendary Power of Rebirth. Even when slain, it will immediately begin the cycle of life renewed as an Egg.
-					The Sorrow is the embodiment of Sadness, Despair, and Water. Not much is known about this Wing, except it is adorned by a golden hairpin that it protects with its life.
-					''' */
-				/* 3WingsLorePart2:
+					那恶徒在操纵你，你的旧友亚伦被洗脑，身负灭世之魔咒
+					你的兄弟“恰好”知晓你妻子幸存之秘
+					而你可怜的妻子历经磨难后，终能道出他渴求的真相
+					集齐元素之冠，但绝不可献祭以召唤夺心魔王
+					若继续落入他的棋局，恐酿大祸...
 					'''
-					The Hunter is the strongest of The Three Wings, embodiment of Pride and the Law of the Jungle. Its contempt prevades the world, limiting the ability of flight for all those it deems as prey.
-					If any of them take enough damage, their natural defenses will activate. This will enrage them and increase the damage of all their attacks!
-					Be cautious, all of them are formidable adversaires.
-					''' */
-				/* RageBiomeHint:
+				WifeRescuedPart2:
 					'''
-					Seek out the Hallowed Caverns. Using the Molten Pickaxe dropped by The Wall, break down the colbalt gates to the east.
-					The spirits tell me The First of The Awakened, The Rage, has made that lair its den.
-					''' */
-				/* RageEscapeHell:
+					集齐元素之冠，但绝不可献祭以召唤夺心魔王
+					你所追寻的复仇代价太高！
+					若继续落入他的棋局，恐酿大祸...
 					'''
-					Well done {0}! Defeating that abomination had consequences, however. I can sense great magic penetrating this realm.
-					No... This must have been a trap. Go to the east side of the underworld; you should be able to walk over the hell stone bridge now.
-					I can feel our path leads us there.
-					''' */
-				/* RageDeeperHint:
+				WallofFleshBiomeHintPart1:
 					'''
-					The spirits of the cavern move through the Hallow, gathering beneath hidden depths to resist a formidable adversary.
-					Go deeper into the Hallow. The Rage awaits beneath our feet.
-					''' */
-				/* SorrowBiomeHintPart1:
+					遗忘之城深处有一片被深渊之火腐化的土地—地狱
+					传说伊扎利斯的魔女在此误创了这欲吞噬万物的邪物
 					'''
-					Our journey takes us further East. The next of the Awakened, The Sorrow, took nest deep below the Frozen Ocean.
-					Unfortunately our way forward is currently barricaded.
-					''' */
-				/* SorrowBiomeHintPart2:
+				WallofFleshBiomeHintPart2:
 					'''
-					The Wyvern Mage, ally of the Mindflayer King, occupies a mountain fortress shrouded in invisible death that stands between us and the Eastern Ocean.
-					The spirits can tell me no more. I fear this is a death trap, {0}... There must be another way through the mountain.
-					''' */
-				/* SorrowEastHint:
+					你想要杀死叛徒亚伦？携带他赠予的守护石深入地狱祭坛并献祭
+					混沌之力将使其如待宰鸡雏般殒命...
 					'''
-					I underestimated you {0}! You made it past the secret magic of the Wyvern Mage and cleared a path towards the Frozen Ocean!
-					All that is left is to head a little further east and dive deep beneath the waters: The Sorrow awaits us.
-					''' */
-				// SorrowDeeperHint: We should explore deep into the Ocean. I feel an icy power radiating within its depths.
-				/* HunterBiomeHint:
+				WallofFleshJungleLeverHint: 应该有另一条从地狱通往遗忘之城上层并开启大门的路径
+				WallofFleshHellLeversHint:
 					'''
-					Beneath the burning sun, black smoke with a violet glow illuminates the path. Hearing that, I can only think of the tribe that once lived within the Western Desert.
-					To get there, you must travel West past the Adamantine gates of the Corruption to seek their prior dwellings.
-					''' */
-				/* HunterElengadRuinHint:
+					传闻地狱之门曾被葛温骑士团封印以退却深渊
+					欲破此障，须寻得散落地狱各处的钥匙，方能开启通往更深处的道路
 					'''
-					The Orspeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
-					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
-					If you don't have a way to cross lava, delving deep into their tunnels would be a fool's errand.
-					''' */
-				/* HunterElengadRuinReady:
+				SolidWallsHiddenPathsHint:
 					'''
-					With the ability to walk across Lava unscathed, you are now ready to delve into the Elengad Ruins and hunt the final wing of The Awakened, The Hunter.
-					It will be dangerous {0}, be safe.
-					''' */
-				/* FireWalkHint:
+					留心世界中的隐秘路径，多数路径缀有地下积聚之力所致的水晶碎块
+					然后有精灵私采水晶，并以幻象魔法遮蔽通路
+					这些伎俩难以欺瞒敏锐的勇者，贴近并用稿子轻击碎裂的墙壁，它们的魔法经不起这样的考验
 					'''
-					It seems dangerous to explore the Elengad ruins now, {0}.
-					You should explore further west and dive into the Nora Sea. Before it was washed away by a tidal storm, there used to be a town there.
-					I'm sure Nora would bless an adventurer courageous enough to explore its depths with the ability to walk on Water and Fire like he did for the people who lived there long ago.
-					''' */
-				/* HunterClose:
+				ProjectileHiddenPathsHintPart1:
 					'''
-					Keep going {0}, I can feel it, we are close! Be cautious however, The Hunter is the strongest of the three wings.
-					I can feel the presence of another beast as well - it won't be alone.
-					''' */
-				/* TempleOfSerris:
+					如果遇到未以拉杆、开关或钥匙上锁的大门，勿慌！或许另有解法
+					最古老的隐秘通路由伊扎利斯人建造
+					他们栖居地下，以奇诡魔法造诣闻名于世
 					'''
-					The Hidden Temple of Serris...? I last heard about it from a brave soul who dared to delve deep into the Shadow Labrynth. 
-					It is said that earning the recognition of Serris will grant one access to the depths of the Labrynth. 
-					We don't need to go there yet, {0}. This path does not lead to the Hunter.
-					''' */
-				/* DestroyerFromSerris:
+				ProjectileHiddenPathsHintPart2:
 					'''
-					It is said that earning the recognition of Serris will grant one access to the depths of the Labrynth. 
-					The path opened by defeating Serris-X should be somewhere to the east of the Serris ruins, underneath a pool of water.
-					''' */
-				/* DestroyerFromHunter:
+					伊扎利斯人的某些通道仅能通过击中青色压力板开启，此类机关常藏于拐角或门扉上方
+					他们以可控魔法开启通路为荣，然而藏匿拙劣，凡铁之矢亦能破之
 					'''
-					A small sandy cave atop a hill... I'm sure we passed one before {0}, when we were traveling West from the corruption.
-					This one seems easy!
-					''' */
-				/* DestroyerLabrynthGates:
+				BreakableBlocksHint:
 					'''
-					The Shadow Labrynth is full of gates that require using a switch, lever, or wall-mounted plate to pass through.
-					The one who can navigate the Labrynth is said to earn the right of awakening The Destroyer of Worlds.
-					Unfortunately, it is now one of the awakened. You must destroy before our time runs out.
-					''' */
-				/* DestroyerLabrynthSecretPaths:
+					你的镐子可以轻松凿穿一格宽的薄墙
+					但某些材料即使厚重，亦能随意掘穿
+					如沙子、雪泥与薄冰
 					'''
-					The spirits tell me of two hidden shortcuts within this Labrynth, both shrouded in secrecy. 
-					The first is within an Ancient Greek Cave said to possess a golden mirror that protects against the Serpent's Gaze.
-					The second is beyond a gate near the maw of the Labrynth. It is gaurded by both the Serpent and the Wraith of Shadow.
-					''' */
-				/* DestroyerLabrynthLayout:
+				ShadowKeyHint:
 					'''
-					The Shadow Labrynth is said to contain three trials that test those who seek the Destroyer.
-					The Trial of Fire, Water, and Flight. One must master all three before being deemed worthy of its presence.
-					I can only imagine what lies deep within its depths, but I'm sure you can handle it {0}!
-					''' */
-				/* MachineTempleLocationHint:
+					某些宝箱需特定钥匙才能打开，唯“死者之首”骷髅王认可者可得
+					我被骷髅王囚禁时，听闻它将一把暗影钥匙深藏于冻洋之下
+					另有传言称，飞龙法师会将其赐予参与其扭曲游戏的胜者，该游戏于东方山脉之巅的堡垒中举办
 					'''
-					Below a broken, familiar bridge huh. {0}, these riddles seem to be tailored to you personally.
-					Maybe you should have a look around your Father's village. It's surely somewhere nearby.
-					''' */
-				// CannotHelp: You have done well, {0}, I have no more advice to offer you.
-				// ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
+				HardmodeLorePart1:
+					'''
+					自你斩开隔绝凡人与超自然伟力的血肉之墙后
+					八位具有强大力量的恶魔守护者自长眠中苏醒					
+					'''
+				HardmodeLorePart2:
+					'''
+					它们连结元素，吞噬世界以滋长己身，其合力重压初火，若任其长醒，此世将坠永恒暗夜
+					你须猎杀八位恶魔守护者，集齐元素之冠，其残躯蕴藏着治愈破碎现实的关键
+					'''
+				3WingsLorePart1:
+					'''
+					欲知恶魔守护者详情？且从“三鸟”之首说起...
+					愤怒司掌怒焰、激情与焚烬。身负涅槃神威的传奇火凰，纵使陨灭亦将化卵重生
+					悲伤司掌哀恸、绝望与潮涌。此鸟鲜为人知，唯知其以命相护一枚金簪
+					'''
+				3WingsLorePart2:
+					'''
+					猎主乃三鸟至强，司掌傲慢与弱肉强食铁则。其蔑视浸染天地，凡被视作猎物者，翔空之能皆受禁锢
+					任一鸟受创至深，本能防御机制即启。此将使其狂暴，诸般攻势威能倍增！
+					慎之，此三者皆非凡敌
+					'''
+				RageBiomeHint:
+					'''
+					寻找神圣洞穴，用血肉之墙掉落的熔岩镐，敲开东边的钴门
+					精灵们告诉我，第一位恶魔守护者熔火飞鸟，已经把它们的家园变成了它的巢穴
+					'''
+				RageEscapeHell:
+					'''
+					干得好，{0}！然而击杀此孽物恐引来灾祸，我感知到强大的魔力正在侵蚀此界
+					不...这恐怕是个陷阱，速去地狱东侧，你现在应该能踏过狱石桥了
+					我感应到前路指向彼方
+					'''
+				RageDeeperHint:
+					'''
+					神圣之地的精灵们汇聚在洞穴深处以抗强敌
+					深入洞穴底层，愤怒蛰伏于我等脚下
+					'''
+				SorrowBiomeHintPart1:
+					'''
+					我等需继续东行，下一位恶魔守护者寒霜飞鸟栖于冻洋的深处
+					不幸的是，我们的前进道路目前受阻
+					'''
+				SorrowBiomeHintPart2:
+					'''
+					夺心魔王的盟友飞龙法师盘踞的魔法堡垒，隐匿于无形死寂之中，横亘于我等与冻洋之间
+					精灵们无法透露更多信息，这恐怕是个陷阱...{0}，一定有其它路径穿过山脉
+					'''
+				SorrowEastHint:
+					'''
+					我低估你了，{0}！你竟突破飞龙法师的隐秘魔法，打开通往冻洋的路！  
+					只需东行潜入深海，悲伤正静候我等
+					'''
+				SorrowDeeperHint: 我们应该深入冻洋，我感知到极寒之力在其深处涌动
+				HunterBiomeHint:
+					'''
+					烈日灼灼之下，紫芒黑烟昭示前路。闻此异象，唯忆起曾栖居西部荒漠之部族
+					欲达彼处，须穿越腐化之地西边的精金之门，寻其旧日居所
+					'''
+				HunterElengadRuinHint:
+					'''
+					奥斯匹克人于部落地下设置诸多陷阱，以御深渊初次侵袭
+					他们是烈焰行者，掌握踏熔岩而无伤的本领
+					如果没有横渡熔岩的方法，贸然深入其隧纯属莽行
+					'''
+				HunterElengadRuinReady:
+					'''
+					既获踏熔岩而无伤之能，汝当深入埃伦加德沙漠遗迹，击败恶魔守护者-猎手
+					此行险恶，{0}，务必小心
+					'''
+				FireWalkHint:
+					'''
+					0}，此刻探索埃伦加德沙漠遗迹恐非善策
+					你应西行潜入诺拉海，那里曾有一座城镇，后毁于潮汐风暴
+					我相信如果有勇者敢探其深渊，诺拉必赐其踏水火而行之能，一如远古子民所受之恩泽
+					'''
+				HunterClose:
+					'''
+					{0}，继续前进，我们快到了！谨慎行动，猎手乃三鸟至强
+					我还感知到有另一只凶兽的气息，此战绝非孤敌
+					'''
+				TempleOfSerris:
+					'''
+					赛里斯的隐藏神殿...？曾有一位勇闯暗影神庙的壮士和我说起过它
+					传闻获赛里斯认可者，方得深入迷宫底层
+					然此路不通猎手，{0}，我们暂无需涉足
+					'''
+				DestroyerFromSerris:
+					'''
+					欲入暗影神庙，需获赛里斯认可
+					击败赛里斯后所启之径，位于赛里斯废墟以东，一汪水潭之下
+					'''
+				DestroyerFromHunter:
+					'''
+					山丘沙穴...{0}，西行越过腐化之后时我们曾途径一处
+					看上去是条捷径！
+					'''
+				DestroyerLabrynthGates:
+					'''
+					暗影神庙迷宫遍布，需以开关、拉杆或压力板开启封闭大门
+					传言通过迷宫者，可唤醒毁灭者
+					然此物已成恶魔守护者一员，须尽快摧毁
+					'''
+				DestroyerLabrynthSecretPaths:
+					'''
+					精灵们告诉我，此迷宫藏有两条秘径：
+					其一匿于大理石洞窟，内有御美杜莎之镜
+					其二隐于迷宫地下湖之侧，由美杜莎与幽魂共守
+					'''
+				DestroyerLabrynthLayout:
+					'''
+					暗影神庙迷宫设三重试炼：火、水、空
+					唯精通三者，方配直面毁灭者
+					纵深处藏何物吾难臆测，但你定可驾驭，{0}！
+					'''
+				MachineTempleLocationHint:
+					'''
+					一座熟悉的断桥下？{0}，此谜语似为你量身而设
+					或许你应该去令尊村庄周围找找，其必藏匿于附近
+					'''
+				CannotHelp: 你已做得足好了，{0}，我无更多建言可予
+				ExhaustedDialogue: "{0}，我们谈得够多了，眼下我实在无话可说"
 			}
 
 			ShamanElder: {
@@ -10863,7 +10865,7 @@ Mods: {
 			"Necromancers Spell.DisplayName": 巫妖王之咒
 			"Krakens Cast.DisplayName": 海妖之怒
 			"Witchking Scream.DisplayName": 巫师尖啸
-			// "Print Position.DisplayName": Print Position (Debug Mode Only)
+			"Print Position.DisplayName": Print Position
 		}
 
 		InfoDisplays: {
