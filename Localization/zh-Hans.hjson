@@ -7865,7 +7865,7 @@ Mods: {
 
 			SpearOfMage: {
 				Tooltip: ""
-				DisplayName: 奥术之矛
+				DisplayName: 奥术谜矛
 			}
 		}
 
@@ -10280,7 +10280,7 @@ Mods: {
 				NextButtonContinue: 继续
 				Quote1:
 					'''
-					吾曾为月灵，自由无拘束。纵使如今困于此偶，与世间精灵之联结犹存
+					吾曾为月灵，自由无拘束。纵使如今困于此偶，与旧世精魂之联结犹存
 					若旅程中需援手，尽管开口。吾可予你数则指引，或示以前路方向
 					'''
 				Quote2:
@@ -10312,7 +10312,7 @@ Mods: {
 					'''
 				NewMoonForm:
 					'''
-					虚无，尽是虚无。皓月渴求不可得之物
+					虚无，尽是虚无，皓月渴求不可得之物
 					速战速决吧！危难之际，新月将予庇佑，并吞噬本将湮灭之物
 					藉此力，我将充盈你的库藏
 					'''
@@ -10426,30 +10426,30 @@ Mods: {
 					任一鸟受创至深，本能防御机制即启。此将使其狂暴，诸般攻势威能倍增！
 					慎之，此三者皆非凡敌
 					'''
-				/* 3MachinesLorePart1:
+				3MachinesLorePart1:
 					'''
-					Do you wish to know more about The Awakened? I will now tell you of three more Awakened, the Great Machines.
-					Made from the desecrated remains of an ancient Eldritch being, the Machines were used to invade and destroy our planet during the dark age.
-					The Earth came close to destruction during that apocalyptic time.
-					''' */
-				/* 3MachinesLorePart2:
+					欲知恶魔守护者更多秘辛？且听吾道来三机之事
+					彼等乃亵渎远古邪神残躯所铸之器，黑暗纪元时曾侵吞吾等世界
+					彼时，此界几近崩毁
 					'''
-					The Destroyer is the first of the three, a planetary eater. It tunnels through the flesh of mother nature, consuming all but the corruption it leaves in its wake.
-					It was sealed away into the Shadow Labyrinth by the Dragons, confining it's physical form. The Destroyer was then used in the trials for a young dragon to become of age.
-					A trial of Fire, Water, and Flight, before facing a weakened form of the calamity in battle. Maybe that was the secret to the Legendary Might of the Dragons.
-					''' */
-				/* 3MachinesLorePart3:
+				3MachinesLorePart2:
 					'''
-					The Machine is the second of the three, a weapon of mass destruction. It was sent to rain fire and brimstone upon the land, slaughtering all who dared to breathe on the surface.
-					Many civilizations fell to this terrifying being of great evil. In their desperate hour the people of the Moon tribe cried out, and the moon answered their pleas.
-					The Machine was lured into their Temple of Worship and sealed away by a great rain from the heavens, flooding the temple and sealing the calamity away for good.
-					''' */
-				/* 3MachinesLorePart4:
+					毁灭者乃三机之首，行星吞噬之器，其穿行地母血肉，所过之处唯余腐化
+					古龙一族将其封印于暗影神庙迷宫，囚其形骸，并设为成年试炼
+					幼龙需历火、水、空三重试炼，方得与削弱后的灾劫对决，此或为古龙神威之秘源
 					'''
-					The Triad is the last of the three, the legendary observer. It was sent to search out and exterminate the Heroes of old, leaving all without hope.
-					Merely a glance could mean death. There were none who dared to face them that lived to tell the tale. The Triad were the only of the Machines to be appeased, rather than defeated.
-					Humanity built them a beautiful shrine of glass so they could observe all freely from their crystalline throne.
-					''' */
+				3MachinesLorePart3:
+					'''
+					旧日机械支配者位列其二，乃灭世之火雨。其降临时，胆敢立足地表者皆遭屠戮
+					无数文明覆灭于此极恶之器。危亡之际，月之部族哀祷，竟得月华回应
+					此械被诱入月之神殿，终以天降豪雨永封，洪流没殿，灾劫长眠
+					'''
+				3MachinesLorePart4:
+					'''
+					三子魔眼居其三，乃传奇猎杀者。其奉命剿灭上古英杰，绝众生希望
+					目视即死，无人生还，然此器乃三机中唯一未败而止者
+					人族为其筑守望圣殿，许其端踞观星台，恣意观测万象
+					'''
 				RageBiomeHint:
 					'''
 					寻找神圣洞穴，用血肉之墙掉落的熔岩镐，敲开东边的钴门
