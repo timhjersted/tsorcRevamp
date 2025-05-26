@@ -359,6 +359,15 @@ namespace tsorcRevamp.NPCs.Friendly
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3WingsLorePart2"));
                 chat.Add(dialogue);
             }
+            // Lore relevant to the second 2 hard mode bosses along with the final one - The Machines
+            else if (tsorcRevampWorld.HardModeNotSHM) 
+            {
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart1"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart2"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart3"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart4"));
+                chat.Add(dialogue);
+            }
 
             // Player doesn't have a shadow key but can get one
             if (!player.HasItemInAnyInventory(ItemID.ShadowKey) && BossDefeated(ModContent.NPCType<TheRage>()))
