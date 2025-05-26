@@ -39,6 +39,7 @@ namespace tsorcRevamp
         public static bool EnteredRuinsOfSerris;
         public static bool EnteredShadowTemple;
         public static bool EnteredFloodedMachineTemple;
+        public static bool EnteredPyramid;
 
         public static List<int> PairedBosses;
 
@@ -113,6 +114,7 @@ namespace tsorcRevamp
             EnteredRuinsOfElengad = false;
             EnteredRuinsOfSerris = false;
             EnteredFloodedMachineTemple = false;
+            EnteredPyramid = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -158,6 +160,8 @@ namespace tsorcRevamp
                 world_state.Add("EnteredShadowTemple");
             if (EnteredFloodedMachineTemple)
                 world_state.Add("EnteredFloodedMachineTemple");
+            if (EnteredPyramid)
+                world_state.Add("EnteredPyramid");
 
             if (DownedBetsy)
             {
@@ -194,6 +198,7 @@ namespace tsorcRevamp
             EnteredRuinsOfSerris = worldStateList.Contains("EnteredRuinsOfSerris");
             EnteredShadowTemple = worldStateList.Contains("EnteredShadowTemple");
             EnteredFloodedMachineTemple = worldStateList.Contains("EnteredFloodedMachineTemple");
+            EnteredPyramid = worldStateList.Contains("EnteredPyramid");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)

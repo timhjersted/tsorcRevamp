@@ -10428,27 +10428,27 @@ Mods: {
 					'''
 				/* 3MachinesLorePart1:
 					'''
-					Do you wish to know more about The Awakened? I will now tell you of three more Awakened, the Great Machines.
-					Made from the desecrated remains of an ancient Eldritch being, the Machines were used to invade and destroy our planet during the dark age.
-					The Earth came close to destruction during that apocalyptic time.
+					Do you wish to know more about The Awakened? I will now tell you of three more Awakened, the three Calamities.
+					Made from the desecrated remains of an ancient Eldritch being, the Calamities invaded and nearly destroyed everything long ago.
+					Woe it be to anyone living during that apocalyptic time.
 					''' */
 				/* 3MachinesLorePart2:
 					'''
-					The Destroyer is the first of the three, a planetary eater. It tunnels through the flesh of mother nature, consuming all but the corruption it leaves in its wake.
-					It was sealed away into the Shadow Labyrinth by the Dragons, confining it's physical form. The Destroyer was then used in the trials for a young dragon to become of age.
-					A trial of Fire, Water, and Flight, before facing a weakened form of the calamity in battle. Maybe that was the secret to the Legendary Might of the Dragons.
+					The Destroyer is the first of the three, a planetary eater. It tunneled through the flesh of mother nature, consuming all but the corruption it left in its wake.
+					This is the origin of the underground tunnels of the world today: scars left by this mighty destroyer. Sealed away into the Shadow Labyrinth by the Dragons, The Destroyer was used in their trials for coming of age.
+					A trial of Fire, Water, Flight, and Might. Maybe this was the secret to the Legendary Might of the Dragons?
 					''' */
 				/* 3MachinesLorePart3:
 					'''
-					The Machine is the second of the three, a weapon of mass destruction. It was sent to rain fire and brimstone upon the land, slaughtering all who dared to breathe on the surface.
-					Many civilizations fell to this terrifying being of great evil. In their desperate hour the people of the Moon tribe cried out, and the moon answered their pleas.
+					The Machine is the second of the three, a weapon of mass destruction. It rained fire and brimstone upon the land, slaughtering all who dared step foot on the surface.
+					Many civilizations fell to this terrifying being of great evil. In their desperate hour the people of the Moon tribe cried out, and the Moon answered their pleas.
 					The Machine was lured into their Temple of Worship and sealed away by a great rain from the heavens, flooding the temple and sealing the calamity away for good.
 					''' */
 				/* 3MachinesLorePart4:
 					'''
-					The Triad is the last of the three, the legendary observer. It was sent to search out and exterminate the Heroes of old, leaving all without hope.
-					Merely a glance could mean death. There were none who dared to face them that lived to tell the tale. The Triad were the only of the Machines to be appeased, rather than defeated.
-					Humanity built them a beautiful shrine of glass so they could observe all freely from their crystalline throne.
+					The Triad is the last of the three, the eyes of death. They searched out and exterminated the Heroes of old, leaving all without hope. Nowhere was safe, not even the underground.
+					Even a mere glance could mean certain death. The Triad were the only of the three Calamities to be appeased, rather than defeated.
+					Humanity built them a shrine of glass, so they could observe freely from their crystaline throne. It is said that they continue to watch us all to this very day.
 					''' */
 				RageBiomeHint:
 					'''
@@ -10548,6 +10548,27 @@ Mods: {
 					一座熟悉的断桥下？{0}，此谜语似为你量身而设
 					或许你应该去令尊村庄周围找找，其必藏匿于附近
 					'''
+				/* MachineTempleStraightForward:
+					'''
+					Discovering this temple was surely the hardest part. After beating the Shadow Temple, I'm sure this place will not pose any challenge!
+					Go, {0}! The Machine awaits you in the depths!
+					''' */
+				/* GolemJunglePyramidPlanteraHint:
+					'''
+					The spirits cry of a great evil emerging within the Jungle. It wishes for nothing but death.
+					I do not know what manner of creature this is, but it must be stopped. Head to the east of where you first found your brother Elijah, within the Forgotten City.
+					You will find a Pyramid dedicated to the Sun and Moon. It leeches from the power there.
+					''' */
+				/* GolemJunglePyramidHint:
+					'''
+					Head to the east of where you first found your brother Elijah, within the Forgotten City.
+					You will find a Pyramid dedicated to the Sun and Moon. That is the Pyramid you seek.
+					''' */
+				/* GolemJungleMoonGate:
+					'''
+					On the way to the Pyramid, if an unbreakable gate seals your path do not fret. Use a cosmic watch to pass time until it is night.
+					The light of the moon shall open your way forward.
+					''' */
 				CannotHelp: 你已做得足好了，{0}，我无更多建言可予
 				ExhaustedDialogue: "{0}，我们谈得够多了，眼下我实在无话可说"
 			}

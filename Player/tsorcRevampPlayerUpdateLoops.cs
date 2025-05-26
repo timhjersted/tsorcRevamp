@@ -932,6 +932,11 @@ namespace tsorcRevamp
             {
                 tsorcRevampWorld.EnteredFloodedMachineTemple = true;
             }
+
+            if (!tsorcRevampWorld.EnteredPyramid && UsefulFunctions.PlayerInZone(Player, 5740, 5760, 1750, 1780))
+            {
+                tsorcRevampWorld.EnteredPyramid = true;
+            }
             
             //--------------------
 

@@ -569,10 +569,33 @@ namespace tsorcRevamp.NPCs.Friendly
                 }
                 else // The player has found the Flooded Machine Temple
                 {
-
+                    // The machine temple is relatively straightforward compared to the shadow temple - no tips needed
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.MachineTempleStraightForward", player.name));
                 }
             }
+            // Time to go to the Jungle temple
+            else if (!tsorcRevampWorld.EnteredPyramid)
+            {
+                // Moon gate hint
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemJungleMoonGate"));
+                // The player could have defeated plantera before this point
+                if (!BossDefeated(NPCID.Plantera))
+                {
+                    // Tell them about plantera
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemJunglePyramidPlanteraHint"));
+                }
+                else
+                {
+                    // Just tell them about the temple
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemJunglePyramidHint"));
+                }
+            }
+            // Golem baby
+            else if (!BossDefeated(NPCID.Golem))
+            {
 
+            }
+            
             // If the help chat is empty
             if (chat.Count == 0)
             {
