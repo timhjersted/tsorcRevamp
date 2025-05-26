@@ -9486,10 +9486,10 @@ Mods: {
 			DivineBoltProjectile.DisplayName: Divine Bolt Projectile
 			WitchkingMaceProjectile.DisplayName: 巫师王权记
 			SpearOfMage.DisplayName: 奥术之矛
-			 RedLightning.DisplayName: Red Lightning
-			 PurpleMagicProj.DisplayName: Purple Magic Proj
-			 GhostWyvernProj.DisplayName: Ghost Wyvern Proj
-			 RedRainProj.DisplayName: Red Rain Proj
+			RedLightning.DisplayName: Red Lightning
+			PurpleMagicProj.DisplayName: Purple Magic Proj
+			GhostWyvernProj.DisplayName: Ghost Wyvern Proj
+			RedRainProj.DisplayName: Red Rain Proj
 		}
 
 		NPCs: {
@@ -10426,6 +10426,30 @@ Mods: {
 					任一鸟受创至深，本能防御机制即启。此将使其狂暴，诸般攻势威能倍增！
 					慎之，此三者皆非凡敌
 					'''
+				/* 3MachinesLorePart1:
+					'''
+					Do you wish to know more about The Awakened? I will now tell you of three more Awakened, the Great Machines.
+					Made from the desecrated remains of an ancient Eldritch being, the Machines were used to invade and destroy our planet during the dark age.
+					The Earth came close to destruction during that apocalyptic time.
+					''' */
+				/* 3MachinesLorePart2:
+					'''
+					The Destroyer is the first of the three, a planetary eater. It tunnels through the flesh of mother nature, consuming all but the corruption it leaves in its wake.
+					It was sealed away into the Shadow Labyrinth by the Dragons, confining it's physical form. The Destroyer was then used in the trials for a young dragon to become of age.
+					A trial of Fire, Water, and Flight, before facing a weakened form of the calamity in battle. Maybe that was the secret to the Legendary Might of the Dragons.
+					''' */
+				/* 3MachinesLorePart3:
+					'''
+					The Machine is the second of the three, a weapon of mass destruction. It was sent to rain fire and brimstone upon the land, slaughtering all who dared to breathe on the surface.
+					Many civilizations fell to this terrifying being of great evil. In their desperate hour the people of the Moon tribe cried out, and the moon answered their pleas.
+					The Machine was lured into their Temple of Worship and sealed away by a great rain from the heavens, flooding the temple and sealing the calamity away for good.
+					''' */
+				/* 3MachinesLorePart4:
+					'''
+					The Triad is the last of the three, the legendary observer. It was sent to search out and exterminate the Heroes of old, leaving all without hope.
+					Merely a glance could mean death. There were none who dared to face them that lived to tell the tale. The Triad were the only of the Machines to be appeased, rather than defeated.
+					Humanity built them a beautiful shrine of glass so they could observe all freely from their crystalline throne.
+					''' */
 				RageBiomeHint:
 					'''
 					寻找神圣洞穴，用血肉之墙掉落的熔岩镐，敲开东边的钴门
