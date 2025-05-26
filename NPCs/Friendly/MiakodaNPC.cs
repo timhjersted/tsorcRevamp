@@ -359,8 +359,8 @@ namespace tsorcRevamp.NPCs.Friendly
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3WingsLorePart2"));
                 chat.Add(dialogue);
             }
-            // Lore relevant to the second 2 hard mode bosses along with the final one - The Machines
-            else if (tsorcRevampWorld.HardModeNotSHM) 
+            // Lore relevant to next two hard mode bosses along with the final one - The Machines
+            else if (tsorcRevampWorld.HardModeNotSHM)
             {
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart1"));
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart2"));

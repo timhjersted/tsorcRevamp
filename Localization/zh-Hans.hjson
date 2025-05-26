@@ -7864,13 +7864,8 @@ Mods: {
 			}
 
 			SpearOfMage: {
-<<<<<<< HEAD
-				// Tooltip: ""
-				// DisplayName: Enigma Spear of Mage
-=======
 				Tooltip: ""
 				DisplayName: 奥术之矛
->>>>>>> fae9f010fb9ba6e6c4bf359ea2a21ea8fc122ba3
 			}
 		}
 
@@ -10285,15 +10280,8 @@ Mods: {
 				NextButtonContinue: 继续
 				Quote1:
 					'''
-<<<<<<< HEAD
-					I was once the Spirit of the Moon, free, unshackled. Even though now I'm limited to this doll, my connections to the spirits and souls of old remain.
-					If you ever need a helping hand on your journey, feel free to just ask. I can give you a couple of tips or guide you to where you need to go next.
-					''' */
-				/* Quote2:
-=======
 					吾曾为月灵，自由无拘束。纵使如今困于此偶，与世间精灵之联结犹存
 					若旅程中需援手，尽管开口。吾可予你数则指引，或示以前路方向
->>>>>>> fae9f010fb9ba6e6c4bf359ea2a21ea8fc122ba3
 					'''
 				Quote2:
 					'''
@@ -10314,17 +10302,8 @@ Mods: {
 					'''
 				FullMoonForm:
 					'''
-<<<<<<< HEAD
-					Have you seen that accursed man, that raving lunatic!?
-					He shackled me into this doll just because I refused to serve that God of his...
-					It calls itself The Moon Lord? Only in its dreams!
-					''' */
-				// BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of The Forgotten City.
-				/* JungleWyvern:
-=======
 					我啜饮满月之光
 					其凝视之下，一切创伤皆得愈疗
->>>>>>> fae9f010fb9ba6e6c4bf359ea2a21ea8fc122ba3
 					'''
 				CrescentMoonForm:
 					'''
@@ -10333,17 +10312,9 @@ Mods: {
 					'''
 				NewMoonForm:
 					'''
-<<<<<<< HEAD
-					That evil one, he manipulates you. Your old friend, Aaron, mind controlled and laced with the magic to unleash hell upon the world.
-					Your brother, conveniently armed with the knowledge of your wife's survival.
-					And your poor wife, who after enduring so much is able to tell you of the knowledge he so desperately sought.
-					''' */
-				/* WifeRescuedPart2:
-=======
 					虚无，尽是虚无。皓月渴求不可得之物
 					速战速决吧！危难之际，新月将予庇佑，并吞噬本将湮灭之物
 					藉此力，我将充盈你的库藏
->>>>>>> fae9f010fb9ba6e6c4bf359ea2a21ea8fc122ba3
 					'''
 				ArazSuspicion:
 					'''
@@ -10357,24 +10328,6 @@ Mods: {
 					就因我拒绝侍奉他口中之神，他便将我禁锢于此玩偶...
 					“月亮领主”？不过是它痴人说梦的自封！
 					'''
-<<<<<<< HEAD
-					Keep an eye out for hidden paths within the world. Most are adorned with Crystals - a consequence of the buried power accumulated within.
-					However some mischievous spirits harvest the crystals for themselves and obscure the path with illusionary magic.
-					They cannot fool a keen and courageous explorer. Walk up to any suspicious walls and press up against them - their magic will not withstand such a test.
-					''' */
-				/* ProjectileHiddenPathsHintPart1:
-					'''
-					If you see a gate that isn't locked behind levers, switches, or key, do not fret! There might be another way!
-					The most ancient of hidden paths were constructed by the people of Izalith.
-					They lived underground and were known for their whimsical mastery of magic.
-					''' */
-				/* ProjectileHiddenPathsHintPart2:
-					'''
-					Their tunnels were only accessible by striking a teal plate, usually hidden around a couple of corners or above the gate.
-					They took pride in using controllable magic to access these paths, but a poorly hidden one could be struck by a mundane projectile too.
-					''' */
-				/* BreakableBlocksHint:
-=======
 				BrotherNotRescued: "{0}，我刚从骷髅王手中脱困时，感知到与你相似的气息！速去遗忘之城深处寻他"
 				JungleWyvern:
 					'''
@@ -10382,29 +10335,15 @@ Mods: {
 					传说佩戴者可获无穷耐力与绝世身姿，你当亲往夺取此力
 					'''
 				JungleWyvernBiomeHint:
->>>>>>> fae9f010fb9ba6e6c4bf359ea2a21ea8fc122ba3
 					'''
 					遗忘之城在你和死者之首骷髅王的战场的左下方
 					我们下一步便去那里一探究竟
 					'''
-<<<<<<< HEAD
-					Certain chests require a certain kind of key, given only to those acknowledged by Skeletron, the first of the dead.
-					While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean.
-					I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...
-					''' */
-				/* HardmodeLorePart1:
-					'''
-					After you sliced through the wall that separated the mortal realm from the supernatural, 8 beings of great power awakened from their slumber.
-					They have linked themselves to the elements, feeding on the world to grow ever stronger.
-					''' */
-				/* HardmodeLorePart2:
-=======
 				HMWifeNotRescued:
 					'''
 					我明白了...那人不仅屠尽你村庄，还囚禁你妻子！
 					此中深意我不敢妄言，{0}，你行事必须万分谨慎
 					夺心魔王的野心...远比表露出来的更险恶
->>>>>>> fae9f010fb9ba6e6c4bf359ea2a21ea8fc122ba3
 					'''
 				WifeRescuedPart1:
 					'''
@@ -10414,48 +10353,11 @@ Mods: {
 					集齐元素之冠，但绝不可献祭以召唤夺心魔王
 					若继续落入他的棋局，恐酿大祸...
 					'''
-<<<<<<< HEAD
-					The Hunter is the strongest of The Three Wings, embodiment of Pride and the Law of the Jungle. Its contempt pervades the world, limiting the ability of flight for all those it deems as prey.
-					If any of them take enough damage, their natural defenses will activate. This will enrage them and increase the damage of all their attacks!
-					Be cautious, all of them are formidable adversaries.
-					''' */
-				/* 3MachinesLorePart1:
-					'''
-					Do you wish to know more about The Awakened? I will now tell you of three more Awakened, the Great Machines.
-					Made from the desecrated remains of an ancient Eldritch being, the Machines were used to invade and destroy our planet during the dark age.
-					The Earth came close to destruction during that apocalyptic time.
-					''' */
-				/* 3MachinesLorePart2:
-					'''
-					The Destroyer is the first of the three, a planetary eater. It tunnels through the flesh of mother nature, consuming all but the corruption it leaves in its wake.
-					It was sealed away into the Shadow Labyrinth by the Dragons, confining it's physical form. The Destroyer was then used in the trials for a young dragon to become of age.
-					A trial of Fire, Water, and Flight, before facing a weakened form of the calamity in battle. Maybe that was the secret to the Legendary Might of the Dragons.
-					''' */
-				/* 3MachinesLorePart3:
-					'''
-					The Machine is the second of the three, a weapon of mass destruction. It was sent to rain fire and brimstone upon the land, slaughtering all who dared to breathe on the surface.
-					Many civilizations fell to this terrifying being of great evil. In their desperate hour the people of the Moon tribe cried out, and the moon answered their pleas.
-					The Machine was lured into their Temple of Worship and sealed away by a great rain from the heavens, flooding the temple and sealing the calamity away for good.
-					''' */
-				/* 3MachinesLorePart4:
-					'''
-					The Triad is the last of the three, the legendary observer. It was sent to search out and exterminate the Heroes of old, leaving all without hope.
-					Merely a glance could mean death. There were none who dared to face them that lived to tell the tale. The Triad were the only of the Machines to be appeased, rather than defeated.
-					Humanity built them a beautiful shrine of glass so they could observe all freely from their crystalline throne.
-					''' */
-				/* RageBiomeHint:
-					'''
-					Seek out the Hallowed Caverns. Using the Molten Pickaxe dropped by The Wall, break down the cobalt gates to the east.
-					The spirits tell me The First of The Awakened, The Rage, has made that lair its den.
-					''' */
-				/* RageEscapeHell:
-=======
 				WifeRescuedPart2:
 					'''
 					集齐元素之冠，但绝不可献祭以召唤夺心魔王
 					你所追寻的复仇代价太高！
 					若继续落入他的棋局，恐酿大祸...
->>>>>>> fae9f010fb9ba6e6c4bf359ea2a21ea8fc122ba3
 					'''
 				WallofFleshBiomeHintPart1:
 					'''
@@ -10485,45 +10387,13 @@ Mods: {
 					最古老的隐秘通路由伊扎利斯人建造
 					他们栖居地下，以奇诡魔法造诣闻名于世
 					'''
-<<<<<<< HEAD
-					The Hidden Temple of Serris...? I last heard about it from a brave soul who dared to delve deep into the Shadow Labyrinth.
-					It is said that earning the recognition of Serris will grant one access to the depths of the Labyrinth.
-					We don't need to go there yet, {0}. This path does not lead to the Hunter.
-					''' */
-				/* DestroyerFromSerris:
-					'''
-					It is said that earning the recognition of Serris will grant one access to the depths of the Labyrinth.
-					The path opened by defeating Serris-X should be somewhere to the east of the Serris ruins, underneath a pool of water.
-					''' */
-				/* DestroyerFromHunter:
-=======
 				ProjectileHiddenPathsHintPart2:
 					'''
 					伊扎利斯人的某些通道仅能通过击中青色压力板开启，此类机关常藏于拐角或门扉上方
 					他们以可控魔法开启通路为荣，然而藏匿拙劣，凡铁之矢亦能破之
->>>>>>> fae9f010fb9ba6e6c4bf359ea2a21ea8fc122ba3
 					'''
 				BreakableBlocksHint:
 					'''
-<<<<<<< HEAD
-					The Shadow Labyrinth is full of gates that require using a switch, lever, or wall-mounted plate to pass through.
-					The one who can navigate the Labyrinth is said to earn the right of awakening The Destroyer of Worlds.
-					Unfortunately, it is now one of the awakened. You must destroy before our time runs out.
-					''' */
-				/* DestroyerLabrynthSecretPaths:
-					'''
-					The spirits tell me of two hidden shortcuts within this Labyrinth, both shrouded in secrecy.
-					The first is within an Ancient Greek Cave said to possess a golden mirror that protects against the Serpent's Gaze.
-					The second is beyond a gate near the maw of the Labyrinth. It is guarded by both the Serpent and the Wraith of Shadow.
-					''' */
-				/* DestroyerLabrynthLayout:
-					'''
-					The Shadow Labyrinth is said to contain three trials that test those who seek the Destroyer.
-					The Trial of Fire, Water, and Flight. One must master all three before being deemed worthy of its presence.
-					I can only imagine what lies deep within its depths, but I'm sure you can handle it {0}!
-					''' */
-				/* MachineTempleLocationHint:
-=======
 					你的镐子可以轻松凿穿一格宽的薄墙
 					但某些材料即使厚重，亦能随意掘穿
 					如沙子、雪泥与薄冰
@@ -10533,7 +10403,6 @@ Mods: {
 					某些宝箱需特定钥匙才能打开，唯“死者之首”骷髅王认可者可得
 					我被骷髅王囚禁时，听闻它将一把暗影钥匙深藏于冻洋之下
 					另有传言称，飞龙法师会将其赐予参与其扭曲游戏的胜者，该游戏于东方山脉之巅的堡垒中举办
->>>>>>> fae9f010fb9ba6e6c4bf359ea2a21ea8fc122ba3
 					'''
 				HardmodeLorePart1:
 					'''
