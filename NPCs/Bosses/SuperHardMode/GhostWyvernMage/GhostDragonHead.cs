@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.damage = 100;
             NPC.defense = 120;
             NPC.HitSound = SoundID.NPCHit4;
-            NPC.DeathSound = SoundID.NPCDeath10;
+            NPC.DeathSound = SoundID.Zombie97;
             NPC.lifeMax = 550000;
             NPC.boss = true;
             NPC.noGravity = true;
@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.alpha = 100;
             NPC.value = 660000;
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
-            UsefulFunctions.AddAttack(NPC, 900, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, SoundID.Item17, stopBeforeFiring: false, needsLineOfSight: false, condition: (NPC npc) => { return npc.Distance(Main.player[npc.target].Center) > 700 && Main.rand.NextBool(200); });
+            UsefulFunctions.AddAttack(NPC, 1000, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, SoundID.Item17, stopBeforeFiring: false, needsLineOfSight: false, condition: (NPC npc) => { return npc.Distance(Main.player[npc.target].Center) > 700 && Main.rand.NextBool(200); });
         }
         int lightningDamage = 50;
 

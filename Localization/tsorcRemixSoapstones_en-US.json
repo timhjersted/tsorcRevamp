@@ -1448,7 +1448,7 @@
   "style": 1
 }
 {
-  "text": "Red:  ",
+  "text": "Miakoda: Red, have you ever heard of the Nine? It seems that the leader of this order is located here, ready to torment us... --NEWLINE  --NEWLINE Red: Yes, I\u0027ve heard too much about them. Over the ages, these horrors have plagued mankind for too long. I intend to put an end to them once and for all by killing their leader right here, the Witchking. ",
   "tileX": 2063,
   "tileY": 1886,
   "textWidth": 320,
@@ -1903,14 +1903,14 @@
   "style": 1
 }
 {
-  "text": "\u003E EAST \u003E --NEWLINE  --NEWLINE The Hallow --NEWLINE The Great Mountains of Elendaris --NEWLINE The Frozen Ocean ",
+  "text": "\u003E EAST \u003E --NEWLINE  --NEWLINE The Hallow --NEWLINE The Great Mountains of Elendaris --NEWLINE The Frozen Ocean ", 
   "tileX": 6278,
   "tileY": 861,
   "textWidth": 320, 
   "style": 1
 }
 {
-  "text": "- You arrived in the enchanted lands of the Hallow -",
+  "text": "- You arrived in the enchanted lands of the Hallow -", 
   "tileX": 6484,
   "tileY": 827,
   "textWidth": 320, 
@@ -1920,6 +1920,13 @@
   "text": "You\u0027ve discovered the entrance to the Hallowed Caverns. --NEWLINE  --NEWLINE The Molten Pickaxe will be needed to enter.",
   "tileX": 6528,
   "tileY": 807,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "As you wander through these enchanted lands, you notice something. The magical and fairy creatures you\u0027ve heard about that are supposed to roam here are simply not present. You doubt the tales and stories you\u0027ve been told before but you also realize that this place seems strangely quiet.",
+  "tileX": 6769,
+  "tileY": 728,
   "textWidth": 320,
   "style": 1
 }
@@ -1976,6 +1983,13 @@
   "text": "- You have found the Scarlet Hill - --NEWLINE  --NEWLINE Miakoda: The passage on the right leads to some very strong blood creatures, be careful, Red.",
   "tileX": 2921,
   "tileY": 427,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Red: These creatures seem to come from the sea, why are they here? --NEWLINE  --NEWLINE Miakoda: Indeed. More precisely, they were recovered dead and then reanimated here with rituals during the blood moon. Such imposing aquatic creatures, they must come from the Eternal Reef.",
+  "tileX": 2802,
+  "tileY": 579,
   "textWidth": 320,
   "style": 1
 }

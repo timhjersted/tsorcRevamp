@@ -9490,6 +9490,8 @@ Mods: {
 			PurpleMagicProj.DisplayName: Purple Magic Proj
 			GhostWyvernProj.DisplayName: Ghost Wyvern Proj
 			RedRainProj.DisplayName: Red Rain Proj
+			// SmallRedLightning.DisplayName: Small Red Lightning
+			// WyvernIcicle.DisplayName: Wyvern Icicle
 		}
 
 		NPCs: {
@@ -9773,6 +9775,9 @@ Mods: {
 			WyvernMageShadow: {
 				DisplayName: 飞龙法师堕魂—渊影
 				DespawnHandler: 飞龙法师堕魂挣脱了囚禁......
+				// ShadowWave: The shadow around you grows......
+				// FinalShadowWave: The Wyvern Mage Shadow plunges you into darkness!
+				// GhostDragonDead: Dare if you wish, Red...
 				Condition: 当他的灵鬼虬龙死后掉落
 			}
 

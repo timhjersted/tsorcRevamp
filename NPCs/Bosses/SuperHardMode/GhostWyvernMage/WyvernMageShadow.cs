@@ -55,6 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         int plasmaDamage = 44;
         int lifeTimer = 0;
         int holdTimer = 0;
+        int desperationTimer = 0;
         int lightningDelayTimer = -1;
         Vector2 delayedTargetPosition;
         int deathTimer = 0;
@@ -104,9 +105,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public override void AI()
         {
-            Lighting.AddLight(NPC.Center, Color.BlueViolet.ToVector3() * 2f);
-            Main.dayTime = false;
-            Main.time = 3000;
+            bool dragonAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
+            
+            Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f);
+            if (!dragonAlive)
+            {
+                Main.dayTime = false;
+                Main.time = 3000;
+            }
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             if (!initialized)
@@ -157,23 +163,39 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             {
                 holdTimer--;
             }
+            if (desperationTimer > 1)
+            {
+                desperationTimer--;
+            }
 
             if (NPC.life < NPC.lifeMax / 2)
             {
                 player.AddBuff(BuffID.Chilled, 30, false);
                 player.AddBuff(BuffID.Ichor, 30, false);
+                player.AddBuff(BuffID.Darkness, 30, false);
 
                 if (holdTimer <= 0)
                 {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMage.FrostWave"), 235, 199, 23);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMageShadow.ShadowWave"), 235, 23, 220);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/Darkness"), NPC.Center);
                     holdTimer = 12000;
+                }
+            }
+
+            //Desperation phase, player gets obstructed
+            if (NPC.life < NPC.lifeMax / 15)
+            {
+                player.AddBuff(BuffID.Blackout, 30, false); player.AddBuff(BuffID.Obstructed, 30, false);
+                if (desperationTimer <= 0)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMageShadow.FinalShadowWave"), 175, 23, 200);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/Darkness"), NPC.Center);
+                    desperationTimer = 15000;
                 }
             }
 
             OrbTimer++;
             TeleportTimer++;
-
-            bool dragonAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
 
             if (dragonAlive)
             {
@@ -182,7 +204,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             if (dragonAliveLastFrame && !dragonAlive)
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMage.DragonDead"), 235, 199, 23);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMageShadow.GhostDragonDead"), 210, 23, 23);
                 phaseTransitionTimer = 1;
             }
             dragonAliveLastFrame = dragonAlive;
@@ -244,7 +266,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.PurpleMagicProj>(), frozenSawDamage, 0f, Main.myPlayer);
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     OrbTimer = 0;
                     ShotCount++;
                 }
@@ -258,7 +279,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                             spawnPos.Y += -550;
                             spawnPos.X += Main.rand.Next(-50, 50);
                             Vector2 projVel = UsefulFunctions.Aim(spawnPos, Main.player[NPC.target].Center, 1);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.SmallRedLightning>(), frozenSawDamage, 0f, Main.myPlayer);
                         }
                     }
                 }
@@ -273,13 +294,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                         Vector2 projVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
                         if (dragonAlive)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.SmallRedLightning>(), frozenSawDamage, 0f, Main.myPlayer);
                         }
                         else
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(-0.15f) * 8, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(-0.15f) * 6, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.PurpleMagicProj>(), frozenSawDamage, 0f, Main.myPlayer, 1);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedLightning>(), frozenSawDamage, 0f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(0.15f) * 8, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(0.15f) * 6, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.PurpleMagicProj>(), frozenSawDamage, 0f, Main.myPlayer, 1);
                         }
                     }
                 }
@@ -299,32 +320,42 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                         }
                     }
                 }
-            }
-            else if (nextAttackType == 2)
-            {
-                zapTimer--;
-                Vector2 spawnPos = Main.rand.NextVector2CircularEdge(1300, 1300) + NPC.Center;
-                Vector2 projVel = UsefulFunctions.Aim(spawnPos, NPC.Center, 10);
-                projVel = projVel.RotatedBy(-.25 + 2f * (teleportCooldown - TeleportTimer) / 600);
-                if (TeleportTimer < 400)
+                if (TeleportTimer % 150 == 0 && !dragonAlive)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Ice5Icicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                        Vector2 projVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                        }
                     }
                 }
+            }
+                else if (nextAttackType == 2)
+                {
+                    zapTimer--;
+                    Vector2 spawnPos = Main.rand.NextVector2CircularEdge(1300, 1300) + NPC.Center;
+                    Vector2 projVel = UsefulFunctions.Aim(spawnPos, NPC.Center, 10);
+                    projVel = projVel.RotatedBy(-.25 + 2f * (teleportCooldown - TeleportTimer) / 600);
+                    if (TeleportTimer < 400)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Ice5Icicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                        }
+                    }
 
-                if (zapTimer <= 0 && TeleportTimer > 90)
-                {
-                    auraBonus = .8f;
-                    zapTimer = Main.rand.Next(35, 60);
-                    projVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (zapTimer <= 0 && TeleportTimer > 90)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                        auraBonus = .8f;
+                        zapTimer = Main.rand.Next(35, 60);
+                        projVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                        }
                     }
                 }
-            }
 
             if (TeleportTimer >= 10)
             {
@@ -338,7 +369,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             }
 
             mageShadowTimer++;
-            if (mageShadowTimer >= 1000 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (mageShadowTimer >= 1250 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[NPC.target].position.X - 676 - NPC.width / 2, (int)Main.player[NPC.target].position.Y - 16 - NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
                 Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
@@ -351,44 +382,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 }
 
                 mageShadowTimer = 0;
-            }
-
-            if (TeleportTimer == 10)
-            {
-                if (NPC.life <= 12000 && lifeTimer < 1 || NPC.life <= 7000 && lifeTimer < 2)
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMage.Archdeacons"), 175, 75, 255);
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int Paraspawn = 0;
-                        Vector2 spawnLoc = Main.player[NPC.target].Center;
-
-                        if (Collision.CanHitLine(spawnLoc, 1, 1, spawnLoc + new Vector2(636, 0), 1, 1))
-                        {
-                            Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnLoc.X + 636, (int)spawnLoc.Y, ModContent.NPCType<Enemies.Archdeacon>(), 0);
-                            Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
-
-                            if (Main.netMode == NetmodeID.Server)
-                            {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
-                            }
-                        }
-                        if (Collision.CanHitLine(spawnLoc, 1, 1, spawnLoc + new Vector2(-636, 0), 1, 1))
-                        {
-                            Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnLoc.X - 636, (int)spawnLoc.Y, ModContent.NPCType<Enemies.Archdeacon>(), 0);
-                            Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
-
-                            if (Main.netMode == NetmodeID.Server)
-                            {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
-                            }
-                        }
-                    }
-
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    lifeTimer++;
-                }
             }
         }
 

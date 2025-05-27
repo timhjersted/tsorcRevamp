@@ -103,8 +103,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         public override void AI()
         {
             Lighting.AddLight(NPC.Center, Color.BlueViolet.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-            Main.dayTime = false;
-            Main.time = 3000;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             if(!initialized)
@@ -333,7 +331,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Ice5Icicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.WyvernIcicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
                     }
                 }
 

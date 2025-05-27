@@ -3,16 +3,17 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
 {
-    class Ice5Icicle : ModProjectile
+    class WyvernIcicle : ModProjectile
     {
 
         public override void SetDefaults()
         {
             Projectile.width = 32;
             Projectile.height = 88;
-            Projectile.friendly = true;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
             Projectile.penetrate = 5;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + 1.57f; //90 degrees in radians!
 
-            Lighting.AddLight(Projectile.Center, Color.BlueViolet.ToVector3() * .75f);
+            Lighting.AddLight(Projectile.Center, Color.Blue.ToVector3() * .75f);
 
             if (Projectile.ai[0] >= 1)
             {

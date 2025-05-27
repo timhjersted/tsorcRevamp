@@ -26,7 +26,7 @@ const float4 empty = float4(0, 0, 0, 0);
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    float4 lightningColor = float4(1, .4, .1, 1);
+    float4 lightningColor = float4(1.1, .2, .2, 1);
     if(active == -2)
     {
         return 1;
@@ -57,9 +57,9 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     return finalIntensity * lightningColor * fadeOut;
 }
 
-technique LightningLine
+technique RedLightningLine
 {
-    pass LightningLinePass
+    pass RedLightningLinePass
     {
         PixelShader = compile ps_2_0 PixelShaderFunction();
     }

@@ -1733,6 +1733,14 @@ namespace tsorcRevamp
                                 lightning.CreateRenderTarget();
                             }
                         }
+                        if (Main.projectile[i].ModProjectile is SmallRedLightning)
+                        {
+                            SmallRedLightning lightning = (SmallRedLightning)Main.projectile[i].ModProjectile;
+                            if (lightning.lightningTarget == null)
+                            {
+                                lightning.CreateRenderTarget();
+                            }
+                        }
                         //I really should just make one "Lightning" class that all these inherit from
                         //But also ¯\_(ツ)_/¯
                         if (Main.projectile[i].ModProjectile is Bolt3Lightning)
