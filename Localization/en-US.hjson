@@ -4424,7 +4424,7 @@ Mods: {
 				DisplayName: Demon Drug
 				Tooltip:
 					'''
-					{$CommonItemTooltip.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.BadDefense@1}
 					Does not stack with Armor Drug, Strength, or Battlefront Potions.
 					'''
