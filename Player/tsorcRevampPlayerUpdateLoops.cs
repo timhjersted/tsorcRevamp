@@ -413,8 +413,9 @@ namespace tsorcRevamp
         public bool EnterTheAbyss;
 
         // 3 seconds until sinking
-        public int LavaWalkTimer = 60 * 3;
+        public const int LavaWalkTimer = 60 * 3;
         public int LavaWalkCount = 0;
+        public int TimeAwayFromLava = 60 * 3;
         public bool WaterWalkingBoots;
 
         public override void ResetEffects()
@@ -896,7 +897,6 @@ namespace tsorcRevamp
                     Main.projectile[p].originalDamage = damage;
                 }
             }
-
             if (Player.HasBuff(BuffID.ShadowFlame))
             {
                 int dust = Dust.NewDust(Player.position, Player.width, Player.height, DustID.ShadowbeamStaff, 0f, 0f, 30, default, Main.rand.NextFloat(1f, 2f));
@@ -1790,11 +1790,13 @@ namespace tsorcRevamp
                             if (tileBelow.LiquidType == LiquidID.Lava)
                             {
                                 walkingOnLava = true;
+                                onSolidGround = false;
                             }
                             // Player is standing on something that isnt lava
-                            else
+                            else 
                             {
                                 onSolidGround = true;
+                                walkingOnLava = false;
                             }
                         }
                         if (tileOnPlayer.LiquidType == LiquidID.Lava)
@@ -1813,11 +1815,13 @@ namespace tsorcRevamp
                 if ((insideLava && !walkingOnLava) && LavaWalkCount < (int)(LavaWalkTimer * 1.5f))
                 {
                     LavaWalkCount++;
+                    TimeAwayFromLava = 0;
                 }
                 // Player is walking on lava, increase the lava count
                 if ((walkingOnLava && !onSolidGround) && LavaWalkCount < LavaWalkTimer)
                 {
                     LavaWalkCount++;
+                    TimeAwayFromLava = 0;
 
                     // If the time remaining is greater than 25%, generate a dust visual for the player.
                     if (Main.rand.Next(5) == 0 && LavaWalkTimer - LavaWalkCount > (int)(LavaWalkTimer * .25f))
@@ -1825,15 +1829,24 @@ namespace tsorcRevamp
                         Dust.NewDustPerfect(Player.Center + offset, DustID.RedTorch);
                     }
                 }
-                // Regenerate the lava count slower than it was used
-                if (LavaWalkCount > 0 && !(insideLava || walkingOnLava) && Main.rand.Next(2) == 0)
+                // Dp not regenerate boots if inside or walking on lava
+                if (LavaWalkCount > 0 && !(insideLava || walkingOnLava))
                 {
-                    LavaWalkCount--;
-
-                    // More dust if the boots are almost fully regened
-                    if (Main.rand.Next(5) == 0 || LavaWalkCount < LavaWalkTimer / 20)
+                    // Regen the boots if the player is grappled safely, on ground, or has spent more than 3 seconds away from lava
+                    if (TimeAwayFromLava >= LavaWalkTimer / 2 || Player.velocity.Y == 0)
                     {
-                        Dust.NewDustPerfect(Player.Center + offset, DustID.BlueTorch);
+                        LavaWalkCount--;
+
+                        // More dust if the boots are almost fully regened
+                        if (Main.rand.Next(8) == 0 || LavaWalkCount < (int)(LavaWalkTimer * .18f))
+                        {
+                            Dust.NewDustPerfect(Player.Center + offset, DustID.BlueTorch);
+                        }
+                    }
+                    // The player is still midair, progress the timer.
+                    else
+                    {
+                        TimeAwayFromLava++;
                     }
                 }
             }
