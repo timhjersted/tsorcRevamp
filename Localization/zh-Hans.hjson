@@ -10601,6 +10601,14 @@ Mods: {
 					The Golem temple is magically linked to the Jungle, Sun, and Moon. Enter the temple through the Jungle Pyramid and proceed with caution.
 					The madness and malice emenating from this temple is unlike anything we've ever seen before, {0}.
 					''' */
+				// TriadLocationHint: Our path draws us now to the Legendary Watchers of old, the Triad. They should reside within their shrine upon the Twin Peaks of Arazium.
+				// TriadCaution: Be careful {0}. None who have dared to face the Triad have survived their gaze. It would be wise to become as strong as possible before seeking them out.
+				/* TriadEmpressOfLight:
+					'''
+					The Triad are akin to Gods, far above ordinary mortals. To face them in battle and triumph might require the power of a true god.
+					Have you ever looked up at the clouds floating above Ashen Peak Village? It is said that the Empress of Light resided there, before she was sealed away by the false God.
+					She will be weakened by her long sealing - and even more so if she cannot draw power from the sun. You must plunder her might.
+					''' */
 				CannotHelp: 你已做得足好了，{0}，我无更多建言可予
 				ExhaustedDialogue: "{0}，我们谈得够多了，眼下我实在无话可说"
 			}

@@ -623,6 +623,28 @@ namespace tsorcRevamp.NPCs.Friendly
             // The triad awaits. Their fight will be legendary.
             else if (!BossDefeated(ModContent.NPCType<SpazmatismV2>()))
             {
+                // If the player isn't near the Shrine of the Triad
+                if (!UsefulFunctions.PlayerInZone(player, 2850, 3350, 40, 335))
+                { 
+                    // Tell them where it is
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.TriadLocationHint"));
+                }
+                else
+                {
+                    // Prepare for the fight
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.TriadCaution", player.name));
+                }
+
+                // If the empress of light hasn't been defeated
+                if (!BossDefeated(NPCID.HallowBoss))
+                {
+                    // Reccomend the player to fight the empress first for gear
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.TriadEmpressOfLight"));
+                }
+            }
+            // This is it, time to fight the Mindflayer king
+            else if (tsorcRevampWorld.HardModeNotSHM)
+            {
 
             }
             
