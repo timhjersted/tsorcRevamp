@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Friendly
         private double _weight;
         private double _weightIncrease;
 
-        public AutoWeightedDialogue(double weight = 1, double weightIncrease = 0.1)
+        public AutoWeightedDialogue(double weight = 1, double weightIncrease = 0.2)
         {
             random = new UnifiedRandom();
             elements = new List<Tuple<List<string>, double>>();
@@ -353,19 +353,34 @@ namespace tsorcRevamp.NPCs.Friendly
             }
 
             // Lore relevant to the first three hardmode bosses - the Wings of the Awakened
-            if (!BossDefeated(ModContent.NPCType<TheHunter>()) && Main.hardMode)
+            if (tsorcRevampWorld.HardModeNotSHM)
             {
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3WingsLorePart1"));
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3WingsLorePart2"));
                 chat.Add(dialogue);
             }
-            // Lore relevant to next two hard mode bosses along with the final one - The Machines
-            else if (tsorcRevampWorld.HardModeNotSHM)
+
+            // Lore relevant to the 4th and 5th hardmode bosses along with the final one - The Calamities of the Awakened
+            if (tsorcRevampWorld.HardModeNotSHM)
             {
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart1"));
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart2"));
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart3"));
                 dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart4"));
+                chat.Add(dialogue);
+            }
+
+            // Talk about plantera at the earliest they could be fought (before hunter)
+            if (BossDefeated(ModContent.NPCType<TheSorrow>()) && tsorcRevampWorld.HardModeNotSHM)
+            {
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.PlanteraLorePart1"));
+                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.PlanteraLorePart2"));
+                // Talk about Golem once you get clues about Golem temple
+                if (BossDefeated(ModContent.NPCType<TheMachine>()) || BossDefeated(NPCID.Plantera) || tsorcRevampWorld.EnteredPyramid)
+                {
+                    dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemLorePart1"));
+                    dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemLorePart2"));
+                }
                 chat.Add(dialogue);
             }
 
@@ -593,6 +608,21 @@ namespace tsorcRevamp.NPCs.Friendly
             // Golem baby
             else if (!BossDefeated(NPCID.Golem))
             {
+                // The player has likely defeated plantera at this point, but if they haven't they need to now.
+                if (!BossDefeated(NPCID.Plantera))
+                {
+                    // Tell them about plantera
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemJunglePyramidPlanteraHint"));
+                }
+                else
+                {
+                    // Remind the player where the entrance to the golem temple is, they have the lock and the key to the temple now.
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemEnter", player.name));
+                }
+            }
+            // The triad awaits. Their fight will be legendary.
+            else if (!BossDefeated(ModContent.NPCType<SpazmatismV2>()))
+            {
 
             }
             
@@ -684,7 +714,7 @@ namespace tsorcRevamp.NPCs.Friendly
             Player player = Main.player[Main.myPlayer];
             NPC.timeLeft = 2;
             //UsefulFunctions.BroadcastText("X: " + NPC.position.X.ToString("0.00") + " Y: " + NPC.position.Y.ToString("0.00"));
-
+            
             SetPos();
 
             // Despawn Miakoda

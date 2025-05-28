@@ -10574,6 +10574,33 @@ Mods: {
 					On the way to the Pyramid, if an unbreakable gate seals your path do not fret. Use a cosmic watch to pass time until it is night.
 					The light of the moon shall open your way forward.
 					''' */
+				/* PlanteraLorePart1:
+					'''
+					Do you wish to know more about The Awakened? I will now tell you about Plantera, the Infection that plagues the Jungle.
+					The Jungle is the heart of Mother Nature. When it was tunneled through by the Destroyer, the corruption it left behind could not consume the Jungle. However, its presence had other effects within.
+					''' */
+				/* PlanteraLorePart2:
+					'''
+					It became a madness, a disease. Mother Nature could only contain the infection and keep it at bay.
+					But Plantera, the incarnation of death and madness, will truly be freed one day. Its taint continues to spread throughout the Jungle whispering to those foolish enough to draw near.
+					''' */
+				/* GolemLorePart1:
+					'''
+					Even Golem, once worshiped by as the Sun God, has fallen to the madness. He and his tribe of Lizardmen were once a shamanic tribe bound deeply to the Jungle.
+					Envious of her power, Golem used the Jungle's magic long ago to usurp the Empress of Light. This linked his very existence with the Jungle.
+					When the Jungle went mad, so did he and his people.
+					''' */
+				/* GolemLorePart2:
+					'''
+					His last act while still sane was to seal himself away deep within his Temple.
+					The sealing was said to be done in two parts. The lock was entrusted to the Moon Tribe, who resided in the present day Flooded Machine Temple.
+					The key was linked to the very infection that drove them mad: Plantera itself. If the source of the madness could be destroyed, the key to their freedom would reveal itself.
+					''' */
+				/* GolemEnter:
+					'''
+					The Golem temple is magically linked to the Jungle, Sun, and Moon. Enter the temple through the Jungle Pyramid and proceed with caution.
+					The madness and malice emenating from this temple is unlike anything we've ever seen before, {0}.
+					''' */
 				CannotHelp: 你已做得足好了，{0}，我无更多建言可予
 				ExhaustedDialogue: "{0}，我们谈得够多了，眼下我实在无话可说"
 			}
