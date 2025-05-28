@@ -10611,6 +10611,11 @@ Mods: {
 					Have you ever looked up at the clouds floating above Ashen Peak Village? It is said that the Empress of Light resided there, before she was sealed away by the false God.
 					She will be weakened by her long sealing - and even more so if she cannot draw power from the sun. You must plunder her might.
 					'''
+				AttraidesLocation:
+					'''
+					Well done {0}! You have defeated all the awakened and gathered their elemental crests. The first flame will continue to burn brightly for ages to come.
+					Do not seek Attraides out in the Western Desert. He seeks to awaken an Ancient Evil with the World Essence you have gathered - do not make the mistake of offering it to him for revenge.
+					'''
 				CannotHelp: You have done well, {0}, I have no more advice to offer you.
 				ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
 			}

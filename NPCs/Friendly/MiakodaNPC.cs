@@ -173,7 +173,7 @@ namespace tsorcRevamp.NPCs.Friendly
         // Miakoda Full moon form maybe increase life regen as well as flat heal
         // Miakoda Cresent moon form maybe increase crit chance as well as flat dmg buff
 
-        public Vector2 lastPlayerPos;
+        public Vector2 lastPlayerPos = new Vector2();
         public static Vector2 offSet = new Vector2(30.2f, -19f);
         public List<string> alreadySaid;
         public List<string> nextMessage;
@@ -183,6 +183,8 @@ namespace tsorcRevamp.NPCs.Friendly
         public bool helpButtonPressed;
         // Don't allow multi-message dialogue for the first chat message or after exit is pressed.
         public bool longDialogueAllowed;
+
+        public int owner = -1;
 
         public override void SetStaticDefaults()
         {
@@ -200,6 +202,17 @@ namespace tsorcRevamp.NPCs.Friendly
         public override List<string> SetNPCNameList()
         {
             return Names;
+        }
+
+        public void SetOwner(int owner)
+        {
+            this.owner = owner;
+            Player player = Main.player[owner];
+
+            lastPlayerPos.X = player.position.X;
+            lastPlayerPos.Y = player.position.Y;
+
+            SetPos();
         }
 
         public override void SetDefaults()
@@ -221,15 +234,12 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
             NPC.scale = 0.7f;
+            NPC.timeLeft = 30;
             alreadySaid = new List<string>();
             nextMessage = new List<string>();
             dialogue = new DialogueHandler();
             helpButtonPressed = false;
             longDialogueAllowed = false;
-
-            lastPlayerPos = Main.player[Main.myPlayer].position;
-
-            SetPos();
         }
 
         // Picks a message from the dialogue given based on whether or not it was already said
@@ -264,7 +274,7 @@ namespace tsorcRevamp.NPCs.Friendly
             // No unique messages, restart logic
             else 
             {
-                Player player = Main.player[Main.myPlayer];
+                Player player = Main.player[owner];
                 message = new List<string>();
                 message.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ExhaustedDialogue", player.name));
                 alreadySaid.Clear();
@@ -278,7 +288,7 @@ namespace tsorcRevamp.NPCs.Friendly
         public override string GetChat()
         {
             AutoWeightedDialogue chat = new AutoWeightedDialogue();
-            Player player = Main.player[Main.myPlayer];
+            Player player = Main.player[owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             // TODO: Focus on adding lore behind biomes, Attraides, and bosses.
@@ -403,7 +413,7 @@ namespace tsorcRevamp.NPCs.Friendly
         public string GetHelp()
         {
             AutoWeightedDialogue chat = new AutoWeightedDialogue();
-            Player player = Main.player[Main.myPlayer];
+            Player player = Main.player[owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             // Progressive, each if statement is mutually exclusive and tied to different areas of the story.
@@ -621,7 +631,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 }
             }
             // The triad awaits. Their fight will be legendary.
-            else if (!BossDefeated(ModContent.NPCType<SpazmatismV2>()))
+            else if (!(BossDefeated(NPCID.Spazmatism) || BossDefeated(NPCID.Retinazer)))
             {
                 // If the player isn't near the Shrine of the Triad
                 if (!UsefulFunctions.PlayerInZone(player, 2850, 3350, 40, 335))
@@ -644,6 +654,10 @@ namespace tsorcRevamp.NPCs.Friendly
             }
             // This is it, time to fight the Mindflayer king
             else if (tsorcRevampWorld.HardModeNotSHM)
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.AttraidesLocation", player.name));
+            }
+            else if (tsorcRevampWorld.SuperHardMode)
             {
 
             }
@@ -721,30 +735,45 @@ namespace tsorcRevamp.NPCs.Friendly
         }
         public override bool CanChat()
         {
-            return true;
+            return owner != -1;
         }
 
         public void SetPos()
         {
-            Player player = Main.player[Main.myPlayer];
+            Player player = Main.player[owner];
             Vector2 targetLocation = new Vector2(player.Center.X + offSet.X, player.Center.Y + offSet.Y);
             NPC.position = targetLocation;
+            NPC.timeLeft = 2;
+        }
+
+        public void Despawn()
+        {
+            // Despawn Miakoda
+            NPC.timeLeft = 0;
+            NPC.position.X += 10000;
         }
 
         public override void PostAI()
         {
-            Player player = Main.player[Main.myPlayer];
-            NPC.timeLeft = 2;
-            //UsefulFunctions.BroadcastText("X: " + NPC.position.X.ToString("0.00") + " Y: " + NPC.position.Y.ToString("0.00"));
-            
+            if (NPC.timeLeft <= 0)
+                Despawn();
+
+            if (owner == -1)
+            {
+                NPC.timeLeft--;
+                return;
+            }
+
+            Player player = Main.player[owner];
+
+            if (player.whoAmI != Main.myPlayer)
+                return;
+
             SetPos();
 
-            // Despawn Miakoda
+            // Despawn Miakoda if the player moves
             if (lastPlayerPos != player.position)
-            {
-                NPC.timeLeft = 0;
-                NPC.position.X += 10000;
-            }
+                Despawn();
         }
         
         // Make Miakoda a ghost, should not interact with other NPC's

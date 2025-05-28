@@ -67,7 +67,10 @@ namespace tsorcRevamp.Projectiles.Pets
                         count++;
                         if (count > 30)
                         {
-                            NPC.NewNPC(player.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y, ModContent.NPCType<MiakodaNPC>());
+                            int npcPos = NPC.NewNPC(player.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y, ModContent.NPCType<MiakodaNPC>());
+                            MiakodaNPC npc = (MiakodaNPC)Main.npc[npcPos].ModNPC;
+                            npc.SetOwner(Projectile.owner);
+
                             count = 0;
                             spawned = true;
                         }
