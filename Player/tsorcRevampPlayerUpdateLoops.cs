@@ -903,6 +903,8 @@ namespace tsorcRevamp
                 Main.dust[dust].noGravity = true;
             }
 
+            // Miakoda help checks
+
             if (!tsorcRevampWorld.EnteredHell && Player.ZoneUnderworldHeight)
             {
                 tsorcRevampWorld.EnteredHell = true;

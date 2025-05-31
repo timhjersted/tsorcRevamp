@@ -22,6 +22,12 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.NPCs;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 
 namespace tsorcRevamp
 {
@@ -40,6 +46,7 @@ namespace tsorcRevamp
         public static bool EnteredShadowTemple;
         public static bool EnteredFloodedMachineTemple;
         public static bool EnteredPyramid;
+        public static bool TalkedToShaman;
 
         public static List<int> PairedBosses;
 
@@ -50,10 +57,48 @@ namespace tsorcRevamp
 
         public static Vector2 AbyssPortalLocation;
 
-        // Returns if the game is in hardmode but before killing attraides
+        public static bool BossDefeated(int npcType) { return NewSlain.ContainsKey(new NPCDefinition(npcType)); }
+
+        /// <summary>
+        /// Returns if the game is in hardmode but before killing attraides
+        /// </summary>
         public static bool HardModeNotSHM
         {
             get { return Main.hardMode && !SuperHardMode && !TheEnd; }
+        }
+        /// <summary>
+        /// Returns true if the player hasn't killed the first three Fiends of superhardmode
+        /// </summary>
+        public static bool EarlySHM
+        {
+            get 
+            { 
+                return SuperHardMode && !(
+                    BossDefeated(ModContent.NPCType<WaterFiendKraken>()) || 
+                    BossDefeated(ModContent.NPCType<FireFiendMarilith>()) ||
+                    BossDefeated(ModContent.NPCType<EarthFiendLich>())
+                    ); 
+            }
+        }
+        /// <summary>
+        /// Placeholder, update later
+        /// </summary>
+        public static bool MidSHM
+        {
+            get
+            {
+                return SuperHardMode && !EarlySHM && false;
+            }
+        }
+        /// <summary>
+        /// Placeholder, update later
+        /// </summary>
+        public static bool LateSHM
+        {
+            get
+            {
+                return SuperHardMode && !MidSHM && false;
+            }
         }
 
         public class WorldState
@@ -115,6 +160,7 @@ namespace tsorcRevamp
             EnteredRuinsOfSerris = false;
             EnteredFloodedMachineTemple = false;
             EnteredPyramid = false;
+            TalkedToShaman = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -162,6 +208,8 @@ namespace tsorcRevamp
                 world_state.Add("EnteredFloodedMachineTemple");
             if (EnteredPyramid)
                 world_state.Add("EnteredPyramid");
+            if (TalkedToShaman)
+                world_state.Add("TalkedToShaman");
 
             if (DownedBetsy)
             {
@@ -199,6 +247,7 @@ namespace tsorcRevamp
             EnteredShadowTemple = worldStateList.Contains("EnteredShadowTemple");
             EnteredFloodedMachineTemple = worldStateList.Contains("EnteredFloodedMachineTemple");
             EnteredPyramid = worldStateList.Contains("EnteredPyramid");
+            TalkedToShaman = worldStateList.Contains("TalkedToShaman");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)

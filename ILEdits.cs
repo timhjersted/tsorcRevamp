@@ -19,8 +19,10 @@ namespace tsorcRevamp
 
             //Disable drawing of wires when in adventure mode
             //editing a get accessor of a property and built in hooks don't have any of those
-            MonoModHooks.Modify(typeof(Terraria.GameContent.UI.WiresUI.Settings).GetProperty("DrawWires").GetGetMethod(), new ILContext.Manipulator(DrawWires_Patch));
-
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            {
+                MonoModHooks.Modify(typeof(Terraria.GameContent.UI.WiresUI.Settings).GetProperty("DrawWires").GetGetMethod(), new ILContext.Manipulator(DrawWires_Patch));
+            }
 
             if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
             {

@@ -10614,6 +10614,17 @@ Mods: {
 					Well done {0}! You have defeated all the awakened and gathered their elemental crests. The first flame will continue to burn brightly for ages to come.
 					Do not seek Attraides out in the Western Desert. He seeks to awaken an Ancient Evil with the World Essence you have gathered - do not make the mistake of offering it to him for revenge.
 					''' */
+				/* ToShaman:
+					'''
+					{0}, an ancient evil invades this world. Killing Attraides has now unleashed the Abyss. Go to the western edge of the world and find the Shaman elder.
+					He should know how to reseal the abyss. Seek him out for answers.
+					''' */
+				/* WaterFiendKrakenHint:
+					'''
+					We must first dive into the Great Chasm and find the Lizhard Gate that blocks the path to the Old One's Tree.
+					According to the Shaman Elder, this is where the Water Fiend Kraken has made its dwelling.
+					It is the first of the beings we need to slay before we can fight Gwyn, Keeper of the Flame.
+					''' */
 				CannotHelp: 你已做得足好了，{0}，我无更多建言可予
 				ExhaustedDialogue: "{0}，我们谈得够多了，眼下我实在无话可说"
 			}

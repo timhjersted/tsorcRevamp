@@ -18,6 +18,10 @@ using rail;
 using Steamworks;
 using tsorcRevamp.NPCs.Bosses.Serris;
 using tsorcRevamp.NPCs.Bosses.PrimeV2;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -405,7 +409,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public static bool BossDefeated(int npcType)
         {
-            return tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(npcType));
+            return tsorcRevampWorld.BossDefeated(npcType);
         }
 
         // The order is important here, the messages added later on in the function are weighted higher than the ones added first
@@ -657,9 +661,80 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.AttraidesLocation", player.name));
             }
-            else if (tsorcRevampWorld.SuperHardMode)
+            // There is already a place explaining where to go next in SHM, direct the player to the Shaman first.
+            else if (!tsorcRevampWorld.TalkedToShaman)
             {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ToShaman", player.name));
+            }
+            else if (tsorcRevampWorld.EarlySHM)
+            // Hint about the first 3 Lizhard Gate Locations
+            {
+                // Hint about the gate within the Great Chasm 
+                if (!BossDefeated(ModContent.NPCType<WaterFiendKraken>()))
+                {
 
+                }
+
+                // Hint about the gate to the east of the Elengad Ruins
+                if (!BossDefeated(ModContent.NPCType<FireFiendMarilith>()))
+                {
+
+                }
+
+                // Two gates lead to him
+                // Hint about the gate at the eastern edge of the world, underneath the ocean
+                // Hint about the gate hidden in lava within hell
+                if (!BossDefeated(ModContent.NPCType<EarthFiendLich>()))
+                {
+
+                }
+
+                // Hint about the gate underneath the Frozen Ocean
+                // Try to encourage player to beat this one early - the wings are a huge help in SHM
+                if (!BossDefeated(ModContent.NPCType<SeathTheScalelessHead>()))
+                {
+
+                }
+            }
+            else if (tsorcRevampWorld.MidSHM)
+            {
+                // Hint about the way to the Witchking - same place as the Earth Fiend Lich except you travel west
+                if (!BossDefeated(ModContent.NPCType<Witchking>()))
+                {
+
+                }
+                // Defeating the Witchking unlocks the way to the Wyvern Mage Shadow
+                // He is located high above the Wyvern Mage's Fortress
+                else if (!BossDefeated(ModContent.NPCType<WyvernMageShadow>()))
+                {
+
+                }
+
+                // Artorias is present between the Pyramid and the Forgotten City
+                if (!BossDefeated(ModContent.NPCType<Artorias>()))
+                {
+
+                }
+                else if (!BossDefeated(ModContent.NPCType<Chaos>()))
+                // Defeating artorias opens the way to Chaos.
+                // Hint about the Amythyst locked gate to the right of the Pyramid
+                {
+
+                }
+
+                // This boss spawns on the surface of the Frozen ocean
+                // Hint about it
+                if (!BossDefeated(ModContent.NPCType<Blight>()))
+                {
+
+                }
+
+                // Hint about the gate underneath the Frozen Ocean
+                // Try to encourage player to beat this one early - the wings are a huge help in SHM
+                if (!BossDefeated(ModContent.NPCType<SeathTheScalelessHead>()))
+                {
+
+                }
             }
             
             // If the help chat is empty
@@ -735,7 +810,7 @@ namespace tsorcRevamp.NPCs.Friendly
         }
         public override bool CanChat()
         {
-            return owner != -1;
+            return owner == Main.myPlayer;
         }
 
         public void SetPos()

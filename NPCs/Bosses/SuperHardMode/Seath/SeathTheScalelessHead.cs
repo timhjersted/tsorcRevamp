@@ -75,28 +75,32 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
         }
 
-        #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            Player P = spawnInfo.Player;
+            Player player = spawnInfo.Player;
+            float chance = 0f;
 
-            bool Sky = spawnInfo.SpawnTileY <= (Main.rockLayer * 4);
-            bool AboveEarth = spawnInfo.SpawnTileY < Main.worldSurface;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
+            bool Sky = player.ZoneSkyHeight;
+            bool AboveEarth = player.ZoneOverworldHeight;
+            bool FrozenOcean = UsefulFunctions.PlayerInZone(player, 7500, 8360, 40, 1140);
+            bool SeathDefeated = tsorcRevampWorld.BossDefeated(ModContent.NPCType<SeathTheScalelessHead>());
 
+            // If the player is above the frozen ocean, add a chance to spawn Seath
+            if (tsorcRevampWorld.SuperHardMode && FrozenOcean && (Sky || AboveEarth) && !SeathDefeated) 
+            {
+                chance += 0.01f;
+            }
 
-            if (tsorcRevampWorld.SuperHardMode && (Sky || AboveEarth) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<SeathTheScalelessHead>())) && FrozenOcean && Main.rand.NextBool(100)) return 1;
-
-            if (Main.hardMode && P.townNPCs > 2f && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<SeathTheScalelessHead>())) && !Main.dayTime && Main.rand.NextBool(1000))
+            // If Artorias is defeated, add a small chance to spawn Seath at night while on the surface
+            // This can occur in towns as well
+            if (tsorcRevampWorld.BossDefeated(ModContent.NPCType<Artorias>()) && (Sky || AboveEarth) && !Main.dayTime && !SeathDefeated && Main.rand.NextBool(1000))
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SeathTheScalelessHead.Spawn"), 175, 75, 255);
-                return 1;
+                chance = 1f;
             }
-            return 0;
+
+            return chance;
         }
-        #endregion
-
-
 
         #region AI
         NPCDespawnHandler despawnHandler;

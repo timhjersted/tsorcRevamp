@@ -100,6 +100,8 @@ namespace tsorcRevamp.NPCs.Friendly
             button = Language.GetTextValue("LegacyInterface.28");
             if (tsorcRevampWorld.SuperHardMode)
             {
+                tsorcRevampWorld.TalkedToShaman = true;
+
                 if (chatState == 0)
                 {
                     button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.button2v1");
