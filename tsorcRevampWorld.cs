@@ -81,23 +81,28 @@ namespace tsorcRevamp
             }
         }
         /// <summary>
-        /// Placeholder, update later
+        /// Returns true if the player still needs to kill more bosses to unlock Gwyn
         /// </summary>
         public static bool MidSHM
         {
             get
             {
-                return SuperHardMode && !EarlySHM && false;
+                return SuperHardMode && !EarlySHM && !(
+                    BossDefeated(ModContent.NPCType<WyvernMageShadow>()) &&
+                    BossDefeated(ModContent.NPCType<Chaos>()) &&
+                    BossDefeated(ModContent.NPCType<Blight>()) &&
+                    BossDefeated(ModContent.NPCType<SeathTheScalelessHead>())
+                    );
             }
         }
         /// <summary>
-        /// Placeholder, update later
+        /// Returns true if Gwyn is the final progression boss left
         /// </summary>
         public static bool LateSHM
         {
             get
             {
-                return SuperHardMode && !MidSHM && false;
+                return SuperHardMode && !EarlySHM && !MidSHM;
             }
         }
 

@@ -414,6 +414,25 @@ namespace tsorcRevamp.NPCs.Friendly
 
         // The order is important here, the messages added later on in the function are weighted higher than the ones added first
         // Add them later on if you want them to be more likely to be immediately seen by the player upon talking with Miakoda
+        public string GetRemixHelp()
+        {
+            AutoWeightedDialogue chat = new AutoWeightedDialogue();
+            Player player = Main.player[owner];
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+            // TODO: Add conditions for the remix map
+
+            // If the help chat is empty
+            if (chat.Count == 0)
+            {
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp", player.name));
+            }
+
+            return PickMessage(chat);
+        }
+
+        // The order is important here, the messages added later on in the function are weighted higher than the ones added first
+        // Add them later on if you want them to be more likely to be immediately seen by the player upon talking with Miakoda
         public string GetHelp()
         {
             AutoWeightedDialogue chat = new AutoWeightedDialogue();
@@ -639,7 +658,7 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 // If the player isn't near the Shrine of the Triad
                 if (!UsefulFunctions.PlayerInZone(player, 2850, 3350, 40, 335))
-                { 
+                {
                     // Tell them where it is
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.TriadLocationHint"));
                 }
@@ -667,18 +686,18 @@ namespace tsorcRevamp.NPCs.Friendly
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ToShaman", player.name));
             }
             else if (tsorcRevampWorld.EarlySHM)
-            // Hint about the first 3 Lizhard Gate Locations
+            // Hint about the fiend Lizhard Gate Locations along with Seath
             {
                 // Hint about the gate within the Great Chasm 
                 if (!BossDefeated(ModContent.NPCType<WaterFiendKraken>()))
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WaterFiendKrakenHint"));
                 }
 
                 // Hint about the gate to the east of the Elengad Ruins
                 if (!BossDefeated(ModContent.NPCType<FireFiendMarilith>()))
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.FireFiendMarilithHint"));
                 }
 
                 // Two gates lead to him
@@ -686,55 +705,69 @@ namespace tsorcRevamp.NPCs.Friendly
                 // Hint about the gate hidden in lava within hell
                 if (!BossDefeated(ModContent.NPCType<EarthFiendLich>()))
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.EarthFiendLichHint1"));
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.EarthFiendLichHint2"));
                 }
 
                 // Hint about the gate underneath the Frozen Ocean
                 // Try to encourage player to beat this one early - the wings are a huge help in SHM
                 if (!BossDefeated(ModContent.NPCType<SeathTheScalelessHead>()))
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SeathTheScalelessHint"));
                 }
             }
             else if (tsorcRevampWorld.MidSHM)
             {
                 // Hint about the way to the Witchking - same place as the Earth Fiend Lich except you travel west
+                // Mention needing a forgotten Gaia Sword or Barrow Blade for his initial defenses
                 if (!BossDefeated(ModContent.NPCType<Witchking>()))
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WitchkingHint"));
                 }
                 // Defeating the Witchking unlocks the way to the Wyvern Mage Shadow
                 // He is located high above the Wyvern Mage's Fortress
                 else if (!BossDefeated(ModContent.NPCType<WyvernMageShadow>()))
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WyvernMageShadowHint"));
                 }
 
                 // Artorias is present between the Pyramid and the Forgotten City
+                // Mention needing a forgotten Gaia Sword or Barrow Blade for his initial defenses
                 if (!BossDefeated(ModContent.NPCType<Artorias>()))
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ArtoriasHint"));
                 }
                 else if (!BossDefeated(ModContent.NPCType<Chaos>()))
                 // Defeating artorias opens the way to Chaos.
                 // Hint about the Amythyst locked gate to the right of the Pyramid
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ChaosHint"));
                 }
 
                 // This boss spawns on the surface of the Frozen ocean
-                // Hint about it
                 if (!BossDefeated(ModContent.NPCType<Blight>()))
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BlightHint"));
                 }
 
                 // Hint about the gate underneath the Frozen Ocean
                 // Try to encourage player to beat this one early - the wings are a huge help in SHM
                 if (!BossDefeated(ModContent.NPCType<SeathTheScalelessHead>()))
                 {
-
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SeathTheScalelessHint"));
                 }
+            }
+            // Time to beat the final boss!
+            else 
+            {
+                // Tell the player about the optional boss in the Jungle Pyramid, Dark Cloud
+                if (!BossDefeated(ModContent.NPCType<DarkCloud>()))
+                {
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DarkCloudHint"));
+                }
+                // Tell the player Gwyn's location.
+                // Mention needing a forgotten Gaia Sword or Barrow Blade for his initial defenses
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GwynHint"));
             }
             
             // If the help chat is empty
@@ -796,7 +829,14 @@ namespace tsorcRevamp.NPCs.Friendly
             else if (button)
             {
                 helpButtonPressed = true;
-                message = GetHelp();
+                if (!tsorcRevampWorld.RemixMap)
+                {
+                    message = GetHelp();
+                }
+                else
+                {
+                    message = GetRemixHelp();
+                }
             }
             // Chat pressed
             else
