@@ -61,7 +61,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             get
             {
                 tsorcRevampPlayer p = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
-                if(p.consumedPotions.Keys.Contains(BuffType))
+                tsorcRevampConfig config = ModContent.GetInstance<tsorcRevampConfig>();
+
+                // To quickly get a max character buffed up from nothing
+                if (config.DebugMode)
+                {
+                    return 100;
+                }    
+                else if(p.consumedPotions.Keys.Contains(BuffType))
                 {
                     return Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().consumedPotions[BuffType];
                 }

@@ -81,13 +81,5 @@ namespace tsorcRevamp.Items.Debug
                 Main.dust[dust].noGravity = true;
             }
         }
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
-            recipe.AddIngredient(ItemID.CopperChainmail, 1);
-
-            recipe.Register();
-        }
     }
 }

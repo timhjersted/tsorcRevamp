@@ -100,14 +100,5 @@ namespace tsorcRevamp.Items.Debug
             NetMessage.SendData(65, -1, -1, null, 0, player.whoAmI, pointPoisition.X, pointPoisition.Y, 1);
             return false;
         }
-
-        public override void AddRecipes()
-        {
-            var recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<ApprenticesWand>(), 1);
-            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
-
-            recipe.Register();
-        }
     }
 }

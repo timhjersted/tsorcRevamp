@@ -82,15 +82,5 @@ namespace tsorcRevamp.Items.Debug
         {
             return Terraria.ModLoader.ModContent.GetInstance<tsorcRevampConfig>().DebugMode;
         }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-
-            recipe.AddIngredient(ItemID.CopperShortsword);
-            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
-
-            recipe.Register();
-        }
     }
 }

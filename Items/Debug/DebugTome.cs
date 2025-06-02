@@ -43,7 +43,17 @@ namespace tsorcRevamp.Items.Debug
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, player.Center);
 
+            tsorcRevampConfig config = ModContent.GetInstance<tsorcRevampConfig>();
+            config.DebugMode = !config.DebugMode;
 
+            if (config.DebugMode)
+            {
+                UsefulFunctions.BroadcastText("DebugMode Enabled");
+            }
+            else
+            {
+                UsefulFunctions.BroadcastText("DebugMode Disabled");
+            }
 
             //NPC.NewNPC(source, (int)position.X, (int)position.Y, ModContent.NPCType<NPCs.Special.AbyssCataclysm>());
 
@@ -69,7 +79,9 @@ namespace tsorcRevamp.Items.Debug
         //For multiplayer testing, because I only have enough hands for one keyboard. Makes the player holding it float vaguely near the next other player.
         public override void UpdateInventory(Player player)
         {
-            player.statLife = player.statLifeMax;
+            // Just use godmode instead
+            // player.statLife = player.statLifeMax;
+
             if (player.name == "MPTestDummy")
             {
                 if (player.whoAmI == 0)
@@ -93,9 +105,14 @@ namespace tsorcRevamp.Items.Debug
             }
         }
 
+        public override void UseItemFrame(Player player)
+        {
+            base.UseItemFrame(player);
+        }
+
         public override bool CanUseItem(Player player)
         {
-            return Terraria.ModLoader.ModContent.GetInstance<tsorcRevampConfig>().DebugMode;
+            return true;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

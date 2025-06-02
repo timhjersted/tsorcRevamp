@@ -98,12 +98,5 @@ namespace tsorcRevamp.Items.Debug
 
             return true;
         }
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CopperHelmet, 1);
-            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
-            recipe.Register();
-        }
     }
 }

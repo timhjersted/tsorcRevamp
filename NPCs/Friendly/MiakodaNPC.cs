@@ -22,6 +22,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
+using tsorcRevamp.Items.BossItems;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -280,12 +281,15 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 Player player = Main.player[owner];
                 message = new List<string>();
-                message.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ExhaustedDialogue", player.name));
+                message.Add(ChatUtil("ExhaustedDialogue", player.name));
                 alreadySaid.Clear();
             }
 
             return message[0];
         }
+
+        public string ChatUtil(string label, params object[] args) => Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC." + label, args);
+        public string ChatUtil(string label) => Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC." + label);
 
         // The order is important here, the messages added later on in the function are weighted higher than the ones added first
         // Add them later on if you want them to be more likely to be immediately seen by the player upon talking with Miakoda
@@ -302,98 +306,98 @@ namespace tsorcRevamp.NPCs.Friendly
             // Might remove or change later.
             if (!BossDefeated(NPCID.CultistBoss))
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.LunaticCultist"));
+                chat.Add(ChatUtil("LunaticCultist"));
             }
 
             // Form change explainations
             if (modPlayer.MiakodaCrescent)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CrescentMoonForm"));
+                chat.Add(ChatUtil("CrescentMoonForm"));
             }
             else if (modPlayer.MiakodaFull)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.FullMoonForm"));
+                chat.Add(ChatUtil("FullMoonForm"));
             }
             else if (modPlayer.MiakodaNew)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NewMoonForm"));
+                chat.Add(ChatUtil("NewMoonForm"));
             }
 
             // Miakoda introduction as the guide for the mod
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote1"));
+            chat.Add(ChatUtil("Quote1"));
 
             // Dark soul curse lore
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote4"));
+            chat.Add(ChatUtil("Quote4"));
             // Form change hint
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote3"));
+            chat.Add(ChatUtil("Quote3"));
             // Dark souls item crafting emphasis
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.Quote2", player.name));
+            chat.Add(ChatUtil("Quote2", player.name));
 
             // Projectiles can open hidden paths reminder
-            dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ProjectileHiddenPathsHintPart1"));
-            dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ProjectileHiddenPathsHintPart2"));
+            dialogue.Add(ChatUtil("ProjectileHiddenPathsHintPart1"));
+            dialogue.Add(ChatUtil("ProjectileHiddenPathsHintPart2"));
             chat.Add(dialogue);
 
             // Explain conditions to break blocks
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+            chat.Add(ChatUtil("BreakableBlocksHint"));
             // Explain certain secret passages
-            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
+            chat.Add(ChatUtil("SolidWallsHiddenPathsHint"));
 
             // Musings from Miakoda relevant to before the wife is saved
             if (!BossDefeated(ModContent.NPCType<TheHunter>()) && Main.hardMode)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HMWifeNotRescued", player.name));
+                chat.Add(ChatUtil("HMWifeNotRescued", player.name));
             }
             else if (tsorcRevampWorld.HardModeNotSHM)
             {
                 // Foreshadow the consequences of killing Attraides
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescuedPart1"));
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WifeRescuedPart2"));
+                dialogue.Add(ChatUtil("WifeRescuedPart1"));
+                dialogue.Add(ChatUtil("WifeRescuedPart2"));
                 chat.Add(dialogue);
             }
 
             // Lore of the crests, foreshadowing
             if (tsorcRevampWorld.TalkedToAraz && tsorcRevampWorld.HardModeNotSHM)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ArazSuspicion"));
+                chat.Add(ChatUtil("ArazSuspicion"));
             }
 
             // Introducing the awakened bosses from hardmode
             if (tsorcRevampWorld.HardModeNotSHM)
             {
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HardmodeLorePart1"));
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HardmodeLorePart2"));
+                dialogue.Add(ChatUtil("HardmodeLorePart1"));
+                dialogue.Add(ChatUtil("HardmodeLorePart2"));
                 chat.Add(dialogue);
             }
 
             // Lore relevant to the first three hardmode bosses - the Wings of the Awakened
             if (tsorcRevampWorld.HardModeNotSHM)
             {
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3WingsLorePart1"));
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3WingsLorePart2"));
+                dialogue.Add(ChatUtil("3WingsLorePart1"));
+                dialogue.Add(ChatUtil("3WingsLorePart2"));
                 chat.Add(dialogue);
             }
 
             // Lore relevant to the 4th and 5th hardmode bosses along with the final one - The Calamities of the Awakened
             if (tsorcRevampWorld.HardModeNotSHM)
             {
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart1"));
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart2"));
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart3"));
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.3MachinesLorePart4"));
+                dialogue.Add(ChatUtil("3MachinesLorePart1"));
+                dialogue.Add(ChatUtil("3MachinesLorePart2"));
+                dialogue.Add(ChatUtil("3MachinesLorePart3"));
+                dialogue.Add(ChatUtil("3MachinesLorePart4"));
                 chat.Add(dialogue);
             }
 
             // Talk about plantera at the earliest they could be fought (before hunter)
             if (BossDefeated(ModContent.NPCType<TheSorrow>()) && tsorcRevampWorld.HardModeNotSHM)
             {
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.PlanteraLorePart1"));
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.PlanteraLorePart2"));
+                dialogue.Add(ChatUtil("PlanteraLorePart1"));
+                dialogue.Add(ChatUtil("PlanteraLorePart2"));
                 // Talk about Golem once you get clues about Golem temple
                 if (BossDefeated(ModContent.NPCType<TheMachine>()) || BossDefeated(NPCID.Plantera) || tsorcRevampWorld.EnteredPyramid)
                 {
-                    dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemLorePart1"));
-                    dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemLorePart2"));
+                    dialogue.Add(ChatUtil("GolemLorePart1"));
+                    dialogue.Add(ChatUtil("GolemLorePart2"));
                 }
                 chat.Add(dialogue);
             }
@@ -401,7 +405,7 @@ namespace tsorcRevamp.NPCs.Friendly
             // Player doesn't have a shadow key but can get one
             if (!player.HasItemInAnyInventory(ItemID.ShadowKey) && BossDefeated(ModContent.NPCType<TheRage>()))
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
+                chat.Add(ChatUtil("ShadowKeyHint"));
             }
 
             return PickMessage(chat);
@@ -425,7 +429,7 @@ namespace tsorcRevamp.NPCs.Friendly
             // If the help chat is empty
             if (chat.Count == 0)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp", player.name));
+                chat.Add(ChatUtil("CannotHelp", player.name));
             }
 
             return PickMessage(chat);
@@ -443,31 +447,31 @@ namespace tsorcRevamp.NPCs.Friendly
             // The player just freed Miakoda
             if (!BossDefeated(ModContent.NPCType<JungleWyvernHead>()) && !tsorcRevampWorld.EnteredHell)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BrotherNotRescued", player.name));
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.JungleWyvern"));
+                chat.Add(ChatUtil("BrotherNotRescued", player.name));
+                chat.Add(ChatUtil("JungleWyvern"));
 
                 // If the player isn't in The Forgotten City
                 if (!player.ZoneDungeon)
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.JungleWyvernBiomeHint"));
+                    chat.Add(ChatUtil("JungleWyvernBiomeHint"));
                 }
             }
             // The player recently spoke with their brother, Elijah, and should be on their way to The Wall of Flesh.
             else if (!Main.hardMode && !tsorcRevampWorld.TheEnd)
             {
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshBiomeHintPart1"));
-                dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshBiomeHintPart2"));
+                dialogue.Add(ChatUtil("WallofFleshBiomeHintPart1"));
+                dialogue.Add(ChatUtil("WallofFleshBiomeHintPart2"));
                 chat.Add(dialogue);
 
                 // The player is currently in hell.
                 if (player.ZoneUnderworldHeight)
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshHellLeversHint"));
+                    chat.Add(ChatUtil("WallofFleshHellLeversHint"));
                 }
                 // The player is above hell, looking for switches.
                 else if ((player.ZoneJungle || player.ZoneDungeon) && tsorcRevampWorld.EnteredHell)
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WallofFleshJungleLeverHint"));
+                    chat.Add(ChatUtil("WallofFleshJungleLeverHint"));
                 }
             }
             // The player recently killed the Wall of Flesh and activated HardMode
@@ -477,22 +481,22 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (player.ZoneUnderworldHeight && !BossDefeated(NPCID.QueenSlimeBoss))
                 {
                     // Tell them about the intended progression escape through the jungle
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageEscapeHell", player.name));
+                    chat.Add(ChatUtil("RageEscapeHell", player.name));
                 }
 
                 // Generic hint about the hallow if the player isn't within it
                 if (!player.ZoneHallow)
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageBiomeHint"));
+                    chat.Add(ChatUtil("RageBiomeHint"));
                 }
                 else
                 {
                     // Hidden paths present in the hallow lead to underneath the frozen ocean 
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+                    chat.Add(ChatUtil("SolidWallsHiddenPathsHint"));
+                    chat.Add(ChatUtil("BreakableBlocksHint"));
 
                     // The player is within the hallow, hint the direction to go
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.RageDeeperHint"));
+                    chat.Add(ChatUtil("RageDeeperHint"));
                 }
             }
             // The player is on their way to the Frozen ocean, either through the secret path from the hallow or through the Wyvern Mage's fortress
@@ -501,29 +505,29 @@ namespace tsorcRevamp.NPCs.Friendly
                 // Hidden paths present in the hallow lead to underneath the frozen ocean
                 if (player.ZoneHallow || player.ZoneSnow)
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SolidWallsHiddenPathsHint"));
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+                    chat.Add(ChatUtil("SolidWallsHiddenPathsHint"));
+                    chat.Add(ChatUtil("BreakableBlocksHint"));
                 }
 
                 // Tell the player about shadow key locations if they don't have one.
                 if (!player.HasItemInAnyInventory(ItemID.ShadowKey))
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ShadowKeyHint"));
+                    chat.Add(ChatUtil("ShadowKeyHint"));
 
                 // Player is at frozen ocean
                 if ((int)player.position.X / 16 > 7510)
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowDeeperHint"));
+                    chat.Add(ChatUtil("SorrowDeeperHint"));
                 }
                 // The player has not arrived at the frozen ocean yet nor defeated the wyvern mage
                 else if (!BossDefeated(ModContent.NPCType<WyvernMage>()))
                 {
-                    dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowBiomeHintPart1"));
-                    dialogue.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowBiomeHintPart2", player.name));
+                    dialogue.Add(ChatUtil("SorrowBiomeHintPart1"));
+                    dialogue.Add(ChatUtil("SorrowBiomeHintPart2", player.name));
                     chat.Add(dialogue);
                 }
                 else // The player defeated the wyvern mage, only the sorrow is left
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SorrowEastHint", player.name));
+                    chat.Add(ChatUtil("SorrowEastHint", player.name));
                 }
             }
             // The player has to head over to the western side of the world to find The Hunter.
@@ -540,38 +544,38 @@ namespace tsorcRevamp.NPCs.Friendly
                         {
                             // Hint at exploring further west
                             // Tell them about the water walking boots
-                            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.FireWalkHint", player.name));
+                            chat.Add(ChatUtil("FireWalkHint", player.name));
                         }
                         else if (!(player.ZoneJungle || player.ZoneGlowshroom))
                         {
                             // The player is ready to traverse the lava spike area to fight the hunter
-                            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterElengadRuinReady", player.name));
+                            chat.Add(ChatUtil("HunterElengadRuinReady", player.name));
                         }
                         else
                         {
                             // The player is very close to the hunter's location
-                            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterClose", player.name));
+                            chat.Add(ChatUtil("HunterClose", player.name));
                         }
                     }
                     // The player has yet to find The Ruins of Elengad
                     else
                     {
                         // Sand blocks need to be mined to enter the ruins
-                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+                        chat.Add(ChatUtil("BreakableBlocksHint"));
 
                         // Tell the player about the ruins
-                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterElengadRuinHint"));
+                        chat.Add(ChatUtil("HunterElengadRuinHint"));
                     }
                 }
                 else // The player is not within the western desert
                 {
                     // Tell them to go past the corruption to the desert
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.HunterBiomeHint"));
+                    chat.Add(ChatUtil("HunterBiomeHint"));
                 }
                 // The player has found a secret underground area, but not the ruins leading to the hunter
                 if (tsorcRevampWorld.EnteredRuinsOfSerris)
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.TempleOfSerris", player.name));
+                    chat.Add(ChatUtil("TempleOfSerris", player.name));
                 }
             }
             // The Destroyer is next, onto the Shadow Temple.
@@ -581,29 +585,29 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (!tsorcRevampWorld.EnteredShadowTemple)
                 {
                     // Tell the player about the sandy cave entrance.
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerFromHunter"));
+                    chat.Add(ChatUtil("DestroyerFromHunter"));
 
                     // The player defeated the optional boss, the entrance to the Shadow temple is closer
                     if (BossDefeated(ModContent.NPCType<SerrisX>()))
                     {
                         // Tell the player about the underwater entrance
-                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerFromSerris"));
+                        chat.Add(ChatUtil("DestroyerFromSerris"));
                     }
                 }
                 // Shadow temple progression hints
                 else
                 {
                     // Sand block paths serve as a shortcut through the entire dungeon
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BreakableBlocksHint"));
+                    chat.Add(ChatUtil("BreakableBlocksHint"));
 
                     // A reminder about puzzle solving for the labrynth
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerLabrynthGates"));
+                    chat.Add(ChatUtil("DestroyerLabrynthGates"));
 
                     // Hidden shortcuts hint
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerLabrynthSecretPaths"));
+                    chat.Add(ChatUtil("DestroyerLabrynthSecretPaths"));
 
                     // Shadow Labrynth Layout
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DestroyerLabrynthLayout", player.name));
+                    chat.Add(ChatUtil("DestroyerLabrynthLayout", player.name));
                 }
             }
             // Flooded Machine Temple
@@ -613,29 +617,29 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (!tsorcRevampWorld.EnteredFloodedMachineTemple)
                 {
                     // Hint at the location
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.MachineTempleLocationHint", player.name));
+                    chat.Add(ChatUtil("MachineTempleLocationHint", player.name));
                 }
                 else // The player has found the Flooded Machine Temple
                 {
                     // The machine temple is relatively straightforward compared to the shadow temple - no tips needed
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.MachineTempleStraightForward", player.name));
+                    chat.Add(ChatUtil("MachineTempleStraightForward", player.name));
                 }
             }
             // Time to go to the Jungle temple
             else if (!tsorcRevampWorld.EnteredPyramid)
             {
                 // Moon gate hint
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemJungleMoonGate"));
+                chat.Add(ChatUtil("GolemJungleMoonGate"));
                 // The player could have defeated plantera before this point
                 if (!BossDefeated(NPCID.Plantera))
                 {
                     // Tell them about plantera
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemJunglePyramidPlanteraHint"));
+                    chat.Add(ChatUtil("GolemJunglePyramidPlanteraHint"));
                 }
                 else
                 {
                     // Just tell them about the temple
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemJunglePyramidHint"));
+                    chat.Add(ChatUtil("GolemJunglePyramidHint"));
                 }
             }
             // Golem baby
@@ -645,12 +649,12 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (!BossDefeated(NPCID.Plantera))
                 {
                     // Tell them about plantera
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemJunglePyramidPlanteraHint"));
+                    chat.Add(ChatUtil("GolemJunglePyramidPlanteraHint"));
                 }
                 else
                 {
                     // Remind the player where the entrance to the golem temple is, they have the lock and the key to the temple now.
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GolemEnter", player.name));
+                    chat.Add(ChatUtil("GolemEnter", player.name));
                 }
             }
             // The triad awaits. Their fight will be legendary.
@@ -660,30 +664,30 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (!UsefulFunctions.PlayerInZone(player, 2850, 3350, 40, 335))
                 {
                     // Tell them where it is
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.TriadLocationHint"));
+                    chat.Add(ChatUtil("TriadLocationHint"));
                 }
                 else
                 {
                     // Prepare for the fight
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.TriadCaution", player.name));
+                    chat.Add(ChatUtil("TriadCaution", player.name));
                 }
 
                 // If the empress of light hasn't been defeated
                 if (!BossDefeated(NPCID.HallowBoss))
                 {
                     // Reccomend the player to fight the empress first for gear
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.TriadEmpressOfLight"));
+                    chat.Add(ChatUtil("TriadEmpressOfLight"));
                 }
             }
             // This is it, time to fight the Mindflayer king
             else if (tsorcRevampWorld.HardModeNotSHM)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.AttraidesLocation", player.name));
+                chat.Add(ChatUtil("AttraidesLocation", player.name));
             }
             // There is already a place explaining where to go next in SHM, direct the player to the Shaman first.
             else if (!tsorcRevampWorld.TalkedToShaman)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ToShaman", player.name));
+                chat.Add(ChatUtil("ToShaman", player.name));
             }
             else if (tsorcRevampWorld.EarlySHM)
             // Hint about the fiend Lizhard Gate Locations along with Seath
@@ -691,13 +695,13 @@ namespace tsorcRevamp.NPCs.Friendly
                 // Hint about the gate within the Great Chasm 
                 if (!BossDefeated(ModContent.NPCType<WaterFiendKraken>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WaterFiendKrakenHint"));
+                    chat.Add(ChatUtil("WaterFiendKrakenHint"));
                 }
 
                 // Hint about the gate to the east of the Elengad Ruins
                 if (!BossDefeated(ModContent.NPCType<FireFiendMarilith>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.FireFiendMarilithHint"));
+                    chat.Add(ChatUtil("FireFiendMarilithHint"));
                 }
 
                 // Two gates lead to him
@@ -705,75 +709,89 @@ namespace tsorcRevamp.NPCs.Friendly
                 // Hint about the gate hidden in lava within hell
                 if (!BossDefeated(ModContent.NPCType<EarthFiendLich>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.EarthFiendLichHint1"));
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.EarthFiendLichHint2"));
+                    dialogue.Add(ChatUtil("EarthFiendLichHint1"));
+                    dialogue.Add(ChatUtil("EarthFiendLichHint2"));
+                    chat.Add(dialogue);
                 }
 
                 // Hint about the gate underneath the Frozen Ocean
                 // Try to encourage player to beat this one early - the wings are a huge help in SHM
                 if (!BossDefeated(ModContent.NPCType<SeathTheScalelessHead>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SeathTheScalelessHint"));
+                    chat.Add(ChatUtil("SeathTheScalelessHint"));
                 }
             }
             else if (tsorcRevampWorld.MidSHM)
             {
+                // Tell the player about the optional boss, the abyssmal oocatile sorcerer
+                if (!BossDefeated(ModContent.NPCType<AbysmalOolacileSorcerer>()))
+                {
+                    chat.Add(ChatUtil("AbysmalOolacileSorcerer", player.name));
+                }
                 // Hint about the way to the Witchking - same place as the Earth Fiend Lich except you travel west
                 // Mention needing a forgotten Gaia Sword or Barrow Blade for his initial defenses
                 if (!BossDefeated(ModContent.NPCType<Witchking>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WitchkingHint"));
+                    chat.Add(ChatUtil("WitchkingHint"));
                 }
                 // Defeating the Witchking unlocks the way to the Wyvern Mage Shadow
                 // He is located high above the Wyvern Mage's Fortress
                 else if (!BossDefeated(ModContent.NPCType<WyvernMageShadow>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.WyvernMageShadowHint"));
+                    if (BossDefeated(ModContent.NPCType<WyvernMage>()))
+                    {
+                        chat.Add(ChatUtil("WyvernMageShadowHint", player.name));
+                    }
+                    else
+                    {
+                        chat.Add(ChatUtil("WyvernMageNotKilledHint"));
+                    }
                 }
 
                 // Artorias is present between the Pyramid and the Forgotten City
                 // Mention needing a forgotten Gaia Sword or Barrow Blade for his initial defenses
                 if (!BossDefeated(ModContent.NPCType<Artorias>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ArtoriasHint"));
+                    chat.Add(ChatUtil("ArtoriasHint"));
                 }
                 else if (!BossDefeated(ModContent.NPCType<Chaos>()))
                 // Defeating artorias opens the way to Chaos.
                 // Hint about the Amythyst locked gate to the right of the Pyramid
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ChaosHint"));
+                    chat.Add(ChatUtil("ChaosHint"));
                 }
 
                 // This boss spawns on the surface of the Frozen ocean
                 if (!BossDefeated(ModContent.NPCType<Blight>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.BlightHint"));
+                    chat.Add(ChatUtil("BlightHint"));
                 }
 
                 // Hint about the gate underneath the Frozen Ocean
                 // Try to encourage player to beat this one early - the wings are a huge help in SHM
                 if (!BossDefeated(ModContent.NPCType<SeathTheScalelessHead>()))
                 {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.SeathTheScalelessHint"));
+                    chat.Add(ChatUtil("SeathTheScalelessHint"));
                 }
             }
             // Time to beat the final boss!
             else 
             {
-                // Tell the player about the optional boss in the Jungle Pyramid, Dark Cloud
-                if (!BossDefeated(ModContent.NPCType<DarkCloud>()))
-                {
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.DarkCloudHint"));
-                }
                 // Tell the player Gwyn's location.
                 // Mention needing a forgotten Gaia Sword or Barrow Blade for his initial defenses
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.GwynHint"));
+                chat.Add(ChatUtil("GwynHint", player.name));
             }
-            
+
+            // Tell the player about the optional boss in the Jungle Pyramid, Dark Cloud
+            if (!BossDefeated(ModContent.NPCType<DarkCloud>()) && player.HasItemInAnyInventory(ModContent.ItemType<DarkMirror>()))
+            {
+                chat.Add(ChatUtil("DarkCloudHint", player.name));
+            }
+
             // If the help chat is empty
             if (chat.Count == 0)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.CannotHelp", player.name));
+                chat.Add(ChatUtil("CannotHelp", player.name));
             }
 
             return PickMessage(chat);
@@ -786,19 +804,19 @@ namespace tsorcRevamp.NPCs.Friendly
                 // Switch the continue button to be the button the player originally pressed
                 if (helpButtonPressed)
                 {
-                    button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NextButtonContinue");
-                    button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NextButtonExit");
+                    button = ChatUtil("NextButtonContinue");
+                    button2 = ChatUtil("NextButtonExit");
                 }
                 else
                 {
-                    button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NextButtonExit");
-                    button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.NextButtonContinue");
+                    button = ChatUtil("NextButtonExit");
+                    button2 = ChatUtil("NextButtonContinue");
                 }
             }
             else // Default buttons
             {
-                button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ButtonHelp");
-                button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.MiakodaNPC.ButtonChat");
+                button = ChatUtil("ButtonHelp");
+                button2 = ChatUtil("ButtonChat");
             }
         }
 

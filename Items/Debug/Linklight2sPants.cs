@@ -65,15 +65,6 @@ namespace tsorcRevamp.Items.Debug
 
             Lighting.AddLight(player.Center, 0.4f, 0.7f, 0.6f);
         }
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            
-            recipe.AddIngredient(ItemID.CopperGreaves, 1);
-            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
-
-            recipe.Register();
-        }
     }
 }
 

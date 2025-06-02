@@ -32,14 +32,5 @@ namespace tsorcRevamp.Items.Debug
             player.immune = true;
             player.lifeRegen += 8000;
         }
-
-        public override void AddRecipes()
-        {
-            var recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<ForgottenRuneAxe>(), 1);
-            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
-            
-            recipe.Register();
-        }
     }
 }

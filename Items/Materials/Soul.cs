@@ -133,16 +133,6 @@ namespace tsorcRevamp.Items.Materials
         {
             return true;
         }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe(1000000);
-
-            recipe.AddIngredient(ModContent.ItemType<Bolt>(), 1);
-            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
-
-            recipe.Register();
-        }
     }
 
     public class GuardianSoul : Soul

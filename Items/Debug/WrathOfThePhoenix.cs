@@ -78,16 +78,6 @@ namespace tsorcRevamp.Items.Debug
             return false;
         }
 
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-
-            recipe.AddIngredient(ItemID.AbigailsFlower, 1);
-            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
-
-            recipe.Register();
-        }
-
         public override bool CanUseItem(Player player)
         {
             return ModContent.GetInstance<tsorcRevampConfig>().DebugMode;

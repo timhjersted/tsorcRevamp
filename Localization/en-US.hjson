@@ -10629,58 +10629,78 @@ Mods: {
 					'''
 				FireFiendMarilithHint:
 					'''
-					Placeholder
-					Text
+					East of the Elengad Ruins and Shadow temple lies a path to the Catacombs. 
+					There lies the Herald of Chaos, Fire Fiend Marilith. 
+					It is the second of the beings we must slay.
 					'''
 				EarthFiendLichHint1:
 					'''
-					Placeholder
-					Text
+					Our fate calls us to the Western Edge of the World, deep into Hell. I can sense two paths leading to our destination.
+					The first has us delving deep into the Western Ocean and diving through the magma that blocks our path.
+					Past the spider's cave and through the hidden veil of Humanity's past, it is there.
 					'''
 				EarthFiendLichHint2:
 					'''
-					Placeholder
-					Text
+					The second path starts from inside hell below the Forgotten City. The spirits tell me of a forgotten passage entombed in molten rock.
+					Take that passage and travel a long ways west from it, until you reach the hidden veil of humanity's past.
+					The Earth Fiend Lich will be near.
 					'''
 				SeathTheScalelessHint:
 					'''
-					Placeholder
-					Text
+					Do you remember where you last fought The Sorrow? Deep within the frozen ocean lies the Betrayer of the Dragons, Seath the Scaleless.
+					With the shackles of the world now shattered, Seath shall take flight in the Eastern Skies once more.
+					If you defeat Seath and plunder his wings, you will become untouchable underneath the sky.
 					'''
 				WitchkingHint:
 					'''
-					Placeholder
-					Text
+					The Spirits tell me of another, a being that instead of escaping the Abyss has made it his dwelling: The Witchking.
+					He is not linked to Gwyn, but he holds the key to an old enemy of ours. Bring a blade that has the power to shatter magical wards.
+					East of the hidden veil of Humanity's past within the Ashen Caves of the Abyss is where you'll find him. 
 					'''
 				WyvernMageShadowHint:
 					'''
-					Placeholder
-					Text
+					{0}, I sensed a pulse of forbidden magic from that Sapphire you got from The Witchking. The Wyvern Mage is... Not dead. 
+					Go to his fortress again and see what you can find. He must be killed for good if we are to ever face Gwyn in combat.
+					'''
+				WyvernMageNotKilledHint:
+					'''
+					The Wyvern Mage, prior ally of the Mindflayer King, occupies a mountain fortress shrouded in invisible death.
+					There is a magic linking this Sapphire to somewhere within his fortress. Our path leads us there.
 					'''
 				ArtoriasHint:
 					'''
-					Placeholder
-					Text
+					The Knight of Izalith, now turned puppet of the abyss: Artorias, is the being we need to fight next.
+					Head over to the Forgotten City and seek out the Junction between it and the Jungle Pyramid.
+					There lies his resting place.
 					'''
 				ChaosHint:
 					'''
-					Placeholder
-					Text
+					That Amethyst that we got from Artorias; it is a seal that locks away the throne of the King of Hell, Chaos. 
+					Like the Calamities that came before it, this being's power and magic were too great for the world.
+					He was sealed by the power of the moon. If you wish to face it in combat, head East from the Jungle Pyramid.
 					'''
 				BlightHint:
 					'''
-					Placeholder
-					Text
+					We should journey East again {0}, to the surface of the frozen ocean. 
+					There is a manifestation there, an infinitesimally small part of a higher being that seeks to widen the crack and fully enter our world..
+					It is a Blight on the world. If it one day makes it through I fe our realm will be shattered.
+					'''
+				AbysmalOolacileSorcerer:
+					'''
+					Underneath the golem temple lies a Sorcerer, a being that holds a ring of great magic and vitality. 
+					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.
 					'''
 				DarkCloudHint:
 					'''
-					Placeholder
-					Text
+					That mirror you hold... Do not look into it. That is an cursed artifact of the moon - one that manifests a future version of its beholder and twists it.
+					An ordinary man might see himself turned into a serial killer, dangerous but not certainly deadly.
+					For you {0}? You should know best how much untapped potential still lies within you. Looking into the mirror might just garuntee your undoing.
 					'''
 				GwynHint:
 					'''
-					Placeholder
-					Text
+					You are ready to face Gwyn, keeper of the Flame and King of the Abyss. The beings that once supplied him with power are no more, vanquished by your hand.  
+					He is the last of the Abyss. His death will allow you to become the next keeper of the flame and close the portal of the Abyss.
+					Seek out his Tomb hidden somewhere within the Western Ocean. I believe in you, {0}.
 					'''
 				CannotHelp: You have done well, {0}, I have no more advice to offer you.
 				ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
