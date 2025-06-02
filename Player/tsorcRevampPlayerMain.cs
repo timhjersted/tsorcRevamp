@@ -1465,7 +1465,7 @@ namespace tsorcRevamp
                                     
                                     npc.StrikeNPC(new NPC.HitInfo
                                     {
-                                        Damage = (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(200),
+                                        Damage = (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(400),
                                         Knockback = 0,
                                         HitDirection = 0,
                                         Crit = false,

@@ -6445,12 +6445,21 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (npc.type == NPCID.Plantera && !Main.expertMode)
+            if (npc.type == NPCID.GoblinSorcerer)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SoulOfLife>(), 30);
+
+                if (Main.rand.NextBool(15))
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness2>(), 1, false, -1);
+                }
             }
+
+            if (npc.type == NPCID.Plantera && !Main.expertMode)
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SoulOfLife>(), 30);
+                }
 
             if (npc.type == NPCID.Golem && !Main.expertMode)
             {

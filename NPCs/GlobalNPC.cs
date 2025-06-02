@@ -2038,7 +2038,7 @@ namespace tsorcRevamp.NPCs
 
             if (WitchkingCurse)
             {
-                int DoTPerS = 201;
+                int DoTPerS = 401;
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;

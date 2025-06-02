@@ -1428,12 +1428,18 @@ namespace tsorcRevamp
             return orig(x, y);
         }
 
-        private static void On_Player_UpdateEquips(On_Player.orig_UpdateEquips orig, Player self, int i)
+        private static void On_Player_UpdateEquips(On_Player.orig_UpdateEquips orig, Player self, int i) 
         {
             if (self.inventory[self.selectedItem].type == ModContent.ItemType<AncientDragonLance>())
             {
                 self.trident = true;
             }
+
+            if (self.inventory[self.selectedItem].type == ModContent.ItemType<PilgrimSpontoon>())
+            {
+                self.trident = true;
+            }
+
             orig(self, i);
         }
 

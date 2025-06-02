@@ -6087,7 +6087,7 @@ Mods: {
 				Tooltip: ""
 			}
 
-			ForgottenPolearm: {
+			PilgrimSpontoon: {
 				DisplayName: 被遗忘的长枪
 				Tooltip: 其上有熠熠生辉的短暂能量涌动
 			}
@@ -9241,7 +9241,7 @@ Mods: {
 			DragoonLanceProj.DisplayName: 龙骑枪
 			FetidExhaust.DisplayName: 腐败吐息
 			ForgottenPearlSpearProj.DisplayName: 被遗忘的珍珠矛
-			ForgottenPolearmProj.DisplayName: 被遗忘的长枪
+			PilgrimSpontoonProj.DisplayName: 被遗忘的长枪
 			ForgottenRadiantLanceProj.DisplayName: 被遗忘的光辉之枪
 			GaeBolgProj.DisplayName: 盖博尔格
 			HiRyuuSpearProj.DisplayName: 空域之矛

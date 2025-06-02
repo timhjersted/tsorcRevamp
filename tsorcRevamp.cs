@@ -1034,13 +1034,13 @@ namespace tsorcRevamp
                 #region Boss Items
                 { ItemID.PumpkinMoonMedallion,       new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<RedTitanite>(), 6),
-                                            (ModContent.ItemType<WhiteTitanite>(), 3)
+                                            (ModContent.ItemType<RedTitanite>(), 4),
+                                            (ModContent.ItemType<WhiteTitanite>(), 2)
                                         }                                       },
                 { ItemID.NaughtyPresent,       new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<BlueTitanite>(), 6),
-                                            (ModContent.ItemType<WhiteTitanite>(), 3)
+                                            (ModContent.ItemType<BlueTitanite>(), 4),
+                                            (ModContent.ItemType<WhiteTitanite>(), 2)
                                         }                                       },
                 #endregion
 

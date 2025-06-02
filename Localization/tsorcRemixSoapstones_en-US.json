@@ -1175,6 +1175,13 @@
   "style": 1
 }
 {
+  "text": "This place seems to be the former lair of the King Slime, who migrated from these lands not long ago to go to the flying islands east of the village, above your burnt house.",
+  "tileX": 3605,
+  "tileY": 586,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Above your head you see a teal pressue plate. --NEWLINE  --NEWLINE Etched into the heavily-worn and scuffed up plate is a carving of a bow and arrow, barely visible... --NEWLINE  --NEWLINE You mark the teal plate on your map with a blue dot.",
   "tileX": 4320,
   "tileY": 990,

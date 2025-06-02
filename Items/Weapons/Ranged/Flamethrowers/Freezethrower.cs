@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
             Item.knockBack = 2;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item34;
-            Item.rare = ItemRarityID.LightPurple;
+            Item.rare = ItemRarityID.Green;
             Item.shootSpeed = 9;
             Item.useAmmo = AmmoID.Gel;
             Item.noMelee = true;

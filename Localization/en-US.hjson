@@ -6091,9 +6091,9 @@ Mods: {
 				Tooltip: ""
 			}
 
-			ForgottenPolearm: {
-				DisplayName: Forgotten Polearm
-				Tooltip: Shimmering ephemeral energy.
+			PilgrimSpontoon: {
+				DisplayName: Pilgrim's Spontoon
+				Tooltip: Inherits Tridents water effect and pierce({0} armor penetration)
 			}
 
 			GaeBolg: {
@@ -9245,7 +9245,7 @@ Mods: {
 			DragoonLanceProj.DisplayName: Dragoon Lance
 			FetidExhaust.DisplayName: Noxious Jet
 			ForgottenPearlSpearProj.DisplayName: Forgotten Pearl Spear
-			ForgottenPolearmProj.DisplayName: Forgotten Polearm
+			PilgrimSpontoonProj.DisplayName: Forgotten Polearm
 			ForgottenRadiantLanceProj.DisplayName: Forgotten Radiant Lance
 			GaeBolgProj.DisplayName: Gae Bolg
 			HiRyuuSpearProj.DisplayName: Hi Ryuu Spear
