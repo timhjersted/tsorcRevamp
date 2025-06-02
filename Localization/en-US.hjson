@@ -6093,7 +6093,7 @@ Mods: {
 
 			PilgrimSpontoon: {
 				DisplayName: Pilgrim's Spontoon
-				Tooltip: Inherits Tridents water effect and pierce({0} armor penetration)
+				Tooltip: Inherits Tridents water effect and pierces {0} armor penetration
 			}
 
 			GaeBolg: {
