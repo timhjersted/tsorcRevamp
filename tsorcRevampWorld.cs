@@ -897,7 +897,7 @@ namespace tsorcRevamp
         {
             string jsonPath = "tsorcRevamp/Localization/tsorcSoapstones_" + Language.ActiveCulture.Name + ".json";
             string RemixjsonPath = "tsorcRevamp/Localization/tsorcRemixSoapstones_" + Language.ActiveCulture.Name + ".json";
-            if (Language.ActiveCulture.Name != "zh-Hans" && Language.ActiveCulture.Name != "en-US")
+            if (Language.ActiveCulture.Name != "zh-Hans" && Language.ActiveCulture.Name != "en-US" && Language.ActiveCulture.Name != "ru-RU")
             {
                 jsonPath = "tsorcRevamp/Localization/tsorcSoapstones_en-US.json";
                 RemixjsonPath = "tsorcRevamp/Localization/tsorcRemixSoapstones_en-US.json";
