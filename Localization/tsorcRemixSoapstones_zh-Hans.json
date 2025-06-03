@@ -370,10 +370,10 @@
   "style": 1
 }
 {
-  "text": "瑞德：",
+  "text": "Miakoda：\u0022瑞德，你可曾听闻恶魔守护者？它们的领袖似乎就蛰伏在此埋伏我们…\u0022 --NEWLINE   --NEWLINE 瑞德：\u0022当然，他们的恶名我早已听腻。千百年来，这些可怖之物肆虐人间太久。 --NEWLINE   --NEWLINE 瑞德：今日我誓要在此斩杀其首领巫师王，一劳永逸地终结这一切…\u0022",
   "tileX": 2063,
   "tileY": 1886,
-  "textWidth": 60,
+  "textWidth": 590,
   "style": 1
 }
 {
@@ -465,6 +465,13 @@
   "tileX": 2880,
   "tileY": 241,
   "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "瑞德：\u0022这些生物似乎来自海洋，为何会在此出现？\u0022 --NEWLINE   --NEWLINE Miakoda：\u0022正是。更准确地说它们是在血月仪式中重新获得了生命的尸骸。  --NEWLINE   --NEWLINE 如此庞大的数量，必定源自永恒珊瑚礁。\u0022",
+  "tileX": 2802,
+  "tileY": 579,
+  "textWidth": 540,
   "style": 1
 }
 {
@@ -745,6 +752,13 @@
   "tileX": 3567,
   "tileY": 1919,
   "textWidth": 230,
+  "style": 1
+}
+{
+  "text": "此地似乎是史莱姆王曾经的巢穴，不久前它离开这片区域， --NEWLINE   --NEWLINE 迁往村庄东部—你那被焚毁房屋上空的空岛群。",
+  "tileX": 3605,
+  "tileY": 586,
+  "textWidth": 430,
   "style": 1
 }
 {
@@ -2040,6 +2054,13 @@
   "tileX": 6724,
   "tileY": 232,
   "textWidth": 250,
+  "style": 1
+}
+{
+  "text": "当你漫步在这片魔法秘境时，突然察觉异样。 --NEWLINE   --NEWLINE 那些传说中本该在此栖息的精灵与魔法生物，竟全然不见踪影。 --NEWLINE   --NEWLINE 你开始怀疑听过的种种传说，但更令你不安的是，此地弥漫着诡异的寂静。",
+  "tileX": 6769,
+  "tileY": 728,
+  "textWidth": 540,
   "style": 1
 }
 {

@@ -2684,7 +2684,7 @@ Mods: {
 				DisplayName: 鲁米莉亚弓箭手裤子
 				Tooltip:
 					'''
-					长使用弓箭，连发枪，以及其他远程武器
+					擅长使用弓箭，连发枪，以及其他远程武器
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					'''
 			}
@@ -4422,7 +4422,7 @@ Mods: {
 				DisplayName: 恶魔药水
 				Tooltip:
 					'''
-					{$CommonItemTooltip.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.BadDefense@1}
 					不与护甲药水、力量药水或前线药水叠加
 					'''
@@ -6088,8 +6088,8 @@ Mods: {
 			}
 
 			PilgrimSpontoon: {
-				DisplayName: 被遗忘的长枪
-				Tooltip: 其上有熠熠生辉的短暂能量涌动
+				DisplayName: 朝圣者三叉戟
+				Tooltip: 继承三叉戟的水中移动效果（{0}点护甲穿透）
 			}
 
 			GaeBolg: {
@@ -9490,8 +9490,8 @@ Mods: {
 			PurpleMagicProj.DisplayName: Purple Magic Proj
 			GhostWyvernProj.DisplayName: Ghost Wyvern Proj
 			RedRainProj.DisplayName: Red Rain Proj
-			// SmallRedLightning.DisplayName: Small Red Lightning
-			// WyvernIcicle.DisplayName: Wyvern Icicle
+			SmallRedLightning.DisplayName: Small Red Lightning
+			WyvernIcicle.DisplayName: Wyvern Icicle
 		}
 
 		NPCs: {
@@ -9775,9 +9775,9 @@ Mods: {
 			WyvernMageShadow: {
 				DisplayName: 飞龙法师堕魂—渊影
 				DespawnHandler: 飞龙法师堕魂挣脱了囚禁......
-				// ShadowWave: The shadow around you grows......
-				// FinalShadowWave: The Wyvern Mage Shadow plunges you into darkness!
-				// GhostDragonDead: Dare if you wish, Red...
+				ShadowWave: 周遭的暗影正在蔓延......
+				FinalShadowWave: 飞龙法师堕魂将你拖入无尽黑暗！
+				GhostDragonDead: 尽管挣扎吧，瑞德...
 				Condition: 当他的灵鬼虬龙死后掉落
 			}
 
@@ -10434,14 +10434,14 @@ Mods: {
 				3MachinesLorePart1:
 					'''
 					欲知恶魔守护者更多秘辛？且听吾道来三机之事
-					彼等乃亵渎远古邪神残躯所铸之器，黑暗纪元时曾侵吞吾等世界
-					彼时，此界几近崩毁
+					它们诞生自某位上古邪神的亵渎残骸，在远古时期几乎毁灭万物
+					活在末世岁月中的生灵，皆难逃厄运
 					'''
 				3MachinesLorePart2:
 					'''
 					毁灭者乃三机之首，行星吞噬之器，其穿行地母血肉，所过之处唯余腐化
-					古龙一族将其封印于暗影神庙迷宫，囚其形骸，并设为成年试炼
-					幼龙需历火、水、空三重试炼，方得与削弱后的灾劫对决，此或为古龙神威之秘源
+					如今世界的地底隧道网络，正是这位毁灭者留下的疤痕，古龙将其封印于暗影神庙迷宫
+					作为它们成年试炼的场地：火焰、流水、翱翔与力量之试炼，或许这正是巨龙传奇力量的奥秘？
 					'''
 				3MachinesLorePart3:
 					'''
@@ -10451,9 +10451,9 @@ Mods: {
 					'''
 				3MachinesLorePart4:
 					'''
-					三子魔眼居其三，乃传奇猎杀者。其奉命剿灭上古英杰，绝众生希望
+					三子魔眼位居其末，乃死亡之眼。其奉命剿灭上古英杰，绝众生希望，即便地底也非安全之所
 					目视即死，无人生还，然此器乃三机中唯一未败而止者
-					人族为其筑守望圣殿，许其端踞观星台，恣意观测万象
+					泰拉人为其筑玻璃圣殿，许其端踞水晶观星台恣意观测万象，传说它们至今仍在注视着这个世界
 					'''
 				RageBiomeHint:
 					'''
@@ -10553,154 +10553,154 @@ Mods: {
 					一座熟悉的断桥下？{0}，此谜语似为你量身而设
 					或许你应该去令尊村庄周围找找，其必藏匿于附近
 					'''
-				/* MachineTempleStraightForward:
+				MachineTempleStraightForward:
 					'''
-					Discovering this temple was surely the hardest part. After beating the Shadow Temple, I'm sure this place will not pose any challenge!
-					Go, {0}! The Machine awaits you in the depths!
-					''' */
-				/* GolemJunglePyramidPlanteraHint:
+					发现这座机械神殿才是最艰难的部分。既然你已征服暗影神庙，此地不足为惧！
+					前进吧，{0}！旧日机械支配着正在深处等候！
 					'''
-					The spirits cry of a great evil emerging within the Jungle. It wishes for nothing but death.
-					I do not know what manner of creature this is, but it must be stopped. Head to the east of where you first found your brother Elijah, within the Forgotten City.
-					You will find a Pyramid dedicated to the Sun and Moon. It leeches from the power there.
-					''' */
-				/* GolemJunglePyramidHint:
+				GolemJunglePyramidPlanteraHint:
 					'''
-					Head to the east of where you first found your brother Elijah, within the Forgotten City.
-					You will find a Pyramid dedicated to the Sun and Moon. That is the Pyramid you seek.
-					''' */
-				/* GolemJungleMoonGate:
+					精灵们在哀嚎，丛林中正孕育着极恶之物，它只为散播死亡而生
+					虽不知其真容，但必须阻止它。前往遗忘之城，在你最初发现兄弟以利亚之处的东方
+					那里矗立着祭祀日月的神殿金字塔，它正在汲取其中的力量
 					'''
-					On the way to the Pyramid, if an unbreakable gate seals your path do not fret. Use a cosmic watch to pass time until it is night.
-					The light of the moon shall open your way forward.
-					''' */
-				/* PlanteraLorePart1:
+				GolemJunglePyramidHint:
 					'''
-					Do you wish to know more about The Awakened? I will now tell you about Plantera, the Infection that plagues the Jungle.
-					The Jungle is the heart of Mother Nature. When it was tunneled through by the Destroyer, the corruption it left behind could not consume the Jungle. However, its presence had other effects within.
-					''' */
-				/* PlanteraLorePart2:
+					前往遗忘之城，在你最初发现兄弟以利亚之处的东方
+					你将找到祭祀日月的金字塔，那正是你寻找的目标
 					'''
-					It became a madness, a disease. Mother Nature could only contain the infection and keep it at bay.
-					But Plantera, the incarnation of death and madness, will truly be freed one day. Its taint continues to spread throughout the Jungle whispering to those foolish enough to draw near.
-					''' */
-				/* GolemLorePart1:
+				GolemJungleMoonGate:
 					'''
-					Even Golem, once worshiped by as the Sun God, has fallen to the madness. He and his tribe of Lizardmen were once a shamanic tribe bound deeply to the Jungle.
-					Envious of her power, Golem used the Jungle's magic long ago to usurp the Empress of Light. This linked his very existence with the Jungle.
-					When the Jungle went mad, so did he and his people.
-					''' */
-				/* GolemLorePart2:
+					若通往金字塔的路上有大门阻隔，不必惊慌。使用宇宙怀表加速时间直至夜幕降临
+					月华将为你照亮前路
 					'''
-					His last act while still sane was to seal himself away deep within his Temple.
-					The sealing was said to be done in two parts. The lock was entrusted to the Moon Tribe, who resided in the present day Flooded Machine Temple.
-					The key was linked to the very infection that drove them mad: Plantera itself. If the source of the madness could be destroyed, the key to their freedom would reveal itself.
-					''' */
-				/* GolemEnter:
+				PlanteraLorePart1:
 					'''
-					The Golem temple is magically linked to the Jungle, Sun, and Moon. Enter the temple through the Jungle Pyramid and proceed with caution.
-					The madness and malice emenating from this temple is unlike anything we've ever seen before, {0}.
-					''' */
-				// TriadLocationHint: Our path draws us now to the Legendary Watchers of old, the Triad. They should reside within their shrine upon the Twin Peaks of Arazium.
-				// TriadCaution: Be careful {0}. None who have dared to face the Triad have survived their gaze. It would be wise to become as strong as possible before seeking them out.
-				/* TriadEmpressOfLight:
+					想了解更多关于恶魔守护者的真相吗？且听我讲述丛林瘟疫—世纪之花的起源
+					丛林本是自然之母的心脏，当毁灭者贯穿其躯体时，残留的腐化虽未吞噬丛林，却引发了更深层的异变
 					'''
-					The Triad are akin to Gods, far above ordinary mortals. To face them in battle and triumph might require the power of a true god.
-					Have you ever looked up at the clouds floating above Ashen Peak Village? It is said that the Empress of Light resided there, before she was sealed away by the false God.
-					She will be weakened by her long sealing - and even more so if she cannot draw power from the sun. You must plunder her might.
-					''' */
-				/* AttraidesLocation:
+				PlanteraLorePart2:
 					'''
-					Well done {0}! You have defeated all the awakened and gathered their elemental crests. The first flame will continue to burn brightly for ages to come.
-					Do not seek Attraides out in the Western Desert. He seeks to awaken an Ancient Evil with the World Essence you have gathered - do not make the mistake of offering it to him for revenge.
-					''' */
-				/* ToShaman:
+					它化作疯狂与疫病，自然之母只能将其勉强遏制
+					但作为死亡化身的世纪之花终将破封，它的低语在丛林中蔓延，引诱着每个靠近的愚者...
 					'''
-					{0}, an ancient evil invades this world. Killing Attraides has now unleashed the Abyss.
-					Go to the western edge of the world and find the Shaman elder. He should know how to reseal the abyss.
-					''' */
-				/* WaterFiendKrakenHint:
+				GolemLorePart1:
 					'''
-					We must first dive into the Great Chasm and find the Lizhard Gate that blocks the path to the Old One's Tree.
-					According to the Shaman Elder, this is where the Water Fiend Kraken has made its dwelling.
-					It is the first of the beings we need to slay before we can fight Gwyn, Keeper of the Flame.
-					''' */
-				/* FireFiendMarilithHint:
+					即便是曾被奉为太阳神的石巨人也难逃疯狂，它与蜥蜴人本是深爱丛林的萨满部族
+					因觊觎光之女皇的权能，他盗取丛林魔力发动叛乱，此举使他的存在与丛林彻底绑定
+					当丛林陷入疯狂，他与子民亦随之堕落
 					'''
-					East of the Elengad Ruins and Shadow temple lies a path to the Catacombs. 
-					There lies the Herald of Chaos, Fire Fiend Marilith. 
-					It is the second of the beings we must slay.
-					''' */
-				/* EarthFiendLichHint1:
+				GolemLorePart2:
 					'''
-					Our fate calls us to the Western Edge of the World, deep into Hell. I can sense two paths leading to our destination.
-					The first has us delving deep into the Western Ocean and diving through the magma that blocks our path.
-					Past the spider's cave and through the hidden veil of Humanity's past, it is there.
-					''' */
-				/* EarthFiendLichHint2:
+					理智尚存时，他最后的举动是将自我封印在神庙深处
+					传说封印分为两部：月之部族掌管锁印—他们居于现今被淹没的机械神殿
+					而钥匙竟与疯狂本源相连：若能摧毁世纪之花，自由之钥自现
 					'''
-					The second path starts from inside hell below the Forgotten City. The spirits tell me of a forgotten passage entombed in molten rock.
-					Take that passage and travel a long ways west from it, until you reach the hidden veil of humanity's past.
-					The Earth Fiend Lich will be near.
-					''' */
-				/* SeathTheScalelessHint:
+				GolemEnter:
 					'''
-					Do you remember where you last fought The Sorrow? Deep within the frozen ocean lies the Betrayer of the Dragons, Seath the Scaleless.
-					With the shackles of the world now shattered, Seath shall take flight in the Eastern Skies once more.
-					If you defeat Seath and plunder his wings, you will become untouchable underneath the sky.
-					''' */
-				/* WitchkingHint:
+					石巨人神庙与丛林、日月魔力共鸣，通过丛林金字塔进入神庙时务必谨慎
+					此处散发的疯狂与恶意超乎想象，{0}
 					'''
-					The Spirits tell me of another, a being that instead of escaping the Abyss has made it his dwelling: The Witchking.
-					He is not linked to Gwyn, but he holds the key to an old enemy of ours. Bring a blade that has the power to shatter magical wards.
-					East of the hidden veil of Humanity's past within the Ashen Caves of the Abyss is where you'll find him. 
-					''' */
-				/* WyvernMageShadowHint:
+				TriadLocationHint: 命运指引我们寻访远古守望者三子魔眼，它们应栖居于阿拉齐姆双峰之巅的圣所
+				TriadCaution: "{0}，务必小心！凡胆敢直视三子魔眼者，无人生还。在挑战前请尽可能提升实力"
+				TriadEmpressOfLight:
 					'''
-					{0}, I sensed a pulse of forbidden magic from that Sapphire you got from The Witchking. The Wyvern Mage is... Not dead. 
-					Go to his fortress again and see what you can find. He must be killed for good if we are to ever face Gwyn in combat.
-					''' */
-				/* WyvernMageNotKilledHint:
+					三子魔眼近乎神明，凌驾凡俗之上。要战胜他们，或许需要真神之力
+					你可曾仰望过埃什峰村上空的流云？传说光之女皇在被伪神封印前居于此地
+					漫长封印已削弱她的力量—若再隔绝日光，她将更为衰弱，你必须夺取她的权能
 					'''
-					The Wyvern Mage, prior ally of the Mindflayer King, occupies a mountain fortress shrouded in invisible death.
-					There is a magic linking this Sapphire to somewhere within his fortress. Our path leads us there.
-					''' */
-				/* ArtoriasHint:
+				AttraidesLocation:
 					'''
-					The Knight of Izalith, now turned puppet of the abyss: Artorias, is the being we need to fight next.
-					Head over to the Forgotten City and seek out the Junction between it and the Jungle Pyramid.
-					There lies his resting place.
-					''' */
-				/* ChaosHint:
+					干得好{0}！你已击败所有恶魔守护者并集齐元素之冠，初火将长明不熄
+					切勿为复仇在西部沙漠寻找阿特拉迪斯，他正企图用你收集的世界精华唤醒上古之恶
 					'''
-					That Amethyst that we got from Artorias; it is a seal that locks away the throne of the King of Hell, Chaos. 
-					Like the Calamities that came before it, this being's power and magic were too great for the world.
-					He was sealed by the power of the moon. If you wish to face it in combat, head East from the Jungle Pyramid.
-					''' */
-				/* BlightHint:
+				ToShaman:
 					'''
-					We should journey East again {0}, to the surface of the frozen ocean. 
-					There is a manifestation there, an infinitesimally small part of a higher being that seeks to widen the crack and fully enter our world..
-					It is a Blight on the world. If it one day makes it through I fe our realm will be shattered.
-					''' */
-				/* AbysmalOolacileSorcerer:
+					{0}，上古之恶正在入侵这个世界。杀死阿特拉迪斯释放了深渊
+					前往世界西陲寻找萨满长老，他知晓重封深渊之法
 					'''
-					Underneath the golem temple lies a Sorcerer, a being that holds a ring of great magic and vitality. 
-					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.
-					''' */
-				/* DarkCloudHint:
+				WaterFiendKrakenHint:
 					'''
-					That mirror you hold... Do not look into it. That is an cursed artifact of the moon - one that manifests a future version of its beholder and twists it.
-					An ordinary man might see himself turned into a serial killer, dangerous but not certainly deadly.
-					For you {0}? You should know best how much untapped potential still lies within you. Looking into the mirror might just garuntee your undoing.
-					''' */
-				/* GwynHint:
+					我们需先潜入大裂谷，找到阻挡通往旧日之树的神庙砖门
+					据萨满长老所言，这正是水之恶魔克拉肯的巢穴所在
+					它是我们迎战火焰守护者葛温前，必须斩杀的首个目标
 					'''
-					You are ready to face Gwyn, keeper of the Flame and King of the Abyss. The beings that once supplied him with power are no more, vanquished by your hand.  
-					He is the last of the Abyss. His death will allow you to become the next keeper of the flame and close the portal of the Abyss.
-					Seek out his Tomb hidden somewhere within the Western Ocean. I believe in you, {0}.
-					''' */
-				CannotHelp: 你已做得足好了，{0}，我无更多建言可予
+				FireFiendMarilithHint:
+					'''
+					在埃伦加德遗迹与暗影神殿以东，通往地下墓穴的路径中
+					盘踞着混沌先驱—火焰恶魔马瑞丽斯
+					这是我们必须消灭的第二个目标
+					'''
+				EarthFiendLichHint1:
+					'''
+					命运召唤我们前往世界西极的地狱深处，我感知到两条通往目的地的路径
+					其一需深入诺拉海，穿越岩浆屏障
+					经过蜘蛛洞穴，穿越人性幻魔阻隔的隐秘帷幕，方能抵达
+					'''
+				EarthFiendLichHint2:
+					'''
+					第二条路径始于遗忘之城下方的地狱，精灵们告诉我，熔岩中封存着被遗忘的通道
+					沿此通道西行，直至人性幻魔阻隔的隐秘帷幕
+					大地恶魔巫妖王就在彼处
+					'''
+				SeathTheScalelessHint:
+					'''
+					还记得与悲伤交战之处吗？在冻洋之下，栖息着龙族叛徒—无鳞者希斯
+					如今世界枷锁已碎，希斯将再度翱翔于天际
+					若你能击败它并夺取龙翼，苍穹之下将无人能敌
+					'''
+				WitchkingHint:
+					'''
+					精灵们向我揭示另一位存在—非但未逃离深渊，反以其为居所的巫师王
+					他与葛温无关，却掌握着对抗宿敌的关键，需携带能破除魔法结界的利刃
+					在人性幻魔阻隔的隐秘帷幕以东，深渊灰烬洞穴中可寻其踪迹
+					'''
+				WyvernMageShadowHint:
+					'''
+					{0}，我从巫师王给你的大蓝玉中感应到禁忌魔法波动，飞龙法师并未消亡...
+					重返其堡垒调查。若要与葛温决战，必须彻底消灭他
+					'''
+				WyvernMageNotKilledHint:
+					'''
+					飞龙法师曾是夺心魔王的盟友，如今盘踞在隐形死亡笼罩的山巅堡垒
+					大蓝玉与要塞某处存在魔法链接，我们必须前往探查
+					'''
+				ArtoriasHint:
+					'''
+					伊扎里斯的骑士，如今沦为深渊傀儡的阿尔特留斯，是我们下一个目标
+					前往遗忘之城与丛林金字塔的交界处
+					他的安息之地就在那里
+					'''
+				ChaosHint:
+					'''
+					从阿尔特留斯处获得的大紫晶，实为封印地狱之王混沌的钥匙
+					与此前的恶魔类似，此存在的力量过于强大而被封印
+					月之力将其禁锢，若欲挑战，请从丛林金字塔向东进发
+					'''
+				BlightHint:
+					'''
+					我们该再次东行，{0}，前往冻洋的表面
+					那里有高等存在的微小具现，正试图撕裂世界裂缝完全降临
+					它是世界的灾疽，若其得逞，我们的位面必将崩毁
+					'''
+				AbysmalOolacileSorcerer:
+					'''
+					在石巨人神殿深处蛰伏着一位持有魔力与生机戒指的乌拉席露巫师
+					若你想夺取戒指，{0}，它必能极大提升你的魔力威能
+					'''
+				DarkCloudHint:
+					'''
+					你持有的那面镜子，千万别注视它...这是受月光诅咒的邪物—能具现化观者被扭曲的未来
+					常人或许会看见自己变成连环杀手，危险但不足以致命
+					{0}，但对你而言，你最清楚体内沉睡的潜能，凝视这镜子恐将招致毁灭
+					'''
+				GwynHint:
+					'''
+					你已准备好面对深渊之王、火焰守护者葛温。曾为他提供权力的存在尽数败于你手
+					他是深渊最后的屏障。击败他，你将成为新任火焰守护者并关闭深渊之门
+					前往西部海洋寻找他的隐秘陵墓。我相信你，{0}！
+					'''
+				CannotHelp: 你已做得足好了，{0}，我无更多谏言可予
 				ExhaustedDialogue: "{0}，我们谈得够多了，眼下我实在无话可说"
 			}
 
@@ -11041,7 +11041,7 @@ Mods: {
 			"Necromancers Spell.DisplayName": 巫妖王之咒
 			"Krakens Cast.DisplayName": 海妖之怒
 			"Witchking Scream.DisplayName": 巫师尖啸
-			"Print Position.DisplayName": Print Position
+			"Print Position.DisplayName": 显示玩家位置
 		}
 
 		InfoDisplays: {
