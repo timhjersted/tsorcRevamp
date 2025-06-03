@@ -31,15 +31,5 @@ namespace tsorcRevamp.Items.Tools
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.HeavenPiercer>();
         }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-
-            recipe.AddIngredient(ItemID.CopperPickaxe);
-            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
-
-            recipe.Register();
-        }
     }
 }
