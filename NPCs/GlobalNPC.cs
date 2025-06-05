@@ -2102,7 +2102,7 @@ namespace tsorcRevamp.NPCs
             if (CrimsonBurn)
             {
                 int DoTPerS = 30;
-                
+
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
@@ -2125,9 +2125,16 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
-                npc.lifeRegen -= DoTPerS * (Main.hardMode ? 2 : 1); 
+                npc.lifeRegen -= DoTPerS * (Main.hardMode ? 2 : 1);
 
                 damage += DoTPerS * (Main.hardMode ? 2 : 1); 
+
+                var N = npc;
+                for (int j = 0; j < 5; j++)
+                {
+                    int dust = Dust.NewDust(N.position, N.width / 2, N.height / 2, 5, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
+                    Main.dust[dust].noGravity = false;
+                }
             }
 
             if (ToxicCatDrain)

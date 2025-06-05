@@ -64,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     || target.type == ModContent.NPCType<ParasyticWormTail>()
                     )
             {
-                modifiers.FinalDamage *= 4;
+                modifiers.FinalDamage *= 3;
             }
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)

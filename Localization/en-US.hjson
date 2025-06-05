@@ -5896,8 +5896,8 @@ Mods: {
 				DisplayName: Ephemeral Throwing Axe 2
 				Tooltip:
 					'''
-					An enchanted melee weapon that can be thrown through walls.
-					It does 20% more damage against mages and other magic users.
+					Passes through solid walls and shoots homing orbs on hit
+					It does 20% more damage and shoots an additional homing orb against mages
 					'''
 			}
 
@@ -6093,7 +6093,14 @@ Mods: {
 
 			PilgrimSpontoon: {
 				DisplayName: Pilgrim's Spontoon
-				Tooltip: Inherits Tridents water effect and pierces {0} armor penetration
+				Tooltip:
+					'''
+					Inherits Tridents water effect and pierces {0} armor penetration
+					Right-click to catalyze the spear with magicat a cost of 60 mana and increase its abilities for a short time
+					Increases weapon speed, allows projectiles to pierce and inflicts a debuff during the buff 
+					Hitting enemies with the spear speeds up the cooldown reset
+					18 seconds cooldown
+					'''
 			}
 
 			GaeBolg: {
@@ -7818,8 +7825,12 @@ Mods: {
 			}
 
 			TaintedBow: {
-				Tooltip: ""
 				DisplayName: Tainted Bow
+				Tooltip:
+					'''
+					The arrows fired are poisoned and conver wooden arrows into tainted arrows
+					Tainted arrows deal more damage and inflict shadowflame on nature enemies
+					'''
 			}
 
 			Linklight2sHat: {
@@ -7870,6 +7881,11 @@ Mods: {
 			SpearOfMage: {
 				Tooltip: ""
 				DisplayName: Enigma Spear of Mage
+			}
+
+			TaintedArrow: {
+				DisplayName: Tainted Arrow
+				Tooltip: ""
 			}
 		}
 
@@ -8841,6 +8857,16 @@ Mods: {
 				Description: Mods.tsorcRevamp.Buffs.WitchkingCurse.Description
 				DisplayName: Witchking Curse
 			}
+
+			PilgrimSpontoonBuff: {
+				DisplayName: Pilgrim Spontoon Buff
+				Description: The pilgrim's spontoon's arcane power increases!
+			}
+
+			PilgrimSpontoonCooldown: {
+				DisplayName: Pilgrim Spontoon Cooldown
+				Description: You cannot reactivate Pilgrim's Spontoon special ability until this runs out
+			}
 		}
 
 		Projectiles: {
@@ -9496,6 +9522,8 @@ Mods: {
 			RedRainProj.DisplayName: Red Rain Proj
 			SmallRedLightning.DisplayName: Small Red Lightning
 			WyvernIcicle.DisplayName: Wyvern Icicle
+			PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
+			TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
 		}
 
 		NPCs: {

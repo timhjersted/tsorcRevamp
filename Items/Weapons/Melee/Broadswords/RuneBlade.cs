@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     class RuneBlade : ModItem
     {
         public int RuneRange = 150;
-        public const int MageDmgAmp = 6;
+        public const int MageDmgAmp = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MageDmgAmp);
         public override void SetStaticDefaults()
         {

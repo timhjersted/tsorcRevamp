@@ -36,25 +36,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (target.type == NPCID.Tim
-                || target.type == NPCID.DarkCaster
-                || target.type == NPCID.GoblinSorcerer
-                || target.type == ModContent.NPCType<UndeadCaster>()
-                || target.type == ModContent.NPCType<MindflayerServant>()
-                || target.type == ModContent.NPCType<DungeonMage>()
-                || target.type == ModContent.NPCType<DemonSpirit>()
-                || target.type == ModContent.NPCType<CrazedDemonSpirit>()
-                || target.type == ModContent.NPCType<ShadowMage>()
-                || target.type == ModContent.NPCType<AttraidiesIllusion>()
-                || target.type == ModContent.NPCType<AttraidiesManifestation>()
-                || target.type == ModContent.NPCType<DarkShogunMask>()
-                || target.type == ModContent.NPCType<DarkDragonMask>()
-                || target.type == ModContent.NPCType<BrokenOkiku>()
-                || target.type == ModContent.NPCType<Okiku>()
-                || target.type == ModContent.NPCType<WyvernMage>()
-                || target.type == ModContent.NPCType<Attraidies>()
-                || target.type == ModContent.NPCType<BarrowWight>()
-                )
+            if (tsorcRevamp.MageNPCs.Contains(target.type))
             {
                 modifiers.FinalDamage *= 1.2f;
             }
@@ -73,6 +55,19 @@ namespace tsorcRevamp.Projectiles
                     Projectile.knockBack / 2,
                     Projectile.owner
                 );
+
+            if (tsorcRevamp.MageNPCs.Contains(target.type))
+                {
+                    Projectile.NewProjectile(
+                        Projectile.GetSource_FromThis(),
+                        target.Center,
+                        Vector2.Zero,
+                        ProjectileID.SpectreWrath,
+                        Projectile.damage / 2,
+                        Projectile.knockBack / 2,
+                        Projectile.owner
+                    );
+                }
             }
         }
 

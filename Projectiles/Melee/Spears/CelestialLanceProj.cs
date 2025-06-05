@@ -45,31 +45,16 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
                         velY = 20f;
                     }
 
-                    //Choose a random star between starfury and the star veil one
                     Vector2 starVelocity = Vector2.Normalize(new Vector2(velX, velY)) * 10f; 
                     starVelocity.Y += Main.rand.Next(-40, 41) * 0.02f; 
 
-                    int starDamage = damageDone / 2; //don't ask why imo
-
-                    int starType;
-                    switch (Main.rand.Next(3)) 
-                    {
-                        case 0:
-                            starType = ProjectileID.BeeCloakStar;
-                            break;
-                        case 1:
-                            starType = ProjectileID.StarCloakStar;
-                            break;
-                        default: 
-                            starType = ProjectileID.StarVeilStar;
-                            break;
-                    }
+                    int starDamage = damageDone / 2; 
 
                     Projectile.NewProjectile(
                         Projectile.GetSource_FromThis(), 
                         starSpawnPos,                  
                         starVelocity * 2.2f,            
-                        starType,                       
+                        ProjectileID.StarVeilStar,                       
                         starDamage,                    
                         3f,                             
                         Projectile.owner                

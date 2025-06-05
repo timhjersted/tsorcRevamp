@@ -1101,6 +1101,13 @@ namespace tsorcRevamp
                 }
             }
         }
+        public override void ModifyWeaponDamage(Item item, ref StatModifier damage)
+        {
+            if (item.type == ModContent.ItemType<Items.Weapons.Melee.Spears.PilgrimSpontoon>() && PilgrimSpontoonBuff)
+            {
+                Player.GetAttackSpeed(DamageClass.Melee) *= 28f / 23f; //reduced the use time of pilgrim spontoon
+            }
+        }
         public void OverCritColor(in Rectangle targetHitbox, in int damageDealt, in int CritColorTier)
         {
             Color ColorOfCrit = Color.Red;

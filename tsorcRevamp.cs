@@ -154,6 +154,7 @@ namespace tsorcRevamp
         public static List<int> SeathSegments;
         public static List<int> UntargetableNPCs;
         public static List<int> MageNPCs;
+        public static List<int> NatureNPCs;
         public static List<int> VanillaMeleeBlackList;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
@@ -1415,6 +1416,51 @@ namespace tsorcRevamp
                 ModContent.NPCType<MindflayerKingServant>(),
                 ModContent.NPCType<MindflayerServant>(),
                 ModContent.NPCType<MindflayerIllusion>(),
+            };
+            #endregion
+
+            #region Nature NPC list
+            NatureNPCs = new List<int>()
+            {
+                NPCID.ManEater,
+                NPCID.AngryTrapper,
+                NPCID.Snatcher,
+                NPCID.BigHornetStingy,
+                NPCID.LittleHornetStingy,
+                NPCID.BigHornetSpikey,
+                NPCID.LittleHornetSpikey,
+                NPCID.BigHornetLeafy,
+                NPCID.LittleHornetLeafy,
+                NPCID.BigHornetHoney,
+                NPCID.LittleHornetHoney,
+                NPCID.BigHornetFatty,
+                NPCID.LittleHornetFatty,
+                NPCID.GiantMossHornet,
+                NPCID.BigMossHornet,
+                NPCID.LittleMossHornet,
+                NPCID.TinyMossHornet,
+                NPCID.BigStinger,
+                NPCID.LittleStinger,
+                NPCID.Hornet,
+                NPCID.GiantTortoise,
+                NPCID.Arapaima,
+                NPCID.MossHornet,
+                NPCID.Derpling,
+                NPCID.Moth,
+                NPCID.QueenBee,
+                NPCID.HornetFatty,
+                NPCID.HornetHoney,
+                NPCID.HornetLeafy,
+                NPCID.HornetSpikey,
+                NPCID.HornetStingy,
+                NPCID.Plantera,
+                NPCID.PlanterasTentacle,
+                NPCID.GiantFungiBulb,
+                NPCID.FungiBulb,
+                NPCID.Dandelion,
+                ModContent.NPCType<AbandonedStump>(),
+                ModContent.NPCType<ResentfulSeedling>(),
+                ModContent.NPCType<JungleSentree>()
             };
             #endregion
             #region Vanilla Melee BlackList

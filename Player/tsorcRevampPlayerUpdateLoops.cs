@@ -179,6 +179,7 @@ namespace tsorcRevamp
         public bool BossBlockedPhoenixRevive = false;
 
         public bool MythrilOrichalcumCritDamage = false;
+        public bool PilgrimSpontoonBuff = false;
         public bool Shunpo = false;
         public float ShunpoTimer = 0;
         public Vector2 ShunpoVelocity;
@@ -463,6 +464,7 @@ namespace tsorcRevamp
             BrokenSpirit = false;
 
             MythrilOrichalcumCritDamage = false;
+            PilgrimSpontoonBuff = false;
             Shunpo = false;
             WhipCritHitboxSize = 1;
 
@@ -2469,7 +2471,7 @@ namespace tsorcRevamp
             if (WitchScreamCooldown > 0)
             {
                 WitchScreamCooldown--;
-            }       
+            }           
 
             TryForceFrame(ref Player.headFrame, ref forcedHeadFrame);
             TryForceFrame(ref Player.bodyFrame, ref forcedBodyFrame);

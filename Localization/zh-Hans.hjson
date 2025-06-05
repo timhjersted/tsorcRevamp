@@ -7814,8 +7814,8 @@ Mods: {
 			}
 
 			TaintedBow: {
-				Tooltip: ""
 				DisplayName: 堕落之弓
+				Tooltip: ""
 			}
 
 			Linklight2sHat: {
@@ -7866,6 +7866,11 @@ Mods: {
 			SpearOfMage: {
 				Tooltip: ""
 				DisplayName: 奥术谜矛
+			}
+
+			TaintedArrow: {
+				// DisplayName: Tainted Arrow
+				// Tooltip: ""
 			}
 		}
 
@@ -8837,6 +8842,16 @@ Mods: {
 				Description: ""
 				DisplayName: 巫师王诅咒
 			}
+
+			PilgrimSpontoonBuff: {
+				// DisplayName: Pilgrim Spontoon Buff
+				// Description: The pilgrim's spontoon's arcane power increases!
+			}
+
+			PilgrimSpontoonCooldown: {
+				// DisplayName: Pilgrim Spontoon Cooldown
+				// Description: You cannot reactivate Pilgrim's Spontoon special ability until this runs out
+			}
 		}
 
 		Projectiles: {
@@ -9492,6 +9507,8 @@ Mods: {
 			RedRainProj.DisplayName: Red Rain Proj
 			SmallRedLightning.DisplayName: Small Red Lightning
 			WyvernIcicle.DisplayName: Wyvern Icicle
+			// PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
+			// TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
 		}
 
 		NPCs: {
