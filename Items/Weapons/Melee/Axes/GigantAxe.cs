@@ -20,6 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useAnimation = 21;
             Item.useTime = 21;
             Item.scale = 1.8f;
+            Item.axe = 150 / 5; // Same as Vortex hamaxe
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Purple_11;

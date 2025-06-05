@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -7,6 +8,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class CorruptedTooth : ModItem
     {
+        const int healCooldown = 60;
+        int healTimer = 0;
+
         public override void SetStaticDefaults()
         {
         }
@@ -28,6 +32,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Green;
         }
+        public override void HoldItem(Player player)
+        {
+            if (healTimer < healCooldown) 
+                healTimer++;
+        }
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             if (target.type == NPCID.EaterofSouls
@@ -39,13 +48,21 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 )
             {
                 modifiers.SourceDamage *= 3;
-                player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 15, true);
-                player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 15, true));
+                if (healTimer == healCooldown)
+                {
+                    healTimer = 0;
+                    player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 15, true);
+                    player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 15, true));
+                }
             }
             else
             {
-                player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 10, true);
-                player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 10, true));
+                if (healTimer == healCooldown)
+                {
+                    healTimer = 0;
+                    player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 10, true);
+                    player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 10, true));
+                }
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>())
             {

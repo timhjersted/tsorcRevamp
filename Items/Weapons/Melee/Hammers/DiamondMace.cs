@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.width = 47;
             Item.height = 47;
             Item.knockBack = 8;
+            Item.hammer = 80; // a bit more than molten hamaxe
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 20;
             Item.useTime = 20;

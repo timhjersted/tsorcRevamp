@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.knockBack = 15;
             Item.autoReuse = true;
             Item.useTurn = false;
+            Item.hammer = 100; // Same as nebula hamaxe
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.LightRed_4;

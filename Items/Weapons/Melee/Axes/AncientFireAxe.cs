@@ -22,6 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.height = 42;
             Item.knockBack = 10f;
             Item.DamageType = DamageClass.Melee;
+            Item.axe = 15; // Same as axe of the night
             Item.useAnimation = 37;
             Item.useTime = 37;
             Item.UseSound = SoundID.Item1;

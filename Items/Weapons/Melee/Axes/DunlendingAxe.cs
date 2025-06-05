@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 3500;
+            Item.axe = 10; // same as iron axe
             Item.rare = ItemRarityID.White;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();

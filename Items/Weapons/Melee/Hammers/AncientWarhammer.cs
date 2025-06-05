@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 
         public override void SetDefaults()
         {
-
+            Item.hammer = 60; // Same as meteor hamaxe
             Item.rare = ItemRarityID.Green;
             Item.DamageType = DamageClass.Melee;
             Item.damage = 55;

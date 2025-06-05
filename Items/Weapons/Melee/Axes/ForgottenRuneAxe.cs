@@ -22,6 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useTime = 28;
             Item.width = 46;
             Item.height = 38;
+            Item.axe = 55 / 5; // Same as gold axe
             Item.DamageType = DamageClass.Melee;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;

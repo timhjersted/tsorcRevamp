@@ -20,6 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.height = 58;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
+            Item.axe = 110 / 5; // same as the Pickaxe axe
             Item.scale = 1.2f;
             Item.useAnimation = 25;
             Item.UseSound = SoundID.Item1;
