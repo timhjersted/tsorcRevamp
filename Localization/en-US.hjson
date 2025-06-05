@@ -5943,9 +5943,14 @@ Mods: {
 					'''
 			}
 
-			DiamondMace: {
-				DisplayName: Diamond Mace
-				Tooltip: A mace made of a large diamond. Has a 1 in 10 chance to heal 15 life.
+			Doomhammer: {
+				DisplayName: Doomhammer
+				Tooltip:
+					'''
+					A legendary hammer forged long ago in a pool of elemental lava
+					Left-click to shoot fireballs and create hot flames in true melee
+					Right-click to shoot a piercing lightning and create electrified clouds in true melee
+					'''
 			}
 
 			Mjolnir: {
@@ -9524,6 +9529,7 @@ Mods: {
 			WyvernIcicle.DisplayName: Wyvern Icicle
 			PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
 			TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
+			DoomhammerFireball.DisplayName: Doomhammer Fireball
 		}
 
 		NPCs: {

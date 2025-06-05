@@ -5939,7 +5939,7 @@ Mods: {
 					'''
 			}
 
-			DiamondMace: {
+			Doomhammer: {
 				DisplayName: 钻石权杖
 				Tooltip: 一把钻石做的权杖，有1/15概率回复 20 生命值
 			}
@@ -9509,6 +9509,7 @@ Mods: {
 			WyvernIcicle.DisplayName: Wyvern Icicle
 			// PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
 			// TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
+			// DoomhammerFireball.DisplayName: Doomhammer Fireball
 		}
 
 		NPCs: {
