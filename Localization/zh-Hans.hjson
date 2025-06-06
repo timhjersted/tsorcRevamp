@@ -5892,8 +5892,8 @@ Mods: {
 				DisplayName: 附魔夺命投斧
 				Tooltip:
 					'''
-					一种可以穿墙投掷的附魔近战武器
-					它对法师和其他魔法使用者造成额外20%伤害
+					可穿墙投掷，命中时生成追踪法球
+					对法师和其他魔法使用者造成额外20%伤害，并额外生成一道追踪法球
 					'''
 			}
 
@@ -5940,8 +5940,13 @@ Mods: {
 			}
 
 			Doomhammer: {
-				DisplayName: 钻石权杖
-				Tooltip: 一把钻石做的权杖，有1/15概率回复 20 生命值
+				DisplayName: 末日锤
+				Tooltip:
+					'''
+					很久以前在元素熔岩池中锻造的一把传奇之锤
+					左键发射火球，近战命中时产生炽热火焰
+					右键发射闪电，近战命中时产生闪电云
+					'''
 			}
 
 			Mjolnir: {
@@ -6089,7 +6094,13 @@ Mods: {
 
 			PilgrimSpontoon: {
 				DisplayName: 朝圣者三叉戟
-				Tooltip: 继承三叉戟的水中移动效果（{0}点护甲穿透）
+				Tooltip:
+					'''
+					继承三叉戟的水中移动效果，{0}点护甲穿透
+					右键消耗60点魔力催化三叉戟，短时间内提升性能
+					提升攻击速度，射弹获得穿透效果，攻击施加减益
+					18 秒冷却，命中敌人加速冷却
+					'''
 			}
 
 			GaeBolg: {
@@ -7815,7 +7826,11 @@ Mods: {
 
 			TaintedBow: {
 				DisplayName: 堕落之弓
-				Tooltip: ""
+				Tooltip:
+					'''
+					施加中毒，并将木箭转化为污染箭
+					污染箭造成额外伤害，并对自然生物类的敌人附加暗影焰
+					'''
 			}
 
 			Linklight2sHat: {
@@ -7869,8 +7884,8 @@ Mods: {
 			}
 
 			TaintedArrow: {
-				// DisplayName: Tainted Arrow
-				// Tooltip: ""
+				DisplayName: 污染箭
+				Tooltip: ""
 			}
 		}
 
@@ -8844,13 +8859,13 @@ Mods: {
 			}
 
 			PilgrimSpontoonBuff: {
-				// DisplayName: Pilgrim Spontoon Buff
-				// Description: The pilgrim's spontoon's arcane power increases!
+				DisplayName: 朝圣者三叉戟增益
+				Description: 朝圣者三叉戟的神秘力量增强了！
 			}
 
 			PilgrimSpontoonCooldown: {
-				// DisplayName: Pilgrim Spontoon Cooldown
-				// Description: You cannot reactivate Pilgrim's Spontoon special ability until this runs out
+				DisplayName: 朝圣者三叉戟冷却
+				Description: 冷却结束前你无法催化朝圣者三叉戟
 			}
 		}
 
@@ -10303,7 +10318,7 @@ Mods: {
 				NextButtonContinue: 继续
 				Quote1:
 					'''
-					吾曾为月灵，自由无拘束。纵使如今困于此偶，与旧世精魂之联结犹存
+					吾曾为月灵，自由无拘束。纵使如今困于此隅，与旧世精魂之联结犹存
 					若旅程中需援手，尽管开口。吾可予你数则指引，或示以前路方向
 					'''
 				Quote2:
