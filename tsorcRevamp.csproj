@@ -6,8 +6,15 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="UI\Markers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\Markers\" />
+    <Reference Include="CalamityMod">
+      <HintPath>..\..\ModReader\CalamityMod\CalamityMod.dll</HintPath>
+    </Reference>
+    <Reference Include="PermaBuffs">
+      <HintPath>..\..\ModReader\PermaBuffs\PermaBuffs.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
