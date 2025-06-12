@@ -470,6 +470,12 @@ Mods: {
 					克苏鲁之眼只能在晚上被召唤
 					一块银表经过改造后或许可以跳过时间...
 					'''
+				/* PirateMap:
+					'''
+					Item is not consumed so that you can retry the fight on defeat
+					The Eye of Cthulhu can only be summoned during the night
+					A silver watch may aid in the passing of time...
+					''' */
 
 				MechanicalEye: {
 					Tooltip:
@@ -599,7 +605,30 @@ Mods: {
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:一个类似于大金字塔的符号，月亮在它的右侧，刻在上面]"
 				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
+				/* RemixLargeSapphire:
+					'''
+					[c/ffbf00:Two symbols are carved into it: one resembling a dark-capped mountain near a fortress,]
+					[c/ffbf00:and the other resembling a giant skull guarding the entrance to great corridors in the frozen depths]
+					''' */
 				LargeRuby: "[c/ffbf00:上面雕刻着一个符号，它形似一座可通过大型金字塔进入的古老丛林神庙]"
+				/* RemixLargeRuby:
+					'''
+					[c/ffbf00:A symbol resembling a ancient temple accessible via the depths of the jungle is carved into it]
+					[c/ffbf00:Quite hidden, but you can also notice another symbol, that of a warm ocean with a coral reef in its depths]
+					''' */
+				/* RemixLargeEmerald:
+					'''
+					[c/ffbf00:Two symbols are carved into it: one resembling lush underground jungle near a temple of meteorite,]
+					[c/ffbf00:and the other resembling a warm ocean with a coral reef in its depths]
+					''' */
+				// LargeAmber: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
+				/* RemixLargeAmber:
+					'''
+					[c/ffbf00:3 symbols representing the elements are carved into it:]
+					[c/ffbf00:The first resembling a mushroom forest, the second resembling a ship in lava and the last resembling the depths of a great chasm]
+					''' */
+				// RemixLargeDiamond: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
+				// RemixLargeTopaz: "[c/ffbf00:A symbol resembling the ruins at the ends of a large abandoned city is carved into it]"
 				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
 				IncinerationHex: 如果已击败双足翼龙，则施加破晓减益
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
@@ -10519,6 +10548,16 @@ Mods: {
 					我低估你了，{0}！你竟突破飞龙法师的隐秘魔法，打开通往冻洋的路！  
 					只需东行潜入深海，悲伤正静候我等
 					'''
+				/* RemixSorrowBiomeHintPart1:
+					'''
+					Our journey takes us further East. The next of the Awakened, The Sorrow, took nest deep below the Frozen Ocean.
+					The gate after the ancestral spirit's lair is the way.
+					''' */
+				/* RemixSorrowBiomeHintPart2:
+					'''
+					The Wyvern Mage, ally of the Mindflayer King, occupies a mountain fortress who guards the eastern skies.
+					The spirits can tell me no more. I fear this is a death trap, {0}...
+					''' */
 				SorrowDeeperHint: 我们应该深入冻洋，我感知到极寒之力在其深处涌动
 				HunterBiomeHint:
 					'''
@@ -10542,6 +10581,11 @@ Mods: {
 					你应西行潜入诺拉海，那里曾有一座城镇，后毁于潮汐风暴
 					我相信如果有勇者敢探其深渊，诺拉必赐其踏水火而行之能，一如远古子民所受之恩泽
 					'''
+				/* RemixFireWalkHint:
+					'''
+					It seems dangerous to explore the Elengad ruins now, {0}.
+					You should explore further west and explore the Tropics, or going back and clear the Scarlet Hill's blood demons.
+					''' */
 				HunterClose:
 					'''
 					{0}，继续前进，我们快到了！谨慎行动，猎手乃三鸟至强
@@ -10688,6 +10732,12 @@ Mods: {
 					他与葛温无关，却掌握着对抗宿敌的关键，需携带能破除魔法结界的利刃
 					在人性幻魔阻隔的隐秘帷幕以东，深渊灰烬洞穴中可寻其踪迹
 					'''
+				/* RemixWitchkingHint:
+					'''
+					The Spirits tell me of another, a being that instead of escaping the Abyss has made it his dwelling: The Witchking.
+					He is not linked to Gwyn, but he holds the key to an old enemy of ours. Bring a blade that has the power to shatter magical wards.
+					East of the hidden veil of Humanity's past in Morgul Feleg, the depths of shadows that you'll find him. 
+					''' */
 				WyvernMageShadowHint:
 					'''
 					{0}，我从巫师王给你的大蓝玉中感应到禁忌魔法波动，飞龙法师并未消亡...
@@ -10783,12 +10833,28 @@ Mods: {
 					葛温的坟墓埋在西海的某个地方，
 					但如果你还没有从其他深渊守护者那里获得力量，他肯定会杀了你。
 					'''
+				/* RemixAdvModeSHMQuote2:
+					'''
+					My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength
+					to face the final lord, who has tended the flame of the Abyss since the world began.
+					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
+					Gwyn's old tomb is buried somewhere in the Eternal Reef, but he will surely kill you
+					if you have not yet gathered the strength obtained from the other lords of the Abyss.
+					''' */
 				AdvModeSHMQuote3:
 					'''
 					你见过散布在世界各地的[c/ffbf00:丛林蜥蜴神庙门]吗？它们会指引你走向你的目标。
 					我会从大裂谷深处的那一个开始，它通向那棵老树。
 					还有另一个，在埃伦加德沙漠遗址以东。剩下的，我相信你会找到的。祖先将帮助引导你。
 					'''
+				/* RemixAdvModeSHMQuote3:
+					'''
+					Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal.
+					It is important to note that some passages are blocked by large gems, notably those of the Fiends
+					which are blocked by a [c/ffbf00:large amber], kept in the Old One's Tree.
+					I would start with the one at the very west of the Mycellium Forest, which leads to the Dreamlike Caverns.
+					There is another, in a strange ship in the underworld. The rest, I'm sure you will find. The ancestors will help guide you.
+					''' */
 				AdvModeSHMQuote4:
 					'''
 					关于[c/ffbf00:亚尔特留斯]和另一个在这些土地上游荡被称为[c/383838:巫师王]的黑暗生物，

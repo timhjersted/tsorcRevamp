@@ -15,10 +15,10 @@ namespace tsorcRevamp.Items.Accessories
         {
             Item.width = 28;
             Item.height = 24;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarityID.LightPurple;
             Item.accessory = true;
             Item.faceSlot = 14;
-            Item.value = PriceByRarity.Green_2;
+            Item.value = PriceByRarity.LightPurple_6;
             Item.vanity = true;
         }
         public override void UpdateEquip(Player player)

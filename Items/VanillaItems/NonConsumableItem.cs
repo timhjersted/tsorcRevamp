@@ -20,6 +20,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 || item.type == ItemID.MechanicalWorm
                 || item.type == ItemID.LihzahrdPowerCell
                 || item.type == ItemID.CelestialSigil
+                || item.type == ItemID.PirateMap
                 )
             {
                 item.consumable = false;

@@ -360,9 +360,9 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.WaterCandle, 0f, 0f, 150, default(Color), 1.3f);
 
             int particleCount = 36; 
-            float radius = 50f; 
+            float radius = 55f; 
 
-            // Création des particules
+            // Create a dust ring around the boulder 
             for (int i = 0; i < particleCount; i++)
             {
                 float angle = MathHelper.TwoPi / particleCount * i;
@@ -371,7 +371,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                 dust.noGravity = true;
             }
 
-            float damageRadius = 50f;
+            float damageRadius = 72f;
             foreach (NPC target in Main.npc)
             {
                 if (target.active && !target.friendly && !target.dontTakeDamage)
@@ -392,7 +392,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
 
                             target.StrikeNPC(hitInfo);
 
-                            Projectile.localNPCImmunity[target.whoAmI] = 20;
+                            Projectile.localNPCImmunity[target.whoAmI] = 10;
                             Projectile.usesLocalNPCImmunity = true;
                         }
                     }

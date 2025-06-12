@@ -38,6 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedRepeater, 1);
+            recipe.AddIngredient(ItemID.SoulofNight, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 

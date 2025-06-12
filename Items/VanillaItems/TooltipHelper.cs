@@ -78,8 +78,6 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.MagicMirror, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RecallItem"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.RecallPotion, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RecallItem"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.LargeAmethyst, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeAmethyst"));
-            SimpleModTooltip(Mod, item, tooltips, ItemID.LargeRuby, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeRuby"));
-            SimpleModTooltip(Mod, item, tooltips, ItemID.LargeSapphire, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeSapphire"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.ApprenticeStaffT3, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.IncinerationHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.MonkStaffT3, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.DD2SquireBetsySword, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
@@ -87,6 +85,23 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ModContent.ItemType<EtherianWyvernStaff>(), Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.StarinaBottle, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.StarinaBottle"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.ManaRegenerationBand, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationBand"));
+
+            if (tsorcRevampWorld.RemixMap)
+            {
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeRuby, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeRuby"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeSapphire, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeSapphire"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeAmber, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeAmber"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeTopaz, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeTopaz"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeEmerald, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeEmerald"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeDiamond, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeDiamond"));
+            }
+
+            if (!tsorcRevampWorld.RemixMap)
+            {
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeRuby, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeRuby"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeSapphire, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeSapphire"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeAmber, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeAmber"));
+            }
 
 
             Player player = Main.LocalPlayer;

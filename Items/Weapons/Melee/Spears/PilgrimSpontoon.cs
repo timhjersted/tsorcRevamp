@@ -16,11 +16,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int ProjectileID => ModContent.ProjectileType<PilgrimSpontoonProj>();
         public override int Width => 52;
         public override int Height => 52;
-        public override int BaseDmg => 32;
+        public override int BaseDmg => 35;
         public override int BaseCritChance => 0;
         public override float BaseKnockback => 3;
-        public override int UseAnimationTime => 28;
-        public override int UseTime => 28;
+        public override int UseAnimationTime => 27;
+        public override int UseTime => 27;
         public override int Rarity => ItemRarityID.Green;
         public const int ArmorPen = 10;
         public override int Value => PriceByRarity.fromItem(Item);

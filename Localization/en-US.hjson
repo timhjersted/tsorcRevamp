@@ -470,6 +470,12 @@ Mods: {
 					The Eye of Cthulhu can only be summoned during the night
 					A silver watch may aid in the passing of time...
 					'''
+				PirateMap:
+					'''
+					Item is not consumed so that you can retry the fight on defeat
+					The Eye of Cthulhu can only be summoned during the night
+					A silver watch may aid in the passing of time...
+					'''
 
 				MechanicalEye: {
 					Tooltip:
@@ -599,7 +605,30 @@ Mods: {
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:A symbol resembling a large pyramid with the moon to its right side is carved into it]"
 				LargeSapphire: "[c/ffbf00:A symbol resembling a snow-capped mountain near a fortress is carved into it]"
+				RemixLargeSapphire:
+					'''
+					[c/ffbf00:Two symbols are carved into it: one resembling a dark-capped mountain near a fortress,]
+					[c/ffbf00:and the other resembling a giant skull guarding the entrance to great corridors in the frozen depths]
+					'''
 				LargeRuby: "[c/ffbf00:A symbol resembling a ancient jungle temple accessible via a large pyramid is carved into it]"
+				RemixLargeRuby:
+					'''
+					[c/ffbf00:A symbol resembling a ancient temple accessible via the depths of the jungle is carved into it]
+					[c/ffbf00:Quite hidden, but you can also notice another symbol, that of a warm ocean with a coral reef in its depths]
+					'''
+				RemixLargeEmerald:
+					'''
+					[c/ffbf00:Two symbols are carved into it: one resembling lush underground jungle near a temple of meteorite,]
+					[c/ffbf00:and the other resembling a warm ocean with a coral reef in its depths]
+					'''
+				LargeAmber: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
+				RemixLargeAmber:
+					'''
+					[c/ffbf00:3 symbols representing the elements are carved into it:]
+					[c/ffbf00:The first resembling a mushroom forest, the second resembling a ship in lava and the last resembling the depths of a great chasm]
+					'''
+				RemixLargeDiamond: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
+				RemixLargeTopaz: "[c/ffbf00:A symbol resembling the ruins at the ends of a large abandoned city is carved into it]"
 				VulnerabilityHex: Applies a vulnerability hex if Betsy has been defeated
 				IncinerationHex: Applies a incineration hex if Betsy has been defeated
 				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
@@ -5903,7 +5932,7 @@ Mods: {
 
 			BerserkerNightmare: {
 				DisplayName: Berserker Nightmare
-				Tooltip: ""
+				Tooltip: Creates a circle of particles around the ball
 			}
 
 			HeavensTear: {
@@ -6205,6 +6234,7 @@ Mods: {
 					'''
 					Always aim for the heart
 					Shoots 2 extra elfin arrows every 3 shots
+					Converts wooden arrows into holy arrows
 					'''
 			}
 
@@ -10522,6 +10552,16 @@ Mods: {
 					I underestimated you {0}! You made it past the secret magic of the Wyvern Mage and cleared a path towards the Frozen Ocean!
 					All that is left is to head a little further east and dive deep beneath the waters: The Sorrow awaits us.
 					'''
+				RemixSorrowBiomeHintPart1:
+					'''
+					Our journey takes us further East. The next of the Awakened, The Sorrow, took nest deep below the Frozen Ocean.
+					The gate after the ancestral spirit's lair is the way.
+					'''
+				RemixSorrowBiomeHintPart2:
+					'''
+					The Wyvern Mage, ally of the Mindflayer King, occupies a mountain fortress who guards the eastern skies.
+					The spirits can tell me no more. I fear this is a death trap, {0}...
+					'''
 				SorrowDeeperHint: We should explore deep into the Ocean. I feel an icy power radiating within its depths.
 				HunterBiomeHint:
 					'''
@@ -10544,6 +10584,11 @@ Mods: {
 					It seems dangerous to explore the Elengad ruins now, {0}.
 					You should explore further west and dive into the Nora Sea. Before it was washed away by a tidal storm, there used to be a town there.
 					I'm sure Nora would bless an adventurer courageous enough to explore its depths with the ability to walk on Water and Fire like he did for the people who lived there long ago.
+					'''
+				RemixFireWalkHint:
+					'''
+					It seems dangerous to explore the Elengad ruins now, {0}.
+					You should explore further west and explore the Tropics, or going back and clear the Scarlet Hill's blood demons.
 					'''
 				HunterClose:
 					'''
@@ -10691,6 +10736,12 @@ Mods: {
 					He is not linked to Gwyn, but he holds the key to an old enemy of ours. Bring a blade that has the power to shatter magical wards.
 					East of the hidden veil of Humanity's past within the Ashen Caves of the Abyss is where you'll find him. 
 					'''
+				RemixWitchkingHint:
+					'''
+					The Spirits tell me of another, a being that instead of escaping the Abyss has made it his dwelling: The Witchking.
+					He is not linked to Gwyn, but he holds the key to an old enemy of ours. Bring a blade that has the power to shatter magical wards.
+					East of the hidden veil of Humanity's past in Morgul Feleg, the depths of shadows that you'll find him. 
+					'''
 				WyvernMageShadowHint:
 					'''
 					{0}, I sensed a pulse of forbidden magic from that Sapphire you got from The Witchking. The Wyvern Mage is... Not dead. 
@@ -10774,7 +10825,7 @@ Mods: {
 					the Abyss was opened, unleashing even more oppressive forces upon the world.
 					The ancestors tell me that the portal can be closed, but
 					you must first defeat the 3 Elemental Fiends: one of
-					[c/2f8ee0:Water], one of [c/2d9e2b:Earth], and one of [c/f53d0a:Fire].
+					[c/2f8ee0:Water], one of [c/fcff00:Earth], and one of [c/f53d0a:Fire].
 					You must also defeat 4 more lords of the Abyss:
 					[c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
 					'''
@@ -10786,11 +10837,27 @@ Mods: {
 					Gwyn's old tomb is buried somewhere beneath the Western sea, but he will surely kill you
 					if you have not yet gathered the strength obtained from the other lords of the Abyss.
 					'''
+				RemixAdvModeSHMQuote2:
+					'''
+					My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength
+					to face the final lord, who has tended the flame of the Abyss since the world began.
+					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
+					Gwyn's old tomb is buried somewhere in the Eternal Reef, but he will surely kill you
+					if you have not yet gathered the strength obtained from the other lords of the Abyss.
+					'''
 				AdvModeSHMQuote3:
 					'''
 					Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal.
 					I would start with the one deep inside the Great Chasm, which leads to the Old One's Tree.
 					There is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.
+					'''
+				RemixAdvModeSHMQuote3:
+					'''
+					Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal.
+					It is important to note that some passages are blocked by large gems, notably those of the Fiends
+					which are blocked by a [c/ffbf00:large amber], kept in the Old One's Tree.
+					I would start with the one at the very west of the Mycellium Forest, which leads to the Dreamlike Caverns.
+					There is another, in a strange ship in the underworld. The rest, I'm sure you will find. The ancestors will help guide you.
 					'''
 				AdvModeSHMQuote4:
 					'''

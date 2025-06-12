@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Melee.Flails;
 using tsorcRevamp.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Flails
@@ -44,6 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.FlowerPow, 1);
+            recipe.AddIngredient(ModContent.ItemType<BerserkerNightmare>(), 1);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             //recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 10);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);

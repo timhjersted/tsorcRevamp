@@ -39,9 +39,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<ThrowingSpear>(), 100);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralThrowingSpear>(), 100);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
-            //recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
 
             recipe.AddTile(TileID.DemonAltar);

@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.GoldBow);
+            recipe.AddIngredient(ItemID.SilverBow);
             recipe.AddIngredient(ModContent.ItemType<Bolt>(), 250);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2450);
             recipe.AddTile(TileID.DemonAltar);

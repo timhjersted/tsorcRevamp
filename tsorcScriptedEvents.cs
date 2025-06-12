@@ -212,6 +212,7 @@ namespace tsorcRevamp
             SandstormElementalEvent,
             KingSlime2Event,
             JungleMimicEvent,
+            BloodLakeEvent,
             BloodBossEvent1,
             BloodBossEvent2,
             BloodBossEvent3,
@@ -224,7 +225,6 @@ namespace tsorcRevamp
             AncestralSpiritRemixEvent,
             FrozenCathedralEvent2, 
             WyvernPrisonEvent,
-            Dutchman,
             SandstormElementalEvent2,
             DeathRemix,
 
@@ -601,7 +601,12 @@ namespace tsorcRevamp
             ScriptedEvent KingSlime2Event = new ScriptedEvent(new Vector2(4749, 639), 25, NPCID.KingSlime, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.KingSlime"), Color.Blue, false, RemixMapCondition);
 
             ScriptedEvent JungleMimicEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, NPCID.BigMimicJungle, 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
-        
+
+            List<int> BloodLakeEventEnemyTypeList = new List<int>() { NPCID.ZombieMerman, NPCID.EyeballFlyingFish };
+            List<Vector2> BloodLakeEventEnemyLocations = new List<Vector2>() { new Vector2(2999, 889), new Vector2(3009, 889) };
+            ScriptedEvent BloodLakeEvent = new ScriptedEvent(new Vector2(3004, 889), 25, BloodLakeEventEnemyTypeList, BloodLakeEventEnemyLocations, 60, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapCondition, SetNightCustomAction); 
+            BloodLakeEvent.SetCustomDrops(new List<int>() { ItemID.HealingPotion, ItemID.BloodRainBow, ItemID.VampireFrogStaff, ItemID.MoneyTrough, ItemID.SharkToothNecklace, ItemID.CombatBook }, new List<int>() { 5, 1, 1, 1, 1, 1 });
+
             ScriptedEvent BloodBossEvent1 = new ScriptedEvent(new Vector2(2914, 526), 25, NPCID.BloodEelHead, 60, true, true, false, LangUtils.GetTextValue("Events.BloodBossEvent1"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
             BloodBossEvent1.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.WrathPotion, ItemID.DripplerFlail }, new List<int>() { 5, 2, 1 });
             BloodBossEvent1.SetCustomStats(null, null, null, 7500);
@@ -637,11 +642,6 @@ namespace tsorcRevamp
             ScriptedEvent IceGolemIsland = new ScriptedEvent(new Vector2(7691, 357), 40, NPCID.IceGolem, 67, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Blue, false, RemixMapCondition);
             IceGolemIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion}, new List<int>() { 5, 3 });
             IceGolemIsland.SetCustomStats(null, null, null, 10000);
-
-            //FLYING DUTCHMAN IN THE TROPICS 
-            ScriptedEvent Dutchman = new ScriptedEvent(new Vector2(597, 848), 50, NPCID.PirateShip, DustID.GoldFlame, true, false, true, LangUtils.GetTextValue("Events.Dutchman"), Color.Gold, false, RemixMapCondition);
-            Dutchman.SetCustomDrops(new List<int>() { ItemID.DiscountCard, ItemID.LuckyCoin, ItemID.GoldRing, ItemID.PirateStaff, ItemID.Cutlass, ItemID.PirateMinecart }, new List<int>() { 1, 1, 1, 1, 1, 1 });
-            Dutchman.SetCustomStats(null, null, null, 10000);
 
             ScriptedEvent SandstormElementalEvent2 = new ScriptedEvent(new Vector2(950, 1503), 22, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow, false, RemixMapCondition);
 
@@ -734,8 +734,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.ShadowTempleEvent2, ShadowTempleEvent2 }, 
                 {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent },
                 {ScriptedEventType.MoltenSkyTempleEvent2, MoltenSkyTempleEvent2 },  
-                {ScriptedEventType.SandstormElementalEvent, SandstormElementalEvent },
+                {ScriptedEventType.SandstormElementalEvent, SandstormElementalEvent }, 
                 {ScriptedEventType.JungleMimicEvent, JungleMimicEvent },
+                {ScriptedEventType.BloodLakeEvent, BloodLakeEvent },
                 {ScriptedEventType.BloodBossEvent1, BloodBossEvent1 },
                 {ScriptedEventType.BloodBossEvent2, BloodBossEvent2 },
                 {ScriptedEventType.BloodBossEvent3, BloodBossEvent3 },
@@ -749,7 +750,6 @@ namespace tsorcRevamp
                 {ScriptedEventType.AncestralSpiritRemixEvent, AncestralSpiritRemixEvent },
                 {ScriptedEventType.FrozenCathedralEvent2, FrozenCathedralEvent2 }, 
                 {ScriptedEventType.WyvernPrisonEvent, WyvernPrisonEvent }, 
-                {ScriptedEventType.Dutchman, Dutchman },
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },
 

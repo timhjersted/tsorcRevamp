@@ -62,13 +62,6 @@
   "style": 1
 }
 {
-  "text": "In the murkey waters you realize there are pink flowers everywhere.  --NEWLINE  --NEWLINE Their allure is dark but seductive.. the flowers want to be destroyed...",
-  "tileX": 284,
-  "tileY": 1556,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "Before you dive below, you have a sudden feeling of the presence of your wife.  --NEWLINE  --NEWLINE You look to the edges of the lake for any signs of her, but nothing.  --NEWLINE  --NEWLINE \u0022I love you my dear,\u0022 you think to yourself. \u0022I don\u0027t know if you\u0027re still alive, but I will find you,.. in this life or the next.\u0022",
   "tileX": 292,
   "tileY": 1515,
@@ -454,7 +447,7 @@
   "style": 1
 }
 {
-  "text": "In the water you see three large, beating hearts...  --NEWLINE  --NEWLINE \u0022What abomination is this?\u0022 --NEWLINE  --NEWLINE Without thinking, you follow your impulse to destroy them...",
+  "text": "Falling from the hole, you land in a blood-soaked lake. Tough, bloodthirsty creatures lurk there, and won't hesitate to try to devour you underwater...",
   "tileX": 3044,
   "tileY": 904,
   "textWidth": 320,
@@ -1595,7 +1588,7 @@
   "style": 1
 }
 {
-  "text": "Beneath your father\u0027s sword you find a note: \u0022Red, many years ago, when our lands knew peace, I split the spirit of this sword in two, ensuring its full power could never be harnessed by dark forces. Should this power be needed again, seek out the Old One\u0027s Tree, deep within the Great Chasm, beyond a Lihzahrd Gate... Take care, Red. I will always be with you.\u0022 - your father",
+  "text": "Beneath your father\u0027s sword you find a note: \u0022Red, many years ago, when our lands knew peace, I split the spirit of this sword in two, ensuring its full power could never be harnessed by dark forces. Should this power be needed again, seek out the Eternal Reef, deep in the Western Ocean... Take care, Red. I will always be with you.\u0022 - your father",
   "tileX": 5084,
   "tileY": 920,
   "textWidth": 320,
@@ -1784,6 +1777,27 @@
   "style": 1
 }
 {
+  "text": "Home of the Dryad. For centuries, the dryad has lived in the jungle, protecting this tree from any potential corruption. Thanks to his efforts, the Tree survives and illuminates the jungle with its golden leaves despite the dark forces of Attraidies",
+  "tileX": 5964,
+  "tileY": 569,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "This gate is sealed by Lihzahrd Bricks, a brick renowned for its extreme resistance.  --NEWLINE  --NEWLINE \u0022What is so important kept in the roots of the tree?\u0022",
+  "tileX": 5964,
+  "tileY": 569,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You have found the large ambers, the keys sealing the paths to the Fiends, the elemental gods",
+  "tileX": 5969,
+  "tileY": 863,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "- You\u0027ve found the Old One\u0027s Tree - --NEWLINE  --NEWLINE The tree of life. With its gigantic size and its golden leaves lighting up the sky, it represents the grandiosity of nature and hope in the face of the corruption that is sweeping the world. To be so majestic, this tree uses a strange liquid with magical properties as energy...",
   "tileX": 5924,
   "tileY": 789,
@@ -1815,6 +1829,13 @@
   "text": "- You\u0022ve found the Undergrowth, the Plantera garden -",
   "tileX": 5968,
   "tileY": 1627,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You pull the lever and hear a passageway open deeper into the Undergrowth.",
+  "tileX": 5434,
+  "tileY": 1590,
   "textWidth": 320,
   "style": 1
 }
@@ -2249,6 +2270,13 @@
   "text": "You catch your breath to look far into the horizon. Nothing but a faint white blending effortlessly with the blue-green sheen glowing up through the snow. This ocean appears to go off into infinity. Who can imagine what could be beyond this world?",
   "tileX": 8334,
   "tileY": 866,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "ABSOLUTE CINEMA",
+  "tileX": 444,
+  "tileY": 1178,
   "textWidth": 320,
   "style": 1
 }

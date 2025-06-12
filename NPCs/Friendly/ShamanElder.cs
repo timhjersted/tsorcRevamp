@@ -132,15 +132,27 @@ namespace tsorcRevamp.NPCs.Friendly
                         chatState = 1;
                         return;
                     }
-                    if (chatState == 1)
+                    if (chatState == 1 && !tsorcRevampWorld.RemixMap)
                     {
                         Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote2");
                         chatState = 2;
                         return;
                     }
-                    if (chatState == 2)
+                    if (chatState == 1 && tsorcRevampWorld.RemixMap)
+                    {
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.RemixAdvModeSHMQuote2");
+                        chatState = 2;
+                        return;
+                    }
+                    if (chatState == 2 && !tsorcRevampWorld.RemixMap)
                     {
                         Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote3");
+                        chatState = 3;
+                        return;
+                    }
+                    if (chatState == 2 && tsorcRevampWorld.RemixMap)
+                    {
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.RemixAdvModeSHMQuote3");
                         chatState = 3;
                         return;
                     }

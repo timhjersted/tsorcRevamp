@@ -24,10 +24,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.useTurn = false;
             Item.rare = ItemRarityID.Pink;
             Item.damage = 120;
-            Item.scale = 1f;
-            Item.crit += 46;
-            Item.width = 65;
-            Item.height = 66;
+            Item.scale = 1.1f;
+            Item.crit += 24;
+            Item.width = 46;
+            Item.height = 46;
             Item.knockBack = 8;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 38;

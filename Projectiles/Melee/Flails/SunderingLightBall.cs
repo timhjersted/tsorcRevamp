@@ -371,7 +371,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                 dust.noGravity = true;
             }
 
-            float damageRadius = 100f;
+            float damageRadius = 115f;
             foreach (NPC target in Main.npc)
             {
                 if (target.active && !target.friendly && !target.dontTakeDamage)
@@ -392,7 +392,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
 
                             target.StrikeNPC(hitInfo);
 
-                            Projectile.localNPCImmunity[target.whoAmI] = 20;
+                            Projectile.localNPCImmunity[target.whoAmI] = 10;
                             Projectile.usesLocalNPCImmunity = true;
                         }
                     }

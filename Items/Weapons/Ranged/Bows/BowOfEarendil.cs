@@ -38,12 +38,22 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MoltenFury, 1);
+            recipe.AddIngredient(ItemID.GoldBow, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
+        }
+
+         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            if (type == ProjectileID.WoodenArrowFriendly)
+            {
+                type = ProjectileID.HolyArrow;
+                velocity = velocity.SafeNormalize(Vector2.Zero) * (Item.shootSpeed + 3.8f); 
+                damage = damage + 8; 
+            }
         }
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
@@ -51,16 +61,16 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 
             if (useCounter >= 4)
             {
-                useCounter = 0; 
+                useCounter = 0;
 
-                Vector2 velocityUp = velocity.RotatedBy(MathHelper.ToRadians(-8)); 
-                Vector2 velocityDown = velocity.RotatedBy(MathHelper.ToRadians(8)); 
+                Vector2 velocityUp = velocity.RotatedBy(MathHelper.ToRadians(-8));
+                Vector2 velocityDown = velocity.RotatedBy(MathHelper.ToRadians(8));
 
                 Projectile.NewProjectile(source, position, velocityUp, ModContent.ProjectileType<ElfinArrow>(), damage, knockback, player.whoAmI);
                 Projectile.NewProjectile(source, position, velocityDown, ModContent.ProjectileType<ElfinArrow>(), damage, knockback, player.whoAmI);
             }
 
-            return true; 
+            return true;
         }
     }
 }

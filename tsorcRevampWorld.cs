@@ -1968,7 +1968,7 @@ namespace tsorcRevamp
         {
             if (RemixMap && Main.invasionType == InvasionID.PirateInvasion)
             {
-                Main.invasionX = (169 + 696) / 2; // The middle of the player zone X check
+                Main.invasionX = (169 + 858) / 2; // The middle of the player zone X check
 
                 if (Main.invasionSize <= 0)
                     RemixPiratesDefeated = true;
