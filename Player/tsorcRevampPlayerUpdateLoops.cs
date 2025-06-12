@@ -942,7 +942,7 @@ namespace tsorcRevamp
                 Main.dust[dust].noGravity = true;
             }
 
-            if (tsorcRevampWorld.RemixMap && UsefulFunctions.PlayerInZone(Player, 169, 696, 755, 886))
+            if (tsorcRevampWorld.RemixMap && UsefulFunctions.PlayerInZone(Player, tsorcRevampWorld.PirateZoneLeftX, tsorcRevampWorld.PirateZoneRightX, 755, 886))
             {
                 if (!tsorcRevampWorld.RemixPiratesDefeated)
                 {
