@@ -587,12 +587,6 @@ namespace tsorcRevamp.NPCs
                     if (!tsorcRevampWorld.HardModeNotSHM)
                         return;
 
-                    if (!tsorcRevampWorld.RemixPiratesDefeated)
-                    {
-                        pool.Clear();
-                        return;
-                    }
-
                     if (!NPC.AnyNPCs(NPCID.PirateShip))
                         pool.Add(NPCID.PirateShip, 0.05f);
                     if (!NPC.AnyNPCs(NPCID.PirateCaptain))
