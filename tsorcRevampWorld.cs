@@ -1957,7 +1957,7 @@ namespace tsorcRevamp
         }
         public override void PreUpdateInvasions()
         {
-            if (RemixMap && !RemixPiratesDefeated && RemixEnteredPirateArea)
+            if (RemixMap && Main.invasionType == InvasionID.PirateInvasion)
             {
                 // To prevent "Pirates approaching from the east/west"
                 Main.invasionX = Main.spawnTileX;
@@ -1966,7 +1966,7 @@ namespace tsorcRevamp
 
         public override void PostUpdateInvasions()
         {
-            if (RemixMap && !RemixPiratesDefeated && RemixEnteredPirateArea)
+            if (RemixMap && Main.invasionType == InvasionID.PirateInvasion)
             {
                 Main.invasionX = (169 + 696) / 2; // The middle of the player zone X check
 
