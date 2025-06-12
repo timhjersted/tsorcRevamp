@@ -1,14 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.VanillaItems;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 {
     public class Bolt3Tome : ModItem
     {
-        public const int originalDamage = 120;
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Bolt 3 Tome");
@@ -21,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override void SetDefaults()
         {
-            Item.damage = originalDamage;
+            Item.damage = 120;
             Item.height = 10;
             Item.width = 34;
             Item.knockBack = 0.1f;
@@ -46,7 +47,24 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
                 damage = (int)(damage * 1.3f);
             }
         }
+        // Show increased damage on tooltip when the player is wet
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            Player player = Main.LocalPlayer;
+            if (!player.wet)
+                return;
 
+            TooltipLine modified = new TooltipLine(Mod, "Damage", player.GetWeaponDamage(Item, true).ToString() + " magic damage");
+
+            for (int i = 0; i < tooltips.Count; i++)
+            {
+                if (tooltips[i].Name == "Damage")
+                {
+                    tooltips[i] = modified;
+                    break;
+                }
+            }
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -57,7 +75,5 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
             recipe.Register();
         }
-
-
     }
 }
