@@ -49,15 +49,15 @@ namespace tsorcRevamp.Projectiles.Magic
             {
                 dying = true;
             }
+
             if (!dying)
             {
                 Lighting.AddLight(Projectile.Center, TorchID.Cursed);
                 Main.player[Projectile.owner].channel = true;
-                Main.player[Projectile.owner].manaRegenDelay = 10;
             }
             if (Projectile.owner == Main.myPlayer)
             {
-                UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 1f, 20, null, true, 0.2f);
+                UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 2f, 20, null);
             }
         }
         public override float CollisionWidthFunction(float progress)

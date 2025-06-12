@@ -10,16 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 {
     public class Bolt3Tome : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Bolt 3 Tome");
-            /* Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
-                                "\nElectrifies and paralyzes enemies" +
-                                "Only mages will be able to realize this tome's full potential. \n" +
-                                "Can be upgraded with 85,000 Dark Souls"); */
-
-        }
-
+        const float dmgIncrease = 1.3f;
         public override void SetDefaults()
         {
             Item.damage = 120;
@@ -44,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             if (player.wet)
             {
                 type = ModContent.ProjectileType<Projectiles.Magic.Bolt4Lightning>();
-                damage = (int)(damage * 1.3f);
+                damage = (int)(damage * dmgIncrease);
             }
         }
         // Show increased damage on tooltip when the player is wet
@@ -54,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             if (!player.wet)
                 return;
 
-            TooltipLine modified = new TooltipLine(Mod, "Damage", player.GetWeaponDamage(Item, true).ToString() + " magic damage");
+            TooltipLine modified = new TooltipLine(Mod, "Damage", ((int)(player.GetWeaponDamage(Item, true) * dmgIncrease)).ToString() + " magic damage");
 
             for (int i = 0; i < tooltips.Count; i++)
             {
