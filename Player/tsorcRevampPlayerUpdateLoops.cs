@@ -711,6 +711,43 @@ namespace tsorcRevamp
                 MiakodaNewBoostTimer = 0;
             }
 
+            // Miakoda help checks
+
+            if (!tsorcRevampWorld.EnteredHell && Player.ZoneUnderworldHeight)
+            {
+                tsorcRevampWorld.EnteredHell = true;
+            }
+
+            if (!tsorcRevampWorld.TalkedToAraz && UsefulFunctions.PlayerInZone(Player, 7290, 7340, 590, 610))
+            {
+                tsorcRevampWorld.TalkedToAraz = true;
+            }
+
+            if (!tsorcRevampWorld.EnteredRuinsOfElengad && (UsefulFunctions.PlayerInZone(Player, 1630, 1660, 950, 980) || UsefulFunctions.PlayerInZone(Player, 920, 950, 1030, 1060)))
+            {
+                tsorcRevampWorld.EnteredRuinsOfElengad = true;
+            }
+
+            if (!tsorcRevampWorld.EnteredRuinsOfSerris && UsefulFunctions.PlayerInZone(Player, 1420, 1460, 920, 940))
+            {
+                tsorcRevampWorld.EnteredRuinsOfSerris = true;
+            }
+
+            if (!tsorcRevampWorld.EnteredShadowTemple && UsefulFunctions.PlayerInZone(Player, 1890, 1930, 1080, 1120))
+            {
+                tsorcRevampWorld.EnteredShadowTemple = true;
+            }
+
+            if (!tsorcRevampWorld.EnteredFloodedMachineTemple && UsefulFunctions.PlayerInZone(Player, 4600, 4620, 1080, 1110))
+            {
+                tsorcRevampWorld.EnteredFloodedMachineTemple = true;
+            }
+
+            if (!tsorcRevampWorld.EnteredPyramid && UsefulFunctions.PlayerInZone(Player, 5740, 5760, 1750, 1780))
+            {
+                tsorcRevampWorld.EnteredPyramid = true;
+            }
+
             #endregion
 
             #region manashield
@@ -905,43 +942,24 @@ namespace tsorcRevamp
                 Main.dust[dust].noGravity = true;
             }
 
-            // Miakoda help checks
-
-            if (!tsorcRevampWorld.EnteredHell && Player.ZoneUnderworldHeight)
+            if (tsorcRevampWorld.RemixMap && UsefulFunctions.PlayerInZone(Player, 169, 696, 755, 886))
             {
-                tsorcRevampWorld.EnteredHell = true;
-            }
+                if (!tsorcRevampWorld.RemixPiratesDefeated)
+                {
+                    if (!tsorcRevampWorld.RemixEnteredPirateArea)
+                        Main.invasionType = 0;
 
-            if (!tsorcRevampWorld.TalkedToAraz && UsefulFunctions.PlayerInZone(Player, 7290, 7340, 590, 610))
-            {
-                tsorcRevampWorld.TalkedToAraz = true;
-            }
+                    Main.invasionDelay = 0;
+                    Main.StartInvasion(InvasionID.PirateInvasion);
+                }
 
-            if (!tsorcRevampWorld.EnteredRuinsOfElengad && (UsefulFunctions.PlayerInZone(Player, 1630, 1660, 950, 980) || UsefulFunctions.PlayerInZone(Player, 920, 950, 1030, 1060)))
-            {
-                tsorcRevampWorld.EnteredRuinsOfElengad = true;
+                tsorcRevampWorld.RemixEnteredPirateArea = true;
             }
-
-            if (!tsorcRevampWorld.EnteredRuinsOfSerris && UsefulFunctions.PlayerInZone(Player, 1420, 1460, 920, 940))
+            else if (tsorcRevampWorld.RemixEnteredPirateArea)
             {
-                tsorcRevampWorld.EnteredRuinsOfSerris = true;
+                tsorcRevampWorld.RemixEnteredPirateArea = false;
             }
-
-            if (!tsorcRevampWorld.EnteredShadowTemple && UsefulFunctions.PlayerInZone(Player, 1890, 1930, 1080, 1120))
-            {
-                tsorcRevampWorld.EnteredShadowTemple = true;
-            }
-
-            if (!tsorcRevampWorld.EnteredFloodedMachineTemple && UsefulFunctions.PlayerInZone(Player, 4600, 4620, 1080, 1110))
-            {
-                tsorcRevampWorld.EnteredFloodedMachineTemple = true;
-            }
-
-            if (!tsorcRevampWorld.EnteredPyramid && UsefulFunctions.PlayerInZone(Player, 5740, 5760, 1750, 1780))
-            {
-                tsorcRevampWorld.EnteredPyramid = true;
-            }
-            
+        
             //--------------------
 
             //TODO REMOVE WHEN FINALIZED

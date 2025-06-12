@@ -581,6 +581,29 @@ namespace tsorcRevamp.NPCs
                     pool.Add(NPCID.CreatureFromTheDeep, 0.6f);
                     pool.Add(NPCID.Shark, 0.6f);
                 }
+
+                if (tsorcRevampWorld.RemixEnteredPirateArea)
+                {
+                    if (!tsorcRevampWorld.HardModeNotSHM)
+                        return;
+
+                    if (!tsorcRevampWorld.RemixPiratesDefeated)
+                    {
+                        pool.Clear();
+                        return;
+                    }
+
+                    if (!NPC.AnyNPCs(NPCID.PirateShip))
+                        pool.Add(NPCID.PirateShip, 0.05f);
+                    if (!NPC.AnyNPCs(NPCID.PirateCaptain))
+                        pool.Add(NPCID.PirateCaptain, 0.1f);
+
+                    pool.Add(NPCID.PirateCrossbower, 0.12f);
+                    pool.Add(NPCID.Parrot, 0.17f);
+                    pool.Add(NPCID.PirateDeadeye, 0.2f);
+                    pool.Add(NPCID.PirateCorsair, 0.24f);
+                    pool.Add(NPCID.PirateDeckhand, 0.3f);
+                }
             }            
 
             bool invasion = Main.invasionType != 0;
@@ -588,11 +611,6 @@ namespace tsorcRevamp.NPCs
             {
                 invasion = false;
             }
-
-            // TODO: Find map coordinates, this is debug mode only for now
-            /*if (tsorcRevampWorld.RemixMap && UsefulFunctions.PlayerInZone(in player, 169, 696, 755, 886))
-            {
-            }*/
 
             if (spawnInfo.Player.ZoneTowerSolar || spawnInfo.Player.ZoneTowerNebula || spawnInfo.Player.ZoneTowerStardust || spawnInfo.Player.ZoneTowerVortex || spawnInfo.Player.ZoneOldOneArmy || invasion)
             {

@@ -47,6 +47,8 @@ namespace tsorcRevamp
         public static bool EnteredFloodedMachineTemple;
         public static bool EnteredPyramid;
         public static bool TalkedToShaman;
+        public static bool RemixPiratesDefeated;
+        public static bool RemixEnteredPirateArea;
 
         public static List<int> PairedBosses;
 
@@ -106,7 +108,7 @@ namespace tsorcRevamp
             }
         }
 
-        public class WorldState
+        public class AbyssWorldState
         {
             public bool bloodMoon = false;
             public int moonPhase = 0;
@@ -149,7 +151,7 @@ namespace tsorcRevamp
             }
         }
 
-        public static WorldState beforeAbyss;
+        public static AbyssWorldState beforeAbyss;
 
         public override void OnWorldLoad()
         {
@@ -166,6 +168,8 @@ namespace tsorcRevamp
             EnteredFloodedMachineTemple = false;
             EnteredPyramid = false;
             TalkedToShaman = false;
+            RemixPiratesDefeated = false;
+            RemixEnteredPirateArea = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -215,6 +219,8 @@ namespace tsorcRevamp
                 world_state.Add("EnteredPyramid");
             if (TalkedToShaman)
                 world_state.Add("TalkedToShaman");
+            if (RemixPiratesDefeated)
+                world_state.Add("RemixPiratesDefeated");
 
             if (DownedBetsy)
             {
@@ -253,6 +259,7 @@ namespace tsorcRevamp
             EnteredFloodedMachineTemple = worldStateList.Contains("EnteredFloodedMachineTemple");
             EnteredPyramid = worldStateList.Contains("EnteredPyramid");
             TalkedToShaman = worldStateList.Contains("TalkedToShaman");
+            RemixPiratesDefeated = worldStateList.Contains("RemixPiratesDefeated");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)
@@ -1946,6 +1953,25 @@ namespace tsorcRevamp
                 }
 
                 return BossIDsAndCoordinatesInternal;
+            }
+        }
+        public override void PreUpdateInvasions()
+        {
+            if (RemixMap && !RemixPiratesDefeated && RemixEnteredPirateArea)
+            {
+                // To prevent "Pirates approaching from the east/west"
+                Main.invasionX = Main.spawnTileX;
+            }
+        }
+
+        public override void PostUpdateInvasions()
+        {
+            if (RemixMap && !RemixPiratesDefeated && RemixEnteredPirateArea)
+            {
+                Main.invasionX = (169 + 696) / 2; // The middle of the player zone X check
+
+                if (Main.invasionSize <= 0)
+                    RemixPiratesDefeated = true;
             }
         }
     }
