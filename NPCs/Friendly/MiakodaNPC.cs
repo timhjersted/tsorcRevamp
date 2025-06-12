@@ -26,7 +26,7 @@ using tsorcRevamp.Items.BossItems;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
-    // Increases the likelihood of every dialogue option offered after the first by 10% stacking, this way more relevant dialogue is usually said first.
+    // Increases the likelihood of every dialogue option offered after the first by 20% stacking, this way more relevant dialogue is usually said first.
     public class AutoWeightedDialogue
     {
         public List<Tuple<List<string>, double>> elements;

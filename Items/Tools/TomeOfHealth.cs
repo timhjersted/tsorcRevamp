@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Tools
 
         public override bool CanUseItem(Player player)
         {
-            return (!player.HasBuff(BuffID.PotionSickness) && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse);
+            return !(player.potionDelay > 0 || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse);
         }
         public override bool? UseItem(Player player)
         {
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Tools
         {
             Player player = Main.LocalPlayer;
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer)
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 tooltips.Add(new TooltipLine(Mod, "BOTCNoHeal", LangUtils.GetTextValue("CommonItemTooltip.BotCNoHeal")));
             }

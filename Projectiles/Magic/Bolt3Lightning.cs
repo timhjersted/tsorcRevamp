@@ -40,6 +40,7 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.timeLeft = 180;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
+            Projectile.DamageType = DamageClass.Magic;
 
             TelegraphTime = 60;
             FiringDuration = 30;

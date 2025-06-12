@@ -8,6 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 {
     public class Bolt3Tome : ModItem
     {
+        public const int originalDamage = 120;
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Bolt 3 Tome");
@@ -20,8 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override void SetDefaults()
         {
-
-            Item.damage = 120;
+            Item.damage = originalDamage;
             Item.height = 10;
             Item.width = 34;
             Item.knockBack = 0.1f;
@@ -38,15 +38,13 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.value = PriceByRarity.LightRed_4;
             Item.shoot = ModContent.ProjectileType<Projectiles.Magic.Bolt3Lightning>();
         }
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             if (player.wet)
             {
                 type = ModContent.ProjectileType<Projectiles.Magic.Bolt4Lightning>();
                 damage = (int)(damage * 1.3f);
             }
-
-            return true;
         }
 
         public override void AddRecipes()
