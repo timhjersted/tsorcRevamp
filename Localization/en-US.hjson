@@ -5223,7 +5223,8 @@ Mods: {
 				Tooltip:
 					'''
 					The scroll reads "Exori vis."
-					Summons a stationary Tesla Coil that zaps all nearby enemies
+					Summons a Tesla Coil sentry that zaps {0} nearby enemies.
+					Inflicts 'dissolving', which stacks to increase enemy damage taken by up to {1}%
 					'''
 			}
 
@@ -5441,8 +5442,8 @@ Mods: {
 					'''
 					A lost beginner's scroll
 					[c/ffbf00:Casts Magic Shield on the player]
-					Increases defense against magic attacks by {0}
-					[c/ffbf00:{$CommonItemTooltip.SecondDuration@1}]
+					Increases defense against magic attacks by {0} for {1} seconds
+					{$CommonItemTooltip.Cooldown@2}
 					{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}

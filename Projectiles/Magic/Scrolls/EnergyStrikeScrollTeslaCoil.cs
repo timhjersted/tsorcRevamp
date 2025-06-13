@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
 {
     public class EnergyStrikeScrollTeslaCoil : ModProjectile
     {
-
+        public const int MaxEnemiesToHit = 3;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 5;
@@ -29,6 +29,7 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.MagicSummonHybrid;
+            Projectile.sentry = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = Projectile.SentryLifeTime + 1;
@@ -48,6 +49,8 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
                 cursorPacket.WriteVector2(player.GetModPlayer<tsorcRevampPlayer>().CursorPosition);
                 cursorPacket.Send();
             }
+
+            player.UpdateMaxTurrets();
         }
         public override void AI()
         {
@@ -64,9 +67,9 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
                  Projectile.velocity = Projectile.Center.DirectionTo(modPlayer.CursorPosition) * Projectile.Center.Distance(modPlayer.CursorPosition);
             }
 
-            if (Timer >= 20 && player.whoAmI == Main.myPlayer) // The magnet sphere uses a timer of 9
+            if (Timer >= 25 && player.whoAmI == Main.myPlayer) // The magnet sphere uses a timer of 9
             {
-                var npcs = Find5NPCsWithinRange(450);
+                var npcs = FindNPCsWithinRange(450);
                 foreach (NPC npc in npcs)
                 {
                     Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EnergyStrikeScrollZap>(), Projectile.damage, 0f, Main.myPlayer, 0, 0, npc.whoAmI);
@@ -88,13 +91,13 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
                 return;
             }
         }
-        public List<NPC> Find5NPCsWithinRange(float maxDetectDistance)
+        public List<NPC> FindNPCsWithinRange(float maxDetectDistance)
         {
             List<NPC> npcs = [];
             int added = 0;
 
             float sqrMaxDetectDistance = maxDetectDistance * maxDetectDistance;
-            for (int k = 0; k < Main.maxNPCs && added < 5; k++)
+            for (int k = 0; k < Main.maxNPCs && added < MaxEnemiesToHit; k++)
             {
                 NPC target = Main.npc[k];
                 if (target.CanBeChasedBy() || target.type == NPCID.TargetDummy)

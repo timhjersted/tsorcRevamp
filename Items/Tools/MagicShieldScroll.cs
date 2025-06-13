@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Tools
@@ -11,7 +12,8 @@ namespace tsorcRevamp.Items.Tools
     {
         public const int DefenseIncrease = 10;
         public const int Duration = 15;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DefenseIncrease, Duration);
+        public const int Cooldown = 30;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DefenseIncrease, Duration, Cooldown);
         public override void SetStaticDefaults()
         {
         }
@@ -43,11 +45,10 @@ namespace tsorcRevamp.Items.Tools
             recipe.Register();
         }
 
-
-
         public override bool? UseItem(Player player)
         {
             player.AddBuff(ModContent.BuffType<Buffs.MagicShield>(), Duration * 60, false);
+            player.AddBuff(ModContent.BuffType<ShieldCooldown>(), Cooldown * 60, false);
             return true;
         }
         public override bool CanUseItem(Player player)
@@ -57,6 +58,10 @@ namespace tsorcRevamp.Items.Tools
             {
                 return false;
             }
+
+            return true;
+
+            // Why search through the list of all buffs 3 times if all inflict a cooldown larger than their duration?
             if (player.HasBuff(ModContent.BuffType<Buffs.MagicBarrier>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>()))
             {
                 return false;

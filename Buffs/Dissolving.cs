@@ -8,6 +8,7 @@ namespace tsorcRevamp.Buffs
 {
     public class Dissolving : ModBuff
     {
+        public const int MaxDissolvingStacks = 10;
         public override string Texture => "Terraria/Images/Buff"; //enemy only
 
         public override void SetStaticDefaults()
@@ -23,7 +24,9 @@ namespace tsorcRevamp.Buffs
 
         public override bool ReApply(NPC npc, int time, int buffIndex)
         {
-            npc.GetGlobalNPC<tsrDissolvingNPC>().DissolvingStacks++;
+            var modNPC = npc.GetGlobalNPC<tsrDissolvingNPC>();
+            if (modNPC.DissolvingStacks < MaxDissolvingStacks)
+                modNPC.DissolvingStacks++;
             return false;
         }
 
@@ -41,7 +44,7 @@ namespace tsorcRevamp.Buffs
                 }
 
                 float multiplier = DissolveMultiplier(DissolvingStacks);
-                modifiers.TargetDamageMultiplier *= multiplier;
+                modifiers.FinalDamage.Base *= multiplier;
             }
 
             public override bool PreAI(NPC npc)
@@ -62,10 +65,9 @@ namespace tsorcRevamp.Buffs
             }
 
             private static float DissolveMultiplier(int DissolvingStacks)
-            {
-                // y=\left(\log_{1.02}\left(x+201\right)\right)-267.808
-                float dissolveMod = (float)((Math.Log(DissolvingStacks + 201, 1.02)) - 267.808);
-                return 1 + (dissolveMod / 250f);
+            { 
+                // Each stack is 1% extra dmg
+                return 1 + (DissolvingStacks / 100f);
             }
         }
     }
