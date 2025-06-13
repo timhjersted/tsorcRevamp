@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
             Projectile.friendly = true;
             Projectile.extraUpdates = 100;
             Projectile.timeLeft = 600;
-            Projectile.DamageType = DamageClass.MagicSummonHybrid;
+            Projectile.DamageType = DamageClass.Summon;
             Projectile.tileCollide = false;
         }
 

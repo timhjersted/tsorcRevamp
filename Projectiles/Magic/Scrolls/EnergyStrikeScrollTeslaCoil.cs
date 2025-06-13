@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
             Projectile.height = 60;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
-            Projectile.DamageType = DamageClass.MagicSummonHybrid;
+            Projectile.DamageType = DamageClass.Summon;
             Projectile.sentry = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;

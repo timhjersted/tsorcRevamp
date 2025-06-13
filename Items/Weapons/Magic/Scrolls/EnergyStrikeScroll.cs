@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Scrolls
             Item.width = 34;
             Item.height = 10;
             Item.damage = 40; // Since it's a sentry any player could have minimum 2 summons
-            Item.DamageType = DamageClass.MagicSummonHybrid;
+            Item.DamageType = DamageClass.Summon;
             Item.mana = 100;
             Item.knockBack = 2f;
             Item.rare = ItemRarityID.LightRed;
