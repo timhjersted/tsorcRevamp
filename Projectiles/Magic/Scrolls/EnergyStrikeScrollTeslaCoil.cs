@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
 using Terraria;
 using Terraria.DataStructures;
@@ -63,22 +64,16 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
                  Projectile.velocity = Projectile.Center.DirectionTo(modPlayer.CursorPosition) * Projectile.Center.Distance(modPlayer.CursorPosition);
             }
 
-            NPC closestNPC = FindClosestNPC(400);
-
-            if (closestNPC != null && Timer >= 30)
+            if (Timer >= 20 && player.whoAmI == Main.myPlayer) // The magnet sphere uses a timer of 9
             {
-                Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EnergyStrikeScrollZap>(), Projectile.damage, 0f, Main.myPlayer, 0, 0, closestNPC.whoAmI);
-                p.originalDamage = Projectile.damage;
-                p.netUpdate = true;
-                Timer = 0;
-            }
-
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (Main.projectile[i].active && Main.projectile[i].type == Type && Main.projectile[i].timeLeft < Projectile.timeLeft)
+                var npcs = FindAllNPCWithinRange(500);
+                foreach (NPC npc in npcs ) 
                 {
-                    Main.projectile[i].Kill();
+                    Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EnergyStrikeScrollZap>(), Projectile.damage, 0f, Main.myPlayer, 0, 0, npc.whoAmI);
+                    p.originalDamage = Projectile.damage;
+                    p.netUpdate = true;
                 }
+                Timer = 0;
             }
 
             Projectile.frameCounter++;
@@ -93,9 +88,9 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
                 return;
             }
         }
-        public NPC FindClosestNPC(float maxDetectDistance)
+        public List<NPC> FindAllNPCWithinRange(float maxDetectDistance)
         {
-            NPC closestNPC = null;
+            List<NPC> npcs = [];
 
             float sqrMaxDetectDistance = maxDetectDistance * maxDetectDistance;
             for (int k = 0; k < Main.maxNPCs; k++)
@@ -108,11 +103,11 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
                     if (sqrDistanceToTarget < sqrMaxDetectDistance)
                     {
                         sqrMaxDetectDistance = sqrDistanceToTarget;
-                        closestNPC = target;
+                        npcs.Add(target);
                     }
                 }
             }
-            return closestNPC;
+            return npcs;
         }
         public override bool? Colliding(Microsoft.Xna.Framework.Rectangle projHitbox, Microsoft.Xna.Framework.Rectangle targetHitbox)
         {

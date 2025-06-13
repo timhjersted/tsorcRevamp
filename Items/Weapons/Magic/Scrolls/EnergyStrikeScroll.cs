@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -18,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Scrolls
         {
             Item.width = 34;
             Item.height = 10;
-            Item.damage = 40;
+            Item.damage = 80;
             Item.DamageType = DamageClass.MagicSummonHybrid;
             Item.mana = 100;
             Item.knockBack = 2f;
@@ -39,6 +41,23 @@ namespace tsorcRevamp.Items.Weapons.Magic.Scrolls
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
+        }
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            // Get rid of any other projectiles, each player can only own one
+            if (player.ownedProjectileCounts[Item.shoot] > 0)
+            {
+                foreach (Projectile projectile in Main.ActiveProjectiles)
+                {
+                    if (projectile.type == Item.shoot && projectile.owner == player.whoAmI)
+                    {
+                        projectile.Kill();
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

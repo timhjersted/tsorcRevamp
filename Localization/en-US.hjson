@@ -5223,7 +5223,7 @@ Mods: {
 				Tooltip:
 					'''
 					The scroll reads "Exori vis."
-					Summons a stationary Tesla Coil that zaps nearby enemies
+					Summons a stationary Tesla Coil that zaps all nearby enemies
 					'''
 			}
 
