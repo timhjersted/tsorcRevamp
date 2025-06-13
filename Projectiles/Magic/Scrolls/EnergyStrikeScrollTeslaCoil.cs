@@ -66,8 +66,8 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
 
             if (Timer >= 20 && player.whoAmI == Main.myPlayer) // The magnet sphere uses a timer of 9
             {
-                var npcs = FindAllNPCWithinRange(500);
-                foreach (NPC npc in npcs ) 
+                var npcs = Find5NPCsWithinRange(450);
+                foreach (NPC npc in npcs)
                 {
                     Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EnergyStrikeScrollZap>(), Projectile.damage, 0f, Main.myPlayer, 0, 0, npc.whoAmI);
                     p.originalDamage = Projectile.damage;
@@ -88,25 +88,27 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
                 return;
             }
         }
-        public List<NPC> FindAllNPCWithinRange(float maxDetectDistance)
+        public List<NPC> Find5NPCsWithinRange(float maxDetectDistance)
         {
             List<NPC> npcs = [];
+            int added = 0;
 
             float sqrMaxDetectDistance = maxDetectDistance * maxDetectDistance;
-            for (int k = 0; k < Main.maxNPCs; k++)
+            for (int k = 0; k < Main.maxNPCs && added < 5; k++)
             {
                 NPC target = Main.npc[k];
-                if (target.CanBeChasedBy())
+                if (target.CanBeChasedBy() || target.type == NPCID.TargetDummy)
                 {
                     float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
 
                     if (sqrDistanceToTarget < sqrMaxDetectDistance)
                     {
-                        sqrMaxDetectDistance = sqrDistanceToTarget;
                         npcs.Add(target);
+                        added++;
                     }
                 }
             }
+
             return npcs;
         }
         public override bool? Colliding(Microsoft.Xna.Framework.Rectangle projHitbox, Microsoft.Xna.Framework.Rectangle targetHitbox)
