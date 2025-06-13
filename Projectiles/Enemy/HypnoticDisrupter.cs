@@ -17,6 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 1;
             Projectile.hostile = true;
             Projectile.timeLeft = 360;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.scale = 1f;
             Projectile.tileCollide = false;
             Projectile.light = 1;

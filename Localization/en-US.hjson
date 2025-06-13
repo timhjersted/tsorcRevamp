@@ -5342,9 +5342,8 @@ Mods: {
 				Tooltip:
 					'''
 					An incantation that casts a Great Magic Shield around the player
-					Raises defense by {2} for {0} seconds
+					Raises magic defense by {2} for {0} seconds
 					{$CommonItemTooltip.UniqueBarrier}
-					Reduces damage dealt by {3}% and movement speed by {4}%
 					{$CommonItemTooltip.Cooldown@1}
 					'''
 			}
@@ -5442,7 +5441,7 @@ Mods: {
 					'''
 					A lost beginner's scroll
 					[c/ffbf00:Casts Magic Shield on the player]
-					[c/ffbf00:{$CommonItemTooltip.IncreasesDefenseBy}]
+					Increases defense against magic attacks by {0}
 					[c/ffbf00:{$CommonItemTooltip.SecondDuration@1}]
 					{$CommonItemTooltip.UniqueBarrier}
 					'''
@@ -8172,12 +8171,7 @@ Mods: {
 
 			GreatMagicShield: {
 				DisplayName: Great Magic Shield
-				Description:
-					'''
-					{$CommonItemTooltip.IncreasesDefenseBy}
-					{$CommonItemTooltip.BadDmgMult@1}
-					{$CommonItemTooltip.Slowness@2}
-					'''
+				Description: Increases defense by {0} against magic attacks!
 			}
 
 			GreatMagicWeapon: {
@@ -8232,7 +8226,7 @@ Mods: {
 
 			MagicShield: {
 				DisplayName: Magic Shield
-				Description: Defense is increased by 10!
+				Description: Defense is increased by {0} against magic attacks!
 			}
 
 			MagicWeapon: {

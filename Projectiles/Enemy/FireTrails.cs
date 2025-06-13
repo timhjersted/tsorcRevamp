@@ -21,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.MaxUpdates = 2;
             Projectile.penetrate = 1;
             Projectile.hostile = true;
+            Projectile.DamageType = DamageClass.Magic;
             //Projectile.alpha -= 5;
             Projectile.netUpdate = true;
             Projectile.light = .9f;

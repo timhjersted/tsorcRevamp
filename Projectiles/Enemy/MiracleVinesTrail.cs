@@ -16,6 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.MaxUpdates = 2;
             Projectile.penetrate = 3;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.hostile = true;
             Projectile.netUpdate = true;
         }

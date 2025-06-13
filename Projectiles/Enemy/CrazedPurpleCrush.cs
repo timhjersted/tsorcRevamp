@@ -22,6 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //projectile.timeLeft = 100;
             Projectile.light = 0.8f;
             Main.projFrames[Projectile.type] = 1;
+            Projectile.DamageType = DamageClass.Magic;
 
             DrawOriginOffsetX = 12;
         }

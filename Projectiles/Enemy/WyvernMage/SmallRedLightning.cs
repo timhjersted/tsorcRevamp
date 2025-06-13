@@ -35,6 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
             Projectile.height = 10;
             Projectile.friendly = false;
             Projectile.hostile = true;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 180;

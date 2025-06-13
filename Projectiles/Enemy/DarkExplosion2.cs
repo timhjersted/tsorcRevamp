@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.width = 76;
             Projectile.timeLeft = 1500;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         public override void AI()

@@ -14,6 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.width = 18;
+            Projectile.DamageType = DamageClass.Magic;
         }
     }
 }

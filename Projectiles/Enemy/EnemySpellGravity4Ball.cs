@@ -17,6 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 1;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         public override void AI()

@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Tools
     public class GreatMagicShieldScroll : ModItem
     {
         public static int Duration = 25;
-        public static int Cooldown = 600;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Duration, Cooldown, Buffs.GreatMagicShield.DefenseIncrease, Buffs.GreatMagicShield.DamagePenalty, Buffs.GreatMagicShield.Slowness);
+        public static int Cooldown = 60;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Duration, Cooldown, Buffs.GreatMagicShield.DefenseIncrease);
         public override void SetStaticDefaults()
         {
         }
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Tools
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ItemID.IronskinPotion);
+            recipe.AddIngredient(ModContent.ItemType<Potions.HealingElixir>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Tools
         public override bool? UseItem(Player player)
         {
             player.AddBuff(ModContent.BuffType<Buffs.GreatMagicShield>(), Duration * 60, false);
-            player.AddBuff(ModContent.BuffType<Buffs.Debuffs.ShieldCooldown>(), Cooldown * 60); //10 minutes and 25 seconds (10 min downtime)
+            player.AddBuff(ModContent.BuffType<Buffs.Debuffs.ShieldCooldown>(), Cooldown * 60); 
             return true;
         }
         public override bool CanUseItem(Player player)

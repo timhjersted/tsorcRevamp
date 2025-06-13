@@ -22,6 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = true;
             Projectile.width = 5;
             Projectile.alpha = 200;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 20;
         }
         public override bool PreKill(int timeLeft)

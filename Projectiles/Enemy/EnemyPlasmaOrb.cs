@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.scale = 2f;
             Projectile.tileCollide = false;
             Main.projFrames[Projectile.type] = 4;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.light = 1;
             Projectile.timeLeft = 150;
             //DrawOffsetX = 50;

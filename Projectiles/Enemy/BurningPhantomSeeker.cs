@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.alpha = 255;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.DamageType = DamageClass.Magic;
             //projectile.maxUpdates = 2;
         }
 

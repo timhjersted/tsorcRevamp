@@ -32,6 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             trailYOffset = 30;
             trailMaxLength = 225;
             NPCSource = false;
+            Projectile.DamageType = DamageClass.Magic;
             collisionPadding = 0;
             collisionEndPadding = 1;
             collisionFrequency = 2;

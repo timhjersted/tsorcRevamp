@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.width = 130;
             Projectile.height = 402;
+            Projectile.DamageType = DamageClass.Magic;
             DrawOffsetX = -55;
             DrawOriginOffsetY = -30;
         }

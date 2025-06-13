@@ -15,6 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.light = 2;
             Projectile.penetrate = 1;
             Projectile.tileCollide = true;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

@@ -16,6 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 300;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.coldDamage = true;
         }
 

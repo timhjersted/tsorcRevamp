@@ -22,6 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 34;
             Projectile.tileCollide = false;
             Projectile.width = 34;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 150;
             Projectile.light = .3f;
             Main.projFrames[Projectile.type] = 4;

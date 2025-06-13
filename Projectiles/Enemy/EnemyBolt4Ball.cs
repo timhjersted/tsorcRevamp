@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = true;
             Projectile.light = 0.8f;
             Projectile.timeLeft = 50;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         public void Kill()

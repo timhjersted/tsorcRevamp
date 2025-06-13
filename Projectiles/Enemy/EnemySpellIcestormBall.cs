@@ -17,6 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = true;
             Projectile.aiStyle = 1;
             Projectile.coldDamage = true;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         public override void AI()

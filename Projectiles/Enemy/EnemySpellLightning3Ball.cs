@@ -12,6 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetDefaults()
         {
             //projectile.aiStyle = 4;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.hostile = true;
             Projectile.height = 16;
             Projectile.penetrate = 1;

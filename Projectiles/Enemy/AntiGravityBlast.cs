@@ -20,6 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 2;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 600;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         public override void OnKill(int timeLeft)

@@ -27,6 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
             trailCollision = true;
             trailWidth = 25;
             trailPointLimit = 150;
+            Projectile.DamageType = DamageClass.Magic;
             trailYOffset = 30;
             trailMaxLength = 150;
             NPCSource = false;

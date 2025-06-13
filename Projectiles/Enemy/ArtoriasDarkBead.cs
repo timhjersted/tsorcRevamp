@@ -21,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             AIType = 27;
             Main.projFrames[Projectile.type] = 1;
             Projectile.ignoreWater = true;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
 

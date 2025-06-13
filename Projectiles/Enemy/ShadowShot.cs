@@ -16,6 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = Projectile.width = 15;
             Projectile.tileCollide = false;
             Projectile.aiStyle = 0;
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.light = 0.7f;
         }
 

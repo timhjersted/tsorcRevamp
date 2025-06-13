@@ -15,6 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.damage = 25;
             Projectile.width = 16;
             //projectile.aiPretendType = 94;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 100;
             Projectile.light = .8f;
             DrawOriginOffsetX = 13;

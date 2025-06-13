@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Tools
     [LegacyName("FogTome")]
     public class MagicShieldScroll : ModItem
     {
-        public static int DefenseIncrease = 10;
-        public static int Duration = 15;
+        public const int DefenseIncrease = 10;
+        public const int Duration = 15;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DefenseIncrease, Duration);
         public override void SetStaticDefaults()
         {
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Tools
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ModContent.ItemType<Potions.HealingElixir>());
+            recipe.AddIngredient(ItemID.IronskinPotion);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 

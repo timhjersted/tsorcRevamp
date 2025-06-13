@@ -17,6 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 3;
             Projectile.width = 16;
             AIType = 27;
+            Projectile.DamageType = DamageClass.Magic;
             Main.projFrames[Projectile.type] = 1;
             Projectile.ignoreWater = true;
         }

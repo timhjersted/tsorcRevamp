@@ -16,6 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 16;
             Projectile.width = 16;
             Projectile.timeLeft = 250;
+            Projectile.DamageType = DamageClass.Magic;
 
         }
         public override void AI()

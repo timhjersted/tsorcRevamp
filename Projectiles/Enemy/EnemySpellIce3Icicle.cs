@@ -18,6 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 300;
             Projectile.coldDamage = true;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         public override void AI()

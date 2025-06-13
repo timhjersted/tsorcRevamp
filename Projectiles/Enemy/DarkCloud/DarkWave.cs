@@ -14,6 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             Projectile.width = 26;
             Projectile.height = 26;
             Projectile.hostile = true;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = 20;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 240;

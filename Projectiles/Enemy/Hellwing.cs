@@ -26,6 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.damage = 60;
             Projectile.friendly = false;
             Projectile.penetrate = 3;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.alpha = 0;
             Projectile.light = .9f;
         }

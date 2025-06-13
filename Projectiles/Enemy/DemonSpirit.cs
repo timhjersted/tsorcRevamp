@@ -21,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 3;
             Projectile.alpha = 70;
             Projectile.light = .7f;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         public override void SetStaticDefaults()

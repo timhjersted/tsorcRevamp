@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = true;
             Projectile.width = 16;
             Projectile.timeLeft = 0;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         #region AI

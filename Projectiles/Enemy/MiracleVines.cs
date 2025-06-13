@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.MaxUpdates = 2;
             Projectile.timeLeft = 75; //this projectile actually uses its timeLeft value. the final set of vines lasts longer, so we need to do the kill check differently
             Projectile.netUpdate = true;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         private const int AI_Split_Counter_Slot = 0;

@@ -616,6 +616,13 @@ namespace tsorcRevamp.Projectiles
 
         public override void ModifyHitPlayer(Projectile projectile, Player target, ref Player.HurtModifiers modifiers)
         {
+            var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
+
+            if (modPlayer.magicDefense > 0 && projectile.DamageType == DamageClass.Magic)
+            {
+                // Directly reduce damage before resistances are applied
+                modifiers.SourceDamage.Flat -= modPlayer.magicDefense;
+            }
         }
 
         public override bool PreKill(Projectile projectile, int timeLeft)

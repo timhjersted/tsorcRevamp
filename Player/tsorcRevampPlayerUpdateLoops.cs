@@ -246,6 +246,7 @@ namespace tsorcRevamp
         public int supersonicLevel = 0;
 
         public int darkSoulQuantity;
+        public int magicDefense = 0;
 
         //An int because it'll probably be necessary to split it into multiple levels
         public int manaShield = 0;
@@ -580,6 +581,7 @@ namespace tsorcRevamp
 
             gilled = false;
             WaterWalkingBoots = false;
+
         }
         public override void PreUpdate()
         {
@@ -590,6 +592,8 @@ namespace tsorcRevamp
             {
                 Player.wingTime = Player.wingTimeMax;
             }
+
+            magicDefense = 0;
 
 
             //No more Distorted debuff
