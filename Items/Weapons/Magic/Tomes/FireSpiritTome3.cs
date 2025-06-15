@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 10;
             Item.useTime = 10;
-            Item.damage = 95;
+            Item.damage = 100;
             Item.knockBack = 11;
             Item.autoReuse = true;
             Item.scale = 1f;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<FireSpiritTome2>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -93,6 +93,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     if (!WorldGen.SolidTile(tpDestination) && (Collision.CanHit(proj.Center, 1, 1, proj.Center + teleportOffset, 1, 1) || Collision.CanHitLine(proj.Center, 1, 1, proj.Center + teleportOffset, 1, 1)))
                     {
                         player.SafeTeleport(proj.Center + teleportOffset);
+                        player.immune = true;
+                        player.immuneTime = 30;
                     }
                     float randOffset = Main.rand.NextVector2CircularEdge(4, 4).ToRotation();
                     for (int j = 0; j < 6; j++)

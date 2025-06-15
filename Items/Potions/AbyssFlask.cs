@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Potions
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient(ItemID.BottledWater)
-				.AddIngredient<Items.Materials.FlameOfTheAbyss>(2)
+				.AddIngredient<Items.Materials.FlameOfTheAbyss>(1)
 				.AddTile(TileID.ImbuingStation)
 				.Register();
 		}

@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int WhipWidth => 30;
         public override int WhipHeight => 36;
         public override int WhipSegments => 25;
-        public override float WhipRangeMult => 1.4f;
+        public override float WhipRangeMult => 1.2f;
         public override int DustId => DustID.CorruptGibs;
         public override int DustWidth => 10;
         public override int DustHeight => 10;
@@ -31,10 +31,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<WitchkingMaceDebuff>();
         public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
-        public override float WhipMultihitPenalty => 0.8f;
+        public override float WhipMultihitPenalty => 0.85f;
         public override Color WhipLineColor => Color.CadetBlue;
         public bool Hit = false;
-        public static int TagDuration = 2;
+        public static int TagDuration = 4;
         public override void CustomAIDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleTorch, 0f, 0f, 150, default, 1f);

@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetDefaults()
         {
-            Projectile.penetrate = 10;
+            Projectile.penetrate = 6;
             Projectile.width = 16;
             Projectile.height = 44;
             Projectile.timeLeft = 1800;

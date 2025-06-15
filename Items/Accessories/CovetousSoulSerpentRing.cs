@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories
     public class CovetousSoulSerpentRing : ModItem
     {
         public static float SoulAmplifier = 30f;
-        public static int DefenseDecrease = 40;
+        public static int DefenseDecrease = 15;
         public static int ConsSoulChanceAmplifier = 100;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulAmplifier, DefenseDecrease, ConsSoulChanceAmplifier);
         public override void SetStaticDefaults()
