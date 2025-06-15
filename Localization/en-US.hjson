@@ -445,10 +445,15 @@ Mods: {
 			WaterFiendKrakenDesc: Seek out the lihzahrd gate in the Great Chasm.
 			EarthFiendLichDesc: Find the ancient Temple west side of the Ashen Cave.
 			WitchkingDesc: Found in his lair deep underground, shrouded in extreme darkness.
+			RemixWaterFiendKrakenDesc: Seek out the lihzahrd gate in the Mycellium Forest.
+			RemixEarthFiendLichDesc: Find the ancient ship hidden in the Fire Temple.
 			ArtoriasDesc: The Abyss pervades the tunnels east of the Forgotten City.
+			RemixArtoriasDesc: Find the key in the Great Foundry in the jungle to open the passage east of the Forgotten City.
 			SeathTheScalelessDesc: Seek out the lihzahrd gate below the Eastern Ocean.
 			AbysmalOolacileSorcererDesc: Seek out the lihzahrd gate below the Lihzahrd Temple.
 			FireFiendMarilithDesc: Seek out the lihzahrd gate in the Western Desert.
+			RemixAbysmalOolacileSorcererDesc: Seek out the lihzahrd gate below the Eastern Ocean.
+			RemixFireFiendMarilithDesc: Seek out the lihzahrd gate in the Great Chasm.
 			BlightName: Blight
 			BlightDesc: The fissure on the Frozen Ocean churns with the energy of the abyss.
 			WyvernMageShadowDesc: Find the Glass Prison, high above the fortress on the mountain.
@@ -622,11 +627,6 @@ Mods: {
 					[c/ffbf00:and the other resembling a warm ocean with a coral reef in its depths]
 					'''
 				LargeAmber: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
-				RemixLargeAmber:
-					'''
-					[c/ffbf00:3 symbols representing the elements are carved into it:]
-					[c/ffbf00:The first resembling a mushroom forest, the second resembling a ship in lava and the last resembling the depths of a great chasm]
-					'''
 				RemixLargeDiamond: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
 				RemixLargeTopaz: "[c/ffbf00:A symbol resembling the ruins at the ends of a large abandoned city is carved into it]"
 				VulnerabilityHex: Applies a vulnerability hex if Betsy has been defeated
@@ -3206,6 +3206,7 @@ Mods: {
 					'''
 					A rare and valuable ore
 					Ice cold to the touch, it glows with enchanted power
+					More common in the abyss
 					'''
 			}
 
@@ -3541,6 +3542,7 @@ Mods: {
 					Summons Attraidies, the Mindflayer King 
 					This is it. The final battle. 
 					[c/ffbf00:To find the light and dark shards needed to craft this in adventure mode... Seek the Dark Tower of Attraidies.]
+					[c/00ffd4:If you are in the Remix map, you should also look for the Old One's Tree in the jungle...]
 					'''
 			}
 
@@ -4074,7 +4076,11 @@ Mods: {
 
 			FlameOfTheAbyss: {
 				DisplayName: Flame of the Abyss
-				Tooltip: Dropped from a fallen soul that has traveled through the abyss.
+				Tooltip:
+					'''
+					A persistent flame that can cause solar incineration
+					[c/ffbf00:Only dropped by fallen souls in the abyss]
+					'''
 			}
 
 			ForgottenIceBowScroll: {
@@ -4978,6 +4984,7 @@ Mods: {
 					'''
 					A rare and valuable ore
 					Radiating heat, it shimmers with forbidden magic
+					More common in the abyss
 					'''
 			}
 
@@ -6815,6 +6822,7 @@ Mods: {
 					'''
 					A rare and valuable ore
 					A solid white surface, it casts an eerie purple shadow
+					More common in the abyss
 					'''
 			}
 
@@ -9580,6 +9588,7 @@ Mods: {
 				DespawnHandlerRare: Taste the rainbow, motherfucker...
 			}
 
+			PillarsForcefield: A great celestial barrier collapses somewhere in the sky......
 			SHM.BossDeath: The portal to The Abyss widens, and its denizens grow stronger...
 			Player.AllDied: All players have been defeated at least once!
 			BossOutOfRange: begins to lose interst, return to the fight!
@@ -10849,8 +10858,6 @@ Mods: {
 				RemixAdvModeSHMQuote3:
 					'''
 					Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal.
-					It is important to note that some passages are blocked by large gems, notably those of the Fiends
-					which are blocked by a [c/ffbf00:large amber], kept in the Old One's Tree.
 					I would start with the one at the very west of the Mycellium Forest, which leads to the Dreamlike Caverns.
 					There is another, in a strange ship in the underworld. The rest, I'm sure you will find. The ancestors will help guide you.
 					'''
@@ -10865,7 +10872,7 @@ Mods: {
 				AdvModeSHMQuote5: Good luck, Red.
 				SandboxSHMQuote1:
 					'''
-					To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:
+					To close the seal to the Abyss, you must defeat the 5 lords of The Abyss:
 					[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow],
 					[c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless].
 					With a lord soul from each of these beings you will be able to summon the final lord -

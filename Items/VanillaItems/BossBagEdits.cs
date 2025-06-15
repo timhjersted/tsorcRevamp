@@ -173,6 +173,7 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.MoonLordBossBag)
             {
                 itemLoot.RemoveWhere(_ => true);
+                itemLoot.Add(ItemDropRule.Common(ItemID.LargeAmethyst));
                 itemLoot.Add(ItemDropRule.Common(ItemID.GravityGlobe));
                 itemLoot.Add(ItemDropRule.Common(ItemID.SuspiciousLookingTentacle));
                 itemLoot.Add(ItemDropRule.Common(ItemID.LongRainbowTrailWings));

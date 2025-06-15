@@ -97,6 +97,69 @@
   "style": 1
 }
 {
+  "text": "You hear a mushroom making sounds beyond the wall. When it has your attention, it speaks to you.  --NEWLINE  --NEWLINE \u0022After you have prepared yourself, seek the Great Pyramid...\u0022 --NEWLINE  --NEWLINE \u0022An entrance hides in the jungle near the exit of the Obsidian\u0027s Volcano..\u0022",
+  "tileX": 286,
+  "tileY": 1333,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Asha: \u0022Okay, Red. But first I need to tell you where you can find your father\u0027s sword and Hallowed armor. It has long been kept in the roots of the Old One's Tree, and the entrance is in the leaves of the tree, at the Dryad's house. The path is sealed with pure Chlorophyte that only the Drax could break.\u0022 --NEWLINE Red: \u0022Okay, let\u0027s go.\u0022",
+  "tileX": 291,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Red: \u0022I will come back, and we will finally be able to live in peace. When we get to the surface, I\u0027ll take you to the tropics to the West, and I will return there when Attraidies is finished.\u0022",
+  "tileX": 294,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "\u0022Attraidies has played all of us. But it doesn\u0027t matter. I did what I thought I needed to save you.\u0022 --NEWLINE  --NEWLINE \u0022I believe you Red. My heart aches to think of you leaving again after finding me, but I have to trust you\u0027ll come back to me again.\u0022",
+  "tileX": 297,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Asha: \u0022What are you going to do?\u0022 --NEWLINE Red: \u0022I\u0027m going to kill him. In my quest to find you, I\u0027ve done a terrible thing, and I have to make right by my father and heal the Earth of this corruption that I helped Attraidies to unleash.\u0022 --NEWLINE Asha: \u0022What did you do?\u0022",
+  "tileX": 300,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "\u0022When I refused to tell them where your father\u0027s sword was, Attraidies tortured me for several days, but finally gave up and left me here. I don\u0027t know why he didn\u0027t kill me. But thank god. It\u0027s so good to see you.\u0022 --NEWLINE  --NEWLINE Red: \u0022Here, let\u0027s get you out of here. I\u0027ll take you somewhere you can be safe.\u0022",
+  "tileX": 303,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You open the door to Asha\u0027s cell, and see her clutching her arm, her clothes bloodied and torn, but her eyes as radient with life as ever. You bring her into your arms and hug her closely, then lean your head back to say, \u0022What did they do to you?\u0022",
+  "tileX": 306,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "\u0022Is that you Asha?\u0022 --NEWLINE \u0022Oh Red, thank god! I\u0027m here!  I knew you were coming.. I could feel you.\u0022 --NEWLINE  --NEWLINE \u0022Asha, I love you so much! I\u0027m going to get you out of here.\u0022 ",
+  "tileX": 319,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Did you hear a voice?",
+  "tileX": 378,
+  "tileY": 1399,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Miakoda: \u0022If I remember from my last journey, straight up from here we\u0027ll find a way out of this cavern, coming up from below the Western Sea. This path also continues far down below. I do not know exactly what you will find down there, but I can sense our path calls us to it.\u0022",
   "tileX": 474,
   "tileY": 1281,
@@ -176,13 +239,6 @@
 {
   "text": "- You\u0027ve discovered the Molten Sky Temple - --NEWLINE  --NEWLINE This place has a strong connection with the sky, the air we breathe is similar to that on the surface.",
   "tileX": 1355,
-  "tileY": 1935,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "You need a large amber to open the passage, which were kept long ago in the old one tree to seal this place.",
-  "tileX": 1364,
   "tileY": 1935,
   "textWidth": 320,
   "style": 1
@@ -349,13 +405,6 @@
   "style": 1
 }
 {
-  "text": "You need a large amber to open the passage, which were kept long ago in the old one tree to seal this place. To access it, you will need to beat the Mindflayer King...",
-  "tileX": 2221,
-  "tileY": 858,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "- This gate guards the Path to the Dreamlike Caverns, home of the Water Fiend Kraken - --NEWLINE  --NEWLINE You get out your map journal and write a note: \u0022Lizard Gate just East of an unknown temple in the desert.\u0022",
   "tileX": 2238,
   "tileY": 857,
@@ -419,14 +468,7 @@
   "style": 1
 }
 {
-  "text": "You need a large amber to open the passage, which were kept long ago in the old one tree to seal this place.",
-  "tileX": 2934,
-  "tileY": 1200,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": " - You\u0027ve found The Catacombs -",
+  "text": "- You\u0027ve found The Catacombs -",
   "tileX": 2991,
   "tileY": 1231,
   "textWidth": 320,
@@ -454,7 +496,7 @@
   "style": 1
 }
 {
-  "text": "- This gate opens from the other side - --NEWLINE  --NEWLINE \u0022It\u0027s adorned with Lizard brick... Perhaps the way in is sealed by the same material...\u0022",
+  "text": "- This gate opens from the other side - --NEWLINE  --NEWLINE \u0022It\u0027s adorned with Lihzahrd brick... Perhaps the way in is sealed by the same material...\u0022",
   "tileX": 3103,
   "tileY": 1837,
   "textWidth": 320,
@@ -727,7 +769,7 @@
   "style": 1
 }
 {
-  "text": "- You have discovered the Path of Ambition - --NEWLINE  --NEWLINE A feeling in your gut makes you think it would not be wise to venture farther down this path... ",
+  "text": "- You have discovered the Crimson Temple - --NEWLINE  --NEWLINE A feeling in your gut makes you think it would not be wise to venture farther down this path... ",
   "tileX": 3758,
   "tileY": 1243,
   "textWidth": 320,
@@ -1371,13 +1413,6 @@
   "style": 1
 }
 {
-  "text": "The entrance is sealed by Chlorophyte, an ore stronger than Adamantite.",
-  "tileX": 4615,
-  "tileY": 1033,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "Looking down into the pit to the left, Miakoda suggests that a Featherfall potion could be useful here... or the Ice Rod...",
   "tileX": 4625,
   "tileY": 1100,
@@ -1588,13 +1623,6 @@
   "style": 1
 }
 {
-  "text": "Beneath your father\u0027s sword you find a note: \u0022Red, many years ago, when our lands knew peace, I split the spirit of this sword in two, ensuring its full power could never be harnessed by dark forces. Should this power be needed again, seek out the Eternal Reef, deep in the Western Ocean... Take care, Red. I will always be with you.\u0022 - your father",
-  "tileX": 5084,
-  "tileY": 920,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "- You\u0027ve found the Forgotten City\u0027s Cavern of Graves - --NEWLINE  --NEWLINE \u0022The door is sealed shut but has no key hole...\u0022",
   "tileX": 5117,
   "tileY": 1743,
@@ -1784,16 +1812,16 @@
   "style": 1
 }
 {
-  "text": "This gate is sealed by Lihzahrd Bricks, a brick renowned for its extreme resistance.  --NEWLINE  --NEWLINE \u0022What is so important kept in the roots of the tree?\u0022",
+  "text": "The entrance is sealed by Chlorophyte, an ore stronger than Adamantite.  --NEWLINE  --NEWLINE \u0022What is so important kept in the roots of the tree?\u0022",
   "tileX": 5964,
   "tileY": 569,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "You have found the large ambers, the keys sealing the paths to the Fiends, the elemental gods",
-  "tileX": 5969,
-  "tileY": 863,
+  "text": "Beneath your father\u0027s sword you find a note: \u0022Red, many years ago, when our lands knew peace, I split the spirit of this sword in two, ensuring its full power could never be harnessed by dark forces. Should this power be needed again, seek out the Eternal Reef, deep in the Western Ocean... Take care, Red. I will always be with you.\u0022 - your father",
+  "tileX": 5926,
+  "tileY": 858,
   "textWidth": 320,
   "style": 1
 }
@@ -2071,6 +2099,13 @@
   "style": 1
 }
 {
+  "text": "You pull the lever and hear ice cracking further down in the fortress.",
+  "tileX": 7122,
+  "tileY": 338,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "\u0022The gravity seems to be affected farther down into the Earth.\u0022",
   "tileX": 6795,
   "tileY": 800,
@@ -2280,3 +2315,33 @@
   "textWidth": 320,
   "style": 1
 }
+{
+  "text": "- The Island of Mind - --NEWLINE  --NEWLINE The Nebula Pillar, one of the four great celestial seals, represents spirit and magic. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
+  "tileX": 921,
+  "tileY": 440,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- The Island of Fury - --NEWLINE  --NEWLINE The Solar Pillar, one of the four great celestial seals, represents anger and flames. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
+  "tileX": 2111,
+  "tileY": 268,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- The Island of Storm - --NEWLINE  --NEWLINE The Vortex Pillar, one of the four great celestial seals, represents distorsion and lightning. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
+  "tileX": 5418,
+  "tileY": 437,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- The Island of clairvoyance - --NEWLINE  --NEWLINE The Stardust Pillar, one of the four great celestial seals, represents sight and stars. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
+  "tileX": 7705,
+  "tileY": 362,
+  "textWidth": 320,
+  "style": 1
+}
+
+

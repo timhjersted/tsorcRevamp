@@ -255,6 +255,7 @@ namespace tsorcRevamp.NPCs
 
         //Stores the targeting, tracking, and despawning information for a NPC
         public NPCDespawnHandler DespawnHandler;
+        private static HashSet<int> defeatedPillars = new HashSet<int>();
 
         public override void ResetEffects(NPC npc)
         {
@@ -721,15 +722,32 @@ namespace tsorcRevamp.NPCs
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.EmpressOfLight.Forcefield"), Color.Cyan);
             }
-            if (npc.boss)
+            if (tsorcRevampWorld.RemixMap)
             {
-                foreach (Player player in Main.player)
+                if ((npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerStardust ||
+                    npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerSolar) &&
+                    ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                 {
-                    if (!player.active) { continue; }
-                    player.GetModPlayer<tsorcRevampPlayer>().bossMagnet = true;
-                    player.GetModPlayer<tsorcRevampPlayer>().bossMagnetTimer = 300; //5 seconds of increased grab range, check GlobalItem::GrabStyle and GrabRange
+                    defeatedPillars.Add(npc.type);
+
+                    if (defeatedPillars.Contains(NPCID.LunarTowerVortex) &&
+                        defeatedPillars.Contains(NPCID.LunarTowerStardust) &&
+                        defeatedPillars.Contains(NPCID.LunarTowerNebula) &&
+                        defeatedPillars.Contains(NPCID.LunarTowerSolar))
+                    {
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.PillarsForcefield"), Color.Teal);
+                    }
                 }
             }
+            if (npc.boss)
+                {                  
+                    foreach (Player player in Main.player)
+                    {
+                        if (!player.active) { continue; }
+                        player.GetModPlayer<tsorcRevampPlayer>().bossMagnet = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().bossMagnetTimer = 300; //5 seconds of increased grab range, check GlobalItem::GrabStyle and GrabRange
+                    }
+                }
 
             if (Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
             {

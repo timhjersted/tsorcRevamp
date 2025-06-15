@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.channel = true;
             Item.useAnimation = 44;
             Item.useTime = 44;
-            Item.damage = 88;
+            Item.damage = 72;
             Item.knockBack = 8;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.LightRed;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BlueMoon, 1);
-            recipe.AddIngredient(ItemID.CobaltBar, 3);
+            recipe.AddIngredient(ItemID.Sunfury, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 

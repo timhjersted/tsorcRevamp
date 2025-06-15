@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
 
         bool canHeal = true;
-        const int HEAL_AMOUNT = 3;
+        const int HEAL_AMOUNT = 2;
         public override void SetStaticDefaults()
         {
         }
@@ -20,9 +20,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.height = 55;
             Item.autoReuse = true;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 20;
-            Item.useTime = 20;
-            Item.damage = 62;
+            Item.useAnimation = 22;
+            Item.useTime = 22;
+            Item.damage = 54;
             Item.knockBack = 2;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.LightRed;
@@ -36,8 +36,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
+            recipe.AddIngredient(ItemID.BloodButcherer);
+            recipe.AddIngredient(ItemID.SoulofNight, 8);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

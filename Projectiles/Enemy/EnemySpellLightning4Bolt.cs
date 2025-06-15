@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.frameCounter++;
 
-            if (Projectile.frameCounter < 15)
+            if (Projectile.frameCounter < 20)
             {
                 Projectile.frame = 0;
                 Projectile.hostile = false; 
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
-            if (Projectile.frameCounter > (15 + 16 * 4)) 
+            if (Projectile.frameCounter > (20 + 16 * 4)) 
             {
                 Projectile.alpha += 15;
             }

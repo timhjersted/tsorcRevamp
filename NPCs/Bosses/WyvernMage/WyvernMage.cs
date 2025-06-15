@@ -277,6 +277,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                             Vector2 spawnPos = delayedTargetPosition;
                             spawnPos.X += Main.rand.Next(-50, 50);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Bolt>(), frozenSawDamage, 0f, Main.myPlayer);
+                            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1f, Pitch = 0f }, spawnPos); 
                         }
                         lightningDelayTimer = -1;
                     }

@@ -90,7 +90,6 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 SimpleModTooltip(Mod, item, tooltips, ItemID.LargeRuby, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeRuby"));
                 SimpleModTooltip(Mod, item, tooltips, ItemID.LargeSapphire, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeSapphire"));
-                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeAmber, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeAmber"));
                 SimpleModTooltip(Mod, item, tooltips, ItemID.LargeTopaz, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeTopaz"));
                 SimpleModTooltip(Mod, item, tooltips, ItemID.LargeEmerald, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeEmerald"));
                 SimpleModTooltip(Mod, item, tooltips, ItemID.LargeDiamond, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeDiamond"));

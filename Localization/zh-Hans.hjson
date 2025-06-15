@@ -445,10 +445,15 @@ Mods: {
 			WaterFiendKrakenDesc: 双峰之间大裂缝底部的丛林蜥蜴砖大门隐藏着秘密...
 			EarthFiendLichDesc: 探索灰烬洞穴西边的古老神庙...
 			WitchkingDesc: 在地下深处的灰烬洞窟中找到他，那里笼罩在极度黑暗之中...
+			// RemixWaterFiendKrakenDesc: Seek out the lihzahrd gate in the Mycellium Forest.
+			// RemixEarthFiendLichDesc: Find the ancient ship hidden in the Fire Temple.
 			ArtoriasDesc: 深渊的力量渗透了遗忘之城东边的隧道...
+			// RemixArtoriasDesc: Find the key in the Great Foundry in the jungle to open the passage east of the Forgotten City.
 			SeathTheScalelessDesc: 追寻冻样深处的丛林蜥蜴砖大门...
 			AbysmalOolacileSorcererDesc: 找到石巨人神庙下方的丛林蜥蜴砖大门...
 			FireFiendMarilithDesc: 探索西部沙漠的丛林蜥蜴砖大门下不为人知的秘密...
+			// RemixAbysmalOolacileSorcererDesc: Seek out the lihzahrd gate below the Eastern Ocean.
+			// RemixFireFiendMarilithDesc: Seek out the lihzahrd gate in the Great Chasm.
 			BlightName: 枯萎
 			BlightDesc: 冰冻海洋上的裂缝翻腾着深渊的能量...
 			WyvernMageShadowDesc: 寻找雪山之巅的玻璃监狱...
@@ -622,11 +627,6 @@ Mods: {
 					[c/ffbf00:and the other resembling a warm ocean with a coral reef in its depths]
 					''' */
 				// LargeAmber: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
-				/* RemixLargeAmber:
-					'''
-					[c/ffbf00:3 symbols representing the elements are carved into it:]
-					[c/ffbf00:The first resembling a mushroom forest, the second resembling a ship in lava and the last resembling the depths of a great chasm]
-					''' */
 				// RemixLargeDiamond: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
 				// RemixLargeTopaz: "[c/ffbf00:A symbol resembling the ruins at the ends of a large abandoned city is carved into it]"
 				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
@@ -9579,6 +9579,7 @@ Mods: {
 				DespawnHandlerRare: 尝尝彩虹的力量吧，混蛋...
 			}
 
+			// PillarsForcefield: A great celestial barrier collapses somewhere in the sky......
 			SHM.BossDeath: 通往深渊的大门越来越宽，它的子民越来越强大...
 			Player.AllDied: 所有玩家均已被打败！
 			BossOutOfRange: 开始对你失去兴趣，重新返回战斗！
@@ -10850,8 +10851,6 @@ Mods: {
 				/* RemixAdvModeSHMQuote3:
 					'''
 					Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal.
-					It is important to note that some passages are blocked by large gems, notably those of the Fiends
-					which are blocked by a [c/ffbf00:large amber], kept in the Old One's Tree.
 					I would start with the one at the very west of the Mycellium Forest, which leads to the Dreamlike Caverns.
 					There is another, in a strange ship in the underworld. The rest, I'm sure you will find. The ancestors will help guide you.
 					''' */

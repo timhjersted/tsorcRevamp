@@ -419,7 +419,7 @@ namespace tsorcRevamp
         public int LavaWalkCount = 0;
         public int TimeAwayFromLava = 60 * 3;
         public bool WaterWalkingBoots;
-
+        
         public override void ResetEffects()
         {
             // Re-evaluate if any boss is alive once per tick
