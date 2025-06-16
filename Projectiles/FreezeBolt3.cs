@@ -16,9 +16,13 @@ namespace tsorcRevamp.Projectiles
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
         }
 
+        public int maxDelay = 6;
+        public int collideDelay = 0;
+        public Vector2 bounceVel;
+
         public override void SetDefaults()
         {
-            Projectile.penetrate = 6;
+            Projectile.penetrate = 8;
             Projectile.width = 16;
             Projectile.height = 44;
             Projectile.timeLeft = 1800;
@@ -64,6 +68,21 @@ namespace tsorcRevamp.Projectiles
                 Projectile.velocity.X *= accel;
                 Projectile.velocity.Y *= accel;
             }
+
+            // Wait until the projectile visually collides with the tile before bouncing
+            if (collideDelay > 0)
+            {
+                collideDelay++;
+
+                if (collideDelay == maxDelay / 2) StartBounce();
+                else if (collideDelay > maxDelay / 2 && collideDelay <= maxDelay)
+                {
+                    Projectile.velocity.X = bounceVel.X;
+                    Projectile.velocity.Y = bounceVel.Y;
+                }
+
+                if (collideDelay == maxDelay) collideDelay = 0;
+            }
         }
 
         public override float CollisionWidthFunction(float progress)
@@ -95,9 +114,11 @@ namespace tsorcRevamp.Projectiles
             collisionPadding = trailPositions.Count / 8;
         }
 
-        public override bool OnTileCollide(Vector2 oldVelocity)
-        { //allow the projectile to bounce
+        public void StartBounce()
+        {
+            //allow the projectile to bounce
             Projectile.penetrate--;
+
             if (Projectile.penetrate == 0)
             {
                 Projectile.tileCollide = false;
@@ -109,16 +130,30 @@ namespace tsorcRevamp.Projectiles
                     Projectile.timeLeft = 60;
                 }
             }
+
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Drip, Projectile.position);
-            if (Projectile.velocity.X != oldVelocity.X)
+        }
+
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        { 
+            if (collideDelay == 0)
             {
-                Projectile.velocity.X = -oldVelocity.X;
+                bounceVel = new Vector2();
+                bounceVel.X = Projectile.velocity.X;
+                bounceVel.Y = Projectile.velocity.Y;
+                collideDelay++;
+
+                if (Projectile.velocity.X != oldVelocity.X)
+                {
+                    bounceVel.X = -oldVelocity.X;
+                }
+                if (Projectile.velocity.Y != oldVelocity.Y)
+                {
+                    bounceVel.Y = -oldVelocity.Y;
+                }
             }
-            if (Projectile.velocity.Y != oldVelocity.Y)
-            {
-                Projectile.velocity.Y = -oldVelocity.Y;
-            }
+
             return false;
         }
 

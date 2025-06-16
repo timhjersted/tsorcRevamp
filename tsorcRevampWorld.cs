@@ -1767,14 +1767,12 @@ namespace tsorcRevamp
             }
         }
 
-        //Scaling formula
-        //Starts at 0.7 with no bosses dead, ramps up logarithmically to 1.5x with all but Gwyn dead
+        // Scaling formula
+        // Starts at 0.7 with no bosses dead, ramps up linearly to 1.5x with all but Gwyn dead
         public static float SHMScale
         {
-            get
-            {
-                return ((float)Math.Log(SHMDowned + 1, 5) * 0.63f) + 1;
-            }
+            get { return (float)Math.Min(1.5f, 0.7f + (0.8f * SHMDowned / 12f)); }
+            
         }
 
         //Less steep scaling formula, goes from 1 to 1.2
@@ -1783,7 +1781,7 @@ namespace tsorcRevamp
         {
             get
             {
-                return ((float)Math.Log(SHMDowned + 1, 5) * 0.13f) + 1;
+                return (float)Math.Min(1.2f, 1f + (0.2f * SHMDowned / 12f));
             }
         }
 
