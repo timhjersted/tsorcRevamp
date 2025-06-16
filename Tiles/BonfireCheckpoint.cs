@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Enums;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -70,42 +71,43 @@ namespace tsorcRevamp.Tiles
                 return;
             }
 
-            bool noFirefly = true;
-            for (int n = 0; n < Main.maxNPCs; n++)
+            Player foundPlayer = null;
+
+            foreach (Player player in Main.ActivePlayers)
             {
-                var npc = Main.npc[n];
-                if (!npc.active || npc.friendly)
-                {
-                    continue;
-                }
-
-                if (npc.type == ModContent.NPCType<Bonfirefly>() && npc.Distance(new Vector2(i * 16, j * 16)) < (6 * 16))
-                {
-                    noFirefly = false;
-                    break;
-                }
-            }
-
-            bool nearPlayer = false;
-            for (int n = 0; n < Main.maxPlayers; n++)
-            {
-                var player = Main.player[n];
-                if (!player.active)
-                {
-                    continue;
-                }
-
                 if (player.Distance(new Vector2(i * 16, j * 16)) < (60 * 16))
                 {
-                    nearPlayer = true;
+                    foundPlayer = player;
                     break;
                 }
             }
 
-            if (noFirefly && nearPlayer)
+            if (foundPlayer == null) return;
+
+            bool fireFlyFound = false;
+
+            foreach (NPC fly in Main.ActiveNPCs)
             {
-                NPC.NewNPC(Entity.GetSource_NaturalSpawn(), i * 16, j * 16, ModContent.NPCType<Bonfirefly>(), 0, i, j);
+                if (fly.type == ModContent.NPCType<Bonfirefly>())
+                {
+                    if (fireFlyFound) // failsafe to despawn all extra fireflies
+                    {
+                        fly.active = false;
+                        fly.position = Vector2.Zero;
+
+                        // Make sure the despawning fly is always offscreen
+                        if (foundPlayer.position.Distance(fly.position) <= Main.screenWidth * 3)
+                            fly.position.X += Main.screenWidth * 5;
+                    }
+                    else
+                    {
+                        fireFlyFound = true;
+                    }
+                }
             }
+
+            if (!fireFlyFound) NPC.NewNPC(Entity.GetSource_NaturalSpawn(), i * 16, j * 16, ModContent.NPCType<Bonfirefly>(), 0, i, j);
+            
         }
 
         public override void NearbyEffects(int i, int j, bool closer)

@@ -32,7 +32,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
             }
             else
             {
-                cooldownToRefund += 0.4f; // Refund part of the cooldown spent not dashing
+                cooldownToRefund += 0.75f; // Refund part of the cooldown spent not dashing
             }
 
             if (modPlayer.SpiritRushTimer > 0f)
