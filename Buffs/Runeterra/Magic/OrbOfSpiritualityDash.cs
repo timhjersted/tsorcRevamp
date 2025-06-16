@@ -59,6 +59,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
                 modPlayer.SpiritRushCharges = 3;
                 modPlayer.SpiritRushCooldown = 0;
                 modPlayer.SpiritRushTimer = 0;
+                cooldownToRefund = 0;
                 player.DelBuff(buffIndex);
                 buffIndex--;
             }

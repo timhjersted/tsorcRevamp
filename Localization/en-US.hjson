@@ -6551,8 +6551,8 @@ Mods: {
 				Tooltip:
 					'''
 					Summons a null sprite to fight for you
-					Null sprites apply a permanent stacking debuff
-					that increases damage taken from all sources
+					Null sprites apply dissolving, a debuff that increases
+					damage taken from all sources by {0}%
 					'''
 			}
 

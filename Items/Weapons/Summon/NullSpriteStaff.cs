@@ -2,8 +2,10 @@
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Buffs;
 using tsorcRevamp.Projectiles.Summon.NullSprite;
 
 namespace tsorcRevamp.Items.Weapons.Summon
@@ -23,6 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 0.75f;
         }
+
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Buffs.Dissolving.MaxDissolvingStacks);
         public override void SetDefaults()
         {
             Item.damage = 65;
