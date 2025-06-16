@@ -58,6 +58,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Lighting.AddLight(Projectile.Center, LightColor.ToVector3() * 1f);
 
             NPC closestNPC = FindClosestNPC(MaxDetectRadius);
+
             if (closestNPC == null || (Projectile.timeLeft >= 780 && Projectile.ai[0] != 1))
             {
                 currentAngle += (angularSpeed / (50f * 0.001f + 1f));
@@ -108,37 +109,31 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             NPC closestNPC = null;
 
+            float sqrCharmedDetectDistance = maxDetectDistance * maxDetectDistance * 1.25f;
             float sqrMaxDetectDistance = maxDetectDistance * maxDetectDistance;
 
-            for (int k = 0; k < Main.maxNPCs; k++)
+            // If the target is charmed, prioritize that one
+            foreach (NPC target in Main.ActiveNPCs)
             {
-                NPC target = Main.npc[k];
-                if (target.CanBeChasedBy() && target.GetGlobalNPC<tsorcRevampGlobalNPC>().Sundered)
-                {
-                    float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
+                if (!target.CanBeChasedBy())
+                    continue;
 
-                    if (sqrDistanceToTarget < sqrMaxDetectDistance * 1.25f)
-                    {
-                        sqrMaxDetectDistance = sqrDistanceToTarget;
-                        closestNPC = target;
-                    }
-                    return closestNPC;
+                float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
+
+                // Prioritize charmed NPCs first
+                if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().Sundered && sqrDistanceToTarget < sqrCharmedDetectDistance)
+                {
+                    closestNPC = target;
+                    break;
+                }
+                // if the NPC is close enough, consider targeting them
+                else if (sqrDistanceToTarget < sqrMaxDetectDistance)
+                {
+                    sqrMaxDetectDistance = sqrDistanceToTarget; // Set the closest found distance to this NPC
+                    closestNPC = target;
                 }
             }
-            for (int k = 0; k < Main.maxNPCs; k++)
-            {
-                NPC target = Main.npc[k];
-                if (target.CanBeChasedBy())
-                {
-                    float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
 
-                    if (sqrDistanceToTarget < sqrMaxDetectDistance)
-                    {
-                        sqrMaxDetectDistance = sqrDistanceToTarget;
-                        closestNPC = target;
-                    }
-                }
-            }
             return closestNPC;
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

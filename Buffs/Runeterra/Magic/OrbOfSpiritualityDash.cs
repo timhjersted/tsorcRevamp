@@ -16,15 +16,26 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
             BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
 
+        float cooldownToRefund = 0;
         public override void Update(Player player, ref int buffIndex)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().SpiritRushTimer -= 0.0167f;
-            player.GetModPlayer<tsorcRevampPlayer>().SpiritRushCooldown -= 0.0167f;
-            if (player.GetModPlayer<tsorcRevampPlayer>().SpiritRushCooldown > 0f)
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.SpiritRushTimer -= 0.0167f;
+            modPlayer.SpiritRushCooldown -= 0.0167f;
+
+            if (modPlayer.SpiritRushCooldown > 0f)
             {
                 player.immune = true;
+
+                if (player.buffTime[buffIndex] < 10) // dont expire during dash
+                    player.buffTime[buffIndex]++;
             }
-            if (player.GetModPlayer<tsorcRevampPlayer>().SpiritRushTimer > 0f)
+            else
+            {
+                cooldownToRefund += 0.4f; // Refund part of the cooldown spent not dashing
+            }
+
+            if (modPlayer.SpiritRushTimer > 0f)
             {
                 player.immune = true;
                 if (Main.GameUpdateCount % 3 == 0 && Main.myPlayer == player.whoAmI)
@@ -36,10 +47,20 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
             {
                 Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<SpiritRushVisual>(), 0, 0, player.whoAmI);
             }
-            if (player.buffTime[buffIndex] == 1)
+
+            if (player.buffTime[buffIndex] == 1 || (modPlayer.SpiritRushCharges == 0 && modPlayer.SpiritRushTimer <= 0f))
             {
-                player.GetModPlayer<tsorcRevampPlayer>().SpiritRushCharges = 3;
-                player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), OrbOfSpirituality.DashCD * 60);
+                // Refund dash CD for each dash cooldown the player has left
+                // Also refund the time this buff was active without a dash being used. ( a hidden tracker for the overall cooldown )
+                int dashCooldown = ((OrbOfSpirituality.DashCD * 3) - (OrbOfSpirituality.DashCD * modPlayer.SpiritRushCharges)) * 60 - (int)cooldownToRefund;
+                if (dashCooldown > 0)
+                    player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), dashCooldown);
+
+                modPlayer.SpiritRushCharges = 3;
+                modPlayer.SpiritRushCooldown = 0;
+                modPlayer.SpiritRushTimer = 0;
+                player.DelBuff(buffIndex);
+                buffIndex--;
             }
         }
     }

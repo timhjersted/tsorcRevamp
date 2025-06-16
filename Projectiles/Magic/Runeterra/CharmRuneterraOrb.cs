@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
             player.AddBuff(CooldownType, OrbOfFlame.FireballCD * 60);
-            SoundEngine.PlaySound(new SoundStyle(SoundPath + "CharmCast") with { Volume = OrbOfDeception.OrbSoundVolume * 2 });
+            SoundEngine.PlaySound(new SoundStyle(SoundPath + "CharmCast") with { Volume = OrbOfDeception.OrbSoundVolume });
             Projectile.velocity *= 0.75f;
         }
 
@@ -87,7 +87,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
             target.AddBuff(DebuffType, OrbOfFlame.FireballDuration * 60);
-            SoundEngine.PlaySound(new SoundStyle(SoundPath + "CharmHit") with { Volume = OrbOfDeception.OrbSoundVolume * 4 });
+            SoundEngine.PlaySound(new SoundStyle(SoundPath + "CharmHit") with { Volume = OrbOfDeception.OrbSoundVolume * 1.25f });
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {

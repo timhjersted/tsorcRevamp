@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public const float EssenceThiefOnKillChance = 20f;
         public const float FilledOrbDmgMod = 75f;
         public const float ShootSpeed = 20f;
-        public const float OrbSoundVolume = 0.5f;
+        public const float OrbSoundVolume = 0.25f;
         public const int HealManaDivisor = 100;
         public const int HealBaseValue = 4;
 
@@ -42,9 +42,9 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public const int FireballCD = 4;
         public const int FireballDuration = 6;
 
-        public static int DashBuffDuration = 15;
-        public static int DashCD = 60;
-        public static int DashCostMultiplier = 4;
+        public static int DashBuffDuration = 6;
+        public static int DashCD = 6;
+        public static int DashCostMultiplier = 2;
         public override void SetStaticDefaults()
         {
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));

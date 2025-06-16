@@ -13,7 +13,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
         public override void CustomSetStaticDefaults()
         {
             LastTickSoundPath = "Runeterra/Magic/OrbOfSpirituality/DashReady";
-            LastTickSoundVolume = OrbOfDeception.OrbSoundVolume * 2;
+            LastTickSoundVolume = OrbOfDeception.OrbSoundVolume;
         }
     }
 }

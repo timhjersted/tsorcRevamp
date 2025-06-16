@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Projectiles.VFX;
 
@@ -83,11 +84,22 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             }
         }
 
+        // Increase the speed multiplier the longer the orb is out
+        float extraSpeed = 0;
+        Vector2 originalVelocity;
+
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
             Projectile.originalDamage = Projectile.damage;
+
+            originalVelocity = new Vector2();
+            originalVelocity.X = Projectile.velocity.X;
+            originalVelocity.Y = Projectile.velocity.Y;
+
             SoundEngine.PlaySound(new SoundStyle(SoundPath + "OrbCast") with { Volume = OrbOfDeception.OrbSoundVolume });
+            extraSpeed = 0;
+
             if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8)
             {
                 Full = true;
@@ -97,15 +109,20 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+            Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * (OrbOfDeception.ShootSpeed + extraSpeed);
+            extraSpeed += 0.08f;
 
-            Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * OrbOfDeception.ShootSpeed;
             switch (CurrentAIState)
             {
                 case AIState.LaunchingForward:
                     {
+                        Vector2 newVelocity = originalVelocity.SafeNormalize(Vector2.Zero) * (OrbOfDeception.ShootSpeed + extraSpeed);
+                        if (newVelocity != Vector2.Zero) Projectile.velocity = newVelocity;
+
                         if (Projectile.Distance(player.Center) > 800f)
                         {
                             CurrentAIState = AIState.Retracting;
+                            extraSpeed = 0;
                             StateTimer = 0f;
                             Hit = false;
                             Projectile.damage = Projectile.originalDamage;

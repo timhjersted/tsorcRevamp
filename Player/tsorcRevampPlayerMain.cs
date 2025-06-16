@@ -1561,7 +1561,7 @@ namespace tsorcRevamp
                 #endregion
 
                 #region Spirit Rush
-                if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana >= (player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()))
+                if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana >= (player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier) && !player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
                 {
                     player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), OrbOfSpirituality.DashBuffDuration * 60);
                     player.statMana -= player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier;
@@ -1569,25 +1569,25 @@ namespace tsorcRevamp
                 if (player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0f && SpiritRushCharges > 0)
                 {
                     player.immune = true;
-                    SpiritRushVelocity = player.DirectionTo(Main.MouseWorld) * 20f;
+                    SpiritRushVelocity = player.DirectionTo(Main.MouseWorld) * 25f;
                     SpiritRushTimer = 0.3f;
                     SpiritRushCooldown = 1f;
-                    player.SetImmuneTimeForAllTypes((int)(SpiritRushCooldown * 60f));
+                    player.SetImmuneTimeForAllTypes(60);
                     if (SpiritRushSoundStyle == 0)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash1") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash1") with { Volume = RuneterraOrb.OrbSoundVolume });
                         SpiritRushSoundStyle += 1;
                     }
                     else
                     if (SpiritRushSoundStyle == 1)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash2") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash2") with { Volume = RuneterraOrb.OrbSoundVolume });
                         SpiritRushSoundStyle += 1;
                     }
                     else
                     if (SpiritRushSoundStyle == 2)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash3") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash3") with { Volume = RuneterraOrb.OrbSoundVolume });
                         SpiritRushSoundStyle = 0;
                     }
                     SpiritRushCharges--;
