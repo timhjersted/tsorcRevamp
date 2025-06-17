@@ -8896,6 +8896,11 @@ Mods: {
 				DisplayName: 朝圣者三叉戟冷却
 				Description: 冷却结束前你无法催化朝圣者三叉戟
 			}
+
+			NecromanticSerpentBuff: {
+				// DisplayName: Necromantic Serpent Buff
+				// Description: Mods.tsorcRevamp.Buffs.NecromanticSerpentBuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -9554,6 +9559,9 @@ Mods: {
 			// PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
 			// TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
 			// DoomhammerFireball.DisplayName: Doomhammer Fireball
+			// NecromanticSerpentBody.DisplayName: Necromantic Serpent Body
+			// NecromanticSerpentHead.DisplayName: Necromantic Serpent Head
+			// NecromanticSerpentTail.DisplayName: Necromantic Serpent Tail
 		}
 
 		NPCs: {

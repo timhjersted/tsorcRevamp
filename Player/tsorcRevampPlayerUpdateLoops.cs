@@ -137,11 +137,9 @@ namespace tsorcRevamp
         public bool Witch;
 
         public bool Kraken;
+        public bool NecromanticSerpent = false;
 
         public int SeveringDuskDashTime = 0;
-
-        public bool Lich;
-        public int LichKills = 0;
 
         public int SoulVessel = 0;
         public float MaxManaAmplifier;
@@ -413,6 +411,7 @@ namespace tsorcRevamp
         public bool HadBuffStrategist;
 
         public bool EnterTheAbyss;
+        public int timeSinceLastAttacked = 0;
 
         // 3 seconds until sinking
         public const int LavaWalkTimer = 60 * 3;
@@ -488,8 +487,6 @@ namespace tsorcRevamp
 
             Witch = false;
 
-            Lich = false;
-
             DragoonBoots = false;
             OldWeapon = false;
             Miakoda = false;
@@ -512,6 +509,7 @@ namespace tsorcRevamp
             SoulSiphonScaling = 1f;
 
             ZirconRing = false;
+            NecromanticSerpent = false;
 
             CrimsonDrain = false;
             Shockwave = false;
@@ -585,6 +583,14 @@ namespace tsorcRevamp
         }
         public override void PreUpdate()
         {
+            timeSinceLastAttacked++;
+            // Reset the last attacked NPC every 10 seconds
+            if (timeSinceLastAttacked > 10 * 60)
+            {
+                LastAttackedNPCIndex = -1;
+                timeSinceLastAttacked = 0;
+            }
+
             RealMouseWorld = Main.MouseWorld;
             tsorcRevampPlayerAuraDrawLayers.HandleAura(this);
             //Fixes bug where switching from a better to a worse pair of wings keeps the previous wing time cap

@@ -5,6 +5,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Projectiles.Summon.NecromanticSerpent;
+using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items.Armors.Magic
 {
@@ -16,6 +18,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         public const int SoulCost = 70000;
         public const int SkullBaseDmg = 250;
         public const float SkullBaseKnockback = 5f;
+        public int serpentPos = -1;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost);
         public override void SetStaticDefaults()
         {
@@ -39,18 +42,15 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().Lich = true;
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            var NecromancersSpellKey = tsorcRevamp.NecromancersSpell.GetAssignedKeys();
-            string NecromancersSpellString = NecromancersSpellKey.Count > 0 ? NecromancersSpellKey[0] : LangUtils.GetTextValue("Keybinds.Necromancers Spell.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
-            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
-            if (ttindex1 != -1)
-            {
-                tooltips.RemoveAt(ttindex1);
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", LangUtils.GetTextValue("Items.NecromancersShirt.Keybind1") + NecromancersSpellString + LangUtils.GetTextValue("Items.NecromancersShirt.Keybind2")));
-            }
+            UsefulFunctions.ModPlayer(player).NecromanticSerpent = true;
+        
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<NecromanticSerpentHead>()] != 0) return;
+
+            serpentPos = Projectile.NewProjectile(player.GetSource_FromThis(), player.position, Vector2.Zero, ModContent.ProjectileType<NecromanticSerpentHead>(),
+                (int)NecromanticSerpentHead.OriginalDamage, NecromanticSerpentHead.OriginalKnockback, player.whoAmI);
+
+            player.AddBuff(NecromanticSerpentHead.BuffType, 2);
         }
         public override void AddRecipes()
         {

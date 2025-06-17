@@ -8905,6 +8905,11 @@ Mods: {
 				DisplayName: Pilgrim Spontoon Cooldown
 				Description: You cannot reactivate Pilgrim's Spontoon special ability until this runs out
 			}
+
+			NecromanticSerpentBuff: {
+				DisplayName: Necromantic Serpent Buff
+				Description: Mods.tsorcRevamp.Buffs.NecromanticSerpentBuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -9563,6 +9568,9 @@ Mods: {
 			PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
 			TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
 			DoomhammerFireball.DisplayName: Doomhammer Fireball
+			NecromanticSerpentBody.DisplayName: Necromantic Serpent Body
+			NecromanticSerpentHead.DisplayName: Necromantic Serpent Head
+			NecromanticSerpentTail.DisplayName: Necromantic Serpent Tail
 		}
 
 		NPCs: {

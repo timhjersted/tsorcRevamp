@@ -68,6 +68,7 @@ namespace tsorcRevamp
         public static bool DiffHit = false;
         public Dictionary<int, int> consumedPotions;
         public Dictionary<Vector2, int> soulDeathLocations = new Dictionary<Vector2, int>();
+        public int LastAttackedNPCIndex;
 
         public override void Initialize()
         {
@@ -89,6 +90,7 @@ namespace tsorcRevamp
             chestPiggyOpen = false;
             chestPiggy = -1;
 
+            LastAttackedNPCIndex = -1;
 
             bagsOpened = new List<int>();
         }
@@ -859,6 +861,9 @@ namespace tsorcRevamp
         }
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
         {
+            LastAttackedNPCIndex = target.whoAmI;
+            timeSinceLastAttacked = 0;
+
             if (SmoughAttackSpeedReduction)
             {
                 if (modifiers.DamageType == DamageClass.SummonMeleeSpeed)
@@ -884,6 +889,13 @@ namespace tsorcRevamp
         }
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
         {
+            // Last attacked NPC is used for summon targeting, it would be pointless if the target updated with summon attacks
+            if (!Main.projPet[proj.type])
+            { 
+                LastAttackedNPCIndex = target.whoAmI;
+                timeSinceLastAttacked = 0;
+            }
+
             if (SmoughAttackSpeedReduction && modifiers.DamageType == DamageClass.SummonMeleeSpeed)
             {
                 if (!ProjectileID.Sets.IsAWhip[proj.type])
@@ -1032,10 +1044,6 @@ namespace tsorcRevamp
             if (DemonPower && hit.DamageType == DamageClass.SummonMeleeSpeed && hit.Crit && Main.myPlayer == Player.whoAmI)
             {
                 Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
-            }
-            if (Lich && hit.Damage >= target.life)
-            {
-                LichKills++;
             }
             if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
             {
@@ -1393,30 +1401,6 @@ namespace tsorcRevamp
                 {
                     Player.AddBuff(ModContent.BuffType<Rejuvenation>(), 5 * 60);
                     Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 25 * 60);
-                }
-            }
-            if (tsorcRevamp.NecromancersSpell.JustReleased)
-            {
-                if (Lich && LichKills > 0)
-                {
-                    for (int i = 0; i < LichKills; i++)
-                    {
-                        if (Main.myPlayer == player.whoAmI)
-                        {
-                            Vector2 speed = Main.rand.NextVector2Circular(6f, 6f); 
-                            Projectile Skull = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center + Main.rand.NextVector2CircularEdge(30, 30), speed, ProjectileID.BookOfSkullsSkull, (int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseDmg), player.GetTotalKnockback(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseKnockback), player.whoAmI, 1);
-                        }
-                    }
-                    SoundEngine.PlaySound(SoundID.Zombie54, player.position);
-                    int dustAmount = 15 + LichKills * 2; 
-                    float dustScale = 1f + LichKills * 0.1f; 
-                    for (int d = 0; d < dustAmount; d++)
-                    { 
-                        Vector2 dustSpeed = Main.rand.NextVector2Circular(10f, 10f);
-                        int dustIndex = Dust.NewDust(player.Center, 0, 0, DustID.BoneTorch, dustSpeed.X, dustSpeed.Y, 0, default(Color), dustScale);
-                        Main.dust[dustIndex].noGravity = true; 
-                    }
-                    LichKills = 0;
                 }
             }
             if (tsorcRevamp.WitchScream.JustReleased && WitchScreamCooldown <= 0)

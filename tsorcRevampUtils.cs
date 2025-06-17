@@ -22,7 +22,6 @@ using tsorcRevamp.Items;
 
 namespace tsorcRevamp
 {
-
     //using static tsorcRevamp.SpawnHelper;
     public static class SpawnHelper
     {
@@ -1533,5 +1532,7 @@ namespace tsorcRevamp
             }
             return false;
         }
+
+        public static tsorcRevampPlayer ModPlayer(Player player) => player.GetModPlayer<tsorcRevampPlayer>();
     }
 }
