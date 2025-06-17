@@ -11139,7 +11139,16 @@ Mods: {
 			SoulSkellyR.MapEntry: Soul Skelly
 			SoulSkellyWall1.MapEntry: Soul Skelly
 			SoulSkellyWall2.MapEntry: Soul Skelly
-			SoulSkullL.MapEntry: Soul Skull
+
+			SoulSkullL: {
+				MapEntry: Soul Skull
+				AnnoyedTalk1: ...What do you want?
+				AnnoyedTalk2: Heh, heh, heh, heh...
+				AnnoyedTalk3: Leave me alone - before I use my 'special attack' on you
+				AnnoyedTalk4: Fine. Here. Take it and leave.
+				AnnoyedTalk5: I said get out of here!
+			}
+
 			SoulSkullR.MapEntry: Soul Skull
 		}
 

@@ -48,7 +48,7 @@
   "style": 1
 }
 {
-  "text": "Asha：\u0022好的，瑞德。但首先我要告诉你在哪里可以找到你父亲的剑和神圣盔甲。 --NEWLINE   --NEWLINE 你还记得我们老房子附近被洪水淹没的矿井吗？ --NEWLINE   --NEWLINE 他的剑和盔甲可以在一堵土墙后找到，在那之外是叶绿矿墙的封印，只有神圣钻头才能打破。\u0022 --NEWLINE   --NEWLINE Red：\u0022彳亍，走吧。\u0022",
+  "text": "亚莎：\u0022好的，瑞德。但首先我要告诉你在哪里可以找到你父亲的剑和神圣盔甲。 --NEWLINE   --NEWLINE 你还记得我们老房子附近被洪水淹没的矿井吗？ --NEWLINE   --NEWLINE 他的剑和盔甲可以在一堵土墙后找到，在那之外是叶绿矿墙的封印，只有神圣钻头才能打破。\u0022 --NEWLINE   --NEWLINE Red：\u0022彳亍，走吧。\u0022",
   "tileX": 291,
   "tileY": 1367,
   "textWidth": 660,
@@ -83,7 +83,7 @@
   "style": 1
 }
 {
-  "text": "Asha：\u0022你打算怎么办？\u0022 --NEWLINE   --NEWLINE Red：\u0022我要杀了他。在我寻找你的过程中，我做了一件可怕的事情， --NEWLINE   --NEWLINE 我必须纠正我父亲的错误，并治愈我帮助阿卓迪斯释放的腐化。\u0022 --NEWLINE   --NEWLINE Asha：\u0022你做了什么？\u0022",
+  "text": "亚莎：\u0022你打算怎么办？\u0022 --NEWLINE   --NEWLINE Red：\u0022我要杀了他。在我寻找你的过程中，我做了一件可怕的事情， --NEWLINE   --NEWLINE 我必须纠正我父亲的错误，并治愈我帮助阿卓迪斯释放的腐化。\u0022 --NEWLINE   --NEWLINE 亚莎：\u0022你做了什么？\u0022",
   "tileX": 300,
   "tileY": 1367,
   "textWidth": 670,
@@ -524,7 +524,7 @@
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022传说中三子魔眼杀害了许多寻求荣耀的勇士。 --NEWLINE   --NEWLINE 不要愚蠢，也许我们应该在面对它们之前掌握更强的力量。\u0022",
+  "text": "Miakoda：\u0022传说中三子魔眼杀害了许多寻求荣耀的勇士。 --NEWLINE   --NEWLINE 不要犯蠢，也许我们应该在面对它们之前掌握更强的力量。\u0022",
   "tileX": 2893,
   "tileY": 59,
   "textWidth": 450,
@@ -1371,7 +1371,7 @@
   "style": 1
 }
 {
-  "text": "(2)\u0022你妻子Asha……她还活着。 --NEWLINE   --NEWLINE 他们把我留在这里,带走了她，如果他们希望找到你父亲的剑，他们不得不让她活着。\u0022 --NEWLINE   --NEWLINE \u0022亚莎知道我们父亲把剑放在哪里？\u0022 --NEWLINE   --NEWLINE \u0022当父亲看到他们走近时他告诉她的，让我们两个都逃跑， --NEWLINE   --NEWLINE 但在我们到达森林之前，侦察员抓住了我们。我们没有机会。\u0022",
+  "text": "(2)\u0022你妻子亚莎……她还活着。 --NEWLINE   --NEWLINE 他们把我留在这里,带走了她，如果他们希望找到你父亲的剑，他们不得不让她活着。\u0022 --NEWLINE   --NEWLINE \u0022亚莎知道我们父亲把剑放在哪里？\u0022 --NEWLINE   --NEWLINE \u0022当父亲看到他们走近时他告诉她的，让我们两个都逃跑， --NEWLINE   --NEWLINE 但在我们到达森林之前，侦察员抓住了我们。我们没有机会。\u0022",
   "tileX": 4459,
   "tileY": 1745,
   "textWidth": 600,
@@ -1773,7 +1773,7 @@
   "text": "这扇门需要从另一侧打开。",
   "tileX": 5338,
   "tileY": 956,
-  "textWidth": 180,
+  "textWidth": 200,
   "style": 1
 }
 {

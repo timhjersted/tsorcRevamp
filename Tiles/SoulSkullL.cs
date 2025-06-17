@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Placeable;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Tiles
 {
@@ -214,11 +215,11 @@ namespace tsorcRevamp.Tiles
                 {
                     if (Main.rand.NextBool(3))
                     {
-                        UsefulFunctions.BroadcastText("...What do you want?", 120, 190, 240);
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Tiles.SoulSkullL.AnnoyedTalk1"), 120, 190, 240);
                     }
                     else if (Main.rand.NextBool(2))
                     {
-                        UsefulFunctions.BroadcastText("Heh, heh, heh, heh...", 120, 190, 240);
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Tiles.SoulSkullL.AnnoyedTalk2"), 120, 190, 240);
                         for (int b = 0; b < 12; b++)
                         {
                             Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<Projectiles.BoneHostile>(), 15, 2f);
@@ -226,19 +227,19 @@ namespace tsorcRevamp.Tiles
                     }
                     else
                     {
-                        UsefulFunctions.BroadcastText("Leave me alone - before I use my 'special attack' on you", 120, 190, 240);
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Tiles.SoulSkullL.AnnoyedTalk3"), 120, 190, 240);
                     }
                 }
 
                 if (sansannoyed == 12) //after clicking 12 times, gives accessory
                 {
-                    UsefulFunctions.BroadcastText("Fine. Here. Take it and leave.", 255, 90, 90);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Tiles.SoulSkullL.AnnoyedTalk4"), 255, 90, 90);
                     Item.NewItem(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(i * 16, j * 16), 16, 16, ModContent.ItemType<BlueEye>(), 1);
                 }
 
                 if (sansannoyed > 12)
                 {
-                    UsefulFunctions.BroadcastText("I said get out of here!", 255, 40, 40);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Tiles.SoulSkullL.AnnoyedTalk5"), 255, 40, 40);
                     for (int b = 0; b < 25; b++)
                     {
                         Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<Projectiles.BoneHostile>(), 25, 2f);

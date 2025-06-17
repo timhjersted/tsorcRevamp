@@ -34,7 +34,7 @@ Mods: {
 			Cursed:
 				'''
 				此物品已被[c/383838:诅咒]，目前无法使用
-				你可以看到一个奇怪的[c/878787:头骨]符号在它的表面发光...	
+				你可以看到一个奇怪的[c/878787:头骨]符号在它的表面发光...
 				'''
 			CorruptionCursed: 该物品已被[c/701070:腐化]力量[c/338338:诅咒]，目前无法使用
 			BotCNoHeal: 无法治愈[c/6d8827:被诅咒者]
@@ -445,15 +445,15 @@ Mods: {
 			WaterFiendKrakenDesc: 双峰之间大裂缝底部的丛林蜥蜴砖大门隐藏着秘密...
 			EarthFiendLichDesc: 探索灰烬洞穴西边的古老神庙...
 			WitchkingDesc: 在地下深处的灰烬洞窟中找到他，那里笼罩在极度黑暗之中...
-			// RemixWaterFiendKrakenDesc: Seek out the lihzahrd gate in the Mycellium Forest.
-			// RemixEarthFiendLichDesc: Find the ancient ship hidden in the Fire Temple.
+			RemixWaterFiendKrakenDesc: 探索菌丝林园西边的丛林蜥蜴砖大门...
+			RemixEarthFiendLichDesc: 找到火焰神庙岩浆中的奇怪飞船...
 			ArtoriasDesc: 深渊的力量渗透了遗忘之城东边的隧道...
-			// RemixArtoriasDesc: Find the key in the Great Foundry in the jungle to open the passage east of the Forgotten City.
+			RemixArtoriasDesc: 找到丛林大铸造厂中的钥匙来打开遗忘之城东边的大门...
 			SeathTheScalelessDesc: 追寻冻样深处的丛林蜥蜴砖大门...
 			AbysmalOolacileSorcererDesc: 找到石巨人神庙下方的丛林蜥蜴砖大门...
 			FireFiendMarilithDesc: 探索西部沙漠的丛林蜥蜴砖大门下不为人知的秘密...
-			// RemixAbysmalOolacileSorcererDesc: Seek out the lihzahrd gate below the Eastern Ocean.
-			// RemixFireFiendMarilithDesc: Seek out the lihzahrd gate in the Great Chasm.
+			RemixAbysmalOolacileSorcererDesc: 探索冻洋深处的丛林蜥蜴砖大门...
+			RemixFireFiendMarilithDesc: 探索双峰间裂谷深处的丛林蜥蜴砖大门...
 			BlightName: 枯萎
 			BlightDesc: 冰冻海洋上的裂缝翻腾着深渊的能量...
 			WyvernMageShadowDesc: 寻找雪山之巅的玻璃监狱...
@@ -475,12 +475,12 @@ Mods: {
 					克苏鲁之眼只能在晚上被召唤
 					一块银表经过改造后或许可以跳过时间...
 					'''
-				/* PirateMap:
+				PirateMap:
 					'''
-					Item is not consumed so that you can retry the fight on defeat
-					The Eye of Cthulhu can only be summoned during the night
-					A silver watch may aid in the passing of time...
-					''' */
+					物品不消耗所以你可以在被打败后重新尝试
+					克苏鲁之眼只能在晚上被召唤
+					一块银表经过改造后或许可以跳过时间...
+					'''
 
 				MechanicalEye: {
 					Tooltip:
@@ -608,27 +608,27 @@ Mods: {
 				Diamond: 制作强力药剂的重要成分
 				IronOre: 也许你可以用这些来制作特殊的箭......？
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
-				LargeAmethyst: "[c/ffbf00:一个类似于大金字塔的符号，月亮在它的右侧，刻在上面]"
+				LargeAmethyst: "[c/ffbf00:一个形似大金字塔的符号，月亮在它的右侧，刻在上面]"
 				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
-				/* RemixLargeSapphire:
+				RemixLargeSapphire:
 					'''
-					[c/ffbf00:Two symbols are carved into it: one resembling a dark-capped mountain near a fortress,]
-					[c/ffbf00:and the other resembling a giant skull guarding the entrance to great corridors in the frozen depths]
-					''' */
-				LargeRuby: "[c/ffbf00:上面雕刻着一个符号，它形似一座可通过大型金字塔进入的古老丛林神庙]"
-				/* RemixLargeRuby:
+					[c/ffbf00:上面刻着两个符号: 一个像飞龙法师堡垒附近的一座雪山]
+					[c/ffbf00:另一个像是巨型颅骨，守卫着冻洋深处冰渊长廊入口]
 					'''
-					[c/ffbf00:A symbol resembling a ancient temple accessible via the depths of the jungle is carved into it]
-					[c/ffbf00:Quite hidden, but you can also notice another symbol, that of a warm ocean with a coral reef in its depths]
-					''' */
-				/* RemixLargeEmerald:
+				LargeRuby: "[c/ffbf00:上面雕刻着一个符号，形似一座可通过大型金字塔进入的古老丛林神庙]"
+				RemixLargeRuby:
 					'''
-					[c/ffbf00:Two symbols are carved into it: one resembling lush underground jungle near a temple of meteorite,]
-					[c/ffbf00:and the other resembling a warm ocean with a coral reef in its depths]
-					''' */
-				// LargeAmber: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
-				// RemixLargeDiamond: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
-				// RemixLargeTopaz: "[c/ffbf00:A symbol resembling the ruins at the ends of a large abandoned city is carved into it]"
+					[c/ffbf00:上面刻着一个形似古代神庙的符号，可以通过丛林深处进入]
+					[c/ffbf00:如果仔细观察还可看见另一个符号，像是热带海洋深处的珊瑚礁]
+					'''
+				RemixLargeEmerald:
+					'''
+					[c/ffbf00:上面刻着两个符号: 一个像陨石神庙附近郁郁葱葱的地下丛林]
+					[c/ffbf00:另一个像是热带海洋深处的珊瑚礁]
+					'''
+				LargeAmber: "[c/ffbf00:上面刻着一个符号，像是村庄山丘下大地神庙的入口]"
+				RemixLargeDiamond: "[c/ffbf00:上面刻着一个符号，像是村庄山丘下大地神庙的入口]"
+				RemixLargeTopaz: "[c/ffbf00:上面刻着一个符号，像是遗忘之城东边的废墟]"
 				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
 				IncinerationHex: 如果已击败双足翼龙，则施加破晓减益
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
@@ -1623,7 +1623,7 @@ Mods: {
 					亚尔特留斯曾佩戴的戒指
 					曾拥有着这个世界所无法承受的力量
 					[c/ffbf00:免疫黑视、遮蔽、酸性毒液与冰冻]
-					[c/ffbf00:在诅咒达到 {0}%后，提高从诅咒获得的正面属性增益幅度]
+					[c/ffbf00:提高 {0}% 被诅咒时获得的正面属性增益]
 					'''
 			}
 
@@ -3173,7 +3173,7 @@ Mods: {
 				Tooltip:
 					'''
 					从阿卓迪斯召唤一个夺心幻魔
-					"[c/00ffd4:你觉得有必要试试这个...]"
+					[c/00ffd4:"你觉得有必要试试这个..."]
 					'''
 			}
 
@@ -3206,6 +3206,7 @@ Mods: {
 					'''
 					一种稀有且珍贵的矿石
 					摸起来冰冷，散发着神圣的力量
+					深渊中的敌人更容易掉落
 					'''
 			}
 
@@ -3541,6 +3542,7 @@ Mods: {
 					召唤阿卓迪斯—夺心魔王
 					终幕已至 
 					[c/ffbf00:为了找到足够数量能在冒险模式下合成这玩意的光＆暗碎片...你得去阿卓迪斯的黑暗之塔最顶端]
+					[c/00ffd4:为了找到足够数量能在冒险模式下合成这玩意的光＆暗碎片...你得去丛林的旧日之树]
 					'''
 			}
 
@@ -3710,7 +3712,7 @@ Mods: {
 				DisplayName: 破损的 锯刃镐
 				Tooltip:
 					'''
-					一个古老的强大工具似乎已经碎成了几块，它损坏的太厉害已经无法被修复了
+					这件古老的强大工具似乎已经碎成了几块，它损坏的太厉害已经无法被修复了
 					[c/00ffd4:残余物已流尽它们的力量，并安静的吟唱着黑魔法]
 					[c/ffbf00:看起来你得去找到其他的能打破神庙砖的东西...]
 					这个东西在接下来的旅程中一无是处，还是扔了最好
@@ -4074,7 +4076,11 @@ Mods: {
 
 			FlameOfTheAbyss: {
 				DisplayName: 深渊之火
-				Tooltip: 从穿越深渊的堕落灵魂掉落
+				Tooltip:
+					'''
+					可以焚烬太阳的永恒之火
+					[c/ffbf00:只有深渊中堕落的生物掉落]
+					'''
 			}
 
 			ForgottenIceBowScroll: {
@@ -4976,6 +4982,7 @@ Mods: {
 					'''
 					一种稀有而珍贵的矿石
 					散发着热量，闪烁着禁忌的地牢魔法
+					深渊中的敌人更容易掉落
 					'''
 			}
 
@@ -5221,7 +5228,8 @@ Mods: {
 				Tooltip:
 					'''
 					卷轴上写着"Exori vis"（注：这是游戏Tibia中的一句话
-					召唤一个静止的特斯拉线圈，伤害附近的敌人
+					召唤一个静止的特斯拉线圈，伤害附近的 {1} 个敌人
+					施加消融，敌人受到的伤害最多提高 {1}%
 					'''
 			}
 
@@ -5340,10 +5348,9 @@ Mods: {
 				Tooltip:
 					'''
 					一种在玩家周围施放大魔法盾的咒语
-					 {0} 秒内提高防御力 {2} 点
+					在 {1} 秒内提高 {0} 点对魔法的防御力
+					{$CommonItemTooltip.Cooldown@2}
 					{$CommonItemTooltip.UniqueBarrier}
-					减少 {3}% 的伤害和 {4}% 的移动速度
-					{$CommonItemTooltip.Cooldown@1}
 					'''
 			}
 
@@ -5439,7 +5446,7 @@ Mods: {
 				Tooltip:
 					'''
 					一个学徒丢弃的卷轴
-					[c/ffbf00:对玩家施放初级魔法屏障，提高 {0} 点防御，持续 {1} 秒]
+					[c/ffbf00:对玩家施放初级魔法屏障，在 {1} 秒内提高 {0} 点对魔法的防御力]
 					{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
@@ -5800,7 +5807,7 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:月光大剑，传奇之剑...]
-					在夜间发光，具有穿透性
+					在夜间发光并变得更强
 					该武器可以获得近战、法师职业的增益，取较高的为准
 					发射月光波
 					'''
@@ -5928,7 +5935,7 @@ Mods: {
 
 			BerserkerNightmare: {
 				DisplayName: 狂战士梦魇
-				Tooltip: ""
+				Tooltip: 在链球周围生成一圈魔法粒子
 			}
 
 			HeavensTear: {
@@ -6229,6 +6236,7 @@ Mods: {
 					'''
 					始终以心脏为目标
 					每三次攻击射出两支精灵之箭
+					将木箭转化为圣箭
 					'''
 			}
 
@@ -6538,8 +6546,8 @@ Mods: {
 				Tooltip:
 					'''
 					召唤一个空精灵为你而战
-					空精灵造成永久性的可堆叠减益
-					逐渐提高目标受到的任何来源的伤害
+					空精灵施加消融
+					敌人受到的伤害提高 {0}%
 					'''
 			}
 
@@ -6809,6 +6817,7 @@ Mods: {
 					'''
 					一种稀有而有价值的矿石
 					纯白的表面，投下紫红的邪恶阴影
+					深渊中的敌人更容易掉落
 					'''
 			}
 
@@ -8108,7 +8117,7 @@ Mods: {
 			}
 
 			Dissolving: {
-				DisplayName: 溶解
+				DisplayName: 消融
 				Description: 受到额外伤害
 			}
 
@@ -8166,12 +8175,7 @@ Mods: {
 
 			GreatMagicShield: {
 				DisplayName: 强力法术盾
-				Description:
-					'''
-					{$CommonItemTooltip.IncreasesDefenseBy}
-					{$CommonItemTooltip.BadDmgMult@1}
-					{$CommonItemTooltip.Slowness@2}
-					'''
+				Description: 提高 {0} 点对魔法的防御力！
 			}
 
 			GreatMagicWeapon: {
@@ -8226,7 +8230,7 @@ Mods: {
 
 			MagicShield: {
 				DisplayName: 初级魔法屏障
-				Description: 防御力增加10点！
+				Description: 提高 {0} 点对魔法的防御力！
 			}
 
 			MagicWeapon: {
@@ -9556,9 +9560,9 @@ Mods: {
 			RedRainProj.DisplayName: Red Rain Proj
 			SmallRedLightning.DisplayName: Small Red Lightning
 			WyvernIcicle.DisplayName: Wyvern Icicle
-			// PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
-			// TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
-			// DoomhammerFireball.DisplayName: Doomhammer Fireball
+			PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
+			TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
+			DoomhammerFireball.DisplayName: Doomhammer Fireball
 			// NecromanticSerpentBody.DisplayName: Necromantic Serpent Body
 			// NecromanticSerpentHead.DisplayName: Necromantic Serpent Head
 			// NecromanticSerpentTail.DisplayName: Necromantic Serpent Tail
@@ -9587,7 +9591,7 @@ Mods: {
 				DespawnHandlerRare: 尝尝彩虹的力量吧，混蛋...
 			}
 
-			// PillarsForcefield: A great celestial barrier collapses somewhere in the sky......
+			PillarsForcefield: 苍穹某处，宏伟的天界屏障轰然崩塌...
 			SHM.BossDeath: 通往深渊的大门越来越宽，它的子民越来越强大...
 			Player.AllDied: 所有玩家均已被打败！
 			BossOutOfRange: 开始对你失去兴趣，重新返回战斗！
@@ -9621,7 +9625,7 @@ Mods: {
 			}
 
 			Cataluminance: {
-				DisplayName: 耀翳眼 v2.02
+				DisplayName: 耀翳眼
 				DespawnHandler: 三子魔眼回归星空......
 				ClosesIn: 耀翳眼正在逼近...
 				Desperation: 三子魔眼准备将你击败...
@@ -9630,14 +9634,14 @@ Mods: {
 			}
 
 			RetinazerV2: {
-				DisplayName: 激光眼 v3.08
+				DisplayName: 激光眼
 				ClosesIn: 激光眼正在逼近...
 				Warning: 灼热的能量从激光眼的躯壳散发出来...
 				Defeated: 已被击败！
 			}
 
 			SpazmatismV2: {
-				DisplayName: 魔焰眼 v3.12
+				DisplayName: 魔焰眼
 				Defeated: 已被击败！
 			}
 
@@ -10557,16 +10561,16 @@ Mods: {
 					我低估你了，{0}！你竟突破飞龙法师的隐秘魔法，打开通往冻洋的路！  
 					只需东行潜入深海，悲伤正静候我等
 					'''
-				/* RemixSorrowBiomeHintPart1:
+				RemixSorrowBiomeHintPart1:
 					'''
-					Our journey takes us further East. The next of the Awakened, The Sorrow, took nest deep below the Frozen Ocean.
-					The gate after the ancestral spirit's lair is the way.
-					''' */
-				/* RemixSorrowBiomeHintPart2:
+					我们的征程继续向东延伸，悲伤蛰伏在冻洋的深处
+					穿越先祖之灵巢穴后的大门，便是前进的道路
 					'''
-					The Wyvern Mage, ally of the Mindflayer King, occupies a mountain fortress who guards the eastern skies.
-					The spirits can tell me no more. I fear this is a death trap, {0}...
-					''' */
+				RemixSorrowBiomeHintPart2:
+					'''
+					夺心魔王的盟友飞龙法师，盘踞着守卫东部天穹的山巅堡垒
+					精灵们的低语至此断绝，{0}，这恐怕是个陷阱...
+					'''
 				SorrowDeeperHint: 我们应该深入冻洋，我感知到极寒之力在其深处涌动
 				HunterBiomeHint:
 					'''
@@ -10590,11 +10594,11 @@ Mods: {
 					你应西行潜入诺拉海，那里曾有一座城镇，后毁于潮汐风暴
 					我相信如果有勇者敢探其深渊，诺拉必赐其踏水火而行之能，一如远古子民所受之恩泽
 					'''
-				/* RemixFireWalkHint:
+				RemixFireWalkHint:
 					'''
-					It seems dangerous to explore the Elengad ruins now, {0}.
-					You should explore further west and explore the Tropics, or going back and clear the Scarlet Hill's blood demons.
-					''' */
+					{0}，此时探索埃伦加德沙漠遗迹恐非良策
+					你应该继续向西探索热带海岸，或折返肃清猩红之丘的血肉之敌
+					'''
 				HunterClose:
 					'''
 					{0}，继续前进，我们快到了！谨慎行动，猎手乃三鸟至强
@@ -10741,12 +10745,12 @@ Mods: {
 					他与葛温无关，却掌握着对抗宿敌的关键，需携带能破除魔法结界的利刃
 					在人性幻魔阻隔的隐秘帷幕以东，深渊灰烬洞穴中可寻其踪迹
 					'''
-				/* RemixWitchkingHint:
+				RemixWitchkingHint:
 					'''
-					The Spirits tell me of another, a being that instead of escaping the Abyss has made it his dwelling: The Witchking.
-					He is not linked to Gwyn, but he holds the key to an old enemy of ours. Bring a blade that has the power to shatter magical wards.
-					East of the hidden veil of Humanity's past in Morgul Feleg, the depths of shadows that you'll find him. 
-					''' */
+					精灵们向我揭示另一位存在—非但未逃离深渊，反以其为居所的巫师王
+					他与葛温无关，却掌握着对抗宿敌的关键，需携带能破除魔法结界的利刃
+					在人性幻魔阻隔的隐秘帷幕以东，魔古尔遗迹的阴影深处可寻其踪迹
+					'''
 				WyvernMageShadowHint:
 					'''
 					{0}，我从巫师王给你的大蓝玉中感应到禁忌魔法波动，飞龙法师并未消亡...
@@ -10830,7 +10834,7 @@ Mods: {
 					一个来自深渊的传送门打开了，向世界释放了更多的黑暗能量。
 					祖先告诉我，传送门可以关闭，
 					但你必须首先击败三个元素恶魔：
-					[c/2f8ee0:水]、[c/2d9e2b:大地]、[c/f53d0a:火焰].
+					[c/2f8ee0:水]、[c/fcff00:大地]、[c/f53d0a:火焰].
 					你还必须击败另外四个深渊守护者：
 					[c/ffbf00:亚尔特留斯], [c/00ffd4:枯萎], [c/aa00ff:飞龙法师堕魂—渊影], and [c/18ffe2:无鳞冰龙—希斯].
 					'''
@@ -10842,26 +10846,26 @@ Mods: {
 					葛温的坟墓埋在西海的某个地方，
 					但如果你还没有从其他深渊守护者那里获得力量，他肯定会杀了你。
 					'''
-				/* RemixAdvModeSHMQuote2:
+				RemixAdvModeSHMQuote2:
 					'''
-					My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength
-					to face the final lord, who has tended the flame of the Abyss since the world began.
-					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
-					Gwyn's old tomb is buried somewhere in the Eternal Reef, but he will surely kill you
-					if you have not yet gathered the strength obtained from the other lords of the Abyss.
-					''' */
+					我的心为你而绝望，瑞德。这不容易，但是如果你成功了，你将有力量面对最后的敌人。
+					自世界诞生以来，他一直在照料深渊的火焰。
+					在祖先的记载中，他被称为[c/ff6618:葛温，灰烬帝王]。
+					葛温的坟墓埋在永恒礁的某个地方，
+					但如果你还没有从其他深渊守护者那里获得力量，他肯定会杀了你。
+					'''
 				AdvModeSHMQuote3:
 					'''
 					你见过散布在世界各地的[c/ffbf00:丛林蜥蜴神庙门]吗？它们会指引你走向你的目标。
-					我会从大裂谷深处的那一个开始，它通向那棵老树。
+					建议从大裂谷深处的那个开始，它通向旧日之树。
 					还有另一个，在埃伦加德沙漠遗址以东。剩下的，我相信你会找到的。祖先将帮助引导你。
 					'''
-				/* RemixAdvModeSHMQuote3:
+				RemixAdvModeSHMQuote3:
 					'''
-					Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal.
-					I would start with the one at the very west of the Mycellium Forest, which leads to the Dreamlike Caverns.
-					There is another, in a strange ship in the underworld. The rest, I'm sure you will find. The ancestors will help guide you.
-					''' */
+					你见过散布在世界各地的[c/ffbf00:丛林蜥蜴神庙门]吗？它们会指引你走向你的目标。
+					建议从菌丝林园西边的那个开始，它通向梦幻洞穴
+					还有另一个，在地狱岩浆中的奇怪飞船。剩下的，我相信你会找到的。祖先将帮助引导你。
+					'''
 				AdvModeSHMQuote4:
 					'''
 					关于[c/ffbf00:亚尔特留斯]和另一个在这些土地上游荡被称为[c/383838:巫师王]的黑暗生物，
@@ -10873,7 +10877,7 @@ Mods: {
 				AdvModeSHMQuote5: 祝你好运，瑞德。
 				SandboxSHMQuote1:
 					'''
-					要关闭通往深渊的传送门，你必须击败6个深渊领主：
+					要关闭通往深渊的传送门，你必须击败五个深渊领主：
 					[c/ffbf00:亚尔特留斯]、[c/00ffd4:枯萎]、[c/aa00ff:飞龙法师堕魂—渊影]、
 					[c/fcff00:混沌]和[c/18FF2:无鳞冰龙—希斯]。
 					有了这些领主的灵魂，
@@ -11132,7 +11136,16 @@ Mods: {
 			SoulSkellyR.MapEntry: 灵魂骷髅
 			SoulSkellyWall1.MapEntry: 灵魂骷髅
 			SoulSkellyWall2.MapEntry: 灵魂骷髅
-			SoulSkullL.MapEntry: 灵魂头骨
+
+			SoulSkullL: {
+				MapEntry: 灵魂头骨
+				AnnoyedTalk1: 你想干什么...
+				AnnoyedTalk2: 呵呵，哼...
+				AnnoyedTalk3: 别烦我，不然我就给你点颜色瞧瞧
+				AnnoyedTalk4: 好吧，拿上这东西赶紧走
+				AnnoyedTalk5: 我说了让你离开！
+			}
+
 			SoulSkullR.MapEntry: 灵魂头骨
 		}
 

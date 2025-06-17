@@ -41,24 +41,17 @@
   "style": 1
 }
 {
-  "text": "- 你找到了 ??? - --NEWLINE  --NEWLINE Miakoda：\u0022抱歉瑞德，我不认识这地方，这的科技和环境似乎不属于我们的世界\u0022",
+  "text": "- 你找到了 ??? - --NEWLINE   --NEWLINE Miakoda：\u0022抱歉瑞德，我不认识这地方，这的科技和环境似乎不属于我们的世界\u0022",
   "tileX": 229,
   "tileY": 152,
   "textWidth": 600,
   "style": 1
 }
 {
-  "text": "嘿，陌生人！我叫博什，我是个渔夫！ --NEWLINE  --NEWLINE 我们是一群四处航行的冒险者，喜欢探索海岸。 --NEWLINE  --NEWLINE 我并非来自这个国家，但我注意到了这些令人印象深刻的废墟，它们似乎蕴藏着丰富的宝藏…… --NEWLINE  --NEWLINE 哦对了，欢迎在这艘船上加入我们！",
+  "text": "嘿，陌生人！我叫博什，我是个渔夫！ --NEWLINE   --NEWLINE 我们是一群四处航行的冒险者，喜欢探索海岸。 --NEWLINE   --NEWLINE 我并非来自这个国家，但我注意到了这些令人印象深刻的废墟，它们似乎蕴藏着丰富的宝藏…… --NEWLINE   --NEWLINE 哦对了，欢迎在这艘船上加入我们！",
   "tileX": 236,
   "tileY": 858, 
   "textWidth": 680,
-  "style": 1
-}
-{
-  "text": "在浑浊的水里，你看到到处都是粉红色的花。 --NEWLINE   --NEWLINE 它们的诱惑力是黑暗的，但确实很诱人……它们等待着被毁灭……",
-  "tileX": 284,
-  "tileY": 1556,
-  "textWidth": 480,
   "style": 1
 }
 {
@@ -69,7 +62,7 @@
   "style": 1
 }
 {
-  "text": "Asha：\u0022好的，瑞德。但首先我要告诉你在哪里可以找到你父亲的剑和神圣盔甲。 --NEWLINE   --NEWLINE 你还记得我们老房子附近被洪水淹没的矿井吗？ --NEWLINE   --NEWLINE 他的剑和盔甲可以在一堵土墙后找到，在那之外是叶绿矿墙的封印，只有神圣钻头才能打破。\u0022 --NEWLINE   --NEWLINE Red：\u0022彳亍，走吧。\u0022",
+  "text": "亚莎：\u0022好的，瑞德。但首先我要告诉你在哪里可以找到你父亲的剑和神圣盔甲。 --NEWLINE   --NEWLINE 你还记得我们老房子附近被洪水淹没的矿井吗？ --NEWLINE   --NEWLINE 他的剑和盔甲可以在一堵土墙后找到，在那之外是叶绿矿墙的封印，只有神圣钻头才能打破。\u0022 --NEWLINE   --NEWLINE 瑞德：\u0022彳亍，走吧。\u0022",
   "tileX": 291,
   "tileY": 1367,
   "textWidth": 660,
@@ -83,6 +76,20 @@
   "style": 1
 }
 {
+  "text": "Red：\u0022我会回来的，我们最终能够迎来和平。 --NEWLINE   --NEWLINE 当我们到达海洋时，我会带你去西边的群岛，当我打败阿卓迪斯后我会回到那里。\u0022",
+  "tileX": 294,
+  "tileY": 1367,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "\u0022阿卓迪斯愚弄了所有人。 --NEWLINE   --NEWLINE 但没关系。我做了我认为需要的事，那就是来救你。\u0022",
+  "tileX": 297,
+  "tileY": 1367,
+  "textWidth": 460,
+  "style": 1
+}
+{
   "text": "你还记得那个巫师告诉过你这个地方， --NEWLINE   --NEWLINE 为了唤醒猎手，你必须潜到湖底，触摸金色的环形区域。",
   "tileX": 298,
   "tileY": 1515,
@@ -90,10 +97,45 @@
   "style": 1
 }
 {
+  "text": "亚莎：\u0022你打算怎么办？\u0022 --NEWLINE   --NEWLINE Red：\u0022我要杀了他。在我寻找你的过程中，我做了一件可怕的事情， --NEWLINE   --NEWLINE 我必须纠正我父亲的错误，并治愈我帮助阿卓迪斯释放的腐化。\u0022 --NEWLINE   --NEWLINE 亚莎：\u0022你做了什么？\u0022",
+  "tileX": 300,
+  "tileY": 1367,
+  "textWidth": 670,
+  "style": 1
+}
+{
+  "text": "\u0022当我拒绝告诉他们你父亲的剑在哪里时，阿卓迪斯折磨了我好几天，但最终放弃了，把我留在了这里。 --NEWLINE   --NEWLINE 我不知道他为什么不杀我。但感谢上帝，还能活着见到你真高兴。\u0022 --NEWLINE   --NEWLINE Red：\u0022来，随我离开这里。我会带你去一个安全的地方。\u0022",
+  "tileX": 303,
+  "tileY": 1367,
+  "textWidth": 740,
+  "style": 1
+}
+{
+  "text": "你打开亚莎牢房的门，看到她紧紧扣住自己的手臂，衣服上血迹斑斑，但她的眼睛依然充满活力。 --NEWLINE   --NEWLINE 你把她抱在怀里，紧紧拥抱她，然后抬头问，\u0022他们对你做了什么？\u0022",
+  "tileX": 306,
+  "tileY": 1367,
+  "textWidth": 720,
+  "style": 1
+}
+{
+  "text": "\u0022是你吗，亚莎？\u0022 --NEWLINE   --NEWLINE \u0022哦，瑞德，感谢上帝！我在这里！我就知道你要来……我在来的路上甚至提前感觉到了你的存在。\u0022 --NEWLINE   --NEWLINE \u0022亚莎，我爱你！我要带你离开这个鬼地方。\u0022",
+  "tileX": 319,
+  "tileY": 1367,
+  "textWidth": 700,
+  "style": 1
+}
+{
   "text": "Miakoda：\u0022我听说在这些废墟下面藏有一笔令人垂涎的宝藏，但要小心，那里布满了陷阱……\u0022",
   "tileX": 349,
   "tileY": 850,
-  "textWidth": 660,
+  "textWidth": 690,
+  "style": 1
+}
+{
+  "text": "你听见什么声音了吗？",
+  "tileX": 378,
+  "tileY": 1399,
+  "textWidth": 180,
   "style": 1
 }
 {
@@ -102,7 +144,14 @@
   "tileY": 1011,
   "textWidth": 710,
   "style": 1
-  }
+}
+{
+  "text": "ABSOLUTE CINEMA",
+  "tileX": 444,
+  "tileY": 1178,
+  "textWidth": 320,
+  "style": 1
+}
 {
   "text": "你感觉到一股强大的力量从这扇门后面涌出 --NEWLINE   --NEWLINE \u0022我需要神圣钻头……\u0022 --NEWLINE   --NEWLINE 直觉告诉你打开这扇门迫在眉睫",
   "tileX": 459,
@@ -181,10 +230,17 @@
   "style": 1
 }
 {
-  "text": "- 你发现了热带地区 - --NEWLINE  --NEWLINE 这的海边是已知世界的西部边缘，以其丰富的生命而闻名，但同时也充满了危险……",
+  "text": "- 你发现了热带地区 - --NEWLINE   --NEWLINE 这的海边是已知世界的西部边缘，以其丰富的生命而闻名，但同时也充满了危险……",
   "tileX": 816,
   "tileY": 833,
   "textWidth": 590,
+  "style": 1
+}
+{
+  "text": "- 心灵之岛 - --NEWLINE   --NEWLINE 星云柱作为四大天界封印之一，象征着精神与魔法。 --NEWLINE   --NEWLINE 很久以前，阿卓迪斯利用天界柱的力量封印了囚禁着邪教徒的远古空间囚笼 --NEWLINE   --NEWLINE 他的这位宿敌曾企图召唤拥有无限力量的神明威胁世界 --NEWLINE   --NEWLINE 摧毁天界柱将破除结界，释放那位强大的邪教徒",
+  "tileX": 921,
+  "tileY": 440,
+  "textWidth": 540,
   "style": 1
 }
 {
@@ -391,6 +447,13 @@
   "style": 1
 }
 {
+  "text": "- 狂怒之岛 - --NEWLINE   --NEWLINE 日耀柱作为四大天界封印之一，象征着愤怒与火焰。 --NEWLINE   --NEWLINE 很久以前，阿卓迪斯利用天界柱的力量封印了囚禁着邪教徒的远古空间囚笼 --NEWLINE   --NEWLINE 他的这位宿敌曾企图召唤拥有无限力量的神明威胁世界 --NEWLINE   --NEWLINE 摧毁天界柱将破除结界，释放那位强大的邪教徒",
+  "tileX": 2111,
+  "tileY": 268,
+  "textWidth": 540,
+  "style": 1
+}
+{
   "text": "你需要一块大琥珀来打开通道 --NEWLINE   --NEWLINE 这块琥珀很久以前就被封存在旧日之树中，以此来封印这个地方 --NEWLINE   --NEWLINE 你需要先击败夺心魔王阿卓迪斯才能获得它……",
   "tileX": 2221,
   "tileY": 858,
@@ -468,21 +531,21 @@
   "style": 1
 }
 {
-  "text": "瑞德：\u0022这些生物似乎来自海洋，为何会在此出现？\u0022 --NEWLINE   --NEWLINE Miakoda：\u0022正是。更准确地说它们是在血月仪式中重新获得了生命的尸骸。  --NEWLINE   --NEWLINE 如此庞大的数量，必定源自永恒珊瑚礁。\u0022",
+  "text": "瑞德：\u0022这些生物似乎来自海洋，为何会在此出现？\u0022 --NEWLINE   --NEWLINE Miakoda：\u0022正是。更准确地说它们是在血月仪式中重新获得了生命的尸骸。  --NEWLINE   --NEWLINE 如此庞大的数量，必定源自永恒礁。\u0022",
   "tileX": 2802,
   "tileY": 579,
   "textWidth": 540,
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022传说中三子魔眼杀害了许多寻求荣耀的勇士。 --NEWLINE   --NEWLINE 不要愚蠢，也许我们应该在面对它们之前掌握更强的力量。\u0022",
+  "text": "Miakoda：\u0022传说中三子魔眼杀害了许多寻求荣耀的勇士。 --NEWLINE   --NEWLINE 不要犯蠢，也许我们应该在面对它们之前掌握更强的力量。\u0022",
   "tileX": 2893,
   "tileY": 59,
   "textWidth": 450,
   "style": 1
 }
 {
-  "text": "- 你发现了猩红之丘 - --NEWLINE  --NEWLINE Miakoda：\u0022瑞德小心，右边的通道通向一些非常凶猛的血肉生物\u0022",
+  "text": "- 你发现了猩红之丘 - --NEWLINE   --NEWLINE Miakoda：\u0022瑞德小心，右边的通道通向一些非常凶猛的血肉生物\u0022",
   "tileX": 2921,
   "tileY": 427,
   "textWidth": 480,
@@ -517,10 +580,10 @@
   "style": 1
 }
 {
-  "text": "在水中你看到三颗跳动的大心脏… --NEWLINE   --NEWLINE \u0022这是什么恶心玩意？\u0022不假思索，你随手摧毁了它们…",
+  "text": "从破洞坠落后，你跌入一片血湖之中 --NEWLINE   --NEWLINE 凶残嗜血的怪物潜伏其间，随时准备将你拖入水下吞噬…",
   "tileX": 3044,
   "tileY": 904,
-  "textWidth": 390,
+  "textWidth": 420,
   "style": 1
 }
 {
@@ -741,7 +804,7 @@
   "style": 1
 }
 {
-  "text": "你找到了巫师私人宝箱的钥匙。 --NEWLINE  --NEWLINE \u0022但我真的能从他那里偷到东西，再活着带走吗？\u0022",
+  "text": "你找到了巫师私人宝箱的钥匙。 --NEWLINE   --NEWLINE \u0022但我真的能从他那里偷到东西，再活着带走吗？\u0022",
   "tileX": 3556,
   "tileY": 313,
   "textWidth": 380,
@@ -797,7 +860,7 @@
   "style": 1
 }
 {
-  "text": "- 你发现了野心之路 - --NEWLINE   --NEWLINE 你的潜意识告诉你沿着这条路走下去是不明智的…",
+  "text": "- 你发现了猩红神殿 - --NEWLINE   --NEWLINE 你的潜意识告诉你沿着这条路走下去是不明智的…",
   "tileX": 3758,
   "tileY": 1243,
   "textWidth": 400,
@@ -1336,7 +1399,7 @@
   "style": 1
 }
 {
-  "text": "(2)\u0022你妻子Asha……她还活着。 --NEWLINE   --NEWLINE 他们把我留在这里,带走了她，如果他们希望找到你父亲的剑，他们不得不让她活着。\u0022 --NEWLINE   --NEWLINE \u0022亚莎知道我们父亲把剑放在哪里？\u0022 --NEWLINE   --NEWLINE \u0022当父亲看到他们走近时他告诉她的，让我们两个都逃跑， --NEWLINE   --NEWLINE 但在我们到达森林之前，侦察员抓住了我们。我们没有机会。\u0022",
+  "text": "(2)\u0022你妻子亚莎……她还活着。 --NEWLINE   --NEWLINE 他们把我留在这里,带走了她，如果他们希望找到你父亲的剑，他们不得不让她活着。\u0022 --NEWLINE   --NEWLINE \u0022亚莎知道我们父亲把剑放在哪里？\u0022 --NEWLINE   --NEWLINE \u0022当父亲看到他们走近时他告诉她的，让我们两个都逃跑， --NEWLINE   --NEWLINE 但在我们到达森林之前，侦察员抓住了我们。我们没有机会。\u0022",
   "tileX": 4459,
   "tileY": 1745,
   "textWidth": 600,
@@ -1410,13 +1473,6 @@
   "tileX": 4615,
   "tileY": 1026,
   "textWidth": 360,
-  "style": 1
-}
-{
-  "text": "入口被叶绿矿封闭 --NEWLINE   --NEWLINE 叶绿矿是一种比精金更坚固的矿石",
-  "tileX": 4615,
-  "tileY": 1033,
-  "textWidth": 260,
   "style": 1
 }
 {
@@ -1637,13 +1693,6 @@
   "style": 1
 }
 {
-  "text": "在你父亲的剑下，你发现一张纸条：\u0022瑞德，很多年前，当这片大地还留有和平的时候， --NEWLINE   --NEWLINE 我将这把剑的灵魂一分为三，确保它的全部力量永远不会被黑暗势力所利用。 --NEWLINE   --NEWLINE 如果再次需要这种力量，请在大峡谷深处的蜥蜴神庙大门后寻找旧日之树… --NEWLINE   --NEWLINE 保持小心，瑞德。我将永远与你在一起。\u0022-你的父亲",
-  "tileX": 5084,
-  "tileY": 920,
-  "textWidth": 680,
-  "style": 1
-}
-{
   "text": "- 你找到了遗忘之城的墓穴 - --NEWLINE   --NEWLINE \u0022门是密封的，但没有钥匙孔……\u0022 --NEWLINE   --NEWLINE 这上面挂着的太阳旗在暗示什么？",
   "tileX": 5117,
   "tileY": 1743,
@@ -1735,7 +1784,7 @@
   "style": 1
 }
 {
-  "text": "- 你发现了地狱边陲 - --NEWLINE  --NEWLINE 生命竟能在这又深又热的地方萌发，真是相当有趣。",
+  "text": "- 你发现了地狱边陲 - --NEWLINE   --NEWLINE 生命竟能在这又深又热的地方萌发，真是相当有趣。",
   "tileX": 5367,
   "tileY": 1877,
   "textWidth": 370,
@@ -1749,10 +1798,24 @@
   "style": 1
 }
 {
+  "text": "- 风暴之岛 - --NEWLINE   --NEWLINE 星漩柱作为四大天界封印之一，象征着扭曲与闪电。 --NEWLINE   --NEWLINE 很久以前，阿卓迪斯利用天界柱的力量封印了囚禁着邪教徒的远古空间囚笼 --NEWLINE   --NEWLINE 他的这位宿敌曾企图召唤拥有无限力量的神明威胁世界 --NEWLINE   --NEWLINE 摧毁天界柱将破除结界，释放那位强大的邪教徒。",
+  "tileX": 5418,
+  "tileY": 437,
+  "textWidth": 540,
+  "style": 1
+}
+{
   "text": "- 你找到了失落的乌拉席露森林 - --NEWLINE   --NEWLINE 一种恐惧感包裹了你：你不应该出现在这里。",
   "tileX": 5422,
   "tileY": 925,
   "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "你拉动拉杆，听到一条通道在刚刚通过的丛林深处打开。",
+  "tileX": 5434,
+  "tileY": 1590,
+  "textWidth": 410,
   "style": 1
 }
 {
@@ -1847,6 +1910,13 @@
   "style": 1
 }
 {
+  "text": "在你父亲的剑下，你发现一张纸条：\u0022瑞德，很多年前，当这片大地还留有和平的时候， --NEWLINE   --NEWLINE 我将这把剑的灵魂一分为三，确保它的全部力量永远不会被黑暗势力所利用。 --NEWLINE   --NEWLINE 如果再次需要这种力量，请在西海深处寻找永恒礁… --NEWLINE   --NEWLINE 保持小心，瑞德。我将永远与你在一起。\u0022-你的父亲",
+  "tileX": 5926,
+  "tileY": 858,
+  "textWidth": 680,
+  "style": 1
+}
+{
   "text": "Miakoda告诉你，你可以通过隧道返回地面 --NEWLINE   --NEWLINE 隧道直接通向西边的大洞穴中最高的神庙废墟。",
   "tileX": 5934,
   "tileY": 1281,
@@ -1861,10 +1931,31 @@
   "style": 1
 }
 {
+  "text": "- 树妖之家 - --NEWLINE   --NEWLINE 数百年来，树妖栖居丛林，守护神树免遭腐化侵蚀 --NEWLINE   --NEWLINE 正因其坚守，神树至今仍以金叶辉耀丛林，抗衡阿特拉迪斯的黑黯之力",
+  "tileX": 5964,
+  "tileY": 569,
+  "textWidth": 510,
+  "style": 1
+}
+{
+  "text": "入口被叶绿矿封闭，一种比精金更坚固的矿石 --NEWLINE   --NEWLINE \u0022树根深处究竟保存了什么东西？\u0022",
+  "tileX": 5958,
+  "tileY": 578,
+  "textWidth": 300,
+  "style": 1
+}
+{
   "text": "- 你发现了丛林秘境 - --NEWLINE   --NEWLINE 世纪之花的花园",
   "tileX": 5968,
   "tileY": 1627,
   "textWidth": 180,
+  "style": 1
+}
+{
+  "text": "你找到了大琥珀，是开启通往元素恶魔大门的钥匙",
+  "tileX": 5969,
+  "tileY": 863,
+  "textWidth": 370,
   "style": 1
 }
 {
@@ -2106,6 +2197,13 @@
   "style": 1
 }
 {
+  "text": "你拉动拉杆，听到冰层在堡垒深处裂开的声音。",
+  "tileX": 7122,
+  "tileY": 338,
+  "textWidth": 340,
+  "style": 1
+}
+{
   "text": "Miakoda：\u0022你要知道，当它的身躯燃烧起来时，愤怒就要狂暴了。 --NEWLINE   --NEWLINE 当它狂暴时会自愈，而且在短时间内内也会变得更加危险。 --NEWLINE   --NEWLINE 你应该好躲避的准备！移动性是关键！",
   "tileX": 7102,
   "tileY": 1457,
@@ -2194,6 +2292,13 @@
   "tileX": 7356,
   "tileY": 485,
   "textWidth": 420,
+  "style": 1
+}
+{
+  "text": "- 预知之岛 - --NEWLINE   --NEWLINE 星尘柱作为四大天界封印之一，象征着视野与星辰。 --NEWLINE   --NEWLINE 很久以前，阿卓迪斯利用天界柱的力量封印了囚禁着邪教徒的远古空间囚笼 --NEWLINE   --NEWLINE 他的这位宿敌曾企图召唤拥有无限力量的神明威胁世界 --NEWLINE   --NEWLINE 摧毁天界柱将破除结界，释放那位强大的邪教徒。",
+  "tileX": 7705,
+  "tileY": 362,
+  "textWidth": 540,
   "style": 1
 }
 {

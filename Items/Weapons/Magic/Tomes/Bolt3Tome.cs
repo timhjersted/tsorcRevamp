@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.VanillaItems;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 {
@@ -45,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             if (!player.wet)
                 return;
 
-            TooltipLine modified = new TooltipLine(Mod, "Damage", ((int)(player.GetWeaponDamage(Item, true) * dmgIncrease)).ToString() + " magic damage");
+            TooltipLine modified = new TooltipLine(Mod, "Damage", ((int)(player.GetWeaponDamage(Item, true) * dmgIncrease)).ToString() + Language.GetTextValue("LegacyTooltip.4"));
 
             for (int i = 0; i < tooltips.Count; i++)
             {
