@@ -5811,7 +5811,7 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:The Moonlight Greatsword, the sword of legend...]
-					Glows and gains piercing projectiles at night
+					Glows and becomes stronger at night
 					Scales with your magic or melee stats, whichever is higher
 					Launches glimmering waves of moonlight
 					'''

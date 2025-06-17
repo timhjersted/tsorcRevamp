@@ -45,6 +45,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Gwyn.DespawnHandler"), Color.OrangeRed, 6);
         }
 
+        // If they player is more than whyAreYouRunning units away, HeroSoulAttacks gain a rage multiplier.
+        public float whyAreYouRunning = 600f;
+        float rageMultiplier = 1f;
+
         //old attacks, not all used
         int deathBallDamage = 39; //200
         int phantomSeekerDamage = 55; //225
@@ -140,6 +144,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
         #endregion
+
+        public int CalculateRageDamage(int originalDamage)
+        {
+            return NPC.Distance(Main.player[NPC.target].Center) < whyAreYouRunning ? originalDamage : (int)(originalDamage * rageMultiplier);
+        }
 
 
         #region AI
@@ -395,7 +404,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
                     //If that is true, check if they are far enough away. If so, set farEnoughAway to true and end the loop with break;
-                    if (NPC.Distance(Main.player[i]) > 550)
+                    if (NPC.Distance(Main.player[i]) > whyAreYouRunning)
                     {
                         farEnoughAway = true;
                         break;
@@ -487,7 +496,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 }
                 //ANTIMAT ROUNDS FINAL
-                if (NPC.life >= NPC.lifeMax / 20 * 3 && NPC.life <= NPC.lifeMax / 10 * 3 && customAi3 >= 270 && NPC.Distance(player.Center) > 550 && Main.rand.NextBool(8))
+                if (NPC.life >= NPC.lifeMax / 20 * 3 && NPC.life <= NPC.lifeMax / 10 * 3 && customAi3 >= 270 && NPC.Distance(player.Center) > 550f && Main.rand.NextBool(8))
                 {
                     float num48 = 3f;//was 4
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2) - (160 + Main.rand.Next(80)));//added - 200
@@ -518,7 +527,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 //3 DEATH SKULLS WHEN PLAYER RUNS AWAY 
-                if (NPC.Distance(player.Center) > 550 && Main.rand.NextBool(400))
+                if (NPC.Distance(player.Center) > whyAreYouRunning && Main.rand.NextBool(400))
                 {
                     Player nT = Main.player[NPC.target];
                     for (int pcy = 0; pcy < 3; pcy++) //2.1 was 7.1f
@@ -527,7 +536,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / 10, 0.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / 10, 0.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), CalculateRageDamage(herosArrowDamage), 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
                         }
                         Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.8f);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //dungeon spirit sound
@@ -549,7 +558,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(600), (float)nT.position.Y - 650f, (float)(-50 + Main.rand.Next(100)) / 10, 0.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), herosArrowDamage, 1f, Main.myPlayer); //EnemySpellSuddenDeathBall
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(600), (float)nT.position.Y - 650f, (float)(-50 + Main.rand.Next(100)) / 10, 0.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), CalculateRageDamage(herosArrowDamage), 1f, Main.myPlayer); //EnemySpellSuddenDeathBall
                         }
                         Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //demon spirit
@@ -572,7 +581,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 800 + Main.rand.Next(800), (float)nT.position.Y - 650f, (float)(-50 + Main.rand.Next(100)) / 10, 0.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), herosArrowDamage, 1f, Main.myPlayer); //EnemySpellSuddenDeathBall
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 800 + Main.rand.Next(800), (float)nT.position.Y - 650f, (float)(-50 + Main.rand.Next(100)) / 10, 0.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), CalculateRageDamage(herosArrowDamage), 1f, Main.myPlayer); //EnemySpellSuddenDeathBall
                         }
                         Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //demon spirit
@@ -595,7 +604,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 400 + Main.rand.Next(400), (float)nT.position.Y - 700f, (float)(-50 + Main.rand.Next(100)) / 10, 3f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), herosArrowDamage, 2f, Main.myPlayer); //EnemySpellSuddenDeathBall
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 400 + Main.rand.Next(400), (float)nT.position.Y - 700f, (float)(-50 + Main.rand.Next(100)) / 10, 3f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), CalculateRageDamage(herosArrowDamage), 2f, Main.myPlayer); //EnemySpellSuddenDeathBall
                         }
                         Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //acid flame
@@ -616,7 +625,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 400 + Main.rand.Next(400), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / 10, 3f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), herosArrowDamage, 2f, Main.myPlayer); //EnemySpellSuddenDeathBall
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 400 + Main.rand.Next(400), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / 10, 3f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), CalculateRageDamage(herosArrowDamage), 2f, Main.myPlayer); //EnemySpellSuddenDeathBall
                         }
                         Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //acid flame
@@ -1859,13 +1868,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #endregion
         }
 
-
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (swordDead)
             {
                 modifiers.FinalDamage *= 1.2f;
-                herosArrowDamage = (int)(herosArrowDamage * 1.1f);
+
+                // His rage increases as you attack from range
+                if (NPC.Distance(player.Center) > whyAreYouRunning)
+                {
+                    rageMultiplier *= 1.1f;
+                }
             }
         }
 
@@ -1874,7 +1887,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (swordDead)
             {
                 modifiers.FinalDamage *= 1.2f;
-                herosArrowDamage = (int)(herosArrowDamage * 1.1f);
+
+                // His rage increases as you attack from range
+                if (NPC.Distance(Main.player[projectile.owner].Center) > whyAreYouRunning)
+                {
+                    rageMultiplier *= 1.1f;
+                }
             }
 
             if (projectile.minion)

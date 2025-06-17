@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Melee;
 
@@ -9,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class MoonlightGreatsword : ModItem
     {
-
+        public static int NightDamageIncrease => 20;
 
         public override void SetStaticDefaults()
         {
@@ -30,27 +32,36 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 1000000;
             Item.shoot = ModContent.ProjectileType<MLGSCrescent>();
-            Item.shootSpeed = 2f; //Yes it looks slow but it gets *1.2f each tick in it's AI. My attempt at making the sword look like it's not spawning in the player.
+            Item.shootSpeed = 12f; 
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Teal;
         }
 
-
-        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        public static DamageClass GetDamageType(Player player)
         {
+            DamageClass dmgClass;
+
             if (player.GetTotalDamage(DamageClass.Magic).ApplyTo(100) < player.GetTotalDamage(DamageClass.Melee).ApplyTo(100))
             {
-                Item.DamageType = DamageClass.Melee;
+                dmgClass = DamageClass.Melee;
             }
             else
             {
-                Item.DamageType = DamageClass.Magic;
+                dmgClass =  DamageClass.Magic;
             }
 
+            return dmgClass;
+        }
+
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            Item.DamageType = GetDamageType(player);
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
+            if (!Main.dayTime)
+                modifiers.SourceDamage.Base *= 1f + (NightDamageIncrease / 100f);
         }
 
         Texture2D glowTexture;
@@ -96,6 +107,28 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 89, player.velocity.X, player.velocity.Y, 100, default, .8f);
             Main.dust[dust].noGravity = true;
+        }
+
+        // Show the proper damage in the tooltip
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            Item.DamageType = GetDamageType(Main.LocalPlayer);
+
+            if (!Main.dayTime)
+            {
+                foreach (TooltipLine line in tooltips)
+                {
+                    if (line.Name == "Damage")
+                    {
+                        Player player = Main.LocalPlayer;
+
+                        string nightDamage = ((int)(player.GetWeaponDamage(Item) * (1f + NightDamageIncrease / 100f))).ToString();
+                        string typeOfDamage = Item.DamageType == DamageClass.Magic ? "magic" : "melee";
+
+                        line.Text = string.Join(" ", nightDamage, typeOfDamage, "damage");
+                    }
+                }
+            }
         }
     }
 }

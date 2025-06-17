@@ -1,33 +1,32 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using System;
 
 namespace tsorcRevamp.Projectiles.Melee
 {
     class MLGSCrescent : ModProjectile
     {
-
+        public static int MaxTicksBeforeSpeedIncrease => 10;
+        public int ticksBeforeSpeedIncrease;
         public override void SetStaticDefaults()
         {
-        }
 
+        }
         public override void SetDefaults()
         {
             Projectile.width = 30;
             Projectile.height = 30;
             Projectile.penetrate = 5;
             Projectile.friendly = true;
-            if (Main.dayTime)
-            {
-                Projectile.tileCollide = true;
-            }
-            else
-            {
-                Projectile.tileCollide = false;
-            }
+            Projectile.scale = 1.5f;
+            Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.timeLeft = 20;
+            Projectile.timeLeft = 70; // Expires a bit more than a screen width away from the player
+            ticksBeforeSpeedIncrease = 0;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -55,6 +54,13 @@ namespace tsorcRevamp.Projectiles.Melee
 
             return false;
         }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            Projectile.DamageType = MoonlightGreatsword.GetDamageType(Main.player[Projectile.owner]);
+
+            if (!Main.dayTime)
+                modifiers.SourceDamage.Base *= 1f + (MoonlightGreatsword.NightDamageIncrease / 100f);
+        }
 
         public override void OnKill(int timeLeft)
         {
@@ -65,13 +71,23 @@ namespace tsorcRevamp.Projectiles.Melee
             }
         }
 
+        // Don't spawn directly on player
+        public override void OnSpawn(IEntitySource source)
+        {
+            Projectile.position += Projectile.velocity / 4f;
+        }
 
         public override void AI()
         {
             Projectile.ai[0]++;
             Projectile.rotation = Projectile.velocity.ToRotation();
 
-            Projectile.velocity *= 1.2f;
+            ticksBeforeSpeedIncrease++;
+            if (ticksBeforeSpeedIncrease == MaxTicksBeforeSpeedIncrease)
+            {
+                Projectile.velocity *= 1.2f;
+                ticksBeforeSpeedIncrease = 0;
+            }
 
             if (Projectile.ai[0] > 8)
             {
