@@ -1959,6 +1959,8 @@ namespace tsorcRevamp
             {
                 // To prevent "Pirates approaching from the east/west"
                 Main.invasionX = Main.spawnTileX;
+                if (Main.invasionSize <= 0)
+                    RemixPiratesDefeated = true;
             }
         }
 
@@ -1969,9 +1971,6 @@ namespace tsorcRevamp
             if (RemixMap && Main.invasionType == InvasionID.PirateInvasion)
             {
                 Main.invasionX = (PirateZoneLeftX + PirateZoneRightX) / 2; // The middle of the player zone X check
-
-                if (Main.invasionSize <= 0)
-                    RemixPiratesDefeated = true;
             }
         }
     }
