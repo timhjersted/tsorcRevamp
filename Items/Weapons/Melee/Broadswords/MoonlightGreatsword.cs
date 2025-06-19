@@ -124,7 +124,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
                         string nightDamage = ((int)(player.GetWeaponDamage(Item) * (1f + NightDamageIncrease / 100f))).ToString();
                         string typeOfDamage = Item.DamageType == DamageClass.Magic ? Language.GetTextValue("LegacyTooltip.4") : Language.GetTextValue("LegacyTooltip.2");
-                        line.Text = string.Join(" ", nightDamage, typeOfDamage);
+                        line.Text = nightDamage + typeOfDamage;
                     }
                 }
             }

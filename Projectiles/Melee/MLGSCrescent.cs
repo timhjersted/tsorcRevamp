@@ -26,6 +26,7 @@ namespace tsorcRevamp.Projectiles.Melee
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.timeLeft = 70; // Expires a bit more than a screen width away from the player
+            Projectile.extraUpdates = 1;
             ticksBeforeSpeedIncrease = 0;
         }
 
