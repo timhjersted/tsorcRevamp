@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.scale = 0.8f;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 50000;
+            NPC.lifeMax = 100000;
             NPC.value = 10000;
             NPC.noGravity = false;
             NPC.noTileCollide = true;

@@ -13,6 +13,7 @@ using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Projectiles.Enemy.Gwyn;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -34,8 +35,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.scale = 1.4f;
             Music = 12;
             NPC.damage = 95;
-            NPC.defense = 160;
-            NPC.lifeMax = 1000000;
+            NPC.defense = 220;
+            NPC.lifeMax = 900000;
             NPC.knockBackResist = 0.0f;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
@@ -114,7 +115,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //ancient demon
         int cultistFireDamage = 41;//192
         int cultistMagicDamage = 62;//259
-        int cultistLightningDamage = 43;//260
         int fireBreathDamage = 50;//131
         int lostSoulDamage = 38;//223
         int greatFireballDamage = 36;//216
@@ -207,7 +207,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     else
                     {
-                        NPC.defense = 160;
+                        NPC.defense = 220;
                     }
 
                 }
@@ -302,7 +302,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 smokebombDamage = 10000;
                 cultistFireDamage = 10000;
                 cultistMagicDamage = 10000;
-                cultistLightningDamage = 10000;
                 fireBreathDamage = 10000;
                 lostSoulDamage = 10000;
                 greatFireballDamage = 10000;
@@ -1459,24 +1458,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         NPC.localAI[3] = 1f;
 
-
-                    }
-                    //LIGHTNING ATTACK
-                    if (NPC.localAI[3] == 160f && (demonChoice == 5 || demonChoice == 4))
-                    {
-                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
-                        speed.Y += Main.rand.NextFloat(-2, -5f);//was -2, -6
-
-                        if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
-                            }
-
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
-                        }
-                        NPC.localAI[3] = -50f;
                     }
 
                     //FINAL JUNGLE FLAMES DESPERATE ATTACK

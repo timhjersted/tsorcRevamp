@@ -9566,6 +9566,8 @@ Mods: {
 			// NecromanticSerpentBody.DisplayName: Necromantic Serpent Body
 			// NecromanticSerpentHead.DisplayName: Necromantic Serpent Head
 			// NecromanticSerpentTail.DisplayName: Necromantic Serpent Tail
+			// GwynAura.DisplayName: Gwyn Aura
+			// BlackArrow.DisplayName: Black Arrow
 		}
 
 		NPCs: {

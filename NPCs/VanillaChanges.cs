@@ -3669,7 +3669,6 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.BoneThrowingSkeleton3
                     || npc.type == NPCID.Butcher
                     || npc.type == NPCID.TheBride
-                    || npc.type == NPCID.MartianProbe
                     || npc.type == NPCID.WindyBalloon
                     || npc.type == NPCID.ToxicSludge
                     || npc.type == NPCID.BloodCrawlerWall
@@ -3679,66 +3678,71 @@ namespace tsorcRevamp.NPCs
                 {
                     npc.active = false;
                 }
-
-                if (tsorcRevampWorld.SuperHardMode) 
+                
+                if (npc.type == NPCID.MartianProbe && !tsorcRevampWorld.RemixMap && !tsorcRevampWorld.SuperHardMode)
                 {
-                    if (npc.type == NPCID.Hornet
-                        || npc.type == NPCID.BigHornetStingy
-                        || npc.type == NPCID.LittleHornetStingy
-                        || npc.type == NPCID.BigHornetSpikey
-                        || npc.type == NPCID.LittleHornetSpikey
-                        || npc.type == NPCID.BigHornetLeafy
-                        || npc.type == NPCID.LittleHornetLeafy
-                        || npc.type == NPCID.BigHornetHoney
-                        || npc.type == NPCID.LittleHornetHoney
-                        || npc.type == NPCID.BigHornetFatty
-                        || npc.type == NPCID.LittleHornetFatty
-                        || npc.type == NPCID.BigStinger
-                        || npc.type == NPCID.LittleStinger
-                        || npc.type == NPCID.ManEater
-                        || npc.type == NPCID.UndeadMiner
-                        || npc.type == NPCID.CaveBat 
-                        || npc.type == NPCID.JungleBat
-                        || npc.type == NPCID.Snatcher
-                        || npc.type == NPCID.LavaSlime
-                        || npc.type == NPCID.Hellbat
-                        || npc.type == NPCID.BlueJellyfish
-                        || npc.type == NPCID.Crimera
-                        || npc.type == NPCID.BigCrimera
-                        || npc.type == NPCID.LittleCrimera
-                        || npc.type == NPCID.WallCreeperWall
-                        || npc.type == NPCID.FaceMonster
-                        || npc.type == NPCID.SnowFlinx
-                        || npc.type == NPCID.SpikedJungleSlime
-                        || npc.type == NPCID.SpikedIceSlime
-                        || npc.type == NPCID.BloodCrawler
-                        || npc.type == NPCID.WalkingAntlion
-                        || npc.type == NPCID.FlyingAntlion
-                        || npc.type == NPCID.TorchZombie
-                        || npc.type == NPCID.ArmedTorchZombie
-                        || npc.type == NPCID.GiantFlyingAntlion
-                        || npc.type == NPCID.IceBat
-                        || npc.type == NPCID.Antlion
-                        || npc.type == NPCID.GiantWormHead
-                        || npc.type == NPCID.Dandelion
-                        || npc.type == NPCID.TombCrawlerHead
-                        || npc.type == NPCID.MotherSlime
-                        || npc.type == NPCID.Piranha
-                        || npc.type == NPCID.UndeadViking
-                        || npc.type == NPCID.CursedSkull)
-                    {
-                    npc.active = false; //Most PHM enemies are removed SHM, they're taking up spawn slots for nothing at this point
-                    }
-
-                    if ((npc.type >= NPCID.DemonEye2 && npc.type <= NPCID.CataractEye2) ||
-                        npc.type == NPCID.DemonEye ||
-                        (npc.type >= NPCID.CataractEye && npc.type <= NPCID.PurpleEye) ||
-                        npc.type == NPCID.DemonEyeOwl ||
-                        npc.type == NPCID.DemonEyeSpaceship)
-                    {
-                        npc.active = false;
-                    }
+                    npc.active = false;
                 }
+
+                if (tsorcRevampWorld.SuperHardMode)
+                    {
+                        if (npc.type == NPCID.Hornet
+                            || npc.type == NPCID.BigHornetStingy
+                            || npc.type == NPCID.LittleHornetStingy
+                            || npc.type == NPCID.BigHornetSpikey
+                            || npc.type == NPCID.LittleHornetSpikey
+                            || npc.type == NPCID.BigHornetLeafy
+                            || npc.type == NPCID.LittleHornetLeafy
+                            || npc.type == NPCID.BigHornetHoney
+                            || npc.type == NPCID.LittleHornetHoney
+                            || npc.type == NPCID.BigHornetFatty
+                            || npc.type == NPCID.LittleHornetFatty
+                            || npc.type == NPCID.BigStinger
+                            || npc.type == NPCID.LittleStinger
+                            || npc.type == NPCID.ManEater
+                            || npc.type == NPCID.UndeadMiner
+                            || npc.type == NPCID.CaveBat
+                            || npc.type == NPCID.JungleBat
+                            || npc.type == NPCID.Snatcher
+                            || npc.type == NPCID.LavaSlime
+                            || npc.type == NPCID.Hellbat
+                            || npc.type == NPCID.BlueJellyfish
+                            || npc.type == NPCID.Crimera
+                            || npc.type == NPCID.BigCrimera
+                            || npc.type == NPCID.LittleCrimera
+                            || npc.type == NPCID.WallCreeperWall
+                            || npc.type == NPCID.FaceMonster
+                            || npc.type == NPCID.SnowFlinx
+                            || npc.type == NPCID.SpikedJungleSlime
+                            || npc.type == NPCID.SpikedIceSlime
+                            || npc.type == NPCID.BloodCrawler
+                            || npc.type == NPCID.WalkingAntlion
+                            || npc.type == NPCID.FlyingAntlion
+                            || npc.type == NPCID.TorchZombie
+                            || npc.type == NPCID.ArmedTorchZombie
+                            || npc.type == NPCID.GiantFlyingAntlion
+                            || npc.type == NPCID.IceBat
+                            || npc.type == NPCID.Antlion
+                            || npc.type == NPCID.GiantWormHead
+                            || npc.type == NPCID.Dandelion
+                            || npc.type == NPCID.TombCrawlerHead
+                            || npc.type == NPCID.MotherSlime
+                            || npc.type == NPCID.Piranha
+                            || npc.type == NPCID.UndeadViking
+                            || npc.type == NPCID.CursedSkull)
+                        {
+                            npc.active = false; //Most PHM enemies are removed SHM, they're taking up spawn slots for nothing at this point
+                        }
+
+                        if ((npc.type >= NPCID.DemonEye2 && npc.type <= NPCID.CataractEye2) ||
+                            npc.type == NPCID.DemonEye ||
+                            (npc.type >= NPCID.CataractEye && npc.type <= NPCID.PurpleEye) ||
+                            npc.type == NPCID.DemonEyeOwl ||
+                            npc.type == NPCID.DemonEyeSpaceship)
+                        {
+                            npc.active = false;
+                        }
+                    }
 
             if ((npc.friendly) && (npc.townNPC == true))
             { //town NPCs are immortal (why was i using a hp check?)

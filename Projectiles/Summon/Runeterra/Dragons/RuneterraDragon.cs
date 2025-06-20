@@ -269,7 +269,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             {
                 case 1:
                     {
-                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/BreathLoop") with { Volume = ScorchingPoint.SoundVolume * 0.5f, IsLooped = true, MaxInstances = 1 };
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/BreathLoop") with { Volume = ScorchingPoint.SoundVolume * 0.25f, IsLooped = true, MaxInstances = 1 };
                         break;
                     }
                 case 2:
@@ -279,7 +279,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                     }
                 case 3:
                     {
-                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BreathLoop") with { Volume = CenterOfTheUniverse.SoundVolume * 0.35f, IsLooped = true, MaxInstances = 1 };
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BreathLoop") with { Volume = CenterOfTheUniverse.SoundVolume * 0.20f, IsLooped = true, MaxInstances = 1 };
                         break;
                     }
             }
@@ -305,7 +305,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             Player player = Main.player[Projectile.owner];
             AltSequence = true;
             SyncAltSequence = true;
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/CometCast") with { Volume = CenterOfTheUniverse.SoundVolume * 0.5f });
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/CometCast") with { Volume = CenterOfTheUniverse.SoundVolume * 0.25f });
             if (Main.myPlayer == Projectile.owner)
             {
                 CometZone = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<GrandCometZone>(), (int)BaseOriginalDamage * 2, player.GetTotalKnockback(DamageClass.Summon).ApplyTo(player.HeldItem.knockBack * 10), player.whoAmI); //this damage only applies to the shockwave after the explosion and hits once
@@ -333,7 +333,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks < 6)
                             {
                                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks++;
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/Marked") with { Volume = ScorchingPoint.SoundVolume * 0.5f });
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/Marked") with { Volume = ScorchingPoint.SoundVolume * 0.25f });
                             }
                             break;
                         }
@@ -342,7 +342,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks < 6)
                             {
                                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks++;
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/Marked") with { Volume = InterstellarVesselGauntlet.SoundVolume * 0.5f });
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/Marked") with { Volume = InterstellarVesselGauntlet.SoundVolume * 0.25f });
                             }
                             break;
                         }
@@ -351,7 +351,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks < 6)
                             {
                                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks++;
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = CenterOfTheUniverse.SoundVolume * 0.5f });
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = CenterOfTheUniverse.SoundVolume * 0.25f });
                             }
                             break;
                         }

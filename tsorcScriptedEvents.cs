@@ -164,6 +164,7 @@ namespace tsorcRevamp
             GwynTombVision,
             AbyssPortal,
             GwynFight,
+            RemixGwynFight,
             AbysmalOolacileSorcererFight,
             RemixAbysmalOolacileSorcererFight,
             WitchkingFight,
@@ -399,7 +400,8 @@ namespace tsorcRevamp
             ScriptedEvent AbyssPortalEvent = new ScriptedEvent(new Vector2(670, 1164), 9999999, ModContent.NPCType<NPCs.Special.AbyssPortal>(), DustID.RedTorch, false, false, false, LangUtils.GetTextValue("Events.AbyssPortal"), default, false, AbyssPortalCustomCondition);
 
             //GWYN
-            ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Gwyn"), Color.Red, false);
+            ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Gwyn"), Color.Red, false, OnlyAdventureMapCondition);
+            ScriptedEvent RemixGwynEvent = new ScriptedEvent(new Vector2(822, 1241), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Gwyn"), Color.Red, false, RemixMapCondition);
 
             //ABYSMAL OOLACILE SORCERER
             ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AbysmalOolacileSorcerer"), Color.Red, false, OnlyAdventureMapCondition);
@@ -689,7 +691,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.AbyssPortal, AbyssPortalEvent},
                 {ScriptedEventType.GwynTombVision, GwynsTombEvent},
                 {ScriptedEventType.GwynFight, GwynEvent},
-                {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
+                {ScriptedEventType.RemixGwynFight, RemixGwynEvent},
+                { ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
                 {ScriptedEventType.RemixAbysmalOolacileSorcererFight, RemixAbysmalOolacileSorcererEvent},
                 {ScriptedEventType.WitchkingFight, WitchkingEvent},
                 {ScriptedEventType.RemixWitchkingEvent, RemixWitchkingEvent},

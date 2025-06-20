@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
             Item.width = 24;
             Item.height = 24;
             Item.accessory = true;
-            Item.defense = 3;
+            Item.defense = 6;
             Item.expert = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.Expert;

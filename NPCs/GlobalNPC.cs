@@ -813,6 +813,7 @@ namespace tsorcRevamp.NPCs
                         {
                             Main.StartInvasion();
                         }
+
                         tsorcRevampWorld.PopulatePairedBosses();
                         //Paired bosses have to have their slain entries work different
                         if (tsorcRevampWorld.PairedBosses.Contains(npc.type))

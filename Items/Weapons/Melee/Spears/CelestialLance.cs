@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int ProjectileID => ModContent.ProjectileType<CelestialLanceProj>();
         public override int Width => 44;
         public override int Height => 44;
-        public override int BaseDmg => 245;
+        public override int BaseDmg => 315;
         public override int BaseCritChance => 0;
         public override float BaseKnockback => 10;
         public override int UseAnimationTime => 20;
