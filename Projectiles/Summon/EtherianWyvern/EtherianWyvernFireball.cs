@@ -73,7 +73,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Condition.DownedOldOnesArmyT3.IsMet())
+            if (tsorcRevampWorld.isHellkiteDragonDead)
             {
                 target.AddBuff(BuffID.BetsysCurse, 3 * 60);
             }

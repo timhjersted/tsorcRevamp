@@ -629,8 +629,9 @@ Mods: {
 				LargeAmber: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
 				RemixLargeDiamond: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
 				RemixLargeTopaz: "[c/ffbf00:A symbol resembling the ruins at the ends of a large abandoned city is carved into it]"
-				VulnerabilityHex: Applies a vulnerability hex if Betsy has been defeated
-				IncinerationHex: Applies a incineration hex if Betsy has been defeated
+				VulnerabilityHex: Deals more damage and applies a vulnerability hex if Hellkite Dragon has been defeated
+				IncinerationHex: Deals more damage and applies a incineration hex if Hellkite Dragon has been defeated
+				MartianBuff: Deals more damage and electrocutes enemies if the Martians have been defeated
 				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
 				ManaRegenerationBand: Increases mana regen by 25 and decreases mana regen delay by 100%
 				WellFedItemsBotC: Increases stamina regen by {0}% for the [c/6d8827:Bearer of the Curse]
@@ -1527,8 +1528,8 @@ Mods: {
 				DisplayName: Dragon Stone
 				Tooltip:
 					'''
-					Increases the Potency of most Debuffs on enemies by {0}x
-					Potency increase is 2x less effective with Daybreak
+					Increases the potency of most weak debuffs on enemies by {0}x
+					Potency increase is 2x less effective with strong debuffs 
 					'''
 			}
 
@@ -8910,6 +8911,11 @@ Mods: {
 				DisplayName: Necromantic Serpent Buff
 				Description: Mods.tsorcRevamp.Buffs.NecromanticSerpentBuff.Description
 			}
+
+			ElectrocutedBuff2: {
+				Description: Mods.tsorcRevamp.Buffs.ElectrocutedBuff2.Description
+				DisplayName: Electrocuted Buff2
+			}
 		}
 
 		Projectiles: {
@@ -9742,6 +9748,7 @@ Mods: {
 				Weightless: You suddenly feel weightless...
 				Portal: A portal from The Abyss has been opened!
 				Hint: You must seek out the Shaman Elder, beyond the Western Sea...
+				MartianHint: Martian probes have been spotted in the sky...
 				AbyssOpen: The portal from The Abyss remains open...
 			}
 

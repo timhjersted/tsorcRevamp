@@ -441,6 +441,11 @@ namespace tsorcRevamp.Items
             {
                 target.AddBuff(BuffID.BetsysCurse, 240);
             }
+
+            if (item.type == ItemID.InfluxWaver && NPC.downedMartians)
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 5 * 60);
+            }
             #region Lethal Tempo
             if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {

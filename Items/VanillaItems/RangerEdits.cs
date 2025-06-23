@@ -1,5 +1,8 @@
+using Humanizer;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -35,7 +38,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.HolyArrow)
             {
-                item.damage = 5; 
+                item.damage = 5;
             }
 
             if (item.type == ItemID.DaedalusStormbow)
@@ -44,13 +47,13 @@ namespace tsorcRevamp.Items.VanillaItems
                 //item.mana = 20;
             }
 
-           
+
             if (item.type == ItemID.PhoenixBlaster)
             {
                 item.damage = 25; //vanilla 50
             }
 
-             //Why is this eventide's internal name i'm literally going to go feral
+            //Why is this eventide's internal name i'm literally going to go feral
             if (item.type == ItemID.FairyQueenRangedItem)
             {
                 item.damage = 40; //vanilla 50
@@ -113,6 +116,25 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.ElectrosphereLauncher)
             {
                 item.damage = 80; //SHM
+            }
+        }
+        
+        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
+        {
+            if (tsorcRevampWorld.NewSlain != null)
+            {
+                if (item.type == ItemID.DD2BetsyBow & tsorcRevampWorld.isHellkiteDragonDead)
+                {
+                    damage *= 1.25f;
+                }
+                if (item.type == ItemID.ElectrosphereLauncher & NPC.downedMartians)
+                {
+                    damage *= 1.15f;
+                }
+                if (item.type == ItemID.Xenopopper & NPC.downedMartians)
+                {
+                    damage *= 1.15f;
+                }
             }
         }
     }

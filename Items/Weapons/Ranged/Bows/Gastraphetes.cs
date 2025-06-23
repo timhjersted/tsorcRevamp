@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
 
             Vector2 cursorPosition = Main.MouseWorld; 
-            Vector2 spawnPosition = new Vector2(cursorPosition.X + Main.rand.Next(-200, 201), player.Center.Y - (50 * 16));
+            Vector2 spawnPosition = new Vector2(cursorPosition.X + Main.rand.Next(-200, 201), player.Center.Y - (65 * 16));
 
             Vector2 directionToCursor = cursorPosition - spawnPosition;
             directionToCursor.Normalize(); 

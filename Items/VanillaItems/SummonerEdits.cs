@@ -86,6 +86,7 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 25;
             }
+            
             if (item.type == ItemID.TempestStaff)
             {
                 item.damage = 44;
@@ -324,6 +325,10 @@ namespace tsorcRevamp.Items.VanillaItems
                 else if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
                 {
                     damage *= 0.82f;
+                }
+                if (item.type == ItemID.XenoStaff & NPC.downedMartians)
+                {
+                    damage *= 1.4f;
                 }
             }
         }

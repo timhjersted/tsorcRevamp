@@ -75,7 +75,6 @@ namespace tsorcRevamp.NPCs
                             }
                         }
                         break;
-                        break;
                     }
 
                 case int armedzombie when ((armedzombie >= NPCID.ArmedZombie && armedzombie <= NPCID.ArmedZombie) || armedzombie == NPCID.ArmedTorchZombie):
@@ -93,7 +92,6 @@ namespace tsorcRevamp.NPCs
                                 globalNPC.lifeBoosted = true; 
                             }
                         }
-                        break;
                         break;
                     }
 
@@ -489,7 +487,6 @@ namespace tsorcRevamp.NPCs
                                 globalNPC.lifeBoosted = true; 
                             }
                         }
-                        break;
                         break;
                     }
                     
@@ -3224,6 +3221,18 @@ namespace tsorcRevamp.NPCs
                         {
                             npc.value = 54630;
                         }
+                            if (tsorcRevampWorld.SuperHardMode)
+                            {   
+                                MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                                if (!globalNPC.lifeBoosted)
+                                {
+                                    npc.lifeMax = (int)(npc.lifeMax * 1.50f); 
+                                    npc.life = npc.lifeMax; 
+                                    npc.defense = (int)(npc.defense * 1.25);
+                                    npc.knockBackResist *= 1.15f;
+                                    globalNPC.lifeBoosted = true; 
+                                }
+                            }
                         break;
                     }
 
@@ -3572,7 +3581,19 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.Nutcracker
                     || npc.type == NPCID.ElfArcher
                     || npc.type == NPCID.Krampus
-                    || npc.type == NPCID.Flocko)
+                    || npc.type == NPCID.Flocko
+                    || npc.type == NPCID.BrainScrambler 
+                    || npc.type == NPCID.RayGunner
+                    || npc.type == NPCID.MartianOfficer
+                    || npc.type == NPCID.ForceBubble
+                    || npc.type == NPCID.GrayGrunt
+                    || npc.type == NPCID.MartianEngineer
+                    || npc.type == NPCID.MartianTurret
+                    || npc.type == NPCID.MartianDrone
+                    || npc.type == NPCID.GigaZapper 
+                    || npc.type == NPCID.ScutlixRider
+                    || npc.type == NPCID.Scutlix
+                    || npc.type == NPCID.MartianWalker)
                 {
 
                     MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
@@ -3678,8 +3699,8 @@ namespace tsorcRevamp.NPCs
                 {
                     npc.active = false;
                 }
-                
-                if (npc.type == NPCID.MartianProbe && !tsorcRevampWorld.RemixMap && !tsorcRevampWorld.SuperHardMode)
+
+                if (npc.type == NPCID.MartianProbe && !tsorcRevampWorld.SuperHardMode)
                 {
                     npc.active = false;
                 }

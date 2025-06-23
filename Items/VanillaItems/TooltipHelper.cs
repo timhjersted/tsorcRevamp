@@ -83,6 +83,12 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.DD2SquireBetsySword, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.DD2BetsyBow, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
             SimpleModTooltip(Mod, item, tooltips, ModContent.ItemType<EtherianWyvernStaff>(), Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.InfluxWaver, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.ChargedBlasterCannon, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.LaserMachinegun, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.ElectrosphereLauncher, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.Xenopopper, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.XenoStaff, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.StarinaBottle, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.StarinaBottle"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.ManaRegenerationBand, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationBand"));
 

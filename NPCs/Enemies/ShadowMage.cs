@@ -304,7 +304,6 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 spriteBatch.Draw(glowTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 56, 54), lightColor, NPC.rotation, new Vector2(28, 27), NPC.scale, effects, 0f);
             }
-
         }
         public override void FindFrame(int frameHeight)
         {

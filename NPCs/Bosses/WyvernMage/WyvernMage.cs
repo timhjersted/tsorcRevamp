@@ -33,8 +33,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         {
             NPC.scale = 1;
             NPC.npcSlots = 6;
-            NPC.width = 28;
-            NPC.height = 44;
+            NPC.width = 32;
+            NPC.height = 48;
             NPC.damage = 0;
             NPC.defense = 20;
             NPC.HitSound = SoundID.NPCHit1;
@@ -560,6 +560,22 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
         public override void FindFrame(int currentFrame)
         {
+            int frameHeight = !Main.dedServ ? TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type] : 1;
+
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
+            {
+                NPC.frame.Y = 2 * frameHeight; 
+                NPC.frameCounter = 0; 
+                if (NPC.position.X > Main.player[NPC.target].position.X)
+                {
+                    NPC.spriteDirection = -1;
+                }
+                else
+                {
+                    NPC.spriteDirection = 1;
+                }
+                return;
+            }
 
             if ((NPC.velocity.X > -9 && NPC.velocity.X < 9) && (NPC.velocity.Y > -9 && NPC.velocity.Y < 9))
             {

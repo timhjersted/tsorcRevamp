@@ -18,7 +18,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = false;
             Projectile.width = 5;
-            Projectile.extraUpdates = 1;
+            Projectile.extraUpdates = 2;
+            Projectile.timeLeft = 240; 
         }
 
         public override void AI()

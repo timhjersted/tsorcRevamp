@@ -243,6 +243,10 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 160; //Vanilla 180
             }
+            if (item.type == ItemID.MonkStaffT3 && tsorcRevampWorld.isHellkiteDragonDead)
+            {
+                item.damage = 175; //Vanilla 140
+            }
             if (item.type == ItemID.PiercingStarlight)
             {
                 item.damage = 70;
@@ -259,7 +263,6 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.InfluxWaver)
             {
                 item.damage = 120; //SHM
-                //item.mana = 23;
             }
             if (item.type == ItemID.DayBreak)
             {
@@ -284,6 +287,25 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.Zenith)
             {
                 item.damage = 90; //Vanilla 190
+            }
+        }
+
+        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
+        {
+            if (tsorcRevampWorld.NewSlain != null)
+            {
+                if (item.type == ItemID.MonkStaffT3 & tsorcRevampWorld.isHellkiteDragonDead)
+                {
+                    damage *= 1.25f;
+                }
+                if (item.type == ItemID.DD2SquireBetsySword & tsorcRevampWorld.isHellkiteDragonDead)
+                {
+                    damage *= 1.25f;
+                }
+                if (item.type == ItemID.InfluxWaver & NPC.downedMartians)
+                {
+                    damage *= 1.15f;
+                }
             }
         }
 

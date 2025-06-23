@@ -100,7 +100,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 140; //vanilla 52, buff as SHM weapon
                 item.mana = 50; //vanilla 30
             }
-            if (item.type == ItemID.BubbleGun)
+            if (item.type == ItemID.BubbleGun) 	
             {
                 item.damage = 60; //vanilla 70
                 item.mana = 10; //vanilla 5
@@ -123,6 +123,24 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 90;
                 item.mana = 39;
+            }
+        }
+        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
+        {
+            if (tsorcRevampWorld.NewSlain != null)
+            {
+                if (item.type == ItemID.ApprenticeStaffT3 & tsorcRevampWorld.isHellkiteDragonDead)
+                {
+                    damage *= 1.25f;
+                }
+                if (item.type == ItemID.ChargedBlasterCannon & NPC.downedMartians)
+                {
+                    damage *= 1.15f;
+                }
+                if (item.type == ItemID.LaserMachinegun & NPC.downedMartians)
+                {
+                    damage *= 1.15f;
+                }
             }
         }
         public override string IsArmorSet(Item head, Item body, Item legs)

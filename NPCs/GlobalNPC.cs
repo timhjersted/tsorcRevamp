@@ -45,6 +45,7 @@ using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
 using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
+using tsorcRevamp;
 
 namespace tsorcRevamp.NPCs
 {
@@ -132,6 +133,7 @@ namespace tsorcRevamp.NPCs
         public bool BiohazardDrain;
         public bool ResetBiohazardBlobs;
         public bool ElectrocutedEffect;
+        public bool ElectrocutedEffect2;
         public bool PolarisElectrocutedEffect;
         public bool CrescentMoonlight;
         public bool Soulstruck;
@@ -271,6 +273,7 @@ namespace tsorcRevamp.NPCs
             BiohazardDrain = false;
             ResetBiohazardBlobs = false;
             ElectrocutedEffect = false;
+            ElectrocutedEffect2 = false;
             PolarisElectrocutedEffect = false;
             CrescentMoonlight = false;
             Soulstruck = false;
@@ -806,7 +809,12 @@ namespace tsorcRevamp.NPCs
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
                         {
-                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SHM.BossDeath"), Color.Orange);
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SHM.BossDeath"), Color.Orange); 
+                        }
+
+                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>())
+                        {
+                            tsorcRevampWorld.isHellkiteDragonDead = true;
                         }
 
                         if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
@@ -2074,6 +2082,10 @@ namespace tsorcRevamp.NPCs
                 {
                     npc.lifeRegen = 0;
                 }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= (DragonStone.Potency / 2);
+                }
                 npc.lifeRegen -= DoTPerS * 2; 
                 damage += DoTPerS;
 
@@ -2111,17 +2123,18 @@ namespace tsorcRevamp.NPCs
 
             if (PhazonCorruption)
             {
-                int DoTPerS = 15;
+                int DoTPerS = 21;
                 if (npc.lifeRegen > 0)
-                {
-                    npc.lifeRegen = 0;
-                }
+                    {
+                        npc.lifeRegen = 0;
+                    }
                 if (tsorcRevampPlayer.DragonStonePotency)
                 {
                     DoTPerS *= DragonStone.Potency;
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage = DoTPerS;
+                npc.lifeRegen -= DoTPerS * (tsorcRevampWorld.SuperHardMode ? 4 : 1);
+
+                damage += DoTPerS * (tsorcRevampWorld.SuperHardMode ? 4 : 1); 
 
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 185, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
                 Main.dust[dust].noGravity = true;
@@ -2280,6 +2293,25 @@ namespace tsorcRevamp.NPCs
                 {
                     npc.lifeRegen = 0;
                 }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= DragonStone.Potency;
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            
+            if (ElectrocutedEffect2)
+            {
+                int DoTPerS = 116;
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= (DragonStone.Potency / 2);
+                }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }
@@ -2290,6 +2322,10 @@ namespace tsorcRevamp.NPCs
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
+                }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= DragonStone.Potency;
                 }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
@@ -2716,6 +2752,12 @@ namespace tsorcRevamp.NPCs
             if (ElectrocutedEffect)
             {
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
+                Main.dust[dust].noGravity = true;
+            }
+
+            if (ElectrocutedEffect2)
+            {
+                int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .5f);
                 Main.dust[dust].noGravity = true;
             }
 

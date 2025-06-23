@@ -631,6 +631,7 @@ Mods: {
 				RemixLargeTopaz: "[c/ffbf00:上面刻着一个符号，像是遗忘之城东边的废墟]"
 				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
 				IncinerationHex: 如果已击败双足翼龙，则施加破晓减益
+				// MartianBuff: Deals more damage and electrocutes enemies if the Martians have been defeated
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生
@@ -8905,6 +8906,11 @@ Mods: {
 				// DisplayName: Necromantic Serpent Buff
 				// Description: Mods.tsorcRevamp.Buffs.NecromanticSerpentBuff.Description
 			}
+
+			ElectrocutedBuff2: {
+				// Description: Mods.tsorcRevamp.Buffs.ElectrocutedBuff2.Description
+				// DisplayName: Electrocuted Buff2
+			}
 		}
 
 		Projectiles: {
@@ -9737,6 +9743,7 @@ Mods: {
 				Weightless: 你突然感到不再受重力的限制...
 				Portal: 一道深渊裂缝被打开了！
 				Hint: 你必须去西海寻找萨满长老...
+				// MartianHint: Martian probes have been spotted in the sky...
 				AbyssOpen: 连接深渊的裂缝敞开了...
 			}
 

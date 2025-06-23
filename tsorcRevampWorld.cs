@@ -34,6 +34,7 @@ namespace tsorcRevamp
     public class tsorcRevampWorld : ModSystem
     {
         public static bool DownedBetsy;
+        public static bool isHellkiteDragonDead;
         public static bool SuperHardMode;
         public static bool TheEnd;
         public static bool CustomMap;
@@ -91,7 +92,7 @@ namespace tsorcRevamp
             {
                 return SuperHardMode && !EarlySHM && !(
                     BossDefeated(ModContent.NPCType<WyvernMageShadow>()) &&
-                    BossDefeated(ModContent.NPCType<Chaos>()) &&
+                    BossDefeated(ModContent.NPCType<Artorias>()) &&
                     BossDefeated(ModContent.NPCType<Blight>()) &&
                     BossDefeated(ModContent.NPCType<SeathTheScalelessHead>())
                     );
@@ -156,6 +157,7 @@ namespace tsorcRevamp
         public override void OnWorldLoad()
         {
             DownedBetsy = false;
+            isHellkiteDragonDead = false;
             SuperHardMode = false;
             TheEnd = false;
             CustomMap = false;
@@ -226,6 +228,10 @@ namespace tsorcRevamp
             {
                 downed.Add("DownedBetsy");
             }
+            if (isHellkiteDragonDead)
+            {
+                downed.Add("isHellkiteDragonDead");
+            }
             tag.Add("downed", downed);
             tag.Add("world_state", world_state);
             SaveSlain(tag);
@@ -244,6 +250,7 @@ namespace tsorcRevamp
 
             IList<string> downedList = tag.GetList<string>("downed");
             DownedBetsy = downedList.Contains("DownedBetsy");
+            isHellkiteDragonDead = downedList.Contains("isHellkiteDragonDead");
 
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");
@@ -359,9 +366,10 @@ namespace tsorcRevamp
         {
             if (Main.netMode == NetmodeID.Server)
             {
+                writer.Write(isHellkiteDragonDead);
                 writer.Write(CustomMap);
                 writer.Write(RemixMap);
-                 writer.Write(OnlyAdventureMap);
+                writer.Write(OnlyAdventureMap);
                 writer.Write(SuperHardMode);
                 writer.WriteVector2(AbyssPortalLocation);
 
@@ -395,6 +403,7 @@ namespace tsorcRevamp
 
         public override void NetReceive(BinaryReader reader)
         {
+            isHellkiteDragonDead = reader.ReadBoolean();
             CustomMap = reader.ReadBoolean();
             RemixMap = reader.ReadBoolean();
             OnlyAdventureMap = reader.ReadBoolean();

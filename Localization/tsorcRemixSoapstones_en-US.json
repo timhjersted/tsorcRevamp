@@ -195,7 +195,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the Molten Sky Temple -",
+  "text": "You sense the presence of the Earth Fiend nearby. The air seems heavier, the pressure more intense, and you also smell a repulsive odor of ichor... --NEWLINE  --NEWLINE 'The passage to the left is blocked, but I think it leads to the Fiend. Perhaps the passage above will find a way to open it.'",
   "tileX": 586,
   "tileY": 1919,
   "textWidth": 320,
@@ -356,7 +356,7 @@
   "style": 1
 }
 {
-  "text": "Miakoda: \u0022A brave soul, who once escaped this place alive, told me there are THREE hidden shortcuts, one on the surface of the lake, one in a cave of horrors, and another almost near the entrance, here, but not quite. I do not know what she meant...\u0022 ",
+  "text": "Miakoda: \u0022A brave soul, who once escaped this place alive, told me there are THREE hidden shortcuts, one on the surface of the temple waterways, one in a cave of horrors, and another almost near the entrance, here, but not quite. I do not know what she meant...\u0022 ",
   "tileX": 1897,
   "tileY": 1121,
   "textWidth": 320,
@@ -419,7 +419,7 @@
   "style": 1
 }
 {
-  "text": "You come upon a deep hallowed cavern. As you make your way down you can feel the gravitational pull start to shift again... --NEWLINE  --NEWLINE (Try pressing the Up key)",
+  "text": "You come upon a deep dark and corrupted cavern. This place appears to be an abandoned mine and the way to the exit of the Shadow Temple.",
   "tileX": 2265,
   "tileY": 1183,
   "textWidth": 320,
@@ -776,6 +776,13 @@
   "style": 1
 }
 {
+  "text": "You see hearts on the ceiling, beating unusually powerfully and heavily, prompting you to search for a way to destroy them. 'Perhaps this lever is connected to those hearts...'",
+  "tileX": 3476,
+  "tileY": 1102,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Miakoda: Red, this liquid has very interesting properties, you should perhaps use it to move forward on your path...",
   "tileX": 3801,
   "tileY": 1545,
@@ -994,8 +1001,8 @@
 }
 {
   "text": "You have discovered the Sky Ruins of the Empress of Light. --NEWLINE  --NEWLINE Long ago, Golem imprisoned the Empress using the dark magic of the great pyramid, leaving this sky temple to fall to ruin.  --NEWLINE  --NEWLINE It is said that upon the day that Golem is slain, the Empress shall be freed to return to these sacred grounds.  ",
-  "tileX": 4154,
-  "tileY": 351,
+  "tileX": 4837,
+  "tileY": 350,
   "textWidth": 320,
   "style": 1
 }

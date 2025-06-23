@@ -406,15 +406,29 @@ namespace tsorcRevamp.Projectiles
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.3f }, target.position);
             }
 
-            if ((projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] == 0)) && Condition.DownedOldOnesArmyT3.IsMet())
+            if ((projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] == 0)) && tsorcRevampWorld.isHellkiteDragonDead)
             {
                 target.AddBuff(BuffID.BetsysCurse, 4 * 60);
             }
 
-            if ((projectile.type >= ProjectileID.ApprenticeStaffT3Shot) && Condition.DownedOldOnesArmyT3.IsMet())
+            if ((projectile.type >= ProjectileID.ApprenticeStaffT3Shot) && tsorcRevampWorld.isHellkiteDragonDead)
             {
                 target.AddBuff(BuffID.Daybreak, 4 * 60);
             }
+
+            if ((projectile.type == ProjectileID.LaserMachinegunLaser || projectile.type == ProjectileID.ElectrosphereMissile || projectile.type == ProjectileID.ChargedBlasterOrb || projectile.type == ProjectileID.ChargedBlasterLaser || projectile.type == ProjectileID.UFOLaser) && NPC.downedMartians)
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 4 * 60);
+            }
+
+            if (projectile.friendly && projectile.owner >= 0)
+            {
+                if ((player.HeldItem.type == ItemID.ElectrosphereLauncher || player.HeldItem.type == ItemID.Xenopopper || player.HeldItem.type == ItemID.InfluxWaver) && NPC.downedMartians)
+                {
+                    target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 4 * 60);
+                }
+            }
+
 
             #region Runeterra Poison Darts
             if (projectile.type == ProjectileID.PoisonDartBlowgun && player.HeldItem.type == ModContent.ItemType<ToxicShot>())

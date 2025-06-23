@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
@@ -34,7 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.lifeMax = 1700;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.noGravity = false;
+            NPC.noGravity = true;
             NPC.noTileCollide = false;
             NPC.alpha = 249;
             NPC.lavaImmune = true;
@@ -45,7 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         int Timer2 = -Main.rand.Next(200);
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(BuffID.Frostburn, 1 * 60 + 30, false);
+            target.AddBuff(BuffID.OnFire, 2 * 60 + 30, false);
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false);
         }
@@ -66,7 +67,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             }
             if (NPC.Distance(player.Center) < 100)
             {
-                player.AddBuff(BuffID.CursedInferno, 30, false);
                 //player.AddBuff(BuffID.Obstructed, 60, false);
                 player.AddBuff(BuffID.ManaSickness, 120, false);
             }
@@ -81,7 +81,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             if (NPC.life < NPC.lifeMax / 3)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y, 150, Color.Blue, 1f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.RedTorch, NPC.velocity.X, NPC.velocity.Y, 150, Color.Blue, 1f);
                 Main.dust[dust].noGravity = true;
             }
 
@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 {
                     float num48 = 3f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.PurpleMagicProj>();
+                    int type = ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedRainProj>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, frozenSawDamage, 0f, Main.myPlayer);
                 }
@@ -120,6 +120,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.ai[3] = 0;//(float)(Main.rand.Next(360) * (Math.PI / 180));
                 NPC.ai[2] = 0;
                 NPC.ai[1] = 0;
+
+                int frameHeight = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type]; // A random frame each time this thing teleport
+                NPC.frame.Y = Main.rand.Next(0, 3) * frameHeight;
 
 
                 Player Pt = Main.player[NPC.target];
@@ -210,43 +213,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public override void FindFrame(int currentFrame)
         {
-
-            if ((NPC.velocity.X > -9 && NPC.velocity.X < 9) && (NPC.velocity.Y > -9 && NPC.velocity.Y < 9))
+            if (NPC.position.X > Main.player[NPC.target].position.X)
             {
-                NPC.frameCounter = 0;
-                NPC.frame.Y = 0;
-                if (NPC.position.X > Main.player[NPC.target].position.X)
-                {
-                    NPC.spriteDirection = -1;
-                }
-                else
-                {
-                    NPC.spriteDirection = 1;
-                }
-            }
-
-            int num = 1;
-            if (!Main.dedServ)
-            {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
-            }
-            if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
-            {
-                NPC.frameCounter = 0;
-                NPC.frame.Y = 0;
+                NPC.spriteDirection = -1;
             }
             else
             {
-                NPC.frameCounter += 1.0;
-            }
-            if (NPC.frameCounter >= 1.0)
-            {
-                NPC.frame.Y = NPC.frame.Y + num;
-                NPC.frameCounter = 0.0;
-            }
-            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
-            {
-                NPC.frame.Y = 0;
+                NPC.spriteDirection = 1;
             }
         }
 
@@ -263,13 +236,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             {
                 {
                     Color color = new Color();
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, 109, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 3f);
                     Main.dust[dust].noGravity = true;
-                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, 109, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 3f);
                     Main.dust[dust].noGravity = true;
-                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, 109, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 3f);
                     Main.dust[dust].noGravity = true;
-                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, 109, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 3f);
                     Main.dust[dust].noGravity = true;
                 }
             }
@@ -277,15 +250,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         #endregion
 
         public static Texture2D texture;
+        public static void ShadowEffect(NPC npc, SpriteBatch spriteBatch, ref Texture2D texture, float scale = 1.5f)
+        {
+            if (texture == null || texture.IsDisposed)
+            {
+                texture = (Texture2D)ModContent.Request<Texture2D>(npc.ModNPC.Texture);
+            }
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.ReflectiveMetalDye), Main.LocalPlayer);
+            data.Apply(null);
+            SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Rectangle sourceRectangle = new Rectangle(0, npc.frame.Y, texture.Width, texture.Height / Main.npcFrameCount[npc.type]);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.White, npc.rotation, origin, scale, effects, 0f);
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+        }
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            GhostDragonHead.GhostEffect(NPC, spriteBatch, ref texture, 0.9f);
+            ShadowEffect(NPC, spriteBatch, ref texture, 0.9f);
             return true;
         }
-        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            GhostDragonHead.GhostEffect(NPC, spriteBatch, ref texture, 1f);
+            ShadowEffect(NPC, spriteBatch, ref texture, 1f);
         }
-
     }
 }
