@@ -783,7 +783,14 @@
   "style": 1
 }
 {
-  "text": "Miakoda: Red, this liquid has very interesting properties, you should perhaps use it to move forward on your path...",
+  "text": "Miakoda: Red, this liquid has very interesting properties, you should perhaps use it to move forward on your path...", 
+  "tileX": 2828,
+  "tileY": 1194,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "The dreamlike caverns are composed of four realms, each with their own distinct colors and architecture. Glowing mushrooms are known to interact spectacularly with colors, and shimmer, a liquid with special properties that reflects every possible color, is found in abundance in these underground caves, creating these mushroom caves with unusual and shimmering colors, which seem very hypnotizing...", 
   "tileX": 3801,
   "tileY": 1545,
   "textWidth": 320,
@@ -1707,7 +1714,7 @@
   "style": 1
 }
 {
-  "text": "To the EAST--\u003E --NEWLINE The Rainforest of the Orid Tribe --NEWLINE Obsidian\u0027s Volcano --NEWLINE The Hallow --NEWLINE Unknown --NEWLINE  --NEWLINE To the SOUTH --V --NEWLINE Cave entrance to the Dryad\u0027s Home",
+  "text": "To the EAST--\u003E --NEWLINE The Rainforest of the Orid Tribe --NEWLINE The Old One\u0022s Tree --NEWLINE The Hallow --NEWLINE Unknown",
   "tileX": 5338,
   "tileY": 867,
   "textWidth": 320,
