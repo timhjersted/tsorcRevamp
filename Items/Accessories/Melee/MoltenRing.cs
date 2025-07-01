@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
     public class MoltenRing : ModItem
     {
-        public static float MeleeDmg = 10f;
+        public static float MeleeDmg = 8f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg);
         public override void SetStaticDefaults()
         {

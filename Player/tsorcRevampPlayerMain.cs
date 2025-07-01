@@ -858,6 +858,10 @@ namespace tsorcRevamp
             {
                 modifiers.CritDamage += MythrilOcrichalcumCritDmg / 100f;
             }
+            if (DragonSoulEffect)
+            {
+                target.AddBuff(BuffID.Daybreak, 180);
+            }
         }
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
         {

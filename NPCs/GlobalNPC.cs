@@ -121,6 +121,7 @@ namespace tsorcRevamp.NPCs
         public static double expertScale = 2;
 
         public bool DarkInferno;
+        public bool AbyssInferno;
         public bool WitchkingCurse;
 
         public bool CCShocked;
@@ -262,6 +263,7 @@ namespace tsorcRevamp.NPCs
         public override void ResetEffects(NPC npc)
         {
             DarkInferno = false;
+            AbyssInferno = false;
             WitchkingCurse = false;
             CCShocked = false;
             Ignited = false;
@@ -2065,13 +2067,55 @@ namespace tsorcRevamp.NPCs
                 damage += DoTPerS;
 
                 var N = npc;
-                for (int j = 0; j < 6; j++) 
+                for (int j = 0; j < 6; j++)
                 {
                     int dust = Dust.NewDust(N.position, N.width / 2, N.height / 2, 54, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust].noGravity = true;
 
                     int dust2 = Dust.NewDust(N.position, N.width / 2, N.height / 2, 58, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust2].noGravity = true;
+                }
+            }
+
+            if (AbyssInferno)
+            {
+                int DoTPerS = 121;
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= DragonStone.Potency / 2;
+                }
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    if (tsorcRevampPlayer.DragonStonePotency)
+                    {
+                        DoTPerS += 25 * DragonStone.Potency;
+                    }
+                    else
+                    {
+                        DoTPerS += 25;
+                    }
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+
+                var N = npc;
+                if (Main.rand.NextBool(7))
+                {
+                    int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, DustID.PinkTorch, 0f, 0f, 100, Color.Pink, 2f);
+                    Main.dust[dustIndex].noGravity = false; 
+                    Main.dust[dustIndex].velocity *= 1.05f;
+                    Main.dust[dustIndex].fadeIn = 1.2f;
+                }
+                if (Main.rand.NextBool(8)) 
+                { 
+                    int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, 223, 0f, 0f, 100, Color.Pink, 1.6f);
+                    Main.dust[dustIndex].noGravity = true; 
+                    Main.dust[dustIndex].velocity *= 0.99f;
+                    Main.dust[dustIndex].fadeIn = 1.2f;
                 }
             }
 
@@ -2086,14 +2130,14 @@ namespace tsorcRevamp.NPCs
                 {
                     DoTPerS *= (DragonStone.Potency / 2);
                 }
-                npc.lifeRegen -= DoTPerS * 2; 
+                npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
 
                 npc.damage = (int)(npc.damage * 0.8f);
                 npc.defense = Math.Max(0, npc.defDefense - 40);
                 npc.velocity *= 0.95f;
 
-                var N = npc; 
+                var N = npc;
             }
 
             if (CCShocked)

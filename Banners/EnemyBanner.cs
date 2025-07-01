@@ -402,11 +402,11 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<Necromancer>();
     }
 
-    public class NecromancerElementalBanner : EnemyBanner
+    public class FallenNecromancerBanner : EnemyBanner
     {
         public override int PlaceStyle => 46;
 
-        public override int NPCType => ModContent.NPCType<NecromancerElemental>();
+        public override int NPCType => ModContent.NPCType<FallenNecromancer>();
     }
 
     public class ParaspriteBanner : EnemyBanner

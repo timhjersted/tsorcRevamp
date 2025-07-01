@@ -210,7 +210,7 @@
 }
 {
   "text": "- You have found the Tomb of Gwyn, Lord of Cinder - --NEWLINE  --NEWLINE To defeat Gwyn, you\u0027ll need the power obtained from defeating 7 ancient beings. They are known as Artorias, Water Fiend Kraken, Fire Fiend Marilith, Earth Fiend Lich, The Blight, The Ghost Wyvern Mage, and Seath the Scaleless. To fight Gwyn before this will surely result in death...",
-  "tileX": 810,
+  "tileX": 759,
   "tileY": 1245,
   "textWidth": 320,
   "style": 1
@@ -244,7 +244,7 @@
   "style": 1
 }
 {
-  "text": "You\u0027ve found the Temple of Attraidies --NEWLINE  --NEWLINE Once you\u0027ve obtained a shard from defeating each of the 8 demon-gods, combine them with the contents in the chest to create the catalyst necessary to summon Attraidies here. The catalyst will weaken Attraidies just enough to give you a chance. --NEWLINE \u0022It\u0027s time to end this.\u0022",
+  "text": "You\u0027ve found the Temple of Attraidies --NEWLINE  --NEWLINE Once you\u0027ve obtained a shard from defeating each of the 8 demon-gods, you will need the dark and light shards to power the catalyst necessary to summon Attraidies here. In this chest are the dark shards, it seems that the light shards are kept preciously in the roots of the world tree with glowing golden leaves... The catalyst will weaken Attraidies just enough to give you a chance. --NEWLINE \u0022It\u0027s time to end this.\u0022",
   "tileX": 1400,
   "tileY": 325,
   "textWidth": 320,
@@ -1829,6 +1829,13 @@
   "text": "The entrance is sealed by Chlorophyte, an ore stronger than Adamantite.  --NEWLINE  --NEWLINE \u0022What is so important kept in the roots of the tree?\u0022",
   "tileX": 5964,
   "tileY": 569,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You pull the lever and and hear wood creaking lower in the tree",
+  "tileX": 5939,
+  "tileY": 642,
   "textWidth": 320,
   "style": 1
 }

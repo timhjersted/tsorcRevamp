@@ -82,8 +82,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackSucceeded == 1)
             {
-                NPC.life += 10;
-                NPC.HealEffect(10);
+                NPC.life += 150;
+                NPC.HealEffect(150);
                 if (NPC.life > NPC.lifeMax)
                 {
                     NPC.life = NPC.lifeMax;
@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int spawnedNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.ArmoredSkeleton, 0);
+                    int spawnedNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.BigSkeleton, 0);
                     if (Main.netMode == NetmodeID.Server)
                     {
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawnedNPC, 0f, 0f, 0f, 0);

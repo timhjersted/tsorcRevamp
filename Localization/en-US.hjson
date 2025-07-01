@@ -905,9 +905,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Necromancer.DisplayName}"
 			}
 
-			NecromancerElementalBanner: {
-				DisplayName: "{$NPCs.NecromancerElemental.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.NecromancerElemental.DisplayName}"
+			FallenNecromancerBanner: {
+				DisplayName: "{$NPCs.FallenNecromancer.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FallenNecromancer.DisplayName}"
 			}
 
 			ObsidianJellyfishBanner: {
@@ -1372,7 +1372,6 @@ Mods: {
 					'Everyone will stay away from you'
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.Thorns}
-					{$CommonItemTooltip.BadMoveSpeedMult@2}
 					'''
 			}
 
@@ -1943,12 +1942,12 @@ Mods: {
 
 			AbyssArrow: {
 				DisplayName: Abyssal Arrow
-				Tooltip: Inflicts Daybroken
+				Tooltip: Inflicts Abyssal Inferno
 			}
 
 			AbyssBullet: {
 				DisplayName: Abyssal Bullet
-				Tooltip: Inflicts Daybroken
+				Tooltip: Inflicts Abyssal Inferno
 			}
 
 			ArrowOfBard: {
@@ -3746,7 +3745,7 @@ Mods: {
 				DisplayName: Flask of the Abyss
 				Tooltip:
 					'''
-					Melee and Whip attacks inflict enemies with Daybroken
+					Melee and Whip attacks inflict enemies with Abyssal Inferno
 					Increase melee and whip damage and crit by 6%
 					'''
 			}
@@ -4079,7 +4078,7 @@ Mods: {
 				DisplayName: Flame of the Abyss
 				Tooltip:
 					'''
-					A persistent flame that can cause solar incineration
+					A persistent flame that can cause incineration from the abyss 
 					[c/ffbf00:Only dropped by fallen souls in the abyss]
 					'''
 			}
@@ -7931,6 +7930,17 @@ Mods: {
 				DisplayName: Tainted Arrow
 				Tooltip: ""
 			}
+
+			DragonSoul: {
+				DisplayName: Supreme Dragon Soul
+				Tooltip:
+					'''
+					Increases the potency of most weak debuffs on enemies by {0}x
+					Potency increase is 2x less effective with strong debuffs 
+					Attacks inflict daybroken and increases damage by {1}%
+					Grants Inferno Potion effect
+					'''
+			}
 		}
 
 		Buffs: {
@@ -8872,7 +8882,7 @@ Mods: {
 				DisplayName: Weapon Imbue: Abyss
 				Description:
 					'''
-					Melee and Whip attacks inflict enemies with Daybroken
+					Melee and Whip attacks inflict enemies with Abyssal Inferno
 					Increase melee and whip damage and crit by 6%
 					'''
 			}
@@ -8915,6 +8925,11 @@ Mods: {
 			ElectrocutedBuff2: {
 				Description: Mods.tsorcRevamp.Buffs.ElectrocutedBuff2.Description
 				DisplayName: Electrocuted Buff2
+			}
+
+			AbyssInferno: {
+				DisplayName: Abyss Inferno
+				Description: Mods.tsorcRevamp.Buffs.AbyssInferno.Description
 			}
 		}
 
@@ -10088,7 +10103,7 @@ Mods: {
 			MindflayerServant.DisplayName: Mindflayer Servant
 			MutantToad.DisplayName: Mutant Toad
 			Necromancer.DisplayName: Necromancer
-			NecromancerElemental.DisplayName: Necromancer Elemental
+			FallenNecromancer.DisplayName: Fallen Necromancer
 			ObsidianJellyfish.DisplayName: Obsidian Jellyfish
 			Parasprite.DisplayName: Parasprite
 			PrimeLaserProbe.DisplayName: Laser Probe

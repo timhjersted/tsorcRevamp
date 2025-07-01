@@ -11,9 +11,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
     public class SpikedIronShield : ModItem
     {
         public static float Thorns = 100f;
-        public static float DR = 4f;
-        public static float BadMoveSpeedMult = 5f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Thorns, DR, BadMoveSpeedMult);
+        public static float DR = 5f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Thorns, DR);
         public override void SetStaticDefaults()
         {
         }
@@ -32,12 +31,12 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
         {
             player.thorns += Thorns / 100f;
             player.endurance += DR / 100f;
-            player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<IronShield>());
+            recipe.AddIngredient(ItemID.Stinger, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 

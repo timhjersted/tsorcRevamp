@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class NecromancerElemental : ModNPC
+    class FallenNecromancer : ModNPC
     {
         int deathStrikeDamage = 18;
         public override void SetStaticDefaults()
@@ -26,9 +26,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
+            NPC.scale = 1.1f;
             NPC.value = 20000;
             Banner = NPC.type;
-            BannerItem = ModContent.ItemType<Banners.NecromancerElementalBanner>();
+            BannerItem = ModContent.ItemType<Banners.FallenNecromancerBanner>();
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, SoundID.Item17);
         }
@@ -72,8 +73,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackSucceeded == 1)
             {
-                NPC.life += 10;
-                NPC.HealEffect(10);
+                NPC.life += 800;
+                NPC.HealEffect(800);
                 if (NPC.life > NPC.lifeMax)
                 {
                     NPC.life = NPC.lifeMax;
@@ -94,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int spawnedNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.ChaosElemental, 0);
+                    int spawnedNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.ArmoredSkeleton, 0);
                     if (Main.netMode == NetmodeID.Server)
                     {
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawnedNPC, 0f, 0f, 0f, 0);

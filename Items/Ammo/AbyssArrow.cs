@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Ammo
         {
             Item.consumable = true;
             Item.ammo = AmmoID.Arrow;
-            Item.damage = 25;
+            Item.damage = 22;
             Item.height = 40;
             Item.knockBack = (float)4.2;
             Item.maxStack = Item.CommonMaxStack;

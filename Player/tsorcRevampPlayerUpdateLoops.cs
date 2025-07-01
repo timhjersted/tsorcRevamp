@@ -154,6 +154,7 @@ namespace tsorcRevamp
         public bool ChloranthyRing2 = false;
 
         public bool DarkInferno = false;
+        public bool AbyssInferno = false;
         public bool MorgulPoisoning = false;
         public bool CrimsonDrain = false;
         public bool PhazonCorruption = false;
@@ -381,6 +382,7 @@ namespace tsorcRevamp
         public bool gilled;
 
         public bool MorgulWhipEffect;
+        public bool DragonSoulEffect;
 
 
         public bool CurseActive;
@@ -503,6 +505,7 @@ namespace tsorcRevamp
 
             RTQ2 = false;
             DarkInferno = false;
+            AbyssInferno = false;
             MorgulPoisoning = false;
             BoneRevenge = false;
             SoulSiphon = false;
@@ -541,6 +544,7 @@ namespace tsorcRevamp
             TornWings = false;
             WitchkingsGrasp = false;
             MorgulWhipEffect = false;
+            DragonSoulEffect = false;
 
             Crippled = false;
             ShadowWeight = false;
@@ -2315,6 +2319,7 @@ namespace tsorcRevamp
 
 
                 DarkInferno = false;
+                AbyssInferno = false;
                 PhazonCorruption = false;
                 Falling = false;
                 FracturingArmor = 1;

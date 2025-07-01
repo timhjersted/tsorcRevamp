@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Ammo;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Ranged.Ammo
 {
@@ -20,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 			Projectile.light = 0.5f; 
 			Projectile.ignoreWater = true; 
 			Projectile.tileCollide = true; 
+            Projectile.penetrate = 2;
 			Projectile.extraUpdates = 2; 
 
 			AIType = ProjectileID.Bullet; 
@@ -27,12 +29,12 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Daybreak, 3 * 60);
+            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 3 * 60);
         }
 
 		public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, 0.9f, 0.5f, 0f);
+            Lighting.AddLight(Projectile.Center, 0.8f, 0.1f, 0.7f);
         }
 
 		public override void OnKill(int timeLeft) 
@@ -41,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
             for (int i = 0; i < 5; i++)
 			{
-				Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.SolarFlare, 1f);
+				Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 223, 1f);
 				dust.noGravity = true;
             }
         }

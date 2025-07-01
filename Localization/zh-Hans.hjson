@@ -905,9 +905,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Necromancer.DisplayName}"
 			}
 
-			NecromancerElementalBanner: {
-				DisplayName: "{$NPCs.NecromancerElemental.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.NecromancerElemental.DisplayName}"
+			FallenNecromancerBanner: {
+				DisplayName: "{$NPCs.FallenNecromancer.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FallenNecromancer.DisplayName}"
 			}
 
 			ObsidianJellyfishBanner: {
@@ -7926,6 +7926,17 @@ Mods: {
 				DisplayName: 污染箭
 				Tooltip: ""
 			}
+
+			DragonSoul: {
+				// DisplayName: Supreme Dragon Soul
+				/* Tooltip:
+					'''
+					Increases the potency of most weak debuffs on enemies by {0}x
+					Potency increase is 2x less effective with strong debuffs 
+					Attacks inflict daybroken and increases damage by {1}%
+					Grants Inferno Potion effect
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -8910,6 +8921,11 @@ Mods: {
 			ElectrocutedBuff2: {
 				// Description: Mods.tsorcRevamp.Buffs.ElectrocutedBuff2.Description
 				// DisplayName: Electrocuted Buff2
+			}
+
+			AbyssInferno: {
+				// DisplayName: Abyss Inferno
+				// Description: Mods.tsorcRevamp.Buffs.AbyssInferno.Description
 			}
 		}
 
@@ -10083,7 +10099,7 @@ Mods: {
 			MindflayerServant.DisplayName: 夺心魔之仆
 			MutantToad.DisplayName: 突变蟾蜍
 			Necromancer.DisplayName: 死灵法师
-			NecromancerElemental.DisplayName: 死灵法师之元素
+			FallenNecromancer.DisplayName: 死灵法师之元素
 			ObsidianJellyfish.DisplayName: 黑曜石水母
 			Parasprite.DisplayName: 精灵飞蝇
 			PrimeLaserProbe.DisplayName: 激光探针

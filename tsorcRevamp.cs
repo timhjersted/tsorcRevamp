@@ -1400,7 +1400,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<MountedSandsprogMage>(),
                 ModContent.NPCType<SandsprogMage>(),
                 ModContent.NPCType<Necromancer>(),
-                ModContent.NPCType<NecromancerElemental>(),
+                ModContent.NPCType<FallenNecromancer>(),
                 ModContent.NPCType<Warlock>(),
                 ModContent.NPCType<DemonSpirit>(),
                 ModContent.NPCType<ShadowMage>(),

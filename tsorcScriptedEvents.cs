@@ -140,7 +140,7 @@ namespace tsorcRevamp
             EoC,
             EoW1,
             AncientDemon,
-            LitchKing,
+            LichKing,
             TheHunter,
             TheRage,
             AODE,
@@ -279,7 +279,7 @@ namespace tsorcRevamp
             BlackKnightHallowed.SetCustomDrops(new List<int>() { ModContent.ItemType<SoulCoin>(), ModContent.ItemType<PurgingStone>() }, new List<int>() { 50, 1 });
 
             //QUEEN SLIME
-            ScriptedEvent QueenSlimeEvent = new ScriptedEvent(new Vector2(7059, 1289), 25, NPCID.QueenSlimeBoss, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.QueenSlime"), Color.Blue, false);
+            ScriptedEvent QueenSlimeEvent = new ScriptedEvent(new Vector2(7059, 1289), 25, NPCID.QueenSlimeBoss, DustID.HallowedTorch, true, true, true, LangUtils.GetTextValue("Events.QueenSlime"), Color.Pink, false);
 
             //GREAT RED KNIGHT IN DESERT
             ScriptedEvent GreatRedKnightInDesert = new ScriptedEvent(new Vector2(2229, 856), 100, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, SuperHardModeCustomCondition);
@@ -289,7 +289,7 @@ namespace tsorcRevamp
             //Ancestral Spirit
             ScriptedEvent AncestralSpiritEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, OnlyAdventureMapCondition);
 
-            ScriptedEvent AncestralSpiritRemixEvent = new ScriptedEvent(new Vector2(7344, 768), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, RemixMapCondition);
+            ScriptedEvent AncestralSpiritRemixEvent = new ScriptedEvent(new Vector2(7344, 768), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Cyan, false, RemixMapCondition);
             //SkeletronHidden
             ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Blue, false, null, SetNightCustomAction);
 
@@ -309,7 +309,7 @@ namespace tsorcRevamp
             Lunatic.SetCustomDrops(new List<int>() { ItemID.CelestialSigil }, new List<int>() {1});
             Lunatic.SetCustomStats(100000, null, null, null);
             //LITCH KING
-            ScriptedEvent LitchKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<EarthFiendLich>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.LichKing"), Color.Gold, false);
+            ScriptedEvent LichKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<EarthFiendLich>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.LichKing"), Color.Gold, false);
 
             //THE HUNTER
             ScriptedEvent TheHunter = new ScriptedEvent(new Vector2(296, 1560), 36, ModContent.NPCType<NPCs.Bosses.TheHunter>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Hunter"), Color.DarkGreen, false);
@@ -601,7 +601,7 @@ namespace tsorcRevamp
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
             
-            ScriptedEvent KingSlime2Event = new ScriptedEvent(new Vector2(4749, 639), 25, NPCID.KingSlime, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.KingSlime"), Color.Blue, false, RemixMapCondition);
+            ScriptedEvent KingSlime2Event = new ScriptedEvent(new Vector2(4749, 639), 25, NPCID.KingSlime, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.KingSlime"), Color.Cyan, false, RemixMapCondition);
 
             ScriptedEvent JungleMimicEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, NPCID.BigMimicJungle, 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
 
@@ -668,7 +668,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.EoC, EoCEvent},
                 {ScriptedEventType.EoW1, EoW1Event},
                 {ScriptedEventType.AncientDemon, AncientDemon},
-                {ScriptedEventType.LitchKing, LitchKing},
+                {ScriptedEventType.LichKing, LichKing},
                 {ScriptedEventType.TheHunter, TheHunter},
                 {ScriptedEventType.TheRage, TheRage},
                 {ScriptedEventType.AODE, AODE},
