@@ -227,11 +227,13 @@ namespace tsorcRevamp.UI
             SoundEngine.PlaySound(SoundID.MenuOpen);
             UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
 
-            string dataDir = Main.SavePath + "\\ModConfigs\\tsorcRevampData";
+            char separator = Path.DirectorySeparatorChar;
 
-            string baseMapFileName = "\\tsorcBaseMap.wld";
-            string userMapFileName = "\\TheStoryofRedCloud.wld";
-            string worldsFolder = Main.SavePath + "\\Worlds";
+            string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
+
+            string baseMapFileName = separator + "tsorcBaseMap.wld";
+            string userMapFileName = separator +  "TheStoryofRedCloud.wld";
+            string worldsFolder = Main.SavePath + separator + "Worlds";
 
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             tsorcRevamp thisMod = (tsorcRevamp)mod;
@@ -268,7 +270,7 @@ namespace tsorcRevamp.UI
                             int worldCount = 1;
                             do
                             {
-                                newFileName = "\\TheStoryOfRedCloud_" + worldCount.ToString() + ".wld";
+                                newFileName = separator + "TheStoryOfRedCloud_" + worldCount.ToString() + ".wld";
                                 if (File.Exists(worldsFolder + newFileName))
                                 {
                                     worldCount++;
@@ -310,11 +312,13 @@ namespace tsorcRevamp.UI
         {
             SoundEngine.PlaySound(SoundID.MenuOpen);
 
-            string dataDir = Main.SavePath + "\\ModConfigs\\tsorcRevampData";
+            char separator = Path.DirectorySeparatorChar;
 
-            string remixMapFileName = "\\tsorc-xelvaa-remix.wld";
-            string userRemixMapFileName = "\\TheStoryofRedCloudXelvaaRemix.wld";
-            string worldsFolder = Main.SavePath + "\\Worlds";
+            string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
+
+            string remixMapFileName = separator + "tsorc-xelvaa-remix.wld";
+            string userRemixMapFileName = separator + "TheStoryofRedCloudXelvaaRemix.wld";
+            string worldsFolder = Main.SavePath + separator + "Worlds";
 
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             tsorcRevamp thisMod = (tsorcRevamp)mod;
@@ -352,7 +356,7 @@ namespace tsorcRevamp.UI
                             int worldCount = 1;
                             do
                             {
-                                newFileName = "\\TheStoryOfRedCloudXelvaaRemix_" + worldCount.ToString() + ".wld";
+                                newFileName = separator + "TheStoryOfRedCloudXelvaaRemix_" + worldCount.ToString() + ".wld";
                                 if (File.Exists(worldsFolder + newFileName))
                                 {
                                     worldCount++;

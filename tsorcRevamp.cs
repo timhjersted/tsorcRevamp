@@ -2928,6 +2928,7 @@ namespace tsorcRevamp
             string newMapFileName = separator + "tsorcBaseMapDownload.wld";
 
             FileInfo fileToCopy = new FileInfo(dataDir + newMapFileName);
+            FileInfo fileToCopy2 = new FileInfo(dataDir + baseMapFileName);
             DirectoryInfo worlds = new DirectoryInfo(worldsFolder);
             bool worldExists = false;
             log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
@@ -2950,7 +2951,7 @@ namespace tsorcRevamp
             }
             else
             {
-                //If it exists and is valid, then overwrite the old map tempate with it
+                //If it exists and is valid, then overwrite the old map template with it
                 fileToCopy.CopyTo(dataDir + baseMapFileName, true);
 
                 //Delete the temporary file
@@ -2991,7 +2992,7 @@ namespace tsorcRevamp
                 thisLogger.Info("Attempting to copy world.");
                 try
                 {
-                    fileToCopy.CopyTo(worldsFolder + userMapFileName, false);
+                    fileToCopy2.CopyTo(worldsFolder + userMapFileName, false);
                 }
                 catch (System.Security.SecurityException e)
                 {
@@ -3007,16 +3008,19 @@ namespace tsorcRevamp
         public void TryCopyRemixMap(object sender = null, AsyncCompletedEventArgs downloadEvent = null)
         {
             char separator = Path.DirectorySeparatorChar;
+            /*
             string userRemixMapFileName = separator + "TheStoryofRedCloudXelvaaRemix.wld";
             string worldsFolder = Main.SavePath + separator + "Worlds";
+            */
             string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             string remixMapFileName = separator + "tsorc-xelvaa-remix.wld";
             string newRemixMapFileName = separator + "tsorc-xelvaa-remixDownload.wld";
 
             FileInfo RemixfileToCopy = new FileInfo(dataDir + newRemixMapFileName);
+            /*FileInfo RemixfileToCopy2 = new FileInfo(dataDir + remixMapFileName);
             DirectoryInfo worlds = new DirectoryInfo(worldsFolder);
             bool RemixworldExists = false;
-            log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
+            log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;*/
 
             //Check if the new Remix file exists and is not too small (indicates corruption or failed download)
             if (IsMapInvalid(dataDir + newRemixMapFileName))
@@ -3036,7 +3040,7 @@ namespace tsorcRevamp
             }
             else
             {
-                //If it exists and is valid, then overwrite the old map tempate with it
+                //If it exists and is valid, then overwrite the old map template with it
                 RemixfileToCopy.CopyTo(dataDir + remixMapFileName, true);
 
                 //Delete the temporary file
@@ -3046,6 +3050,7 @@ namespace tsorcRevamp
                 WriteVersionInfo("", "", newRemixMapUpdateString);
             }
 
+            /*Do not automatically create a remix world after having downloaded both because it somehow replaces the normal map and tbh it shouldn't automatically pop up for newer players
             //Then check if there is a copy of the adventure map in the players worlds folder, and if not auto-copy one there
             if (!Directory.Exists(worldsFolder))
             {
@@ -3077,7 +3082,7 @@ namespace tsorcRevamp
                 thisLogger.Info("Attempting to copy Remixworld.");
                 try
                 {
-                    RemixfileToCopy.CopyTo(worldsFolder + userRemixMapFileName, false);
+                    RemixfileToCopy2.CopyTo(worldsFolder + userRemixMapFileName, false);
                 }
                 catch (System.Security.SecurityException e)
                 {
@@ -3087,7 +3092,7 @@ namespace tsorcRevamp
                 {
                     thisLogger.Error("World copy failed ({0}).", e);
                 }
-            }
+            }*/
         }
 
         public bool IsMusicInvalid(string path)

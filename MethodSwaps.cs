@@ -3297,6 +3297,7 @@ namespace tsorcRevamp
 
         internal static void DownloadMapButton(Terraria.On_Main.orig_DrawMenu orig, Main self, GameTime gameTime)
         {
+            char separator = Path.DirectorySeparatorChar;
             orig(self, gameTime);
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             tsorcRevamp selfMod = (tsorcRevamp)mod;
@@ -3308,7 +3309,7 @@ namespace tsorcRevamp
 
             if (Main.menuMode == 0)
             {
-                string musicModDir = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
+                string musicModDir = Main.SavePath + separator + "Mods" + separator + "tsorcMusic.tmod";
                 //self goes here so that it runs *after* the first reload has finished and the game has transitioned back to the main menu.
                 //Do *not* want to initiate a second reload in the middle of the first.
                 if (tsorcRevamp.ReloadNeeded)
