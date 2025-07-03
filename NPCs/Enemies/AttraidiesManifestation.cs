@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
@@ -39,6 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 5000; // life * 1.25 bc attraidies minion
             NPC.width = 28;
             NPC.knockBackResist = 0.3f;
+            NPC.scale = 1.1f;
 
             if (Main.hardMode)
             {
@@ -105,12 +108,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.life > NPC.lifeMax / 4 * 3)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 210, Color.Red, 1f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 65, NPC.velocity.X, NPC.velocity.Y, 210, Color.Purple, 1f);
                 Main.dust[dust].noGravity = true;
             }
             else if (NPC.life <= NPC.lifeMax / 10 * 4)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, Color.Red, 1f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, Color.Purple, 1f);
                 Main.dust[dust].noGravity = true;
             }
 
@@ -156,7 +159,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int i = 0; i < 10; i++)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 55, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 86, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
                     Main.dust[dust].noGravity = true;
                 }
                 NPC.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
@@ -342,7 +345,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.frame.Y = 0;
             }
         }
-
 
         public override void OnKill()
         {

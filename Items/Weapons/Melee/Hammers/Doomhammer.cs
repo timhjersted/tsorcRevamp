@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 using Terraria.DataStructures;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Hammers;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Projectiles.Melee;
 using tsorcRevamp.Projectiles.Melee.Axes;
 using tsorcRevamp.Projectiles.Melee.Hammers;
@@ -147,7 +147,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Mjolnir>());
-            recipe.AddIngredient(ModContent.ItemType<MagmaTooth>());
+            recipe.AddIngredient(ModContent.ItemType<AncientFireAxe>());
             recipe.AddIngredient(ItemID.SoulofMight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe.AddTile(TileID.DemonAltar);

@@ -1392,6 +1392,20 @@
   "style": 1
 }
 {
+  "text": "The passage ahead is sealed by three large ambers, secretly scattered throughout the world. There are clues in each of the gem locks: one represents an enchanted underground with flames at the very bottom, one represents depths of icy waters, and the last represents a barren cavern and an underground oasis next to it .",
+  "tileX": 3980,
+  "tileY": 1433,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You have discovered the Elemental Pool and the Great Egg, the birthplace of the Three Wings. In this cavern, which still seems to be in its primal state, a gigantic egg appeared, and three important winged creatures were born from it. The Rage, a great phoenix of fire and anger; the Sorrow, a cold-water eagle filled with melancholy; and finally, Hunter, the most powerful of the trio, the great vulture, representing the vivacious and fearless nature. These creatures, though imposing, were domesticated and used as weapons by Attraidies and its allies to establish its domination over the world...",
+  "tileX": 3901,
+  "tileY": 1438,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Every cell in your body is screaming at you to turn back now!",
   "tileX": 4527,
   "tileY": 1104,

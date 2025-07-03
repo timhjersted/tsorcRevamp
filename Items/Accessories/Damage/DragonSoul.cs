@@ -49,9 +49,14 @@ namespace tsorcRevamp.Items.Accessories.Damage
             player.GetModPlayer<tsorcRevampPlayer>().DragonStoneImmunity = true;
             tsorcRevampPlayer.DragonStonePotency = true;
             player.GetModPlayer<tsorcRevampPlayer>().DragonSoulEffect = true;
-            player.GetDamage(DamageClass.Generic) += DamageIncrease / 100f;
-            player.inferno = true;
+            player.GetDamage(DamageClass.Generic) += DamageIncrease / 100f;     
         }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            if (!hideVisual) player.inferno = true;
+        }
+
 
         public override void AddRecipes()
         {

@@ -15,8 +15,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void SetDefaults()
         {
             Item.damage = 8;
-            Item.width = 24;
-            Item.height = 22;
+            Item.width = 30;
+            Item.height = 28;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 11;
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 3500;
-            Item.axe = 10; // same as iron axe
+            Item.axe = 10; 
             Item.rare = ItemRarityID.White;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();

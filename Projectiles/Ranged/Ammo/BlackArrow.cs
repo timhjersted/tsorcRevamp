@@ -43,6 +43,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
                 dust.noGravity = false;
                 dust.velocity *= 0.5f;
             }
+
+            UsefulFunctions.HomeOnEnemy(Projectile, 110, 30);
         }
 
         public override void OnKill(int timeLeft)

@@ -18,14 +18,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         {
             Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
-            Item.useTime = Item.useAnimation = 20;
-            Item.damage = 200;
+            Item.useTime = Item.useAnimation = 16;
+            Item.damage = 310;
             Item.knockBack = 1;
             Item.autoReuse = true;
             Item.shootSpeed = 16;
             Item.useAmmo = AmmoID.Bullet;
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = PriceByRarity.Cyan_9;
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.value = PriceByRarity.Purple_11;
             Item.UseSound = SoundID.Item12;
             Item.shoot = 10;
             Item.height = 50;

@@ -80,12 +80,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.life > NPC.lifeMax / 4 * 3)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 120, Color.Red, 1f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 65, NPC.velocity.X, NPC.velocity.Y, 120, Color.Purple, 1f);
                 Main.dust[dust].noGravity = true;
             }
             else if (NPC.life <= NPC.lifeMax / 10 * 4)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 180, Color.Red, 1f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 180, Color.Purple, 1f);
                 Main.dust[dust].noGravity = true;
             }
 
@@ -177,7 +177,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int i = 0; i < 10; i++)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 55, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 86, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
                     Main.dust[dust].noGravity = true;
                 }
                 NPC.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));

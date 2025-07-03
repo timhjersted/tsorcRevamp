@@ -256,6 +256,7 @@ Mods: {
 			FrozenCathedralEvent: You want to be frozen like the fools before you, Red?
 			ShadowTempleEvent: A strange vision has manifested itself from your fears...
 			ShadowTempleEvent2: A paladin appears to smite you!
+			WingTrio: The Three Wings have united again, ready to fight you!
 			SandstormElementalEvent: A powerful elemental is summoned!
 			Dutchman: A flying Dutchman invades the tropics!
 			IceGolemWyvern: !!!
@@ -1789,6 +1790,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					Grants Magma Stone and Inferno Potion effects
+					Inferno potion effect can be toggled by hiding the accessory
 					'''
 			}
 
@@ -5670,7 +5672,11 @@ Mods: {
 
 			ForgottenPoisonAxe: {
 				DisplayName: Forgotten Poison Axe
-				Tooltip: The blade has been dipped in poison.
+				Tooltip:
+					'''
+					The blade has been dipped in poison.
+					Has a chance to inflict Acid Venom 
+					'''
 			}
 
 			ForgottenRuneAxe: {
@@ -5680,7 +5686,11 @@ Mods: {
 
 			GigantAxe: {
 				DisplayName: Gigant Axe
-				Tooltip: An axe used to kill humans.
+				Tooltip:
+					'''
+					An axe used to kill humans.
+					Deals massive damage to humans
+					'''
 			}
 
 			AncientFireSword: {
@@ -7938,7 +7948,16 @@ Mods: {
 					Increases the potency of most weak debuffs on enemies by {0}x
 					Potency increase is 2x less effective with strong debuffs 
 					Attacks inflict daybroken and increases damage by {1}%
-					Grants Inferno Potion effect
+					Grants Inferno Potion effect, can be toggled by hiding the accessory
+					'''
+			}
+
+			ShadowFury: {
+				DisplayName: Shadow Fury
+				Tooltip:
+					'''
+					Converts wooden arrows into shadowflame arrows
+					Shoots an extra shadowflame spike
 					'''
 			}
 		}

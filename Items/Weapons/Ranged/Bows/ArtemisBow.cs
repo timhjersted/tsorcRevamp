@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<ArtemisBowHeld>();
             Item.channel = true;
-            Item.damage = 230;
+            Item.damage = 200;
             Item.crit = 10;
             Item.width = 14;
             Item.height = 28;
@@ -51,10 +51,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.MoltenFury, 1);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
-            recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
-
+            recipe.AddIngredient(ItemID.MythrilBar, 5);
+            recipe.AddIngredient(ItemID.SoulofLight, 4);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

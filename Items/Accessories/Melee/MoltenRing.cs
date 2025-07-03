@@ -40,8 +40,12 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
             player.magmaStone = true;
-            player.inferno = true;
+            
         }
 
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            if (!hideVisual) player.inferno = true;
+        }
     }
 }

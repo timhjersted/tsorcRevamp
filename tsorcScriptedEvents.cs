@@ -226,6 +226,7 @@ namespace tsorcRevamp
             IceGolemIsland,
             AncestralSpiritRemixEvent,
             FrozenCathedralEvent2, 
+            WingTrioEvent,
             WyvernPrisonEvent,
             SandstormElementalEvent2,
             DeathRemix,
@@ -637,6 +638,12 @@ namespace tsorcRevamp
             List<int> FrozenCathedralEvent2EnemyTypeList = new List<int>() { NPCID.MourningWood, NPCID.MourningWood };
             List<Vector2> FrozenCathedralEvent2EnemyLocations = new List<Vector2>() { new Vector2(7189, 1650), new Vector2(7164, 1650) };
             ScriptedEvent FrozenCathedralEvent2 = new ScriptedEvent(new Vector2(7177, 1650), 35, FrozenCathedralEvent2EnemyTypeList, FrozenCathedralEvent2EnemyLocations, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction); 
+            
+            List<int> WingTrioEventEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.TheRage>(), ModContent.NPCType<NPCs.Bosses.TheSorrow>(), ModContent.NPCType<NPCs.Bosses.TheHunter>() };
+            List<Vector2> WingTrioEventEnemyLocations = new List<Vector2>() { new Vector2(3838, 1425), new Vector2(3879, 1425), new Vector2(3858, 1410) };
+            ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, false, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
+            WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Materials.EternalCrystal>(), ModContent.ItemType<Items.Materials.EternalCrystal>()}, new List<int>() { 3, 1 });
+            WingTrioEvent.SetCustomStats(null, null, null, 40000);
 
             ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, OnlyAdventureMapCondition, SetNightCustomAction);
             GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
@@ -693,7 +700,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.GwynTombVision, GwynsTombEvent},
                 {ScriptedEventType.GwynFight, GwynEvent},
                 {ScriptedEventType.RemixGwynFight, RemixGwynEvent},
-                { ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
+                {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
                 {ScriptedEventType.RemixAbysmalOolacileSorcererFight, RemixAbysmalOolacileSorcererEvent},
                 {ScriptedEventType.WitchkingFight, WitchkingEvent},
                 {ScriptedEventType.RemixWitchkingEvent, RemixWitchkingEvent},
@@ -727,7 +734,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnWizard, SpawnWizard},
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
                 {ScriptedEventType.EoL, EoL},
-                { ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
+                {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
                 {ScriptedEventType.DualSandsprogAmbush1, DualSandsprogAmbush1 },
                 {ScriptedEventType.DrownedAmbush1, DrownedAmbush1 },
                 {ScriptedEventType.DrownedAmbush2, DrownedAmbush2 },
@@ -753,6 +760,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.IceGolemIsland, IceGolemIsland },          
                 {ScriptedEventType.AncestralSpiritRemixEvent, AncestralSpiritRemixEvent },
                 {ScriptedEventType.FrozenCathedralEvent2, FrozenCathedralEvent2 }, 
+                {ScriptedEventType.WingTrioEvent, WingTrioEvent }, 
                 {ScriptedEventType.WyvernPrisonEvent, WyvernPrisonEvent }, 
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },

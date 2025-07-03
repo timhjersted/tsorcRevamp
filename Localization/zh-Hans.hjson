@@ -256,6 +256,7 @@ Mods: {
 			FrozenCathedralEvent: 瑞德，你想像之前的那些傻瓜一样被永远冰封吗？
 			ShadowTempleEvent: 一只奇怪的远古幻影妖从你的恐惧中显现......
 			ShadowTempleEvent2: 一名圣骑士出现，准备对你进行制裁！
+			// WingTrio: The Three Wings have united again, ready to fight you!
 			SandstormElementalEvent: 一个强大的沙尘精被召唤出来了！
 			Dutchman: 荷兰飞盗船入侵了热带地区！
 			IceGolemWyvern: ！！！
@@ -7934,7 +7935,16 @@ Mods: {
 					Increases the potency of most weak debuffs on enemies by {0}x
 					Potency increase is 2x less effective with strong debuffs 
 					Attacks inflict daybroken and increases damage by {1}%
-					Grants Inferno Potion effect
+					Grants Inferno Potion effect, can be toggled by hiding the accessory
+					''' */
+			}
+
+			ShadowFury: {
+				// DisplayName: Shadow Fury
+				/* Tooltip:
+					'''
+					Converts wooden arrows into shadowflame arrows
+					Shoots an extra shadowflame spike
 					''' */
 			}
 		}
