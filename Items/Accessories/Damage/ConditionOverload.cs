@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
 {
     public class ConditionOverload : ModItem
     {
-        public const float Dmg = 8f;
+        public const float Dmg = 7f;
         public override void SetStaticDefaults()
         {
         }
@@ -29,11 +29,11 @@ namespace tsorcRevamp.Items.Accessories.Damage
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.HellstoneBar, 4);
-            recipe.AddIngredient(ItemID.CursedFlame, 4);
-            recipe.AddIngredient(ItemID.Ichor, 4);
-            recipe.AddIngredient(ItemID.Stinger, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ItemID.HellstoneBar, 8);
+            recipe.AddIngredient(ItemID.CursedFlame, 8);
+            recipe.AddIngredient(ItemID.Ichor, 8);
+            recipe.AddIngredient(ItemID.Stinger, 8);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

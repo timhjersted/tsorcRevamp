@@ -1682,6 +1682,23 @@ namespace tsorcRevamp
                     //return;
                 }
             }
+            //Trinity Accessory
+            if (Trinity)
+            {
+                Player.AddBuff(BuffID.RapidHealing, 120);
+                foreach (NPC npc in Main.npc)
+                {
+                    if (npc.active && !npc.friendly && npc.Distance(Player.Center) <= 320f) 
+                    {
+                        npc.AddBuff(BuffID.Venom, 240);
+
+                        if (Main.rand.NextFloat() < 0.33f)
+                        {
+                            npc.AddBuff(BuffID.Frozen, 90);
+                        }
+                    }
+                }
+            }
         }
 
         //Reduces the mana restored from potions and such to zero

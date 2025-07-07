@@ -36,10 +36,10 @@ namespace tsorcRevamp.Items.Accessories.Damage
             {
                 rotation += 0.01f;
                 Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i + rotation) * 5;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Cyan * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Yellow * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
 
                 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i - rotation) * 5;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Cyan * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Yellow * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
             }
             return true;
         }

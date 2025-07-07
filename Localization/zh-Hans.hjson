@@ -7947,6 +7947,17 @@ Mods: {
 					Shoots an extra shadowflame spike
 					''' */
 			}
+
+			Trinity: {
+				// DisplayName: Trinity
+				/* Tooltip:
+					'''
+					[c/ffbf00:You feel the power of the 3 Wings and the elements within you]
+					Inflicts acid venom, has a chance to freeze nearby enemies, and gains rapid healing for a small duration upon taking damage
+					When the wearer is below 50% life, activates his natural defenses and gains a buff
+					[c/00ffd4:The buff grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed]
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -8936,6 +8947,15 @@ Mods: {
 			AbyssInferno: {
 				// DisplayName: Abyss Inferno
 				// Description: Mods.tsorcRevamp.Buffs.AbyssInferno.Description
+			}
+
+			TrinityBuff: {
+				// DisplayName: Natural Defenses
+				/* Description:
+					'''
+					Your natural defenses have been activated!
+					Grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed 
+					''' */
 			}
 		}
 

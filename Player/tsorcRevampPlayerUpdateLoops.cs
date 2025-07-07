@@ -70,6 +70,7 @@ namespace tsorcRevamp
         public bool UndeadTalisman = false;
         public bool WolfRing = false;
         public bool BarrierRing;
+        public bool Trinity = false;
 
         public bool DragoonBoots = false;
         public bool DragoonBootsEnable = false;
@@ -471,10 +472,12 @@ namespace tsorcRevamp
             WhipCritHitboxSize = 1;
 
             PhoenixSkull = false;
+            Trinity = false;
 
             SummonTagStrength = 1f;
             SummonTagDuration = 1f;
             CrystallineShard = false;
+
 
             MaxMinionTurretMultiplier = 1;
 
