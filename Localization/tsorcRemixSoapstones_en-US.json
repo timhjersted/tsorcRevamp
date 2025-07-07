@@ -195,7 +195,7 @@
   "style": 1
 }
 {
-  "text": "You sense the presence of the Earth Fiend nearby. The air seems heavier, the pressure more intense, and you also smell a repulsive odor of ichor... --NEWLINE  --NEWLINE 'The passage to the left is blocked, but I think it leads to the Fiend. Perhaps the passage above will find a way to open it.'",
+  "text": "You sense the presence of the Earth Fiend nearby. The air seems heavier, the pressure more intense, and you also smell a repulsive odor of ichor... --NEWLINE  --NEWLINE \u0022The passage to the left is blocked, but I think it leads to the Fiend. Perhaps the passage above will find a way to open it.\u0022",
   "tileX": 586,
   "tileY": 1919,
   "textWidth": 320,
@@ -776,7 +776,7 @@
   "style": 1
 }
 {
-  "text": "You see hearts on the ceiling, beating unusually powerfully and heavily, prompting you to search for a way to destroy them. 'Perhaps this lever is connected to those hearts...'",
+  "text": "You see hearts on the ceiling, beating unusually powerfully and heavily, prompting you to search for a way to destroy them. \u0022Perhaps this lever is connected to those hearts...\u0022",
   "tileX": 3476,
   "tileY": 1102,
   "textWidth": 320,

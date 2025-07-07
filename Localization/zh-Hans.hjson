@@ -166,7 +166,7 @@ Mods: {
 					[c/77ff77:当前总使用次数：]{1}
 					[c/77ff77:当前药水效率：]{2}%
 					'''
-				NoScaling: 永久获得 {0} 增益
+				NoScaling: 永久获得{0}增益
 				GeneralTooltip:
 					'''
 					不占用Buff栏位
@@ -256,7 +256,7 @@ Mods: {
 			FrozenCathedralEvent: 瑞德，你想像之前的那些傻瓜一样被永远冰封吗？
 			ShadowTempleEvent: 一只奇怪的远古幻影妖从你的恐惧中显现......
 			ShadowTempleEvent2: 一名圣骑士出现，准备对你进行制裁！
-			// WingTrio: The Three Wings have united again, ready to fight you!
+			WingTrio: 三鸟重聚于世，惩罚你这不敬之人！
 			SandstormElementalEvent: 一个强大的沙尘精被召唤出来了！
 			Dutchman: 荷兰飞盗船入侵了热带地区！
 			IceGolemWyvern: ！！！
@@ -630,9 +630,9 @@ Mods: {
 				LargeAmber: "[c/ffbf00:上面刻着一个符号，像是村庄山丘下大地神庙的入口]"
 				RemixLargeDiamond: "[c/ffbf00:上面刻着一个符号，像是村庄山丘下大地神庙的入口]"
 				RemixLargeTopaz: "[c/ffbf00:上面刻着一个符号，像是遗忘之城东边的废墟]"
-				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
-				IncinerationHex: 如果已击败双足翼龙，则施加破晓减益
-				// MartianBuff: Deals more damage and electrocutes enemies if the Martians have been defeated
+				VulnerabilityHex: 击败炼狱鸢龙后，提高伤害并对敌人施加
+				IncinerationHex: 击败炼狱鸢龙后，提高伤害并
+				MartianBuff: 击败火星飞碟后，提高伤害并对敌人施加电击
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生
@@ -1373,7 +1373,6 @@ Mods: {
 					“所有人都会离得你远远的”
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.Thorns}
-					{$CommonItemTooltip.BadMoveSpeedMult@2}
 					'''
 			}
 
@@ -1530,7 +1529,7 @@ Mods: {
 				Tooltip:
 					'''
 					增加 {0} 倍对敌人造成的减益伤害
-					破晓敌人造成的减益伤害为 2.5 倍
+					较强力减益的伤害只受到增益的一半
 					'''
 			}
 
@@ -1790,7 +1789,8 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					给与岩浆石和狱火药水效果
+					获得岩浆石和狱火药水效果
+					狱火药水效果可通过隐藏饰品关闭
 					'''
 			}
 
@@ -1944,12 +1944,12 @@ Mods: {
 
 			AbyssArrow: {
 				DisplayName: 深渊箭
-				Tooltip: 施加破晓
+				Tooltip: 施加孽火
 			}
 
 			AbyssBullet: {
 				DisplayName: 深渊弹
-				Tooltip: 施加破晓
+				Tooltip: 施加孽火
 			}
 
 			ArrowOfBard: {
@@ -2099,12 +2099,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
-					{$CommonItemTooltip.SetBonus}每当你杀死一名敌人获得一层堆叠
-					{$Items.NecromancersShirt.Keybind1}{$Items.NecromancersShirt.Keybind2}
-					不死之骨受到魔法和召唤伤害加成
+					{$CommonItemTooltip.SetBonus}召唤巫妖骨蟒攻击你附近的敌人
 					'''
-				Keybind1: "按 "
-				Keybind2: " 消耗堆叠层数以发射不死之骨"
 			}
 
 			NecromancersSkullmask: {
@@ -2663,7 +2659,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.SetBonus}提供二段跳
 					提高移动速度和加速度
-					{$CommonItemTooltip.LifeThreshold@1}给与玩家 恐慌！增益
+					{$CommonItemTooltip.LifeThreshold@1}获得恐慌！增益
 					'''
 			}
 
@@ -3747,7 +3743,7 @@ Mods: {
 				DisplayName: 深渊瓶
 				Tooltip:
 					'''
-					近战和鞭子攻击对敌人施加破晓
+					近战和鞭子攻击对敌人施加孽火
 					增加近战和鞭子伤害、暴击率
 					'''
 			}
@@ -4080,7 +4076,7 @@ Mods: {
 				DisplayName: 深渊之火
 				Tooltip:
 					'''
-					可以焚烬太阳的永恒之火
+					来自深渊焚烬万物的永恒之火
 					[c/ffbf00:只有深渊中堕落的生物掉落]
 					'''
 			}
@@ -5668,7 +5664,11 @@ Mods: {
 
 			ForgottenPoisonAxe: {
 				DisplayName: 被遗忘的毒斧
-				Tooltip: 锋刃已浸入毒药
+				Tooltip:
+					'''
+					锋刃已浸入毒药
+					有几率施加酸性毒液
+					'''
 			}
 
 			ForgottenRuneAxe: {
@@ -5678,7 +5678,11 @@ Mods: {
 
 			GigantAxe: {
 				DisplayName: 巨斧
-				Tooltip: 用来杀人的斧头，对人类造成双倍伤害
+				Tooltip:
+					'''
+					用来杀人的斧头
+					对人类造成双倍伤害
+					'''
 			}
 
 			AncientFireSword: {
@@ -6949,7 +6953,7 @@ Mods: {
 					释放[c/708090:旋风]会消耗所有[c/708090:钢铁风暴堆叠]
 					近战速度加成可以减少[c/708090:突刺冷却](冷却最低为 1.33 秒)
 					当前[c/708090:突刺冷却]: {0} 秒
-					[c/708090:突袭]和[c/708090:旋风]造成双倍伤害
+					[c/708090:突刺]和[c/708090:旋风]造成双倍伤害
 					'''
 				SmoughBalance: 从斯摩盔甲获得的暴击率不会被加倍
 			}
@@ -6979,7 +6983,7 @@ Mods: {
 					释放[c/708090:旋风]会消耗所有[c/708090:钢铁风暴堆叠]
 					近战速度加成可以减少[c/708090:突刺冷却](冷却最低为 1.33 秒)
 					当前[c/708090:突刺冷却]: {0} 秒
-					[c/708090:突袭]和[c/708090:旋风]造成双倍伤害
+					[c/708090:突刺]和[c/708090:旋风]造成双倍伤害
 					'''
 			}
 
@@ -7010,7 +7014,7 @@ Mods: {
 					释放[c/708090:旋风]会消耗所有[c/708090:钢铁风暴堆叠]
 					近战速度加成可以减少[c/708090:突刺冷却](冷却最低为 1.33 秒)
 					当前[c/708090:突刺冷却]: {0} 秒
-					[c/708090:突袭]和[c/708090:旋风]造成双倍伤害
+					[c/708090:突刺]和[c/708090:旋风]造成双倍伤害
 					'''
 			}
 
@@ -7755,7 +7759,7 @@ Mods: {
 
 			EstusRing: {
 				DisplayName: 元素戒指
-				Tooltip: 提高元素瓶 {0} 点生命值的治疗效果，增加 {1}% 最大生命值
+				Tooltip: 元素瓶的生命恢复效果固定增加 {0} 点，并额外恢复最大生命值的 {1}%
 			}
 
 			RingOfFavorAndProtection: {
@@ -7929,34 +7933,34 @@ Mods: {
 			}
 
 			DragonSoul: {
-				// DisplayName: Supreme Dragon Soul
-				/* Tooltip:
+				DisplayName: 至尊龙魂
+				Tooltip:
 					'''
-					Increases the potency of most weak debuffs on enemies by {0}x
-					Potency increase is 2x less effective with strong debuffs 
-					Attacks inflict daybroken and increases damage by {1}%
-					Grants Inferno Potion effect, can be toggled by hiding the accessory
-					''' */
+					增加 {0} 倍对敌人造成的减益伤害
+					较强力减益的伤害只受到增益的一半
+					攻击施加破晓并增加 {1}% 伤害
+					获得狱火药水效果，可通过隐藏饰品关闭
+					'''
 			}
 
 			ShadowFury: {
-				// DisplayName: Shadow Fury
-				/* Tooltip:
+				DisplayName: 暗影狂怒之弓
+				Tooltip:
 					'''
-					Converts wooden arrows into shadowflame arrows
-					Shoots an extra shadowflame spike
-					''' */
+					将木箭转化为暗影箭
+					额外射出暗影焰尖刺
+					'''
 			}
 
 			Trinity: {
-				// DisplayName: Trinity
-				/* Tooltip:
+				DisplayName: 三位一体
+				Tooltip:
 					'''
-					[c/ffbf00:You feel the power of the 3 Wings and the elements within you]
-					Inflicts acid venom, has a chance to freeze nearby enemies, and gains rapid healing for a small duration upon taking damage
-					When the wearer is below 50% life, activates his natural defenses and gains a buff
-					[c/00ffd4:The buff grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed]
-					''' */
+					[c/ffbf00:你感受到三鸟的元素之力在体内奔涌]
+					攻击施加酸性毒液并有概率冻结周围敌人，受伤后短暂恢复生命
+					生命值低于50%时激活自然防御并获得增益
+					[c/00ffd4:增加 4 点生命再生、12 点防御、15% 伤害和 20% 移动速度]
+					'''
 			}
 		}
 
@@ -8899,7 +8903,7 @@ Mods: {
 				DisplayName: 武器灌注：深渊
 				Description:
 					'''
-					近战和鞭子攻击对敌人施加破晓
+					近战和鞭子攻击对敌人施加孽火
 					增加近战和鞭子伤害、暴击率
 					'''
 			}
@@ -8935,27 +8939,27 @@ Mods: {
 			}
 
 			NecromanticSerpentBuff: {
-				// DisplayName: Necromantic Serpent Buff
-				// Description: Mods.tsorcRevamp.Buffs.NecromanticSerpentBuff.Description
+				DisplayName: 巫妖骨蟒
+				Description: ""
 			}
 
 			ElectrocutedBuff2: {
-				// Description: Mods.tsorcRevamp.Buffs.ElectrocutedBuff2.Description
-				// DisplayName: Electrocuted Buff2
+				Description: ""
+				DisplayName: 电击减益
 			}
 
 			AbyssInferno: {
-				// DisplayName: Abyss Inferno
-				// Description: Mods.tsorcRevamp.Buffs.AbyssInferno.Description
+				DisplayName: 孽火
+				Description: ""
 			}
 
 			TrinityBuff: {
-				// DisplayName: Natural Defenses
-				/* Description:
+				DisplayName: 自然防御
+				Description:
 					'''
-					Your natural defenses have been activated!
-					Grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed 
-					''' */
+					你的自然防御本能已激活！
+					增加 4 点生命再生、12 点防御、15% 伤害和 20% 移动速度
+					'''
 			}
 		}
 
@@ -9615,11 +9619,11 @@ Mods: {
 			PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
 			TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
 			DoomhammerFireball.DisplayName: Doomhammer Fireball
-			// NecromanticSerpentBody.DisplayName: Necromantic Serpent Body
-			// NecromanticSerpentHead.DisplayName: Necromantic Serpent Head
-			// NecromanticSerpentTail.DisplayName: Necromantic Serpent Tail
-			// GwynAura.DisplayName: Gwyn Aura
-			// BlackArrow.DisplayName: Black Arrow
+			NecromanticSerpentBody.DisplayName: 巫妖骨蟒
+			NecromanticSerpentHead.DisplayName: 巫妖骨蟒
+			NecromanticSerpentTail.DisplayName: 巫妖骨蟒
+			GwynAura.DisplayName: Gwyn Aura
+			BlackArrow.DisplayName: Black Arrow
 		}
 
 		NPCs: {
@@ -9789,7 +9793,7 @@ Mods: {
 				Weightless: 你突然感到不再受重力的限制...
 				Portal: 一道深渊裂缝被打开了！
 				Hint: 你必须去西海寻找萨满长老...
-				// MartianHint: Martian probes have been spotted in the sky...
+				MartianHint: 天空中开始出现火星探测器...
 				AbyssOpen: 连接深渊的裂缝敞开了...
 			}
 
@@ -10129,7 +10133,7 @@ Mods: {
 			MindflayerServant.DisplayName: 夺心魔之仆
 			MutantToad.DisplayName: 突变蟾蜍
 			Necromancer.DisplayName: 死灵法师
-			FallenNecromancer.DisplayName: 死灵法师之元素
+			FallenNecromancer.DisplayName: 堕落巫师
 			ObsidianJellyfish.DisplayName: 黑曜石水母
 			Parasprite.DisplayName: 精灵飞蝇
 			PrimeLaserProbe.DisplayName: 激光探针
@@ -11212,8 +11216,7 @@ Mods: {
 			"Wolf Ring.DisplayName": 苍狼戒指
 			"Wings of Seath speed toggle.DisplayName": 希斯之翼加速度切换
 			Shunpo.DisplayName: 瞬步
-			"Necromancers Spell.DisplayName": 巫妖王之咒
-			"Krakens Cast.DisplayName": 海妖之怒
+			"Krakens Cast.DisplayName": 海妖旋风
 			"Witchking Scream.DisplayName": 巫师尖啸
 			"Print Position.DisplayName": 显示玩家位置
 		}

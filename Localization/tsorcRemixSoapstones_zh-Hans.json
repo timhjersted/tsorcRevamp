@@ -202,10 +202,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了熔岩空域神庙 -",
+  "text": "你感到大地恶魔近在咫尺。空气变得滞重，压迫感愈发强烈，腐臭的灵液气味令人作呕... --NEWLINE   --NEWLINE \u0022左侧通道虽被封锁，但应是通往大地恶魔的捷径，或许上层通道能找到开启之法。\u0022",
   "tileX": 586,
   "tileY": 1919,
-  "textWidth": 230,
+  "textWidth": 670,
   "style": 1
 }
 {
@@ -217,7 +217,7 @@
 }
 {
   "text": "- 你发现了灰烬之王葛温的坟墓 - --NEWLINE   --NEWLINE 要打败葛温，你需要击败七个恶魔领主来获得足够的力量。 --NEWLINE   --NEWLINE 他们被称为亚尔特留斯、大地恶魔巫妖王、火焰恶魔马瑞丽斯、水之恶魔克拉肯、枯萎、冰龙希斯和渊堕飞龙法师。 --NEWLINE   --NEWLINE 在击败他们之前和葛温战斗，必死无疑",
-  "tileX": 810,
+  "tileX": 759,
   "tileY": 1245,
   "textWidth": 800,
   "style": 1
@@ -265,17 +265,10 @@
   "style": 1
 }
 {
-  "text": "你需要一块大琥珀来打开通道 --NEWLINE   --NEWLINE 这块琥珀很久以前就被封存在旧日之树中，以此来封印这个地方",
-  "tileX": 1364,
-  "tileY": 1935,
-  "textWidth": 460,
-  "style": 1
-}
-{
-  "text": "- 你找到了阿卓迪斯的神殿 - --NEWLINE   --NEWLINE 你每击败一个恶魔之神（共计有8个）就会获得一块碎片，把它们和这箱子中的材料结合起来，制造出阿卓迪斯的召唤物。 --NEWLINE   --NEWLINE 召唤物将削弱阿卓迪斯的力量，这能给你一个击败他的机会。 --NEWLINE   --NEWLINE \u0022是时候结束这一切了。\u0022",
+  "text": "- 你找到了阿卓迪斯的神殿 - --NEWLINE   --NEWLINE 当你击败八位恶魔守护者并获得八块碎片后，还需暗黑与光明碎块为其充能，方可召唤阿卓迪斯。 --NEWLINE   --NEWLINE 此箱中存放着暗黑碎块，而光明碎块似乎被珍藏在世界树的根系之中…… --NEWLINE   --NEWLINE 召唤物将削弱阿卓迪斯的力量，这能给你一个击败他的机会。 --NEWLINE   --NEWLINE \u0022是时候结束这一切了。\u0022",
   "tileX": 1400,
   "tileY": 325,
-  "textWidth": 880,
+  "textWidth": 700,
   "style": 1
 }
 {
@@ -391,7 +384,7 @@
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022一个曾活着逃离这个地方的勇敢灵魂，告诉我有三条隐藏的捷径: --NEWLINE   --NEWLINE 一条在地下湖表面；一条在恐怖大理石洞穴；另一条几乎靠近入口，又不完全如此… --NEWLINE   --NEWLINE 我不确定它提到的这些地点具体在哪里…\u0022",
+  "text": "Miakoda：\u0022一个曾活着逃离这个地方的勇敢灵魂，告诉我有三条隐藏的捷径: --NEWLINE   --NEWLINE 一条在神庙的水道；一条在恐怖大理石洞穴；另一条几乎靠近入口，又不完全如此… --NEWLINE   --NEWLINE 我不确定它提到的这些地点具体在哪里…\u0022",
   "tileX": 1897,
   "tileY": 1121,
   "textWidth": 620,
@@ -454,13 +447,6 @@
   "style": 1
 }
 {
-  "text": "你需要一块大琥珀来打开通道 --NEWLINE   --NEWLINE 这块琥珀很久以前就被封存在旧日之树中，以此来封印这个地方 --NEWLINE   --NEWLINE 你需要先击败夺心魔王阿卓迪斯才能获得它……",
-  "tileX": 2221,
-  "tileY": 858,
-  "textWidth": 460,
-  "style": 1
-}
-{
   "text": "- 这扇门守卫着通往水之恶魔梦幻洞穴的路 - --NEWLINE   --NEWLINE 你拿出日记，写下一张纸条：\u0022蜥蜴门就在沙漠中一座未知神庙的东边。\u0022",
   "tileX": 2238,
   "tileY": 857,
@@ -468,10 +454,10 @@
   "style": 1
 }
 {
-  "text": "你来到一个很深的神圣尖刺裂缝。 --NEWLINE   --NEWLINE 当你往下走的时候，你可以感觉到重力再次开始变化…（尝试按向上键）",
+  "text": "你来到一处很深的黑黯腐败洞穴。 --NEWLINE   --NEWLINE 这地方似乎是一个废弃的矿井，也是通往影庙出口的路。",
   "tileX": 2265,
   "tileY": 1183,
-  "textWidth": 520,
+  "textWidth": 410,
   "style": 1
 }
 {
@@ -497,8 +483,8 @@
 }
 {
   "text": "- 你发现了梦幻洞穴 - --NEWLINE   --NEWLINE 正如其名，你感到自己仿佛正在梦中旅行……",
-  "tileX": 2630,
-  "tileY": 1112,
+  "tileX": 2656,
+  "tileY": 1174,
   "textWidth": 320,
   "style": 1
 }
@@ -549,13 +535,6 @@
   "tileX": 2921,
   "tileY": 427,
   "textWidth": 480,
-  "style": 1
-}
-{
-  "text": "你需要一块大琥珀来打开通道 --NEWLINE   --NEWLINE 这块琥珀很久以前就被封存在旧日之树中，以此来封印这个地方",
-  "tileX": 2934,
-  "tileY": 1200,
-  "textWidth": 460,
   "style": 1
 }
 {
@@ -734,6 +713,13 @@
   "style": 1
 }
 {
+  "text": "你看到天花板上的心脏异常有力和沉重地跳动，促使你寻找摧毁它们的方法。 --NEWLINE   --NEWLINE \u0022也许这个拉杆与那些心脏有关...\u0022",
+  "tileX": 3476,
+  "tileY": 1102,
+  "textWidth": 560,
+  "style": 1
+}
+{
   "text": "奥罗斯山口，莱昂哈德大桥 --NEWLINE   --NEWLINE 在阿拉齐姆双峰之间的交界处",
   "tileX": 3486,
   "tileY": 357,
@@ -867,10 +853,10 @@
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022瑞德，这种液体具有非常有趣的特性， --NEWLINE   --NEWLINE 你或许可以用它来帮助你在道路上前进……\u0022",
+  "text": "梦幻洞穴由四大界域组成，每个界域都有独特的色彩与建筑风格。 --NEWLINE   --NEWLINE 发光蘑菇会与色彩产生奇妙反应，而洞穴中的微光是一种能够反射出所有颜色的特殊液体， --NEWLINE   --NEWLINE 它们共同造就了这些色彩斑斓、光怪陆离的蘑菇洞穴，令人目眩神迷……",
   "tileX": 3801,
   "tileY": 1545,
-  "textWidth": 370,
+  "textWidth": 640,
   "style": 1
 }
 {
@@ -923,6 +909,13 @@
   "style": 1
 }
 {
+  "text": "你发现了元素之池与巨卵-三鸟的诞生地。 --NEWLINE   --NEWLINE 在这个看起来仍处于原始状态的洞穴中，曾出现了一枚巨大的蛋，三鸟从中诞生。 --NEWLINE   --NEWLINE 愤怒，代表火焰与愤怒的凤凰 --NEWLINE 悲伤，充满忧郁的寒水天鹅 --NEWLINE 以及最强大的猎手，象征生机勃勃和无畏的本性的秃鹫。 --NEWLINE   --NEWLINE 这些生物虽然令人畏惧，却被阿卓迪斯及其盟友驯化并用作武器，以建立对世界的统治……",
+  "tileX": 3901,
+  "tileY": 1438,
+  "textWidth": 650,
+  "style": 1
+}
+{
   "text": "- 阿拉齐姆山洞 - --NEWLINE   --NEWLINE \u0022奇怪。这些发光蘑菇的排列顺序看起来不是随机的……\u0022",
   "tileX": 3923,
   "tileY": 685,
@@ -948,6 +941,13 @@
   "tileX": 3976,
   "tileY": 896,
   "textWidth": 170,
+  "style": 1
+}
+{
+  "text": "前方的道路被三块大琥珀封住，它们秘密散布在整个世界中。 --NEWLINE   --NEWLINE 每个宝石锁中都有线索：一个在最底部有火焰的魔法地下 --NEWLINE   --NEWLINE 一个在冰冷水域的深处，最后一个在贫瘠的洞穴和旁边的地下绿洲。",
+  "tileX": 3980,
+  "tileY": 1433,
+  "textWidth": 480,
   "style": 1
 }
 {
@@ -1081,13 +1081,6 @@
   "tileX": 4151,
   "tileY": 709,
   "textWidth": 280,
-  "style": 1
-}
-{
-  "text": "- 你发现了光之女皇的天空废墟 - --NEWLINE   --NEWLINE 很久以前，石巨人用大金字塔的黑暗魔法囚禁了女皇，让这座天空神庙毁于一旦。 --NEWLINE   --NEWLINE 据说，在石巨人被打败的那一天，女皇将被释放回到这些圣地。",
-  "tileX": 4154,
-  "tileY": 351,
-  "textWidth": 580,
   "style": 1
 }
 {
@@ -1567,6 +1560,13 @@
   "style": 1
 }
 {
+  "text": "- 你发现了光之女皇的天空废墟 - --NEWLINE   --NEWLINE 很久以前，石巨人用大金字塔的黑暗魔法囚禁了女皇，让这座天空神庙毁于一旦。 --NEWLINE   --NEWLINE 据说，在石巨人被打败的那一天，女皇将被释放回到这些圣地。",
+  "tileX": 4837,
+  "tileY": 350,
+  "textWidth": 580,
+  "style": 1
+}
+{
   "text": "你兄弟以利亚和博迪的房子。",
   "tileX": 4842,
   "tileY": 855,
@@ -1770,7 +1770,7 @@
   "style": 1
 }
 {
-  "text": "向东--> --NEWLINE 奥里德部落的雨林 --NEWLINE 黑曜石火山 --NEWLINE 神圣之地 --NEWLINE 未知 --NEWLINE   --NEWLINE 向南↓ --NEWLINE 树妖之家的洞穴入口",
+  "text": "向东--> --NEWLINE 奥里德部落的雨林 --NEWLINE 旧日之树 --NEWLINE 神圣之地 --NEWLINE 未知",
   "tileX": 5338,
   "tileY": 867,
   "textWidth": 220,
@@ -1924,6 +1924,13 @@
   "style": 1
 }
 {
+  "text": "你拉动拉杆，听见树冠下方传来木结构吱呀作响的声音",
+  "tileX": 5939,
+  "tileY": 642,
+  "textWidth": 390,
+  "style": 1
+}
+{
   "text": "- 你发现了丛林秘境的入口 - --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022叶绿之门位于斯洛格拉和盖波陵墓以西的地下丛林\u0022",
   "tileX": 5939,
   "tileY": 1259,
@@ -1949,13 +1956,6 @@
   "tileX": 5968,
   "tileY": 1627,
   "textWidth": 180,
-  "style": 1
-}
-{
-  "text": "你找到了大琥珀，是开启通往元素恶魔大门的钥匙",
-  "tileX": 5969,
-  "tileY": 863,
-  "textWidth": 370,
   "style": 1
 }
 {
