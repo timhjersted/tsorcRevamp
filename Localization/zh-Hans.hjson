@@ -459,6 +459,7 @@ Mods: {
 			BlightDesc: 冰冻海洋上的裂缝翻腾着深渊的能量...
 			WyvernMageShadowDesc: 寻找雪山之巅的玻璃监狱...
 			ChaosDesc: 探寻金字塔东边的月亮神殿里的秘密...
+			// RemixChaosDesc: Seek the Temple of Forgotten Lights Gate, to the East of the Great Pryamid.
 			DarkCloudName: ???
 			DarkCloudDesc: 古老的金字塔又一次被黑暗占据...
 			GwynName: 葛温—灰烬帝王
@@ -2101,6 +2102,8 @@ Mods: {
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.SetBonus}召唤巫妖骨蟒攻击你附近的敌人
 					'''
+				// Keybind1: "Press "
+				// Keybind2: " to cast an undead skull for each stack"
 			}
 
 			NecromancersSkullmask: {
@@ -3745,15 +3748,6 @@ Mods: {
 					'''
 					近战和鞭子攻击对敌人施加孽火
 					增加近战和鞭子伤害、暴击率
-					'''
-			}
-
-			CompactFrame: {
-				DisplayName: 紧凑模具
-				Tooltip:
-					'''
-					来自于不属于这个世界的文明， 用于打造强力武器
-					它不受重力影响的这种特性，让你想起了曾经去过的某个地方...
 					'''
 			}
 
@@ -11216,6 +11210,7 @@ Mods: {
 			"Wolf Ring.DisplayName": 苍狼戒指
 			"Wings of Seath speed toggle.DisplayName": 希斯之翼加速度切换
 			Shunpo.DisplayName: 瞬步
+			// "Necromancers Spell.DisplayName": Necromancers Spell
 			"Krakens Cast.DisplayName": 海妖旋风
 			"Witchking Scream.DisplayName": 巫师尖啸
 			"Print Position.DisplayName": 显示玩家位置

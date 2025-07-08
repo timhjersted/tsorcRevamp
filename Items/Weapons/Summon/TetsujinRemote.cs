@@ -68,8 +68,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<CompactFrame>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 2);
             //recipe.AddIngredient(ModContent.ItemType<Ammo.TeslaBolt>(), 100);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);

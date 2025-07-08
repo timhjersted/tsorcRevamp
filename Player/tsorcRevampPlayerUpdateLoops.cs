@@ -1724,7 +1724,7 @@ namespace tsorcRevamp
             if (DragoonBoots && DragoonBootsEnable)
             {
                 //Player.jumpSpeed += 10f; why
-                Player.jumpSpeedBoost += 10f;
+                Player.jumpSpeedBoost += 6f;
             }
             if (DragoonHorn && (((Player.gravDir == 1f) && (Player.velocity.Y > 0)) || ((Player.gravDir == -1f) && (Player.velocity.Y < 0))))
             {

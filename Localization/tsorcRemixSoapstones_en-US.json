@@ -62,6 +62,13 @@
   "style": 1
 }
 {
+  "text": "\u0022Greetings Red, so you have made it to the eastern lands. I have guarded this home and this little mushroom forest for a long time, a small paradise and a great oasis between the corrupted mountains of the west and the arid and hostile desert of the east. I am in communication with my friend Yimaya, the Dryad, she informed me of your returns and the path you have traveled, I can only encourage you, but beware, the challenges on your way are only just beginning... your path further east will be difficult. Otherwise, you are welcome here, if rest is necessary.\u0022",
+  "tileX": 2450,
+  "tileY": 753,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Before you dive below, you have a sudden feeling of the presence of your wife.  --NEWLINE  --NEWLINE You look to the edges of the lake for any signs of her, but nothing.  --NEWLINE  --NEWLINE \u0022I love you my dear,\u0022 you think to yourself. \u0022I don\u0027t know if you\u0027re still alive, but I will find you,.. in this life or the next.\u0022",
   "tileX": 292,
   "tileY": 1515,
@@ -1714,6 +1721,13 @@
   "style": 1
 }
 {
+  "text": "Red: \u0022Miakoda, is there a connection between the Great Foundry and Artorias?\u0022 --NEWLINE --NEWLINE Miakoda: \u0022Yes, a long time ago, when the Foundry was in full operation, there were strong ties between it and the Forgotten City. Artorias\u0022 armor, renowned as one of the most durable, was forged here with magical protection, and the Large Topaz was offered in exchange.\u0022",
+  "tileX": 5544,
+  "tileY": 1329,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "- You\u0027ve discovered the underground jungle\u0027s Lake of Flowered Paths -",
   "tileX": 5317,
   "tileY": 1371,
@@ -2099,7 +2113,7 @@
   "style": 1
 }
 {
-  "text": "Hello stranger! My name is Bosh and I\u0027m an angler! We are travelers who own a boat and explore the coasts. I\u0027m not from the country but I noticed here the impressive ruins in these tropics which seem quite rich in treasure... Oh and otherwise you are welcome in this boat among us!",
+  "text": "\u0027Hello stranger! My name is Bosh and I\u0027m an angler! We are travelers who own a boat and explore the coasts. I\u0027m not from the country but I noticed here the impressive ruins in these tropics which seem quite rich in treasure... Oh and otherwise you are welcome in this boat among us!\u0027",
   "tileX": 236,
   "tileY": 858, 
   "textWidth": 320,
@@ -2281,6 +2295,20 @@
   "style": 1
 }
 {
+  "text": "- You\u0022ve found the Bowels of the Abyss - --NEWLINE  --NEWLINE A voice speaks to you, as if from inside your own mind: \u0022This colorless fog is from the Abyss. It seeps through cracks in the space between this world and the other, where the fabric between realms is very thin.\u0022",
+  "tileX": 8240,
+  "tileY": 1760,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "\u0022This corridor seems endless...\u0022",
+  "tileX": 7572,
+  "tileY": 1664,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "- You have discovered the Blight on the Frozen Ocean - --NEWLINE  --NEWLINE It\u0027s power seems dormant but unstable...",
   "tileX": 8136,
   "tileY": 867,
@@ -2365,7 +2393,7 @@
   "style": 1
 }
 {
-  "text": "- The Island of clairvoyance - --NEWLINE  --NEWLINE The Stardust Pillar, one of the four great celestial seals, represents sight and stars. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
+  "text": "- The Island of Clairvoyance - --NEWLINE  --NEWLINE The Stardust Pillar, one of the four great celestial seals, represents sight and stars. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
   "tileX": 7705,
   "tileY": 362,
   "textWidth": 320,

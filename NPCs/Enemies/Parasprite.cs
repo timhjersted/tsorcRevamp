@@ -47,6 +47,10 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 chance = 0.2f;
             }
+            if (spawnInfo.Water || tsorcRevampWorld.SuperHardMode)
+            {
+                chance = 0;
+            }
             return chance;
         }
 

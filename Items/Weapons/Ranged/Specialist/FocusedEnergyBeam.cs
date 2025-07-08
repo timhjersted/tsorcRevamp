@@ -40,8 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<CompactFrame>());
-            recipe.AddIngredient(ModContent.ItemType<DestructionElement>());
+            recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 2);
             recipe.AddIngredient(ItemID.SpaceGun, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
 

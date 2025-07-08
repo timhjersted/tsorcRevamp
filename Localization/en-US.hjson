@@ -446,7 +446,7 @@ Mods: {
 			WaterFiendKrakenDesc: Seek out the lihzahrd gate in the Great Chasm.
 			EarthFiendLichDesc: Find the ancient Temple west side of the Ashen Cave.
 			WitchkingDesc: Found in his lair deep underground, shrouded in extreme darkness.
-			RemixWaterFiendKrakenDesc: Seek out the lihzahrd gate in the Mycellium Forest.
+			RemixWaterFiendKrakenDesc: Seek out the lihzahrd gate in the Mycelium Forest.
 			RemixEarthFiendLichDesc: Find the ancient ship hidden in the Fire Temple.
 			ArtoriasDesc: The Abyss pervades the tunnels east of the Forgotten City.
 			RemixArtoriasDesc: Find the key in the Great Foundry in the jungle to open the passage east of the Forgotten City.
@@ -1539,6 +1539,7 @@ Mods: {
 				Tooltip:
 					'''
 					Steel Boots made for Dragoons
+					{$CommonItemTooltip.MoveSpeedMult} and acceleration by 60%
 					{$CommonItemTooltip.NoFallDmg}
 					Faster Jump, which also results in a higher jump.
 					Press Dragoon Boots to toggle high jump
@@ -1553,6 +1554,7 @@ Mods: {
 					'''
 					Gear worn by Dragoons
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage} whilst falling
+					{$CommonItemTooltip.MoveSpeedMult} and acceleration by 60%
 					{$CommonItemTooltip.NoFallDmg}
 					Faster Jump, which also results in a higher jump.
 					Press Dragoon Boots to toggle high jump
@@ -3750,15 +3752,6 @@ Mods: {
 					'''
 					Melee and Whip attacks inflict enemies with Abyssal Inferno
 					Increase melee and whip damage and crit by 6%
-					'''
-			}
-
-			CompactFrame: {
-				DisplayName: Compact Frame
-				Tooltip:
-					'''
-					Used for making advanced weaponry, from a civilization not of this world
-					The strange way it is unaffected by gravity reminds you of somewhere...
 					'''
 			}
 
@@ -10930,7 +10923,7 @@ Mods: {
 				RemixAdvModeSHMQuote3:
 					'''
 					Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal.
-					I would start with the one at the very west of the Mycellium Forest, which leads to the Dreamlike Caverns.
+					I would start with the one at the very west of the Mycelium Forest, which leads to the Dreamlike Caverns.
 					There is another, in a strange ship in the underworld. The rest, I'm sure you will find. The ancestors will help guide you.
 					'''
 				AdvModeSHMQuote4:

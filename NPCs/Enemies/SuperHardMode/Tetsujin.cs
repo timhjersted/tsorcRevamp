@@ -497,7 +497,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 1, 200, 230));
-            npcLoot.Add(ItemDropRule.OneFromOptions(1, ModContent.ItemType<CompactFrame>(), ModContent.ItemType<DestructionElement>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DestructionElement>()));
         }
     }
 }
