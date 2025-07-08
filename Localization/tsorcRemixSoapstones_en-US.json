@@ -1630,13 +1630,6 @@
   "style": 1
 }
 {
-  "text": "This gate is sealed by Chlorophyte, an ore stronger than Adamantite.  --NEWLINE  --NEWLINE \u0022I\u0027m going to need a really powerful drill to open this. Bombs and normal drills don\u0027t put a dent in it...\u0022 --NEWLINE  --NEWLINE You jot a note in your journal.",
-  "tileX": 4850,
-  "tileY": 908,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "Far up above you you can see an opening in the room.  --NEWLINE  --NEWLINE \u0022Maybe that will lead to the way out.\u0022",
   "tileX": 5054,
   "tileY": 1092,
@@ -1742,7 +1735,7 @@
   "style": 1
 }
 {
-  "text": "A voice whispers to you... \u0022Seek the lord known as Chaos. Its temple has long remained a secret, as it is protected by a Gem Lock once sealed by Artorias.\u0022 --NEWLINE  --NEWLINE \u0022Seek the Moon Temple Gate...to the East of the Great Pryamid...\u0022",
+  "text": "A voice whispers to you... \u0022Seek the lord known as Chaos. Its temple has long remained a secret, as it is protected by a Gem Lock once sealed by Artorias.\u0022 --NEWLINE  --NEWLINE \u0022Seek the Temple of the Forgotten Lights Gate...to the East of the Great Pryamid...\u0022",
   "tileX": 5402,
   "tileY": 1689,
   "textWidth": 320,
@@ -1826,7 +1819,7 @@
   "style": 1
 }
 {
-  "text": "A voice speaks to you, as if it is inside the walls: \u0022The Moon Temple to the East hides more secrets than it appears...\u0022 --NEWLINE  --NEWLINE \u0022It is a gateway to Chaos.\u0022",
+  "text": "A voice speaks to you, as if it is inside the walls: \u0022The Temple of the Forgotten Lights to the East hides more secrets than it appears...\u0022 --NEWLINE  --NEWLINE \u0022It is a gateway to Chaos.\u0022",
   "tileX": 5916,
   "tileY": 1781,
   "textWidth": 320,
@@ -1917,7 +1910,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Moon Temple Gate - --NEWLINE  --NEWLINE You notice a hole in the East wall in the shape of a crescent moon.   --NEWLINE  --NEWLINE The light from the moon glowing from the hologram on the North wall just barely misses the hole...",
+  "text": "- You\u0027ve found the Temple of the Forgotten Lights Gate - --NEWLINE  --NEWLINE You notice a hole in the East wall in the shape of a crescent moon.   --NEWLINE  --NEWLINE The light from the moon glowing from the hologram on the North wall just barely misses the hole...",
   "tileX": 6053,
   "tileY": 1746,
   "textWidth": 320,
@@ -1931,7 +1924,7 @@
   "style": 1
 }
 {
-  "text": "You\u0027ve found an Amethyst Gem Lock. --NEWLINE  --NEWLINE A Large Amethyst is required to unlock the forcefield blocking the teleporter. --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Need Large Amethyst. Lizard gate behind hidden Moon Temple door.... East of the Great Pyramid...\u0022 ",
+  "text": "You\u0027ve found an Amethyst Gem Lock. --NEWLINE  --NEWLINE A Large Amethyst is required to unlock the forcefield blocking the teleporter. --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Need Large Amethyst. Lizard gate behind hidden Temple of the Forgotten Lights door.... East of the Great Pyramid...\u0022 ",
   "tileX": 6087,
   "tileY": 1743,
   "textWidth": 320,
