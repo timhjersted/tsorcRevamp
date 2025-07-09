@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int ProjectileID => ModContent.ProjectileType<AncientBloodLanceProj>();
         public override int Width => 64;
         public override int Height => 64;
-        public override int BaseDmg => 38;
+        public override int BaseDmg => 42;
         public override int BaseCritChance => 0;
         public override float BaseKnockback => 6.5f;
         public override int UseAnimationTime => 19;

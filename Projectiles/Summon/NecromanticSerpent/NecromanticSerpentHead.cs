@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Summon.NecromanticSerpent
         public int tickCount = 0;
         public int TicksBeforeUpdate = 1;
         public int bodyLength = 20;
-        public static int NPCHitCooldown => 20;
+        public static int NPCHitCooldown => 15;
         public override void SetDefaults()
         {
             Projectile.width = 40;
@@ -148,6 +148,14 @@ namespace tsorcRevamp.Projectiles.Summon.NecromanticSerpent
         {
             // Speed up as you hit the enemy so you run through it
             Projectile.velocity *= 1.8f; 
+
+            //50% to heal 1 hp
+            Player player = Main.player[Projectile.owner];
+            if (Main.rand.NextBool(2)) 
+            {
+                player.statLife += 1;
+                player.HealEffect(1); 
+            }   
         }
         public override bool MinionContactDamage()
         {
@@ -229,8 +237,11 @@ namespace tsorcRevamp.Projectiles.Summon.NecromanticSerpent
 
                 Lighting.AddLight((from.Center + to.Center) / 2f, TorchID.Demon);
 
-                int pos = Dust.NewDust((from.Center + to.Center) / 2f, 20, 10, DustID.Crimson, from.velocity.X, from.velocity.Y, Alpha: 10, Scale: 1.2f);
-                Main.dust[pos].noGravity = true;
+                if (Main.rand.NextFloat() < 0.8f) 
+                {
+                    int pos = Dust.NewDust((from.Center + to.Center) / 2f, 20, 10, DustID.Crimson, from.velocity.X, from.velocity.Y, Alpha: 10, Scale: 1.4f);
+                    Main.dust[pos].noGravity = true;
+                }
 
                 UpdateSegmentPos(from, to);
             }

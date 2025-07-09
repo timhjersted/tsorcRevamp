@@ -2104,8 +2104,6 @@ Mods: {
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.SetBonus}召唤巫妖骨蟒攻击你附近的敌人
 					'''
-				// Keybind1: "Press "
-				// Keybind2: " to cast an undead skull for each stack"
 			}
 
 			NecromancersSkullmask: {
@@ -6129,9 +6127,13 @@ Mods: {
 					'''
 			}
 
-			ForgottenPearlSpear: {
-				DisplayName: 被遗忘的珍珠矛
-				Tooltip: ""
+			WingedSpear: {
+				// DisplayName: Winged Spear
+				/* Tooltip:
+					'''
+					A spear as light as the wind
+					increases movement speed when held
+					''' */
 			}
 
 			PilgrimSpontoon: {
@@ -9624,6 +9626,8 @@ Mods: {
 			NecromanticSerpentTail.DisplayName: 巫妖骨蟒
 			GwynAura.DisplayName: Gwyn Aura
 			BlackArrow.DisplayName: Black Arrow
+			// WingedSpearProj.DisplayName: Winged Spear Proj
+			// WingedSpearAirwave.DisplayName: Winged Spear Airwave
 		}
 
 		NPCs: {

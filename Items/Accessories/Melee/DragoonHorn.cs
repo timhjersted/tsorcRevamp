@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 {
     public class DragoonHorn : ModItem
     {
-        public const float MeleeDmg = 45f;
+        public const float MeleeDmg = 50f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg);
         public override void SetStaticDefaults()
         {

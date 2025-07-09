@@ -14,6 +14,7 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
 
@@ -1070,7 +1071,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             }
                             else
                             {
-                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<ForgottenPearlSpear>(), 1, false, -1);
+                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<WingedSpear>(), 1, false, -1);
+                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<WandOfFire2>(), 1, false, -1);
                                 Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<MaskOfTheChild>(), 1, false, -1);
                                 Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<MaskOfTheFather>(), 1, false, -1);
                                 Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<MaskOfTheMother>(), 1, false, -1);

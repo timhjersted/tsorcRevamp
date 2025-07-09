@@ -34,6 +34,18 @@ namespace tsorcRevamp.Projectiles.Summon.NecromanticSerpent
             Projectile.tileCollide = false;
             Projectile.originalDamage = (int)NecromanticSerpentHead.OriginalDamage;
             Projectile.hide = true;
+            Projectile.usesIDStaticNPCImmunity = true; 
+            Projectile.idStaticNPCHitCooldown = 15; 
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            //33% to heal 1 hp
+            Player player = Main.player[Projectile.owner];
+            if (Main.rand.NextBool(3)) 
+            {
+                player.statLife += 1;
+                player.HealEffect(1); 
+            }   
         }
         public override bool MinionContactDamage()
         {

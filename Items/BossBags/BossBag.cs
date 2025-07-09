@@ -96,7 +96,8 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ForgottenPearlSpear>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WingedSpear>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WandOfFire2>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EstusRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.MaskOfTheChild>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.MaskOfTheMother>()));

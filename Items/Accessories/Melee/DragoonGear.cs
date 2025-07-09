@@ -48,6 +48,10 @@ namespace tsorcRevamp.Items.Accessories.Melee
             player.moveSpeed *= 1f + MoveSpeedMult / 100f;
             player.runAcceleration *= 1.6f;
         }
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            if (!hideVisual) player.GetModPlayer<tsorcRevampPlayer>().Shockwave = true;
+        }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             var DragoonBoots = tsorcRevamp.toggleDragoonBoots.GetAssignedKeys();

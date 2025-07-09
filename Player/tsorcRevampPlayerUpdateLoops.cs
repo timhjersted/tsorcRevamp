@@ -1545,7 +1545,8 @@ namespace tsorcRevamp
                             for (int i = -9; i < 10; i++)
                             { //19 projectiles
                                 Vector2 shotDirection = new Vector2(0f, -16f);
-                                Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, Player.whoAmI);
+                                float damageMultiplier = tsorcRevampWorld.SuperHardMode ? 12.0f : (Main.hardMode ? 6.0f : 3.0f);
+                                Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * damageMultiplier), 12, Player.whoAmI, 15f);
                             }
                         }
                     }

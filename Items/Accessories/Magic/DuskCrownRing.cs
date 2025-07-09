@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
     public class DuskCrownRing : ModItem
     {
         public static float MagicDmg = 100f;
-        public static int LifeRegen = 7;
-        public static float BadMaxLife = 50f;
+        public static int LifeRegen = 8;
+        public static float BadMaxLife = 45f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MagicDmg, LifeRegen, BadMaxLife);
         public override void SetStaticDefaults()
         {

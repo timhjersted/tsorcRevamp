@@ -1540,9 +1540,8 @@ Mods: {
 					'''
 					Steel Boots made for Dragoons
 					{$CommonItemTooltip.MoveSpeedMult} and acceleration by 60%
-					{$CommonItemTooltip.NoFallDmg}
+					Grants Shockwave Potion effect, can be toggled by hiding the accessory
 					Faster Jump, which also results in a higher jump.
-					Press Dragoon Boots to toggle high jump
 					'''
 				Keybind1: "Press "
 				Keybind2: " to toggle high jump"
@@ -1555,9 +1554,8 @@ Mods: {
 					Gear worn by Dragoons
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1} whilst falling
 					{$CommonItemTooltip.MoveSpeedMult} and acceleration by 60%
-					{$CommonItemTooltip.NoFallDmg}
+					Grants Shockwave Potion effect, can be toggled by hiding the accessory
 					Faster Jump, which also results in a higher jump.
-					Press Dragoon Boots to toggle high jump
 					'''
 			}
 
@@ -2102,12 +2100,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
-					{$CommonItemTooltip.SetBonus}Gather a stack each time you kill an enemy(stores up to 20)
-					{$Items.NecromancersShirt.Keybind1}NecromancersSpell{$Items.NecromancersShirt.Keybind2}
-					Undead skulls scale with magic and summon damage
+					{$CommonItemTooltip.SetBonus}Summons a necromantic serpent that hunts enemies
+					The serpent can regenerate you by hitting enemies
 					'''
-				Keybind1: "Press "
-				Keybind2: " to cast an undead skull for each stack"
 			}
 
 			NecromancersSkullmask: {
@@ -6135,9 +6130,12 @@ Mods: {
 					'''
 			}
 
-			ForgottenPearlSpear: {
-				DisplayName: Forgotten Pearl Spear
-				Tooltip: ""
+			WingedSpear: {
+				DisplayName: Winged Spear
+				Tooltip:
+					'''
+					A spear as light as the wind
+					'''
 			}
 
 			PilgrimSpontoon: {
@@ -9631,6 +9629,8 @@ Mods: {
 			NecromanticSerpentTail.DisplayName: Necromantic Serpent Tail
 			GwynAura.DisplayName: Gwyn Aura
 			BlackArrow.DisplayName: Black Arrow
+			WingedSpearProj.DisplayName: Winged Spear Proj
+			WingedSpearAirwave.DisplayName: Winged Spear Airwave
 		}
 
 		NPCs: {
