@@ -48,7 +48,7 @@
   "style": 1
 }
 {
-  "text": "嘿，陌生人！我叫博什，我是个渔夫！ --NEWLINE   --NEWLINE 我们是一群四处航行的冒险者，喜欢探索海岸。 --NEWLINE   --NEWLINE 我并非来自这个国家，但我注意到了这些令人印象深刻的废墟，它们似乎蕴藏着丰富的宝藏…… --NEWLINE   --NEWLINE 哦对了，欢迎在这艘船上加入我们！",
+  "text": "\u0022嘿，陌生人！我叫博什，我是个渔夫！ --NEWLINE   --NEWLINE 我们是一群四处航行的冒险者，喜欢探索海岸。 --NEWLINE   --NEWLINE 我并非来自这个国家，但我注意到了这些令人印象深刻的废墟，它们似乎蕴藏着丰富的宝藏…… --NEWLINE   --NEWLINE 哦对了，欢迎在这艘船上加入我们！\u0022",
   "tileX": 236,
   "tileY": 858, 
   "textWidth": 680,
@@ -472,6 +472,13 @@
   "tileX": 2445,
   "tileY": 1802,
   "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "\u0022你好瑞德，你终究还是踏上了这片西方之地。 --NEWLINE   --NEWLINE 长久以来，我守护着这片菌丝林园， --NEWLINE   --NEWLINE 它是腐化群山与死亡荒漠间的避难所，亦是伟大绿洲。 --NEWLINE   --NEWLINE 我与树妖挚友保持联系，她告知了你的归来与旅途历程， --NEWLINE   --NEWLINE 我唯有献上祝福，但切记东行之路将愈发艰险… --NEWLINE   --NEWLINE 若需休整，此地随时欢迎你。\u0022",
+  "tileX": 2450,
+  "tileY": 753,
+  "textWidth": 450,
   "style": 1
 }
 {
@@ -1588,13 +1595,6 @@
   "style": 1
 }
 {
-  "text": "这扇大门被叶绿矿封闭，叶绿矿是一种比精金更坚固的矿石。 --NEWLINE   --NEWLINE \u0022我需要一个非常强大的钻头来打开这个。炸弹和普通的钻头不能破坏它…\u0022",
-  "tileX": 4850,
-  "tileY": 908,
-  "textWidth": 560,
-  "style": 1
-}
-{
   "text": "击败骷髅王并在附近的德鲁伊家休息后，你回到这里，凝视下面的黑暗。 --NEWLINE   --NEWLINE \u0022这一定是前进的道路\u0022你想，但你看不到壁架之外的任何东西。 --NEWLINE   --NEWLINE 深吸一口气，你跳进未知世界。",
   "tileX": 4888,
   "tileY": 1407,
@@ -1791,7 +1791,7 @@
   "style": 1
 }
 {
-  "text": "一个声音低声对你说： --NEWLINE   --NEWLINE \u0022寻找被称为混沌的恶魔领主。 --NEWLINE   --NEWLINE 它被亚尔特留斯的紫晶宝石锁封印着，所以不被世人知晓\u0022 --NEWLINE   --NEWLINE \u0022寻找月亮神殿…在大金字塔以东…\u0022",
+  "text": "一个声音低声对你说： --NEWLINE   --NEWLINE \u0022寻找被称为混沌的恶魔领主。 --NEWLINE   --NEWLINE 它被亚尔特留斯的紫晶宝石锁封印着，所以不被世人知晓\u0022 --NEWLINE   --NEWLINE \u0022寻找遗忘之光神殿…在大金字塔以东…\u0022",
   "tileX": 5402,
   "tileY": 1689,
   "textWidth": 430,
@@ -1823,6 +1823,13 @@
   "tileX": 5507,
   "tileY": 982,
   "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "瑞德：\u0022大熔炉与亚尔特留斯之间是否存在联系？\u0022 --NEWLINE  --NEWLINE Miakoda：\u0022确有渊源。昔日熔炉全盛之时，与遗忘之城往来密切， --NEWLINE  --NEWLINE 阿尔特留斯那套以极致耐久闻名的铠甲，便是以大黄玉作为交换，在此灌注魔法锻造而成。\u0022",
+  "tileX": 5544,
+  "tileY": 1329,
+  "textWidth": 650,
   "style": 1
 }
 {
@@ -1896,10 +1903,10 @@
   "style": 1
 }
 {
-  "text": "你听到一个墙里声音对你说： --NEWLINE   --NEWLINE \u0022东边的月亮神殿隐藏了比它看起来更多的秘密……\u0022",
+  "text": "你听到一个墙里声音对你说： --NEWLINE   --NEWLINE \u0022东边的遗忘之光神殿隐藏了比它看起来更多的秘密……\u0022",
   "tileX": 5916,
   "tileY": 1781,
-  "textWidth": 400,
+  "textWidth": 440,
   "style": 1
 }
 {
@@ -1987,7 +1994,7 @@
   "style": 1
 }
 {
-  "text": "- 你找到了月亮神殿大门 - --NEWLINE   --NEWLINE 你注意到东墙有一个月牙形状的洞。 --NEWLINE   --NEWLINE 墙上投影发出的月光没有射中洞口…",
+  "text": "- 你找到了遗忘之光神殿大门 - --NEWLINE   --NEWLINE 你注意到东墙有一个月牙形状的洞。 --NEWLINE   --NEWLINE 墙上投影发出的月光没有射中洞口…",
   "tileX": 6053,
   "tileY": 1746,
   "textWidth": 270,
@@ -2001,10 +2008,10 @@
   "style": 1
 }
 {
-  "text": "你找到了一把紫晶宝石锁。需要一个大紫晶来解锁阻止传送机的力场。 --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022需要大紫晶。月亮神殿门后的神庙蜥蜴门……大金字塔东边……\u0022",
+  "text": "你找到了一把紫晶宝石锁。需要一个大紫晶来解锁阻止传送机的力场。 --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022需要大紫晶。遗忘之光神殿门后的神庙蜥蜴门……大金字塔东边……\u0022",
   "tileX": 6087,
   "tileY": 1743,
-  "textWidth": 700,
+  "textWidth": 740,
   "style": 1
 }
 {
@@ -2295,6 +2302,13 @@
   "style": 1
 }
 {
+  "text": "\u0022这条长廊似乎永无尽头……\u0022",
+  "tileX": 7572,
+  "tileY": 1664,
+  "textWidth": 220,
+  "style": 1
+}
+{
   "text": "- 预知之岛 - --NEWLINE   --NEWLINE 星尘柱作为四大天界封印之一，象征着视野与星辰。 --NEWLINE   --NEWLINE 很久以前，阿卓迪斯利用天界柱的力量封印了囚禁着邪教徒的远古空间囚笼 --NEWLINE   --NEWLINE 他的这位宿敌曾企图召唤拥有无限力量的神明威胁世界 --NEWLINE   --NEWLINE 摧毁天界柱将破除结界，释放那位强大的邪教徒。",
   "tileX": 7705,
   "tileY": 362,
@@ -2390,6 +2404,13 @@
   "tileX": 8172,
   "tileY": 1645,
   "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "- 你发现了深渊之肠 - --NEWLINE   --NEWLINE 一种声音在你脑海中响起：\u0022这种无色的雾气来自深渊。 --NEWLINE   --NEWLINE 从世界间的裂缝渗透进来，那里领域之间的构造非常脆弱。\u0022",
+  "tileX": 8240,
+  "tileY": 1760,
+  "textWidth": 460,
   "style": 1
 }
 {

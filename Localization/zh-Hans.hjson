@@ -459,7 +459,7 @@ Mods: {
 			BlightDesc: 冰冻海洋上的裂缝翻腾着深渊的能量...
 			WyvernMageShadowDesc: 寻找雪山之巅的玻璃监狱...
 			ChaosDesc: 探寻金字塔东边的月亮神殿里的秘密...
-			// RemixChaosDesc: Seek the Temple of Forgotten Lights Gate, to the East of the Great Pryamid.
+			RemixChaosDesc: 探寻金字塔东边遗忘之光神殿的秘密...
 			DarkCloudName: ???
 			DarkCloudDesc: 古老的金字塔又一次被黑暗占据...
 			GwynName: 葛温—灰烬帝王
@@ -1539,6 +1539,7 @@ Mods: {
 				Tooltip:
 					'''
 					龙骑士的钢靴
+					{$CommonItemTooltip.MoveSpeedMult}和 60% 加速度
 					{$CommonItemTooltip.NoFallDmg}
 					跳得更快，也让你跳得更高
 					按下绑定的龙骑士之靴快捷键让你跳的更高
@@ -1552,7 +1553,8 @@ Mods: {
 				Tooltip:
 					'''
 					龙骑士的全部套装
-					从高处落下时，{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					从高处落下时，{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
+					{$CommonItemTooltip.MoveSpeedMult}和 60% 加速度
 					{$CommonItemTooltip.NoFallDmg}
 					跳的更快，跳的更高
 					按下绑定的龙骑士之靴快捷键让你跳的更高
@@ -6070,7 +6072,11 @@ Mods: {
 
 			AncientBloodLance: {
 				DisplayName: 远古血矛
-				Tooltip: 每次攻击造成多段伤害
+				Tooltip:
+					'''
+					在小范围内施加猩红燃火
+					如果使用了猩红药水，则有 50% 概率在命中时恢复 1 点生命值
+					'''
 			}
 
 			AncientDragonLance: {
@@ -6480,7 +6486,7 @@ Mods: {
 				DisplayName: 无限真空刃—祝福之风
 				Tooltip:
 					'''
-					一把由 30 个迷失的暗夜之魂组成的强大的可投掷剑
+					除精金握柄外，通体由纯净暗影锻造而成
 					黑暗的光环在持用者的手中无限地显现四把刀片
 					如果持用者的投掷未命中目标，则会将它们归还
 					'''

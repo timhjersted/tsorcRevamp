@@ -1553,7 +1553,7 @@ Mods: {
 				Tooltip:
 					'''
 					Gear worn by Dragoons
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage} whilst falling
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1} whilst falling
 					{$CommonItemTooltip.MoveSpeedMult} and acceleration by 60%
 					{$CommonItemTooltip.NoFallDmg}
 					Faster Jump, which also results in a higher jump.
