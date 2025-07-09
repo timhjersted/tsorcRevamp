@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.width = 20;
             Item.height = 20;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
+            Item.useAnimation = 32;
+            Item.useTime = 32;
             Item.useTurn = true;
             Item.damage = 50;
             Item.autoReuse = true;
@@ -35,8 +35,9 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SoulofNight, 30);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
+            recipe.AddIngredient(ItemID.SoulofNight, 15);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 26000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

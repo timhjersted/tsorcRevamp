@@ -6078,7 +6078,11 @@ Mods: {
 
 			AncientBloodLance: {
 				DisplayName: Ancient Blood Lance
-				Tooltip: Pierces multiple times on every hit.
+				Tooltip:
+					'''
+					Inflicts Crimson Burn in a small radius
+					If the owner has the Crimson Potion effect, has a 50% chance to heal 1 hp on hit 
+					'''
 			}
 
 			AncientDragonLance: {
@@ -6489,7 +6493,7 @@ Mods: {
 				DisplayName: Crissaegrim
 				Tooltip:
 					'''
-					A powerful, throwable sword made of 30 lost souls of the night
+					Aside from its adamantite grip, it is a throwing sword made of pure darkness.
 					A dark aura endlessly manifests four blades in the wielder's hand, and will
 					return them if the wielder's throw misses the one for whom it was intended.
 					'''

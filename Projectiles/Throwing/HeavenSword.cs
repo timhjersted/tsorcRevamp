@@ -16,6 +16,8 @@ namespace tsorcRevamp.Projectiles.Throwing
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Ranged;
+            Projectile.scale = 1.1f;
+            Projectile.extraUpdates = 1;
         }
 
         public override void AI()
