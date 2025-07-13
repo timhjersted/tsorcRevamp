@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CrackedDragonStone : ModItem
     {
-        public static float Dmg = 4f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
+        public static float DR = 6f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DR);
         public override void SetStaticDefaults()
         {
         }
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
+            player.endurance += DR / 100f;
             player.noKnockback = true;
             player.fireWalk = true;
             player.buffImmune[BuffID.OnFire] = true;

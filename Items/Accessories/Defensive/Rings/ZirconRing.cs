@@ -26,8 +26,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SilverBar, 1);
-            recipe.AddIngredient(ItemID.SoulofNight, 1);
+            recipe.AddIngredient(ItemID.SilverBar, 3);
+            recipe.AddIngredient(ItemID.SoulofNight, 6);
             recipe.AddIngredient(ItemID.LifeCrystal, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
             recipe.AddTile(TileID.DemonAltar);

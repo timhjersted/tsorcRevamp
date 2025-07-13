@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         {
             Item.width = 24;
             Item.height = 24;
-            Item.defense = 6;
+            Item.defense = 5;
             Item.accessory = true;
             Item.value = PriceByRarity.Green_2;
             Item.rare = ItemRarityID.Green;

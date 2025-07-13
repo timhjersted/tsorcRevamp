@@ -19,10 +19,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         {
             Item.width = 24;
             Item.height = 24;
-            Item.defense = 6;
+            Item.defense = 18;
             Item.accessory = true;
             Item.value = PriceByRarity.Purple_11;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ModContent.RarityType<DarkBlue>();
         }
 
 
@@ -33,10 +33,13 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             { // Apparently this is the flag used in the Abyss?
                 player.statDefense += AbyssDef;
             }
+            player.buffImmune[BuffID.Frozen] = true;
+            player.buffImmune[BuffID.Blackout] = true;
+            player.buffImmune[BuffID.Obstructed] = true;
+            player.buffImmune[BuffID.Venom] = true;
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueVenom, 1, false);
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)

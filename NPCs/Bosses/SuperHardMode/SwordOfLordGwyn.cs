@@ -21,11 +21,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.aiStyle = 23;
             NPC.knockBackResist = 0;
             NPC.damage = 130;
-            NPC.defense = 35;
-            NPC.scale = 0.8f;
+            NPC.defense = 85;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 100000;
+            NPC.lifeMax = 125000;
             NPC.value = 10000;
             NPC.noGravity = false;
             NPC.noTileCollide = true;
@@ -38,6 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
+
             if (!NPC.AnyNPCs(ModContent.NPCType<Gwyn>()))
             {
                 for (int i = 0; i < 60; i++)

@@ -13,7 +13,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
     public class GreyWolfRing : ModItem
     {
         public static int AbyssDef = 12;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AbyssDef, BandOfPhenomenalCosmicPower.LifeRegen, BandOfPhenomenalCosmicPower.MaxManaIncrease, BandOfPhenomenalCosmicPower.ManaRegen, BandOfPhenomenalCosmicPower.ManaRegenDelay);
+        public static float MaxLifeIncrease = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AbyssDef, CrackedDragonStone.DR, RingOfClarity.LifeRegen, MaxLifeIncrease);
         public override void SetStaticDefaults()
         {
         }
@@ -22,18 +23,19 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         {
             Item.width = 24;
             Item.height = 24;
-            Item.defense = 19;
+            Item.defense = 18;
             Item.accessory = true;
             Item.value = PriceByRarity.Purple_11;
-            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.rare = ModContent.RarityType<OrangeRed>();
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<WolfRing>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<BandOfPhenomenalCosmicPower>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<WolfRing>());
             recipe.AddIngredient(ModContent.ItemType<RingOfClarity>());
+            recipe.AddIngredient(ModContent.ItemType<ZirconRing>());
+            recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -43,15 +45,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         public override void UpdateEquip(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().WolfRing = true;
-
-            //Band of Phenomenal Cosmic Power inheritance
-            player.statManaMax2 += BandOfPhenomenalCosmicPower.MaxManaIncrease;
-            player.lifeRegen += BandOfPhenomenalCosmicPower.LifeRegen;
-            player.manaRegenBonus += BandOfPhenomenalCosmicPower.ManaRegen;
-            player.manaRegenDelayBonus += BandOfPhenomenalCosmicPower.ManaRegenDelay / 100f;
+            player.GetModPlayer<tsorcRevampPlayer>().ZirconRing = true;
 
             //Ring of Clarity inheritance
-            player.GetDamage(DamageClass.Generic) += CrackedDragonStone.Dmg / 100f;
+            player.lifeRegen += RingOfClarity.LifeRegen;
+            player.endurance += CrackedDragonStone.DR / 100f;
             player.noKnockback = true;
             player.fireWalk = true;
             player.buffImmune[BuffID.OnFire] = true;
@@ -63,6 +61,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             player.buffImmune[BuffID.Frostburn] = true;
             player.buffImmune[BuffID.Ichor] = true;
             player.buffImmune[BuffID.Gravitation] = true;
+            player.buffImmune[BuffID.Frozen] = true;
+            player.buffImmune[BuffID.Blackout] = true;
+            player.buffImmune[BuffID.Obstructed] = true;
+            player.buffImmune[BuffID.Venom] = true;
             player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
 
             //Wolf Ring inheritance
@@ -74,7 +76,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueVenom, 1, false);
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

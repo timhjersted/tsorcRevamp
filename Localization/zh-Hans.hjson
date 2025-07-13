@@ -71,6 +71,7 @@ Mods: {
 			BadLifeRegen: 减少 {0} 点生命再生
 			BadDefense: 减少 {0} 点防御
 			BadDmg: 降低 {0}% 伤害
+			// ArmorPen: Increases armor penetration by {0}
 			DmgMult: 乘算增加 {0}% 伤害
 			BadDmgMult: 乘算减少 {0}% 伤害
 			AtkSpeed: 增加 {0}% 攻击速度
@@ -6129,11 +6130,7 @@ Mods: {
 
 			WingedSpear: {
 				// DisplayName: Winged Spear
-				/* Tooltip:
-					'''
-					A spear as light as the wind
-					increases movement speed when held
-					''' */
+				// Tooltip: A spear as light as the wind
 			}
 
 			PilgrimSpontoon: {

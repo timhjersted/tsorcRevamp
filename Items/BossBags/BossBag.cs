@@ -166,13 +166,8 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ChloranthyRing>()));
-            itemLoot.Add(ItemDropRule.Common(ItemID.Amethyst, 1, 2, 10));
-            itemLoot.Add(ItemDropRule.Common(ItemID.Topaz, 1, 2, 10));
-            itemLoot.Add(ItemDropRule.Common(ItemID.Sapphire, 1, 2, 10));
-            itemLoot.Add(ItemDropRule.Common(ItemID.Emerald, 1, 2, 10));
-            itemLoot.Add(ItemDropRule.Common(ItemID.Ruby, 1, 2, 10));
-            itemLoot.Add(ItemDropRule.Common(ItemID.Amber, 1, 2, 10));
-            itemLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 2, 10));
+            itemLoot.Add(ItemDropRule.Common(ItemID.Geode, 1, 4, 5));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EphemeralDust>(), 1, 4, 6));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>()));
         }
     }

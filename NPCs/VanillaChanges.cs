@@ -2356,7 +2356,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Plantera.DespawnHandler"), Color.Green, DustID.GreenTorch);
 
-                        npc.lifeMax = 35000; //base 30k
+                        npc.lifeMax = 40000; //base 30k
                         npc.damage = 93; //base 70
                         npc.value = 295930;
                         npc.rarity = 25;
@@ -2366,6 +2366,8 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.PlanterasTentacle):
                     {
                         npc.damage = 86; //base 70
+                        npc.lifeMax = 1250;
+                        npc.defense = 25;
                         npc.value = 1490;
                         break;
                     }
@@ -2399,6 +2401,8 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DetonatingBubble):
                     {
+                        npc.lifeMax = 500; //base 0
+                        npc.damage = 60; //base 70 (ie 140)
                         npc.value = 1030;
                         break;
                     }
@@ -3707,7 +3711,7 @@ namespace tsorcRevamp.NPCs
 
                 if (tsorcRevampWorld.SuperHardMode)
                     {
-                        if (npc.type == NPCID.Hornet
+                        if (npc.type == NPCID.Hornet 
                             || npc.type == NPCID.BigHornetStingy
                             || npc.type == NPCID.LittleHornetStingy
                             || npc.type == NPCID.BigHornetSpikey
@@ -3750,6 +3754,7 @@ namespace tsorcRevamp.NPCs
                             || npc.type == NPCID.MotherSlime
                             || npc.type == NPCID.Piranha
                             || npc.type == NPCID.UndeadViking
+                            || npc.type == NPCID.SandSlime
                             || npc.type == NPCID.CursedSkull)
                         {
                             npc.active = false; //Most PHM enemies are removed SHM, they're taking up spawn slots for nothing at this point

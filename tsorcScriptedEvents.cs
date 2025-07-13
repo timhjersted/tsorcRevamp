@@ -213,7 +213,7 @@ namespace tsorcRevamp
             MoltenSkyTempleEvent2,
             SandstormElementalEvent,
             KingSlime2Event,
-            JungleMimicEvent,
+            AbysswalkerEvent,
             BloodLakeEvent,
             BloodBossEvent1,
             BloodBossEvent2,
@@ -604,7 +604,7 @@ namespace tsorcRevamp
             
             ScriptedEvent KingSlime2Event = new ScriptedEvent(new Vector2(4749, 639), 25, NPCID.KingSlime, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.KingSlime"), Color.Cyan, false, RemixMapCondition);
 
-            ScriptedEvent JungleMimicEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, NPCID.BigMimicJungle, 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
+            ScriptedEvent AbysswalkerEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.Abysswalker>(), 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
 
             List<int> BloodLakeEventEnemyTypeList = new List<int>() { NPCID.ZombieMerman, NPCID.EyeballFlyingFish };
             List<Vector2> BloodLakeEventEnemyLocations = new List<Vector2>() { new Vector2(2999, 889), new Vector2(3009, 889) };
@@ -746,7 +746,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent },
                 {ScriptedEventType.MoltenSkyTempleEvent2, MoltenSkyTempleEvent2 },  
                 {ScriptedEventType.SandstormElementalEvent, SandstormElementalEvent }, 
-                {ScriptedEventType.JungleMimicEvent, JungleMimicEvent },
+                {ScriptedEventType.AbysswalkerEvent, AbysswalkerEvent },
                 {ScriptedEventType.BloodLakeEvent, BloodLakeEvent },
                 {ScriptedEventType.BloodBossEvent1, BloodBossEvent1 },
                 {ScriptedEventType.BloodBossEvent2, BloodBossEvent2 },

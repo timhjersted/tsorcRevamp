@@ -71,6 +71,7 @@ Mods: {
 			BadLifeRegen: Decreases life regeneration by {0}
 			BadDefense: Decreases defense by {0}
 			BadDmg: Decreases damage dealt by {0}%
+			ArmorPen: Increases armor penetration by {0}
 			DmgMult: Increases damage by {0}% multiplicatively
 			BadDmgMult: Decreases damage by {0}% multiplicatively
 			AtkSpeed: Increases attack speed by {0}%
@@ -1261,17 +1262,14 @@ Mods: {
 				DisplayName: Grey Wolf Ring
 				Tooltip:
 					'''
-					One of the rings worn by Artorias.
-					Inherits {$Items.RingOfClarity.DisplayName} immunities
+					A great ring, resonating with the abyss, which gives you a will of steel.
+					Inherits {$Items.RingOfClarity.DisplayName} and {$Items.WolfRing.DisplayName} immunities
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
 					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
-					Grants Acid Venom imbue effect
-					{$CommonItemTooltip.LifeRegen@1}
-					{$CommonItemTooltip.IncreasesMaxManaBy@2}
-					{$CommonItemTooltip.Magic.ManaRegen@3}
-					{$CommonItemTooltip.Magic.ManaRegenDelay@4}
-					Imbue effect can be toggled by hiding the accessory.
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.LifeRegen@2}
+					{$CommonItemTooltip.IncreasesMaxLifeByPercent@3}
 					'''
 			}
 
@@ -1352,7 +1350,7 @@ Mods: {
 					'''
 					Immunity to {$CommonItemTooltip.OnFire}, Burning, Chilled, Frostburn, {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
 					Gravitation, Bleeding, Poisoned and knockback
-					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.DRStat}
 					{$CommonItemTooltip.LifeRegen@1}
 					'''
 			}
@@ -1386,12 +1384,11 @@ Mods: {
 				DisplayName: Wolf Ring
 				Tooltip:
 					'''
-					One of the rings worn by Artorias.
+					One of the special rings granted to the four knights of Gwyn.
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
+					Immunity to Blackout, Obstructed, Freezing and Acid Venom
 					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
-					Grants Acid Venom imbue effect
-					Imbue effect can be toggled by hiding the accessory.
 					'''
 				Keybind1: "Press "
 				Keybind2: " to massively increase life regen and damage taken temporarily"
@@ -1509,7 +1506,7 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:Provides immunity to catching on fire, burning, frostbite, frostburn, and becoming chilled]
-					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.DRStat}
 					{$CommonItemTooltip.NoKnockback}
 					'''
 			}
@@ -1624,8 +1621,8 @@ Mods: {
 					'''
 					The great Ring of Artorias.
 					Once held strength too great for this world to bear.
-					[c/ffbf00:It grants immunity to Blackout, Obstructed, Freezing and Acid Venom.]
-					[c/ffbf00:On top of this, it increases the positive stats gained after being cursed by {0}%]
+					{$CommonItemTooltip.PercentIncreasedDamage} and {$CommonItemTooltip.ArmorPen@1}
+					[c/ffbf00:Increases the positive stats gained after being cursed by {2}%]
 					'''
 			}
 
@@ -6132,10 +6129,7 @@ Mods: {
 
 			WingedSpear: {
 				DisplayName: Winged Spear
-				Tooltip:
-					'''
-					A spear as light as the wind
-					'''
+				Tooltip: A spear as light as the wind
 			}
 
 			PilgrimSpontoon: {
@@ -7941,6 +7935,7 @@ Mods: {
 				DisplayName: Supreme Dragon Soul
 				Tooltip:
 					'''
+					The flaming, exalted form of a great dragon soul.
 					Increases the potency of most weak debuffs on enemies by {0}x
 					Potency increase is 2x less effective with strong debuffs 
 					Attacks inflict daybroken and increases damage by {1}%

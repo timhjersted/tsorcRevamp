@@ -7,9 +7,11 @@ using tsorcRevamp.Buffs.Debuffs;
 namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 {
     public class RingofArtorias : ModItem
-    {
+    {   
+        public static float Dmg = 7f;
+        public static int ArmorPen = 7;
         public float PositiveCurseStatBoost = 34f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PositiveCurseStatBoost);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, ArmorPen, PositiveCurseStatBoost);
         public override void SetStaticDefaults()
         {
         }
@@ -25,6 +27,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 
         public override void UpdateEquip(Player player)
         {
+            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
+            player.GetArmorPenetration(DamageClass.Generic) += ArmorPen;
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.CursePositiveStatsMultiplier += PositiveCurseStatBoost / 100f;
             player.buffImmune[BuffID.Frozen] = true;

@@ -32,11 +32,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.aiStyle = 3;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.scale = 1.4f;
+            NPC.scale = 1.5f;
             Music = 12;
             NPC.damage = 95;
-            NPC.defense = 220;
-            NPC.lifeMax = 900000;
+            NPC.defense = 550;
+            NPC.lifeMax = 750000;
             NPC.knockBackResist = 0.0f;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
@@ -82,7 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //slogra attacks
         public int tridentDamage = 43; //150
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
-        public int burningSphereDamage = 209;//360
+        public int OrangeProjDamage = 45;//360
 
         //gwyn 
         float customAi1;
@@ -94,6 +94,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool breath;
         int breathCD = 120;
         float breathTimer = 60;
+        float distanceTimer = 90;
         float shotTimer;
 
         //slogra
@@ -207,7 +208,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     else
                     {
-                        NPC.defense = 220;
+                        NPC.defense = 550;
                     }
 
                 }
@@ -246,13 +247,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //near instant death when player runs too far away
             if (NPC.Distance(player.Center) > 2000) //was 4600
             {
-                player.AddBuff(ModContent.BuffType<CowardsAffliction>(), 1 * 30, false);
-
-                if (!announcedDebuffs)
+                distanceTimer--; 
+                if (distanceTimer <= 0) //add a cooldown of 90 frames before getting destroyed by the debuff (to prevent some unfair cases where you are in this zone because of a random dash or anything)
                 {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Coward"), 235, 199, 23);//deep yellow
-                    announcedDebuffs = true;
+                    player.AddBuff(ModContent.BuffType<CowardsAffliction>(), 1 * 30, false);
+
+                    if (!announcedDebuffs)
+                    {
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Coward"), 235, 199, 23); //deep yellow
+                        announcedDebuffs = true;
+                    }
                 }
+            }
+            else
+            {
+                distanceTimer = 90; 
+                announcedDebuffs = false; 
             }
 
 
@@ -363,27 +373,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 DarkBeadShotCounter = 0;
                 NPC.localAI[2] = 1f;
-                NPC.netUpdate = true;
-            }
-
-            //JUMP BEFORE KNIFE ATTACK SOMETIMES
-            if (customAi1 == 130f && NPC.velocity.Y == 0f && NPC.life >= NPC.lifeMax / 10 && NPC.life <= NPC.lifeMax / 2 && Main.rand.NextBool(2))
-            {
-
-                NPC.velocity.Y = Main.rand.NextFloat(-10f, -5f);
-
-                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8); //0.4f, true, true																								
-                speed += Main.rand.NextVector2Circular(-4, -2);
-                if (Main.rand.NextBool(4) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center); //knife throw
-
-                }
-
                 NPC.netUpdate = true;
             }
 
@@ -647,39 +636,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), throwingKnifeDamage, 0f, Main.myPlayer);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     }
 
                     NPC.netUpdate = true;
-                }
-
-                //THROW KNIFE	
-                if (customAi1 == 152)
-                {
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true
-                                                                                                                         //speed += Main.rand.NextVector2Circular(-3, -1);
-                    speed += Main.player[NPC.target].velocity / 2;
-                    if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center); //knife throw
-
-                        //go to smoke bomb attack
-                        customAi1 = 200f;
-
-
-                        if (Main.rand.NextBool(2))
-                        {
-                            //does nothing yet
-                        }
-                    }
-                    NPC.netUpdate = true;
-
                 }
 
                 //SMOKE BOMB DUST TELEGRAPH
@@ -1713,13 +1675,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 {
                                     if (swordDead)
                                     {
-                                        int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.BurningSphere, 0);
-                                        Main.npc[spawned].damage = burningSphereDamage;
-                                        Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
+                                        Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
+                                        velocity += Main.player[NPC.target].velocity;
+                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedRainProj>(), OrangeProjDamage, 0.5f, Main.myPlayer);
                                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
                                         if (Main.netMode == NetmodeID.Server)
                                         {
-                                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                                            NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, Main.projectile.Length - 1);
                                         }
                                     }
                                 }
@@ -1805,13 +1767,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             if (swordDead)
                             {
-                                int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.BurningSphere, 0);
-                                Main.npc[spawned].damage = burningSphereDamage;
-                                Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
-                                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
-                                if (Main.netMode == NetmodeID.Server)
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
-                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                                    Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
+                                    velocity += Main.player[NPC.target].velocity;
+                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedRainProj>(), OrangeProjDamage, 0.5f, Main.myPlayer);
+                                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
+                                    if (Main.netMode == NetmodeID.Server)
+                                    {
+                                        NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, Main.projectile.Length - 1);
+                                    }
                                 }
                             }
                         }
@@ -1853,7 +1818,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (swordDead)
             {
-                modifiers.FinalDamage *= 1.2f;
+                modifiers.FinalDamage *= 1.1f;
 
                 // His rage increases as you attack from range
                 if (NPC.Distance(player.Center) > whyAreYouRunning)
@@ -1861,13 +1826,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     rageMultiplier *= 1.1f;
                 }
             }
+            else
+            {
+                modifiers.FinalDamage *= 0.7f;
+            }
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (swordDead)
             {
-                modifiers.FinalDamage *= 1.2f;
+                modifiers.FinalDamage *= 1.1f;
 
                 // His rage increases as you attack from range
                 if (NPC.Distance(Main.player[projectile.owner].Center) > whyAreYouRunning)
@@ -1879,6 +1848,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (projectile.minion)
             {
                 modifiers.Knockback *= 0;
+            }
+            else
+            {
+                modifiers.FinalDamage *= 0.7f;
             }
         }
 
@@ -1973,8 +1946,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
 
-        //knife and bomb sprite telegraph code
-        static Texture2D spearTexture;
+        //bomb sprite telegraph code
         static Texture2D bombTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
@@ -1982,34 +1954,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player player = Main.player[NPC.target];
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            if (spearTexture == null) //|| spearTexture.IsDisposed
-            {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyThrowingKnifeSmall");
-            }
-
             if (bombTexture == null)
             {
                 bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemySmokebomb");
-            }
-
-            //knife
-            if (customAi1 >= 120 && customAi1 <= 152)
-            {
-                Lighting.AddLight(NPC.Center, Color.LightGoldenrodYellow.ToVector3() * 0.8f); //was 0.1f
-
-                if (customAi1 == 120)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item64 with { Volume = 0.3f, }, NPC.Center); //Play blow dart sound PitchVariance = -0.3f
-                }
-
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(14, 4), NPC.scale, effects, 0); //facing left, (-22,--) was above NPC head, was 24, 48
-                }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(4, 10), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher, 2nd value is width axis
-                }
             }
 
             //bomb

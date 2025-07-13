@@ -18,6 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Magic;
+            Projectile.scale = 1.15f;
         }
 
         public override void AI()
