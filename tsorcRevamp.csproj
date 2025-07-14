@@ -1,20 +1,16 @@
-
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\tModLoader.targets" />
-  <PropertyGroup>
-    <AssemblyName>tsorcRevamp</AssemblyName>
-    <LangVersion>preview</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="UI\Markers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\Markers\" />
-    <Reference Include="CalamityMod">
-      <HintPath>..\..\ModReader\CalamityMod\CalamityMod.dll</HintPath>
-    </Reference>
-    <Reference Include="PermaBuffs">
-      <HintPath>..\..\ModReader\PermaBuffs\PermaBuffs.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+
+	<!-- Import tModLoader mod properties -->
+	<Import Project="..\tModLoader.targets" />
+
+	<!-- General -->
+	<PropertyGroup>
+	<DotNetName Condition=" '$(OS)' == 'Unix' ">/usr/bin/dotnet</DotNetName>
+	</PropertyGroup>
+
+	<!-- References -->
+	<ItemGroup>
+		
+	</ItemGroup>
+
 </Project>

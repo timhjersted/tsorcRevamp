@@ -1,18 +1,16 @@
 {
-  "profiles": {
-    "Terraria": {
-      "commandName": "Executable",
-      "executablePath": "dotnet",
-      "commandLineArgs": "$(tMLPath)",
-      "workingDirectory": "$(tMLSteamPath)",
-      "nativeDebugging": false
-    },
-    "TerrariaServer": {
-      "commandName": "Executable",
-      "executablePath": "dotnet",
-      "commandLineArgs": "$(tMLServerPath)",
-      "workingDirectory": "$(tMLSteamPath)",
-      "nativeDebugging": false
-    }
-  }
+	"profiles": {
+		"Terraria": {
+			"commandName": "Executable",
+			"executablePath": "$(DotNetName)",
+			"commandLineArgs": "$(tMLPath)",
+			"workingDirectory": "$(tMLSteamPath)"
+		},
+		"TerrariaServer": {
+			"commandName": "Executable",
+			"executablePath": "$(DotNetName)",
+			"commandLineArgs": "$(tMLServerPath)",
+			"workingDirectory": "$(tMLSteamPath)"
+		}
+	}
 }
