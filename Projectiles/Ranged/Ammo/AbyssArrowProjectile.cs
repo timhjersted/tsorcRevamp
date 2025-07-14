@@ -24,6 +24,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.timeLeft = 1200;
             Projectile.light = 0.5f;
             Projectile.penetrate = 2;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

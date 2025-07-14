@@ -16,11 +16,11 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 25;
-            Item.useTime = 25;
-            Item.damage = 95;
+            Item.useAnimation = 22;
+            Item.useTime = 22;
+            Item.damage = 140;
             Item.knockBack = 4f;
-            Item.mana = 8;
+            Item.mana = 9;
             Item.rare = ItemRarityID.Pink;
             Item.UseSound = SoundID.Item8;
             Item.DamageType = DamageClass.Magic;
@@ -28,8 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.useTurn = true;
             Item.autoReuse = true;
             Item.value = PriceByRarity.Pink_5;
-            Item.shootSpeed = 11;
-            Item.shoot = ModContent.ProjectileType<Projectiles.ChaosBall2>();
+            Item.shootSpeed = 6.5f;
+            Item.shoot = ModContent.ProjectileType<Projectiles.ChaosBall2>();                   
         }
 
         public override void AddRecipes()

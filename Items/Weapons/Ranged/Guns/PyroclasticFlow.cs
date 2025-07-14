@@ -24,15 +24,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.rare = ItemRarityID.Red;
             Item.value = PriceByRarity.Red_10;
             Item.shoot = 10;
-            Item.height = 50;
-            Item.width = 32;
+            Item.height = 30;
+            Item.width = 92;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = SoundID.Item40;
         }
 
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(-6, 0);
+            return new Vector2(-16, 0);
         }
 
         int tallyCounter;

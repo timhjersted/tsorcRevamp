@@ -18,29 +18,35 @@ namespace tsorcRevamp.Items.Accessories.Damage
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Potency, DamageIncrease);
         public override void SetStaticDefaults()
         {
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(8, 4));
+            ItemID.Sets.AnimatesAsSoul[Item.type] = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
         }
 
         public override void SetDefaults()
         {
-            Item.width = 26;
-            Item.height = 26;
+            Item.width = 38;
+            Item.height = 40;
             Item.accessory = true;
             Item.value = PriceByRarity.Purple_11;
             Item.expert = true;
         }
 
         float rotation = 0;
+
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            int frameHeight = texture.Height / 4; 
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;
                 Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i + rotation) * 5;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Yellow * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+                Rectangle frameRect = new Rectangle(0, i * frameHeight, texture.Width, frameHeight);
+                spriteBatch.Draw(texture, position + offsetPositon, frameRect, Color.Yellow * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
 
                 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i - rotation) * 5;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Yellow * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, position + offsetPositon, frameRect, Color.Yellow * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
             }
             return true;
         }

@@ -22,8 +22,9 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 			Projectile.ignoreWater = true; 
 			Projectile.tileCollide = true; 
             Projectile.penetrate = 2;
-			Projectile.extraUpdates = 2; 
-
+			Projectile.extraUpdates = 2;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60; 
 			AIType = ProjectileID.Bullet; 
         }
 

@@ -20,11 +20,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int WhipHeight => 36;
         public override int WhipSegments => 25;
         public override float WhipRangeMult => 1.2f;
-        public override int DustId => DustID.CorruptGibs;
+        public override int DustId => 181;
         public override int DustWidth => 10;
         public override int DustHeight => 10;
         public override Color DustColor => default;
-        public override float DustScale => 1f;
+        public override float DustScale => 0.9f;
         public override float MaxChargeTime => 0;
         public override Vector2 WhipTipBase => new Vector2(10, 12);
         public override float MaxChargeDmgMultiplier => 1f;
