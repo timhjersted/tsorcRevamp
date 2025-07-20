@@ -7822,7 +7822,11 @@ Mods: {
 
 			SniperCrossbow: {
 				DisplayName: Sniper Crossbow
-				Tooltip: Converts normal bolts into sniper bolts
+				Tooltip:
+					'''
+					Converts normal bolts into sniper bolts
+					Right Click to zoom out 
+					'''
 			}
 
 			FieryScale: {

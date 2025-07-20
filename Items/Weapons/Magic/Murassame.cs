@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.DamageType = DamageClass.Magic;
             Item.mana = 20;
             Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
-            Item.shootSpeed = 12f;
+            Item.shootSpeed = 13f;
         }
 
         public override void AddRecipes()

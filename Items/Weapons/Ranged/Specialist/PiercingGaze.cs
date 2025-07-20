@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.noMelee = true; //so the item's animation doesn't do damage
             Item.knockBack = 4;
             Item.value = 100000;
-            Item.scale = 0.9f;
+            Item.scale = 1f;
             Item.rare = ItemRarityID.LightRed;
             Item.crit = 5;
             //Item.UseSound = SoundID.Item40;

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.crit = 15;
             Item.knockBack = 6;
             Item.crit = 16;
-            Item.shootSpeed = 13;
+            Item.shootSpeed = 14;
             Item.useTime = 38;
             Item.useAnimation = 38;
             Item.width = 72;
@@ -53,9 +53,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 				type = ModContent.ProjectileType<SniperBoltProjectile>(); 
 			}
 		}
-        public override Vector2? HoldoutOffset() 
+        public override void HoldItem(Player player)
         {
-		    return new Vector2(2f, -2f);
+            player.scope = true;
+        }
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(2f, -2f);
         }
     }
 }

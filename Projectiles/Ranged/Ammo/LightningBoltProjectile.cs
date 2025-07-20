@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Projectiles.Ranged.Ammo
 {
@@ -27,24 +28,24 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
         {
             Projectile.velocity.Y = Projectile.velocity.Y;
 
-            Lighting.AddLight(Projectile.Center, 0.2f, 0.4f, 1f); 
+            Lighting.AddLight(Projectile.Center, 0.2f, 0.4f, 1f);
 
-            if (Main.rand.NextBool(5)) 
+            if (Main.rand.NextBool(5))
             {
                 Dust dust = Dust.NewDustDirect(
-                    Projectile.position,               
-                    Projectile.width,                 
-                    Projectile.height,                 
-                    221,                               
-                    Projectile.velocity.X * 0.2f,     
-                    Projectile.velocity.Y * 0.2f,      
-                    100,                               
-                    default,                           
-                    1.2f                              
+                    Projectile.position,
+                    Projectile.width,
+                    Projectile.height,
+                    221,
+                    Projectile.velocity.X * 0.2f,
+                    Projectile.velocity.Y * 0.2f,
+                    100,
+                    default,
+                    1.2f
                 );
 
-                dust.noGravity = true;                
-                dust.velocity *= 0.5f;                
+                dust.noGravity = true;
+                dust.velocity *= 0.5f;
             }
         }
 
@@ -52,15 +53,15 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
         {
             if (Main.rand.NextFloat() <= 0.33f)
             {
-                int boltDamage = (int)(damageDone * 0.25f); 
+                int boltDamage = (int)(damageDone * 0.25f);
                 Projectile.NewProjectile(
                     Projectile.GetSource_FromThis(),
                     Projectile.position,
                     Projectile.velocity,
-                    ModContent.ProjectileType<Bolt1Bolt>(), 
-                    boltDamage,                             
-                    Projectile.knockBack,                  
-                    Projectile.owner                       
+                    ModContent.ProjectileType<Bolt1Bolt>(),
+                    boltDamage,
+                    Projectile.knockBack,
+                    Projectile.owner
                 );
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit53, Projectile.position);
@@ -92,6 +93,26 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
         {
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
+        }
+        
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+
+            Main.EntitySpriteDraw(
+                texture,
+                Projectile.Center - Main.screenPosition,
+                frame,
+                Color.White, 
+                Projectile.rotation,
+                frame.Size() / 2f,
+                Projectile.scale,
+                SpriteEffects.None,
+                0
+            );
+
+            return false;
         }
     }
 }
