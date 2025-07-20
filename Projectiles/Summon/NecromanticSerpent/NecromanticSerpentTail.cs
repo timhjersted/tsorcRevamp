@@ -38,6 +38,9 @@ namespace tsorcRevamp.Projectiles.Summon.NecromanticSerpent
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            //Ichor
+            target.AddBuff(BuffID.Ichor, 4 * 60);
+
             //33% to heal 1 hp
             Player player = Main.player[Projectile.owner];
             if (Main.rand.NextBool(3)) 

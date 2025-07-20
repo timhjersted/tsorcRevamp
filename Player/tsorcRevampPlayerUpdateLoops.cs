@@ -2503,12 +2503,7 @@ namespace tsorcRevamp
                 Player.itemRotation = forcedItemRotation.Value;
 
                 forcedItemRotation = null;
-            }
-
-            if (WitchScreamCooldown > 0)
-            {
-                WitchScreamCooldown--;
-            }           
+            }          
 
             TryForceFrame(ref Player.headFrame, ref forcedHeadFrame);
             TryForceFrame(ref Player.bodyFrame, ref forcedBodyFrame);

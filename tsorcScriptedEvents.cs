@@ -316,7 +316,7 @@ namespace tsorcRevamp
             ScriptedEvent TheHunter = new ScriptedEvent(new Vector2(296, 1560), 36, ModContent.NPCType<NPCs.Bosses.TheHunter>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Hunter"), Color.DarkGreen, false);
 
             //THE RAGE
-            ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1845), 30, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Rage"), Color.Red, false);
+            ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1845), 30, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.Torch, true, true, true, LangUtils.GetTextValue("Events.Rage"), Color.Red, false);
 
             //DEFILED DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
             ScriptedEvent AncientDemon = new ScriptedEvent(new Vector2(5317, 1800), 25, ModContent.NPCType<NPCs.Bosses.AncientDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.AncientDemon"), Color.MediumPurple, false);

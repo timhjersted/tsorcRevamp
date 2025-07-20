@@ -122,7 +122,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
             recipe.AddTile(TileID.DemonAltar);
 

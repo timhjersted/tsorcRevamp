@@ -42,9 +42,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.Keybrand);
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>());
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>());
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>());
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
 
             recipe.AddTile(TileID.DemonAltar);

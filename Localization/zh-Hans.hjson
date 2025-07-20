@@ -8960,6 +8960,11 @@ Mods: {
 					增加 4 点生命再生、12 点防御、15% 伤害和 20% 移动速度
 					'''
 			}
+
+			WitchkingScreamCooldown: {
+				// DisplayName: Witchking Scream Cooldown
+				// Description: You cannot scream again until this runs out
+			}
 		}
 
 		Projectiles: {

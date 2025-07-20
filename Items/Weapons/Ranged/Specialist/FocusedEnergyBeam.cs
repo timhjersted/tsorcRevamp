@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 4);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 2);
             recipe.AddIngredient(ItemID.SpaceGun, 1);

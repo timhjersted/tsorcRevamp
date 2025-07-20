@@ -29,12 +29,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.knockBack = (float)4;
             Item.scale = (float)1;
             Item.UseSound = SoundID.Item34;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.shootSpeed = (float)20;
             Item.crit = 2;
             Item.mana = 100;
             Item.noMelee = true;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
             Item.channel = true;
 
@@ -243,7 +243,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CrystalShard, 1);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 6);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);

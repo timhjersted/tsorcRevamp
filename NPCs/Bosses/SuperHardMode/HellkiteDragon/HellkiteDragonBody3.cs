@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -7,7 +8,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 {
     class HellkiteDragonBody3 : ModNPC
     {
-        int fireDamage = 25;
+        public int Timer = 0;
+        int fireDamage = 48;
         public override void SetStaticDefaults()
         {
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
@@ -54,6 +56,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 NPC.HitEffect(0, 10.0);
                 NPC.NPCLoot();
                 NPC.active = false;
+            }
+
+            Timer++;
+
+            if (Timer == 480 || Timer == 510 || Timer >= 540)
+            {
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    float num48 = 16f;
+                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2));
+                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    rotation += Main.rand.Next(-50, 50) / 100;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.Fireball, fireDamage, 0f, Main.myPlayer);
+                    }
+                    if (Timer >= 540)
+                    {
+                        Timer = 0;
+                    }
+                }
+
+                //npc.netUpdate=true;
             }
         }
 

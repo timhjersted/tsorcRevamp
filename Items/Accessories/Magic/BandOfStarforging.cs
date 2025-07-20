@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BandOfPhenomenalCosmicPower>());
             recipe.AddIngredient(ModContent.ItemType<EssenceOfMana>());
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 2);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>());
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 66000);
             recipe.AddTile(TileID.DemonAltar);
 

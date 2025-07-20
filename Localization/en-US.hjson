@@ -2065,7 +2065,7 @@ Mods: {
 					'''
 				Keybind1: "{$CommonItemTooltip.SetBonus}Press "
 				Keybind2: " to cast a floating Tsunami at your cursor position"
-				Tooltip1: It will also spawn a friendly shark which homes in on the closest enemy, dealing {0} ranged damage
+				Tooltip1: It will also spawn a friendly shark which homes in on the closest enemy, dealing {0} ranged damage (Only 3 sharks per second)
 			}
 
 			KrakenHead: {
@@ -2098,7 +2098,7 @@ Mods: {
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.SetBonus}Summons a necromantic serpent that hunts enemies
-					The serpent can regenerate you by hitting enemies
+					The serpent can regenerate you by hitting enemies and inflicts ichor 
 					'''
 			}
 
@@ -8960,6 +8960,11 @@ Mods: {
 					Your natural defenses have been activated!
 					Grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed 
 					'''
+			}
+
+			WitchkingScreamCooldown: {
+				DisplayName: Witchking Scream Cooldown
+				Description: You cannot scream again until this runs out
 			}
 		}
 

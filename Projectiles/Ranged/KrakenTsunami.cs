@@ -18,6 +18,9 @@ namespace tsorcRevamp.Projectiles.Ranged
         SlotId WaterSoundID;
         public bool SoundTimerIsRunning = false;
         public int SoundTimer = 0;
+
+        private int SharkSpawnCounter = 0;
+        private int SharkSpawnTimer = 0;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 8;
@@ -68,10 +71,20 @@ namespace tsorcRevamp.Projectiles.Ranged
                 if (i != Projectile.whoAmI && other.active && other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && other.DamageType == DamageClass.Ranged && !other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered && other.type != ModContent.ProjectileType<KrakenTsunamiShark>() && player.ownedProjectileCounts[ModContent.ProjectileType<KrakenTsunamiShark>()] < 10)
                 {
                     other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered = true;
-                    if (Main.myPlayer == Projectile.owner)
+                    // limited to 3 sharks per sec 
+                    if (SharkSpawnCounter < 3 && Main.myPlayer == Projectile.owner)
                     {
-                        Projectile Shark = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<KrakenTsunamiShark>(), Projectile.originalDamage, Projectile.knockBack, Projectile.owner);
-                        Shark.velocity *= 1.3f;
+                        Projectile Shark = Projectile.NewProjectileDirect(
+                            Projectile.GetSource_FromThis(),
+                            Projectile.Center,
+                            Vector2.Zero,
+                            ModContent.ProjectileType<KrakenTsunamiShark>(),
+                            Projectile.originalDamage,
+                            Projectile.knockBack,
+                            Projectile.owner
+                        );
+                        Shark.velocity *= 1.6f;
+                        SharkSpawnCounter++;
                     }
                     if (!SoundEngine.TryGetActiveSound(WaterSoundID, out var ActiveSound))
                     {
@@ -90,6 +103,14 @@ namespace tsorcRevamp.Projectiles.Ranged
                 activeSound.Stop();
                 SoundTimerIsRunning = false;
                 SoundTimer = 0;
+            }
+
+            //reset the shark spawn counter every seconds 
+            SharkSpawnTimer++;
+            if (SharkSpawnTimer >= 60)
+            {
+                SharkSpawnTimer = 0;
+                SharkSpawnCounter = 0;
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

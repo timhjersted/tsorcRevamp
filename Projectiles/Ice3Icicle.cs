@@ -11,11 +11,13 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 32;
             Projectile.height = 88;
             Projectile.friendly = true;
-            Projectile.penetrate = 5;
+            Projectile.penetrate = 3;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 200;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

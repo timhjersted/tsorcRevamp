@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.width = 254;
             Projectile.height = 472;
-            Projectile.penetrate = 8;
+            Projectile.penetrate = 6;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.light = 0.8f;

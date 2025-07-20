@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.UseSound = SoundID.Item1;
             Item.rare = ModContent.RarityType<OrangeRed>();
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
             Item.shootSpeed = 13f;

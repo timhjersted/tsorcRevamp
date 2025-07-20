@@ -47,9 +47,9 @@ namespace tsorcRevamp.Projectiles
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
             if (Main.myPlayer == Projectile.owner)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, ModContent.ProjectileType<Ice5Icicle>(), (int)(this.Projectile.damage), 3f, Projectile.owner);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * 2), 0, 5, ModContent.ProjectileType<Ice5Icicle>(), (int)(this.Projectile.damage), 3f, Projectile.owner);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * 2), 0, 5, ModContent.ProjectileType<Ice5Icicle>(), (int)(this.Projectile.damage), 3f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, ModContent.ProjectileType<Ice3Icicle>(), (int)(this.Projectile.damage / 2), 3f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * 2), 0, 5, ModContent.ProjectileType<Ice3Icicle>(), (int)(this.Projectile.damage / 2), 3f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * 2), 0, 5, ModContent.ProjectileType<Ice3Icicle>(), (int)(this.Projectile.damage / 2), 3f, Projectile.owner);
             }
 
             Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, DustID.MagicMirror, 0, 0, 100, default, 1f);

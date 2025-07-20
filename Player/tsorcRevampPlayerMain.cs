@@ -63,7 +63,6 @@ namespace tsorcRevamp
         public List<int> bagsOpened;
         public static int LastHit = 1;
         public static int ShunpoCooldownPerHit = -40;
-        public int WitchScreamCooldown = 0;
         public static bool SameHit = false;
         public static bool DiffHit = false;
         public Dictionary<int, int> consumedPotions;
@@ -1407,10 +1406,12 @@ namespace tsorcRevamp
                     Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 25 * 60);
                 }
             }
-            if (tsorcRevamp.WitchScream.JustReleased && WitchScreamCooldown <= 0)
+            if (tsorcRevamp.WitchScream.JustReleased && !Player.HasBuff(ModContent.BuffType<WitchkingScreamCooldown>()))
                 {
                     if (Witch)
                     {
+                        player.AddBuff(ModContent.BuffType<WitchkingScreamCooldown>(), 20 * 60);
+                        
                         if (Main.myPlayer == Player.whoAmI)
                         {
                             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream"), Player.Center);
@@ -1437,16 +1438,16 @@ namespace tsorcRevamp
                                 520, // ai0
                                 60   // ai1
                             );
-                            for (int i = 0; i < 20; i++) 
+                            for (int i = 0; i < 30; i++) 
                             {
                                 Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
-                                int dustIndex = Dust.NewDust(player.Center, 0, 0, 114, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.8f);
+                                int dustIndex = Dust.NewDust(player.Center, 0, 0, 114, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.9f);
                                 Main.dust[dustIndex].noGravity = true; 
                             }
-                            for (int i = 0; i < 20; i++) 
+                            for (int i = 0; i < 30; i++) 
                             {
                                 Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
-                                int dustIndex = Dust.NewDust(player.Center, 0, 0, 130, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.8f);
+                                int dustIndex = Dust.NewDust(player.Center, 0, 0, 130, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.9f);
                                 Main.dust[dustIndex].noGravity = true; 
                             }
 
@@ -1460,7 +1461,7 @@ namespace tsorcRevamp
                                     
                                     npc.StrikeNPC(new NPC.HitInfo
                                     {
-                                        Damage = (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(400),
+                                        Damage = (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(800),
                                         Knockback = 0,
                                         HitDirection = 0,
                                         Crit = false,
@@ -1468,8 +1469,6 @@ namespace tsorcRevamp
                                     }, false, false); // noPlayerInteraction = false, dontTriggerSound = false
                                 }
                             }
-
-                            WitchScreamCooldown = 1200; 
                         }
                     }
                 }

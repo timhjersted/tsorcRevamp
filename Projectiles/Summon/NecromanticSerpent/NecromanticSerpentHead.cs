@@ -149,9 +149,12 @@ namespace tsorcRevamp.Projectiles.Summon.NecromanticSerpent
             // Speed up as you hit the enemy so you run through it
             Projectile.velocity *= 1.8f; 
 
-            //50% to heal 1 hp
+            //Ichor 
+            target.AddBuff(BuffID.Ichor, 4 * 60);
+
+            //33% to heal 1 hp
             Player player = Main.player[Projectile.owner];
-            if (Main.rand.NextBool(2)) 
+            if (Main.rand.NextBool(3)) 
             {
                 player.statLife += 1;
                 player.HealEffect(1); 

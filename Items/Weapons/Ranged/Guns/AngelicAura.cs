@@ -16,18 +16,19 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         {
             Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
-            Item.useTime = Item.useAnimation = 2; //brrrrrr
-            Item.damage = 38;
+            Item.useTime = Item.useAnimation = 3; //brrrrrr
+            Item.damage = 50;
             Item.knockBack = 1;
             Item.autoReuse = true;
             Item.shootSpeed = 16;
             Item.useAmmo = AmmoID.Bullet;
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = PriceByRarity.Cyan_9;
+            Item.rare = ItemRarityID.Purple;
+            Item.value = PriceByRarity.Purple_11;
             Item.shoot = 10;
             Item.height = 50;
             Item.width = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
+            Item.UseSound = SoundID.Item11;
 
         }
 
@@ -51,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.VenusMagnum);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
             recipe.AddTile(TileID.DemonAltar);
 

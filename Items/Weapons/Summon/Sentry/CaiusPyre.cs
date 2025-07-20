@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FireGauntlet);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 4);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 66000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

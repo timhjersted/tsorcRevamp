@@ -24,9 +24,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.rare = ModContent.RarityType<DarkBlue>();
             Item.mana = 100;
             Item.shootSpeed = 33;
-            Item.useAnimation = 40;
+            Item.useAnimation = 35;
             Item.UseSound = SoundID.Item5;
-            Item.useTime = 40;
+            Item.useTime = 35;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = PriceByRarity.Purple_11;
             Item.width = 30;
