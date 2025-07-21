@@ -513,7 +513,7 @@
   "text": "你注意到门上方隐藏着一个小开关… --NEWLINE   --NEWLINE Miakoda说：\u0022这个地牢似乎用各种把戏来保护自己的秘密。\u0022",
   "tileX": 2846,
   "tileY": 1647,
-  "textWidth": 390,
+  "textWidth": 420,
   "style": 1
 }
 {
@@ -583,7 +583,7 @@
   "text": "- 你发现了深渊的起源 - --NEWLINE   --NEWLINE 它是深渊渗透整个世界的源头。",
   "tileX": 3147,
   "tileY": 1782,
-  "textWidth": 300,
+  "textWidth": 260,
   "style": 1
 }
 {
@@ -643,7 +643,7 @@
   "style": 1
 }
 {
-  "text": " - 你找到了三子守望者的圣殿 - --NEWLINE   --NEWLINE \u0022我需要一些可以打破叶绿的东西…\u0022",
+  "text": " - 你找到了三子守望者圣殿 - --NEWLINE   --NEWLINE \u0022我需要一些可以打破叶绿的东西…\u0022",
   "tileX": 3316,
   "tileY": 238,
   "textWidth": 260,
@@ -1434,10 +1434,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了进入大地神庙的入口 - --NEWLINE   --NEWLINE 它被一扇大钻石门锁住了 --NEWLINE   --NEWLINE \u0022据说这把钥匙的多个副本可以在埃什峰村以西的山脉中找到\u0022",
+  "text": "- 你发现了进入大地神庙的入口 - --NEWLINE   --NEWLINE 它被一扇大钻石门锁住了 --NEWLINE   --NEWLINE \u0022据说这把钥匙的复制品可以在埃什峰村以西的山脉中找到\u0022",
   "tileX": 4521,
   "tileY": 857,
-  "textWidth": 430,
+  "textWidth": 440,
   "style": 1
 }
 {
@@ -1624,22 +1624,22 @@
 }
 {
   "text": "你醒来时咳着黑色的血块，有人认为你已经死去，遂将你埋在这里 --NEWLINE   --NEWLINE 你的心跳开始加速，手在黑暗中挣扎，寻找任何能帮你出去的东西 --NEWLINE   --NEWLINE 你感觉到背后有东西，发现了背包中你父亲遗留的破碎镐子…",
-  "tileX": 4922,
+  "tileX": 4925,
   "tileY": 860,
   "textWidth": 520,
   "style": 1
 }
 {
   "text": "~·~ The Story Of Red Cloud 红云物语·重构版·地图 ~·~ --NEWLINE   --NEWLINE 巨焱龙晶汉化组 汉化  --NEWLINE 人手不够 有部分翻译生硬 请见谅  --NEWLINE   --NEWLINE ~·~汉化人员：~·~ --NEWLINE 星界棱晶 b站id454936579 --NEWLINE 巨像ha b站id 52650683 --NEWLINE 丛林龙_亚戎 b站id 319380527 --NEWLINE 闪金 b站id 434011516 --NEWLINE 麒龙 b站id 178324958 --NEWLINE 芋圆銮歌 b站id 259288171 --NEWLINE 小小红白 b站id 397702 --NEWLINE 咕咕王 b站id 38075201 --NEWLINE urgiv --NEWLINE 感谢所有在翻译过程中提出建议和帮助的人",
-  "tileX": 4926,
-  "tileY": 860,
+  "tileX": 4932,
+  "tileY": 851,
   "textWidth": 400,
   "style": 1
 }
 {
   "text": "附加的一些游玩提示： --NEWLINE   --NEWLINE ~ 这是红云物语的重构版地图，建议在游玩冒险地图后再体验 ~ --NEWLINE   --NEWLINE 1.不要加内容类模组！ --NEWLINE 以及某些辅助类模组如：懒人、翻页背包、连锁挖矿。 --NEWLINE 不但你加的mod玩不好，这张地图也有可能出大bug，出事了只能说你活该。 --NEWLINE   --NEWLINE 2.如果游玩过程中遇到没翻译的句子、告示牌或你认为有问题的地方。 --NEWLINE 可以截图（尽量详细一些），发在我们的qq群里，并@群主&管理 --NEWLINE   --NEWLINE 可以加QQ群:368675949关注我们的动态以及提出宝贵建议！ --NEWLINE   --NEWLINE 感谢您对红云物语模组和该冒险地图以及我们的支持！祝您游玩愉快！",
-  "tileX": 4930,
-  "tileY": 860,
+  "tileX": 4940,
+  "tileY": 851,
   "textWidth": 600,
   "style": 1
 }
@@ -1774,13 +1774,6 @@
   "tileX": 5338,
   "tileY": 867,
   "textWidth": 220,
-  "style": 1
-}
-{
-  "text": "这扇门需要从另一侧打开。",
-  "tileX": 5338,
-  "tileY": 956,
-  "textWidth": 200,
   "style": 1
 }
 {
@@ -1955,7 +1948,7 @@
   "text": "入口被叶绿矿封闭，一种比精金更坚固的矿石 --NEWLINE   --NEWLINE \u0022树根深处究竟保存了什么东西？\u0022",
   "tileX": 5958,
   "tileY": 578,
-  "textWidth": 300,
+  "textWidth": 350,
   "style": 1
 }
 {

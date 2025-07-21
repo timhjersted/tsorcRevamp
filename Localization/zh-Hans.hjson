@@ -71,7 +71,7 @@ Mods: {
 			BadLifeRegen: 减少 {0} 点生命再生
 			BadDefense: 减少 {0} 点防御
 			BadDmg: 降低 {0}% 伤害
-			// ArmorPen: Increases armor penetration by {0}
+			ArmorPen: 增加 {0} 点护甲穿透
 			DmgMult: 乘算增加 {0}% 伤害
 			BadDmgMult: 乘算减少 {0}% 伤害
 			AtkSpeed: 增加 {0}% 攻击速度
@@ -632,8 +632,8 @@ Mods: {
 				LargeAmber: "[c/ffbf00:上面刻着一个符号，像是村庄山丘下大地神庙的入口]"
 				RemixLargeDiamond: "[c/ffbf00:上面刻着一个符号，像是村庄山丘下大地神庙的入口]"
 				RemixLargeTopaz: "[c/ffbf00:上面刻着一个符号，像是遗忘之城东边的废墟]"
-				VulnerabilityHex: 击败炼狱鸢龙后，提高伤害并对敌人施加
-				IncinerationHex: 击败炼狱鸢龙后，提高伤害并
+				VulnerabilityHex: 击败炼狱鸢龙后，提高伤害并对敌人施加易伤减益
+				IncinerationHex: 击败炼狱鸢龙后，提高伤害并对敌人施加伤害减益
 				MartianBuff: 击败火星飞碟后，提高伤害并对敌人施加电击
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
@@ -1262,17 +1262,14 @@ Mods: {
 				DisplayName: 灰狼戒指
 				Tooltip:
 					'''
-					亚尔特留斯曾经佩戴的戒指之一
-					继承{$Items.RingOfClarity.DisplayName}的免疫效果
+					一枚伟大的戒指，与深渊共鸣，给你钢铁般的意志
+					继承{$Items.RingOfClarity.DisplayName}和{$Items.WolfRing.DisplayName}的免疫效果
 					按下绑定的苍狼戒指快捷键以短暂提高生命恢复和受到的伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
 					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy}
-					赋予酸性毒液灌注效果
-					{$CommonItemTooltip.LifeRegen@1}
-					{$CommonItemTooltip.IncreasesMaxManaBy@2}
-					{$CommonItemTooltip.Magic.ManaRegen@3}
-					{$CommonItemTooltip.Magic.ManaRegenDelay@4}
-					灌注效果可通过隐藏饰品关闭
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.LifeRegen@2}
+					{$CommonItemTooltip.IncreasesMaxLifeByPercent@3}
 					'''
 			}
 
@@ -1353,7 +1350,7 @@ Mods: {
 					'''
 					免疫{$CommonItemTooltip.OnFire}、燃烧、冷冻、霜冻、{$CommonItemTooltip.CursedInferno}、{$CommonItemTooltip.Ichor}
 					免疫重力颠倒、流血、中毒和击退
-					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.DRStat}
 					{$CommonItemTooltip.LifeRegen@1}
 					'''
 			}
@@ -1387,12 +1384,11 @@ Mods: {
 				DisplayName: 苍狼戒指
 				Tooltip:
 					'''
-					亚尔特留斯曾经佩戴的戒指之一
+					授予葛温四位骑士的特殊戒指之一
 					按下绑定的苍狼戒指快捷键以短暂提高生命恢复和受到的伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
 					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy} 
-					赋予酸性毒液灌注效果
-					灌注效果可通过隐藏饰品关闭
+					免疫黑视、遮蔽、酸性毒液与冰冻
 					'''
 				Keybind1: "按 "
 				Keybind2: " 键以短暂提高生命恢复和受到的伤害"
@@ -1510,7 +1506,7 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:免疫着火、燃烧、冻伤、霜冻、冷冻]
-					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.DRStat}
 					{$CommonItemTooltip.NoKnockback}
 					'''
 			}
@@ -1541,7 +1537,7 @@ Mods: {
 					'''
 					龙骑士的钢靴
 					{$CommonItemTooltip.MoveSpeedMult}和 60% 加速度
-					{$CommonItemTooltip.NoFallDmg}
+					获得冲击波药水效果，可通过隐藏饰品关闭
 					跳得更快，也让你跳得更高
 					按下绑定的龙骑士之靴快捷键让你跳的更高
 					'''
@@ -1556,7 +1552,7 @@ Mods: {
 					龙骑士的全部套装
 					从高处落下时，{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
 					{$CommonItemTooltip.MoveSpeedMult}和 60% 加速度
-					{$CommonItemTooltip.NoFallDmg}
+					获得冲击波药水效果，可通过隐藏饰品关闭
 					跳的更快，跳的更高
 					按下绑定的龙骑士之靴快捷键让你跳的更高
 					'''
@@ -1627,8 +1623,8 @@ Mods: {
 					'''
 					亚尔特留斯曾佩戴的戒指
 					曾拥有着这个世界所无法承受的力量
-					[c/ffbf00:免疫黑视、遮蔽、酸性毒液与冰冻]
-					[c/ffbf00:提高 {0}% 被诅咒时获得的正面属性增益]
+					{$CommonItemTooltip.PercentIncreasedDamage}并{$CommonItemTooltip.ArmorPen@1}
+					[c/ffbf00:提高 {2}% 被诅咒时获得的正面属性增益]
 					'''
 			}
 
@@ -2071,7 +2067,7 @@ Mods: {
 					'''
 				Keybind1: "{$CommonItemTooltip.SetBonus}按 "
 				Keybind2: " 在光标位置生成一个浮空的海妖旋风"
-				Tooltip1: 同时生成一个鲨鱼追踪攻击最近的敌人，造成 {0} 远程伤害
+				Tooltip1: 每秒最多同时生成三只鲨鱼追踪攻击最近的敌人，造成 {0} 远程伤害
 			}
 
 			KrakenHead: {
@@ -2103,7 +2099,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
-					{$CommonItemTooltip.SetBonus}召唤巫妖骨蟒攻击你附近的敌人
+					{$CommonItemTooltip.SetBonus}召唤一条猎杀敌人的巫妖骨蟒
+					骨蟒施加灵液并通过攻击敌人再生
 					'''
 			}
 
@@ -5977,7 +5974,7 @@ Mods: {
 			}
 
 			Doomhammer: {
-				DisplayName: 末日锤
+				DisplayName: 毁灭之锤
 				Tooltip:
 					'''
 					很久以前在元素熔岩池中锻造的一把传奇之锤
@@ -6129,8 +6126,8 @@ Mods: {
 			}
 
 			WingedSpear: {
-				// DisplayName: Winged Spear
-				// Tooltip: A spear as light as the wind
+				DisplayName: 翼矛
+				Tooltip: 像风一样轻的长矛
 			}
 
 			PilgrimSpontoon: {
@@ -7822,7 +7819,11 @@ Mods: {
 
 			SniperCrossbow: {
 				DisplayName: 精准弩炮
-				Tooltip: 将普通弩箭转化为高速弩箭
+				Tooltip:
+					'''
+					将普通弩箭转化为高速弩箭
+					右键缩放视野
+					'''
 			}
 
 			FieryScale: {
@@ -7903,7 +7904,7 @@ Mods: {
 
 			WrathOfThePhoenix: {
 				Tooltip: 仅限测试
-				DisplayName: Wrath of the Phoenix
+				DisplayName: 凤凰怒焰
 			}
 
 			TeleportationRod: {
@@ -7935,6 +7936,7 @@ Mods: {
 				DisplayName: 至尊龙魂
 				Tooltip:
 					'''
+					此为伟大龙魂的炽焰升华形态
 					增加 {0} 倍对敌人造成的减益伤害
 					较强力减益的伤害只受到增益的一半
 					攻击施加破晓并增加 {1}% 伤害
@@ -8962,8 +8964,8 @@ Mods: {
 			}
 
 			WitchkingScreamCooldown: {
-				// DisplayName: Witchking Scream Cooldown
-				// Description: You cannot scream again until this runs out
+				DisplayName: 巫师尖啸冷却
+				Description: 冷却结束前你无法使用巫师尖啸
 			}
 		}
 
@@ -9246,7 +9248,7 @@ Mods: {
 			FirebombProj.DisplayName: 火焰炸弹
 			FireField.DisplayName: 赤炎力场
 			FireFieldBall.DisplayName: 赤炎力场球
-			BerserkerNightmareBall.DisplayName: 狂热者的梦魇球
+			BerserkerNightmareBall.DisplayName: 狂战士梦魇
 			HeavensTearBall.DisplayName: 天堂之泪
 			MoonfuryBall.DisplayName: 月煞球
 			SunderingLightBall.DisplayName: 消逝之光
@@ -9518,7 +9520,7 @@ Mods: {
 			CaiusPyreRift.DisplayName: 凯厄斯之葬裂隙
 			GaleforceArrow.DisplayName: 极风之弦箭雨
 			WorldEnderSword.DisplayName: 末世之剑
-			RuneterraKatanaTornado.DisplayName: 符文之地系列武器旋风
+			RuneterraKatanaTornado.DisplayName: 旋风
 			SpiritAshKnightMinion.DisplayName: 灵灰骑士
 			KrakenTsunami.DisplayName: 海妖旋风
 			TyphoonProjectile.DisplayName: 炽风之弦
@@ -9628,8 +9630,8 @@ Mods: {
 			NecromanticSerpentTail.DisplayName: 巫妖骨蟒
 			GwynAura.DisplayName: Gwyn Aura
 			BlackArrow.DisplayName: Black Arrow
-			// WingedSpearProj.DisplayName: Winged Spear Proj
-			// WingedSpearAirwave.DisplayName: Winged Spear Airwave
+			WingedSpearProj.DisplayName: 翼矛
+			WingedSpearAirwave.DisplayName: 翼矛
 		}
 
 		NPCs: {
@@ -10436,8 +10438,8 @@ Mods: {
 				Quote3:
 					'''
 					我被封印进这个玩偶已有数十年了...
-					真不懂你们泰拉人怎能日复一日困在同一副躯壳里活着！
-					如果你有富余的黑暗之魂，可否给我这躯体换点新花样？
+					真不懂泰拉人怎能日复一日困在同一副躯壳里活着！
+					如果有富余的黑暗之魂，可否给我这躯体换点新花样？
 					'''
 				Quote4:
 					'''
@@ -11222,7 +11224,6 @@ Mods: {
 			"Wolf Ring.DisplayName": 苍狼戒指
 			"Wings of Seath speed toggle.DisplayName": 希斯之翼加速度切换
 			Shunpo.DisplayName: 瞬步
-			// "Necromancers Spell.DisplayName": Necromancers Spell
 			"Krakens Cast.DisplayName": 海妖旋风
 			"Witchking Scream.DisplayName": 巫师尖啸
 			"Print Position.DisplayName": 显示玩家位置
