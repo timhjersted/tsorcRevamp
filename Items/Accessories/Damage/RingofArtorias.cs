@@ -4,7 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.Items.Accessories.Defensive.Rings
+namespace tsorcRevamp.Items.Accessories.Damage
 {
     public class RingofArtorias : ModItem
     {   

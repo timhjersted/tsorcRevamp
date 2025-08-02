@@ -7,16 +7,15 @@ using tsorcRevamp.Items.Materials;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    class ShadowNinjaMask2 : ModItem
+    class AbyssalNinjaMask : ModItem
     {
         public static float CritChance = 30f;
-        public static float Dmg = 30f;
+        public static float Dmg = 15f;
         public static float AtkSpeed = 30f;
         public static int MaxDefense = 60;
         public static int LifeRegen = 30;
         public static float DRToMoveSpeedRatio = 2f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, Dmg, AtkSpeed, MaxDefense, LifeRegen, DRToMoveSpeedRatio);
-        public override string Texture => "tsorcRevamp/Items/Armors/Melee/ShadowNinjaMask";
         public override void SetStaticDefaults()
         {
         }
@@ -24,8 +23,8 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 18;
             Item.height = 12;
-            Item.rare = ItemRarityID.Purple;
-            Item.value = PriceByRarity.fromItem(Item);
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.value = PriceByRarity.Purple_11;
             Item.defense = 6;
         }
         public override void UpdateEquip(Player player)
@@ -35,7 +34,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<Melee.ShadowNinjaTop>() && legs.type == ModContent.ItemType<Melee.ShadowNinjaBottoms>();
+            return body.type == ModContent.ItemType<AbyssalNinjaTop>() && legs.type == ModContent.ItemType<AbyssalNinjaBottoms>();
         }
 
         public override void UpdateArmorSet(Player player)
@@ -54,9 +53,9 @@ namespace tsorcRevamp.Items.Armors
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Melee.ShadowNinjaMask>());
-            recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
+            recipe.AddIngredient(ModContent.ItemType<OolacileDarkMatter>());
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

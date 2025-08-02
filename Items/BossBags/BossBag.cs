@@ -136,8 +136,7 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BurningStone>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PoisonbiteRing>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodbiteRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodbaneRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Specialist.DarkTrident>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.SunsetQuasar>()));
         }
@@ -151,8 +150,7 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BurningAura>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PoisonbiteRing>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodbiteRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodbaneRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Specialist.DarkTrident>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.SunsetQuasar>()));
         }
@@ -493,7 +491,8 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HealingElixir>(), 1, 10, 20));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 2, 4));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 5, 10));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 8, 12));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<OolacileDarkMatter>(), 1, 4, 8));
         }
     }
     public class ArtoriasBag : BossBag

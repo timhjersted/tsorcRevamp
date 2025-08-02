@@ -6381,7 +6381,7 @@ namespace tsorcRevamp.NPCs
 
             if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow))
             {
-                if (Main.rand.NextBool(10))
+                if (Main.rand.NextBool(8))
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.SymbolOfAvarice>());
                 }

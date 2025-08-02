@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
         //Nightbringer specific
         public const int WindwallDuration = 5;
-        public const int WindwallCooldown = 30;
+        public const int WindwallCooldown = 25;
         public abstract int DashCooldownBuffID { get; }
         public abstract int DashDustID { get; }
         public abstract int DashBuffID { get; }

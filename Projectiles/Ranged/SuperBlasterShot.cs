@@ -15,6 +15,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.width = 10;
             Projectile.height = 10;
             Projectile.friendly = true;
+            Projectile.scale = 1.2f;
             Projectile.aiStyle = 0;
             Projectile.penetrate = 2;
             Projectile.DamageType = DamageClass.Ranged;
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         public override void AI()
         {
             {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 111, 0, 0, 30, default(Color), .85f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 111, 0, 0, 30, default(Color), .95f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= .5f;
 

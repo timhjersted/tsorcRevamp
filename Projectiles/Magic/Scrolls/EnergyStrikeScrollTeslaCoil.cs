@@ -67,7 +67,7 @@ namespace tsorcRevamp.Projectiles.Magic.Scrolls
                  Projectile.velocity = Projectile.Center.DirectionTo(modPlayer.CursorPosition) * Projectile.Center.Distance(modPlayer.CursorPosition);
             }
 
-            if (Timer >= 25 && player.whoAmI == Main.myPlayer) // The magnet sphere uses a timer of 9
+            if (Timer >= 30 && player.whoAmI == Main.myPlayer) // The magnet sphere uses a timer of 9
             {
                 var npcs = FindNPCsWithinRange(450);
                 foreach (NPC npc in npcs)

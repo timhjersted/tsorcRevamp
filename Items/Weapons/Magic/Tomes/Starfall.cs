@@ -22,15 +22,15 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.scale = 0.9f;
 
             Item.rare = ModContent.RarityType<DarkBlue>();
-            Item.shootSpeed = 10;
+            Item.shootSpeed = 11;
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
 
             Item.UseSound = SoundID.Item25;
             Item.mana = 14;
-            Item.damage = 90;
-            Item.useAnimation = Item.useTime = 15;
+            Item.damage = 100;
+            Item.useAnimation = Item.useTime = 14;
             Item.shoot = ModContent.ProjectileType<Projectiles.StarfallProjectile>();
             Item.autoReuse = true;
 

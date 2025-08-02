@@ -138,7 +138,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 despawnHandler.TargetAndDespawn(NPC.whoAmI);
             }
 
-            tsorcRevampAIs.FighterAI(NPC, 1, 0.04f, 0.2f, canTeleport: true, 10, false, null, 1000, 0.5f, 2.5f, lavaJumping: true, canDodgeroll: true);
+            tsorcRevampAIs.FighterAI(NPC, 1, 0.05f, 0.2f, canTeleport: true, 10, false, null, 1000, 0.5f, 2.5f, lavaJumping: true, canDodgeroll: true);
             Lighting.AddLight(NPC.Center, Color.GhostWhite.ToVector3() * 2f);
 
             Vector2 targetPosition = Vector2.Zero;
@@ -362,7 +362,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Poison Attack 2 Telegraph
-                if (NPC.ai[1] == 350)
+                if (NPC.ai[1] == 375)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -376,9 +376,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Poison Attack 2
-                if (NPC.ai[1] == 375)
+                if (NPC.ai[1] == 405)
                 {
-                    float projectileSpeed = 5f;
+                    float projectileSpeed = 4f;
                     float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
                     int numProjectiles = 4; // Number of projectiles to shoot
 
@@ -595,7 +595,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     // Exlosives
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 10, fallback: true);
-                    speed += Main.rand.NextVector2Circular(-12, -16);//was -4, -2, then -12, -16
+                    speed += Main.rand.NextVector2Circular(-6, -8);//was -4, -2, then -12, -16
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyGreatAttack>(), redKnightsGreatDamage, 0f, Main.myPlayer);
@@ -629,7 +629,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Vector2 targetVector = UsefulFunctions.Aim(NPC.Center, closestPlayer.Center, 1);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.SmallRedLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
                         }
                     }
                 }

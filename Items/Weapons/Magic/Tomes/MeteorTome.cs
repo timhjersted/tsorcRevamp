@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -13,18 +14,18 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         }
         public override void SetDefaults()
         {
-            Item.damage = 90;
+            Item.damage = 80;
             Item.height = 10;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Pink;
-            Item.shootSpeed = 6;
+            Item.shootSpeed = 3f;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Magic;
-            Item.mana = 70;
-            Item.UseSound = SoundID.Item21;
+            Item.mana = 12;
+            Item.UseSound = SoundID.Item88;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 10;
-            Item.useAnimation = 120;
+            Item.useTime = 11;
+            Item.useAnimation = 11;
             Item.value = PriceByRarity.Pink_5;
             Item.width = 34;
             Item.autoReuse = true;
@@ -34,6 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<MeteorShower>());
+            recipe.AddIngredient(ItemID.MeteorStaff);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe.AddTile(TileID.DemonAltar);
@@ -45,8 +47,25 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         {
             if (Main.myPlayer == player.whoAmI)
             {
-                Projectile.NewProjectile(player.GetSource_ItemUse(Item), (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200), player.position.Y - 800.0f,
-                   (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Meteor>(), (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage)), 2.0f, player.whoAmI);
+                Vector2 target = Main.MouseWorld;
+                Vector2 spawnPosition = new Vector2(
+                    target.X + Main.rand.NextFloat(-250f, 250f), 
+                    player.position.Y - 600f 
+                );
+
+                Vector2 direction = target - spawnPosition;
+                direction.Normalize();
+                direction *= 14f; 
+
+                Projectile.NewProjectile(
+                    player.GetSource_ItemUse(Item),
+                    spawnPosition,
+                    direction,
+                    ModContent.ProjectileType<Projectiles.Meteor>(),
+                    (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage)),
+                    2.0f,
+                    player.whoAmI
+                );
             }
             return true;
         }

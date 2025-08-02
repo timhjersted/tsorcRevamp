@@ -24,17 +24,17 @@ namespace tsorcRevamp.Items.Weapons.Magic.Scrolls
         {
             Item.width = 34;
             Item.height = 10;
-            Item.damage = 40; // Since it's a sentry any player could have minimum 2 summons
+            Item.damage = 35; // Since it's a sentry any player could have minimum 2 summons
             Item.DamageType = DamageClass.Summon;
-            Item.mana = 100;
+            Item.mana = 10;
             Item.knockBack = 2f;
-            Item.rare = ItemRarityID.LightRed;
-            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.value = PriceByRarity.LightPurple_6;
             Item.shoot = ModContent.ProjectileType<EnergyStrikeScrollTeslaCoil>();
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 60;
-            Item.useAnimation = 60;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
             Item.sentry = true;
             Item.noMelee = true;
         }

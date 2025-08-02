@@ -5,11 +5,10 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Claws
 {
-    class ForgottenKaiserKnuckles : ModItem
+    class WildKnuckles : ModItem
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Great spiked knuckles.");
         }
 
         public override void SetDefaults()
@@ -18,8 +17,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Item.useTurn = false;
             Item.rare = ItemRarityID.Green;
             Item.damage = 17;
-            Item.width = 21;
-            Item.height = 23;
+            Item.width = 30;
+            Item.height = 38;
+            Item.scale = 1f;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.knockBack = 3;
             Item.DamageType = DamageClass.Melee;
@@ -28,6 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Item.UseSound = SoundID.Item1;
             Item.value = PriceByRarity.Green_2;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Green;
         }
         public override void AddRecipes()
         {

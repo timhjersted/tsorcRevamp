@@ -20,6 +20,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.width = 5;
             Projectile.extraUpdates = 1;
             Projectile.timeLeft = 240; 
+            Projectile.ArmorPenetration = 10;
         }
 
         public override void AI()

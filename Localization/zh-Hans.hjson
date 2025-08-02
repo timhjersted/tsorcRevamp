@@ -1314,27 +1314,6 @@ Mods: {
 					'''
 			}
 
-			PoisonbiteRing: {
-				DisplayName: 咬毒戒指
-				Tooltip:
-					'''
-					一枚由卡里姆的阿斯托爵士委托打造的臭名昭著的指环 
-					即使围绕着它的创造产生了非常多的可怕谣言
-					这个玩意仍是一种价值不菲的宝物，因为它能免疫中毒
-					'''
-			}
-
-			PoisonbloodRing: {
-				DisplayName: 剧毒之血指环
-				Tooltip:
-					'''
-					一个由卡里姆的阿斯托爵士委托打造的臭名昭著的指环
-					即使围绕着它的创造产生了非常多的可怕谣言，它仍是价值不菲的宝物
-					它会使佩戴者免疫中毒和出血
-					{$CommonItemTooltip.LifeRegen}
-					'''
-			}
-
 			ProtectRing: {
 				DisplayName: 守护戒指
 				Tooltip:
@@ -2681,22 +2660,36 @@ Mods: {
 					'''
 			}
 
-			ShadowNinjaMask2: {
-				DisplayName: 暗影忍者面具II
-				Tooltip:
+			ShadowNinjaTop: {
+				DisplayName: 暗影忍者上衣
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+			}
+
+			AbyssalNinjaTop: {
+				// Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+				// DisplayName: Abyssal Ninja Top
+			}
+
+			AbyssalNinjaMask: {
+				// DisplayName: Abyssal Ninja Mask
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@3}
-					抵抗力以（1 : {5}）的比例转化为移动速度
+					Resistance is converted into movement speed(1 : {5})
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
 					{$CommonItemTooltip.LifeRegen@4}
-					'''
+					''' */
 			}
 
-			ShadowNinjaTop: {
-				DisplayName: 暗影忍者上衣
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+			AbyssalNinjaBottoms: {
+				// DisplayName: Abyssal Ninja Bottoms
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
+					''' */
 			}
 
 			ArcherOfLumeliaHairStyle: {
@@ -5902,21 +5895,6 @@ Mods: {
 					'''
 			}
 
-			ForgottenBurningFist: {
-				DisplayName: 被遗忘的燃烧之拳
-				Tooltip: 攻击敌人时释放火焰
-			}
-
-			ForgottenKaiserKnuckles: {
-				DisplayName: 被遗忘的凯撒指虎
-				Tooltip: 大尖刺
-			}
-
-			ForgottenTigerFangs: {
-				DisplayName: 被遗忘的虎牙
-				Tooltip: 长而极其锋利的爪牙
-			}
-
 			EphemeralThrowingAxe: {
 				DisplayName: 夺命投斧
 				Tooltip: 能穿过坚固的墙壁
@@ -7963,6 +7941,50 @@ Mods: {
 					[c/00ffd4:增加 4 点生命再生、12 点防御、15% 伤害和 20% 移动速度]
 					'''
 			}
+
+			DiamondCrusher: {
+				// Tooltip: ""
+				// DisplayName: Diamond Crusher
+			}
+
+			BloodbaneRing: {
+				// DisplayName: Bloodbane Ring
+				/* Tooltip:
+					'''
+					A useful ring in wild areas, where bleeding and being poisoned is common.
+					Immunity to Poison and Bleeding
+					{$CommonItemTooltip.LifeRegen}
+					''' */
+			}
+
+			XBow: {
+				// DisplayName: X-Bow
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a mystical crossbow which shoots piercing arrows towards your cursor at high speed
+					''' */
+			}
+
+			WildKnuckles: {
+				// DisplayName: Wild Knuckles
+				// Tooltip: Fast and sharp!
+			}
+
+			BurningFist: {
+				// DisplayName: Burning Fist
+				// Tooltip: Create flames by hitting enemies
+			}
+
+			XuenClaws: {
+				// DisplayName: Xuen's Claws
+				// Tooltip: The extremely sharp, electric claws of an ancient wild god.
+			}
+
+			OolacileDarkMatter: {
+				// DisplayName: Oolacile Dark Matter
+				// Tooltip: Tangible shadow energy from the darkness of Oolacile.
+			}
 		}
 
 		Buffs: {
@@ -9632,6 +9654,11 @@ Mods: {
 			BlackArrow.DisplayName: Black Arrow
 			WingedSpearProj.DisplayName: 翼矛
 			WingedSpearAirwave.DisplayName: 翼矛
+			// DiamondCrusherBall.DisplayName: Diamond Crusher Ball
+			// XBowProjectile.DisplayName: X Bow Projectile
+			// XBowArrow.DisplayName: X Bow Arrow
+			// DragoonSpearZap.DisplayName: Dragoon Spear Zap
+			// FlameScrollStrike.DisplayName: Flame Scroll Strike
 		}
 
 		NPCs: {

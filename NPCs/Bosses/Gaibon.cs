@@ -580,8 +580,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             npcLoot.Add(ItemDropRule.BossBagByCondition(new GaibonDropCondition(), ModContent.ItemType<Items.BossBags.GaibonBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<PoisonbiteRing>()));
-            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<BloodbiteRing>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<BloodbaneRing>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<DarkTrident>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<SunsetQuasar>()));
             npcLoot.Add(notExpertCondition);

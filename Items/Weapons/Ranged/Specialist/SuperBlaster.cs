@@ -18,11 +18,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
         {
             Item.damage = 42;
             Item.DamageType = DamageClass.Ranged;
-            Item.crit = 4;
+            Item.crit = 10;
             Item.width = 76;
             Item.height = 30;
-            Item.useTime = 20;
-            Item.useAnimation = 20;
+            Item.useTime = 18;
+            Item.useAnimation = 18;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 4f;
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Blaster>());
-            recipe.AddIngredient(ItemID.HellstoneBar, 1);
+            recipe.AddIngredient(ItemID.HellstoneBar, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 

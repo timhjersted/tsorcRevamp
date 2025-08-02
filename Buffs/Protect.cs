@@ -14,7 +14,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense += ProtectRing.Defense;
+            player.statDefense += 30;
         }
     }
 }

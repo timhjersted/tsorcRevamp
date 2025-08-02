@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.tileCollide = false; //custom tile collision code
             Projectile.DamageType = DamageClass.Summon;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 5;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
 

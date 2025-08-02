@@ -12,20 +12,20 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     public class YianBlade : ModItem
     {
-        public int ManaRestoration = 66;
+        public int ManaRestoration = 50;
         public int BaseManaCost = 200;
         public int ProjectileDmgMult = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaRestoration, BaseManaCost);
         public override void SetDefaults()
         {
-            Item.width = 44;
-            Item.height = 44;
+            Item.width = 84;
+            Item.height = 90;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 60;
-            Item.useTime = 60;
-            Item.scale = 1.2f;
-            Item.damage = 666;
+            Item.useAnimation = 40;
+            Item.useTime = 40;
+            Item.damage = 444;
             Item.knockBack = 5f;
+            Item.scale = 1.05f;
             Item.useTurn = false;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Purple;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 5f;
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
-            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkMagenta;
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Gray;
         }
 
         public override void AddRecipes()
@@ -53,6 +53,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
+            target.AddBuff(BuffID.Confused, 240, false);
+
             player.ManaEffect(ManaRestoration);
             player.statMana += ManaRestoration;
             if (hit.Crit)
@@ -105,8 +107,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void MeleeEffects(Player player, Rectangle rectangle)
         {
             Color color = new Color();
-            int dust = Dust.NewDust(new Vector2((float)rectangle.X, (float)rectangle.Y), rectangle.Width, rectangle.Height, 15, (player.velocity.X * 0.2f) + (player.direction * 2), player.velocity.Y * 0.2f, 100, color, 1f);
-            Main.dust[dust].noGravity = false;
+            int dust = Dust.NewDust(new Vector2((float)rectangle.X, (float)rectangle.Y), rectangle.Width, rectangle.Height, 91, (player.velocity.X * 0.2f) + (player.direction * 2), player.velocity.Y * 0.2f, 50, color, 1f);
+            Main.dust[dust].noGravity = true;
         }
 
     }

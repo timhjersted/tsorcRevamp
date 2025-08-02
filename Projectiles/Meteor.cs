@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -19,6 +20,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = 1;
             Projectile.tileCollide = false; //strictly worse than unupgraded variant otherwise
             Projectile.timeLeft = 200;
+            Projectile.extraUpdates = 1;
         }
 
         public override void AI()
@@ -43,10 +45,17 @@ namespace tsorcRevamp.Projectiles
             }
 
             Projectile.penetrate = 20;
+            Vector2 oldCenter = Projectile.Center;
             Projectile.width = 200;
             Projectile.height = 200;
+            Projectile.position = oldCenter - new Vector2(Projectile.width / 2f, Projectile.height / 2f);
             Projectile.damage /= 2;
             Projectile.Damage();
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.OnFire3, 3 * 60);
         }
     }
 }

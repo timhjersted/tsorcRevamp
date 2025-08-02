@@ -318,7 +318,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HealingElixir>(), 1, 5, 10));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 1, 2));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 3, 6));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 5, 8));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<OolacileDarkMatter>(), 1, 3, 6));
             npcLoot.Add(notExpertCondition);
         }
 

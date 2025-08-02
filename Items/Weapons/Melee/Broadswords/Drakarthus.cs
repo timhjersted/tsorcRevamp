@@ -25,12 +25,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void SetDefaults()
         {
             Item.rare = ModContent.RarityType<CDW_Drakarthus>();
-            Item.damage = 182;
+            Item.damage = 218;
             Item.height = 71;
             Item.width = 71;
             Item.knockBack = 3f;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
+            Item.scale = 1.15f;
             Item.useAnimation = 13;
             Item.useTime = 13;
             Item.UseSound = SoundID.Item1;
@@ -94,7 +95,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     {
                         player.SafeTeleport(proj.Center + teleportOffset);
                         player.immune = true;
-                        player.immuneTime = 30;
+                        player.immuneTime = 25;
                     }
                     float randOffset = Main.rand.NextVector2CircularEdge(4, 4).ToRotation();
                     for (int j = 0; j < 6; j++)

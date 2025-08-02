@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<PoisonbloodRing>());
+            recipe.AddIngredient(ModContent.ItemType<BloodbaneRing>());
             recipe.AddIngredient(ItemID.HallowedBar, 5);
             recipe.AddIngredient(ModContent.ItemType<CrackedDragonStone>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);

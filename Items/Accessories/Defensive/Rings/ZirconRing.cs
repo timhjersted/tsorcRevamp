@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 24;
+            Item.width = 32;
+            Item.height = 32;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SilverBar, 3);
+            recipe.AddIngredient(ItemID.CobaltBar, 3);
             recipe.AddIngredient(ItemID.SoulofNight, 6);
             recipe.AddIngredient(ItemID.LifeCrystal, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);

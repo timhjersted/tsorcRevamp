@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.UseSound = SoundID.Item20;
             Item.rare = ItemRarityID.Purple;
             Item.shootSpeed = 20;
-            Item.mana = 5;
+            Item.mana = 6;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.Fireball3>();

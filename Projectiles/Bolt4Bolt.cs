@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(Terraria.ID.BuffID.Slow, 180);
-            target.AddBuff(Terraria.ID.BuffID.Electrified, 360);
+            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 3 * 60);
         }
 
         public override void AI()

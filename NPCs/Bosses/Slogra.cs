@@ -465,8 +465,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             npcLoot.Add(ItemDropRule.BossBagByCondition(new SlograDropCondition(), ModContent.ItemType<Items.BossBags.SlograBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<PoisonbiteRing>()));
-            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<BloodbiteRing>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<BloodbaneRing>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<DarkTrident>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<SunsetQuasar>()));
             npcLoot.Add(notExpertCondition);

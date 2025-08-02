@@ -16,15 +16,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Item.rare = ItemRarityID.Red;
             Item.autoReuse = true;
-            Item.damage = 200;
+            Item.damage = 320;
             Item.width = 55;
             Item.height = 55;
             Item.knockBack = 8;
+            Item.scale = 1.4f;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 21;
+            Item.useAnimation = 32;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 21;
+            Item.useTime = 32;
             Item.value = PriceByRarity.Red_10;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
@@ -64,7 +65,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
             {
-                modifiers.FinalDamage *= 3;
+                modifiers.FinalDamage *= 2;
             }
         }
     }

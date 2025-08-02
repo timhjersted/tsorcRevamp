@@ -3,10 +3,11 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 {
-    public class PoisonbloodRing : ModItem
+    public class BloodbaneRing : ModItem
     {
         public static int LifeRegen = 1;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen);
@@ -27,9 +28,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<PoisonbiteRing>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<BloodbiteRing>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
+            recipe.AddIngredient(ModContent.ItemType<SilverRing>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<BloodredMossClump>(), 10);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

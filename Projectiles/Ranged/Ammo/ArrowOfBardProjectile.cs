@@ -27,6 +27,9 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.aiStyle = 1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 100;
+            Projectile.extraUpdates = 1;
+            Projectile.scale = 1.1f;
+            Projectile.ArmorPenetration = 15;
         }
 
         public override void OnKill(int timeLeft)

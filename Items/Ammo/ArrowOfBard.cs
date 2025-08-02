@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.consumable = true;
             Item.ammo = AmmoID.Arrow;
             Item.shoot = ModContent.ProjectileType<ArrowOfBardProjectile>();
-            Item.damage = 50; //500 totally was just a typo guys, how did we not notice this earlier
+            Item.damage = 40; //500 totally was just a typo guys, how did we not notice this earlier
             Item.height = 28;
             Item.knockBack = 4f;
             Item.maxStack = Item.CommonMaxStack;

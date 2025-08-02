@@ -1,12 +1,13 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class ForgottenIceBrand : ModItem
     {
-        public const int CoinPrice = 4000;
+        public const int CoinPrice = 3500;
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("A sword imbued with ice.\n" + "Will randomly cast ice 2.");
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useAnimation = 22;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 15;
+            Item.useTime = 22;
             Item.value = PriceByRarity.Pink_5;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
@@ -32,11 +33,26 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override bool? UseItem(Player player)
         {
-            if (Main.rand.NextBool(5) && player.whoAmI == Main.myPlayer)
+            if (Main.rand.NextBool(2) && player.whoAmI == Main.myPlayer)
             {
                 Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.position.X, player.position.Y, (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Ice2Ball>(), 20, 2.0f, player.whoAmI);
             }
             return true;
+        }
+
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.Frostburn2, 300, false);
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.FrostCore);
+            recipe.AddIngredient(ItemID.IceBlade);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
         }
     }
 }

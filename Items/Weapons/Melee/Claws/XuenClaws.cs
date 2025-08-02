@@ -5,21 +5,21 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Claws
 {
-    class ForgottenTigerFangs : ModItem
+    class XuenClaws : ModItem
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Long and extremely sharp fighting claws.");
         }
 
         public override void SetDefaults()
         {
             Item.autoReuse = true;
             Item.useTurn = false;
-            Item.rare = ItemRarityID.Purple;
-            Item.damage = 150;
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.damage = 180;
             Item.width = 22;
             Item.height = 22;
+            Item.scale = 1.05f;
             Item.knockBack = 3;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 8;
@@ -28,12 +28,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Purple_11;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
+        }
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 4 * 60);
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<ForgottenKaiserKnuckles>());
+            recipe.AddIngredient(ModContent.ItemType<BurningFist>());
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 15);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 

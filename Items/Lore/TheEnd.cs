@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Lore
 {
     class TheEnd : ModItem
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DeathStrikeScroll";
+        public override string Texture => "tsorcRevamp/Items/Weapons/Magic/Scrolls/DeathStrikeScroll";
         public override void SetStaticDefaults()
         {
         }

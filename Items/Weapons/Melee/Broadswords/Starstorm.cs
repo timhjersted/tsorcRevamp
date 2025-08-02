@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 29;
             Item.useTime = 58;
-            Item.damage = 45;
+            Item.damage = 42;
             Item.knockBack = 6;
             Item.autoReuse = true;
             Item.alpha = 100;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             float speedX = (Main.rand.Next(-20, 20)) / 10f;
             float speedY = 14.9f;
             int type = ModContent.ProjectileType<Projectiles.Melee.StarstormProjectile>();
-            int damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage);
+            int damage = (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage);
             float knockback = 3.0f;
             int owner = player.whoAmI;
             y = player.position.Y - 800f;

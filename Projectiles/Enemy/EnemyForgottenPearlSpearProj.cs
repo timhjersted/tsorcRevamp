@@ -19,7 +19,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 15;
             Projectile.penetrate = 1;
             Projectile.DamageType = DamageClass.Ranged;
-            Projectile.scale = 0.7f;
             Projectile.tileCollide = true;
             Projectile.width = 14;
         }

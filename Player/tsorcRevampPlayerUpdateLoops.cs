@@ -2035,7 +2035,7 @@ namespace tsorcRevamp
                     Player.lifeRegen = 0;
                 }
                 Player.lifeRegenTime = 0;
-                Player.lifeRegen -= 15;
+                Player.lifeRegen -= 8;
                 if (Main.rand.NextBool(3))
                 {
                     int dust = Dust.NewDust(Player.position, Player.width, Player.height, 235, Player.velocity.X, Player.velocity.Y, 140, default, 0.8f);

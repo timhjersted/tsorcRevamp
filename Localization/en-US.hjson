@@ -1314,27 +1314,6 @@ Mods: {
 					'''
 			}
 
-			PoisonbiteRing: {
-				DisplayName: Poisonbite Ring
-				Tooltip:
-					'''
-					One of the infamous bite rings commissioned by Sir Arstor of Carim.
-					Despite the dreadful rumors surrounding its creation, this ring is an unmistakable asset,
-					due to its ability to prevent becoming poisoned.
-					'''
-			}
-
-			PoisonbloodRing: {
-				DisplayName: Poisonblood Ring
-				Tooltip:
-					'''
-					One of the infamous bite rings commissioned by Sir Arstor of Carim.
-					Despite the dreadful rumors surrounding its creation, this ring is an unmistakable asset,
-					due to its ability to prevent bleeding and becoming poisoned.
-					{$CommonItemTooltip.LifeRegen}
-					'''
-			}
-
 			ProtectRing: {
 				DisplayName: Protect Ring
 				Tooltip:
@@ -2445,7 +2424,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
-					{$CommonItemTooltip.CritDmg}
+					{$CommonItemTooltip.CritDmg@1}
 					'''
 			}
 
@@ -2679,8 +2658,18 @@ Mods: {
 					'''
 			}
 
-			ShadowNinjaMask2: {
-				DisplayName: Shadow Ninja Mask II
+			ShadowNinjaTop: {
+				DisplayName: Shadow Ninja Top
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+			}
+
+			AbyssalNinjaTop: {
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+				DisplayName: Abyssal Ninja Top
+			}
+
+			AbyssalNinjaMask: {
+				DisplayName: Abyssal Ninja Mask
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
@@ -2692,9 +2681,13 @@ Mods: {
 					'''
 			}
 
-			ShadowNinjaTop: {
-				DisplayName: Shadow Ninja Top
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+			AbyssalNinjaBottoms: {
+				DisplayName: Abyssal Ninja Bottoms
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
+					'''
 			}
 
 			ArcherOfLumeliaHairStyle: {
@@ -5490,11 +5483,11 @@ Mods: {
 
 			MeteorShower: {
 				DisplayName: Meteor Shower
-				Tooltip: Causes meteorites to rain from the sky.
+				Tooltip: Causes meteorites to rain from the sky
 			}
 
 			MeteorTome: {
-				DisplayName: Meteor Tome
+				DisplayName: Meteor Storm
 				Tooltip: A legendary spell tome that calls down a meteor storm
 			}
 
@@ -5741,11 +5734,11 @@ Mods: {
 			}
 
 			ForgottenGaiaSword: {
-				DisplayName: Forgotten Gaia Sword
+				DisplayName: Gaia Blade
 				Tooltip:
 					'''
-					A blade made to slay the Witchking.
-					[c/ffbf00:Does 3x damage to the Witchking and dispels the defensive shield of the Witchking and Artorias]
+					An earthbound blade, capable of breaking some magical protections
+					[c/ffbf00:Does 2x damage to the Witchking and dispels the defensive shield of the Witchking and Artorias]
 					'''
 			}
 
@@ -5902,21 +5895,6 @@ Mods: {
 					Right click using all mana to cast a homing blaze, need at least {0} mana
 					Blaze deals {1}x the swords damage
 					'''
-			}
-
-			ForgottenBurningFist: {
-				DisplayName: Forgotten Burning Fist
-				Tooltip: Create flames by hitting enemies
-			}
-
-			ForgottenKaiserKnuckles: {
-				DisplayName: Forgotten Kaiser Knuckles
-				Tooltip: Great spiked knuckles.
-			}
-
-			ForgottenTigerFangs: {
-				DisplayName: Forgotten Tiger Fangs
-				Tooltip: Long and extremely sharp fighting claws.
 			}
 
 			EphemeralThrowingAxe: {
@@ -7966,6 +7944,50 @@ Mods: {
 					[c/00ffd4:The buff grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed]
 					'''
 			}
+
+			DiamondCrusher: {
+				Tooltip: ""
+				DisplayName: Diamond Crusher
+			}
+
+			BloodbaneRing: {
+				DisplayName: Bloodbane Ring
+				Tooltip:
+					'''
+					A useful ring in wild areas, where bleeding and being poisoned is common.
+					Immunity to Poison and Bleeding
+					{$CommonItemTooltip.LifeRegen}
+					'''
+			}
+
+			XBow: {
+				DisplayName: X-Bow
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a mystical crossbow which shoots piercing arrows towards your cursor at high speed
+					'''
+			}
+
+			WildKnuckles: {
+				DisplayName: Wild Knuckles
+				Tooltip: Fast and sharp!
+			}
+
+			BurningFist: {
+				DisplayName: Burning Fist
+				Tooltip: Create flames by hitting enemies
+			}
+
+			XuenClaws: {
+				DisplayName: Xuen's Claws
+				Tooltip: The extremely sharp, electric claws of an ancient wild god.
+			}
+
+			OolacileDarkMatter: {
+				DisplayName: Oolacile Dark Matter
+				Tooltip: Tangible shadow energy from the darkness of Oolacile.
+			}
 		}
 
 		Buffs: {
@@ -9635,6 +9657,11 @@ Mods: {
 			BlackArrow.DisplayName: Black Arrow
 			WingedSpearProj.DisplayName: Winged Spear Proj
 			WingedSpearAirwave.DisplayName: Winged Spear Airwave
+			DiamondCrusherBall.DisplayName: Diamond Crusher Ball
+			XBowProjectile.DisplayName: X Bow Projectile
+			XBowArrow.DisplayName: X Bow Arrow
+			DragoonSpearZap.DisplayName: Dragoon Spear Zap
+			FlameScrollStrike.DisplayName: Flame Scroll Strike
 		}
 
 		NPCs: {
