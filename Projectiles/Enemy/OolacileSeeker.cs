@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 750;
             Main.projFrames[Projectile.type] = 4;
             Projectile.light = 1;
+            Projectile.scale = 1.15f;
         }
 
         Vector2[] lastpos = new Vector2[20];

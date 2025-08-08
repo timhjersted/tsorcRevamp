@@ -48,8 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             recipe.AddIngredient(ModContent.ItemType<BerserkerNightmare>(), 1);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             //recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
 
             recipe.AddTile(TileID.DemonAltar);
 

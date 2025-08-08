@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //redKnightGlobalNPC.CastingSpeed = Main.rand.NextFloat(0.6f, 1.4f);
             //redKnightGlobalNPC.Strength = Main.rand.NextFloat(0.7f, 1.4f);
 
-            redKnightGlobalNPC.Agility = 0.2f;
+            redKnightGlobalNPC.Agility = 0.3f;
 
         }
 

@@ -22,10 +22,11 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.npcSlots = 1;
             NPC.damage = 0;
-            NPC.defense = 15;
+            NPC.defense = 20;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 3500;
+            NPC.lifeMax = 4500;
+            NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.noGravity = false;
@@ -33,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             NPC.value = 17500;
             NPC.width = 28;
-            NPC.knockBackResist = 0.2f;
+            NPC.knockBackResist = 0f;
             AnimationType = NPCID.GoblinSorcerer;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DiscipleOfAttraidiesBanner>();
@@ -41,6 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
+            Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.25f, 0f, 0.4f);
 
             NPC.netUpdate = false;
             NPC.ai[0]++; // Timer Scythe

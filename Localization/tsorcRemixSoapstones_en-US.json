@@ -237,6 +237,13 @@
   "style": 1
 }
 {
+  "text": "- This gate guards the teleporter to the Molten Sky Temple, place of the Earth Fiend Lich - --NEWLINE  --NEWLINE You get out your map journal and write a note: \u0022Lizard Gate at the middle of the Sky Temple Ruins.\u0022",
+  "tileX": 4475,
+  "tileY": 351,
+  "textWidth": 320,
+  "style": 1 
+}
+{
   "text": "- You\u0027ve discovered the Molten Sky Temple - --NEWLINE  --NEWLINE This place has a strong connection with the sky, the air we breathe is similar to that on the surface.",
   "tileX": 1355,
   "tileY": 1935,
@@ -405,7 +412,7 @@
   "style": 1
 }
 {
-  "text": "- This gate guards the Path to the Dreamlike Caverns, home of the Water Fiend Kraken - --NEWLINE  --NEWLINE You get out your map journal and write a note: \u0022Lizard Gate just East of an unknown temple in the desert.\u0022",
+  "text": "- This gate guards the Path to the Dreamlike Caverns, home of the Water Fiend Kraken - --NEWLINE  --NEWLINE You get out your map journal and write a note: \u0022Lizard Gate at the very west of the Mycelium Forest.\u0022",
   "tileX": 2238,
   "tileY": 857,
   "textWidth": 320,
@@ -1750,6 +1757,13 @@
 }
 {
   "text": "- You\u0027ve found the Lost Oolacile Forest - --NEWLINE  --NEWLINE A feeling of dread hits your stomach: You shouldn\u0027t be here.",
+  "tileX": 5666,
+  "tileY": 1072,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You\u0027ve found the Lost Oolacile Forest - --NEWLINE  --NEWLINE A feeling of dread hits your stomach: You shouldn\u0027t be here.",
   "tileX": 5422,
   "tileY": 925,
   "textWidth": 320,
@@ -1882,7 +1896,7 @@
   "style": 1
 }
 {
-  "text": "Well, it just seems to be classic jungle around here...",
+  "text": "As you continue along the path, you see the jungle becoming more and more colorful and lush, it becomes almost oppressive with all this nature.",
   "tileX": 5983,
   "tileY": 1544,
   "textWidth": 320,
@@ -2373,8 +2387,8 @@
 }
 {
   "text": "- The Island of Fury - --NEWLINE  --NEWLINE The Solar Pillar, one of the four great celestial seals, represents anger and flames. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
-  "tileX": 2111,
-  "tileY": 268,
+  "tileX": 2151,
+  "tileY": 329,
   "textWidth": 320,
   "style": 1
 }

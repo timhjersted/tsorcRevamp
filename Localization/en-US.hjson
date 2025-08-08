@@ -260,6 +260,7 @@ Mods: {
 			WingTrio: The Three Wings have united again, ready to fight you!
 			SandstormElementalEvent: A powerful elemental is summoned!
 			Dutchman: A flying Dutchman invades the tropics!
+			DiscipleOfAttraidiesEvent: A powerful mage from the Atraidies army confronts you!
 			IceGolemWyvern: !!!
 			IceGolem: !
 			KingSlime: King Slime appears!
@@ -300,6 +301,7 @@ Mods: {
 			LothricAmbush2: Ambush!
 			DualSandsprogAmbush1: Ambush!
 			HellkiteDragon: The village is under attack! A Hellkite Dragon has come to feed...
+			RemixHellkiteDragon: A Hellkite Dragon has come to feed...
 			Bossduration: "Boss duration: "
 		}
 
@@ -443,12 +445,12 @@ Mods: {
 			AttraidiesDesc: Gather all the Crests in order to craft the Mind Cube.
 			RealAttraidiesName: Attraidies (Real)
 			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
-			HellkiteDragonDesc: Often sighted roaming the skies above the Village, searching for its next feast.
+			HellkiteDragonDesc: flies on a large magmatic sky island, above the western sand dunes.
 			WaterFiendKrakenDesc: Seek out the lihzahrd gate in the Great Chasm.
 			EarthFiendLichDesc: Find the ancient Temple west side of the Ashen Cave.
-			WitchkingDesc: Found in his lair deep underground, shrouded in extreme darkness.
+			WitchkingDesc: Find the ancient ship hidden in the Fire Temple.
 			RemixWaterFiendKrakenDesc: Seek out the lihzahrd gate in the Mycelium Forest.
-			RemixEarthFiendLichDesc: Find the ancient ship hidden in the Fire Temple.
+			RemixEarthFiendLichDesc: Seek out the lihzahrd gate in the Sky Temple Ruins.
 			ArtoriasDesc: The Abyss pervades the tunnels east of the Forgotten City.
 			RemixArtoriasDesc: Find the key in the Great Foundry in the jungle to open the passage east of the Forgotten City.
 			SeathTheScalelessDesc: Seek out the lihzahrd gate below the Eastern Ocean.

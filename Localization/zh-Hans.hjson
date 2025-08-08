@@ -260,6 +260,7 @@ Mods: {
 			WingTrio: 三鸟重聚于世，惩罚你这不敬之人！
 			SandstormElementalEvent: 一个强大的沙尘精被召唤出来了！
 			Dutchman: 荷兰飞盗船入侵了热带地区！
+			// DiscipleOfAttraidiesEvent: A powerful mage from the Atraidies army confronts you!
 			IceGolemWyvern: ！！！
 			IceGolem: ！
 			KingSlime: 史莱姆王出现了！
@@ -300,6 +301,7 @@ Mods: {
 			LothricAmbush2: 遭遇偷袭！
 			DualSandsprogAmbush1: 遭遇偷袭！
 			HellkiteDragon: 村庄受到袭击！一条炼狱鸢龙前来捕食...
+			// RemixHellkiteDragon: A Hellkite Dragon has come to feed...
 			Bossduration: "耗时: "
 		}
 

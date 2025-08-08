@@ -406,12 +406,12 @@ namespace tsorcRevamp.Projectiles
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.3f }, target.position);
             }
 
-            if ((projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] == 0)) && tsorcRevampWorld.isHellkiteDragonDead)
+            if ((projectile.type == ProjectileID.MonkStaffT3 || projectile.type == ProjectileID.DD2BetsyArrow || (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] == 0)) && tsorcRevampWorld.isHellkiteDragonDead)
             {
                 target.AddBuff(BuffID.BetsysCurse, 4 * 60);
             }
 
-            if ((projectile.type >= ProjectileID.ApprenticeStaffT3Shot) && tsorcRevampWorld.isHellkiteDragonDead)
+            if (projectile.type == ProjectileID.ApprenticeStaffT3Shot && tsorcRevampWorld.isHellkiteDragonDead)
             {
                 target.AddBuff(BuffID.Daybreak, 4 * 60);
             }

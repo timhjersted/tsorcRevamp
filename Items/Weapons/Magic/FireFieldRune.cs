@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.height = 28;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.LightRed;
-            Item.shootSpeed = 21;
+            Item.shootSpeed = 19;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.autoReuse = true;
@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 1);
-            //recipe.AddIngredient(ItemID.SoulofNight, 8);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
+            recipe.AddIngredient(ItemID.SoulofNight, 6);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);
             recipe.AddTile(TileID.DemonAltar);
 

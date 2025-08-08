@@ -35,12 +35,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.defense = 90;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 125000;
+            NPC.lifeMax = 145000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.boss = true;
-            NPC.scale = 1.25f;
-            NPC.noGravity = false;
+            NPC.scale = 1.3f;
+            NPC.noGravity = true;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
             NPC.value = 430000;
@@ -146,7 +146,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //NPCSpawningTimer += (Main.rand.Next(2, 5) * 0.1f);
             if (NPCSpawningTimer >= 10f)
             {
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightPhantom>()) < 4) && Main.rand.NextBool(250))
+                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightPhantom>()) < 4) && Main.rand.NextBool(500))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -157,7 +157,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     }
                 }
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.NextBool(2000))
+                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.NextBool(2500))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -202,10 +202,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (SecondAttackCounter >= 60)
             {
-                if (Main.rand.NextBool(20))
+                if (Main.rand.NextBool(240))
                 {
                     Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
-                    projVelocity.Y -= 520;
+                    projVelocity.Y -= 5;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>(), darkOrbDamage, 0f, Main.myPlayer);
@@ -215,7 +215,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     SecondAttackCounter = 0;
                 }
 
-                if (Main.rand.NextBool(16))
+                if (Main.rand.NextBool(18))
                 {
                     Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
                     if (Main.netMode != NetmodeID.MultiplayerClient)

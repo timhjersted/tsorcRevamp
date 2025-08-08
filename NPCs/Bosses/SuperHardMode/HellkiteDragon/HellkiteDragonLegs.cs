@@ -28,6 +28,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             DrawOffsetY = 49;
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
+            NPC.scale = 1.3f;
             NPC.timeLeft = 22750;
             NPC.damage = 45;
             NPC.defense = 60;
@@ -70,7 +71,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 if (!Main.dedServ)
                 {
-                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hellkite Dragon Legs Gore").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hellkite Dragon Legs Gore").Type, 1.3f);
                 }
             }
         }

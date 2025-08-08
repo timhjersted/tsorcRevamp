@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
@@ -128,6 +129,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int holdTimer = 0;
         int lifeTimer = 0;
         int swordTimer = 0;
+        int deathTimer = 0;
 
         bool announcedDebuffs = false;
 
@@ -247,7 +249,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //near instant death when player runs too far away
             if (NPC.Distance(player.Center) > 2000) //was 4600
             {
-                distanceTimer--; 
+                distanceTimer--;
                 if (distanceTimer <= 0) //add a cooldown of 90 frames before getting destroyed by the debuff (to prevent some unfair cases where you are in this zone because of a random dash or anything)
                 {
                     player.AddBuff(ModContent.BuffType<CowardsAffliction>(), 1 * 30, false);
@@ -261,8 +263,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             else
             {
-                distanceTimer = 90; 
-                announcedDebuffs = false; 
+                distanceTimer = 90;
+                announcedDebuffs = false;
             }
 
 
@@ -1812,6 +1814,43 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             }
             #endregion
+            
+            if (deathTimer > 0)
+            {
+                deathTimer++;
+                NPC.noGravity = true;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int rand = Main.rand.Next(10);
+                    if (rand == 0)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                    }
+                    if (rand == 1)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Red));
+                    }
+                    if (rand == 2)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Orange));
+                    }
+                }
+
+                if (deathTimer == 60)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer, 1);
+                    }
+                }
+
+                if (deathTimer > 300)
+                {
+                    NPC.StrikeNPC(NPC.CalculateHitInfo(999999, 1, true, 0), false, false);
+                }
+
+                return;
+            }
         }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
@@ -1927,6 +1966,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override bool CheckActive()
         {
             return false;
+        }    
+        public override bool CheckDead()
+        {
+            if (deathTimer == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Shatter);
+                deathTimer++;
+                NPC.life = 1;
+                NPC.dontTakeDamage = true;
+            }
+
+            if (deathTimer > 300)
+            {
+                return true;
+            }
+            return false;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -1937,7 +1992,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Epilogue>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<EssenceOfTerraria>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.RodOfHarmony));
-            
+
             npcLoot.Add(notExpertCondition);
         }
         public override void BossLoot(ref string name, ref int potionType)
@@ -1985,13 +2040,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Gore
         public override void OnKill()
         {
+            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+
             if (!Main.dedServ)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hero of Lumelia Gore 1").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hero of Lumelia Gore 2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hero of Lumelia Gore 3").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hero of Lumelia Gore 2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hero of Lumelia Gore 3").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gwyn Gore 1").Type, 1.5f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gwyn Gore 2").Type, 1.5f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gwyn Gore 3").Type, 1.5f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gwyn Gore 2").Type, 1.5f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gwyn Gore 3").Type, 1.5f);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Orange));
+
             }
             tsorcRevampWorld.InitiateTheEnd();
         }

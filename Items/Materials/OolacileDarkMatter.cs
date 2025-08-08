@@ -13,8 +13,8 @@ namespace tsorcRevamp.Items.Materials
         }
         public override void SetDefaults()
         {
-            Item.width = 26;
-            Item.height = 44;
+            Item.width = 30;
+            Item.height = 24;
             Item.maxStack = Item.CommonMaxStack;
             Item.value = Item.sellPrice(0, 1, 80, 0);
             Item.rare = ItemRarityID.Purple;

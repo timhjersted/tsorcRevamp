@@ -197,6 +197,7 @@ namespace tsorcRevamp
             SpawnMechanic,
             SpawnWizard,
             HellkiteDragonEvent,
+            RemixHellkiteDragonEvent,
             EoL,
             RemixEoL,
             DungeonGuardian,
@@ -225,11 +226,13 @@ namespace tsorcRevamp
             Lunatic,
             IceGolemIsland,
             AncestralSpiritRemixEvent,
-            FrozenCathedralEvent2, 
+            FrozenCathedralEvent2,
             WingTrioEvent,
             WyvernPrisonEvent,
             SandstormElementalEvent2,
             DeathRemix,
+            DiscipleOfAttraidiesEvent,
+            WyvernFortressEvent,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -572,7 +575,7 @@ namespace tsorcRevamp
             DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.BoostPotion>() }, new List<int>() { 2 }); 
 
             //Sandstorm Elemental in the Solar Island
-            ScriptedEvent SandstormElementalEvent = new ScriptedEvent(new Vector2(2119, 248), 40, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow);
+            ScriptedEvent SandstormElementalEvent = new ScriptedEvent(new Vector2(2021, 351), 40, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow, false, RemixMapCondition);
 
             //Ancient vision in the Shadow Temple
             ScriptedEvent ShadowTempleEvent = new ScriptedEvent(new Vector2(1460, 1364), 25, NPCID.AncientCultistSquidhead, 228, true, true, false, LangUtils.GetTextValue("Events.ShadowTempleEvent"), Color.Yellow);
@@ -598,7 +601,9 @@ namespace tsorcRevamp
             //Molten Sky Temple second event
             ScriptedEvent MoltenSkyTempleEvent2 = new ScriptedEvent(new Vector2(90, 1893), 30, NPCID.MourningWood, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction);
 
-            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
+            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, HellkiteDragonCustomCondition, SetNightCustomAction);
+
+            ScriptedEvent RemixHellkiteDragonEvent = new ScriptedEvent(new Vector2(2159, 308), 150, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, false, LangUtils.GetTextValue("Events.RemixHellkiteDragon"), new Color(175, 75, 255), false, RemixHellkiteDragonCustomCondition, SetNightCustomAction);
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
             
@@ -653,6 +658,10 @@ namespace tsorcRevamp
             IceGolemIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion}, new List<int>() { 5, 3 });
             IceGolemIsland.SetCustomStats(null, null, null, 10000);
 
+            ScriptedEvent DiscipleOfAttraidiesEvent = new ScriptedEvent(new Vector2(6971, 1113), 40, ModContent.NPCType<NPCs.Enemies.DiscipleOfAttraidies>(), 15, true, true, false, LangUtils.GetTextValue("Events.DiscipleOfAttraidiesEvent"), Color.Cyan, false, RemixMapCondition);
+
+            ScriptedEvent WyvernFortressEvent = new ScriptedEvent(new Vector2(7022, 288), 85, NPCID.WyvernHead, 16, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Cyan, false, RemixMapCondition);
+
             ScriptedEvent SandstormElementalEvent2 = new ScriptedEvent(new Vector2(950, 1503), 22, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow, false, RemixMapCondition);
 
             //Every enum and ScriptedEvent has to get paired up here
@@ -684,7 +693,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.Golem2, Golem2},
                 {ScriptedEventType.IceGolemEvent, IceGolemEvent},
                 {ScriptedEventType.KingSlimeEvent, KingSlimeEvent},
-                {ScriptedEventType.HeroofLumeliaFight, HeroofLumeliaFight}, 
+                {ScriptedEventType.HeroofLumeliaFight, HeroofLumeliaFight},
                 {ScriptedEventType.FireLurkerPain, FireLurkerPain},
                 {ScriptedEventType.RedKnightPain, RedKnightPain},
                 {ScriptedEventType.RedKnightTwinMountain, RedKnightTwinMountain},
@@ -717,7 +726,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin },
                 {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent},
                 {ScriptedEventType.TwinEoWFight, TwinEoWFight},
-                {ScriptedEventType.DunledingAmbush, DunledingAmbush}, 
+                {ScriptedEventType.DunledingAmbush, DunledingAmbush},
                 {ScriptedEventType.RemixDunledingAmbush, RemixDunledingAmbush},
                 {ScriptedEventType.BoulderfallEvent1, BoulderfallEvent1},
                 {ScriptedEventType.BoulderfallEvent2, BoulderfallEvent2},
@@ -733,7 +742,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnMechanic, SpawnMechanic},
                 {ScriptedEventType.SpawnWizard, SpawnWizard},
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
-                {ScriptedEventType.EoL, EoL},
+                {ScriptedEventType.RemixHellkiteDragonEvent, RemixHellkiteDragonEvent},
+                { ScriptedEventType.EoL, EoL},
                 {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
                 {ScriptedEventType.DualSandsprogAmbush1, DualSandsprogAmbush1 },
                 {ScriptedEventType.DrownedAmbush1, DrownedAmbush1 },
@@ -741,29 +751,31 @@ namespace tsorcRevamp
                 {ScriptedEventType.MushroomCavern, MushroomCavern },
                 {ScriptedEventType.AshCavernLeftside, AshCavernLeftside },
                 {ScriptedEventType.AshCavernRightside, AshCavernRightside },
-                {ScriptedEventType.ShadowTempleEvent, ShadowTempleEvent }, 
-                {ScriptedEventType.ShadowTempleEvent2, ShadowTempleEvent2 }, 
+                {ScriptedEventType.ShadowTempleEvent, ShadowTempleEvent },
+                {ScriptedEventType.ShadowTempleEvent2, ShadowTempleEvent2 },
                 {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent },
-                {ScriptedEventType.MoltenSkyTempleEvent2, MoltenSkyTempleEvent2 },  
-                {ScriptedEventType.SandstormElementalEvent, SandstormElementalEvent }, 
+                {ScriptedEventType.MoltenSkyTempleEvent2, MoltenSkyTempleEvent2 },
+                {ScriptedEventType.SandstormElementalEvent, SandstormElementalEvent },
                 {ScriptedEventType.AbysswalkerEvent, AbysswalkerEvent },
                 {ScriptedEventType.BloodLakeEvent, BloodLakeEvent },
                 {ScriptedEventType.BloodBossEvent1, BloodBossEvent1 },
                 {ScriptedEventType.BloodBossEvent2, BloodBossEvent2 },
                 {ScriptedEventType.BloodBossEvent3, BloodBossEvent3 },
                 {ScriptedEventType.CatacombsEvent, CatacombsEvent },
-                {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent }, 
+                {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
                 {ScriptedEventType.FoundryEvent, FoundryEvent },
                 {ScriptedEventType.FoundryEvent2, FoundryEvent2 },
                 {ScriptedEventType.Lunatic, Lunatic },
-                {ScriptedEventType.KingSlime2Event, KingSlime2Event },  
-                {ScriptedEventType.IceGolemIsland, IceGolemIsland },          
+                {ScriptedEventType.KingSlime2Event, KingSlime2Event },
+                {ScriptedEventType.IceGolemIsland, IceGolemIsland },
                 {ScriptedEventType.AncestralSpiritRemixEvent, AncestralSpiritRemixEvent },
-                {ScriptedEventType.FrozenCathedralEvent2, FrozenCathedralEvent2 }, 
-                {ScriptedEventType.WingTrioEvent, WingTrioEvent }, 
-                {ScriptedEventType.WyvernPrisonEvent, WyvernPrisonEvent }, 
+                {ScriptedEventType.FrozenCathedralEvent2, FrozenCathedralEvent2 },
+                {ScriptedEventType.WingTrioEvent, WingTrioEvent },
+                {ScriptedEventType.WyvernPrisonEvent, WyvernPrisonEvent },
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },
+                {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent }, 
+                {ScriptedEventType.WyvernFortressEvent, WyvernFortressEvent }, 
 
             };
 
@@ -875,6 +887,14 @@ namespace tsorcRevamp
         public static bool OnlyAdventureMapCondition()
         {
             return tsorcRevampWorld.OnlyAdventureMap;
+        }
+        public static bool HellkiteDragonCustomCondition()
+        {
+            return OnlyAdventureMapCondition() && tsorcRevampWorld.SuperHardMode;
+        }
+        public static bool RemixHellkiteDragonCustomCondition()
+        {
+            return RemixMapCondition() && tsorcRevampWorld.SuperHardMode;
         }
 
         public static bool MarilithCustomCondition()

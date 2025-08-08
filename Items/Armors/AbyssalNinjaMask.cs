@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors
         public static float Dmg = 15f;
         public static float AtkSpeed = 30f;
         public static int MaxDefense = 60;
-        public static int LifeRegen = 30;
+        public static int LifeRegen = 25;
         public static float DRToMoveSpeedRatio = 2f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, Dmg, AtkSpeed, MaxDefense, LifeRegen, DRToMoveSpeedRatio);
         public override void SetStaticDefaults()
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Armors
             Item.height = 12;
             Item.rare = ModContent.RarityType<DarkBlue>();
             Item.value = PriceByRarity.Purple_11;
-            Item.defense = 6;
+            Item.defense = 7;
         }
         public override void UpdateEquip(Player player)
         {

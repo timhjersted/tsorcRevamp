@@ -8,7 +8,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 {
     class HellkiteDragonBody3 : ModNPC
     {
-        public int Timer = 0;
+        public int Timer = 14;
         int fireDamage = 48;
         public override void SetStaticDefaults()
         {
@@ -30,6 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             DrawOffsetY = 58;
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
+            NPC.scale = 1.3f;
             NPC.timeLeft = 22750;
             NPC.damage = 35;
             NPC.defense = 50;
@@ -60,11 +61,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             Timer++;
 
-            if (Timer == 480 || Timer == 510 || Timer >= 540)
+            if (Timer == 540 || Timer == 585 || Timer >= 620)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    float num48 = 16f;
+                    float num48 = 12f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2));
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
@@ -72,7 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.Fireball, fireDamage, 0f, Main.myPlayer);
                     }
-                    if (Timer >= 540)
+                    if (Timer >= 620)
                     {
                         Timer = 0;
                     }
@@ -95,7 +96,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 if (!Main.dedServ)
                 {
-                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hellkite Dragon Body Gore 2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hellkite Dragon Body Gore 2").Type, 1.3f);
                 }
             }
         }

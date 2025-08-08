@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.height = 60;
             DrawOffsetY = 42;
             NPC.aiStyle = 6;
+            NPC.scale = 1.3f;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
             NPC.damage = 145;
@@ -221,7 +222,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             if (Main.rand.NextBool(2))
             {
-                int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, NPC.velocity.X / 2f, NPC.velocity.Y / 2f, 100, default(Color), 2f);
+                int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, 127, NPC.velocity.X / 2f, NPC.velocity.Y / 2f, 100, default(Color), 2.5f);
                 Main.dust[d].noGravity = true;
             }
 
@@ -253,7 +254,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         {
             if (!Main.dedServ)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hellkite Dragon Head Gore").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hellkite Dragon Head Gore").Type, 1.3f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
             }
