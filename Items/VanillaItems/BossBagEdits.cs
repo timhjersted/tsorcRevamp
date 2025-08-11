@@ -81,6 +81,19 @@ namespace tsorcRevamp.Items.VanillaItems
                 itemLoot.Add(ItemDropRule.Common(ItemID.QueenSlimeTrophy, 7));
             }
 
+            //Remix map exclusive secret boss
+            if (item.type == ItemID.SkeletronPrimeBossBag)
+            {
+                itemLoot.RemoveWhere(_ => true);
+                itemLoot.Add(ItemDropRule.Common(ItemID.LargeRuby));
+                itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 15, 30));
+                itemLoot.Add(ItemDropRule.Common(ItemID.SoulofFright));
+                itemLoot.Add(ItemDropRule.Common(ItemID.SoulofMight));
+                itemLoot.Add(ItemDropRule.Common(ItemID.SoulofSight));
+                itemLoot.Add(ItemDropRule.Common(ItemID.Uzi));
+                itemLoot.Add(ItemDropRule.Common(ItemID.SkeletronPrimeMask));
+            }
+
             
             if (item.type == ItemID.PlanteraBossBag)
             {

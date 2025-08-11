@@ -228,6 +228,7 @@ namespace tsorcRevamp
             AncestralSpiritRemixEvent,
             FrozenCathedralEvent2,
             WingTrioEvent,
+            SkeletronPrimeEvent,
             WyvernPrisonEvent,
             SandstormElementalEvent2,
             DeathRemix,
@@ -650,6 +651,9 @@ namespace tsorcRevamp
             WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Materials.EternalCrystal>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>()}, new List<int>() { 3, 1, 1, 1, 1 });
             WingTrioEvent.SetCustomStats(null, null, null, 40000);
 
+            ScriptedEvent SkeletronPrimeEvent = new ScriptedEvent(new Vector2(1765, 1479), 30, NPCID.SkeletronPrime, DustID.Flare, true, true, false, LangUtils.GetTextValue("Events.SkeletronPrimeRemix"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
+            SkeletronPrimeEvent.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ModContent.ItemType<Items.Materials.EternalCrystal>() }, new List<int>() { 6, 3 });
+
             ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, OnlyAdventureMapCondition, SetNightCustomAction);
             GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
             GoblinSharkTropicalIsland.SetCustomStats(5000, null, null, 15000); 
@@ -771,12 +775,11 @@ namespace tsorcRevamp
                 {ScriptedEventType.AncestralSpiritRemixEvent, AncestralSpiritRemixEvent },
                 {ScriptedEventType.FrozenCathedralEvent2, FrozenCathedralEvent2 },
                 {ScriptedEventType.WingTrioEvent, WingTrioEvent },
-                {ScriptedEventType.WyvernPrisonEvent, WyvernPrisonEvent },
+                {ScriptedEventType.WyvernFortressEvent, WyvernFortressEvent }, 
+                {ScriptedEventType.SkeletronPrimeEvent, SkeletronPrimeEvent },
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },
-                {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent }, 
-                {ScriptedEventType.WyvernFortressEvent, WyvernFortressEvent }, 
-
+                {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent },  
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();

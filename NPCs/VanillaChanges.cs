@@ -2305,7 +2305,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.SkeletronPrime):
                     {
                         npc.active = false;
-
+                        npc.lifeMax = 32000;
                         npc.value = 276430;
                         npc.defense = 40;
                         npc.damage = 100;
@@ -5727,12 +5727,13 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+
             if (npc.type == NPCID.SkeletronPrime)
             {
+                float partCount = 0;
                 PrimeLaserCooldown--;
                 if (npc.ai[1] == 1)
                 {
-                    float partCount = 0;
                     if (NPC.AnyNPCs(NPCID.PrimeLaser))
                     {
                         partCount++;
@@ -5753,6 +5754,14 @@ namespace tsorcRevamp.NPCs
                     //Bosses speed is cut to 40% of base, but ramps up to almost full speed as its pieces die
                     float speedMultiplier = 0.8f - (0.4f * partCount / 4);
                     npc.velocity *= speedMultiplier;
+                }
+
+                if (Main.rand.NextBool(300))
+                {
+                    if (!NPC.AnyNPCs(NPCID.PrimeSaw) && !NPC.AnyNPCs(NPCID.PrimeVice) && !NPC.AnyNPCs(NPCID.PrimeCannon) && !NPC.AnyNPCs(NPCID.PrimeLaser) && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                    }
                 }
 
                 //Laser attack speed ramps up as pieces die

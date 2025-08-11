@@ -426,6 +426,27 @@
   "style": 1
 }
 {
+  "text": "This room seems strange, you feel something different in it even though it seems ordinary. Also, you hear strange noises coming from the celling...",
+  "tileX": 1668,
+  "tileY": 1565,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You activate the lever but nothing happens. --NEWLINE  --NEWLINE ...? --NEWLINE  --NEWLINE After a short while you hear a noise in a nearby cavern.",
+  "tileX": 2005,
+  "tileY": 1615,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You have found the Skeletron Prime Vault, hidden and long-abandoned in the Shadow Temple.",
+  "tileX": 1724,
+  "tileY": 1477,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "You come upon a deep dark and corrupted cavern. This place appears to be an abandoned mine and the way to the exit of the Shadow Temple.",
   "tileX": 2265,
   "tileY": 1183,

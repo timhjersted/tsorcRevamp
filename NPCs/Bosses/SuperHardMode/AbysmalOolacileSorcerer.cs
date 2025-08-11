@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float NPCSpawningTimer;
         float NPCSpawningTimer2;
 
-        #region Spawn
+        /*#region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player P = spawnInfo.Player;
@@ -101,6 +101,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return 0;
         }
         #endregion
+        */
 
 
         #region AI
