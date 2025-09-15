@@ -100,14 +100,14 @@ Mods: {
 			Trident: Улучшает подвижность в воде при удержании
 
 			Melee: {
-			  ArmorPenPercent: Увеличивает пробитие брони в ближнем бою на {0}%
-			  FlatDmg: Увеличивает урон ближнего боя на {0} ед.
-			  Bonus: (x{0} для ближнего боя)
-			  BadDmg: Уменьшает урон ближнего боя на {0}%
-			  Only: Только для ближнего боя
-			  DmgMult: Мультипликативно увеличивает урон в ближнем бою на {0}%
-			  CritMult: Мультипликативно увеличивает шанс крит. удара ближнего боя на {0}%
-			  AtkSpeedMult: Мультипликативно увеличивает скорость оружия ближнего боя на {0}%
+				ArmorPenPercent: Увеличивает пробитие брони в ближнем бою на {0}%
+				FlatDmg: Увеличивает урон ближнего боя на {0} ед.
+				Bonus: (x{0} для ближнего боя)
+				BadDmg: Уменьшает урон ближнего боя на {0}%
+				Only: Только для ближнего боя
+				DmgMult: Мультипликативно увеличивает урон в ближнем бою на {0}%
+				CritMult: Мультипликативно увеличивает шанс крит. удара ближнего боя на {0}%
+				AtkSpeedMult: Мультипликативно увеличивает скорость оружия ближнего боя на {0}%
 			}
 
 			Ranged: {
@@ -130,7 +130,7 @@ Mods: {
 				ArmorPen: Увеличивает пробитие брони магическим оружием на {0}
 				FlatDmg: Увеличивает магический урон на {0} ед.
 			}
-			
+
 			Summon: {
 				WhipKnockback: Увеличиват отбрасывание хлыстом
 				AtkSpeed: Увеличивает скорость атаки миньонов на {0}%
@@ -146,7 +146,7 @@ Mods: {
 				ChargedWhipAtkSpeed: Увеличивает на {0}-{1}% Скорость атаки миньонов после удара по врагу
 				WhipCC: Эффективнее  других хлыстов против нескольких целей
 				TagArmorPen: "{0} пробивание брони призывным уроном"
-				BadDmgMult: Мультипликативно уменьшает урон миньонов на{0}% 
+				BadDmgMult: Мультипликативно уменьшает урон миньонов на{0}%
 				SlotsRequired: Использует {0} ед. слотов миньонов
 				PercentOfASlot: Использует {0}% слотов миньонов
 				MinionSentrySlot: Увеличивает максимальное количество миньонов на {0} и часовых на {1}
@@ -263,7 +263,7 @@ Mods: {
 			Dutchman: Летучий голландец вторгается в тропики!
 			DiscipleOfAttraidiesEvent: Вам противостоит могущественный маг из армии Аттрайдиса
 			IceGolemWyvern: !!!
-			IceGolem: !	
+			IceGolem: !
 			KingSlime: Король Слизней появляется!
 			HeroOfLumelia: "'Ты убил моего брата, Рэд! ... Ты обрушил ад на этот мир' Герой из Лумелии прибыл в поисках справедливости... "
 			FireLurker: Появляется проклятый Хранитель Огня...
@@ -338,7 +338,7 @@ Mods: {
 			GetMusic: Нажмите сюда, чтобы установить мод Story of Red Cloud Music!
 			MusicNewUpdate: Доступно обновление музыкального мода, нажмите здесь, чтобы загрузить! (Игра перезапустится!)
 			MusicFail: Загрузка музыкального мода не удалась, нажмите, чтобы повторить попытку...
-			AdvMapDownloadProgress: "Иёет загрузка карты приключений:"
+			AdvMapDownloadProgress: Иёет загрузка карты приключений:
 			AdvMapUpdated: Обновление карты приключений завершено!
 			RemixMapDownloadProgress: "Загрузка ремикс-карты в процессе: "
 			RemixMapUpdated: Обновление ремикс-карты завершено!
@@ -481,7 +481,7 @@ Mods: {
 					Глаз Ктулху можно призвать только ночью
 					Серебряные часы могут помочь вам скоротать время...
 					'''
-			PirateMap:
+				PirateMap:
 					'''
 					Предмет не расходуется, так что вы можете повторить битву в случае поражения
 					Глаз ктулху можно призвать только ночью
@@ -498,6 +498,7 @@ Mods: {
 					OnUseText2: Триада уже держит вас на прицеле...
 					OnUseText3: Триада просыпается только ночью...
 				}
+
 				WaterWalkingBoots: Также позволяет ходить по лаве
 				ChlorophyteMaskSet:
 					'''
@@ -646,437 +647,437 @@ Mods: {
 			}
 
 			AbandonedStumpBanner: {
-				DisplayName: "Знамя заброшенного пня"
+				DisplayName: Знамя заброшенного пня
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AbandonedStump.DisplayName}"
 			}
 
 			AbysswalkerBanner: {
-				DisplayName: "Знамя дворка-странника бездны"
+				DisplayName: Знамя дворка-странника бездны
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Abysswalker.DisplayName}"
 			}
 
 			AncientDemonOfTheAbyssBanner: {
-				DisplayName: "Знамя древнего демона бездны"
+				DisplayName: Знамя древнего демона бездны
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemonOfTheAbyss.DisplayName}"
 			}
 
 			ArchdeaconBanner: {
-				DisplayName: "Знамя архидьякона"
+				DisplayName: Знамя архидьякона
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Archdeacon.DisplayName}"
 			}
 
 			ArmoredWraithBanner: {
-				DisplayName: "Знамя призрака без доспехов"
+				DisplayName: Знамя призрака без доспехов
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ArmoredWraith.DisplayName}"
 			}
 
 			AssassinBanner: {
-				DisplayName: "Знамя ассасина"
+				DisplayName: Знамя ассасина
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Assassin.DisplayName}"
 			}
 
 			AttraidiesIllusionBanner: {
-				DisplayName: "Знамя иллюзии Аттрайдиса"
+				DisplayName: Знамя иллюзии Аттрайдиса
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesIllusion.DisplayName}"
 			}
 
 			AttraidiesManifestationBanner: {
-				DisplayName: "Знамя проявления Аттрайдиса"
+				DisplayName: Знамя проявления Аттрайдиса
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesManifestation.DisplayName}"
 			}
 
 			BarrowWightBanner: {
-				DisplayName: "Знамя умертвия"
+				DisplayName: Знамя умертвия
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BarrowWight.DisplayName}"
 			}
 
 			BarrowWightNemesisBanner: {
-				DisplayName: "Знамя заклятого врага умертвия"
+				DisplayName: Знамя заклятого врага умертвия
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BarrowWightNemesis.DisplayName}"
 			}
 
 			BarrowWightPhantomBanner: {
-				DisplayName: "Знамя призрака умертвия"
+				DisplayName: Знамя призрака умертвия
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BarrowWightPhantom.DisplayName}"
 			}
 
 			BasiliskHunterBanner: {
-				DisplayName: "Знамя василиска-охотника"
+				DisplayName: Знамя василиска-охотника
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BasiliskHunter.DisplayName}"
 			}
 
 			BasiliskShifterBanner: {
-				DisplayName: "Знамя василиска-оборотня"
+				DisplayName: Знамя василиска-оборотня
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BasiliskShifter.DisplayName}"
 			}
 
 			BasiliskWalkerBanner: {
-				DisplayName: "Знамя ходячего василиска"
+				DisplayName: Знамя ходячего василиска
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BasiliskWalker.DisplayName}"
 			}
 
 			BlackKnightBanner: {
-				DisplayName: "Знамя тёмного рыцаря"
+				DisplayName: Знамя тёмного рыцаря
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BlackKnight.DisplayName}"
 			}
 
 			CloudBatBanner: {
-				DisplayName: "Знамя облачной летучей мыши"
+				DisplayName: Знамя облачной летучей мыши
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CloudBat.DisplayName}"
 			}
 
 			CorruptedElementalBanner: {
-				DisplayName: "Знамя элементаля порчи"
+				DisplayName: Знамя элементаля порчи
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CorruptedElemental.DisplayName}"
 			}
 
 			CorruptedHornetBanner: {
-				DisplayName: "Знамя шершня порчи"
+				DisplayName: Знамя шершня порчи
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CorruptedHornet.DisplayName}"
 			}
 
 			CosmicCrystalLizardBanner: {
-				DisplayName: "Знамя кристально-космической ящерицы"
+				DisplayName: Знамя кристально-космической ящерицы
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CosmicCrystalLizard.DisplayName}"
 			}
 
 			CrazedDemonSpiritBanner: {
-				DisplayName: "Знамя безумного духа демона"
+				DisplayName: Знамя безумного духа демона
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CrazedDemonSpirit.DisplayName}"
 			}
 
 			CrystalKnightBanner: {
-				DisplayName: "Знамя кристального рыцаря"
+				DisplayName: Знамя кристального рыцаря
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CrystalKnight.DisplayName}"
 			}
 
 			DarkBloodKnightBanner: {
-				DisplayName: "Знамя рыцаря тёмной крови"
+				DisplayName: Знамя рыцаря тёмной крови
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkBloodKnight.DisplayName}"
 			}
 
 			DarkKnightBanner: {
-				DisplayName: "Знамя тёмного рыцаря"
+				DisplayName: Знамя тёмного рыцаря
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkKnight.DisplayName}"
 			}
 
 			DemonSpiritBanner: {
-				DisplayName: "Знамя духа демона"
+				DisplayName: Знамя духа демона
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DemonSpirit.DisplayName}"
 			}
 
 			DiscipleOfAttraidiesBanner: {
-				DisplayName: "Знамя ученика Аттрайдиса"
+				DisplayName: Знамя ученика Аттрайдиса
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DiscipleOfAttraidies.DisplayName}"
 			}
 
 			DungeonMageBanner: {
-				DisplayName: "Знамя мага темницы"
+				DisplayName: Знамя мага темницы
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DungeonMage.DisplayName}"
 			}
 
 			DunlendingBanner: {
-				DisplayName: "Знамя дунэлиндца"
+				DisplayName: Знамя дунэлиндца
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Dunlending.DisplayName}"
 			}
 
 			DworcFleshhunterBanner: {
-				DisplayName: "Знамя дворка-охотника за плотью"
+				DisplayName: Знамя дворка-охотника за плотью
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcFleshhunter.DisplayName}"
 			}
 
 			DworcVenomsniperBanner: {
-				DisplayName: "Знамя ядовитого снайпера дворка"
+				DisplayName: Знамя ядовитого снайпера дворка
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcVenomsniper.DisplayName}"
 			}
 
 			DworcVoodoomasterBanner: {
-				DisplayName: "Знамя дворка алхимика"
+				DisplayName: Знамя дворка алхимика
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcVoodoomaster.DisplayName}"
 			}
 
 			DworcVoodooShamanBanner: {
-				DisplayName: "Знамя дворка шамана"
+				DisplayName: Знамя дворка шамана
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcVoodooShaman.DisplayName}"
 			}
 
 			FirebombHollowBanner: {
-				DisplayName: "Знамя пустого-подрывника"
+				DisplayName: Знамя пустого-подрывника
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FirebombHollow.DisplayName}"
 			}
 
 			GhostOfTheDarkmoonKnightBanner: {
-				DisplayName: "Знамя призрака тёмной луны"
+				DisplayName: Знамя призрака тёмной луны
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GhostOfTheDarkmoonKnight.DisplayName}"
 			}
 
 			GhostOfTheForgottenKnightBanner: {
-				DisplayName: "Знамя призрака забытого рыцаря"
+				DisplayName: Знамя призрака забытого рыцаря
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GhostoftheForgottenKnight.DisplayName}"
 			}
 
 			GhostOfTheForgottenWarriorBanner: {
-				DisplayName: "Знамя призрака забытого воина"
+				DisplayName: Знамя призрака забытого воина
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GhostOfTheForgottenWarrior.DisplayName}"
 			}
 
 			GreatRedKnightBanner: {
-				DisplayName: "Знамя великого красного рыцаря"
+				DisplayName: Знамя великого красного рыцаря
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GreatRedKnight.DisplayName}"
 			}
 
 			GuardianCorruptorBanner: {
-				DisplayName: "Знамя стража-искажателя"
+				DisplayName: Знамя стража-искажателя
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GuardianCorruptor.DisplayName}"
 			}
 
 			HydrisElementalBanner: {
-				DisplayName: "Знамя элементаля Гидриса"
+				DisplayName: Знамя элементаля Гидриса
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisElemental.DisplayName}"
 			}
 
 			HydrisNecromancerBanner: {
-				DisplayName: "Знамя некроманта Гидрис"
+				DisplayName: Знамя некроманта Гидрис
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisNecromancer.DisplayName}"
 			}
 
 			IceSkeletonBanner: {
-				DisplayName: "Знамя ледяного скелета"
+				DisplayName: Знамя ледяного скелета
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.IceSkeleton.DisplayName}"
 			}
 
 			JungleSentreeBanner: {
-				DisplayName: "Знамя часового джунглей"
+				DisplayName: Знамя часового джунглей
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.JungleSentree.DisplayName}"
 			}
 
 			JungleWyvernJuvenileBanner: {
-				DisplayName: "Знамя детёныша виверны джунглей"
+				DisplayName: Знамя детёныша виверны джунглей
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.JungleWyvernJuvenileHead.DisplayName}"
 			}
 
 			LivingGlowshroomBanner: {
-				DisplayName: "Знамя живого светящегося гриба"
+				DisplayName: Знамя живого светящегося гриба
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LivingGlowshroom.DisplayName}"
 			}
 
 			LivingShroomBanner: {
-				DisplayName: "Знамя живого гриба"
+				DisplayName: Знамя живого гриба
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LivingShroom.DisplayName}"
 			}
 
 			LivingShroomThiefBanner: {
-				DisplayName: "Знамя живого гриба-вора"
+				DisplayName: Знамя живого гриба-вора
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LivingShroomThief.DisplayName}"
 			}
 
 			ManHunterBanner: {
-				DisplayName: "Знамя охотника за людьми"
+				DisplayName: Знамя охотника за людьми
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManHunter.DisplayName}"
 			}
 
 			ManOfWarBanner: {
-				DisplayName: "Знамя человека войны"
+				DisplayName: Знамя человека войны
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManOfWar.DisplayName}"
 			}
 
 			MarilithSpiritTwinBanner: {
-				DisplayName: "Знамя духовного близнеца Марилит"
+				DisplayName: Знамя духовного близнеца Марилит
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MarilithSpiritTwin.DisplayName}"
 			}
 
 			MindflayerIllusionBanner: {
-				DisplayName: "Знамя иллюзии Истязателя разума"
+				DisplayName: Знамя иллюзии Истязателя разума
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerIllusion.DisplayName}"
 			}
 
 			MindflayerKingServantBanner: {
-				DisplayName: "Знамя слуги Короля-истязателя разума"
+				DisplayName: Знамя слуги Короля-истязателя разума
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerKingServant.DisplayName}"
 			}
 
 			MindflayerServantBanner: {
-				DisplayName: "Знамя слуги Истязателя разума"
+				DisplayName: Знамя слуги Истязателя разума
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerServant.DisplayName}"
 			}
 
 			MutantToadBanner: {
-				DisplayName: "Знамя жабы-мутанта"
+				DisplayName: Знамя жабы-мутанта
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MutantToad.DisplayName}"
 			}
 
 			NecromancerBanner: {
-				DisplayName: "Знамя некроманта"
+				DisplayName: Знамя некроманта
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Necromancer.DisplayName}"
 			}
 
 			FallenNecromancerBanner: {
-				DisplayName: "Знамя падшего некроманта"
+				DisplayName: Знамя падшего некроманта
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FallenNecromancer.DisplayName}"
 			}
 
 			ObsidianJellyfishBanner: {
-				DisplayName: "Знамя обсидиановой медузы"
+				DisplayName: Знамя обсидиановой медузы
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianJellyfish.DisplayName}"
 			}
 
 			OolacileDemonBanner: {
-				DisplayName: "Знамя демона Оолациля"
+				DisplayName: Знамя демона Оолациля
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileDemon.DisplayName}"
 			}
 
 			OolacileKnightBanner: {
-				DisplayName: "Знамя рыцаря Оолациля"
+				DisplayName: Знамя рыцаря Оолациля
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
 			}
 
 			OolacileSorcererBanner: {
-				DisplayName: "Знамя колдуна Оолациля"
+				DisplayName: Знамя колдуна Оолациля
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileSorcerer.DisplayName}"
 			}
 
 			ParaspriteBanner: {
-				DisplayName: "Знамя Параспрайта"
+				DisplayName: Знамя Параспрайта
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Parasprite.DisplayName}"
 			}
 
 			ParasyticWormBanner: {
-				DisplayName: "Знамя червя-паразита"
+				DisplayName: Знамя червя-паразита
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ParasyticWormHead.DisplayName}"
 			}
 
 			QuaraHydromancerBanner: {
-				DisplayName: "Знамя гидроманта Квара"
+				DisplayName: Знамя гидроманта Квара
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.QuaraHydromancer.DisplayName}"
 			}
 
 			RedCloudHunterBanner: {
-				DisplayName: "Знамя охотника за Рэдом Клаудом"
+				DisplayName: Знамя охотника за Рэдом Клаудом
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.RedCloudHunter.DisplayName}"
 			}
 
 			RedKnightBanner: {
-				DisplayName: "Знамя красного рыцаря"
+				DisplayName: Знамя красного рыцаря
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.RedKnight.DisplayName}"
 			}
 
 			ResentfulSeedlingBanner: {
-				DisplayName: "Знамя обиженного саженца"
+				DisplayName: Знамя обиженного саженца
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ResentfulSeedling.DisplayName}"
 			}
 
 			SerpentOfTheAbyssBanner: {
-				DisplayName: "Знамя змея бездны"
+				DisplayName: Знамя змея бездны
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SerpentOfTheAbyssHead.DisplayName}"
 			}
 
 			ShadowMageBanner: {
-				DisplayName: "Знамя теневого мага"
+				DisplayName: Знамя теневого мага
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ShadowMage.DisplayName}"
 			}
 
 			SlograIIBanner: {
-				DisplayName: "Знамя Слогры"
+				DisplayName: Знамя Слогры
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SlograII.DisplayName}"
 			}
 
 			SnowOwlBanner: {
-				DisplayName: "Знамя снежной совы"
+				DisplayName: Знамя снежной совы
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SnowOwl.DisplayName}"
 			}
 
 			StoneGolemBanner: {
-				DisplayName: "Знамя каменного голема"
+				DisplayName: Знамя каменного голема
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.StoneGolem.DisplayName}"
 			}
 
 			TaurusKnightBanner: {
-				DisplayName: "Знамя рыцаря-тельца"
+				DisplayName: Знамя рыцаря-тельца
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TaurusKnight.DisplayName}"
 			}
 
 			TetsujinBanner: {
-				DisplayName: "Знамя Тецудзина"
+				DisplayName: Знамя Тецудзина
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Tetsujin.DisplayName}"
 			}
 
 			TibianAmazonBanner: {
-				DisplayName: "Знамя тибианского амазона"
+				DisplayName: Знамя тибианского амазона
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TibianAmazon.DisplayName}"
 			}
 
 			TibianValkyrieBanner: {
-				DisplayName: "Знамя тибианской валькирии"
+				DisplayName: Знамя тибианской валькирии
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TibianValkyrie.DisplayName}"
 			}
 
 			TonberryBanner: {
-				DisplayName: "Знамя Тонберри"
+				DisplayName: Знамя Тонберри
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Tonberry.DisplayName}"
 			}
 
 			UndeadCasterBanner: {
-				DisplayName: "Знамя мертвеца-заклинателя"
+				DisplayName: Знамя мертвеца-заклинателя
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.UndeadCaster.DisplayName}"
 			}
 
 			VampireBatBanner: {
-				DisplayName: "Знамя летучей мыши-вампира"
+				DisplayName: Знамя летучей мыши-вампира
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.VampireBat.DisplayName}"
 			}
 
 			WarlockBanner: {
-				DisplayName: "Знамя Варлока"
+				DisplayName: Знамя Варлока
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Warlock.DisplayName}"
 			}
 
 			WaterSpiritBanner: {
-				DisplayName: "Знамя водяного духа"
+				DisplayName: Знамя водяного духа
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.WaterSpirit.DisplayName}"
 			}
 
 			FireLurkerBanner: {
-				DisplayName: "Знамя огненного луркера"
+				DisplayName: Знамя огненного луркера
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FireLurker.DisplayName}"
 			}
 
 			HollowSoldierBanner: {
-				DisplayName: "Знамя пустого солдата"
+				DisplayName: Знамя пустого солдата
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HollowSoldier.DisplayName}"
 			}
 
 			HollowWarriorBanner: {
-				DisplayName: "Знамя пустого воина"
+				DisplayName: Знамя пустого воина
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HollowWarrior.DisplayName}"
 			}
 
 			HumanityPhantomBanner: {
-				DisplayName: "Знамя призрака человечности"
+				DisplayName: Знамя призрака человечности
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HumanityPhantom.DisplayName}"
 			}
 
 			LothricBlackKnightBanner: {
-				DisplayName: "Знамя чёрного рыцаря Лотрика"
+				DisplayName: Знамя чёрного рыцаря Лотрика
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LothricBlackKnight.DisplayName}"
 			}
 
 			LothricKnightBanner: {
-				DisplayName: "Знамя рыцаря Лотрика"
+				DisplayName: Знамя рыцаря Лотрика
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LothricKnight.DisplayName}"
 			}
 
 			LothricSpearKnightBanner: {
-				DisplayName: "Знамя копейщика Лотрика"
+				DisplayName: Знамя копейщика Лотрика
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LothricSpearKnight.DisplayName}"
 			}
 
 			RingedKnightBanner: {
-				DisplayName: "Знамя рыцаря кольца"
+				DisplayName: Знамя рыцаря кольца
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.RingedKnight.DisplayName}"
 			}
 
 			ClericOfSorrowBanner: {
-				DisplayName: "Знамя жреца скорби"
+				DisplayName: Знамя жреца скорби
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ClericOfSorrow.DisplayName}"
 			}
 
@@ -1313,7 +1314,6 @@ Mods: {
 					Увеличивает защиту на 10 и сопротивление на 16 при уровне здоровья ниже 66%.
 					Увеличивает защиту на 16 и сопротивление на 32 при уровне здоровья ниже 33%.
 					'''
-					
 			}
 
 			ProtectRing: {
@@ -1323,7 +1323,6 @@ Mods: {
 					Кольцо, охраняющее от смерти.
 					Накладывает "защиту" на владельца ({$CommonItemTooltip.IncreasesDefenseBy})
 					'''
-					
 			}
 
 			RingOfClarity: {
@@ -1337,9 +1336,9 @@ Mods: {
 					'''
 			}
 
-			RingOfTheBlueEye: {
-				DisplayName: Кольцо Голубого Глаза
-				Tooltip: Кости разлетаются в отместку, когда игрок получает травму
+			BlueEye: {
+				// DisplayName: Blazing Blue Eye
+				// Tooltip: Bones fly out in retaliation when player is hurt
 			}
 
 			SilverRing: {
@@ -1932,8 +1931,8 @@ Mods: {
 			}
 
 			ArrowOfBard: {
-				DisplayName:Стрела Барда
-				Tooltip: '''«Стрела, сразившая Смауга».'''
+				DisplayName: Стрела Барда
+				Tooltip: «Стрела, сразившая Смауга».
 			}
 
 			Bolt: {
@@ -3387,7 +3386,7 @@ Mods: {
 				Wrong: Этот предмет можно использовать только в руинах древнего храма ночью...
 				WrongTime: Этот предмет можно использовать только ночью...
 			}
-			
+
 			MechanicalSkull: {
 				DisplayName: Механический Череп
 				Tooltip:
@@ -3401,7 +3400,7 @@ Mods: {
 				Wrong: Этот предмет можно использовать только в Затопленном Храме и только ночью...
 				WrongTime: Этот предмет можно использовать только ночью...
 			}
-			
+
 			DarkMirror: {
 				DisplayName: Тёмное зеркало
 				Tooltip: ""
@@ -3463,15 +3462,15 @@ Mods: {
 				Summon: Исчадие воды — Кракен появляется из глубин
 			}
 
-			DyingWindCrystal: {
-				DisplayName: Умирающий кристалл ветра
-				Tooltip:
+			DyingDarkCrystal: {
+				// DisplayName: Dying Dark Crystal
+				/* Tooltip:
 					'''
-					Угасающий кристалл ветра 
-					Призывает Хаос
-					Не расходуется
-					'''
-				Summon: Хаос перерождается из теней!
+					The fading Crystal of Darkness. 
+					Will summon Chaos.
+					Item is non-consumable
+					''' */
+				// Summon: Chaos reincarnates from the shadows!
 			}
 
 			FieryEgg: {
@@ -3575,13 +3574,13 @@ Mods: {
 				Summon: "Твоя смерть только подпитает мое бессмертие, Рэд... "
 			}
 
-			StrangeMagicRing: {
-				DisplayName: Странное волшебное кольцо
-				Tooltip:
+			MasterRing: {
+				// DisplayName: Master Ring
+				/* Tooltip:
 					'''
-					Странное волшебное кольцо, которое, по словам Миакоды, призовет Арториаса, Странника Бездны.
-					Один из четырех рыцарей Гвина, Арториас - святой воин с несгибаемой стальной волей.
-					'''
+					This ring leads to damnation for those tempted by its treacherous and evil power.
+					Summons the Witchking who will answer the call of the ring.
+					''' */
 			}
 
 			TomeOfSlograAndGaibon: {
@@ -3711,15 +3710,15 @@ Mods: {
 					'''
 			}
 
-			BrokenStrangeMagicRing: {
-				DisplayName: Сломанное Странное Волшебное кольцо
-				Tooltip:
+			BrokenDarkMagicRing: {
+				// DisplayName: Broken Dark Magic Ring
+				/* Tooltip:
 					'''
-					Странное магическое кольцо, разбитое на две части...
-					Миакода: "Чтобы перековать это кольцо и восстановить его магические способности,
-					вам понадобятся 5 белых титанитов и 1000 Темных 
-					Чтобы найти то, что нам нужно, вы должны найти порченые земли и темницу.""
-					'''
+					A dark magic ring, broken into two pieces...
+					Miakoda: "To reforge this ring and restore its magical abilitiy,
+					you'll need 5 White Titanite and 1000 Dark Souls.
+					To find what we need, we should seek out the Evil Biomes and the Dungeon."
+					''' */
 			}
 
 			CharcoalPineResin: {
@@ -5577,7 +5576,7 @@ Mods: {
 
 			WandOfDarkness2: {
 				DisplayName: Жезл тьмы II
-				Tooltip:Больший урон и более высокая отдача
+				Tooltip: Больший урон и более высокая отдача
 			}
 
 			WandOfFire: {
@@ -5700,7 +5699,7 @@ Mods: {
 
 			CoralSword: {
 				DisplayName: Коралловый меч
-				Tooltip: Острый, чтобы убивать морских обитателей. Наносит 4-кратный урон водным врагам. 
+				Tooltip: Острый, чтобы убивать морских обитателей. Наносит 4-кратный урон водным врагам.
 			}
 
 			CorruptedTooth: {
@@ -5818,7 +5817,7 @@ Mods: {
 			}
 
 			RTQ2Sword: {
-				DisplayName: Меч RTQ2 
+				DisplayName: Меч RTQ2
 				Tooltip:
 					'''
 					Вызывает звёздный дождь с неба
@@ -5882,15 +5881,6 @@ Mods: {
 			VampireBlade: {
 				DisplayName: Вампирский клинок
 				Tooltip: Восстанавливает 2 здоровья при попадании
-			}
-
-			WereBane: {
-				DisplayName: Губитель оборотней
-				Tooltip:
-					'''
-					Меч, используемый для мгновенного уничтожения оборотней.
-					Наносит оборотням 8-кратный урон.
-					'''
 			}
 
 			WitchkingsSword: {
@@ -6812,16 +6802,6 @@ Mods: {
 					Редкая и ценная руда
 					Благодаря твёрдой белой поверхности, он отбрасывает жутковатую фиолетовую тень
 					Распространён в бездне
-					'''
-			}
-
-			WitchkingScroll: {
-				DisplayName: Свиток Короля-Чародея
-				Tooltip:
-					'''
-					Чтобы закрыть портал в Бездну, вы должны найти короля чародея и вернуть ему странное кольцо, которое он уронил.
-					Он будет появляться из Бездны по ночам и чаще всего глубоко под землёй, особенно в темницах.
-					Однако самый надежный способ найти его - это самому спуститься в Бездну, используя кольцо Ковенанта Арториаса.
 					'''
 			}
 
@@ -7860,12 +7840,12 @@ Mods: {
 					Максимальный урон увеличивается с помощью модификаторов урона.
 					'''
 			}
-			
+
 			WitchkingMace: {
 				DisplayName: Булава Короля—Чародея
 				Tooltip: Накладывает 1 случайный дебафф хлыстов при ударе
 			}
-			
+
 			TaintedBow: {
 				DisplayName: Испорченный лук
 				Tooltip:
@@ -7881,7 +7861,7 @@ Mods: {
 			}
 
 			Linklight2sPants: {
-				DisplayName:  Штаны Linklight2s
+				DisplayName: Штаны Linklight2s
 				Tooltip: Только в целях тестирования.
 			}
 
@@ -7961,7 +7941,7 @@ Mods: {
 					[c/00ffd4:Эффект даёт +4 к регенерации жизни, +12 ед. к защите, +15% урона и +20% скорости передвижения]
 					'''
 			}
-			
+
 			DiamondCrusher: {
 				Tooltip: ""
 				DisplayName: Алмазный крушитель
@@ -8005,7 +7985,6 @@ Mods: {
 				DisplayName: Тёмная материя Оолациля
 				Tooltip: Ощутимая теневая энергия из тьмы Оолациля.
 			}
-
 		}
 
 		Buffs: {
@@ -8176,7 +8155,7 @@ Mods: {
 				DisplayName: Порванные крылья
 				Description: Ты не можешь летать!
 			}
-			
+
 			WitchkingsGrasp: {
 				DisplayName: Хватка Короля-Чародея
 				Description: Ты не уйдёшь.
@@ -8257,7 +8236,6 @@ Mods: {
 			GreatMagicShield: {
 				DisplayName: Великий магический щит
 				Description: Увеличивает защиту на {0} против магических атак!
-					
 			}
 
 			GreatMagicWeapon: {
@@ -8681,6 +8659,7 @@ Mods: {
 
 			NightsCrackerDebuff: {
 				DisplayName: Ночная петарда
+				// Description: ""
 			}
 
 			PolarisLeashDebuff: {
@@ -8961,7 +8940,7 @@ Mods: {
 				Description: ""
 				DisplayName: Разрушение защиты
 			}
-			
+
 			WitchkingMaceDebuff: {
 				Description: Mods.tsorcRevamp.Buffs.WitchkingMaceDebuff.Description
 				DisplayName: Дебафф булавы Короля-Чародея
@@ -9010,7 +8989,6 @@ Mods: {
 				DisplayName: Перезарядка вопля Короля-Чародея
 				Description: Вы не можете прокричать снова, пока она не закончится
 			}
-			
 		}
 
 		Projectiles: {
@@ -9655,6 +9633,10 @@ Mods: {
 			Icicle2.DisplayName: Сосулька 2
 			ShadowBreath.DisplayName: Дыхание тени
 			FrostFireBall.DisplayName: Ледяной огненный шар
+			// DrakarthusProjectile.DisplayName: Drakarthus Projectile
+			// HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
+			// DivineBoltProjectile.DisplayName: Divine Bolt Projectile
+			// WitchkingMaceProjectile.DisplayName: Witchking Mace Projectile
 			SpearOfMage.DisplayName: Копьё мага
 			RedLightning.DisplayName: Красная молния
 			PurpleMagicProj.DisplayName: Фиолетовый магический снаряд
@@ -9701,7 +9683,7 @@ Mods: {
 				DespawnHandler: Императрица света вернулась к солнцу
 				DespawnHandlerRare: Попробуй радугу на вкус, ублюдок...
 			}
-			
+
 			PillarsForcefield: Где-то в небе рушится огромный небесный барьер......
 			SHM.BossDeath: Портал в Бездну расширяется, а её обитатели становятся сильнее...
 			Player.AllDied: Все игроки были побеждены хотя бы один раз!
@@ -9795,11 +9777,6 @@ Mods: {
 				DisplayName: Исчадие земли — Лич
 				DespawnHandler: Исчадие земли — Лич возвращается к истокам...
 				Heat: Король-лич излучает тепло магматического ядра Земли!
-			}
-
-			LichKingDisciple: {
-				DisplayName: Ученик Короля-лича
-				Aura: Ученик Короля-лича распространяет вокруг себя миазмы Ихора!
 			}
 
 			LichKingSerpentBody.DisplayName: Змей Короля-лича
@@ -10040,7 +10017,7 @@ Mods: {
 				DisplayName: Охотник
 				DespawnHandler: Охотник ищет свою следующую жертву...
 				Child: Охотник решил скормить вас своему ребенку. Он полностью замаскирован!
-				Enrage: Охотник слишком быстро получил урон, его естественная защита активировалась...     
+				Enrage: Охотник слишком быстро получил урон, его естественная защита активировалась...
 			}
 
 			TheHunterChild: {
@@ -10092,7 +10069,7 @@ Mods: {
 			IchorMissile.DisplayName: Ихорная ракета
 			NamelessKing.DisplayName: Безымянный король
 			ParasyticWormBody.DisplayName: Червь-паразит
-			ParasyticWormHead.DisplayName: Червь-паразит 
+			ParasyticWormHead.DisplayName: Червь-паразит
 			ParasyticWormTail.DisplayName: Червь-паразит
 			Bonfirefly.DisplayName: Светлячок у костра
 
@@ -10467,7 +10444,7 @@ Mods: {
 				DisplayName2: ???
 				DisplayName3: Беглый гриб
 			}
-			
+
 			MiakodaNPC: {
 				DisplayName: Миакода
 				Name1: Миакода
@@ -10913,7 +10890,7 @@ Mods: {
 					'''
 				CannotHelp: You have done well, {0}, I have no more advice to offer you.
 				ExhaustedDialogue: I believe we've talked enough {0}, I can't think of anything more to say for now.
-			}			
+			}
 
 			ShamanElder: {
 				DisplayName: Старейшина шаманов
@@ -11217,6 +11194,7 @@ Mods: {
 			AbyssFracture.DisplayName: Разлом бездны
 			AbyssCataclysm.DisplayName: Катаклизм бездны
 			AttraidiesShield.DisplayName: Щит Аттрайдиса
+			LichKingDisciple.DisplayName: Ученик Короля-лича
 		}
 
 		Prefixes: {
@@ -11250,8 +11228,7 @@ Mods: {
 			SoulSkellyR.MapEntry: Скелет души
 			SoulSkellyWall1.MapEntry: Скелет души
 			SoulSkellyWall2.MapEntry: Скелет души
-			SoulSkullL.MapEntry: Скелет души
-			
+
 			SoulSkullL: {
 				MapEntry: Скелет души
 				AnnoyedTalk1: ...чего ты хочешь?
@@ -11260,7 +11237,7 @@ Mods: {
 				AnnoyedTalk4: Отлично. Здесь. Бери это и уходи.
 				AnnoyedTalk5: Я сказал, убирайся отсюда!
 			}
-			
+
 			SoulSkullR.MapEntry: Скелет души
 		}
 
@@ -11270,7 +11247,7 @@ Mods: {
 			"Dodge Roll.DisplayName": Перекат
 			"Special Ability.DisplayName": Специальная способность
 			"Wolf Ring.DisplayName": Кольцо волка
-			"Wings of Seath speed toggle.DisplayName": Переключение скорости крыльев Сита 
+			"Wings of Seath speed toggle.DisplayName": Переключение скорости крыльев Сита
 			Shunpo.DisplayName: Поступь
 			"Krakens Cast.DisplayName": Применение кракена
 			"Witchking Scream.DisplayName": Вопль Короля-чародея
@@ -11521,7 +11498,7 @@ Mods: {
 					Label: Регулирование громкости Bot C Mechanics
 					Tooltip: ""
 				}
-				
+
 				DebugMode: {
 					Tooltip: ""
 					Label: Режим отладки
@@ -11530,7 +11507,7 @@ Mods: {
 				DisableModWingsFallControlDuringFlight: {
 					Tooltip: ""
 					Label: Отключить режим управления падением крыльев во время полёта
-				}				
+				}
 			}
 		}
 
