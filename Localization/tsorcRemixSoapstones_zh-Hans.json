@@ -244,13 +244,6 @@
   "style": 1
 }
 {
-  "text": "拉动控制杆后，你听到从下方发出的巨大隆隆声， --NEWLINE   --NEWLINE 声音一直向东传播然后消失。 --NEWLINE   --NEWLINE 无论它打开了什么，它都离你很远。 --NEWLINE   --NEWLINE Miakoda：\u0022这座波涌神庙似乎还留下了一个秘密……\u0022",
-  "tileX": 1051,
-  "tileY": 955,
-  "textWidth": 380,
-  "style": 1
-}
-{
   "text": "Miakoda告诉你：\u0022你需要一些东西来穿过这里。\u0022",
   "tileX": 1172,
   "tileY": 1433,
@@ -342,10 +335,25 @@
   "style": 1
 }
 {
+  "text": "这个房间看起来很奇怪，尽管看起来很普通，但你感觉到其中有什么不同。 --NEWLINE   --NEWLINE 此外，你听到天花板上传来奇怪的声音……",
+  "tileX": 1668,
+  "tileY": 1565,
+  "textWidth": 540,
+  "style": 1
+}
+{
   "text": "埃伦加德沙漠遗迹 --NEWLINE   --NEWLINE 你曾经听说过一个叫奥斯匹克的民族的故事， --NEWLINE   --NEWLINE 他们在烈日下的沙漠深处建立了自己的文明，通过隧道网络连接起来。 --NEWLINE   --NEWLINE 没有人知道他们为什么选择这样一个不适宜居住的地方， --NEWLINE   --NEWLINE 但一些人相信，一种神秘的能量在这个地方的下方生长。",
   "tileX": 1723,
   "tileY": 804,
   "textWidth": 520,
+  "style": 1
+}
+
+{
+  "text": "你发现了隐藏在暗影神庙中早已被遗弃的旧日机械支配者的宝库。",
+  "tileX": 1724,
+  "tileY": 1477,
+  "textWidth": 480,
   "style": 1
 }
 {
@@ -411,6 +419,14 @@
   "textWidth": 560,
   "style": 1
 }
+
+{
+  "text": "你拉下拉杆但无事发生…… --NEWLINE   --NEWLINE 过了一会儿，你听到附近的洞穴传来声音。",
+  "tileX": 2005,
+  "tileY": 1615,
+  "textWidth": 320,
+  "style": 1
+}
 {
   "text": "- 你抵达了埃伦加德大沙漠 - --NEWLINE   --NEWLINE 回首望向神庙建筑，Miakoda问道： --NEWLINE   --NEWLINE \u0022你认为这些柱子的方向和排列有什么特殊意义吗？\u0022",
   "tileX": 2033,
@@ -441,13 +457,13 @@
 }
 {
   "text": "- 狂怒之岛 - --NEWLINE   --NEWLINE 日耀柱作为四大天界封印之一，象征着愤怒与火焰。 --NEWLINE   --NEWLINE 很久以前，阿卓迪斯利用天界柱的力量封印了囚禁着邪教徒的远古空间囚笼 --NEWLINE   --NEWLINE 他的这位宿敌曾企图召唤拥有无限力量的神明威胁世界 --NEWLINE   --NEWLINE 摧毁天界柱将破除结界，释放那位强大的邪教徒",
-  "tileX": 2111,
-  "tileY": 268,
+  "tileX": 2151,
+  "tileY": 329,
   "textWidth": 540,
   "style": 1
 }
 {
-  "text": "- 这扇门守卫着通往水之恶魔梦幻洞穴的路 - --NEWLINE   --NEWLINE 你拿出日记，写下一张纸条：\u0022蜥蜴门就在沙漠中一座未知神庙的东边。\u0022",
+  "text": "- 这扇门守卫着通往水之恶魔梦幻洞穴的路 - --NEWLINE   --NEWLINE 你拿出日记，写下一张纸条：\u0022蜥蜴门就在菌丝林园的西边。\u0022",
   "tileX": 2238,
   "tileY": 857,
   "textWidth": 520,
@@ -1420,6 +1436,13 @@
   "style": 1
 }
 {
+  "text": "- 这扇大门守护着通往熔岩空域神庙的传送门，那里是大地恶魔巫妖王的巢穴 - --NEWLINE   --NEWLINE 你拿出日记，写下一张便条：\u0022天空废墟中的蜥蜴门\u0022",
+  "tileX": 4475,
+  "tileY": 351,
+  "textWidth": 590,
+  "style": 1 
+}
+{
   "text": "右键单击篝火以点燃它们。 --NEWLINE   --NEWLINE 点燃篝火后，你可以将其设置为重生点， --NEWLINE   --NEWLINE 右击使用提供的猪猪存钱罐和保险箱。 --NEWLINE   --NEWLINE 点击地图上已经点燃的篝火可以随时传送。",
   "tileX": 4480,
   "tileY": 732,
@@ -1854,6 +1877,13 @@
   "style": 1
 }
 {
+  "text": "- 你找到了失落的乌拉席露森林 - --NEWLINE   --NEWLINE 一种恐惧感包裹了你：你不应该出现在这里。",
+  "tileX": 5666,
+  "tileY": 1072,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "- 你发现了丛林城镇 - --NEWLINE   --NEWLINE \u0022真有意思，我认识这里的一些居民……\u0022",
   "tileX": 5680,
   "tileY": 822,
@@ -1959,10 +1989,10 @@
   "style": 1
 }
 {
-  "text": "嗯，这附近看起来只是普通的丛林……",
+  "text": "越往深处行进，草木愈发斑斓茂密。 --NEWLINE   --NEWLINE 蓬勃到近乎压迫的自然力量，已彻底笼罩你的视野。",
   "tileX": 5983,
   "tileY": 1544,
-  "textWidth": 280,
+  "textWidth": 380,
   "style": 1
 }
 {

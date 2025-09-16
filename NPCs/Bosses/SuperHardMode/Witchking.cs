@@ -139,7 +139,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     lastStand = true;
 
                     NPC.DelBuff(NPC.FindBuffIndex(ModContent.BuffType<Buffs.DispelShadow>()));
-                    UsefulFunctions.BroadcastText("With a desperate scream the Witchking restores his shields, taking his final stand!", Color.Purple);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Witchking.Restore"), Color.Purple);
                 }
             }
 

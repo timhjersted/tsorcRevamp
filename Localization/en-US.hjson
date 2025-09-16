@@ -2590,7 +2590,8 @@ Mods: {
 				Tooltip:
 					'''
 					Adept at close combat
-					{$CommonItemTooltip.PercentIncreasedMeleeDamageCritChance}
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
 					'''
 			}
 
@@ -10011,6 +10012,7 @@ Mods: {
 				DisplayName: Witchking
 				DespawnHandler: The Witchking claims another victim...
 				Immune: Immune!
+				Restore: With a desperate scream the Witchking restores his shields, taking his final stand!
 			}
 
 			TestBoss: {
