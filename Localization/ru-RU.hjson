@@ -2588,7 +2588,8 @@ Mods: {
 				Tooltip:
 					'''
 					Мастер ближнего боя
-					{$CommonItemTooltip.PercentIncreasedMeleeDamageCritChance}
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
 					'''
 			}
 
