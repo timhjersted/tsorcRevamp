@@ -234,7 +234,7 @@ Mods: {
 		}
 
 		Events: {
-			Pinwheel: Пинвиле обращает свой взгляд на вас.
+			Pinwheel: Вертопрах обращает свой взгляд на вас.
 			Death: Настал роковой день твоей смерти.
 			QueenSlime: Королева Слизней выходит из своей священной пещеры!
 			GreatRedKnightInvasion: Великий красный рыцарь вторгся в ваш мир!
@@ -1337,8 +1337,8 @@ Mods: {
 			}
 
 			BlueEye: {
-				// DisplayName: Blazing Blue Eye
-				// Tooltip: Bones fly out in retaliation when player is hurt
+				DisplayName: Сверкающий голубой глаз
+				Tooltip: Когда вас атакуют, из вас вылетают наносящие урон кости
 			}
 
 			SilverRing: {
@@ -3463,14 +3463,14 @@ Mods: {
 			}
 
 			DyingDarkCrystal: {
-				// DisplayName: Dying Dark Crystal
-				/* Tooltip:
+				DisplayName: Умирающий тёмный кристалл
+				Tooltip:
 					'''
-					The fading Crystal of Darkness. 
-					Will summon Chaos.
-					Item is non-consumable
-					''' */
-				// Summon: Chaos reincarnates from the shadows!
+					Угасающий кристалл тьмы. 
+					Призывает Хаос.
+					Не расходуется
+					'''
+				Summon: Хаос возрождается из теней!
 			}
 
 			FieryEgg: {
@@ -3575,12 +3575,12 @@ Mods: {
 			}
 
 			MasterRing: {
-				// DisplayName: Master Ring
-				/* Tooltip:
+				DisplayName: Кольцо повелителя
+				Tooltip:
 					'''
-					This ring leads to damnation for those tempted by its treacherous and evil power.
-					Summons the Witchking who will answer the call of the ring.
-					''' */
+					Это кольцо обрекает на вечные муки тех, кто поддался его коварной и злой силе.
+					Призывает Короля-чародея, который откликнется на зов кольца.
+					'''
 			}
 
 			TomeOfSlograAndGaibon: {
@@ -3711,14 +3711,14 @@ Mods: {
 			}
 
 			BrokenDarkMagicRing: {
-				// DisplayName: Broken Dark Magic Ring
-				/* Tooltip:
+				DisplayName: Сломанное кольцо тёмной магии
+				Tooltip:
 					'''
-					A dark magic ring, broken into two pieces...
-					Miakoda: "To reforge this ring and restore its magical abilitiy,
-					you'll need 5 White Titanite and 1000 Dark Souls.
-					To find what we need, we should seek out the Evil Biomes and the Dungeon."
-					''' */
+					Кольцо тёмной магии, разбитое надвое...
+					Миакода: "Чтобы восстановить это кольцо и вернуть его магические способности,
+					тебе потребуется 5 белого титанита и 1000 тёмных душ.
+					Чтобы всё это найти, мы должны отправиться в порченые земли и темницу."
+					'''
 			}
 
 			CharcoalPineResin: {
@@ -7722,7 +7722,7 @@ Mods: {
 			}
 
 			PinwheelBag: {
-				DisplayName: Мешок с сокровищами (Пинвиле)
+				DisplayName: Мешок с сокровищами (Вертопрах)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -7741,8 +7741,8 @@ Mods: {
 				Tooltip:
 					'''
 					Увеличивает здоровье на 40 и выносливость на 15 при ношении
-					Похоже, что Пинвиле держала его, чтобы
-					ожерелье, которое она носила, не высвободило всю свою силу
+					Похоже, что Вертопрах носил его, чтобы
+					ожерелье, которое он носил, не высвободило всю свою силу
 					'''
 			}
 
@@ -8659,7 +8659,7 @@ Mods: {
 
 			NightsCrackerDebuff: {
 				DisplayName: Ночная петарда
-				// Description: ""
+				Description: ""
 			}
 
 			PolarisLeashDebuff: {
@@ -9633,10 +9633,10 @@ Mods: {
 			Icicle2.DisplayName: Сосулька 2
 			ShadowBreath.DisplayName: Дыхание тени
 			FrostFireBall.DisplayName: Ледяной огненный шар
-			// DrakarthusProjectile.DisplayName: Drakarthus Projectile
-			// HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
-			// DivineBoltProjectile.DisplayName: Divine Bolt Projectile
-			// WitchkingMaceProjectile.DisplayName: Witchking Mace Projectile
+			DrakarthusProjectile.DisplayName: Снаряд Дракартуса
+			HostileFreezeBolt.DisplayName: Враждебный замораживающий снаряд
+			DivineBoltProjectile.DisplayName: Божественный снаряд
+			WitchkingMaceProjectile.DisplayName: Снаряд булавы Короля-чародея
 			SpearOfMage.DisplayName: Копьё мага
 			RedLightning.DisplayName: Красная молния
 			PurpleMagicProj.DisplayName: Фиолетовый магический снаряд
@@ -10005,7 +10005,7 @@ Mods: {
 				DisplayName: Король-чародей
 				DespawnHandler: Король-чародей требует ещё одну жертву...
 				Immune: Иммунитет!
-				// Restore: With a desperate scream the Witchking restores his shields, taking his final stand!
+				Restore: Отчаянно крича, Король-чародей восстанавливает свои щиты, готовясь к финальной схватке!
 			}
 
 			TestBoss: {
@@ -11183,15 +11183,15 @@ Mods: {
 			SandsprogMage.DisplayName: Песчаный бегун-маг
 
 			Pinwheel: {
-				DisplayName: Пинвиле
-				DespawnHandler1: Пинвиле возвращается к своим занятиям...
-				DespawnHandler2: Ярость Пинвиле утихает...
+				DisplayName: Вертопрах
+				DespawnHandler1: Вертопрах возвращается к своим занятиям...
+				DespawnHandler2: Ярость Вертопрах утихает...
 			}
 
 			GhostOfAHollowWarrior.DisplayName: Призрак пустого воина
 			GhostOfTheDrowned.DisplayName: Призрак утопленника
 			HollowSpearman.DisplayName: Пустой Копейщик
-			PinwheelFireball.DisplayName: Огненный шар Пинвиле
+			PinwheelFireball.DisplayName: Огненный шар Вертопраха
 			AbyssFracture.DisplayName: Разлом бездны
 			AbyssCataclysm.DisplayName: Катаклизм бездны
 			AttraidiesShield.DisplayName: Щит Аттрайдиса
