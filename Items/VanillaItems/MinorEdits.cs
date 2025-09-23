@@ -12,6 +12,7 @@ namespace tsorcRevamp.Items.VanillaItems
 {
     class MinorEdits : GlobalItem
     {
+
         public static float BotCWellFedStaminaRegen = 5f;
         public static float BotCPlentySatisfiedStaminaRegen = 10f;
         public static float BotCExquisitelyStuffedStaminaRegen = 15f;

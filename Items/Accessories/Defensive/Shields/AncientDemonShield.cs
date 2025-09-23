@@ -26,6 +26,14 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
             Item.value = PriceByRarity.Orange_3;
             Item.rare = ItemRarityID.Orange;
         }
+        public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
+        {
+            if (incomingItem.type == ModContent.ItemType<IronShield>() || incomingItem.type == ModContent.ItemType<SpikedIronShield>())
+            {
+                return false;
+            }
+            return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
+        }
 
         public override void UpdateEquip(Player player)
         {

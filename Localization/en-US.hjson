@@ -8510,14 +8510,14 @@ Mods: {
 				Description: You are in a hot center
 			}
 
-			CenterOfTheUniverseBuff: {
-				DisplayName: Center of the Universe
-				Description: You are the center of the Universe!
-			}
-
 			InterstellarCommander: {
 				DisplayName: Interstellar Commander
 				Description: You are the commander of these ships!
+			}
+
+			CenterOfTheUniverseBuff: {
+				DisplayName: Center of the Universe
+				Description: You are the center of the Universe!
 			}
 
 			ScorchingDebuff: {

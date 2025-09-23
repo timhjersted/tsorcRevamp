@@ -76,6 +76,7 @@ using tsorcRevamp.Utilities;
 using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
 using System.Linq;
+using Terraria.Net;
 
 namespace tsorcRevamp
 {
@@ -345,10 +346,9 @@ namespace tsorcRevamp
                 Main.instance.LoadNPC(NPCID.Probe);
                 TextureAssets.Npc[NPCID.Probe] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_139");
             }*/
-
+            
             UpdateCheck();
         }
-
         private void PopulateArrays()
         {
             #region tsorcItemDropRuleConditions class

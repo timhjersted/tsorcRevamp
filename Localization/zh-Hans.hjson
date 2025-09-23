@@ -8507,14 +8507,14 @@ Mods: {
 				Description: 你在一个“热点”上
 			}
 
-			CenterOfTheUniverseBuff: {
-				DisplayName: 宇宙重心
-				Description: 你在一个“轴心”上
-			}
-
 			InterstellarCommander: {
 				DisplayName: 星际指挥官
 				Description: 你是这些星舰的指挥官！
+			}
+
+			CenterOfTheUniverseBuff: {
+				DisplayName: 宇宙重心
+				Description: 你在一个“轴心”上
 			}
 
 			ScorchingDebuff: {

@@ -28,6 +28,15 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
             Item.value = PriceByRarity.Blue_1;
         }
 
+        public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
+        {
+            if (incomingItem.type == ModContent.ItemType<SpikedIronShield>() || incomingItem.type == ModContent.ItemType<AncientDemonShield>())
+            {
+                return false;
+            }
+            return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
+        }
+
         public override void UpdateEquip(Player player)
         {
             player.endurance += DR / 100f;

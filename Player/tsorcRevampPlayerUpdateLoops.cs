@@ -127,10 +127,10 @@ namespace tsorcRevamp
         public bool GoredrinkerReady = false;
         public bool GoredrinkerSwung = false;
         public int GoredrinkerHits = 0;
-        public bool MaskOfTheFather = false;
 
         public int WorldEnderSwing = 1;
 
+        public bool MaskOfTheFather = false;
         public bool BoneRing;
         public bool CelestialCloak;
 

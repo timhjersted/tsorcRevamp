@@ -27,6 +27,11 @@ namespace tsorcRevamp.Items
         public static List<int> torchList;
         public static List<int> hasSoulRecipe;
 
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.ShimmerTransformToItem[ItemID.LunarHook] = ItemID.LunarHook;
+        }
+
         public override bool CanUseItem(Item item, Player player)
         {
             if (item.type == ItemID.MagicMirror || item.type == ItemID.RecallPotion)

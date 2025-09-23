@@ -8503,14 +8503,14 @@ Mods: {
 				Description: Вы находитесь в центре притяжения
 			}
 
-			CenterOfTheUniverseBuff: {
-				DisplayName: Центр Вселенной
-				Description: Ты - центр Вселенной!
-			}
-
 			InterstellarCommander: {
 				DisplayName: Межзвёздный командир
 				Description: Вы - командир этих кораблей!
+			}
+
+			CenterOfTheUniverseBuff: {
+				DisplayName: Центр Вселенной
+				Description: Ты - центр Вселенной!
 			}
 
 			ScorchingDebuff: {
