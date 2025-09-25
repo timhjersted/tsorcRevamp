@@ -1879,6 +1879,62 @@ namespace tsorcRevamp
                         break;
                     }
 
+                case tsorcPacketID.SpawnNPCLunarTowerVortex:
+                    {
+                        Vector2 npcLocation = reader.ReadVector2();
+                        Mod mod = ModContent.GetInstance<tsorcRevamp>();
+                        if (Main.netMode == NetmodeID.Server && !NPC.AnyNPCs(NPCID.LunarTowerVortex) && !NPC.downedTowerVortex) {
+                            int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (int)npcLocation.X, (int)npcLocation.Y, NPCID.LunarTowerVortex, 1);
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                            NPC.TowerActiveVortex = true;
+                            NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
+                            NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                        }
+                        break;
+                    }
+
+                case tsorcPacketID.SpawnNPCLunarTowerNebula:
+                    {
+                        Vector2 npcLocation = reader.ReadVector2();
+                        Mod mod = ModContent.GetInstance<tsorcRevamp>();
+                        if (Main.netMode == NetmodeID.Server && !NPC.AnyNPCs(NPCID.LunarTowerNebula) && !NPC.downedTowerNebula) {
+                            int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (int)npcLocation.X, (int)npcLocation.Y, NPCID.LunarTowerNebula, 1);
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                            NPC.TowerActiveNebula = true;
+                            NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
+                            NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                        }
+                        break;
+                    }
+
+                case tsorcPacketID.SpawnNPCLunarTowerStardust:
+                    {
+                        Vector2 npcLocation = reader.ReadVector2();
+                        Mod mod = ModContent.GetInstance<tsorcRevamp>();
+                        if (Main.netMode == NetmodeID.Server && !NPC.AnyNPCs(NPCID.LunarTowerStardust) && !NPC.downedTowerStardust) {
+                            int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (int)npcLocation.X, (int)npcLocation.Y, NPCID.LunarTowerStardust, 1);
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                            NPC.TowerActiveStardust = true;
+                            NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
+                            NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                        }
+                        break;
+                    }
+
+                case tsorcPacketID.SpawnNPCLunarTowerSolar:
+                    {
+                        Vector2 npcLocation = reader.ReadVector2();
+                        Mod mod = ModContent.GetInstance<tsorcRevamp>();
+                        if (Main.netMode == NetmodeID.Server && !NPC.AnyNPCs(NPCID.LunarTowerSolar) && !NPC.downedTowerSolar) {
+                            int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (int)npcLocation.X, (int)npcLocation.Y, NPCID.LunarTowerSolar, 1);
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                            NPC.TowerActiveSolar = true;
+                            NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
+                            NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                        }
+                        break;
+                    }
+
                 default:
                     {
                         Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
@@ -3355,6 +3411,16 @@ namespace tsorcRevamp
         public const byte SyncCurse = 14;
         public const byte SyncOwnerCursor = 15;
         public const byte SyncWhipCharging = 16;
+
+        /// <summary>
+        /// Handle serverside spawning of lunar towers / pillars in multiplayer.
+        /// Split into separate messages since they're setting NPC fields directly
+        /// such as `NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;`
+        /// </summary>
+        public const byte SpawnNPCLunarTowerVortex = 17;
+        public const byte SpawnNPCLunarTowerNebula = 18;
+        public const byte SpawnNPCLunarTowerStardust = 19;
+        public const byte SpawnNPCLunarTowerSolar = 20;
     }
 
     //config moved to separate file
@@ -3573,11 +3639,22 @@ namespace tsorcRevamp
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
-                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                                    NPC.TowerActiveVortex = true;
-                                    NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
-                                    NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                                    {
+                                        ModPacket packet = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                                        packet.Write(tsorcPacketID.SpawnNPCLunarTowerVortex);
+                                        Vector2 location = new Vector2((i * 16) + 8, (j * 16) - 64);
+                                        packet.WriteVector2(location);
+                                        packet.Send();
+                                    }
+                                    else
+                                    {
+                                        int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
+                                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                        NPC.TowerActiveVortex = true;
+                                        NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
+                                        NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                    }
                                 }
                                 else
                                 {
@@ -3595,11 +3672,22 @@ namespace tsorcRevamp
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
-                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                                    NPC.TowerActiveNebula = true;
-                                    NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
-                                    NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                                    {
+                                        ModPacket packet = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                                        packet.Write(tsorcPacketID.SpawnNPCLunarTowerNebula);
+                                        Vector2 location = new Vector2((i * 16) + 8, (j * 16) - 64);
+                                        packet.WriteVector2(location);
+                                        packet.Send();
+                                    }
+                                    else
+                                    {
+                                        int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
+                                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                        NPC.TowerActiveNebula = true;
+                                        NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
+                                        NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                    }
                                 }
                                 else
                                 {
@@ -3617,11 +3705,22 @@ namespace tsorcRevamp
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
-                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                                    NPC.TowerActiveStardust = true;
-                                    NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
-                                    NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                                    {
+                                        ModPacket packet = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                                        packet.Write(tsorcPacketID.SpawnNPCLunarTowerStardust);
+                                        Vector2 location = new Vector2((i * 16) + 8, (j * 16) - 64);
+                                        packet.WriteVector2(location);
+                                        packet.Send();
+                                    }
+                                    else
+                                    {
+                                        int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
+                                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                        NPC.TowerActiveStardust = true;
+                                        NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
+                                        NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                    }
                                 }
                                 else
                                 {
@@ -3639,11 +3738,22 @@ namespace tsorcRevamp
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
-                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                                    NPC.TowerActiveSolar = true;
-                                    NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
-                                    NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                                    {
+                                        ModPacket packet = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                                        packet.Write(tsorcPacketID.SpawnNPCLunarTowerSolar);
+                                        Vector2 location = new Vector2((i * 16) + 8, (j * 16) - 64);
+                                        packet.WriteVector2(location);
+                                        packet.Send();
+                                    }
+                                    else
+                                    {
+                                        int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
+                                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                        NPC.TowerActiveSolar = true;
+                                        NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
+                                        NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                    }
                                 }
                                 else
                                 {
