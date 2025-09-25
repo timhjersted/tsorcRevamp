@@ -1882,7 +1882,6 @@ namespace tsorcRevamp
                 case tsorcPacketID.SpawnNPCLunarTowerVortex:
                     {
                         Vector2 npcLocation = reader.ReadVector2();
-                        Mod mod = ModContent.GetInstance<tsorcRevamp>();
                         if (Main.netMode == NetmodeID.Server && !NPC.AnyNPCs(NPCID.LunarTowerVortex) && !NPC.downedTowerVortex) {
                             int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (int)npcLocation.X, (int)npcLocation.Y, NPCID.LunarTowerVortex, 1);
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
@@ -1896,7 +1895,6 @@ namespace tsorcRevamp
                 case tsorcPacketID.SpawnNPCLunarTowerNebula:
                     {
                         Vector2 npcLocation = reader.ReadVector2();
-                        Mod mod = ModContent.GetInstance<tsorcRevamp>();
                         if (Main.netMode == NetmodeID.Server && !NPC.AnyNPCs(NPCID.LunarTowerNebula) && !NPC.downedTowerNebula) {
                             int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (int)npcLocation.X, (int)npcLocation.Y, NPCID.LunarTowerNebula, 1);
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
@@ -1910,7 +1908,6 @@ namespace tsorcRevamp
                 case tsorcPacketID.SpawnNPCLunarTowerStardust:
                     {
                         Vector2 npcLocation = reader.ReadVector2();
-                        Mod mod = ModContent.GetInstance<tsorcRevamp>();
                         if (Main.netMode == NetmodeID.Server && !NPC.AnyNPCs(NPCID.LunarTowerStardust) && !NPC.downedTowerStardust) {
                             int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (int)npcLocation.X, (int)npcLocation.Y, NPCID.LunarTowerStardust, 1);
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
@@ -1924,7 +1921,6 @@ namespace tsorcRevamp
                 case tsorcPacketID.SpawnNPCLunarTowerSolar:
                     {
                         Vector2 npcLocation = reader.ReadVector2();
-                        Mod mod = ModContent.GetInstance<tsorcRevamp>();
                         if (Main.netMode == NetmodeID.Server && !NPC.AnyNPCs(NPCID.LunarTowerSolar) && !NPC.downedTowerSolar) {
                             int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (int)npcLocation.X, (int)npcLocation.Y, NPCID.LunarTowerSolar, 1);
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
