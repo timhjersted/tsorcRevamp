@@ -11526,5 +11526,28 @@ Mods: {
 			SHM9Downed: Девятый страж бездны побеждён
 			RageDowned: Ярость была побеждена
 		}
+
+		Achievements: {
+			ChallengerEternalCrystalAchievement: {
+				// FriendlyName: Give Me Crystal!
+				// Description: Find cosmic crystal lizard.
+				// Progress: You are making progress towards [c/ff8000:{0}], keep at it.
+			}
+
+			CollectorCosmicWatch: {
+				// FriendlyName: Time controller
+				// Description: Day by Night
+			}
+
+			ExploreVillage: {
+				// FriendlyName: Is that a Village?
+				// Description: Welcome travellor
+			}
+
+			SlayerLeonhard: {
+				// FriendlyName: Defeat Leonhard
+				// Description: "{$BossChecklist.LeonhardDesc}"
+			}
+		}
 	}
 }

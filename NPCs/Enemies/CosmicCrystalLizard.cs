@@ -5,6 +5,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Achievements;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
@@ -1008,6 +1009,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.defense = 0;
                 immuneframe = 0;
             }
+
+            ModContent.GetInstance<ChallengerEternalCrystalAchievement>().TotalDamageCondition.Value += damageDone;
+			if (item.DamageType == DamageClass.Melee)
+            {
+				ModContent.GetInstance<ChallengerEternalCrystalAchievement>().EternalCrystalHitCondition.Complete();
+			}
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
@@ -1021,6 +1028,11 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.defense = 0;
                 immuneframe = 0;
+            }
+            
+            if (Main.netMode != NetmodeID.Server && !projectile.trap && !projectile.npcProj)
+            {
+                ModContent.GetInstance<ChallengerEternalCrystalAchievement>().TotalDamageCondition.Value += damageDone;
             }
         }
         public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)

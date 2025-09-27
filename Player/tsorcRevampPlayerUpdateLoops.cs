@@ -11,27 +11,28 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using TerraUI.Objects;
 using tsorcRevamp;
-using tsorcRevamp.NPCs;
-using tsorcRevamp.NPCs.Enemies.SuperHardMode;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
+using tsorcRevamp.Achievements;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+using tsorcRevamp.NPCs;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
+using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Items.Accessories.Defensive;
 
 namespace tsorcRevamp
 {
@@ -729,7 +730,13 @@ namespace tsorcRevamp
             }
 
             // Miakoda help checks
+            // ALSO for Achievements Explore condition
 
+            if (!tsorcRevampWorld.ExploreVillage && UsefulFunctions.PlayerInZone(Player, 4000, 4400, 620, 745))
+            {
+                tsorcRevampWorld.ExploreVillage = true;
+                ModContent.GetInstance<ExploreVillage>().ExploreVillageCondition.Complete();
+            }
             if (!tsorcRevampWorld.EnteredHell && Player.ZoneUnderworldHeight)
             {
                 tsorcRevampWorld.EnteredHell = true;

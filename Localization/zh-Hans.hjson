@@ -239,7 +239,7 @@ Mods: {
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
 			GoblinShark: 一只血浆哥布林鲨鱼正渴望鲜血！
-			SkeletronPrimeRemix: 被遗忘旧日机械支配者已苏醒！
+			SkeletronPrimeRemix: 被遗忘的旧日机械支配者已苏醒！
 			AncestralSpirit: 你惊扰了先祖之灵！
 			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
@@ -4037,7 +4037,7 @@ Mods: {
 				Tooltip:
 					'''
 					[c/4949c2:一种神秘的水晶]
-					凝视它就像凝视着无限广阔的 [c/4949c2:太空]
+					凝视它就像凝视着无限广阔的[c/4949c2:太空]
 					'''
 			}
 
@@ -11530,6 +11530,29 @@ Mods: {
 			SHM6Downed: 六名深渊守护者被击败
 			SHM9Downed: 九名深渊守护者被击败
 			RageDowned: 击败愤怒
+		}
+
+		Achievements: {
+			ChallengerEternalCrystalAchievement: {
+				FriendlyName: 我要水晶！
+				Description: 去找找宇宙晶蜥。
+				Progress: 你已取得了[c/ff8000:{0}]的进度，继续加油
+			}
+
+			CollectorCosmicWatch: {
+				FriendlyName: 时间掌控者
+				Description: 夜以继日。
+			}
+
+			ExploreVillage: {
+				FriendlyName: 那是一座村庄吗？
+				Description: 欢迎你，旅行者。
+			}
+
+			SlayerLeonhard: {
+				FriendlyName: 击败李奥纳德
+				Description: "{$BossChecklist.LeonhardDesc}"
+			}
 		}
 	}
 }

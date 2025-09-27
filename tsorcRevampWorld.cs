@@ -40,6 +40,7 @@ namespace tsorcRevamp
         public static bool CustomMap;
         public static bool OnlyAdventureMap;
         public static bool RemixMap;
+        public static bool ExploreVillage;
         public static bool EnteredHell;
         public static bool TalkedToAraz;
         public static bool EnteredRuinsOfElengad;
