@@ -1,4 +1,0 @@
-﻿[*.cs]
-
-# ChangeMagicNumberToID: Change magic numbers into appropriate ID values
-dotnet_diagnostic.ChangeMagicNumberToID.severity = none
