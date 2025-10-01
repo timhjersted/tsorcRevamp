@@ -11530,23 +11530,23 @@ Mods: {
 		Achievements: {
 			ChallengerEternalCrystalAchievement: {
 				FriendlyName: Отдай мне кристалл!
-				// Description: Найдите кристально-космическую ящерицу
+				Description: Найдите кристально-космическую ящерицу
 				// Progress: Вы продвигаетесь к [c/ff8000:{0}],продолжайте в том же духе.
 			}
 
 			CollectorCosmicWatch: {
-				// FriendlyName: Манипулятор временем
-				// Description: День за ночью
+				FriendlyName: Манипулятор временем
+				Description: День за ночью
 			}
 
 			ExploreVillage: {
-				// FriendlyName: Это что, деревня?
-				// Description: Добро пожаловать, путешественник
+				FriendlyName: Это что, деревня?
+				Description: Добро пожаловать, путешественник
 			}
 
 			SlayerLeonhard: {
-				// FriendlyName: Победите леонарда
-				// Description: "{$BossChecklist.LeonhardDesc}"
+				FriendlyName: Победите леонарда
+				Description: "{$BossChecklist.LeonhardDesc}"
 			}
 		}
 	}
