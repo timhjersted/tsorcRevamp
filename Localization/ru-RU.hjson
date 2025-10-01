@@ -11531,7 +11531,7 @@ Mods: {
 			ChallengerEternalCrystalAchievement: {
 				FriendlyName: Отдай мне кристалл!
 				Description: Найдите кристально-космическую ящерицу
-				// Progress: Вы продвигаетесь к [c/ff8000:{0}],продолжайте в том же духе.
+				Progress: Вы продвигаетесь к [c/ff8000:{0}],продолжайте в том же духе.
 			}
 
 			CollectorCosmicWatch: {
