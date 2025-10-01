@@ -193,7 +193,7 @@ Mods: {
 			10: Вы можете уклоняться в воздухе, чтобы избежать атак, преодолевать большие расстояния и мгновенно менять направление движения...
 			11: У оружия плохой модификатор? Поговорите с Джейд, Изумрудным Вестником. Она может снять его с помощью своего благословения
 			12: Если вы чувствуете, что заблудились, ищите темные места на своей карте. Секреты и пути есть почти в каждом направлении
-			13: Мыльные камни дают много важных советов
+			13: Белые знаки дают много важных советов
 			14: Играйте с модом Recipe Browser, чтобы легко увидеть, во что можно превратить вашу добычу
 			15: Удар по врагам кончиком хлыста всегда приводит к критическому урону
 			16: Я чертовски зол
@@ -6852,7 +6852,7 @@ Mods: {
 			}
 
 			SoapstonePlaceable: {
-				DisplayName: Мыльный камень, которое можно поставить
+				DisplayName: Размещаемый белый знак
 				Tooltip: Возможно, вам не стоит его брать.
 			}
 
@@ -11225,7 +11225,7 @@ Mods: {
 		Tiles: {
 			BonfireCheckpoint.MapEntry: Костёр-сохранение
 			FlameJet.MapEntry: Струя пламени
-			SoapstoneTile.MapEntry: Сообщение на мыльном камне
+			SoapstoneTile.MapEntry: Сообщение на белом знаке
 			SoulSkellyL.MapEntry: Скелет души
 			SoulSkellyR.MapEntry: Скелет души
 			SoulSkellyWall1.MapEntry: Скелет души
@@ -11397,20 +11397,20 @@ Mods: {
 				}
 
 				HideSoapstones: {
-					Label: Скрыть прочитанные мыльные камни
+					Label: Скрыть прочитанные белые знаки
 					Tooltip:
 						'''
-						Если эта опция включена, прочитанные сообщения мыльных камней
+						Если эта опция включена, прочитанные сообщения белых знаков
 						не будут отображаться до тех пор, пока не будет нажата кнопка для их отображения.
 						По умолчанию включено.
 						'''
 				}
 
 				SoapstoneScale: {
-					Label: Увеличение размера мыльного камня
+					Label: Увеличение размера белого знака
 					Tooltip:
 						'''
-						Увеличивает размер всех диалоговых окон мыльных камней на определённый процент.
+						Увеличивает размер всех диалоговых окон белых знаков на определённый процент.
 						По умолчанию 0%.
 						'''
 				}
@@ -11529,23 +11529,23 @@ Mods: {
 
 		Achievements: {
 			ChallengerEternalCrystalAchievement: {
-				// FriendlyName: Give Me Crystal!
-				// Description: Find cosmic crystal lizard.
-				// Progress: You are making progress towards [c/ff8000:{0}], keep at it.
+				FriendlyName: Отдай мне кристалл!
+				// Description: Найдите кристально-космическую ящерицу
+				// Progress: Вы продвигаетесь к [c/ff8000:{0}],продолжайте в том же духе.
 			}
 
 			CollectorCosmicWatch: {
-				// FriendlyName: Time controller
-				// Description: Day by Night
+				// FriendlyName: Манипулятор временем
+				// Description: День за ночью
 			}
 
 			ExploreVillage: {
-				// FriendlyName: Is that a Village?
-				// Description: Welcome travellor
+				// FriendlyName: Это что, деревня?
+				// Description: Добро пожаловать, путешественник
 			}
 
 			SlayerLeonhard: {
-				// FriendlyName: Defeat Leonhard
+				// FriendlyName: Победите леонарда
 				// Description: "{$BossChecklist.LeonhardDesc}"
 			}
 		}
