@@ -89,15 +89,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             //Proximity Debuffs
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
             {
-                player.AddBuff(BuffID.OnFire, 30, false); //on fire
+                player.AddBuff(BuffID.Ichor, 300, false); //on fire
                 player.AddBuff(ModContent.BuffType<TornWings>(), 30, false);
-
-                if (holdTimer <= 0)
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.EarthFiendLich.Heat"), 255, 255, 0); //yellow
-                    holdTimer = 12000;
-                }
-
             }
 
             bool flag25 = false;

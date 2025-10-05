@@ -1887,6 +1887,10 @@ namespace tsorcRevamp
         {
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), new Vector2(8234, 1875) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2490, 1804) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>(), new Vector2(305, 1923) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(3152, 1696) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), new Vector2(7034, 985) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), new Vector2(6500, 1875) },
         };
 
 

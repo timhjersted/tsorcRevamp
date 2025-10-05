@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons
             Item.height = 100;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.shoot = ModContent.ProjectileType<Nothing>();
-            Item.shootSpeed = 5f;
+            Item.shootSpeed = 10f;
             Item.useAmmo = AmmoID.Bullet;
             Item.DamageType = DamageClass.Generic;
             Item.useAnimation = 24;

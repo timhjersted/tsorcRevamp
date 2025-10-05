@@ -925,15 +925,15 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.WitheredArmor, 5 * 60);
             }
 
-            if (tsorcRevampWorld.SuperHardMode && Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.HeavenforgeBrickWall)
+            if (tsorcRevampWorld.SuperHardMode && Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.HellstoneBrickUnsafe)
             {
-                Player.AddBuff(BuffID.Darkness, 5 * 60);
+                Player.AddBuff(BuffID.OnFire, 5 * 60);
                 Player.AddBuff(BuffID.WitheredArmor, 5 * 60);
             }
 
-            if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.StarRoyaleBrickWall)
+            if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.LavaMossBlockWall)
             {
-                Player.AddBuff(BuffID.Darkness, 5 * 60);
+                Player.AddBuff(BuffID.OnFire, 5 * 60);
                 Player.AddBuff(BuffID.WitheredArmor, 5 * 60);
             }
 

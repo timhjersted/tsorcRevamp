@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.LightRed;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.width = 38;
             Item.height = 34;
             Item.useStyle = ItemUseStyleID.HoldUp;
@@ -27,17 +28,20 @@ namespace tsorcRevamp.Items.BossItems
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.MagicMirror);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 10);
+            recipe.AddIngredient(ModContent.ItemType<BewitchedTitanite>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 15);
             recipe.AddIngredient(ItemID.SoulofNight, 8);
-            recipe.AddIngredient(ItemID.LunarBar, 5);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
 
             recipe.Register();
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.RemixMap)
+            {
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure", LangUtils.GetTextValue("Items.DarkMirror.RemixMode")));
+            }
+            else if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !tsorcRevampWorld.RemixMap)
             {
                 tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure", LangUtils.GetTextValue("Items.DarkMirror.AdvMode")));
             }
@@ -66,6 +70,22 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 return false;
             }
+        }
+
+        float rotation = 0;
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                rotation += 0.01f;
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i + rotation) * 4;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Gray * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+
+                offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i - rotation) * 4;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Gray * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+            }
+            return true;
         }
 
         double timeRate;
@@ -110,7 +130,15 @@ namespace tsorcRevamp.Items.BossItems
                         }
                     }
 
-                    player.position = new Vector2(5760, 1774) * 16;
+                    if (tsorcRevampWorld.RemixMap)
+                    {
+                        player.position = new Vector2(6148, 1751) * 16;
+                    }
+                    else
+                    {
+                        player.position = new Vector2(5760, 1774) * 16;
+                    }
+                    
 
 
                     player.gravDir = 1;

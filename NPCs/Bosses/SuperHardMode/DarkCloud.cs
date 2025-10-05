@@ -1806,6 +1806,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 NPC.Center = new Vector2(5827.5f, 1698) * 16;
+                if (tsorcRevampWorld.RemixMap)
+                {
+                    NPC.Center = new Vector2(6500, 1795) * 16;
+                }
             }
             else
             {
@@ -2053,7 +2057,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 Vector2 pyramidCenter = new Vector2(5828, 1750) * 16;
+                if (tsorcRevampWorld.RemixMap)
+                {
+                    pyramidCenter = new Vector2(6500, 1840) * 16;
+                }
+
                 NPC.Center = pyramidCenter;
+                
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     if (Vector2.Distance(Main.player[i].Center, NPC.Center) < 10000)

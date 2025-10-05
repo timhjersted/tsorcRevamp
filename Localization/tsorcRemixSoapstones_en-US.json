@@ -1,14 +1,7 @@
 {
-  "text": "- You have discovered the lair of the Lich King, the Earth Fiend Spirit -",
-  "tileX": 58,
-  "tileY": 1911,
-  "textWidth": 320, 
-  "style": 1
-}
-{
-  "text": "You pull the lever and hear a gate opening to the East that appears to be the entrance to the Lich King's lair.",
-  "tileX": 227,
-  "tileY": 1796,
+  "text": "You pull the lever and hear a gate opening to the East that appears to be the entrance to the Fire Fiend's lair.",
+  "tileX": 98,
+  "tileY": 1913,
   "textWidth": 320, 
   "style": 1
 }
@@ -181,7 +174,7 @@
   "style": 1
 }
 {
-  "text": "A voice speaks to you from beyond the stars: \u0022Seek out the Great Pyramid once more. To its East, you will find the lock that guards an ancient, elemental being... The legends of your people refer to it as... Chaos.\u0022",
+  "text": "A voice speaks to you from beyond the stars: \u0022Seek out the Hallow once more. To its East, you will find the lock that guards an ancient, elemental being... The legends of your people refer to it as... Chaos.\u0022",
   "tileX": 481,
   "tileY": 1791,
   "textWidth": 320,
@@ -201,8 +194,8 @@
   "textWidth": 320,
   "style": 1
 }
-{
-  "text": "You sense the presence of the Earth Fiend nearby. The air seems heavier, the pressure more intense, and you also smell a repulsive odor of ichor... --NEWLINE  --NEWLINE \u0022The passage to the left is blocked, but I think it leads to the Fiend. Perhaps the passage above will find a way to open it.\u0022",
+{ 
+  "text": "You sense the presence of the Fiend nearby. you feel an air so hot and heavy that it makes you want to faint... --NEWLINE  --NEWLINE \u0022The passage to the left is blocked, but I think it leads to the Fiend. Perhaps the passage above will find a way to open it.\u0022",
   "tileX": 586,
   "tileY": 1919,
   "textWidth": 320,
@@ -237,14 +230,14 @@
   "style": 1
 }
 {
-  "text": "- This gate guards the teleporter to the Molten Sky Temple, place of the Earth Fiend Lich - --NEWLINE  --NEWLINE You get out your map journal and write a note: \u0022Lizard Gate at the middle of the Sky Temple Ruins.\u0022",
-  "tileX": 4475,
-  "tileY": 351,
+  "text": "- This gate guards the Forgotten Path to Morgul Feleg - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Lizard gate in a unknown structure somewhere in the waterways of the Shadow Temple, deep in the darkness...\u0022",
+  "tileX": 2177,
+  "tileY": 1774,
   "textWidth": 320,
   "style": 1 
 }
 {
-  "text": "- You\u0027ve discovered the Molten Sky Temple - --NEWLINE  --NEWLINE This place has a strong connection with the sky, the air we breathe is similar to that on the surface.",
+  "text": "- You\u0027ve discovered the Molten Citadel - --NEWLINE  --NEWLINE It is the hottest and most scorching place in the world, with a burning brick fortress and a fiery air. Going to this place without fire protection would be madness...",
   "tileX": 1355,
   "tileY": 1935,
   "textWidth": 320,
@@ -496,7 +489,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found The Catacombs -",
+  "text": "- You\u0027ve found The Grey Catacombs -",
   "tileX": 2991,
   "tileY": 1231,
   "textWidth": 320,
@@ -527,13 +520,6 @@
   "text": "- This gate opens from the other side - --NEWLINE  --NEWLINE \u0022It\u0027s adorned with Lihzahrd brick... Perhaps the way in is sealed by the same material...\u0022",
   "tileX": 3103,
   "tileY": 1837,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "- You have found the Origin of the Abyss - --NEWLINE  --NEWLINE It is the source from which the Abyss permeates the entire world.",
-  "tileX": 3147,
-  "tileY": 1782,
   "textWidth": 320,
   "style": 1
 }
@@ -608,14 +594,14 @@
   "style": 1
 }
 {
-  "text": "A voice whispers from the void: --NEWLINE \u0022The Witchking and Artorias are both protected by a powerful magical shield. Seek the Barrow Blade...\u0022",
-  "tileX": 3343,
-  "tileY": 1782,
+  "text": "A voice whispers from the depths: --NEWLINE \u0022The Witchking and Artorias are both protected by a powerful magical shield. Seek the Barrow Blade...\u0022",
+  "tileX": 216,
+  "tileY": 1924,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "- This gate guards the Path to the Catacombs, Home of the Fire Fiend Spirit - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE \u0022Lizard Gate at the bottom of the Great Chasm.  Key to open unknown...\u0022",
+  "text": "- This gate guards the Path to the Grey Catacombs, Home of the Earth Fiend Lich - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE \u0022Lizard Gate at the bottom of the Great Chasm.  Key to open unknown...\u0022",
   "tileX": 3364,
   "tileY": 1412,
   "textWidth": 320,
@@ -1035,7 +1021,7 @@
   "style": 1
 }
 {
-  "text": "You have discovered the Sky Ruins of the Empress of Light. --NEWLINE  --NEWLINE Long ago, Golem imprisoned the Empress using the dark magic of the great pyramid, leaving this sky temple to fall to ruin.  --NEWLINE  --NEWLINE It is said that upon the day that Golem is slain, the Empress shall be freed to return to these sacred grounds.  ",
+  "text": "You have discovered the Sky Ruins of the Empress of Light. --NEWLINE  --NEWLINE Long ago, Golem imprisoned the Empress using the great magic of the pyramid, leaving this sky temple to fall to ruin.  --NEWLINE  --NEWLINE It is said that upon the day that Golem is slain, the Empress shall be freed to return to these sacred grounds.  ",
   "tileX": 4837,
   "tileY": 350,
   "textWidth": 320,
@@ -1525,7 +1511,7 @@
   "style": 1
 }
 {
-  "text": "- This gate guards the Forgotten Path to Morgul Meleg - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Lizard gate near the Earth\u0027s molten core, guarding something I do not know how to describe... a vessel of some kind, or a transporter.. \u0022 --NEWLINE  --NEWLINE You attempt a rough sketch of it, and draw the tower above it leading to the Forgotten City as a reference point...",
+  "text": "- This gate guards the Path to the Molten Citadel - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Lizard gate near the Earth\u0027s molten core, guarding something I do not know how to describe... a vessel of some kind, or a transporter.. \u0022 --NEWLINE  --NEWLINE You attempt a rough sketch of it, and draw the tower above it leading to the Forgotten City as a reference point...",
   "tileX": 4791,
   "tileY": 1907,
   "textWidth": 320,
@@ -1770,7 +1756,7 @@
   "style": 1
 }
 {
-  "text": "A voice whispers to you... \u0022Seek the lord known as Chaos. Its temple has long remained a secret, as it is protected by a Gem Lock once sealed by Artorias.\u0022 --NEWLINE  --NEWLINE \u0022Seek the Temple of Forgotten Lights Gate...to the East of the Great Pryamid...\u0022",
+  "text": "A voice whispers to you... \u0022Seek the lord known as Chaos. Its prison has long remained a secret, as it is protected by a Gem Lock once sealed by Artorias.\u0022 --NEWLINE  --NEWLINE \u0022Seek somewhere in the Hallow... At the end of the Palladium Caves...\u0022",
   "tileX": 5402,
   "tileY": 1689,
   "textWidth": 320,
@@ -1833,7 +1819,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the Great Pyramid - --NEWLINE  --NEWLINE Miakoda: \u0022This pryamid is known to have some connection to the stars and the moon. It is believed that a smaller temple was built due West of this spot, to align with the cosmic energies of the moon. For what purpose? Old tales say it was used as a gate to another realm... but, perhaps some mysteries are best left that way...\u0022",
+  "text": "- You\u0027ve discovered the Great Pyramid - --NEWLINE  --NEWLINE Miakoda: \u0022This pryamid is a high place of power and also the birthplace of Plantera bulbs.\u0022",
   "tileX": 5774,
   "tileY": 1781,
   "textWidth": 320,
@@ -1856,13 +1842,6 @@
 {
   "text": "Miakoda: \u0022This Crimson Key could be used to open the red chest at the bottom of the Western Ocean. I\u0027m told it holds a charm to protect against lava...\u0022",
   "tileX": 5887,
-  "tileY": 1781,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "A voice speaks to you, as if it is inside the walls: \u0022The Temple of Forgotten Lights to the East hides more secrets than it appears...\u0022 --NEWLINE  --NEWLINE \u0022It is a gateway to Chaos.\u0022",
-  "tileX": 5916,
   "tileY": 1781,
   "textWidth": 320,
   "style": 1
@@ -1952,13 +1931,6 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Temple of Forgotten Lights Gate - --NEWLINE  --NEWLINE You notice a hole in the East wall in the shape of a crescent moon.   --NEWLINE  --NEWLINE The light from the moon glowing from the hologram on the North wall just barely misses the hole...",
-  "tileX": 6053,
-  "tileY": 1746,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "The gate is sealed shut, but an inscription reads... --NEWLINE  --NEWLINE \u0022Near the Molten Runes you will find me, Submerged in Murky Light.\u0022 --NEWLINE  --NEWLINE \u0022It\u0027s some kind of riddle,\u0022 you think to yourself. \u0022There must be a switch hidden in these ruins somewhere.\u0022",
   "tileX": 6087,
   "tileY": 1037,
@@ -1966,9 +1938,9 @@
   "style": 1
 }
 {
-  "text": "You\u0027ve found an Amethyst Gem Lock. --NEWLINE  --NEWLINE A Large Amethyst is required to unlock the forcefield blocking the teleporter. --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Need Large Amethyst. Lizard gate behind hidden Temple of Forgotten Lights door.... East of the Great Pyramid...\u0022 ",
-  "tileX": 6087,
-  "tileY": 1743,
+  "text": "You\u0027ve found an Amethyst Gem Lock. --NEWLINE  --NEWLINE This lock guards the prison of Chaos and its darkness.",
+  "tileX": 7182,
+  "tileY": 965,
   "textWidth": 320,
   "style": 1
 }
@@ -2316,6 +2288,20 @@
   "style": 1
 }
 {
+  "text": "- The path is blocked by lihzahrd bricks, blocking the path to the Prison of Chaos -  --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Lizard Gate in a small cavity on the border between the Hallowed Caves and the Frozen Ocean...\u0022",
+  "tileX": 7497,
+  "tileY": 873,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You have found the Temple of Chaos, long sealed within the Hallowed Caves. But with the death of the Attraidies and the rift between the Abyss and the world, the seal has been damaged, and a shadow has been released into these enchanted lands. Defeating Chaos will dispel the darkness...",
+  "tileX": 7100,
+  "tileY": 986,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Although this place is absolutely terrifying, the architecture is unequally beautiful and complex.",
   "tileX": 7794,
   "tileY": 1734,
@@ -2340,6 +2326,13 @@
   "text": "- You have discovered the Blight on the Frozen Ocean - --NEWLINE  --NEWLINE It\u0027s power seems dormant but unstable...",
   "tileX": 8136,
   "tileY": 867,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You\u0022ve found the Martian outpost of the Frozen Ocean, hidden beneath the surface glacier. --NEWLINE  --NEWLINE The outpost appears empty, but still appears fully functional. Exploring the outpost leaves you wondering : --NEWLINE \u0022Why did this alien civilization install structures like this around the world?\u0022",
+  "tileX": 8086,
+  "tileY": 1119,
   "textWidth": 320,
   "style": 1
 }
@@ -2424,6 +2417,34 @@
   "text": "- The Island of Clairvoyance - --NEWLINE  --NEWLINE The Stardust Pillar, one of the four great celestial seals, represents sight and stars. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
   "tileX": 7705,
   "tileY": 362,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You\u0022ve found the Shrine of Death - --NEWLINE  --NEWLINE A terrifying and dark frost is spread over these lands at the edge of the frozen skies that remind you of your death.",
+  "tileX": 8002,
+  "tileY": 570,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "\u0022Where am I? Why did I stare at this mirror for so long?\u0022",
+  "tileX": 6212,
+  "tileY": 1759,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Using this mirror, you now find yourself lost in the Abyss. The pressure and darkness of the Abyss slowly degrade your mind, and as you progress through these dark caves, you feel a presence intensifying and seeming strangely familiar.",
+  "tileX": 6425,
+  "tileY": 1686,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You have found the Origin of the Abyss - --NEWLINE  --NEWLINE It is the source from which the Abyss permeates the entire world.",
+  "tileX": 6626,
+  "tileY": 1876,
   "textWidth": 320,
   "style": 1
 }

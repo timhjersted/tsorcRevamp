@@ -24,12 +24,12 @@ namespace tsorcRevamp.Projectiles
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 100;
 
-            trailWidth = 16;
-            trailPointLimit = 100;
+            trailWidth = 20;
+            trailPointLimit = 120;
             trailCollision = true;
             collisionFrequency = 2;
-            trailYOffset = 50;
-            trailMaxLength = 50;
+            trailYOffset = 40;
+            trailMaxLength = 100;
             collisionEndPadding = 1;
             collisionPadding = 1;
 
@@ -79,6 +79,13 @@ namespace tsorcRevamp.Projectiles
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks = 0;
                 SoundEngine.PlaySound(SoundID.Item14);
+
+                for (int i = 0; i < 25; i++)
+                {
+                    Vector2 velocity = Main.rand.NextVector2Circular(6f, 6f);
+                    int dustIndex = Dust.NewDust(target.Center, 0, 0, DustID.GemSapphire, velocity.X, velocity.Y, 150, default, 2.5f);
+                    Main.dust[dustIndex].noGravity = true;
+                }
             }
         }
     }

@@ -245,7 +245,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 {
                     if (MoveTimer % 60 == 0)
                     {
-                        Vector2 lightningCenter = new Vector2(Main.rand.Next(3107, 3350), 1682) * 16;
+                        Vector2 lightningCenter; 
+                        if (tsorcRevampWorld.RemixMap)
+                        {
+                            lightningCenter = new Vector2(Main.rand.Next(176, 419), 1824) * 16;
+                        }
+                        else
+                        {
+                            lightningCenter = new Vector2(Main.rand.Next(3107, 3350), 1682) * 16;
+                        }
                         float distance = Vector2.Distance(lightningCenter, Target.Center);
                         Vector2 lightningVector = UsefulFunctions.Aim(lightningCenter, Target.Center, distance / 30);
                         lightningVector += Target.velocity;
@@ -255,14 +263,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                         }
                     }
 
-                    Vector2 fireballCenter = new Vector2(Main.rand.Next(3107, 3350), 1687) * 16;
+                    Vector2 fireballCenter; 
+                    if (tsorcRevampWorld.RemixMap)
+                    {
+                        fireballCenter = new Vector2(Main.rand.Next(176, 419), 1829) * 16;
+                    }
+                    else
+                    {
+                        fireballCenter = new Vector2(Main.rand.Next(3107, 3350), 1687) * 16;
+                    }
                     Vector2 fireballVector = UsefulFunctions.Aim(fireballCenter, Target.Center, 10);
                     fireballVector += Target.velocity * Main.rand.NextFloat(0, 1);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), fireballCenter, fireballVector, ModContent.ProjectileType<MarilithFireball>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
                     }
-
                 }
             }
 
@@ -341,7 +356,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         float[] angles;
         private void HoldBallStorm()
         {
-            if (NPC.Distance(new Vector2(3228, 1731) * 16) > 90 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            Vector2 targetPosition = new Vector2(3228, 1731) * 16; 
+            if (tsorcRevampWorld.RemixMap)
+            {
+                targetPosition = new Vector2(297, 1873) * 16; // for remix map
+            }
+
+            if (NPC.Distance(targetPosition) > 90 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 MoveTimer = 0;
                 MoveCounter++;
@@ -349,7 +370,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 {
                     MoveCounter = 15;
                 }
-                NPC.velocity = UsefulFunctions.Aim(NPC.Center, new Vector2(3228, 1731) * 16, MoveCounter / 2);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, targetPosition, MoveCounter / 2);
             }
             else
             {

@@ -45,8 +45,13 @@ namespace tsorcRevamp.Items.Tools
                     || (buffType == BuffID.CursedInferno)
                     || (buffType == BuffID.Cursed)
                     || (buffType == BuffID.Silenced)
-                    || (buffType == BuffID.Silenced)
-                    || (buffType == BuffID.Silenced)
+                    || (buffType == BuffID.Frostburn)
+                    || (buffType == BuffID.Chilled)
+                    || (buffType == BuffID.Frozen)
+                    || (buffType == BuffID.Ichor)
+                    || (buffType == BuffID.Blackout)
+                    || (buffType == BuffID.Obstructed)
+
                     )
                 {
                     player.buffTime[buffIndex] = 0;
@@ -60,9 +65,9 @@ namespace tsorcRevamp.Items.Tools
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome);
-            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
             recipe.AddIngredient(ModContent.ItemType<Potions.HealingElixir>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 65000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

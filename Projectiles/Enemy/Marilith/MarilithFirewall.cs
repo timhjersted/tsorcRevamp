@@ -71,31 +71,68 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 int width = 140;
                 int longLength = 268;
                 int shortLength = 122;
-                //Left
-                if (Projectile.ai[0] == 0)
+                
+                if (tsorcRevampWorld.RemixMap)
                 {
-                    Projectile.width = width;
-                    Projectile.height = 16 * shortLength;
-                    Projectile.Center = new Vector2(3107, 1731) * 16;
+                    // Left
+                    if (Projectile.ai[0] == 0)
+                    {
+                        Projectile.width = width;
+                        Projectile.height = 16 * shortLength;
+                        Projectile.Center = new Vector2(176, 1873) * 16;
+                    }
+                    // Right
+                    else if (Projectile.ai[0] == 1)
+                    {
+                        Projectile.width = width;
+                        Projectile.height = 16 * shortLength;
+                        Projectile.Center = new Vector2(419.2f, 1873) * 16;
+                    }
+                    // Top
+                    else if (Projectile.ai[0] == 2)
+                    {
+                        Projectile.width = 16 * longLength;
+                        Projectile.height = width;
+                        Projectile.Center = new Vector2(297.5f, 1824.3f) * 16;
+                    }
+                    // Bottom
+                    else if (Projectile.ai[0] == 3)
+                    {
+                        Projectile.width = 16 * longLength;
+                        Projectile.height = width;
+                        Projectile.Center = new Vector2(297.5f, 1921.8f) * 16;
+                    }
                 }
-                //Right
-                else if (Projectile.ai[0] == 1)
+                else
                 {
-                    Projectile.width = width;
-                    Projectile.height = 16 * shortLength;
-                    Projectile.Center = new Vector2(3350.2f, 1731) * 16;
-                }//Top
-                else if (Projectile.ai[0] == 2)
-                {
-                    Projectile.width = 16 * longLength;
-                    Projectile.height = width;
-                    Projectile.Center = new Vector2(3228.5f, 1682.3f) * 16;
-                }//Bottom
-                else if (Projectile.ai[0] == 3)
-                {
+                    // Left
+                    if (Projectile.ai[0] == 0)
+                    {
+                        Projectile.width = width;
+                        Projectile.height = 16 * shortLength;
+                        Projectile.Center = new Vector2(3107, 1731) * 16;
+                    }
+                    //Right
+                    else if (Projectile.ai[0] == 1)
+                    {
+                        Projectile.width = width;
+                        Projectile.height = 16 * shortLength;
+                        Projectile.Center = new Vector2(3350.2f, 1731) * 16;
+                    }
+                    //Top
+                    else if (Projectile.ai[0] == 2)
+                    {
+                        Projectile.width = 16 * longLength;
+                        Projectile.height = width;
+                        Projectile.Center = new Vector2(3228.5f, 1682.3f) * 16;
+                    }
+                    //Bottom
+                    else if (Projectile.ai[0] == 3)
+                    {
                     Projectile.width = 16 * longLength;
                     Projectile.height = width;
                     Projectile.Center = new Vector2(3228.5f, 1779.8f) * 16;
+                    }
                 }
             }
 
