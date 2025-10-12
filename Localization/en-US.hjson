@@ -446,26 +446,56 @@ Mods: {
 			AttraidiesDesc: Gather all the Crests in order to craft the Mind Cube.
 			RealAttraidiesName: Attraidies (Real)
 			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
-			HellkiteDragonDesc: flies on a large magmatic sky island, above the western sand dunes.
-			WaterFiendKrakenDesc: Seek out the lihzahrd gate in the Great Chasm.
-			EarthFiendLichDesc: Find the ancient Temple west side of the Ashen Cave.
-			WitchkingDesc: Find the ancient ship hidden in the Fire Temple.
-			RemixWaterFiendKrakenDesc: Seek out the lihzahrd gate in the Mycelium Forest.
-			RemixEarthFiendLichDesc: Seek out the lihzahrd gate in the Sky Temple Ruins.
-			ArtoriasDesc: The Abyss pervades the tunnels east of the Forgotten City.
-			RemixArtoriasDesc: Find the key in the Great Foundry in the jungle to open the passage east of the Forgotten City.
+			HellkiteDragonDesc:
+				'''
+				Often sighted roaming the skies above the Village, searching for its next feast.
+				Remix Map: Flies on a large magmatic sky island, above the western sand dunes.
+				'''
+			WaterFiendKrakenDesc:
+				'''
+				Seek out the lihzahrd gate in the Great Chasm.
+				Remix Map: Seek out the lihzahrd gate in the Mycelium Forest.
+				'''
+			EarthFiendLichDesc:
+				'''
+				Find the ancient Temple west side of the Ashen Cave.
+				Remix Map: Seek out the lihzahrd gate in the Great Chasm.
+				'''
+			WitchkingDesc:
+				'''
+				Found in his lair deep underground, shrouded in extreme darkness.
+				Remix Map: Find the ancient ship hidden in the Shadow Temple.
+				'''
+			ArtoriasDesc:
+				'''
+				The Abyss pervades the tunnels east of the Forgotten City.
+				Remix Map: Find the key in the Great Foundry in the jungle to open the passage east of the Forgotten City.
+				'''
 			SeathTheScalelessDesc: Seek out the lihzahrd gate below the Eastern Ocean.
-			AbysmalOolacileSorcererDesc: Seek out the lihzahrd gate below the Lihzahrd Temple.
-			FireFiendMarilithDesc: Seek out the lihzahrd gate in the Western Desert.
-			RemixAbysmalOolacileSorcererDesc: Seek out the lihzahrd gate below the Eastern Ocean.
-			RemixFireFiendMarilithDesc: Seek out the lihzahrd gate in the Great Chasm.
+			AbysmalOolacileSorcererDesc:
+				'''
+				Seek out the lihzahrd gate below the Lihzahrd Temple.
+				Remix Map: Seek out the lihzahrd gate below the Eastern Ocean.
+				'''
+			FireFiendMarilithDesc:
+				'''
+				Seek out the lihzahrd gate in the Western Desert.
+				Remix Map: Find the ancient ship hidden in the Fire Temple.
+				'''
 			BlightName: Blight
 			BlightDesc: The fissure on the Frozen Ocean churns with the energy of the abyss.
 			WyvernMageShadowDesc: Find the Glass Prison, high above the fortress on the mountain.
-			ChaosDesc: Seek the Moon Temple Gate, to the East of the Great Pryamid.
-			RemixChaosDesc: Seek the Temple of Forgotten Lights Gate, to the East of the Great Pryamid.
+			ChaosDesc:
+				'''
+				Seek the Moon Temple Gate, to the East of the Great Pryamid.
+				Remix Map: Seek the Hallow once more, in the palladium caves.
+				'''
 			DarkCloudName: ???
-			DarkCloudDesc: The ancient pyramid grows dark once more.
+			DarkCloudDesc:
+				'''
+				The ancient pyramid grows dark once more.
+				Remix Map: Use the Dark Mirror.
+				'''
 			GwynName: Gwyn, Lord of Cinder
 			GwynDesc: Seek the tomb below the Western Ocean.
 		}
@@ -3669,7 +3699,11 @@ Mods: {
 				9: "{$BossChecklist.SlograAndGaibonDesc}"
 				10: From the Jungle Ruins to Forgotten City, Larvas are everywhere.
 				11: Found past the Lake of Flowered Paths in underground jungle, open the shut gate.
-				12: Check the basement of Wizard's house, to an icy land.
+				12:
+					'''
+					Check the basement of Wizard's house, to an icy land.
+					Remix Map: Seek far to the east, at the entrance to the Frozen Ocean past the Hallow.
+					'''
 				13: "{$BossChecklist.JungleWyvernDesc}"
 				14: "{$BossChecklist.AncientDemonDesc}"
 				15: Pass the four gate west of the Fire Temple, will you find an answer on the altar?
@@ -3682,7 +3716,11 @@ Mods: {
 				22: "{$BossChecklist.TheHunterDesc}"
 				23: It awaits at the end of Shadow Temple.
 				24: Below a Broken, familiar Bridge, you will find the Flooded Machine Temple.
-				25: Why do the Great Pyramid and Hunter's arena have the same pink flowers?
+				25:
+					'''
+					Why do the Great Pyramid and Hunter's arena have the same pink flowers?
+					Remix Map: Search in the Jungle Ruins the entrance to its lush and forgotten depths.
+					'''
 				26: Where does the Teleporter of the Great Pyramid lead to?
 				27: Golem controls the forcefield of the floating island above the village.
 				28: Atop the Twin Peaks of Arazium, they gaze at Sky Above and the Great Chasm Below.
@@ -3690,7 +3728,11 @@ Mods: {
 				30: "{$BossChecklist.RealAttraidiesDesc}"
 				31: "{$BossChecklist.HellkiteDragonDesc}"
 				32: "{$BossChecklist.WitchkingDesc}"
-				33: Solve the puzzle of Three stone pillars on the west Side of the Ashen Cave.
+				33:
+					'''
+					Solve the puzzle of Three stone pillars on the west Side of the Ashen Cave.
+					Remix Map: Confront the four celestial pillars and search for an ancient alien structure in the sky.
+					'''
 				34: "{$BossChecklist.WaterFiendKrakenDesc}"
 				35: "{$BossChecklist.EarthFiendLichDesc}"
 				36: "{$BossChecklist.FireFiendMarilithDesc}"
@@ -3764,12 +3806,20 @@ Mods: {
 
 			CrestOfEarth: {
 				DisplayName: Crest of Earth
-				Tooltip:
+				Tooltip: ""
+				AdvMode:
 					'''
 					A shard of pure minerals
 					One of eight. [c/00ffd4:On its side there's a clue:]
 					"[c/ffbf00:Two paths lead to my entrance. Below the Oasis in the Desert, Serris unlocks the Way.]
 					"[c/ffbf00:In a small sandy Cave atop a hill, a Chlorophyte Gate guards the other.]"
+					'''
+				RemixMode:
+					'''
+					A shard of pure minerals
+					One of eight. [c/00ffd4:On its side there's a clue:]
+					"[c/ffbf00:Two paths lead to my entrance. Deep in the Dark Tower, Serris unlocks the Way.]
+					"[c/ffbf00:In a cave in the Mycelium Forest, a Chlorophyte Gate guards the other.]"
 					'''
 			}
 
@@ -3809,12 +3859,20 @@ Mods: {
 
 			CrestOfSteel: {
 				DisplayName: Crest of Steel
-				Tooltip:
+				Tooltip: ""
+				AdvMode:
 					'''
 					A shard of burning hot steel
 					One of eight.
 					[c/00ffd4:A riddle is etched into the metal:] 
 					"[c/ffbf00:Above the Machine's Throne, Below the Dryad's Cove: A Locked Door guards an Ancient Pyramid, long ago forgotten.]"
+					'''
+				RemixMode:
+					'''
+					A shard of burning hot steel
+					One of eight.
+					[c/00ffd4:A riddle is etched into the metal:] 
+					"[c/ffbf00:Somewhere in the Jungle, Near the exit of the Volcano: A Chlorophyte Gate guards the entrance to lush, wild depths, long ago forgotten.]"
 					'''
 			}
 
@@ -9674,6 +9732,7 @@ Mods: {
 			XBowArrow.DisplayName: X Bow Arrow
 			DragoonSpearZap.DisplayName: Dragoon Spear Zap
 			FlameScrollStrike.DisplayName: Flame Scroll Strike
+			BloodShot.DisplayName: Blood Shot
 		}
 
 		NPCs: {
@@ -10423,7 +10482,7 @@ Mods: {
 			FreedFairy: {
 				DisplayName: Freed Fairy
 				Name1: Freed Fairy
-				Quote1: Thank you for freeing me! Have this [c/aa9911:glowing thing] I recovered from the bottom of the spring
+				Quote1: Thank you for freeing me! Have this [c/aa9911:glowing thing] I recovered from the bottom of the spring.
 				Button: Accept
 
 				TownNPCMood: {
@@ -10717,14 +10776,25 @@ Mods: {
 					It is said that earning the recognition of Serris will grant one access to the depths of the Labyrinth.
 					We don't need to go there yet, {0}. This path does not lead to the Hunter.
 					'''
+				RemixTempleOfSerris:
+					'''
+					Serris...? I last heard about it from a brave soul who dared to delve deep into the Basements of the Dark Tower.
+					It is said that Serris, hidden below the tower, guards the access to a secret path somewhere.
+					We don't need to go there yet, {0}. This path does not lead to the Hunter.
+					'''
 				DestroyerFromSerris:
 					'''
 					It is said that earning the recognition of Serris will grant one access to the depths of the Labyrinth.
-					The path opened by defeating Serris-X should be somewhere to the east of the Serris ruins, underneath a pool of water.
+					The path opened by defeating Serris-X should be somewhere under the Desert Surface, near the ruins.
 					'''
 				DestroyerFromHunter:
 					'''
 					A small sandy cave atop a hill... I'm sure we passed one before {0}, when we were traveling West from the corruption.
+					This one seems easy!
+					'''
+				RemixDestroyerFromHunter:
+					'''
+					A small mushroom cave in the Mycelium Forest... I'm sure we passed one before {0}, when we were traveling West from the corruption. It was near the Truffle's home!
 					This one seems easy!
 					'''
 				DestroyerLabrynthGates:
@@ -10761,10 +10831,21 @@ Mods: {
 					I do not know what manner of creature this is, but it must be stopped. Head to the east of where you first found your brother Elijah, within the Forgotten City.
 					You will find a Pyramid dedicated to the Sun and Moon. It leeches from the power there.
 					'''
+				RemixGolemJunglePyramidPlanteraHint:
+					'''
+					The spirits cry of a great evil emerging within the Jungle. It wishes for nothing but death.
+					I do not know what manner of creature this is, but it must be stopped. Do you remember the chlorophyte gate deep in the jungle, near the exit of the Volcano?
+					You will find the path to the old jungle, where it draws its power from a powerful energy source.
+					'''
 				GolemJunglePyramidHint:
 					'''
 					Head to the east of where you first found your brother Elijah, within the Forgotten City.
 					You will find a Pyramid dedicated to the Sun and Moon. That is the Pyramid you seek.
+					'''
+				RemixGolemJunglePyramidHint:
+					'''
+					Go back deep into the jungle and find the passage near the exit of the Meteor Temple.
+					This is where you will find the Great Pyramid of Life, where this creature leeches its energy.
 					'''
 				GolemJungleMoonGate:
 					'''
@@ -10822,9 +10903,21 @@ Mods: {
 					According to the Shaman Elder, this is where the Water Fiend Kraken has made its dwelling.
 					It is the first of the beings we need to slay before we can fight Gwyn, Keeper of the Flame.
 					'''
+				RemixWaterFiendKrakenHint:
+					'''
+					West of the Mycelium Forest near the Shadow Temple lies a path to the Dreamlike Caverns. 
+					According to the Shaman Elder, this is where the Water Fiend Kraken has made its dwelling.
+					It is the first of the beings we need to slay before we can fight Gwyn, Keeper of the Flame.
+					'''
 				FireFiendMarilithHint:
 					'''
 					East of the Elengad Ruins and Shadow temple lies a path to the Catacombs. 
+					There lies the Herald of Chaos, Fire Fiend Marilith. 
+					It is the second of the beings we must slay.
+					'''
+				RemixFireFiendMarilithHint:
+					'''
+					The burning path starts from inside hell below the Forgotten City. The spirits tell me of a forgotten passage entombed in molten rock.
 					There lies the Herald of Chaos, Fire Fiend Marilith. 
 					It is the second of the beings we must slay.
 					'''
@@ -10839,6 +10932,12 @@ Mods: {
 					The second path starts from inside hell below the Forgotten City. The spirits tell me of a forgotten passage entombed in molten rock.
 					Take that passage and travel a long ways west from it, until you reach the hidden veil of humanity's past.
 					The Earth Fiend Lich will be near.
+					'''
+				RemixEarthFiendLichHint1:
+					'''
+					We must dive into the Great Chasm and find the Lihzahrd Gate that blocks the path to the Gray Catacombs.
+					Despite the horror of this place, we have no choice but to venture there and face what is there.
+					The Earth Fiend Lich is here, deep in the Catacombs.
 					'''
 				SeathTheScalelessHint:
 					'''
@@ -10874,11 +10973,24 @@ Mods: {
 					Head over to the Forgotten City and seek out the Junction between it and the Jungle Pyramid.
 					There lies his resting place.
 					'''
+				RemixArtoriasHint:
+					'''
+					The Knight of Izalith, now turned puppet of the abyss: Artorias, is the being we need to fight next.
+					He rests to the Forgotten City at the Junction between it and the Undergrowth.
+					But, it has long since been sealed, by a powerful artifact of a form of Topaz, left forgotten in the Great Foundry of the jungle.
+					The spirits gave me the Path to the Foundry: Under a bridge on the jungle surface.	
+					'''
 				ChaosHint:
 					'''
 					That Amethyst that we got from Artorias; it is a seal that locks away the throne of the King of Hell, Chaos. 
 					Like the Calamities that came before it, this being's power and magic were too great for the world.
 					He was sealed by the power of the moon. If you wish to face it in combat, head East from the Jungle Pyramid.
+					'''
+				RemixChaosHint:
+					'''
+					That Amethyst that we got from Artorias; it is a seal that locks away the throne of the King of Hell, Chaos. 
+					Like the Calamities that came before it, this being's power and magic were too great for the world.
+					He was sealed by the luminous power of the Hallow. If you wish to face it in combat, return to the Hallow, which is invaded by shadows.
 					'''
 				BlightHint:
 					'''
@@ -10889,6 +11001,11 @@ Mods: {
 				AbysmalOolacileSorcerer:
 					'''
 					Underneath the golem temple lies a Sorcerer, a being that holds a ring of great magic and vitality. 
+					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.
+					'''
+				RemixAbysmalOolacileSorcerer:
+					'''
+					It seems that in the Frozen Cathedral also lies a powerful Sorcerer from Oolacile, a being that holds a ring of great magic and vitality. 
 					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.
 					'''
 				DarkCloudHint:
@@ -11185,6 +11302,34 @@ Mods: {
 				Census.SpawnCondition: Conditions unknown
 			}
 
+			LonelyFairy: {
+				DisplayName: Lonely Fairy
+				Name1: Aurora
+				Name2: Faye
+				Name3: Jasmine
+				Name4: Lyra
+				Name5: Elora
+				Quote1: Greetings human, I'm not used to meeting people, as I've been living in the Grove alone for years, but your presence doesn't bother me.
+				Quote2: I may have some interesting things to sell you; during my long life I have collected a significant number of souls and various objects.
+				Quote3: How old am I? Long enough, I would say... I remember the time when the Empress filled the sky with her light, the fairies captivated by it.
+				Quote4: I sense incredible will and kindness in you, little one.
+				Quote5: The spirits of nature are stirring, darkness is approaching, but with this comes a glimmer of hope that has never been so bright.
+				Quote6: "[c/ffbf00:If you come back after a while, maybe my list of items for sale will grow and it could interest you in your adventure.]"
+
+				TownNPCMood: {
+					NoHome: I hate not having a home.
+					Content: I am content.
+					FarFromHome: I am too far from home.
+					LoveSpace: I love having so much space.
+					DislikeCrowded: I dislike how crowded I am.
+					HateCrowded: I hate how crowded I am.
+					LikeNPC_Princess: I like {NPCName}.
+					Princess_LovesNPC: I like {NPCName}.
+				}
+
+				Census.SpawnCondition: Conditions unknown
+			}
+
 			HomingMissile.DisplayName: Homing Missile
 			Byakhee.DisplayName: Byakhee
 			ClericOfSorrow.DisplayName: Cleric of Sorrow
@@ -11210,6 +11355,8 @@ Mods: {
 			AbyssCataclysm.DisplayName: Abyss Cataclysm
 			AttraidiesShield.DisplayName: Attraidies Shield
 			LichKingDisciple.DisplayName: Lich King Disciple
+			LeonhardRemix.DisplayName: Leonhard
+			TrueDeath.DisplayName: True Death
 		}
 
 		Prefixes: {
@@ -11531,6 +11678,7 @@ Mods: {
 			AdventureModeEnabled: Adventure Mode-only
 			DebugModeEnabled: For testing-only
 			BotCEnabled: Bearer of the Curse-only
+			WyvernMageDowned: The Wyvern Mage has been defeated
 			SorrowDowned: The Sorrow has been defeated
 			HunterDowned: The Hunter has been defeated
 			SHM1Downed: One Guardians of the Abyss slain

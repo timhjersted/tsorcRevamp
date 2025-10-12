@@ -261,7 +261,11 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Scrolls.EnergyStrikeScroll>())
+            {
+                shopCustomPrice = 4000,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.DownedPlantera);
 
             shop.Add(new Item(ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
             {

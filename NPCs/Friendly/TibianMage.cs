@@ -196,12 +196,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Scrolls.EnergyStrikeScroll>())
-            {
-                shopCustomPrice = 4000,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.DownedPlantera);
-
             shop.Add(new Item(ModContent.ItemType<ForgottenIceBowScroll>())
             {
                 shopCustomPrice = 5000,

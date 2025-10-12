@@ -450,20 +450,14 @@ Mods: {
 			WaterFiendKrakenDesc: 双峰之间大裂缝底部的丛林蜥蜴砖大门隐藏着秘密...
 			EarthFiendLichDesc: 探索灰烬洞穴西边的古老神庙...
 			WitchkingDesc: 找到火焰神庙岩浆中的奇怪飞船...
-			RemixWaterFiendKrakenDesc: 探索菌丝林园西边的丛林蜥蜴砖大门...
-			RemixEarthFiendLichDesc: 探索天空废墟的丛林蜥蜴砖大门...
 			ArtoriasDesc: 深渊的力量渗透了遗忘之城东边的隧道...
-			RemixArtoriasDesc: 找到丛林大铸造厂中的钥匙来打开遗忘之城东边的大门...
 			SeathTheScalelessDesc: 追寻冻样深处的丛林蜥蜴砖大门...
 			AbysmalOolacileSorcererDesc: 找到石巨人神庙下方的丛林蜥蜴砖大门...
 			FireFiendMarilithDesc: 探索西部沙漠的丛林蜥蜴砖大门下不为人知的秘密...
-			RemixAbysmalOolacileSorcererDesc: 探索冻洋深处的丛林蜥蜴砖大门...
-			RemixFireFiendMarilithDesc: 探索双峰间裂谷深处的丛林蜥蜴砖大门...
 			BlightName: 枯萎
 			BlightDesc: 冰冻海洋上的裂缝翻腾着深渊的能量...
 			WyvernMageShadowDesc: 寻找雪山之巅的玻璃监狱...
 			ChaosDesc: 探寻金字塔东边的月亮神殿里的秘密...
-			RemixChaosDesc: 探寻金字塔东边遗忘之光神殿的秘密...
 			DarkCloudName: ???
 			DarkCloudDesc: 古老的金字塔又一次被黑暗占据...
 			GwynName: 葛温—灰烬帝王
@@ -3773,6 +3767,20 @@ Mods: {
 					[c/ffbf00:"有两条路通向入口。 在沙漠遗迹之下, 赛里斯开启了道路"]
 					[c/ffbf00:"大漠边缘的暗影之洞，叶绿之门守护着秘密"]
 					'''
+				/* AdvMode:
+					'''
+					A shard of pure minerals
+					One of eight. [c/00ffd4:On its side there's a clue:]
+					"[c/ffbf00:Two paths lead to my entrance. Below the Oasis in the Desert, Serris unlocks the Way.]
+					"[c/ffbf00:In a small sandy Cave atop a hill, a Chlorophyte Gate guards the other.]"
+					''' */
+				/* RemixMode:
+					'''
+					A shard of pure minerals
+					One of eight. [c/00ffd4:On its side there's a clue:]
+					"[c/ffbf00:Two paths lead to my entrance. Deep in the Dark Tower, Serris unlocks the Way.]
+					"[c/ffbf00:In a cave in the Mycelium Forest, a Chlorophyte Gate guards the other.]"
+					''' */
 			}
 
 			CrestOfFire: {
@@ -3818,6 +3826,20 @@ Mods: {
 					[c/00ffd4:一个谜语刻在金属上：] 
 					[c/ffbf00:"机器王座之上，树妖海湾之下：一扇锁着的门守卫着一座古老的金字塔，很久以前就被遗忘了。"]
 					'''
+				/* AdvMode:
+					'''
+					A shard of burning hot steel
+					One of eight.
+					[c/00ffd4:A riddle is etched into the metal:] 
+					"[c/ffbf00:Above the Machine's Throne, Below the Dryad's Cove: A Locked Door guards an Ancient Pyramid, long ago forgotten.]"
+					''' */
+				/* RemixMode:
+					'''
+					A shard of burning hot steel
+					One of eight.
+					[c/00ffd4:A riddle is etched into the metal:] 
+					"[c/ffbf00:Somewhere in the Jungle, Near the exit of the Volcano: A Chlorophyte Gate guards the entrance to lush, wild depths, long ago forgotten.]"
+					''' */
 			}
 
 			CrestOfStone: {
@@ -9671,6 +9693,7 @@ Mods: {
 			XBowArrow.DisplayName: 未知之弦
 			DragoonSpearZap.DisplayName: Dragoon Spear Zap
 			FlameScrollStrike.DisplayName: Flame Scroll Strike
+			// BloodShot.DisplayName: Blood Shot
 		}
 
 		NPCs: {
@@ -11184,6 +11207,34 @@ Mods: {
 				Census.SpawnCondition: Conditions unknown
 			}
 
+			LonelyFairy: {
+				// DisplayName: Lonely Fairy
+				// Name1: Aurora
+				// Name2: Faye
+				// Name3: Jasmine
+				// Name4: Lyra
+				// Name5: Elora
+				// Quote1: Greetings human, I'm not used to meeting people, as I've been living in the Grove alone for years, but your presence doesn't bother me.
+				// Quote2: I may have some interesting things to sell you; during my long life I have collected a significant number of souls and various objects.
+				// Quote3: How old am I? Long enough, I would say... I remember the time when the Empress filled the sky with her light, the fairies captivated by it.
+				// Quote4: I sense incredible will and kindness in you, little one.
+				// Quote5: The spirits of nature are stirring, darkness is approaching, but with this comes a glimmer of hope that has never been so bright.
+				// Quote6: "[c/ffbf00:If you come back after a while, maybe my list of items for sale will grow and it could interest you in your adventure.]"
+
+				TownNPCMood: {
+					// NoHome: I hate not having a home.
+					// Content: I am content.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+
+				// Census.SpawnCondition: Conditions unknown
+			}
+
 			HomingMissile.DisplayName: 追踪导弹
 			Byakhee.DisplayName: 拜亚基
 			ClericOfSorrow.DisplayName: 悲怆骑士
@@ -11209,6 +11260,8 @@ Mods: {
 			AbyssCataclysm.DisplayName: 深渊风暴
 			AttraidiesShield.DisplayName: 阿卓迪斯护盾
 			LichKingDisciple.DisplayName: 巫妖王信徒
+			// LeonhardRemix.DisplayName: Leonhard
+			// TrueDeath.DisplayName: True Death
 		}
 
 		Prefixes: {
@@ -11530,6 +11583,7 @@ Mods: {
 			AdventureModeEnabled: 仅限冒险模式
 			DebugModeEnabled: 仅限开发者测试
 			BotCEnabled: 仅限被诅咒者
+			// WyvernMageDowned: The Wyvern Mage has been defeated
 			SorrowDowned: 击败悲伤
 			HunterDowned: 击败猎手
 			SHM1Downed: 一名深渊守护者被击败

@@ -1,7 +1,9 @@
-﻿
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Lore
 {
@@ -45,6 +47,18 @@ namespace tsorcRevamp.Items.Lore
             base.SetDefaults();
         }
 
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.RemixMap)
+            {
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure", LangUtils.GetTextValue("Items.CrestOfEarth.RemixMode")));
+            }
+            else
+            {
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorDefault", LangUtils.GetTextValue("Items.CrestOfEarth.AdvMode")));
+            }
+        }
+
         public override void SetStaticDefaults()
         {
         }
@@ -80,6 +94,18 @@ namespace tsorcRevamp.Items.Lore
         public override void SetDefaults()
         {
             base.SetDefaults();
+        } 
+        
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.RemixMap)
+            {
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure", LangUtils.GetTextValue("Items.CrestOfSteel.RemixMode")));
+            }
+            else
+            {
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorDefault", LangUtils.GetTextValue("Items.CrestOfSteel.AdvMode")));
+            }
         }
 
         public override void SetStaticDefaults()

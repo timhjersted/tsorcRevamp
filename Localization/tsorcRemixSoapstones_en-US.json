@@ -2260,7 +2260,7 @@
   "style": 1
 }
 {
-  "text": "You peer below and see a verdant island in the clouds.",
+  "text": "You peer below and see a great snowy island in the clouds.",
   "tileX": 7887,
   "tileY": 147,
   "textWidth": 320,
@@ -2326,6 +2326,20 @@
   "text": "- You have discovered the Blight on the Frozen Ocean - --NEWLINE  --NEWLINE It\u0027s power seems dormant but unstable...",
   "tileX": 8136,
   "tileY": 867,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "There seems to be a passage underneath. --NEWLINE  --NEWLINE \u0027The way to open it can\u0027t be that far away...\u0027",
+  "tileX": 7660,
+  "tileY": 1030,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You have discovered the Forgotten Grove - --NEWLINE  --NEWLINE A small, peaceful place, lost in the icy underground, inhabited by a single fairy for ages...",
+  "tileX": 7664,
+  "tileY": 1097,
   "textWidth": 320,
   "style": 1
 }

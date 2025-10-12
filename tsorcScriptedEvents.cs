@@ -240,6 +240,7 @@ namespace tsorcRevamp
             DeathRemix,
             DiscipleOfAttraidiesEvent,
             WyvernFortressEvent,
+            SpawnLonelyFairy,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -517,6 +518,8 @@ namespace tsorcRevamp
 
             //WIZARD SPAWN EVENT
             ScriptedEvent SpawnWizard = new ScriptedEvent(new Vector2(7322, 603), 40, default, 31, true, true, false, "", default, true, WizardCondition, WizardAction);
+            
+            ScriptedEvent SpawnLonelyFairy = new ScriptedEvent(new Vector2(7707, 1161), 50, default, 31, true, true, false, "", default, false, FairyCondition, FairyAction);
 
             //BOULDERFALL EVENT 1 - EARTH TEMPLE ENTRANCE
             ScriptedEvent BoulderfallEvent1 = new ScriptedEvent(new Vector2(4378, 922), 6, default, default, true, false, false, "", default, false, default, BoulderfallEvent1Action);
@@ -743,7 +746,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.ChaosFight, ChaosEvent},
                 {ScriptedEventType.ChaosEventRemix, ChaosEventRemix},
                 { ScriptedEventType.WyvernMageShadowFight, WyvernMageShadowEvent},
-                {ScriptedEventType.BlightFight, BlightEvent}, 
+                {ScriptedEventType.BlightFight, BlightEvent},
                 {ScriptedEventType.DarkCloudPyramidFight, DarkCloudEvent},
                 {ScriptedEventType.DarkCloudEventRemix, DarkCloudEventRemix},
                 {ScriptedEventType.ArtoriasFight, ArtoriasEvent},
@@ -753,6 +756,7 @@ namespace tsorcRevamp
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
                 {ScriptedEventType.SpawnUndeadMerchant, SpawnUndeadMerchant },
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin },
+                {ScriptedEventType.SpawnLonelyFairy, SpawnLonelyFairy },
                 {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent},
                 {ScriptedEventType.TwinEoWFight, TwinEoWFight},
                 {ScriptedEventType.DunledingAmbush, DunledingAmbush},
@@ -802,11 +806,11 @@ namespace tsorcRevamp
                 {ScriptedEventType.AncestralSpiritRemixEvent, AncestralSpiritRemixEvent },
                 {ScriptedEventType.FrozenCathedralEvent2, FrozenCathedralEvent2 },
                 {ScriptedEventType.WingTrioEvent, WingTrioEvent },
-                {ScriptedEventType.WyvernFortressEvent, WyvernFortressEvent }, 
+                {ScriptedEventType.WyvernFortressEvent, WyvernFortressEvent },
                 {ScriptedEventType.SkeletronPrimeEvent, SkeletronPrimeEvent },
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },
-                {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent },  
+                {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent },
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -1032,6 +1036,12 @@ namespace tsorcRevamp
         {
             return !NPC.AnyNPCs(NPCID.GoblinTinkerer);
         }
+
+        public static bool FairyCondition()
+        {
+            return RemixMapCondition() && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.LonelyFairy>());
+        }
+
 
         public static bool SlograGaibonCondition()
         {
@@ -1268,6 +1278,15 @@ namespace tsorcRevamp
             NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), 4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
             goblinNPC.homeTileX = 4449;
             goblinNPC.homeTileY = 1740;
+            return EventActionStatus.CompletedEvent;
+        }
+
+        public static EventActionStatus FairyAction(ScriptedEvent thisEvent)
+        {
+            NPC.savedGoblin = true;
+            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), 7707 * 16, 1161 * 16, ModContent.NPCType<NPCs.Friendly.LonelyFairy>());
+            goblinNPC.homeTileX = 7707;
+            goblinNPC.homeTileY = 1161;
             return EventActionStatus.CompletedEvent;
         }
 
