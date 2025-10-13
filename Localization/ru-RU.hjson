@@ -10734,6 +10734,12 @@ Mods: {
 					Говорят, что, заслужив признание Серрис, можно проникнуть в глубины Лабиринта.
 					Нам пока не нужно туда идти, {0}. Этот путь не ведёт к Охотнику.
 					'''
+				/* RemixTempleOfSerris:
+					'''
+					Serris...? I last heard about it from a brave soul who dared to delve deep into the Basements of the Dark Tower.
+					It is said that Serris, hidden below the tower, guards the access to a secret path somewhere.
+					We don't need to go there yet, {0}. This path does not lead to the Hunter.
+					''' */
 				DestroyerFromSerris:
 					'''
 					Говорят, что, заслужив признание Серриса, можно проникнуть в глубины Лабиринта.
@@ -10744,6 +10750,11 @@ Mods: {
 					Небольшая песчаная пещера на вершине холма... Я уверен, что мы уже проходили мимо одной из них, {0}, когда путешествовали на запад от порчи.
 					Эта пещера кажется безопасной!
 					'''
+				/* RemixDestroyerFromHunter:
+					'''
+					A small mushroom cave in the Mycelium Forest... I'm sure we passed one before {0}, when we were traveling West from the corruption. It was near the Truffle's home!
+					This one seems easy!
+					''' */
 				DestroyerLabrynthGates:
 					'''
 					В Теневом лабиринте полно врат, для прохода через которые требуется использовать переключатель, рычаг или настенную панель.
@@ -10778,11 +10789,22 @@ Mods: {
 					Я не знаю, что это за существо, но его необходимо остановить. Отправляйся на восток от того места, где ты впервые нашёл своего брата Элайджу, в Забытый город.
 					Ты найдёшь пирамиду, посвящённую солнцу и луне. Она питается находящейся там энергией.
 					'''
+				/* RemixGolemJunglePyramidPlanteraHint:
+					'''
+					The spirits cry of a great evil emerging within the Jungle. It wishes for nothing but death.
+					I do not know what manner of creature this is, but it must be stopped. Do you remember the chlorophyte gate deep in the jungle, near the exit of the Volcano?
+					You will find the path to the old jungle, where it draws its power from a powerful energy source.
+					''' */
 				GolemJunglePyramidHint:
 					'''
 					Иди на восток от того места, где впервые нашёл своего брата Элайджу, в пределы Забытого города.
 					Ты найдёшь пирамиду, посвящённую Солнцу и Луне. Это та пирамида, которую ты ищешь.
 					'''
+				/* RemixGolemJunglePyramidHint:
+					'''
+					Go back deep into the jungle and find the passage near the exit of the Meteor Temple.
+					This is where you will find the Great Pyramid of Life, where this creature leeches its energy.
+					''' */
 				GolemJungleMoonGate:
 					'''
 					Если на пути к пирамиде твой путь преградят нерушимые врата, не волнуйся. Используй космические часы, чтобы скоротать время, пока не наступит ночь.
@@ -10839,12 +10861,24 @@ Mods: {
 					По словам старшего шамана, именно здесь обосновалось исчадие воды — Кракен.
 					Это первое из существ, которых нам нужно убить, прежде чем мы сможем сразиться с Гвином, хранителем пламени.
 					'''
+				/* RemixWaterFiendKrakenHint:
+					'''
+					West of the Mycelium Forest near the Shadow Temple lies a path to the Dreamlike Caverns. 
+					According to the Shaman Elder, this is where the Water Fiend Kraken has made its dwelling.
+					It is the first of the beings we need to slay before we can fight Gwyn, Keeper of the Flame.
+					''' */
 				FireFiendMarilithHint:
 					'''
 					К востоку от руин Эленгада и теневого храма лежит путь в катакомбы. 
 					Там находится Вестница Хаоса, исчадие огня — Марилит. 
 					Это второе из существ, которых мы должны убить.
 					'''
+				/* RemixFireFiendMarilithHint:
+					'''
+					The burning path starts from inside hell below the Forgotten City. The spirits tell me of a forgotten passage entombed in molten rock.
+					There lies the Herald of Chaos, Fire Fiend Marilith. 
+					It is the second of the beings we must slay.
+					''' */
 				EarthFiendLichHint1:
 					'''
 					Наша судьба зовёт нас на западный край света, вглубь Ада. Я чувствую, что к нашей цели ведут два пути.
@@ -10857,6 +10891,12 @@ Mods: {
 					Воспользуйся этим проходом и направляйся далеко на запад от него, пока не достигнешь скрытой завесы прошлого человечества.
 					Исчадие земли, Лич будет рядом.
 					'''
+				/* RemixEarthFiendLichHint1:
+					'''
+					We must dive into the Great Chasm and find the Lihzahrd Gate that blocks the path to the Gray Catacombs.
+					Despite the horror of this place, we have no choice but to venture there and face what is there.
+					The Earth Fiend Lich is here, deep in the Catacombs.
+					''' */
 				SeathTheScalelessHint:
 					'''
 					Ты помнишь, где в последний раз сражался со скорбью? Глубоко в ледяном океане лежит Предатель Драконов, нагой Сит.
@@ -10891,12 +10931,25 @@ Mods: {
 					Head over to the Forgotten City and seek out the Junction between it and the Jungle Pyramid.
 					There lies his resting place.
 					'''
+				/* RemixArtoriasHint:
+					'''
+					The Knight of Izalith, now turned puppet of the abyss: Artorias, is the being we need to fight next.
+					He rests to the Forgotten City at the Junction between it and the Undergrowth.
+					But, it has long since been sealed, by a powerful artifact of a form of Topaz, left forgotten in the Great Foundry of the jungle.
+					The spirits gave me the Path to the Foundry: Under a bridge on the jungle surface.	
+					''' */
 				ChaosHint:
 					'''
 					That Amethyst that we got from Artorias; it is a seal that locks away the throne of the King of Hell, Chaos. 
 					Like the Calamities that came before it, this being's power and magic were too great for the world.
 					He was sealed by the power of the moon. If you wish to face it in combat, head East from the Jungle Pyramid.
 					'''
+				/* RemixChaosHint:
+					'''
+					That Amethyst that we got from Artorias; it is a seal that locks away the throne of the King of Hell, Chaos. 
+					Like the Calamities that came before it, this being's power and magic were too great for the world.
+					He was sealed by the luminous power of the Hallow. If you wish to face it in combat, return to the Hallow, which is invaded by shadows.
+					''' */
 				BlightHint:
 					'''
 					We should journey East again {0}, to the surface of the frozen ocean. 
@@ -10908,6 +10961,11 @@ Mods: {
 					Underneath the golem temple lies a Sorcerer, a being that holds a ring of great magic and vitality. 
 					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.
 					'''
+				/* RemixAbysmalOolacileSorcerer:
+					'''
+					It seems that in the Frozen Cathedral also lies a powerful Sorcerer from Oolacile, a being that holds a ring of great magic and vitality. 
+					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.
+					''' */
 				DarkCloudHint:
 					'''
 					That mirror you hold... Do not look into it. That is an cursed artifact of the moon - one that manifests a future version of its beholder and twists it.

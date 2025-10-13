@@ -446,20 +446,56 @@ Mods: {
 			AttraidiesDesc: 收集所有的冠冕以合成思绪立方体！
 			RealAttraidiesName: 阿卓迪斯
 			RealAttraidiesDesc: 使用幻象掉落的噬魂怪遗物以迎接这挑战吧！
-			HellkiteDragonDesc: 据说它盘踞于西部沙漠上空的巨型熔岩空岛...
-			WaterFiendKrakenDesc: 双峰之间大裂缝底部的丛林蜥蜴砖大门隐藏着秘密...
-			EarthFiendLichDesc: 探索灰烬洞穴西边的古老神庙...
-			WitchkingDesc: 找到火焰神庙岩浆中的奇怪飞船...
-			ArtoriasDesc: 深渊的力量渗透了遗忘之城东边的隧道...
+			HellkiteDragonDesc:
+				'''
+				经常在村庄上方的天空中游荡，寻找它的下一顿餐食...
+				重构版地图: 据说它盘踞于西部沙漠上空的巨型熔岩空岛...
+				'''
+			WaterFiendKrakenDesc:
+				'''
+				双峰之间大裂谷底部的丛林蜥蜴砖大门隐藏着秘密...
+				重构版地图: 探索菌丝林园西边的丛林蜥蜴砖大门...
+				'''
+			EarthFiendLichDesc:
+				'''
+				探索灰烬洞穴西边的古老神庙...
+				重构版地图: 双峰之间大裂谷底部的丛林蜥蜴砖大门隐藏着秘密...
+				'''
+			WitchkingDesc:
+				'''
+				在地下深处的灰烬洞窟中找到他，那里笼罩在极度黑暗之中...
+				重构版地图: 找到暗影神庙中隐藏的奇怪飞船...
+				'''
+			ArtoriasDesc:
+				'''
+				深渊的力量渗透了遗忘之城东边的隧道...
+				重构版地图: 找到丛林中大铸造厂的钥匙以打开遗忘之城东边的通路...
+				'''
 			SeathTheScalelessDesc: 追寻冻样深处的丛林蜥蜴砖大门...
-			AbysmalOolacileSorcererDesc: 找到石巨人神庙下方的丛林蜥蜴砖大门...
-			FireFiendMarilithDesc: 探索西部沙漠的丛林蜥蜴砖大门下不为人知的秘密...
+			AbysmalOolacileSorcererDesc:
+				'''
+				找到石巨人神庙下方的丛林蜥蜴砖大门...
+				重构版地图: 探索冻样深处的丛林蜥蜴砖大门...
+				'''
+			FireFiendMarilithDesc:
+				'''
+				探索西部沙漠的丛林蜥蜴砖大门下不为人知的秘密...
+				重构版地图: 找到火焰神庙岩浆中的奇怪飞船...
+				'''
 			BlightName: 枯萎
 			BlightDesc: 冰冻海洋上的裂缝翻腾着深渊的能量...
 			WyvernMageShadowDesc: 寻找雪山之巅的玻璃监狱...
-			ChaosDesc: 探寻金字塔东边的月亮神殿里的秘密...
+			ChaosDesc:
+				'''
+				探寻金字塔东边的月亮神殿里的秘密...
+				重构版地图: 再次探索神圣的钯金洞穴...
+				'''
 			DarkCloudName: ???
-			DarkCloudDesc: 古老的金字塔又一次被黑暗占据...
+			DarkCloudDesc:
+				'''
+				古老的金字塔又一次被黑暗占据...
+				重构版地图: 使用黑镜
+				'''
 			GwynName: 葛温—灰烬帝王
 			GwynDesc: 西海之下的珊瑚礁引导你找到他的坟墓
 		}
@@ -3406,26 +3442,26 @@ Mods: {
 				AdvMode:
 					'''
 					你凝视镜子，看到你的倒影回头看着你...
-					当你继续凝视镜子时，你的倒影身后得到背景显露
+					当你继续凝视镜子时，你的倒影身后的背景得到显露
 					那是一座黑暗的金字塔...
 					在晚上使用镜子以更深入的探索你的倒影...
-					或者把它扔掉，忘记这个黑暗的遗迹...
+					或者把它扔掉，忘记这个黑暗的残物...
 					'''
-				/* RemixMode:
+				RemixMode:
 					'''
-					You look into the mirror and see your reflection looking back at you...
-					As you continue to gaze into the mirror, the background behind
-					your reflection comes into focus, revealing the abyss...
-					Use the mirror to continue looking into the eyes of your reflection...
-					Or throw it away and rid yourself of this dark relic...
-					''' */
+					你凝视镜子，看到你的倒影回头看着你...
+					当你继续凝视镜子时，你的倒影身后的背景得到显露
+					那是一段黑暗的深渊...
+					使用镜子以更深入的探索你的倒影...
+					或者把它扔掉，忘记这个黑暗的残物...
+					'''
 				NonAdv:
 					'''
 					你凝视镜子，看到你的倒影回头看着你...
-					当你继续凝视镜子时，你的倒影身后得到背景显露
-					那是一段黑暗的深渊...
-					在晚上使用镜子以更深入的探索你的倒影...
-					或者把它扔掉，忘记这个黑暗的遗迹...
+					当你继续凝视镜子时，你的倒影身后的背景得到显露
+					你的倒影变得模糊，仿佛凝视着黑暗的深渊...
+					使用镜子以更深入的探索你的倒影...
+					或者把它扔掉，忘记这个黑暗的残物...
 					'''
 				Summon: 你的阴影面已经从你最黑暗的恐惧中脱离出来...
 				Engulf: 镜子的阴影吞噬了你...
@@ -3665,7 +3701,11 @@ Mods: {
 				9: "{$BossChecklist.SlograAndGaibonDesc}"
 				10: 自丛林遗迹到失落之城，蜂蛹随处可见...
 				11: 找到丛林地下的花间湖，打开尘封的大门...
-				12: 雪山上巫师住所的地下室，通往一处冰封之地...
+				12:
+					'''
+					雪山上巫师住所的地下室，通往一处冰封之地...
+					重构版地图: 继续向东方前进，穿过神圣前往冻洋的入口...
+					'''
 				13: "{$BossChecklist.JungleWyvernDesc}"
 				14: "{$BossChecklist.AncientDemonDesc}"
 				15: 穿过火焰神庙西侧的四道大门，你会在祭坛上找到答案吗？
@@ -3678,7 +3718,11 @@ Mods: {
 				22: "{$BossChecklist.TheHunterDesc}"
 				23: 它在暗影神庙的尽头等待着你...
 				24: 在一座断裂的、熟悉的桥下，你会找到被淹没的机器神殿，那里有什么？
-				25: 大金字塔里为什么会有和猎手场地一样的粉色花苞？
+				25:
+					'''
+					大金字塔里为什么会有和猎手场地一样的粉色花苞？
+					重构版地图: 在丛林废墟中寻找其郁郁葱葱、被遗忘的深处的入口...
+					'''
 				26: 大金字塔的传送机通往何方？
 				27: 石巨人控制着村庄上方空岛的力场...
 				28: 在阿拉齐姆双峰之上，他们凝视上天，下观沟壑。
@@ -3686,7 +3730,11 @@ Mods: {
 				30: "{$BossChecklist.RealAttraidiesDesc}"
 				31: "{$BossChecklist.HellkiteDragonDesc}"
 				32: "{$BossChecklist.WitchkingDesc}"
-				33: 解开熔岩空域神庙东边三座附魔石柱的谜题
+				33:
+					'''
+					解开熔岩空域神庙东边三座附魔石柱的谜题
+					重构版地图: 对抗四根天界柱，并在天空寻找一处古老的外星建筑...
+					'''
 				34: "{$BossChecklist.WaterFiendKrakenDesc}"
 				35: "{$BossChecklist.EarthFiendLichDesc}"
 				36: "{$BossChecklist.FireFiendMarilithDesc}"
@@ -3760,27 +3808,21 @@ Mods: {
 
 			CrestOfEarth: {
 				DisplayName: 大地之冠
-				Tooltip:
+				Tooltip: ""
+				AdvMode:
 					'''
 					一块纯净的矿物打磨而成八分之一
 					[c/00ffd4:其中包含一个谜语：] 
-					[c/ffbf00:"有两条路通向入口。 在沙漠遗迹之下, 赛里斯开启了道路"]
+					[c/ffbf00:"有两条路通向入口。在沙漠遗迹之下, 赛里斯开启了道路"]
 					[c/ffbf00:"大漠边缘的暗影之洞，叶绿之门守护着秘密"]
 					'''
-				/* AdvMode:
+				RemixMode:
 					'''
-					A shard of pure minerals
-					One of eight. [c/00ffd4:On its side there's a clue:]
-					"[c/ffbf00:Two paths lead to my entrance. Below the Oasis in the Desert, Serris unlocks the Way.]
-					"[c/ffbf00:In a small sandy Cave atop a hill, a Chlorophyte Gate guards the other.]"
-					''' */
-				/* RemixMode:
+					一块纯净的矿物打磨而成八分之一
+					[c/00ffd4:其中包含一个谜语：] 
+					[c/ffbf00:"有两条路通向入口。黑暗之塔深处的秘库, 赛里斯开启了道路"]
+					[c/ffbf00:"菌丝林园的洞穴之中，叶绿之门守护着秘密"]
 					'''
-					A shard of pure minerals
-					One of eight. [c/00ffd4:On its side there's a clue:]
-					"[c/ffbf00:Two paths lead to my entrance. Deep in the Dark Tower, Serris unlocks the Way.]
-					"[c/ffbf00:In a cave in the Mycelium Forest, a Chlorophyte Gate guards the other.]"
-					''' */
 			}
 
 			CrestOfFire: {
@@ -3819,27 +3861,21 @@ Mods: {
 
 			CrestOfSteel: {
 				DisplayName: 钢铁之冠
-				Tooltip:
+				Tooltip: ""
+				AdvMode:
 					'''
 					一块燃烧的热钢碎片
 					八分之一
-					[c/00ffd4:一个谜语刻在金属上：] 
+					[c/00ffd4:一个谜语刻在金属上：]
 					[c/ffbf00:"机器王座之上，树妖海湾之下：一扇锁着的门守卫着一座古老的金字塔，很久以前就被遗忘了。"]
 					'''
-				/* AdvMode:
+				RemixMode:
 					'''
-					A shard of burning hot steel
-					One of eight.
-					[c/00ffd4:A riddle is etched into the metal:] 
-					"[c/ffbf00:Above the Machine's Throne, Below the Dryad's Cove: A Locked Door guards an Ancient Pyramid, long ago forgotten.]"
-					''' */
-				/* RemixMode:
+					一块燃烧的热钢碎片
+					八分之一
+					[c/00ffd4:一个谜语刻在金属上：]
+					[c/ffbf00:"在丛林的某个地方，火山的出口附近：一扇叶绿大门守卫着郁郁葱葱、被遗忘的深处的入口。"]
 					'''
-					A shard of burning hot steel
-					One of eight.
-					[c/00ffd4:A riddle is etched into the metal:] 
-					"[c/ffbf00:Somewhere in the Jungle, Near the exit of the Volcano: A Chlorophyte Gate guards the entrance to lush, wild depths, long ago forgotten.]"
-					''' */
 			}
 
 			CrestOfStone: {
@@ -9693,7 +9729,7 @@ Mods: {
 			XBowArrow.DisplayName: 未知之弦
 			DragoonSpearZap.DisplayName: Dragoon Spear Zap
 			FlameScrollStrike.DisplayName: Flame Scroll Strike
-			// BloodShot.DisplayName: Blood Shot
+			BloodShot.DisplayName: 死神
 		}
 
 		NPCs: {
@@ -10737,7 +10773,13 @@ Mods: {
 					'''
 					赛里斯的隐藏神殿...？曾有一位勇闯暗影神庙的壮士和我说起过它
 					传闻获赛里斯认可者，方得深入迷宫底层
-					然此路不通猎手，{0}，我们暂无需涉足
+					然而此路不通猎手，{0}，我们暂时无需涉足
+					'''
+				RemixTempleOfSerris:
+					'''
+					赛里斯...？曾有一位勇闯黑暗之塔地下秘库的壮士和我说起过它
+					传闻塔下隐藏的赛里斯，守卫着一条通往无名之地的密道
+					然而此路不通猎手，{0}，我们暂时无需涉足
 					'''
 				DestroyerFromSerris:
 					'''
@@ -10747,6 +10789,11 @@ Mods: {
 				DestroyerFromHunter:
 					'''
 					山丘沙穴...{0}，西行越过腐化之后时我们曾途径一处
+					看上去是条捷径！
+					'''
+				RemixDestroyerFromHunter:
+					'''
+					菌丝林园的莫负洞穴...{0}，西行越过腐化之后时我们曾途径一处，就在蘑菇人的家附近！
 					看上去是条捷径！
 					'''
 				DestroyerLabrynthGates:
@@ -10783,10 +10830,21 @@ Mods: {
 					虽不知其真容，但必须阻止它。前往遗忘之城，在你最初发现兄弟以利亚之处的东方
 					那里矗立着祭祀日月的神殿金字塔，它正在汲取其中的力量
 					'''
+				RemixGolemJunglePyramidPlanteraHint:
+					'''
+					精灵们在哀嚎，丛林中正孕育着极恶之物，它只为散播死亡而生
+					虽不知其真容，但必须阻止它。你是否还记得丛林深处靠近火山出口的叶绿大门？
+					在那里你将会找到通往旧丛林的道路，其正从强大的能源中汲取能量
+					'''
 				GolemJunglePyramidHint:
 					'''
 					前往遗忘之城，在你最初发现兄弟以利亚之处的东方
 					你将找到祭祀日月的金字塔，那正是你寻找的目标
+					'''
+				RemixGolemJunglePyramidHint:
+					'''
+					返回丛林深处并找到靠近流星神庙出口的通道
+					你会发现生命大金字塔，它正在那里汲取能量
 					'''
 				GolemJungleMoonGate:
 					'''
@@ -10842,13 +10900,25 @@ Mods: {
 					'''
 					我们需先潜入大裂谷，找到阻挡通往旧日之树的神庙砖门
 					据萨满长老所言，这正是水之恶魔克拉肯的巢穴所在
-					它是我们迎战火焰守护者葛温前，必须斩杀的首个目标
+					它是我们迎战灰烬帝王葛温前，必须斩杀的首个目标
+					'''
+				RemixWaterFiendKrakenHint:
+					'''
+					菌丝林园的西侧，暗影神庙旁隐匿着通往梦幻洞窟的小径
+					据萨满长老说，此地是水之恶魔克拉肯的巢穴
+					唯有先击败它，我们才能挑战灰烬帝王葛温
 					'''
 				FireFiendMarilithHint:
 					'''
-					在埃伦加德遗迹与暗影神殿以东，通往地下墓穴的路径中
+					在埃伦加德遗迹与暗影神庙以东，通往地下墓穴的路径中
 					盘踞着混沌先驱—火焰恶魔马瑞丽斯
 					这是我们必须消灭的第二个目标
+					'''
+				RemixFireFiendMarilithHint:
+					'''
+					灼烬之路自遗忘之城下方的地狱发端，精灵们告诉我：熔岩深处封存着一条被世人遗忘的甬道
+					混沌先驱火焰恶魔马瑞丽斯便蛰伏于此
+					这是我们必须击败的第二位恶魔
 					'''
 				EarthFiendLichHint1:
 					'''
@@ -10861,6 +10931,12 @@ Mods: {
 					第二条路径始于遗忘之城下方的地狱，精灵们告诉我，熔岩中封存着被遗忘的通道
 					沿此通道西行，直至人性幻魔阻隔的隐秘帷幕
 					大地恶魔巫妖王就在彼处
+					'''
+				RemixEarthFiendLichHint1:
+					'''
+					我们必须潜入大裂谷，找到阻隔灰色陵寝通路的丛林蜥蜴砖大门
+					即使此地诡谲可怖，我们亦当深入幽邃，直面蛰伏之物
+					大地恶魔巫妖王便栖身于此，盘踞于苍灰陵寝的幽暗深处
 					'''
 				SeathTheScalelessHint:
 					'''
@@ -10896,11 +10972,24 @@ Mods: {
 					前往遗忘之城与丛林金字塔的交界处
 					他的安息之地就在那里
 					'''
+				RemixArtoriasHint:
+					'''
+					伊扎里斯的骑士，如今沦为深渊傀儡的阿尔特留斯，是我们下一个目标
+					他长眠于遗忘之城与地下丛林接壤的交界地
+					然而，通往此地的道路早已被一块被遗落在丛林大铸造厂中的大黄玉所封印
+					精灵们已将通往大铸造厂的道路昭示于我：就在地表丛林的一座桥下
+					'''
 				ChaosHint:
 					'''
 					从阿尔特留斯处获得的大紫晶，实为封印地狱之王混沌的钥匙
 					与此前的恶魔类似，此存在的力量过于强大而被封印
 					月之力将其禁锢，若欲挑战，请从丛林金字塔向东进发
+					'''
+				RemixChaosHint:
+					'''
+					从阿尔特留斯处获得的大紫晶，实为封印地狱之王混沌的钥匙
+					与此前的恶魔类似，此存在的力量过于强大而被封印
+					神圣的伟力将其禁锢，若欲挑战，请返回神圣洞穴，那里正在被黑暗入侵
 					'''
 				BlightHint:
 					'''
@@ -10911,6 +11000,11 @@ Mods: {
 				AbysmalOolacileSorcerer:
 					'''
 					在石巨人神殿深处蛰伏着一位持有魔力与生机戒指的乌拉席露巫师
+					若你想夺取戒指，{0}，它必能极大提升你的魔力威能
+					'''
+				RemixAbysmalOolacileSorcerer:
+					'''
+					看来在寒渊大教堂还沉眠着一位来自乌拉席露的强大法师，他持有一枚蕴含浩瀚魔力与生命力的戒指
 					若你想夺取戒指，{0}，它必能极大提升你的魔力威能
 					'''
 				DarkCloudHint:
@@ -11208,31 +11302,31 @@ Mods: {
 			}
 
 			LonelyFairy: {
-				// DisplayName: Lonely Fairy
-				// Name1: Aurora
-				// Name2: Faye
-				// Name3: Jasmine
-				// Name4: Lyra
-				// Name5: Elora
-				// Quote1: Greetings human, I'm not used to meeting people, as I've been living in the Grove alone for years, but your presence doesn't bother me.
-				// Quote2: I may have some interesting things to sell you; during my long life I have collected a significant number of souls and various objects.
-				// Quote3: How old am I? Long enough, I would say... I remember the time when the Empress filled the sky with her light, the fairies captivated by it.
-				// Quote4: I sense incredible will and kindness in you, little one.
-				// Quote5: The spirits of nature are stirring, darkness is approaching, but with this comes a glimmer of hope that has never been so bright.
-				// Quote6: "[c/ffbf00:If you come back after a while, maybe my list of items for sale will grow and it could interest you in your adventure.]"
+				DisplayName: Lonely Fairy
+				Name1: Aurora
+				Name2: Faye
+				Name3: Jasmine
+				Name4: Lyra
+				Name5: Elora
+				Quote1: 幸会，泰拉人。我独居密林多年，不常与人接触...不过，你的到来并没有让我觉得扰攘
+				Quote2: 我有些有趣的东西物可以售卖。漫漫长年所积累下的魂灵器物还是十分可观的。
+				Quote3: 我的年纪多大了几许？够久了罢...我还记得当年女皇辉光盈空，精灵们都为之倾倒之时
+				Quote4: 我在小友身上感应到非凡的意志与温厚的心性。
+				Quote5: 自然精灵们躁动不安，黑暗渐近，然而希望的微光，亦从未如此明耀。
+				Quote6: "[c/ffbf00:若他日重游，所列货品或已琳琅，定让你的冒险如虎添翼。]"
 
 				TownNPCMood: {
-					// NoHome: I hate not having a home.
-					// Content: I am content.
-					// FarFromHome: I am too far from home.
-					// LoveSpace: I love having so much space.
-					// DislikeCrowded: I dislike how crowded I am.
-					// HateCrowded: I hate how crowded I am.
-					// LikeNPC_Princess: I like {NPCName}.
-					// Princess_LovesNPC: I like {NPCName}.
+					NoHome: I hate not having a home.
+					Content: I am content.
+					FarFromHome: I am too far from home.
+					LoveSpace: I love having so much space.
+					DislikeCrowded: I dislike how crowded I am.
+					HateCrowded: I hate how crowded I am.
+					LikeNPC_Princess: I like {NPCName}.
+					Princess_LovesNPC: I like {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			HomingMissile.DisplayName: 追踪导弹
@@ -11260,8 +11354,8 @@ Mods: {
 			AbyssCataclysm.DisplayName: 深渊风暴
 			AttraidiesShield.DisplayName: 阿卓迪斯护盾
 			LichKingDisciple.DisplayName: 巫妖王信徒
-			// LeonhardRemix.DisplayName: Leonhard
-			// TrueDeath.DisplayName: True Death
+			LeonhardRemix.DisplayName: 李奥纳德
+			TrueDeath.DisplayName: 死神
 		}
 
 		Prefixes: {
@@ -11583,7 +11677,7 @@ Mods: {
 			AdventureModeEnabled: 仅限冒险模式
 			DebugModeEnabled: 仅限开发者测试
 			BotCEnabled: 仅限被诅咒者
-			// WyvernMageDowned: The Wyvern Mage has been defeated
+			WyvernMageDowned: 击败飞龙法师
 			SorrowDowned: 击败悲伤
 			HunterDowned: 击败猎手
 			SHM1Downed: 一名深渊守护者被击败
