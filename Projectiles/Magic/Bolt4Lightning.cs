@@ -337,6 +337,10 @@ namespace tsorcRevamp.Projectiles.Magic
         public static Effect blurEffect;
         public void CreateRenderTarget()
         {
+            if (branches == null)
+            {
+                return;
+            }
             //Potential better version of this: Rotate them just like is done when drawing them, and calcualte their max X and Y offset of every single branch node
             //Probably an unnecessary optimization, but an option for if it does become necessary in the future
             lightningMaxDimensions.X = 0;
