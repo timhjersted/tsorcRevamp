@@ -22,6 +22,11 @@ namespace tsorcRevamp.Items
 {
     public class tsorcGlobalItem : GlobalItem
     {
+        // Magic Weapon imbue bonuses
+        public static float BonusDamage1 = 30f; // MagicWeapon
+        public static float BonusDamage2 = 50f; // GreatMagicWeapon
+        public static float BonusDamage3 = 75f; // CrystalMagicWeapon
+
         public static List<int> potionList;
         public static List<int> ammoList;
         public static List<int> torchList;
@@ -510,46 +515,6 @@ namespace tsorcRevamp.Items
                 StaminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation);
             }
         }
-        public static float BonusDamage1 = 30f;
-        public static float BonusDamage2 = 50f;
-        public static float BonusDamage3 = 75f;
-        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
-        {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (item.CountsAsClass(DamageClass.Melee))
-            {
-                /*Main.NewText("magicDamage: " + player.GetDamage(DamageClass.Magic));
-				Main.NewText("magicDamageMult: " + player.GetDamage(DamageClass.Magic)Mult);
-				Main.NewText((player.GetDamage(DamageClass.Magic) - player.GetDamage(DamageClass.Magic)Mult) * .5f);*/
-
-                if (modPlayer.MagicWeapon)
-                {
-                    float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * BonusDamage1 / 100f;
-                    if (bonusDamage >= 0)
-                    {
-                        player.GetDamage(DamageClass.Melee) += bonusDamage;
-                    }
-                }
-                if (modPlayer.GreatMagicWeapon)
-                {
-                    float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * BonusDamage2 / 100f;
-                    if (bonusDamage >= 0)
-                    {
-                        player.GetDamage(DamageClass.Melee) += bonusDamage;
-                    }
-                }
-                if (modPlayer.CrystalMagicWeapon)
-                {
-                    float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) * BonusDamage3 / 100f;
-                    if (bonusDamage >= 0)
-                    {
-                        player.GetDamage(DamageClass.Melee) += bonusDamage;
-                    }
-                }
-            }
-        }
-
-        
 
         public override bool OnPickup(Item item, Player player)
         {
