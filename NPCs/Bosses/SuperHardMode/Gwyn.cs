@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
@@ -202,17 +203,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Protected"), 175, 75, 255);
                     holdTimer = 200;
                 }
+            }
+            else if (holdTimer <= 0) // preserve 9999 NPC.defense penalty until hold timer expires
+            {
+                if (swordDead)
+                {
+                    NPC.defense = 130; //Speed things up a bit
+                }
                 else
                 {
-                    if (swordDead)
-                    {
-                        NPC.defense = 110;
-                    }
-                    else
-                    {
-                        NPC.defense = 550;
-                    }
-
+                    NPC.defense = 550;
                 }
             }
 
@@ -1464,7 +1464,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (swordDead)
                 {
 
-                    NPC.defense = 130; //Speed things up a bit
                     baseCooldown = 180; //was 90
 
                     /*
@@ -1567,11 +1566,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 //Check if SwordOfLordGwyn is dead. If so we don't need to keep calling AnyNPCs. 
-                if (OptionSpawned == true)
+                if (OptionSpawned == true && !swordDead)
                 {
                     if (!NPC.AnyNPCs(ModContent.NPCType<SwordOfLordGwyn>()))
                     {
                         swordDead = true;
+                        NPC.netUpdate = true;
                     }
                 }
 
@@ -1962,6 +1962,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             return base.PreDraw(spriteBatch, screenPos, drawColor);
 
+        }
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(swordDead);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            swordDead = reader.ReadBoolean();
         }
         public override bool CheckActive()
         {
