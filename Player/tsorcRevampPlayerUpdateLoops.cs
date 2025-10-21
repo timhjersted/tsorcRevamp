@@ -1801,6 +1801,37 @@ namespace tsorcRevamp
                 }
             }
 
+            if (Player.HeldItem.CountsAsClass(DamageClass.Melee))
+            {
+                /*Main.NewText("magicDamage: " + player.GetDamage(DamageClass.Magic));
+				Main.NewText("magicDamageMult: " + player.GetDamage(DamageClass.Magic)Mult);
+				Main.NewText((player.GetDamage(DamageClass.Magic) - player.GetDamage(DamageClass.Magic)Mult) * .5f);*/
+                if (Player.HasBuff(ModContent.BuffType<MagicWeapon>()))
+                {
+                    float bonusDamage = ((Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * Items.tsorcGlobalItem.BonusDamage1 / 100f;
+                    if (bonusDamage >= 0)
+                    {
+                        Player.GetDamage(DamageClass.Melee) += bonusDamage;
+                    }
+                }
+                if (Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()))
+                {
+                    float bonusDamage = ((Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * Items.tsorcGlobalItem.BonusDamage2 / 100f;
+                    if (bonusDamage >= 0)
+                    {
+                        Player.GetDamage(DamageClass.Melee) += bonusDamage;
+                    }
+                }
+                if (Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>()))
+                {
+                    float bonusDamage = (Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) * Items.tsorcGlobalItem.BonusDamage3 / 100f;
+                    if (bonusDamage >= 0)
+                    {
+                        Player.GetDamage(DamageClass.Melee) += bonusDamage;
+                    }
+                }
+            }
+
             if (WaterWalkingBoots)
             {
                 if (LavaWalkCount < LavaWalkTimer)

@@ -861,6 +861,10 @@ namespace tsorcRevamp
             {
                 target.AddBuff(BuffID.Daybreak, 180);
             }
+            if (MaskOfTheFather)
+            {
+                modifiers.CritDamage += Items.Armors.MaskOfTheFather.CritDmgIncrease / 100f;
+            }
         }
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
         {
@@ -917,10 +921,6 @@ namespace tsorcRevamp
             if (modifiers.DamageType == DamageClass.Ranged && InfinityEdge)
             {
                 modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
-            }
-            if (MaskOfTheFather)
-            {
-                modifiers.CritDamage += Items.Armors.MaskOfTheFather.CritDmgIncrease / 100f;
             }
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
             {
