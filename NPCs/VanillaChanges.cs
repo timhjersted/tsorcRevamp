@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs
         {
             public bool lifeBoosted = false; 
 
-            public override bool InstancePerEntity => true; // Pour garantir un flag par instance de NPC
+            public override bool InstancePerEntity => true;
         }
 
         #region SetDefaults
@@ -2114,6 +2114,8 @@ namespace tsorcRevamp.NPCs
 
                         npc.value = 67430;
                         npc.rarity = 10;
+                        npc.lifeMax = 3800;
+                        npc.scale = 1.1f;
                         break;
                     }
                 #endregion
@@ -2356,19 +2358,21 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Plantera.DespawnHandler"), Color.Green, DustID.GreenTorch);
 
-                        npc.lifeMax = 40000; //base 30k
+                        npc.lifeMax = 42000; //base 30k
                         npc.damage = 93; //base 70
                         npc.value = 295930;
                         npc.rarity = 25;
+                        npc.scale = 1.15f;
                         break;
                     }
 
                 case (NPCID.PlanterasTentacle):
                     {
                         npc.damage = 86; //base 70
-                        npc.lifeMax = 1250;
+                        npc.lifeMax = 1300;
                         npc.defense = 25;
                         npc.value = 1490;
+                        npc.scale = 1.2f;
                         break;
                     }
 
@@ -2376,6 +2380,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.damage = 0; //base 70, it's hooks are bs
                         npc.value = 1490; //not sure if this even allows it to drop souls but whatever
+                        npc.scale = 1.15f;
                         break;
                     }
 
@@ -2384,6 +2389,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 500; //base 0
                         npc.damage = 60; //base 70 (ie 140)
                         npc.value = 130;
+                        npc.scale = 1.3f;
                         break;
                     }
                 #endregion
@@ -2631,26 +2637,26 @@ namespace tsorcRevamp.NPCs
                 || goblinarmy == NPCID.GoblinArcher
                     ):
                     {
-                        npc.value = 420; // x/10 * (80+[y*40]) (x = value, y = player count) for approximate total soul drops per army 
+                        npc.value = 460; // x/10 * (80+[y*40]) (x = value, y = player count) for approximate total soul drops per army 
 
                         if (npc.type == NPCID.GoblinPeon)
                         {
                             npc.damage = 20;
                             npc.lifeMax = 70;
-                            npc.knockBackResist = 0.5f;
+                            npc.knockBackResist = 0.4f;
                         }
                         if (npc.type == NPCID.GoblinThief)
                         {
-                            npc.damage = 55;
-                            npc.defense = 6;
-                            npc.lifeMax = 110;
-                            npc.knockBackResist = 0.2f;
+                            npc.damage = 45;
+                            npc.defense = 8;
+                            npc.lifeMax = 100;
+                            npc.knockBackResist = 0.4f;
                         }
                         if (npc.type == NPCID.GoblinWarrior)
                         {
-                            npc.damage = 40;
+                            npc.damage = 38;
                             npc.defense = 15;
-                            npc.lifeMax = 135;
+                            npc.lifeMax = 125;
                             npc.knockBackResist = 0f;
                         }
                         if (npc.type == NPCID.GoblinSorcerer)
@@ -2662,7 +2668,7 @@ namespace tsorcRevamp.NPCs
                         }
                         if (npc.type == NPCID.GoblinArcher)
                         {
-                            npc.lifeMax = 120;
+                            npc.lifeMax = 100;
                             npc.defense = 10;
                             npc.damage = 0;
                         }
@@ -2707,7 +2713,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2GoblinT3):
                     {
-                        npc.value = 250;
+                        npc.value = 280;
                         break;
                     }
 
@@ -2725,7 +2731,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2GoblinBomberT3):
                     {
-                        npc.value = 280;
+                        npc.value = 310;
                         break;
                     }
 
@@ -2743,7 +2749,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2WyvernT3):
                     {
-                        npc.value = 370;
+                        npc.value = 350;
                         break;
                     }
 
@@ -2761,7 +2767,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2JavelinstT3):
                     {
-                        npc.value = 300;
+                        npc.value = 320;
                         break;
                     }
 
@@ -2773,7 +2779,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2SkeletonT3):
                     {
-                        npc.value = 110;
+                        npc.value = 100;
                         break;
                     }
 
@@ -2809,7 +2815,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2KoboldWalkerT3):
                     {
-                        npc.value = 300;
+                        npc.value = 330;
                         break;
                     }
 
@@ -2821,12 +2827,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2KoboldFlyerT3):
                     {
-                        npc.value = 320;
+                        npc.value = 350;
                         break;
                     }
 
                 case (NPCID.DD2DarkMageT1):
                     {
+                        npc.lifeMax = 1000;
                         npc.value = 5850;
                         npc.damage = 0;
                         break;
@@ -2878,7 +2885,7 @@ namespace tsorcRevamp.NPCs
 
                 case int pirates when ((pirates >= NPCID.PirateDeckhand && pirates <= NPCID.PirateCaptain) || pirates == NPCID.PirateShip || pirates == NPCID.PirateShipCannon || pirates == NPCID.PirateGhost):
                     {
-                        npc.value = 890; //wiki doesn't tell me how many pirates come so idk
+                        npc.value = 930; //wiki doesn't tell me how many pirates come so idk
                         if (npc.type == NPCID.PirateCaptain)
                         {
                             npc.value = 4430;
@@ -4380,8 +4387,8 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.Retinazer)
             {
-                npc.active = false;
-                return false;
+                //npc.active = false;
+                //return false;
             }
             if (npc.type == NPCID.Spazmatism)
             {
@@ -6481,6 +6488,11 @@ namespace tsorcRevamp.NPCs
                 else if (Main.rand.NextBool(100))
                 { // 1% 
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Specialist.ToxicCatalyzer>(), 1, false, -1);
+                }
+
+                if (Main.rand.NextBool(120))
+                { // 0.8%
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Accessories.Mobility.BootsOfHaste>(), 1, false, -1);
                 }
             }
 

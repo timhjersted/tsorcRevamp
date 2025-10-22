@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class ShadowSickle : ModItem
     {
-        public const int BaseDamage = 51;
+        public const int BaseDamage = 44;
         public static int ManaRefund = 15;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaRefund);
         public override void SetStaticDefaults()
@@ -22,10 +22,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.damage = BaseDamage;
             Item.width = 32;
             Item.height = 32;
+            Item.scale = 1.25f;
             Item.knockBack = 6f;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 60;
-            Item.useTime = 60;
+            Item.useAnimation = 42;
+            Item.useTime = 42;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 13500;
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.DemoniteBar, 3);
+            recipe.AddIngredient(ItemID.DemoniteBar, 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 

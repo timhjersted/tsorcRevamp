@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         public override void SetDefaults()
         {
             Item.autoReuse = true; //why was it the only one without autoreuse?
-            Item.damage = 24;
+            Item.damage = 23;
             Item.height = 10;
             Item.knockBack = 0.1f;
             Item.rare = ItemRarityID.LightRed;
@@ -32,12 +32,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.shootSpeed = 16;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.mana = 30;
+            Item.mana = 16;
             storeManaCost3 = Item.mana;
-            Item.useAnimation = 10;
+            Item.useAnimation = 11;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 10;
+            Item.useTime = 11;
             Item.value = PriceByRarity.LightRed_4;
             Item.width = 34;
             Item.shoot = ModContent.ProjectileType<Projectiles.Ice3Ball>();

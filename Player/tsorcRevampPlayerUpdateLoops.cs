@@ -2467,8 +2467,8 @@ namespace tsorcRevamp
 
                     foreach (NPC npc in Main.npc)
                     {
-                        if (npc.active && 
-                            (npc.type == ModContent.NPCType<GhostDragonHead>() || npc.type == ModContent.NPCType<WyvernMageShadow>())) 
+                        if (npc.active &&
+                            (npc.type == ModContent.NPCType<GhostDragonHead>() || npc.type == ModContent.NPCType<WyvernMageShadow>()))
                         {
                             WyvernShadowIsAlive = true;
                             break;
@@ -2477,11 +2477,35 @@ namespace tsorcRevamp
 
                     if (!WyvernShadowIsAlive)
                     {
-                        Player.AddBuff(BuffID.WitheredWeapon, 4*60);
-                        Player.AddBuff(BuffID.Battle, 4*60);
-                        Player.AddBuff(ModContent.BuffType<WeightOfShadow>(), 4*60, false);
+                        Player.AddBuff(BuffID.WitheredWeapon, 4 * 60);
+                        Player.AddBuff(BuffID.Battle, 4 * 60);
+                        Player.AddBuff(ModContent.BuffType<WeightOfShadow>(), 4 * 60, false);
                     }
                 }
+
+                /* For a future update of the remix map
+                
+                if (Main.LocalPlayer.ZoneHallow && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneRockLayerHeight) && tsorcRevampWorld.SuperHardMode)
+                {
+                    bool ChaosIsAlive = false;
+
+                    foreach (NPC npc in Main.npc)
+                    {
+                        if (npc.active && 
+                            (npc.type == ModContent.NPCType<Chaos>())) 
+                        {
+                            ChaosIsAlive = true;
+                            break;
+                        }
+                    }
+
+                    if (!ChaosIsAlive)
+                    {
+                        Player.AddBuff(BuffID.WitheredWeapon, 2*60);
+                        Player.AddBuff(BuffID.Blackout, 2*60);
+                        Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 2*60, false);
+                    }
+                }*/
 
                 if (Main.LocalPlayer.ZoneJungle && !Main.LocalPlayer.ZoneDungeon && !Main.LocalPlayer.ZoneOverworldHeight && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
                 {

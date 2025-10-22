@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Head)]
     public class RTQ2Helmet : ModItem
     {
-        public static float Dmg = 27f;
+        public static float Dmg = 18f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {

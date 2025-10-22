@@ -22,11 +22,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 25;
             Item.useTime = 25;
-            Item.damage = 18;
+            Item.damage = 20;
             Item.knockBack = 2.5f;
             Item.mana = 5;
             Item.UseSound = SoundID.Item8;
-            Item.shootSpeed = 7;
+            Item.shootSpeed = 8.5f;
             Item.noMelee = true;
             Item.value = PriceByRarity.Green_2;
             Item.rare = ItemRarityID.Green;
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<WandOfDarkness>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2300);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1700);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

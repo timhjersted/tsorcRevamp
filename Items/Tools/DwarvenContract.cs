@@ -6,7 +6,6 @@ namespace tsorcRevamp.Items.Tools
 {
     class DwarvenContract : ModItem
     {
-        public override string Texture => "tsorcRevamp/Items/Materials/ForgottenIceBowScroll";
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("A contract for a dwarf guard.\n" + "Will summon a dwarf to guard a piece of property.");

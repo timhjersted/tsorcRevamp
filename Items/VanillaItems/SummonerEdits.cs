@@ -113,6 +113,30 @@ namespace tsorcRevamp.Items.VanillaItems
             #endregion
 
             #region Turrets/Sentries
+            if (item.type == ItemID.DD2FlameburstTowerT1Popper)
+            {
+                item.damage = 22;
+            }
+            if (item.type == ItemID.DD2FlameburstTowerT2Popper)
+            {
+                item.damage = 56;
+            }
+            if (item.type == ItemID.DD2FlameburstTowerT3Popper)
+            {
+                item.damage = 112;
+            }
+            if (item.type == ItemID.DD2LightningAuraT1Popper)
+            {
+                item.damage = 6;
+            }
+            if (item.type == ItemID.DD2LightningAuraT2Popper)
+            {
+                item.damage = 16;
+            }
+            if (item.type == ItemID.DD2LightningAuraT3Popper)
+            {
+                item.damage = 43;
+            }
             if (item.type == ItemID.HoundiusShootius)
             {
                 item.damage = 30;

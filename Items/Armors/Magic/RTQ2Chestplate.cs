@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Body)]
     public class RTQ2Chestplate : ModItem
     {
-        public static float CritChance = 7f;
+        public static float CritChance = 16f;
         public static float AtkSpeed = 10f;
         public static float LifeThreshold = 40f;
         public static int Defense = 15;

@@ -664,7 +664,6 @@ Mods: {
 					'''
 				LargeAmber: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
 				RemixLargeDiamond: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
-				RemixLargeTopaz: "[c/ffbf00:A symbol resembling the ruins at the ends of a large abandoned city is carved into it]"
 				VulnerabilityHex: Deals more damage and applies a vulnerability hex if Hellkite Dragon has been defeated
 				IncinerationHex: Deals more damage and applies a incineration hex if Hellkite Dragon has been defeated
 				MartianBuff: Deals more damage and electrocutes enemies if the Martians have been defeated
@@ -10977,8 +10976,8 @@ Mods: {
 					'''
 					The Knight of Izalith, now turned puppet of the abyss: Artorias, is the being we need to fight next.
 					He rests to the Forgotten City at the Junction between it and the Undergrowth.
-					But, it has long since been sealed, by a powerful artifact of a form of Topaz, left forgotten in the Great Foundry of the jungle.
-					The spirits gave me the Path to the Foundry: Under a bridge on the jungle surface.	
+					But the Path through the ruins seems to be blocked, we need to find another way.
+					The spirits tell me that the Great Foundry is the only way in: the entrance is located under a bridge on the surface of the jungle.
 					'''
 				ChaosHint:
 					'''
@@ -11686,6 +11685,8 @@ Mods: {
 			SHM6Downed: Six Guardians of the Abyss slain
 			SHM9Downed: Nine Guardians of the Abyss slain
 			RageDowned: The Rage has been defeated
+			SlograGaibonDowned: Mods.tsorcRevamp.Conditions.SlograGaibonDowned
+			AbysmalOolacileSorcererDowned: Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned
 		}
 
 		Achievements: {

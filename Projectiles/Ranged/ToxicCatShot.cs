@@ -96,7 +96,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                 (target.Center - Projectile.Center) *
                 0.75f; // Change velocity based on delta center of targets (difference between entity centers)
             Projectile.netUpdate = true; // netUpdate this javelin
-            target.AddBuff(ModContent.BuffType<Buffs.ToxicCatDrain>(), 480); // Adds the ExampleJavelin debuff for a very small DoT
+            target.AddBuff(ModContent.BuffType<Buffs.ToxicCatDrain>(), 540); // Adds the ExampleJavelin debuff for a very small DoT
 
             Projectile.damage = 0; // Makes sure the sticking javelins do not deal damage anymore
 

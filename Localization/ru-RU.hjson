@@ -628,7 +628,6 @@ Mods: {
 					'''
 				LargeAmber: "[c/ffbf00:На нём высечен символ, напоминающий вход в заброшенный храм под холмом]"
 				RemixLargeDiamond: "[c/ffbf00:На нём высечен символ, напоминающий вход в заброшенный храм под холмом]"
-				RemixLargeTopaz: "[c/ffbf00:На нём высечен символ, напоминающий руины на окраинах большого заброшенного города]"
 				VulnerabilityHex: Наносит больше урона и применяет проклятие уязвимости, если Адский Дракон был побеждён
 				IncinerationHex: Наносит больше урона и применяет проклятие испепеления, если Адский Дракон был побеждён
 				MartianBuff: Наносит больше урона и электризует врагов, если Марсиане были побеждены
@@ -10935,8 +10934,8 @@ Mods: {
 					'''
 					The Knight of Izalith, now turned puppet of the abyss: Artorias, is the being we need to fight next.
 					He rests to the Forgotten City at the Junction between it and the Undergrowth.
-					But, it has long since been sealed, by a powerful artifact of a form of Topaz, left forgotten in the Great Foundry of the jungle.
-					The spirits gave me the Path to the Foundry: Under a bridge on the jungle surface.	
+					But the Path through the ruins seems to be blocked, we need to find another way.
+					The spirits tell me that the Great Foundry is the only way in: the entrance is located under a bridge on the surface of the jungle.
 					''' */
 				ChaosHint:
 					'''
@@ -11644,6 +11643,8 @@ Mods: {
 			SHM6Downed: Шестой страж бездны побёжден
 			SHM9Downed: Девятый страж бездны побеждён
 			RageDowned: Ярость была побеждена
+			// SlograGaibonDowned: Mods.tsorcRevamp.Conditions.SlograGaibonDowned
+			// AbysmalOolacileSorcererDowned: Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned
 		}
 
 		Achievements: {

@@ -49,8 +49,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.DemonBow);
-            recipe.AddIngredient(ItemID.WormTooth, 2);
-            recipe.AddIngredient(ItemID.PurificationPowder, 15);
+            recipe.AddIngredient(ItemID.RottenChunk, 5);
+            recipe.AddIngredient(ItemID.VilePowder, 15);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -1693,7 +1693,7 @@
   "style": 1
 }
 {
-  "text": "- You have found the Lost Ruins of Artorias - --NEWLINE  --NEWLINE This gate is blocked, only openable with a large topaz, but which has long since been lost in the great foundry, located in the Jungle below a bridge. But this place being difficult to access and very dangerous, almost no one ventured out to try to recover it.",
+  "text": "- You have found the Lost Ruins of Artorias - --NEWLINE  --NEWLINE This gate is blocked, only openable in the other side. It is said that there is a path to Artorias in the Great Foundry, which the entry is located in the jungle below a bridge.",
   "tileX": 5163,
   "tileY": 1755,
   "textWidth": 320,
@@ -1728,7 +1728,7 @@
   "style": 1
 }
 {
-  "text": "Red: \u0022Miakoda, is there a connection between the Great Foundry and Artorias?\u0022 --NEWLINE --NEWLINE Miakoda: \u0022Yes, a long time ago, when the Foundry was in full operation, there were strong ties between it and the Forgotten City. Artorias\u0022 armor, renowned as one of the most durable, was forged here with magical protection, and the Large Topaz was offered in exchange.\u0022",
+  "text": "Red: \u0022Miakoda, is there a connection between the Great Foundry and Artorias?\u0022 --NEWLINE --NEWLINE Miakoda: \u0022Yes, a long time ago, when the Foundry was in full operation, there were strong ties between it and the Forgotten City. Artorias\u0022 armor, renowned as one of the most durable, was forged here with magical protection, and a long tunnel was created to connect the foundry to the city.\u0022",
   "tileX": 5544,
   "tileY": 1329,
   "textWidth": 320,

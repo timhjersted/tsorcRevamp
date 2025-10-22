@@ -28,7 +28,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.noMelee = true;
             Item.knockBack = 5f;
             Item.value = 1000000;
-            Item.scale = 0.8f;
             Item.rare = ItemRarityID.Lime;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<PolarisShot>();

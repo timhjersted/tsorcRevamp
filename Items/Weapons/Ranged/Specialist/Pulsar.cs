@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 
         public override void SetDefaults()
         {
-            Item.damage = 34;
+            Item.damage = 35;
             Item.DamageType = DamageClass.Ranged;
             Item.crit = 0;
             Item.width = 38;
@@ -27,10 +27,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.noMelee = true;
             Item.knockBack = 2f;
             Item.value = 20000;
-            Item.scale = 0.8f;
             Item.rare = ItemRarityID.Green;
             Item.shoot = ModContent.ProjectileType<PulsarShot>();
-            Item.shootSpeed = 5f;
+            Item.shootSpeed = 6.5f;
             //item.glowMask = TransparentTextureType.PulsarGlowmask;
         }
 

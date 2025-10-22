@@ -28,7 +28,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.noMelee = true;
             Item.knockBack = 3.5f;
             Item.value = PriceByRarity.Pink_5;
-            Item.scale = 0.8f;
             Item.rare = ItemRarityID.Pink;
             Item.shoot = ModContent.ProjectileType<GWPulsarShot>();
             Item.shootSpeed = 12f;

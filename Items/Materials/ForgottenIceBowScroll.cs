@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Materials
         }
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Pink;
+            Item.rare = ItemRarityID.Red;
             Item.width = 12;
             Item.height = 12;
             Item.value = 5000000;

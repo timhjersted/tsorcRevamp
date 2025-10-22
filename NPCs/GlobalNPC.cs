@@ -2244,7 +2244,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (ToxicCatShotCount >= 4)
                 { //this is to make it worth the players time stickying more than 3 times
-                    npc.lifeRegen -= ToxicCatShotCount * 3 * 2; //Use 1st N for damage, second N can be used to make it tick faster.
+                    npc.lifeRegen -= ToxicCatShotCount * 3 * 3; //Use 1st N for damage, second N can be used to make it tick faster.
                     if (damage < ToxicCatShotCount * 1)
                     {
                         damage = ToxicCatShotCount * 1;
@@ -2252,7 +2252,7 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    npc.lifeRegen -= ToxicCatShotCount * 2 * 2;
+                    npc.lifeRegen -= ToxicCatShotCount * 2 * 3;
                     if (damage < ToxicCatShotCount * 1)
                     {
                         damage = ToxicCatShotCount * 1;

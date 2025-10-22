@@ -664,7 +664,6 @@ Mods: {
 					'''
 				LargeAmber: "[c/ffbf00:上面刻着一个符号，像是村庄山丘下大地神庙的入口]"
 				RemixLargeDiamond: "[c/ffbf00:上面刻着一个符号，像是村庄山丘下大地神庙的入口]"
-				RemixLargeTopaz: "[c/ffbf00:上面刻着一个符号，像是遗忘之城东边的废墟]"
 				VulnerabilityHex: 击败炼狱鸢龙后，提高伤害并对敌人施加易伤减益
 				IncinerationHex: 击败炼狱鸢龙后，提高伤害并对敌人施加伤害减益
 				MartianBuff: 击败火星飞碟后，提高伤害并对敌人施加电击
@@ -11685,6 +11684,8 @@ Mods: {
 			SHM6Downed: 六名深渊守护者被击败
 			SHM9Downed: 九名深渊守护者被击败
 			RageDowned: 击败愤怒
+			// SlograGaibonDowned: Mods.tsorcRevamp.Conditions.SlograGaibonDowned
+			// AbysmalOolacileSorcererDowned: Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned
 		}
 
 		Achievements: {

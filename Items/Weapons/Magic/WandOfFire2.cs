@@ -20,9 +20,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 19;
             Item.useTime = 19;
-            Item.damage = 23;
+            Item.damage = 24;
             Item.knockBack = 1;
-            Item.mana = 8;
+            Item.mana = 7;
             Item.UseSound = SoundID.Item20;
             Item.shootSpeed = 14;
             Item.noMelee = true;

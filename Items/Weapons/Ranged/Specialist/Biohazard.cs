@@ -30,7 +30,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.noMelee = true;
             Item.knockBack = 3f;
             Item.value = PriceByRarity.Yellow_8;
-            Item.scale = 0.8f;
             Item.rare = ItemRarityID.Yellow;
             Item.shoot = ModContent.ProjectileType<BiohazardShot>();
             Item.shootSpeed = 15f;

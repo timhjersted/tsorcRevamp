@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class StuddedLeatherHelmet : ModItem
     {
-        public static float CritChance = 5f;
+        public static float CritChance = 6f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
@@ -17,8 +17,8 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 20;
             Item.height = 26;
-            Item.defense = 1;
-            Item.rare = ItemRarityID.Orange;
+            Item.defense = 2;
+            Item.rare = ItemRarityID.Green;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)

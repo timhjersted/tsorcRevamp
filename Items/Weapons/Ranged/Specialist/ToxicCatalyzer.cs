@@ -27,7 +27,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.noMelee = true;
             Item.knockBack = 2f;
             Item.value = 20000;
-            Item.scale = 0.8f;
             Item.rare = ItemRarityID.Green;
             Item.shoot = ModContent.ProjectileType<ToxicCatShot>();
             Item.shootSpeed = 10.6f;

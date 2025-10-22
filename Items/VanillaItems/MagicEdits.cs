@@ -109,20 +109,20 @@ namespace tsorcRevamp.Items.VanillaItems
             //Lunar items
             if (item.type == ItemID.NebulaBlaze)
             {
-                item.mana = 24;
+                item.mana = 20;
             }
             if (item.type == ItemID.NebulaArcanum)
             {
-                item.mana = 60;
+                item.mana = 40;
             }
             if (item.type == ItemID.LastPrism)
             {
-                item.mana = 30;
+                item.mana = 22;
             }
             if (item.type == ItemID.LunarFlareBook)
             {
-                item.damage = 90;
-                item.mana = 39;
+                item.damage = 92;
+                item.mana = 14;
             }
         }
         public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)

@@ -1,11 +1,11 @@
-﻿using Terraria.ID;
+﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Materials
 {
     class ForgottenThunderBowScroll : ModItem
     {
-        public override string Texture => "tsorcRevamp/Items/Materials/ForgottenIceBowScroll";
         public override void SetStaticDefaults()
         {
         }
@@ -13,9 +13,8 @@ namespace tsorcRevamp.Items.Materials
         {
             Item.width = 12;
             Item.height = 12;
-            Item.consumable = false;
             Item.value = 5000000;
-            Item.rare = ItemRarityID.Pink;
+            Item.rare = ItemRarityID.Red;
         }
     }
 }

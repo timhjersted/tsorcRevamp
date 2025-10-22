@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 10;
             NPC.height = 28;
             NPC.width = 20;
-            NPC.lifeMax = 90;
+            NPC.lifeMax = 75;
             NPC.value = 40;
 
             tsorcRevampGlobalNPC sprogletGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();

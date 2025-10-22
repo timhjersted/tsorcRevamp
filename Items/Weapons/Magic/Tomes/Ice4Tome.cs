@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         int storeManaCost4;
         public override void SetDefaults()
         {
-            Item.damage = 140;
+            Item.damage = 130;
             Item.height = 10;
             Item.knockBack = 0.1f;
             Item.rare = ItemRarityID.Lime;
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.shootSpeed = 45;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.mana = 50;
+            Item.mana = 35;
             storeManaCost4 = Item.mana;
             Item.useAnimation = 25;
             Item.useTime = 25;
