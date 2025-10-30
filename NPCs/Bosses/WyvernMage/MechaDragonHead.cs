@@ -201,7 +201,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageBag>(), 1, 1, 1, new WyvernDiscipleDropCondition()));
+            npcLoot.Add(ItemDropRule.BossBagByCondition(new WyvernDiscipleDropCondition(), ModContent.ItemType<Items.BossBags.WyvernMageBag>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 900, 900));
         }
     }
