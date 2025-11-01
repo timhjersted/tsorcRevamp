@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             //recipe.AddIngredient(ItemID.LaserMachinegun, 1);
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 8);
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 10);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);

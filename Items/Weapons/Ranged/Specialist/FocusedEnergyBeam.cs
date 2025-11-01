@@ -38,11 +38,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 4);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 4);
             recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 2);
             recipe.AddIngredient(ItemID.SpaceGun, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
 
             recipe.AddTile(TileID.DemonAltar);
 

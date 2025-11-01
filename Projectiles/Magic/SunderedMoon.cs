@@ -8,27 +8,26 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Magic
 {
-    class LightOfDawn : DynamicTrail
+    class SunderedMoon : DynamicTrail
     {
         public override string Texture => base.Texture;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Light of Dawn");
         }
         public override void SetDefaults()
         {
-            Projectile.width = 20;
-            Projectile.height = 20;
-            Projectile.scale = 1.1f;
-            Projectile.timeLeft = 600;
+            Projectile.width = 22;
+            Projectile.height = 22;
+            Projectile.scale = 1.2f;
+            Projectile.timeLeft = 360;
             Projectile.hostile = false;
             Projectile.tileCollide = false;
             Projectile.friendly = true;
-            Projectile.penetrate = 999;
+            Projectile.penetrate = 4;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
+            Projectile.localNPCHitCooldown = 20;
             Projectile.DamageType = DamageClass.Magic;
-            trailWidth = 20;
+            trailWidth = 33;
             trailPointLimit = 900;
             trailCollision = true;
             NPCSource = false;
@@ -54,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Magic
             if (!hasHitNPC)
             {
                 int? target = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
-                if (target.HasValue && Main.npc[target.Value].Distance(Projectile.Center) < 300)
+                if (target.HasValue && Main.npc[target.Value].Distance(Projectile.Center) < 320)
                 {
                     //Perform homing
                     UsefulFunctions.SmoothHoming(Projectile, Main.npc[target.Value].Center, 0.5f, 20, Main.npc[target.Value].velocity, false);
@@ -63,9 +62,32 @@ namespace tsorcRevamp.Projectiles.Magic
         }
 
         bool hasHitNPC = false;
+        
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             hasHitNPC = true;
+
+            if (Main.rand.Next(1, 3) == 1)
+            {
+                Vector2 spawnPosition = new Vector2(
+                    target.position.X + Main.rand.NextFloat(-100f, 100f), 
+                    target.position.Y - 520f 
+                );
+
+                Vector2 direction = new Vector2(0, 1); 
+                direction.Normalize();
+                direction *= 5f; 
+
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    spawnPosition,
+                    direction,
+                    ProjectileID.MagicMissile,
+                    damageDone, 
+                    1.0f,
+                    Main.myPlayer
+                );
+            }
         }
 
         public override float CollisionWidthFunction(float progress)
@@ -83,8 +105,8 @@ namespace tsorcRevamp.Projectiles.Magic
 
         public override void SetEffectParameters(Effect effect)
         {
-            Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
-            Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
+            Color shaderColor = Color.Lerp(new Color(0.05f, 0.15f, 1f), new Color(0.1f, 0.3f, 1f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
+            Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.02f);
 
             collisionEndPadding = (int)trailCurrentLength / 30;
             visualizeTrail = false;

@@ -14,12 +14,12 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
         {
             Projectile.aiStyle = 1;
             Projectile.friendly = true;
-            Projectile.height = 40;
+            Projectile.height = 18;
             Projectile.damage = 25;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
-            Projectile.width = 18;
+            Projectile.width = 16;
             Projectile.extraUpdates = 1;
             Projectile.timeLeft = 1200;
             Projectile.light = 0.5f;

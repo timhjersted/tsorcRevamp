@@ -7,10 +7,13 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Weapons.Ranged.Bows;
+using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Utilities;
@@ -45,6 +48,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 1500000;
             NPC.rarity = 43;
             NPC.knockBackResist = 0f;
+            NPC.scale = 1.15f;
             NPC.boss = true;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DarkCloud.DespawnHandler"), Color.Blue, DustID.ShadowbeamStaff);
         }
@@ -582,6 +586,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 TeleportToArenaCenter();
                 targetPlayers = new List<Player>();
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/Darkness"), NPC.Center);
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     if (Vector2.Distance(Main.player[i].Center, NPC.Center) < 5000)
@@ -770,7 +775,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 else if ((NPC.Center.X < Target.Center.X) && !dashLeft)
                 {
-                    NPC.velocity = new Vector2(30, 0);
+                    NPC.velocity = new Vector2(30, 0); 
                     NPC.noTileCollide = true;
                     NPC.noGravity = true;
                 }
@@ -792,6 +797,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     NPC.direction = -1;
                 }
+
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
             }
 
             //Charge up effect again
@@ -1158,6 +1165,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Dust.NewDustPerfect(NPC.Center, DustID.ShadowbeamStaff, -dustVel, Scale: 5).noLight = true;
                     }
 
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+
                     //In-between each attack, nuke all dust that was telegraphing the previous one
                     //Hacky way to do this, but it works
                     for (int i = 0; i < Main.maxDust; i++)
@@ -1174,7 +1183,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //At the end of the attack, change attacks and spawn a burst of dust
             if (AttackModeCounter >= 800)
             {
-                for (int i = 0; i < 120; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     Vector2 offset = Main.rand.NextVector2CircularEdge(256, 256);
                     Vector2 velocity = new Vector2(15, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
@@ -1293,7 +1302,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         for (int j = 0; j < 3; j++)
                         {
-                            Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.FireworkFountain_Green, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
+                            Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.FireworkFountain_Blue, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
                             Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.ShadowbeamStaff, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
                         }
                         Main.projectile[i].Kill();
@@ -1470,6 +1479,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, new Vector2(1, 0).RotatedBy(initialTargetRotation), ModContent.ProjectileType<DarkDivineSpark>(), divineSparkDamage, 0.5f, Main.myPlayer, direction * 999, NPC.whoAmI);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/MasterBuster"), NPC.Center);
                 }
             }
         }
@@ -1640,6 +1650,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (arrowRainTargetingVector + offset), ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
                         }
                     }
                 }
@@ -1651,6 +1662,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (velocity != Vector2.Zero && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
                         }
                     }
                 }
@@ -1687,6 +1699,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 16), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(-10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item36, NPC.Center);
             }
         }
 
@@ -1984,7 +1997,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 for (int i = 0; i < 20; i++)
                 {
                     Vector2 thisVel = arrowRainTargetingVector + Main.rand.NextVector2Circular(10, 10);
-                    Dust.NewDustPerfect(NPC.Center, DustID.FireworkFountain_Green, thisVel).noGravity = true;
+                    Dust.NewDustPerfect(NPC.Center, DustID.FireworkFountain_Blue, thisVel).noGravity = true;
                 }
             }
 
@@ -2096,6 +2109,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 2, 4));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>(), 1, 2, 4));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MoonlightGreatsword>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<RadiantStrand>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SunderedMoon>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<NullSpriteStaff>()));
             npcLoot.Add(notExpertCondition);
         }

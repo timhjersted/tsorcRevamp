@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(ModContent.ItemType<EphemeralThrowingAxe>());
             recipe.AddIngredient(ItemID.SoulofNight, 6);
             recipe.AddIngredient(ItemID.MythrilBar, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

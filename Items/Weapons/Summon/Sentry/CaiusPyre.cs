@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
             Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
             Item.sentry = true;
             Item.noMelee = true;
-            Item.DamageType = DamageClass.MagicSummonHybrid;
+            Item.DamageType = DamageClass.Summon;
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Sentry.CaiusPyreRift>();
         }
 
@@ -55,9 +55,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.FireGauntlet);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 8);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 66000);
+            recipe.AddIngredient(ItemID.LunarTabletFragment, 6);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 9);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

@@ -35,11 +35,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CobaltBar, 1);
-            recipe.AddIngredient(ItemID.MythrilBar, 3);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 5);
+            recipe.AddIngredient(ItemID.MythrilBar, 5);
             recipe.AddIngredient(ModContent.ItemType<Muramassa>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -591,6 +591,9 @@ namespace tsorcRevamp
         }
         public override void PreUpdate()
         {
+            int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
+            int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
+
             timeSinceLastAttacked++;
             // Reset the last attacked NPC every 10 seconds
             if (timeSinceLastAttacked > 10 * 60)
@@ -917,6 +920,30 @@ namespace tsorcRevamp
             if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.StarlitHeavenWallpaper)
             {
                 Player.AddBuff(BuffID.Darkness, 60);
+            }
+
+
+            if ((playerX > 6083 && playerX < 6847 && playerY > 1664 && playerY < 1999) &&
+            tsorcRevampWorld.RemixMap && !(Main.LocalPlayer.ZoneOverworldHeight || Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneSkyHeight) && Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.StarlitHeavenWallpaper)
+            {
+                
+                bool DarkCloudIsAlive = false;
+
+                foreach (NPC npc in Main.npc)
+                {
+                    if (npc.active && npc.type == ModContent.NPCType<DarkCloud>()) 
+                    {
+                        DarkCloudIsAlive = true;
+                        break;
+                    }
+                }
+
+                if (!DarkCloudIsAlive)
+                {
+                    Player.AddBuff(BuffID.Blackout, 60);
+                    Player.AddBuff(BuffID.Darkness, 60);
+                    Player.AddBuff(BuffID.Battle, 60);
+                }
             }
 
             if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.PinkDungeonSlab)
@@ -2482,10 +2509,10 @@ namespace tsorcRevamp
                         Player.AddBuff(ModContent.BuffType<WeightOfShadow>(), 4 * 60, false);
                     }
                 }
-
-                /* For a future update of the remix map
                 
-                if (Main.LocalPlayer.ZoneHallow && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneRockLayerHeight) && tsorcRevampWorld.SuperHardMode)
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())) &&
+                Main.LocalPlayer.ZoneHallow && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneRockLayerHeight) 
+                && tsorcRevampWorld.SuperHardMode)
                 {
                     bool ChaosIsAlive = false;
 
@@ -2505,7 +2532,7 @@ namespace tsorcRevamp
                         Player.AddBuff(BuffID.Blackout, 2*60);
                         Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 2*60, false);
                     }
-                }*/
+                }
 
                 if (Main.LocalPlayer.ZoneJungle && !Main.LocalPlayer.ZoneDungeon && !Main.LocalPlayer.ZoneOverworldHeight && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
                 {

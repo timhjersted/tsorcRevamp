@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.height = 12;
             Projectile.friendly = true;
             Projectile.aiStyle = 0;
-            Projectile.scale = 0.9f;
+            Projectile.scale = 1f;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.penetrate = 3;
@@ -28,7 +28,6 @@ namespace tsorcRevamp.Projectiles.Ranged
             // DisplayName.SetDefault("Anti-Material Round");
         }
 
-        public override string Texture => "tsorcRevamp/Projectiles/Ranged/AntiMaterialRound";
         bool reposition = true;
         float sinwaveCounter = -1.4f;
         bool hitTile = false;

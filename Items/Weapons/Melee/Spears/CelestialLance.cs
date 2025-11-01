@@ -1,4 +1,3 @@
-
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -14,8 +13,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int ProjectileID => ModContent.ProjectileType<CelestialLanceProj>();
         public override int Width => 44;
         public override int Height => 44;
-        public override int BaseDmg => 315;
-        public override int BaseCritChance => 0;
+        public override int BaseDmg => 345;
+        public override int BaseCritChance => 4;
         public override float BaseKnockback => 10;
         public override int UseAnimationTime => 20;
         public override int UseTime => 20;
@@ -37,9 +36,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Longinus>());
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 14);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>());
-            recipe.AddIngredient(ItemID.FallenStar, 20);
+            recipe.AddIngredient(ItemID.FragmentStardust, 12);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 140000);
 
             recipe.AddTile(TileID.DemonAltar);

@@ -71,11 +71,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 4);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 4);
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
             recipe.AddIngredient(ItemID.BeetleWings);
             recipe.AddIngredient(ItemID.BeetleHusk, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 66000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

@@ -212,6 +212,11 @@ namespace tsorcRevamp.Projectiles
                     projectile.usesLocalNPCImmunity = true;
                 }
 
+                if (projectile.type == ProjectileID.Skull)
+                {
+                    projectile.tileCollide = false;
+                }
+
                 if (projectile.type == ProjectileID.FrostBlastFriendly)
                 {
                     projectile.penetrate = 6;

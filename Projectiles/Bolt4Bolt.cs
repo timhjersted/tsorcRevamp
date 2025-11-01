@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.light = 0.8f;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 25;
-            Projectile.DamageType = DamageClass.Magic;
+            Projectile.DamageType = DamageClass.Ranged;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

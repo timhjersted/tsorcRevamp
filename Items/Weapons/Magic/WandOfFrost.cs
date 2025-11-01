@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe(); ;
-            //recipe.AddIngredient(ModContent.ItemType<WoodenWand>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<WoodenWand>(), 1);
             recipe.AddIngredient(ItemID.AquaScepter, 1);
             //recipe.AddIngredient(ItemID.CrystalShard, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);

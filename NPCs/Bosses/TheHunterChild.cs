@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.behindTiles = true;
+            NPC.behindTiles = false;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             DrawOffsetY = +70;

@@ -560,13 +560,7 @@ namespace tsorcRevamp
             DisabledRecipes = new List<int>()
             {
                 #region Accessories IDs
-                ItemID.ObsidianSkull,
-                ItemID.BalloonHorseshoeSharkron,
-                ItemID.BlueHorseshoeBalloon,
-                ItemID.WhiteHorseshoeBalloon,
-                ItemID.YellowHorseshoeBalloon,
-                ItemID.BalloonHorseshoeFart,
-                ItemID.BalloonHorseshoeHoney
+                ItemID.ObsidianSkull
                 #endregion
                 ,
                 #region Armor IDs
@@ -1145,7 +1139,7 @@ namespace tsorcRevamp
                 { ItemID.Zenith,   new List<(int ItemID, int Count)>()
                                         {
                                             (ModContent.ItemType<SoulOfChaos>(), 1),
-                                            (ModContent.ItemType<DarkSoul>(), 100000)
+                                            (ModContent.ItemType<DarkSoul>(), 150000)
                                         }                                                   },
                 #endregion
 

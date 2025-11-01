@@ -241,11 +241,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CrystalShard, 1);
+            recipe.AddIngredient(ItemID.CrystalShard, 10);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 6);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

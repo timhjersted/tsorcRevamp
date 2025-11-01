@@ -54,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
                     {//tracer
                         Vector2 DustPos = Projectile.position;
 
-                        int DustIndex = Dust.NewDust(DustPos, 0, 0, 6, 0, 0, 100, default(Color), 1.7f);
+                        int DustIndex = Dust.NewDust(DustPos, 0, 0, 272, 0, 0, 100, default(Color), 1.4f);
                         Main.dust[DustIndex].noGravity = true;
                         Main.dust[DustIndex].velocity = new Vector2(0, 0);
                     }
@@ -64,8 +64,8 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
                         int DustWidth = Projectile.width;
                         int DustHeight = Projectile.height;
 
-                        Dust.NewDust(DustPos, DustWidth, DustHeight, 6, 0, 0, 100, default(Color), 1.1f);
-                        int DustIndex = Dust.NewDust(DustPos, DustWidth, DustHeight, 31, 0, 0, 100, default(Color), 3f);
+                        Dust.NewDust(DustPos, DustWidth, DustHeight, 272, 0, 0, 100, default(Color), 1f);
+                        int DustIndex = Dust.NewDust(DustPos, DustWidth, DustHeight, 31, 0, 0, 100, default(Color), 2.5f);
                         Main.dust[DustIndex].noGravity = true;
                     }
                 }
@@ -76,7 +76,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
                         new Vector2((float)(15 * Math.Cos(sinwaveCounter) * Math.Cos(Projectile.rotation)),
                         (float)(15 * Math.Sin(sinwaveCounter) * Math.Sin(Projectile.rotation)));
 
-                    int sineTop = Dust.NewDust(DustTopPos, 0, 0, 60, 0, 0, 100, default(Color), 1f);
+                    int sineTop = Dust.NewDust(DustTopPos, 0, 0, 272, 0, 0, 100, default(Color), 1.2f);
                     Main.dust[sineTop].noGravity = true;
                     Main.dust[sineTop].velocity = new Vector2(0, 0);
                     //sine wave bottom
@@ -84,7 +84,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
                         new Vector2((float)(-15 * Math.Cos(sinwaveCounter) * Math.Cos(Projectile.rotation)),
                         (float)(-15 * Math.Sin(sinwaveCounter) * Math.Sin(Projectile.rotation)));
 
-                    int sineBot = Dust.NewDust(DustBotPos, 0, 0, 60, 0, 0, 100, default(Color), 1f);
+                    int sineBot = Dust.NewDust(DustBotPos, 0, 0, 272, 0, 0, 100, default(Color), 1.2f);
                     Main.dust[sineBot].noGravity = true;
                     Main.dust[sineBot].velocity = new Vector2(0, 0);
                 }

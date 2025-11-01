@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int ProjectileID => ModContent.ProjectileType<LonginusProj>();
         public override int Width => 94;
         public override int Height => 94;
-        public override int BaseDmg => 250;
+        public override int BaseDmg => 265;
         public override int BaseCritChance => 0;
         public override float BaseKnockback => 9;
         public override int UseAnimationTime => 20;

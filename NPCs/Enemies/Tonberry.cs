@@ -97,9 +97,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 5, 10);
-            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<WhiteTitanite>(), 1, 5, 10);
-            IItemDropRule drop3 = ItemDropRule.Common(ModContent.ItemType<BlueTitanite>(), 1, 5, 10);
+            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 3, 5);
+            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<WhiteTitanite>(), 1, 3, 5);
+            IItemDropRule drop3 = ItemDropRule.Common(ModContent.ItemType<BlueTitanite>(), 1, 3, 5);
 
             SuperHardmodeRule SHM = new();
             IItemDropRule condition = new LeadingConditionRule(SHM);

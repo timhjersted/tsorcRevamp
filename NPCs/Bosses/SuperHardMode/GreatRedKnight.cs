@@ -896,7 +896,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 20, 50));
 
-            IItemDropRule drop1 = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 3, 6);
+            IItemDropRule drop1 = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 4, 6);
             IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 1);
             IItemDropRule drop3 = ItemDropRule.Common(ModContent.ItemType<FlameOfTheAbyss>(), 1, 2, 3);
             SuperHardmodeRule SHM = new();

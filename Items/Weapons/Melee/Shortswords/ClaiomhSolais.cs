@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             recipe.AddIngredient(ModContent.ItemType<Laevateinn>());
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 6);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

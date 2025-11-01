@@ -225,6 +225,7 @@ namespace tsorcRevamp
             BloodBossEvent1,
             BloodBossEvent2,
             BloodBossEvent3,
+            TwinsEvent,
             CatacombsEvent,
             FoundryEvent,
             FoundryEvent2,
@@ -315,11 +316,10 @@ namespace tsorcRevamp
             ScriptedEvent EoW1Event = new ScriptedEvent(new Vector2(3633, 996), 46, NPCID.EaterofWorldsHead, DustID.Shadowflame, false, true, true, LangUtils.GetTextValue("Events.EoW"), Color.Purple, false, PreEoWCustomCondition);
 
             //EMPRESS OF LIGHT
-            ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 350), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, true, LangUtils.GetTextValue("Events.EoL"), Main.DiscoColor, false, EoLDownedCondition);
+            ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 350), 100, NPCID.HallowBoss, DustID.HallowedTorch, false, true, true, LangUtils.GetTextValue("Events.EoL"), Color.Pink, false, EoLDownedCondition);
 
             ScriptedEvent Lunatic = new ScriptedEvent(new Vector2(171, 210), 40, NPCID.CultistBoss, 15, false, true, true, LangUtils.GetTextValue("Events.Lunatic"), Color.Cyan, false, RemixMapCondition);
             Lunatic.SetCustomDrops(new List<int>() { ItemID.CelestialSigil }, new List<int>() {1});
-            Lunatic.SetCustomStats(100000, null, null, null);
             //LICH KING
             ScriptedEvent LichKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<EarthFiendLich>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.LichKing"), Color.Gold, false, OnlyAdventureMapCondition);
 
@@ -653,6 +653,10 @@ namespace tsorcRevamp
             BloodBossEvent3.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.LifeforcePotion, ItemID.BloodHamaxe, ItemID.MagicQuiver, ItemID.LavaCharm }, new List<int>() { 6, 3, 1, 1, 1, 1});
             BloodBossEvent3.SetCustomStats(null, null, null, 12000);
 
+            List<int> TwinsEventEnemyTypeList = new List<int>() { NPCID.Retinazer, NPCID.Spazmatism };
+            List<Vector2> TwinsEventEnemyLocations = new List<Vector2>() { new Vector2(2864, 236), new Vector2(2904, 236) };
+            ScriptedEvent TwinsEvent = new ScriptedEvent(new Vector2(2884, 236), 42, TwinsEventEnemyTypeList, TwinsEventEnemyLocations, 15, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Green, false, RemixMapCondition, SetNightCustomAction); 
+
             ScriptedEvent CatacombsEvent = new ScriptedEvent(new Vector2(3181, 1334), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SlograII>(), DustID.Torch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapCondition);
             CatacombsEvent.SetCustomStats(9000, null, null, null);
 
@@ -796,6 +800,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.BloodBossEvent1, BloodBossEvent1 },
                 {ScriptedEventType.BloodBossEvent2, BloodBossEvent2 },
                 {ScriptedEventType.BloodBossEvent3, BloodBossEvent3 },
+                {ScriptedEventType.TwinsEvent, TwinsEvent },
                 {ScriptedEventType.CatacombsEvent, CatacombsEvent },
                 {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
                 {ScriptedEventType.FoundryEvent, FoundryEvent },

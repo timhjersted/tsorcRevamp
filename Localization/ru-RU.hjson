@@ -8015,6 +8015,16 @@ Mods: {
 				DisplayName: Тёмная материя Оолациля
 				Tooltip: Ощутимая теневая энергия из тьмы Оолациля.
 			}
+
+			SunderedMoon: {
+				// DisplayName: Sundered Moon
+				/* Tooltip:
+					'''
+					A legendary tome drawing on lunar power.
+					Casts powerful lunar energy streaks
+					Can summon stars on hit
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -9690,6 +9700,11 @@ Mods: {
 			DragoonSpearZap.DisplayName: Заряд копья дракона
 			FlameScrollStrike.DisplayName: Удар огненного свитка
 			// BloodShot.DisplayName: Blood Shot
+			// SunderedMoon.DisplayName: Sundered Moon
+			// DragoonLanceZap.DisplayName: Dragoon Lance Zap
+			// OldUltimaExplosion.DisplayName: Old Ultima Explosion
+			// SuperPhazonRound.DisplayName: Super Phazon Round
+			// ThunderBowLightning.DisplayName: Thunder Bow Lightning
 		}
 
 		NPCs: {

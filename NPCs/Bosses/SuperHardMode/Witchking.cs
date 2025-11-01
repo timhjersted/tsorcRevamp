@@ -49,8 +49,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.height = 45;
             NPC.width = 30;
             NPC.damage = 110;
-            NPC.defense = 25;
-            NPC.lifeMax = 150000;
+            NPC.defense = 65;
+            NPC.lifeMax = 170000;
             NPC.scale = 1.3f;
             NPC.HitSound = SoundID.NPCHit4; 
             NPC.DeathSound = new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream");

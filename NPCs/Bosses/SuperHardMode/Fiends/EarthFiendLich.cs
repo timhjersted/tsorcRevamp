@@ -97,18 +97,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             ProjectileTimer += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
             if (ProjectileTimer >= 10f)
             {
-                if (Main.rand.NextBool(90))
+                if (Main.rand.NextBool(180))
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
+                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 4);
                         projVector += Main.rand.NextVector2Circular(20, 20);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ProjectileID.Skull, lightningDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     ProjectileTimer = 1f;
                 }
-                if (Main.rand.NextBool(20))
+                if (Main.rand.NextBool(22))
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

@@ -2130,6 +2130,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 45; //legacy: 50, then 35
                         npc.lifeMax = 4000;
                         npc.rarity = 11;
+                        npc.scale = 1.1f;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
                     }
@@ -2137,9 +2138,10 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.SkeletronHand):
                     {
                         npc.value = 0;
-                        npc.defense = 14; //legacy: 12
+                        npc.defense = 15; //legacy: 12
                         npc.damage = 40; //legacy: 40, then 22, then 32 but reports still too easy
-                        npc.lifeMax = 900;
+                        npc.lifeMax = 1000;
+                        npc.scale = 1.1f;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
                     }
@@ -2496,7 +2498,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.CultistBoss):
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.LunaticCultist.DespawnHandler"), Color.Blue, DustID.BlueTorch);
-                        npc.lifeMax = 45000;
+                        npc.lifeMax = 90000;
                         npc.value = 200000;
                         break;
                     }
@@ -6505,6 +6507,55 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            if (npc.type == NPCID.PirateDeckhand || npc.type == NPCID.PirateCorsair || npc.type == NPCID.PirateDeadeye || npc.type == NPCID.PirateCrossbower)
+            {
+
+                if (Main.rand.NextBool(3))
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.GoldDust, 1, false, -1);
+                }
+
+                if (Main.rand.NextBool(50))
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.LuckPotionLesser, 1, false, -1);
+                }
+
+                if (Main.rand.NextBool(500))
+                { // 0.2%
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.SymbolOfAvarice>(), 1, false, -1);
+                }
+            }
+
+            if (npc.type == NPCID.PirateCaptain)
+            {
+
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.GoldDust, 1, false, -1);
+
+                if (Main.rand.NextBool(100))
+                { // 1%
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.SymbolOfAvarice>(), 1, false, -1);
+                }
+
+                if (Main.rand.NextBool(5))
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.LuckPotion, 1, false, -1);
+                }
+            }
+            
+            if (npc.type == NPCID.PirateShip)
+            {
+
+                if (Main.rand.NextBool(20))
+                { // 5%
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.SymbolOfAvarice>(), 1, false, -1);
+                }
+                
+                if (Main.rand.NextBool(4))
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.LuckPotionGreater, 1, false, -1);
+                }
+            }
+
             if (npc.type == NPCID.Plantera && !Main.expertMode)
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
@@ -6592,6 +6643,11 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.GoblinSummoner)
             {
                 npcLoot.Add(ItemDropRule.Common(ItemID.SummoningPotion, 2, 1, 1));
+            }
+            if (npc.type == NPCID.PirateDeadeye || npc.type == NPCID.PirateCrossbower)
+            {
+                npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 15, 1, 1));
+                npcLoot.Add(ItemDropRule.Common(ItemID.AmmoReservationPotion, 15, 1, 1));
             }
 
         }

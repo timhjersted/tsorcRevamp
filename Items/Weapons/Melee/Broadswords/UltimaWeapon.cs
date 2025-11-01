@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetDefaults()
         {
-            Item.damage = 600;
+            Item.damage = 500;
             Item.useAnimation = 26;
             Item.useTime = 26;
             Item.width = 68;
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.knockBack = 14f;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.scale = 2f;
+            Item.scale = 1.8f;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.rare = ModContent.RarityType<DarkBlue>();
@@ -39,10 +39,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TerraBlade, 1);
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 6);
+            recipe.AddIngredient(ModContent.ItemType<AtmaWeapon>());
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 140000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

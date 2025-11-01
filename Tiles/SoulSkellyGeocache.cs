@@ -160,6 +160,11 @@ namespace tsorcRevamp.Tiles
 
             //Jungle Ruins after getting hook
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5470, 1093, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
+
+            if (tsorcRevampWorld.RemixMap)
+            {
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(6941, 1583, 2, 2), ModContent.ItemType<Items.HeroSoul>(), 1));
+            }
         }
     }
 }

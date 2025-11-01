@@ -8054,6 +8054,16 @@ Mods: {
 				DisplayName: 乌拉席露暗物质
 				Tooltip: 来自乌拉席露黑暗深渊的有形暗影能量p
 			}
+
+			SunderedMoon: {
+				// DisplayName: Sundered Moon
+				/* Tooltip:
+					'''
+					A legendary tome drawing on lunar power.
+					Casts powerful lunar energy streaks
+					Can summon stars on hit
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -9729,6 +9739,11 @@ Mods: {
 			DragoonSpearZap.DisplayName: Dragoon Spear Zap
 			FlameScrollStrike.DisplayName: Flame Scroll Strike
 			BloodShot.DisplayName: 死神
+			// SunderedMoon.DisplayName: Sundered Moon
+			// DragoonLanceZap.DisplayName: Dragoon Lance Zap
+			// OldUltimaExplosion.DisplayName: Old Ultima Explosion
+			// SuperPhazonRound.DisplayName: Super Phazon Round
+			// ThunderBowLightning.DisplayName: Thunder Bow Lightning
 		}
 
 		NPCs: {

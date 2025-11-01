@@ -143,25 +143,25 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.StrangePlant1)
             {
-                shopCustomPrice = 200,
+                shopCustomPrice = 35,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ItemID.StrangePlant2)
             {
-                shopCustomPrice = 200,
+                shopCustomPrice = 35,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ItemID.StrangePlant3)
             {
-                shopCustomPrice = 200,
+                shopCustomPrice = 35,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ItemID.StrangePlant4)
             {
-                shopCustomPrice = 200,
+                shopCustomPrice = 35,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 

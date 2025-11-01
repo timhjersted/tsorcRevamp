@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = false;
             Projectile.timeLeft = 80;
             Projectile.alpha = 90;
+            Projectile.scale = 1.25f;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -45,7 +46,7 @@ namespace tsorcRevamp.Projectiles
             Color newColor = default(Color);
             if (Main.rand.NextBool(2))
             {
-                int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
+                int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2.3f);
                 Dust expr_2684 = Main.dust[num47];
                 expr_2684.velocity *= 0.3f;
 

@@ -17,21 +17,21 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
 
     public override void SetDefaults()
         {
-            Item.damage = 500;
+            Item.damage = 220;
             Item.width = 108;
             Item.height = 48;
             Item.DamageType = DamageClass.Ranged;
             Item.autoReuse = true;
-            Item.knockBack = 20f;
+            Item.knockBack = 15f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.MiniNukeRocketI;
-            Item.shootSpeed = 10f;
+            Item.shootSpeed = 12.5f;
             Item.useAmmo = AmmoID.Rocket;
-            Item.useAnimation = 25;
-            Item.useTime = 25;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
             Item.UseSound = SoundID.Item61;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.Purple_11;
         }
 
@@ -48,19 +48,24 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             int proj = Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
-            Main.projectile[proj].ai[1] = 1f; 
+            Main.projectile[proj].ai[1] = 1f;
             return false;
         }
 
-        /*public override void AddRecipes()
+        public override void HoldItem(Player player)
+        {
+            player.scope = true;
+        }
+
+        public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.RocketLauncher, 1);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
+            recipe.AddIngredient(ItemID.ExplosivePowder, 500);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 10);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
-        }*/
+        }
     }
 }

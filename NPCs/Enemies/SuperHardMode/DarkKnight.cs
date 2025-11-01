@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<WhiteTitanite>(), 1, 3, 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<WhiteTitanite>(), 1, 2, 3));
         }
     }
 }

@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             int ShotAmt = 4;
             int spread = 24;
             float spreadMult = 0.05f;
-            type = ModContent.ProjectileType<PhazonRound>();
+            type = ModContent.ProjectileType<SuperPhazonRound>();
             for (int i = 0; i < ShotAmt; i++)
             {
                 float vX = speed.X + Main.rand.Next(-spread, spread + 1) * spreadMult;

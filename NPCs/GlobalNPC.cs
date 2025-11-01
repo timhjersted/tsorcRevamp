@@ -638,6 +638,12 @@ namespace tsorcRevamp.NPCs
                 pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
             }
 
+            if ((playerX > 6083 && playerX < 6847 && playerY > 1664 && playerY < 1999) && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.ObsidianBrickUnsafe && tsorcRevampWorld.RemixMap)
+            {
+                pool.Clear();
+                pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
+            }
+
             if (tsorcRevampWorld.TheEnd)
             {
                 pool.Clear(); //stop NPC spawns in The End 

@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 5);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 98000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

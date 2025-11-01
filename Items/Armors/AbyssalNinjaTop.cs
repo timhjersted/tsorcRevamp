@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ModContent.ItemType<Melee.ShadowNinjaTop>());
             recipe.AddIngredient(ModContent.ItemType<OolacileDarkMatter>());
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 55000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

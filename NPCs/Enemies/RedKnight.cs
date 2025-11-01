@@ -660,7 +660,7 @@ namespace tsorcRevamp.NPCs.Enemies
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.RegenerationPotion, 30));
             npcLoot.Add(hmCondition);
-            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 1, 2);
+            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 2, 3);
             IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 20);
             SuperHardmodeRule SHM = new();
             IItemDropRule shmCondition = new LeadingConditionRule(SHM);

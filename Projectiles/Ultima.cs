@@ -18,10 +18,13 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 150;
             Projectile.height = 80;
             Projectile.friendly = true;
-            Projectile.penetrate = 50;
+            Projectile.penetrate = 5;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60;
+            Projectile.scale = 1.2f;
         }
 
         public override void AI()
@@ -37,7 +40,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile.Kill();
                 if (Projectile.owner == Main.myPlayer)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<UltimaExplosion>(), 500, 8f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<Projectiles.Magic.UltimaExplosion>(), Projectile.damage / 2, 8f, Projectile.owner);
                 }
                 return;
             }
@@ -77,7 +80,7 @@ namespace tsorcRevamp.Projectiles
                     Vector2 arg_1328_0 = Projectile.position;
                     int arg_1328_1 = Projectile.width;
                     int arg_1328_2 = Projectile.height;
-                    int arg_1328_3 = 58;
+                    int arg_1328_3 = 107;
                     float arg_1328_4 = Projectile.velocity.X * 0.5f;
                     float arg_1328_5 = Projectile.velocity.Y * 0.5f;
                     int arg_1328_6 = 150;
@@ -87,10 +90,32 @@ namespace tsorcRevamp.Projectiles
                 {
                     if (!Main.dedServ)
                     {
-                        Gore.NewGore(Projectile.GetSource_FromThis(), Projectile.position, new Vector2(Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f), Main.rand.Next(16, 18), 1f);
+                        int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 107, Projectile.velocity.X, Projectile.velocity.Y, 0, default(Color), 1.5f);
+                        Main.dust[dust].noGravity = true;
                     }
                     return;
                 }
+            }
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (Projectile.penetrate <= 0)
+            {
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    Projectile.NewProjectile(
+                        Projectile.GetSource_FromThis(),
+                        Projectile.Center.X,
+                        Projectile.Center.Y,
+                        0, 0,
+                        ModContent.ProjectileType<Projectiles.Magic.UltimaExplosion>(),
+                        Projectile.damage / 2,
+                        8f,
+                        Projectile.owner
+                    );
+                }
+                Projectile.Kill();
             }
         }
     }

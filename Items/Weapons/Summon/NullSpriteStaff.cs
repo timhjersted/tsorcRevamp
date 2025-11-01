@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;
-            Item.useTime = Item.useAnimation = 36;
+            Item.useTime = Item.useAnimation = 18;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = Item.buyPrice(2, 0, 0, 0);
             Item.mana = 10;

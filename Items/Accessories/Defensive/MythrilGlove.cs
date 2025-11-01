@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.statDefense += 5; 
-            player.endurance += 0.08f; 
+            player.statDefense += 6; 
+            player.endurance += 0.1f; 
 
             if (player.statLife < player.statLifeMax2 * 0.66f)
             {
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
             if (player.statLife < player.statLifeMax2 * 0.33f)
             {
-                player.statDefense += 6; 
+                player.statDefense += 7; 
                 player.endurance += 0.16f; 
             }
 

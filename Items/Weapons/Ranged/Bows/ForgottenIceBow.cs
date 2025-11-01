@@ -1,11 +1,12 @@
-﻿
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.DataStructures;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 
-namespace tsorcRevamp.Items.Weapons.Magic
+namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 {
     class ForgottenIceBow : ModItem
     {
@@ -20,32 +21,43 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            Item.damage = 240;
+            Item.damage = 150;
             Item.height = 54;
             Item.knockBack = 4;
             Item.noMelee = true;
-            Item.DamageType = DamageClass.Magic;
+            Item.DamageType = DamageClass.Ranged;
             Item.rare = ModContent.RarityType<DarkBlue>();
-            Item.mana = 40;
             Item.channel = true;
             Item.autoReuse = true;
-            Item.scale = 0.9f;
-            Item.shootSpeed = 34;
-            Item.useAnimation = 15;
+            Item.scale = 1f;
+            Item.shootSpeed = 33;
+            Item.useAnimation = 16;
             Item.UseSound = SoundID.Item5;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 15;
+            Item.useAmmo = AmmoID.Arrow;
+            Item.useTime = 16;
             Item.value = PriceByRarity.Purple_11;
             Item.width = 28;
             Item.shoot = ModContent.ProjectileType<Projectiles.Ice5Ball>();
         }
 
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+            {
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.Ice5Ball>(), damage, knockback, player.whoAmI);
+
+                Vector2 lowPos = position + new Vector2(0, 15);
+                Projectile.NewProjectile(source, lowPos, velocity, type, damage, knockback, player.whoAmI);
+
+                Vector2 highPos = position + new Vector2(0, -15);
+                Projectile.NewProjectile(source, highPos, velocity, type, damage, knockback, player.whoAmI);
+
+                return false; 
+            }
+
         public override void AddRecipes()
         {
-            //todo add ingredients
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<ForgottenIceBowScroll>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<Ice4Tome>(), 1);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 9);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 160000);

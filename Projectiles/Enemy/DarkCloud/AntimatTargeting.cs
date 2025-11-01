@@ -11,19 +11,20 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 
         public override void SetDefaults()
         {
+            Projectile.alpha = 190;
             base.SetDefaults();
 
             FollowHost = true;
             TelegraphTime = 285;
             MaxCharge = 0;
             LaserLength = 4000;
-            LaserColor = Color.Red * 0.5f; //Forbidden secret color "half red"
-            LightColor = Color.OrangeRed;
+            LaserColor = Color.DarkViolet * 0.5f; //Forbidden secret color "half red"
+            LightColor = Color.Purple;
             TileCollide = false;
             CastLight = true;
             LaserSound = null;
             TargetingMode = 1;
-            LaserSize = 0.6f;
+            LaserSize = 0.4f;
         }
 
         Vector2 initialDirection = Vector2.Zero;

@@ -154,9 +154,9 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BeholderShield>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 65000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

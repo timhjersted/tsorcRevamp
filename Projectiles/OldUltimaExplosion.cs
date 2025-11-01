@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class UltimaExplosion : ModProjectile
+    class OldUltimaExplosion : ModProjectile
     {
         public override void SetStaticDefaults()
         {

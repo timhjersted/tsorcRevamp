@@ -27,9 +27,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.width = 132;
             Item.height = 132;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 45;
-            Item.useTime = 45;
-            Item.damage = 850;
+            Item.useAnimation = 44;
+            Item.useTime = 44;
+            Item.damage = 860;
             Item.knockBack = 20f;
             Item.rare = ModContent.RarityType<OrangeRed>();
             Item.value = Item.buyPrice(1, 0, 0, 0);
@@ -178,7 +178,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 10);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 25);
             recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

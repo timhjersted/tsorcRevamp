@@ -92,6 +92,15 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void AddRecipes()
         {
+            Recipe recipe4 = CreateRecipe();
+            recipe4.AddIngredient(ModContent.ItemType<DragoonHelmet>());
+            recipe4.AddIngredient(ItemID.CharmofMyths);
+            recipe4.AddIngredient(ModContent.ItemType<BewitchedTitanite>(), 1);
+            recipe4.AddIngredient(ModContent.ItemType<OolacileDarkMatter>(), 1);
+            recipe4.AddIngredient(ModContent.ItemType<DarkSoul>(), 54000);
+            recipe4.AddTile(TileID.DemonAltar);
+            recipe4.Register();
+
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ModContent.ItemType<DragoonHelmet>());
             recipe3.AddIngredient(ItemID.CharmofMyths);

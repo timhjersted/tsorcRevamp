@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.friendly = true;
             Projectile.height = 16;
-            Projectile.DamageType = DamageClass.Magic;
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.penetrate = 1;
             Projectile.tileCollide = true;
             Projectile.width = 16;

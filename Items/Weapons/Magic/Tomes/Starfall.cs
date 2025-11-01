@@ -19,18 +19,18 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.useStyle = ItemUseStyleID.Shoot;
 
             Item.knockBack = 6;
-            Item.scale = 0.9f;
+            Item.scale = 1f;
 
             Item.rare = ModContent.RarityType<DarkBlue>();
-            Item.shootSpeed = 11;
+            Item.shootSpeed = 12;
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
 
             Item.UseSound = SoundID.Item25;
             Item.mana = 14;
-            Item.damage = 100;
-            Item.useAnimation = Item.useTime = 14;
+            Item.damage = 105;
+            Item.useAnimation = Item.useTime = 13;
             Item.shoot = ModContent.ProjectileType<Projectiles.StarfallProjectile>();
             Item.autoReuse = true;
 
@@ -41,9 +41,9 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.FallenStar, 30);
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 6);
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

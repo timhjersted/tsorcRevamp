@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 10);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 25);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
 
             recipe.AddTile(TileID.DemonAltar);
 

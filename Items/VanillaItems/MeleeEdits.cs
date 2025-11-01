@@ -286,7 +286,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Zenith)
             {
-                item.damage = 90; //Vanilla 190
+                item.damage = 95; //Vanilla 190
             }
         }
 

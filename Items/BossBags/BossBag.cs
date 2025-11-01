@@ -564,7 +564,10 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ReflectionShift>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.MoonlightGreatsword>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Bows.RadiantStrand>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SunderedMoon>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.NullSpriteStaff>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 2000, 2500));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>(), 1, 5, 10));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
         }

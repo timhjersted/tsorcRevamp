@@ -1875,7 +1875,9 @@ namespace tsorcRevamp
 
         public static Dictionary<int, Vector2> RemixPreHardmodeBossIDs = new Dictionary<int, Vector2>
         {
-            { NPCID.Deerclops, new Vector2(7344, 768) }, 
+            { NPCID.KingSlime, new Vector2(4748, 643) },
+            { NPCID.BrainofCthulhu, new Vector2(3500, 1100) },
+            { NPCID.Deerclops, new Vector2(7344, 768) },
         };
 
         public static Dictionary<int, Vector2> RemixHardmodeBossIDs = new Dictionary<int, Vector2>

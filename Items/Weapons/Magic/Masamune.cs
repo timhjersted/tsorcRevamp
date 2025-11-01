@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 10);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 180000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 160000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

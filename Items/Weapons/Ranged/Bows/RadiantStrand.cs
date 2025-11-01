@@ -40,17 +40,5 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             type = ModContent.ProjectileType<Projectiles.Ranged.RadiantStrand>();
             velocity = velocity.RotatedByRandom(0.5);
         }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.FairyQueenRangedItem);
-            recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.AddCondition(tsorcRevampWorld.SHM9Downed);
-
-            recipe.Register();
-        }
     }
 }
