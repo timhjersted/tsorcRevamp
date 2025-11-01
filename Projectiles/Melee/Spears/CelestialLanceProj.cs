@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
             }
 
             // Spawn 2 stars when hitting an enemy, pretty much the same code than starfall
-            if (Main.netMode != NetmodeID.MultiplayerClient) 
+            if (Main.myPlayer == Projectile.owner)
             {
                 for (int i = 0; i < 2; i++) 
                 {

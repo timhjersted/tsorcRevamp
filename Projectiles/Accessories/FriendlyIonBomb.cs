@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Accessories
             DetonationProgress++;
             Projectile.rotation++;
 
-            if (DetonationProgress == 30 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (DetonationProgress == 30 && Main.myPlayer == Projectile.owner)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Projectile.owner, 240, 25);
 
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Projectiles.Accessories
         {
             Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.5f }, Projectile.Center);
 
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.myPlayer == Projectile.owner)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Projectile.owner, 400, 30);
             }
