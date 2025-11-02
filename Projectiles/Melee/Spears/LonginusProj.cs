@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
             }
 
             // Spawn un seul RubyBolt au toucher, inspiré de Starfall
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.myPlayer == Projectile.owner)
             {
                 Vector2 boltSpawnPos = target.Center;
                 boltSpawnPos.Y -= 500f; // 600 pixels au-dessus

@@ -1305,7 +1305,21 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.luck += ApplyScaling(0.3f);
+            player.GetModPlayer<PermanentLuckPotionPlayer>().AdditionalLuckScaling = ApplyScaling(0.3f);
+        }
+
+        private class PermanentLuckPotionPlayer : ModPlayer
+        {
+            public float AdditionalLuckScaling = 0;
+
+            public override void ModifyLuck(ref float luck)
+            {
+                luck += AdditionalLuckScaling;
+            }
+            public override void ResetEffects()
+            {
+                AdditionalLuckScaling = 0;
+            }
         }
     }
     public class PermanentAbyssImbuement : PermanentPotion
