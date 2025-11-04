@@ -35,6 +35,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 Hide = true
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+
+            // Set NeedsExpertScaling for lifeMax scaling in multiplayer, otherwise scaling is skipped since NPC.damage=0.
+            NPCID.Sets.NeedsExpertScaling[NPC.type] = true;
         }
         public override void SetDefaults()
         {

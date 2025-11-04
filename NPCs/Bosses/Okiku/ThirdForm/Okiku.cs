@@ -31,6 +31,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
+
+            // Set NeedsExpertScaling for lifeMax scaling in multiplayer, otherwise scaling is skipped since NPC.damage=0.
+            NPCID.Sets.NeedsExpertScaling[NPC.type] = true;
         }
         public override void SetDefaults()
         {

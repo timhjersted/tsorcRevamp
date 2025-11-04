@@ -27,6 +27,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         {
             Main.npcFrameCount[NPC.type] = 7;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+
+            // Set NeedsExpertScaling for lifeMax scaling in multiplayer, otherwise scaling is skipped since NPC.damage=0.
+            NPCID.Sets.NeedsExpertScaling[NPC.type] = true;
         }
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/SecondForm/DarkDragonMask";
         public override void SetDefaults()

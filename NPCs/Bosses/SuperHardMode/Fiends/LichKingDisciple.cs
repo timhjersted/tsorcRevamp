@@ -14,6 +14,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         {
             Main.npcFrameCount[NPC.type] = 3;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+
+            // Set NeedsExpertScaling for lifeMax scaling in multiplayer, otherwise scaling is skipped since NPC.damage=0.
+            NPCID.Sets.NeedsExpertScaling[NPC.type] = true;
         }
         public override void SetDefaults()
         {

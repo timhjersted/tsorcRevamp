@@ -22,6 +22,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 4;
+
+            // Set NeedsExpertScaling for lifeMax scaling in multiplayer, otherwise scaling is skipped since NPC.damage=0.
+            NPCID.Sets.NeedsExpertScaling[NPC.type] = true;
         }
         public override void SetDefaults()
         {
