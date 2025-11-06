@@ -168,4 +168,22 @@ namespace tsorcRevamp
             return null;
         }
     }
+
+    public class NonRemixWorldDropCondition : IItemDropRuleCondition
+    {
+        public virtual bool CanDrop(DropAttemptInfo info)
+        {
+            return !tsorcRevampWorld.CheckForRemixMap();
+        }
+
+        public bool CanShowItemDropInUI()
+        {
+            return true;
+        }
+
+        public string GetConditionDescription()
+        {
+            return null;
+        }
+    }
 }

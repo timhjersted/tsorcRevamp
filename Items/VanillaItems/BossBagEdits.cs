@@ -86,14 +86,25 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 itemLoot.RemoveWhere(_ => true);
                 //Why apple can't drop by this????
-                itemLoot.Add(ItemDropRule.ByCondition(new RemixWorldDropCondition(), ItemID.IronBar));
+                itemLoot.Add(ItemDropRule.ByCondition(new NonRemixWorldDropCondition(), ModContent.ItemType<CrestOfSteel>()));
                 itemLoot.Add(ItemDropRule.Common(ItemID.LargeRuby));
                 itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 15, 30));
-                itemLoot.Add(ItemDropRule.Common(ItemID.SoulofFright));
-                itemLoot.Add(ItemDropRule.Common(ItemID.SoulofMight));
-                itemLoot.Add(ItemDropRule.Common(ItemID.SoulofSight));
-                itemLoot.Add(ItemDropRule.Common(ItemID.Uzi));
+                itemLoot.Add(ItemDropRule.ByCondition(new NonRemixWorldDropCondition(), ItemID.SoulofFright, 1, 25, 40));
+                itemLoot.Add(ItemDropRule.ByCondition(new RemixWorldDropCondition(), ItemID.SoulofFright));
+                itemLoot.Add(ItemDropRule.ByCondition(new RemixWorldDropCondition(), ItemID.SoulofMight));
+                itemLoot.Add(ItemDropRule.ByCondition(new RemixWorldDropCondition(), ItemID.SoulofSight));
+                itemLoot.Add(ItemDropRule.ByCondition(new RemixWorldDropCondition(), ItemID.Uzi));
+                itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalBatteryPiece));
                 itemLoot.Add(ItemDropRule.Common(ItemID.SkeletronPrimeMask));
+            }
+            
+            //Remix map exclusive boss
+            if (item.type == ItemID.TwinsBossBag)
+            {
+                itemLoot.RemoveWhere(_ => true);
+                itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalEye));
+                itemLoot.Add(ItemDropRule.Common(ItemID.SoulofSight, 1, 2));
+                itemLoot.Add(ItemDropRule.Common(ItemID.TwinMask));
             }
 
             
