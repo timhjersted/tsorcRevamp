@@ -1340,9 +1340,9 @@ Mods: {
 				Tooltip:
 					'''
 					基于生命值提供防御和抵抗力加成：
-					始终提供 5 防御和 8 抵抗力
-					当生命值低于 66% 时，提供 10 点防御和 16 抵抗力
-					当生命值低于 33% 时，提供 16 点防御和 32 抵抗力
+					始终提供 6 防御和 10 抵抗力
+					当生命值低于 66% 时，提供 11 点防御和 18 抵抗力
+					当生命值低于 33% 时，提供 18 点防御和 34 抵抗力
 					'''
 			}
 
@@ -3232,6 +3232,7 @@ Mods: {
 					一种稀有且珍贵的矿石
 					摸起来冰冷，散发着神圣的力量
 					深渊中的敌人更容易掉落
+					[c/00ffd4:请装备亚尔特留斯之约以进入深渊]
 					'''
 			}
 
@@ -4132,6 +4133,7 @@ Mods: {
 					'''
 					来自深渊焚烬万物的永恒之火
 					[c/ffbf00:只有深渊中堕落的生物掉落]
+					[c/00ffd4:请装备亚尔特留斯之约以进入深渊]
 					'''
 			}
 
@@ -5035,6 +5037,7 @@ Mods: {
 					一种稀有而珍贵的矿石
 					散发着热量，闪烁着禁忌的地牢魔法
 					深渊中的敌人更容易掉落
+					[c/00ffd4:请装备亚尔特留斯之约以进入深渊]
 					'''
 			}
 
@@ -5351,18 +5354,12 @@ Mods: {
 
 			ForgottenIceBow: {
 				DisplayName: 遗忘冰弓
-				Tooltip:
-					'''
-					从你的弓上投下魔法碎冰
-					当被法师使用时，与最强大的力量相适应
-					当箭矢在空中时，你可以用意念的力量引导每一次射击
-					可以直接在你的敌人正上方射击，获得最大的伤害
-					'''
+				Tooltip: 每次射出两支箭和一支冰锥
 			}
 
 			ForgottenThunderBow: {
 				DisplayName: 遗忘雷弓
-				Tooltip: 从你的弓上发出一道闪电，随着时间的推移造成巨大的伤害
+				Tooltip: 每次射出两支箭和一道闪电
 			}
 
 			FreezeBolt: {
@@ -6252,7 +6249,12 @@ Mods: {
 
 			Blast: {
 				DisplayName: 战术高爆发射器
-				Tooltip: 将火箭转化为微型核弹
+				Tooltip:
+					'''
+					将火箭转化为微型核弹
+					威力惊人并有极高风险
+					右键缩放视野
+					'''
 			}
 
 			BlizzardBlaster: {
@@ -6332,7 +6334,7 @@ Mods: {
 				Tooltip:
 					'''
 					射出两支箭 
-					按住 攻击 进行蓄力
+					按住左键进行蓄力
 					蓄力时箭更快更准
 					'''
 			}
@@ -6867,6 +6869,7 @@ Mods: {
 					一种稀有而有价值的矿石
 					纯白的表面，投下紫红的邪恶阴影
 					深渊中的敌人更容易掉落
+					[c/00ffd4:请装备亚尔特留斯之约以进入深渊]
 					'''
 			}
 
@@ -8056,13 +8059,13 @@ Mods: {
 			}
 
 			SunderedMoon: {
-				// DisplayName: Sundered Moon
-				/* Tooltip:
+				DisplayName: 残月秘典
+				Tooltip:
 					'''
-					A legendary tome drawing on lunar power.
-					Casts powerful lunar energy streaks
-					Can summon stars on hit
-					''' */
+					借月华之力写就的传奇典籍
+					释放强效月能光束
+					命中时召唤星辰坠落
+					'''
 			}
 		}
 
@@ -9739,11 +9742,11 @@ Mods: {
 			DragoonSpearZap.DisplayName: Dragoon Spear Zap
 			FlameScrollStrike.DisplayName: Flame Scroll Strike
 			BloodShot.DisplayName: 死神
-			// SunderedMoon.DisplayName: Sundered Moon
-			// DragoonLanceZap.DisplayName: Dragoon Lance Zap
-			// OldUltimaExplosion.DisplayName: Old Ultima Explosion
-			// SuperPhazonRound.DisplayName: Super Phazon Round
-			// ThunderBowLightning.DisplayName: Thunder Bow Lightning
+			SunderedMoon.DisplayName: 残月秘典
+			DragoonLanceZap.DisplayName: 龙骑枪
+			OldUltimaExplosion.DisplayName: Old Ultima Explosion
+			SuperPhazonRound.DisplayName: 驱虫炮
+			ThunderBowLightning.DisplayName: 遗忘雷弓
 		}
 
 		NPCs: {
@@ -10990,8 +10993,8 @@ Mods: {
 					'''
 					伊扎里斯的骑士，如今沦为深渊傀儡的阿尔特留斯，是我们下一个目标
 					他长眠于遗忘之城与地下丛林接壤的交界地
-					然而，通往此地的道路早已被一块被遗落在丛林大铸造厂中的大黄玉所封印
-					精灵们已将通往大铸造厂的道路昭示于我：就在地表丛林的一座桥下
+					但遗迹中的通路似乎已被阻断，我们需要另寻他途
+					精灵们告诉我唯有穿越大铸造厂才能进入，它的入口就在地表丛林的一座桥下
 					'''
 				ChaosHint:
 					'''
@@ -11699,8 +11702,8 @@ Mods: {
 			SHM6Downed: 六名深渊守护者被击败
 			SHM9Downed: 九名深渊守护者被击败
 			RageDowned: 击败愤怒
-			// SlograGaibonDowned: Mods.tsorcRevamp.Conditions.SlograGaibonDowned
-			// AbysmalOolacileSorcererDowned: Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned
+			SlograGaibonDowned: 击败斯洛格拉或盖波
+			AbysmalOolacileSorcererDowned: 击败堕渊乌拉席露巫师
 		}
 
 		Achievements: {

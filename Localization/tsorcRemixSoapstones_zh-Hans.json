@@ -1744,7 +1744,7 @@
   "style": 1
 }
 {
-  "text": "- 你发现了被遗忘的亚尔特留斯废墟 - --NEWLINE   --NEWLINE 这扇门需要一块大黄玉才能打开，但那块黄玉早已遗失在一座桥下丛林的大铸造厂中。 --NEWLINE   --NEWLINE 然而，这个地方难以到达且极其危险，几乎没有人敢冒险去尝试找回它",
+  "text": "- 你发现了被遗忘的亚尔特留斯废墟 - --NEWLINE   --NEWLINE 这扇门被封锁，只能从另一侧打开。 --NEWLINE   --NEWLINE 传说在大铸造厂中有通往亚尔特留斯的道路，而大铸造厂的入口位于地表丛林的一座桥下。",
   "tileX": 5163,
   "tileY": 1755,
   "textWidth": 640,
@@ -1755,13 +1755,6 @@
   "tileX": 5257,
   "tileY": 865,
   "textWidth": 370,
-  "style": 1
-}
-{
-  "text": "\u0022这堵墙被冻的很坚固。我想应该从其它方向进去……\u0022",
-  "tileX": 5271,
-  "tileY": 1630,
-  "textWidth": 390,
   "style": 1
 }
 {
@@ -1800,6 +1793,13 @@
   "style": 1
 }
 {
+  "text": "\u0022这条路很奇怪，是另一条通往遗忘之城的道路吗？\u0022",
+  "tileX": 5369,
+  "tileY": 1629,
+  "textWidth": 390,
+  "style": 1
+}
+{
   "text": "一个声音低声对你说： --NEWLINE   --NEWLINE \u0022寻找被称为混沌的恶魔领主。 --NEWLINE   --NEWLINE 它被亚尔特留斯的紫晶宝石锁封印着，所以不被世人知晓\u0022 --NEWLINE   --NEWLINE \u0022再次探索钯金洞穴…就在神圣之地…\u0022",
   "tileX": 5402,
   "tileY": 1689,
@@ -1835,7 +1835,7 @@
   "style": 1
 }
 {
-  "text": "瑞德：\u0022大熔炉与亚尔特留斯之间是否存在联系？\u0022 --NEWLINE   --NEWLINE Miakoda：\u0022确有渊源。昔日熔炉全盛之时，与遗忘之城往来密切， --NEWLINE   --NEWLINE 阿尔特留斯那套以极致耐久闻名的铠甲，便是以大黄玉作为交换，在此灌注魔法锻造而成。\u0022",
+  "text": "瑞德：\u0022大熔炉与亚尔特留斯之间是否存在联系？\u0022 --NEWLINE   --NEWLINE Miakoda：\u0022确有渊源。昔日熔炉全盛之时，与遗忘之城往来密切， --NEWLINE   --NEWLINE 阿尔特留斯那套以极致耐久闻名的铠甲，便是在此灌注魔法锻造而成。 --NEWLINE   --NEWLINE 并且一条隧道被建造用来通往大铸造厂的and a long tunnel was created to connect the foundry to the city.\u0022",
   "tileX": 5544,
   "tileY": 1329,
   "textWidth": 650,
@@ -1860,13 +1860,6 @@
   "tileX": 5589,
   "tileY": 1230,
   "textWidth": 600,
-  "style": 1
-}
-{
-  "text": "你在地下丛林里呆了这么久，感到迷失方向，渴望阳光。 --NEWLINE   --NEWLINE \u0022我想知道这会导致什么？\u0022",
-  "tileX": 5599,
-  "tileY": 1032,
-  "textWidth": 440,
   "style": 1
 }
 {
