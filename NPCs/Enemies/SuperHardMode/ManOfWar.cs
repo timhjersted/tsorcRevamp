@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 1000;
+            NPC.lifeMax = 800;
             NPC.alpha = 20;
             NPC.scale = 0.8f;
             NPC.knockBackResist = 0.1f;
@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 2000; // life / 2.5 / 2 bc it's so simple : was 125
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ManOfWarBanner>();
-            if (Main.hardMode)
+            if (!Main.hardMode)
             {
                 NPC.lifeMax = 250;
                 NPC.defense = 30;

@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.noGravity = true;
-            NPC.lifeMax = 1000;
+            NPC.lifeMax = 2000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CorruptedHornetBanner>();
         }

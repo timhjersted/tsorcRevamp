@@ -75,7 +75,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        /*public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player player = spawnInfo.Player;
             float chance = 0f;
@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
 
             return chance;
-        }
+        }*/
 
         #region AI
         NPCDespawnHandler despawnHandler;

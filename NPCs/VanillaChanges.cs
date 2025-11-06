@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -963,9 +963,9 @@ namespace tsorcRevamp.NPCs
                             MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
                             if (!globalNPC.lifeBoosted)
                             {
-                                npc.lifeMax = (int)(npc.lifeMax * 2.25f); 
+                                npc.lifeMax = (int)(npc.lifeMax * 2.5f); 
                                 npc.life = npc.lifeMax; 
-                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.defense = (int)(npc.defense * 2);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
                             }
@@ -3021,8 +3021,8 @@ namespace tsorcRevamp.NPCs
                             {
                                 npc.lifeMax = (int)(npc.lifeMax * 1.50f);
                                 npc.life = npc.lifeMax; 
-                                npc.defense = (int)(npc.defense * 1.25);
-                                npc.knockBackResist *= 1.15f;
+                                npc.defense = (int)(npc.defense * 1.3);
+                                npc.knockBackResist *= 1.2f;
                                 globalNPC.lifeBoosted = true; 
                             }
                         }
@@ -3083,8 +3083,8 @@ namespace tsorcRevamp.NPCs
                             {
                                 npc.lifeMax = (int)(npc.lifeMax * 1.50f);
                                 npc.life = npc.lifeMax; 
-                                npc.defense = (int)(npc.defense * 1.25);
-                                npc.knockBackResist *= 1.15f;
+                                npc.defense = (int)(npc.defense * 1.3);
+                                npc.knockBackResist *= 1.2f;
                                 globalNPC.lifeBoosted = true; 
                             }
                         }
@@ -3241,8 +3241,8 @@ namespace tsorcRevamp.NPCs
                                 {
                                     npc.lifeMax = (int)(npc.lifeMax * 1.50f); 
                                     npc.life = npc.lifeMax; 
-                                    npc.defense = (int)(npc.defense * 1.25);
-                                    npc.knockBackResist *= 1.15f;
+                                    npc.defense = (int)(npc.defense * 1.3);
+                                    npc.knockBackResist *= 1.2f;
                                     globalNPC.lifeBoosted = true; 
                                 }
                             }
@@ -3498,7 +3498,7 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.GiantTortoise
                     || npc.type == NPCID.AngryTrapper
                     || npc.type == NPCID.Derpling
-                    || npc.type == NPCID.SkeletonCommando
+                    || npc.type == NPCID.SkeletonCommando 
                     || npc.type == NPCID.FlyingSnake
                     || npc.type == NPCID.Medusa
                     || npc.type == NPCID.Mimic
@@ -3508,16 +3508,19 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.MushiLadybug
                     || npc.type == NPCID.FungiBulb
                     || npc.type == NPCID.Shark
+                    || npc.type == NPCID.ArmoredSkeleton
+                    || npc.type == NPCID.HeavySkeleton
+                    || npc.type == NPCID.GiantCursedSkull
                     || npc.type == NPCID.IceMimic)
                 {
 
                     MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
                     if (!globalNPC.lifeBoosted)
                     {
-                        npc.lifeMax = (int)(npc.lifeMax * 2.25f); //Buff some HM enemies in SHM
+                        npc.lifeMax = (int)(npc.lifeMax * 2.5f); //Buff some HM enemies in SHM
                         npc.life = npc.lifeMax; 
-                        npc.defense = (int)(npc.defense * 1.75);
-                        npc.knockBackResist *= 1.25f;
+                        npc.defense = (int)(npc.defense * 2);
+                        npc.knockBackResist *= 1.35f;
                         globalNPC.lifeBoosted = true; 
                     }
                 }
@@ -3546,7 +3549,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.lifeMax = (int)(npc.lifeMax * 5f); //Buff some PHM enemies in SHM
                         npc.life = npc.lifeMax; 
-                        npc.defense = (int)(npc.defense * 2.25);
+                        npc.defense = (int)(npc.defense * 2.5);
                         npc.knockBackResist *= 1.45f;
                         globalNPC.lifeBoosted = true; 
                     }
@@ -3606,6 +3609,16 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.GigaZapper 
                     || npc.type == NPCID.ScutlixRider
                     || npc.type == NPCID.Scutlix
+                    || npc.type == NPCID.Moth
+                    || npc.type == NPCID.Paladin
+                    || npc.type == NPCID.SandElemental
+                    || npc.type == NPCID.RockGolem
+                    || npc.type == NPCID.IceGolem
+                    || npc.type == NPCID.GoblinSummoner
+                    || npc.type == NPCID.BigMimicCorruption
+                    || npc.type == NPCID.BigMimicCrimson
+                    || npc.type == NPCID.BigMimicHallow
+                    || npc.type == NPCID.BigMimicJungle
                     || npc.type == NPCID.MartianWalker)
                 {
 
@@ -3614,8 +3627,8 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.lifeMax = (int)(npc.lifeMax * 1.50f);
                         npc.life = npc.lifeMax; 
-                        npc.defense = (int)(npc.defense * 1.25);
-                        npc.knockBackResist *= 1.15f;
+                        npc.defense = (int)(npc.defense * 1.3);
+                        npc.knockBackResist *= 1.2f;
                         globalNPC.lifeBoosted = true; 
                     }
                 }

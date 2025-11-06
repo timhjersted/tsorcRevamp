@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             NPC.HitSound = SoundID.NPCHit2;
             NPC.DeathSound = SoundID.NPCDeath2;
-            NPC.lifeMax = 1000;
+            NPC.lifeMax = 1900;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.IceSkeletonBanner>();
         }

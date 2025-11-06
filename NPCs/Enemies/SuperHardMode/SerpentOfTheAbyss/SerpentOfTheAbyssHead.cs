@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             NPC.damage = 85;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.lifeMax = 10000; // was 8k
+            NPC.lifeMax = 20000; // was 8k
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             NPC.scale = 1;

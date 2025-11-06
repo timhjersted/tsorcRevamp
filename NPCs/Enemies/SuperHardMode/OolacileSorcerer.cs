@@ -23,11 +23,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.npcSlots = 2;
             AnimationType = 29;
             NPC.aiStyle = 0;
-            NPC.damage = 68;
+            NPC.damage = 0;
             NPC.defense = 92;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 2000; // 6400 geez
+            NPC.lifeMax = 3500; // 6400 geez
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;

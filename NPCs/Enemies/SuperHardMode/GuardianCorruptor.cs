@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.height = 164;
             NPC.damage = 42;
             NPC.defense = 50;
-            NPC.lifeMax = 1500; // 4500 was too much for such a dumb enemy
+            NPC.lifeMax = 2200; // 4500 was too much for such a dumb enemy
             NPC.aiStyle = -1;
             NPC.npcSlots = 3;
             NPC.value = 6000; //life / 2.5 : was 1875 but with way more health 

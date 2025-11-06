@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             NPC.defense = 50;
             NPC.timeLeft = 22000;
-            NPC.lifeMax = 5000; // was 7100, toning down to increase spawn rates, now also in desert
+            NPC.lifeMax = 5400; // was 7100, toning down to increase spawn rates, now also in desert
             NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;

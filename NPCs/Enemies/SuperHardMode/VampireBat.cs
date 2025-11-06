@@ -20,12 +20,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.height = 36;
             NPC.aiStyle = 14;
             AIType = NPCID.CaveBat;
-            NPC.timeLeft = 750;
+            NPC.timeLeft = 1750;
             NPC.damage = 63;
             NPC.defense = 70;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath4;
-            NPC.lifeMax = 900;
+            NPC.lifeMax = 1500;
             NPC.scale = 1;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0.4f;

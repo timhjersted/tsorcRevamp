@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 30;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 2000;
+            NPC.lifeMax = 3000;
             NPC.knockBackResist = 0f;
             NPC.value = 8000; // was 968 with more health
             Banner = NPC.type;

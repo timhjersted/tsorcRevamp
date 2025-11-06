@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
-            NPC.lifeMax = 3000;
+            NPC.lifeMax = 4000;
             NPC.knockBackResist = 0f;
             NPC.value = 12000; // was 600
             Banner = NPC.type;

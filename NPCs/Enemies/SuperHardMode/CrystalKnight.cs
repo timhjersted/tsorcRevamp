@@ -24,11 +24,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.height = 48;
             NPC.timeLeft = 750;
             NPC.damage = 125;
-            NPC.defense = 30;
+            NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
-            NPC.lifeMax = 2000;
+            NPC.lifeMax = 2800;
             NPC.scale = 1f; // was 0.9 for some reason?
             NPC.knockBackResist = 0;
             NPC.value = 8000; // life / 2.5 : was 723 with a bit less health - 2.5 seems a good average to equalize the numbers
