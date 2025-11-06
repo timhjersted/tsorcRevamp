@@ -85,6 +85,8 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.SkeletronPrimeBossBag)
             {
                 itemLoot.RemoveWhere(_ => true);
+                //Why apple can't drop by this????
+                itemLoot.Add(ItemDropRule.ByCondition(new RemixWorldDropCondition(), ItemID.IronBar));
                 itemLoot.Add(ItemDropRule.Common(ItemID.LargeRuby));
                 itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 15, 30));
                 itemLoot.Add(ItemDropRule.Common(ItemID.SoulofFright));

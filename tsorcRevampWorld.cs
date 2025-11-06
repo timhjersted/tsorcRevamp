@@ -1148,7 +1148,14 @@ namespace tsorcRevamp
                     //Stuff that should be done by every client that joins
                     if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("UI.AdvModeAutoEnabled"), Color.GreenYellow);
+                        if (RemixMap)
+                        {
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("UI.RemixAdvModeAutoEnabled"), Color.GreenYellow);
+                        }
+                        else
+                        {
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("UI.AdvModeAutoEnabled"), Color.GreenYellow);
+                        }
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
                     }
                     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)

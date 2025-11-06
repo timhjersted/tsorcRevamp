@@ -328,6 +328,7 @@ Mods: {
 			BonfireLit: 篝火已点燃，重生点设置！
 			BonfireTP: 打开你的小地图来快捷传送到世界上的每一处篝火
 			AdvModeAutoEnabled: 检测到红云物语专属地图，冒险模式自动启用。
+			RemixAdvModeAutoEnabled: 检测到红云物语重构版地图，冒险模式自动启用。
 			AdvModeAutoDisabled: 检测到随机生成的地图，冒险模式自动禁用。
 			SelectMarker: 单击以选择地图标记类型。 在地图上点击以放置标记。
 			EraseMarkers: 点击以开始擦除标记。

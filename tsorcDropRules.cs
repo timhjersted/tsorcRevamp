@@ -150,4 +150,22 @@ namespace tsorcRevamp
 
         public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.DownedSkeletron");
     }
+
+    public class RemixWorldDropCondition : IItemDropRuleCondition
+    {
+        public virtual bool CanDrop(DropAttemptInfo info)
+        {
+            return tsorcRevampWorld.CheckForRemixMap();
+        }
+
+        public bool CanShowItemDropInUI()
+        {
+            return true;
+        }
+
+        public string GetConditionDescription()
+        {
+            return null;
+        }
+    }
 }

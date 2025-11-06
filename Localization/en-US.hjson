@@ -328,6 +328,7 @@ Mods: {
 			BonfireLit: Bonfire lit, spawn point set!
 			BonfireTP: Open your minimap to instantly teleport to any bonfire in the world
 			AdvModeAutoEnabled: Custom map detected. Adventure Mode auto-enabled.
+			RemixAdvModeAutoEnabled: Remix map detected. Adventure Mode auto-enabled.
 			AdvModeAutoDisabled: Randomly-generated map detected. Adventure Mode auto-disabled.
 			SelectMarker: Click to select map marker. Click on the map to place a marker.
 			EraseMarkers: Click to begin erasing markers.
