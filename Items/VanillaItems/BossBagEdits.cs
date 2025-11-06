@@ -103,7 +103,7 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 itemLoot.RemoveWhere(_ => true);
                 itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalEye));
-                itemLoot.Add(ItemDropRule.Common(ItemID.SoulofSight, 1, 2));
+                itemLoot.Add(ItemDropRule.Common(ItemID.SoulofSight, 1, 2, 2));
                 itemLoot.Add(ItemDropRule.Common(ItemID.TwinMask));
             }
 

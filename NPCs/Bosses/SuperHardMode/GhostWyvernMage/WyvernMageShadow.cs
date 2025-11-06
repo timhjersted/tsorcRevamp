@@ -199,7 +199,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             if (dragonAlive)
             {
-                NPC.defense = 40;
+                NPC.defense = 142;
             }
 
             if (dragonAliveLastFrame && !dragonAlive)
@@ -233,7 +233,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             int transparency = 100;
             if (!dragonAlive)
             {
-                NPC.defense = 0;
                 transparency += 50;
             }
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, transparency, Color.Black, 1f);

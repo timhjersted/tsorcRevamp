@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.defense = 20;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.lifeMax = 18200;
+            NPC.lifeMax = 20000;
             NPC.timeLeft = 22500;
             NPC.friendly = false;
             NPC.noTileCollide = false;
@@ -180,7 +180,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             if (dragonAlive)
             {
-                NPC.defense = 40; 
+                NPC.defense = 50; 
             }
 
             if(dragonAliveLastFrame && !dragonAlive)
@@ -214,7 +214,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             int transparency = 100;
             if (!dragonAlive)
             {
-                NPC.defense = 0;
                 transparency += 50;
             }
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, transparency, Color.Black, 1f);
@@ -547,7 +546,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         {
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
             {
-                modifiers.FinalDamage *= 0.5f; 
+                modifiers.FinalDamage *= 0.4f; 
             }
         }
 
@@ -555,7 +554,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         {
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
             {
-                modifiers.FinalDamage *= 0.5f; 
+                modifiers.FinalDamage *= 0.4f; 
             }
         }
         public override void FindFrame(int currentFrame)
