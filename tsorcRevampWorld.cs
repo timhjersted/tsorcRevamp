@@ -1172,7 +1172,11 @@ namespace tsorcRevamp
                             Main.worldID = Main.rand.Next(9999999);
                             PlaceModdedTiles();
                             //ReadSoapstonesIntoJson();
-                            BuildSoapstones();
+                            if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSoapstones)
+                            {
+                                BuildSoapstones();
+                            }
+                            
                         }
 
                         //Spawn in NPCs

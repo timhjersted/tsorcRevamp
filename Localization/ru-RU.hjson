@@ -11643,6 +11643,11 @@ Mods: {
 					Tooltip: ""
 					Label: Отключить режим управления падением крыльев во время полёта
 				}
+
+				DisableSoapstones: {
+					// Tooltip: Only takes effect when creating new map
+					// Label: Disable Soapstones
+				}
 			}
 		}
 

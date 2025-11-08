@@ -11688,6 +11688,11 @@ Mods: {
 					Tooltip: ""
 					Label: Disable Mod Wings Fall Control During Flight
 				}
+
+				DisableSoapstones: {
+					Tooltip: Only takes effect when creating new map
+					Label: Disable Soapstones
+				}
 			}
 		}
 

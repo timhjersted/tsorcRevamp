@@ -11687,6 +11687,11 @@ Mods: {
 					Tooltip: ""
 					Label: 禁用模组翅膀的加速下落
 				}
+
+				DisableSoapstones: {
+					Tooltip: 只有在创建新地图时才生效
+					Label: 禁用箴言文字泡
+				}
 			}
 		}
 

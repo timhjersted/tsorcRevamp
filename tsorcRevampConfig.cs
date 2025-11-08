@@ -109,6 +109,11 @@ namespace tsorcRevamp
         [DefaultValue(224)]
         public uint ChargeCircleOpacity { get; set; }
 
+        [BackgroundColor(200, 80, 80, 192)]
+        [ReloadRequired]
+        [DefaultValue(false)]
+        public bool DisableSoapstones { get; set; }
+
         [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(true)]
         public bool HideSoapstones { get; set; }
