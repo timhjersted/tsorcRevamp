@@ -1749,13 +1749,6 @@
   "style": 1
 }
 {
-  "text": "This door opens from the other side.",
-  "tileX": 5338,
-  "tileY": 956,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "A voice whispers to you... \u0022Seek the lord known as Chaos. Its prison has long remained a secret, as it is protected by a Gem Lock once sealed by Artorias.\u0022 --NEWLINE  --NEWLINE \u0022Seek somewhere in the Hallow... At the end of the Palladium Caves...\u0022",
   "tileX": 5402,
   "tileY": 1689,

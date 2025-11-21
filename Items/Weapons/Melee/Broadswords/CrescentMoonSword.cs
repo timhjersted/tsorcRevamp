@@ -19,11 +19,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void SetDefaults()
         {
             Item.autoReuse = true;
-            Item.rare = ItemRarityID.Cyan;
-            Item.damage = 61;
+            Item.rare = ItemRarityID.LightRed;
+            Item.damage = 40;
             Item.width = 40;
             Item.height = 40;
-            Item.knockBack = 4.5f;
+            Item.knockBack = 4f;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 25;
             Item.useTime = 25;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 100000;
             Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
-            Item.shootSpeed = 4.5f; //Projectile has same range as the Ancient Blood Lance
+            Item.shootSpeed = 5f; //Projectile has same range as the Ancient Blood Lance
         }
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             else
             {
                 Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
-                Item.shootSpeed = 4.5f; //Projectile has same range as the Ancient Blood Lance
+                Item.shootSpeed = 5f; //Projectile has same range as the Ancient Blood Lance
                 instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.ForestGreen;
             }
             return true;
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             if ((player.name == "Zeodexic") || (player.name == "ChromaEquinox")) //*/) //Add whatever names you use -C
             {
-                Item.damage = 120; //change this to whatever suits your testing needs -C
+                Item.damage = 100; //change this to whatever suits your testing needs -C
             }
         }
 
@@ -65,10 +65,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<ShatteredMoonlight>(), 1);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
-            //recipe.AddIngredient(ItemID.SoulofLight, 7);
-            //recipe.AddIngredient(ItemID.SoulofNight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ItemID.CobaltBar, 3);
+            recipe.AddIngredient(ItemID.SoulofLight, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

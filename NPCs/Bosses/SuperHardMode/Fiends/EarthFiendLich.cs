@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -10,14 +11,21 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Projectiles.Enemy.Triad;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
     [AutoloadBossHead]
     class EarthFiendLich : ModNPC
     {
-        int lightningDamage = 43;
-        int oracleDamage = 38;
+        int skullDamage = 43;
+        int ichorDamage = 38;
+
+        int skullCircleTimer = 0;
+        int teleportTimer = 0;
+        int telegraphTimer = 0;
+        Vector2 teleportTargetPos;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
@@ -31,11 +39,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.damage = 120;
             NPC.defense = 82;
             NPC.aiStyle = 22;
-            NPC.scale = 1.1f;
+            NPC.scale = 1.2f;
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 275000;
+            NPC.lifeMax = 350000;
             NPC.timeLeft = 22500;
             NPC.friendly = false;
             NPC.noTileCollide = true;
@@ -53,32 +61,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             get => NPC.ai[1];
             set => NPC.ai[1] = value;
         }
-        bool OptionSpawned = false;
-        int OptionId = 0;
 
         //chaos
         int holdTimer = 0;
+        int holdTimer2 = 0;
 
         //We can override this even further on a per-NPC basis here
         #region AI
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0f, 0.25f);
-
-            if (OptionSpawned == false)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    OptionId = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<LichKingSerpentHead>(), NPC.whoAmI);
-                    Main.npc[OptionId].velocity.Y = -10;
-                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
-                }
-                OptionSpawned = true;
-            }
-
-
 
             Player player = Main.player[NPC.target];
             //chaos code: announce proximity debuffs once
@@ -86,41 +81,210 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             {
                 holdTimer--;
             }
+            if (holdTimer2 > 1)
+            {
+                holdTimer2--;
+            }
             //Proximity Debuffs
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
             {
-                player.AddBuff(BuffID.Ichor, 300, false); //on fire
+                player.AddBuff(BuffID.Ichor, 300, false); //Ichor
                 player.AddBuff(ModContent.BuffType<TornWings>(), 30, false);
             }
+
+            #region Ichor/Skull Normal Attacks
 
             bool flag25 = false;
             ProjectileTimer += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
             if (ProjectileTimer >= 10f)
             {
-                if (Main.rand.NextBool(180))
+                if (NPC.life > NPC.lifeMax * 0.60f)
                 {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.rand.NextBool(205))
                     {
-                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 4);
-                        projVector += Main.rand.NextVector2Circular(20, 20);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ProjectileID.Skull, lightningDamage, 0f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 4);
+                            projVector += Main.rand.NextVector2Circular(13, 13);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ProjectileID.Skull, skullDamage, 0f, Main.myPlayer);
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                        ProjectileTimer = 1f;
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    ProjectileTimer = 1f;
+                    if (Main.rand.NextBool(33))
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 10);
+                            projVector += Main.rand.NextVector2Circular(4, 4);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), ichorDamage, 0f, Main.myPlayer);
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                        ProjectileTimer = 1f;
+                    }
                 }
-                if (Main.rand.NextBool(22))
+                else
                 {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.rand.NextBool(180))
                     {
-                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 11);
-                        projVector += Main.rand.NextVector2Circular(10, 10);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.TheOracle>(), oracleDamage, 0f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 5);
+                            projVector += Main.rand.NextVector2Circular(14, 14);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ProjectileID.Skull, skullDamage, 0f, Main.myPlayer);
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                        ProjectileTimer = 1f;
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    ProjectileTimer = 1f;
+                    if (Main.rand.NextBool(29))
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 11);
+                            projVector += Main.rand.NextVector2Circular(5, 5);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), ichorDamage, 0f, Main.myPlayer);
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                        ProjectileTimer = 1f;
+                    }
+                }
+            }
+            #endregion
+
+            #region Skull Circle Attack 
+            skullCircleTimer++;
+            if (skullCircleTimer > 360)
+            {
+                if (skullCircleTimer < 420)
+                {
+                    float rotationSpeed = 0.044f;
+                    float circleRotation = skullCircleTimer * rotationSpeed;
+
+                    if (NPC.life < NPC.lifeMax * 0.60f && skullCircleTimer == 390 && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 12; i++)
+                        {
+                            float angle = (float)i / 12f * MathHelper.TwoPi;
+                            Vector2 shadowVel = new Vector2(3f, 0).RotatedBy(angle);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, shadowVel,
+                                ProjectileID.Shadowflames, skullDamage, 1f, Main.myPlayer);
+                        }
+                    }
+
+                    for (int i = 0; i < 16; i++)
+                    {
+                        float angle = (float)i / 16f * MathHelper.TwoPi + circleRotation;
+                        Vector2 telePos = NPC.Center + new Vector2(100, 0).RotatedBy(angle);
+                        for (int j = 0; j < 3; j++)
+                        {
+                            Vector2 dustOffset = new Vector2(8, 0).RotatedBy(angle + Main.rand.NextFloat(-0.3f, 0.3f));
+                            Vector2 dustPos = telePos + dustOffset;
+                            int dust = Dust.NewDust(dustPos, 8, 8, 181, 0, 0, 150, default, 1f + Main.rand.NextFloat(-0.3f, 0.3f));
+                            Main.dust[dust].noGravity = true;
+                            Main.dust[dust].velocity *= 0.1f;
+                        }
+                    }
+                }
+
+                if (skullCircleTimer >= 420 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 16; i++)
+                    {
+                        float angle = (float)i / 16f * MathHelper.TwoPi;
+                        Vector2 skullVel = new Vector2(8f, 0).RotatedBy(angle);
+                        int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, skullVel,
+                            ProjectileID.Skull, skullDamage, 1f, Main.myPlayer);
+                        Main.projectile[proj].timeLeft = 300;
+                    }
+                }
+
+                if (skullCircleTimer > 420)
+                {
+                    skullCircleTimer = 0;
+                    NPC.netUpdate = true;
+                }
+            }
+            #endregion
+
+            #region Ichor Teleportation
+            teleportTimer++;
+            int teleportThreshold = NPC.life < NPC.lifeMax * 0.30f ? 600 : 720;
+            if (teleportTimer >= teleportThreshold)
+            {
+                teleportTimer = 0;
+
+                Player target = Main.player[NPC.target];
+                float minDistX = 400f;
+                float maxDistX = 600f;
+                float maxDistY = 200f;
+
+                float absX = Main.rand.NextFloat(minDistX, maxDistX);
+                float signX = Main.rand.NextBool() ? 1f : -1f;
+                float offsetX = absX * signX;
+
+                float offsetY = Main.rand.NextFloat(-maxDistY, maxDistY);
+
+                Vector2 offset = new Vector2(offsetX, offsetY);
+                teleportTargetPos = target.Center + offset;
+
+                telegraphTimer = 90;
+                NPC.netUpdate = true;
+            }
+
+            if (telegraphTimer > 0)
+            {
+                telegraphTimer--;
+
+                for (int i = 0; i < 14; i++)
+                {
+                    Vector2 dustOffset = Main.rand.NextVector2Circular(55, 75);
+                    Vector2 dustPos = teleportTargetPos + dustOffset;
+                    int dust = Dust.NewDust(dustPos, 0, 0, 169, 0f, 0f, 150, default, 2f);
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity *= 0.5f;
+                }
+
+                if (telegraphTimer <= 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.Center = teleportTargetPos;
+                    NPC.velocity = Vector2.Zero;
+
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                        ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+
+                    if (NPC.life > NPC.lifeMax * 0.60f)
+                    {
+                        int glob = NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<IchorGlob>());
+                        if (glob < Main.maxNPCs)
+                            Main.npc[glob].velocity.Y = -5f;
+                    }
+                    else
+                    {
+                        int missile = NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<IchorMissile>());
+                        if (missile < Main.maxNPCs)
+                            Main.npc[missile].velocity.Y = -5f;
+                    }
+
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                    NPC.netUpdate = true;
                 }
             }
 
+            if (NPC.life < NPC.lifeMax * 0.30f && telegraphTimer > 0 && telegraphTimer % 10 == 0)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float angleSpread = 13f; 
+                    float randomAngle = Main.rand.NextFloat(-angleSpread, angleSpread) * MathHelper.ToRadians(1f);
+                    Vector2 ichorVel = new Vector2(0, -9f).RotatedBy(randomAngle); 
+                    
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 
+                        ichorVel.X, ichorVel.Y, 
+                        ProjectileID.GoldenShowerHostile, ichorDamage, 1f, Main.myPlayer);
+                }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+            }
+            #endregion
 
             if (NPC.justHit)
             {
@@ -334,6 +498,34 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 }
             }
 
+            if (NPC.life < NPC.lifeMax * 0.60f && holdTimer <= 0)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath10, NPC.Center);
+                NPC.netUpdate = true;
+                holdTimer = 30000;
+
+                for (int i = 0; i < 30; i++) 
+                {
+                    Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
+                    int dustIndex = Dust.NewDust(NPC.Center, 0, 0, DustID.IchorTorch, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2.5f);
+                    Main.dust[dustIndex].noGravity = true; 
+                }
+            }
+
+            if (NPC.life < NPC.lifeMax * 0.30f && holdTimer2 <= 0)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath10, NPC.Center);
+                NPC.netUpdate = true;
+                holdTimer2 = 30000;
+
+                for (int i = 0; i < 30; i++) 
+                {
+                    Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
+                    int dustIndex = Dust.NewDust(NPC.Center, 0, 0, DustID.IchorTorch, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2.5f);
+                    Main.dust[dustIndex].noGravity = true; 
+                }
+            }
+
         }
         #endregion
 
@@ -396,11 +588,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         }
         public override void OnKill()
         {
+            SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1.1f });
+
             if (!Main.dedServ)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Fiend Lich Gore 1").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Fiend Lich Gore 2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Fiend Lich Gore 2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Fiend Lich Gore 1").Type, 1.2f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Fiend Lich Gore 2").Type, 1.2f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Fiend Lich Gore 2").Type, 1.2f);
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
             }
         }
     }

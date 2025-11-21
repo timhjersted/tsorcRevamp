@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 150;
             Projectile.height = 80;
             Projectile.friendly = true;
-            Projectile.penetrate = 5;
+            Projectile.penetrate = 4;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
@@ -50,11 +50,6 @@ namespace tsorcRevamp.Projectiles
                     Projectile.ai[1] = 1f;
                     Projectile.netUpdate = true;
                 }
-            }
-            if (Projectile.soundDelay == 0)
-            {
-                Projectile.soundDelay = 20 + Main.rand.Next(40);
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, Projectile.Center);
             }
             if (Projectile.localAI[0] == 0f)
             {
@@ -97,25 +92,23 @@ namespace tsorcRevamp.Projectiles
                 }
             }
         }
-
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        
+        public override void OnKill(int timeLeft)
         {
-            if (Projectile.penetrate <= 0)
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 0.5f, Pitch = 1f }, Projectile.Center);
+
+            if (Projectile.owner == Main.myPlayer)
             {
-                if (Projectile.owner == Main.myPlayer)
-                {
-                    Projectile.NewProjectile(
-                        Projectile.GetSource_FromThis(),
-                        Projectile.Center.X,
-                        Projectile.Center.Y,
-                        0, 0,
-                        ModContent.ProjectileType<Projectiles.Magic.UltimaExplosion>(),
-                        Projectile.damage / 2,
-                        8f,
-                        Projectile.owner
-                    );
-                }
-                Projectile.Kill();
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    Projectile.Center.X,
+                    Projectile.Center.Y,
+                    0, 0,
+                    ModContent.ProjectileType<Projectiles.Magic.UltimaExplosion>(),
+                    Projectile.damage / 2,
+                    8f,
+                    Projectile.owner
+                );
             }
         }
     }

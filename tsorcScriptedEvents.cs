@@ -192,6 +192,7 @@ namespace tsorcRevamp
             BoulderfallEvent3,
             FirebombHollowAmbush,
             LeonhardPhase1Event,
+            LeonhardRemixEvent,
             HollowAmbush1,
             GoblinAmbush1,
             ShadowMageAmbush1,
@@ -538,6 +539,8 @@ namespace tsorcRevamp
             //LEONHARD PHASE 1 EVENT - BY ADAMANTITE GATE ACROSS BRIDGE FROM WIZARDS HOUSE
             ScriptedEvent LeonhardPhase1Event = new ScriptedEvent(new Vector2(3314, 355), 34, ModContent.NPCType<NPCs.Special.LeonhardPhase1>(), 54, true, false, true, LangUtils.GetTextValue("Events.Leonhard1"), Color.Red, false, LeonhardPhase1Undefeated);
 
+            //ScriptedEvent LeonhardRemixEvent = new ScriptedEvent(new Vector2(3418, 362), 35, ModContent.NPCType<NPCs.Special.LeonhardRemix>(), 60, true, true, true, LangUtils.GetTextValue("Events.Leonhard1"), Color.Red, false, LeonhardRemixSecretCondition);
+
             //HOLLOW AMBUSH 1 - BOTTOM RIGHT OF EARTH TEMPLE
             List<int> HollowAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
             List<Vector2> HollowAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4446, 1211), new Vector2(4456, 1211) };
@@ -749,7 +752,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.RemixWitchkingEvent, RemixWitchkingEvent},
                 {ScriptedEventType.ChaosFight, ChaosEvent},
                 {ScriptedEventType.ChaosEventRemix, ChaosEventRemix},
-                { ScriptedEventType.WyvernMageShadowFight, WyvernMageShadowEvent},
+                {ScriptedEventType.WyvernMageShadowFight, WyvernMageShadowEvent},
                 {ScriptedEventType.BlightFight, BlightEvent},
                 {ScriptedEventType.DarkCloudPyramidFight, DarkCloudEvent},
                 {ScriptedEventType.DarkCloudEventRemix, DarkCloudEventRemix},
@@ -769,6 +772,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.BoulderfallEvent2, BoulderfallEvent2},
                 {ScriptedEventType.BoulderfallEvent3, BoulderfallEvent3},
                 {ScriptedEventType.LeonhardPhase1Event, LeonhardPhase1Event},
+                //{ScriptedEventType.LeonhardRemixEvent, LeonhardRemixEvent},
                 {ScriptedEventType.HollowAmbush1, HollowAmbush1},
                 {ScriptedEventType.GoblinAmbush1, GoblinAmbush1},
                 {ScriptedEventType.ShadowMageAmbush1, ShadowMageAmbush1},
@@ -1084,6 +1088,18 @@ namespace tsorcRevamp
         public static bool LeonhardPhase1Undefeated()
         {
             if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Special.LeonhardPhase1>())))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool LeonhardRemixSecretCondition()
+        {
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Special.LeonhardPhase1>())) && tsorcRevampWorld.RemixMap && Main.bloodMoon)
             {
                 return true;
             }

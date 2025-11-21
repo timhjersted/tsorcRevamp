@@ -77,13 +77,13 @@ namespace tsorcRevamp.NPCs.Bosses
             int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.AncientLight, NPC.velocity.X, NPC.velocity.Y, 150, Color.Purple, 0.9f);
             Main.dust[dust2].noGravity = true;
 
-            if (NPC.life > 5000)
+            if (NPC.life > NPC.lifeMax * 0.30f)
             {
                 Color color = new Color();
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 180, color, 4f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 5000)
+            else if (NPC.life < NPC.lifeMax * 0.30f)
             {
                 Color color = new Color();
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 150, color, 6f);
@@ -112,7 +112,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.velocity.Y *= 0.97f;
             }
 
-            if ((NPC.ai[1] >= 150 && NPC.life > 2000) || (NPC.ai[1] >= 100 && NPC.life <= 2000))
+            if ((NPC.ai[1] >= 150 && NPC.life > NPC.lifeMax * 0.15f) || (NPC.ai[1] >= 100 && NPC.life <= NPC.lifeMax * 0.15f))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int i = 0; i < 10; i++)
@@ -182,9 +182,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                 if (!Main.dedServ)
                 {
-                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 1").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 3").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 1").Type, 1.1f);
+                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 2").Type, 1.1f);
+                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 3").Type, 1.1f);
                 }
                 for (int i = 0; i < 50; i++)
                 {

@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Special
         {
             NPC.knockBackResist = 0.1f;
             NPC.aiStyle = -1;
-            NPC.scale = 1.1f;
+            NPC.scale = 1.15f;
             NPC.damage = 25; //Low contact damage, the slashes will be doing the damage
             NPC.defense = 10;
             NPC.height = 40;

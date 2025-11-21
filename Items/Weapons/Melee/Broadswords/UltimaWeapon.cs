@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
             Item.scale = 1.8f;
-            Item.UseSound = SoundID.Item1;
+            Item.UseSound = SoundID.Item20;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.rare = ModContent.RarityType<DarkBlue>();
             Item.value = PriceByRarity.Purple_11;

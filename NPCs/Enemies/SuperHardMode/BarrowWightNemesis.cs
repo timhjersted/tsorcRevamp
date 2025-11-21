@@ -421,12 +421,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 50));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>(), 5));
         }
-        #region Magic Defense
-        public int MagicDefenseValue()
-        {
-            return 5;
-        }
-        #endregion
 
         #region Glowing Eye Effect
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

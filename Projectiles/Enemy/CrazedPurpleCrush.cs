@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //projectile.aiStyle = 24;
             Projectile.hostile = true;
             Projectile.height = 16;
-            Projectile.scale = 1;
+            Projectile.scale = 1.3f;
             Projectile.tileCollide = false;
             Projectile.damage = 25;
             //projectile.aiPretendType = 94;
@@ -42,12 +42,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
 
             Color color = new Color();
-            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 100, color, 1.0f);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 100, color, 1.4f);
             Main.dust[dust].noGravity = true;
 
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())))
             {
-                int dust2 = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width / 2, Projectile.height / 2, 6, Projectile.velocity.X, Projectile.velocity.Y, 80, Color.Yellow, 1f);
+                int dust2 = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width / 2, Projectile.height / 2, DustID.DemonTorch, Projectile.velocity.X, Projectile.velocity.Y, 80, color, 1.4f);
                 Main.dust[dust2].noGravity = true;
             }
             Projectile.rotation++;

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
@@ -11,6 +12,9 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Projectiles.Enemy.Birbs;
+using tsorcRevamp.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -28,457 +32,307 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.ShadowFlame] = true;
         }
+
         public override void SetDefaults()
         {
             NPC.width = 130;
             NPC.height = 170;
-            NPC.aiStyle = 22;
+            NPC.aiStyle = -1; // ChaosMovement
             NPC.damage = 100;
             NPC.defense = 80;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.lifeMax = 250000;
-            NPC.knockBackResist = 0;
+            NPC.lifeMax = 400000;
+            NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.value = 670000;
-            NPC.rarity = 42;
+            NPC.scale = 1.1f;
             NPC.boss = true;
             NPC.lavaImmune = true;
+
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Chaos.DespawnHandler"), Color.Yellow, DustID.GoldFlame);
 
+            InitializeMoves();
         }
 
-        int fireBreathDamage = 50;
-        int greatFireballDamage = 48;
-        int blazeBallDamage = 48;
         int purpleCrushDamage = 45;
-        int meteorDamage = 55;
-        int tornadoDamage = 45;
-        int crystalFireDamage = 45;
-        int fireTrailsDamage = 45;
+        int sickleDamage = 55;
+        int BlackFireDamage = 50; 
 
         int chaosHealed = 0;
         bool chargeDamageFlag = false;
-        int holdTimer = 0;
-        int holdTimer2 = 0;
 
-        int chargeTimer = 0;
+        List<ChaosMove> MoveList;
+        public int MoveIndex
+        {
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
+        }
+        public int MoveTimer
+        {
+            get => (int)NPC.ai[1];
+            set => NPC.ai[1] = value;
+        }
 
-        #region AI
+        ChaosMove CurrentMove => MoveList[MoveIndex];
+
         NPCDespawnHandler despawnHandler;
+
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0f, 0f);
 
-            Player player = Main.player[NPC.target];
+            Lighting.AddLight(NPC.Center, 0.5f, 0.1f, 0.6f);
 
-            if (holdTimer > 0)
-            {
-                holdTimer--;
-            }
+            if (MoveList == null || MoveIndex >= MoveList.Count) MoveIndex = 0;
 
-            if (holdTimer2 > 1)
-            {
-                holdTimer--;
-            }
-            //Proximity Debuffs
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1800)
-            {
-                player.AddBuff(BuffID.BrokenArmor, 120, false);
-                player.AddBuff(ModContent.BuffType<FracturingArmor>(), 60, false);
+           
 
-                if (holdTimer2 <= 0)
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Chaos.Heal1"), 255, 255, 0); //yellow
-                    holdTimer2 = 9000;
-                }
+            CurrentMove.Move();
 
-            }
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1000)
+            if (NPC.life <= NPC.lifeMax / 3 && chaosHealed < 4) //huhh IDK if I should keep this but anyway 
             {
-                NPC.defense = 9999;
-                if (holdTimer <= 0)
+                if (Main.rand.NextBool(500))
                 {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Chaos.Heal2"), 175, 75, 255);
-                    holdTimer = 200;
-                }
-                else
-                {
-                    NPC.defense = 80;
-                }
-            }
+                    chaosHealed++;
+                    NPC.life += NPC.lifeMax / 6;
+                    if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
 
-            ClientSideAttacks();
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                NonClientAttacks();
-            }
-
-            if (NPC.justHit)
-            {
-                NPC.ai[2] = 0f;
-            }
-            if (NPC.ai[2] >= 0f)
-            {
-                int num258 = 16;
-                bool flag26 = false;
-                bool flag27 = false;
-                if (NPC.position.X > NPC.ai[0] - (float)num258 && NPC.position.X < NPC.ai[0] + (float)num258)
-                {
-                    flag26 = true;
-                }
-                else
-                {
-                    if ((NPC.velocity.X < 0f && NPC.direction > 0) || (NPC.velocity.X > 0f && NPC.direction < 0))
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        flag26 = true;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                            ModContent.ProjectileType<EnemySpellEffectHealing>(), 0, 0f, Main.myPlayer);
                     }
-                }
-                num258 += 24;
-                if (NPC.position.Y > NPC.ai[1] - (float)num258 && NPC.position.Y < NPC.ai[1] + (float)num258)
-                {
-                    flag27 = true;
-                }
-                if (flag26 && flag27)
-                {
-                    NPC.ai[2] += 1f;
-                    if (NPC.ai[2] >= 60f)
-                    {
-                        NPC.ai[2] = -200f;
-                        NPC.direction *= -1;
-                        NPC.velocity.X = NPC.velocity.X * -1f;
-                        NPC.collideX = false;
-                    }
-                }
-                else
-                {
-                    NPC.ai[0] = NPC.position.X;
-                    NPC.ai[1] = NPC.position.Y;
-                    NPC.ai[2] = 0f;
-                }
-            }
-            else
-            {
-                NPC.ai[2] += 1f;
-                if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) > NPC.position.X + (float)(NPC.width / 2))
-                {
-                    NPC.direction = -1;
-                }
-                else
-                {
-                    NPC.direction = 1;
-                }
-            }
-            int num259 = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
-            int num260 = (int)((NPC.position.Y + (float)NPC.height) / 16f);
-            if (NPC.position.Y > Main.player[NPC.target].position.Y)
-            {
-                NPC.velocity.Y -= .22f;
-                if (NPC.velocity.Y < -2)
-                {
-                    NPC.velocity.Y = -2;
-                }
-            }
-            if (NPC.position.Y < Main.player[NPC.target].position.Y)
-            {
-                NPC.velocity.Y += .22f;
-                if (NPC.velocity.Y > 2)
-                {
-                    NPC.velocity.Y = 2;
-                }
-            }
-            if (NPC.collideX)
-            {
-                NPC.velocity.X = NPC.oldVelocity.X * -0.4f;
-                if (NPC.direction == -1 && NPC.velocity.X > 0f && NPC.velocity.X < 1f)
-                {
-                    NPC.velocity.X = 1f;
-                }
-                if (NPC.direction == 1 && NPC.velocity.X < 0f && NPC.velocity.X > -1f)
-                {
-                    NPC.velocity.X = -1f;
-                }
-            }
-            if (NPC.collideY)
-            {
-                NPC.velocity.Y = NPC.oldVelocity.Y * -0.25f;
-                if (NPC.velocity.Y > 0f && NPC.velocity.Y < 1f)
-                {
-                    NPC.velocity.Y = 1f;
-                }
-                if (NPC.velocity.Y < 0f && NPC.velocity.Y > -1f)
-                {
-                    NPC.velocity.Y = -1f;
-                }
-            }
-            float num270 = 2.5f;
-            if (NPC.direction == -1 && NPC.velocity.X > -num270)
-            {
-                NPC.velocity.X = NPC.velocity.X - 0.1f;
-                if (NPC.velocity.X > num270)
-                {
-                    NPC.velocity.X = NPC.velocity.X - 0.1f;
-                }
-                else
-                {
-                    if (NPC.velocity.X > 0f)
-                    {
-                        NPC.velocity.X = NPC.velocity.X + 0.05f;
-                    }
-                }
-                if (NPC.velocity.X < -num270)
-                {
-                    NPC.velocity.X = -num270;
-                }
-            }
-            else
-            {
-                if (NPC.direction == 1 && NPC.velocity.X < num270)
-                {
-                    NPC.velocity.X = NPC.velocity.X + 0.1f;
-                    if (NPC.velocity.X < -num270)
-                    {
-                        NPC.velocity.X = NPC.velocity.X + 0.1f;
-                    }
-                    else
-                    {
-                        if (NPC.velocity.X < 0f)
-                        {
-                            NPC.velocity.X = NPC.velocity.X - 0.05f;
-                        }
-                    }
-                    if (NPC.velocity.X > num270)
-                    {
-                        NPC.velocity.X = num270;
-                    }
-                }
-            }
-            if (NPC.directionY == -1 && (double)NPC.velocity.Y > -2.5)
-            {
-                NPC.velocity.Y = NPC.velocity.Y - 0.04f;
-                if ((double)NPC.velocity.Y > 2.5)
-                {
-                    NPC.velocity.Y = NPC.velocity.Y - 0.05f;
-                }
-                else
-                {
-                    if (NPC.velocity.Y > 0f)
-                    {
-                        NPC.velocity.Y = NPC.velocity.Y + 0.03f;
-                    }
-                }
-                if ((double)NPC.velocity.Y < -2.5)
-                {
-                    NPC.velocity.Y = -2.5f;
-                }
-            }
-            else
-            {
-                if (NPC.directionY == 1 && (double)NPC.velocity.Y < 2.5)
-                {
-                    NPC.velocity.Y = NPC.velocity.Y + 0.04f;
-                    if ((double)NPC.velocity.Y < -2.5)
-                    {
-                        NPC.velocity.Y = NPC.velocity.Y + 0.05f;
-                    }
-                    else
-                    {
-                        if (NPC.velocity.Y < 0f)
-                        {
-                            NPC.velocity.Y = NPC.velocity.Y - 0.03f;
-                        }
-                    }
-                    if ((double)NPC.velocity.Y > 2.5)
-                    {
-                        NPC.velocity.Y = 2.5f;
-                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item4, NPC.Center);
                 }
             }
         }
+
+        #region IA
+
+        private void NormalPattern() //Setup the patterns for the boss
+        {
+            MoveTimer++;
+
+            if (MoveTimer % 48 == 0)
+            {
+                PurpleCrushBarrage();
+                
+            }
+
+            if (MoveTimer % 35 == 0)
+            {
+                DemonSickle(); 
+            }
+
+            if (MoveTimer % 210 == 0)
+            {
+                BlackFire();   
+            }
+
+            if (MoveTimer >= 1080)
+            {
+                NextMove(); 
+                MoveTimer = 0;
+            }
+
+            ChaosMovement();
+        }
+
+        private void ChaosTeleportPattern() //How the teleport attack works 
+        {
+            MoveTimer++;
+
+            int telegraphDuration = 95; 
+            int attackDuration = MoveTimer - telegraphDuration;
+
+            if (MoveTimer <= telegraphDuration)
+            {
+                TelegraphChaosAttack();
+
+                if (MoveTimer == 1)
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item163 with { Volume = 1.2f, Pitch = -0.4f }, NPC.Center);
+
+                ChaosMovement();
+                return;
+            }
+
+            if (attackDuration >= 0 && attackDuration % 45 == 0 && attackDuration / 45 <= 5)
+            {
+                NPC.velocity = Vector2.Zero;
+
+                TeleportCircleAttack();
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+            }
+
+            if (attackDuration >= 285) 
+            {
+                NextMove(); 
+                MoveTimer = 0;
+            }
+        }
+
         #endregion
 
+        #region Pattern
 
-        //Projectile spawning code must not run for every single multiplayer client
-        void NonClientAttacks()
+        private void PurpleCrushBarrage() //The base spamming attack 
         {
-            NPC.ai[1] += 0.35f;
-            if (NPC.ai[1] >= 10f)
-            {
-                if (Main.rand.NextBool(90))
-                {
-                    Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
-                    projTarget += Main.rand.NextVector2Circular(3, 3);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPC.ai[1] = 1f;
-                }
-                if (Main.rand.NextBool(450))
-                {
-                    Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
-                    projTarget += Main.rand.NextVector2Circular(3, 3);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPC.ai[1] = 1f;
-                }
-                if (Main.rand.NextBool(1000))
-                {
-                    Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
-                    projTarget += Main.rand.NextVector2Circular(3, 3);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlazeBall>(), blazeBallDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPC.ai[1] = 1f;
-                }
-                if (Main.rand.NextBool(300))
-                {
-                    Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 11);
-                    projTarget += Main.rand.NextVector2Circular(3, 3);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPC.ai[1] = 1f;
-                }
+            if (Main.netMode == NetmodeID.MultiplayerClient) return; //I use this form instead, it works so ? 
 
-                if (Main.rand.NextBool(205) && Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), Main.player[NPC.target].position.X - 100 + Main.rand.Next(300), Main.player[NPC.target].position.Y - 530.0f, (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteor>(), meteorDamage, 2.0f, Main.myPlayer);
-                }
-                /*
-                if (Main.rand.NextBool(1200))
-                {
-                    Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 4);
-                    projTarget += Main.rand.NextVector2Circular(3, 3);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellTornado>(), tornadoDamage, 0f, Main.myPlayer, NPC.target);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPC.ai[1] = 1f;
-                }
-                */
-                if (Main.rand.NextBool(60))
-                {
-                    Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
-                    projTarget += Main.rand.NextVector2Circular(3, 3);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), crystalFireDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPC.ai[1] = 1f;
-                }
-                if (Main.rand.NextBool(120))
-                {
-                    Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 5);
-                    projTarget += Main.rand.NextVector2Circular(3, 3);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireTrails>(), fireTrailsDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPC.ai[1] = 1f;
-                }
+            Vector2 direction = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1f);
+            float baseRot = direction.ToRotation();
+
+            for (int i = -1; i <= 1; i++)
+            {
+                float offset = MathHelper.ToRadians(9f * i);
+                Vector2 vel = new Vector2((float)Math.Cos(baseRot + offset), (float)Math.Sin(baseRot + offset)) * 14f;
+
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
+                    ModContent.ProjectileType<CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
+            }
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.6f }, NPC.Center);
+        }
+
+        private void DemonSickle() // Shoots consistently demon sickle 
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+
+            Vector2 vel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2.7f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
+            ProjectileID.DemonSickle, sickleDamage, 0f, Main.myPlayer);
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.4f }, NPC.Center);
+        }
+
+        private void BlackFire() //Every 3 seconds, shoots 9 projectiles in a circle, almost the same attack than attraidieis 
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 9f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, -1, Main.myPlayer, -1);
+            }
+
+            for (int i = 0; i < 24; i++)
+            {
+                Dust.NewDustPerfect(NPC.Center, DustID.DemonTorch, Main.rand.NextVector2CircularEdge(4, 4), Scale: 2.2f);
             }
         }
 
-        //Healing and dashing code must be deterministic and must run on every client
-        void ClientSideAttacks()
+        private void TelegraphChaosAttack() //The telegraph before the teleport circle attack
         {
-            chargeTimer++;
-            if (chargeTimer >= 480)
+            for (int i = 0; i < 9; i++)
             {
-                chargeTimer = 0;
-                chargeDamageFlag = true;
-                NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 14) + Main.player[NPC.target].velocity;
+                Vector2 offset = Main.rand.NextVector2Circular(95, 95);
+                Dust dust = Dust.NewDustPerfect(NPC.Center + offset, DustID.PurpleTorch, offset * 0.04f, Scale: 2.6f);
+                dust.noGravity = true;
             }
-            if (chargeDamageFlag == true)
+        }
+
+        private void TeleportCircleAttack() //actual attack of the teleport pattern, shoots 13 projectile + 1 demon spirit in a circle
+        {
+            float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+            NPC.Center = Main.player[NPC.target].Center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * 650f;
+            NPC.netUpdate = true;
+
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+
+            float speed = 11f;
+
+            for (int i = 0; i < 13; i++)
+            {
+                float rot = MathHelper.TwoPi * i / 13f;
+                Vector2 vel = new Vector2(MathF.Cos(rot), MathF.Sin(rot)) * speed;
+
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel, ModContent.ProjectileType<RageDemonBolt>(), sickleDamage, 0f, Main.myPlayer);
+            }
+
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DemonSpirit>(), sickleDamage, 0f, Main.myPlayer);
+
+            for (int i = 0; i < 38; i++)
+            {
+                Dust.NewDustPerfect(NPC.Center, DustID.PurpleTorch, Main.rand.NextVector2CircularEdge(5, 5), Scale: 3f);
+            }
+        }
+
+        private void ChaosMovement() //The IA and Movement of the boss
+        {
+            float maxSpeed = 6f;
+            float acceleration = 0.08f;
+            float turnSpeed = 0.1f;
+
+            Vector2 targetDirection = Main.player[NPC.target].Center - NPC.Center;
+            targetDirection.Normalize();
+
+            NPC.velocity += targetDirection * acceleration;
+            if (NPC.velocity.Length() > maxSpeed)
+                NPC.velocity = Vector2.Normalize(NPC.velocity) * maxSpeed;
+
+            if (NPC.velocity.X > 0.1f) NPC.spriteDirection = 1;
+            if (NPC.velocity.X < -0.1f) NPC.spriteDirection = -1;
+
+            if (chargeDamageFlag)
             {
                 NPC.damage = 120;
-            }
-            if (Math.Abs(NPC.Center.X - Main.player[NPC.target].Center.X) < 20)
-            {
-                chargeDamageFlag = false;
-                NPC.damage = 110;
-            }
-
-            if (NPC.life <= NPC.lifeMax / 3)
-            {
-                if (chaosHealed >= 1 && chaosHealed <= 3)
+                if (NPC.Hitbox.Intersects(Main.player[NPC.target].Hitbox))
                 {
-                    if (Main.rand.NextBool(500))
-                    {
-                        if (chaosHealed == 0)
-                        {
-                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Chaos.Rips"), Color.Yellow);
-                        }
-                        else
-                        {
-                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Chaos.OutOfRange"), Color.Yellow);
-                        }
-                        NPC.life += NPC.lifeMax / 6;
-                        if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0f, Main.myPlayer);
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item4, NPC.Center); NPC.netUpdate = true;
-                        chaosHealed += 1;
-                    }
+                    chargeDamageFlag = false;
+                    NPC.damage = 100;
                 }
             }
         }
-        #region Frames
-        public override void FindFrame(int currentFrame)
+
+        private void NextMove()
         {
-            int num = 1;
-            if (!Main.dedServ)
-            {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
-            }
-            if (NPC.velocity.X < 0)
-            {
-                NPC.spriteDirection = -1;
-            }
-            else
-            {
-                NPC.spriteDirection = 1;
-            }
-            NPC.rotation = NPC.velocity.X * 0.08f;
-            NPC.frameCounter += 1.0;
-            if (NPC.frameCounter >= 4.0)
-            {
-                NPC.frame.Y = NPC.frame.Y + num;
-                NPC.frameCounter = 0.0;
-            }
-            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
-            {
-                NPC.frame.Y = 0;
-            }
+            MoveIndex++;
+            if (MoveIndex >= MoveList.Count) MoveIndex = 0;
+            MoveTimer = 0;
         }
+
+        private void InitializeMoves()
+        {
+            MoveList = new List<ChaosMove>
+            {
+                new ChaosMove(NormalPattern, null, 0, "Normal Chaos"),
+                new ChaosMove(ChaosTeleportPattern, null, 1, "Chaos Circle Attack")
+            };
+        }
+
         #endregion
 
         #region Gore
-        public override void OnKill()
+
+        public override void FindFrame(int frameHeight)
+        {
+            NPC.rotation = NPC.velocity.X * 0.08f;
+            NPC.spriteDirection = NPC.velocity.X < 0 ? -1 : 1;
+
+            NPC.frameCounter++;
+            if (NPC.frameCounter >= 4)
+            {
+                NPC.frameCounter = 0;
+                NPC.frame.Y += frameHeight;
+                if (NPC.frame.Y >= Main.npcFrameCount[NPC.type] * frameHeight)
+                {
+                    NPC.frame.Y = 0;
+                }
+            }
+        }
+
+        public override void OnKill() //special death animation
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)NPC.position.X, (int)NPC.position.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.ChaosDeathAnimation>(), 0, 0f, Main.myPlayer);
             }
         }
+
         #endregion
-        public override bool CheckActive()
-        {
-            return false;
-        }
+
+        public override bool CheckActive() => false;
+
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.SuperHealingPotion;
@@ -495,11 +349,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
         }
 
-        #region Magic Defense
-        public int MagicDefenseValue()
+    }
+
+    class ChaosMove
+    {
+        public Action Move;
+        public Action Draw;
+        public int ID;
+        public string Name;
+
+        public ChaosMove(Action MoveAction, Action DrawAction, int MoveID, string AttackName)
         {
-            return 65;
+            Move = MoveAction;
+            Draw = DrawAction;
+            ID = MoveID;
+            Name = AttackName;
         }
-        #endregion
     }
 }

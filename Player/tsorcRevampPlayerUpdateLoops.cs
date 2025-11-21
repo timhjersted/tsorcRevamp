@@ -992,24 +992,6 @@ namespace tsorcRevamp
                 int dust = Dust.NewDust(Player.position, Player.width, Player.height, DustID.ShadowbeamStaff, 0f, 0f, 30, default, Main.rand.NextFloat(1f, 2f));
                 Main.dust[dust].noGravity = true;
             }
-
-            if (tsorcRevampWorld.RemixMap && UsefulFunctions.PlayerInZone(Player, tsorcRevampWorld.PirateZoneLeftX, tsorcRevampWorld.PirateZoneRightX, 755, 886))
-            {
-                if (!tsorcRevampWorld.RemixPiratesDefeated)
-                {
-                    if (!tsorcRevampWorld.RemixEnteredPirateArea)
-                        Main.invasionType = 0;
-
-                    Main.invasionDelay = 0;
-                    Main.StartInvasion(InvasionID.PirateInvasion);
-                }
-
-                tsorcRevampWorld.RemixEnteredPirateArea = true;
-            }
-            else if (tsorcRevampWorld.RemixEnteredPirateArea)
-            {
-                tsorcRevampWorld.RemixEnteredPirateArea = false;
-            }
         
             //--------------------
 

@@ -217,6 +217,11 @@ namespace tsorcRevamp.Projectiles
                     projectile.tileCollide = false;
                 }
 
+                if (projectile.type == ProjectileID.GoldenShowerHostile)
+                {
+                    projectile.tileCollide = false;
+                }
+
                 if (projectile.type == ProjectileID.FrostBlastFriendly)
                 {
                     projectile.penetrate = 6;

@@ -355,13 +355,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        #region Magic Defense
-        public int MagicDefenseValue()
-        {
-            return 5;
-        }
-        #endregion
-
 
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)

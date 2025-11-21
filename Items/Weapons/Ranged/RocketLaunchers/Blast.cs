@@ -25,10 +25,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
             Item.knockBack = 15f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.MiniNukeRocketI;
-            Item.shootSpeed = 12.5f;
+            Item.shootSpeed = 12f;
             Item.useAmmo = AmmoID.Rocket;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
+            Item.useAnimation = 16;
+            Item.useTime = 16;
             Item.UseSound = SoundID.Item61;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.rare = ItemRarityID.Purple;
@@ -49,6 +49,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
         {
             int proj = Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
             Main.projectile[proj].ai[1] = 1f;
+
+            int flameDamage = (int)(damage * 0.66f);
+
+            Vector2 lowPos = velocity.RotatedBy(MathHelper.ToRadians(10)) * (1f / 2f);
+            Projectile.NewProjectile(source, position, lowPos, ProjectileID.Flames, flameDamage, knockback, player.whoAmI);
+
+            Vector2 highPos = velocity.RotatedBy(MathHelper.ToRadians(-10)) * (1f / 2f);
+            Projectile.NewProjectile(source, position, highPos, ProjectileID.Flames, flameDamage, knockback, player.whoAmI);
+
             return false;
         }
 
