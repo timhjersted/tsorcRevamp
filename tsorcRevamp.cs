@@ -469,6 +469,25 @@ namespace tsorcRevamp
                 CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageUnit").Type);
                 CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageConnector").Type);
             }
+
+            Mod ThoriumMod;
+            if (ModLoader.TryGetMod("ThoriumMod", out ThoriumMod))
+            {
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("MagentaTorch").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("BlackTorch").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("DeeplightTorch").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("BloodAltar").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("ConductorsStand").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("ArcaneArmorFabricator").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("BirdFeederTileGrounded").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("BirdFeederTileHanging").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("ChristmasCenter").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("GuidesFinalGiftTile").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("HalloweenCenter").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("AncientPhylactery").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("ThoriumAnvil").Type);
+                CrossModTiles.Add(ThoriumMod.Find<ModTile>("SoulForgeNew").Type);
+            }
             #endregion
             //--------
             #region PlaceAllowedModTiles list

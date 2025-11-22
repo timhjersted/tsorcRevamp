@@ -2510,9 +2510,9 @@ namespace tsorcRevamp
 
                     if (!ChaosIsAlive)
                     {
-                        Player.AddBuff(BuffID.WitheredWeapon, 2*60);
-                        Player.AddBuff(BuffID.Blackout, 2*60);
-                        Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 2*60, false);
+                        Player.AddBuff(BuffID.WitheredWeapon, 1*60);
+                        Player.AddBuff(BuffID.Blackout, 1*30);
+                        Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1*60, false);
                     }
                 }
 

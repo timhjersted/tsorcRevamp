@@ -25,6 +25,20 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.consumable = false;
             }
+
+            if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
+            {
+                if (item.type == thorium.Find<ModItem>("JellyfishResonator").Type
+                    || item.type == thorium.Find<ModItem>("StarCaller").Type
+                    || item.type == thorium.Find<ModItem>("StriderTear").Type
+                    || item.type == thorium.Find<ModItem>("VoidLens").Type
+                    || item.type == thorium.Find<ModItem>("AbyssalShadow2").Type
+                    || item.type == thorium.Find<ModItem>("DoomSayersCoin").Type
+                    )
+                {
+                    item.consumable = false;
+                }
+            }
         }
     }
 }

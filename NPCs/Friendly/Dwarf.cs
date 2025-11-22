@@ -182,11 +182,11 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.DownedEowOrBoc);       
+            }, Condition.DownedEowOrBoc);     
 
             shop.Add(new Item(ItemID.MeteoriteBar)
             {
-                shopCustomPrice = 10,
+                shopCustomPrice = 8,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.SlograGaibonDowned"), () => (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gaibon>())) || tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Slogra>())))));
 
@@ -261,6 +261,39 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopCustomPrice = 80,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMoonLord);
+
+            if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
+            {
+                shop.Add(new Item(thorium.Find<ModItem>("ThoriumBar").Type)
+                {
+                    shopCustomPrice = 6,                    
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.DownedEyeOfCthulhu);  
+
+                shop.Add(new Item(thorium.Find<ModItem>("AquaiteBar").Type)
+                {
+                    shopCustomPrice = 8,                    
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.DownedEowOrBoc);  
+
+                shop.Add(new Item(thorium.Find<ModItem>("aDarksteelAlloy").Type)
+                {
+                    shopCustomPrice = 10,                    
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.DownedSkeletron);  
+
+                shop.Add(new Item(thorium.Find<ModItem>("IllumiteIngot").Type)
+                {
+                    shopCustomPrice = 50,                    
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.DownedPlantera);  
+
+                shop.Add(new Item(thorium.Find<ModItem>("Leviathan").Type)
+                {
+                    shopCustomPrice = 700,                    
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.Hardmode);
+            }  
 
             shop.Add(new Item(ModContent.ItemType<Items.Materials.ImpHead>())
             {

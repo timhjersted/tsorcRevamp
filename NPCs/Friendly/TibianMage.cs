@@ -226,6 +226,21 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
 
+            if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
+            {
+                shop.Add(new Item(thorium.Find<ModItem>("BubbleConch").Type)
+                {
+                    shopCustomPrice = 800,
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.DownedEowOrBoc); 
+
+                shop.Add(new Item(thorium.Find<ModItem>("SteelDrum").Type)
+                {
+                    shopCustomPrice = 800,
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.DownedEowOrBoc); 
+            }
+
 
 
             shop.Register();

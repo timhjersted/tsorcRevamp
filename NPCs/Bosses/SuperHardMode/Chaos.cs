@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
@@ -326,6 +327,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)NPC.position.X, (int)NPC.position.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.ChaosDeathAnimation>(), 0, 0f, Main.myPlayer);
+            }
+
+            if (tsorcRevampWorld.RemixMap && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
+            {
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Chaos.DarknessLifted"), new Color(255, 225, 20));
             }
         }
 

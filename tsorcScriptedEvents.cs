@@ -122,6 +122,12 @@ namespace tsorcRevamp
 
         //Each scripted event should have a definition here. I added some theoretical examples commented out
         //This name is what the event handler uses to save an event, and marks them as unique.
+        private static int GetThoriumNPCType(string name) =>
+        ModLoader.TryGetMod("ThoriumMod", out Mod thorium) 
+            ? thorium.Find<ModNPC>(name).Type 
+            : NPCID.None;
+
+        private static readonly Func<bool> ThoriumActive = () => ModLoader.HasMod("ThoriumMod");
         public enum ScriptedEventType
         {
             Pinwheel,
@@ -243,6 +249,16 @@ namespace tsorcRevamp
             DiscipleOfAttraidiesEvent,
             WyvernFortressEvent,
             SpawnLonelyFairy,
+            //THORIUM COMPATIBILITY UNIQUE EVENTS
+            ThunderBird,
+            ThunderBird2,
+            QueenJellyfish,
+            Viscount,
+            StarScouter,
+            BoreanStrider,
+            Lich,
+            ForgottenOne
+
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -254,7 +270,6 @@ namespace tsorcRevamp
         public static void InitializeScriptedEvents()
         {
             Player player = Main.LocalPlayer;
-
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
 
@@ -699,6 +714,19 @@ namespace tsorcRevamp
 
             ScriptedEvent SandstormElementalEvent2 = new ScriptedEvent(new Vector2(950, 1503), 22, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow, false, RemixMapCondition);
 
+            //THORIUM SECTION
+            Mod ThoriumMod;
+            ModLoader.TryGetMod("ThoriumMod", out ThoriumMod);
+            
+            ScriptedEvent ThunderBird = new(new Vector2(3818, 416), 25, GetThoriumNPCType("TheGrandThunderBird"), DustID.Electric, true, true, false, LangUtils.GetTextValue("Events.ThunderBird"), Color.Yellow, false, ThoriumActive);
+            ScriptedEvent ThunderBird2 = new(new Vector2(5029, 770), 20, GetThoriumNPCType("TheGrandThunderBird"), DustID.Electric, true, false, false, LangUtils.GetTextValue("Events.ThunderBird"), Color.Yellow, false, ThoriumActive);
+            ScriptedEvent QueenJellyfish = new(new Vector2(5233, 1422), 25, GetThoriumNPCType("QueenJellyfish"), DustID.CoralTorch, true, true, false, LangUtils.GetTextValue("Events.QueenJellyfish"), Color.Pink, false, ThoriumActive);
+            ScriptedEvent Viscount = new(new Vector2(4660, 1432), 25, GetThoriumNPCType("Viscount"), DustID.CrimsonTorch, true, true, false, LangUtils.GetTextValue("Events.Viscount"), Color.Red, false, ThoriumActive);
+            ScriptedEvent StarScouter = new(new Vector2(5412, 426), 30, GetThoriumNPCType("StarScouter"), DustID.Vortex, true, true, false, LangUtils.GetTextValue("Events.StarScouter"), Color.Green, false, ThoriumActive);
+            ScriptedEvent BoreanStrider = new(new Vector2(7877, 855), 80, GetThoriumNPCType("BoreanStrider"), DustID.IceTorch, true, false, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Cyan, false, ThoriumActive, RainCustomAction);
+            ScriptedEvent Lich = new(new Vector2(318, 416), 25, GetThoriumNPCType("Lich"), 181, true, true, false, LangUtils.GetTextValue("Events.Lich"), Color.Red, false, ThoriumActive, SetNightCustomAction);
+            ScriptedEvent ForgottenOne = new(new Vector2(218, 1027), 32, GetThoriumNPCType("ForgottenOne"), 173, true, true, false, LangUtils.GetTextValue("Events.ForgottenOne"), Color.Blue, false, ThoriumActive);
+            
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
@@ -820,6 +848,14 @@ namespace tsorcRevamp
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },
                 {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent },
+                {ScriptedEventType.ThunderBird, ThunderBird },
+                {ScriptedEventType.ThunderBird2, ThunderBird2 },
+                {ScriptedEventType.QueenJellyfish, QueenJellyfish },
+                {ScriptedEventType.Viscount, Viscount },
+                {ScriptedEventType.StarScouter, StarScouter },
+                {ScriptedEventType.BoreanStrider, BoreanStrider },
+                {ScriptedEventType.Lich, Lich },
+                {ScriptedEventType.ForgottenOne, ForgottenOne },
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -911,7 +947,6 @@ namespace tsorcRevamp
         {
             return !Main.dayTime;
         }
-
 
         public static bool HardModeCustomCondition()
         {
@@ -1022,6 +1057,11 @@ namespace tsorcRevamp
             {
                 return false;
             }
+        }
+
+        public static bool ThoriumModOnly()
+        {
+           return (ModLoader.HasMod("ThoriumMod"));
         }
 
         public static bool TwinEoWCustomCondition()

@@ -273,6 +273,33 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
 
+            if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
+            {
+                shop.Add(new Item(thorium.Find<ModItem>("VampireGland").Type)
+                {
+                    shopCustomPrice = 1800,
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.Hardmode);
+
+                shop.Add(new Item(thorium.Find<ModItem>("CrystalWave").Type)
+                {
+                    shopCustomPrice = 1000,
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.Hardmode);
+
+                shop.Add(new Item(thorium.Find<ModItem>("HowToSpeakWhaleABiography").Type)
+                {
+                    shopCustomPrice = 1500,
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.Hardmode);
+
+                shop.Add(new Item(thorium.Find<ModItem>("NanoClamCane").Type)
+                {
+                    shopCustomPrice = 800,
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.DownedEowOrBoc); 
+            }
+
 
             shop.Register();
         }

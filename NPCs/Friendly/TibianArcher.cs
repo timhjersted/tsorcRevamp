@@ -191,6 +191,21 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 
+            if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
+            {
+                shop.Add(new Item(thorium.Find<ModItem>("SeaNinjaStar").Type)
+                {
+                    shopCustomPrice = 1,
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.DownedEowOrBoc); 
+
+                shop.Add(new Item(thorium.Find<ModItem>("VoltHatchet").Type)
+                {
+                    shopCustomPrice = 2000,
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                }, Condition.Hardmode);
+            }
+
             shop.Register();
         }
         public override void HitEffect(NPC.HitInfo hit)

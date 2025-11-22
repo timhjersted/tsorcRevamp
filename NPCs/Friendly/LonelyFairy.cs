@@ -183,6 +183,15 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
+            if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
+            {
+                shop.Add(new Item(thorium.Find<ModItem>("SoulofPlight").Type)
+                {
+                    shopCustomPrice = 40,
+                    shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                });
+            }
+
             shop.Add(new Item(ItemID.SoulofFlight)
             {
                 shopCustomPrice = 40,
