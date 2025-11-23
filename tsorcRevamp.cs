@@ -132,7 +132,7 @@ namespace tsorcRevamp
         public static List<int> PlaceAllowedModTiles;
         public static List<int> BannedItems;
         public static List<int> RestrictedHooks;
-        public static List<int> DisabledRecipes;
+        public static List<int> DisabledRecipes = new List<int>();
         public static List<int> GiantWormSegments;
         public static List<int> DevourerSegments;
         public static List<int> TombCrawlerSegments;
@@ -488,6 +488,7 @@ namespace tsorcRevamp
                 CrossModTiles.Add(ThoriumMod.Find<ModTile>("ThoriumAnvil").Type);
                 CrossModTiles.Add(ThoriumMod.Find<ModTile>("SoulForgeNew").Type);
             }
+
             #endregion
             //--------
             #region PlaceAllowedModTiles list
@@ -1617,6 +1618,31 @@ namespace tsorcRevamp
             }
             // add new recipes
             ModRecipeHelper.AddRecipes();
+
+            if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
+            {
+                Recipe.Create(thorium.Find<ModItem>("CrystalGeode").Type)
+                    .AddIngredient(ItemID.SoulofLight, 1)
+                    .AddIngredient(ItemID.CrystalShard, 2)
+                    .AddTile(TileID.Anvils)
+                    .Register();
+
+                Recipe.Create(thorium.Find<ModItem>("BloodAltar").Type)
+                    .AddIngredient(thorium.Find<ModItem>("aDarksteelAlloy").Type, 10)
+                    .AddIngredient(thorium.Find<ModItem>("Blood").Type, 5)
+                    .AddIngredient(ModContent.ItemType<DarkSoul>(), 1000)
+                    .AddTile(TileID.Anvils)
+                    .Register();
+
+                Recipe.Create(thorium.Find<ModItem>("AncientPhylactery").Type)
+                    .AddIngredient(ItemID.AdamantiteBar, 12)
+                    .AddIngredient(ItemID.SoulofSight, 1)
+                    .AddIngredient(ItemID.SoulofMight, 1)
+                    .AddIngredient(ItemID.SoulofFright, 1)
+                    .AddIngredient(ModContent.ItemType<DarkSoul>(), 8000)
+                    .AddTile(TileID.Anvils)
+                    .Register();
+            }
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -2664,6 +2690,42 @@ namespace tsorcRevamp
             #endregion
 
             VanillaBossesRemadeEnabled = ModLoader.TryGetMod("VanillaBossesRemade", out Mod VBM);
+
+            //THORIUM COMPATIBILITY AND BALANCE
+            if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
+            {
+                DisabledRecipes.Add(thorium.Find<ModItem>("BronzePax").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("bDarksteelPickaxe").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("GranitePickAxe").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("GeodePickaxe").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("DragonsPickAxe").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("DragonDrill").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("FleshPickAxe").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("FleshDrill").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("ValadiumPickaxe").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("LodeStonePickaxe").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("TerrariumCanyonSplitter").Type);
+                DisabledRecipes.Add(thorium.Find<ModItem>("TerrariumTerrarformer").Type);
+
+                var ModifiedThoriumRecipes = new Dictionary<int, List<(int, int)>>
+                {
+                    { thorium.Find<ModItem>("AphrodisiacVial").Type,      new List<(int, int)> { (ItemID.SoulofLight, 1) } },
+                    { thorium.Find<ModItem>("CombustionFlask").Type,     new List<(int, int)> { (ItemID.SoulofLight, 1) } },
+                    { thorium.Find<ModItem>("CorrosionBeaker").Type,     new List<(int, int)> { (ItemID.SoulofLight, 1) } },
+                    { thorium.Find<ModItem>("NitrogenVial").Type,        new List<(int, int)> { (ItemID.SoulofLight, 1) } },
+                    { thorium.Find<ModItem>("PlasmaVial").Type,          new List<(int, int)> { (ItemID.SoulofLight, 1) } },
+                    { thorium.Find<ModItem>("GasContainer").Type,        new List<(int, int)> { (ItemID.SoulofLight, 1) } },
+                    { thorium.Find<ModItem>("CrystalBalloon").Type,      new List<(int, int)> { (ItemID.SoulofLight, 1) } }
+                };
+
+                foreach (var entry in ModifiedThoriumRecipes)
+                {
+                    if (!ModifiedRecipes.ContainsKey(entry.Key))
+                        ModifiedRecipes[entry.Key] = new List<(int, int)>();
+
+                    ModifiedRecipes[entry.Key].AddRange(entry.Value);
+                }
+            }
         }
 
         internal async void UpdateCheck()

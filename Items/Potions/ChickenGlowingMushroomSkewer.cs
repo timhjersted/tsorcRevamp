@@ -71,7 +71,7 @@ namespace tsorcRevamp.Items.Potions
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.RichMahogany, 1);
+            recipe.AddIngredient(ItemID.ShroomiteBar, 1);
             recipe.AddIngredient(ItemID.GlowingMushroom, 1);
             recipe.AddIngredient(ModContent.ItemType<DeadChicken>(), 1);
             recipe.AddIngredient(ItemID.PixieDust, 1);
