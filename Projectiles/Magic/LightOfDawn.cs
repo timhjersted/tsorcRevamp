@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles.Magic
             Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
             Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
 
-            collisionEndPadding = (int)trailCurrentLength / 30;
+            collisionEndPadding = trailPositions.Count / 30;
             visualizeTrail = false;
 
             //Shifts its color slightly over time
