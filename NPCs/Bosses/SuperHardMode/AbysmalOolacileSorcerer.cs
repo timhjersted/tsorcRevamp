@@ -25,6 +25,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+
+            // Set NeedsExpertScaling for lifeMax scaling in multiplayer, otherwise scaling is skipped since NPC.damage=0.
+            NPCID.Sets.NeedsExpertScaling[NPC.type] = true;
         }
         public override void SetDefaults()
         {
