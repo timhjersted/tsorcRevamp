@@ -243,6 +243,7 @@ namespace tsorcRevamp
         public float AmmoReservationDamageScaling = 1f;
 
         public bool SOADrain = false;
+        public bool VOEGDrain = false;
 
         public int supersonicLevel = 0;
 
@@ -385,8 +386,7 @@ namespace tsorcRevamp
 
         public bool MorgulWhipEffect;
         public bool DragonSoulEffect;
-
-
+        public bool MidasGreedEffect;
         public bool CurseActive;
         public float CurseMaxLifeMultiplier;
         public float CurseDefenseBonus;
@@ -521,6 +521,7 @@ namespace tsorcRevamp
             CrimsonDrain = false;
             Shockwave = false;
             SOADrain = false;
+            VOEGDrain = false;
             MiakodaFull = false;
 
             MiakodaFullHeal1 = false;
@@ -549,6 +550,7 @@ namespace tsorcRevamp
             WitchkingsGrasp = false;
             MorgulWhipEffect = false;
             DragonSoulEffect = false;
+            MidasGreedEffect = false;
 
             Crippled = false;
             ShadowWeight = false;
@@ -2091,6 +2093,22 @@ namespace tsorcRevamp
                 }
             }
 
+            if (VOEGDrain)
+            {
+                if (Player.lifeRegen > 0)
+                {
+                    Player.lifeRegen = 0;
+                }
+                Player.lifeRegenTime = 0;
+                Player.lifeRegen -= 4;
+                if (Main.rand.NextBool(2))
+                {
+                    int dust = Dust.NewDust(Player.position, Player.width, Player.height, 235, Player.velocity.X, Player.velocity.Y, 140, default, 1f);
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].fadeIn = 1f;
+                }
+            }
+
             if (CowardsAffliction)
             {
                 if (Player.lifeRegen > 0)
@@ -2435,8 +2453,8 @@ namespace tsorcRevamp
 
             if (Main.LocalPlayer.ZoneGlowshroom && !Main.LocalPlayer.ZoneDungeon && Main.LocalPlayer.ZoneRockLayerHeight && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
             {
-                Player.AddBuff(BuffID.WaterCandle, 5*60);
-                Player.AddBuff(BuffID.MoonLeech, 5*60);
+                Player.AddBuff(BuffID.WaterCandle, 4*60);
+                Player.AddBuff(BuffID.MoonLeech, 4*60);
             }
 
             if (tsorcRevampWorld.RemixMap)
@@ -2464,9 +2482,9 @@ namespace tsorcRevamp
                     // Applies the effects only if witchking or ancient abyss demon isn't here
                     if (!BossIsAlive)
                     {
-                        Player.AddBuff(BuffID.WitheredArmor, 4*60);
-                        Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 4*60, false);
-                        Player.AddBuff(BuffID.Darkness, 4*60);
+                        Player.AddBuff(BuffID.WitheredArmor, 3*60);
+                        Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 3*60, false);
+                        Player.AddBuff(BuffID.Darkness, 3*60);
                     }
                 }
 
@@ -2486,9 +2504,9 @@ namespace tsorcRevamp
 
                     if (!WyvernShadowIsAlive)
                     {
-                        Player.AddBuff(BuffID.WitheredWeapon, 4 * 60);
-                        Player.AddBuff(BuffID.Battle, 4 * 60);
-                        Player.AddBuff(ModContent.BuffType<WeightOfShadow>(), 4 * 60, false);
+                        Player.AddBuff(BuffID.WitheredWeapon, 2 * 60);
+                        Player.AddBuff(BuffID.Battle, 2 * 60);
+                        Player.AddBuff(ModContent.BuffType<WeightOfShadow>(), 2 * 60, false);
                     }
                 }
                 
@@ -2511,6 +2529,7 @@ namespace tsorcRevamp
                     if (!ChaosIsAlive)
                     {
                         Player.AddBuff(BuffID.WitheredWeapon, 1*60);
+                        Player.AddBuff(BuffID.WaterCandle, 1*60);
                         Player.AddBuff(BuffID.Blackout, 1*30);
                         Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1*60, false);
                     }

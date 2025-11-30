@@ -29,10 +29,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.aiStyle = 3;
             NPC.timeLeft = 750;
             NPC.damage = 50;
-            NPC.defense = 32;
+            NPC.defense = 55;
+            NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 1500;
+            NPC.lifeMax = 1900;
             NPC.value = 6000; // health / 2.5 : was 130 with 2600 life (?)
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CorruptedElementalBanner>();
@@ -57,6 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.Battle, 60 * 60, false); //battle
+            target.AddBuff(BuffID.Obstructed, 2 * 60, false); //obstructed
             target.AddBuff(BuffID.Weak, 60 * 60, false); //weak
         }
 

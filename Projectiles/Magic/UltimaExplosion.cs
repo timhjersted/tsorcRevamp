@@ -15,8 +15,8 @@ namespace tsorcRevamp.Projectiles.Magic
 
             Projectile.aiStyle = 0;
             Projectile.friendly = true;
-            Projectile.width = 176;
-            Projectile.height = 144;
+            Projectile.width = 164;
+            Projectile.height = 138;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.scale = 1;

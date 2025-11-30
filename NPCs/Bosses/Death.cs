@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.DataStructures;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
@@ -19,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class Death : ModNPC
     {
-        int shadowShotDamage = 98;
+        int shadowShotDamage = 95;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
@@ -201,6 +202,23 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.SuperHealingPotion;
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            //When spawn during a blood moon, turn Death into his Absolute variant 
+            if (Main.bloodMoon)
+            {
+                Vector2 spawnPosition = NPC.position;
+
+                NPC.active = false;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int trueDeath = ModContent.NPCType<NPCs.Special.TrueDeath>();
+                    NPC.NewNPC(source, (int)spawnPosition.X, (int)spawnPosition.Y, trueDeath);
+                }
+            }
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

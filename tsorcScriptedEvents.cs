@@ -724,8 +724,8 @@ namespace tsorcRevamp
             ScriptedEvent Viscount = new(new Vector2(4660, 1432), 25, GetThoriumNPCType("Viscount"), DustID.CrimsonTorch, true, true, false, LangUtils.GetTextValue("Events.Viscount"), Color.Red, false, ThoriumActive);
             ScriptedEvent StarScouter = new(new Vector2(5412, 426), 30, GetThoriumNPCType("StarScouter"), DustID.Vortex, true, true, false, LangUtils.GetTextValue("Events.StarScouter"), Color.Green, false, ThoriumActive);
             ScriptedEvent BoreanStrider = new(new Vector2(7877, 855), 80, GetThoriumNPCType("BoreanStrider"), DustID.IceTorch, true, false, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Cyan, false, ThoriumActive, RainCustomAction);
-            ScriptedEvent Lich = new(new Vector2(318, 416), 25, GetThoriumNPCType("Lich"), 181, true, true, false, LangUtils.GetTextValue("Events.Lich"), Color.Red, false, ThoriumActive, SetNightCustomAction);
-            ScriptedEvent ForgottenOne = new(new Vector2(218, 1027), 32, GetThoriumNPCType("ForgottenOne"), 173, true, true, false, LangUtils.GetTextValue("Events.ForgottenOne"), Color.Blue, false, ThoriumActive);
+            ScriptedEvent Lich = new(new Vector2(1401, 299), 25, GetThoriumNPCType("Lich"), 181, true, true, false, LangUtils.GetTextValue("Events.Lich"), Color.Red, false, ThoriumActive, SetNightCustomAction);
+            ScriptedEvent ForgottenOne = new(new Vector2(218, 1027), 35, GetThoriumNPCType("ForgottenOne"), 173, true, true, false, LangUtils.GetTextValue("Events.ForgottenOne"), Color.Blue, false, ThoriumActive);
             
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){

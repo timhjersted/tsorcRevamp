@@ -26,18 +26,22 @@ namespace tsorcRevamp.Items.BossItems
         { //todo keep adding bosses to this
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.KingSlime);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.EyeofCthulhu);
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Special.LeonhardPhase1>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.EaterofWorldsHead);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.BrainofCthulhu);
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.QueenBee);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Slogra>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Gaibon>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.SkeletronHead);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.Deerclops);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.AncientDemon>());
             NPC.SpawnWOF(player.position);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.QueenSlimeBoss);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.TheRage>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.TheHunter>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.TheSorrow>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
@@ -52,6 +56,7 @@ namespace tsorcRevamp.Items.BossItems
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Death>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.HallowBoss);
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.MoonLordCore);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<FireFiendMarilith>());

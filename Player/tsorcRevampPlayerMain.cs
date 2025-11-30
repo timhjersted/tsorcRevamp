@@ -68,6 +68,7 @@ namespace tsorcRevamp
         public Dictionary<int, int> consumedPotions;
         public Dictionary<Vector2, int> soulDeathLocations = new Dictionary<Vector2, int>();
         public int LastAttackedNPCIndex;
+        public int DwarvenContractsGiven = 0;
 
         public override void Initialize()
         {
@@ -860,6 +861,10 @@ namespace tsorcRevamp
             if (DragonSoulEffect)
             {
                 target.AddBuff(BuffID.Daybreak, 180);
+            }
+            if (MidasGreedEffect)
+            {
+                target.AddBuff(BuffID.Midas, 300);
             }
             if (MaskOfTheFather)
             {
@@ -1824,6 +1829,10 @@ namespace tsorcRevamp
             if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain)
             {
                 multiplier += SymbolOfAvarice.SoulAmplifier / 100f;
+            }
+            if (player.GetModPlayer<tsorcRevampPlayer>().VOEGDrain)
+            {
+                multiplier += VaultOfEndlessGreed.SoulAmplifier / 100f;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {

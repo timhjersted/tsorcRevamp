@@ -15,8 +15,8 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetDefaults()
         {
-            Projectile.width = 150;
-            Projectile.height = 80;
+            Projectile.width = 75;
+            Projectile.height = 75;
             Projectile.friendly = true;
             Projectile.penetrate = 4;
             Projectile.DamageType = DamageClass.Magic;
@@ -105,7 +105,7 @@ namespace tsorcRevamp.Projectiles
                     Projectile.Center.Y,
                     0, 0,
                     ModContent.ProjectileType<Projectiles.Magic.UltimaExplosion>(),
-                    Projectile.damage / 2,
+                    Projectile.damage,
                     8f,
                     Projectile.owner
                 );

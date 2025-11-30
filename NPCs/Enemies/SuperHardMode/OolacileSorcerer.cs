@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 92;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 3500; // 6400 geez
+            NPC.lifeMax = 5500; // 6400 geez
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;

@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.friendly = true;
             Projectile.penetrate = 4;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 20;
+            Projectile.localNPCHitCooldown = 60;
             Projectile.DamageType = DamageClass.Magic;
             trailWidth = 33;
             trailPointLimit = 900;

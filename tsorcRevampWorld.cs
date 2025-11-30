@@ -58,6 +58,7 @@ namespace tsorcRevamp
         public static Dictionary<Vector2, int> MapMarkers;
 
         public static Vector2 AbyssPortalLocation;
+        public static int DwarvenContractsGiven = 0;
 
         public static bool BossDefeated(int npcType) { return NewSlain.ContainsKey(new NPCDefinition(npcType)); }
 
@@ -178,7 +179,7 @@ namespace tsorcRevamp
             MapMarkers = new();
             BossIDsAndCoordinatesInternal = null;
             beforeAbyss = new();
-
+            DwarvenContractsGiven = 0;
             PopulatePairedBosses();
         }
 
@@ -236,6 +237,7 @@ namespace tsorcRevamp
             tag.Add("MapMarkerKeys", MapMarkers.Keys.ToList());
             tag.Add("MapMarkerValues", MapMarkers.Values.ToList());
             tag.Add("AbyssPortal", AbyssPortalLocation);
+            tag["DwarvenContractsGiven"] = DwarvenContractsGiven;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -317,6 +319,7 @@ namespace tsorcRevamp
                 }
 
             }
+            DwarvenContractsGiven = tag.GetInt("DwarvenContractsGiven");
         }
 
         private void SaveSlain(TagCompound tag)
@@ -391,6 +394,7 @@ namespace tsorcRevamp
                     writer.WriteVector2(marker.Key);
                     writer.Write(marker.Value);
                 }
+                writer.Write(DwarvenContractsGiven);
             }
         }
 
@@ -445,6 +449,7 @@ namespace tsorcRevamp
                     MapMarkers.Add(markerKey, markerValue);
                 }
             }
+            DwarvenContractsGiven = reader.ReadInt32();
         }
 
         public static bool JustPressed(Keys key)

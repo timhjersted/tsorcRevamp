@@ -20,15 +20,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             AnimationType = NPCID.AngryBones;
             NPC.width = 18;
             NPC.height = 40;
-            NPC.knockBackResist = .3f;
+            NPC.knockBackResist = .2f;
             NPC.value = 4000; // 163
             NPC.timeLeft = 750;
             NPC.damage = 70;
-            NPC.defense = 73;
+            NPC.defense = 78;
+            NPC.scale = 1.1f;
             NPC.lavaImmune = true;
             NPC.HitSound = SoundID.NPCHit2;
             NPC.DeathSound = SoundID.NPCDeath2;
-            NPC.lifeMax = 1900;
+            NPC.lifeMax = 2200;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.IceSkeletonBanner>();
         }

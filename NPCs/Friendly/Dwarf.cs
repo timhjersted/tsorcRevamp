@@ -8,16 +8,21 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Weapons.Melee.Spears;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
     [AutoloadHead]
     class Dwarf : ModNPC
     {
-
         public static List<string> Names = new List<string> {
             Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name1"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name2"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name3"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name4"),
             Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name5"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name6"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name7"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name8"),
@@ -103,24 +108,146 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void SetChatButtons(ref string button, ref string button2)
         {
             button = Language.GetTextValue("LegacyInterface.28");
+            button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.ContractButton");
         }
 
         public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
-            shopName = "Shop";
-            return;
+            if (firstButton)
+            {
+                shopName = "Shop";
+                return;
+            }
+
+            Player player = Main.LocalPlayer;
+
+            int givenContract = tsorcRevampWorld.DwarvenContractsGiven;
+
+            if (givenContract >= 10)
+            {
+                Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.ContractMax");
+                return;
+            }
+
+            if (!player.HasItem(ModContent.ItemType<DwarvenContract>()))
+            {
+                WeightedRandom<string> chat = new WeightedRandom<string>();
+                Main.npcChatText = Language.GetTextValue($"Mods.tsorcRevamp.NPCs.Dwarf.ContractQuote1");
+                Main.npcChatText = Language.GetTextValue($"Mods.tsorcRevamp.NPCs.Dwarf.ContractQuote2");
+                Main.npcChatText = Language.GetTextValue($"Mods.tsorcRevamp.NPCs.Dwarf.ContractQuote3");
+                return;
+            }
+
+            // Consume the Contract
+            player.ConsumeItem(ModContent.ItemType<DwarvenContract>());
+            givenContract++;
+            tsorcRevampWorld.DwarvenContractsGiven = givenContract;
+
+            // Rewards
+            switch (givenContract)
+            {
+                //PHM section
+                case 1:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 150); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<OldHalberd>(), 1); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeCrystal, 1);
+                    break;
+
+                case 2:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 200);  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.EndurancePotion, 2);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeCrystal, 2);
+                    break;
+
+                case 3:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 100); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<NamelessSoldierSoul>(), 1); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Humanity>(), 2); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<EternalCrystal>(), 1); 
+                    break;
+
+                case 4:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 320); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<LostUndeadSoul>(), 2); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LuckPotion, 2);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldenDelight, 1);
+                    break;
+
+                //HM section
+                case 5:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 500); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<ProudKnightSoul>(), 1); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.RagePotion, 1);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.WrathPotion, 1);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<PurgingStone>(), 1); 
+                    break;
+
+                case 6:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1000); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Humanity>(), 2); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<PurgingStone>(), 1); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<EternalCrystal>(), 1); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeFruit, 2);
+                    break;
+
+                case 7:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1000); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<ProudKnightSoul>(), 1); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldenDelight, 1);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LuckPotionLesser, 1);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LuckPotion, 1);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LuckPotionGreater, 1);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeFruit, 2);
+                    break;
+
+                case 8:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1000); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<BraveWarriorSoul>(), 1); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<PurgingStone>(), 2);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<DemonDrugPotion>(), 2); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<ArmorDrugPotion>(), 2);  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<EternalCrystal>(), 1); 
+                    break;
+
+                //SHM section
+                case 9:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1250); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<FlameOfTheAbyss>(), 5);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeforcePotion, 2);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LuckPotionGreater, 2);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Trinity>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Trinity>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Trinity>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Trinity>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<HeroSoul>(), 1); 
+                    break;
+
+                case 10: 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1500); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<HeroSoul>(), 2); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<VaultOfEndlessGreed>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<VaultOfEndlessGreed>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<VaultOfEndlessGreed>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<VaultOfEndlessGreed>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<HolyWarElixir>(), 5);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<PurgingStone>(), 3);
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<EternalCrystal>(), 2); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldenDelight, 2);
+                    break;
+                // After 10 contracts given, no more rewards or anything
+            }
+
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DwarvenGuard>());
+
+            Main.npcChatText = givenContract == 10
+                ? Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.FinalContractGiven")
+                : Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.ContractGiven");
         }
 
         #region Setup Shop
         public override void AddShops()
         {
             NPCShop shop = new(NPC.type);
-
-            shop.Add(new Item(ModContent.ItemType<DwarvenContract>())
-            {
-                shopCustomPrice = 100,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            });
 
             shop.Add(new Item(ItemID.Flipper)
             {
@@ -262,6 +389,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMoonLord);
 
+            //Thorium compatibility section
             if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
             {
                 shop.Add(new Item(thorium.Find<ModItem>("ThoriumBar").Type)

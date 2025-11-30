@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Special
     [AutoloadBossHead]
     class TrueDeath : ModNPC
     {
-        int shadowShotDamage = 98;
+        int shadowShotDamage = 100;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
@@ -45,10 +45,10 @@ namespace tsorcRevamp.NPCs.Special
             NPC.height = 100;
             NPC.damage = 300;
             NPC.defense = 55;
-            NPC.scale = 1.35f;
+            NPC.scale = 1.3f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 180000;
+            NPC.lifeMax = 45000;
             NPC.friendly = false;
             NPC.boss = true;
             NPC.noTileCollide = true;
@@ -67,6 +67,10 @@ namespace tsorcRevamp.NPCs.Special
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            Main.dayTime = false;
+            Main.time = 3000; 
+            Main.bloodMoon = true;
+
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             NPC.netUpdate = false;
             NPC.ai[0]++; // Timer Scythe
@@ -78,13 +82,13 @@ namespace tsorcRevamp.NPCs.Special
             int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.AncientLight, NPC.velocity.X, NPC.velocity.Y, 150, Color.Red, 1f);
             Main.dust[dust2].noGravity = true;
 
-            if (NPC.life > 35000)
+            if (NPC.life > NPC.lifeMax * 0.40f)
             {
                 Color color = new Color();
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 180, color, 4.5f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 35000)
+             else if (NPC.life < NPC.lifeMax * 0.40f)
             {
                 Color color = new Color();
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 150, color, 6.8f);
@@ -113,7 +117,7 @@ namespace tsorcRevamp.NPCs.Special
                 NPC.velocity.Y *= 0.97f;
             }
 
-            if ((NPC.ai[1] >= 120 && NPC.life > 14000) || (NPC.ai[1] >= 85 && NPC.life <= 14000))
+            if ((NPC.ai[1] >= 120 && NPC.life > NPC.lifeMax * 0.25f) || (NPC.ai[1] >= 85 && NPC.life <= NPC.lifeMax * 0.25f))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int i = 0; i < 10; i++)

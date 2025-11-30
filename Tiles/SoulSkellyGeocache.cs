@@ -159,11 +159,36 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5168, 1749, 3, 3), ModContent.ItemType<Items.Potions.StrengthPotion>(), 3));
 
             //Jungle Ruins after getting hook
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5470, 1093, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5470, 1093, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
+
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3108, 337, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4080, 908, 3, 3), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3531, 1276, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4612, 1506, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(6749, 1440, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(7651, 1402, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2107, 1493, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4451, 413, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3444, 1537, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(320, 1743, 3, 3), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
 
             if (tsorcRevampWorld.RemixMap)
             {
                 SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(6941, 1583, 2, 2), ModContent.ItemType<Items.HeroSoul>(), 1));
+
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
             }
         }
     }

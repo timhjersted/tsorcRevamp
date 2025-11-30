@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void SetDefaults()
         {
-            Item.damage = 300;
+            Item.damage = 245;
             Item.height = 10;
             Item.knockBack = 4;
             Item.rare = ModContent.RarityType<DarkBlue>();

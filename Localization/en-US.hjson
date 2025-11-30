@@ -3198,6 +3198,17 @@ Mods: {
 					'''
 			}
 
+			VaultOfEndlessGreed: {
+				DisplayName: Vault of Endless Greed
+				Tooltip:
+					'''
+					You feel overwhelmed by the sin of avarice.
+					Attacks inflict the Midas debuff
+					{$CommonItemTooltip.SoulDrops}
+					but the curse of the branded also [c/FF0000:drains a small amount of HP].
+					'''
+			}
+
 			AttraidiesRelic: {
 				DisplayName: Attraidies Relic
 				Tooltip:
@@ -3406,7 +3417,7 @@ Mods: {
 				DisplayName: Blight Stone
 				Tooltip:
 					'''
-					Summons The Blight, one of six guardians of The Abyss.
+					Summons The Blight, one of the seven guardians of The Abyss.
 					You must fight this battle on the surface.
 					The Blight cannot be fought with the Covenant of Artorias ring equipped.
 					'''
@@ -4061,7 +4072,7 @@ Mods: {
 				Tooltip:
 					'''
 					A contract for a dwarf guard.
-					Will summon a dwarf to guard a piece of property.
+					[c/00ffd4:The dwarf is very interested in this, and may give you a gift in return.]
 					'''
 			}
 
@@ -5885,15 +5896,6 @@ Mods: {
 					'''
 					Inflicts Betsy's Curse
 					Increases melee armor penetration by {0}, when you are in Underground
-					'''
-			}
-
-			RTQ2Sword: {
-				DisplayName: RTQ2 Sword
-				Tooltip:
-					'''
-					Causes stars to rain from the sky
-					Magnetic to stars.
 					'''
 			}
 
@@ -10297,8 +10299,8 @@ Mods: {
 			BarrowWightNemesis.DisplayName: Barrow Wight Nemesis
 			BarrowWightPhantom.DisplayName: Barrow Wight Phantom
 			BasiliskHunter.DisplayName: Basilisk Hunter
-			CorruptedElemental.DisplayName: Corrupted Elemental
-			CorruptedHornet.DisplayName: Corrupted Hornet
+			CorruptedElemental.DisplayName: Abyss Elemental
+			CorruptedHornet.DisplayName: Defiled Hornet
 			CrystalKnight.DisplayName: Crystal Knight
 			DarkBloodKnight.DisplayName: Demonic Blood Knight
 			DarkKnight.DisplayName: Dark Knight
@@ -10313,7 +10315,7 @@ Mods: {
 			GuardianCorruptor.DisplayName: Guardian Corruptor
 			HydrisElemental.DisplayName: Hydris Elemental
 			HydrisNecromancer.DisplayName: Hydris Necromancer
-			IceSkeleton.DisplayName: Ice Skeleton
+			IceSkeleton.DisplayName: Adept of Seath
 
 			KnightOfGwyn: {
 				DisplayName: Knight of Gwyn
@@ -10374,13 +10376,20 @@ Mods: {
 				Name9: Ofur
 				Name10: Ofi
 				Name11: Bompbi
-				Quote1: I've got some contracts for sale.
-				Quote2: How are you?
-				Quote3: I'm thirsty...
+				Quote1: Hello my friend, how are you?
+				Quote2: I'm thirsty... would you like to have a drink with me?
+				Quote3: We dwarves are very warm and helpful; if you have a problem, you can always come to us without any trouble!
 				Quote4: After you defeat the Eater of Worlds, I'll have cheap sticky bombs for sale!
 				Quote5: If you're able to defeat The Sorrow or The Destroyer, I'll have more things to sell later...
 				Quote6: If you're able to defeat The Sorrow, I'll have more things to sell later...
 				Quote7: If you're able to defeat The Destroyer, I'll have more things to sell later...
+				ContractButton: Dwarven Contract
+				ContractQuote1: Found any Dwarven Contracts yet, traveler?
+				ContractQuote2: Bring me one and I’ll send a proper guard to watch over a property, with a gift as a thanks!
+				ContractQuote3: If you ever find any old Dwarven Contracts lying around, bring them to me.
+				ContractGiven: Thanks for the contract! A dwarf will come to guard a property. Oh yes, and here's your reward!
+				FinalContractGiven: You found me every possible contract! Thank you Red for all your hard work, this is your ultimate reward!
+				ContractMax: Sorry Red, I've already hired every dwarves willing to work. No more contracts!
 
 				TownNPCMood: {
 					Content: I am content.

@@ -60,9 +60,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int purpleCrushDamage = 45;
         int sickleDamage = 55;
         int BlackFireDamage = 50; 
-
-        int chaosHealed = 0;
         bool chargeDamageFlag = false;
+        private bool Phase2 => NPC.life <= (int)(NPC.lifeMax * 0.6f);
 
         List<ChaosMove> MoveList;
         public int MoveIndex
@@ -88,26 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (MoveList == null || MoveIndex >= MoveList.Count) MoveIndex = 0;
 
-           
-
             CurrentMove.Move();
-
-            if (NPC.life <= NPC.lifeMax / 3 && chaosHealed < 4) //huhh IDK if I should keep this but anyway 
-            {
-                if (Main.rand.NextBool(500))
-                {
-                    chaosHealed++;
-                    NPC.life += NPC.lifeMax / 6;
-                    if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                            ModContent.ProjectileType<EnemySpellEffectHealing>(), 0, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item4, NPC.Center);
-                }
-            }
         }
 
         #region IA
@@ -132,7 +112,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 BlackFire();   
             }
 
-            if (MoveTimer >= 1080)
+            if (MoveTimer % 210 == 20 && Phase2)
+            {
+                BlackFire();   
+            }
+
+            if (MoveTimer >= 900)
             {
                 NextMove(); 
                 MoveTimer = 0;
@@ -260,9 +245,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         private void ChaosMovement() //The IA and Movement of the boss
         {
-            float maxSpeed = 6f;
-            float acceleration = 0.08f;
-            float turnSpeed = 0.1f;
+            float maxSpeed = Phase2 ? 11.2f : 7f;
+            float acceleration = Phase2 ? 0.158f : 0.09f;
 
             Vector2 targetDirection = Main.player[NPC.target].Center - NPC.Center;
             targetDirection.Normalize();

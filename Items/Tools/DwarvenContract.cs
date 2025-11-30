@@ -14,18 +14,10 @@ namespace tsorcRevamp.Items.Tools
         {
             Item.width = 18;
             Item.height = 18;
-            Item.consumable = true;
+            Item.consumable = false;
             Item.value = 10000;
-            Item.rare = ItemRarityID.Pink;
-            Item.useTime = 5;
-            Item.useAnimation = 5;
-            Item.scale = 1f;
-            Item.useStyle = ItemUseStyleID.HoldUp;
-        }
-        public override bool? UseItem(Player player)
-        {
-            NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Friendly.DwarvenGuard>());
-            return true;
+            Item.rare = ItemRarityID.Yellow;
+            Item.maxStack = Item.CommonMaxStack;
         }
     }
 }

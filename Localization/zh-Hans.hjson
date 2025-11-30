@@ -3200,6 +3200,17 @@ Mods: {
 					'''
 			}
 
+			VaultOfEndlessGreed: {
+				// DisplayName: Vault of Endless Greed
+				/* Tooltip:
+					'''
+					You feel overwhelmed by the sin of avarice.
+					Attacks inflict the Midas debuff
+					{$CommonItemTooltip.SoulDrops}
+					but the curse of the branded also [c/FF0000:drains a small amount of HP].
+					''' */
+			}
+
 			AttraidiesRelic: {
 				DisplayName: 阿卓迪斯之遗物
 				Tooltip:
@@ -5883,15 +5894,6 @@ Mods: {
 					'''
 					施加双足翼龙诅咒减益
 					在地狱时，增加 {0} 点近战护甲穿透
-					'''
-			}
-
-			RTQ2Sword: {
-				DisplayName: RTQ2之剑
-				Tooltip:
-					'''
-					使星星从天而降
-					吸星大法-_-
 					'''
 			}
 
@@ -10378,6 +10380,13 @@ Mods: {
 				Quote5: 当你打败悲伤或者铁长直之后，我会有更多货物可卖...
 				Quote6: 当你打败悲伤之后，我会有更多货物可卖...
 				Quote7: 当你打败铁长直之后，我会有更多货物可卖...
+				// ContractButton: Dwarven Contract
+				// ContractQuote1: Found any Dwarven Contracts yet, traveler?
+				// ContractQuote2: Bring me one and I’ll send a proper guard to watch over a property, with a gift as a thanks!
+				// ContractQuote3: If you ever find any old Dwarven Contracts lying around, bring them to me.
+				// ContractGiven: Thanks for the contract! A dwarf will come to guard a property. Oh yes, and here's your reward!
+				// FinalContractGiven: You found me every possible contract! Thank you Red for all your hard work, this is your ultimate reward!
+				// ContractMax: Sorry Red, I've already hired every dwarves willing to work. No more contracts!
 
 				TownNPCMood: {
 					Content: 我很满足。

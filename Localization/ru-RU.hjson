@@ -3160,6 +3160,17 @@ Mods: {
 					'''
 			}
 
+			VaultOfEndlessGreed: {
+				// DisplayName: Vault of Endless Greed
+				/* Tooltip:
+					'''
+					You feel overwhelmed by the sin of avarice.
+					Attacks inflict the Midas debuff
+					{$CommonItemTooltip.SoulDrops}
+					but the curse of the branded also [c/FF0000:drains a small amount of HP].
+					''' */
+			}
+
 			AttraidiesRelic: {
 				DisplayName: Реликвия Аттрайдиса
 				Tooltip:
@@ -5850,15 +5861,6 @@ Mods: {
 					'''
 					Накладывает проклятие Бетси
 					Увеличивает пробитие брони в ближнем бою на {0}, когда вы находитесь в Подземелье
-					'''
-			}
-
-			RTQ2Sword: {
-				DisplayName: Меч RTQ2
-				Tooltip:
-					'''
-					Вызывает звёздный дождь с неба
-					Притягивает звезды.
 					'''
 			}
 
@@ -10336,6 +10338,13 @@ Mods: {
 				Quote5: Если ты сможешь победить Скорбь или Уничтожителя, позже у меня будет еще кое-что на продажу...
 				Quote6: Если ты сможешь победить Скорбь, позже у меня будет еще кое-что на продажу...
 				Quote7: Если ты сможешь победить Уничтожителя, позже у меня будет еще кое-что на продажу...
+				// ContractButton: Dwarven Contract
+				// ContractQuote1: Found any Dwarven Contracts yet, traveler?
+				// ContractQuote2: Bring me one and I’ll send a proper guard to watch over a property, with a gift as a thanks!
+				// ContractQuote3: If you ever find any old Dwarven Contracts lying around, bring them to me.
+				// ContractGiven: Thanks for the contract! A dwarf will come to guard a property. Oh yes, and here's your reward!
+				// FinalContractGiven: You found me every possible contract! Thank you Red for all your hard work, this is your ultimate reward!
+				// ContractMax: Sorry Red, I've already hired every dwarves willing to work. No more contracts!
 
 				TownNPCMood: {
 					Content: Я удовлетворён.
