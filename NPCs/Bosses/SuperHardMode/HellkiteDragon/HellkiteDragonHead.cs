@@ -16,9 +16,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
     [AutoloadBossHead]
     class HellkiteDragonHead : ModNPC
     {
-        int breathDamage = 16;
-        int flameRainDamage = 16; //was 37
-        int meteorDamage = 32;
+        int breathDamage = 54;
+        int flameRainDamage = 50; //was 37
+        int meteorDamage = 60;
         public override void SetStaticDefaults()
         {
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
@@ -51,15 +51,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.rarity =31;
             Color textColor = new Color(175, 75, 255);
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.HellkiteDragonHead.DespawnHandler"), textColor, 174);
-
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                NPC.damage = 145;
-                NPC.value = 100000;
-                breathDamage = 54;
-                flameRainDamage = 50;
-                meteorDamage = 60;
-            }
         }
         public float flapWings;
         //oolicile sorcerer

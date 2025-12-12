@@ -13,8 +13,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
     class MageShadow : ModNPC
     {
-        int frozenSawDamage = 50;
-        int lightningDamage = 60;
+        int frozenSawDamage = 55;
+        int lightningDamage = 62;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;

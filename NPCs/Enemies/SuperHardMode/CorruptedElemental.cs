@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 1900;
+            NPC.lifeMax = 2000;
             NPC.value = 6000; // health / 2.5 : was 130 with 2600 life (?)
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CorruptedElementalBanner>();
@@ -66,6 +66,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             tsorcRevampAIs.FighterAI(NPC, 2.8f, 0.08f, canTeleport: true, enragePercent: 0.2f, enrageTopSpeed: 3.6f);
             tsorcRevampAIs.LeapAtPlayer(NPC, 6, 5, 2, 128);
+
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 210, Color.Black, 2f);
+            Main.dust[dust].noGravity = true;
 
         }
 

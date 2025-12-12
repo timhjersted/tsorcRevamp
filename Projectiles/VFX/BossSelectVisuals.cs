@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
@@ -121,7 +120,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 //Blight
                 if (currentDownedList == SHMDownedBosses && SHMDownedBosses[6].type != NPCID.Bunny)
                 {
-                    int dust = Dust.NewDust(Projectile.Center + new Vector2(450 * UsefulFunctions.EasingCurve(Math.Min(radius, 1)), 0).RotatedBy(-6 * MathHelper.TwoPi / currentDownedList.Count), 60, 110, 15, 0, 0, 250, default, 5f);
+                    int dust = Dust.NewDust(Projectile.Center + new Vector2(450 * UsefulFunctions.EasingCurve(Math.Min(radius, 1)), 0).RotatedBy(-6 * MathHelper.TwoPi / currentDownedList.Count), 60, 110, 185, 0, 0, 250, default, 5f);
                     Main.dust[dust].noGravity = true;
                 }
             }

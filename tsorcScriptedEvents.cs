@@ -448,7 +448,7 @@ namespace tsorcRevamp
             ScriptedEvent RemixWitchkingEvent = new ScriptedEvent(new Vector2(2487, 1803), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.Witchking"), Color.Green, false, RemixMapCondition);
 
             //BLIGHT
-            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.Blight"), Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 35, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.IceTorch, true, true, true, LangUtils.GetTextValue("Events.Blight"), Color.Blue, false, SuperHardModeCustomCondition, RainCustomAction);
             //BlightEvent.SetCustomStats(50000, 30, 50);
 
             //CHAOS

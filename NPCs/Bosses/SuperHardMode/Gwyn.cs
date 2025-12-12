@@ -1814,43 +1814,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             }
             #endregion
-            
-            if (deathTimer > 0)
-            {
-                deathTimer++;
-                NPC.noGravity = true;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int rand = Main.rand.Next(10);
-                    if (rand == 0)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.OrangeRed));
-                    }
-                    if (rand == 1)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Red));
-                    }
-                    if (rand == 2)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Orange));
-                    }
-                }
-
-                if (deathTimer == 60)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer, 1);
-                    }
-                }
-
-                if (deathTimer > 300)
-                {
-                    NPC.StrikeNPC(NPC.CalculateHitInfo(999999, 1, true, 0), false, false);
-                }
-
-                return;
-            }
         }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
@@ -1975,22 +1938,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             return false;
         }    
-        public override bool CheckDead()
-        {
-            if (deathTimer == 0)
-            {
-                SoundEngine.PlaySound(SoundID.Shatter);
-                deathTimer++;
-                NPC.life = 1;
-                NPC.dontTakeDamage = true;
-            }
-
-            if (deathTimer > 300)
-            {
-                return true;
-            }
-            return false;
-        }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

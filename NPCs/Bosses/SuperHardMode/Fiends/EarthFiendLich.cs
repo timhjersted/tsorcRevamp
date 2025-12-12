@@ -18,8 +18,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
     [AutoloadBossHead]
     class EarthFiendLich : ModNPC
     {
-        int skullDamage = 43;
-        int ichorDamage = 38;
+        int skullDamage = 50;
+        int ichorDamage = 60;
 
         int skullCircleTimer = 0;
         int teleportTimer = 0;

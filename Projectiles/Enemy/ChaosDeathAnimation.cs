@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 1;
             Projectile.tileCollide = false;
             Projectile.width = 1;
-            Projectile.scale = 1.2f;
+            Projectile.scale = 2.2f;
         }
 
         //int chaosdacount1 = 0;

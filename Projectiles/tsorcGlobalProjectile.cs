@@ -217,10 +217,30 @@ namespace tsorcRevamp.Projectiles
                     projectile.tileCollide = false;
                 }
 
-                if (projectile.type == ProjectileID.GoldenShowerHostile)
+                if (projectile.type == ProjectileID.MagicMissile)
                 {
                     projectile.tileCollide = false;
                 }
+
+                if (tsorcRevampWorld.SuperHardMode)
+                {
+
+                    if (projectile.type == ProjectileID.GoldenShowerHostile)
+                    {
+                        projectile.tileCollide = false;
+                    }
+
+                    if (projectile.type == ProjectileID.FrostBlastHostile)
+                    {
+                        projectile.tileCollide = false;
+                    }
+
+                    if (projectile.type == ProjectileID.DemonSickle)
+                    {
+                        projectile.tileCollide = false;
+                    }
+                }
+
 
                 if (projectile.type == ProjectileID.FrostBlastFriendly)
                 {

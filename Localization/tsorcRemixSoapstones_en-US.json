@@ -104,6 +104,13 @@
   "style": 1
 }
 {
+  "text": "You find a note on the table; it's difficult to decipher, but you manage to read this: --NEWLINE Capital... Fallen... Great Demon... lava...",
+  "tileX": 5643,
+  "tileY": 1200,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Asha: \u0022Okay, Red. But first I need to tell you where you can find your father\u0027s sword and Hallowed armor. It has long been kept in the roots of the Old One's Tree, and the entrance is in the leaves of the tree, at the Dryad's house. The path is sealed with pure Chlorophyte that only the Drax could break.\u0022 --NEWLINE Red: \u0022Okay, let\u0027s go.\u0022",
   "tileX": 291,
   "tileY": 1367,
@@ -1420,6 +1427,13 @@
   "style": 1
 }
 {
+  "text": "Seeing these three torches in this cave, you wonder what their significance is.",
+  "tileX": 3768,
+  "tileY": 1306,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Every cell in your body is screaming at you to turn back now!",
   "tileX": 4527,
   "tileY": 1104,
@@ -2113,6 +2127,13 @@
   "style": 1
 }
 {
+  "text": "- You have found the Celestial Wastes, the blasted skies at the edge of the world -",
+  "tileX": 331,
+  "tileY": 208,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "- You\u0027ve found the Lunar Chamber of the Celestial Wastes - --NEWLINE  --NEWLINE Miakoda: I don\u0027t know this place at all, this technology and this biome doesn\u0027t seem to come from our world...",
   "tileX": 229,
   "tileY": 152,
@@ -2389,13 +2410,6 @@
   "text": "You catch your breath to look far into the horizon. Nothing but a faint white blending effortlessly with the blue-green sheen glowing up through the snow. This ocean appears to go off into infinity. Who can imagine what could be beyond this world?",
   "tileX": 8334,
   "tileY": 866,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "ABSOLUTE CINEMA",
-  "tileX": 444,
-  "tileY": 1178,
   "textWidth": 320,
   "style": 1
 }

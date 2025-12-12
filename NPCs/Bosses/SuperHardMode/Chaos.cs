@@ -1,9 +1,13 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -14,7 +18,7 @@ using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.Projectiles.Enemy.Birbs;
+using tsorcRevamp.Projectiles.Enemy.Chaos;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -57,11 +61,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             InitializeMoves();
         }
 
-        int purpleCrushDamage = 45;
-        int sickleDamage = 55;
-        int BlackFireDamage = 50; 
+        int purpleCrushDamage = 55;
+        int sickleDamage = 60;
+        int BlackFireDamage = 65; 
         bool chargeDamageFlag = false;
         private bool Phase2 => NPC.life <= (int)(NPC.lifeMax * 0.6f);
+        int holdTimer = 0;
+        public int TeleportTimer
+        {
+            get => (int)NPC.ai[2];
+            set => NPC.ai[2] = value;
+        }
+        Vector2 nextWarpPoint;
+        bool canTeleport = true; // disable the teleport during ChaosTeleportPattern
+        int teleportCooldown;
 
         List<ChaosMove> MoveList;
         public int MoveIndex
@@ -88,6 +101,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (MoveList == null || MoveIndex >= MoveList.Count) MoveIndex = 0;
 
             CurrentMove.Move();
+
+            if (holdTimer > 1)
+            {
+                holdTimer--;
+            }
+
+            if (holdTimer <= 0 && Phase2)
+            {
+
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/ChaosLaugh") with { Volume = 1.8f}, NPC.Center);
+                holdTimer = 12000;
+
+                for (int i = 0; i < 26; i++)
+                {
+                    Vector2 dustVel = Main.rand.NextVector2CircularEdge(16, 16);
+                    int purple = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Shadowflame, dustVel.X, dustVel.Y, Scale: 4.3f);
+                    Main.dust[purple].noGravity = true;
+                }
+            }
+
+            RandomTeleport();
         }
 
         #region IA
@@ -117,10 +151,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 BlackFire();   
             }
 
-            if (MoveTimer >= 900)
+            if (!Phase2)
             {
-                NextMove(); 
-                MoveTimer = 0;
+                if (MoveTimer >= 900)
+                {
+                    NextMove(); 
+                    MoveTimer = 0;
+                }
+            }
+            else
+            {
+                if (MoveTimer >= 800)
+                {
+                    NextMove(); 
+                    MoveTimer = 0;
+                }
             }
 
             ChaosMovement();
@@ -129,8 +174,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         private void ChaosTeleportPattern() //How the teleport attack works 
         {
             MoveTimer++;
-
-            int telegraphDuration = 95; 
+            canTeleport = false;
+            int telegraphDuration = Phase2 ? 70 : 95; 
             int attackDuration = MoveTimer - telegraphDuration;
 
             if (MoveTimer <= telegraphDuration)
@@ -138,24 +183,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 TelegraphChaosAttack();
 
                 if (MoveTimer == 1)
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item163 with { Volume = 1.2f, Pitch = -0.4f }, NPC.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item163 with { Volume = 1.1f, Pitch = -0.3f }, NPC.Center);
 
                 ChaosMovement();
                 return;
             }
 
-            if (attackDuration >= 0 && attackDuration % 45 == 0 && attackDuration / 45 <= 5)
+            if (!Phase2)
             {
-                NPC.velocity = Vector2.Zero;
+                if (attackDuration >= 0 && attackDuration % 45 == 0 && attackDuration / 45 <= 5)
+                {
+                    NPC.velocity = Vector2.Zero;
 
-                TeleportCircleAttack();
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                    TeleportCircleAttack();
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                }
+            }
+            else
+            {
+                if (attackDuration >= 0 && attackDuration % 40 == 0 && attackDuration / 40 <= 6)
+                {
+                    NPC.velocity = Vector2.Zero;
+
+                    TeleportCircleAttack();
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                }
             }
 
             if (attackDuration >= 285) 
             {
                 NextMove(); 
                 MoveTimer = 0;
+                canTeleport = true;
             }
         }
 
@@ -176,7 +235,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Vector2 vel = new Vector2((float)Math.Cos(baseRot + offset), (float)Math.Sin(baseRot + offset)) * 14f;
 
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                    ModContent.ProjectileType<CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
             }
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.6f }, NPC.Center);
@@ -203,7 +262,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             for (int i = 0; i < 24; i++)
             {
-                Dust.NewDustPerfect(NPC.Center, DustID.DemonTorch, Main.rand.NextVector2CircularEdge(4, 4), Scale: 2.2f);
+                Dust.NewDustPerfect(NPC.Center, DustID.DemonTorch, Main.rand.NextVector2CircularEdge(5, 5), Scale: 2.5f);
             }
         }
 
@@ -232,19 +291,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float rot = MathHelper.TwoPi * i / 13f;
                 Vector2 vel = new Vector2(MathF.Cos(rot), MathF.Sin(rot)) * speed;
 
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel, ModContent.ProjectileType<RageDemonBolt>(), sickleDamage, 0f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel, ModContent.ProjectileType<ChaosDemonBolt>(), sickleDamage, 0f, Main.myPlayer);
             }
 
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DemonSpirit>(), sickleDamage, 0f, Main.myPlayer);
 
-            for (int i = 0; i < 38; i++)
+            for (int i = 0; i < 40; i++)
             {
-                Dust.NewDustPerfect(NPC.Center, DustID.PurpleTorch, Main.rand.NextVector2CircularEdge(5, 5), Scale: 3f);
+                Dust dust = Dust.NewDustPerfect(NPC.Center, DustID.Shadowflame, Main.rand.NextVector2CircularEdge(12, 12), Scale: 3.2f);
+                dust.noGravity = true;
             }
         }
 
         private void ChaosMovement() //The IA and Movement of the boss
-        {
+        {        
             float maxSpeed = Phase2 ? 11.2f : 7f;
             float acceleration = Phase2 ? 0.158f : 0.09f;
 
@@ -269,6 +329,97 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        private void RandomTeleport()
+        {
+            if (!canTeleport) return;
+
+            TeleportTimer++;
+            int teleportChance = Phase2 ? 330 : 390;
+
+            if (TeleportTimer >= teleportChance && Main.rand.Next(teleportChance) == 0)
+            {
+                teleportCooldown = Phase2 ? 125 : 150;
+
+                int warpHorizontalMax = 600;
+                int warpVerticalMax = 440;
+                int checks = 0;
+                nextWarpPoint = Vector2.Zero;
+                while (checks < 15)
+                {
+                    checks++;
+                    Vector2 relativePoint = Main.rand.NextVector2CircularEdge(warpHorizontalMax, warpVerticalMax);
+                    Vector2 candidate = Main.player[NPC.target].Center + relativePoint;
+                    if (Collision.CanHit(Main.player[NPC.target].Center, 1, 1, candidate, 1, 1) ||
+                        Collision.CanHitLine(Main.player[NPC.target].Center, 1, 1, candidate, 1, 1))
+                    {
+                        nextWarpPoint = candidate;
+                        break;
+                    }
+                }
+
+                if (nextWarpPoint != Vector2.Zero && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), nextWarpPoint, Vector2.Zero,
+                        ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: teleportCooldown);
+                }
+
+                TeleportTimer = 0;
+                NPC.netUpdate = true;
+            }
+
+            if (nextWarpPoint != Vector2.Zero && teleportCooldown > 0)
+            {
+                teleportCooldown--;
+                if (teleportCooldown <= 0)
+                {
+                    Vector2 diff = nextWarpPoint - NPC.Center;
+                    float length = diff.Length();
+                    if (length > 0) diff.Normalize();
+                    Vector2 offset = Vector2.Zero;
+                    for (int i = 0; i < (int)length; i += 2)
+                    {
+                        offset += diff * 2f;
+                        if (Main.rand.NextBool(2) && offset.Length() < length)
+                        {
+                            Vector2 dustPoint = offset;
+                            dustPoint.X += Main.rand.NextFloat(-NPC.width / 2f, NPC.width / 2f);
+                            dustPoint.Y += Main.rand.NextFloat(-NPC.height / 2f, NPC.height / 2f);
+                            if (Main.rand.NextBool())
+                            {
+                                Dust.NewDustPerfect(NPC.Center + dustPoint, 71, diff * 5f, 200, default, 0.9f).noGravity = true;
+                            }
+                            else
+                            {
+                                Dust.NewDustPerfect(NPC.Center + dustPoint, DustID.ShadowbeamStaff, diff * 5f, 200, default, 0.9f).noGravity = true;
+                            }
+                        }
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                        ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                    }
+
+                    NPC.Center = nextWarpPoint;
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, Phase2 ? 12f : 9f);
+                    SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DemonSpirit>(), sickleDamage, 0f, Main.myPlayer);
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height,
+                            DustID.Wraith, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10),
+                            200, Color.Purple, 4f);
+                        Main.dust[dust].noGravity = false;
+                    }
+
+                    nextWarpPoint = Vector2.Zero;
+                    NPC.netUpdate = true;
+                }
+            }
+        }
+
         private void NextMove()
         {
             MoveIndex++;
@@ -283,6 +434,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 new ChaosMove(NormalPattern, null, 0, "Normal Chaos"),
                 new ChaosMove(ChaosTeleportPattern, null, 1, "Chaos Circle Attack")
             };
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.WriteVector2(nextWarpPoint);
+            writer.Write(canTeleport);
+            writer.Write(teleportCooldown);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            nextWarpPoint = reader.ReadVector2();
+            canTeleport = reader.ReadBoolean();
+            teleportCooldown = reader.ReadInt32();
         }
 
         #endregion
@@ -304,6 +469,32 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.frame.Y = 0;
                 }
             }
+        }
+
+        public static Texture2D texture;
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (Phase2)
+            {
+                if (texture == null || texture.IsDisposed)
+                {
+                    texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
+                }
+
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.DevDye), Main.LocalPlayer);
+                data.Apply(null);
+                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                Rectangle sourceRectangle = NPC.frame;
+                Vector2 origin = sourceRectangle.Size() / 2f;
+                Vector2 offset = new Vector2(2, -20);
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + offset, sourceRectangle, Color.White, NPC.rotation, origin, 1.2f, effects, 0f);
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            }
+            return base.PreDraw(spriteBatch, screenPos, drawColor);
         }
 
         public override void OnKill() //special death animation

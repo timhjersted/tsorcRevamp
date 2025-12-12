@@ -10,6 +10,7 @@ using tsorcRevamp.Projectiles.Enemy.Death;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
@@ -48,7 +49,7 @@ namespace tsorcRevamp.NPCs.Special
             NPC.scale = 1.3f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 45000;
+            NPC.lifeMax = 100000;
             NPC.friendly = false;
             NPC.boss = true;
             NPC.noTileCollide = true;
@@ -58,7 +59,7 @@ namespace tsorcRevamp.NPCs.Special
             NPC.value = 150000;
             NPC.rarity =21;
 
-            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Death.DespawnHandler"), Color.DarkMagenta, DustID.Demonite);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Death.DespawnHandler"), Color.Red, DustID.CrimsonSpray);
         }
 
 
@@ -211,6 +212,10 @@ namespace tsorcRevamp.NPCs.Special
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DeathBag>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<SoulVessel>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<HeroSoul>(), 2));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 3, 5));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>(), 6));

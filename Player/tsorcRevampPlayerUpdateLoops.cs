@@ -2639,32 +2639,33 @@ namespace tsorcRevamp
                 }
             }
 
-            if(tsorcRevampWorld.RemixMap)
+            if (UsefulFunctions.PlayerInZone(Player, 140,2690, 320,820) || UsefulFunctions.PlayerInZone(Player, 430,2690, 50,320))
             {
-                if (UsefulFunctions.PlayerInZone(Player, 140,2690, 320,820) || UsefulFunctions.PlayerInZone(Player, 430,2690, 50,320))
-                {
-                    //Main.NewText("Desert");
-                    Player.ZoneDesert = true;
-                }
-                else if (UsefulFunctions.PlayerInZone(Player, 2630,3100, 70,320) || UsefulFunctions.PlayerInZone(Player, 2630,3010, 320,550))
+                //Main.NewText("Desert");
+                Player.ZoneDesert = true;
+            }
+            else if (UsefulFunctions.PlayerInZone(Player, 5359,6120, 50,800) || UsefulFunctions.PlayerInZone(Player, 6120,6300, 400,800) || UsefulFunctions.PlayerInZone(Player, 5726,5937, 1656,1803))
+            {
+                //Main.NewText("Jungle");
+                Player.ZoneJungle = true;
+            }
+            else if (UsefulFunctions.PlayerInZone(Player, 3330,3580, 120,350) || UsefulFunctions.PlayerInZone(Player, 6850,8360, 50,540) || UsefulFunctions.PlayerInZone(Player, 7430,8360, 540,840))
+            {
+                //Main.NewText("Snow");
+                Player.ZoneSnow = true;
+            }
+                
+            if (tsorcRevampWorld.RemixMap)
+            {
+                if (UsefulFunctions.PlayerInZone(Player, 2630,3100, 70,320) || UsefulFunctions.PlayerInZone(Player, 2630,3010, 320,550))
                 {
                     //Main.NewText("Crimson");
                     Player.ZoneCrimson = true;
-                }
-                else if (UsefulFunctions.PlayerInZone(Player, 5150,6120, 50,800) || UsefulFunctions.PlayerInZone(Player, 6120,6300, 400,800) || UsefulFunctions.PlayerInZone(Player, 5726,5937, 1656,1803))
-                {
-                    //Main.NewText("Jungle");
-                    Player.ZoneJungle = true;
                 }
                 else if (UsefulFunctions.PlayerInZone(Player, 6460,6640, 460,850))
                 {
                     //Main.NewText("Hallow");
                     Player.ZoneHallow = true;
-                }
-                else if (UsefulFunctions.PlayerInZone(Player, 3330,3580, 120,350) || UsefulFunctions.PlayerInZone(Player, 6850,8360, 50,540) || UsefulFunctions.PlayerInZone(Player, 7430,8360, 540,840))
-                {
-                    //Main.NewText("Snow");
-                    Player.ZoneSnow = true;
                 }
             }
         }

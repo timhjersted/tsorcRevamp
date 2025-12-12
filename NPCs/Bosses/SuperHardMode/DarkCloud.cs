@@ -797,8 +797,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     NPC.direction = -1;
                 }
-
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
             }
 
             //Charge up effect again
@@ -2147,6 +2145,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
             UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.DarkCloud.Defeated"), Color.Blue);
+
+            SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1.1f });
+            
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+            }
         }
 
         #region Debuffs

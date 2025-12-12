@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -28,10 +29,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.height = 44;
             NPC.timeLeft = 22500;
             NPC.lifeMax = 5500; // 6400 geez
-            NPC.scale = 1;
+            NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.noGravity = false;
+            NPC.noGravity = true;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
             Banner = NPC.type;
@@ -42,7 +43,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         int darkBeadDamage = 40;
-        int darkOrbDamage = 64;
+        int darkOrbDamage = 60;
         int seekerDamage = 49;
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
@@ -140,7 +141,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.netMode != 2)
             {
-                if (NPC.ai[0] >= 12 && NPC.ai[2] < 5) //2 was 12
+                if (NPC.ai[0] >= 15 && NPC.ai[2] < 5) //2 was 12
                 {
                     float num48 = 7f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -152,7 +153,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>();//44;//0x37; //14;
+                        int type = ModContent.ProjectileType<OolacileBolt>();//44;//0x37; //14;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkBeadDamage, 0f, Main.myPlayer);
@@ -175,9 +176,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if ((NPC.ai[1] >= 280 && NPC.life > NPC.lifeMax / 42) || (NPC.ai[1] >= 120 && NPC.life <= NPC.lifeMax / 42)) //300 increases the time between teleports
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 11; i++)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 27, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Purple, 1f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 114, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 1.2f);
                     Main.dust[dust].noGravity = true;
                 }
                 NPC.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
@@ -276,7 +277,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (Main.rand.NextBool(40)) //1 in 2 chance boss will use attack when it flies down on top of you
                 {
 
-                    float num48 = 2f;
+                    float num48 = 6f;
                     Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
                     float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
                     float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);

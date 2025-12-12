@@ -72,6 +72,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 3);
                                 npc.knockBackResist *= 1.75f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -90,6 +91,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 3);
                                 npc.knockBackResist *= 1.75f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -123,6 +125,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 3);
                                 npc.knockBackResist *= 1.75f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -141,6 +144,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 3);
                                 npc.knockBackResist *= 1.75f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -485,6 +489,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 3);
                                 npc.knockBackResist *= 1.75f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -968,6 +973,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 2);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -1289,6 +1295,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.5);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -1309,6 +1316,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.5);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -1329,6 +1337,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.5);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -1365,6 +1374,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.5);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -1384,6 +1394,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.5);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -1403,6 +1414,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.5);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -1715,6 +1727,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.5);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -1736,6 +1749,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.5);
                                 npc.knockBackResist *= 1.25f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -3024,6 +3038,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.3);
                                 npc.knockBackResist *= 1.2f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -3086,6 +3101,7 @@ namespace tsorcRevamp.NPCs
                                 npc.defense = (int)(npc.defense * 1.3);
                                 npc.knockBackResist *= 1.2f;
                                 globalNPC.lifeBoosted = true; 
+                                npc.lavaImmune = true;
                             }
                         }
                         break;
@@ -3244,6 +3260,7 @@ namespace tsorcRevamp.NPCs
                                     npc.defense = (int)(npc.defense * 1.3);
                                     npc.knockBackResist *= 1.2f;
                                     globalNPC.lifeBoosted = true; 
+                                    npc.lavaImmune = true;
                                 }
                             }
                         break;
@@ -3522,6 +3539,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = (int)(npc.defense * 2);
                         npc.knockBackResist *= 1.35f;
                         globalNPC.lifeBoosted = true; 
+                        npc.lavaImmune = true;
                     }
                 }
             }
@@ -3552,6 +3570,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = (int)(npc.defense * 2.5);
                         npc.knockBackResist *= 1.45f;
                         globalNPC.lifeBoosted = true; 
+                        npc.lavaImmune = true;
                     }
                 }
             }
@@ -3630,6 +3649,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = (int)(npc.defense * 1.3);
                         npc.knockBackResist *= 1.2f;
                         globalNPC.lifeBoosted = true; 
+                        npc.lavaImmune = true;
                     }
                 }
             }

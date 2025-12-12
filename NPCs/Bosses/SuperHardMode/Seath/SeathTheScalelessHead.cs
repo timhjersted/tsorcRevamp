@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.defense = 120;
             NPC.HitSound = SoundID.NPCHit6;//6 is werewolf, 7 is the worst, generic hit sound evvarrr, 13, 21 worth trying
             NPC.DeathSound = SoundID.Item119;//good dragon death sound
-            NPC.lifeMax = 450000;
+            NPC.lifeMax = 475000;
             Music = 12;
             NPC.boss = true;
             NPC.noGravity = true;
@@ -238,7 +238,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
 
             Player nT = Main.player[NPC.target];
-            if (Main.rand.NextBool(255))
+            if (Main.rand.NextBool(220))
             {
                 breath = true;
 
@@ -275,7 +275,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 //play breath sound
                 if (Main.rand.NextBool(3))
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.4f, Pitch = -0.6f }, NPC.Center); //flame thrower
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f, Pitch = -0.6f }, NPC.Center); //flame thrower
                 }
 
                 breathCD--;
@@ -304,7 +304,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             //FROST SPACED ATTACK
             //Counts up each tick. Used to space out shots
-            if (FrostShotTimer >= 26 && FrostShotCounter < 9)
+            if (FrostShotTimer >= 22 && FrostShotCounter < 9)
             {
 
                 if (Main.netMode != NetmodeID.MultiplayerClient) //ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>()
@@ -321,7 +321,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             //FROST GROUP ATTACK
             //Counts up each tick. Used to space out shots
-            if (FrostShot2Timer >= 8 && FrostShot2Counter < 3)
+            if (FrostShot2Timer >= 7 && FrostShot2Counter < 3)
             {
 
                 if (Main.netMode != NetmodeID.MultiplayerClient) //ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>()
@@ -339,7 +339,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
 
             //massive ice crystal shards falling down   
-            if (Main.rand.NextBool(250))
+            if (Main.rand.NextBool(230))
             {
 
                 float num48 = 6f;
@@ -379,7 +379,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
 
             //ice storm horizontal attack
-            if (Main.rand.NextBool(180))
+            if (Main.rand.NextBool(150))
             {
                 float num48 = 6f;
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2)); //.2 was .5
@@ -442,7 +442,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             //spawn
 
 
-            if ((customspawn1 < 50) && Main.rand.NextBool(2000))
+            if ((customspawn1 < 50) && Main.rand.NextBool(1800))
             {
                 int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0);
                 Main.npc[Spawned].velocity.Y = -8;

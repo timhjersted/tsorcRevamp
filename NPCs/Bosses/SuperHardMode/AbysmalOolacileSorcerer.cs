@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
@@ -6,19 +7,25 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using Terraria.Audio;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
     [AutoloadBossHead]
     class AbysmalOolacileSorcerer : ModNPC
     {
-        int darkBeadDamage = 46;
-        int darkOrbDamage = 49;
-        int seekerDamage = 40;
+        int darkBeadDamage = 56;
+        int darkOrbDamage = 59;
+        int seekerDamage = 50;
+        public static Effect effect;
+        float auraBonus = 1f;
+        int expandRadius = 0;
+        private int currentAttackType = 0;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
@@ -35,14 +42,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             AnimationType = 29;
             NPC.aiStyle = 0;
             NPC.damage = 0;
-            NPC.defense = 90;
+            NPC.defense = 80;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 155000;
+            NPC.lifeMax = 230000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.boss = true;
-            NPC.scale = 1.3f;
+            NPC.scale = 1.35f;
             NPC.noGravity = true;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
@@ -150,9 +157,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //NPCSpawningTimer += (Main.rand.Next(2, 5) * 0.1f);
             if (NPCSpawningTimer >= 10f)
             {
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightPhantom>()) < 4) && Main.rand.NextBool(500))
+                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.OolacileDemon>()) < 3) && Main.rand.NextBool(1500))
                 {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileDemon>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                     if (Main.netMode == 2)
@@ -161,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     }
                 }
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.NextBool(2500))
+                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.NextBool(1800))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -174,11 +181,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
             }
-            if (NPCSpawningTimer2 >= 5000f)
+            if (NPCSpawningTimer2 >= 6000f)
             {
-                if (NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.TaurusKnight>()) < 1)
+                if (NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.OolacileSorcerer>()) < 1)
                 {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileSorcerer>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                     NPCSpawningTimer2 = 0;
@@ -192,16 +199,86 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public void FireProjectiles()
         {
-            if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 5)
+            if (DarkBeadShotCounter == 0 && TeleportTimer <= 20) 
             {
-                Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
-                }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                currentAttackType = Main.rand.Next(1, 4); 
                 DarkBeadShotTimer = 0;
-                DarkBeadShotCounter++;
+            }
+
+            if (currentAttackType == 1)
+            {
+                if (DarkBeadShotTimer >= 9 && DarkBeadShotCounter < 6)
+                {
+                    Vector2 vel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 10f);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
+                        ModContent.ProjectileType<OolacileBolt>(), darkBeadDamage, 0f, Main.myPlayer);
+                    }
+                    SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+
+                    DarkBeadShotCounter++;
+                    DarkBeadShotTimer = 0;
+                }
+            }
+
+            else if (currentAttackType == 2)
+            {
+                if (DarkBeadShotTimer >= 25 && DarkBeadShotCounter < 2)
+                {
+                    Vector2 dir = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1f);
+                    float baseRot = dir.ToRotation();
+
+                    for (int i = -1; i <= 1; i++)
+                    {
+                        float offset = MathHelper.ToRadians(16f * i);
+                        Vector2 vel = baseRot.ToRotationVector2() * 10f;
+                        vel = vel.RotatedBy(offset);
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
+                            ModContent.ProjectileType<OolacileBolt>(), darkBeadDamage, 0f, Main.myPlayer);
+                        }
+                    }
+
+                    SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                    DarkBeadShotCounter++;
+                    DarkBeadShotTimer = 0;
+                }
+            }
+
+            else if (currentAttackType == 3)
+            {
+                if (DarkBeadShotCounter == 0 && DarkBeadShotTimer >= 55)
+                {
+                    Vector2 dir = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1f);
+                    float baseRot = dir.ToRotation();
+
+                    for (int i = -2; i <= 2; i++)
+                    {
+                        float offset = MathHelper.ToRadians(18f * i);
+                        Vector2 vel = baseRot.ToRotationVector2() * 11f;
+                        vel = vel.RotatedBy(offset);
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
+                            ModContent.ProjectileType<OolacileBolt>(), darkBeadDamage, 0f, Main.myPlayer);
+                        }
+                    }
+
+                    SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+
+                    for (int i = 0; i < 30; i++)
+                    {
+                        Dust d = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(60, 60), 114, Main.rand.NextVector2CircularEdge(4, 4), Scale: 2f);
+                        d.noGravity = true;
+                    }
+
+                    DarkBeadShotCounter = 1;
+                    DarkBeadShotTimer = 0;
+                }
             }
 
             if (SecondAttackCounter >= 60)
@@ -219,7 +296,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     SecondAttackCounter = 0;
                 }
 
-                if (Main.rand.NextBool(18))
+                if (Main.rand.NextBool(30))
                 {
                     Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -236,13 +313,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             //bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
-            if ((TeleportTimer >= 200 && NPC.life > NPC.lifeMax / 4) || (TeleportTimer >= 120 && NPC.life <= NPC.lifeMax / 4))
+            if ((TeleportTimer >= 150 && NPC.life > NPC.lifeMax / 4) || (TeleportTimer >= 120 && NPC.life <= NPC.lifeMax / 3))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 25; i++)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 27, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Purple, 1f);
-                    Main.dust[dust].noGravity = true;
+                    Vector2 dustVel = Main.rand.NextVector2CircularEdge(14, 14);
+                    int red = Dust.NewDust(NPC.position, NPC.width, NPC.height, 114, dustVel.X, dustVel.Y, Scale: 2f);
+                    Main.dust[red].noGravity = true;
                 }
                 DarkBeadShotCounter = 0;
                 TeleportTimer = 0;
@@ -368,17 +446,60 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            auraBonus *= 0.9f;
+            auraBonus += 0.1f; 
+
+            Color rgbColor = new Color(130, 8, 30); 
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            if (effect == null)
+            {
+                effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            float colorIntensity = 0.3f + auraBonus * 0.2f;
+            int auraSize = 135 + expandRadius / 4 + 30; 
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, auraSize, auraSize);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseVoronoi.Width);
+            effect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4() * colorIntensity * 1.2f);
+            effect.Parameters["ringProgress"].SetValue(0.6f);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 1.2f);
+            effect.Parameters["scaleFactor"].SetValue(3.5f);
+
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseVoronoi, NPC.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, NPC.scale * 1.1f, SpriteEffects.None, 0);
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+
+            return true;
+        }
+
         #region Gore
         public override void OnKill()
         {
-            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.Defeated"), 150, 150, 150);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.Defeated"), 160, 160, 160);
+            SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1.1f });
             if (!Main.dedServ)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 1").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 3").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 3").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 1").Type, 1.35f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 2").Type, 1.35f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 3").Type, 1.35f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 2").Type, 1.35f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 3").Type, 1.35f);
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
             }
         }
         #endregion

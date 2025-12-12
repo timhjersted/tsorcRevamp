@@ -53,14 +53,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             nextWarpPoint = Main.rand.NextVector2CircularEdge(320, 320);
         }
 
-        int frozenSawDamage = 50;
-        int lightningDamage = 62;
-        int plasmaDamage = 50;
-        int lifeTimer = 0;
+        int frozenSawDamage = 56;
+        int lightningDamage = 65;
         int holdTimer = 0;
         int desperationTimer = 0;
         int lightningDelayTimer = -1;
-        Vector2 delayedTargetPosition;
         int deathTimer = 0;
         int mageShadowTimer = 0;
 

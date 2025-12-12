@@ -9756,6 +9756,8 @@ Mods: {
 			OldUltimaExplosion.DisplayName: Old Ultima Explosion
 			SuperPhazonRound.DisplayName: 驱虫炮
 			ThunderBowLightning.DisplayName: 遗忘雷弓
+			// ChaosDemonBolt.DisplayName: Chaos Demon Bolt
+			// OolacileBolt.DisplayName: Oolacile Bolt
 		}
 
 		NPCs: {

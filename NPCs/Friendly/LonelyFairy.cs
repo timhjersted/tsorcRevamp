@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.6f;
             NPC.dontTakeDamage = true;
-            NPC.scale = 1.15f;
+            NPC.scale = 1.1f;
         }
 
         #region Frames

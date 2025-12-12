@@ -9714,6 +9714,8 @@ Mods: {
 			// OldUltimaExplosion.DisplayName: Old Ultima Explosion
 			// SuperPhazonRound.DisplayName: Super Phazon Round
 			// ThunderBowLightning.DisplayName: Thunder Bow Lightning
+			// ChaosDemonBolt.DisplayName: Chaos Demon Bolt
+			// OolacileBolt.DisplayName: Oolacile Bolt
 		}
 
 		NPCs: {

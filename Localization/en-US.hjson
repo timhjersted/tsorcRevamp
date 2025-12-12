@@ -280,7 +280,7 @@ Mods: {
 			GwynTombVisions: default
 			AbyssPortal: default
 			Gwyn: Gwyn has awoken to bring your journey to its final end...
-			AbysmalOolacileSorcerer: The Abysmal Oolacile Sorcerer shall now disembowel you...
+			AbysmalOolacileSorcerer: The Grand Occultist of Oolacile shall now disembowel you...
 			Witchking: The Witchking has been waiting for you...
 			Blight: The Blight surfaces from the ocean!
 			Chaos: Chaos has entered this dimension!
@@ -3338,7 +3338,7 @@ Mods: {
 			}
 
 			OolacileSorcererBag: {
-				DisplayName: Treasure Bag (Abysmal Oolacile Sorcerer)
+				DisplayName: Treasure Bag (Grand Occultist of Oolacile)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3408,7 +3408,7 @@ Mods: {
 				DisplayName: Abysmal Stone
 				Tooltip:
 					'''
-					Summons the Abysmal Oolacile Sorcerer.
+					Summons the Grand Occultist of Oolacile.
 					Can only be used at night.
 					'''
 			}
@@ -9759,6 +9759,8 @@ Mods: {
 			OldUltimaExplosion.DisplayName: Old Ultima Explosion
 			SuperPhazonRound.DisplayName: Super Phazon Round
 			ThunderBowLightning.DisplayName: Thunder Bow Lightning
+			ChaosDemonBolt.DisplayName: Chaos Demon Bolt
+			OolacileBolt.DisplayName: Oolacile Bolt
 		}
 
 		NPCs: {
@@ -9981,8 +9983,8 @@ Mods: {
 			}
 
 			AbysmalOolacileSorcerer: {
-				DisplayName: Abysmal Oolacile Sorcerer
-				DespawnHandler: The Abysmal Oolacile Sorcerer has shattered your mind...
+				DisplayName: Grand Occultist of Oolacile
+				DespawnHandler: The Grand Occultist of Oolacile has shattered your mind...
 				Defeated: A darkness has been lifted from the world...
 			}
 

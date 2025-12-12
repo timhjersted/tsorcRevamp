@@ -18,6 +18,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     [AutoloadBossHead]
     class Blight : ModNPC
     {
+        public static Effect effect;
+        float auraBonus = 1f;
+        int expandRadius = 0;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 4;
@@ -38,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.HitSound = SoundID.NPCHit3;
             NPC.DeathSound = SoundID.Zombie53;
             // npc.DeathSound = SoundID.NPCDeath43;
-            NPC.lifeMax = 250000;
+            NPC.lifeMax = 300000;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -140,27 +144,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (Main.player[NPC.target].position.Y - 100 > NPC.position.Y)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 15, NPC.velocity.X, NPC.velocity.Y, 250, default, 5f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 185, NPC.velocity.X, NPC.velocity.Y, 250, default, 6f);
                 Main.dust[dust].noGravity = true;
                 NPC.directionY = 1;
             }
             else
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 15, NPC.velocity.X, NPC.velocity.Y, 250, default, 4f);
-                Main.dust[dust].noGravity = false;
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 172, NPC.velocity.X, NPC.velocity.Y, 250, default, 5f);
+                Main.dust[dust].noGravity = true;
                 NPC.directionY = -1;
             }
 
             if (Main.player[NPC.target].position.X - 250 > NPC.position.X)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 15, NPC.velocity.X, NPC.velocity.Y, 250, default, 2f);
-                Main.dust[dust].noGravity = false;
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 185, NPC.velocity.X, NPC.velocity.Y, 250, default, 3f);
+                Main.dust[dust].noGravity = true;
                 NPC.direction = 1;
             }
             else
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 15, NPC.velocity.X, NPC.velocity.Y, 250, default, 5f);
-                Main.dust[dust].noGravity = false;
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 172, NPC.velocity.X, NPC.velocity.Y, 250, default, 6f);
+                Main.dust[dust].noGravity = true;
                 NPC.direction = -1;
             }
 
@@ -504,6 +508,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            auraBonus *= 0.9f;
+            auraBonus += 0.1f; 
+
+            Color rgbColor = new Color(8, 100, 255); 
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            if (effect == null)
+            {
+                effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            float colorIntensity = 0.11f + auraBonus * 0.03f;
+            int auraSize = 400 + expandRadius / 4 + 60; 
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, auraSize, auraSize);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseVoronoi.Width);
+            effect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4() * colorIntensity * 1.2f);
+            effect.Parameters["ringProgress"].SetValue(0.6f);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 1.2f);
+            effect.Parameters["scaleFactor"].SetValue(3.5f);
+
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseVoronoi, NPC.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, NPC.scale * 1.1f, SpriteEffects.None, 0);
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+
             Random rand1 = new Random((int)Main.GameUpdateCount);
             int height = this.NPC.frame.Height;
             int width = this.NPC.frame.Width;
@@ -558,7 +594,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             0f);
             }
 
-            return false;
+            return true;
         }
         public override bool CheckActive()
         {
