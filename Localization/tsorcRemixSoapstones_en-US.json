@@ -2036,6 +2036,13 @@
   "style": 1
 }
 {
+  "text": "- You\u0027ve discovered Obsidian\u0027s Volcano -",
+  "tileX": 6430,
+  "tileY": 828,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "You\u0027ve discovered the secret entrance to the underground jungle.  --NEWLINE  --NEWLINE A moment after pulling the lever, you hear the ground faintly rumble to the West. ",
   "tileX": 6447,
   "tileY": 1126,
@@ -2358,9 +2365,23 @@
   "style": 1
 }
 {
-  "text": "You\u0022ve found the Martian outpost of the Frozen Ocean, hidden beneath the surface glacier. --NEWLINE  --NEWLINE The outpost appears empty, but still appears fully functional. Exploring the outpost leaves you wondering : --NEWLINE \u0022Why did this alien civilization install structures like this around the world?\u0022",
+  "text": "You\u0022ve found the Martian laboratory of the Frozen Ocean, hidden beneath the surface glacier. --NEWLINE  --NEWLINE The laboratory appears empty, yet seems fully functional. Exploring the laboratory leaves you wondering : --NEWLINE \u0022Why did this alien civilization install structures like this around the world?\u0022",
   "tileX": 8086,
   "tileY": 1119,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "placeholder",
+  "tileX": 8160,
+  "tileY": 1172,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "An ancient frozen kingdom was built upon this long glacier, formed from a thick layer of mithril ice that covers the ocean. You\u0027ve never seen a sight like this in your entire life.",
+  "tileX": 7597,
+  "tileY": 853,
   "textWidth": 320,
   "style": 1
 }
