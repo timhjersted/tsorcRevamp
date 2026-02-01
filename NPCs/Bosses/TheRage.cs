@@ -287,25 +287,30 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (EnrageDamageCounter > (NPC.lifeMax / 10))
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheRage.Enrage"), Color.Orange);
+                bool isAnotherBirdAlive = NPC.AnyNPCs(ModContent.NPCType<TheSorrow>()) || NPC.AnyNPCs(ModContent.NPCType<TheHunter>());
 
-                NPC.ai[3] = 1;
-                for (int i = 0; i < 50; i++)
+                if (!isAnotherBirdAlive)
                 {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
-                }
-                for (int i = 0; i < 20; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, 0, 0, 100, default, 3f);
-                }
-                NPC.ai[1] = -250;
-                EnrageDamageCounter = 0;
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheRage.Enrage"), Color.Orange);
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                    NPC.ai[3] = 1;
+                    for (int i = 0; i < 50; i++)
+                    {
+                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
+                    }
+                    for (int i = 0; i < 20; i++)
+                    {
+                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, 0, 0, 100, default, 3f);
+                    }
+                    NPC.ai[1] = -250;
+                    EnrageDamageCounter = 0;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62, NPC.Center);
                 }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62, NPC.Center);
             }
 
             if (NPC.ai[3] == 0)

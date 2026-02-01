@@ -237,6 +237,7 @@ namespace tsorcRevamp
             FoundryEvent,
             FoundryEvent2,
             FrozenCathedralEvent,
+            EnragedQB,
             Lunatic,
             IceGolemIsland,
             AncestralSpiritRemixEvent,
@@ -249,6 +250,7 @@ namespace tsorcRevamp
             DiscipleOfAttraidiesEvent,
             WyvernFortressEvent,
             SpawnLonelyFairy,
+            Dutchman,
             //THORIUM COMPATIBILITY UNIQUE EVENTS
             ThunderBird,
             ThunderBird2,
@@ -320,7 +322,7 @@ namespace tsorcRevamp
 
             ScriptedEvent AncestralSpiritRemixEvent = new ScriptedEvent(new Vector2(7344, 768), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Cyan, false, RemixMapCondition);
             //SkeletronHidden
-            ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Blue, false, null, SetNightCustomAction);
+            ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, 181, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Violet, false, null, SetNightCustomAction);
 
             //SkeletronHidden
             ScriptedEvent OldManEvent = new ScriptedEvent(new Vector2(4979, 1398), 64, NPCID.OldMan, DustID.WhiteTorch, true, true, true, "default", Color.White, false, () => { return !NPC.AnyNPCs(NPCID.OldMan) && !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3; });
@@ -678,6 +680,13 @@ namespace tsorcRevamp
             ScriptedEvent CatacombsEvent = new ScriptedEvent(new Vector2(3181, 1334), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SlograII>(), DustID.Torch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapCondition);
             CatacombsEvent.SetCustomStats(9000, null, null, null);
 
+            ScriptedEvent Dutchman = new ScriptedEvent(new Vector2(597, 848), 50, NPCID.PirateShip, DustID.GoldFlame, true, false, true, LangUtils.GetTextValue("Events.Dutchman"), Color.Yellow, false, RemixMapCondition);
+            Dutchman.SetCustomStats(null, null, null, 8000);
+
+            ScriptedEvent EnragedQB = new ScriptedEvent(new Vector2(5954, 401), 50, NPCID.QueenBee, DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.EnragedQB"), Color.Yellow, false, RemixMapCondition);
+            EnragedQB.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ModContent.ItemType<Items.Materials.EternalCrystal>() }, new List<int>() { 3, 1, 1 });
+            EnragedQB.SetCustomStats(null, null, null, 2000);
+
             ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
 
             ScriptedEvent FoundryEvent2 = new ScriptedEvent(new Vector2(5801, 1381), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Yellow, false, RemixMapCondition); 
@@ -693,7 +702,7 @@ namespace tsorcRevamp
             
             List<int> WingTrioEventEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.TheRage>(), ModContent.NPCType<NPCs.Bosses.TheSorrow>(), ModContent.NPCType<NPCs.Bosses.TheHunter>() };
             List<Vector2> WingTrioEventEnemyLocations = new List<Vector2>() { new Vector2(3838, 1425), new Vector2(3879, 1425), new Vector2(3858, 1410) };
-            ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, false, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
+            ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, true, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
             WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Materials.EternalCrystal>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>()}, new List<int>() { 3, 1, 1, 1, 1 });
             WingTrioEvent.SetCustomStats(null, null, null, 40000);
 
@@ -835,6 +844,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.TwinsEvent, TwinsEvent },
                 {ScriptedEventType.CatacombsEvent, CatacombsEvent },
                 {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
+                {ScriptedEventType.EnragedQB, EnragedQB },
                 {ScriptedEventType.FoundryEvent, FoundryEvent },
                 {ScriptedEventType.FoundryEvent2, FoundryEvent2 },
                 {ScriptedEventType.Lunatic, Lunatic },
@@ -848,6 +858,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },
                 {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent },
+                {ScriptedEventType.Dutchman, Dutchman },
                 {ScriptedEventType.ThunderBird, ThunderBird },
                 {ScriptedEventType.ThunderBird2, ThunderBird2 },
                 {ScriptedEventType.QueenJellyfish, QueenJellyfish },
@@ -1075,6 +1086,42 @@ namespace tsorcRevamp
                 return true;
             }
         }
+
+        /*public static bool BoreanStriderCondition()
+        {
+            if (NPC.AnyNPCs(NPCID.BoreanStrider) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static bool LichCondition()
+        {
+            if (NPC.AnyNPCs(NPCID.Lich) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static bool ForgottenOneCondition()
+        {
+            if (NPC.AnyNPCs(NPCID.ForgottenOne) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }*/
 
         public static bool UndeadMerchantCondition()
         {

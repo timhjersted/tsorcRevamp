@@ -393,11 +393,6 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 131, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.DarkGreen, 3f);
             }
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.Green));
-            }
         }
         public override void HitEffect(NPC.HitInfo hit)
         {

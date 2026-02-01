@@ -4,18 +4,19 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Weapons.Magic.Tomes
+namespace tsorcRevamp.Items.Weapons.Magic
 {
-    class MeteorTome : ModItem
+    class MeteorStorm : ModItem
     {
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("A legendary spell tome that calls down a meteor storm");
+            Item.staff[Item.type] = true;
         }
         public override void SetDefaults()
         {
             Item.damage = 80;
-            Item.height = 10;
+            Item.height = 64;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Pink;
             Item.shootSpeed = 3f;
@@ -27,14 +28,15 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.useTime = 11;
             Item.useAnimation = 11;
             Item.value = PriceByRarity.Pink_5;
-            Item.width = 34;
+            Item.width = 44;
             Item.autoReuse = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<MeteorShower>());
+            recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Magic.Tomes.MeteorShower>());
             recipe.AddIngredient(ItemID.MeteorStaff);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
@@ -49,8 +51,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             {
                 Vector2 target = Main.MouseWorld;
                 Vector2 spawnPosition = new Vector2(
-                    target.X + Main.rand.NextFloat(-250f, 250f), 
-                    player.position.Y - 600f 
+                    target.X + Main.rand.NextFloat(-300f, 300f), 
+                    player.position.Y - 610f 
                 );
 
                 Vector2 direction = target - spawnPosition;

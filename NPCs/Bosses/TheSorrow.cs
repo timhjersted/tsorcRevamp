@@ -105,26 +105,31 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (EnrageDamageCounter > (NPC.lifeMax / 10))
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheSorrow.Enrage"), Color.Orange);
+                bool isAnotherBirdAlive = NPC.AnyNPCs(ModContent.NPCType<TheHunter>()) || NPC.AnyNPCs(ModContent.NPCType<TheRage>());
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (!isAnotherBirdAlive)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
-                }
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheSorrow.Enrage"), Color.Orange);
 
-                for (int i = 0; i < 50; i++)
-                { // Dustsplosion on enrage
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
-                }
-                for (int i = 0; i < 20; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, 0, 0, 100, default, 3f);
-                }
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                    }
+
+                    for (int i = 0; i < 50; i++)
+                    { // Dustsplosion on enrage
+                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
+                    }
+                    for (int i = 0; i < 20; i++)
+                    {
+                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, 0, 0, 100, default, 3f);
+                    }
 
 
-                NPC.ai[3] = 1; // Begin inisibility/high defense state
-                NPC.ai[1] = -180;
-                EnrageDamageCounter = 0; // Reset damage counter
+                    NPC.ai[3] = 1; // Begin inisibility/high defense state
+                    NPC.ai[1] = -180;
+                    EnrageDamageCounter = 0; // Reset damage counter
+                }
             }
 
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
@@ -458,7 +463,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 // Enrage Phase
                 NPC.ai[3]++;
                 //NPC.alpha = 220; // No longer goes invisible, that is now just a Hunter mechanic
-                NPC.defense = 333; // Was 57, increased greatly just for The Sorrow to fit with frozen ice theme
+                NPC.defense = 87; // Was 57, increased greatly just for The Sorrow to fit with frozen ice theme
                 NPC.damage = 100;
                 NPC.netUpdate = true;
 

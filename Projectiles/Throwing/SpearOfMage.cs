@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Throwing
 {
     class SpearOfMage : ModProjectile
     {

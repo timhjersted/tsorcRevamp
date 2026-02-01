@@ -162,8 +162,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-
-
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.WandOfFire>())
             {
                 shopCustomPrice = 550,
@@ -175,8 +173,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedEyeOfCthulhu);
-
-
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Scrolls.FlameStrikeScroll>())
             {
@@ -214,12 +210,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Tomes.FlareTome>())
-            {
-                shopCustomPrice = 10000,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
-
             shop.Add(new Item(ItemID.SuperManaPotion)
             {
                 shopCustomPrice = 25,
@@ -240,9 +230,6 @@ namespace tsorcRevamp.NPCs.Friendly
                     shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                 }, Condition.DownedEowOrBoc); 
             }
-
-
-
             shop.Register();
         }
 

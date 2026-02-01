@@ -11,18 +11,20 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.width = 50;
             Projectile.height = 50;
-            Projectile.scale = 0.8f;
-            Projectile.penetrate = -1;
+            Projectile.scale = 1f;
+            Projectile.penetrate = 6;
             Projectile.light = 1;
-            Projectile.timeLeft = 180;
+            Projectile.timeLeft = 240;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Throwing;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60;
         }
 
         public override void AI()
         {
-            Projectile.velocity *= 0.95f;
+            Projectile.velocity *= 0.99f;
             Projectile.ai[0] += 1f;
             if (Projectile.ai[0] == 180f)
             {
@@ -33,7 +35,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile.ai[1] = 1f;
                 for (int k = 0; k < 30; k++)
                 {
-                    Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 44, Projectile.velocity.X, Projectile.velocity.Y, 50, default(Color), 1f);
+                    Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 44, Projectile.velocity.X, Projectile.velocity.Y, 50, default(Color), 1.3f);
                 }
             }
         }

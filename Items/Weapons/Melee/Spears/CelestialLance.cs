@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             recipe.AddIngredient(ModContent.ItemType<Longinus>());
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 14);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>());
-            recipe.AddIngredient(ItemID.FragmentStardust, 12);
+            recipe.AddIngredient(ItemID.FragmentStardust, 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 140000);
 
             recipe.AddTile(TileID.DemonAltar);

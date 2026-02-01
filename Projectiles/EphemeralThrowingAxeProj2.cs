@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = 4;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 100;
+            Projectile.timeLeft = 150;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 60;
         }

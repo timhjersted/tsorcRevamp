@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs
         public bool DarkInferno;
         public bool AbyssInferno;
         public bool WitchkingCurse;
-
+        public bool AbyssalSinking;
         public bool CCShocked;
         public bool Ignited;
         public bool CrimsonBurn;
@@ -265,6 +265,7 @@ namespace tsorcRevamp.NPCs
             DarkInferno = false;
             AbyssInferno = false;
             WitchkingCurse = false;
+            AbyssalSinking = false;
             CCShocked = false;
             Ignited = false;
             CrimsonBurn = false;
@@ -959,6 +960,10 @@ namespace tsorcRevamp.NPCs
             if (Sundered && modifiers.DamageType == DamageClass.Magic)
             {
                 modifiers.FinalDamage *= 1f + OrbOfFlame.MagicSunder / 100f;
+            }
+            if (AbyssalSinking)
+            {
+                modifiers.FinalDamage *= 1.09f;
             }
             if (Ignited)
             {
@@ -2129,6 +2134,12 @@ namespace tsorcRevamp.NPCs
                 var N = npc;
             }
 
+            if (AbyssalSinking)
+            {
+                npc.defense = Math.Max(0, npc.defDefense - 24);
+                npc.velocity *= 0.98f;
+            }
+
             if (CCShocked)
             {
                 int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(100);
@@ -2863,6 +2874,19 @@ namespace tsorcRevamp.NPCs
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 5, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), 1f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity += npc.velocity;
+                    Main.dust[dust].fadeIn = 1f;
+                }
+            }
+
+            if (AbyssalSinking)
+            {
+                Lighting.AddLight(npc.position, 0.015f, 0.155f, 0.165f);
+                if (Main.rand.NextBool(6))
+                {
+                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 217, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), 1.8f); ;
+                    Main.dust[dust].velocity *= 0.5f;
+                    Main.dust[dust].noGravity = false;
                     Main.dust[dust].velocity += npc.velocity;
                     Main.dust[dust].fadeIn = 1f;
                 }

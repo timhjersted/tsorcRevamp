@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.VanillaItems
             //Why is this eventide's internal name i'm literally going to go feral
             if (item.type == ItemID.FairyQueenRangedItem)
             {
-                item.damage = 40; //vanilla 50
+                item.damage = 42; //vanilla 50
             }
 
             //Golem items
@@ -99,13 +99,18 @@ namespace tsorcRevamp.Items.VanillaItems
             //Lunar items
             if (item.type == ItemID.Phantasm)
             {
-                item.damage = 42;
+                item.damage = 42; 
             }
 
             //Vanilla damage is 53
             if (item.type == ItemID.Tsunami)
             {
-                item.damage = 41;
+                item.damage = 46;
+            }
+
+            if (item.type == ItemID.DD2BetsyBow)
+            {
+                item.damage = 36;
             }
 
             if (item.type == ItemID.Xenopopper)

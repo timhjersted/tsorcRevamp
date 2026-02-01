@@ -926,9 +926,8 @@ namespace tsorcRevamp
 
 
             if ((playerX > 6083 && playerX < 6847 && playerY > 1664 && playerY < 1999) &&
-            tsorcRevampWorld.RemixMap && !(Main.LocalPlayer.ZoneOverworldHeight || Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneSkyHeight) && Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.StarlitHeavenWallpaper)
-            {
-                
+            tsorcRevampWorld.RemixMap && !(Main.LocalPlayer.ZoneOverworldHeight || Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneSkyHeight) && Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.ObsidianBrickUnsafe)
+            {     
                 bool DarkCloudIsAlive = false;
 
                 foreach (NPC npc in Main.npc)

@@ -1,8 +1,10 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Magic
 {
     public class DevilSickle : ModProjectile
     {
@@ -10,8 +12,8 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.width = 40;
             Projectile.height = 40;
-            Projectile.scale = 0.9f;
-            Projectile.alpha = 100;
+            Projectile.scale = 1.05f;
+            Projectile.alpha = 200;
             Projectile.timeLeft = 500;
             Projectile.friendly = true;
             Projectile.penetrate = 5;
@@ -31,7 +33,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.velocity.Y,
             90,
             default,
-            1.8f
+            2f
             );
             Main.dust[dust].noGravity = true;
             Projectile.rotation += Projectile.direction * 0.8f;
@@ -41,6 +43,51 @@ namespace tsorcRevamp.Projectiles
             {
                 Projectile.velocity.X *= 1.05f;
                 Projectile.velocity.Y *= 1.05f;
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+
+            Main.EntitySpriteDraw(
+                texture,
+                Projectile.Center - Main.screenPosition,
+                frame,
+                Color.White, 
+                Projectile.rotation,
+                frame.Size() / 2f,
+                Projectile.scale,
+                SpriteEffects.None,
+                0
+            );
+
+            return false;
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
+            Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f); 
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+
+            for (int i = 1; i <= 5; i++)  
+            {
+                Vector2 offset = Projectile.velocity * -i * 0.7f;  
+                float alpha = 0.6f * (1f - (i / 6f));  
+
+                Main.EntitySpriteDraw(
+                    texture,
+                    drawPosition + offset,
+                    null,
+                    lightColor * alpha,  
+                    Projectile.rotation,
+                    origin,
+                    Projectile.scale,
+                    SpriteEffects.None,
+                    0
+                );
             }
         }
 

@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Magic
 {
     class Ultima : ModProjectile
     {
@@ -67,7 +67,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile.localAI[0] = 1f;
             }
             Projectile.rotation += (Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y)) * 0.01f * (float)Projectile.direction;
-            if (Projectile.ai[1] == 1f || Projectile.type == 92)
+            if (Projectile.ai[1] == 1f)
             {
                 Projectile.light = 0.9f;
                 if (Main.rand.NextBool(10))
@@ -88,7 +88,6 @@ namespace tsorcRevamp.Projectiles
                         int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 107, Projectile.velocity.X, Projectile.velocity.Y, 0, default(Color), 1.5f);
                         Main.dust[dust].noGravity = true;
                     }
-                    return;
                 }
             }
         }

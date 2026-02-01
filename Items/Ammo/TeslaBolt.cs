@@ -19,7 +19,6 @@ namespace tsorcRevamp.Items.Ammo
             Item.scale = 1f;
             Item.value = 3;
             Item.ammo = Item.type;
-            Item.shoot = ModContent.ProjectileType<RedLaserBeam>();
         }
     }
 }

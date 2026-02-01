@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Weapons.Magic
+namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 {
     class WaterSpiritTome : ModItem
     {
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Item.width = 28;
             Item.height = 30;
-            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 6;
             Item.useTime = 6;
             Item.damage = 35;
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.UseSound = SoundID.Item9;
             Item.rare = ItemRarityID.LightRed;
             Item.shootSpeed = 9;
-            Item.mana = 4;
+            Item.mana = 5;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.IceSpirit4>();
@@ -42,11 +42,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SpellTome, 1);
-            //recipe.AddIngredient(ItemID.CrystalShard, 100);
+            recipe.AddIngredient(ItemID.CrystalStorm, 1);
             recipe.AddIngredient(ItemID.FrostCore, 1);
-            //recipe.AddIngredient(ItemID.SoulofNight, 40);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

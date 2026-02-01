@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.FairyQueenMagicItem)
             {
-                item.damage = 35; //vanilla 50
+                item.damage = 40; //vanilla 50
             }
             if (item.type == ItemID.SparkleGuitar)
             {

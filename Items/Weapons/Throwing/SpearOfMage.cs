@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Throwing;
 
-namespace tsorcRevamp.Items.Weapons.Magic
+namespace tsorcRevamp.Items.Weapons.Throwing
 {
     public class SpearOfMage : ModItem
     {
@@ -33,14 +33,14 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
             Item.UseSound = SoundID.Item1;
             Item.value = PriceByRarity.LightRed_4;
-            Item.shoot = ModContent.ProjectileType<Projectiles.SpearOfMage>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Throwing.SpearOfMage>();
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<EphemeralThrowingSpear>(), 100);
-            recipe.AddIngredient(ItemID.SoulofLight, 3);
+            recipe.AddIngredient(ItemID.SoulofLight, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
 
             recipe.AddTile(TileID.DemonAltar);

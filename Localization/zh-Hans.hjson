@@ -301,6 +301,7 @@ Mods: {
 			LothricAmbush1: 遭遇偷袭！
 			LothricAmbush2: 遭遇偷袭！
 			DualSandsprogAmbush1: 遭遇偷袭！
+			// EnragedQB: An angry Queen Bee appears!
 			HellkiteDragon: 村庄受到袭击！一条炼狱鸢龙前来捕食...
 			RemixHellkiteDragon: 一条炼狱鸢龙开始了它的狩猎...
 			// ThunderBird: The Grand Thunder Bird appears!
@@ -1697,11 +1698,6 @@ Mods: {
 					永久增加 {1} 最大生命值和 0.{0} 运气
 					"英雄功业的证明"
 					'''
-			}
-
-			HolyNecklace: {
-				DisplayName: 神圣项链
-				Tooltip: 发出淡蓝色的光，增加无敌帧时长，提供星星斗篷效果
 			}
 
 			AquamarineRing: {
@@ -5257,6 +5253,15 @@ Mods: {
 					'''
 			}
 
+			DivineAfflicter: {
+				// DisplayName: Divine Afflicter
+				/* Tooltip:
+					'''
+					Summons a lash of ichor to wither your foes
+					Deals more damage the slower it is moving when it strikes an enemy
+					''' */
+			}
+
 			DeathStrikeScroll: {
 				DisplayName: 死亡打击卷轴
 				Tooltip: 卷轴上写着"Exori mort"（注：这是游戏Tibia中的一句话
@@ -5363,11 +5368,6 @@ Mods: {
 			FlameStrikeScroll: {
 				DisplayName: 燎焱打击卷轴
 				Tooltip: 卷轴上写着"Exori flam"
-			}
-
-			FlareTome: {
-				DisplayName: 照明弹
-				Tooltip: 一本失传的传奇巨著
 			}
 
 			ForgottenIceBow: {
@@ -5566,11 +5566,6 @@ Mods: {
 			MeteorShower: {
 				DisplayName: 流星雨
 				Tooltip: 使陨石从天而降
-			}
-
-			MeteorTome: {
-				DisplayName: 流星宝典
-				Tooltip: 传说中的法术巨著，可以召唤出流星风暴
 			}
 
 			PoisonBombRune: {
@@ -6536,30 +6531,9 @@ Mods: {
 				Tooltip: ""
 			}
 
-			Crissaegrim: {
-				DisplayName: 无限真空刃—祝福之风
-				Tooltip:
-					'''
-					除精金握柄外，通体由纯净暗影锻造而成
-					黑暗的光环在持用者的手中无限地显现四把刀片
-					如果持用者的投掷未命中目标，则会将它们归还
-					'''
-			}
-
 			EphemeralThrowingSpear: {
 				DisplayName: 短暂投掷矛
 				Tooltip: 穿过坚固的墙壁
-			}
-
-			HeavenSword: {
-				DisplayName: 天堂之刃
-				Tooltip:
-					'''
-					除了它的精钢握把之外, 它是一把由纯光制成的投掷剑
-					神圣之光赐福，在持用者的手中无限地显现
-					如果持用者的投掷未命中目标，则会将它归还
-					穿过坚固的墙壁
-					'''
 			}
 
 			RoyalThrowingSpear: {
@@ -8076,6 +8050,49 @@ Mods: {
 					命中时召唤星辰坠落
 					'''
 			}
+
+			VenomBlade: {
+				// DisplayName: Toxic Blade
+				/* Tooltip:
+					'''
+					Poisoned throwing blades that release a small cloud of poison on hit
+					Has a chance to inflict Acid Venom 
+					''' */
+			}
+
+			MeteorStorm: {
+				// Tooltip: A legendary magic staff that calls down a meteor storm
+				// DisplayName: Meteor Storm
+			}
+
+			AbyssalDeluge: {
+				// DisplayName: Abyssal Deluge
+				/* Tooltip:
+					'''
+					A powerful tome from the Abyss that casts a water bomb that creates a massive flood upon explosion
+					Inflicts Sinking, a debuff that slightly increases damage taken from all sources, reduces defense and movement speed
+					''' */
+			}
+
+			DivineTouch: {
+				// DisplayName: Divine Touch
+				/* Tooltip:
+					'''
+					You are blessed with the light of the gods
+					Greatly lights up the cursor of you and your allies when equipped 
+					Emit a large pale light and increases pickup range for items
+					{$CommonItemTooltip.VanityFunction}
+					''' */
+			}
+
+			StarlightMagnetite: {
+				// DisplayName: Starlight Magnetite
+				/* Tooltip:
+					'''
+					Emit a blue light and increases pickup range for items
+					{$CommonItemTooltip.VanityFunction}
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -9080,6 +9097,11 @@ Mods: {
 				DisplayName: 巫师尖啸冷却
 				Description: 冷却结束前你无法使用巫师尖啸
 			}
+
+			AbyssalSinking: {
+				// DisplayName: Abyssal Sinking
+				// Description: Mods.tsorcRevamp.Buffs.AbyssalSinking.Description
+			}
 		}
 
 		Projectiles: {
@@ -9758,6 +9780,11 @@ Mods: {
 			ThunderBowLightning.DisplayName: 遗忘雷弓
 			// ChaosDemonBolt.DisplayName: Chaos Demon Bolt
 			// OolacileBolt.DisplayName: Oolacile Bolt
+			// VenomBlade.DisplayName: Venom Blade
+			// VenomBladeField.DisplayName: Venom Blade Field
+			// AbyssalDeluge.DisplayName: Abyssal Deluge
+			// AbyssalDelugeBall.DisplayName: Abyssal Deluge Ball
+			// DivineAfflicterProjectile.DisplayName: Divine Afflicter Projectile
 		}
 
 		NPCs: {
@@ -11050,6 +11077,13 @@ Mods: {
 					常人或许会看见自己变成连环杀手，危险但不足以致命
 					{0}，但对你而言，你最清楚体内沉睡的潜能，凝视这镜子恐将招致毁灭
 					'''
+				/* RemixDarkCloudHint:
+					'''
+					That mirror you hold... Do not look into it. That is an cursed artifact of the Abyss - one that transports you 
+					deep in the Abyss and manifests a future version of its beholder and twists it.
+					An ordinary man might see himself turned into a serial killer, dangerous but not certainly deadly.
+					For you {0}? You should know best how much untapped potential still lies within you. Looking into the mirror might just garuntee your undoing.
+					''' */
 				GwynHint:
 					'''
 					你已准备好面对深渊之王、火焰守护者葛温。曾为他提供权力的存在尽数败于你手

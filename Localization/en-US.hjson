@@ -301,6 +301,7 @@ Mods: {
 			LothricAmbush1: Ambush!
 			LothricAmbush2: Ambush!
 			DualSandsprogAmbush1: Ambush!
+			EnragedQB: An angry Queen Bee appears!
 			HellkiteDragon: The village is under attack! A Hellkite Dragon has come to feed...
 			RemixHellkiteDragon: A Hellkite Dragon has come to feed...
 			ThunderBird: The Grand Thunder Bird appears!
@@ -436,7 +437,7 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: Explore the suspension bridge between snow-topped mountains.
-			PinwheelDesc: Seek Catacombs of the Drowned under the village entrance.
+			PinwheelDesc: Seek the Path of the Drowned under the village entrance.
 			AncientOolacileDemonDesc: Legends mention the Oolacile Forest...
 			SlograAndGaibonName: Slogra and Gaibon
 			SlograAndGaibonDesc: Found in the depths of the Meteor Temple.
@@ -476,7 +477,7 @@ Mods: {
 			ArtoriasDesc:
 				'''
 				The Abyss pervades the tunnels east of the Forgotten City.
-				Remix Map: Find the key in the Great Foundry in the jungle to open the passage east of the Forgotten City.
+				Remix Map: Find the forgotten path to Artorias in the Great Foundry somewhere in the Jungle.
 				'''
 			SeathTheScalelessDesc: Seek out the lihzahrd gate below the Eastern Ocean.
 			AbysmalOolacileSorcererDesc:
@@ -1154,7 +1155,7 @@ Mods: {
 				DisplayName: Condition Overload
 				Tooltip:
 					'''
-					Enemies take bonus damage for every debuff affecting them.
+					Enemies take 7% bonus damage for every debuff affecting them.
 					"H Deimos CO farm 3/4 LF despoil"
 					Debuffs inflicted by whips excluded.
 					'''
@@ -1695,11 +1696,6 @@ Mods: {
 					maximum life by {1} and Luck by 0.{0}
 					"Proof of the hero's accomplishments"
 					'''
-			}
-
-			HolyNecklace: {
-				DisplayName: Holy Necklace
-				Tooltip: Emits blue light, longer invincibility and starcloak effect.
 			}
 
 			AquamarineRing: {
@@ -5257,6 +5253,15 @@ Mods: {
 					'''
 			}
 
+			DivineAfflicter: {
+				DisplayName: Divine Afflicter
+				Tooltip:
+					'''
+					Summons a lash of ichor to wither your foes
+					Deals more damage the slower it is moving when it strikes an enemy
+					'''
+			}
+
 			DeathStrikeScroll: {
 				DisplayName: Death Strike Scroll
 				Tooltip: The scroll reads "Exori mort."
@@ -5363,11 +5368,6 @@ Mods: {
 			FlameStrikeScroll: {
 				DisplayName: Flame Strike Scroll
 				Tooltip: The scroll reads "Exori flam."
-			}
-
-			FlareTome: {
-				DisplayName: Flare Tome
-				Tooltip: A lost legendary tome.
 			}
 
 			ForgottenIceBow: {
@@ -5568,11 +5568,6 @@ Mods: {
 			MeteorShower: {
 				DisplayName: Meteor Shower
 				Tooltip: Causes meteorites to rain from the sky
-			}
-
-			MeteorTome: {
-				DisplayName: Meteor Storm
-				Tooltip: A legendary spell tome that calls down a meteor storm
 			}
 
 			PoisonBombRune: {
@@ -6539,30 +6534,9 @@ Mods: {
 				Tooltip: ""
 			}
 
-			Crissaegrim: {
-				DisplayName: Crissaegrim
-				Tooltip:
-					'''
-					Aside from its adamantite grip, it is a throwing sword made of pure darkness.
-					A dark aura endlessly manifests four blades in the wielder's hand, and will
-					return them if the wielder's throw misses the one for whom it was intended.
-					'''
-			}
-
 			EphemeralThrowingSpear: {
 				DisplayName: Ephemeral Throwing Spear
 				Tooltip: Passes through solid walls
-			}
-
-			HeavenSword: {
-				DisplayName: Heaven Sword
-				Tooltip:
-					'''
-					Aside from its adamantite grip, it is a throwing sword made of pure light.
-					Blessed with a divine aura, it manifests endlessly in the wielder's hand
-					and returns if its blade should not pierce into the one whom it was meant for.
-					Passes through walls.
-					'''
 			}
 
 			RoyalThrowingSpear: {
@@ -8079,6 +8053,49 @@ Mods: {
 					Can summon stars on hit
 					'''
 			}
+
+			VenomBlade: {
+				DisplayName: Toxic Blade
+				Tooltip:
+					'''
+					Poisoned throwing blades that release a small cloud of poison on hit
+					Has a chance to inflict Acid Venom 
+					'''
+			}
+
+			MeteorStorm: {
+				Tooltip: A legendary magic staff that calls down a meteor storm
+				DisplayName: Meteor Storm
+			}
+
+			AbyssalDeluge: {
+				DisplayName: Abyssal Deluge
+				Tooltip:
+					'''
+					A powerful tome from the Abyss that casts a water bomb that creates a massive flood upon explosion
+					Inflicts Sinking, a debuff that slightly increases damage taken from all sources, reduces defense and movement speed
+					'''
+			}
+
+			DivineTouch: {
+				DisplayName: Divine Touch
+				Tooltip:
+					'''
+					You are blessed with the light of the gods
+					Greatly lights up the cursor of you and your allies when equipped 
+					Emit a large pale light and increases pickup range for items
+					{$CommonItemTooltip.VanityFunction}
+					'''
+			}
+
+			StarlightMagnetite: {
+				DisplayName: Starlight Magnetite
+				Tooltip:
+					'''
+					Emit a blue light and increases pickup range for items
+					{$CommonItemTooltip.VanityFunction}
+					'''
+			}
 		}
 
 		Buffs: {
@@ -9083,6 +9100,11 @@ Mods: {
 				DisplayName: Witchking Scream Cooldown
 				Description: You cannot scream again until this runs out
 			}
+
+			AbyssalSinking: {
+				DisplayName: Abyssal Sinking
+				Description: Mods.tsorcRevamp.Buffs.AbyssalSinking.Description
+			}
 		}
 
 		Projectiles: {
@@ -9761,6 +9783,11 @@ Mods: {
 			ThunderBowLightning.DisplayName: Thunder Bow Lightning
 			ChaosDemonBolt.DisplayName: Chaos Demon Bolt
 			OolacileBolt.DisplayName: Oolacile Bolt
+			VenomBlade.DisplayName: Venom Blade
+			VenomBladeField.DisplayName: Venom Blade Field
+			AbyssalDeluge.DisplayName: Abyssal Deluge
+			AbyssalDelugeBall.DisplayName: Abyssal Deluge Ball
+			DivineAfflicterProjectile.DisplayName: Divine Afflicter Projectile
 		}
 
 		NPCs: {
@@ -10972,7 +10999,7 @@ Mods: {
 					'''
 				RemixEarthFiendLichHint1:
 					'''
-					We must dive into the Great Chasm and find the Lihzahrd Gate that blocks the path to the Gray Catacombs.
+					We must dive into the Great Chasm and find the Lihzahrd Gate that blocks the path to the Catacombs.
 					Despite the horror of this place, we have no choice but to venture there and face what is there.
 					The Earth Fiend Lich is here, deep in the Catacombs.
 					'''
@@ -11048,6 +11075,13 @@ Mods: {
 				DarkCloudHint:
 					'''
 					That mirror you hold... Do not look into it. That is an cursed artifact of the moon - one that manifests a future version of its beholder and twists it.
+					An ordinary man might see himself turned into a serial killer, dangerous but not certainly deadly.
+					For you {0}? You should know best how much untapped potential still lies within you. Looking into the mirror might just garuntee your undoing.
+					'''
+				RemixDarkCloudHint:
+					'''
+					That mirror you hold... Do not look into it. That is an cursed artifact of the Abyss - one that transports you 
+					deep in the Abyss and manifests a future version of its beholder and twists it.
 					An ordinary man might see himself turned into a serial killer, dangerous but not certainly deadly.
 					For you {0}? You should know best how much untapped potential still lies within you. Looking into the mirror might just garuntee your undoing.
 					'''

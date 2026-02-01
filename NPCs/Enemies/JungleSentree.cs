@@ -8,6 +8,7 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Magic;
 using tsorcRevamp.Projectiles.Ranged.Ammo;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Utilities;

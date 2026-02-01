@@ -301,6 +301,7 @@ Mods: {
 			LothricAmbush1: Засада!
 			LothricAmbush2: Засада!
 			DualSandsprogAmbush1: Засада!
+			// EnragedQB: An angry Queen Bee appears!
 			HellkiteDragon: На деревню совершено нападение! Адский дракон прибыл чтобы покормиться...
 			RemixHellkiteDragon: Адский дракон прибыл чтобы покормиться...
 			// ThunderBird: The Grand Thunder Bird appears!
@@ -1657,11 +1658,6 @@ Mods: {
 					Максимальное здоровье на {1} и удачу на 0.{0}
 					"Доказательство достижений героя"
 					'''
-			}
-
-			HolyNecklace: {
-				DisplayName: Святое Ожерелье
-				Tooltip: Излучает синий свет, дает более длительную неуязвимость и эффект звёздного плаща.
 			}
 
 			AquamarineRing: {
@@ -5216,6 +5212,15 @@ Mods: {
 					'''
 			}
 
+			DivineAfflicter: {
+				// DisplayName: Divine Afflicter
+				/* Tooltip:
+					'''
+					Summons a lash of ichor to wither your foes
+					Deals more damage the slower it is moving when it strikes an enemy
+					''' */
+			}
+
 			DeathStrikeScroll: {
 				DisplayName: Свиток смертельного удара
 				Tooltip: На свитке написано "Изгнать смерть".
@@ -5322,11 +5327,6 @@ Mods: {
 			FlameStrikeScroll: {
 				DisplayName: Свиток огненного удара
 				Tooltip: На свитке написано "Изгони пламя".
-			}
-
-			FlareTome: {
-				DisplayName: Факельный том
-				Tooltip: Утерянный легендарный том
 			}
 
 			ForgottenIceBow: {
@@ -5533,11 +5533,6 @@ Mods: {
 			MeteorShower: {
 				DisplayName: Метеоритный дождь
 				Tooltip: Вызывает падение метеоритов с неба
-			}
-
-			MeteorTome: {
-				DisplayName: Метеоритный шторм
-				Tooltip: Легендарный фолиант заклинаний, вызывающий метеоритный шторм
 			}
 
 			PoisonBombRune: {
@@ -6499,30 +6494,9 @@ Mods: {
 				Tooltip: ""
 			}
 
-			Crissaegrim: {
-				DisplayName: Криссаэгрим
-				Tooltip:
-					'''
-					Помимо адамантитовой рукояти, это метательный меч, сделанный из чистой тьмы.
-					Тёмная аура бесконечно проявляет четыре клинка в руке владельца и возвращает
-					их обратно, если бросок не попадает в того, кому он предназначался.
-					'''
-			}
-
 			EphemeralThrowingSpear: {
 				DisplayName: Эфемерное метательное копье
 				Tooltip: Проходит сквозь твёрдые стены
-			}
-
-			HeavenSword: {
-				DisplayName: Небесный меч
-				Tooltip:
-					'''
-					Помимо адамантитовой рукояти, это метательный меч, сделанный из чистого света.
-					Наделённый божественной аурой, он бесконечно проявляется в руке владельца
-					и возвращается, если его лезвие не пронзает того, для кого предназначено.
-					Проходит сквозь стены.
-					'''
 			}
 
 			RoyalThrowingSpear: {
@@ -8034,6 +8008,49 @@ Mods: {
 					Can summon stars on hit
 					''' */
 			}
+
+			VenomBlade: {
+				// DisplayName: Toxic Blade
+				/* Tooltip:
+					'''
+					Poisoned throwing blades that release a small cloud of poison on hit
+					Has a chance to inflict Acid Venom 
+					''' */
+			}
+
+			MeteorStorm: {
+				// Tooltip: A legendary magic staff that calls down a meteor storm
+				// DisplayName: Meteor Storm
+			}
+
+			AbyssalDeluge: {
+				// DisplayName: Abyssal Deluge
+				/* Tooltip:
+					'''
+					A powerful tome from the Abyss that casts a water bomb that creates a massive flood upon explosion
+					Inflicts Sinking, a debuff that slightly increases damage taken from all sources, reduces defense and movement speed
+					''' */
+			}
+
+			DivineTouch: {
+				// DisplayName: Divine Touch
+				/* Tooltip:
+					'''
+					You are blessed with the light of the gods
+					Greatly lights up the cursor of you and your allies when equipped 
+					Emit a large pale light and increases pickup range for items
+					{$CommonItemTooltip.VanityFunction}
+					''' */
+			}
+
+			StarlightMagnetite: {
+				// DisplayName: Starlight Magnetite
+				/* Tooltip:
+					'''
+					Emit a blue light and increases pickup range for items
+					{$CommonItemTooltip.VanityFunction}
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -9038,6 +9055,11 @@ Mods: {
 				DisplayName: Перезарядка вопля Короля-Чародея
 				Description: Вы не можете прокричать снова, пока она не закончится
 			}
+
+			AbyssalSinking: {
+				// DisplayName: Abyssal Sinking
+				// Description: Mods.tsorcRevamp.Buffs.AbyssalSinking.Description
+			}
 		}
 
 		Projectiles: {
@@ -9716,6 +9738,11 @@ Mods: {
 			// ThunderBowLightning.DisplayName: Thunder Bow Lightning
 			// ChaosDemonBolt.DisplayName: Chaos Demon Bolt
 			// OolacileBolt.DisplayName: Oolacile Bolt
+			// VenomBlade.DisplayName: Venom Blade
+			// VenomBladeField.DisplayName: Venom Blade Field
+			// AbyssalDeluge.DisplayName: Abyssal Deluge
+			// AbyssalDelugeBall.DisplayName: Abyssal Deluge Ball
+			// DivineAfflicterProjectile.DisplayName: Divine Afflicter Projectile
 		}
 
 		NPCs: {
@@ -10927,7 +10954,7 @@ Mods: {
 					'''
 				/* RemixEarthFiendLichHint1:
 					'''
-					We must dive into the Great Chasm and find the Lihzahrd Gate that blocks the path to the Gray Catacombs.
+					We must dive into the Great Chasm and find the Lihzahrd Gate that blocks the path to the Catacombs.
 					Despite the horror of this place, we have no choice but to venture there and face what is there.
 					The Earth Fiend Lich is here, deep in the Catacombs.
 					''' */
@@ -11006,6 +11033,13 @@ Mods: {
 					An ordinary man might see himself turned into a serial killer, dangerous but not certainly deadly.
 					For you {0}? You should know best how much untapped potential still lies within you. Looking into the mirror might just garuntee your undoing.
 					'''
+				/* RemixDarkCloudHint:
+					'''
+					That mirror you hold... Do not look into it. That is an cursed artifact of the Abyss - one that transports you 
+					deep in the Abyss and manifests a future version of its beholder and twists it.
+					An ordinary man might see himself turned into a serial killer, dangerous but not certainly deadly.
+					For you {0}? You should know best how much untapped potential still lies within you. Looking into the mirror might just garuntee your undoing.
+					''' */
 				GwynHint:
 					'''
 					You are ready to face Gwyn, keeper of the Flame and King of the Abyss. The beings that once supplied him with power are no more, vanquished by your hand.  

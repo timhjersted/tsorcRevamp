@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.width = 12;
             Item.knockBack = 4;
             Item.shoot = ModContent.ProjectileType<Projectiles.GlaiveBeamHoldout>();
+            Item.useAmmo = ModContent.ItemType<TeslaBolt>();
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = null;
             Item.channel = true;

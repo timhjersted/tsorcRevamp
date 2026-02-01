@@ -6,6 +6,13 @@
   "style": 1
 }
 {
+  "text": "P.S: THE ORIGINAL STORY OF RED CLOUD MUSIC MOD IS NOT COMPATIBLE WITH THE REMIX MAP. IT IS RECOMMANDED TO PLAY WITH THE \u0027The Story of Red Cloud Music - Remix Map Version\u0027 MUSIC MOD INSTEAD, AVALIABLE ON THE STEAM WORKSHOP.",
+  "tileX": 4855,
+  "tileY": 857,
+  "textWidth": 320, 
+  "style": 1
+}
+{
   "text": "You\u0027ve found the home of the Shaman Elder",
   "tileX": 101,
   "tileY": 524,
@@ -55,7 +62,7 @@
   "style": 1
 }
 {
-  "text": "\u0022Greetings Red, so you have made it to the eastern lands. I have guarded this home and this little mushroom forest for a long time, a small paradise and a great oasis between the corrupted mountains of the west and the arid and hostile desert of the east. I am in communication with my friend Yimaya, the Dryad, she informed me of your returns and the path you have traveled, I can only encourage you, but beware, the challenges on your way are only just beginning... your path further east will be difficult. Otherwise, you are welcome here, if rest is necessary.\u0022",
+  "text": "\u0022Greetings Red, so you have made it to the eastern lands. I have guarded this home and this little mushroom forest for a long time, a small paradise and a great oasis between the corrupted mountains of the east and the arid and hostile desert of the west. I am in communication with my friend Yimaya, the Dryad, she informed me of your returns and the path you have traveled, I can only encourage you, but beware, the challenges on your way are only just beginning... your path further east will be difficult. Otherwise, you are welcome here, if rest is necessary.\u0022",
   "tileX": 2450,
   "tileY": 753,
   "textWidth": 320,
@@ -209,7 +216,7 @@
   "style": 1
 }
 {
-  "text": "You come upon a mystic sanctuary, and feel a deep feeling of peace in your heart for perhaps the first time since the day your parents died and you lost your wife. A great feeling of love overwhelms you, mixed with great sadness as the thought grabs you. You decide to stay here for a moment longer to reflect on your journey... and to summon all your courage for the path ahead.",
+  "text": "You come upon a mystic sanctuary which appears to be a memorial to Elengad, the ancient great king of the Desert. You feel a deep feeling of peace in your heart for perhaps the first time since the day your parents died and you lost your wife. A great feeling of love overwhelms you, mixed with great sadness as the thought grabs you. You decide to stay here for a moment longer to reflect on your journey... and to summon all your courage for the path ahead.",
   "tileX": 611,
   "tileY": 1559,
   "textWidth": 320,
@@ -293,7 +300,21 @@
   "style": 1
 }
 {
-  "text": "Miakoda: \u0022This looks perilous, Red. Perhaps we should explore further to the West, in search of more powerful gear.  --NEWLINE  --NEWLINE Beyond this desert lies the Nora Sea. Its depths are so deep, few have ever explored beyond its shallow waters and returned,  but it\u0027s rumored an underwater people once lived down there who could walk on water, and lava even!\u0022",
+  "text": "The ancient inhabitants of these ruins were called the Noranians, a tropical people who worshipped the sea-god Nora, about whom you have heard many myths. No one truly knows how this civilization fell, but it became a place overflowing with treasure, where pirates from across the sea come to land and plunder the ruins...",
+  "tileX": 601,
+  "tileY": 860,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- The Nora Sea - --NEWLINE  --NEWLINE The great sea of the west is known as the sea of storms, tidal waves, and pirates. Renowned for its dangerosity, only a few fools venture there in search of new lands. --NEWLINE Seeing the sea on the horizon, you think of all the lands and civilizations hidden beyond, and you wonder if it is as ruined as it is on this continent.",
+  "tileX": 185,
+  "tileY": 854,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Miakoda: \u0022This looks perilous, Red. Find a way to protect you from the lava, it\u0022s crucial here.",
   "tileX": 1577,
   "tileY": 988,
   "textWidth": 320,
@@ -370,7 +391,7 @@
   "style": 1
 }
 {
-  "text": "Miakoda: \u0022Red, I\u0027ve heard many rumors about the Shadow Temple. It is legendary for its labyrinthian design, which sprawls beyond the gates of the temple, connecting caverns, a great underground lake and hallowed spike chasms...\u0022 ",
+  "text": "Miakoda: \u0022Red, I\u0027ve heard many rumors about the Shadow Temple. It is legendary for its labyrinthian design, which sprawls beyond the gates of the temple, connecting caverns, waterways and corrupted spike chasms...\u0022 ",
   "tileX": 1900,
   "tileY": 1121,
   "textWidth": 320,
@@ -496,7 +517,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found The Grey Catacombs -",
+  "text": "- You\u0027ve found The Catacombs -",
   "tileX": 2991,
   "tileY": 1231,
   "textWidth": 320,
@@ -540,7 +561,7 @@
 {
   "text": "Holding a shadow scale in your hand, you sense that the hidden-soul form of the Shadow Armor has a powerful ability that will be useful in the jungles that lie ahead. --NEWLINE  --NEWLINE \u0022Ahh, this house has tools for me to craft the Shadow Armor.\u0022",
   "tileX": 3188,
-  "tileY": 1096,
+  "tileY": 1095,
   "textWidth": 320,
   "style": 1
 }
@@ -608,7 +629,7 @@
   "style": 1
 }
 {
-  "text": "- This gate guards the Path to the Grey Catacombs, Home of the Earth Fiend Lich - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE \u0022Lizard Gate at the bottom of the Great Chasm.  Key to open unknown...\u0022",
+  "text": "- This gate guards the Path to the Catacombs, Home of the Earth Fiend Lich - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE \u0022Lizard Gate at the bottom of the Great Chasm.  Key to open unknown...\u0022",
   "tileX": 3364,
   "tileY": 1412,
   "textWidth": 320,
@@ -1099,8 +1120,8 @@
 }
 {
   "text": "\u0022It looks like I can safely step on this ashen mud without getting burned.\u0022 --NEWLINE  --NEWLINE Miakoda: \u0022The inhabitants of these ruins were known to use Obsidian Stones to protect their feet. If we can make it far enough we may be able to find one.\u0022",
-  "tileX": 4219,
-  "tileY": 1868,
+  "tileX": 4399,
+  "tileY": 1880,
   "textWidth": 320,
   "style": 1
 }
@@ -1119,14 +1140,21 @@
   "style": 1
 }
 {
-  "text": "- You have discovered the Fire Temple - ",
-  "tileX": 4227,
-  "tileY": 1862,
+  "text": "Miakoda: This path to the Fire Temple is obstructed, try to find another passage on the other side of the city perhaps.",
+  "tileX": 4226,
+  "tileY": 1844,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "- You have found the Underworld's Outskirts - --NEWLINE  --NEWLINE It\u0027s quite interesting that nature developed here, in such a deep and hot place.",
+  "text": "- You have discovered the Fire Temple - ",
+  "tileX": 4233,
+  "tileY": 1889,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You have found the Underworld\u0027s Outskirts - --NEWLINE  --NEWLINE It\u0027s quite interesting that nature developed here, in such a deep and hot place.",
   "tileX": 5367,
   "tileY": 1877,
   "textWidth": 320,
@@ -1238,7 +1266,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Cherry Blossom Skies - --NEWLINE  --NEWLINE These small islands flying above the plains are covered with beautiful cherry blossom trees which makes them magnificent. They were once inhabited by a lone ninja who appears to have been absorbed into a gelatinous creature that now roams these floating islands",
+  "text": "- You\u0027ve found the Cherry Blossom Skies - --NEWLINE  --NEWLINE These small islands flying above the plains are covered with beautiful cherry blossom trees which makes them magnificent. They were once inhabited by a lone ninja who appears to have been absorbed into a gelatinous creature that now roams these floating islands.",
   "tileX": 4651,
   "tileY": 650,
   "textWidth": 320,
@@ -1287,7 +1315,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the Catacombs of the Drowned - ",
+  "text": "- You\u0027ve discovered the Path of the Drowned - ",
   "tileX": 4360,
   "tileY": 765,
   "textWidth": 320,
@@ -1532,7 +1560,7 @@
   "style": 1
 }
 {
-  "text": " - You\u0027ve found the Morgul Feleg, the source of corruption and dark magic in this world -",
+  "text": " - You\u0027ve found Morgul Feleg, the epicenter of corruption and dark magic in this world -",
   "tileX": 1488,
   "tileY": 1914,
   "textWidth": 320,
@@ -1553,7 +1581,7 @@
   "style": 1
 }
 {
-  "text": "You have discovered The Forgotten City",
+  "text": "You have discovered The Forgotten City of Izalith, ",
   "tileX": 4821,
   "tileY": 1470,
   "textWidth": 320,
@@ -1567,7 +1595,7 @@
   "style": 1
 }
 {
-  "text": "This bridge is made of burning Hellstone.  --NEWLINE  --NEWLINE \u0022I\u0027I forgot how hot it was here…\u0022",
+  "text": "- You have arrived in the Underworld, the deepest layer of the World, filled with nothing but flames, ashes, and discord. - --NEWLINE  --NEWLINE This bridge is made of burning Hellstone.  --NEWLINE  --NEWLINE \u0022I\u0027I forgot how hot it was here…\u0022",
   "tileX": 4846,
   "tileY": 1884,
   "textWidth": 320,
@@ -1602,7 +1630,7 @@
   "style": 1
 }
 {
-  "text": "After defeating Skeletron and resting in the nearby Druid\u0027s home, you return here and peer into the darkness below.  --NEWLINE  --NEWLINE \u0022This must be the path forward,\u0022 you think, but you can\u0027t see anything beyond the ledge. With a deep breath, you take a leap, into the unknown.",
+  "text": "After defeating Skeletron and resting in the nearby house, you return here and peer into the darkness below.  --NEWLINE  --NEWLINE \u0022This must be the path forward,\u0022 you think, but you can\u0027t see anything beyond the ledge. With a deep breath, you take a leap, into the unknown.",
   "tileX": 4888,
   "tileY": 1407,
   "textWidth": 320,
@@ -1686,7 +1714,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the entrance to the Great Foundry - --NEWLINE  --NEWLINE This foundry was abandoned for a long time but remains somewhat active, it\u0027s quite strange.",
+  "text": "- You\u0027ve found the entrance to the Great Foundry - --NEWLINE  --NEWLINE It is said that the foundry contains a secret path to the lost ruins of Artorias...",
   "tileX": 5149,
   "tileY": 1004,
   "textWidth": 320,
@@ -1723,12 +1751,12 @@
 {
   "text": "\u0022This path seems strange, is it another passage to the forgotten city?\u0022",
   "tileX": 5369,
-  "tileY": 1629,
+  "tileY": 1620,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "Miakoda: Long ago, The Forgotten City was guarded by a knight known as Artorias, the Abyss Walker.  --NEWLINE  --NEWLINE This room still hums with the energy of the Abyss...",
+  "text": "Miakoda: Long ago, The Forgotten City, formerly the City of Izalith, was guarded by a knight known as Artorias, the Abyss Walker.  --NEWLINE  --NEWLINE This room still hums with the energy of the Abyss...",
   "tileX": 5308,
   "tileY": 1694,
   "textWidth": 320,
@@ -1742,14 +1770,14 @@
   "style": 1
 }
 {
-  "text": "Red: \u0022Miakoda, is there a connection between the Great Foundry and Artorias?\u0022 --NEWLINE --NEWLINE Miakoda: \u0022Yes, a long time ago, when the Foundry was in full operation, there were strong ties between it and the Forgotten City. Artorias\u0022 armor, renowned as one of the most durable, was forged here with magical protection, and a long tunnel was created to connect the foundry to the city.\u0022",
+  "text": "Red: \u0022Miakoda, is there a connection between the Great Foundry and Artorias?\u0022 --NEWLINE --NEWLINE Miakoda: \u0022Yes, a long time ago, when the Foundry was in full operation, there were strong ties between it and the Forgotten City of Izalith. Artorias\u0022 armor, renowned as one of the most durable, was forged here with magical protection, and a long tunnel was created to connect the foundry to the city.\u0022",
   "tileX": 5544,
   "tileY": 1329,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the underground jungle\u0027s Lake of Flowered Paths -",
+  "text": "- You\u0027ve discovered the Underground Jungle\u0027s Lake of Flowered Paths - --NEWLINE --NEWLINE This large underground lake was sacred to the inhabitants of these ruins; many pilgrims from the jungle came here to purify themselves with the lake\u0022s fresh water. Observing the lake\u0022s depth, you wonder what lies hidden at its very bottom.",
   "tileX": 5317,
   "tileY": 1371,
   "textWidth": 320,
@@ -1777,14 +1805,14 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Lost Oolacile Forest - --NEWLINE  --NEWLINE A feeling of dread hits your stomach: You shouldn\u0027t be here.",
+  "text": "The darkness and the stench of death intensify as you progress. The path ahead seems particularly dark and dense, and you sense the demon\u0027s presence nearby.",
   "tileX": 5422,
   "tileY": 925,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "As you open the gate you feel a gust of fresh air. ",
+  "text": "As you open the gate, you also hear noise behind you; --NEWLINE it seems to be coming from the passage that was blocked down earlier.",
   "tileX": 5507,
   "tileY": 982,
   "textWidth": 320,
@@ -1819,9 +1847,9 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the Great Pyramid - --NEWLINE  --NEWLINE Miakoda: \u0022This pryamid is a high place of power and also the birthplace of Plantera bulbs.\u0022",
-  "tileX": 5774,
-  "tileY": 1781,
+  "text": "- You\u0027ve discovered the Great Pyramid of Life - --NEWLINE  --NEWLINE Miakoda: \u0022This pryamid is considered to be the heart of the Undergrowth and also the birthplace of Plantera bulbs.\u0022",
+  "tileX": 5828,
+  "tileY": 1761,
   "textWidth": 320,
   "style": 1
 }
@@ -1973,14 +2001,21 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Jungle Village - --NEWLINE  --NEWLINE \u0022Interesting, I recognize some of the residents here...\u0022",
+  "text": "- You\u0027ve found the Tree Village of the Orid Tribe - --NEWLINE  --NEWLINE \u0022Interesting, I recognize some of the residents here...\u0022",
   "tileX": 5680,
   "tileY": 822,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Jungle Ruins - --NEWLINE  --NEWLINE \u0022What ancient civilization could have built this?...\u0022",
+  "text": "\u0022What ancient civilization could have built this?...\u0022",
+  "tileX": 5596,
+  "tileY": 736,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You\u0027ve found the Jungle Ruins - --NEWLINE  --NEWLINE \u0022The Orid Tribe, although perceived as barbarians by the peoples of the west, were known for their remarkable architecture and the richness of their civilization. They managed to harmonize their golden structures with the dense and wild flora and fauna of the jungle. --NEWLINE But now, only ruins remain.",
   "tileX": 6200,
   "tileY": 879,
   "textWidth": 320,
@@ -2029,6 +2064,20 @@
   "style": 1
 }
 {
+  "text": "- The Great Mountains of Elendaris -",
+  "tileX": 6704,
+  "tileY": 530,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- The Frozen Ocean - --NEWLINE  --NEWLINE Upon leaving the Mountains of Elendaris, you hear a faint, melancholic sound coming from beneath the ice. --NEWLINE  --NEWLINE Miakoda: Sorrow waits, deep beneath the Frozen Ocean. The icy path that awaits you will not be easy, Red.",
+  "tileX": 7505,
+  "tileY": 774,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "A voice beyond the wall snickers, \u0022If it is Obsidian\u0027s Temple you seek, know that there is more than one entrance to the secrets it holds...\u0022 --NEWLINE  --NEWLINE The voice makes an unsettling laugh and then goes silent.",
   "tileX": 6349,
   "tileY": 1077,
@@ -2036,7 +2085,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered Obsidian\u0027s Volcano -",
+  "text": "- You\u0027ve discovered Obsidian\u0027s Volcano - --NEWLINE  --NEWLINE Below was once the sparkling Golden City of the Jungle, where opulence and wealth were limitless, which is now formed only of magma, ash, and meteorites.",
   "tileX": 6430,
   "tileY": 828,
   "textWidth": 320,
@@ -2123,13 +2172,6 @@
   "text": "\u0027Hello stranger! My name is Bosh and I\u0027m an angler! We are travelers who own a boat and explore the coasts. I\u0027m not from the country but I noticed here the impressive ruins in these tropics which seem quite rich in treasure... Oh and otherwise you are welcome in this boat among us!\u0027",
   "tileX": 236,
   "tileY": 858, 
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "- You have found the Celestial Wastes, the blasted skies at the edge of the world -",
-  "tileX": 331,
-  "tileY": 208,
   "textWidth": 320,
   "style": 1
 }
@@ -2309,7 +2351,7 @@
   "style": 1
 }
 {
-  "text": "- The path is blocked by lihzahrd bricks, blocking the path to the Prison of Chaos -  --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Lizard Gate in a small cavity on the border between the Hallowed Caves and the Frozen Ocean...\u0022",
+  "text": "- The path is sealed by lihzahrd bricks, blocking the path to the Prison of Chaos -  --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Lizard Gate in a small cavity on the border between the Hallowed Caves and the Frozen Ocean...\u0022",
   "tileX": 7497,
   "tileY": 873,
   "textWidth": 320,
@@ -2372,14 +2414,14 @@
   "style": 1
 }
 {
-  "text": "placeholder",
+  "text": "You find a worn note on the ground: --NEWLINE \u0022The Mythril, a cold ore formed in ancient ice, holds powerful magical properties. Yet the vast layer of Mythril ice on the surface does not appear to be of natural origin; perhaps it was created to act as a barrier to the Blight spreading in the ocean?\u0022",
   "tileX": 8160,
   "tileY": 1172,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "An ancient frozen kingdom was built upon this long glacier, formed from a thick layer of mithril ice that covers the ocean. You\u0027ve never seen a sight like this in your entire life.",
+  "text": "An ancient frozen kingdom was built upon this long glacier, with a thick layer of Mythril ice inside that covers the ocean. You\u0027ve never seen a sight like this in your entire life.",
   "tileX": 7597,
   "tileY": 853,
   "textWidth": 320,
@@ -2431,6 +2473,13 @@
   "text": "You catch your breath to look far into the horizon. Nothing but a faint white blending effortlessly with the blue-green sheen glowing up through the snow. This ocean appears to go off into infinity. Who can imagine what could be beyond this world?",
   "tileX": 8334,
   "tileY": 866,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Red: \u0022Miakoda, these floating islands... the Celestial Pillars... where do they come from? Why do they hover above the world?\u0022 --NEWLINE Miakoda: \u0022Long ago, Attraidies sought to control their power. To keep their power from other hands, he tore these lands from the earth, raising them to the skies. he bound each pillar with a monolithic seal, locked by his own life. As long as Attraidies is alive, the pillars will be sealed forever..\u0022",
+  "tileX": 2364,
+  "tileY": 384,
   "textWidth": 320,
   "style": 1
 }

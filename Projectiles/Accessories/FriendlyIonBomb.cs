@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Accessories
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Electrified, 300);
+            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 300);
         }
 
         public override bool PreKill(int timeLeft)

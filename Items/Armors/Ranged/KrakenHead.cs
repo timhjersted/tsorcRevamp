@@ -32,6 +32,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShroomiteHelmet);
             recipe.AddIngredient(ModContent.ItemType<KrakenFlesh>());
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -40,6 +41,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.ShroomiteHeadgear);
             recipe2.AddIngredient(ModContent.ItemType<KrakenFlesh>());
+            recipe2.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe2.AddTile(TileID.DemonAltar);
 
@@ -48,6 +50,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.ShroomiteMask);
             recipe3.AddIngredient(ModContent.ItemType<KrakenFlesh>());
+            recipe3.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
             recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe3.AddTile(TileID.DemonAltar);
 

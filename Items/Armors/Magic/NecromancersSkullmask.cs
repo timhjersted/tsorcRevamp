@@ -32,6 +32,7 @@ namespace tsorcRevamp.Items.Armors.Magic
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpectreHood);
             recipe.AddIngredient(ModContent.ItemType<LichBone>());
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -40,6 +41,7 @@ namespace tsorcRevamp.Items.Armors.Magic
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.SpectreMask);
             recipe2.AddIngredient(ModContent.ItemType<LichBone>());
+            recipe2.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe2.AddTile(TileID.DemonAltar);
 

@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Weapons.Magic
+namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 {
     class UltimaTome : ModItem
     {
@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.height = 10;
             Item.knockBack = 4;
             Item.rare = ModContent.RarityType<DarkBlue>();
-            Item.shootSpeed = 9;
+            Item.shootSpeed = 9.5f;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 18;
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useAnimation = 10;
             Item.value = 5000000;
             Item.width = 34;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Ultima>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Magic.Ultima>();
         }
 
         public override void AddRecipes()

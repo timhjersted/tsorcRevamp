@@ -1175,7 +1175,7 @@ namespace tsorcRevamp
             self.dontTakeDamage = !IsVulnerable;
             if (self.Hitbox.Intersects(player.Hitbox) && !IsUnderwater)
             {
-                player.AddBuff(ModContent.BuffType<Stiff>(), 10 * 60);
+                player.AddBuff(ModContent.BuffType<Stiff>(), 5 * 60);
             }
         }
 
