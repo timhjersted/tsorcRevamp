@@ -547,7 +547,6 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
                 pool.Add(NPCID.NebulaHeadcrab, 0.4f); //.1 is 3%
-                pool.Add(NPCID.NebulaBeast, 0.3f); //.1 is 3%
                 pool.Add(NPCID.NebulaSoldier, 0.4f); //.1 is 3%
             }
             //spaceships or flesh background of crimson biome

@@ -61,6 +61,26 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
             return false;
         }
 
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            if (type == ProjectileID.RocketIII || type == ProjectileID.RocketII || type == ProjectileID.RocketIV)
+            {
+                type = ProjectileID.MiniNukeRocketI; 
+            }
+
+            Projectile.NewProjectile(
+                player.GetSource_ItemUse(Item), 
+                position, 
+                velocity.RotatedByRandom(MathHelper.ToRadians(30)) * 0.8f,
+                ProjectileID.ShadowFlame, 
+                damage / 2, 
+                knockback, 
+                player.whoAmI,
+                0f, 0f, 
+                DamageClass.Ranged.Type 
+            );
+        }
+
         public override void HoldItem(Player player)
         {
             player.scope = true;
