@@ -280,7 +280,7 @@ Mods: {
 			GwynTombVisions: default
 			AbyssPortal: default
 			Gwyn: 葛温已苏醒，将你的旅程推向终焉...
-			AbysmalOolacileSorcerer: 堕渊乌拉席露巫师将杀死你...
+			AbysmalOolacileSorcerer: 乌拉席露大秘术师将杀死你...
 			Witchking: 巫师王已经在等你...
 			Blight: 枯萎从洋面上升起！
 			Chaos: 混沌已经进入这个维度！
@@ -301,15 +301,15 @@ Mods: {
 			LothricAmbush1: 遭遇偷袭！
 			LothricAmbush2: 遭遇偷袭！
 			DualSandsprogAmbush1: 遭遇偷袭！
-			// EnragedQB: An angry Queen Bee appears!
+			EnragedQB: 一只愤怒的蜂后出现了！
 			HellkiteDragon: 村庄受到袭击！一条炼狱鸢龙前来捕食...
 			RemixHellkiteDragon: 一条炼狱鸢龙开始了它的狩猎...
-			// ThunderBird: The Grand Thunder Bird appears!
-			// QueenJellyfish: The Queen Jellyfish has spotted you in the lake...
-			// Viscount: Viscount is bloodthirsty!
-			// StarScouter: A Star Scouter descends from the sky...
-			// Lich: The Lich wants your soul...
-			// ForgottenOne: The Forgotten One sees you!
+			ThunderBird: 惊雷王鹰出现了！
+			QueenJellyfish: 湖中水母皇后正注视着你...
+			Viscount: 蝙蝠子爵正渴求你的鲜血！
+			StarScouter: 星宇航舟自天穹降临...
+			Lich: 巫妖索求你的灵魂...
+			ForgottenOne: T遗忘之主已将你锁定！
 			Bossduration: "耗时: "
 		}
 
@@ -477,7 +477,7 @@ Mods: {
 			ArtoriasDesc:
 				'''
 				深渊的力量渗透了遗忘之城东边的隧道...
-				重构版地图: 找到丛林中大铸造厂的钥匙以打开遗忘之城东边的通路...
+				重构版地图: 找到丛林中大铸造厂里被遗忘的通往阿卓迪斯的的通路...
 				'''
 			SeathTheScalelessDesc: 追寻冻样深处的丛林蜥蜴砖大门...
 			AbysmalOolacileSorcererDesc:
@@ -1155,8 +1155,8 @@ Mods: {
 				DisplayName: 超载状态
 				Tooltip:
 					'''
-					敌人每受到一个负面状态的影响，将会受到指数级增加的额外伤害
-					这不包括鞭子造成的效果
+					敌人每受到一个负面状态的影响，将会受到 7% 额外伤害
+					不包括鞭子施加的减益效果
 					"水男火卫二速刷土豆 3=1 来个掠夺"
 					'''
 			}
@@ -3197,14 +3197,14 @@ Mods: {
 			}
 
 			VaultOfEndlessGreed: {
-				// DisplayName: Vault of Endless Greed
-				/* Tooltip:
+				DisplayName: 无尽贪婪之证
+				Tooltip:
 					'''
-					You feel overwhelmed by the sin of avarice.
-					Attacks inflict the Midas debuff
+					贪婪之罪将你彻底吞噬
+					攻击施加迈达斯减益
 					{$CommonItemTooltip.SoulDrops}
-					but the curse of the branded also [c/FF0000:drains a small amount of HP].
-					''' */
+					但是其上烙印的诅咒也会[c/FF0000:蚕食你的生命]
+					'''
 			}
 
 			AttraidiesRelic: {
@@ -3336,7 +3336,7 @@ Mods: {
 			}
 
 			OolacileSorcererBag: {
-				DisplayName: 宝藏袋（堕渊乌拉席露巫师）
+				DisplayName: 宝藏袋（乌拉席露大秘术师）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3406,7 +3406,7 @@ Mods: {
 				DisplayName: 堕渊之石
 				Tooltip:
 					'''
-					召唤堕渊乌拉席露巫师
+					召唤乌拉席露大秘术师
 					仅在夜晚使用
 					'''
 			}
@@ -3415,7 +3415,7 @@ Mods: {
 				DisplayName: 枯萎之石
 				Tooltip:
 					'''
-					召唤「枯萎」，深渊六守卫之一
+					召唤「枯萎」，深渊七守卫之一
 					你必须在地表上战斗
 					在你佩戴饰品「亚尔特留斯之约」时枯萎不会受伤
 					'''
@@ -4070,7 +4070,7 @@ Mods: {
 				Tooltip:
 					'''
 					一份关于矮人守卫的契约
-					将召唤一个矮人保卫村庄
+					[c/00ffd4:小矮人对此很感兴趣，或许会回赠你一份礼物]
 					'''
 			}
 
@@ -5254,12 +5254,12 @@ Mods: {
 			}
 
 			DivineAfflicter: {
-				// DisplayName: Divine Afflicter
-				/* Tooltip:
+				DisplayName: 神罚者
+				Tooltip:
 					'''
-					Summons a lash of ichor to wither your foes
-					Deals more damage the slower it is moving when it strikes an enemy
-					''' */
+					召唤神血鞭笞，使敌人陷入凋零
+					命中敌人时，其移速越慢，造成的伤害越高
+					'''
 			}
 
 			DeathStrikeScroll: {
@@ -8052,46 +8052,46 @@ Mods: {
 			}
 
 			VenomBlade: {
-				// DisplayName: Toxic Blade
-				/* Tooltip:
+				DisplayName: 剧毒之刃
+				Tooltip:
 					'''
-					Poisoned throwing blades that release a small cloud of poison on hit
-					Has a chance to inflict Acid Venom 
-					''' */
+					淬毒的飞刀，命中时释放一小团毒云
+					有几率施加酸性毒液
+					'''
 			}
 
 			MeteorStorm: {
-				// Tooltip: A legendary magic staff that calls down a meteor storm
-				// DisplayName: Meteor Storm
+				Tooltip: 传说中可召唤流星风暴的法杖
+				DisplayName: 流星风暴
 			}
 
 			AbyssalDeluge: {
-				// DisplayName: Abyssal Deluge
-				/* Tooltip:
+				DisplayName: 深渊洪流
+				Tooltip:
 					'''
-					A powerful tome from the Abyss that casts a water bomb that creates a massive flood upon explosion
-					Inflicts Sinking, a debuff that slightly increases damage taken from all sources, reduces defense and movement speed
-					''' */
+					来自深渊的强大魔法书，施放一颗水爆弹，爆炸时释放水流冲刷
+					施加深渊沉溺减益，略微提升受到的所有伤害，降低防御力和移动速度
+					'''
 			}
 
 			DivineTouch: {
-				// DisplayName: Divine Touch
-				/* Tooltip:
+				DisplayName: 神圣之触
+				Tooltip:
 					'''
-					You are blessed with the light of the gods
-					Greatly lights up the cursor of you and your allies when equipped 
-					Emit a large pale light and increases pickup range for items
+					你被神明的光辉所祝福
+					装备时为你和队友的光标提供照明
+					发出苍白色大范围光芒，并提升物品拾取范围
 					{$CommonItemTooltip.VanityFunction}
-					''' */
+					'''
 			}
 
 			StarlightMagnetite: {
-				// DisplayName: Starlight Magnetite
-				/* Tooltip:
+				DisplayName: 星光磁石
+				Tooltip:
 					'''
-					Emit a blue light and increases pickup range for items
+					发出蓝色光芒，并提升物品拾取范围
 					{$CommonItemTooltip.VanityFunction}
-					''' */
+					'''
 			}
 		}
 
@@ -9099,8 +9099,8 @@ Mods: {
 			}
 
 			AbyssalSinking: {
-				// DisplayName: Abyssal Sinking
-				// Description: Mods.tsorcRevamp.Buffs.AbyssalSinking.Description
+				DisplayName: 深渊沉溺
+				Description: ""
 			}
 		}
 
@@ -9955,7 +9955,7 @@ Mods: {
 				Hint: 你必须去西海寻找萨满长老...
 				MartianHint: 天空中开始出现火星探测器...
 				AbyssOpen: 连接深渊的裂缝敞开了...
-				// HallowDarker: Darkness spreads through the Hallowed Caves...
+				HallowDarker: 阴影自神圣洞穴中散播...
 			}
 
 			AttraidiesFragment.DisplayName: 阿卓迪斯分身
@@ -10007,8 +10007,8 @@ Mods: {
 			}
 
 			AbysmalOolacileSorcerer: {
-				DisplayName: 堕渊乌拉席露巫师
-				DespawnHandler: 堕渊乌拉席露巫师对你的心智实施了降维打击...
+				DisplayName: 乌拉席露大秘术师
+				DespawnHandler: 乌拉席露大秘术师对你的心智实施了降维打击...
 				Defeated: 黑暗笼罩于世...
 			}
 
@@ -10036,7 +10036,7 @@ Mods: {
 				Heal2: 混沌被无形的护盾保护着 - 你离它太远了...
 				Rips: 混沌撕裂你的翅膀和盔甲！
 				OutOfRange: 混沌受到看不见的力量的保护—你离它太远了！
-				// DarknessLifted: The shadow in the Hallow has been lifted!
+				DarknessLifted: 神圣洞穴中的阴影已被驱散！
 			}
 
 			DarkCloud: {
@@ -10328,7 +10328,7 @@ Mods: {
 			CorruptedElemental.DisplayName: 堕落元素
 			CorruptedHornet.DisplayName: 堕落黄蜂
 			CrystalKnight.DisplayName: 魔晶骑士
-			DarkBloodKnight.DisplayName: 黑暗血炎骑士
+			DarkBloodKnight.DisplayName: 血魔骑士
 			DarkKnight.DisplayName: 黯骑士
 			DemonWheel.DisplayName: 恶魔之轮
 
@@ -10341,7 +10341,7 @@ Mods: {
 			GuardianCorruptor.DisplayName: 腐化守护者
 			HydrisElemental.DisplayName: 海德里斯元素
 			HydrisNecromancer.DisplayName: 海德里斯死灵法师
-			IceSkeleton.DisplayName: 寒霜骷髅
+			IceSkeleton.DisplayName: 希斯门徒
 
 			KnightOfGwyn: {
 				DisplayName: 葛温的骑士
@@ -10402,20 +10402,20 @@ Mods: {
 				Name9: Ofur
 				Name10: Ofi
 				Name11: Bompbi
-				Quote1: 我搞到了一些打折的东西来卖。
-				Quote2: 你怎么样？
-				Quote3: 我好渴...
-				Quote4: 当你打败了世吞之后，我就可以卖给你粘性炸弹了！
-				Quote5: 当你打败悲伤或者铁长直之后，我会有更多货物可卖...
+				Quote1: 你好啊朋友，最近过得怎么样？
+				Quote2: 我有点渴了...要不要一起喝一杯？
+				Quote3: 我们矮人可是热情又乐于助人；遇上什么麻烦，随时来找我们就行！
+				Quote4: 当你打败了世界吞噬者之后，我就可以卖给你粘性炸弹了！
+				Quote5: 当你打败悲伤或者毁灭者之后，我会有更多货物可卖...
 				Quote6: 当你打败悲伤之后，我会有更多货物可卖...
-				Quote7: 当你打败铁长直之后，我会有更多货物可卖...
-				// ContractButton: Dwarven Contract
-				// ContractQuote1: Found any Dwarven Contracts yet, traveler?
-				// ContractQuote2: Bring me one and I’ll send a proper guard to watch over a property, with a gift as a thanks!
-				// ContractQuote3: If you ever find any old Dwarven Contracts lying around, bring them to me.
-				// ContractGiven: Thanks for the contract! A dwarf will come to guard a property. Oh yes, and here's your reward!
-				// FinalContractGiven: You found me every possible contract! Thank you Red for all your hard work, this is your ultimate reward!
-				// ContractMax: Sorry Red, I've already hired every dwarves willing to work. No more contracts!
+				Quote7: 当你打败毁灭者之后，我会有更多货物可卖...
+				ContractButton: 矮人契约
+				ContractQuote1: 旅行者，找到矮人契约了吗？
+				ContractQuote2: 带一份契约给我，我就派个靠谱的守卫去，还有谢礼奉上！
+				ContractQuote3: 要是你在哪儿见到早年的矮人契约，记得带给我。
+				ContractGiven: 多谢你的契约！会有一位矮人去的。对了，这是给你的回报！
+				FinalContractGiven: 你居然把所有能找的契约都集齐了！瑞德，辛苦你啦，这是最终的大礼！
+				ContractMax: 抱歉啊瑞德，愿意干活的矮人我都雇完了。暂时不需要更多契约啦！
 
 				TownNPCMood: {
 					Content: 我很满足。
@@ -11077,13 +11077,12 @@ Mods: {
 					常人或许会看见自己变成连环杀手，危险但不足以致命
 					{0}，但对你而言，你最清楚体内沉睡的潜能，凝视这镜子恐将招致毁灭
 					'''
-				/* RemixDarkCloudHint:
+				RemixDarkCloudHint:
 					'''
-					That mirror you hold... Do not look into it. That is an cursed artifact of the Abyss - one that transports you 
-					deep in the Abyss and manifests a future version of its beholder and twists it.
-					An ordinary man might see himself turned into a serial killer, dangerous but not certainly deadly.
-					For you {0}? You should know best how much untapped potential still lies within you. Looking into the mirror might just garuntee your undoing.
-					''' */
+					你持有的那面镜子，千万别注视它...这是受深渊诅咒的邪物—会将你拖入深渊深处，并显现出凝视者未来的扭曲倒影
+					常人或许会看见自己变成连环杀手，危险但不足以致命
+					{0}，但对你而言，你最清楚体内沉睡的潜能，凝视这镜子恐将招致毁灭
+					'''
 				GwynHint:
 					'''
 					你已准备好面对深渊之王、火焰守护者葛温。曾为他提供权力的存在尽数败于你手
@@ -11762,7 +11761,7 @@ Mods: {
 			SHM9Downed: 九名深渊守护者被击败
 			RageDowned: 击败愤怒
 			SlograGaibonDowned: 击败斯洛格拉或盖波
-			AbysmalOolacileSorcererDowned: 击败堕渊乌拉席露巫师
+			AbysmalOolacileSorcererDowned: 击败乌拉席露大秘术师
 		}
 
 		Achievements: {
