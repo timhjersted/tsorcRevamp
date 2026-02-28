@@ -21,9 +21,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 84;
             Item.height = 90;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 40;
-            Item.useTime = 40;
-            Item.damage = 444;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
+            Item.damage = 333;
             Item.knockBack = 5f;
             Item.scale = 1.05f;
             Item.useTurn = false;
@@ -41,7 +41,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.Keybrand);
+            recipe.AddIngredient(ItemID.LightShard);
+            recipe.AddIngredient(ItemID.DarkShard);
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);

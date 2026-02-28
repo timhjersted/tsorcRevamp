@@ -12,10 +12,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
     public class SupremeDragoonLashProjectile : ModdedWhipProjectile
     {
-        public override int WhipWidth => 12;
-        public override int WhipHeight => 36;
-        public override int WhipSegments => 22;
-        public override float WhipRangeMult => 2.2f;
+        public override int WhipWidth => 10;
+        public override int WhipHeight => 20;
+        public override int WhipSegments => 26;
+        public override float WhipRangeMult => 2.51f;
         public override int DustId => DustID.Sandnado;
         public override int DustWidth => 10;
         public override int DustHeight => 10;
@@ -62,15 +62,15 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             {
                 // These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
                 // You can change them if they don't!
-                Rectangle frame = new Rectangle(0, 0, 12, 36);
-                Vector2 origin = new Vector2(5, 16);
+                Rectangle frame = new Rectangle(0, 0, 10, 20);
+                Vector2 origin = new Vector2(4, 12);
                 float scale = 1;
 
                 // These statements determine what part of the spritesheet to draw for the current segment.
                 // They can also be changed to suit your sprite.
                 if (i == list.Count - 2)
                 {
-                    frame.Y = 58;
+                    frame.Y = 48;
                     frame.Height = 12;
 
                     // For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
@@ -80,12 +80,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
                 }
                 else if (i > 10)
                 {
-                    frame.Y = 48;
+                    frame.Y = 34;
                     frame.Height = 10;
                 }
                 else if (i > 0)
                 {
-                    frame.Y = 36;
+                    frame.Y = 20;
                     frame.Height = 10;
                 }
 

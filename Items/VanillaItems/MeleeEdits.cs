@@ -77,9 +77,9 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.width = 40;
                 item.height = 40;
             }
-            if (item.type == ItemID.WoodenBoomerang)
+            if (item.type == ItemID.BeeKeeper)
             {
-                //item.mana = 0;
+                item.damage = 25;
             }
             if (item.type == ItemID.EnchantedBoomerang)
             {
@@ -173,9 +173,13 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 //item.mana = 11;
             }
-            if (item.type == ItemID.BouncingShield)
+            if (item.type == ItemID.BouncingShield) 	
             {
                 //item.mana = 15;
+            }
+            if (item.type == ItemID.MonkStaffT1) 
+            {
+                item.damage = 100;
             }
             if (item.type == ItemID.ChlorophyteSaber)
             {

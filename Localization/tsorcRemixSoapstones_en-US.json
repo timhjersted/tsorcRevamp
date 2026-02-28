@@ -1770,6 +1770,13 @@
   "style": 1
 }
 {
+  "text": "The Great Foundry is a vast structure built and operated by an ancient dwarven clan. It was notorious as a hellish place to work, where the dwarven laborers working there were exploited by the city of Isalith day and night, condemned to endless hard labor. What is surprising is that, despite the foundry galleries having been abandoned for a long time, the machines here still seem to be running...",
+  "tileX": 5316,
+  "tileY": 1162,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Red: \u0022Miakoda, is there a connection between the Great Foundry and Artorias?\u0022 --NEWLINE --NEWLINE Miakoda: \u0022Yes, a long time ago, when the Foundry was in full operation, there were strong ties between it and the Forgotten City of Izalith. Artorias\u0022 armor, renowned as one of the most durable, was forged here with magical protection, and a long tunnel was created to connect the foundry to the city.\u0022",
   "tileX": 5544,
   "tileY": 1329,
@@ -1777,7 +1784,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the Underground Jungle\u0027s Lake of Flowered Paths - --NEWLINE --NEWLINE This large underground lake was sacred to the inhabitants of these ruins; many pilgrims from the jungle came here to purify themselves with the lake\u0022s fresh water. Observing the lake\u0022s depth, you wonder what lies hidden at its very bottom.",
+  "text": "- You\u0027ve discovered the Underground Jungle\u0027s Lake of Flowered Paths - --NEWLINE --NEWLINE This large underground lake was sacred to the inhabitants of these ruins; many pilgrims from the jungle came here to purify themselves with the lake\u0027s fresh water. Observing the lake\u0027s depth, you wonder what lies hidden at its very bottom.",
   "tileX": 5317,
   "tileY": 1371,
   "textWidth": 320,

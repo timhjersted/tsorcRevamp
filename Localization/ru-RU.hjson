@@ -474,7 +474,6 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
-				LunarPortal: Использует статические кадры иммунитета (складывание неэффективно)
 				LockedCrates: "[c/383838:Проклят] свирепым [c/009400:охотником]"
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
@@ -645,6 +644,11 @@ Mods: {
 				ManaRegenerationPotionBotC: Увеличивает время восстановления лазурной фляги на {0}%
 				CelestialMagnetBotC: Подбор звёзд маны восстанавливает только {0}% от максимального количества маны [c/6d8827:носителя проклятия]
 				MagicCuffsBotC: Восстанавливает только {0}% урона, полученного [c/6d8827:носителем проклятия] до смягчения, в виде маны
+				/* CoinGun:
+					'''
+					[c/ffbf00:Can also use soul coins as ammo]
+					[c/ffbf00:Soul coins pierce once]
+					''' */
 			}
 
 			AbandonedStumpBanner: {
@@ -5186,11 +5190,6 @@ Mods: {
 				Tooltip: Призывает множество осколков, которые обрушивают божественный гнев на ваших врагов
 			}
 
-			ChaosTome: {
-				DisplayName: Том Хаоса
-				Tooltip: Создает нестабильный красный энергетический шар, который может проходить сквозь твёрдые объекты.
-			}
-
 			CrystalMagicWeapon: {
 				DisplayName: Кристаллическое магическое оружие
 				Tooltip:
@@ -8051,6 +8050,21 @@ Mods: {
 					{$CommonItemTooltip.VanityFunction}
 					''' */
 			}
+
+			DragoonLauncher: {
+				// Tooltip: ""
+				// DisplayName: Dragoon Launcher
+			}
+
+			Sanguinis: {
+				// DisplayName: Sanguinis
+				/* Tooltip:
+					'''
+					Your blood and vitality become your weapon
+					Using this weapon drains your life with each use
+					It becomes more powerful below 66% and 33% health
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -9057,7 +9071,7 @@ Mods: {
 			}
 
 			AbyssalSinking: {
-				// DisplayName: Abyssal Sinking
+				// DisplayName: Sinking
 				// Description: Mods.tsorcRevamp.Buffs.AbyssalSinking.Description
 			}
 		}
@@ -9743,6 +9757,13 @@ Mods: {
 			// AbyssalDeluge.DisplayName: Abyssal Deluge
 			// AbyssalDelugeBall.DisplayName: Abyssal Deluge Ball
 			// DivineAfflicterProjectile.DisplayName: Divine Afflicter Projectile
+			// DragoonLanceThrown.DisplayName: Dragoon Lance Thrown
+			// DragoonLanceHeld.DisplayName: Dragoon Lance Held
+			// SanguinisProj.DisplayName: Sanguinis Proj
+			// DragoonRocket.DisplayName: Dragoon Rocket
+			// Ichorthrower.DisplayName: Ichorthrower
+			// SoulCoinProj.DisplayName: Soul Coin Proj
+			// ChaosBlackFire.DisplayName: Chaos Black Fire
 		}
 
 		NPCs: {
@@ -11009,7 +11030,7 @@ Mods: {
 					'''
 					That Amethyst that we got from Artorias; it is a seal that locks away the throne of the King of Hell, Chaos. 
 					Like the Calamities that came before it, this being's power and magic were too great for the world.
-					He was sealed by the luminous power of the Hallow. If you wish to face it in combat, return to the Hallow, which is invaded by shadows.
+					He was sealed by the luminous power of the Hallow. If you wish to face it in combat, return at the entrance of the Hallowed Caves, now invaded by shadows.
 					''' */
 				BlightHint:
 					'''
@@ -11124,6 +11145,12 @@ Mods: {
 					[c/f53d0a:исчадие огня — Марилит] и некоторые [c/cffffa:Призраки], которые бродят по небесам, по слухам, обладают клинками, наполненными свирепой магией.
 					[c/fcff00:Клинок кургана] может оказаться достаточно сильным, чтобы разрушить их защиту...
 					'''
+				/* RemixAdvModeSHMQuoteCHAOS:
+					'''
+					One last thing: Chaos's prison in the Hallow is cracked, and its darkness is spreading throughout the caves. 
+					Because of this, some barriers have been activated and some passages are blocked. There is only one way back to Chaos in the Hallow; 
+					[c/ffbf00:return to the starting point at the entrance to the Hallowed Caves, and you will find the path.]
+					''' */
 				AdvModeSHMQuote5: Удачи, Рэд.
 				SandboxSHMQuote1:
 					'''

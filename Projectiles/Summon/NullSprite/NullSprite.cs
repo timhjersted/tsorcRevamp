@@ -26,7 +26,8 @@ namespace tsorcRevamp.Projectiles.Summon.NullSprite
             Projectile.height = 20;
             Projectile.tileCollide = false;
             Projectile.minion = true;
-            Projectile.minionSlots = 0.75f;
+            Projectile.scale = 1.15f;
+            Projectile.minionSlots = 1f;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Summon;
         }
@@ -50,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Summon.NullSprite
 
         private void AI_062()
         {
-            int attackInterval = 60;
+            int attackInterval = 50;
             Projectile.tileCollide = true;
             float idleSpeed = 0.6f;
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -197,6 +198,12 @@ namespace tsorcRevamp.Projectiles.Summon.NullSprite
             if (Main.rand.NextBool(4))
             {
                 Dust dust = Dust.NewDustDirect(new Vector2(Projectile.position.X - Projectile.width, Projectile.position.Y - Projectile.height), Projectile.width * 2, Projectile.height * 2, DustID.Shadowflame, -Projectile.velocity.X, -Projectile.velocity.Y, 100, default, 1.5f);
+                dust.noGravity = true;
+                dust.noLight = true;
+            }
+            if (Main.rand.NextBool(4))
+            {
+                Dust dust = Dust.NewDustDirect(new Vector2(Projectile.position.X - Projectile.width, Projectile.position.Y - Projectile.height), Projectile.width * 2, Projectile.height * 2, 54, -Projectile.velocity.X, -Projectile.velocity.Y, 100, default, 1.7f);
                 dust.noGravity = true;
                 dust.noLight = true;
             }

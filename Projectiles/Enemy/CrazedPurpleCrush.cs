@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //projectile.aiStyle = 24;
             Projectile.hostile = true;
             Projectile.height = 16;
-            Projectile.scale = 1.3f;
+            Projectile.scale = 1.1f;
             Projectile.tileCollide = false;
             Projectile.damage = 25;
             //projectile.aiPretendType = 94;

@@ -24,8 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public override float SlotsRequired => RequiredSlots;
         public const float SummonTagDmgMult = 100f;
         public override float SummonTagDmgMulti => SummonTagDmgMult;
-        public override int UseTimeAnimation => 30;
-        public override int Mana => 10;
+        public override int UseTimeAnimation => 15;
         public override float Knockback => 1f;
         public override int Rarity => ItemRarityID.LightPurple;
         public const int BleedProcBaseDmg = BaseDamage * 4;

@@ -174,12 +174,52 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-                if (projectile.type == ProjectileID.MoonlordTurretLaser)
+                if (projectile.type == ProjectileID.RainbowCrystalExplosion)
                 {
-                    projectile.usesLocalNPCImmunity = false;
-                    projectile.localNPCHitCooldown = -2;
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 60;
+                }
+
+                if (projectile.type == ProjectileID.UnholyArrow || projectile.type == ProjectileID.JestersArrow)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 60;
+                }
+
+                if (projectile.type == ProjectileID.BabySlime)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 12;
+                }
+
+                if (projectile.type == ProjectileID.DangerousSpider)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 18;
+                }
+
+                if (projectile.type == ProjectileID.JumperSpider)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 18;
+                }
+
+                if (projectile.type == ProjectileID.VenomSpider)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 18;
+                }
+
+                if (projectile.type == ProjectileID.Bee)
+                {
                     projectile.usesIDStaticNPCImmunity = true;
-                    projectile.idStaticNPCHitCooldown = 10;
+                    projectile.idStaticNPCHitCooldown = 15;
+                }
+
+                if (projectile.type == ProjectileID.GiantBee)
+                {
+                    projectile.usesIDStaticNPCImmunity = true;
+                    projectile.idStaticNPCHitCooldown = 15;
                 }
 
                 if (modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
@@ -193,7 +233,8 @@ namespace tsorcRevamp.Projectiles
                 else if (!modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
                     projectile.penetrate = 1;
-                    projectile.usesLocalNPCImmunity = false;
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 20;
                 }
 
                 if (projectile.type == ProjectileID.BloodArrow)

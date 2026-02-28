@@ -148,18 +148,21 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 //PHM section
                 case 1:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 1);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 150); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<OldHalberd>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeCrystal, 1);
                     break;
 
                 case 2:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 5);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 200);  
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.EndurancePotion, 2);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeCrystal, 2);
                     break;
 
                 case 3:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 10);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 100); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<NamelessSoldierSoul>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Humanity>(), 2); 
@@ -167,6 +170,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 case 4:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 15);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 320); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<LostUndeadSoul>(), 2); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LuckPotion, 2);
@@ -175,6 +179,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
                 //HM section
                 case 5:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 20);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 500); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<ProudKnightSoul>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.RagePotion, 1);
@@ -183,6 +188,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 case 6:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 30);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1000); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Humanity>(), 2); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<PurgingStone>(), 1); 
@@ -191,6 +197,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 case 7:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 40);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1000); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<ProudKnightSoul>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldenDelight, 1);
@@ -200,7 +207,8 @@ namespace tsorcRevamp.NPCs.Friendly
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeFruit, 2);
                     break;
 
-                case 8:  
+                case 8: 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 50); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1000); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<BraveWarriorSoul>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<PurgingStone>(), 2);
@@ -210,7 +218,8 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 //SHM section
-                case 9:  
+                case 9: 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 75);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1250); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<FlameOfTheAbyss>(), 5);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeforcePotion, 2);
@@ -223,6 +232,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 case 10: 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.PlatinumCoin, 1);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1500); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<HeroSoul>(), 2); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<VaultOfEndlessGreed>());

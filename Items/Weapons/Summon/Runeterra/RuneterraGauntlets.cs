@@ -53,11 +53,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         {
             Item.damage = Damage;
             Item.knockBack = Knockback;
-            Item.mana = 10;
             Item.width = Width;
             Item.height = Height;
-            Item.useTime = 20;
-            Item.useAnimation = 20;
+            Item.useTime = 15;
+            Item.useAnimation = 15;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.holdStyle = ItemHoldStyleID.HoldFront;
             Item.noUseGraphic = true;

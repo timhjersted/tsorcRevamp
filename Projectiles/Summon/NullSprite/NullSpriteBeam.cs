@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Summon.NullSprite
                     int num448 = Dust.NewDust(projectilepos, 1, 1, 70);
                     Main.dust[num448].noGravity = true;
                     Main.dust[num448].position = projectilepos;
-                    Main.dust[num448].scale = (float)Main.rand.Next(70, 110) * 0.013f;
+                    Main.dust[num448].scale = (float)Main.rand.Next(85, 130) * 0.014f;
                     Main.dust[num448].velocity *= 0.2f;
                 }
             }

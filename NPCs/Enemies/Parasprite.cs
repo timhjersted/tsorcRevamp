@@ -23,6 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.friendly = false;
             NPC.noTileCollide = false;
             NPC.noGravity = true;
+            NPC.defense = 1;
             NPC.knockBackResist = 0;
             NPC.value = 80;
             Banner = NPC.type;

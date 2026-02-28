@@ -442,7 +442,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             //spawn
 
 
-            if ((customspawn1 < 50) && Main.rand.NextBool(1800))
+            if ((customspawn1 < 50) && Main.rand.NextBool(2300))
             {
                 int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0);
                 Main.npc[Spawned].velocity.Y = -8;

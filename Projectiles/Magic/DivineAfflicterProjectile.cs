@@ -120,7 +120,7 @@ namespace tsorcRevamp.Projectiles.Magic
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["speed"].SetValue(hostVel);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(Color.Gold.ToVector4());
+            effect.Parameters["shaderColor"].SetValue(new Color(0.93f, 0.68f, 0.2f, 1.0f).ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
     }

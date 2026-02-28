@@ -29,11 +29,10 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.damage = 12;
             Item.crit = BaseCritChance;
             Item.knockBack = 3f;
-            Item.mana = 10;
             Item.width = 50;
             Item.height = 50;
-            Item.useTime = 30;
-            Item.useAnimation = 30;
+            Item.useTime = 18;
+            Item.useAnimation = 18;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.rare = ItemRarityID.Blue;
             Item.value = PriceByRarity.fromItem(Item);

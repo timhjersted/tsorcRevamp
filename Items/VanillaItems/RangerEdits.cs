@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 1; //from 14
             }
 
-            if (item.type == ItemID.BloodRainBow)
+            if (item.type == ItemID.BloodRainBow) 	
             {
                 //given out as reward for beating a red knight so I think this is fair, also hard to use
                 item.damage = 12; //from 14
@@ -39,6 +39,23 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.HolyArrow)
             {
                 item.damage = 5;
+            }
+
+            if (item.type == ItemID.BeesKnees)
+            {
+                item.damage = 19;
+            }
+
+            if (item.type == ItemID.Beenade)
+            {
+                item.damage = 10;
+            }
+
+            if (item.type == ItemID.CoinGun)
+            {
+                item.damage = 25; 
+                item.useTime = 10;
+                item.useAnimation = 10;
             }
 
             if (item.type == ItemID.DaedalusStormbow)
@@ -50,7 +67,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.PhoenixBlaster)
             {
-                item.damage = 25; //vanilla 50
+                item.damage = 25; 
             }
 
             //Why is this eventide's internal name i'm literally going to go feral

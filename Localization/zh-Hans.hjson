@@ -510,7 +510,6 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
-				LunarPortal: 使用静态免伤无敌帧
 				LockedCrates: 此物品被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
@@ -681,6 +680,11 @@ Mods: {
 				ManaRegenerationPotionBotC: 增加 {0}% 蓝露滴圣杯瓶恢复速度
 				CelestialMagnetBotC: 魔力星只固定恢复[c/6d8827:被诅咒者]最大魔力值的 {0}%
 				MagicCuffsBotC: 只恢复[c/6d8827:被诅咒者]受到伤害 {0}% 的魔力
+				/* CoinGun:
+					'''
+					[c/ffbf00:Can also use soul coins as ammo]
+					[c/ffbf00:Soul coins pierce once]
+					''' */
 			}
 
 			AbandonedStumpBanner: {
@@ -5227,11 +5231,6 @@ Mods: {
 				Tooltip: 召唤出一系列碎片，向敌人释放神圣之怒
 			}
 
-			ChaosTome: {
-				DisplayName: 混沌之书
-				Tooltip: 发出一串可以穿过实体物块的紫色火焰
-			}
-
 			CrystalMagicWeapon: {
 				DisplayName: 璀璨魔兵灌注
 				Tooltip:
@@ -8093,6 +8092,21 @@ Mods: {
 					{$CommonItemTooltip.VanityFunction}
 					'''
 			}
+
+			DragoonLauncher: {
+				// Tooltip: ""
+				// DisplayName: Dragoon Launcher
+			}
+
+			Sanguinis: {
+				// DisplayName: Sanguinis
+				/* Tooltip:
+					'''
+					Your blood and vitality become your weapon
+					Using this weapon drains your life with each use
+					It becomes more powerful below 66% and 33% health
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -9785,6 +9799,13 @@ Mods: {
 			// AbyssalDeluge.DisplayName: Abyssal Deluge
 			// AbyssalDelugeBall.DisplayName: Abyssal Deluge Ball
 			// DivineAfflicterProjectile.DisplayName: Divine Afflicter Projectile
+			// DragoonLanceThrown.DisplayName: Dragoon Lance Thrown
+			// DragoonLanceHeld.DisplayName: Dragoon Lance Held
+			// SanguinisProj.DisplayName: Sanguinis Proj
+			// DragoonRocket.DisplayName: Dragoon Rocket
+			// Ichorthrower.DisplayName: Ichorthrower
+			// SoulCoinProj.DisplayName: Soul Coin Proj
+			// ChaosBlackFire.DisplayName: Chaos Black Fire
 		}
 
 		NPCs: {
@@ -11167,6 +11188,12 @@ Mods: {
 					[c/cffffa:火焰恶魔马瑞丽斯]和某些传说在天空中漫游的[c/cffffa:幻影]携带着凶猛的魔法之刃。
 					名为[c/fcff00:巴罗之刃] 的武器或许足以粉碎他们的防护屏障...
 					'''
+				/* RemixAdvModeSHMQuoteCHAOS:
+					'''
+					One last thing: Chaos's prison in the Hallow is cracked, and its darkness is spreading throughout the caves. 
+					Because of this, some barriers have been activated and some passages are blocked. There is only one way back to Chaos in the Hallow; 
+					[c/ffbf00:return to the starting point at the entrance to the Hallowed Caves, and you will find the path.]
+					''' */
 				AdvModeSHMQuote5: 祝你好运，瑞德。
 				SandboxSHMQuote1:
 					'''

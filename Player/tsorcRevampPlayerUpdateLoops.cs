@@ -1605,7 +1605,7 @@ namespace tsorcRevamp
                 Vector2 centerOffset = new Vector2(Player.Center.X + 2 - Player.width / 2, Player.Center.Y + 6 - Player.height / 2);
                 const float circleRadius = 150f;
                 const int dustType = 235;
-                const int particleCount = 30;
+                const int particleCount = 28;
 
                 for (int j = 1; j < particleCount; j++)
                 {

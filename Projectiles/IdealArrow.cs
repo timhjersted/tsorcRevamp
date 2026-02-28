@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 5;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 360;
+            Projectile.timeLeft = 330;
             Projectile.aiStyle = -1;
             //Missing: aiStyle = 1;
             //Vanilla aiStyles are kinda janky. We can do better with just a few lines below in AI()...
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles
         //The explosion of dust upon hitting an enemy
         public override bool PreKill(int timeLeft)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 12; i++)
             {
                 Vector2 vel = Projectile.velocity + Main.rand.NextVector2Circular(5, 5);
                 Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.MagicMirror, vel, 10, default, 2);

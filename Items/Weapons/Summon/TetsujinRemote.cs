@@ -27,11 +27,10 @@ namespace tsorcRevamp.Items.Weapons.Summon
         {
             Item.damage = 40;
             Item.knockBack = 3f;
-            Item.mana = 10;
             Item.width = 42;
             Item.height = 28;
-            Item.useTime = 30;
-            Item.useAnimation = 30;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.buyPrice(1, 50, 0, 0);
             Item.rare = ModContent.RarityType<DarkBlue>();

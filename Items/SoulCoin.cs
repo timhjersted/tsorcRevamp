@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Items
 {
@@ -27,7 +28,28 @@ namespace tsorcRevamp.Items
             Item.value = 1;
             Item.rare = ItemRarityID.Lime;
             DarkSoulRarity = 12;
+            Item.consumable = true; 
+            Item.shoot = ModContent.ProjectileType<SoulCoinProj>(); 
+            Item.ammo = AmmoID.Coin; 
         }
+
+        public override void UpdateInventory(Player player)
+        {
+            bool hasCoinGun = player.HasItem(ItemID.CoinGun);
+
+            if (hasCoinGun)
+            {
+                Item.damage = 45;
+			    Item.shootSpeed = 1.8f; 
+                Item.DamageType = DamageClass.Ranged;
+            }
+            else
+            {
+                Item.damage = 0; 
+                Item.shootSpeed = 0f; 
+            }
+        }
+        
         public override bool GrabStyle(Player player)
         {
             Vector2 vectorItemToPlayer = player.Center - Item.Center;

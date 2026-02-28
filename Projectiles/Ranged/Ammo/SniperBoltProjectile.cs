@@ -8,7 +8,6 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
     {
         public override void SetDefaults()
         {
-            Projectile.aiStyle = 1;
             Projectile.scale = 1.2f;
             Projectile.friendly = true;
             Projectile.height = 20;

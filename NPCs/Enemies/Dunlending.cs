@@ -22,6 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.damage = 20;
             NPC.defDamage = 2;
+            NPC.defense = 2;
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 45;

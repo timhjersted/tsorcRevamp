@@ -606,7 +606,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             //Draw some dusts
             //"Black hole" effect dusts
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 20; i++)
             {
                 Vector2 dustPos = Main.rand.NextVector2CircularEdge(damageRadius * strengthFactor, damageRadius * strengthFactor);
                 Vector2 dustVel = new Vector2(15, 0).RotatedBy(dustPos.ToRotation() + MathHelper.Pi);
@@ -1139,7 +1139,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 //Spawn dust telegraphing next attack
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 18; i++)
                 {
                     //Spawn dust within 45 degrees (Pi / 4) around the chosen angle 
                     float dustAngle = currentBlastAngle + Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
@@ -1155,7 +1155,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if ((AttackModeCounter - 300) % 60 == 59)
                 {
-                    for (int i = 0; i < 50; i++)
+                    for (int i = 0; i < 35; i++)
                     {
                         float dustAngle = currentBlastAngle + Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
                         Vector2 dustVel = new Vector2(99, 0).RotatedBy(dustAngle);
@@ -1181,7 +1181,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //At the end of the attack, change attacks and spawn a burst of dust
             if (AttackModeCounter >= 800)
             {
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < 80; i++)
                 {
                     Vector2 offset = Main.rand.NextVector2CircularEdge(256, 256);
                     Vector2 velocity = new Vector2(15, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
@@ -3242,6 +3242,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 int x_blockpos = (int)NPC.position.X / 16; // corner not center
                 int y_blockpos = (int)NPC.position.Y / 16; // corner not center
                 int tp_radius = 25; // radius around target(upper left corner) in blocks to teleport into
+                const float MIN_TELEPORT_DISTANCE = 192f;
                 int tp_counter = 0;
                 bool flag7 = false;
                 if (Math.Abs(NPC.position.X - Main.player[NPC.target].position.X) + Math.Abs(NPC.position.Y - Main.player[NPC.target].position.Y) > 2000f)
@@ -3257,6 +3258,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
                     int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                    Vector2 teleportPosition = new Vector2(tp_x_target * 16f - NPC.width / 2, tp_y_target * 16f - NPC.height);
+                    if (Vector2.Distance(teleportPosition, Main.player[NPC.target].Center) < MIN_TELEPORT_DISTANCE)
+                    {
+                        continue; 
+                    }
                     for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
                     { // (tp_x_target,m) is block under its feet I think
                         if ((m < target_y_blockpos - 9 || m > target_y_blockpos + 9 || tp_x_target < target_x_blockpos - 9 || tp_x_target > target_x_blockpos + 6) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].HasTile)
@@ -3275,6 +3281,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 NPC.netUpdate = true;
                                 NPC.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
                                 flag7 = true; // end the loop (after testing every lower point :/)
+                                break;
                             }
                         } // END over 6 blocks distant from player...
                     } // END traverse y down to edge of radius

@@ -14,6 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             Projectile.width = 10;
             Projectile.height = 10;
             Projectile.alpha = 0;
+            Projectile.scale = 1.15f;
             Projectile.timeLeft = 400;
             Projectile.friendly = false;
             Projectile.hostile = true;
@@ -28,15 +29,6 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             {
                 Projectile.localAI[0] = 1f;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);
-            }
-
-            if (Main.rand.NextBool(10))
-            {
-                Dust.NewDustPerfect(Projectile.Center, DustID.MagicMirror, Projectile.velocity * 0.5f, 100, default, 2f).noLight = true;
-            }
-            if (Main.rand.NextBool(10))
-            {
-                Dust.NewDustPerfect(Projectile.Center, DustID.ShadowbeamStaff, Projectile.velocity * 0.5f, 100, default, 2f).noLight = true;
             }
 
             Projectile.rotation += 0.3f * (float)Projectile.direction;
@@ -78,11 +70,49 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             return false;
         }
 
-        static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)
         {
-            UsefulFunctions.DrawSimpleLitProjectile(Projectile, ref texture);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+
+            Main.EntitySpriteDraw(
+                texture,
+                Projectile.Center - Main.screenPosition,
+                frame,
+                Color.White, 
+                Projectile.rotation,
+                frame.Size() / 2f,
+                Projectile.scale,
+                SpriteEffects.None,
+                0
+            );
+
             return false;
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
+            Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f); 
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+
+            for (int i = 1; i <= 5; i++)  
+            {
+                Vector2 offset = Projectile.velocity * -i * 0.9f;  
+                float alpha = 0.7f * (1f - (i / 6f));  
+
+                Main.EntitySpriteDraw(
+                    texture,
+                    drawPosition + offset,
+                    null,
+                    lightColor * alpha,  
+                    Projectile.rotation,
+                    origin,
+                    Projectile.scale,
+                    SpriteEffects.None,
+                    0
+                );
+            }
         }
     }
 }
