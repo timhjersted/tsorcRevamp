@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.boss = true;
             NPC.damage = 100;
             NPC.defense = 80;
-            NPC.lifeMax = 400000;
+            NPC.lifeMax = 450000;
             NPC.value = 700000f;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
@@ -461,7 +461,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         for (int i = 0; i < 20; i++)
                         {
-                            Vector2 startPosition = anchoredPosition + new Vector2(xOffset + i * 200, -1000);
+                            Vector2 startPosition = anchoredPosition + new Vector2(xOffset + i * 200, -900);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, new Vector2(0, 20), ModContent.ProjectileType<ChaosDemonBolt>(), NPC.damage / 6, 1);
                         }
 

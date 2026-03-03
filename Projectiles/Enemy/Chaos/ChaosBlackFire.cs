@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku
+namespace tsorcRevamp.Projectiles.Enemy.Chaos
 {
     class ChaosBlackFire : Projectiles.VFX.DynamicTrail
     {
@@ -121,7 +121,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
 
             float len = 4f;
-            int flam = ModContent.ProjectileType<EnemyBlackFirelet>();
+            int flam = ModContent.ProjectileType<ChaosBlackFirelet>();
             Vector2 dir = new Vector2(1f, 0f);
 
             // determine how many flamelets to spew (5~8)
@@ -161,7 +161,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 velX *= 4f;
                 velY *= 4f;
                 int p = Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width >> 1), Projectile.position.Y - (float)(Projectile.height >> 1)), Projectile.width, Projectile.height, 54, velX, velY, 160, default(Color), 1.5f);
-                int p2 = Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width >> 1), Projectile.position.Y - (float)(Projectile.height >> 1)), Projectile.width, Projectile.height, 58, velX, velY, 160, default(Color), 1.5f);
+                int p2 = Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width >> 1), Projectile.position.Y - (float)(Projectile.height >> 1)), Projectile.width, Projectile.height, 27, velX, velY, 160, default(Color), 1.5f);
             }
 
             // terminate projectile

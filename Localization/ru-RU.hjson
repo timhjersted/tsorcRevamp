@@ -9757,13 +9757,12 @@ Mods: {
 			// AbyssalDeluge.DisplayName: Abyssal Deluge
 			// AbyssalDelugeBall.DisplayName: Abyssal Deluge Ball
 			// DivineAfflicterProjectile.DisplayName: Divine Afflicter Projectile
-			// DragoonLanceThrown.DisplayName: Dragoon Lance Thrown
-			// DragoonLanceHeld.DisplayName: Dragoon Lance Held
 			// SanguinisProj.DisplayName: Sanguinis Proj
 			// DragoonRocket.DisplayName: Dragoon Rocket
 			// Ichorthrower.DisplayName: Ichorthrower
 			// SoulCoinProj.DisplayName: Soul Coin Proj
 			// ChaosBlackFire.DisplayName: Chaos Black Fire
+			// ChaosBlackFirelet.DisplayName: Chaos Black Firelet
 		}
 
 		NPCs: {
