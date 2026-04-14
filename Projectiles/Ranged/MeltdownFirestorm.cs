@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         bool dying = false;
         float size = 0;
         Vector2 truePosition;
-        float maxSize = 2300;
+        float maxSize = 2200;
         float fadeIn;
         float trueSize = 1;
         public override void AI()

@@ -8,23 +8,14 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
 {
     class CelestialLanceProj : ModdedSpearProjectile
     {
-        public override float HoldoutRangeMin => 95f;
-        public override float HoldoutRangeMax => 285f;
+        public override float HoldoutRangeMin => 102f;
+        public override float HoldoutRangeMax => 270f;
         public override float HitboxSize => 1;
-        public override float Scale => 1;
+        public override float Scale => 1.05f;
         public override int dustID => DustID.HallowedTorch;
-        bool hasHealed = false;
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Player player = Main.player[Projectile.owner];
-            if (Main.rand.NextBool(6) && !hasHealed)
-            {
-                player.statLife += CelestialLance.HealOnHit;
-                player.HealEffect(CelestialLance.HealOnHit, true);
-                hasHealed = true;
-            }
-
             // Spawn 2 stars when hitting an enemy, pretty much the same code than starfall
             if (Main.myPlayer == Projectile.owner)
             {
@@ -48,13 +39,14 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
                     Vector2 starVelocity = Vector2.Normalize(new Vector2(velX, velY)) * 10f; 
                     starVelocity.Y += Main.rand.Next(-40, 41) * 0.02f; 
 
-                    int starDamage = damageDone / 2; 
+                    int starDamage = (int)(damageDone * 0.45f); 
+                    int starType = Main.rand.NextBool(2) ? ProjectileID.StarCloakStar : ProjectileID.BeeCloakStar;
 
                     Projectile.NewProjectile(
                         Projectile.GetSource_FromThis(), 
                         starSpawnPos,                  
                         starVelocity * 2.2f,            
-                        ProjectileID.StarVeilStar,                       
+                        starType,                       
                         starDamage,                    
                         3f,                             
                         Projectile.owner                

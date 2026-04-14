@@ -29,6 +29,7 @@ namespace tsorcRevamp.Items.Potions
             Item.maxStack = Item.CommonMaxStack;
             Item.value = 2;
             Item.width = 20;
+            Item.rare = ItemRarityID.Blue;
             Item.healLife = Healing;
         }
 

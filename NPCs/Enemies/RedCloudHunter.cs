@@ -28,6 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.height = 48;
             NPC.knockBackResist = 0.6f;
+            NPC.scale = 1.05f;
             NPC.rarity = 3;
             Banner = NPC.type;
             NPC.buffImmune[BuffID.Confused] = true;
@@ -35,8 +36,8 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.SkeletonArcher;
             if (Main.hardMode)
             {
-                NPC.lifeMax = 800;
-                NPC.defense = 27;
+                NPC.lifeMax = 700;
+                NPC.defense = 40;
                 NPC.value = 4000; // was 350
                 NPC.damage = 24;
                 archerBoltDamage = 45;
@@ -44,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 2000;
-                NPC.defense = 42;
+                NPC.defense = 58;
                 NPC.value = 8000; // life / 2.5 : was 390
                 NPC.damage = 55;
                 archerBoltDamage = 75;
@@ -86,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FlamingArrow, 22, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
+            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FrostburnArrow, 22, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
         }
 
         #region Gore

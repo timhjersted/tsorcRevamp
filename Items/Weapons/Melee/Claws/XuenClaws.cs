@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 4 * 60);
+            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 4 * 60);
         }
         public override void AddRecipes()
         {

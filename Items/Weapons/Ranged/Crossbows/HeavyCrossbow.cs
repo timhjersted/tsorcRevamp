@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
+namespace tsorcRevamp.Items.Weapons.Ranged.Crossbows
 {
     class HeavyCrossbow : ModItem
     {

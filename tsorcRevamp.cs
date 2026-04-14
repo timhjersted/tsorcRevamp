@@ -53,6 +53,7 @@ using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
 using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
+using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
 using tsorcRevamp.NPCs.Special;
 using tsorcRevamp.Projectiles.Summon;
@@ -157,6 +158,8 @@ namespace tsorcRevamp
         public static List<int> UntargetableNPCs;
         public static List<int> MageNPCs;
         public static List<int> NatureNPCs;
+        public static List<int> UndeadNPCs;
+        public static List<int> GhostNPCs;
         public static List<int> VanillaMeleeBlackList;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
@@ -1478,6 +1481,66 @@ namespace tsorcRevamp
                 ModContent.NPCType<JungleSentree>()
             };
             #endregion
+
+            #region Undead NPC list
+            UndeadNPCs = new List<int>()
+            {
+                NPCID.Zombie,
+                NPCID.Skeleton,
+                NPCID.BaldZombie,
+                NPCID.AngryBones,
+                NPCID.ArmoredViking,
+                NPCID.UndeadViking,
+                NPCID.DarkCaster,
+                NPCID.CursedSkull,
+                NPCID.UndeadMiner,
+                NPCID.Tim,
+                NPCID.DoctorBones,
+                NPCID.ArmoredSkeleton,
+                NPCID.Mummy,
+                NPCID.DarkMummy,
+                NPCID.LightMummy,
+                NPCID.Wraith,
+                NPCID.SkeletonArcher,
+                NPCID.PossessedArmor,
+                NPCID.TheGroom,
+                NPCID.SkeletronHand,
+                NPCID.SkeletronHead,
+                ModContent.NPCType<UndeadCaster>(),
+                ModContent.NPCType<FallenNecromancer>(),
+                ModContent.NPCType<IceSkeleton>()
+            };
+            #endregion
+
+            #region Ghost NPC list
+            GhostNPCs = new List<int>()
+            {
+                NPCID.Wraith,
+                NPCID.Reaper,
+                NPCID.Ghost,
+                NPCID.Poltergeist,
+                NPCID.CultistDragonHead,
+                NPCID.AncientCultistSquidhead,
+                NPCID.DesertDjinn,
+                NPCID.PirateGhost,
+                ModContent.NPCType<GhostoftheForgottenKnight>(), 
+                ModContent.NPCType<GhostOfTheForgottenWarrior>(),
+                ModContent.NPCType<DemonSpirit>(),
+                ModContent.NPCType<CrazedDemonSpirit>(), 
+                ModContent.NPCType<BarrowWight>(), 
+                ModContent.NPCType<BarrowWightNemesis>(), 
+                ModContent.NPCType<BarrowWightPhantom>(), 
+                ModContent.NPCType<WyvernMageShadow>(), 
+                ModContent.NPCType<GhostDragonHead>(), 
+                ModContent.NPCType<GhostDragonBody>(), 
+                ModContent.NPCType<GhostDragonBody2>(), 
+                ModContent.NPCType<GhostDragonBody3>(), 
+                ModContent.NPCType<GhostDragonLegs>(), 
+                ModContent.NPCType<GhostDragonTail>(), 
+                ModContent.NPCType<GhostOfTheDarkmoonKnight>()
+            };
+            #endregion
+
             #region Vanilla Melee BlackList
             VanillaMeleeBlackList = new List<int>()
             {

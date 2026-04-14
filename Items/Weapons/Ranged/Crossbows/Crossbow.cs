@@ -6,7 +6,7 @@ using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
+namespace tsorcRevamp.Items.Weapons.Ranged.Crossbows
 {
     class Crossbow : ModItem
     {

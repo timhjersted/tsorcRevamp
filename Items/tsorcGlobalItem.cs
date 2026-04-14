@@ -454,7 +454,7 @@ namespace tsorcRevamp.Items
 
             if (item.type == ItemID.InfluxWaver && NPC.downedMartians)
             {
-                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 5 * 60);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 5 * 60);
             }
             #region Lethal Tempo
             if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)

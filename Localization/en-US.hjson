@@ -454,11 +454,7 @@ Mods: {
 			AttraidiesDesc: Gather all the Crests in order to craft the Mind Cube.
 			RealAttraidiesName: Attraidies (Real)
 			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
-			HellkiteDragonDesc:
-				'''
-				Often sighted roaming the skies above the Village, searching for its next feast.
-				Remix Map: Flies on a large magmatic sky island, above the western sand dunes.
-				'''
+			HellkiteDragonDesc: Often sighted roaming the skies above the Village, searching for its next feast.
 			WaterFiendKrakenDesc:
 				'''
 				Seek out the lihzahrd gate in the Great Chasm.
@@ -1268,7 +1264,6 @@ Mods: {
 					The rare gem called tearstone has the uncanny ability to sense imminent death.
 					{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1} and
 					{$CommonItemTooltip.DRStat@2}
-					{$CommonItemTooltip.Melee.BadDmg@3}
 					'''
 			}
 
@@ -4078,7 +4073,7 @@ Mods: {
 
 			EphemeralDust: {
 				DisplayName: Ephemeral Dust
-				Tooltip: ""
+				Tooltip: "'As tangible as ghostly'"
 			}
 
 			Epilogue: {
@@ -6142,9 +6137,8 @@ Mods: {
 				DisplayName: Celestial Lance
 				Tooltip:
 					'''
-					Celestial lance fabled to hold sway over the world.
-					Rains fallen stars on enemy hits
-					{0}% increased damage while falling and has a chance to heal {1} HP on hit.
+					Ruler of stars
+					Rains fallen stars on direct hits
 					'''
 			}
 
@@ -6184,7 +6178,7 @@ Mods: {
 				Tooltip:
 					'''
 					Inherits Tridents water effect and pierces {0} armor penetration
-					Right-click to catalyze the spear with magicat a cost of 60 mana and increase its abilities for a short time
+					Right-click to catalyze the spear with magic at a cost of 60 mana and increase its abilities for a short time
 					Increases weapon speed, allows projectiles to pierce and inflicts a debuff during the buff 
 					Hitting enemies with the spear speeds up the cooldown reset
 					18 seconds cooldown
@@ -6193,7 +6187,11 @@ Mods: {
 
 			GaeBolg: {
 				DisplayName: Gae Bolg
-				Tooltip: Pierce reality
+				Tooltip:
+					'''
+					Pierce reality 
+					Hold left click to charge a throw, right click to stab
+					'''
 			}
 
 			HiRyuuSpear: {
@@ -6201,7 +6199,8 @@ Mods: {
 				Tooltip:
 					'''
 					Ruler of sky
-					Deal {0}% extra damage to airborne enemies
+					{0}% increased damage while falling and has a chance to heal {1} HP on hit
+					Deal {2}% extra damage to airborne enemies
 					'''
 			}
 
@@ -6210,8 +6209,8 @@ Mods: {
 				Tooltip:
 					'''
 					Legendary spear fabled to hold sway over the world.
-					Summons red energy from the sky on enemy hits
-					Increases attack damage by {0}% when falling and has a chance to heal {1} HP on hit.
+					Hold left click to charge a throw, right click to stab
+					Fully charged spears create large powerful explosions
 					'''
 			}
 
@@ -6270,11 +6269,6 @@ Mods: {
 					Fires a blast of freezing wind,
 					damaging up to 8 enemies in a cone.
 					'''
-			}
-
-			AncientGreatBow: {
-				DisplayName: Ancient Great Bow
-				Tooltip: ""
 			}
 
 			ArtemisBow: {
@@ -7775,7 +7769,7 @@ Mods: {
 
 			LichBone: {
 				DisplayName: Lich Bone
-				Tooltip: ""
+				Tooltip: "'The hard bones of a lich infused with necromantic power and a stink smell of ichor'"
 			}
 
 			PinwheelBag: {
@@ -7785,7 +7779,7 @@ Mods: {
 
 			KrakenFlesh: {
 				DisplayName: Kraken Flesh
-				Tooltip: ""
+				Tooltip: "'A moist flesh of a kraken that is both resistant and elastic'"
 			}
 
 			EstusRing: {
@@ -7863,7 +7857,7 @@ Mods: {
 
 			FieryScale: {
 				DisplayName: Fiery Scale
-				Tooltip: ""
+				Tooltip: "'Thick, incandescent scale of a half-serpent that burns on contact'"
 			}
 
 			LightningBolt: {
@@ -7883,7 +7877,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentSummonTagCritChance}
 					Reforged to its full potential
-					Breathe fire at enemies struck by this whip and a minion on a cooldown
+					Breathe rainbow flames at enemies struck by this whip and a minion on a cooldown
 					Refresh the cooldown by whipping an enemy
 					{$CommonItemTooltip.Whips}
 					'''
@@ -7907,44 +7901,9 @@ Mods: {
 				DisplayName: Tainted Bow
 				Tooltip:
 					'''
-					The arrows fired are poisoned and conver wooden arrows into tainted arrows
+					The arrows fired are poisoned and converts wooden arrows into tainted arrows
 					Tainted arrows deal more damage and inflict shadowflame on nature enemies
 					'''
-			}
-
-			Linklight2sHat: {
-				DisplayName: Linklight2s Hat
-				Tooltip: For testing purposes only.
-			}
-
-			Linklight2sPants: {
-				DisplayName: Linklight2s Pants
-				Tooltip: For testing purposes only.
-			}
-
-			Linklight2sShirt: {
-				DisplayName: Linklight2s Shirt
-				Tooltip: For testing purposes only.
-			}
-
-			Linklight2sBoots: {
-				DisplayName: Linklight2s Boots
-				Tooltip: For testing purposes only.
-			}
-
-			Linklight2sSword: {
-				DisplayName: Linklight2s Sword
-				Tooltip: For testing purposes only.
-			}
-
-			WrathOfThePhoenix: {
-				Tooltip: For testing purposes only.
-				DisplayName: Wrath of the Phoenix
-			}
-
-			TeleportationRod: {
-				DisplayName: Teleportation Rod
-				Tooltip: ""
 			}
 
 			EchoGoggles: {
@@ -7958,8 +7917,12 @@ Mods: {
 			}
 
 			SpearOfMage: {
-				Tooltip: ""
 				DisplayName: Enigma Spear of Mage
+				Tooltip:
+					'''
+					A magic spear that passes through solid walls
+					Inflicts 'dissolving', which stacks to increase enemy damage taken by up to 10%
+					'''
 			}
 
 			TaintedArrow: {
@@ -8049,7 +8012,6 @@ Mods: {
 					'''
 					A legendary tome drawing on lunar power.
 					Casts powerful lunar energy streaks
-					Can summon stars on hit
 					'''
 			}
 
@@ -8108,6 +8070,32 @@ Mods: {
 					Your blood and vitality become your weapon
 					Using this weapon drains your life with each use
 					It becomes more powerful below 66% and 33% health
+					'''
+			}
+
+			ShadowsparkBullet: {
+				Tooltip: Inflicts Shadowflame and creates shadow sparks on impact
+				DisplayName: Shadowspark Bullet
+			}
+
+			DraconicArrow: {
+				Tooltip: ""
+				DisplayName: Draconic Arrow
+			}
+
+			Ichorthrower: {
+				Tooltip: ""
+				DisplayName: Ichorthrower
+			}
+
+			EyeOfTheHunt: {
+				DisplayName: Eye Of The Hunt
+				Tooltip:
+					'''
+					Enemies are less likely to target you
+					Summon a young hunter to protect you
+					The young hunter inflicts Acid Venom and {0}% more damage on crit
+					Scale with summon damage and critical strike chance
 					'''
 			}
 		}
@@ -9091,8 +9079,8 @@ Mods: {
 				Description: Mods.tsorcRevamp.Buffs.NecromanticSerpentBuff.Description
 			}
 
-			ElectrocutedBuff2: {
-				Description: Mods.tsorcRevamp.Buffs.ElectrocutedBuff2.Description
+			ElectrocutedBuff3: {
+				Description: Mods.tsorcRevamp.Buffs.ElectrocutedBuff3.Description
 				DisplayName: Electrocuted Buff2
 			}
 
@@ -9118,6 +9106,21 @@ Mods: {
 			AbyssalSinking: {
 				DisplayName: Sinking
 				Description: Mods.tsorcRevamp.Buffs.AbyssalSinking.Description
+			}
+
+			SupremeDragoonLashDebuff: {
+				DisplayName: Supreme Dragoon Lash Debuff
+				Description: Mods.tsorcRevamp.Buffs.SupremeDragoonLashDebuff.Description
+			}
+
+			ElectrocutedBuff2: {
+				Description: Mods.tsorcRevamp.Buffs.ElectrocutedBuff2.Description
+				DisplayName: Electrocuted Buff2
+			}
+
+			YoungHunterBuff: {
+				DisplayName: Young Hunter Buff
+				Description: Mods.tsorcRevamp.Buffs.YoungHunterBuff.Description
 			}
 		}
 
@@ -9808,6 +9811,19 @@ Mods: {
 			SoulCoinProj.DisplayName: Soul Coin Proj
 			ChaosBlackFire.DisplayName: Chaos Black Fire
 			ChaosBlackFirelet.DisplayName: Chaos Black Firelet
+			ShadowSparkle.DisplayName: Shadow Sparkle
+			ShadowsparkBulletProjectile.DisplayName: Shadowspark Bullet Projectile
+			Ichorstorm.DisplayName: Ichorstorm
+			DraconicArrowProjectile.DisplayName: Draconic Arrow Projectile
+			GaeBolgHeld.DisplayName: Gae Bolg Held
+			GaeBolgPoke.DisplayName: Gae Bolg Poke
+			GaeBolgThrown.DisplayName: Gae Bolg Thrown
+			LonginusThrown.DisplayName: Longinus Thrown
+			LonginusPoke.DisplayName: Longinus Poke
+			LonginusHeld.DisplayName: Longinus Held
+			FriendlyHunterChild.DisplayName: Friendly Hunter Child
+			YoungHunter.DisplayName: Young Hunter
+			YoungHunterProjectile.DisplayName: Young Hunter Projectile
 		}
 
 		NPCs: {
@@ -10829,7 +10845,7 @@ Mods: {
 					'''
 				HunterElengadRuinHint:
 					'''
-					The Orspeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
+					The Orespeak built many traps underneath their tribe as a way to defend against the first coming of the Abyss.
 					They were a tribe of Fire Walkers - they had the magical ability to walk on molten rock yet remain unharmed.
 					If you don't have a way to cross lava, delving deep into their tunnels would be a fool's errand.
 					'''
@@ -11454,6 +11470,7 @@ Mods: {
 			LichKingDisciple.DisplayName: Lich King Disciple
 			LeonhardRemix.DisplayName: Leonhard
 			TrueDeath.DisplayName: Absolute Death
+			DarkCloudShadow.DisplayName: Dark Cloud Shadow
 		}
 
 		Prefixes: {
@@ -11801,18 +11818,193 @@ Mods: {
 
 			CollectorCosmicWatch: {
 				FriendlyName: Time controller
-				Description: Day by Night
+				Description: Try to instantly advance time with a cosmic watch.
+			}
+
+			ExploreFortyBonfire: {
+				FriendlyName: Lots of Rest
+				Description: Activate a total of forty bonfires on a world.
+			}
+
+			ExploreContractFind: {
+				FriendlyName: Lost Contract
+				Description: Find an ancient Dwarven Contract by exploring the world.
+			}
+
+			CollectorContractFull: {
+				FriendlyName: Contract Completed
+				Description: Give all possible Dwarven Contracts to the Dwarf.
+			}
+
+			CollectorMillionSoul: {
+				FriendlyName: The Souliest
+				Description: Have a total of 1 million Dark Souls in your inventory.
+			}
+
+			ChallengerDodge: {
+				FriendlyName: You were supposed to die!
+				Description: Dodge a deadly blow from Tonberry.
 			}
 
 			ExploreVillage: {
 				FriendlyName: Is that a Village?
-				Description: Welcome travellor
+				Description: Welcome travellor!
 			}
 
 			SlayerLeonhard: {
-				FriendlyName: Defeat Leonhard
-				Description: "{$BossChecklist.LeonhardDesc}"
+				FriendlyName: A Mysterious Encounter
+				Description: Defeat Leonhard, a mysterious man keeping the high bridge between the mountains.
 			}
+
+			SlayerPinwheel: {
+				FriendlyName: Family
+				Description: Defeat Pinwheel, the necromancer cursing the caves below the village.
+			}
+
+			SlayerAncientOolacileDemon: {
+				FriendlyName: Beast of the Lost Forest
+				Description: Defeat the Ancient Oolacile Demon, the hidden beast of the Oolacile Forest.
+			}
+
+			SlayerSlograGaibon: {
+				FriendlyName: Fallen Duo
+				Description: Defeat Slogra and Gaibon, the undead and the demon refugees in their volcanic crypt.
+			}
+
+			SlayerJungleWyvern: {
+				FriendlyName: Keeper of the Ruins
+				Description: Defeat the Ancient Jungle Wyvern, the guardian of the Forgotten City.
+			}
+
+			SlayerDefiledDemon: {
+				FriendlyName: Scourge of the City
+				Description: Defeat the Defiled Demon of the Forgotten City, a powerful creature coming from the Underworld.
+			}
+
+			SlayerRage: {
+				FriendlyName: Renaissance
+				Description: Defeat the Rage, the phoenix of fire and wrath in the hallowed depths.
+			}
+
+			SlayerWyvernMage: {
+				FriendlyName: Wyvern Tamer
+				Description: Defeat the Wyvern Mage and his disciple in their fortress dominating the eastern mountains.
+			}
+
+			SlayerSorrow: {
+				FriendlyName: Frozen Grief
+				Description: Defeat the Sorrow, the water eagle lurking in the depths of icy waters.
+			}
+
+			SlayerHeroOfLumelia: {
+				FriendlyName: Heroic Revenge
+				Description: Defeat the Hero of Lumelia, coming to avenge his brother and your irresponsible actions against the world.
+			}
+
+			SlayerSerris: {
+				FriendlyName: Battle X
+				Description: Defeat Serris, an unknown being from space hidden under a dark tower.
+			}
+
+			SlayerDeath: {
+				FriendlyName: Fate
+				Description: Defeat Death.
+			}
+
+			SlayerHunter: {
+				FriendlyName: Hunting Time
+				Description: Defeat the Hunter, the ferocious great vulture of the desert, the strongest of the Three Wings.
+			}
+
+			SlayerMachine: {
+				FriendlyName: Flooded Gears
+				Description: Defeat the Machine, the ancient keeper of the forgotten Machine Temple
+			}
+
+			SlayerTriad: {
+				FriendlyName: Triple Attack
+				Description: Defeat the Triad, the eyes of death constantly observing the world from their giant shrine of glass.
+			}
+
+			SlayerAttraidies: {
+				FriendlyName: The End?
+				Description: Defeat Attraidies, the supreme warlock, bane of the world.
+			}
+
+			ExplorerSHM: {
+				FriendlyName: Beyond Hard!
+				Description: Opening a portal from the abyss by killing Attraidies, unleashing more dark and oppressive forces across the world.
+			}
+
+			SlayerHellkiteDragon: {
+				FriendlyName: Dragon Slayer
+				Description: Defeat the Hellkite Dragon, a fiery beast of the abyss roaming above the village.
+			}
+
+			SlayerKraken: {
+				FriendlyName: Water Master
+				Description: Defeat Water Fiend Kraken, the water god resting in fungal caverns.
+			}
+
+			SlayerLich: {
+				FriendlyName: Earth Master
+				Description: Defeat Earth Fiend Lich, the god of earth and necromancy, in his terrifying lair.
+			}
+
+			SlayerMarilith: {
+				FriendlyName: Fire Master
+				Description: Defeat Fire Fiend Marilith, the demonic fire goddess from the abyss.
+			}
+
+			SlayerWitchking: {
+				FriendlyName: Bane of Humanity
+				Description: Defeat the Witchking, a fallen king who has become a wraith wandering in the dark depths.
+			}
+
+			SlayerOccultist: {
+				FriendlyName: Remnants of Oolacile
+				Description: Defeat the Grand Occultist of Oolacile, a powerful sorcerer from the distant, ruined land of Oolacile.
+			}
+
+			SlayerArtorias: {
+				FriendlyName: A Mighty Knight
+				Description: Defeat Artorias, the great knight of Izalith, waiting in the ruins of the city.
+			}
+
+			SlayerBlight: {
+				FriendlyName: ???
+				Description: Defeat Blight, a strange entity from the abyss on the surface of the Frozen Ocean.
+			}
+
+			SlayerSeath: {
+				FriendlyName: End of Immortality
+				Description: Defeath Seath the Scaleless, the great undead dragon in search of immortality.
+			}
+
+			SlayerWyvernShadow: {
+				FriendlyName: Dark Secrets
+				Description: Defeat the Wyvern Mage Shadow and his phantom disciple, secretly imprisoned in a huge glass structure.
+			}
+
+			SlayerChaos: {
+				FriendlyName: God of Discord
+				Description: Defeat Chaos, the forgotten god of discord and darkness.
+			}
+
+			SlayerDarkCloud: {
+				FriendlyName: Yourself
+				Description: Defeat Dark Cloud.
+			}
+
+			SlayerGwyn: {
+				FriendlyName: The First Flame
+				Description: Defeat Gwyn.
+			}
+		}
+
+		Bestiary: {
+			DemonElemental: These primordial elementals are composed purely of demonic energy. They roam the Underworld with the sole purpose of fear and destruction.
+			Dunlending: The Dunlendings are wild men from Dunland, a nearby land of vast plains. Their hatred of men and their savagery drive them to ravage the surrounding lands.
 		}
 	}
 }

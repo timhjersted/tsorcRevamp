@@ -149,6 +149,12 @@ namespace tsorcRevamp.Projectiles
                 player.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer = 0;
                 projectile.ai[0] = 0;
             }
+            if (projectile.type == ProjectileID.RainbowRodBullet && projectile.ai[0] == 1)
+            {
+                projectile.DamageType = DamageClass.SummonMeleeSpeed;
+                player.GetModPlayer<tsorcRevampPlayer>().SupremeDragoonLashFireBreathTimer = 0;
+                projectile.ai[0] = 0;
+            }
             if (projectile.type == ProjectileID.ScytheWhipProj && projectile.ai[0] == 1)
             {
                 projectile.localNPCImmunity[(int)projectile.ai[1]] = -1;
@@ -489,14 +495,14 @@ namespace tsorcRevamp.Projectiles
 
             if ((projectile.type == ProjectileID.LaserMachinegunLaser || projectile.type == ProjectileID.ElectrosphereMissile || projectile.type == ProjectileID.ChargedBlasterOrb || projectile.type == ProjectileID.ChargedBlasterLaser || projectile.type == ProjectileID.UFOLaser) && NPC.downedMartians)
             {
-                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 4 * 60);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 4 * 60);
             }
 
             if (projectile.friendly && projectile.owner >= 0)
             {
                 if ((player.HeldItem.type == ItemID.ElectrosphereLauncher || player.HeldItem.type == ItemID.Xenopopper || player.HeldItem.type == ItemID.InfluxWaver) && NPC.downedMartians)
                 {
-                    target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 4 * 60);
+                    target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 4 * 60);
                 }
             }
 

@@ -33,6 +33,7 @@ namespace tsorcRevamp.Items.Potions
             Item.value = 500;
             Item.buffType = BuffID.WellFed3;
             Item.buffTime = ExquisitelyStuffedDuration * 60;
+            Item.rare = ItemRarityID.LightRed;
         }
 
 
@@ -71,13 +72,20 @@ namespace tsorcRevamp.Items.Potions
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Wood, 1);
-            recipe.AddIngredient(ItemID.Mushroom, 1);
+            recipe.AddIngredient(ModContent.ItemType<MushroomSkewer>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DeadChicken>(), 1);
             recipe.AddIngredient(ItemID.PixieDust, 1);
             recipe.AddTile(TileID.Campfire);
 
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ModContent.ItemType<MushroomSkewer>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<CookedChicken>(), 1);
+            recipe2.AddIngredient(ItemID.PixieDust, 1);
+            recipe2.AddTile(TileID.Campfire);
+
+            recipe2.Register();
         }
     }
 }

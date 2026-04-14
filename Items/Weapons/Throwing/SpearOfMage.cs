@@ -15,12 +15,12 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         }
         public override void SetDefaults()
         {
-            Item.shootSpeed = 16f;
-            Item.damage = 66;
+            Item.shootSpeed = 17f;
+            Item.damage = 57;
             Item.knockBack = 9f;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 35;
-            Item.useTime = 35;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
             Item.width = 30;
             Item.height = 84;
             Item.rare = ItemRarityID.LightRed;
@@ -39,8 +39,8 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<EphemeralThrowingSpear>(), 100);
-            recipe.AddIngredient(ItemID.SoulofLight, 5);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralThrowingSpear>(), 500);
+            recipe.AddIngredient(ItemID.SoulofLight, 6);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
 
             recipe.AddTile(TileID.DemonAltar);

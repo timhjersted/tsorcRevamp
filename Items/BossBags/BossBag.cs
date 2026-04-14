@@ -271,7 +271,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MythrilBulwark>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EyeOfTheHunt>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.Drax));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheHunterMask>(), 7));

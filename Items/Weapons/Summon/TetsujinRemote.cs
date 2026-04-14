@@ -7,6 +7,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Projectiles.Summon.Tetsujin;
 
 namespace tsorcRevamp.Items.Weapons.Summon
@@ -68,7 +69,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 2);
-            //recipe.AddIngredient(ModContent.ItemType<Ammo.TeslaBolt>(), 100);
+            recipe.AddIngredient(ModContent.ItemType<TeslaBolt>(), 100);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
             recipe.AddTile(TileID.DemonAltar);

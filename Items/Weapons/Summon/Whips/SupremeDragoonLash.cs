@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class SupremeDragoonLash : ModItem
     {
         public static float SummonTagCrit = 10;
-        public const int BaseDamage = 105;
+        public const int BaseDamage = 100;
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.shootSpeed = 4;
 
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 22;
-            Item.useAnimation = 22;
+            Item.useTime = 23;
+            Item.useAnimation = 23;
             Item.noMelee = true;
             Item.noUseGraphic = true;
         }

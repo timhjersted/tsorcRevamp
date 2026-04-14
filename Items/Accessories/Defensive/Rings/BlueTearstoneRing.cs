@@ -8,10 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
     public class BlueTearstoneRing : ModItem
     {
         public static float LifeThreshold = 40f;
-        public static int Defense = 25;
-        public static float DrIncrease = 9f;
-        public static int BadMeleeDmg = 200;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Defense, DrIncrease, BadMeleeDmg);
+        public static int Defense = 15;
+        public static float DrIncrease = 18f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Defense, DrIncrease);
         public override void SetStaticDefaults()
         {
         }
@@ -20,7 +19,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         {
             Item.width = 24;
             Item.height = 24;
-            Item.defense = 15;
+            Item.defense = 16;
             Item.accessory = true;
             Item.value = PriceByRarity.Purple_11;
             Item.rare = ModContent.RarityType<DarkBlue>();
@@ -33,7 +32,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             {
                 player.statDefense += Defense;
                 player.endurance += DrIncrease / 100f;
-                player.GetDamage(DamageClass.Melee) -= BadMeleeDmg / 100;
             }
         }
 

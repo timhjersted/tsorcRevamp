@@ -25,11 +25,18 @@
   "tileY": 1266,
   "textWidth": 320,
   "style": 1
-}
+} 
 {
-  "text": "The Eternal Reef is a place where life has developed in a spectacular way, independently of the rest of the world. --NEWLINE But this exotic fauna and flora makes this reef very dangerous.  --NEWLINE This is also where a huge mutated creature resides, maybe here you will find the place to bait it and fight it on the surface...",
+  "text": "The Eternal Reef is one of the oldest biomes in the world where life has developed in a spectacular way, independently of the rest of the world. --NEWLINE But this exotic fauna and flora makes this reef very dangerous.  --NEWLINE This is also where a huge mutated creature resides, maybe here you will find the place to bait it and fight it on the surface...",
   "tileX": 379,
   "tileY": 1011,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Here lived a group of merfolks, a mythical, forgotten aquatic race. They coexisted with the Great Duke in the reef, more or less peacefully. Long ago, when the fiends roamed the lands, the Water Fiend Kraken settled in the Eternal Reef, gradually disrupting and destroying it. It was driven back and fled east deep into the dreamlike caves, but at the cost of their territory, which has long since been in ruins.",
+  "tileX": 203,
+  "tileY": 1032,
   "textWidth": 320,
   "style": 1
 }
@@ -62,7 +69,7 @@
   "style": 1
 }
 {
-  "text": "\u0022Greetings Red, so you have made it to the eastern lands. I have guarded this home and this little mushroom forest for a long time, a small paradise and a great oasis between the corrupted mountains of the east and the arid and hostile desert of the west. I am in communication with my friend Yimaya, the Dryad, she informed me of your returns and the path you have traveled, I can only encourage you, but beware, the challenges on your way are only just beginning... your path further east will be difficult. Otherwise, you are welcome here, if rest is necessary.\u0022",
+  "text": "\u0022Greetings Red, so you have made it to the western lands. I have guarded this home and this little mushroom forest for a long time, a small paradise and a great oasis between the corrupted mountains of the east and the arid and hostile desert of the west. I am in communication with my friend Yimaya, the Dryad, she informed me of your returns and the path you have traveled, I can only encourage you, but beware, the challenges on your way are only just beginning... your path further east will be difficult. Otherwise, you are welcome here, if rest is necessary.\u0022",
   "tileX": 2450,
   "tileY": 753,
   "textWidth": 320,
@@ -279,9 +286,30 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found The Dark Tower of Attraidies - --NEWLINE  --NEWLINE The top of the dark tower is blocked, to unblock the passage you will need to go to the basement of the tower...",
+  "text": "Attraidies was once a human citizen of Orespeak, deeply interested in magic and driven by a thirst for power. While studying the world\u0022s history, he became fascinated by the lost tribe of the Takers, the first to create a bond with the Abyss and establish their dominion and unleash chaos upon all of Terraria, eradicating the animists and the peoples of the Old World. Inspired by the Takers, Attraidies resolved to perpetuate the evil legacy of this tribe and conquer the world with his powerful allies.",
+  "tileX": 1372,
+  "tileY": 956,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You\u0027ve found The Dark Tower of Attraidies - --NEWLINE  --NEWLINE The top of the dark tower is blocked, to unlock the passage you will need to go to the basement of the tower...",
   "tileX": 1401,
   "tileY": 842,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "On the table, you see a paper that appears to be a map of the known world. You see places you\u0022ve visited, but also others unknown to you, like the Lost Islands to the north, which seem to be an archipelago where the goblins originated, or Dunland south of Makhóčhe, the wild land of the Dunlendings. There\u0022s some writing at the bottom of the map, seemingly written by Attraidies: \u0022Most of the territories on this map are either conquered or in ruins. Absolute victory is advancing. Only Ashenpeak, the remnants of the Orid Tribe, and Tibia are fiercely resisting. I'm preparing something for them, a little game they'll fall for completely; they\u0022re not ready...\u0022",
+  "tileX": 1408,
+  "tileY": 581,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You flip the switch and hear a strange noise coming from above the tower. You should go there.",
+  "tileX": 1404,
+  "tileY": 534,
   "textWidth": 320,
   "style": 1
 }
@@ -524,7 +552,14 @@
   "style": 1
 }
 {
-  "text": "To the West \u003C--- --NEWLINE Scarlet Hill --NEWLINE  Mycelium Forest --NEWLINE Elengad\u0027s Desert Ruins --NEWLINE Unknown... --NEWLINE  --NEWLINE To the East --\u003E --NEWLINE The Twin Peaks of Arazium --NEWLINE The Village --NEWLINE The Rainforest of the Orid Tribe",
+  "text": "These greyish galleries weren't like this before. It was once a vast swamp, tainted by the necromancy of the Earth Fiend Lich. All that remains of this former great swamp are dead roots and a significant amount of water.",
+  "tileX": 3120,
+  "tileY": 1269,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "To the West \u003C--- --NEWLINE Scarlet Hill --NEWLINE Mycelium Forest --NEWLINE Elengad\u0027s Desert Ruins --NEWLINE Unknown... --NEWLINE  --NEWLINE To the East --\u003E --NEWLINE The Twin Peaks of Arazium --NEWLINE The Village --NEWLINE The Rainforest of the Orid Tribe",
   "tileX": 3011,
   "tileY": 348,
   "textWidth": 320,
@@ -609,6 +644,20 @@
 }
 {
   "text": "- You\u0027ve found the Sanctuary of the Watchers - --NEWLINE  --NEWLINE \u0022I need something that can break Chlorophyte...\u0022",
+  "tileX": 3316,
+  "tileY": 238,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "On this wall, it is inscribed: The eyes of death in their fortress have long observed the actions of humanity. No one, not even those in the depths of the world, is spared their terrifying gaze.",
+  "tileX": 3148,
+  "tileY": 65,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Through the window you have an impressive view to the east at the mountain peak. You can see the Ashenpeak Village and the Sky Temple in the distance, and even a bit of the Jungle.",
   "tileX": 3316,
   "tileY": 238,
   "textWidth": 320,
@@ -2064,6 +2113,20 @@
   "style": 1
 }
 {
+  "text": "You\u0027ve discovered the Hallowed Caverns.",
+  "tileX": 6840,
+  "tileY": 1046,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Across the Hallowed Caves, this kind of gate can be found, with an inscription. It reads: If shadows and chaos once again descend upon these enchanted galleries, these runic barriers will activate to protect them and contain the darkness. Light will triumph over darkness.",
+  "tileX": 7169,
+  "tileY": 1229,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "As you wander through these enchanted lands, you notice something. The magical and fairy creatures you\u0027ve heard about that are supposed to roam here are simply not present. You doubt the tales and stories you\u0027ve been told before but you also realize that this place seems strangely quiet.",
   "tileX": 6769,
   "tileY": 728,
@@ -2071,7 +2134,7 @@
   "style": 1
 }
 {
-  "text": "- The Great Mountains of Elendaris -",
+  "text": "- The Great Mountains of Elendaris - --NEWLINE  --NEWLINE These cold mountains are known to be the nest of the legendary wyverns. Long ago, Elendaris was the first known man to tame one, a difficult feat as wyverns are powerful and proud creatures. He became a renowned hero of the east, and these mountains were named after him for his achievement.",
   "tileX": 6704,
   "tileY": 530,
   "textWidth": 320,
@@ -2267,13 +2330,6 @@
   "style": 1
 }
 {
-  "text": "You pull the lever and hear a faint rumble far below you. --NEWLINE  --NEWLINE It seems this may have opened the gate blocking the path to the Frozen Ocean...",
-  "tileX": 7299,
-  "tileY": 599,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "A voice enters your mind, \u0022Red, don\u0027t be in such a hurry to kill me. Your thirst for violence can wait.\u0022 He laughs. --NEWLINE  --NEWLINE \u0022After all, there will be plenty of time for that... --NEWLINE  --NEWLINE First, I\u0027d like you to play a game. I think you\u0027ll like it.  --NEWLINE  --NEWLINE The entrance is just down those steps...if you succeed, a Shadow Key awaits you...\u0022",
   "tileX": 7304,
   "tileY": 420,
@@ -2361,6 +2417,13 @@
   "text": "- The path is sealed by lihzahrd bricks, blocking the path to the Prison of Chaos -  --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Lizard Gate in a small cavity on the border between the Hallowed Caves and the Frozen Ocean...\u0022",
   "tileX": 7497,
   "tileY": 873,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Sharian\u0022s Village --NEWLINE  --NEWLINE This abandoned village, once a haven of peace in the Hallow, was ravaged by the dark presence of Chaos and a surprise invasion from the Abyss. A powerful demon lies underneath, awaiting its next victim.",
+  "tileX": 6655,
+  "tileY": 972,
   "textWidth": 320,
   "style": 1
 }
@@ -2477,7 +2540,7 @@
   "style": 1
 }
 {
-  "text": "You catch your breath to look far into the horizon. Nothing but a faint white blending effortlessly with the blue-green sheen glowing up through the snow. This ocean appears to go off into infinity. Who can imagine what could be beyond this world?",
+  "text": "You catch your breath to look far into the horizon. Nothing but a faint white blending effortlessly with the blue-green sheen glowing up through the snow. This ocean appears to go off into infinity.",
   "tileX": 8334,
   "tileY": 866,
   "textWidth": 320,

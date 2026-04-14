@@ -16,8 +16,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.aiStyle = 0;
             Projectile.tileCollide = true;
             Projectile.timeLeft = 335;
-            Projectile.scale = 0.85f;
-            Projectile.extraUpdates = 1;
+            Projectile.scale = 1f;
+            Projectile.extraUpdates = 2;
         }
         public override void AI()
         {

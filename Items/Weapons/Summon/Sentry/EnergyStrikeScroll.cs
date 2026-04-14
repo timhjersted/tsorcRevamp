@@ -11,7 +11,7 @@ using tsorcRevamp.Projectiles.Magic.Scrolls;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs;
 
-namespace tsorcRevamp.Items.Weapons.Magic.Scrolls
+namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 {
     class EnergyStrikeScroll : ModItem
     {

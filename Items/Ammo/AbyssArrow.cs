@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Ammo
         {
             Item.consumable = true;
             Item.ammo = AmmoID.Arrow;
-            Item.damage = 22;
+            Item.damage = 23;
             Item.height = 40;
             Item.knockBack = (float)4.2;
             Item.maxStack = Item.CommonMaxStack;
@@ -33,7 +33,8 @@ namespace tsorcRevamp.Items.Ammo
             Recipe recipe = CreateRecipe(400);
             recipe.AddIngredient(ItemID.WoodenArrow, 400);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 1);  
-            recipe.AddTile(TileID.LunarCraftingStation);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }
 

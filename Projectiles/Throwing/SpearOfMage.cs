@@ -15,9 +15,9 @@ namespace tsorcRevamp.Projectiles.Throwing
         }
         public override void SetDefaults()
         {
-            Projectile.width = 40;
-            Projectile.height = 40;
-            Projectile.timeLeft = 120;
+            Projectile.width = 32;
+            Projectile.height = 32;
+            Projectile.timeLeft = 180;
             Projectile.light = 0.5f;
             Projectile.friendly = true;
             Projectile.hostile = false;
@@ -51,8 +51,12 @@ namespace tsorcRevamp.Projectiles.Throwing
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90f); //simplified rotation code (no trig!)
 
             Color color = new Color();
-            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 242, 0f, 0f, 80, color, 1f);
+            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 242, 0f, 0f, 80, color, 1.1f);
             Main.dust[dust].noGravity = true;
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Dissolving>(), 2);
         }
 
         public override void OnKill(int timeLeft)

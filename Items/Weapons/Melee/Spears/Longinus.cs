@@ -1,44 +1,95 @@
-
+using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
-    public class Longinus : ModdedSpearItem
+    class Longinus : ModItem
     {
-        public override int ProjectileID => ModContent.ProjectileType<LonginusProj>();
-        public override int Width => 94;
-        public override int Height => 94;
-        public override int BaseDmg => 265;
-        public override int BaseCritChance => 0;
-        public override float BaseKnockback => 9;
-        public override int UseAnimationTime => 20;
-        public override int UseTime => 20;
-        public override int Rarity => ModContent.RarityType<DarkBlue>();
-        public override int Value => PriceByRarity.Lime_7;
-        public override SoundStyle UseSoundID => SoundID.Item71;
-        public const float BonusDmgWhileFalling = 120f;
-        public const int HealOnHit = 4;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BonusDmgWhileFalling, HealOnHit);
-        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
+        public override void SetStaticDefaults()
         {
-            if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0)
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
+        }
+
+        public override void SetDefaults()
+        {
+            Item.DamageType = DamageClass.Melee;
+            Item.shoot = ModContent.ProjectileType<LonginusHeld>();
+            Item.channel = true;
+            Item.damage = 1250;
+            Item.crit = 20;
+            Item.width = 24;
+            Item.height = 48;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
+            Item.knockBack = 4f;
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.UseSound = SoundID.Item7;
+            Item.shootSpeed = 21f;
+            Item.channel = true;
+        }
+
+        public override bool CanUseItem(Player player)
+        {
+            //Block using the item unless they have one more than the required stamina
+            //Prevents a bug where, if the player uses this weapon with *exactly* the stamina required, it instantly throws it without letting them charge up
+            //This happens constantly if they hold left mouse, as it gets used the instant stamina refills to that level
+            int staminaUse = (int)(Item.useAnimation / player.GetAttackSpeed(Item.DamageType));
+            staminaUse = (int)tsorcRevampPlayer.ReduceStamina(staminaUse);
+            if (player.altFunctionUse != 2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < staminaUse * 2)
             {
-                damage *= BonusDmgWhileFalling / 100f;
+                return false;
+            }
+            return base.CanUseItem(player);
+        }
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            if (player.altFunctionUse == 2)
+            {
+                Item.useStyle = ItemUseStyleID.Thrust;
+            }
+            else
+            {
+                Item.useStyle = ItemUseStyleID.HoldUp;
+            }
+
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<LonginusHeld>(), damage, knockback, player.whoAmI, type);
+            }
+            return false;
+        }
+
+
+        public override bool AltFunctionUse(Player player)
+        {
+            if (!Main.mouseLeft && player.ItemTimeIsZero)
+            {
+                return true;
+            }
+            else
+            {
+                player.altFunctionUse = 1;
+                return false;
             }
         }
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ChlorophytePartisan, 1);
+            recipe.AddIngredient(ModContent.ItemType<GaeBolg>());
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

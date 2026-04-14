@@ -70,6 +70,7 @@ namespace tsorcRevamp.NPCs
         public bool markedByDetonationSignal;
         public bool markedByDominatrix;
         public bool markedByDragoonLash;
+        public bool markedBySupremeDragoonLash;
         public bool markedByEnchantedWhip;
         public bool markedByNightsCracker;
         public bool markedByPolarisLeash;
@@ -135,6 +136,7 @@ namespace tsorcRevamp.NPCs
         public bool ResetBiohazardBlobs;
         public bool ElectrocutedEffect;
         public bool ElectrocutedEffect2;
+        public bool ElectrocutedEffect3;
         public bool PolarisElectrocutedEffect;
         public bool CrescentMoonlight;
         public bool Soulstruck;
@@ -277,6 +279,7 @@ namespace tsorcRevamp.NPCs
             ResetBiohazardBlobs = false;
             ElectrocutedEffect = false;
             ElectrocutedEffect2 = false;
+            ElectrocutedEffect3 = false;
             PolarisElectrocutedEffect = false;
             CrescentMoonlight = false;
             Soulstruck = false;
@@ -289,6 +292,7 @@ namespace tsorcRevamp.NPCs
             markedByDetonationSignal = false;
             markedByDominatrix = false;
             markedByDragoonLash = false;
+            markedBySupremeDragoonLash = false;
             markedByEnchantedWhip = false;
             markedByNightsCracker = false;
             markedByPolarisLeash = false;
@@ -511,10 +515,23 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.GoblinSummoner, 0.01f);
             }
+            if (spawnInfo.Player.ZoneHallow && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.hardMode)
+            {
+                pool.Add(NPCID.Pixie, 0.40f);
+                pool.Add(NPCID.Gastropod, 0.18f);
+                pool.Add(NPCID.Unicorn, 0.09f);
+                pool.Add(NPCID.RainbowSlime, 0.03f);
+            }
             //ocean water (outer thirds of the map)
             if (spawnInfo.Water && Main.hardMode && (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
             {
                 pool.Add(NPCID.SandsharkHallow, 0.3f);
+            }
+
+            if (spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneRockLayerHeight && Main.hardMode)
+            {
+                pool.Add(NPCID.Derpling, 0.25f);
+                pool.Add(NPCID.GiantFlyingFox, 0.25f);
             }
 
             //SUPER HARD MODE SECTION
@@ -567,10 +584,7 @@ namespace tsorcRevamp.NPCs
                 // wyvern mage prison (remix map)
                 if (spawnInfo.Player.ZoneMeteor && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && spawnInfo.Player.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
                 {
-                    pool.Add(NPCID.SolarCorite, 0.15f);
-                    pool.Add(NPCID.NebulaBrain, 0.15f);
-                    pool.Add(NPCID.StardustJellyfishBig, 0.15f);
-                    pool.Add(NPCID.VortexLarva, 0.15f);
+                    pool.Add(NPCID.SolarCorite, 0.35f);
                 }
                 // great foundry (remix map)
                 if ((spawnInfo.SpawnTileType == TileID.Cog || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.TinPlating) && tsorcRevampWorld.SuperHardMode)
@@ -590,7 +604,7 @@ namespace tsorcRevamp.NPCs
             }            
 
             bool invasion = Main.invasionType != 0;
-            if (player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000)
+            if (!tsorcRevampWorld.SuperHardMode && (player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000))
             {
                 invasion = false;
             }
@@ -811,6 +825,11 @@ namespace tsorcRevamp.NPCs
                         if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
                         {
                             Main.StartInvasion();
+                        }
+
+                        if ((npc.type == ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && Main.invasionType == 0)
+                        {
+                            Main.StartInvasion(3);
                         }
 
                         tsorcRevampWorld.PopulatePairedBosses();
@@ -1237,6 +1256,14 @@ namespace tsorcRevamp.NPCs
                 if (projectileOwner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer >= 1 && Main.myPlayer == projectileOwner.whoAmI)
                 {
                     Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer, 1);
+                }
+            }
+            if (markedBySupremeDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
+            {
+                int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(SupremeDragoonLash.BaseDamage);
+                if (projectileOwner.GetModPlayer<tsorcRevampPlayer>().SupremeDragoonLashFireBreathTimer >= 1 && Main.myPlayer == projectileOwner.whoAmI)
+                {
+                    Projectile RgbFireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.RainbowRodBullet, WhipDamage, 1f, Main.myPlayer, 1);
                 }
             }
             #endregion
@@ -2343,8 +2370,23 @@ namespace tsorcRevamp.NPCs
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }
-            
+
             if (ElectrocutedEffect2)
+            {
+                int DoTPerS = 36;
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= (DragonStone.Potency / 2);
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            
+            if (ElectrocutedEffect3)
             {
                 int DoTPerS = 116;
                 if (npc.lifeRegen > 0)
@@ -2799,6 +2841,12 @@ namespace tsorcRevamp.NPCs
             }
 
             if (ElectrocutedEffect2)
+            {
+                int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .45f);
+                Main.dust[dust].noGravity = true;
+            }
+
+            if (ElectrocutedEffect3)
             {
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .5f);
                 Main.dust[dust].noGravity = true;

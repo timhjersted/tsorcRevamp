@@ -33,6 +33,15 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.Skeleton;
             Main.npcFrameCount[NPC.type] = 15;
             UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 9, 8, SoundID.Item63, telegraphColor: Color.GreenYellow);
+
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 100;
+                NPC.defense = 12;
+                NPC.value = 300;
+                NPC.damage = 35;
+                NPC.knockBackResist = 0.05f;
+            }
         }
 
         //these mfs drop Every Potion too 

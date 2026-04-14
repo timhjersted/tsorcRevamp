@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories.Defensive.Rings
+namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class BlueEye : ModItem
     {

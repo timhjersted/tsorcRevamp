@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             float chance = 0;
             Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
+            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneDesert)
             {
                 chance = 0;
                 return chance;

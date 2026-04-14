@@ -30,6 +30,15 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.DworcFleshhunterBanner>();
 
             AnimationType = NPCID.Skeleton;
+
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 100;
+                NPC.defense = 18;
+                NPC.value = 250;
+                NPC.damage = 42;
+                NPC.knockBackResist = 0.05f;
+            }
         }
 
         //oh sweet jesus why do you drop so many potions - lol

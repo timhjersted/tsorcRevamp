@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Magic
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<AbyssalSinking>(), 5 * 60);
+            target.AddBuff(ModContent.BuffType<AbyssalSinking>(), 7 * 60);
         }
         
         public override void OnKill(int timeLeft)

@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.aiStyle = -1;
             NPC.damage = 50;
             NPC.defense = 9999;
-            NPC.lifeMax = 1000;
+            NPC.lifeMax = 10000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 1f;

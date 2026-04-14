@@ -101,7 +101,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         {
             Player player = Main.player[Projectile.owner]; 
 
-            int whipBuffSelection = Main.rand.Next(20); 
+            int whipBuffSelection = Main.rand.Next(21); 
             switch (whipBuffSelection)
             {
                 case 0:
@@ -172,6 +172,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
                     break;
                 case 19:
                     target.AddBuff(ModContent.BuffType<PyromethaneDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                    break;
+                case 20:
+                    target.AddBuff(ModContent.BuffType<SupremeDragoonLashDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                    player.AddBuff(ModContent.BuffType<DragoonLashBuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                    player.GetModPlayer<tsorcRevampPlayer>().SupremeDragoonLashFireBreathTimer += 0.7f;
                     break;
             }
 

@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.aiStyle = 1;
             Projectile.friendly = true;
             Projectile.height = 10;
-            Projectile.penetrate = 2;
+            Projectile.penetrate = 4;
             Projectile.damage = 500;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;

@@ -82,7 +82,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.WoodenArrowHostile, 14, 11, 120, 1.3f, 0.08f, canTeleport: false);
+            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FlamingArrow, 14, 11, 120, 1.3f, 0.08f, canTeleport: false);
         }
 
 

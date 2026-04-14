@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int WhipWidth => 10;
         public override int WhipHeight => 20;
         public override int WhipSegments => 26;
-        public override float WhipRangeMult => 2.51f;
+        public override float WhipRangeMult => 2.48f;
         public override int DustId => DustID.Sandnado;
         public override int DustWidth => 10;
         public override int DustHeight => 10;
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override Vector2 WhipTipBase => new Vector2(10, 12);
         public override float MaxChargeDmgMultiplier => 1f;
         public override float ChargeRangeBonus => 0;
-        public override int WhipDebuffId => ModContent.BuffType<DragoonLashDebuff>();
+        public override int WhipDebuffId => ModContent.BuffType<SupremeDragoonLashDebuff>();
         public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
         public override float WhipMultihitPenalty => 0.8f;
         public override Color WhipLineColor => Color.Indigo;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             owner.AddBuff(ModContent.BuffType<DragoonLashBuff>(), (int)(WhipDebuffDuration * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
             if (!Hit)
             {
-                owner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer += 0.71f;
+                owner.GetModPlayer<tsorcRevampPlayer>().SupremeDragoonLashFireBreathTimer += 0.7f;
                 Hit = true;
             }
         }

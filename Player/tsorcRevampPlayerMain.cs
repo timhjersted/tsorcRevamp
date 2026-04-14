@@ -770,7 +770,7 @@ namespace tsorcRevamp
             startingItems.Add(ForgottenRuneAxe);
 
             Item Crossbow = new Item();
-            Crossbow.SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.Specialist.Crossbow>());
+            Crossbow.SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>());
             Crossbow.prefix = PrefixID.Awful;
             startingItems.Add(Crossbow);
 
@@ -1231,29 +1231,7 @@ namespace tsorcRevamp
         {
             if (UndeadTalisman)
             {
-                if (NPCID.Sets.Skeletons[npc.type]
-                    || npc.type == NPCID.Zombie
-                    || npc.type == NPCID.Skeleton
-                    || npc.type == NPCID.BaldZombie
-                    || npc.type == NPCID.AngryBones
-                    || npc.type == NPCID.ArmoredViking
-                    || npc.type == NPCID.UndeadViking
-                    || npc.type == NPCID.DarkCaster
-                    || npc.type == NPCID.CursedSkull
-                    || npc.type == NPCID.UndeadMiner
-                    || npc.type == NPCID.Tim
-                    || npc.type == NPCID.DoctorBones
-                    || npc.type == NPCID.ArmoredSkeleton
-                    || npc.type == NPCID.Mummy
-                    || npc.type == NPCID.DarkMummy
-                    || npc.type == NPCID.LightMummy
-                    || npc.type == NPCID.Wraith
-                    || npc.type == NPCID.SkeletonArcher
-                    || npc.type == NPCID.PossessedArmor
-                    || npc.type == NPCID.TheGroom
-                    || npc.type == NPCID.SkeletronHand
-                    || npc.type == NPCID.SkeletronHead
-                    /* || NT == mod.NPCType("MagmaSkeleton") || NT == mod.NPCType("Troll") || NT == mod.NPCType("HeavyZombie") || NT == mod.NPCType("IceSkeleton") || NT == mod.NPCType("IrateBones")*/)
+                if (tsorcRevamp.UndeadNPCs.Contains(npc.type))
                 {
                     modifiers.FinalDamage.Flat -= Items.Accessories.Defensive.UndeadTalisman.FlatDR;
                 }

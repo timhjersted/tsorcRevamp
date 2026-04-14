@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.DangerDetectRange[NPC.type] = 700;
             NPCID.Sets.AttackType[NPC.type] = 1; // 0 is throwing, 1 is shooting, 2 is magic, 3 is melee
             NPCID.Sets.AttackTime[NPC.type] = 40;
-            NPCID.Sets.AttackAverageChance[NPC.type] = 10;
+            NPCID.Sets.AttackAverageChance[NPC.type] = 9;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
 
@@ -45,8 +45,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.height = 40;
             NPC.aiStyle = 7;
             NPC.damage = 50;
-            NPC.defense = 15;
-            NPC.lifeMax = 1000;
+            NPC.defense = 55;
+            NPC.lifeMax = 7500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.3f;
@@ -126,7 +126,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Ranged.Specialist.Crossbow>())
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>())
             {
                 shopCustomPrice = 75,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -225,22 +225,24 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
+            damage = 22;
+            knockback = 2f;
             if (Main.hardMode)
             {
                 damage = 44;
-                knockback = 6f;
+                knockback = 3f;
             }
-            else
+            if (tsorcRevampWorld.SuperHardMode)
             {
-                damage = 22;
-                knockback = 5f;
+                damage = 88;
+                knockback = 6f;
             }
         }
 
         public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown)
         {
-            cooldown = 5;
-            randExtraCooldown = 20;
+            cooldown = 20;
+            randExtraCooldown = 10;
         }
         public override void DrawTownAttackGun(ref Texture2D item, ref Rectangle itemFrame, ref float scale, ref int horizontalHoldoutOffset)/* tModPorter Note: closeness is now horizontalHoldoutOffset, use 'horizontalHoldoutOffset = Main.DrawPlayerItemPos(1f, itemtype) - originalClosenessValue' to adjust to the change. See docs for how to use hook with an item type. */
         {
@@ -251,8 +253,8 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = ProjectileID.HellfireArrow;
-            attackDelay = 35;
+            projType = ProjectileID.VenomArrow;
+            attackDelay = 25;
         }
 
         public override void TownNPCAttackProjSpeed(ref float multiplier, ref float gravityCorrection, ref float randomOffset)

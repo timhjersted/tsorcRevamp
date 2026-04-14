@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.CoinGun)
             {
-                item.damage = 25; 
+                item.damage = 20; 
                 item.useTime = 10;
                 item.useAnimation = 10;
             }

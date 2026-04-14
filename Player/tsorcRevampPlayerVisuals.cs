@@ -861,6 +861,7 @@ namespace tsorcRevamp
         Nebula,
         TripleThreat,
         Cataluminance,
+        SunderedMoon,
         Spazmatism,
         Darkness,
         Light,
@@ -940,6 +941,11 @@ namespace tsorcRevamp
                 case tsorcAuraState.Cataluminance:
                     {
                         DrawCatAura(drawPlayer);
+                        break;
+                    }
+                case tsorcAuraState.SunderedMoon:
+                    {
+                        DrawSundMoonAura(drawPlayer);
                         break;
                     }
                 case tsorcAuraState.Poison:
@@ -1032,6 +1038,62 @@ namespace tsorcRevamp
             Lighting.AddLight((int)drawPlayer.Center.X / 16, (int)drawPlayer.Center.Y / 16, 0f, 0.4f, 0.8f);
             Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
             Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
+
+            //Apply the shader, caching it as well
+            if (catEffect == null)
+            {
+                catEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)(modPlayer.effectRadius / 0.7f), (int)(modPlayer.effectRadius / 0.7f));
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+
+
+            //Pass relevant data to the shader via these parameters
+            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
+            catEffect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            catEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            catEffect.Parameters["fadePercent"].SetValue(0);
+            float timeFactor = 1;
+
+            catEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            catEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            Rectangle baseRectangle = new Rectangle(0, 0, 200, 200);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+
+
+            //Pass relevant data to the shader via these parameters
+            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
+            catEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+            catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            catEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            catEffect.Parameters["fadePercent"].SetValue(0);
+            catEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            catEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, 1, SpriteEffects.None, 0);
+        }
+
+        static void DrawSundMoonAura(Player drawPlayer)
+        {
+            tsorcRevampPlayer modPlayer = drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+
+
+            Lighting.AddLight((int)drawPlayer.Center.X / 16, (int)drawPlayer.Center.Y / 16, 0f, 0.4f, 0.9f);
+            Color shaderColor = Color.Lerp(new Color(0.60f, 0.70f, 1f), new Color(0.1f, 0.4f, 1f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
+            Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.04f);
 
             //Apply the shader, caching it as well
             if (catEffect == null)

@@ -19,7 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
             Item.useTime = Item.useAnimation = 12;
-            Item.damage = 350;
+            Item.damage = 355;
+            Item.crit = 6;
             Item.knockBack = 1;
             Item.autoReuse = true;
             Item.shootSpeed = 16;

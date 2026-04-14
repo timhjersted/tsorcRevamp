@@ -31,7 +31,8 @@ namespace tsorcRevamp.Items.Ammo
             recipe.AddIngredient(ModContent.ItemType<Bolt>(), 200);
             recipe.AddIngredient(ItemID.MythrilBar, 1);
             recipe.AddIngredient(ItemID.SoulofFlight, 1);
-            recipe.AddTile(TileID.Anvils);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }
     }

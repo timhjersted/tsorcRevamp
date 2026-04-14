@@ -23,8 +23,8 @@ namespace tsorcRevamp.Projectiles
         public override void SetDefaults()
         {
             Projectile.penetrate = 8;
-            Projectile.width = 16;
-            Projectile.height = 44;
+            Projectile.width = 20;
+            Projectile.height = 20;
             Projectile.timeLeft = 1800;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;

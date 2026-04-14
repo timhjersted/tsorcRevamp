@@ -208,7 +208,6 @@ namespace tsorcRevamp
             SpawnMechanic,
             SpawnWizard,
             HellkiteDragonEvent,
-            RemixHellkiteDragonEvent,
             EoL,
             RemixEoL,
             DungeonGuardian,
@@ -221,6 +220,7 @@ namespace tsorcRevamp
             AshCavernRightside,
             MorgulFelegLeftside,
             MorgulFelegRightside,
+            HallowDemonEvent,
             ShadowTempleEvent,
             ShadowTempleEvent2,
             MoltenSkyTempleEvent,
@@ -259,7 +259,12 @@ namespace tsorcRevamp
             StarScouter,
             BoreanStrider,
             Lich,
-            ForgottenOne
+            ForgottenOne,
+            //ShadowDarkCloud1,
+            //ShadowDarkCloud2,
+            //ShadowDarkCloud3,
+            //ShadowDarkCloud4,
+            ShadowDarkCloud5
 
 
             //AncientDemonAmbush,
@@ -640,15 +645,16 @@ namespace tsorcRevamp
             //Morgul Feleg Rightside - Great Demon Of The Abyss
             ScriptedEvent MorgulFelegRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
 
+            //Great Demon Of The Abyss on the Abandonned Hallowed Village (Remix Map)
+            ScriptedEvent HallowDemonEvent = new ScriptedEvent(new Vector2(6761, 1081), 30, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
+
             //Molten Sky Temple 
             ScriptedEvent MoltenSkyTempleEvent = new ScriptedEvent(new Vector2(1040, 1865), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss.SerpentOfTheAbyssHead>(), 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange);
 
             //Molten Sky Temple second event
             ScriptedEvent MoltenSkyTempleEvent2 = new ScriptedEvent(new Vector2(90, 1893), 30, NPCID.MourningWood, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction);
 
-            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, OnlyAdventureMapConditionSHM, SetNightCustomAction);
-
-            ScriptedEvent RemixHellkiteDragonEvent = new ScriptedEvent(new Vector2(2159, 308), 150, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, false, LangUtils.GetTextValue("Events.RemixHellkiteDragon"), new Color(175, 75, 255), false, RemixMapConditionSHM, SetNightCustomAction);
+            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
             
@@ -722,6 +728,16 @@ namespace tsorcRevamp
             ScriptedEvent WyvernFortressEvent = new ScriptedEvent(new Vector2(7022, 288), 85, NPCID.WyvernHead, 16, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Cyan, false, RemixMapCondition);
 
             ScriptedEvent SandstormElementalEvent2 = new ScriptedEvent(new Vector2(950, 1503), 22, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow, false, RemixMapCondition);
+
+            //ScriptedEvent ShadowDarkCloud1 = new ScriptedEvent(new Vector2(2159, 308), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
+
+            //ScriptedEvent ShadowDarkCloud2 = new ScriptedEvent(new Vector2(2159, 308), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
+
+            //ScriptedEvent ShadowDarkCloud3 = new ScriptedEvent(new Vector2(2159, 308), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
+
+            //ScriptedEvent ShadowDarkCloud4 = new ScriptedEvent(new Vector2(2159, 308), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
+
+            ScriptedEvent ShadowDarkCloud5 = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
 
             //THORIUM SECTION
             Mod ThoriumMod;
@@ -820,7 +836,6 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnMechanic, SpawnMechanic},
                 {ScriptedEventType.SpawnWizard, SpawnWizard},
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
-                {ScriptedEventType.RemixHellkiteDragonEvent, RemixHellkiteDragonEvent},
                 {ScriptedEventType.EoL, EoL},
                 {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
                 {ScriptedEventType.DualSandsprogAmbush1, DualSandsprogAmbush1 },
@@ -829,8 +844,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.MushroomCavern, MushroomCavern },
                 {ScriptedEventType.AshCavernLeftside, AshCavernLeftside },
                 {ScriptedEventType.AshCavernRightside, AshCavernRightside },
-                {ScriptedEventType.MorgulFelegLeftside, MorgulFelegLeftside },
+                {ScriptedEventType.MorgulFelegLeftside, MorgulFelegLeftside }, 
                 {ScriptedEventType.MorgulFelegRightside, MorgulFelegRightside },
+                {ScriptedEventType.HallowDemonEvent, HallowDemonEvent },
                 {ScriptedEventType.ShadowTempleEvent, ShadowTempleEvent },
                 {ScriptedEventType.ShadowTempleEvent2, ShadowTempleEvent2 },
                 {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent },
@@ -867,6 +883,11 @@ namespace tsorcRevamp
                 {ScriptedEventType.BoreanStrider, BoreanStrider },
                 {ScriptedEventType.Lich, Lich },
                 {ScriptedEventType.ForgottenOne, ForgottenOne },
+                //{ScriptedEventType.ShadowDarkCloud1, ShadowDarkCloud1 },
+                //{ScriptedEventType.ShadowDarkCloud2, ShadowDarkCloud2 },
+                //{ScriptedEventType.ShadowDarkCloud3, ShadowDarkCloud3 },
+                //{ScriptedEventType.ShadowDarkCloud4, ShadowDarkCloud4 },
+                {ScriptedEventType.ShadowDarkCloud5, ShadowDarkCloud5 },
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -1070,11 +1091,6 @@ namespace tsorcRevamp
             }
         }
 
-        public static bool ThoriumModOnly()
-        {
-           return (ModLoader.HasMod("ThoriumMod"));
-        }
-
         public static bool TwinEoWCustomCondition()
         {
             if (NPC.AnyNPCs(NPCID.EaterofWorldsHead) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
@@ -1085,44 +1101,7 @@ namespace tsorcRevamp
             {
                 return true;
             }
-        }
-
-        /*public static bool BoreanStriderCondition()
-        {
-            if (NPC.AnyNPCs(NPCID.BoreanStrider) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        public static bool LichCondition()
-        {
-            if (NPC.AnyNPCs(NPCID.Lich) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        public static bool ForgottenOneCondition()
-        {
-            if (NPC.AnyNPCs(NPCID.ForgottenOne) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }*/
-
+        }   
         public static bool UndeadMerchantCondition()
         {
             return !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());

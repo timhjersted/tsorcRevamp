@@ -109,17 +109,17 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
 
-            int dust = Dust.NewDust(NPC.position, NPC.width * 2, NPC.height * 2, DustID.MagicMirror, 0.0f, 0.0f, 200);
+            int dust = Dust.NewDust(NPC.position, NPC.width * 2, NPC.height * 2, 204, 0.0f, 0.0f, 200);
             Main.dust[dust].velocity *= 0.3f;
 
-            Lighting.AddLight(NPC.position, 0.82f, 0.99f, 10f);
+            Lighting.AddLight(NPC.position, 0.92f, 0.99f, 0.20f);
         }
 
         public override void HitEffect(NPC.HitInfo hit)
         {
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 12; i++)
             {
-                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, hit.HitDirection, -1f);
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, 204, hit.HitDirection, -1f);
                 Dust dust = Main.dust[dustIndex];
                 dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.01f;
                 dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.01f;
@@ -129,7 +129,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, hit.HitDirection, -1f);
+                    int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, 204, hit.HitDirection, -1f);
                     Dust dust = Main.dust[dustIndex];
                     dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.01f;
                     dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.01f;

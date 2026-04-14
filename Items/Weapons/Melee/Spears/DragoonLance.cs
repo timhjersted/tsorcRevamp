@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<GaeBolg>());
+            recipe.AddIngredient(ItemID.ChlorophyteBar, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
             recipe.AddIngredient(ItemID.SoulofMight, 1);

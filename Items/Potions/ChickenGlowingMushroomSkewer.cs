@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Potions
     {
         public static int Healing = 150;
         public static int BaseSickness = 30;
-        public static int ExquisitelyStuffedDuration = 900;
+        public static int ExquisitelyStuffedDuration = 1200;
         public static int PhilosophersStoneEfficiency = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Healing, ExquisitelyStuffedDuration, BaseSickness);
         public override void SetStaticDefaults()
@@ -33,6 +33,7 @@ namespace tsorcRevamp.Items.Potions
             Item.value = 750;
             Item.buffType = BuffID.WellFed3;
             Item.buffTime = ExquisitelyStuffedDuration * 60;
+            Item.rare = ItemRarityID.Lime;
         }
 
 
@@ -71,13 +72,28 @@ namespace tsorcRevamp.Items.Potions
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ShroomiteBar, 1);
-            recipe.AddIngredient(ItemID.GlowingMushroom, 1);
+            recipe.AddIngredient(ModContent.ItemType<GlowingMushroomSkewer>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DeadChicken>(), 1);
-            recipe.AddIngredient(ItemID.PixieDust, 1);
+            recipe.AddIngredient(ItemID.ShroomiteBar, 1);
             recipe.AddTile(TileID.Campfire);
 
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ModContent.ItemType<GlowingMushroomSkewer>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<CookedChicken>(), 1);
+            recipe2.AddIngredient(ItemID.ShroomiteBar, 1);
+            recipe2.AddTile(TileID.Campfire);
+
+            recipe2.Register();
+
+            Recipe recipe3 = CreateRecipe();
+            recipe3.AddIngredient(ModContent.ItemType<ChickenMushroomSkewer>(), 1);
+            recipe3.AddIngredient(ItemID.GlowingMushroom, 2);
+            recipe3.AddIngredient(ItemID.ShroomiteBar, 1);
+            recipe3.AddTile(TileID.Campfire);
+
+            recipe3.Register();
         }
     }
 }

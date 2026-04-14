@@ -18,9 +18,10 @@ namespace tsorcRevamp.Projectiles.Accessories
             Projectile.timeLeft = DetonationTime;
             Projectile.hostile = false;
             Projectile.friendly = true;
+            Projectile.penetrate = -1;
         }
 
-        int DetonationTime = 60;
+        int DetonationTime = 70;
         float DetonationProgress = 0;
         float DetonationPercent
         {
@@ -72,7 +73,7 @@ namespace tsorcRevamp.Projectiles.Accessories
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 300);
+            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 270);
         }
 
         public override bool PreKill(int timeLeft)

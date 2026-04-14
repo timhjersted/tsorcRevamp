@@ -51,7 +51,9 @@ namespace tsorcRevamp.Items.Tools
                     || (buffType == BuffID.Ichor)
                     || (buffType == BuffID.Blackout)
                     || (buffType == BuffID.Obstructed)
-
+                    || (buffType == BuffID.Venom)
+                    || (buffType == BuffID.Electrified)
+                    || (buffType == BuffID.Rabies)
                     )
                 {
                     player.buffTime[buffIndex] = 0;

@@ -209,6 +209,7 @@ namespace tsorcRevamp
         public float CrystalNunchakuDefenseDamage;
 
         public float DragoonLashFireBreathTimer = 0f;
+        public float SupremeDragoonLashFireBreathTimer = 0f;
 
         public float SummonTagStrength;
         public float SummonTagDuration;

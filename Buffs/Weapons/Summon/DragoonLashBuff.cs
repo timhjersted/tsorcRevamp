@@ -19,6 +19,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.DragoonLashFireBreathTimer += 0.0167f;
+            modPlayer.SupremeDragoonLashFireBreathTimer += 0.0167f;
         }
     }
 }

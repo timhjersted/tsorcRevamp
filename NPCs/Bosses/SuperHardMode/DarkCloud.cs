@@ -2614,49 +2614,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
                 if (customAi1 >= 10f)
                 {
-                    //npc.TargetClosest(true);
-                    if ((customspawn1 < 1) && Main.rand.NextBool(1000))
-                    {
-                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.CrystalKnight>(), 0);
-                        Main.npc[Spawned].velocity.Y = -8;
-                        Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                        NPC.ai[0] = 20 - Main.rand.Next(80);
-                        customspawn1 += 1f;
-                        if (Main.netMode != 1)
-                        {
-                            NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                        }
-                    }
-                    if ((customspawn2 < 2) && Main.rand.NextBool(3500))
-                    {
-                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
-                        Main.npc[Spawned].velocity.Y = -8;
-                        Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                        NPC.ai[0] = 20 - Main.rand.Next(80);
-                        customspawn2 += 1f;
-                        if (Main.netMode != 1)
-                        {
-                            NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                        }
-                    }
-
-
-
-                    if ((customspawn3 < 0) && Main.rand.NextBool(9950))
-                    {
-                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
-                        Main.npc[Spawned].velocity.Y = -8;
-                        Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                        NPC.ai[0] = 20 - Main.rand.Next(80);
-                        customspawn3 += 1f;
-                        if (Main.netMode != 1)
-                        {
-                            NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                        }
-                    }
-
-
-
                     if (Main.rand.NextBool(700))
                     {
                         float num48 = 10f;

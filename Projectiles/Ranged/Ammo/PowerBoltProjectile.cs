@@ -56,8 +56,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 
             for (int i = 0; i < 30; i++)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, Scale: 1.5f);
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Scale: 1.5f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 1.5f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, 1.5f);
             }
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.position);

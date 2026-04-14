@@ -37,6 +37,7 @@ namespace tsorcRevamp.Projectiles.Magic
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
+        bool hasHitNPC = false;
         bool playedSound = false;
         public override void AI()
         {
@@ -61,33 +62,9 @@ namespace tsorcRevamp.Projectiles.Magic
             }
         }
 
-        bool hasHitNPC = false;
-        
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             hasHitNPC = true;
-
-            if (Main.rand.Next(1, 3) == 1)
-            {
-                Vector2 spawnPosition = new Vector2(
-                    target.position.X + Main.rand.NextFloat(-100f, 100f), 
-                    target.position.Y - 520f 
-                );
-
-                Vector2 direction = new Vector2(0, 1); 
-                direction.Normalize();
-                direction *= 5f; 
-
-                Projectile.NewProjectile(
-                    Projectile.GetSource_FromThis(),
-                    spawnPosition,
-                    direction,
-                    ProjectileID.MagicMissile,
-                    damageDone, 
-                    1.0f,
-                    Main.myPlayer
-                );
-            }
         }
 
         public override float CollisionWidthFunction(float progress)
