@@ -20,6 +20,12 @@ namespace tsorcRevamp.Projectiles.Melee
         /// Set to -2 for no dust
         /// </summary>
         public abstract int dustID { get; }
+        /// <summary>
+        /// Override to add custom dust logic in addition to default from dustID
+        /// </summary>
+        public virtual void CustomDust()
+        { }
+
         public override void SetDefaults()
         {
             Projectile.width = (int)(18 * HitboxSize);
@@ -29,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Melee
             Projectile.tileCollide = false;
             Projectile.scale = Scale;
             Projectile.hide = true;
-            Projectile.aiStyle = 19;
+            Projectile.aiStyle = ProjAIStyleID.Spear;
             Projectile.ownerHitCheck = true;
             Projectile.DamageType = DamageClass.Melee;
         }
@@ -78,18 +84,22 @@ namespace tsorcRevamp.Projectiles.Melee
             }
 
             // Avoid spawning dusts on dedicated servers
-            if (!Main.dedServ && dustID != -2)
+            if (!Main.dedServ)
             {
-                // These dusts are added later, for the 'ExampleMod' effect
-                if (Main.rand.NextBool(3))
+                if (dustID != -2)
                 {
-                    Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustID, Projectile.velocity.X * 2f, Projectile.velocity.Y * 2f, Alpha: 128, Scale: 1.2f);
-                }
+                    // These dusts are added later, for the 'ExampleMod' effect
+                    if (Main.rand.NextBool(3))
+                    {
+                        Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustID, Projectile.velocity.X * 2f, Projectile.velocity.Y * 2f, Alpha: 128, Scale: 1.2f);
+                    }
 
-                if (Main.rand.NextBool(4))
-                {
-                    Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustID, Alpha: 128, Scale: 0.3f);
+                    if (Main.rand.NextBool(4))
+                    {
+                        Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustID, Alpha: 128, Scale: 0.3f);
+                    }
                 }
+                CustomDust();
             }
             return false;
         }
