@@ -19,8 +19,10 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.scale = 1.1f;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 420;
+            Projectile.timeLeft = 480;
             Projectile.netImportant = true;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 18;
 
             trailWidth = 70;
             trailPointLimit = 1000;

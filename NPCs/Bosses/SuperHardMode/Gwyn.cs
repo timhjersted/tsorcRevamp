@@ -1679,7 +1679,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                     {
                                         Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
                                         velocity += Main.player[NPC.target].velocity;
-                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedRainProj>(), OrangeProjDamage, 0.5f, Main.myPlayer);
+                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.FireRainProj>(), OrangeProjDamage, 0.5f, Main.myPlayer);
                                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
                                         if (Main.netMode == NetmodeID.Server)
                                         {
@@ -1773,7 +1773,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 {
                                     Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
                                     velocity += Main.player[NPC.target].velocity;
-                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedRainProj>(), OrangeProjDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.FireRainProj>(), OrangeProjDamage, 0.5f, Main.myPlayer);
                                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
                                     if (Main.netMode == NetmodeID.Server)
                                     {

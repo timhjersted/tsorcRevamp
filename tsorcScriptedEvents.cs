@@ -464,9 +464,7 @@ namespace tsorcRevamp
             ScriptedEvent ChaosEventRemix = new ScriptedEvent(new Vector2(7034, 968), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, RemixMapConditionSHM);
 
             //WYVERN MAGE SHADOW-SHM
-            List<int> WyvernShadowEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>() };
-            List<Vector2> WyvernShadowLocations = new List<Vector2>() { new Vector2(6432, 196), new Vector2(6432, 196) };
-            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 25, WyvernShadowEnemyTypeList, WyvernShadowLocations, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.WyvernMageShadow"), Color.LightBlue, false, SuperHardModeCustomCondition);
+            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 25, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.CrimsonTorch, true, true, true, LangUtils.GetTextValue("Events.WyvernMageShadow"), Color.OrangeRed, false, SuperHardModeCustomCondition);
 
             //DARK CLOUD
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.DarkCloud"), Color.LightCyan, false, OnlyAdventureMapConditionSHM);

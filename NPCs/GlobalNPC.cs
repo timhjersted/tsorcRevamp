@@ -19,6 +19,7 @@ using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories.Damage;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Debug;
@@ -517,10 +518,13 @@ namespace tsorcRevamp.NPCs
             }
             if (spawnInfo.Player.ZoneHallow && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.hardMode)
             {
-                pool.Add(NPCID.Pixie, 0.40f);
                 pool.Add(NPCID.Gastropod, 0.18f);
+            }
+            if (spawnInfo.Player.ZoneHallow && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.Pixie, 0.40f);
                 pool.Add(NPCID.Unicorn, 0.09f);
-                pool.Add(NPCID.RainbowSlime, 0.03f);
+                pool.Add(NPCID.RainbowSlime, 0.01f);
             }
             //ocean water (outer thirds of the map)
             if (spawnInfo.Water && Main.hardMode && (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
@@ -541,13 +545,14 @@ namespace tsorcRevamp.NPCs
             }
 
             //mushroom
-            if (spawnInfo.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode) 
             {
-                pool.Add(NPCID.StardustWormHead, 0.1f); //.1 is 3%
+                pool.Add(NPCID.StardustWormHead, 0.1f); //.1 is 3% 
                 pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
                 pool.Add(NPCID.StardustJellyfishBig, 0.3f);
                 pool.Add(NPCID.StardustSpiderBig, 0.6f);
                 pool.Add(NPCID.StardustSoldier, 1f);
+                pool.Add(NPCID.ShimmerSlime, 0.25f);
             }
             //underground 
             if (spawnInfo.Player.ZoneUnderworldHeight && !spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
@@ -2662,6 +2667,12 @@ namespace tsorcRevamp.NPCs
                         {
                             item.AddCondition(new Condition("", () => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode));
                         }
+
+                        shop.Add(new Item(ModContent.ItemType<LoveRing>())
+                        {
+                            shopCustomPrice = 5000, 
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
                         break;
                     }
                 case NPCID.Cyborg:

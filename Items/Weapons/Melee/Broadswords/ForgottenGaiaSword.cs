@@ -1,6 +1,9 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
+using Terraria.Audio;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -16,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Item.rare = ItemRarityID.Red;
             Item.autoReuse = true;
-            Item.damage = 320;
+            Item.damage = 250;
             Item.width = 66;
             Item.height = 66;
             Item.knockBack = 8;
@@ -32,14 +35,20 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Gold;
         }
 
-
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
+        {
+            if (player.velocity.Y == 0f)
+            {
+                damage *= 1.25f;
+            }
+        }
 
         /*public override void AddRecipes() {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FallenStar, 120);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000); 
             recipe.AddTile(TileID.DemonAltar);
             
             recipe.Register();
@@ -47,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
+            if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>() || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())
             {
                 target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
                 if (Main.netMode != NetmodeID.SinglePlayer)
@@ -59,13 +68,32 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     shadowPacket.Send();
                 }
             }
+
+            if (player.velocity.Y == 0f)
+            {
+                target.AddBuff(BuffID.BetsysCurse, 360);
+            }
+            
+            if (Main.rand.NextBool(2))
+            {
+                Projectile.NewProjectile(
+                    player.GetSource_OnHit(target),
+                    target.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<GaiaSmash>(),
+                    (int)(damageDone * 0.5f), 
+                    0f,
+                    player.whoAmI
+                );
+                SoundEngine.PlaySound(SoundID.Item89 with { Volume = 0.6f }, player.Center);
+            }
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
+            if (player.velocity.Y == 0f && target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
             {
-                modifiers.FinalDamage *= 2;
+                modifiers.FinalDamage *= 1.25f;
             }
         }
     }

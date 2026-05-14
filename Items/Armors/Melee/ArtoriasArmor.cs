@@ -36,6 +36,8 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
+            player.aggro += 800;
+            
             player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging = true;
 
             int dust = Dust.NewDust(new Vector2((float)player.position.X - 5, (float)player.position.Y), player.width + 10, player.height, 77, player.velocity.X, -2, 180, default, 1.25f);

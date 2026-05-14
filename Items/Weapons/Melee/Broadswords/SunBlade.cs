@@ -35,34 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //todo add mod NPCs to this list
-            if (NPCID.Sets.Skeletons[target.type]
-                    || target.type == NPCID.Zombie
-                    || target.type == NPCID.BaldZombie
-                    || target.type == NPCID.AngryBones
-                    || target.type == NPCID.DarkCaster
-                    || target.type == NPCID.CursedSkull
-                    || target.type == NPCID.UndeadMiner
-                    || target.type == NPCID.Tim
-                    || target.type == NPCID.DoctorBones
-                    || target.type == NPCID.ArmoredSkeleton
-                    || target.type == NPCID.Mummy
-                    || target.type == NPCID.DarkMummy
-                    || target.type == NPCID.LightMummy
-                    || target.type == NPCID.Wraith
-                    || target.type == NPCID.SkeletonArcher
-                    || target.type == NPCID.PossessedArmor
-                    || target.type == NPCID.TheGroom
-                    || target.type == NPCID.SkeletronHand
-                    || target.type == NPCID.SkeletronHead
-                    || target.type == ModContent.NPCType<LichKingSerpentHead>()
-                    || target.type == ModContent.NPCType<LichKingSerpentBody>()
-                    || target.type == ModContent.NPCType<LichKingSerpentTail>()
-                    || target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()
-                    || target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()
-                    || target.type == ModContent.NPCType<ParasyticWormHead>()
-                    || target.type == ModContent.NPCType<ParasyticWormBody>()
-                    || target.type == ModContent.NPCType<ParasyticWormTail>()
-                    )
+            if (tsorcRevamp.UndeadNPCs.Contains(target.type))
             {
                 modifiers.FinalDamage *= 3;
             }

@@ -26,6 +26,7 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories.Summon;
 using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Armors;
@@ -817,6 +818,7 @@ namespace tsorcRevamp
             return startingItems;
         }
         public static float AmmoReservationRangedCritDamage = 10f;
+        public static float TitanMeleeSize = 15f;
         public static float SharpenedMeleeArmorPen = 50f;
         public static float MythrilOcrichalcumCritDmg = 25f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -955,6 +957,13 @@ namespace tsorcRevamp
             if (ProjectileID.Sets.MinionSacrificable[proj.type])
             {
                 ShunpoCooldownPerHit = -4;
+            }
+        }
+        public override void ModifyItemScale(Item item, ref float scale)
+        {
+            if (Player.GetModPlayer<tsorcRevampPlayer>().TitanPotion && item.DamageType == DamageClass.Melee)
+            {
+                scale += Player.GetModPlayer<tsorcRevampPlayer>().TitanSizeScaling * TitanMeleeSize / 100f;
             }
         }
         public bool WhipTipCrit(in Projectile projectile, in List<Vector2> points, in Rectangle targetHitbox)
@@ -1441,10 +1450,13 @@ namespace tsorcRevamp
                                 if (npc.active && !npc.friendly && npc.Distance(Player.Center) <= radius)
                                 {
                                     npc.AddBuff(ModContent.BuffType<WitchkingCurse>(), 6 * 60); // 6 seconds
+                                    npc.AddBuff(BuffID.Confused, 4 * 60);
+                                    int baseDamage = (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(800);
+                                    int finalDamage = Main.DamageVar(baseDamage);
                                     
                                     npc.StrikeNPC(new NPC.HitInfo
                                     {
-                                        Damage = (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(800),
+                                        Damage = finalDamage,
                                         Knockback = 0,
                                         HitDirection = 0,
                                         Crit = false,
@@ -1677,6 +1689,123 @@ namespace tsorcRevamp
                         if (Main.rand.NextFloat() < 0.33f)
                         {
                             npc.AddBuff(BuffID.Frozen, 90);
+                        }
+                    }
+                }
+            }
+
+            if (HasSporePowder) 
+            {
+                Vector2 center = Player.Center;
+                float radius = 120f; 
+
+                for (int i = 0; i < 190; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
+                    int dust = Dust.NewDust(center + offset, 1, 1, 44, 0f, 0f, 100, default, 1.4f); 
+                    Main.dust[dust].velocity = offset.SafeNormalize(Vector2.Zero) * 1f;
+                    Main.dust[dust].noGravity = false;
+                }
+
+                for (int n = 0; n < Main.maxNPCs; n++)
+                {
+                    NPC npc = Main.npc[n];
+                    if (npc.active && !npc.friendly && !npc.dontTakeDamage)
+                    {
+                        if (Vector2.Distance(npc.Center, center) <= radius)
+                        {
+                            int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(60);
+                            int finalDamage = Main.DamageVar(baseDamage);
+                            npc.StrikeNPC(new NPC.HitInfo
+                            {
+                                Damage = finalDamage,
+                                Knockback = 2f,
+                                HitDirection = 0,
+                                Crit = false,
+                                DamageType = DamageClass.Generic
+                            }, false, false); // noPlayerInteraction = false, dontTriggerSound = false
+
+                            npc.AddBuff(BuffID.Poisoned, 240); // 4 seconds
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.8f }, Player.Center);
+                        }
+                    }
+                }
+            }
+
+            /*if (HasVenomPowder) 
+            {
+                Vector2 center = Player.Center;
+                float radius = 150f; 
+
+                for (int i = 0; i < 280; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
+                    int dust = Dust.NewDust(center + offset, 1, 1, 171, 0f, 0f, 100, default, 1.6f);
+                    Main.dust[dust].velocity = offset.SafeNormalize(Vector2.Zero) * 1.5f;
+                    Main.dust[dust].noGravity = true;
+                }
+
+                for (int n = 0; n < Main.maxNPCs; n++)
+                {
+                    NPC npc = Main.npc[n];
+                    if (npc.active && !npc.friendly && !npc.dontTakeDamage)
+                    {
+                        if (Vector2.Distance(npc.Center, center) <= radius)
+                        {
+                            int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(90);
+                            int finalDamage = Main.DamageVar(baseDamage);
+                            npc.StrikeNPC(new NPC.HitInfo
+                            {
+                                Damage = finalDamage,
+                                Knockback = 4f,
+                                HitDirection = 0,
+                                Crit = false,
+                                DamageType = DamageClass.Generic
+                            }, false, false); // noPlayerInteraction = false, dontTriggerSound = false
+
+                            npc.AddBuff(BuffID.Venom, 240); // 4 seconds
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17 with { Volume = 0.9f }, Player.Center);
+                        }
+                    }
+                }
+            }*/
+
+            if (HasLoveRing && loveHealCooldown < 0) 
+            {
+                loveHealCooldown = LoveRing.Cooldown;
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player ally = Main.player[i];
+                    if (ally.active && !ally.dead && ally.team == Player.team && ally.team != 0)
+                    {
+                        if (Vector2.Distance(Player.Center, ally.Center) < 800f)
+                        {
+                            ally.statLife += LoveRing.HealAmount;
+                            if (ally.statLife > ally.statLifeMax2)
+                                ally.statLife = ally.statLifeMax2;
+
+                            ally.HealEffect(LoveRing.HealAmount);
+
+                            for (int b = 0; b < ally.buffType.Length; b++)
+                            {
+                                int buff = ally.buffType[b];
+
+                            if (buff <= 0)
+                                continue;
+
+                            if (!Main.debuff[buff])
+                                continue;
+
+                            if (Main.buffNoTimeDisplay[buff])
+                                continue;
+
+                                // ofc ignoring these 
+                                if (buff == BuffID.PotionSickness || buff == BuffID.ManaSickness)
+                                    continue;
+
+                                if (ally.buffTime[b] > 120)
+                                    ally.buffTime[b] -= 120;
+                            }
                         }
                     }
                 }

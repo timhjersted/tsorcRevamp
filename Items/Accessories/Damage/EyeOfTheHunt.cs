@@ -18,16 +18,17 @@ namespace tsorcRevamp.Items.Accessories.Damage
         {
             Item.width = 20;
             Item.height = 34;
-            Item.alpha = 0;
             Item.accessory = true;
             Item.value = PriceByRarity.Pink_5;
             Item.expert = true;
         }
         public override void UpdateEquip(Player player)
         {
+            player.GetModPlayer<tsorcRevampPlayer>().HasYoungHunterAccessory = true;
+
             player.aggro -= 400;
             
-            player.AddBuff(ModContent.BuffType<Buffs.Weapons.Summon.YoungHunterBuff>(), 2);
+            player.AddBuff(ModContent.BuffType<Buffs.Accessories.YoungHunterBuff>(), 2);
 
             if (player.ownedProjectileCounts[ModContent.ProjectileType<YoungHunter>()] <= 0)
             {
@@ -47,9 +48,9 @@ namespace tsorcRevamp.Items.Accessories.Damage
         {
             if (!hideVisual && player.direction == 1)
             {
-                int dust = Dust.NewDust(player.position + new Vector2(4, 9), 2, 2, 107, 0f, 0f, 100, default(Color), .7f);
+                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 107, 0f, 0f, 100, default(Color), .7f);
                 Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity *= 0.1f;
+                Main.dust[dust].velocity *= 0.11f;
                 Main.dust[dust].velocity.Y = Main.dust[dust].velocity.Y - 1f;
                 Main.dust[dust].velocity.X = Main.dust[dust].velocity.X + 2f;
             }
@@ -59,11 +60,11 @@ namespace tsorcRevamp.Items.Accessories.Damage
         {
             if (player.direction == 1)
             {
-                int dust = Dust.NewDust(player.position + new Vector2(4, 9), 2, 2, 107, 0f, 0f, 100, default(Color), .7f);
+                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 107, 0f, 0f, 100, default(Color), .7f);
                 Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity *= 0.1f;
+                Main.dust[dust].velocity *= 0.11f;
                 Main.dust[dust].velocity.Y = Main.dust[dust].velocity.Y - 1f;
-                Main.dust[dust].velocity.X = Main.dust[dust].velocity.X + 2f;
+                Main.dust[dust].velocity.X = Main.dust[dust].velocity.X - 2f;
             }
         }
     }

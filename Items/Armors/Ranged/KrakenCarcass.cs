@@ -11,12 +11,14 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Body)]
     public class KrakenCarcass : ModItem
     {
-        public const float AmmoReduction = 25f;
+        public const float AmmoReduction = 30f;
+        public const float ArmorPen = 10f;
+        public const float Velocity = 15f;
         public const int SoulCost = 70000;
         public const int TsunamiBaseDmg = 150;
         public const float TsunamiBaseKnockback = 5f;
         public const float TsunamiDmgBoost = 25f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AmmoReduction, TsunamiDmgBoost, Main.LocalPlayer.GetTotalDamage(DamageClass.Ranged).ApplyTo(TsunamiBaseDmg));
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AmmoReduction, ArmorPen, TsunamiDmgBoost, Main.LocalPlayer.GetTotalDamage(DamageClass.Ranged).ApplyTo(TsunamiBaseDmg));
         public override void SetStaticDefaults()
         {
         }
@@ -31,6 +33,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void UpdateEquip(Player player)
         {
             player.ammoCost75 = true;
+            player.GetArmorPenetration(DamageClass.Ranged) += ArmorPen;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

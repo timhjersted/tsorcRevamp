@@ -53,6 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.SporePowder>(), 100));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 20, 2, 3));
 
         }

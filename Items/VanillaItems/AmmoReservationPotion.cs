@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (item.type == ItemID.AmmoReservationPotion)
             {
-                tooltips.Insert(4, new TooltipLine(Mod, "SharpEyes", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AmmoReservationPotion").FormatWith(tsorcRevampPlayer.AmmoReservationRangedCritDamage)));
+                tooltips.Insert(3, new TooltipLine(Mod, "SharpEyes", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AmmoReservationPotion").FormatWith(tsorcRevampPlayer.AmmoReservationRangedCritDamage)));
             }
         }
     }

@@ -30,6 +30,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
+using tsorcRevamp.Projectiles.Summon.YoungHunter;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -92,6 +93,12 @@ namespace tsorcRevamp
         public int powerfulCurseDecayTimer = 0;
 
         public bool BrokenSpirit;
+
+        public bool HasSporePowder;
+        public bool HasVenomPowder;
+        public bool HasYoungHunterAccessory;
+        public bool HasLoveRing;
+        private int loveHealCooldown = 0;
 
         public int MaxMinionTurretMultiplier;
 
@@ -241,7 +248,9 @@ namespace tsorcRevamp
         public bool Sharpened = false;
         public bool AmmoBox = false;
         public bool AmmoReservationPotion = false;
+        public bool TitanPotion = false;
         public float AmmoReservationDamageScaling = 1f;
+        public float TitanSizeScaling = 1f;
 
         public bool SOADrain = false;
         public bool VOEGDrain = false;
@@ -480,7 +489,10 @@ namespace tsorcRevamp
             SummonTagDuration = 1f;
             CrystallineShard = false;
 
-
+            HasSporePowder = false;
+            HasVenomPowder = false;
+            HasYoungHunterAccessory = false;
+            HasLoveRing = false;
             MaxMinionTurretMultiplier = 1;
 
             MythrilBulwark = false;
@@ -561,6 +573,8 @@ namespace tsorcRevamp
             AmmoBox = false;
             AmmoReservationPotion = false;
             AmmoReservationDamageScaling = 1f;
+            TitanPotion = false;
+            TitanSizeScaling = 1f;
 
             PhazonCorruption = false;
             LifegemHealing = false;
@@ -2581,6 +2595,23 @@ namespace tsorcRevamp
                 }
             }
             SetDirection();
+
+            if (!HasYoungHunterAccessory)
+            {
+                Player.ClearBuff(ModContent.BuffType<YoungHunterBuff>());
+
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    Projectile summon = Main.projectile[i];
+                    if (summon.active && summon.owner == Player.whoAmI && summon.type == ModContent.ProjectileType<YoungHunter>())
+                    {
+                        summon.Kill();
+                    }
+                }
+            }
+
+            if (loveHealCooldown > 0)
+            loveHealCooldown--;
 
             if (!Player.mount.Active)
             {

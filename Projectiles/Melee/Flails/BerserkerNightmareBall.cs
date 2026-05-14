@@ -62,7 +62,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
         
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Frostburn2, 3 * 60);
+            target.AddBuff(BuffID.Frostburn2, 4 * 60);
         }
 
         // This AI code was adapted from vanilla code: Terraria.Projectile.AI_015_Flails() 
@@ -340,44 +340,20 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             if (Main.rand.NextBool(dustRate))
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 180, 0f, 0f, 150, default(Color), 1.3f);
 
-            int particleCount = 18;
-            float radius = 45f;
-
-            // Create a dust ring around the boulder 
-            for (int i = 0; i < particleCount; i++)
+            if (Projectile.localAI[0]++ >= 3)
             {
-                float angle = MathHelper.TwoPi / particleCount * i;
-                Vector2 particlePosition = Projectile.Center + radius * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                Dust dust = Dust.NewDustPerfect(particlePosition, 180, Vector2.Zero, 100, Color.Blue, 1.25f);
-                dust.noGravity = true;
-            }
+                Projectile.localAI[0] = 0;
 
-            float damageRadius = 62f;
-            foreach (NPC target in Main.npc)
-            {
-                if (target.active && !target.friendly && !target.dontTakeDamage)
-                {
-                    float distanceToTarget = Vector2.Distance(target.Center, Projectile.Center);
-                    if (distanceToTarget <= damageRadius)
-                    {
-                        if (Projectile.localNPCImmunity[target.whoAmI] == 0)
-                        {
-                            int dynamicDamage = Main.DamageVar(Projectile.damage);
-
-                            NPC.HitInfo hitInfo = new NPC.HitInfo()
-                            {
-                                Damage = dynamicDamage,
-                                Knockback = Projectile.knockBack,
-                                HitDirection = Projectile.direction
-                            };
-
-                            target.StrikeNPC(hitInfo);
-                            target.AddBuff(BuffID.Frostburn2, 3 * 60);
-                            Projectile.localNPCImmunity[target.whoAmI] = 10;
-                            Projectile.usesLocalNPCImmunity = true;
-                        }
-                    }
-                }
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    Projectile.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<BerserkerNightmareAura>(),
+                    Projectile.damage / 4,
+                    0f,
+                    Projectile.owner,
+                    Projectile.whoAmI
+                );
             }
         }
 

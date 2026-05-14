@@ -3,7 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Items.Accessories.Damage;
 
 namespace tsorcRevamp.Projectiles.Summon.YoungHunter
@@ -26,11 +26,11 @@ namespace tsorcRevamp.Projectiles.Summon.YoungHunter
             Projectile.width = 84;
             Projectile.height = 73;
             Projectile.tileCollide = false; // Makes the minion go through tiles freely
-            Projectile.damage = 40;
+            Projectile.damage = 32;
             Projectile.scale = 1.1f;
             // These below are needed for a minion weapon
+            Projectile.minion = true;
             Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
-            Projectile.minion = true; // Declares this as a minion (has many effects)
             Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
             Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
             Projectile.usesLocalNPCImmunity = true;
@@ -77,13 +77,31 @@ namespace tsorcRevamp.Projectiles.Summon.YoungHunter
             Visuals();
 
             shootTimer++;
-            if (shootTimer >= 180)
+            if (shootTimer % 80 == 0 && shootTimer < 320)
+            {
+                if (foundTarget)
+                {
+                    int projDamage = (int)(Projectile.damage * 0.75f); 
+                    Vector2 shootDirection = UsefulFunctions.Aim(Projectile.Center, targetCenter, 7f);
+
+                    Projectile.NewProjectile(
+                        Projectile.GetSource_FromThis(),
+                        Projectile.Center,
+                        shootDirection,
+                        ModContent.ProjectileType<YoungHunterProjectile>(),
+                        projDamage, 
+                        1f,
+                        Projectile.owner
+                    );
+                }
+            }
+            if (shootTimer >= 320)
             {
                 shootTimer = 0;
 
                 if (foundTarget)
                 {
-                    int projDamage = (int)(Projectile.damage * 0.80f); 
+                    int projDamage = (int)(Projectile.damage * 0.75f); 
                     Vector2 shootDirection = UsefulFunctions.Aim(Projectile.Center, targetCenter, 11f);
 
                     Projectile.NewProjectile(

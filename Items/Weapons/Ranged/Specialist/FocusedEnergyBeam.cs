@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
         {
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<RedLaserBeam>();
-            Item.damage = 750;
+            Item.damage = 710;
             Item.width = 52;
             Item.height = 22;
             Item.knockBack = 9.0f;

@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.noMelee = true;
             Item.value = 500;
             Item.shoot = ModContent.ProjectileType<OilPotProjectile>();
-            Item.shootSpeed = 6.5f;
+            Item.shootSpeed = 9.5f;
             Item.useAnimation = 50;
             Item.useTime = 50;
             Item.UseSound = SoundID.Item1;

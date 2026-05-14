@@ -95,7 +95,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             int movingHitCooldown = 10; // How often your flail hits when moving
             int ricochetTimeLimit = launchTimeLimit + 5;
 
-            if (Projectile.localAI[0]++ >= 15) // Every 15 ticks
+            if (Projectile.localAI[0]++ >= 10) // Every 10 ticks
             {
                 Projectile.localAI[0] = 0; // 
                 if (Main.myPlayer == Projectile.owner)
@@ -106,8 +106,8 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                         Projectile.Center,
                         projectileVelocity,
                         ProjectileID.RainFriendly,
-                        Projectile.damage / 2,
-                        Projectile.knockBack,
+                        (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Projectile.damage / 2) ,
+                        Projectile.knockBack / 2,
                         Main.myPlayer
                     );
                 }
@@ -359,44 +359,20 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             if (Main.rand.NextBool(dustRate))
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.WaterCandle, 0f, 0f, 150, default(Color), 1.3f);
 
-            int particleCount = 36; 
-            float radius = 55f; 
-
-            // Create a dust ring around the boulder 
-            for (int i = 0; i < particleCount; i++)
+            if (Projectile.localAI[0]++ >= 3)
             {
-                float angle = MathHelper.TwoPi / particleCount * i;
-                Vector2 particlePosition = Projectile.Center + radius * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                Dust dust = Dust.NewDustPerfect(particlePosition, DustID.WaterCandle, Vector2.Zero, 100, Color.Blue, 1.5f);
-                dust.noGravity = true;
-            }
+                Projectile.localAI[0] = 0;
 
-            float damageRadius = 72f;
-            foreach (NPC target in Main.npc)
-            {
-                if (target.active && !target.friendly && !target.dontTakeDamage)
-                {
-                    float distanceToTarget = Vector2.Distance(target.Center, Projectile.Center);
-                    if (distanceToTarget <= damageRadius)
-                    {
-                        if (Projectile.localNPCImmunity[target.whoAmI] == 0)
-                        {
-                            int dynamicDamage = Main.DamageVar(Projectile.damage);
-
-                            NPC.HitInfo hitInfo = new NPC.HitInfo()
-                            {
-                                Damage = dynamicDamage,
-                                Knockback = Projectile.knockBack,
-                                HitDirection = Projectile.direction
-                            };
-
-                            target.StrikeNPC(hitInfo);
-
-                            Projectile.localNPCImmunity[target.whoAmI] = 10;
-                            Projectile.usesLocalNPCImmunity = true;
-                        }
-                    }
-                }
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    Projectile.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<HeavensTearAura>(),
+                    Projectile.damage / 3,
+                    0f,
+                    Projectile.owner,
+                    Projectile.whoAmI
+                );
             }
         }
 
@@ -508,32 +484,9 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             {
                 modifiers.Knockback *= 0.5f;
             }
-            if (target.type == NPCID.Tim
-               || target.type == NPCID.DarkCaster
-               || target.type == NPCID.GoblinSorcerer
-               || target.type == ModContent.NPCType<NPCs.Enemies.UndeadCaster>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.DungeonMage>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.ShadowMage>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerKingServant>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.BarrowWight>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.GhostoftheForgottenKnight>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.DarkDragonMask>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.Okiku>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>()
-               )
+            if (tsorcRevamp.MageNPCs.Contains(target.type) && tsorcRevamp.GhostNPCs.Contains(target.type))
             {
-                modifiers.FinalDamage *= 2;
+                modifiers.FinalDamage *= 1.4f;
             }
         }
 

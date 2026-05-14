@@ -8,7 +8,7 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
 {
-    class Blast : ModItem
+    class TacticalBazooka : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -17,22 +17,22 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
 
     public override void SetDefaults()
         {
-            Item.damage = 220;
+            Item.damage = 70;
             Item.width = 108;
             Item.height = 48;
             Item.DamageType = DamageClass.Ranged;
             Item.autoReuse = true;
-            Item.knockBack = 15f;
+            Item.knockBack = 7f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.MiniNukeRocketI;
             Item.shootSpeed = 12f;
             Item.useAmmo = AmmoID.Rocket;
-            Item.useAnimation = 16;
-            Item.useTime = 16;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
             Item.UseSound = SoundID.Item61;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.rare = ItemRarityID.Purple;
-            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Yellow;
+            Item.value = PriceByRarity.Yellow_8;
         }
 
         public override void UseStyle(Player player, Rectangle rectangle)
@@ -45,40 +45,17 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
             player.itemLocation.Y = player.itemLocation.Y - backX * sinRot * player.direction + downY * cosRot * player.gravDir;
         }
 
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            int proj = Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
-            Main.projectile[proj].ai[1] = 1f;
-
-            int flameDamage = (int)(damage * 0.66f);
-
-            Vector2 lowPos = velocity.RotatedBy(MathHelper.ToRadians(10)) * (1f / 2f);
-            Projectile.NewProjectile(source, position, lowPos, ProjectileID.Flames, flameDamage, knockback, player.whoAmI);
-
-            Vector2 highPos = velocity.RotatedBy(MathHelper.ToRadians(-10)) * (1f / 2f);
-            Projectile.NewProjectile(source, position, highPos, ProjectileID.Flames, flameDamage, knockback, player.whoAmI);
-
-            return false;
-        }
-
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            if (type == ProjectileID.RocketIII || type == ProjectileID.RocketII || type == ProjectileID.RocketIV)
+            switch (type)
             {
-                type = ProjectileID.MiniNukeRocketI; 
+                case ProjectileID.RocketI:
+                case ProjectileID.RocketII:
+                case ProjectileID.RocketIII:
+                case ProjectileID.RocketIV:
+                    type = ProjectileID.MiniNukeRocketI;
+                    break;
             }
-
-            Projectile.NewProjectile(
-                player.GetSource_ItemUse(Item), 
-                position, 
-                velocity.RotatedByRandom(MathHelper.ToRadians(30)) * 0.8f,
-                ProjectileID.ShadowFlame, 
-                damage / 2, 
-                knockback, 
-                player.whoAmI,
-                0f, 0f, 
-                DamageClass.Ranged.Type 
-            );
         }
 
         public override void HoldItem(Player player)
@@ -91,8 +68,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.RocketLauncher, 1);
             recipe.AddIngredient(ItemID.ExplosivePowder, 500);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

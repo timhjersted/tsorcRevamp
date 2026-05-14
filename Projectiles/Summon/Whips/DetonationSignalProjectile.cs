@@ -31,7 +31,15 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override Color WhipLineColor => Color.OrangeRed;
         public override void CustomAIDustAndTipEffects(List<Vector2> points)
         {
+            Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, 25, 0f, 0f, 150, default, 0.75f);
+            if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<DetonationSignalTrail>()] == 0)
+            {
+                Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<DetonationSignalTrail>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 0, player.itemAnimationMax, ChargeTime);
+                player.ownedProjectileCounts[ModContent.ProjectileType<DetonationSignalTrail>()]++; //without this it'd spawn two trails because of extraupdate spawning them in the same tick, before their owned number increases
+                Trail.netUpdate = true;
+            }
         }
         public override void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

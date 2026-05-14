@@ -37,6 +37,22 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 1000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.JungleSentreeBanner>();
+
+            if (Main.hardMode)
+            {
+                NPC.defense = 20;
+                NPC.value = 1200;
+                NPC.damage = 38;
+                NPC.lifeMax = 400;
+            }
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.defense = 35;
+                NPC.value = 1400;
+                NPC.damage = 50;
+                NPC.lifeMax = 650;
+            }
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

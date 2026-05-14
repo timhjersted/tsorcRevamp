@@ -52,6 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 5, 1, 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 7));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.SporePowder>(), 100));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5));
         }
 

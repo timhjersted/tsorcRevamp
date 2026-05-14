@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.consumable = true;
             Item.DamageType = DamageClass.Ranged;
             Item.ammo = ModContent.ItemType<Bolt>();
-            Item.damage = 10;
+            Item.damage = 9;
             Item.height = 10;
             Item.height = 20;
             Item.knockBack = 3f;

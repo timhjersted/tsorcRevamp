@@ -3,6 +3,7 @@ Mods: {
 		CommonItemTooltip: {
 			Details: 按住 左Shift 以显示详细信息
 			AggroBoost: 敌人更可能瞄准你
+			// AggroDecrease: Enemies are less likely to target you
 			SetBonus: 套装奖励：
 			NoKnockback: 对击退免疫
 			ObsidianShield: "{$CommonItemTooltip.NoKnockback}、对火块免疫"
@@ -108,6 +109,7 @@ Mods: {
 				DmgMult: 乘算增加 {0}% 近战伤害
 				CritMult: 乘算增加 {0}% 近战暴击率
 				AtkSpeedMult: 乘算增加 {0}% 近战速度
+				// Size: Increases the size of melee weapons by {0}%
 			}
 
 			Ranged: {
@@ -115,6 +117,7 @@ Mods: {
 				CritMult: 乘算增加 {0}% 远程暴击率
 				CritDmg: 增加 {0}% 远程暴击伤害
 				NonCritDmg: 减少 {0}% 远程非暴击伤害
+				// ArmorPenRanged: Increases ranged armor penetration by {0}
 				FlatDmg: 增加 {0} 点远程伤害
 				SeedBag: 当此物品在背包中时，树妖会出售种子
 				CurrentAccuracy: 当前准确度：{0}%
@@ -557,6 +560,7 @@ Mods: {
 				ManaCost1: "消耗 "
 				ManaCost2: " 魔力以发射投掷物"
 				AmmoReservationPotion: "{$CommonItemTooltip.Ranged.CritDmg}"
+				// TitanPotion: "{$CommonItemTooltip.Melee.Size}"
 				AmmoBox: 以弹药基础伤害值的一半增加弹药暴击几率
 				HerosShirt:
 					'''
@@ -6250,14 +6254,14 @@ Mods: {
 				Tooltip: 射程相对较短，但穿透一次。不需要弹药
 			}
 
-			Blast: {
-				DisplayName: 战术高爆发射器
-				Tooltip:
+			TacticalBazooka: {
+				// DisplayName: Tactical Bazooka
+				/* Tooltip:
 					'''
-					将火箭转化为微型核弹
-					威力惊人并有极高风险
-					右键缩放视野
-					'''
+					Converts rockets into mini-nukes 
+					High firepower, but can gravely injure the user
+					Right Click to zoom out 
+					''' */
 			}
 
 			BlizzardBlaster: {
@@ -8084,14 +8088,46 @@ Mods: {
 			}
 
 			EyeOfTheHunt: {
-				// DisplayName: Eye Of The Hunt
+				// DisplayName: Mark of the Hunt
 				/* Tooltip:
 					'''
-					Enemies are less likely to target you
+					{$CommonItemTooltip.AggroDecrease}
 					Summon a young hunter to protect you
 					The young hunter inflicts Acid Venom and {0}% more damage on crit
 					Scale with summon damage and critical strike chance
 					''' */
+			}
+
+			LoveRing: {
+				// DisplayName: Covenant of Everlasting Love
+				/* Tooltip:
+					'''
+					[c/ff8da1:'A symbol of our union and eternal love']
+					{$CommonItemTooltip.AggroBoost}
+					Increases your life regeneration and that of all nearby players by {0}
+					When you take damage, nearby players recover {1} health and reduce the duration of debuffs
+					(can only occur once every two seconds, does not affect Mana/Potion Sickness)
+					''' */
+			}
+
+			VenomPowder: {
+				// DisplayName: Venom Powder
+				// Tooltip: Consuming a healing potion/Estus flask or taking damage creates an large explosion of acid venom around you
+			}
+
+			VenomDart: {
+				// Tooltip: Inflicts acid venom in a radius on hit
+				// DisplayName: Venom Dart
+			}
+
+			FrigidDart: {
+				// Tooltip: Bounces between enemies and has a chance to freeze enemies
+				// DisplayName: Frigid Dart
+			}
+
+			AbyssalStar: {
+				// Tooltip: ""
+				// DisplayName: Abyssal Star
 			}
 		}
 
@@ -8105,7 +8141,6 @@ Mods: {
 					'''
 				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, 受到伤害时击退敌人"
 				WeaponImbue: 增加 {0}% 近战和鞭子暴击率
-				TitanPotion: 增加 {0}% 近战武器大小
 			}
 
 			Curse: {
@@ -9114,8 +9149,8 @@ Mods: {
 			}
 
 			YoungHunterBuff: {
-				// DisplayName: Young Hunter Buff
-				// Description: Mods.tsorcRevamp.Buffs.YoungHunterBuff.Description
+				// DisplayName: Young Hunter
+				// Description: The Young Hunter will hunt for you!
 			}
 		}
 
@@ -9819,6 +9854,26 @@ Mods: {
 			// FriendlyHunterChild.DisplayName: Friendly Hunter Child
 			// YoungHunter.DisplayName: Young Hunter
 			// YoungHunterProjectile.DisplayName: Young Hunter Projectile
+			// YoungHunterVine.DisplayName: Young Hunter Vine
+			// SporePowderProjectile.DisplayName: Spore Powder Projectile
+			// DarkCircleProj.DisplayName: Dark Circle Proj
+			// TaintedIcicle.DisplayName: Tainted Icicle
+			// FireRainProj.DisplayName: Fire Rain Proj
+			// RedMagicProj.DisplayName: Red Magic Proj
+			// ShadowDragonsBreath.DisplayName: Shadow Dragons Breath
+			// VenomDartProjectile.DisplayName: Venom Dart Projectile
+			// FrigidDartProjectile.DisplayName: Frigid Dart Projectile
+			// FireBallWOF2.DisplayName: Fire Ball W O F2
+			// AbyssalStarProj.DisplayName: Abyssal Star Proj
+			// SunderingLightAura.DisplayName: Sundering Light Aura
+			// HeavensTearAura.DisplayName: Heavens Tear Aura
+			// BerserkerNightmareAura.DisplayName: Berserker Nightmare Aura
+			// PowerBoltExplosion.DisplayName: Power Bolt Explosion
+			// SupremeDragoonLashTrail.DisplayName: Supreme Dragoon Lash Trail
+			// DetonationSignalTrail.DisplayName: Detonation Signal Trail
+			// GaiaSmash.DisplayName: Gaia Smash
+			// YianBlaze2.DisplayName: Yian Blaze2
+			// YianBlaze.DisplayName: Yian Blaze
 		}
 
 		NPCs: {
@@ -11907,14 +11962,29 @@ Mods: {
 				// Description: Defeat Death.
 			}
 
+			SlayerAbsoluteDeath: {
+				// FriendlyName: Absolute Fate
+				// Description: Defeat Death at his full power during the Blood Moon.
+			}
+
+			ExploreShamanElderHome: {
+				// FriendlyName: Home of the Elder
+				// Description: Find the true home of the Shaman Elder at the edge of the world.
+			}
+
 			SlayerHunter: {
 				// FriendlyName: Hunting Time
 				// Description: Defeat the Hunter, the ferocious great vulture of the desert, the strongest of the Three Wings.
 			}
 
+			ExploreWifeRescured: {
+				// FriendlyName: The Reunion
+				// Description: Find Asha in a prison located deep within the ruins of the desert.
+			}
+
 			SlayerMachine: {
 				// FriendlyName: Flooded Gears
-				// Description: Defeat the Machine, the ancient keeper of the forgotten Machine Temple
+				// Description: Defeat the Machine, the ancient keeper of the forgotten Machine Temple.
 			}
 
 			SlayerTriad: {

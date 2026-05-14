@@ -19,11 +19,17 @@ namespace tsorcRevamp.Projectiles
         }
         public override void AI()
         {
+            Projectile.rotation++;
+            if (Projectile.velocity.X <= 10 && Projectile.velocity.Y <= 10 && Projectile.velocity.X >= -10 && Projectile.velocity.Y >= -10)
+            {
+                Projectile.velocity.X *= 1.01f;
+                Projectile.velocity.Y *= 1.01f;
+            }
 
             Color color = new Color();
-            for (int d = 0; d < 2; d++)
+            for (int d = 0; d < 3; d++)
             {
-                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 100, color, 1.25f);
+                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 100, color, 1.4f);
                 Main.dust[dust].noGravity = true;
             }
             if (Projectile.wet)

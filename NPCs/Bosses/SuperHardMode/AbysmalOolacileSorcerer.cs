@@ -137,7 +137,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                SpawnNPCs();
                 FireProjectiles();
             }
 
@@ -148,53 +147,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             OolacileTeleport();
-        }
-
-        public void SpawnNPCs()
-        {
-            NPCSpawningTimer++;
-            NPCSpawningTimer2++;
-            //NPCSpawningTimer += (Main.rand.Next(2, 5) * 0.1f);
-            if (NPCSpawningTimer >= 10f)
-            {
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.OolacileDemon>()) < 3) && Main.rand.NextBool(1500))
-                {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileDemon>(), 0);
-                    Main.npc[Spawned].velocity.Y = -8;
-                    Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                    if (Main.netMode == 2)
-                    {
-                        NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-
-                    }
-                }
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.NextBool(1800))
-                {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
-                    Main.npc[Spawned].velocity.Y = -8;
-                    Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                    NPCSpawningTimer = 0;
-                    if (Main.netMode == 2)
-                    {
-                        NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                    }
-                }
-
-            }
-            if (NPCSpawningTimer2 >= 6000f)
-            {
-                if (NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.OolacileSorcerer>()) < 1)
-                {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileSorcerer>(), 0);
-                    Main.npc[Spawned].velocity.Y = -8;
-                    Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                    NPCSpawningTimer2 = 0;
-                    if (Main.netMode == 2)
-                    {
-                        NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                    }
-                }
-            }
         }
 
         public void FireProjectiles()

@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.active = false;
             }
 
-            if (Timer >= 420)
+            if (Timer >= 360)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {

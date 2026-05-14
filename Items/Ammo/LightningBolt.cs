@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.DamageType = DamageClass.Ranged;
             Item.ammo = ModContent.ItemType<Bolt>();
             Item.damage = 9;
-            Item.height = 10;
+            Item.width = 10;
             Item.height = 28;
             Item.knockBack = 3.5f;
             Item.maxStack = Item.CommonMaxStack;

@@ -22,10 +22,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             AIType = NPCID.CaveBat;
             NPC.timeLeft = 1750;
             NPC.damage = 63;
-            NPC.defense = 70;
+            NPC.defense = 60;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath4;
-            NPC.lifeMax = 1500;
+            NPC.lifeMax = 1300;
             NPC.scale = 1;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0.4f;
@@ -57,7 +57,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void AI()
         {
             base.AI();
-
+            if (NPC.life < NPC.lifeMax)
+            {
+                NPC.life += 2;
+                if (NPC.life > NPC.lifeMax)
+                    NPC.life = NPC.lifeMax;
+            }
         }
 
         public int frame = 0;
@@ -88,6 +93,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             target.AddBuff(BuffID.MoonLeech, 10 * 60);
             target.AddBuff(BuffID.Bleeding, 60 * 60);
+
+            NPC.life += NPC.lifeMax / 2;
+            if (NPC.life > NPC.lifeMax)
+            {
+                NPC.life = NPC.lifeMax;
+            }
+
+            NPC.netUpdate = true;
         }
     }
 }

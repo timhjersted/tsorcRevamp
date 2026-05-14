@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
         {
             //item.CloneDefaults(ItemID.LastPrism);
             Item.mana = 0;
-            Item.damage = 680;
+            Item.damage = 640;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.height = 28;

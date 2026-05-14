@@ -30,6 +30,14 @@ namespace tsorcRevamp.Projectiles
             Main.dust[dust].noGravity = true;
         }
 
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (tsorcRevamp.MageNPCs.Contains(target.type))
+            {
+                modifiers.FinalDamage *= 1.2f;
+            }
+        }
+
         public override void OnKill(int timeLeft)
         {
             if (!Projectile.active)

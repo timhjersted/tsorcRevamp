@@ -1767,6 +1767,16 @@ namespace tsorcRevamp.NPCs
                         npc.value = 10000;
                         break;
                     }
+                case (NPCID.ShimmerSlime):
+                    {
+                        npc.value = 1400;
+                        npc.defense = 40;
+                        npc.knockBackResist = 0f;
+                        npc.damage = 80;
+                        npc.lifeMax = 1250;
+                        npc.scale = 1.25f;
+                        break;
+                    }
 
                 #endregion
 
@@ -6438,7 +6448,7 @@ namespace tsorcRevamp.NPCs
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 2);
             }
 
-            if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow))
+            if (npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow)
             {
                 if (Main.rand.NextBool(8))
                 {
@@ -6502,7 +6512,14 @@ namespace tsorcRevamp.NPCs
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.Heart);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.Heart);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.Heart);
+            }
 
+            if (npc.type == NPCID.IceElemental || npc.type == NPCID.IcyMerman || npc.type == NPCID.IceTortoise)
+            {
+                if (Main.rand.NextBool(100))
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.FrostCore, 1, false, -1);
+                }
             }
 
 

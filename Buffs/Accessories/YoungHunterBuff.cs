@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Summon.YoungHunter;
 using tsorcRevamp.Items.Weapons.Summon;
 
-namespace tsorcRevamp.Buffs.Weapons.Summon
+namespace tsorcRevamp.Buffs.Accessories
 {
     public class YoungHunterBuff : ModBuff
     {

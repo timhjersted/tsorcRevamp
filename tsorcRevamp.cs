@@ -1508,7 +1508,10 @@ namespace tsorcRevamp
                 NPCID.SkeletronHead,
                 ModContent.NPCType<UndeadCaster>(),
                 ModContent.NPCType<FallenNecromancer>(),
-                ModContent.NPCType<IceSkeleton>()
+                ModContent.NPCType<IceSkeleton>(),
+                ModContent.NPCType<ParasyticWormHead>(),
+                ModContent.NPCType<ParasyticWormBody>(),
+                ModContent.NPCType<ParasyticWormTail>()
             };
             #endregion
 

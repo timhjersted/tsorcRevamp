@@ -21,6 +21,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.value = 3;
             Item.ammo = Item.type;
             Item.rare = ItemRarityID.Red;
+            Item.damage = 50;
         }
     }
 }

@@ -36,6 +36,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
                 Item.knockBack / 3,
                 player.whoAmI
             );
+            Star.DamageType = DamageClass.Melee;
+            Star.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
+            Star.netUpdate = true;
             return null;
         }
 

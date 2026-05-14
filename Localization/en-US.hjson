@@ -3,6 +3,7 @@ Mods: {
 		CommonItemTooltip: {
 			Details: Hold Left Shift to reveal details
 			AggroBoost: Enemies are more likely to target you
+			AggroDecrease: Enemies are less likely to target you
 			SetBonus: "Set Bonus: "
 			NoKnockback: Grants immunity to knockback
 			ObsidianShield: "{$CommonItemTooltip.NoKnockback} and fire blocks"
@@ -108,6 +109,7 @@ Mods: {
 				DmgMult: Increases melee damage by {0}% multiplicatively
 				CritMult: Increases melee critical strike chance by {0}% multiplicatively
 				AtkSpeedMult: Increases melee speed by {0}% multiplicatively
+				Size: Increases the size of melee weapons by {0}%
 			}
 
 			Ranged: {
@@ -115,6 +117,7 @@ Mods: {
 				CritMult: Increases ranged critical strike chance by {0}% multiplicatively
 				CritDmg: Increases ranged critical strike damage by {0}%
 				NonCritDmg: Decreases ranged non-critical strike damage by {0}%
+				ArmorPenRanged: Increases ranged armor penetration by {0}
 				FlatDmg: Increases ranged damage by {0} flat
 				SeedBag: The Dryad will sell seeds while this is in your inventory
 				CurrentAccuracy: Current Accuracy: {0}%
@@ -553,6 +556,7 @@ Mods: {
 				ManaCost1: "Requires "
 				ManaCost2: " mana to cast projectile"
 				AmmoReservationPotion: "{$CommonItemTooltip.Ranged.CritDmg}"
+				TitanPotion: "{$CommonItemTooltip.Melee.Size}"
 				AmmoBox: Increases critical strike chance by your ammo's base damage
 				HerosShirt:
 					'''
@@ -1510,7 +1514,7 @@ Mods: {
 				DisplayName: Covetous Soul Serpent Ring
 				Tooltip:
 					'''
-					An ancient relic forged and lost many centuries ago
+					An ancient relic reforged to its maximum greed
 					[c/ffbf00:{$CommonItemTooltip.SoulDrops}]
 					[c/ffbf00:{$CommonItemTooltip.BadDefense@1}]
 					[c/ffbf00:{$CommonItemTooltip.ConsumableSoulDrops@2}]
@@ -2046,6 +2050,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.SetBonus}Allows you to use items while dodgerolling
 					Increase additional {1}x melee damage while dodgerolling
+					{$CommonItemTooltip.AggroBoost}
 					'''
 			}
 
@@ -2073,8 +2078,8 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentChanceToSaveAmmo}
-					{$CommonItemTooltip.SetBonus}{$Items.KrakenCarcass.Keybind1}KrakensCast{$Items.KrakenCarcass.Keybind2}
-					The Tsunami will increase the damage of ranged projectiles that pass through it by {1}%
+					{$Items.KrakenCarcass.Keybind1}KrakensCast{$Items.KrakenCarcass.Keybind2}
+					The Tsunami will increase the damage of ranged projectiles that pass through it by {2}%
 					'''
 				Keybind1: "{$CommonItemTooltip.SetBonus}Press "
 				Keybind2: " to cast a floating Tsunami at your cursor position"
@@ -3177,11 +3182,12 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.IncreasesMaxMinionsBy@1} 
-					{$CommonItemTooltip.SetBonus}{$Items.WitchkingRobe.Keybind1}WitchScream{$Items.WitchkingRobe.Keybind2}
+					{$CommonItemTooltip.SetBonus}{$Items.WitchkingRobe.Keybind1}{$Items.WitchkingRobe.Keybind2}
 					Affected enemies deal less damage, have reduced defense and speed, and take significant damage over time for a short moment
+					{$CommonItemTooltip.AggroDecrease}
 					'''
-				Keybind1: "Press "
-				Keybind2: " to let out a terrifying scream that affects enemies in a radius"
+				Keybind1: "{$CommonItemTooltip.SetBonus}Press "
+				Keybind2: " to let out a terrifying scream that affects and confuses enemies in a radius"
 			}
 
 			SymbolOfAvarice: {
@@ -4152,7 +4158,7 @@ Mods: {
 				DisplayName: Forgotten Ice Bow Scroll
 				Tooltip:
 					'''
-					Used to make a great magic weapon
+					Used to make a great magic bow
 					Sold by a powerful sorcerer
 					'''
 			}
@@ -4161,7 +4167,7 @@ Mods: {
 				DisplayName: Forgotten Thunder Bow Scroll
 				Tooltip:
 					'''
-					Used to make a great magic weapon
+					Used to make a great magic bow
 					Sold by a powerful sorcerer
 					'''
 			}
@@ -5810,8 +5816,9 @@ Mods: {
 				DisplayName: Gaia Blade
 				Tooltip:
 					'''
-					An earthbound blade, capable of breaking some magical protections
-					[c/ffbf00:Does 2x damage to the Witchking and dispels the defensive shield of the Witchking and Artorias]
+					An earthbound blade, breaking the earth and capable of breaking some magical protections
+					Deals 25% more damage and reduces the enemy's defense while on the ground, 50% more damage against Witchking
+					[c/ffbf00:Dispels the defensive shield of the Witchking and Artorias]
 					'''
 			}
 
@@ -5956,14 +5963,14 @@ Mods: {
 				Tooltip: Restores {0} mana on-hit, crits restore mana twice
 				Tooltip2:
 					'''
-					Right click using all mana to cast a homing blaze, need at least {0} mana
-					Blaze deals {1}x the swords damage
+					Shoots Yin blazes and confuses enemies on true melee hits
+					Right click using all mana to cast three Yang homing blazes, need at least {0} mana
 					'''
 			}
 
 			EphemeralThrowingAxe: {
 				DisplayName: Ephemeral Throwing Axe
-				Tooltip: Passes through solid walls
+				Tooltip: Passes through solid walls and does 20% more damage against mages
 			}
 
 			EphemeralThrowingAxe2: {
@@ -5985,7 +5992,7 @@ Mods: {
 				Tooltip:
 					'''
 					Heaven splits with each swing
-					Deals double damage to mages and ghosts
+					Deals 40% more damage to mages and ghosts
 					'''
 			}
 
@@ -5999,7 +6006,7 @@ Mods: {
 				Tooltip:
 					'''
 					Rips apart the border of life and death
-					Deals double damage to mages and ghosts
+					Deals 50% more damage to mages and ghosts
 					'''
 			}
 
@@ -6179,7 +6186,7 @@ Mods: {
 					'''
 					Inherits Tridents water effect and pierces {0} armor penetration
 					Right-click to catalyze the spear with magic at a cost of 60 mana and increase its abilities for a short time
-					Increases weapon speed, allows projectiles to pierce and inflicts a debuff during the buff 
+					Increases weapon speed, allows projectiles to pierce and inflicts frostburn during the buff 
 					Hitting enemies with the spear speeds up the cooldown reset
 					18 seconds cooldown
 					'''
@@ -6252,8 +6259,8 @@ Mods: {
 				Tooltip: Relatively short range but pierces once. Doesn't require ammo
 			}
 
-			Blast: {
-				DisplayName: Volatile Bazooka
+			TacticalBazooka: {
+				DisplayName: Tactical Bazooka
 				Tooltip:
 					'''
 					Converts rockets into mini-nukes 
@@ -6837,8 +6844,8 @@ Mods: {
 			}
 
 			SporePowder: {
-				DisplayName: Spore Powder
-				Tooltip: ""
+				DisplayName: Bloom Powder
+				Tooltip: Consuming a healing potion/Estus flask or taking damage creates an explosion of poison spores around you
 			}
 
 			WhiteTitanite: {
@@ -7888,13 +7895,17 @@ Mods: {
 				Tooltip:
 					'''
 					Does random damage from 0 to {0}
-					Maximum damage is increased by damage modifiers.
+					Maximum damage is increased by damage modifiers. 
 					'''
 			}
 
 			WitchkingMace: {
 				DisplayName: Witchking Mace
-				Tooltip: Inflicts 1 random whip debuff each hit
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Whips}
+					Inflicts 1 random whip debuff each hit
+					'''
 			}
 
 			TaintedBow: {
@@ -8002,7 +8013,7 @@ Mods: {
 			}
 
 			OolacileDarkMatter: {
-				DisplayName: Oolacile Dark Matter
+				DisplayName: Essence of Oolacile
 				Tooltip: Tangible shadow energy from the darkness of Oolacile.
 			}
 
@@ -8089,14 +8100,46 @@ Mods: {
 			}
 
 			EyeOfTheHunt: {
-				DisplayName: Eye Of The Hunt
+				DisplayName: Mark of the Hunt
 				Tooltip:
 					'''
-					Enemies are less likely to target you
+					{$CommonItemTooltip.AggroDecrease}
 					Summon a young hunter to protect you
 					The young hunter inflicts Acid Venom and {0}% more damage on crit
 					Scale with summon damage and critical strike chance
 					'''
+			}
+
+			LoveRing: {
+				DisplayName: Covenant of Everlasting Love
+				Tooltip:
+					'''
+					[c/ff8da1:'A symbol of our union and eternal love']
+					{$CommonItemTooltip.AggroBoost}
+					Increases your life regeneration and that of all nearby players by {0}
+					When you take damage, nearby players recover {1} health and reduce the duration of debuffs
+					(can only occur once every two seconds, does not affect Mana/Potion Sickness)
+					'''
+			}
+
+			VenomPowder: {
+				DisplayName: Venom Powder
+				Tooltip: Consuming a healing potion/Estus flask or taking damage creates an large explosion of acid venom around you
+			}
+
+			VenomDart: {
+				Tooltip: Inflicts acid venom in a radius on hit
+				DisplayName: Venom Dart
+			}
+
+			FrigidDart: {
+				Tooltip: Bounces between enemies and has a chance to freeze enemies
+				DisplayName: Frigid Dart
+			}
+
+			AbyssalStar: {
+				Tooltip: ""
+				DisplayName: Abyssal Star
 			}
 		}
 
@@ -8110,7 +8153,6 @@ Mods: {
 					'''
 				SolarShield: "{$CommonItemTooltip.DRStat}, repel enemies when taking damage"
 				WeaponImbue: Increases melee and whip crit by {0}%
-				TitanPotion: Increases melee size by {0}%
 			}
 
 			Curse: {
@@ -9119,8 +9161,8 @@ Mods: {
 			}
 
 			YoungHunterBuff: {
-				DisplayName: Young Hunter Buff
-				Description: Mods.tsorcRevamp.Buffs.YoungHunterBuff.Description
+				DisplayName: Young Hunter
+				Description: The Young Hunter will hunt for you!
 			}
 		}
 
@@ -9824,6 +9866,26 @@ Mods: {
 			FriendlyHunterChild.DisplayName: Friendly Hunter Child
 			YoungHunter.DisplayName: Young Hunter
 			YoungHunterProjectile.DisplayName: Young Hunter Projectile
+			YoungHunterVine.DisplayName: Young Hunter Vine
+			SporePowderProjectile.DisplayName: Spore Powder Projectile
+			DarkCircleProj.DisplayName: Dark Circle Proj
+			TaintedIcicle.DisplayName: Tainted Icicle
+			FireRainProj.DisplayName: Fire Rain Proj
+			RedMagicProj.DisplayName: Red Magic Proj
+			ShadowDragonsBreath.DisplayName: Shadow Dragons Breath
+			VenomDartProjectile.DisplayName: Venom Dart Projectile
+			FrigidDartProjectile.DisplayName: Frigid Dart Projectile
+			FireBallWOF2.DisplayName: Fire Ball W O F2
+			AbyssalStarProj.DisplayName: Abyssal Star Proj
+			SunderingLightAura.DisplayName: Sundering Light Aura
+			HeavensTearAura.DisplayName: Heavens Tear Aura
+			BerserkerNightmareAura.DisplayName: Berserker Nightmare Aura
+			PowerBoltExplosion.DisplayName: Power Bolt Explosion
+			SupremeDragoonLashTrail.DisplayName: Supreme Dragoon Lash Trail
+			DetonationSignalTrail.DisplayName: Detonation Signal Trail
+			GaiaSmash.DisplayName: Gaia Smash
+			YianBlaze2.DisplayName: Yian Blaze2
+			YianBlaze.DisplayName: Yian Blaze
 		}
 
 		NPCs: {
@@ -11911,14 +11973,29 @@ Mods: {
 				Description: Defeat Death.
 			}
 
+			SlayerAbsoluteDeath: {
+				FriendlyName: Absolute Fate
+				Description: Defeat Death at his full power during the Blood Moon.
+			}
+
+			ExploreShamanElderHome: {
+				FriendlyName: Home of the Elder
+				Description: Find the true home of the Shaman Elder at the edge of the world.
+			}
+
 			SlayerHunter: {
 				FriendlyName: Hunting Time
 				Description: Defeat the Hunter, the ferocious great vulture of the desert, the strongest of the Three Wings.
 			}
 
+			ExploreWifeRescured: {
+				FriendlyName: The Reunion
+				Description: Find Asha in a prison located deep within the ruins of the desert.
+			}
+
 			SlayerMachine: {
 				FriendlyName: Flooded Gears
-				Description: Defeat the Machine, the ancient keeper of the forgotten Machine Temple
+				Description: Defeat the Machine, the ancient keeper of the forgotten Machine Temple.
 			}
 
 			SlayerTriad: {

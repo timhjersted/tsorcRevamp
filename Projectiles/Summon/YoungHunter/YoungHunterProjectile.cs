@@ -2,44 +2,53 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ModLoader;
+using Terraria.GameContent;
 using Terraria.ID;
-using tsorcRevamp.Projectiles.VFX;
+using Terraria.ModLoader;
 using tsorcRevamp.Items.Accessories.Damage;
 
 namespace tsorcRevamp.Projectiles.Summon.YoungHunter
 {
-    class YoungHunterProjectile : DynamicTrail
+    class YoungHunterProjectile : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
+        }
+
         public override void SetDefaults()
         {
-            Projectile.width = 20;
-            Projectile.height = 20;
-            Projectile.timeLeft = 115;
-            Projectile.hostile = true;
-            Projectile.friendly = true;
+            Projectile.height = 15;
+            Projectile.width = 15;
+            Projectile.scale = 1.2f;
             Projectile.tileCollide = false;
-            Projectile.penetrate = 3;
-            Projectile.extraUpdates = 1;
-            trailWidth = 25;
-            trailPointLimit = 100;
-            trailYOffset = 30;
-            trailMaxLength = 140;
-            trailCollision = true;
-            NPCSource = false;
-            collisionPadding = 0;
-            collisionEndPadding = 1;
-            collisionFrequency = 2;
+            Projectile.ignoreWater = false;
+            Projectile.hostile = false;
+            Projectile.friendly = true;
+            Projectile.timeLeft = 200;
             Projectile.DamageType = DamageClass.Summon;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 60;
+            Projectile.ArmorPenetration = 5;
+            Projectile.extraUpdates = 1;
+        }
+
+        public override void AI()
+        {
+            if (Projectile.ai[0] != 0)
+            {
+                Projectile.timeLeft = (int)Projectile.ai[0];
+                Projectile.ai[0] = 0;
+            }
+
+            Lighting.AddLight(Projectile.position, 0.1f, .35f, 1f); //1f was .25f
+            Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.X, (double)Projectile.velocity.Y);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 100, default, 2.0f);
+            Main.dust[dust].noGravity = true;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Poisoned, 240);
+            target.AddBuff(BuffID.Poisoned, 180);
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -47,46 +56,35 @@ namespace tsorcRevamp.Projectiles.Summon.YoungHunter
             modifiers.CritDamage *= 1f + (EyeOfTheHunt.CritDamage / 100);
         }
 
-        bool playedSound = false;
-        Vector2 realVelocity = Vector2.Zero;
-        public override void AI()
+        public override void OnKill(int timeLeft)
         {
-            base.AI();
-            Lighting.AddLight(Projectile.Center, Color.Green.ToVector3());
-            if (!playedSound)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                realVelocity = Projectile.velocity;
-                playedSound = true;
+                int projIndex = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X, Projectile.position.Y, 0, -3f, ModContent.ProjectileType<YoungHunterVine>(), Projectile.damage / 3, 0f, Main.myPlayer);
+                Projectile.active = false;
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60 with { Volume = 0.5f, Pitch = -0.1f }, Projectile.position);
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, projIndex);
+                    NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, this.Projectile.whoAmI);
+                }
             }
         }
-
-        public override float CollisionWidthFunction(float progress)
+        public override bool PreDraw(ref Color lightColor)
         {
-            return 9;
-        }
+            Main.instance.LoadProjectile(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
 
-        float baseNoiseUOffset;
-        public override void SetEffectParameters(Effect effect)
-        {
-            if (baseNoiseUOffset == 0)
+            // Redraw the projectile with the color not influenced by light
+            Vector2 drawOrigin = new Vector2(texture.Width * 0.5f, Projectile.height * 0.5f);
+            for (int k = 0; k < Projectile.oldPos.Length; k++)
             {
-                baseNoiseUOffset = Main.rand.NextFloat();
+                Vector2 drawPos = (Projectile.oldPos[k] - Main.screenPosition) + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
+                Color color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
+                Main.EntitySpriteDraw(texture, drawPos, null, color, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             }
 
-            effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
-            effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);
-            //effect.Parameters["secondaryNoise"].SetValue(noiseTexture);
-
-            visualizeTrail = false;
-
-            effect.Parameters["fadeOut"].SetValue(fadeOut);
-            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            Color shaderColor = new Color(0.3f, 1.0f, 0.3f, 0.5f);
-            effect.Parameters["slashCenter"].SetValue(Color.Gray.ToVector4());
-            effect.Parameters["slashEdge"].SetValue(shaderColor.ToVector4());
-            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
-            collisionEndPadding = trailPositions.Count / 5;
-            collisionPadding = trailPositions.Count / 8;
+            return true;
         }
     }
 }

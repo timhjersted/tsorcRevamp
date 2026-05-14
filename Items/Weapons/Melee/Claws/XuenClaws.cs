@@ -40,7 +40,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BurningFist>());
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 15);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -96,6 +96,11 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             player.noKnockback = true;
             player.buffImmune[BuffID.Darkness] = true;
             player.buffImmune[BuffID.OnFire] = true;
+            player.buffImmune[BuffID.CursedInferno] = true;
+            player.buffImmune[BuffID.Frostburn] = true;
+            player.buffImmune[BuffID.Burning] = true;
+            player.buffImmune[BuffID.Ichor] = true;
+            player.buffImmune[BuffID.ShadowFlame] = true;
             player.nightVision = true;
             player.AddBuff(BuffID.Hunter, 1);
 

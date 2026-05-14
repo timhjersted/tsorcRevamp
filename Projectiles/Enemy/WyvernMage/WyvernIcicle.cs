@@ -10,8 +10,8 @@ namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
 
         public override void SetDefaults()
         {
-            Projectile.width = 32;
-            Projectile.height = 88;
+            Projectile.width = 40;
+            Projectile.height = 40;
             Projectile.friendly = false;
             Projectile.hostile = true;
             Projectile.penetrate = 5;

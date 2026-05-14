@@ -7,7 +7,7 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
 {
-    class RedRainProj : DynamicTrail
+    class RedMagicProj : DynamicTrail
     {
 
         public override void SetStaticDefaults()
@@ -19,17 +19,17 @@ namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
         {
             Projectile.width = 20;
             Projectile.height = 20;
-            Projectile.timeLeft = 300;
+            Projectile.timeLeft = 600;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
 
             trailCollision = true;
             trailWidth = 25;
-            trailPointLimit = 150;
             Projectile.DamageType = DamageClass.Magic;
+            trailPointLimit = 150;
             trailYOffset = 30;
-            trailMaxLength = 150;
+            trailMaxLength = 155;
             NPCSource = false;
             collisionPadding = 0;
             collisionEndPadding = 1;
@@ -37,15 +37,15 @@ namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
-        /*public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(BuffID.OnFire, 100);
-        }*/
+            target.AddBuff(BuffID.Bleeding, 300);
+        }
         
         public override void AI()
         {
             base.AI();
-            Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3());
+            Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
         }
 
         public override float CollisionWidthFunction(float progress)
@@ -64,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
 
-            Color shaderColor = new Color(1.0f, 0.3f, 0.1f, 1.0f);
+            Color shaderColor = new Color(1.0f, 0.05f, 0.05f, 0.8f);
             shaderColor = UsefulFunctions.ShiftColor(shaderColor, timeFactor, 0.03f);
             effect.Parameters["shaderColor"].SetValue(shaderColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());

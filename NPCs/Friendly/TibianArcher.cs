@@ -7,6 +7,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -190,6 +191,18 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopCustomPrice = 1,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
+
+            shop.Add(new Item(ModContent.ItemType<ForgottenIceBowScroll>())
+            {
+                shopCustomPrice = 5000,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
+
+            shop.Add(new Item(ModContent.ItemType<ForgottenThunderBowScroll>())
+            {
+                shopCustomPrice = 5000,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
 
             if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
             {

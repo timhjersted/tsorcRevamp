@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,8 +14,8 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
 
         public override void SetDefaults()
         {
-            Projectile.width = 70;
-            Projectile.height = 100;
+            Projectile.width = 40;
+            Projectile.height = 40;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 3600;
             Projectile.friendly = true; //can hit enemies
@@ -72,10 +73,26 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
 
             if (Main.rand.NextBool(2))
             {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 90, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), 1.2f);
-                Main.dust[dust].noGravity = true;
+                Vector2 spearTipOffset = new Vector2(100 * MathF.Cos(Projectile.velocity.ToRotation()), 100 * MathF.Sin(Projectile.velocity.ToRotation()));
+                int dust = Dust.NewDust(Projectile.position + spearTipOffset, Projectile.width, Projectile.height, 90, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), 1.2f);
             }
         }
+
+        public override void ModifyDamageHitbox(ref Rectangle hitbox)
+        {
+            // Move damage hitbox to where spear tip is
+            double spearTipOffsetX = 95 * Math.Cos(Projectile.velocity.ToRotation());
+            double spearTipOffsetY = 95 * Math.Sin(Projectile.velocity.ToRotation());
+            hitbox.Offset((int)spearTipOffsetX, (int)spearTipOffsetY);
+        }
+
+		public override void CutTiles()
+		{
+			// Move vine/pot breaking to where spear tip is
+            Vector2 spearTipOffsetStarting = new Vector2(85 * MathF.Cos(Projectile.velocity.ToRotation()), 85 * MathF.Sin(Projectile.velocity.ToRotation()));
+            Vector2 spearTipOffsetEnding = new Vector2(115 * MathF.Cos(Projectile.velocity.ToRotation()), 115 * MathF.Sin(Projectile.velocity.ToRotation()));
+			Utils.PlotTileLine(Projectile.Center + spearTipOffsetStarting, Projectile.Center + spearTipOffsetEnding, 70, DelegateMethods.CutTiles);
+		}
 
         public static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)

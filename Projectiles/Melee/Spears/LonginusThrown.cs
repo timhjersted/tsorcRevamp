@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -62,6 +63,22 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
             return false;
         }
 
+        public override void ModifyDamageHitbox(ref Rectangle hitbox)
+        {
+            // Move damage hitbox to where spear tip is
+            double spearTipOffsetX = 185 * Math.Cos(Projectile.velocity.ToRotation());
+            double spearTipOffsetY = 185 * Math.Sin(Projectile.velocity.ToRotation());
+            hitbox.Offset((int)spearTipOffsetX, (int)spearTipOffsetY);
+        }
+
+		public override void CutTiles()
+		{
+			// Move vine/pot breaking to where spear tip is
+            Vector2 spearTipOffsetStarting = new Vector2(170 * MathF.Cos(Projectile.velocity.ToRotation()), 170 * MathF.Sin(Projectile.velocity.ToRotation()));
+            Vector2 spearTipOffsetEnding = new Vector2(200 * MathF.Cos(Projectile.velocity.ToRotation()), 200 * MathF.Sin(Projectile.velocity.ToRotation()));
+			Utils.PlotTileLine(Projectile.Center + spearTipOffsetStarting, Projectile.Center + spearTipOffsetEnding, 70, DelegateMethods.CutTiles);
+		}
+
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 + MathHelper.ToRadians(45f); //This makes it rotate to face where it's moving
@@ -70,54 +87,40 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
 
             if (Main.rand.NextBool(3))
             {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 90, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), 1.3f);
+                Vector2 spearTipOffset = new Vector2(185 * MathF.Cos(Projectile.velocity.ToRotation()), 185 * MathF.Sin(Projectile.velocity.ToRotation()));
+                int dust = Dust.NewDust(Projectile.position + spearTipOffset, Projectile.width, Projectile.height, 90, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), 1.3f);
                 Main.dust[dust].noGravity = true;
             }
         }
 
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        public override void OnKill(int timeLeft)
         {
             if (Projectile.ai[0] == 1)
             {
-                Explode();
-            }
-        }
+                Vector2 spearTipOffset = new Vector2(185 * MathF.Cos(Projectile.velocity.ToRotation()), 185 * MathF.Sin(Projectile.velocity.ToRotation()));
 
-        private void Explode()
-        {
-            int explosionRadius = 230;
-
-            for (int i = 0; i < 150; i++)
-            {
-                Vector2 direction = Main.rand.NextVector2Circular(1f, 1f).SafeNormalize(Vector2.UnitX);
-                float speed = Main.rand.NextFloat(5.5f, 19f);
-
-                int dust1 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 90, 0f, 0f, 70, default, 1.55f);
-                Main.dust[dust1].velocity = direction * speed;
-                Main.dust[dust1].noGravity = true;
-
-                int dust2 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 219, 0f, 0f, 70, default, 1.95f);
-                Main.dust[dust2].velocity = direction * (speed * 1.2f);
-                Main.dust[dust2].noGravity = true;
-            }
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
-
-            foreach (NPC npc in Main.npc)
-            {
-                if (npc.active && !npc.friendly && npc.Distance(Projectile.Center) <= explosionRadius)
+                for (int i = 0; i < 150; i++)
                 {
-        
-                    int explosionDamage = (int)(Projectile.damage * 0.5f);
+                    Vector2 direction = Main.rand.NextVector2Circular(1f, 1f).SafeNormalize(Vector2.UnitX);
+                    float speed = Main.rand.NextFloat(5.5f, 19f);
 
-                    NPC.HitInfo hitInfo = new NPC.HitInfo
-                    {
-                        Damage = explosionDamage,
-                        Knockback = 2f,
-                        HitDirection = Projectile.Center.X < npc.Center.X ? 1 : -1
-                    };
+                    int dust1 = Dust.NewDust(Projectile.position + spearTipOffset, Projectile.width, Projectile.height, 90, 0f, 0f, 70, default, 1.55f);
+                    Main.dust[dust1].velocity = direction * speed;
+                    Main.dust[dust1].noGravity = true;
 
-                    npc.StrikeNPC(hitInfo, fromNet: false);
+                    int dust2 = Dust.NewDust(Projectile.position + spearTipOffset, Projectile.width, Projectile.height, 219, 0f, 0f, 70, default, 1.95f);
+                    Main.dust[dust2].velocity = direction * (speed * 1.2f);
+                    Main.dust[dust2].noGravity = true;
                 }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
+
+                Projectile.penetrate = 15;
+                Vector2 oldCenter = Projectile.Center;
+                Projectile.width = 320;
+                Projectile.height = 320;
+                Projectile.position = oldCenter - new Vector2(Projectile.width / 2f, Projectile.height / 2f);
+                Projectile.damage /= 2;
+                Projectile.Damage();
             }
         }
 
