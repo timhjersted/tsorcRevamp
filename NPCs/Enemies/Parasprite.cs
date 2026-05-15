@@ -34,13 +34,13 @@ namespace tsorcRevamp.NPCs.Enemies
         bool init;
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            bool underground = (spawnInfo.Player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
+            bool underground = (spawner.Player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
             float chance = 0;
-            Player p = spawnInfo.Player;
+            Player p = spawner.Player;
 
-            if (spawnInfo.Player.ZoneHallow && underground && NPC.downedBoss3)
+            if (spawner.Player.ZoneHallow && underground && NPC.downedBoss3)
             { //it's spawning on the surface for some reason too
                 chance = 0.1f;
             }
@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 chance = 0.2f;
             }
-            if (spawnInfo.Water || tsorcRevampWorld.SuperHardMode)
+            if (spawner.waterTile || tsorcRevampWorld.SuperHardMode)
             {
                 chance = 0;
             }

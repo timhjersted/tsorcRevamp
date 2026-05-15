@@ -42,10 +42,10 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.AttraidiesIllusionBanner>();
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<AttraidiesManifestation>()) < 1
+            if (spawner.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<AttraidiesManifestation>()) < 1
                 && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 && NPC.CountNPCS(ModContent.NPCType<DungeonMage>()) < 1)
             {
                 if (!Main.hardMode) { chance = .02f; }
@@ -53,12 +53,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
             }
 
-            if (spawnInfo.Player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(ModContent.NPCType<AttraidiesIllusion>()))
+            if (spawner.Player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(ModContent.NPCType<AttraidiesIllusion>()))
             {
                 chance = .033f;
             }
 
-            if (spawnInfo.Player.ZoneRockLayerHeight && Main.hardMode && !tsorcRevampWorld.SuperHardMode) // was jungle only
+            if (spawner.Player.ZoneRockLayerHeight && Main.hardMode && !tsorcRevampWorld.SuperHardMode) // was jungle only
             {
                 chance = .00525f;
             }

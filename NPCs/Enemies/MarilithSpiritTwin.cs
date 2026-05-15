@@ -44,9 +44,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player P = spawnInfo.Player;
+            Player P = spawner.Player;
 
             if (tsorcRevampWorld.SuperHardMode) return 0;
 

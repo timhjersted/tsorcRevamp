@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<DarkInferno>()] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<CrimsonBurn>()] = true;
-            NPCID.Sets.GoldCrittersCollection.Add(Type);
+            NPCID.Sets.IsGoldCritter[Type] = true;
         }
 
         public override void SetDefaults()
@@ -49,21 +49,21 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.CosmicCrystalLizardBanner>();
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
 
-            if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight) && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && !spawnInfo.Player.ZoneJungle)
+            if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && (spawner.Player.ZoneRockLayerHeight || spawner.Player.ZoneDirtLayerHeight) && !spawner.waterTile && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].IsHalfBlock && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].RightSlope && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].LeftSlope && !spawner.Player.ZoneJungle)
             {
-                return 0.02f * (1f + spawnInfo.Player.luck);
+                return 0.02f * (1f + spawner.Player.luck);
             }
-            if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight) && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && spawnInfo.Player.ZoneJungle)
+            if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && (spawner.Player.ZoneRockLayerHeight || spawner.Player.ZoneDirtLayerHeight) && !spawner.waterTile && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].IsHalfBlock && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].RightSlope && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].LeftSlope && spawner.Player.ZoneJungle)
             {
-                return 0.02f * (1f + spawnInfo.Player.luck);
+                return 0.02f * (1f + spawner.Player.luck);
             }
-            if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.DirtUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.MudUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.Planked))
+            if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && spawner.Player.ZoneOverworldHeight && !spawner.waterTile && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].IsHalfBlock && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].RightSlope && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].LeftSlope && (Main.tile[spawner.SpawnTileX, spawner.SpawnTileY - 2].WallType == WallID.DirtUnsafe || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY - 2].WallType == WallID.MudUnsafe || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY - 2].WallType == WallID.Planked))
             {
-                return 0.02f * (1f + spawnInfo.Player.luck);
+                return 0.02f * (1f + spawner.Player.luck);
             }
             return chance;
         }

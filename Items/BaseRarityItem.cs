@@ -21,7 +21,7 @@ public abstract class BaseRarityItem : ModItem
             {
                 if (line2.Mod == "Terraria" && line2.Name == "ItemName")
                 {
-                    line2.OverrideColor = (Color)customNameColor;
+                    line2.Color = (Color)customNameColor;
                 }
             }
             return;
@@ -39,7 +39,7 @@ public abstract class BaseRarityItem : ModItem
             {
                 if (line2.Mod == "Terraria" && line2.Name == "ItemName")
                 {
-                    line2.OverrideColor = Rare;
+                    line2.Color = Rare;
                 }
             }
         }

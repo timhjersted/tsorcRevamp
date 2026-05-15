@@ -59,26 +59,26 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player P = spawnInfo.Player; //this shortens our code up from writing this line over and over.
+            Player P = spawner.Player; //this shortens our code up from writing this line over and over.
 
-            bool Sky = spawnInfo.SpawnTileY <= (Main.rockLayer * 4);
+            bool Sky = spawner.SpawnTileY <= (Main.rockLayer * 4);
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
             bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
             bool Hallow = P.ZoneHallow;
-            bool AboveEarth = spawnInfo.SpawnTileY < Main.worldSurface;
-            bool InBrownLayer = spawnInfo.SpawnTileY >= Main.worldSurface && spawnInfo.SpawnTileY < Main.rockLayer;
-            bool InGrayLayer = spawnInfo.SpawnTileY >= Main.rockLayer && spawnInfo.SpawnTileY < (Main.maxTilesY - 200) * 16;
-            bool InHell = spawnInfo.SpawnTileY >= (Main.maxTilesY - 200) * 16;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
+            bool AboveEarth = spawner.SpawnTileY < Main.worldSurface;
+            bool InBrownLayer = spawner.SpawnTileY >= Main.worldSurface && spawner.SpawnTileY < Main.rockLayer;
+            bool InGrayLayer = spawner.SpawnTileY >= Main.rockLayer && spawner.SpawnTileY < (Main.maxTilesY - 200) * 16;
+            bool InHell = spawner.SpawnTileY >= (Main.maxTilesY - 200) * 16;
+            bool FrozenOcean = spawner.SpawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawner.SpawnTileX < 800 || FrozenOcean;
 
             // these are all the regular stuff you get , now lets see......
 
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
             if (NPC.AnyNPCs(ModContent.NPCType<OolacileKnight>()))
             {

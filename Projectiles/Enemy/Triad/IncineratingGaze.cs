@@ -209,7 +209,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public static ArmorShaderData data;
         public static ArmorShaderData targetingData;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Color laserColor = new Color(1.0f, 0.1f, 0.1f);
 

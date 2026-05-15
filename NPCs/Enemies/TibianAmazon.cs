@@ -68,23 +68,23 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #region Spawn
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneDesert)
+            Player p = spawner.Player;
+            if (spawner.invaders || Sky(p) || spawner.Player.ZoneSnow || spawner.Player.ZoneDesert)
             {
                 chance = 0;
                 return chance;
             }
 
-            if (spawnInfo.Player.townNPCs > 0f || tsorcRevampWorld.SuperHardMode || spawnInfo.Player.ZoneDungeon) chance = 0f;
-            if (!tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneOverworldHeight || spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
+            if (spawner.Player.townNPCs > 0f || tsorcRevampWorld.SuperHardMode || spawner.Player.ZoneDungeon) chance = 0f;
+            if (!tsorcRevampWorld.SuperHardMode && (spawner.Player.ZoneOverworldHeight || spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight))
             {
-                if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.05f;
-                if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !Main.dayTime) return 0.055f;
-                if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && Main.dayTime) return 0.0534f;
-                if (spawnInfo.Player.ZoneMeteor && !Main.dayTime) return 0.0725f;
+                if (!(spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson)) return 0.05f;
+                if (!(spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson) && !Main.dayTime) return 0.055f;
+                if (!(spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson) && Main.dayTime) return 0.0534f;
+                if (spawner.Player.ZoneMeteor && !Main.dayTime) return 0.0725f;
             }
 
             return chance;

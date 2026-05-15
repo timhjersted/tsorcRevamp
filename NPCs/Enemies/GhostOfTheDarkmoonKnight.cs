@@ -39,31 +39,31 @@ namespace tsorcRevamp.NPCs.Enemies
         bool charging = false;
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            bool BeforeFourAfterSix = spawnInfo.SpawnTileX < Main.maxTilesX * 0.6f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.8f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?) but different because I increased numbers by .2
+            bool BeforeFourAfterSix = spawner.SpawnTileX < Main.maxTilesX * 0.6f || spawner.SpawnTileX > Main.maxTilesX * 0.8f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?) but different because I increased numbers by .2
 
-            if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && spawnInfo.Player.ZoneDungeon)
+            if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && spawner.Player.ZoneDungeon)
             {
                 return 0.6f;
             }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneUnderworldHeight && spawnInfo.Player.ZoneDungeon)
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneUnderworldHeight && spawner.Player.ZoneDungeon)
             {
                 return 0.5f;
             }
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && spawnInfo.Player.ZoneDungeon)
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && spawner.Player.ZoneDungeon)
             {
                 return 0.4f;
             }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon)
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneDungeon)
             {
                 return 0.2f;
             }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneHallow)
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneHallow)
             {
                 return 0.1f;
             }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneForest && !Main.dayTime)
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneForest && !Main.dayTime)
             {
                 return 0.3f;
             }

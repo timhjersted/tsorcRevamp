@@ -48,10 +48,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         //float customAi1;
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            bool underworld = spawnInfo.Player.ZoneUnderworldHeight;
-            if (Main.hardMode && spawnInfo.Player.ZoneDungeon || Main.hardMode && underworld)
+            bool underworld = spawner.Player.ZoneUnderworldHeight;
+            if (Main.hardMode && spawner.Player.ZoneDungeon || Main.hardMode && underworld)
             {
                 if (Main.rand.NextBool(40))
                 {

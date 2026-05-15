@@ -266,7 +266,7 @@ namespace tsorcRevamp.Items
             }
         }
 
-        public override void GrabRange(Item item, Player player, ref int grabRange)
+        public override void GrabRange(WorldItem item, Player player, ref int grabRange)
         {
             if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet && item.type != ModContent.ItemType<DarkSoul>())
             { //bossMagnet is set on every player when a boss is killed, in NPCLoot
@@ -299,7 +299,7 @@ namespace tsorcRevamp.Items
             base.UpdateVanity(item, player);
         }*/
 
-        public override bool GrabStyle(Item item, Player player)
+        public override bool GrabStyle(WorldItem item, Player player)
         {
             if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet)
             { //pulling items is faster and more consistent
@@ -516,7 +516,7 @@ namespace tsorcRevamp.Items
             }
         }
 
-        public override bool OnPickup(Item item, Player player)
+        public override bool OnPickup(WorldItem item, Player player)
         {
             if (PotionBagUIState.IsValidPotion(item) && player.HasItem(ModContent.ItemType<PotionBag>()))
             {

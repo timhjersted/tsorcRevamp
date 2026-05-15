@@ -1081,16 +1081,16 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
+            if (spawner.Player.townNPCs > 1f) return 0f;
 
-            if (spawnInfo.Player.ZoneUnderworldHeight) return 0.1f;
+            if (spawner.Player.ZoneUnderworldHeight) return 0.1f;
 
-            if (spawnInfo.Player.ZoneUnderworldHeight && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.LavaMossBlockWall || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.LavaUnsafe2 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.LavaUnsafe1)) return chance = 0.15f;
+            if (spawner.Player.ZoneUnderworldHeight && (Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.LavaMossBlockWall || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.LavaUnsafe2 || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.LavaUnsafe1)) return chance = 0.15f;
 
-            if (Main.hardMode && spawnInfo.Player.ZoneUndergroundDesert) return 0.1f; // now spawns in desert HM
+            if (Main.hardMode && spawner.Player.ZoneUndergroundDesert) return 0.1f; // now spawns in desert HM
 
             return chance;
         }

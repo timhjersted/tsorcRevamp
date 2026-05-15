@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void SetDefaults()
         {
-            DrawHeldProjInFrontOfHeldItemAndArms = true; // Makes projectile appear in front of arms, not just in between body and arms
+            DrawHeldProjInFrontOfHeldItemAndArms/* tModPorter Note: Removed. Replace with Projectile.drawLayer = ProjectileDrawLayerID.HeldProjOverHand; */ = true; // Makes projectile appear in front of arms, not just in between body and arms
             Projectile.friendly = true;
             Projectile.width = 48;
             Projectile.height = 62;

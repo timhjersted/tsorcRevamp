@@ -70,7 +70,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             return false;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             return false;
         }
 
-        public override void PostDraw(Color lightColor)
+        public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
             Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f); 

@@ -804,52 +804,52 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
+            bool FrozenOcean = spawner.SpawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawner.SpawnTileX < 800 || FrozenOcean;
 
-            Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
+            Player p = spawner.Player;
+            if (spawner.invaders || Sky(p) || spawner.Player.ZoneSnow)
             {
                 chance = 0;
                 return chance;
             }
 
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
+            if (spawner.Player.townNPCs > 1f) return 0f;
 
-            if (spawnInfo.Water || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) return 0f;
-            if (spawnInfo.Player.ZoneGlowshroom) return 0f;
+            if (spawner.waterTile || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson) return 0f;
+            if (spawner.Player.ZoneGlowshroom) return 0f;
 
-            if (!Main.hardMode && spawnInfo.SpawnTileType == TileID.GreenDungeonBrick && !spawnInfo.Water) return 0.07f;
-            if (!spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonUnsafe) && !Main.hardMode && !tsorcRevampWorld.SuperHardMode) return 0.05f;
-            if (Main.hardMode && spawnInfo.Lihzahrd) return 0.1f;
-            if (Main.hardMode && p.ZoneNormalCaverns && !spawnInfo.Water) return 0.01f;
-            if (Main.hardMode && p.ZoneDesert && p.ZoneOverworldHeight && !spawnInfo.Water) return 0.025f;
-            if (Main.hardMode && p.ZoneUndergroundDesert && !spawnInfo.Water) return 0.035f;
-            if (Main.hardMode && spawnInfo.SpawnTileType == TileID.BlueDungeonBrick && !spawnInfo.Water) return 0.09f;
-            if (Main.hardMode && spawnInfo.SpawnTileType == TileID.TungstenBrick && !spawnInfo.Water) return 0.08f;
+            if (!Main.hardMode && spawner.SpawnTileType == TileID.GreenDungeonBrick && !spawner.waterTile) return 0.07f;
+            if (!spawner.waterTile && (Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.GreenDungeonUnsafe) && !Main.hardMode && !tsorcRevampWorld.SuperHardMode) return 0.05f;
+            if (Main.hardMode && spawner.ZoneLihzhardTemple) return 0.1f;
+            if (Main.hardMode && p.ZoneNormalCaverns && !spawner.waterTile) return 0.01f;
+            if (Main.hardMode && p.ZoneDesert && p.ZoneOverworldHeight && !spawner.waterTile) return 0.025f;
+            if (Main.hardMode && p.ZoneUndergroundDesert && !spawner.waterTile) return 0.035f;
+            if (Main.hardMode && spawner.SpawnTileType == TileID.BlueDungeonBrick && !spawner.waterTile) return 0.09f;
+            if (Main.hardMode && spawner.SpawnTileType == TileID.TungstenBrick && !spawner.waterTile) return 0.08f;
 
-            if (tsorcRevampWorld.SuperHardMode && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUnderworldHeight)) return 0.115f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSkyHeight)) return 0.13f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDesert && !Ocean) return 0.15f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneUnderworldHeight) return 0.08f; //.08% is 4.28%
+            if (tsorcRevampWorld.SuperHardMode && !(Ocean || spawner.Player.ZoneJungle || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneUnderworldHeight)) return 0.115f;
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneOverworldHeight && !(Ocean || spawner.Player.ZoneJungle || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSkyHeight)) return 0.13f;
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneDesert && !Ocean) return 0.15f;
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneDungeon && !spawner.Player.ZoneUnderworldHeight) return 0.08f; //.08% is 4.28%
 
 
-            if (Main.expertMode && Main.bloodMoon && spawnInfo.Player.ZoneOverworldHeight && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSkyHeight)) return chance = 0.04f;
+            if (Main.expertMode && Main.bloodMoon && spawner.Player.ZoneOverworldHeight && !(Ocean || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSkyHeight)) return chance = 0.04f;
 
-            if (Main.expertMode && Main.bloodMoon && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.02f;
+            if (Main.expertMode && Main.bloodMoon && !(Ocean || spawner.Player.ZoneJungle || spawner.Player.ZoneHallow || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSnow || spawner.Player.ZoneSkyHeight || spawner.Player.ZoneUnderworldHeight)) return chance = 0.02f;
 
             // not sure why these were added since base game is expert mode
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.Player.ZoneOverworldHeight && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight)) return chance = 0.025f;
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.05f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawner.Player.ZoneOverworldHeight && Main.dayTime && !(Ocean || spawner.Player.ZoneJungle || spawner.Player.ZoneHallow || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSnow || spawner.Player.ZoneBeach || spawner.Player.ZoneSkyHeight)) return chance = 0.025f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawner.Player.ZoneOverworldHeight && !Main.dayTime && !(spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson)) return chance = 0.05f;
 
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.035f;
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.05f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight) && Main.dayTime && !(Ocean || spawner.Player.ZoneJungle || spawner.Player.ZoneHallow || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSnow)) return chance = 0.035f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight) && !Main.dayTime && !(Ocean || spawner.Player.ZoneJungle || spawner.Player.ZoneHallow || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSnow)) return chance = 0.05f;
 
 
-            if ((!Main.expertMode && !(spawnInfo.Player.ZoneUnderworldHeight || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) return chance = 0.02f;
+            if ((!Main.expertMode && !(spawner.Player.ZoneUnderworldHeight || spawner.Player.ZoneJungle || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson) && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) return chance = 0.02f;
 
             return chance;
         }

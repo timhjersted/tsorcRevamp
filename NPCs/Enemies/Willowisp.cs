@@ -53,11 +53,11 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player P = spawnInfo.Player; //this shortens our code up from writing this line over and over.
+            Player P = spawner.Player; //this shortens our code up from writing this line over and over.
 
-            bool Sky = spawnInfo.SpawnTileY <= (Main.rockLayer * 4);
+            bool Sky = spawner.SpawnTileY <= (Main.rockLayer * 4);
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
@@ -67,11 +67,11 @@ namespace tsorcRevamp.NPCs.Enemies
             bool InBrownLayer = P.ZoneDirtLayerHeight;
             bool InGrayLayer = P.ZoneRockLayerHeight;
             bool InHell = P.ZoneUnderworldHeight;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800;
+            bool FrozenOcean = spawner.SpawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawner.SpawnTileX < 800;
 
             // these are all the regular stuff you get , now lets see......
-            if (spawnInfo.Player.townNPCs > 0f) return 0;
+            if (spawner.Player.townNPCs > 0f) return 0;
 
             if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && Main.rand.NextBool(85)) return 1;
 

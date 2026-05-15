@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Summon
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = ProjectileFrames;
-            ProjectileID.Sets.MinionTargettingFeature[Type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Type] = true;
             Main.projPet[Type] = true;
             ProjectileID.Sets.MinionSacrificable[Type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Type] = true;

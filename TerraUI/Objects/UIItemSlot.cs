@@ -170,7 +170,7 @@ namespace TerraUI.Objects
         {
             UIUtils.SwitchItems(ref item1, ref item2);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
-            Recipe.FindRecipes();
+            Recipe.FindRecipes()/* tModPorter Note: Removed. No longer used. */;
         }
 
         /// <summary>

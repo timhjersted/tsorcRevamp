@@ -133,7 +133,7 @@ namespace tsorcRevamp.Projectiles.Melee.Shortswords
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
         }
 
-        public override void PostDraw(Color lightColor)
+        public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)
@@ -148,7 +148,7 @@ namespace tsorcRevamp.Projectiles.Melee.Shortswords
             Main.EntitySpriteDraw(texture,
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
                 sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-            base.PostDraw(lightColor);
+            base.PostDraw(player, lightColor);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

@@ -115,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Pets
                 Terraria.Audio.SoundEngine.PlaySound(UseSound);
                 p.chest = -1;
                 SetWhoAmI(p.GetModPlayer<tsorcRevampPlayer>(), -1);
-                Recipe.FindRecipes();
+                Recipe.FindRecipes()/* tModPorter Note: Removed. No longer used. */;
                 return;
             }
 
@@ -128,7 +128,7 @@ namespace tsorcRevamp.Projectiles.Pets
             Main.SetNPCShopIndex(0);
             Main.playerInventory = true;
             Terraria.Audio.SoundEngine.PlaySound(UseSound);
-            Recipe.FindRecipes();
+            Recipe.FindRecipes()/* tModPorter Note: Removed. No longer used. */;
 
 
         }

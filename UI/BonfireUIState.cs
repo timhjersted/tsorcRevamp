@@ -138,7 +138,7 @@ namespace tsorcRevamp.UI
             { //only spawn a safe if there is no existing safe
                 //Main.playerInventory = true; //force open inventory
                 Projectile.NewProjectile(new EntitySource_Misc("Bonfire"), new Vector2(player.position.X - 48, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>(), 0, 0, player.whoAmI);
-                Recipe.FindRecipes();
+                Recipe.FindRecipes()/* tModPorter Note: Removed. No longer used. */;
             }
         }
         private void ButtonSafeClicked(UIMouseEvent evt, UIElement listeningElement)
@@ -165,7 +165,7 @@ namespace tsorcRevamp.UI
             {
                 //Main.playerInventory = true;
                 Projectile.NewProjectile(new EntitySource_Misc("Bonfire"), new Vector2(player.position.X + 64, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>(), 0, 0, player.whoAmI);
-                Recipe.FindRecipes();
+                Recipe.FindRecipes()/* tModPorter Note: Removed. No longer used. */;
             }
         }
     }

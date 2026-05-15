@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
             Main.projFrames[Projectile.type] = 33;
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
         }
 

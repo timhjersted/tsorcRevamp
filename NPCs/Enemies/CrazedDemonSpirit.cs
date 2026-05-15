@@ -68,9 +68,9 @@ namespace tsorcRevamp.NPCs.Enemies
         float customAi1;
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player p = spawnInfo.Player;
+            Player p = spawner.Player;
 
             //Ensuring it can't spawn if two already exist.
             int count = 0;
@@ -87,14 +87,14 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             bool nospecialbiome = !p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHallow && !p.ZoneMeteor && !p.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
-            bool sky = nospecialbiome && ((double)spawnInfo.SpawnTileY < Main.worldSurface * 0.44999998807907104);
-            bool surface = nospecialbiome && !sky && (spawnInfo.SpawnTileY <= Main.worldSurface);
-            bool underground = nospecialbiome && !surface && (spawnInfo.SpawnTileY <= Main.rockLayer);
+            bool sky = nospecialbiome && ((double)spawner.SpawnTileY < Main.worldSurface * 0.44999998807907104);
+            bool surface = nospecialbiome && !sky && (spawner.SpawnTileY <= Main.worldSurface);
+            bool underground = nospecialbiome && !surface && (spawner.SpawnTileY <= Main.rockLayer);
             bool underworld = (p.ZoneUnderworldHeight);
-            bool cavern = nospecialbiome && (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25);
-            bool undergroundJungle = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneJungle;
-            bool undergroundEvil = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
-            bool undergroundHoly = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneHallow;
+            bool cavern = nospecialbiome && (spawner.SpawnTileY >= Main.rockLayer) && (spawner.SpawnTileY <= Main.rockLayer * 25);
+            bool undergroundJungle = (spawner.SpawnTileY >= Main.rockLayer) && (spawner.SpawnTileY <= Main.rockLayer * 25) && p.ZoneJungle;
+            bool undergroundEvil = (spawner.SpawnTileY >= Main.rockLayer) && (spawner.SpawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
+            bool undergroundHoly = (spawner.SpawnTileY >= Main.rockLayer) && (spawner.SpawnTileY <= Main.rockLayer * 25) && p.ZoneHallow;
 
             if (p.ZoneMeteor && Main.hardMode && Main.rand.NextBool(25)) return 1;
 
@@ -106,7 +106,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (spawnInfo.Player.ZoneCrimson)
+                if (spawner.Player.ZoneCrimson)
                 {
                     return 0.15f;
                 }

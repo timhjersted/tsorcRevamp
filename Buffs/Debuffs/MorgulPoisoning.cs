@@ -15,7 +15,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 			Main.debuff[Type] = true;  
 			Main.pvpBuff[Type] = false; 
 			Main.buffNoSave[Type] = true; 
-			BuffID.Sets.LongerExpertDebuff[Type] = true; 
+			BuffID.Sets.BuffTimeIsExtendedWithGameDifficulty[Type] = true; 
 		}
 
 		public override void Update(NPC npc, ref int buffIndex)

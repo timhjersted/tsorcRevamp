@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/MoltenWeld", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
         }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)/* tModPorter Note: Removed. Set Projectile.drawLayer instead */
         {
             behindNPCs.Add(index);
         }

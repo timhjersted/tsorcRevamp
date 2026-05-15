@@ -36,9 +36,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         //Super high because they seem to like spawning, rolling out of range, and instantly despawning
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player player = spawnInfo.Player;
+            Player player = spawner.Player;
 
             if (player.ZoneDungeon && tsorcRevampWorld.SuperHardMode) return 0.5f; 
 

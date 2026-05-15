@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             Projectile.height = 10 + (240 - Projectile.timeLeft) / 2;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
 
             Vector2 offset = Main.rand.NextVector2CircularEdge(Projectile.width, Projectile.height);

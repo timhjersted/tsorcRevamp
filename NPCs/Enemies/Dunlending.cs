@@ -76,19 +76,19 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f, canPounce: false);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            var p = spawnInfo.Player;
+            var p = spawner.Player;
 
             float chance = 0;
 
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
+            if (spawner.invaders || Sky(p) || spawner.Player.ZoneSnow)
             {
                 chance = 0;
                 return chance;
             }
 
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
+            if (spawner.Player.townNPCs > 1f) return 0f;
 
 
             if (p.ZoneOverworldHeight)
@@ -98,8 +98,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (oUnderSurfaceByTile(p) || oUndergroundByTile(p) || oCavernByTile(p))
             {
-                if (Main.dayTime && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) chance = 0.067f;
-                if (!Main.dayTime && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) chance = 0.1f;
+                if (Main.dayTime && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson) chance = 0.067f;
+                if (!Main.dayTime && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson) chance = 0.1f;
             }
             if (Main.hardMode)
             {

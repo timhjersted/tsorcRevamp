@@ -93,9 +93,9 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player P = spawnInfo.Player;
+            Player P = spawner.Player;
 
             if (Main.hardMode && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && Main.rand.NextBool(1200)) return 1;
 

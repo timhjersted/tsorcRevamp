@@ -133,9 +133,9 @@ namespace tsorcRevamp.Projectiles.Ranged
             SoundEngine.PlaySound(SoundID.SandShark with { Volume = 0.25f });
         }
         public static Texture2D texture;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
-            base.PreDraw(ref lightColor);
+            base.PreDraw(player, ref lightColor);
             return true;
         }
         Vector2 samplePointOffset1;

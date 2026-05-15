@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.shoot = ModContent.ProjectileType<ShatteredMoonlightProjectile>();
         }
 
-        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+        public override void PostDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
             if (Main.rand.NextBool(20))
             {

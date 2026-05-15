@@ -54,22 +54,22 @@ namespace tsorcRevamp.NPCs.Enemies
 
             UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17);
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
 
-            if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.Player.ZoneDungeon)
+            if (!Main.hardMode && NPC.downedBoss3 && spawner.Player.ZoneDungeon)
             {
                 return 0.16f; // was .2 : .16 should be 8%
             }
-            if (Main.hardMode && spawnInfo.Player.ZoneDungeon)
+            if (Main.hardMode && spawner.Player.ZoneDungeon)
             {
                 return 0.1f; // was 0.17
             }
-            if (spawnInfo.Player.ZoneGraveyard)
+            if (spawner.Player.ZoneGraveyard)
             {
                 return 0.2f; // was 0.17
             }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon)
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneDungeon)
             {
                 return 0.05f; //.08% is 4.28%
             }

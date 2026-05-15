@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.SearingLash
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, player.Center.DirectionTo(target.Center).SafeNormalize(Vector2.Zero) * 3.5f, ModContent.ProjectileType<SearingLashBat>(), BatDamage, 0, Main.myPlayer);
             }
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             List<Vector2> list = new List<Vector2>();
             Projectile.FillWhipControlPoints(Projectile, list);

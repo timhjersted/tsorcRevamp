@@ -56,14 +56,14 @@ namespace tsorcRevamp.NPCs.Enemies
         //Spawn in the Cavern, mostly before 3/10th and after 7/10th (Width). Does not spawn in the Dungeon, Jungle, Meteor, or if there are Town NPCs
         #region Spawn
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             if (!NPC.downedBoss1)
             {
                 return 0;
             }
 
-            Player P = spawnInfo.Player; //These are mostly redundant with the new zone definitions, but it still works.
+            Player P = spawner.Player; //These are mostly redundant with the new zone definitions, but it still works.
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool oUnderground = P.ZoneDirtLayerHeight;
             bool oCavern = P.ZoneRockLayerHeight;
             bool InHell = P.ZoneUnderworldHeight;
-            bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
+            bool Ocean = spawner.SpawnTileX < 3600 || spawner.SpawnTileX > (Main.maxTilesX - 100) * 16;
 
             //Ensuring it can't spawn if one already exists.
             int count = 0;
@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (!Main.hardMode && oCavern)
             {
                 if (Main.rand.NextBool(1200)) return 1;
-                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(430))
+                else if ((spawner.SpawnTileX < Main.maxTilesX * 0.3f || spawner.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(430))
                 {
                     return 1;
                 }
@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.hardMode && (oCavern || oUnderground || Jungle))
             {
                 if (Main.rand.NextBool(600)) return 1;
-                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(300))
+                else if ((spawner.SpawnTileX < Main.maxTilesX * 0.3f || spawner.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(300))
                 {
                     return 1;
                 }

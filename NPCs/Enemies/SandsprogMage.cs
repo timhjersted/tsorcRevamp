@@ -222,18 +222,18 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         #region Spawning
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            Player p = spawnInfo.Player;
+            Player p = spawner.Player;
 
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
+            if (spawner.invaders || Sky(p) || spawner.Player.ZoneSnow)
             {
                 chance = 0;
                 return chance;
             }
 
-            if (spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneUndergroundDesert) return 0.04f;
+            if (spawner.Player.ZoneDesert || spawner.Player.ZoneUndergroundDesert) return 0.04f;
 
             return chance;
         }

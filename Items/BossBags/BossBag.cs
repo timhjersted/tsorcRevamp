@@ -69,7 +69,7 @@ namespace tsorcRevamp.Items.BossBags
             return true;
         }
 
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        public override bool PreDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             //UsefulFunctions.DustRing(Item.Center, 32, DustID.ShadowbeamStaff);
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];

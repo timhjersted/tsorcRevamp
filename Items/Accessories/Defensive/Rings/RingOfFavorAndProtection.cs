@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 += 10f;
         }
 
-        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+        public override void PostDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
             Lighting.AddLight(Item.Right, 0.4f, 0.4f, 0.0f);
 

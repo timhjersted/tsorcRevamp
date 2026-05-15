@@ -236,10 +236,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public override void SetStaticDefaults()
         {
             Main.projPet[Projectile.type] = true;
-            ProjectileID.Sets.DontAttachHideToAlpha[Type] = true;
+            ProjectileID.Sets.DontAttachHideToAlpha/* tModPorter Note: Removed. Now true by default. See Projectile.usesOwnerLight and Projectile.drawLayer for more details. */[Type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Projectile.type] = true;
             ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.DragonSummonTagDmgMult / 100f;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 999999999;
         }
@@ -724,7 +724,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             if (reader.ReadBoolean())
                 AltSequence = true;
         }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)/* tModPorter Note: Removed. Set Projectile.drawLayer instead */
         {
             behindProjectiles.Add(index);
         }

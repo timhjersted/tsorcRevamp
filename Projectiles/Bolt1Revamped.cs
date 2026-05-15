@@ -160,7 +160,7 @@ namespace tsorcRevamp.Projectiles
         public static Texture2D BoltMiddle1;
         public static Texture2D BoltMiddle2;
         public static Texture2D BoltEnd;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             //Load all the textures if any are not loaded
             if (BoltStart == null || BoltStart.IsDisposed)

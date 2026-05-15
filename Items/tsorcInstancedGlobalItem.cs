@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items
 
                 if (tooltipText != null)
                 {
-                    TooltipLine line = new TooltipLine(Mod, "tsorcRevamp:Prefix", tooltipText) { IsModifier = true };
+                    TooltipLine line = new TooltipLine(Mod, "tsorcRevamp:Prefix", tooltipText) { IsModifier/* tModPorter Note: Removed. Set Color = Terraria.ID.Colors.PrefixGood instead */ = true };
                     tooltips.Add(line);
                 }
             }

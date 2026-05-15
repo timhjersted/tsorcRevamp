@@ -413,42 +413,42 @@ namespace tsorcRevamp.NPCs
                 npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 5, 10));
             }
         }
-        public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
+        public override void EditSpawnPool(IDictionary<int, float> pool, NPC.Spawner spawner)
         {
             int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
             int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
-            Player player = spawnInfo.Player;
+            Player player = spawner.Player;
 
             //VANILLA AND SOME MOD NPC SPAWN EDITS
 
             //PRE-HARD MODE
 
             // Arazium's Mountain Caverns (not in water)
-            if (!spawnInfo.Water && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.DirtUnsafe1 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.DirtUnsafe2) && !Main.hardMode)
+            if (!spawner.waterTile && (spawner.Player.ZoneSkyHeight || spawner.Player.ZoneOverworldHeight) && (Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.DirtUnsafe1 || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.DirtUnsafe2) && !Main.hardMode)
             {
                 pool.Add(NPCID.Skeleton, 0.02f);
             }
 
             //jungle
-            if (spawnInfo.Player.ZoneJungle && !Main.hardMode)
+            if (spawner.Player.ZoneJungle && !Main.hardMode)
             {
                 //pool.Add(the type of the npc, what chance you want it to spawn with);
                 pool.Add(NPCID.LostGirl, 0.005f);
                 pool.Add(NPCID.Salamander2, 0.03f);
             }
             //corrupt (not in water)
-            if (spawnInfo.Player.ZoneCorrupt && !spawnInfo.Water && !Main.hardMode)
+            if (spawner.Player.ZoneCorrupt && !spawner.waterTile && !Main.hardMode)
             {
                 pool.Add(NPCID.CochinealBeetle, 0.02f);
                 pool.Add(NPCID.GiantShelly, 0.02f);
             }
             //corrupt (in water)
-            if (spawnInfo.Player.ZoneCorrupt && spawnInfo.Water && !Main.hardMode)
+            if (spawner.Player.ZoneCorrupt && spawner.waterTile && !Main.hardMode)
             {
                 pool.Add(NPCID.Squid, 0.02f);
             }
             //crimson
-            if (spawnInfo.Player.ZoneCrimson && !Main.hardMode)
+            if (spawner.Player.ZoneCrimson && !Main.hardMode)
             {
                 pool.Add(NPCID.LacBeetle, 0.02f);
                 pool.Add(NPCID.Drippler, 0.2f);
@@ -456,14 +456,14 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.BloodCrawlerWall, 0.002f);
             }
             //meteor
-            if (spawnInfo.Player.ZoneMeteor && !Main.hardMode)
+            if (spawner.Player.ZoneMeteor && !Main.hardMode)
             {
                 pool.Add(NPCID.GraniteFlyer, 0.4f);
                 pool.Add(NPCID.Salamander4, 0.4f);
                 pool.Add(NPCID.MeteorHead, 0.01f);
             }
             //graveyard
-            if (spawnInfo.Player.ZoneGraveyard && !Main.hardMode)
+            if (spawner.Player.ZoneGraveyard && !Main.hardMode)
             {
                 pool.Add(NPCID.BigMisassembledSkeleton, 0.03f);
                 pool.Add(NPCID.BoneThrowingSkeleton2, 0.03f);
@@ -472,7 +472,7 @@ namespace tsorcRevamp.NPCs
             //HARD MODE SECTION
 
             //golem temple
-            if (spawnInfo.SpawnTileType == TileID.LihzahrdBrick && spawnInfo.Lihzahrd && Main.hardMode)
+            if (spawner.SpawnTileType == TileID.LihzahrdBrick && spawner.ZoneLihzhardTemple && Main.hardMode)
             {
                 pool.Add(NPCID.DesertDjinn, 0.075f);
                 pool.Add(NPCID.DiabolistWhite, 0.02f); //was 0.1
@@ -482,13 +482,13 @@ namespace tsorcRevamp.NPCs
             }
 
             //desert or underground desert and dungeon(shadow temple)
-            if ((spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneUndergroundDesert) && spawnInfo.Player.ZoneDungeon && Main.hardMode)
+            if ((spawner.Player.ZoneDesert || spawner.Player.ZoneUndergroundDesert) && spawner.Player.ZoneDungeon && Main.hardMode)
             {
                 pool.Add(NPCID.DiabolistRed, 0.01f);
             }
 
             //machine temple (in water)
-            if (spawnInfo.Water && playerY < 1430 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
+            if (spawner.waterTile && playerY < 1430 && Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == 98 && Main.hardMode)
             {            
                 // 98 = WallID.GreenDungeonSlabUnsafe
                 
@@ -504,7 +504,7 @@ namespace tsorcRevamp.NPCs
 
             }
             //machine temple (not in water)
-            if (!spawnInfo.Water && playerY < 1430 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
+            if (!spawner.waterTile && playerY < 1430 && Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == 98 && Main.hardMode)
             {
                 pool.Clear();
                 pool.Add(ModContent.NPCType<Enemies.GhostOfTheDrowned>(), 3f);
@@ -512,40 +512,40 @@ namespace tsorcRevamp.NPCs
 
             }
             //sky
-            if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)
+            if (spawner.Player.ZoneSkyHeight && Main.hardMode)
             {
                 pool.Add(NPCID.GoblinSummoner, 0.01f);
             }
-            if (spawnInfo.Player.ZoneHallow && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.hardMode)
+            if (spawner.Player.ZoneHallow && (spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight) && Main.hardMode)
             {
                 pool.Add(NPCID.Gastropod, 0.18f);
             }
-            if (spawnInfo.Player.ZoneHallow && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
+            if (spawner.Player.ZoneHallow && (spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight) && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.Pixie, 0.40f);
                 pool.Add(NPCID.Unicorn, 0.09f);
                 pool.Add(NPCID.RainbowSlime, 0.01f);
             }
             //ocean water (outer thirds of the map)
-            if (spawnInfo.Water && Main.hardMode && (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
+            if (spawner.waterTile && Main.hardMode && (Math.Abs(spawner.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
             {
                 pool.Add(NPCID.SandsharkHallow, 0.3f);
             }
 
-            if (spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneRockLayerHeight && Main.hardMode)
+            if (spawner.Player.ZoneJungle && spawner.Player.ZoneRockLayerHeight && Main.hardMode)
             {
                 pool.Add(NPCID.Derpling, 0.25f);
                 pool.Add(NPCID.GiantFlyingFox, 0.25f);
             }
 
             //SUPER HARD MODE SECTION
-            if (spawnInfo.Player.ZoneJungle && tsorcRevampWorld.SuperHardMode)
+            if (spawner.Player.ZoneJungle && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.BoneLee, 0.05f);
             }
 
             //mushroom
-            if (spawnInfo.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode) 
+            if (spawner.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode) 
             {
                 pool.Add(NPCID.StardustWormHead, 0.1f); //.1 is 3% 
                 pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
@@ -555,7 +555,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.ShimmerSlime, 0.25f);
             }
             //underground 
-            if (spawnInfo.Player.ZoneUnderworldHeight && !spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+            if (spawner.Player.ZoneUnderworldHeight && !spawner.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.SolarCrawltipedeHead, 0.002f);
                 pool.Add(NPCID.SolarSroller, 0.4f); //.5 is 16%
@@ -565,19 +565,19 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.SolarSolenian, 0.6f); 
             }
             //catacombs
-            if (spawnInfo.SpawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
+            if (spawner.SpawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
                 pool.Add(NPCID.NebulaHeadcrab, 0.4f); //.1 is 3%
                 pool.Add(NPCID.NebulaSoldier, 0.4f); //.1 is 3%
             }
             //spaceships or flesh background of crimson biome
-            if ((spawnInfo.SpawnTileType == TileID.MartianConduitPlating || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Flesh || spawnInfo.Player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode)
+            if ((spawner.SpawnTileType == TileID.MartianConduitPlating || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.Flesh || spawner.Player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.VortexLarva, 2f); //.1 is 3%
             }
             // molten sky temple
-            if (spawnInfo.Player.ZoneUnderworldHeight && (spawnInfo.SpawnTileType == TileID.MeteoriteBrick || spawnInfo.SpawnTileType == TileID.HeavenforgeBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.HeavenforgeBrickWall) && tsorcRevampWorld.SuperHardMode)
+            if (spawner.Player.ZoneUnderworldHeight && (spawner.SpawnTileType == TileID.MeteoriteBrick || spawner.SpawnTileType == TileID.HeavenforgeBrick || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.HeavenforgeBrickWall) && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.VortexRifleman, 0.1f); //.1 is 3%
                 pool.Add(NPCID.VortexHornet, 0.02f); //.5 is 16%
@@ -587,12 +587,12 @@ namespace tsorcRevamp.NPCs
             if (tsorcRevampWorld.RemixMap) // If it is Remix Map
             {
                 // wyvern mage prison (remix map)
-                if (spawnInfo.Player.ZoneMeteor && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && spawnInfo.Player.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
+                if (spawner.Player.ZoneMeteor && (spawner.Player.ZoneSkyHeight || spawner.Player.ZoneOverworldHeight) && spawner.Player.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
                 {
                     pool.Add(NPCID.SolarCorite, 0.35f);
                 }
                 // great foundry (remix map)
-                if ((spawnInfo.SpawnTileType == TileID.Cog || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.TinPlating) && tsorcRevampWorld.SuperHardMode)
+                if ((spawner.SpawnTileType == TileID.Cog || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.TinPlating) && tsorcRevampWorld.SuperHardMode)
                 {
                     pool.Add(NPCID.SolarSolenian, 0.2f);
                     pool.Add(NPCID.HellArmoredBones, 0.1f);
@@ -601,7 +601,7 @@ namespace tsorcRevamp.NPCs
                     pool.Add(NPCID.HellArmoredBonesSword, 0.1f);
                 }
 
-                if ((spawnInfo.Water && spawnInfo.SpawnTileType == TileID.Coralstone || spawnInfo.SpawnTileType == TileID.ReefBlock || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.HallowUnsafe2) && Main.hardMode)
+                if ((spawner.waterTile && spawner.SpawnTileType == TileID.Coralstone || spawner.SpawnTileType == TileID.ReefBlock || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.HallowUnsafe2) && Main.hardMode)
                 {
                     pool.Add(NPCID.CreatureFromTheDeep, 0.6f);
                     pool.Add(NPCID.Shark, 0.6f);
@@ -614,7 +614,7 @@ namespace tsorcRevamp.NPCs
                 invasion = false;
             }
 
-            if (spawnInfo.Player.ZoneTowerSolar || spawnInfo.Player.ZoneTowerNebula || spawnInfo.Player.ZoneTowerStardust || spawnInfo.Player.ZoneTowerVortex || spawnInfo.Player.ZoneOldOneArmy || invasion)
+            if (spawner.Player.ZoneTowerSolar || spawner.Player.ZoneTowerNebula || spawner.Player.ZoneTowerStardust || spawner.Player.ZoneTowerVortex || spawner.Player.ZoneOldOneArmy || invasion)
             {
                 List<int> blockedNPCs = new List<int>();
 

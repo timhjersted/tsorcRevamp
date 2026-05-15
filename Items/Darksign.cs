@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items
             Item.noUseGraphic = true;
             Item.rare = ItemRarityID.Red; // Mainly for colour consistency.
         }
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.7f, 0.4f, 0.1f);
             if (Main.rand.NextBool(8))
@@ -45,14 +45,14 @@ namespace tsorcRevamp.Items
                 dust.noGravity = true;
             }
         }
-        public override bool GrabStyle(Player player)
+        public override bool GrabStyle(WorldItem item, Player player)
         { //make pulling souls through walls more consistent
             Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
             Item.velocity = Item.velocity + movement;
             return true;
         }
-        public override void GrabRange(Player player, ref int grabRange)
+        public override void GrabRange(WorldItem item, Player player, ref int grabRange)
         {
             grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
         }
@@ -171,7 +171,7 @@ namespace tsorcRevamp.Items
         public int itemframe = 0;
         public int itemframeCounter = 0;
 
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        public override bool PreDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             var myrectangle = texture.Frame(1, 6, 0, itemframe);

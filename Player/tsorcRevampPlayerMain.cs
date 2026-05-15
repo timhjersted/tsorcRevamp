@@ -83,7 +83,7 @@ namespace tsorcRevamp
             SoulSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LangUtils.GetTextValue("UI.DarkSouls"), null, SoulSlotCondition, DrawSoulSlotBackground, null, null, false, true);
             SoulSlot.BackOpacity = 0.8f;
             SoulSlot.Item = new Item();
-            SoulSlot.Item.SetDefaults(0, true);
+            SoulSlot.Item.SetDefaults(0);
 
             chestBankOpen = false;
             chestBank = -1;
@@ -1978,7 +1978,7 @@ namespace tsorcRevamp
                     else
                         Player.chest = -1;
 
-                    Recipe.FindRecipes();
+                    Recipe.FindRecipes()/* tModPorter Note: Removed. No longer used. */;
                 }
             }
             else
@@ -1987,7 +1987,7 @@ namespace tsorcRevamp
 
                 whoAmI = -1;
                 Player.chest = -1; //none
-                Recipe.FindRecipes();
+                Recipe.FindRecipes()/* tModPorter Note: Removed. No longer used. */;
             }
         }
 

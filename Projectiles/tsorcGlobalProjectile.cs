@@ -817,7 +817,7 @@ namespace tsorcRevamp.Projectiles
             base.OnKill(projectile, timeLeft);
         }
 
-        public override bool PreDraw(Projectile projectile, ref Color lightColor)
+        public override bool PreDraw(Projectile projectile, Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             if (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] != 0)
             {
@@ -826,7 +826,7 @@ namespace tsorcRevamp.Projectiles
                 return false;
             }
 
-            return base.PreDraw(projectile, ref lightColor);
+            return base.PreDraw(projectile, player, ref lightColor);
         }
 
     }

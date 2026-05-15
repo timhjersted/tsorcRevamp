@@ -55,18 +55,18 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
 
-            if (spawnInfo.Player.ZoneJungle && NPC.CountNPCS(ModContent.NPCType<JungleSentree>()) < 2
-                && TileID.Sets.Conversion.JungleGrass[spawnInfo.SpawnTileType]
-                && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.MudUnsafe)
-                && Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY].TileType == TileID.JungleGrass && !Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY].LeftSlope //all this is to prevent the npc spawning in really odd looking places
-                && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].TileType == TileID.JungleGrass && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].RightSlope//make sure block to left and right are jungle grass
-                && Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY - 1].TileType != TileID.JungleGrass && Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY - 1].TileType != TileID.Mud && !Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY - 1].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY - 1].RightSlope //make sure blocks to left/right and above are empty
-                && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].TileType != TileID.JungleGrass && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].TileType != TileID.Mud && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].LeftSlope
-                && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 8].TileType != TileID.JungleGrass && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 8].TileType != TileID.Mud) //check the cieling is high enough
+            if (spawner.Player.ZoneJungle && NPC.CountNPCS(ModContent.NPCType<JungleSentree>()) < 2
+                && TileID.Sets.Conversion.JungleGrass[spawner.SpawnTileType]
+                && (Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.None || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.MudUnsafe)
+                && Main.tile[spawner.SpawnTileX - 1, spawner.SpawnTileY].TileType == TileID.JungleGrass && !Main.tile[spawner.SpawnTileX - 1, spawner.SpawnTileY].IsHalfBlock && !Main.tile[spawner.SpawnTileX - 1, spawner.SpawnTileY].LeftSlope //all this is to prevent the npc spawning in really odd looking places
+                && Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY].TileType == TileID.JungleGrass && !Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY].IsHalfBlock && !Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY].RightSlope//make sure block to left and right are jungle grass
+                && Main.tile[spawner.SpawnTileX - 1, spawner.SpawnTileY - 1].TileType != TileID.JungleGrass && Main.tile[spawner.SpawnTileX - 1, spawner.SpawnTileY - 1].TileType != TileID.Mud && !Main.tile[spawner.SpawnTileX - 1, spawner.SpawnTileY - 1].IsHalfBlock && !Main.tile[spawner.SpawnTileX - 1, spawner.SpawnTileY - 1].RightSlope //make sure blocks to left/right and above are empty
+                && Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY - 1].TileType != TileID.JungleGrass && Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY - 1].TileType != TileID.Mud && !Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY - 1].IsHalfBlock && !Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY - 1].LeftSlope
+                && Main.tile[spawner.SpawnTileX, spawner.SpawnTileY - 8].TileType != TileID.JungleGrass && Main.tile[spawner.SpawnTileX, spawner.SpawnTileY - 8].TileType != TileID.Mud) //check the cieling is high enough
 
             {
                 return 0.6f; // It's high because the chance of the conditions being right is pretty low

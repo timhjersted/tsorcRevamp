@@ -64,9 +64,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         }
         int[] bodyTypes;
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player p = spawnInfo.Player;
+            Player p = spawner.Player;
             Point pTile = p.Center.ToTileCoordinates();
             bool worldEdge = (pTile.X < Main.maxTilesX * 0.3f) || (pTile.X > Main.maxTilesX * 0.7f); //thanks i hate it
 

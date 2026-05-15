@@ -54,10 +54,10 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             // Spawns in the Western Sea
-            if (Main.hardMode && spawnInfo.Water && spawnInfo.SpawnTileX < 900 && Main.rand.NextBool(15))
+            if (Main.hardMode && spawner.waterTile && spawner.SpawnTileX < 900 && Main.rand.NextBool(15))
             {
                 return 1;
             }
@@ -69,16 +69,16 @@ namespace tsorcRevamp.NPCs.Enemies
                     return 0;
                 }
             }
-            bool nospecialbiome = !spawnInfo.Player.ZoneJungle && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneHallow && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
+            bool nospecialbiome = !spawner.Player.ZoneJungle && !(spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson) && !spawner.Player.ZoneHallow && !spawner.Player.ZoneMeteor && !spawner.Player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
 
-            bool sky = nospecialbiome && ((double)spawnInfo.Player.position.Y < Main.worldSurface * 0.44999998807907104);
-            bool surface = nospecialbiome && !sky && (spawnInfo.Player.position.Y <= Main.worldSurface);
-            bool underground = nospecialbiome && !surface && (spawnInfo.Player.position.Y <= Main.rockLayer);
-            bool underworld = (spawnInfo.Player.position.Y > Main.maxTilesY - 190);
-            bool cavern = nospecialbiome && (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25);
-            bool undergroundJungle = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneJungle;
-            bool undergroundEvil = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson);
-            bool undergroundHoly = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneHallow;
+            bool sky = nospecialbiome && ((double)spawner.Player.position.Y < Main.worldSurface * 0.44999998807907104);
+            bool surface = nospecialbiome && !sky && (spawner.Player.position.Y <= Main.worldSurface);
+            bool underground = nospecialbiome && !surface && (spawner.Player.position.Y <= Main.rockLayer);
+            bool underworld = (spawner.Player.position.Y > Main.maxTilesY - 190);
+            bool cavern = nospecialbiome && (spawner.Player.position.Y >= Main.rockLayer) && (spawner.Player.position.Y <= Main.rockLayer * 25);
+            bool undergroundJungle = (spawner.Player.position.Y >= Main.rockLayer) && (spawner.Player.position.Y <= Main.rockLayer * 25) && spawner.Player.ZoneJungle;
+            bool undergroundEvil = (spawner.Player.position.Y >= Main.rockLayer) && (spawner.Player.position.Y <= Main.rockLayer * 25) && (spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson);
+            bool undergroundHoly = (spawner.Player.position.Y >= Main.rockLayer) && (spawner.Player.position.Y <= Main.rockLayer * 25) && spawner.Player.ZoneHallow;
             if (!Main.dayTime && undergroundJungle)
             {
                 if (Main.rand.NextBool(15))
@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies
             int closeTownNPCs = 0;
             if (!Main.bloodMoon)
             {
-                Vector2 playerPosition = spawnInfo.Player.position + new Vector2(spawnInfo.Player.width / 2, spawnInfo.Player.height / 2);
+                Vector2 playerPosition = spawner.Player.position + new Vector2(spawner.Player.width / 2, spawner.Player.height / 2);
                 for (int i = 0; i < 200; i++)
                 {
                     Vector2 npcPosition = Main.npc[i].position + new Vector2(Main.npc[i].width / 2, Main.npc[i].height / 2);

@@ -62,11 +62,11 @@ namespace tsorcRevamp.NPCs.Enemies
         int poisonFieldDamage = 12;//gets doubled
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !spawnInfo.Water && Main.rand.NextBool(100)) return 1;
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight) && !spawner.waterTile && Main.rand.NextBool(100)) return 1;
 
-            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
+            if (!Main.hardMode && spawner.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
                 && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<DungeonMage>()) < 1)
             {
                 //MaxSpawns = 1;

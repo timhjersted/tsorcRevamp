@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Summon.PhotonicDownpour
     {
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true; // This is necessary for right-click targeting
+            ProjectileID.Sets.MinionTargetingFeature[Projectile.type] = true; // This is necessary for right-click targeting
             Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // This is needed so your minion can properly spawn when summoned and replaced when other minions are summoned
         }
@@ -132,7 +132,7 @@ namespace tsorcRevamp.Projectiles.Summon.PhotonicDownpour
         }
 
         public static Texture2D glowmask;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             UsefulFunctions.EnsureLoaded(ref glowmask, Texture + "Glowmask");
             SpriteEffects spriteEffects = SpriteEffects.None;

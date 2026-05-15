@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.damage = 25;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             //Get the premultiplied, properly transparent texture
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MasterBuster];

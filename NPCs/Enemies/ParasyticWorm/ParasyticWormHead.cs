@@ -44,21 +44,21 @@ namespace tsorcRevamp.NPCs.Enemies.ParasyticWorm
         }
         int[] bodyTypes;
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            bool nospecialbiome = !spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && !spawnInfo.Player.ZoneHallow && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
+            bool nospecialbiome = !spawner.Player.ZoneJungle && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson && !spawner.Player.ZoneHallow && !spawner.Player.ZoneMeteor && !spawner.Player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
 
-            bool sky = nospecialbiome && ((double)spawnInfo.Player.position.Y < Main.worldSurface * 0.44999998807907104);
-            bool surface = nospecialbiome && !sky && (spawnInfo.Player.position.Y <= Main.worldSurface);
-            bool underground = nospecialbiome && !surface && (spawnInfo.Player.position.Y <= Main.rockLayer);
-            bool cavern = nospecialbiome && (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25);
-            bool undergroundJungle = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneJungle;
-            bool undergroundEvil = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson);
-            bool undergroundHoly = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneHallow;
+            bool sky = nospecialbiome && ((double)spawner.Player.position.Y < Main.worldSurface * 0.44999998807907104);
+            bool surface = nospecialbiome && !sky && (spawner.Player.position.Y <= Main.worldSurface);
+            bool underground = nospecialbiome && !surface && (spawner.Player.position.Y <= Main.rockLayer);
+            bool cavern = nospecialbiome && (spawner.Player.position.Y >= Main.rockLayer) && (spawner.Player.position.Y <= Main.rockLayer * 25);
+            bool undergroundJungle = (spawner.Player.position.Y >= Main.rockLayer) && (spawner.Player.position.Y <= Main.rockLayer * 25) && spawner.Player.ZoneJungle;
+            bool undergroundEvil = (spawner.Player.position.Y >= Main.rockLayer) && (spawner.Player.position.Y <= Main.rockLayer * 25) && (spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson);
+            bool undergroundHoly = (spawner.Player.position.Y >= Main.rockLayer) && (spawner.Player.position.Y <= Main.rockLayer * 25) && spawner.Player.ZoneHallow;
 
             if (Main.hardMode)
             {
-                if (spawnInfo.Player.ZoneUnderworldHeight || undergroundEvil)
+                if (spawner.Player.ZoneUnderworldHeight || undergroundEvil)
                 {
                     if (Main.rand.NextBool(200))
                     {

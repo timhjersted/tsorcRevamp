@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items
             return true;
         }
 
-        public override bool OnPickup(Player player)
+        public override bool OnPickup(WorldItem item, Player player)
         {
             if (player.whoAmI == Main.myPlayer) /*i dont know if this is necessary but better safe than sorry*/
             {
@@ -53,14 +53,14 @@ namespace tsorcRevamp.Items
             return false;
         }
 
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        public override bool PreDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(2, 0), Item.scale, SpriteEffects.None, 0);
 
             return false;
         }
-        public override bool GrabStyle(Player player)
+        public override bool GrabStyle(WorldItem item, Player player)
         {
             Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
@@ -68,7 +68,7 @@ namespace tsorcRevamp.Items
             return true;
         }
 
-        public override void GrabRange(Player player, ref int grabRange)
+        public override void GrabRange(WorldItem item, Player player, ref int grabRange)
         {
             grabRange *= (1 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().StaminaReaper);
         }

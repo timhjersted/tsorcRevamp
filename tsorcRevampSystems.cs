@@ -301,7 +301,7 @@ namespace tsorcRevamp
             CobaltHelmets = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Lang.GetItemNameValue(ItemID.CobaltHelmet)}",
                 ItemID.CobaltHelmet, ItemID.CobaltHat, ItemID.CobaltMask);
 
-            RecipeGroup.RegisterGroup("tsorcRevamp:CobaltHelmet", CobaltHelmets);
+            RecipeGroup.RegisterGroup("tsorcRevamp:CobaltHelmet", CobaltHelmets)/* tModPorter Note: Removed. Replace this and "new RecipeGroup()" with RecipeGroup.Register */;
         }
 
         public override void UpdateUI(GameTime gameTime)

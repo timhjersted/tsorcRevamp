@@ -40,9 +40,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             crystalBoltDamage = (int)(crystalBoltDamage * tsorcRevampWorld.SHMScale);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player player = spawnInfo.Player;
+            Player player = spawner.Player;
             float chance = 0;
 
             //Ensuring it can't spawn if one already exists.
@@ -59,11 +59,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && (player.ZoneSnow || player.ZoneHallow))
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneOverworldHeight && (player.ZoneSnow || player.ZoneHallow))
             {
                 chance = 0.2f;
             }
-            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.Player.ZoneOverworldHeight && (player.ZoneSnow || player.ZoneHallow))
+            if (tsorcRevampWorld.SuperHardMode && !spawner.Player.ZoneOverworldHeight && (player.ZoneSnow || player.ZoneHallow))
             {
                 chance = 0.36f;
             }

@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Potions
             Item.buffType = ModContent.BuffType<Buffs.SoulSiphon>();
             Item.buffTime = 420 * 60;
         }
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.3f, 0.7f, 0.12f);
         }

@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CloudBatBanner>();
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
             if (Main.hardMode)

@@ -58,24 +58,24 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileSorcerer>()))
             {
                 return 0;
             }
 
-            Player P = spawnInfo.Player; //this shortens our code up from writing this line over and over.
+            Player P = spawner.Player; //this shortens our code up from writing this line over and over.
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
             bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
             bool Hallow = P.ZoneHallow;
-            bool AboveEarth = spawnInfo.SpawnTileY < Main.worldSurface;
-            bool InBrownLayer = spawnInfo.SpawnTileY >= Main.worldSurface && spawnInfo.SpawnTileY < Main.rockLayer;
-            bool InGrayLayer = spawnInfo.SpawnTileY >= Main.rockLayer && spawnInfo.SpawnTileY < (Main.maxTilesY - 200) * 16;
-            bool InHell = spawnInfo.SpawnTileY >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
+            bool AboveEarth = spawner.SpawnTileY < Main.worldSurface;
+            bool InBrownLayer = spawner.SpawnTileY >= Main.worldSurface && spawner.SpawnTileY < Main.rockLayer;
+            bool InGrayLayer = spawner.SpawnTileY >= Main.rockLayer && spawner.SpawnTileY < (Main.maxTilesY - 200) * 16;
+            bool InHell = spawner.SpawnTileY >= (Main.maxTilesY - 200) * 16;
+            bool Ocean = spawner.SpawnTileX < 3600 || spawner.SpawnTileX > (Main.maxTilesX - 100) * 16;
 
             // these are all the regular stuff you get , now lets see......
 
@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Jungle && !Dungeon && !Corruption && !AboveEarth && !Ocean && Main.rand.NextBool(30)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(20)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneCrimson && Main.rand.NextBool(20)) return 1;
 
             if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InGrayLayer && Main.rand.NextBool(50)) return 1;
 

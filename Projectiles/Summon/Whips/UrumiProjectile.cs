@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             modifiers.ArmorPenetration += Urumi.WhipArmorPen;
             modifiers.CritDamage *= 1f + (Urumi.CritDamage / 100);
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             List<Vector2> list = new List<Vector2>();
             Projectile.FillWhipControlPoints(Projectile, list);

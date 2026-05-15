@@ -57,10 +57,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
         {
             target.AddBuff(ModContent.BuffType<AwestruckDebuff>(), CenterOfTheUniverse.AwestruckDebuffDuration * 60);
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             lightColor = new Color(Timer / TransparencyDivisor, Timer / TransparencyDivisor, Timer / TransparencyDivisor, Timer / TransparencyDivisor);
-            return base.PreDraw(ref lightColor);
+            return base.PreDraw(player, ref lightColor);
         }
         public override void OnKill(int timeLeft)
         {

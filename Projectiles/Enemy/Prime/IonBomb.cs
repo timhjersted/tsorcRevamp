@@ -121,7 +121,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         float starRotation;
         public static Effect RingEffect;
         public static Effect CoreEffect;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Vector3 hslColor1 = Main.rgbToHsl(Color.Cyan);
             Vector3 hslColor2 = Main.rgbToHsl(Color.Navy);

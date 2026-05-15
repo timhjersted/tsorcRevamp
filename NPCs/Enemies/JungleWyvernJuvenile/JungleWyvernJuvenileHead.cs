@@ -63,18 +63,18 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0f;
 
-            if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
+            if (!Main.hardMode && NPC.downedBoss3 && spawner.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
                 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
             {
                 chance = 0.05f;
             }
 
             // Spawns in the Western Sea
-            if (Main.hardMode && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 2 && spawnInfo.Water && spawnInfo.SpawnTileX < 800)
+            if (Main.hardMode && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 2 && spawner.waterTile && spawner.SpawnTileX < 800)
             {
                 chance = 0.04f;
             }

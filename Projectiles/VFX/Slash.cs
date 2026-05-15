@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.VFX
             newPointDistance = 0.000f;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/Slash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)/* tModPorter Note: Removed. Set Projectile.drawLayer instead */
         {
             behindNPCs.Add(index);
         }
@@ -173,10 +173,10 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public static Texture2D texture;
         public static Texture2D glowTexture;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             visualizeTrail = false;
-            base.PreDraw(ref lightColor);
+            base.PreDraw(player, ref lightColor);
             return false;
         }
     }

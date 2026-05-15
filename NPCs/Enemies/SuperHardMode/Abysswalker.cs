@@ -52,9 +52,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         //Spawns in the Jungle Underground and in the Cavern.
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player player = spawnInfo.Player;
+            Player player = spawner.Player;
 
             // these are all the regular stuff you get , now lets see......
             float chance = 0;

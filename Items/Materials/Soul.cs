@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Materials
             Item.rare = ItemRarityID.Lime;
             DarkSoulRarity = 12;
         }
-        public override bool GrabStyle(Player player)
+        public override bool GrabStyle(WorldItem item, Player player)
         { //make pulling souls through walls more consistent
             Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
@@ -64,12 +64,12 @@ namespace tsorcRevamp.Items.Materials
             return true;
         }
 
-        public override void GrabRange(Player player, ref int grabRange)
+        public override void GrabRange(WorldItem item, Player player, ref int grabRange)
         {
             grabRange *= 2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper;
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.15f, 0.6f, 0.32f);
 
@@ -80,12 +80,12 @@ namespace tsorcRevamp.Items.Materials
             {
                 if (line2.Mod == "Terraria" && line2.Name == "ItemName")
                 {
-                    line2.OverrideColor = BaseColor.RarityExample;
+                    line2.Color = BaseColor.RarityExample;
                 }
             }
         }
 
-        public override bool OnPickup(Player player)
+        public override bool OnPickup(WorldItem item, Player player)
         {
 
             SoundStyle PickupSound = SoundID.NPCDeath52;
@@ -145,7 +145,7 @@ namespace tsorcRevamp.Items.Materials
                 "\nCan be used at Demon Altars to forge powerful weapons and items."); */
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.93f, 0.1f, 0.45f);
         }
@@ -160,7 +160,7 @@ namespace tsorcRevamp.Items.Materials
                 "\nYou question whether you should even hold such a thing in your possession."); */
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.93f, 0.1f, 0.45f);
         }
@@ -175,7 +175,7 @@ namespace tsorcRevamp.Items.Materials
             // Tooltip.SetDefault("The essence of Artorias of the Abyss.");
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.9f, 0.9f, 0.9f);
         }
@@ -190,7 +190,7 @@ namespace tsorcRevamp.Items.Materials
             // Tooltip.SetDefault("The essence of destruction.");
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.9f, 0.9f, 0.9f);
         }
@@ -206,7 +206,7 @@ namespace tsorcRevamp.Items.Materials
             // Tooltip.SetDefault("The essence of chaos.");
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.70f, 0.20f, 0.13f);
         }
@@ -226,7 +226,7 @@ namespace tsorcRevamp.Items.Materials
                 "\nawarded dukedom, embraced by the royalty, and given a fragment of a great soul."); */
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.33f, 0.75f, 0.70f);
         }
@@ -243,7 +243,7 @@ namespace tsorcRevamp.Items.Materials
             // Tooltip.SetDefault("The essence of the Ghost Wyvern.");
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.28f, 0.33f, 0.75f);
         }
@@ -258,7 +258,7 @@ namespace tsorcRevamp.Items.Materials
             base.SetStaticDefaults();
             // Tooltip.SetDefault("Soul of a cursed being.");
         }
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.85f, 0f, 0f);
         }
@@ -272,7 +272,7 @@ namespace tsorcRevamp.Items.Materials
             // Tooltip.SetDefault("The essence of growth, deeply connected to the Earth.");
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, Color.Green.ToVector3());
         }

@@ -32,7 +32,7 @@ namespace tsorcRevamp.Banners
             Item.value = Item.buyPrice(0, 0, 10, 0);
         }
 
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        public override bool PreDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             scale = 1.5f;
             return true;

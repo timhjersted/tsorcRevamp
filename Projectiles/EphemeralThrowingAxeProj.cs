@@ -62,7 +62,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.active = false;
         }
 
-        public override void PostDraw(Color lightColor)
+        public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Texture2D glowTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/EphemeralThrowingAxeProj_Glowmask").Value;
             Vector2 origin = new Vector2(glowTexture.Width / 2f, glowTexture.Height / 2f);

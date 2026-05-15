@@ -55,14 +55,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         //Spawns from the Surface into the Cavern, from 2/10th to 3.5/10th and again from 6.5/10th to 8/10th (Width) on Normal Mode. Also spawns in the Dungeon and in the sky in Hardmode.
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player player = spawnInfo.Player;
+            Player player = spawner.Player;
 
             float chance = 0;
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (player.ZoneSkyHeight || spawnInfo.Player.ZoneDungeon || spawnInfo.Player.ZoneSnow)
+                if (player.ZoneSkyHeight || spawner.Player.ZoneDungeon || spawner.Player.ZoneSnow)
                 {
                     chance = 0.17f;
                 }

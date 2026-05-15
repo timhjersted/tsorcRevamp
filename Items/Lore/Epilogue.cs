@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Lore
                     }
                     else
                     {
-                        tooltips[i].OverrideColor = Main.DiscoColor;
+                        tooltips[i].Color = Main.DiscoColor;
                     }
                 }
             }

@@ -69,12 +69,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player player = spawnInfo.Player;
+            Player player = spawner.Player;
 
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
+            bool FrozenOcean = spawner.SpawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawner.SpawnTileX < 800 || FrozenOcean;
             float chance = 0;
 
             //Ensuring it can't spawn if two already exists.
@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
             if (tsorcRevampWorld.SuperHardMode)
             {

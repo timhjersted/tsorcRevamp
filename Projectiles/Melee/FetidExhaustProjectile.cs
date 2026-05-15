@@ -164,7 +164,7 @@ namespace tsorcRevamp.Projectiles.Melee
         public static ArmorShaderData data;
         public static ArmorShaderData targetingData;
         public bool additiveContext = false;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             if (!additiveContext || lastPositions == null)
             {

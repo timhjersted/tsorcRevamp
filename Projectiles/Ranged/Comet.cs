@@ -95,7 +95,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-        public override void PostDraw(Color lightColor)
+        public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Random rand1 = new Random((int)Main.GameUpdateCount);
             Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);

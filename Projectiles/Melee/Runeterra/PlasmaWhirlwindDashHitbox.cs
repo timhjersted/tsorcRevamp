@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         {
             modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * PlasmaWhirlwind.DashAndSlashPercentHealthDamage / 100f, PlasmaWhirlwind.HealthDamageCap);
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             return false;
         }

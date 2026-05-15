@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 36;
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Projectile.type] = true;
 
             Main.projPet[Projectile.type] = true;
 

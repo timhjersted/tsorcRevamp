@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 30;
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             return Terraria.ModLoader.Utilities.SpawnCondition.TownGeneralCritter.Chance * 0.22f;
         }

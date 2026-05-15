@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Melee.Axes
             Projectile.CritChance = (int)Projectile.ai[0];
             Projectile.ai[0] = 0;
         }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)/* tModPorter Note: Removed. Set Projectile.drawLayer instead */
         {
             behindProjectiles.Add(index);
         }

@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             //if (spawnInfo.Player.ZoneDesert && spawnInfo.Player.ZoneSnow)
             //{

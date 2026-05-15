@@ -115,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                 SoundEngine.PlaySound(new SoundStyle(SoundPath + "TornadoHit") with { Volume = SoundVolume });
             }
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             float _xscalebonus = 0;
             switch (Projectile.ai[0])

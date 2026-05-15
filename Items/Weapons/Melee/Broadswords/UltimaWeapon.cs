@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             return false;
         }
 
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        public override bool PreDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             if (glowTexture == null || glowTexture.IsDisposed)
             {

@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 150; 
             }
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
             if (Main.SceneMetrics.SnowTileCount > 5)
@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //Otherwise it spawns in the frozen ocean and gets stuck in the ceiling
-            if (spawnInfo.Water || tsorcRevampWorld.SuperHardMode)
+            if (spawner.waterTile || tsorcRevampWorld.SuperHardMode)
             {
                 chance = 0;
             }

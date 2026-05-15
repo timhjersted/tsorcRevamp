@@ -105,7 +105,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             if (Main.player[Projectile.owner].altFunctionUse != 2)
             {
@@ -136,7 +136,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
 
         public static Texture2D texture;
 
-        public override void PostDraw(Color lightColor)
+        public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

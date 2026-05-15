@@ -63,7 +63,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             int frameWidth = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Width;
             int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height;

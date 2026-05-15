@@ -67,15 +67,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         //Spawns in Lower Cavern into the Underworld. Spawns more under 2.5/10th and again after 7.5/10th (Length). Spawns in Super Hardmode. Will not spawn if there are more than 2 Town NPCs nearby (or if a Blood Moon).
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            bool oMagmaCavern = (spawnInfo.Player.position.Y >= (Main.maxTilesY * 0.6f) && !spawnInfo.Player.ZoneUnderworldHeight);
-            bool BeforeThreeAfterSeven = (spawnInfo.Player.position.X < Main.maxTilesX * 0.3f) || (spawnInfo.Player.position.X > Main.maxTilesX * 0.7f); //Before 3/10ths or after 7/10ths width
+            bool oMagmaCavern = (spawner.Player.position.Y >= (Main.maxTilesY * 0.6f) && !spawner.Player.ZoneUnderworldHeight);
+            bool BeforeThreeAfterSeven = (spawner.Player.position.X < Main.maxTilesX * 0.3f) || (spawner.Player.position.X > Main.maxTilesX * 0.7f); //Before 3/10ths or after 7/10ths width
 
             float chance = 0;
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (spawnInfo.Player.ZoneUnderworldHeight)
+                if (spawner.Player.ZoneUnderworldHeight)
                 {
                     chance = 0.001f;
 

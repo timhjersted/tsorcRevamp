@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.ignoreWater = true;
             Projectile.MaxUpdates = 2;
             Projectile.light = 5;
-            DrawHeldProjInFrontOfHeldItemAndArms = true;
+            DrawHeldProjInFrontOfHeldItemAndArms/* tModPorter Note: Removed. Replace with Projectile.drawLayer = ProjectileDrawLayerID.HeldProjOverHand; */ = true;
         }
 
         Vector2[] lastpos = new Vector2[20];
@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles
         }
 
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Rectangle fromrect = new Rectangle(0, 0, Projectile.width, Projectile.height);
             Vector2 PC;

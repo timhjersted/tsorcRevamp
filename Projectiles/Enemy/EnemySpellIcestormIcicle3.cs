@@ -27,14 +27,14 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             //Color color = new Color();
             //int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 100, color, 1.0f);
             //Main.dust[dust].noGravity = true;
 
             lightColor = Color.White;
-            return base.PreDraw(ref lightColor);
+            return base.PreDraw(player, ref lightColor);
         }
     }
 }

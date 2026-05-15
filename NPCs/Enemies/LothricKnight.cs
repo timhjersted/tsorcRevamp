@@ -912,29 +912,29 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
+            bool FrozenOcean = spawner.SpawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawner.SpawnTileX < 800 || FrozenOcean;
 
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
+            if (spawner.Player.townNPCs > 1f) return 0f;
 
-            if (spawnInfo.Water) return 0f;
-            if (spawnInfo.Player.ZoneGlowshroom) return 0f;
+            if (spawner.waterTile) return 0f;
+            if (spawner.Player.ZoneGlowshroom) return 0f;
 
-            if (spawnInfo.Player.ZoneDungeon) return chance = 0.02f;
+            if (spawner.Player.ZoneDungeon) return chance = 0.02f;
 
-            if (tsorcRevampWorld.SuperHardMode && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return 0.03f;
+            if (tsorcRevampWorld.SuperHardMode && !(spawner.Player.ZoneJungle || spawner.Player.ZoneHallow || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSnow || spawner.Player.ZoneBeach || spawner.Player.ZoneSkyHeight || spawner.Player.ZoneUnderworldHeight)) return 0.03f;
 
-            if (Main.bloodMoon && spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Player.ZoneSkyHeight && NPC.downedBoss3) return chance = 0.02f;
+            if (Main.bloodMoon && spawner.Player.ZoneOverworldHeight && !spawner.Player.ZoneSkyHeight && NPC.downedBoss3) return chance = 0.02f;
 
-            if (Main.bloodMoon && NPC.downedBoss3 && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.02f;
+            if (Main.bloodMoon && NPC.downedBoss3 && !(spawner.Player.ZoneJungle || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSnow || spawner.Player.ZoneBeach || spawner.Player.ZoneSkyHeight || spawner.Player.ZoneUnderworldHeight)) return chance = 0.02f;
 
-            if (NPC.downedBoss3 && spawnInfo.Player.ZoneOverworldHeight && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.005f;
-            if (NPC.downedBoss3 && spawnInfo.Player.ZoneOverworldHeight && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.015f;
+            if (NPC.downedBoss3 && spawner.Player.ZoneOverworldHeight && !(spawner.Player.ZoneJungle || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSnow || spawner.Player.ZoneBeach || spawner.Player.ZoneSkyHeight || spawner.Player.ZoneUnderworldHeight)) return chance = 0.005f;
+            if (NPC.downedBoss3 && spawner.Player.ZoneOverworldHeight && !(spawner.Player.ZoneJungle || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSnow || spawner.Player.ZoneBeach || spawner.Player.ZoneSkyHeight || spawner.Player.ZoneUnderworldHeight)) return chance = 0.015f;
 
-            if (NPC.downedBoss3 && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.003f;
+            if (NPC.downedBoss3 && !(spawner.Player.ZoneJungle || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneSnow || spawner.Player.ZoneBeach || spawner.Player.ZoneSkyHeight || spawner.Player.ZoneUnderworldHeight)) return chance = 0.003f;
 
             return chance;
         }

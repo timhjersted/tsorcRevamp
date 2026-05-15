@@ -60,9 +60,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
         //Spawns in the Jungle and in the Cavern in HM.
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            var player = spawnInfo.Player;
+            var player = spawner.Player;
             bool TropicalOcean = player.position.X < 3600;
             float chance = 0f;
 
@@ -80,16 +80,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
-            if (Main.hardMode && (spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneJungle) && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
+            if (Main.hardMode && (spawner.Player.ZoneMeteor || spawner.Player.ZoneJungle) && !spawner.Player.ZoneDungeon && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson)
             {
-                if (spawnInfo.Player.ZoneOverworldHeight && Main.dayTime) return 0.01f;
-                if (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime) return 0.035f;
-                if (spawnInfo.Player.ZoneDirtLayerHeight) return 0.025f;
-                if (spawnInfo.Player.ZoneRockLayerHeight) return 0.03f;
+                if (spawner.Player.ZoneOverworldHeight && Main.dayTime) return 0.01f;
+                if (spawner.Player.ZoneOverworldHeight && !Main.dayTime) return 0.035f;
+                if (spawner.Player.ZoneDirtLayerHeight) return 0.025f;
+                if (spawner.Player.ZoneRockLayerHeight) return 0.03f;
             }
-            if (Main.hardMode && TropicalOcean && spawnInfo.Player.ZoneJungle) return 0.045f;
+            if (Main.hardMode && TropicalOcean && spawner.Player.ZoneJungle) return 0.045f;
 
             return chance;
         }

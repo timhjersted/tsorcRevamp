@@ -69,32 +69,32 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0f;
 
 
-            if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(140))
+            if (Main.hardMode && !Main.dayTime && spawner.Player.ZoneJungle && !spawner.Player.ZoneOverworldHeight && !spawner.Player.ZoneDungeon && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson && Main.rand.NextBool(140))
             {
                 return 1f;
             }
 
-            if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(200))
+            if (Main.hardMode && !Main.dayTime && spawner.Player.ZoneJungle && !spawner.Player.ZoneDungeon && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson && Main.rand.NextBool(200))
             {
                 return 1f;
             }
 
-            if (Main.hardMode && Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(300))
+            if (Main.hardMode && Main.dayTime && spawner.Player.ZoneJungle && !spawner.Player.ZoneDungeon && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson && Main.rand.NextBool(300))
             {
                 return 1f;
             }
 
-            if (Main.hardMode && (spawnInfo.Player.ZoneDungeon || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneUndergroundDesert || spawnInfo.Player.ZoneDesert) && Main.rand.NextBool(200))
+            if (Main.hardMode && (spawner.Player.ZoneDungeon || spawner.Player.ZoneHallow || spawner.Player.ZoneSnow || spawner.Player.ZoneUndergroundDesert || spawner.Player.ZoneDesert) && Main.rand.NextBool(200))
             {
                 return 1f;
             }
 
-            if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneOverworldHeight && Main.rand.NextBool(300))
+            if (Main.hardMode && !Main.dayTime && spawner.Player.ZoneOverworldHeight && Main.rand.NextBool(300))
             {
                 return 1f;
             }
@@ -102,11 +102,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (spawnInfo.Player.ZoneDirtLayerHeight)
+                if (spawner.Player.ZoneDirtLayerHeight)
                 {
                     chance = 0.002f;
                 }
-                if (spawnInfo.Player.ZoneRockLayerHeight)
+                if (spawner.Player.ZoneRockLayerHeight)
                 {
                     chance = 0.001f;
                 }

@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Throwing
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width, Projectile.position.Y + Projectile.height, 0, 0, ModContent.ProjectileType<VenomBladeField>(), Projectile.damage / 3, 1f, Projectile.owner);
             }
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
             Color alphalowered = Color.White;
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Throwing
             return false;
         }
 
-        public override void PostDraw(Color lightColor)
+        public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
             Texture2D glowTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.VenomBladeGlowmask];

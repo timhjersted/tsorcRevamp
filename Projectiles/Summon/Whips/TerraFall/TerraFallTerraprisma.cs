@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true; // Make the cultist resistant to this projectile, as it's resistant to all homing projectiles.
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Projectile.type] = true;
             Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
         }
         public override void SetDefaults()

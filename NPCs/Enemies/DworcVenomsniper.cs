@@ -59,20 +59,20 @@ namespace tsorcRevamp.NPCs.Enemies
         //Spawns in the Jungle, mostly Underground and in the Cavern.
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0f;
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
-            if (spawnInfo.Player.ZoneDungeon)
+            if (spawner.Player.ZoneDungeon)
             {
                 return 0f;
             }
-            else if (!Main.hardMode && spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneOverworldHeight)
+            else if (!Main.hardMode && spawner.Player.ZoneJungle && spawner.Player.ZoneOverworldHeight)
             {
                 return 0.2f;
             }
-            else if (!Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
+            else if (!Main.hardMode && spawner.Player.ZoneJungle && (spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight))
             {
                 return 0.345f;
             }

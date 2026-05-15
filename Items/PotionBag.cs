@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items
             return false;
         }
 
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.3f, 0.2f, 0.4f);
 
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Items
         public int itemframe = 0;
         public int itemframeCounter = 0;
 
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        public override bool PreDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             Texture2D textureGlow = (Texture2D)Mod.Assets.Request<Texture2D>("Items/PotionBag_Glow");

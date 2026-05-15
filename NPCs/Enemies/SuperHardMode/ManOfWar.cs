@@ -62,19 +62,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
 
-            if (Main.hardMode && spawnInfo.Water)
+            if (Main.hardMode && spawner.waterTile)
             {
                 chance = 0.25f;
             }
-            if (Main.hardMode && spawnInfo.Player.ZoneDungeon && spawnInfo.Water)
+            if (Main.hardMode && spawner.Player.ZoneDungeon && spawner.waterTile)
             {
                 chance = 0.5f;
             }
-            if (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3)
+            if (Math.Abs(spawner.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3)
             {
                 chance *= 4;
             }

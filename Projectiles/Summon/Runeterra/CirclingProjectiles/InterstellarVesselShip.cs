@@ -108,9 +108,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
 
         public static Texture2D texture;
         public static Texture2D glowTexture;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
-            base.PreDraw(ref lightColor);
+            base.PreDraw(player, ref lightColor);
             if (additiveContext)
             {
                 Main.spriteBatch.End();

@@ -32,11 +32,11 @@ namespace tsorcRevamp.NPCs.Friendly
             BannerItem = ModContent.ItemType<Banners.LivingGlowshroomBanner>();
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
 
-            if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].TileType == TileID.MushroomGrass)
+            if (Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].TileType == TileID.MushroomGrass)
             {
                 return 0.75f;
             }

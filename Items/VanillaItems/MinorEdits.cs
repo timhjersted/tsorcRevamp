@@ -67,7 +67,7 @@ namespace tsorcRevamp.Items.VanillaItems
                     break;
             }
         }
-        public override void GrabRange(Item item, Player player, ref int grabRange)
+        public override void GrabRange(WorldItem item, Player player, ref int grabRange)
         {
             if (item.type == ItemID.ManaCloakStar)
             {

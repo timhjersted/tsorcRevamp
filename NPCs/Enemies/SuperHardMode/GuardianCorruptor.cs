@@ -37,16 +37,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.GuardianCorruptorBanner>();
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            Player player = spawnInfo.Player;
+            Player player = spawner.Player;
             if (tsorcRevampWorld.SuperHardMode)
             {
                 if (player.ZoneCorrupt && player.ZoneOverworldHeight && !Main.dayTime) chance = 0.5f;
                 else if (player.ZoneCorrupt && (player.ZoneRockLayerHeight || player.ZoneDirtLayerHeight) && !Main.dayTime) chance = 0.5f;
                 else if (player.ZoneCorrupt) chance = 0.25f;
-                else if (player.ZoneCorrupt && spawnInfo.Water) chance = 0.025f;
+                else if (player.ZoneCorrupt && spawner.waterTile) chance = 0.025f;
             }
 
             return chance;

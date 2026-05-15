@@ -47,29 +47,29 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         //Spawns in the Underground and Cavern before 3.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
 
-            Player P = spawnInfo.Player; //this shortens our code up from writing this line over and over.
+            Player P = spawner.Player; //this shortens our code up from writing this line over and over.
             bool Hallow = P.ZoneHallow;
-            bool oMagmaCavern = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.6f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.8f));
-            bool oUnderworld = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.8f));
+            bool oMagmaCavern = (spawner.SpawnTileY >= (Main.maxTilesY * 0.6f) && spawner.SpawnTileY < (Main.maxTilesY * 0.8f));
+            bool oUnderworld = (spawner.SpawnTileY >= (Main.maxTilesY * 0.8f));
 
             if (tsorcRevampWorld.SuperHardMode && (P.ZoneDirtLayerHeight || P.ZoneRockLayerHeight || oMagmaCavern))
             {
                 if (Hallow && Main.rand.NextBool(20)) return 1; //was 20
-                if (spawnInfo.Player.ZoneGlowshroom && Main.rand.NextBool(20)) return 1; //was 20
-                if (spawnInfo.Player.ZoneUndergroundDesert && Main.rand.NextBool(20)) return 1; //was 20
+                if (spawner.Player.ZoneGlowshroom && Main.rand.NextBool(20)) return 1; //was 20
+                if (spawner.Player.ZoneUndergroundDesert && Main.rand.NextBool(20)) return 1; //was 20
                 if (Hallow && Main.bloodMoon && Main.rand.NextBool(6)) return 1;
-                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(20)) return 1; //was 10
-                if (spawnInfo.SpawnTileType == TileID.BoneBlock && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(20))
+                if ((spawner.SpawnTileX < Main.maxTilesX * 0.35f || spawner.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(20)) return 1; //was 10
+                if (spawner.SpawnTileType == TileID.BoneBlock && spawner.Player.ZoneDungeon && Main.rand.NextBool(20))
                     return 0;
             }
 
             else if (tsorcRevampWorld.SuperHardMode && oUnderworld)
             {
                 if (Main.rand.NextBool(60)) return 1;
-                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(30)) return 1;
+                if ((spawner.SpawnTileX < Main.maxTilesX * 0.35f || spawner.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(30)) return 1;
                 return 0;
             }
             return 0;

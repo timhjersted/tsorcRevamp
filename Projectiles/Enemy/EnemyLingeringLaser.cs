@@ -290,7 +290,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             if ((Projectile.ai[0] == -3 || Projectile.ai[0] == -2 || Projectile.ai[0] == -1) && !IsAtMaxCharge)
             {
@@ -312,7 +312,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             else
             {
-                base.PreDraw(ref lightColor);
+                base.PreDraw(player, ref lightColor);
             }
 
             return false;

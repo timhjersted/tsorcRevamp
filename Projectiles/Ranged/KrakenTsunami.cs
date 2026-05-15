@@ -123,7 +123,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         public float yScale = 0.9f;
         public int numrings = 40;
         public Color Color = Color.MidnightBlue;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             if (frameTimer == 0)
             {

@@ -451,7 +451,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
         }
 
         // PreDraw is used to draw a chain and trail before the projectile is drawn normally.
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Vector2 playerArmPosition = Main.GetPlayerArmPosition(Projectile);
 

@@ -54,9 +54,9 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow);
             UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple);
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player P = spawnInfo.Player; //These are mostly redundant with the new zone definitions, but it still works.
+            Player P = spawner.Player; //These are mostly redundant with the new zone definitions, but it still works.
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
@@ -66,12 +66,12 @@ namespace tsorcRevamp.NPCs.Enemies
             bool InGrayLayer = P.ZoneRockLayerHeight;
             // P.townNPCs > 0f // is no town NPCs nearby
 
-            if (spawnInfo.Invasion)
+            if (spawner.invaders)
             {
                 return 0;
             }
 
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
             if (!Main.hardMode && !Main.dayTime && (Corruption || Jungle) && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)) && Main.rand.NextBool(24)) return 1;
 

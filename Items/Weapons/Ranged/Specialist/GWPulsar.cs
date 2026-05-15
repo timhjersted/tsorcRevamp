@@ -74,7 +74,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 
         }
 
-        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+        public override void PostDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
             Lighting.AddLight(Item.Right, 0.0452f, 0.24f, 0.24f);
 

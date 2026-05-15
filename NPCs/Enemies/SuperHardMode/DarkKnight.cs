@@ -40,11 +40,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             stormWaveDamage = (int)(stormWaveDamage * tsorcRevampWorld.SHMScale);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player player = spawnInfo.Player;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
+            Player player = spawner.Player;
+            bool FrozenOcean = spawner.SpawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawner.SpawnTileX < 800 || FrozenOcean;
 
 
             float chance = 0;

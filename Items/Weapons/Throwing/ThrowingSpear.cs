@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe(100);
-            recipe.AddRecipeGroup(RecipeGroupID.Wood, 10);
+            recipe.AddRecipeGroup(RecipeGroups.Wood, 10);
             recipe.AddIngredient(ItemID.StoneBlock, 10);
             recipe.Register();
         }

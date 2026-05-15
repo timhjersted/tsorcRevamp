@@ -125,7 +125,7 @@ namespace tsorcRevamp.UI
                         bool favorited = _vanillaItemSlot.Item.favorited;
                         int stack = _vanillaItemSlot.Item.stack;
                         Item reforgeItem = new Item();
-                        reforgeItem.netDefaults(_vanillaItemSlot.Item.netID);
+                        reforgeItem.netDefaults(_vanillaItemSlot.Item.type);
                         //reforgeItem = reforgeItem.CloneWithModdedDataFrom(_vanillaItemSlot.Item)/* tModPorter Note: Removed. Use Clone, ResetPrefix or Refresh */;
                         // This is the main effect of this slot. Giving the Blessed prefix 100% of the time. All for a constant 1 gold. Useless, but informative.
 

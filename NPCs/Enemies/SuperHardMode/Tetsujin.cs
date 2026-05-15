@@ -53,9 +53,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         bool breath = false;
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player player = spawnInfo.Player;
+            Player player = spawner.Player;
 
             float chance = 0;
 

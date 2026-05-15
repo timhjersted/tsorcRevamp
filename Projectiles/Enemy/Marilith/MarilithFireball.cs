@@ -104,7 +104,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         }
 
         Texture2D texture;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             if (texture == null || texture.IsDisposed)
             {

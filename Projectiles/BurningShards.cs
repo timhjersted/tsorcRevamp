@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void SetDefaults()
         {
-            DrawHeldProjInFrontOfHeldItemAndArms = true; // Makes projectile appear in front of arms, not just in between body and arms
+            DrawHeldProjInFrontOfHeldItemAndArms/* tModPorter Note: Removed. Replace with Projectile.drawLayer = ProjectileDrawLayerID.HeldProjOverHand; */ = true; // Makes projectile appear in front of arms, not just in between body and arms
             Projectile.friendly = true;
             Projectile.width = 16;
             Projectile.height = 16;
@@ -110,7 +110,7 @@ namespace tsorcRevamp.Projectiles
         }
 
         public static Texture2D texture;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

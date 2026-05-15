@@ -32,18 +32,18 @@ namespace tsorcRevamp.NPCs.Enemies
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ArmoredWraithBanner>();
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            if (spawnInfo.Player.ZoneMeteor && !Main.dayTime && spawnInfo.Player.ZoneOverworldHeight)
+            if (spawner.Player.ZoneMeteor && !Main.dayTime && spawner.Player.ZoneOverworldHeight)
             {
                 chance = .04f;
             }
-            if (spawnInfo.Player.ZoneMeteor && !Main.dayTime && spawnInfo.Player.ZoneDirtLayerHeight)
+            if (spawner.Player.ZoneMeteor && !Main.dayTime && spawner.Player.ZoneDirtLayerHeight)
             {
                 chance = .033f;
             }
-            if (spawnInfo.Player.ZoneMeteor && !Main.dayTime && spawnInfo.Player.ZoneRockLayerHeight)
+            if (spawner.Player.ZoneMeteor && !Main.dayTime && spawner.Player.ZoneRockLayerHeight)
             {
                 chance = .04f;
             }

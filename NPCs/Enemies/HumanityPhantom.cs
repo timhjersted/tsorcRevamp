@@ -49,28 +49,28 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.HumanityPhantomBanner>();
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) //Spawns in extremely deep, dark places.
+        public override float SpawnChance(NPC.Spawner spawner) //Spawns in extremely deep, dark places.
         {
             float chance = 0;
 
-            if (spawnInfo.SpawnTileY >= Main.maxTilesY - 400)
+            if (spawner.SpawnTileY >= Main.maxTilesY - 400)
             {
-                if (spawnInfo.Player.ZoneRockLayerHeight && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.SpiderUnsafe) //This is at the very bottom of the chasm. Accessible pre-HM. Still difficult to encounter them as the area isn't really big enough to allow them to spawn offscreen
+                if (spawner.Player.ZoneRockLayerHeight && Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.SpiderUnsafe) //This is at the very bottom of the chasm. Accessible pre-HM. Still difficult to encounter them as the area isn't really big enough to allow them to spawn offscreen
                 {
                     chance = 2f;
                 }
 
-                if ((spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneUnderworldHeight) && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.ObsidianBrickUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.TitanstoneBlock)) //Gwyns tomb entrance, a SHM cave under the krakens arena, and the caves leading up to the Witchking
+                if ((spawner.Player.ZoneRockLayerHeight || spawner.Player.ZoneUnderworldHeight) && (Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.ObsidianBrickUnsafe || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.TitanstoneBlock)) //Gwyns tomb entrance, a SHM cave under the krakens arena, and the caves leading up to the Witchking
                 {
                     chance = 1.5f;
                 }
 
-                if (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) < Main.maxTilesX / 3 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.StarlitHeavenWallpaper) //Inner third of the map, abyss wall. This is the heart of the abyss, SHM
+                if (Math.Abs(spawner.SpawnTileX - Main.spawnTileX) < Main.maxTilesX / 3 && Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.StarlitHeavenWallpaper) //Inner third of the map, abyss wall. This is the heart of the abyss, SHM
                 {
                     chance = 10f;
                 }
 
-                if (tsorcRevampWorld.RemixMap && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneUnderworldHeight) && spawnInfo.SpawnTileType == TileID.Titanstone && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.StarlitHeavenWallpaper) //Remix map, Dark Cloud Temple
+                if (tsorcRevampWorld.RemixMap && (spawner.Player.ZoneRockLayerHeight || spawner.Player.ZoneUnderworldHeight) && spawner.SpawnTileType == TileID.Titanstone && Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == WallID.StarlitHeavenWallpaper) //Remix map, Dark Cloud Temple
                 {
                     chance = 10f;
                 }

@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         {
             Main.projFrames[Projectile.type] = ProjFrames;
             Main.projPet[Projectile.type] = true;
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.BallSummonTagDmgMult / 100f;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 999999999;
@@ -73,7 +73,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         {
             return true;
         }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)/* tModPorter Note: Removed. Set Projectile.drawLayer instead */
         {
             behindNPCs.Add(index);
         }

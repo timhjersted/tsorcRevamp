@@ -75,14 +75,14 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.Patience = 2f;
         }
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
-            if (!spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && spawnInfo.Player.ZoneOverworldHeight && NPC.downedBoss3 && !Main.dayTime && Main.rand.NextBool(250)) return 1;
-            if (Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
-            if (Main.hardMode && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneBeach && !Main.dayTime && Main.rand.NextBool(250)) return 1;
-            if (Main.hardMode && spawnInfo.Player.ZoneUnderworldHeight && !Main.dayTime && Main.rand.NextBool(160)) return 1;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
+            if (spawner.Player.townNPCs > 1f) return 0f;
+            if (!spawner.Player.ZoneMeteor && !spawner.Player.ZoneDungeon && !(spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson) && spawner.Player.ZoneOverworldHeight && NPC.downedBoss3 && !Main.dayTime && Main.rand.NextBool(250)) return 1;
+            if (Main.hardMode && spawner.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
+            if (Main.hardMode && !(spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson) && !spawner.Player.ZoneBeach && !Main.dayTime && Main.rand.NextBool(250)) return 1;
+            if (Main.hardMode && spawner.Player.ZoneUnderworldHeight && !Main.dayTime && Main.rand.NextBool(160)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
 
             return 0;
         }

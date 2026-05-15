@@ -1989,7 +1989,7 @@ namespace tsorcRevamp
                 }
 
                 //force a recipe recalculation so you cant craft things without enough souls
-                Recipe.FindRecipes();
+                Recipe.FindRecipes()/* tModPorter Note: Removed. No longer used. */;
             }
         }
 
@@ -2105,7 +2105,7 @@ namespace tsorcRevamp
                     {
                         Main.PlayInteractiveProjectileOpenCloseSound(Main.projectile[projectileLocalIndex].type, false);
                         self.chest = -1;
-                        Recipe.FindRecipes(false);
+                        Recipe.FindRecipes(false)/* tModPorter Note: Removed. No longer used. */;
                     }
                     else
                     {
@@ -2121,7 +2121,7 @@ namespace tsorcRevamp
                                 Main.PlayInteractiveProjectileOpenCloseSound(Main.projectile[projectileLocalIndex].type, false);
                             }
                             self.chest = -1;
-                            Recipe.FindRecipes(false);
+                            Recipe.FindRecipes(false)/* tModPorter Note: Removed. No longer used. */;
                         }
                     }
                 }
@@ -2133,7 +2133,7 @@ namespace tsorcRevamp
                     {
                         SoundEngine.PlaySound(SoundID.Item130, null);
                         self.chest = -1;
-                        Recipe.FindRecipes(false);
+                        Recipe.FindRecipes(false)/* tModPorter Note: Removed. No longer used. */;
                     }
                     else
                     {
@@ -2149,7 +2149,7 @@ namespace tsorcRevamp
                                 SoundEngine.PlaySound(SoundID.Item130, null);
                             }
                             self.chest = -1;
-                            Recipe.FindRecipes(false);
+                            Recipe.FindRecipes(false)/* tModPorter Note: Removed. No longer used. */;
                         }
                     }
                 }
@@ -2164,14 +2164,14 @@ namespace tsorcRevamp
                         //SoundEngine.PlaySound(11, -1, -1, 1, 1f, 0f);
                     }
                     self.chest = -1;
-                    Recipe.FindRecipes(false);
+                    Recipe.FindRecipes(false)/* tModPorter Note: Removed. No longer used. */;
                     return;
                 }
                 if (!Main.tile[self.chestX, self.chestY].HasTile)
                 {
                     //SoundEngine.PlaySound(11, -1, -1, 1, 1f, 0f);
                     self.chest = -1;
-                    Recipe.FindRecipes(false);
+                    Recipe.FindRecipes(false)/* tModPorter Note: Removed. No longer used. */;
                     return;
                 }
             }
@@ -2722,7 +2722,7 @@ namespace tsorcRevamp
             if (item.stack <= 0)
                 item.TurnToAir();
 
-            Recipe.FindRecipes();
+            Recipe.FindRecipes()/* tModPorter Note: Removed. No longer used. */;
         }
 
         private static void OldOnesArmyPatch(On_NPCUtils.orig_TargetClosestOldOnesInvasion orig, NPC searcher, bool faceTarget, Vector2? checkPosition)

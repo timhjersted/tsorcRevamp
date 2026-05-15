@@ -60,25 +60,25 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #region Spawn
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
+            Player p = spawner.Player;
+            if (spawner.invaders || Sky(p) || spawner.Player.ZoneSnow)
             {
                 chance = 0;
                 return chance;
             }
 
-            if (spawnInfo.Player.townNPCs > 0f) return 0f;
-            if (spawnInfo.Player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.Player.ZoneCrimson && !Main.dayTime) return 0.0427f;
-            if (spawnInfo.Player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.Player.ZoneCrimson && Main.dayTime) return 0.038f;
+            if (spawner.Player.townNPCs > 0f) return 0f;
+            if (spawner.Player.ZoneOverworldHeight && !Main.hardMode && !spawner.Player.ZoneCrimson && !Main.dayTime) return 0.0427f;
+            if (spawner.Player.ZoneOverworldHeight && !Main.hardMode && !spawner.Player.ZoneCrimson && Main.dayTime) return 0.038f;
 
-            if (!Main.hardMode && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneJungle)
+            if (!Main.hardMode && !spawner.Player.ZoneMeteor && !spawner.Player.ZoneJungle)
             {
-                if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime) return 0.0433f;
-                if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime) return 0.0555f;
-                if (spawnInfo.Player.ZoneDungeon && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight)) return 0.03857f;
+                if (!spawner.Player.ZoneDungeon && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson && (spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight) && Main.dayTime) return 0.0433f;
+                if (!spawner.Player.ZoneDungeon && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson && (spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight) && !Main.dayTime) return 0.0555f;
+                if (spawner.Player.ZoneDungeon && (spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneRockLayerHeight)) return 0.03857f;
             }
             return chance;
         }

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Materials
             Item.maxStack = Item.CommonMaxStack;
         }
 
-         public override void PostUpdate()
+         public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.10f, 0.33f, 0.75f);
         }

@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
-            NPCID.Sets.GoldCrittersCollection.Add(Type);
+            NPCID.Sets.IsGoldCritter[Type] = true;
         }
         public override void SetDefaults()
         {
@@ -47,13 +47,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player P = spawnInfo.Player;
-            bool InGrayLayer = spawnInfo.SpawnTileY >= Main.rockLayer && spawnInfo.SpawnTileY < (Main.maxTilesY - 200) * 16;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
+            Player P = spawner.Player;
+            bool InGrayLayer = spawner.SpawnTileY >= Main.rockLayer && spawner.SpawnTileY < (Main.maxTilesY - 200) * 16;
+            bool FrozenOcean = spawner.SpawnTileX > (Main.maxTilesX - 800);
 
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
             if (Main.hardMode && !FrozenOcean && Main.rand.NextBool(200)) return 1;
 

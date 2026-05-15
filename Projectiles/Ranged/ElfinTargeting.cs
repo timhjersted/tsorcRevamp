@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             //Just couldn't get the ring to look good. Texture wasn't made to be expanded that large, and couldn't really edit it well enough to make it work lol
             /*

@@ -51,9 +51,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player P = spawnInfo.Player; //These are mostly redundant with the new zone definitions, but it still works.
+            Player P = spawner.Player; //These are mostly redundant with the new zone definitions, but it still works.
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
@@ -63,8 +63,8 @@ namespace tsorcRevamp.NPCs.Enemies
             bool InBrownLayer = P.ZoneDirtLayerHeight;
             bool InGrayLayer = P.ZoneRockLayerHeight;
             bool InHell = P.ZoneUnderworldHeight;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
+            bool FrozenOcean = spawner.SpawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawner.SpawnTileX < 800 || FrozenOcean;
             // P.townNPCs > 0f // is no town NPCs nearby
 
             //Ensuring it can't spawn if two already exists.
@@ -81,32 +81,32 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
             //SPAWNS IN HM JUNGLE AT NIGHT ABOVE GROUND AFTER THE RAGE IS DEFEATED
             if (Main.hardMode && Jungle && !Corruption && !Main.dayTime && AboveEarth && !Ocean && P.townNPCs <= 0f && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && Main.rand.NextBool(30)) return 1;
 
             //SPAWNS IN HM METEOR UNDERGROUND AT NIGHT
-            if (Main.hardMode && Meteor && !Main.dayTime && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.NextBool(10)) return 1;
+            if (Main.hardMode && Meteor && !Main.dayTime && (InBrownLayer || InGrayLayer) && !spawner.waterTile && Main.rand.NextBool(10)) return 1;
 
-            if (Main.hardMode && Meteor && Main.dayTime && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.NextBool(20)) return 1;
+            if (Main.hardMode && Meteor && Main.dayTime && (InBrownLayer || InGrayLayer) && !spawner.waterTile && Main.rand.NextBool(20)) return 1;
 
             //SPAWNS AGAIN IN CORRUPTION AND NOW CRIMSON
-            if (Main.hardMode && Corruption && !Main.dayTime && !Ocean && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.NextBool(20)) return 1;
+            if (Main.hardMode && Corruption && !Main.dayTime && !Ocean && (InBrownLayer || InGrayLayer) && !spawner.waterTile && Main.rand.NextBool(20)) return 1;
 
-            if (Main.hardMode && Corruption && Main.dayTime && !Ocean && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.NextBool(30)) return 1;
+            if (Main.hardMode && Corruption && Main.dayTime && !Ocean && (InBrownLayer || InGrayLayer) && !spawner.waterTile && Main.rand.NextBool(30)) return 1;
 
             //SPAWNS IN DUNGEON AT NIGHT RARELY
             if (Main.hardMode && Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(45)) return 1;
 
             //SPAWNS IN HM HALLOW RARELY
-            if (Main.hardMode && (InBrownLayer || InGrayLayer) && Hallow && !Ocean && !spawnInfo.Water && Main.rand.NextBool(45)) return 1;
+            if (Main.hardMode && (InBrownLayer || InGrayLayer) && Hallow && !Ocean && !spawner.waterTile && Main.rand.NextBool(45)) return 1;
 
             //SPAWNS RARELY IN HM JUNGLE UNDERGROUND
-            if (Main.hardMode && Jungle && InGrayLayer && !Ocean && !spawnInfo.Water && Main.rand.NextBool(60)) return 1;
+            if (Main.hardMode && Jungle && InGrayLayer && !Ocean && !spawner.waterTile && Main.rand.NextBool(60)) return 1;
 
             //BLOODMOON HIGH SPAWN IN METEOR OR JUNGLE
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (Meteor || Jungle) && !Dungeon && (AboveEarth || InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.bloodMoon && Main.rand.NextBool(5)) return 1;
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (Meteor || Jungle) && !Dungeon && (AboveEarth || InBrownLayer || InGrayLayer) && !spawner.waterTile && Main.bloodMoon && Main.rand.NextBool(5)) return 1;
 
             return 0;
         }

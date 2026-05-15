@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles
             base.AI();
         }
 
-        public override void PostDraw(Color lightColor)
+        public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles
             Main.EntitySpriteDraw(texture,
                 Projectile.Center - Main.screenPosition,
                 sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-            base.PostDraw(lightColor);
+            base.PostDraw(player, lightColor);
         }
     }
 }

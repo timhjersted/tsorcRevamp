@@ -40,11 +40,11 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player P = spawnInfo.Player;
+            Player P = spawner.Player;
 
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
             //now spawns in hallow, since jungle was getting crowded
             //spawns more before the rage is defeated
@@ -53,10 +53,10 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.hardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && !Main.dayTime && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(25)) return 1;
             if (Main.hardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && Main.dayTime && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(35)) return 1;
             if (Main.hardMode && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(10)) return 1;
-            if (Main.hardMode && spawnInfo.Lihzahrd && Main.rand.NextBool(45)) return 1;
-            if (Main.hardMode && spawnInfo.Player.ZoneDesert && Main.rand.NextBool(45)) return 1;
+            if (Main.hardMode && spawner.ZoneLihzhardTemple && Main.rand.NextBool(45)) return 1;
+            if (Main.hardMode && spawner.Player.ZoneDesert && Main.rand.NextBool(45)) return 1;
             if (tsorcRevampWorld.SuperHardMode && P.ZoneHallow && Main.rand.NextBool(10)) return 1;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneGlowshroom && Main.rand.NextBool(5)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneGlowshroom && Main.rand.NextBool(5)) return 1;
             return 0;
         }
         #endregion

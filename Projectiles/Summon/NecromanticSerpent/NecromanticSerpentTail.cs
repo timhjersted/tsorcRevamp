@@ -16,10 +16,10 @@ namespace tsorcRevamp.Projectiles.Summon.NecromanticSerpent
             Main.projFrames[Type] = 1;
             Main.projPet[Type] = true;
 
-            ProjectileID.Sets.MinionTargettingFeature[Type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Type] = true;
             ProjectileID.Sets.MinionSacrificable[Type] = false;
             ProjectileID.Sets.CultistIsResistantTo[Type] = true;
-            ProjectileID.Sets.DontAttachHideToAlpha[Type] = true;
+            ProjectileID.Sets.DontAttachHideToAlpha/* tModPorter Note: Removed. Now true by default. See Projectile.usesOwnerLight and Projectile.drawLayer for more details. */[Type] = true;
         }
         public override void SetDefaults()
         {
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Summon.NecromanticSerpent
         {
             return false;
         }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)/* tModPorter Note: Removed. Set Projectile.drawLayer instead */
         {
             behindProjectiles.Add(index);
         }

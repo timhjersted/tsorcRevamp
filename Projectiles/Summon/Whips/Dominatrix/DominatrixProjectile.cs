@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.Dominatrix
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], DustWidth, DustHeight, DustID.CrimsonPlants, 0f, 0f, 150, default, 1.3f);
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             List<Vector2> list = new List<Vector2>();
             Projectile.FillWhipControlPoints(Projectile, list);

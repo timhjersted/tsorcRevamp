@@ -63,9 +63,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player P = spawnInfo.Player; //These are mostly redundant with the new zone definitions, but it still works.
+            Player P = spawner.Player; //These are mostly redundant with the new zone definitions, but it still works.
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
@@ -75,15 +75,15 @@ namespace tsorcRevamp.NPCs.Enemies
             bool InBrownLayer = P.ZoneDirtLayerHeight;
             bool InGrayLayer = P.ZoneRockLayerHeight;
             bool InHell = P.ZoneUnderworldHeight;
-            bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
+            bool Ocean = spawner.SpawnTileX < 3600 || spawner.SpawnTileX > (Main.maxTilesX - 100) * 16;
             // P.townNPCs > 0f // is no town NPCs nearby
 
-            if (spawnInfo.Invasion)
+            if (spawner.invaders)
             {
                 return 0;
             }
 
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
             //ONLY SPAWNS IN HELL PRE-HM, THEN CAN SPAWN IN CORRUPTION IN HM
             if (!Main.hardMode && InHell && Main.rand.NextBool(6)) return 1;

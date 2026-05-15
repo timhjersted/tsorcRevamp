@@ -53,14 +53,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 dashCounter = 0;
             }
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player p = spawnInfo.Player;
+            Player p = spawner.Player;
             if (tsorcRevampWorld.SuperHardMode && p.ZoneSnow)
             {
                 return 0.1f;
             }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f)
+            if (tsorcRevampWorld.SuperHardMode && spawner.SpawnTileX > Main.maxTilesX * 0.7f)
             {
                 if (p.ZoneDirtLayerHeight)
                 {

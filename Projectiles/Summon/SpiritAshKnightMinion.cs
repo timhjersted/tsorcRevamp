@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Summon
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 8;
-            ProjectileID.Sets.MinionTargettingFeature[Type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Type] = true;
 
             Main.projPet[Type] = true;
 

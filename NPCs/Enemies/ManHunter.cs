@@ -65,17 +65,17 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0f;
 
-            if (!Main.hardMode && !spawnInfo.Player.ZoneMeteor && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
+            if (!Main.hardMode && !spawner.Player.ZoneMeteor && spawner.Player.ZoneJungle && !spawner.Player.ZoneDungeon && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson)
             {
-                if (spawnInfo.Player.ZoneOverworldHeight) return 0.1f;
-                if (spawnInfo.Player.ZoneDirtLayerHeight) return 0.03f;
-                if (spawnInfo.Player.ZoneRockLayerHeight) return 0.04f;
+                if (spawner.Player.ZoneOverworldHeight) return 0.1f;
+                if (spawner.Player.ZoneDirtLayerHeight) return 0.03f;
+                if (spawner.Player.ZoneRockLayerHeight) return 0.04f;
             }
-            if (Main.hardMode && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneBeach && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) return 0.02f;
+            if (Main.hardMode && !spawner.Player.ZoneMeteor && !spawner.Player.ZoneBeach && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson) return 0.02f;
 
             return chance;
         }

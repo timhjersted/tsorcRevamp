@@ -32,18 +32,18 @@ namespace tsorcRevamp.Items
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
         }
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.15f, 0.42f, 0.05f);
         }
-        public override bool GrabStyle(Player player)
+        public override bool GrabStyle(WorldItem item, Player player)
         { //make pulling souls through walls more consistent
             Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
             Item.velocity = movement;
             return true;
         }
-        public override void GrabRange(Player player, ref int grabRange)
+        public override void GrabRange(WorldItem item, Player player, ref int grabRange)
         {
             grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
         }
@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items
             // DisplayName.SetDefault("Fading soul");
             // Tooltip.SetDefault("Consume to gain a mere 50 souls");
         }
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.05f, 0.18f, 0.02f);
         }
@@ -194,7 +194,7 @@ namespace tsorcRevamp.Items
             // DisplayName.SetDefault("Soul of a Proud Knight");
             // Tooltip.SetDefault("Consume to gain 2000 souls");
         }
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.25f, 0.60f, 0.15f);
         }
@@ -273,7 +273,7 @@ namespace tsorcRevamp.Items
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
         }
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.2f, 0.52f, 0.08f);
         }
@@ -370,7 +370,7 @@ namespace tsorcRevamp.Items
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
         }
-        public override void PostUpdate()
+        public override void PostUpdate(WorldItem item)
         {
             Lighting.AddLight(Item.Center, 0.25f, 0.6f, 0.10f);
         }

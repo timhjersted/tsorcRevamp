@@ -113,7 +113,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Main.spriteBatch.Draw(((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]), Projectile.Center - Main.screenPosition, Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Frame(), Color.White, 0, Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Size() / 2, 2, SpriteEffects.None, 0);
             return false;

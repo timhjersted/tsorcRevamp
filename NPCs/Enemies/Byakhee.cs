@@ -43,25 +43,25 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #region Spawn
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion)
+            Player p = spawner.Player;
+            if (spawner.invaders)
             {
                 chance = 0;
                 return chance;
             }
 
-            if (spawnInfo.Player.townNPCs > 0f) return 0f;
-            if (spawnInfo.Player.ZoneOverworldHeight && Main.hardMode && spawnInfo.Player.ZoneDesert && !Main.dayTime) return 0.0627f;
-            if (spawnInfo.Player.ZoneOverworldHeight && Main.hardMode && spawnInfo.Player.ZoneDesert && Main.dayTime) return 0.0368f;
-            if (spawnInfo.Player.ZoneUndergroundDesert && Main.hardMode && Main.dayTime) return 0.038f;
+            if (spawner.Player.townNPCs > 0f) return 0f;
+            if (spawner.Player.ZoneOverworldHeight && Main.hardMode && spawner.Player.ZoneDesert && !Main.dayTime) return 0.0627f;
+            if (spawner.Player.ZoneOverworldHeight && Main.hardMode && spawner.Player.ZoneDesert && Main.dayTime) return 0.0368f;
+            if (spawner.Player.ZoneUndergroundDesert && Main.hardMode && Main.dayTime) return 0.038f;
 
-            if (Main.hardMode && spawnInfo.Player.ZoneRain)
+            if (Main.hardMode && spawner.Player.ZoneRain)
             {
-                if (spawnInfo.Player.ZoneOverworldHeight && Main.dayTime) return 0.0433f;
-                if (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime) return 0.0855f;
+                if (spawner.Player.ZoneOverworldHeight && Main.dayTime) return 0.0433f;
+                if (spawner.Player.ZoneOverworldHeight && !Main.dayTime) return 0.0855f;
             }
             return chance;
         }

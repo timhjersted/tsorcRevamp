@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(BuffID.Oiled, Main.rand.Next(8, 18) * 30);
             }
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             lightColor = new Color(255, 255, 255, 127) * (1f - (float)Projectile.alpha / 255f);
             return true;

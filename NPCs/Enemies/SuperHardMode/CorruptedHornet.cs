@@ -43,11 +43,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             cursedFlameDamage = (int)(cursedFlameDamage * tsorcRevampWorld.SHMScale);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight && Main.rand.NextBool(2))
+                if (spawner.Player.ZoneJungle && !spawner.Player.ZoneOverworldHeight && Main.rand.NextBool(2))
                 {
                     return 1;
                 }

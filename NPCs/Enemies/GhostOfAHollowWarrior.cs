@@ -809,25 +809,25 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
+            bool FrozenOcean = spawner.SpawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawner.SpawnTileX < 800 || FrozenOcean;
 
-            Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
+            Player p = spawner.Player;
+            if (spawner.invaders || Sky(p) || spawner.Player.ZoneSnow)
             {
                 chance = 0;
                 return chance;
             }
 
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
-            if (spawnInfo.Water || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) return 0f;
-            if (spawnInfo.Player.ZoneGlowshroom) return 0f;
+            if (spawner.Player.townNPCs > 1f) return 0f;
+            if (spawner.waterTile || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson) return 0f;
+            if (spawner.Player.ZoneGlowshroom) return 0f;
 
-            if (spawnInfo.Player.ZoneGraveyard && !Main.hardMode && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 185 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 215
-                 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 301 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 214 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 302)) chance = 3f;
+            if (spawner.Player.ZoneGraveyard && !Main.hardMode && (Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == 185 || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == 215
+                 || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == 301 || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == 214 || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].WallType == 302)) chance = 3f;
 
             return chance;
         }

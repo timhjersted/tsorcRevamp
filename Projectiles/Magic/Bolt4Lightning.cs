@@ -273,7 +273,7 @@ namespace tsorcRevamp.Projectiles.Magic
 
         public RenderTarget2D tempTarget;
         public RenderTarget2D lightningTarget;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             //Don't draw anything if it hasn't generated the branches
             if (branches == null || branches.Count == 0 || lightningTarget == null)

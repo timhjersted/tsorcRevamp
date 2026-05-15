@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items
             }
         }
         
-        public override bool GrabStyle(Player player)
+        public override bool GrabStyle(WorldItem item, Player player)
         {
             Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
@@ -58,7 +58,7 @@ namespace tsorcRevamp.Items
             return true;
         }
 
-        public override void GrabRange(Player player, ref int grabRange)
+        public override void GrabRange(WorldItem item, Player player, ref int grabRange)
         {
             grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper / 2);
         }
@@ -69,12 +69,12 @@ namespace tsorcRevamp.Items
             {
                 if (line2.Mod == "Terraria" && line2.Name == "ItemName")
                 {
-                    line2.OverrideColor = BaseColor.RarityExample;
+                    line2.Color = BaseColor.RarityExample;
                 }
             }
         }
 
-        public override bool OnPickup(Player player)
+        public override bool OnPickup(WorldItem item, Player player)
         {
             bool openSlot = false;
             for (int i = 0; i < /*Main.maxInventory*/ 50; i++) //Main.maxInventory == 58 would include coin and ammo slots, we don't want to take those into account in this case
@@ -110,7 +110,7 @@ namespace tsorcRevamp.Items
         int itemframe = 0;
         int itemframeCounter = 0;
 
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        public override bool PreDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
 
             Lighting.AddLight(Item.Center, 0.1f, 0.45f, 0.21f);

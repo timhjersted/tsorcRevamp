@@ -33,9 +33,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.VampireBatBanner>();
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            Player p = spawnInfo.Player;
+            Player p = spawner.Player;
             if (tsorcRevampWorld.SuperHardMode)
             {
                 if (p.ZoneCorrupt || p.ZoneCrimson)

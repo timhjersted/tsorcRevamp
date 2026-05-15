@@ -176,17 +176,17 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             return false;
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             lightColor = Color.White;
             if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8)
             {
                 lightColor = FilledColor;
-                return base.PreDraw(ref lightColor);
+                return base.PreDraw(player, ref lightColor);
             }
-            return base.PreDraw(ref lightColor);
+            return base.PreDraw(player, ref lightColor);
         }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)/* tModPorter Note: Removed. Set Projectile.drawLayer instead */
         {
             overPlayers.Add(index);
         }

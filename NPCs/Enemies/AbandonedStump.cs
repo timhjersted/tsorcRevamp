@@ -67,15 +67,15 @@ namespace tsorcRevamp.NPCs.Enemies
             });
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0;
 
-            if (Main.dayTime && NPC.CountNPCS(ModContent.NPCType<AbandonedStump>()) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.SpawnTileType] && /*!spawnInfo.Water &&*/ ((Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 5].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 8].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 12].WallType == WallID.None) || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.MudUnsafe)
-                && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneMeteor)//all this is to prevent the npc spawning in really odd looking places
-                && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].TileType == TileID.Grass && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].RightSlope//make sure block to left and right are jungle grass
-                && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].TileType != TileID.Grass && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].TileType != TileID.Dirt && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].LeftSlope
-                && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope)
+            if (Main.dayTime && NPC.CountNPCS(ModContent.NPCType<AbandonedStump>()) < 2 && TileID.Sets.Conversion.Grass[spawner.SpawnTileType] && /*!spawnInfo.Water &&*/ ((Main.tile[spawner.SpawnTileX, spawner.SpawnTileY - 5].WallType == WallID.None || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY - 8].WallType == WallID.None || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY - 12].WallType == WallID.None) || Main.tile[spawner.SpawnTileX, spawner.SpawnTileY - 2].WallType == WallID.MudUnsafe)
+                && !(spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneDesert || spawner.Player.ZoneHallow || spawner.Player.ZoneJungle || spawner.Player.ZoneMeteor)//all this is to prevent the npc spawning in really odd looking places
+                && Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY].TileType == TileID.Grass && !Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY].IsHalfBlock && !Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY].RightSlope//make sure block to left and right are jungle grass
+                && Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY - 1].TileType != TileID.Grass && Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY - 1].TileType != TileID.Dirt && !Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY - 1].IsHalfBlock && !Main.tile[spawner.SpawnTileX + 1, spawner.SpawnTileY - 1].LeftSlope
+                && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].IsHalfBlock && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].RightSlope && !Main.tile[spawner.SpawnTileX, spawner.SpawnTileY].LeftSlope)
             {
                 return 1.3f;
             }

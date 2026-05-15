@@ -110,7 +110,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
             return result;
         }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)/* tModPorter Note: Removed. Set Projectile.drawLayer instead */
         {
             behindProjectiles.Add(index);
         }
@@ -118,7 +118,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         Texture2D texture;
         Texture2D starTexture;
         float starRotation;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             if (Projectile.ai[1] == 1)
             {

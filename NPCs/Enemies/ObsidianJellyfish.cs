@@ -38,16 +38,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 80;
             }
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
-            bool TropicalOcean = spawnInfo.Player.position.X < 3600 && spawnInfo.Water;
+            bool TropicalOcean = spawner.Player.position.X < 3600 && spawner.waterTile;
             float chance = 0;
 
-            if (Main.hardMode && TropicalOcean && spawnInfo.Player.ZoneJungle) return 0.045f;
+            if (Main.hardMode && TropicalOcean && spawner.Player.ZoneJungle) return 0.045f;
 
             if (!Main.hardMode /*|| ModWorld.superHardmode*/)
             {
-                if ((spawnInfo.Water && (spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneOverworldHeight)) //I've added dirt layer as otherwise they would be practically non-existent on the tsorc map
+                if ((spawner.waterTile && (spawner.Player.ZoneMeteor || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson)) && (spawner.Player.ZoneRockLayerHeight || spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneOverworldHeight)) //I've added dirt layer as otherwise they would be practically non-existent on the tsorc map
                 {
                     chance = .35f;
                 }
@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode /*|| ModWorld.superHardmode*/)
             {
-                if ((spawnInfo.Water && (spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneDungeon)) && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneOverworldHeight)) //I've added dirt layer as otherwise they would be practically non-existent on the tsorc map
+                if ((spawner.waterTile && (spawner.Player.ZoneMeteor || spawner.Player.ZoneCorrupt || spawner.Player.ZoneCrimson || spawner.Player.ZoneDungeon)) && (spawner.Player.ZoneRockLayerHeight || spawner.Player.ZoneDirtLayerHeight || spawner.Player.ZoneOverworldHeight)) //I've added dirt layer as otherwise they would be practically non-existent on the tsorc map
                 {
                     chance = .45f;
                 }

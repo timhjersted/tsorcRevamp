@@ -57,23 +57,23 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             float chance = 0f;
 
-            if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.Player.ZoneDungeon)
+            if (!Main.hardMode && NPC.downedBoss3 && spawner.Player.ZoneDungeon)
             {
                 return 0.25f;
             }
-            else if (Main.hardMode && spawnInfo.Player.ZoneDungeon)
+            else if (Main.hardMode && spawner.Player.ZoneDungeon)
             {
                 return 0.12f;
             }
-            else if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon)
+            else if (tsorcRevampWorld.SuperHardMode && spawner.Player.ZoneDungeon)
             {
                 return 0.1f; //.05 is 3.85%
             }
-            if (spawnInfo.Player.ZoneGraveyard)
+            if (spawner.Player.ZoneGraveyard)
             {
                 return 0.2f; // was 0.17
             }

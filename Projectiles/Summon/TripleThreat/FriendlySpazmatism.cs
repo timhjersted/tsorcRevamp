@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Summon.TripleThreat
         {
 
             // This is necessary for right-click targeting
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Projectile.type] = true;
 
             Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
 
@@ -330,7 +330,7 @@ namespace tsorcRevamp.Projectiles.Summon.TripleThreat
         }
 
         public static Effect spazEffect;
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             Lighting.AddLight((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16, 0f, 0.4f, 0.8f);
 

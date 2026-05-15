@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Materials
         public int itemframe = 0;
         public int itemframeCounter = 0;
 
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        public override bool PreDrawInWorld(WorldItem item, SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Lighting.AddLight(Item.Center, .5f, .35f, .35f);
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];

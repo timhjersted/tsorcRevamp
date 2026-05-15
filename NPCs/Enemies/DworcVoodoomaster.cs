@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies
         //Spawns in the Jungle Underground and in the Cavern.
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        public override float SpawnChance(NPC.Spawner spawner)
         {
             //Ensuring it can't spawn if one already exists.
             int count = 0;
@@ -105,16 +105,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
             float chance = 0f;
 
-            if (spawnInfo.Water) return 0f;
+            if (spawner.waterTile) return 0f;
 
-            if ((spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneJungle) && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
+            if ((spawner.Player.ZoneMeteor || spawner.Player.ZoneJungle) && !spawner.Player.ZoneDungeon && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson)
             {
-                if (spawnInfo.Player.ZoneOverworldHeight) return 0.004f;
-                if (spawnInfo.Player.ZoneDirtLayerHeight) return 0.008f;
-                if (spawnInfo.Player.ZoneRockLayerHeight && Main.dayTime) return 0.095f;
-                if (spawnInfo.Player.ZoneRockLayerHeight && !Main.dayTime) return 0.035f;
+                if (spawner.Player.ZoneOverworldHeight) return 0.004f;
+                if (spawner.Player.ZoneDirtLayerHeight) return 0.008f;
+                if (spawner.Player.ZoneRockLayerHeight && Main.dayTime) return 0.095f;
+                if (spawner.Player.ZoneRockLayerHeight && !Main.dayTime) return 0.035f;
             }
-            if (Main.hardMode && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneBeach && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) return 0.005f;
+            if (Main.hardMode && spawner.Player.ZoneJungle && !spawner.Player.ZoneMeteor && !spawner.Player.ZoneBeach && !spawner.Player.ZoneCorrupt && !spawner.Player.ZoneCrimson) return 0.005f;
 
             return chance;
         }

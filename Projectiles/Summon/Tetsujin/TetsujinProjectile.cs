@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Summon.Tetsujin
         {
 
             // This is necessary for right-click targeting
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargetingFeature[Projectile.type] = true;
 
             Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
 
@@ -383,7 +383,7 @@ namespace tsorcRevamp.Projectiles.Summon.Tetsujin
             Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3() * 0.78f);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.direction == 1)
