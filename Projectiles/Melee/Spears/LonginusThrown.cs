@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -28,6 +28,20 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
         }
 
         public static Texture2D texture;
+        public override void OnSpawn(IEntitySource source)
+        {
+            // Since projectile is centered on spear tip for collision hitbox, offset starting
+            // projectile center so sprite matches where projectile is initially held.
+            if (texture == null || texture.IsDisposed)
+            {
+                texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture);
+            }
+            Vector2 origin = texture.Bounds.Size() / 2f;
+            float initialRotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 + MathHelper.ToRadians(45f);
+            Vector2 spearTipOffset = origin.RotatedBy(initialRotation);
+            Projectile.Center -= spearTipOffset;
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();
@@ -54,30 +68,15 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
+            Vector2 spearTipOffset = origin.RotatedBy(Projectile.rotation);
             Main.EntitySpriteDraw(texture,
-                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY) + spearTipOffset,
                 sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
 
             return false;
         }
-
-        public override void ModifyDamageHitbox(ref Rectangle hitbox)
-        {
-            // Move damage hitbox to where spear tip is
-            double spearTipOffsetX = 185 * Math.Cos(Projectile.velocity.ToRotation());
-            double spearTipOffsetY = 185 * Math.Sin(Projectile.velocity.ToRotation());
-            hitbox.Offset((int)spearTipOffsetX, (int)spearTipOffsetY);
-        }
-
-		public override void CutTiles()
-		{
-			// Move vine/pot breaking to where spear tip is
-            Vector2 spearTipOffsetStarting = new Vector2(170 * MathF.Cos(Projectile.velocity.ToRotation()), 170 * MathF.Sin(Projectile.velocity.ToRotation()));
-            Vector2 spearTipOffsetEnding = new Vector2(200 * MathF.Cos(Projectile.velocity.ToRotation()), 200 * MathF.Sin(Projectile.velocity.ToRotation()));
-			Utils.PlotTileLine(Projectile.Center + spearTipOffsetStarting, Projectile.Center + spearTipOffsetEnding, 70, DelegateMethods.CutTiles);
-		}
 
         public override void AI()
         {
@@ -87,8 +86,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
 
             if (Main.rand.NextBool(3))
             {
-                Vector2 spearTipOffset = new Vector2(185 * MathF.Cos(Projectile.velocity.ToRotation()), 185 * MathF.Sin(Projectile.velocity.ToRotation()));
-                int dust = Dust.NewDust(Projectile.position + spearTipOffset, Projectile.width, Projectile.height, 90, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), 1.3f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 90, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), 1.3f);
                 Main.dust[dust].noGravity = true;
             }
         }
@@ -97,18 +95,16 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
         {
             if (Projectile.ai[0] == 1)
             {
-                Vector2 spearTipOffset = new Vector2(185 * MathF.Cos(Projectile.velocity.ToRotation()), 185 * MathF.Sin(Projectile.velocity.ToRotation()));
-
                 for (int i = 0; i < 150; i++)
                 {
                     Vector2 direction = Main.rand.NextVector2Circular(1f, 1f).SafeNormalize(Vector2.UnitX);
                     float speed = Main.rand.NextFloat(5.5f, 19f);
 
-                    int dust1 = Dust.NewDust(Projectile.position + spearTipOffset, Projectile.width, Projectile.height, 90, 0f, 0f, 70, default, 1.55f);
+                    int dust1 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 90, 0f, 0f, 70, default, 1.55f);
                     Main.dust[dust1].velocity = direction * speed;
                     Main.dust[dust1].noGravity = true;
 
-                    int dust2 = Dust.NewDust(Projectile.position + spearTipOffset, Projectile.width, Projectile.height, 219, 0f, 0f, 70, default, 1.95f);
+                    int dust2 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 219, 0f, 0f, 70, default, 1.95f);
                     Main.dust[dust2].velocity = direction * (speed * 1.2f);
                     Main.dust[dust2].noGravity = true;
                 }
@@ -127,8 +123,9 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
         public override void PostDraw(Color lightColor)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
-            Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f); 
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
+            Vector2 spearTipOffset = origin.RotatedBy(Projectile.rotation);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition + spearTipOffset;
 
             for (int i = 1; i <= 5; i++)  
             {
