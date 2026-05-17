@@ -110,7 +110,7 @@ namespace tsorcRevamp.Projectiles.Melee
                     Projectile.rotation,
                     origin,
                     Projectile.scale,
-                    SpriteEffects.None,
+                    SpriteEffects.None
                     
                 );
             }

@@ -629,7 +629,10 @@ namespace tsorcRevamp
 
             magicDefense = 0;
 
-
+            if (loveHealCooldown > 0)
+            {
+                loveHealCooldown--;
+            }
             //No more Distorted debuff
             Player.buffImmune[BuffID.VortexDebuff] = true;
 
@@ -2573,6 +2576,28 @@ namespace tsorcRevamp
                         Player.AddBuff(BuffID.WitheredArmor, 5*60);
                         Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 5*60, false);
                         Player.AddBuff(BuffID.Chilled, 5*30);
+                    }
+                }
+            }
+
+            if (HasLoveRing)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player ally = Main.player[i];
+
+                    if (ally.whoAmI == Player.whoAmI)
+                        continue;
+
+                    if (!ally.active || ally.dead)
+                        continue;
+
+                    if (!(Player.team == 0 || ally.team == Player.team))
+                        continue;
+
+                    if (Vector2.Distance(Player.Center, ally.Center) < 1000f)
+                    {
+                        ally.AddBuff(ModContent.BuffType<EverlastingLoveBuff>(), 3);
                     }
                 }
             }

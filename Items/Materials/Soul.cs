@@ -238,14 +238,15 @@ namespace tsorcRevamp.Items.Materials
         public override string Texture => "tsorcRevamp/Items/Materials/SoulOfGhostWyvern";
         public override void SetStaticDefaults()
         {
-            base.SetStaticDefaults();
-            // DisplayName.SetDefault("Soul of the Ghost Wyvern");
-            // Tooltip.SetDefault("The essence of the Ghost Wyvern.");
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
+            ItemID.Sets.AnimatesAsSoul[Item.type] = true;
+            ItemID.Sets.ItemIconPulse[Item.type] = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
         }
 
         public override void PostUpdate()
         {
-            Lighting.AddLight(Item.Center, 0.28f, 0.33f, 0.75f);
+            Lighting.AddLight(Item.Center, 0.85f, 0.33f, 0.23f);
         }
 
     }
@@ -275,6 +276,17 @@ namespace tsorcRevamp.Items.Materials
         public override void PostUpdate()
         {
             Lighting.AddLight(Item.Center, Color.Green.ToVector3());
+        }
+    }
+    public class SoulOfOccultist : Soul
+    {
+        public override void SetStaticDefaults()
+        {
+            base.SetStaticDefaults();
+        }
+        public override void PostUpdate()
+        {
+            Lighting.AddLight(Item.Center, 0.7f, 0f, 0.25f);
         }
     }
 }

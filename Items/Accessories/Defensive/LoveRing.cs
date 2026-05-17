@@ -27,23 +27,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // Aggro increase, same as flesh knuckles 
             player.aggro += 400;
             player.lifeRegen += LifeRegen;
-
-            // Increase life regen for all near players 
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
-                Player ally = Main.player[i];
-                if (ally.active && !ally.dead && ally.team == player.team && ally.team != 0)
-                {
-                    if (Vector2.Distance(player.Center, ally.Center) < 800f)
-                    {
-                        ally.lifeRegen += LifeRegen;
-                    }
-                }
-            }
-
             player.GetModPlayer<tsorcRevampPlayer>().HasLoveRing = true;
         }
     }

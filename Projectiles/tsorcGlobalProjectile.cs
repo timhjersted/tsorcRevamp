@@ -179,7 +179,7 @@ namespace tsorcRevamp.Projectiles
             {
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
+                
                 if (projectile.type == ProjectileID.RainbowCrystalExplosion)
                 {
                     projectile.usesLocalNPCImmunity = true;
@@ -251,12 +251,6 @@ namespace tsorcRevamp.Projectiles
                     {
                         projectile.Kill();
                     }
-                }
-
-                if (projectile.type == ProjectileID.RubyBolt)
-                {
-                    projectile.localNPCHitCooldown = 100;
-                    projectile.usesLocalNPCImmunity = true;
                 }
 
                 if (projectile.type == ProjectileID.Skull)

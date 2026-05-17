@@ -160,6 +160,7 @@ namespace tsorcRevamp
         public static List<int> NatureNPCs;
         public static List<int> UndeadNPCs;
         public static List<int> GhostNPCs;
+        public static List<int> WaterNPCs;
         public static List<int> VanillaMeleeBlackList;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
@@ -1540,7 +1541,42 @@ namespace tsorcRevamp
                 ModContent.NPCType<GhostDragonBody3>(), 
                 ModContent.NPCType<GhostDragonLegs>(), 
                 ModContent.NPCType<GhostDragonTail>(), 
-                ModContent.NPCType<GhostOfTheDarkmoonKnight>()
+                ModContent.NPCType<GhostOfTheDarkmoonKnight>(),
+                ModContent.NPCType<Death>(),
+                ModContent.NPCType<TrueDeath>()
+            };
+            #endregion
+
+            #region Water NPC list
+            WaterNPCs = new List<int>()
+            {
+                NPCID.Shark,
+                NPCID.Goldfish,
+                NPCID.CorruptGoldfish, 
+                NPCID.BlueJellyfish,
+                NPCID.GreenJellyfish,
+                NPCID.PinkJellyfish,
+                NPCID.Piranha,
+                NPCID.Arapaima,
+                NPCID.SeaSnail,
+                NPCID.Squid,
+                NPCID.FlyingFish,
+                NPCID.GoldfishWalker,
+                NPCID.BloodJelly,
+                NPCID.BloodFeeder,
+                NPCID.DukeFishron,
+                NPCID.Sharkron,
+                NPCID.Sharkron2,
+                NPCID.CreatureFromTheDeep,
+                NPCID.BloodNautilus,
+                NPCID.BloodSquid,
+                NPCID.GoblinShark,
+                NPCID.BloodEelHead,
+                NPCID.BloodEelBody,
+                NPCID.BloodEelTail,
+                //NPCID.Orca,
+                ModContent.NPCType<NPCs.Enemies.SuperHardMode.ManOfWar>(),
+                ModContent.NPCType<NPCs.Enemies.WaterSpirit>()
             };
             #endregion
 

@@ -3223,7 +3223,7 @@ Mods: {
 				DisplayName: Bequeathed Lord Soul Shard
 				Tooltip:
 					'''
-					Soul of the albino Seath the Scaleless.
+					'The essence of the albino Seath the Scaleless'
 					A fragment of a Lord Soul discovered at the dawn of the Age of Fire.
 					Seath allied with Lord Gwyn and turned upon the dragons, and for this he was
 					awarded dukedom, embraced by the royalty, and given a fragment of a great soul.
@@ -3919,7 +3919,7 @@ Mods: {
 
 			CursedSoul: {
 				DisplayName: Cursed Soul
-				Tooltip: Soul of a cursed being.
+				Tooltip: "'The essence of cursed beings from the abyss'"
 			}
 
 			Darksign: {
@@ -4174,7 +4174,7 @@ Mods: {
 
 			GhostWyvernSoul: {
 				DisplayName: Soul of the Ghost Wyvern
-				Tooltip: The essence of the Ghost Wyvern.
+				Tooltip: "'The essence of the Wyvern Mage Shadow and his disciple'"
 			}
 
 			GlintstonePebble: {
@@ -4211,7 +4211,7 @@ Mods: {
 				DisplayName: Guardian Soul
 				Tooltip:
 					'''
-					Soul of an ancient guardian.
+					'The essence of an ancient guardian'
 					Can be used at Demon Altars to forge powerful weapons and items.
 					'''
 			}
@@ -5072,7 +5072,7 @@ Mods: {
 
 			SoulOfArtorias: {
 				DisplayName: Soul of Artorias
-				Tooltip: The essence of Artorias of the Abyss.
+				Tooltip: "'The essence of Artorias of the Abyss'"
 			}
 
 			SoulOfAttraidies: {
@@ -5086,17 +5086,17 @@ Mods: {
 
 			SoulOfBlight: {
 				DisplayName: Soul of Blight
-				Tooltip: The essence of destruction.
+				Tooltip: "'The essence of destruction'"
 			}
 
 			SoulOfChaos: {
 				DisplayName: Soul of Chaos
-				Tooltip: The essence of chaos.
+				Tooltip: "'The essence of pure discord'"
 			}
 
 			SoulOfLife: {
 				DisplayName: Soul of Life
-				Tooltip: The essence of growth, deeply connected to the Earth.
+				Tooltip: "'The essence of growth, deeply connected to the Earth'"
 			}
 
 			StaminaDroplet: {
@@ -5777,7 +5777,7 @@ Mods: {
 
 			CoralSword: {
 				DisplayName: Coral Sword
-				Tooltip: Edged to slay those of the sea. Deals 4x damage to water enemies.
+				Tooltip: Edged to slay those of the sea. Deals 3x damage to water enemies.
 			}
 
 			CorruptedTooth: {
@@ -8012,11 +8012,6 @@ Mods: {
 				Tooltip: The extremely sharp, electric claws of an ancient wild god.
 			}
 
-			OolacileDarkMatter: {
-				DisplayName: Essence of Oolacile
-				Tooltip: Tangible shadow energy from the darkness of Oolacile.
-			}
-
 			SunderedMoon: {
 				DisplayName: Sundered Moon
 				Tooltip:
@@ -8140,6 +8135,11 @@ Mods: {
 			AbyssalStar: {
 				Tooltip: ""
 				DisplayName: Abyssal Star
+			}
+
+			SoulOfOccultist: {
+				DisplayName: Soul of the Occultist
+				Tooltip: "'The essence of dark magic from the remains of Oolacile'"
 			}
 		}
 
@@ -9163,6 +9163,15 @@ Mods: {
 			YoungHunterBuff: {
 				DisplayName: Young Hunter
 				Description: The Young Hunter will hunt for you!
+			}
+
+			EverlastingLoveBuff: {
+				DisplayName: Everlasting Love
+				Description:
+					'''
+					Your bond of love with the wearer is strong! 
+					Increases life regeneration and slightly reduces aggro
+					'''
 			}
 		}
 

@@ -7962,11 +7962,6 @@ Mods: {
 				Tooltip: Чрезвычайно острые, электрические когти древнего дикого бога.
 			}
 
-			OolacileDarkMatter: {
-				DisplayName: Тёмная материя Оолациля
-				Tooltip: Ощутимая теневая энергия из тьмы Оолациля.
-			}
-
 			SunderedMoon: {
 				// DisplayName: Sundered Moon
 				/* Tooltip:
@@ -8090,6 +8085,11 @@ Mods: {
 			AbyssalStar: {
 				// Tooltip: ""
 				// DisplayName: Abyssal Star
+			}
+
+			SoulOfOccultist: {
+				// DisplayName: Soul Of Occultist
+				// Tooltip: ""
 			}
 		}
 
@@ -9113,6 +9113,15 @@ Mods: {
 			YoungHunterBuff: {
 				// DisplayName: Young Hunter
 				// Description: The Young Hunter will hunt for you!
+			}
+
+			EverlastingLoveBuff: {
+				// DisplayName: Everlasting Love
+				/* Description:
+					'''
+					Your bond of love with the wearer is strong! 
+					Increases life regeneration and slightly reduces aggro
+					''' */
 			}
 		}
 

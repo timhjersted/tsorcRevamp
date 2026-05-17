@@ -7999,11 +7999,6 @@ Mods: {
 				Tooltip: 古老荒野之神的极致锐利带电利爪
 			}
 
-			OolacileDarkMatter: {
-				DisplayName: 乌拉席露暗物质
-				Tooltip: 来自乌拉席露黑暗深渊的有形暗影能量p
-			}
-
 			SunderedMoon: {
 				DisplayName: 残月秘典
 				Tooltip:
@@ -8128,6 +8123,11 @@ Mods: {
 			AbyssalStar: {
 				// Tooltip: ""
 				// DisplayName: Abyssal Star
+			}
+
+			SoulOfOccultist: {
+				// DisplayName: Soul Of Occultist
+				// Tooltip: ""
 			}
 		}
 
@@ -9151,6 +9151,15 @@ Mods: {
 			YoungHunterBuff: {
 				// DisplayName: Young Hunter
 				// Description: The Young Hunter will hunt for you!
+			}
+
+			EverlastingLoveBuff: {
+				// DisplayName: Everlasting Love
+				/* Description:
+					'''
+					Your bond of love with the wearer is strong! 
+					Increases life regeneration and slightly reduces aggro
+					''' */
 			}
 		}
 

@@ -492,7 +492,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 2, 4));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 8, 12));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<OolacileDarkMatter>(), 1, 4, 8));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfOccultist>(), 1, 4, 8));
         }
     }
     public class ArtoriasBag : BossBag

@@ -494,7 +494,81 @@ namespace tsorcRevamp
         {
             if (info.Damage > 1)
             {
-                Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
+                Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s
+            }
+
+            // Convenant of Everlasting Love
+            if (HasLoveRing && loveHealCooldown <= 0 && info.Damage > 0)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player ally = Main.player[i];
+
+                    if (!ally.active || ally.dead)
+                        continue;
+
+                    if (!(Player.team == 0 || ally.team == Player.team))
+                        continue;
+
+                    if (ally.whoAmI == Player.whoAmI)
+                        continue; 
+
+                    if (Vector2.Distance(Player.Center, ally.Center) < 1000f)
+                    {
+                        ally.statLife += LoveRing.HealAmount;
+                        if (ally.statLife > ally.statLifeMax2)
+                            ally.statLife = ally.statLifeMax2;
+
+                        ally.HealEffect(LoveRing.HealAmount);
+
+                        for (int b = 0; b < ally.buffType.Length; b++)
+                        {
+                            int buff = ally.buffType[b];
+
+                            if (buff <= 0)
+                                continue;
+
+                            if (!Main.debuff[buff])
+                                continue;
+
+                            if (buff == BuffID.PotionSickness || buff == BuffID.ManaSickness) // ofc ingoring these
+                                continue;
+
+                            ally.buffTime[b] -= 120; // 2 seconds
+                            if (ally.buffTime[b] < 0)
+                                ally.buffTime[b] = 0;
+                        }
+
+                        for (int h = 0; h < 45; h++)
+                        {
+                            float t = MathHelper.TwoPi * (h / 40f);
+
+                            float x = 16 * (float)Math.Pow(Math.Sin(t), 3);
+                            float y = 13 * (float)Math.Cos(t)
+                                    - 5 * (float)Math.Cos(2 * t)
+                                    - 2 * (float)Math.Cos(3 * t)
+                                    - (float)Math.Cos(4 * t);
+
+                            Vector2 offset = new Vector2(x, -y) * 1.8f;
+
+                            int dust = Dust.NewDust(
+                                ally.Center + offset,
+                                0, 0,
+                                58,
+                                0f, 0f,
+                                150,
+                                default,
+                                1.5f
+                            );
+
+                            Main.dust[dust].noGravity = true;
+                            Main.dust[dust].velocity *= 0.1f;
+                        }
+                    }
+                }
+
+                // Cooldown Love Ring
+                loveHealCooldown = LoveRing.Cooldown;
             }
         }
 
@@ -1769,47 +1843,6 @@ namespace tsorcRevamp
                     }
                 }
             }*/
-
-            if (HasLoveRing && loveHealCooldown < 0) 
-            {
-                loveHealCooldown = LoveRing.Cooldown;
-                for (int i = 0; i < Main.maxPlayers; i++)
-                {
-                    Player ally = Main.player[i];
-                    if (ally.active && !ally.dead && ally.team == Player.team && ally.team != 0)
-                    {
-                        if (Vector2.Distance(Player.Center, ally.Center) < 800f)
-                        {
-                            ally.statLife += LoveRing.HealAmount;
-                            if (ally.statLife > ally.statLifeMax2)
-                                ally.statLife = ally.statLifeMax2;
-
-                            ally.HealEffect(LoveRing.HealAmount);
-
-                            for (int b = 0; b < ally.buffType.Length; b++)
-                            {
-                                int buff = ally.buffType[b];
-
-                            if (buff <= 0)
-                                continue;
-
-                            if (!Main.debuff[buff])
-                                continue;
-
-                            if (Main.buffNoTimeDisplay[buff])
-                                continue;
-
-                                // ofc ignoring these 
-                                if (buff == BuffID.PotionSickness || buff == BuffID.ManaSickness)
-                                    continue;
-
-                                if (ally.buffTime[b] > 120)
-                                    ally.buffTime[b] -= 120;
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         //Reduces the mana restored from potions and such to zero
