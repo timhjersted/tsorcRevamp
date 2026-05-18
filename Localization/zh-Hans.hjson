@@ -39,6 +39,7 @@ Mods: {
 				'''
 			CorruptionCursed: 该物品已被[c/701070:腐化]力量[c/338338:诅咒]，目前无法使用
 			BotCNoHeal: 无法治愈[c/6d8827:被诅咒者]
+			// UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			BotCPStone: 减少 {0}% 元素瓶的使用时间
 			BotCManaFlower: 减少 {0}% 蓝露滴圣杯瓶的使用时间
 			DSPickUpRange: 增加黑暗之魂拾取范围
@@ -345,6 +346,12 @@ Mods: {
 			StopEditMarkers: 点击以停止修改标记。
 			ClickToHide: 点这里隐藏
 			ClickToShow: 点这里显示
+			ShowPrefix: 显示
+			TagStory: 剧情
+			TagLore: 传说
+			TagHint: 提示
+			TagTutorial: 教程
+			TagLocation: 地点
 			UpdateMusic: 正在更新音乐包(也可在创意工坊搜索“The Story of Red Cloud Music”订阅音乐包):
 			GetMusic: 创意工坊搜索 “The Story of Red Cloud Music” 订阅音乐包
 			MusicNewUpdate: 点击这里以更新音乐包 (如已手动放置tsorcMusic.tmod，则忽略此提示)
@@ -3711,7 +3718,73 @@ Mods: {
 				Attraidies1: 阿卓迪斯初始阶段
 				Attraidies2: 阿卓迪斯最终阶段
 				Next: 下一个 Boss:
+				// Location: Where to find:
 				DeathCountText: 死亡次数: {0}
+				// ─────────────────────────────────────────────────────────────────────────────
+				//  Clue index → boss mapping. Each clue N corresponds to the boss with NPC.rarity = N.
+				//  Hover behavior:
+				//    Defeated boss → shows "Next Boss:" + clue (rarity + 1)
+				//    Undefeated (???) → shows "Where to find:" + this boss's own clue (rarity)
+				//  Undefeated clues are gated by era (pre-hardmode/hardmode/SHM) so end-game bosses
+				//  stay hidden until the player has progressed there.
+				//
+				//  Rarity → boss mapping. Modded bosses set NPC.rarity in their own SetDefaults.
+				//  Vanilla bosses get their rarity assigned by tsorcRevamp in NPCs/VanillaChanges.cs
+				//  (search "npc.rarity = N" in that file to find/edit). [PHM] = pre-hardmode,
+				//  [HM] = hardmode, [SHM] = Super Hard Mode.
+				//
+				//    1  [PHM] Leonhard               (Special/LeonhardPhase1)             — modded
+				//    2  [PHM] Red Knight             (Enemies/RedKnight)                  — modded
+				//    3  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded
+				//    4  [PHM] Eye of Cthulhu         (VanillaChanges.cs)                  — vanilla
+				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
+				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
+				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
+				//    8  [PHM] King Slime             (VanillaChanges.cs)                  — vanilla
+				//    9  [PHM] Slogra (+ Gaibon)      (Bosses/Slogra)                      — modded
+				//   10  [PHM] Queen Bee              (VanillaChanges.cs)                  — vanilla
+				//   11  [PHM] Skeletron             (VanillaChanges.cs)                   — vanilla
+				//   12  [PHM] Deerclops              (VanillaChanges.cs)                  — vanilla
+				//   13  [PHM] Jungle Wyvern          (Bosses/JungleWyvern/JungleWyvernHead) — modded
+				//   14  [PHM] Ancient Demon          (Bosses/AncientDemon)                — modded
+				//   15  [PHM] Wall of Flesh          (VanillaChanges.cs)                  — vanilla
+				//   16  [HM]  Queen Slime            (VanillaChanges.cs)                  — vanilla
+				//   17  [HM]  The Rage               (Bosses/TheRage)                     — modded
+				//   18  [HM]  Wyvern Mage            (Bosses/WyvernMage/WyvernMage)       — modded
+				//   19  [HM]  The Sorrow             (Bosses/TheSorrow)                   — modded
+				//   20  [HM]  Serris                 (Bosses/Serris/SerrisX)              — modded
+				//   21  [HM]  Death / True Death     (Bosses/Death, Special/TrueDeath)    — modded
+				//   22  [HM]  The Hunter             (Bosses/TheHunter)                   — modded
+				//   23  [HM]  The Destroyer          (VanillaChanges.cs)                  — vanilla
+				//   24  [HM]  The Machine (PrimeV2)  (Bosses/PrimeV2/TheMachine)          — modded
+				//   25  [HM]  Plantera               (VanillaChanges.cs)                  — vanilla
+				//   26  [HM]  Golem                  (VanillaChanges.cs, GolemHeadFree)   — vanilla
+				//   27  [HM]  Empress of Light       (VanillaChanges.cs, HallowBoss)      — vanilla
+				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
+				//   29  [HM]  Dark Shogun Mask       (Bosses/Okiku/FirstForm/DarkShogunMask) — modded
+				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
+				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
+				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
+				//   33  [SHM] Moon Lord              (VanillaChanges.cs, MoonLordFreeEye) — vanilla
+				//   34  [SHM] Water Fiend Kraken     (Bosses/SuperHardMode/Fiends/WaterFiendKraken)   — modded
+				//   35  [SHM] Earth Fiend Lich       (Bosses/SuperHardMode/Fiends/EarthFiendLich)     — modded
+				//   36  [SHM] Fire Fiend Marilith    (Bosses/SuperHardMode/Fiends/FireFiendMarilith)  — modded
+				//   37  [SHM] Blight                 (Bosses/SuperHardMode/Blight)        — modded
+				//   38  [SHM] Abysmal Oolacile Sorc. (Bosses/SuperHardMode/AbysmalOolacileSorcerer)   — modded
+				//   39  [SHM] Artorias               (Bosses/SuperHardMode/Artorias)      — modded
+				//   40  [SHM] Seath the Scaleless    (Bosses/SuperHardMode/Seath/SeathTheScalelessHead) — modded
+				//   41  [SHM] Wyvern Mage Shadow     (Bosses/SuperHardMode/GhostWyvernMage/WyvernMageShadow) — modded
+				//   42  [SHM] Chaos                  (Bosses/SuperHardMode/Chaos)         — modded (currently has no rarity set; defaults to 0 — fix in its SetDefaults)
+				//   43  [SHM] Dark Cloud             (Bosses/SuperHardMode/DarkCloud)     — modded
+				//   44  [SHM] Gwyn                   (Bosses/SuperHardMode/Gwyn)          — modded
+				//   45        "True ending" message — shown as the "Next Boss" hint when hovering Gwyn
+				//
+				//  To rebind a clue to a different boss, edit that boss's `NPC.rarity = N` (or the
+				//  `npc.rarity = N` line in VanillaChanges.cs for vanilla bosses). To rewrite a clue's
+				//  text, just edit the localization line below. Many `*Desc` clues use the shared
+				//  Mods.tsorcRevamp.BossChecklist.*Desc strings (defined near the top of this file)
+				//  so the Boss Checklist mod UI and the Boss Hunting Tome stay in sync.
+				// ─────────────────────────────────────────────────────────────────────────────
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: 李奥纳德出现之地的下方有什么，野心之路的终点又有什么？
 				3: "{$BossChecklist.PinwheelDesc}"
@@ -3941,6 +4014,12 @@ Mods: {
 					'''
 				Enabled: 你成为了被诅咒者
 				Disabled: 诅咒已被移除
+				// Unkindled: You rise as the Unkindled — your fire still smolders.
+				// BearerOfTheCurse: You have taken up the burden — the Curse is yours to bear.
+				// Classic: You let the flame fade. The curse is lifted.
+				// State_Classic: "[c/aaaaaa:Currently:] Classic [c/aaaaaa:— click to become] [c/6d8827:Unkindled]"
+				// State_Unkindled: "[c/6d8827:Currently:] Unkindled [c/aaaaaa:— click to take up the] [c/dd3333:Curse]"
+				// State_BotC: "[c/dd3333:Currently:] Bearer of the Curse [c/aaaaaa:— click to return to] [c/aaaaaa:Classic]"
 				Melee:
 					'''
 					[c/ff8400:近战攻速减少至 {0}%]
@@ -3972,12 +4051,6 @@ Mods: {
 					[c/6efaff:堆叠层数增加你的召唤伤害，如果一段时间没有刷新则堆叠层数会减少]
 					[c/6efaff:每层增加 {1}% 伤害，最高到 {3} 层获得 {2}% 加成]
 					[c/6efaff:满层时，增加 {4}% 召唤标记持续时间]
-					'''
-				End:
-					'''
-					在背包中右键点击此物品来查看不同职业的新机制
-					[c/ca1e00:此模式适用于有红云物语模组游玩经验的玩家]
-					[c/ca1e00:第一次游玩时 【不】 推荐开启]
 					'''
 			}
 
@@ -8126,8 +8199,8 @@ Mods: {
 			}
 
 			SoulOfOccultist: {
-				// DisplayName: Soul Of Occultist
-				// Tooltip: ""
+				// DisplayName: Soul of the Occultist
+				// Tooltip: "'The essence of dark magic from the remains of Oolacile'"
 			}
 		}
 
@@ -10607,11 +10680,15 @@ Mods: {
 				Luck: 祝好运。
 				Gift: 如果你需要更多，你可以在篝火的火焰上烤一些。再见。
 				BotCGift: 被诅咒者，这些生命宝石无疑将在你的旅程中显示它们的价值。再见。
+				// UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems — may they sustain you on the road ahead. Farewell.
 				EasterEgg: 承载...寻求...寻求...免得...
 				button1: 祝福
 				button2v1: 教程引导...
 				button2v2: 收下礼物
 				button2v3: 给予碎片
+				// button2v4: Receive tome
+				// TomeOffer: Before we speak, take this — a [c/6d8827:Boss Hunting Tome]. Hover over any boss in its pages to learn where it dwells, and re-summon those you have already slain.
+				// TomeGiven: May it guide your path. Now then, what knowledge do you seek?
 				BringShards: 如果你碰巧找到了另一个元素瓶碎片，请将其带给我。 这样我就可以减轻你的生存压力。
 				EstusUpgrade: "元素瓶的可使用次数增加了！ 最大容量： "
 				CeruleanUpgrade: "蓝露滴圣杯瓶的可使用次数增加了！ 最大容量： "
@@ -11849,6 +11926,31 @@ Mods: {
 					Tooltip: 只有在创建新地图时才生效
 					Label: 禁用箴言文字泡
 				}
+
+				AutoOpenSoapstones: {
+					// Label: Auto Open Soapstones
+					// Tooltip: ""
+				}
+
+				DisableStorySoapstones: {
+					// Label: Disable Story Soapstones
+					// Tooltip: ""
+				}
+
+				DisableLoreSoapstones: {
+					// Label: Disable Lore Soapstones
+					// Tooltip: ""
+				}
+
+				DisableTutorialSoapstones: {
+					// Label: Disable Tutorial Soapstones
+					// Tooltip: ""
+				}
+
+				DisableLocationBanner: {
+					// Label: Disable Location Banner
+					// Tooltip: ""
+				}
 			}
 		}
 
@@ -11857,6 +11959,7 @@ Mods: {
 			AdventureModeEnabled: 仅限冒险模式
 			DebugModeEnabled: 仅限开发者测试
 			BotCEnabled: 仅限被诅咒者
+			// SoulsModeEnabled: Unkindled or Bearer of the Curse
 			WyvernMageDowned: 击败飞龙法师
 			SorrowDowned: 击败悲伤
 			HunterDowned: 击败猎手

@@ -137,6 +137,15 @@ namespace tsorcRevamp.Items
             return true;
         }
 
+        // Apply the Unkindled heal multiplier to every healing item (mod + vanilla).
+        // Bearer of the Curse never reaches this because CanUseItem above already blocks healLife > 0.
+        // Classic players get the unmodified vanilla amount; Unkindled players get half via ApplyHealing.
+        public override void GetHealLife(Item item, Player player, bool quickHeal, ref int healValue)
+        {
+            if (healValue <= 0) return;
+            healValue = player.GetModPlayer<tsorcRevampPlayer>().ApplyHealing(healValue);
+        }
+
 
         public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
@@ -816,6 +825,16 @@ namespace tsorcRevamp.Items
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.type == ItemID.ManaCrystal)
             {
                 player.statMana += 20;
+            }
+            // Souls-tier Life Crystal nerf: vanilla awards +20 max HP per crystal (and bumps current HP).
+            // For Unkindled and BotC, undo half of that so each crystal gives +10 max HP instead — keeps
+            // the early/mid-game HP curve closer to vanilla Terraria's pre-hardmode threat balance, which
+            // the Souls-style combat is tuned against.
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && item.type == ItemID.LifeCrystal)
+            {
+                player.statLifeMax -= 10;
+                player.statLife -= 10;
+                if (player.statLife < 1) player.statLife = 1;
             }
         }
 

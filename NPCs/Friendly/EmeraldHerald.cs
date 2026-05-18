@@ -43,190 +43,223 @@ namespace tsorcRevamp.NPCs.Friendly
 
         #region Chat Functionality Stuff
 
+        // chatState is stored in the player's ModPlayer (heraldChatState) so it persists across
+        // world re-entries and NPC respawns. State map:
+        //   0   = pre-sequence (greeting / tome offer pending)
+        //   1-6 = tip sequence (Tip5→Tip10)
+        //   7   = ReceiveGift text shown, awaiting acceptance
+        //   8   = gift received, idle random tips
+        //   20  = tome-offer text showing, awaiting "Receive tome" click
 
         public override string GetChat()
         {
             Player player = Main.LocalPlayer;
-            WeightedRandom<string> chat = new WeightedRandom<string>();
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (!player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter)
+            // Auto-migrate: players who received the gift before heraldChatState was saved start at 0
+            // but should be treated as post-gift (state 8).
+            if (modPlayer.ReceivedGift && modPlayer.heraldChatState < 8)
+                modPlayer.heraldChatState = 8;
+
+            if (!modPlayer.FirstEncounter)
             {
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
-
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.FirstEncounter"));
-                player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter = true;
+                modPlayer.FirstEncounter = true;
+                return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.FirstEncounter");
             }
 
-            else
+            if (player.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
             {
-                if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.HasShard"));
-                }
-                else
-                {
-                    if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
-                    {
-                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
-                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.RewardTip"), 4);
-                    }
-                    if (!tsorcRevampWorld.SuperHardMode)
-                    {
-                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.AttraidiesTip"));
-                    }
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip1"));
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip2"));
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip3"));
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip4"));
-                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.EasterEgg"), 0.05); // Easter egg. A classic DS2 meme. Rare dialogue.
-                }
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
+                return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.HasShard");
             }
 
+            // Sequential tip states: reopening the dialog shows the tip the player is currently on.
+            switch (modPlayer.heraldChatState)
+            {
+                case 20:
+                    return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.TomeOffer");
+                case 1:
+                    return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip5");
+                case 2:
+                    return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip6");
+                case 3:
+                    return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip7");
+                case 4:
+                    return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip8");
+                case 5:
+                    return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip9");
+                case 6:
+                    return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip10");
+                case 7:
+                    return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.ReceiveGift");
+            }
+
+            // State 0 (pre-sequence) and state 8+ (post-gift): random tips.
+            WeightedRandom<string> chat = new WeightedRandom<string>();
+            if (!modPlayer.ReceivedGift)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.RewardTip"), 4);
+            }
+            if (!tsorcRevampWorld.SuperHardMode)
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.AttraidiesTip"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip1"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip4"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.EasterEgg"), 0.05);
             return chat;
         }
-
-        int chatState = 0;
 
         public override void SetChatButtons(ref string button, ref string button2)
         {
             Player player = Main.LocalPlayer;
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button1");
 
-            if (chatState == 0 || chatState == 1 || chatState == 2 || chatState == 3 || chatState == 4 || chatState == 5 || chatState == 6 || chatState == 7) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v1"); }
-            if (chatState == 8 || chatState == 9) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v2"); }
-            if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v3"); }
+            // Shard reinforcement takes priority regardless of sequence state.
+            if (player.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
+            {
+                button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v3");
+                return;
+            }
 
+            int s = modPlayer.heraldChatState;
+
+            // Tome-offer step.
+            if (s == 20)
+            {
+                button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v4");
+                return;
+            }
+
+            // Gift-acceptance step.
+            if (s == 7)
+            {
+                button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v2");
+                return;
+            }
+
+            // Everything else (pre-sequence, tip steps, post-gift idle).
+            button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v1");
         }
 
         public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
             Player player = Main.LocalPlayer;
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             if (firstButton)
             {
                 Main.playerInventory = true;
                 Main.npcChatText = "";
                 ModContent.GetInstance<tsorcRevamp>().EmeraldHeraldUserInterface.SetState(new UI.EmeraldHeraldUI());
-                //shop = false; // no shop
                 return;
             }
-            else
+
+            // Shard reinforcement takes priority at any sequence state.
+            if (player.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
             {
-                if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item37);
+                Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BringShards");
+                int shardIndex = player.FindItem(ModContent.ItemType<Items.EstusFlaskShard>());
+                if (player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item37); // Reforge/Anvil sound
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BringShards");
-                    int ShardItemIndex = Main.LocalPlayer.FindItem(ModContent.ItemType<Items.EstusFlaskShard>());
-
-                    if (Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
+                    player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax += 1;
+                    player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax += 3;
+                    if (player.inventory[shardIndex].stack == 1) player.inventory[shardIndex].TurnToAir();
+                    else player.inventory[shardIndex].stack--;
+                    if (Main.netMode != NetmodeID.Server)
                     {
-                        Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax += 1;
-                        Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax += 3;
-                        if (Main.LocalPlayer.inventory[ShardItemIndex].stack == 1) { Main.LocalPlayer.inventory[ShardItemIndex].TurnToAir(); }
-                        else Main.LocalPlayer.inventory[ShardItemIndex].stack--;
-
-                        if (Main.netMode != NetmodeID.Server)
-                        {
-                            Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.EstusUpgrade") + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
-                            Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.CeruleanUpgrade") + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax, Color.RoyalBlue);
-                        }
+                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.EstusUpgrade") + player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
+                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.CeruleanUpgrade") + player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax, Color.RoyalBlue);
                     }
-                    return;
                 }
-                if (chatState == 0) //if you click while in state 0 (greeting)
-                {
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip5"); //show this text
-                    chatState = 1; //move to state 1
-                    return;
-                }
-                if (chatState == 1) //if you click while on the first page of text
-                {
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip6");
-                    chatState = 2; //move to state 2
-                    return;
-                }
-                if (chatState == 2) //if you click while on the second page of text
-                {
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip7");
-                    chatState = 3; //move to state 3, etc
-                    return;
-                }
-                if (chatState == 3)
-                {
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip8");
-                    chatState = 5;
-                    return;
-                }
-                /*if (chatState == 4)
-				{
-					Main.npcChatText = "Don't move vanilla NPC's like the Wizard, Mechanic or Goblin Tinkerer until you've found them in game. Modded NPCs may be moved.";
-					chatState = 5;
-					return;
-				}*/
-                if (chatState == 5)
-                {
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip9");
-                    chatState = 6;
-                    return;
-                }
-                if (chatState == 6)
-                {
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip10");
-                    chatState = 7;
-                    return;
-                }
+                return;
+            }
 
-                if (chatState == 7)
+            // Pre-sequence: offer the tome first, then start the tips.
+            if (modPlayer.heraldChatState == 0)
+            {
+                if (!modPlayer.ReceivedHuntingTome)
                 {
-
-                    if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
-                    {
-                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.ReceiveGift");
-                        if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) { chatState = 9; }
-                        else { chatState = 8; }
-                    }
-                    else
-                    {
-                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Luck");
-                        chatState = 0;
-                    }
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.TomeOffer");
+                    modPlayer.heraldChatState = 20;
                     return;
                 }
-                if (chatState == 8)
-                {
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Gift");
-                    player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
+                // Already has tome — start the tip sequence.
+                Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip5");
+                modPlayer.heraldChatState = 1;
+                return;
+            }
 
-                    if (Main.netMode == NetmodeID.MultiplayerClient)
-                    {
-                        Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ItemID.WormholePotion, 5);
-                    }
-                    chatState = 0;
-                    return;
-                }
-                if (chatState == 9)
+            // Tome acceptance.
+            if (modPlayer.heraldChatState == 20)
+            {
+                Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.TomeGiven");
+                modPlayer.ReceivedHuntingTome = true;
+                player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.BossItems.BossRematchTome>());
+                modPlayer.heraldChatState = 1;
+                return;
+            }
+
+            // Tip sequence steps 1-5: advance one step and show the next tip.
+            if (modPlayer.heraldChatState >= 1 && modPlayer.heraldChatState <= 5)
+            {
+                modPlayer.heraldChatState++;
+                string[] tipKeys = { "Tip5", "Tip6", "Tip7", "Tip8", "Tip9", "Tip10" };
+                Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald." + tipKeys[modPlayer.heraldChatState - 1]);
+                return;
+            }
+
+            // Last tip (Tip10, state 6) → transition to gift offer.
+            if (modPlayer.heraldChatState == 6)
+            {
+                Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.ReceiveGift");
+                modPlayer.heraldChatState = 7;
+                return;
+            }
+
+            // Gift acceptance (state 7).
+            if (modPlayer.heraldChatState == 7)
+            {
+                modPlayer.ReceivedGift = true;
+                modPlayer.heraldChatState = 8;
+
+                if (modPlayer.BearerOfTheCurse)
                 {
                     Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BotCGift");
-                    player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.Lifegem>(), 10);
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.StarlightShard>(), 4);
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
-
-                    if (Main.netMode == NetmodeID.MultiplayerClient)
-                    {
-                        Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ItemID.WormholePotion, 5);
-                    }
-                    chatState = 0;
-                    return;
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.Lifegem>(), 10);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.StarlightShard>(), 4);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
                 }
+                else if (modPlayer.Unkindled)
+                {
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.UnkindledGift");
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.Lifegem>(), 5);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
+                }
+                else
+                {
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Gift");
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
+                }
+
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ItemID.WormholePotion, 5);
+                return;
             }
+
+            // Post-gift idle (state 8+).
+            Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Luck");
         }
 
 
@@ -239,6 +272,10 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void AI()
         {
             NPC.spriteDirection = NPC.direction; //she's technically facing the opposite way she's looking but whatevs
+
+            // Apply StoryTime ambient effect while the local player is in conversation with her.
+            if (Main.netMode != NetmodeID.Server && Main.LocalPlayer.talkNPC == NPC.whoAmI)
+                Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 2);
 
             if (tsorcRevampWorld.CustomMap) // If it is our custom map
             {

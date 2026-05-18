@@ -136,30 +136,41 @@ namespace tsorcRevamp.Items
                     dust.velocity.X = Main.rand.NextFloat(5, 1.5f);
                 }
 
-                //Main.NewText("What has been done cannot be undone", 200, 60, 40);
                 if (player.whoAmI == Main.LocalPlayer.whoAmI)
                 {
-                    if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                    {
-                        player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = true;
-                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.Darksign.Enabled"), 200, 60, 40);
+                    var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                    bool wasSoulsMode = modPlayer.SoulsMode;
 
+                    // Cycle Classic → Unkindled → Bearer of the Curse → Classic.
+                    if (!modPlayer.Unkindled && !modPlayer.BearerOfTheCurse)
+                    {
+                        modPlayer.Unkindled = true;
+                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.Darksign.Unkindled"), 200, 60, 40);
+                    }
+                    else if (modPlayer.Unkindled && !modPlayer.BearerOfTheCurse)
+                    {
+                        modPlayer.Unkindled = false;
+                        modPlayer.BearerOfTheCurse = true;
+                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.Darksign.BearerOfTheCurse"), 200, 60, 40);
                     }
                     else
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = false;
-                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.Darksign.Disabled"), 200, 60, 40);
-
+                        modPlayer.Unkindled = false;
+                        modPlayer.BearerOfTheCurse = false;
+                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.Darksign.Classic"), 200, 60, 40);
                     }
-                }
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                {
-                    player.statManaMax2 += player.statManaMax2;
-                    player.statMana += player.statMana;
-                }
-                else
-                {
-                    player.statMana -= player.statMana / 2;
+
+                    // Mana scales on entry/exit of Souls tier — both Unkindled and BotC get the doubled pool.
+                    bool isSoulsMode = modPlayer.SoulsMode;
+                    if (!wasSoulsMode && isSoulsMode)
+                    {
+                        player.statManaMax2 += player.statManaMax2;
+                        player.statMana += player.statMana;
+                    }
+                    else if (wasSoulsMode && !isSoulsMode)
+                    {
+                        player.statMana -= player.statMana / 2;
+                    }
                 }
                 //Main.NewText("Stamina regen rate: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate);
                 //Main.NewText("Stamina regen gain mult: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult);
@@ -216,30 +227,39 @@ namespace tsorcRevamp.Items
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
 
+            // Dynamic current-tier line — tells the player which mode they're in AND what left-clicking
+            // will do next. Inserted at the top of the appended tooltips (right after the last vanilla line)
+            // so it's the first thing read after the item name/description.
+            string stateKey;
+            if (modPlayer.BearerOfTheCurse) stateKey = "Mods.tsorcRevamp.Items.Darksign.State_BotC";
+            else if (modPlayer.Unkindled) stateKey = "Mods.tsorcRevamp.Items.Darksign.State_Unkindled";
+            else stateKey = "Mods.tsorcRevamp.Items.Darksign.State_Classic";
+            tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CurrentState", Language.GetTextValue(stateKey)));
+
+            // Class-mechanic preview (right-click cycles ClassCounter). Inserted after the state line.
             switch (ClassCounter)
             {
                 case 1:
                     {
-                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("Items.Darksign.Melee", (int)(modPlayer.BotCMeleeBaseAttackSpeedMult * 100f), (int)(modPlayer.BotCLethalTempoBonus * 100f), (int)(modPlayer.BotCLethalTempoBonus * modPlayer.BotCLethalTempoMaxStacks * 100f), (int)modPlayer.BotCLethalTempoMaxStacks)));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("Items.Darksign.Melee", (int)(modPlayer.BotCMeleeBaseAttackSpeedMult * 100f), (int)(modPlayer.BotCLethalTempoBonus * 100f), (int)(modPlayer.BotCLethalTempoBonus * modPlayer.BotCLethalTempoMaxStacks * 100f), (int)modPlayer.BotCLethalTempoMaxStacks)));
                         break;
                     }
                 case 2:
                     {
-                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Accuracy", LangUtils.GetTextValue("Items.Darksign.Ranged", (int)(modPlayer.BotCAccuracyGain * 100f), (int)(modPlayer.BotCAccuracyLoss * 100f), modPlayer.BotCAccuracyMaxFlatCrit, modPlayer.BotCRangedBaseCritMult + modPlayer.BotCAccuracyMaxCritMult, modPlayer.BotCRangedBaseCritMult)));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Accuracy", LangUtils.GetTextValue("Items.Darksign.Ranged", (int)(modPlayer.BotCAccuracyGain * 100f), (int)(modPlayer.BotCAccuracyLoss * 100f), modPlayer.BotCAccuracyMaxFlatCrit, modPlayer.BotCRangedBaseCritMult + modPlayer.BotCAccuracyMaxCritMult, modPlayer.BotCRangedBaseCritMult)));
                         break;
                     }
                 case 3:
                     {
-                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", tsorcRevampPlayer.BotCCeruleanFlaskMaxManaScaling, modPlayer.BotCMagicDamageAmp, modPlayer.BotCMagicAttackSpeedAmp)));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", tsorcRevampPlayer.BotCCeruleanFlaskMaxManaScaling, modPlayer.BotCMagicDamageAmp, modPlayer.BotCMagicAttackSpeedAmp)));
                         break;
                     }
                 case 4:
                     {
-                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", (int)(modPlayer.BotCSummonBaseDamageMult * 100f), (int)(modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks * modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks), (int)((1f - modPlayer.BotCFullConquerorBonusTagDuration) * 100f))));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", (int)(modPlayer.BotCSummonBaseDamageMult * 100f), (int)(modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks * modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks), (int)((1f - modPlayer.BotCFullConquerorBonusTagDuration) * 100f))));
                         break;
                     }
             }
-            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "EndLine", LangUtils.GetTextValue("Items.Darksign.End")));
         }
     }
 }

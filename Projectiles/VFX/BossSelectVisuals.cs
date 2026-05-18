@@ -38,8 +38,17 @@ namespace tsorcRevamp.Projectiles.VFX
                 PreHardmodeDownedBosses = new List<NPC>();
                 HardmodeDownedBosses = new List<NPC>();
                 SHMDownedBosses = new List<NPC>();
+                // Parallel lists tracking the *intended* rarity for each slot, even when the displayed
+                // sprite is a bunny placeholder for an undefeated boss. This lets the hover clue lookup
+                // work for both defeated bosses (real sprite) and undefeated ones (question mark).
+                PreHardmodeRarities = new List<int>();
+                HardmodeRarities = new List<int>();
+                SHMRarities = new List<int>();
+                NPC tempNPC = new NPC();
                 foreach (int id in tsorcRevampWorld.PreHardmodeBossIDs.Keys)
                 {
+                    tempNPC.SetDefaults(id);
+                    PreHardmodeRarities.Add(tempNPC.rarity);
                     PreHardmodeDownedBosses.Add(new NPC());
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == NPCID.EaterofWorldsHead && NPC.downedBoss2) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
@@ -52,6 +61,8 @@ namespace tsorcRevamp.Projectiles.VFX
                 }
                 foreach (int id in tsorcRevampWorld.HardmodeBossIDs.Keys)
                 {
+                    tempNPC.SetDefaults(id);
+                    HardmodeRarities.Add(tempNPC.rarity);
                     HardmodeDownedBosses.Add(new NPC());
 
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>() && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
@@ -72,6 +83,8 @@ namespace tsorcRevamp.Projectiles.VFX
                 }
                 foreach (int id in tsorcRevampWorld.SHMBossIDs.Keys)
                 {
+                    tempNPC.SetDefaults(id);
+                    SHMRarities.Add(tempNPC.rarity);
                     SHMDownedBosses.Add(new NPC());
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
@@ -90,6 +103,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 if (currentDownedList == null)
                 {
                     currentDownedList = PreHardmodeDownedBosses;
+                    currentRarityList = PreHardmodeRarities;
                 }
                 inititalized = true;
             }
@@ -146,9 +160,16 @@ namespace tsorcRevamp.Projectiles.VFX
         List<NPC> PreHardmodeDownedBosses;
         List<NPC> HardmodeDownedBosses;
         List<NPC> SHMDownedBosses;
+        // Rarity values per slot, captured from each boss's real SetDefaults rarity. Used for clue
+        // lookup so that undefeated bosses (drawn as question marks) can still surface their hint
+        // when hovered. Parallel to the three Boss lists above.
+        List<int> PreHardmodeRarities;
+        List<int> HardmodeRarities;
+        List<int> SHMRarities;
         int spawnCountdown = 0;
         int spawnID = 0;
         List<NPC> currentDownedList;
+        List<int> currentRarityList;
         public static Texture2D buttonTexture;
         public static Texture2D questionmarkTexture;
         public override bool PreDraw(ref Color lightColor)
@@ -156,6 +177,7 @@ namespace tsorcRevamp.Projectiles.VFX
             if (currentDownedList == null)
             {
                 currentDownedList = PreHardmodeDownedBosses;
+                currentRarityList = PreHardmodeRarities;
             }
 
             if (spawnCountdown != 0)
@@ -190,10 +212,12 @@ namespace tsorcRevamp.Projectiles.VFX
                             if (currentDownedList == HardmodeDownedBosses)
                             {
                                 currentDownedList = SHMDownedBosses;
+                                currentRarityList = SHMRarities;
                             }
                             else
                             {
                                 currentDownedList = HardmodeDownedBosses;
+                                currentRarityList = HardmodeRarities;
                             }
                         }
                     }
@@ -215,10 +239,12 @@ namespace tsorcRevamp.Projectiles.VFX
                             if (currentDownedList == HardmodeDownedBosses)
                             {
                                 currentDownedList = PreHardmodeDownedBosses;
+                                currentRarityList = PreHardmodeRarities;
                             }
                             else
                             {
                                 currentDownedList = HardmodeDownedBosses;
+                                currentRarityList = HardmodeRarities;
                             }
                         }
                     }
@@ -238,10 +264,41 @@ namespace tsorcRevamp.Projectiles.VFX
                 drawPos.X *= 1.2f;
                 DeathCountText = LangUtils.GetTextValue("Items.BossRematchTome.DeathCountText", Main.player[Projectile.owner].numberOfDeathsPVE);
 
-                //Bunnies are used in place of non-defeated bosses, and are not rendered
+                //Bunnies are used in place of non-defeated bosses — they draw as question marks.
+                //Hover-test the drawn question mark's bounds so the player can still surface the
+                //progression clue for bosses they haven't found yet.
+                //
+                //Tier gating: only show the clue if the player has reached the boss's tier. Pre-hardmode
+                //clues are always visible; hardmode clues only after entering hardmode; SHM clues only
+                //after entering Super Hard Mode. This prevents end-game spoilers on a fresh character.
                 if (currentDownedList[i].type == NPCID.Bunny)
                 {
-                    Main.spriteBatch.Draw(questionmarkTexture, Projectile.Center + drawPos - Main.screenPosition, questionmarkTexture.Bounds, Color.White, 0, questionmarkTexture.Bounds.Size() / 2, currentDownedList[i].scale * 1.3f, SpriteEffects.None, 0);
+                    float qmScale = currentDownedList[i].scale * 1.3f;
+                    Vector2 qmCenter = Projectile.Center + drawPos;
+                    Vector2 qmHalfSize = questionmarkTexture.Bounds.Size() * qmScale / 2f;
+                    Rectangle qmHitbox = new Rectangle(
+                        (int)(qmCenter.X - qmHalfSize.X),
+                        (int)(qmCenter.Y - qmHalfSize.Y),
+                        (int)(qmHalfSize.X * 2),
+                        (int)(qmHalfSize.Y * 2));
+
+                    Main.spriteBatch.Draw(questionmarkTexture, qmCenter - Main.screenPosition, questionmarkTexture.Bounds, Color.White, 0, questionmarkTexture.Bounds.Size() / 2, qmScale, SpriteEffects.None, 0);
+
+                    bool eraUnlocked =
+                        currentDownedList == PreHardmodeDownedBosses ||
+                        (currentDownedList == HardmodeDownedBosses && Main.hardMode) ||
+                        (currentDownedList == SHMDownedBosses && tsorcRevampWorld.SuperHardMode);
+
+                    if (eraUnlocked && Projectile.owner == Main.myPlayer && qmHitbox.Contains(Main.MouseWorld.ToPoint()) && radius >= 1 && currentRarityList != null && i < currentRarityList.Count)
+                    {
+                        Main.LocalPlayer.mouseInterface = true;
+                        mouseOver = "???";
+                        // Undefeated boss: show its OWN clue ("Where to find") so the player can hunt it.
+                        int clueIndex = currentRarityList[i];
+                        mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + clueIndex);
+                        mouseOverPos = qmCenter;
+                        mouseOverHeight = qmHalfSize.Y * 2f;
+                    }
                     continue;
                 }
 
@@ -292,8 +349,13 @@ namespace tsorcRevamp.Projectiles.VFX
                         currentDownedList[i].scale = 1.1f;
                         Main.LocalPlayer.mouseInterface = true;
                         mouseOver = currentDownedList[i].TypeName;
-                        //need put mouseOverGuideText with questionmarkTexture, currently text only shows after Boss Downed
-                        int nextBoss = currentDownedList[i].rarity + 1;
+                        // Defeated boss hover: show the NEXT boss's clue (rarity + 1). Falls back to the
+                        // parallel rarity list because some entries override their NPC type at draw time
+                        // (Golem head, Moon Lord eye, etc.) which can zero out currentDownedList[i].rarity.
+                        int baseRarity = (currentRarityList != null && i < currentRarityList.Count)
+                            ? currentRarityList[i]
+                            : currentDownedList[i].rarity;
+                        int nextBoss = baseRarity + 1;
                         mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Next") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + nextBoss);
                         mouseOverPos = currentDownedList[i].Center;
                         mouseOverHeight = currentDownedList[i].height;

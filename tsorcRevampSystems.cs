@@ -404,7 +404,7 @@ namespace tsorcRevamp
                         return;
                     }
 
-                    string showButtonText = LangUtils.GetTextValue("UI.ClickToShow");
+                    string showButtonText = SoapstoneTileEntity.BuildShowButtonText(soapstone);
                     Vector2 textSize = FontAssets.ItemStack.Value.MeasureString(showButtonText) * scaleMod;
                     Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition - new Vector2((textSize.X / 2) - 16, 20));
                     Vector2 textPositionWorld = new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - new Vector2((textSize.X / 2) - 16, 20);
@@ -435,10 +435,59 @@ namespace tsorcRevamp
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
                             soapstone.timer = 25;
                             soapstone.hidden = false;
+                            // Sticky open: bubble stays visible until the player moves the mouse
+                            // far from this click point (or walks out of range). The proximity
+                            // refresh in SoapstoneTile.PostDraw keeps timer at 25 while open.
+                            soapstone.manuallyOpened = true;
+                            soapstone.clickedAtMouse = Main.MouseScreen;
+                            // Read state should only flip on actual viewing (i.e. now), not on
+                            // mere proximity when AutoOpen is off.
+                            soapstone.read = true;
                         }
                     }
                 }
             }
+
+            DrawLocationBanner(spriteBatch);
+        }
+
+        // White all-caps location announcement. Centered horizontally, top third vertically.
+        // Drawn entirely client-side; timer ticks here once per frame.
+        private void DrawLocationBanner(SpriteBatch spriteBatch)
+        {
+            if (tsorcRevamp.LocationBannerTimer <= 0 || string.IsNullOrEmpty(tsorcRevamp.LocationBannerText))
+                return;
+
+            int timer = tsorcRevamp.LocationBannerTimer;
+            int total = tsorcRevamp.LOCATION_BANNER_TOTAL;
+            int fadeIn = tsorcRevamp.LOCATION_BANNER_FADE_IN;
+            int fadeOut = tsorcRevamp.LOCATION_BANNER_FADE_OUT;
+
+            int elapsed = total - timer;
+            float alpha;
+            if (elapsed < fadeIn)
+                alpha = elapsed / (float)fadeIn;
+            else if (timer < fadeOut)
+                alpha = timer / (float)fadeOut;
+            else
+                alpha = 1f;
+            if (alpha < 0f) alpha = 0f;
+            if (alpha > 1f) alpha = 1f;
+
+            DynamicSpriteFont font = FontAssets.DeathText.Value;
+            float scale = 0.85f;
+            string text = tsorcRevamp.LocationBannerText;
+            Vector2 size = font.MeasureString(text) * scale;
+            Vector2 pos = new(Main.screenWidth / 2f - size.X / 2f, Main.screenHeight / 3f);
+
+            Color textColor = Color.White * alpha;
+            Color shadowColor = Color.Black * alpha;
+            Terraria.UI.Chat.ChatManager.DrawColorCodedStringWithShadow(
+                Main.spriteBatch, font, text, pos, textColor, 0f, Vector2.Zero, new Vector2(scale), -1f, 2f);
+
+            tsorcRevamp.LocationBannerTimer--;
+            if (tsorcRevamp.LocationBannerTimer <= 0)
+                tsorcRevamp.LocationBannerText = null;
         }
 
         public override void Unload()

@@ -28,13 +28,16 @@ namespace tsorcRevamp.Items.Tools
 
         public override bool CanUseItem(Player player)
         {
+            // BotC: blocked entirely. Classic + Unkindled: usable (Unkindled at reduced effect).
             return !(player.potionDelay > 0 || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse);
         }
         public override bool? UseItem(Player player)
         {
-            player.statLife += HealAmount;
+            // Tier-aware heal: Classic full HealAmount, Unkindled half, BotC zero (CanUseItem blocks).
+            int heal = player.GetModPlayer<tsorcRevampPlayer>().ApplyHealing(HealAmount);
+            player.statLife += heal;
             if (player.statLife > player.statLifeMax2) player.statLife = player.statLifeMax2;
-            player.HealEffect(HealAmount, true);
+            player.HealEffect(heal, true);
             player.AddBuff(BuffID.PotionSickness, ((player.pStone) ? 45 : 60) * 60);
             return true;
         }
@@ -42,10 +45,15 @@ namespace tsorcRevamp.Items.Tools
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             Player player = Main.LocalPlayer;
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (modPlayer.BearerOfTheCurse)
             {
                 tooltips.Add(new TooltipLine(Mod, "BOTCNoHeal", LangUtils.GetTextValue("CommonItemTooltip.BotCNoHeal")));
+            }
+            else if (modPlayer.Unkindled)
+            {
+                tooltips.Add(new TooltipLine(Mod, "UnkindledReducedHeal", LangUtils.GetTextValue("CommonItemTooltip.UnkindledReducedHeal")));
             }
         }
 

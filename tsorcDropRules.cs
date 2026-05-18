@@ -90,12 +90,16 @@ namespace tsorcRevamp
         public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.FisrtBagOnly");
     }
 
+    // Widened to fire for either Unkindled or Bearer of the Curse — Souls-tier first-kill bonus drops.
+    // Class name kept as "CursedRule" / "FirstBagCursedRule" for save/file-system compatibility; the
+    // mechanic now triggers for both Souls tiers. Localization keys (BotCOnly / FirstBagBotCOnly) were
+    // updated to "Unkindled or Bearer of the Curse" wording.
     public class CursedRule : IItemDropRuleCondition, IProvideItemConditionDescription
     {
         public virtual bool CanDrop(DropAttemptInfo info)
         {
             tsorcRevampPlayer modPlayer = info.player.GetModPlayer<tsorcRevampPlayer>();
-            return modPlayer.BearerOfTheCurse;
+            return modPlayer.SoulsMode;
         }
 
         public bool CanShowItemDropInUI() => true;
@@ -109,7 +113,7 @@ namespace tsorcRevamp
         public override bool CanDrop(DropAttemptInfo info)
         {
             tsorcRevampPlayer modPlayer = info.player.GetModPlayer<tsorcRevampPlayer>();
-            return modPlayer.BearerOfTheCurse & base.CanDrop(info);
+            return modPlayer.SoulsMode & base.CanDrop(info);
         }
 
         public override string GetConditionDescription() => LangUtils.GetTextValue("DropRules.FirstBagBotCOnly");

@@ -995,13 +995,81 @@ namespace tsorcRevamp
                             entity.text = sign.text;
                             entity.textWidth = sign.textWidth;
                             entity.style = sign.style;
+                            entity.category = string.IsNullOrWhiteSpace(sign.category) ? null : sign.category.Trim();
+                            entity.locationName = string.IsNullOrWhiteSpace(sign.locationName) ? null : sign.locationName.Trim();
                         }
                     }
                 }
             }
             else
             {
-                mod.Logger.Info("Soapstones present. Skipping JSON read.");
+                // Soapstone tiles already exist in the world. Don't re-place tiles, but DO re-apply
+                // JSON-side metadata (text, textWidth, category, locationName) so author edits in the
+                // JSON propagate to existing worlds on next load. Per-world state (read, hidden) is
+                // preserved.
+                mod.Logger.Info("Soapstones present. Re-syncing metadata from JSON.");
+
+                Byte[] jsonBytes = ModContent.GetFileBytes(jsonPath);
+                if (RemixMap)
+                {
+                    jsonBytes = null;
+                    jsonBytes = ModContent.GetFileBytes(RemixjsonPath);
+                }
+                string bigJson = System.Text.Encoding.UTF8.GetString(jsonBytes);
+
+                List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
+
+                // Build a coord lookup of existing soapstone entities.
+                Dictionary<(int, int), SoapstoneTileEntity> existing = new();
+                foreach (KeyValuePair<int, TileEntity> kv in TileEntity.ByID)
+                {
+                    if (kv.Value is SoapstoneTileEntity se)
+                        existing[(se.Position.X, se.Position.Y)] = se;
+                }
+
+                int placedCount = 0;
+                int skippedOccupiedCount = 0;
+                foreach (SignJSONSerializable sign in texts)
+                {
+                    if (existing.TryGetValue((sign.tileX, sign.tileY), out SoapstoneTileEntity entity))
+                    {
+                        entity.text = sign.text;
+                        entity.textWidth = sign.textWidth;
+                        entity.style = sign.style;
+                        entity.category = string.IsNullOrWhiteSpace(sign.category) ? null : sign.category.Trim();
+                        entity.locationName = string.IsNullOrWhiteSpace(sign.locationName) ? null : sign.locationName.Trim();
+                        continue;
+                    }
+
+                    // No entity at these coords. Only place a new soapstone if the tile is empty
+                    // (don't overwrite player-built blocks, chests, etc.).
+                    Tile tile = Framing.GetTileSafely(sign.tileX, sign.tileY);
+                    if (tile.HasTile)
+                    {
+                        skippedOccupiedCount++;
+                        mod.Logger.Warn($"Soapstone JSON entry at ({sign.tileX},{sign.tileY}) skipped: tile occupied by type {tile.TileType}.");
+                        continue;
+                    }
+
+                    tile.HasTile = true;
+                    tile.TileType = (ushort)ModContent.TileType<SoapstoneTile>();
+                    tile.TileFrameX = 0;
+                    tile.TileFrameY = 0;
+                    tile.TileFrameNumber = 0;
+
+                    ModContent.GetInstance<SoapstoneTileEntity>().Place(sign.tileX, sign.tileY);
+                    if (TileUtils.TryGetTileEntityAs(sign.tileX, sign.tileY, out SoapstoneTileEntity newEntity))
+                    {
+                        newEntity.text = sign.text;
+                        newEntity.textWidth = sign.textWidth;
+                        newEntity.style = sign.style;
+                        newEntity.category = string.IsNullOrWhiteSpace(sign.category) ? null : sign.category.Trim();
+                        newEntity.locationName = string.IsNullOrWhiteSpace(sign.locationName) ? null : sign.locationName.Trim();
+                        placedCount++;
+                    }
+                }
+                if (placedCount > 0 || skippedOccupiedCount > 0)
+                    mod.Logger.Info($"Soapstone re-sync: placed {placedCount} new, skipped {skippedOccupiedCount} occupied.");
             }
         }
 
@@ -1371,6 +1439,8 @@ namespace tsorcRevamp
                             entity.text = sign.text;
                             entity.textWidth = sign.textWidth;
                             entity.style = sign.style;
+                            entity.category = string.IsNullOrWhiteSpace(sign.category) ? null : sign.category.Trim();
+                            entity.locationName = string.IsNullOrWhiteSpace(sign.locationName) ? null : sign.locationName.Trim();
                         }
                     }
                 }
@@ -1518,6 +1588,9 @@ namespace tsorcRevamp
         public override void OnWorldUnload()
         {
             tsorcRevamp.NearbySoapstone = null;
+            tsorcRevamp.LastShownLocationId = -1;
+            tsorcRevamp.LocationBannerText = null;
+            tsorcRevamp.LocationBannerTimer = 0;
         }
 
         //Called upon the death of Gwyn, Lord of Cinder. Disables both hardmode and superhardmode, and sets the world state to "The End".
@@ -1674,18 +1747,25 @@ namespace tsorcRevamp
                 return debugEnabled;
             }
         }
-        static Condition BotCEnabled;
-        public static Condition BearerOfTheCurseEnabled
+        static Condition _soulsModeEnabled;
+        // Fires for either Unkindled or Bearer of the Curse — any Souls-tier player can satisfy this.
+        // Used by Lifegem / RadiantLifegem / StarlightShard recipes (and any other Souls-flavored crafting).
+        public static Condition SoulsModeEnabled
         {
             get
             {
-                if (BotCEnabled == null)
+                if (_soulsModeEnabled == null)
                 {
-                    BotCEnabled = new Condition("Mods.tsorcRevamp.Conditions.BotCEnabled", () => Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse);
+                    _soulsModeEnabled = new Condition("Mods.tsorcRevamp.Conditions.SoulsModeEnabled", () => Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode);
                 }
-                return BotCEnabled;
+                return _soulsModeEnabled;
             }
         }
+
+        // Backwards-compatible alias for existing recipe references. Forwards to SoulsModeEnabled so
+        // recipes flagged "Bearer of the Curse only" now also accept Unkindled players. Recipes that
+        // truly need BotC-tier-only (currently none) should reference BearerOfTheCurse directly.
+        public static Condition BearerOfTheCurseEnabled => SoulsModeEnabled;
 
         public static Condition SHM1Downed
         {

@@ -64,6 +64,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.noTileCollide = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0f;
+            // Rarity slot for the Boss Hunting Tome clue list — clue 42 is BossChecklist.ChaosDesc.
+            // Was missing on Chaos, causing the hover hint to fall through to clue 0/1 (Leonhard).
+            NPC.rarity = 42;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Chaos.DespawnHandler"), Color.Yellow, DustID.GoldFlame);
         }
         NPCDespawnHandler despawnHandler;

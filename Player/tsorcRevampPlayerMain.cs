@@ -152,9 +152,13 @@ namespace tsorcRevamp
             tag.Add("townWarpWorld", townWarpWorld);
             tag.Add("townWarpSet", townWarpSet);
             tag.Add("gotPickaxe", gotPickaxe);
+            tag.Add("gotDarksign", gotDarksign);
             tag.Add("FirstEncounter", FirstEncounter);
             tag.Add("ReceivedGift", ReceivedGift);
+            tag.Add("ReceivedHuntingTome", ReceivedHuntingTome);
+            tag.Add("heraldChatState", heraldChatState);
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
+            tag.Add("Unkindled", Unkindled);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
             tag.Add("Curse", CurseActive);
             tag.Add("CurseMaxLifeMult", CurseMaxLifeMultiplier);
@@ -241,9 +245,22 @@ namespace tsorcRevamp
             townWarpWorld = tag.GetInt("townWarpWorld");
             townWarpSet = tag.GetBool("townWarpSet");
             gotPickaxe = tag.GetBool("gotPickaxe");
+            gotDarksign = tag.GetBool("gotDarksign");
             FirstEncounter = tag.GetBool("FirstEncounter");
             ReceivedGift = tag.GetBool("ReceivedGift");
+            ReceivedHuntingTome = tag.GetBool("ReceivedHuntingTome");
+            heraldChatState = tag.GetInt("heraldChatState");
             BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
+            if (tag.ContainsKey("Unkindled"))
+            {
+                Unkindled = tag.GetBool("Unkindled");
+            }
+            else if (!BearerOfTheCurse)
+            {
+                // Migration: an existing pre-Unkindled save that wasn't BotC was Classic.
+                // Promote them to Unkindled so they pick up the new base Souls mechanics.
+                Unkindled = true;
+            }
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
             CurseActive = tag.GetBool("Curse");
@@ -1860,6 +1877,19 @@ namespace tsorcRevamp
             { //sandbox mode only, and only once
                 Player.QuickSpawnItem(Player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
+            }
+
+            if (!gotDarksign)
+            { // Fresh character: grant the Darksign, start in Unkindled mode, strip junk starter items.
+                Player.QuickSpawnItem(Player.GetSource_Loot(), ModContent.ItemType<Darksign>());
+                gotDarksign = true;
+                if (!BearerOfTheCurse) Unkindled = true;
+
+                for (int i = 0; i < Player.inventory.Length; i++)
+                {
+                    if (Player.inventory[i].type == ItemID.CopperShortsword || Player.inventory[i].type == ItemID.CopperAxe)
+                        Player.inventory[i].TurnToAir();
+                }
             }
         }
 

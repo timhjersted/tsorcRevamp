@@ -34,8 +34,8 @@ namespace tsorcRevamp.UI
         Texture2D textureCharges;
         public override void Draw(SpriteBatch spriteBatch)
         {
-            // This prevents drawing unless we are BotC
-            if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            // This prevents drawing unless we are in Souls mode (Unkindled or Bearer of the Curse)
+            if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
                 return;
             }
@@ -86,7 +86,7 @@ namespace tsorcRevamp.UI
 
         public override void Update(GameTime gameTime)
         {
-            if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
                 return;
             }

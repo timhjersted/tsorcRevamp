@@ -10,14 +10,17 @@
   "tileX": 4855,
   "tileY": 857,
   "textWidth": 320, 
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "You\u0027ve found the home of the Shaman Elder",
   "tileX": 101,
   "tileY": 524,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "HOME OF THE SHAMAN ELDER"
 }
 {
   "text": "Miakoda : In this labyrinthine area, the 4 most powerful armors of the Tavernkeep are scattered, I advise you to find them!",
@@ -31,21 +34,25 @@
   "tileX": 379,
   "tileY": 1011,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Here lived a group of merfolks, a mythical, forgotten aquatic race. They coexisted with the Great Duke in the reef, more or less peacefully. Long ago, when the fiends roamed the lands, the Water Fiend Kraken settled in the Eternal Reef, gradually disrupting and destroying it. It was driven back and fled east deep into the dreamlike caves, but at the cost of their territory, which has long since been in ruins.",
   "tileX": 203,
   "tileY": 1032,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You arrived in the Tropics - --NEWLINE  --NEWLINE The Tropics are the edge of the known world to the west, renowned for being rich in life but dangerous and filled with ruins...",
   "tileX": 816,
   "tileY": 833,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "THE TROPICS"
 }
 {
   "text": "Miakoda: I heard that beneath these ruins there is a coveted treasure, but be careful, it is full of traps...",
@@ -66,21 +73,25 @@
   "tileX": 2654,
   "tileY": 673,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "MYCELIUM FOREST"
 }
 {
   "text": "\u0022Greetings Red, so you have made it to the western lands. I have guarded this home and this little mushroom forest for a long time, a small paradise and a great oasis between the corrupted mountains of the east and the arid and hostile desert of the west. I am in communication with my friend Yimaya, the Dryad, she informed me of your returns and the path you have traveled, I can only encourage you, but beware, the challenges on your way are only just beginning... your path further east will be difficult. Otherwise, you are welcome here, if rest is necessary.\u0022",
   "tileX": 2450,
   "tileY": 753,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Before you dive below, you have a sudden feeling of the presence of your wife.  --NEWLINE  --NEWLINE You look to the edges of the lake for any signs of her, but nothing.  --NEWLINE  --NEWLINE \u0022I love you my dear,\u0022 you think to yourself. \u0022I don\u0027t know if you\u0027re still alive, but I will find you,.. in this life or the next.\u0022",
   "tileX": 292,
   "tileY": 1515,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "You remember the Wizard telling you about this place - that to awaken The Hunter you must dive to the bottom of the lake and touch the golden ring.",
@@ -94,7 +105,9 @@
   "tileX": 174,
   "tileY": 908,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "ETERNAL REEF ENTRANCE"
 }
 {
   "text": "You feel a strong presence coming from behind this Chlorophyte gate,... --NEWLINE  --NEWLINE \u0022I need the Drax...\u0022  --NEWLINE  --NEWLINE It feels urgent.",
@@ -108,7 +121,9 @@
   "tileX": 460,
   "tileY": 1520,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "LAIR OF THE HUNTER"
 }
 {
   "text": "You hear a mushroom making sounds beyond the wall. When it has your attention, it speaks to you.  --NEWLINE  --NEWLINE \u0022After you have prepared yourself, seek the Great Pyramid...\u0022 --NEWLINE  --NEWLINE \u0022An entrance hides in the jungle near the exit of the Obsidian\u0027s Volcano..\u0022",
@@ -129,49 +144,56 @@
   "tileX": 291,
   "tileY": 1367,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Red: \u0022I will come back, and we will finally be able to live in peace. When we get to the surface, I\u0027ll take you to the tropics to the West, and I will return there when Attraidies is finished.\u0022",
   "tileX": 294,
   "tileY": 1367,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022Attraidies has played all of us. But it doesn\u0027t matter. I did what I thought I needed to save you.\u0022 --NEWLINE  --NEWLINE \u0022I believe you Red. My heart aches to think of you leaving again after finding me, but I have to trust you\u0027ll come back to me again.\u0022",
   "tileX": 297,
   "tileY": 1367,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Asha: \u0022What are you going to do?\u0022 --NEWLINE Red: \u0022I\u0027m going to kill him. In my quest to find you, I\u0027ve done a terrible thing, and I have to make right by my father and heal the Earth of this corruption that I helped Attraidies to unleash.\u0022 --NEWLINE Asha: \u0022What did you do?\u0022",
   "tileX": 300,
   "tileY": 1367,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022When I refused to tell them where your father\u0027s sword was, Attraidies tortured me for several days, but finally gave up and left me here. I don\u0027t know why he didn\u0027t kill me. But thank god. It\u0027s so good to see you.\u0022 --NEWLINE  --NEWLINE Red: \u0022Here, let\u0027s get you out of here. I\u0027ll take you somewhere you can be safe.\u0022",
   "tileX": 303,
   "tileY": 1367,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "You open the door to Asha\u0027s cell, and see her clutching her arm, her clothes bloodied and torn, but her eyes as radient with life as ever. You bring her into your arms and hug her closely, then lean your head back to say, \u0022What did they do to you?\u0022",
   "tileX": 306,
   "tileY": 1367,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022Is that you Asha?\u0022 --NEWLINE \u0022Oh Red, thank god! I\u0027m here!  I knew you were coming.. I could feel you.\u0022 --NEWLINE  --NEWLINE \u0022Asha, I love you so much! I\u0027m going to get you out of here.\u0022 ",
   "tileX": 319,
   "tileY": 1367,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Did you hear a voice?",
@@ -206,7 +228,8 @@
   "tileX": 537,
   "tileY": 1484,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Miakoda: \u0022Now that we can break Chlorophyte Gates, there are three, perhaps four paths we can take. It is up to you to decide. --NEWLINE  --NEWLINE There is no ideal path, only the path that is most true to you.\u0022",
@@ -227,14 +250,17 @@
   "tileX": 611,
   "tileY": 1559,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "- You have found the Tomb of Gwyn, Lord of Cinder - --NEWLINE  --NEWLINE To defeat Gwyn, you\u0027ll need the power obtained from defeating 7 ancient beings. They are known as Artorias, Water Fiend Kraken, Fire Fiend Marilith, Earth Fiend Lich, The Blight, The Ghost Wyvern Mage, and Seath the Scaleless. To fight Gwyn before this will surely result in death...",
   "tileX": 759,
   "tileY": 1245,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "TOMB OF GWYN"
 }
 {
   "text": "Miakoda: \u0022Red, mark this spot on your map.  --NEWLINE  --NEWLINE I believe this cave under the ocean leads to the Tomb of Gwyn.  --NEWLINE  --NEWLINE Should we ever find a way to open this, we should return here.\u0022 --NEWLINE  --NEWLINE You get out your journal and draw a rough sketch of where you are. ",
@@ -262,14 +288,18 @@
   "tileX": 1355,
   "tileY": 1935,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "MOLTEN CITADEL"
 }
 {
   "text": "You\u0027ve found the Temple of Attraidies --NEWLINE  --NEWLINE Once you\u0027ve obtained a shard from defeating each of the 8 demon-gods, you will need the dark and light shards to power the catalyst necessary to summon Attraidies here. In this chest are the dark shards, it seems that the light shards are kept preciously in the roots of the world tree with glowing golden leaves... The catalyst will weaken Attraidies just enough to give you a chance. --NEWLINE \u0022It\u0027s time to end this.\u0022",
   "tileX": 1400,
   "tileY": 325,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "TEMPLE OF ATTRAIDIES"
 }
 {
   "text": "Looking at the bolting system on this gate, you think it must take three switches to unlock.",
@@ -283,28 +313,34 @@
   "tileX": 1445,
   "tileY": 937,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "BASEMENTS OF THE DARK TOWER"
 }
 {
   "text": "Attraidies was once a human citizen of Orespeak, deeply interested in magic and driven by a thirst for power. While studying the world\u0022s history, he became fascinated by the lost tribe of the Takers, the first to create a bond with the Abyss and establish their dominion and unleash chaos upon all of Terraria, eradicating the animists and the peoples of the Old World. Inspired by the Takers, Attraidies resolved to perpetuate the evil legacy of this tribe and conquer the world with his powerful allies.",
   "tileX": 1372,
   "tileY": 956,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You\u0027ve found The Dark Tower of Attraidies - --NEWLINE  --NEWLINE The top of the dark tower is blocked, to unlock the passage you will need to go to the basement of the tower...",
   "tileX": 1401,
   "tileY": 842,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "THE DARK TOWER OF ATTRAIDIES"
 }
 {
   "text": "On the table, you see a paper that appears to be a map of the known world. You see places you\u0022ve visited, but also others unknown to you, like the Lost Islands to the north, which seem to be an archipelago where the goblins originated, or Dunland south of Makhóčhe, the wild land of the Dunlendings. There\u0022s some writing at the bottom of the map, seemingly written by Attraidies: \u0022Most of the territories on this map are either conquered or in ruins. Absolute victory is advancing. Only Ashenpeak, the remnants of the Orid Tribe, and Tibia are fiercely resisting. I'm preparing something for them, a little game they'll fall for completely; they\u0022re not ready...\u0022",
   "tileX": 1408,
   "tileY": 581,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "You flip the switch and hear a strange noise coming from above the tower. You should go there.",
@@ -325,21 +361,26 @@
   "tileX": 1554,
   "tileY": 1709,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "REALM OF THE WATER FIEND"
 }
 {
   "text": "The ancient inhabitants of these ruins were called the Noranians, a tropical people who worshipped the sea-god Nora, about whom you have heard many myths. No one truly knows how this civilization fell, but it became a place overflowing with treasure, where pirates from across the sea come to land and plunder the ruins...",
   "tileX": 601,
   "tileY": 860,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- The Nora Sea - --NEWLINE  --NEWLINE The great sea of the west is known as the sea of storms, tidal waves, and pirates. Renowned for its dangerosity, only a few fools venture there in search of new lands. --NEWLINE Seeing the sea on the horizon, you think of all the lands and civilizations hidden beyond, and you wonder if it is as ruined as it is on this continent.",
   "tileX": 185,
   "tileY": 854,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "THE NORA SEA"
 }
 {
   "text": "Miakoda: \u0022This looks perilous, Red. Find a way to protect you from the lava, it\u0022s crucial here.",
@@ -353,7 +394,9 @@
   "tileX": 1622,
   "tileY": 971,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "CAVERN OF ANGUISH"
 }
 {
   "text": "\u0022A gold bow? Strange... but perhaps it\u0027ll be useful...\u0022",
@@ -374,7 +417,8 @@
   "tileX": 1723,
   "tileY": 804,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "\u0022This must open from the other side.\u0022",
@@ -388,7 +432,9 @@
   "tileX": 1800,
   "tileY": 1045,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "SHADOW TEMPLE"
 }
 {
   "text": "You hear gates opening above and below you. --NEWLINE  --NEWLINE After a quick look,  you can tell the path above leads back into the caverns near the Shadow Temple.",
@@ -423,7 +469,8 @@
   "tileX": 1900,
   "tileY": 1121,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "There must be a lever nearby.",
@@ -437,28 +484,34 @@
   "tileX": 1966,
   "tileY": 846,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You arrived in the Great Desert of Elengad - --NEWLINE  --NEWLINE Looking back at the temple architecture, Miakoda wonders aloud, \u0022Do you think the direction and alignment of these columns have any significance?\u0022",
   "tileX": 2033,
   "tileY": 860,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "GREAT DESERT OF ELENGAD"
 }
 {
   "text": "Miakoda: \u0022These items you sometimes find Red, that appear useless... don\u0027t be so quick to assume.  --NEWLINE  --NEWLINE If it can be crafted into something new with dark souls, it may be worth investigating its hidden potential...\u0022",
   "tileX": 2096,
   "tileY": 973,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "- You\u0027ve found the Temple of The Destroyer - --NEWLINE Miakoda: \u0022Stay nimble for this next fight, Red. Evasion will be key...\u0022",
   "tileX": 2108,
   "tileY": 968,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "TEMPLE OF THE DESTROYER"
 }
 {
   "text": "- This gate guards the Path to the Dreamlike Caverns, home of the Water Fiend Kraken - --NEWLINE  --NEWLINE You get out your map journal and write a note: \u0022Lizard Gate at the very west of the Mycelium Forest.\u0022",
@@ -472,7 +525,9 @@
   "tileX": 2656,
   "tileY": 1174,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "DREAMLIKE CAVERNS"
 }
 {
   "text": "This room seems strange, you feel something different in it even though it seems ordinary. Also, you hear strange noises coming from the celling...",
@@ -493,7 +548,9 @@
   "tileX": 1724,
   "tileY": 1477,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "SKELETRON PRIME VAULT"
 }
 {
   "text": "You come upon a deep dark and corrupted cavern. This place appears to be an abandoned mine and the way to the exit of the Shadow Temple.",
@@ -549,28 +606,34 @@
   "tileX": 2991,
   "tileY": 1231,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "THE CATACOMBS"
 }
 {
   "text": "These greyish galleries weren't like this before. It was once a vast swamp, tainted by the necromancy of the Earth Fiend Lich. All that remains of this former great swamp are dead roots and a significant amount of water.",
   "tileX": 3120,
   "tileY": 1269,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "To the West \u003C--- --NEWLINE Scarlet Hill --NEWLINE Mycelium Forest --NEWLINE Elengad\u0027s Desert Ruins --NEWLINE Unknown... --NEWLINE  --NEWLINE To the East --\u003E --NEWLINE The Twin Peaks of Arazium --NEWLINE The Village --NEWLINE The Rainforest of the Orid Tribe",
   "tileX": 3011,
   "tileY": 348,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "After this gate is the Witchking\u0027s lair, where you feel fear as you see the darkness ahead.",
   "tileX": 3040,
   "tileY": 1819,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "WITCHKING'S LAIR ENTRANCE"
 }
 {
   "text": "Falling from the hole, you land in a blood-soaked lake. Tough, bloodthirsty creatures lurk there, and won't hesitate to try to devour you underwater...",
@@ -591,7 +654,8 @@
   "tileX": 3188,
   "tileY": 985,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Holding a shadow scale in your hand, you sense that the hidden-soul form of the Shadow Armor has a powerful ability that will be useful in the jungles that lie ahead. --NEWLINE  --NEWLINE \u0022Ahh, this house has tools for me to craft the Shadow Armor.\u0022",
@@ -619,7 +683,8 @@
   "tileX": 3241,
   "tileY": 1187,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "You feel a warm blast of air shoot up from the slit in the corrupted rock below you.  --NEWLINE  --NEWLINE You can sense that the Eater of Worlds is near. --NEWLINE  --NEWLINE Inside the gold chest a note is found: --NEWLINE \u0022I left a Cloud in a Bottle and a piece of Shadow armor in the chest down below. I hope it serves you better than it did I.\u0022",
@@ -647,28 +712,35 @@
   "tileX": 3316,
   "tileY": 238,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "SANCTUARY OF THE WATCHERS"
 }
 {
   "text": "On this wall, it is inscribed: The eyes of death in their fortress have long observed the actions of humanity. No one, not even those in the depths of the world, is spared their terrifying gaze.",
   "tileX": 3148,
   "tileY": 65,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Through the window you have an impressive view to the east at the mountain peak. You can see the Ashenpeak Village and the Sky Temple in the distance, and even a bit of the Jungle.",
   "tileX": 3316,
   "tileY": 238,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "SANCTUARY OF THE WATCHERS"
 }
 {
   "text": "You\u0027ve found the Eye of the Sanctum, the great observatory of the Triad.",
   "tileX": 2880,
   "tileY": 241,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "EYE OF THE SANCTUM"
 }
 {
   "text": "A voice whispers from the depths: --NEWLINE \u0022The Witchking and Artorias are both protected by a powerful magical shield. Seek the Barrow Blade...\u0022",
@@ -710,7 +782,9 @@
   "tileX": 3413,
   "tileY": 713,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "MOUTH OF THE CORRUPTION TEMPLE"
 }
 {
   "text": "This is it. Upon this titanic altar of ancient darkness, you take out the voodoo idol and raise it high above your head, preparing to cast it into the lava below.  --NEWLINE  --NEWLINE NOTE: If your first attempt does not succeed, use 3 Guide Voodoo Dolls at a demon altar to craft Aaron\u0027s Protection stone and use the stone to resummon The Wall.",
@@ -724,7 +798,9 @@
   "tileX": 3436,
   "tileY": 799,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "THE CORRUPTED FOREST"
 }
 {
   "text": "You realize that your journey is at a crossroads. --NEWLINE You can attempt to venture farther into the Corrupted Temple\u0027s depths to retreive unknown treasures, or you can head back to Ashen Peak Village. --NEWLINE  --NEWLINE With the Cloud in a Bottle, new lands to the East of your grave are now possible to explore. ",
@@ -745,14 +821,17 @@
   "tileX": 3486,
   "tileY": 357,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "LEONHARD'S BRIDGE"
 }
 {
   "text": "You drop a glow stick down the shaft and it disappears into the darkness. \u0022Maybe I\u0027ll use the Greater Magic Mirror here...\u0022 --NEWLINE  --NEWLINE Greater Magic Mirror: Lets you set a warp point at your location. Obtain it by right-clicking on the Green Glowing Skull nearby.",
   "tileX": 3487,
   "tileY": 413,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "You found the key that unlocks the Golden Treasure Chest. This Key can only be used to open the Locked Treasure Chest found somewhere in this mountain. --NEWLINE  --NEWLINE \u0022The hyroglyphs look like they\u0027re pointing up.\u0022",
@@ -780,7 +859,8 @@
   "tileX": 3509,
   "tileY": 1919,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "In the dim glow above,  you can just barely see a gold chest at the top of this room.",
@@ -794,14 +874,16 @@
   "tileX": 3545,
   "tileY": 292,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "On the table you find a book with a passage highlighted: --NEWLINE \u0022The strategists have a saying: --NEWLINE  I dare not advance an inch, but rather retreat a foot. --NEWLINE  --NEWLINE There is no greater calamity than to underestimate the strength of your enemy. --NEWLINE For to underestimate the strength of your enemy is to lose your treasure.\u0022",
   "tileX": 3547,
   "tileY": 292,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "This lever opens the volcanic gate at the bottom of the Great Chasm. It has protected the world above for millennia. ",
@@ -836,7 +918,8 @@
   "tileX": 3660,
   "tileY": 260,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022Weird... there\u0027s a thick slime on the surface of the water here...\u0022",
@@ -850,7 +933,8 @@
   "tileX": 3734,
   "tileY": 896,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "The tunnel has collapsed.  --NEWLINE  --NEWLINE \u0022I need to find another way in.\u0022",
@@ -864,7 +948,9 @@
   "tileX": 3758,
   "tileY": 1243,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "CRIMSON TEMPLE"
 }
 {
   "text": "You see hearts on the ceiling, beating unusually powerfully and heavily, prompting you to search for a way to destroy them. \u0022Perhaps this lever is connected to those hearts...\u0022",
@@ -885,21 +971,24 @@
   "tileX": 3801,
   "tileY": 1545,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "The opulent beast carved into the rock mesmerizes you, its red eyes seeping down, down, down into your subliminal conciousness, reaching into your dreams, planting seeds of nightmares and crumbling your faith. You begin to doubt, to ask yourself if you are really capable of taking this to the end.. Enough! You tear your gaze away and suddenly you awake. Two hours have passed! My god. What powers lie within this beast of a god?",
   "tileX": 3820,
   "tileY": 904,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "The thought of having so many souls on you makes you nervous.  --NEWLINE  --NEWLINE \u0022I should try to spend what I have when I\u0027m able. Especially once I have a few thousand. I don\u0027t want hubris or carelessness to be my last regret.\u0022",
   "tileX": 3823,
   "tileY": 1130,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "\u0022These Ironskin and Dangersense Potions should help when exploring the Earth Temple...\u0022",
@@ -913,42 +1002,49 @@
   "tileX": 3835,
   "tileY": 904,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022I wonder what these hieroglyphs mean?\u0022",
   "tileX": 3840,
   "tileY": 533,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "You remember this place, which seemed rather peaceful. The eastern mountain serves in particular as a natural barrier between the dangerous lands of the west and the village. apart from a few weak creatures and corrupted men, there is no great threat, unlike the mountain of the west.",
   "tileX": 3851,
   "tileY": 713,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Try dodging mid-air to reach greater distances or evade attacks after jumping.",
   "tileX": 3859,
   "tileY": 1077,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "- Arazium\u0027s Mountain Caverns - --NEWLINE  --NEWLINE \u0022Odd. These glowing mushrooms don\u0027t seem random...\u0022",
   "tileX": 3923,
   "tileY": 685,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "ARAZIUM'S MOUNTAIN CAVERNS"
 }
 {
   "text": "A troll-like voice beyond the wall snickers, and then mutters, \u0022Remember to use your dodge roll.\u0022  --NEWLINE  --NEWLINE Its creepy laugh unsettles you.  --NEWLINE  --NEWLINE When you reply back, you hear nothing but a long silence, which makes you question if you\u0027ve been underground for too long...",
   "tileX": 3938,
   "tileY": 1120,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "\u0022These caverns may be worth exploring before I head deeper below...\u0022",
@@ -983,7 +1079,8 @@
   "tileX": 4017,
   "tileY": 710,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "\u0022This pressure plate must be hooked up to a timer.\u0022",
@@ -1004,7 +1101,8 @@
   "tileX": 4035,
   "tileY": 1138,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "You pull the lever and hear a faint rumble above you. The glow of a lantern flickers at the top.",
@@ -1039,21 +1137,24 @@
   "tileX": 4080,
   "tileY": 713,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Caves can be entered by standing at the entrance and clicking on the darkness above your head.",
   "tileX": 4091,
   "tileY": 983,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "Your friend Aaron: \u0022Red!\u0022 He stammers, surprised, \u0022They said you were killed!\u0022 --NEWLINE  --NEWLINE Red: \u0022I know, I can\u0027t believe it either. I\u0027m just glad you weren\u0027t visiting when they attacked. Almost all of my family...\u0022  --NEWLINE  --NEWLINE Aaron: \u0022I know Red. I can\u0027t believe what they did.. It\u0027s..\u0022",
   "tileX": 4092,
   "tileY": 709,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "You see a teal pressue plate. --NEWLINE  --NEWLINE Below it, a symbol of the Great Eye is painted on the wall.  --NEWLINE  --NEWLINE \u0022This must be the way forward. I need to find a way to activate this plate...\u0022",
@@ -1074,14 +1175,16 @@
   "tileX": 4115,
   "tileY": 1006,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "Torches: Can be placed to remember where you\u0027ve been. --NEWLINE  --NEWLINE Potions: Recommended for ordinary exploration and combat. Hoarded potions are of no use to the dead. --NEWLINE  --NEWLINE Wood \u0026 Stone: For making arrows.",
   "tileX": 4116,
   "tileY": 713,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "You pull the lever and hear a gate opening to the West.",
@@ -1095,21 +1198,25 @@
   "tileX": 4151,
   "tileY": 709,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "You have discovered the Sky Ruins of the Empress of Light. --NEWLINE  --NEWLINE Long ago, Golem imprisoned the Empress using the great magic of the pyramid, leaving this sky temple to fall to ruin.  --NEWLINE  --NEWLINE It is said that upon the day that Golem is slain, the Empress shall be freed to return to these sacred grounds.  ",
   "tileX": 4837,
   "tileY": 350,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "SKY RUINS OF THE EMPRESS OF LIGHT"
 }
 {
   "text": "Seemingly useless or ordinary items found in chests may hide their true potential. Bring them to a Demon Altar or a Recipe guide to discover their real purpose.",
   "tileX": 4155,
   "tileY": 1193,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "\u0022With a bit more speed I can almost...\u0022",
@@ -1123,7 +1230,8 @@
   "tileX": 4163,
   "tileY": 1135,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "This chest contains the Wizard\u0027s personal possesions and requires a key to unlock. But even if I could find the Wizard\u0027s key, could I really steal from him and live with myself?",
@@ -1137,7 +1245,8 @@
   "tileX": 4185,
   "tileY": 655,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022A magic mirror... with an inscription: Take me to a demon altar with one thousand dark souls to reveal my true form.\u0022",
@@ -1151,21 +1260,24 @@
   "tileX": 4209,
   "tileY": 944,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "The Town Well. You see a shimmering speck of light deep within the darkness. The light mesmerizes you, as if you saw yourself looking back into your eyes. A rush of memories from the raid suddenly floods your senses. You see your father taking a knife wound from a cloaked assassin with glowing yellow eyes. You remember him throwing you and mother behind him as three black knights, shrouded in an ashen fog, break into the room. You take a blow and the memory fades...",
   "tileX": 4210,
   "tileY": 713,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Many items can be transformed with Dark Souls.  --NEWLINE  --NEWLINE You can take items marked as a \u0022Dark Soul recipe material\u0022 to Aaron, the Guide, or inspect it with a Recipe Mod to learn more about its hidden potential.",
   "tileX": 4218,
   "tileY": 970,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "\u0022It looks like I can safely step on this ashen mud without getting burned.\u0022 --NEWLINE  --NEWLINE Miakoda: \u0022The inhabitants of these ruins were known to use Obsidian Stones to protect their feet. If we can make it far enough we may be able to find one.\u0022",
@@ -1179,14 +1291,16 @@
   "tileX": 4223,
   "tileY": 713,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Try dodging mid-air to reach greater distances or evade attacks after jumping.",
   "tileX": 4227,
   "tileY": 1178,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "Miakoda: This path to the Fire Temple is obstructed, try to find another passage on the other side of the city perhaps.",
@@ -1200,28 +1314,34 @@
   "tileX": 4233,
   "tileY": 1889,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "FIRE TEMPLE"
 }
 {
   "text": "- You have found the Underworld\u0027s Outskirts - --NEWLINE  --NEWLINE It\u0027s quite interesting that nature developed here, in such a deep and hot place.",
   "tileX": 5367,
   "tileY": 1877,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "UNDERWORLD'S OUTSKIRTS"
 }
 {
   "text": "Along the way, you ask yourself the question: \u0027What will be the consequences of the death of the great wall?\u0027",
   "tileX": 6003,
   "tileY": 1866,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Bodhi: \u0022I have food and supplies here. Please take what you need... The mountain caverns to the West may be worth exploring before you set out as well.\u0022 --NEWLINE  --NEWLINE \u0022Thank you brother. You will be in my thoughts.\u0022",
   "tileX": 4225,
   "tileY": 699,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022Miakoda, in your travels, have you ever come across a Shadow Key?\u0022 --NEWLINE  --NEWLINE \u0022Before I was imprisoned by Skeletron, I once obtained one from deep below the Frozen Ocean. I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...\u0022",
@@ -1235,56 +1355,64 @@
   "tileX": 4237,
   "tileY": 789,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "\u0022Elijah and your wife, I don\u0027t know. I rushed home when I saw the smoke in the valley. They were nowhere in sight. I only found you and our parents. Village scouts who saw the attack said the army headed East...\u0022  --NEWLINE  --NEWLINE \u0022Then there\u0027s still a chance they\u0027re alive,\u0022 you say calmly, still numb to what\u0027s happened.",
   "tileX": 4242,
   "tileY": 709,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Bodhi freezes as he sees you through the open door. then exclaims with joy, \u0022Brother! You\u0027re alive! I thought you were dead!\u0022  --NEWLINE  --NEWLINE Still in shock, you ask,\u0022But what about Elijah, and our parents... and Asha!? Are they alive!?\u0022 --NEWLINE  -- \u0022Oh god, Red, no. It was terrible. They killed father and mother. I had to bury them alone with you. You weren\u0027t breathing...\u0022 ",
   "tileX": 4248,
   "tileY": 713,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Right-click on Glowing Green Skulls and Hanging Skeletons to discover hidden loot.",
   "tileX": 4248,
   "tileY": 980,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "You find a book on the table of ancient spells, and after deciding to secure this abandoned room to rest for the night, you spend the rest of your evening reading through this tome of old magic. In the morning you come to a page: Protection Idols \u0026 Enchantments. And one spell in particular -- Voodoo Mimicry.",
   "tileX": 4249,
   "tileY": 1822,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022Voodoo Mimicry -- An enchantment upon an object that grants the gift of invincibility. Such magic is rarely used, however, among gifted mages, as the price of such power is that one\u0027s life becomes tied to the object. Destroy the object and you kill the enchanted.\u0022 Suddenly it all clicked. The idol Aaron gave you, emanating the same force as described.",
   "tileX": 4252,
   "tileY": 1822,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "But surely he would have known? Something seemed odd, but the solution was too brilliant, and has been within my possession since the beginning. -- You take out the idol and your most powerful weapon, coming down on the volcanic stone with tremendous force. Shock! An electric wave blasts through you, sending you to the floor. Getting back on your feet you realize destroying this stone may not prove so easy...",
   "tileX": 4255,
   "tileY": 1822,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Craft your souls in the fires of this sacred altar.  --NEWLINE  --NEWLINE Great powers can be forged here, but also great burdens... ",
   "tileX": 4266,
   "tileY": 989,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "You hear a humming sound coming from the caverns above...",
@@ -1319,14 +1447,17 @@
   "tileX": 4651,
   "tileY": 650,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "CHERRY BLOSSOM SKIES"
 }
 {
   "text": "This place seems to be the former lair of the King Slime, who migrated from these lands not long ago to go to the flying islands east of the village, above your burnt house.",
   "tileX": 3605,
   "tileY": 586,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Above your head you see a teal pressue plate. --NEWLINE  --NEWLINE Etched into the heavily-worn and scuffed up plate is a carving of a bow and arrow, barely visible... --NEWLINE  --NEWLINE You mark the teal plate on your map with a blue dot.",
@@ -1340,42 +1471,50 @@
   "tileX": 4326,
   "tileY": 709,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "You\u0027ve discovered the lair of the Ancient Jungle Wyvern, a powerful beast who guards this forgotten city. ",
   "tileX": 4330,
   "tileY": 1740,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "LAIR OF THE ANCIENT JUNGLE WYVERN"
 }
 {
   "text": "You find a note in a skeleton\u0027s hand: \u0022Using potions while exploring will be essential to your survival. --NEWLINE Use them when you have a lot of souls.  --NEWLINE Use them when retrieving lost souls. --NEWLINE Use them when exploring new areas.  --NEWLINE Use them when you see a dangerous foe. Do not make the same mistake I did.\u0022",
   "tileX": 4335,
   "tileY": 1030,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "\u0022With a well-timed mid-air dodge roll I think I can avoid those spikes...\u0022",
   "tileX": 4348,
   "tileY": 1041,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "- You\u0027ve discovered the Path of the Drowned - ",
   "tileX": 4360,
   "tileY": 765,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "PATH OF THE DROWNED"
 }
 {
   "text": "Solaire\u0027s Watch Tower -- After Solaire greets you with a prayer for the sun, he asks if you\u0027ve spoken with Jade yet - the woman who keeps watch outside the village. --NEWLINE  --NEWLINE \u0022Go and speak with her my friend! She has many important things to tell you. And perhaps something to help you on your journey.\u0022 \u0022Go on..\u0022 he mutters, then bellows: \u0022For the sake of jolly cooperation!\u0022 ",
   "tileX": 4379,
   "tileY": 669,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "The tower is blocked from this direction...",
@@ -1396,7 +1535,9 @@
   "tileX": 4384,
   "tileY": 713,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "ASHEN PEAK VILLAGE"
 }
 {
   "text": "You flip the switch and hear something move below you...",
@@ -1410,35 +1551,41 @@
   "tileX": 4445,
   "tileY": 1740,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "(5) \u0022Killing Aaron though, it won\u0027t be easy. He\u0027ll be expecting a direct attack and has surely taken on some powerful magic to protect himself. Do not let him become suspicious. If you can think of something in-direct... I just don\u0027t know what... But enough talk. Go now. Hurry! I can make it back alright. Past my cell window is the beast that guards this forgotten city. Steal its power and you may stand a chance. I\u0027ve seen what Attraidies has become. He has grown considerably more powerful since our father\u0027s time.\u0022",
   "tileX": 4452,
   "tileY": 1740,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "(4) \u0022No one in the village knows he\u0027s working with the Mindflayer King. It disgusts me to think of him living up there with his new found riches, laughing, knowing that I must surely be dead and his secret is safe. I don\u0027t know what to say Red.  --NEWLINE  --NEWLINE As long as he remains alive... I\u0027m sorry. --NEWLINE  --NEWLINE I think you know what you have to do.\u0022",
   "tileX": 4452,
   "tileY": 1745,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "-- The Earth Temple -- --NEWLINE  --NEWLINE You feel the air grow warm and moist. The walls around you feel like they\u0027re breathing. ",
   "tileX": 4456,
   "tileY": 854,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "EARTH TEMPLE"
 }
 {
   "text": "(3) \u0022They think she\u0027s weak and they can still break her, but you and I know she\u0027ll never tell the Mindflayer King, even if they take her life. I only hope you can find her before they realize this. --NEWLINE  --NEWLINE But Red, there\u0027s one last thing I need to tell you. Your friend Aaron... he\u0027s betrayed all of us. He was standing beside the Mindflayer King when they took me here. He must have told him where to find us and our father.\u0022 ",
   "tileX": 4456,
   "tileY": 1745,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Beyond the ledge and the great drop off below you can see an opening to the neighboring tower.  --NEWLINE  --NEWLINE \u0022With some speed I think I can make this..\u0022 ",
@@ -1452,28 +1599,32 @@
   "tileX": 4459,
   "tileY": 1745,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "(1) \u0022Red, thank god! It\u0027s you! Get me out of here. When Attraidies\u0027 army attacked, they took me captive. They\u0027re looking for our father\u0027s sword. They beat me until they seemed convinced I didn\u0027t know and left me here to rot. But Red! ...",
   "tileX": 4462,
   "tileY": 1745,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Armors and accessories must be in your inventory (not in use) while at a Demon Altar to see if they can be upgraded with Dark Souls. --NEWLINE  --NEWLINE Read the tool tip on all items for upgrade clues. ",
   "tileX": 4468,
   "tileY": 1028,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "Right click on bonfires to light them.  --NEWLINE  --NEWLINE After they are lit, you can set them as a respawn point or use the phantom piggy bank or safe they offer. --NEWLINE  --NEWLINE Lit bonfires can be teleported to at any time by clicking on their map icon via the map.",
   "tileX": 4480,
   "tileY": 732,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "You sense a terrible force in this direction. You question whether you should turn back... and yet...",
@@ -1487,7 +1638,9 @@
   "tileX": 4521,
   "tileY": 857,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "EARTH TEMPLE ENTRANCE"
 }
 {
   "text": "The passage ahead is sealed by three large ambers, secretly scattered throughout the world. There are clues in each of the gem locks: one represents an enchanted underground with flames at the very bottom, one represents depths of icy waters, and the last represents a barren cavern and an underground oasis next to it .",
@@ -1501,7 +1654,9 @@
   "tileX": 3901,
   "tileY": 1438,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "ELEMENTAL POOL"
 }
 {
   "text": "Seeing these three torches in this cave, you wonder what their significance is.",
@@ -1529,7 +1684,8 @@
   "tileX": 4580,
   "tileY": 857,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "A weapon that can pierce through walls may be essential to survival beyond this point.",
@@ -1543,7 +1699,9 @@
   "tileX": 4615,
   "tileY": 1026,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "FLOODED MACHINE TEMPLE"
 }
 {
   "text": "Looking down into the pit to the left, Miakoda suggests that a Featherfall potion could be useful here... or the Ice Rod...",
@@ -1564,42 +1722,49 @@
   "tileX": 4647,
   "tileY": 898,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "- You\u0027ve discovered the Path of Mystery -",
   "tileX": 4666,
   "tileY": 919,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "PATH OF MYSTERY"
 }
 {
   "text": "\u0022Strange. It looks like someone or something has been trying to rebuild this place.\u0022",
   "tileX": 4668,
   "tileY": 1754,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "The descent is straight down, but you think you can make it.  --NEWLINE  --NEWLINE You\u0027re suprised suddenly by a memory of your father, and the thought hits you with a heavy weight of sadness, remembering that he\u0027s passed, but you\u0027re also grateful, thinking back to when he taught you how to rappel and climb small mountains in the summers.",
   "tileX": 4746,
   "tileY": 1482,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022These support beams look like they were built more recently, in the past few years...\u0022",
   "tileX": 4755,
   "tileY": 1742,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "None of your family is in sight, but you hold out hope they\u0027re still alive.  --NEWLINE  --NEWLINE \u0022Perhaps they made it to the village...\u0022",
   "tileX": 4671,
   "tileY": 852,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "- This gate guards the Path to the Molten Citadel - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Lizard gate near the Earth\u0027s molten core, guarding something I do not know how to describe... a vessel of some kind, or a transporter.. \u0022 --NEWLINE  --NEWLINE You attempt a rough sketch of it, and draw the tower above it leading to the Forgotten City as a reference point...",
@@ -1613,42 +1778,51 @@
   "tileX": 1488,
   "tileY": 1914,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "MORGUL FELEG"
 }
 {
   "text": "Miakoda: Red, have you ever heard of the Nine? It seems that the leader of this order is located here, ready to torment us... --NEWLINE  --NEWLINE Red: Yes, I\u0027ve heard too much about them. Over the ages, these horrors have plagued mankind for too long. I intend to put an end to them once and for all by killing their leader right here, the Witchking. ",
   "tileX": 2063,
   "tileY": 1886,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "The crackling embers of your old home blow in the wind. Your writings and paintings destroyed. Your wife is gone. You look down at a broken picture frame of the two of you; your heart clenches, a pang of rage and sadness lashes your heart. \u0022What meaning can be found in this life? This short life seeking simple pleasures, a little comfort, love, food and security? This attachment to success and approval? None of it matters now -- all of this I leave behind, left to burn to ashes.\u0022",
   "tileX": 4976,
   "tileY": 846,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "You have discovered The Forgotten City of Izalith, ",
   "tileX": 4821,
   "tileY": 1470,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "THE FORGOTTEN CITY OF IZALITH"
 }
 {
   "text": "Your brother Elijah and Bodhi\u0027s house",
   "tileX": 4842,
   "tileY": 855,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You have arrived in the Underworld, the deepest layer of the World, filled with nothing but flames, ashes, and discord. - --NEWLINE  --NEWLINE This bridge is made of burning Hellstone.  --NEWLINE  --NEWLINE \u0022I\u0027I forgot how hot it was here…\u0022",
   "tileX": 4846,
   "tileY": 1884,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "THE UNDERWORLD"
 }
 {
   "text": "This gate opens from the other side.",
@@ -1662,77 +1836,89 @@
   "tileX": 4795,
   "tileY": 851,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "You notice that this camp wasn't here before. This territory, which belonged to Ashenpeak Village, was abandoned after Attraidies attacked, where Dunlendings now take refuge. You remember that these men are hostile to you...",
   "tileX": 4730,
   "tileY": 853,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Your mother and father\u0027s house",
   "tileX": 4905,
   "tileY": 850,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "After defeating Skeletron and resting in the nearby house, you return here and peer into the darkness below.  --NEWLINE  --NEWLINE \u0022This must be the path forward,\u0022 you think, but you can\u0027t see anything beyond the ledge. With a deep breath, you take a leap, into the unknown.",
   "tileX": 4888,
   "tileY": 1407,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Your last memories before unconsciousness start to come back.  --NEWLINE  --NEWLINE Your family\u0027s village was raided and set ablaze by an army wearing the sigil of Attraidies, The Mindflayer King.  --NEWLINE  --NEWLINE You rush to the site of your family\u0027s home to search for survivors.",
   "tileX": 4909,
   "tileY": 854,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Your stomach sinks -- the two graves next to yours are unmarked, but must have been dug at the time of yours. ",
   "tileX": 4917,
   "tileY": 854,
   "textWidth": 320, 
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "The great eastern tower, which marks the border between the verdant plains of Ashenpeak and the jungle, is now in ruins following numerous attacks. The tower is now sometimes inhabited by goblins who have always fought for this territory...",
   "tileX": 5028,
   "tileY": 831,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "You wake up coughing black, dried blood.  --NEWLINE  --NEWLINE Coming to your senses, your heart starts racing as you realize you were buried alive.  --NEWLINE  --NEWLINE You scramble to find anything in the darkness that could help dig your way out and feel something sharp jabbing you in the side - a broken shard of your father\u0027s pickaxe...",
   "tileX": 4925,
   "tileY": 860,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "To the WEST \u003C--- --NEWLINE Ashen Peak Village --NEWLINE  --NEWLINE To the EAST---\u003E --NEWLINE The Tree Village of the Orid Tribe --NEWLINE Jungle Ruins --NEWLINE Obsidian\u0027s Volcano --NEWLINE Unknown",
   "tileX": 5054,
   "tileY": 831,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You have found the tomb where The Machine was sealed away long ago  -",
   "tileX": 4977,
   "tileY": 1101,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "TOMB OF THE MACHINE"
 }
 {
   "text": "\u0022It appears whoever lived here worshipped the sun... --NEWLINE  --NEWLINE Could it have been an ancestor of Solaire? They must have been miserable without the warmth and light of the day to comfort them... --NEWLINE  --NEWLINE Perhaps they still found a way to commune with the sun down here...\u0022",
   "tileX": 5002,
   "tileY": 1741,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Far up above you you can see an opening in the room.  --NEWLINE  --NEWLINE \u0022Maybe that will lead to the way out.\u0022",
@@ -1746,14 +1932,18 @@
   "tileX": 5059,
   "tileY": 1402,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,hint,location",
+  "locationName": "SKELETRON'S TEMPLE"
 }
 {
   "text": "- You\u0027ve found the Forgotten City\u0027s Cavern of Graves - --NEWLINE  --NEWLINE \u0022The door is sealed shut but has no key hole...\u0022",
   "tileX": 5117,
   "tileY": 1743,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "CAVERN OF GRAVES"
 }
 {
   "text": "You pull the lever and hear a rumbling above you as the gate at the edge of the lake opens to reveal a new path.",
@@ -1767,7 +1957,9 @@
   "tileX": 5149,
   "tileY": 1004,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "GREAT FOUNDRY ENTRANCE"
 }
 {
   "text": "\u0022The lever for this gate must be nearby.\u0022 --NEWLINE  --NEWLINE You prepare yourself and take a deep breath...",
@@ -1781,21 +1973,25 @@
   "tileX": 5151,
   "tileY": 1366,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You have found the Lost Ruins of Artorias - --NEWLINE  --NEWLINE This gate is blocked, only openable in the other side. It is said that there is a path to Artorias in the Great Foundry, which the entry is located in the jungle below a bridge.",
   "tileX": 5163,
   "tileY": 1755,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "LOST RUINS OF ARTORIAS"
 }
 {
   "text": "This ruined house was previously that of Unadin, the merchant. You still remember before your unconsciousness the times you went to visit him.",
   "tileX": 5257,
   "tileY": 865,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "\u0022This path seems strange, is it another passage to the forgotten city?\u0022",
@@ -1809,42 +2005,50 @@
   "tileX": 5308,
   "tileY": 1694,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You\u0027ve found the Great Foundry -",
   "tileX": 5314,
   "tileY": 1006,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "THE GREAT FOUNDRY"
 }
 {
   "text": "The Great Foundry is a vast structure built and operated by an ancient dwarven clan. It was notorious as a hellish place to work, where the dwarven laborers working there were exploited by the city of Isalith day and night, condemned to endless hard labor. What is surprising is that, despite the foundry galleries having been abandoned for a long time, the machines here still seem to be running...",
   "tileX": 5316,
   "tileY": 1162,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Red: \u0022Miakoda, is there a connection between the Great Foundry and Artorias?\u0022 --NEWLINE --NEWLINE Miakoda: \u0022Yes, a long time ago, when the Foundry was in full operation, there were strong ties between it and the Forgotten City of Izalith. Artorias\u0022 armor, renowned as one of the most durable, was forged here with magical protection, and a long tunnel was created to connect the foundry to the city.\u0022",
   "tileX": 5544,
   "tileY": 1329,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You\u0027ve discovered the Underground Jungle\u0027s Lake of Flowered Paths - --NEWLINE --NEWLINE This large underground lake was sacred to the inhabitants of these ruins; many pilgrims from the jungle came here to purify themselves with the lake\u0027s fresh water. Observing the lake\u0027s depth, you wonder what lies hidden at its very bottom.",
   "tileX": 5317,
   "tileY": 1371,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "LAKE OF FLOWERED PATHS"
 }
 {
   "text": "To the EAST--\u003E --NEWLINE The Rainforest of the Orid Tribe --NEWLINE The Old One\u0022s Tree --NEWLINE The Hallow --NEWLINE Unknown",
   "tileX": 5338,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "A voice whispers to you... \u0022Seek the lord known as Chaos. Its prison has long remained a secret, as it is protected by a Gem Lock once sealed by Artorias.\u0022 --NEWLINE  --NEWLINE \u0022Seek somewhere in the Hallow... At the end of the Palladium Caves...\u0022",
@@ -1858,14 +2062,17 @@
   "tileX": 5666,
   "tileY": 1072,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "LOST OOLACILE FOREST"
 }
 {
   "text": "The darkness and the stench of death intensify as you progress. The path ahead seems particularly dark and dense, and you sense the demon\u0027s presence nearby.",
   "tileX": 5422,
   "tileY": 925,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "As you open the gate, you also hear noise behind you; --NEWLINE it seems to be coming from the passage that was blocked down earlier.",
@@ -1900,21 +2107,25 @@
   "tileX": 5680,
   "tileY": 1158,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You\u0027ve discovered the Great Pyramid of Life - --NEWLINE  --NEWLINE Miakoda: \u0022This pryamid is considered to be the heart of the Undergrowth and also the birthplace of Plantera bulbs.\u0022",
   "tileX": 5828,
   "tileY": 1761,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,hint,location",
+  "locationName": "GREAT PYRAMID OF LIFE"
 }
 {
   "text": "This old and dead forest is now the territory of a powerful demon...",
   "tileX": 5788,
   "tileY": 1030,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "A dark impulse compels you to destroy one of these large flowers.  --NEWLINE  --NEWLINE You believe it is the key to gaining access to the Temple of Golem.",
@@ -1935,14 +2146,18 @@
   "tileX": 5964,
   "tileY": 569,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "HOME OF THE DRYAD"
 }
 {
   "text": "The entrance is sealed by Chlorophyte, an ore stronger than Adamantite.  --NEWLINE  --NEWLINE \u0022What is so important kept in the roots of the tree?\u0022",
   "tileX": 5964,
   "tileY": 569,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "HOME OF THE DRYAD"
 }
 {
   "text": "You pull the lever and and hear wood creaking lower in the tree",
@@ -1956,14 +2171,17 @@
   "tileX": 5926,
   "tileY": 858,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "- You\u0027ve found the Old One\u0027s Tree - --NEWLINE  --NEWLINE The tree of life. With its gigantic size and its golden leaves lighting up the sky, it represents the grandiosity of nature and hope in the face of the corruption that is sweeping the world. To be so majestic, this tree uses a strange liquid with magical properties as energy...",
   "tileX": 5924,
   "tileY": 789,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "THE OLD ONE'S TREE"
 }
 {
   "text": "Your spirit friend Miakoda tells you that you can get back to the surface via the tunnel that opens directly above the tallest temple ruin in the large cavern just to the West.",
@@ -1977,21 +2195,26 @@
   "tileX": 5939,
   "tileY": 1259,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "UNDERGROWTH ENTRANCE"
 }
 {
   "text": "As you continue along the path, you see the jungle becoming more and more colorful and lush, it becomes almost oppressive with all this nature.",
   "tileX": 5983,
   "tileY": 1544,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You\u0022ve found the Undergrowth, the Plantera garden -",
   "tileX": 5968,
   "tileY": 1627,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "THE UNDERGROWTH"
 }
 {
   "text": "You pull the lever and hear a passageway open deeper into the Undergrowth.",
@@ -2005,7 +2228,8 @@
   "tileX": 6021,
   "tileY": 80,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "You can feel the heat of magma boiling above you. Before you pull the lever, you make sure you\u0027re ready, because you know you\u0027re going to have to make a mad dash to survive this.",
@@ -2033,7 +2257,9 @@
   "tileX": 6098,
   "tileY": 1386,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "GOLEM'S TEMPLE"
 }
 {
   "text": "To open this gate you need a large emerald, a treasure long ago left in the tropics.",
@@ -2054,98 +2280,121 @@
   "tileX": 6192,
   "tileY": 1034,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "UNDERGROUND JUNGLE RUINS"
 }
 {
   "text": "- You\u0027ve found the Tree Village of the Orid Tribe - --NEWLINE  --NEWLINE \u0022Interesting, I recognize some of the residents here...\u0022",
   "tileX": 5680,
   "tileY": 822,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "TREE VILLAGE OF THE ORID TRIBE"
 }
 {
   "text": "\u0022What ancient civilization could have built this?...\u0022",
   "tileX": 5596,
   "tileY": 736,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You\u0027ve found the Jungle Ruins - --NEWLINE  --NEWLINE \u0022The Orid Tribe, although perceived as barbarians by the peoples of the west, were known for their remarkable architecture and the richness of their civilization. They managed to harmonize their golden structures with the dense and wild flora and fauna of the jungle. --NEWLINE But now, only ruins remain.",
   "tileX": 6200,
   "tileY": 879,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "JUNGLE RUINS"
 }
 {
   "text": "You have discovered the Crypt of Slogra and Gaibon.",
   "tileX": 6230,
   "tileY": 1279,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "CRYPT OF SLOGRA AND GAIBON"
 }
 {
   "text": "The exit from the Jungle is near, observing the Hallow and the mountains on the horizon, with still the light emitting from the Old One's Tree behind. Over time, you have heard that this part of the world is under the control of the Wyvern Mage, a powerful ally of Attraidies.",
   "tileX": 6278,
   "tileY": 854,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "\u003E EAST \u003E --NEWLINE  --NEWLINE The Hallow --NEWLINE The Great Mountains of Elendaris --NEWLINE The Frozen Ocean ", 
   "tileX": 6278,
   "tileY": 861,
   "textWidth": 320, 
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You arrived in the enchanted lands of the Hallow -", 
   "tileX": 6484,
   "tileY": 827,
   "textWidth": 320, 
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "THE HALLOW"
 }
 {
   "text": "You\u0027ve discovered the entrance to the Hallowed Caverns. --NEWLINE  --NEWLINE The Molten Pickaxe will be needed to enter.",
   "tileX": 6528,
   "tileY": 807,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "HALLOWED CAVERNS ENTRANCE"
 }
 {
   "text": "You\u0027ve discovered the Hallowed Caverns.",
   "tileX": 6840,
   "tileY": 1046,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "HALLOWED CAVERNS"
 }
 {
   "text": "Across the Hallowed Caves, this kind of gate can be found, with an inscription. It reads: If shadows and chaos once again descend upon these enchanted galleries, these runic barriers will activate to protect them and contain the darkness. Light will triumph over darkness.",
   "tileX": 7169,
   "tileY": 1229,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "As you wander through these enchanted lands, you notice something. The magical and fairy creatures you\u0027ve heard about that are supposed to roam here are simply not present. You doubt the tales and stories you\u0027ve been told before but you also realize that this place seems strangely quiet.",
   "tileX": 6769,
   "tileY": 728,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- The Great Mountains of Elendaris - --NEWLINE  --NEWLINE These cold mountains are known to be the nest of the legendary wyverns. Long ago, Elendaris was the first known man to tame one, a difficult feat as wyverns are powerful and proud creatures. He became a renowned hero of the east, and these mountains were named after him for his achievement.",
   "tileX": 6704,
   "tileY": 530,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "GREAT MOUNTAINS OF ELENDARIS"
 }
 {
   "text": "- The Frozen Ocean - --NEWLINE  --NEWLINE Upon leaving the Mountains of Elendaris, you hear a faint, melancholic sound coming from beneath the ice. --NEWLINE  --NEWLINE Miakoda: Sorrow waits, deep beneath the Frozen Ocean. The icy path that awaits you will not be easy, Red.",
   "tileX": 7505,
   "tileY": 774,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "THE FROZEN OCEAN"
 }
 {
   "text": "A voice beyond the wall snickers, \u0022If it is Obsidian\u0027s Temple you seek, know that there is more than one entrance to the secrets it holds...\u0022 --NEWLINE  --NEWLINE The voice makes an unsettling laugh and then goes silent.",
@@ -2159,7 +2408,9 @@
   "tileX": 6430,
   "tileY": 828,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "OBSIDIAN'S VOLCANO"
 }
 {
   "text": "You\u0027ve discovered the secret entrance to the underground jungle.  --NEWLINE  --NEWLINE A moment after pulling the lever, you hear the ground faintly rumble to the West. ",
@@ -2180,14 +2431,16 @@
   "tileX": 6492,
   "tileY": 1020,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "Try pressing the up key (as if you had a gravity potion active) to become fully in tune with the unique gravitational forces within this sacred area beneath the volcano. ",
   "tileX": 6495,
   "tileY": 1020,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "A spirit appears and whispers into your ear: --NEWLINE  --NEWLINE \u0022A hidden entrance to the underground jungle ruins lies this way, to the left... Deep inside these ruins, above the three golden shrines, you will find an escape back to the surface.\u0022",
@@ -2208,56 +2461,68 @@
   "tileX": 2921,
   "tileY": 427,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "SCARLET HILL"
 }
 {
   "text": "Red: These creatures seem to come from the sea, why are they here? --NEWLINE  --NEWLINE Miakoda: Indeed. More precisely, they were recovered dead and then reanimated here with rituals during the blood moon. Such imposing aquatic creatures, they must come from the Eternal Reef.",
   "tileX": 2802,
   "tileY": 579,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "You feel yourself growing lighter. The gravitational pull is shifting... --NEWLINE  --NEWLINE Try pressing the up key (as if you had a gravity potion active) to become fully in tune with the unique gravitational forces within this area.",
   "tileX": 6718,
   "tileY": 848,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "tutorial"
 }
 {
   "text": "You\u0027ve discovered the Wyvern Mage\u0027s Prison. It is unknown what he has imprisoned here...",
   "tileX": 6724,
   "tileY": 232,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "WYVERN MAGE'S PRISON"
 }
 {
   "text": "Red: What the hell is happening here... --NEWLINE  --NEWLINE Miakoda: This place is much more chaotic than last time, it seems that the fracture between the Abyss and Earth has completely ravaged this place.",
   "tileX": 6281,
   "tileY": 117, 
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0027Hello stranger! My name is Bosh and I\u0027m an angler! We are travelers who own a boat and explore the coasts. I\u0027m not from the country but I noticed here the impressive ruins in these tropics which seem quite rich in treasure... Oh and otherwise you are welcome in this boat among us!\u0027",
   "tileX": 236,
   "tileY": 858, 
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You have found the Celestial Wastes, the blasted skies at the edge of the world -",
   "tileX": 331,
   "tileY": 208,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "CELESTIAL WASTES"
 }
 {
   "text": "- You\u0027ve found the Lunar Chamber of the Celestial Wastes - --NEWLINE  --NEWLINE Miakoda: I don\u0027t know this place at all, this technology and this biome doesn\u0027t seem to come from our world...",
   "tileX": 229,
   "tileY": 152,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "LUNAR CHAMBER"
 }
 {
   "text": "\u0022Have you seen it?\u0022 whispers a feminine voice. --NEWLINE  --NEWLINE \u0022The sky temple that floats above the village?\u0022 --NEWLINE  --NEWLINE \u0022It is where Golem imprisoned the Empress!\u0022",
@@ -2271,7 +2536,9 @@
   "tileX": 6749,
   "tileY": 457,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "WYVERN MAGE'S FORTRESS"
 }
 {
   "text": "You pull the lever and hear ice cracking further down in the fortress.",
@@ -2292,7 +2559,8 @@
   "tileX": 6805,
   "tileY": 900,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "You look down into the dark pit below.  --NEWLINE  --NEWLINE Hot steam is pouring up through the opening, almost burning your face. --NEWLINE  --NEWLINE The Rage awaits.",
@@ -2320,70 +2588,82 @@
   "tileX": 7219,
   "tileY": 773,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "LAIR OF THE ANCESTRAL SPIRIT"
 }
 {
   "text": "A little blue magic whisp appears and speaks to you: --NEWLINE  --NEWLINE \u0022Red, is that you? It\u0027s me, Araz! I was an old friend of your father. Attraidies took me captive shortly after the raid on your family\u0027s village. I\u0027m imprisoned down here, below the gates!\u0022 --NEWLINE  --NEWLINE Red:\u0022I\u0027m going to get you out of there, hold on!\u0022",
   "tileX": 7298,
   "tileY": 568,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "A voice enters your mind, \u0022Red, don\u0027t be in such a hurry to kill me. Your thirst for violence can wait.\u0022 He laughs. --NEWLINE  --NEWLINE \u0022After all, there will be plenty of time for that... --NEWLINE  --NEWLINE First, I\u0027d like you to play a game. I think you\u0027ll like it.  --NEWLINE  --NEWLINE The entrance is just down those steps...if you succeed, a Shadow Key awaits you...\u0022",
   "tileX": 7304,
   "tileY": 420,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "You\u0027ve found the Wyvern Mage\u0027s Ice Magic Game.  --NEWLINE  --NEWLINE The price of failure is death.  --NEWLINE  --NEWLINE Your reward, if you survive: The Shadow Key.",
   "tileX": 7308,
   "tileY": 477,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "WYVERN MAGE'S ICE MAGIC GAME"
 }
 {
   "text": "Red: \u0022Araz, can you help me? Since you were captured things have gotten so much worse. Ever since killing the snitch that gave us up to Attraidies, the world has been flooded with even more powerful beasts and demons. The corruption has been spreading farther and faster across the land. I don\u0027t know how I can stop it.\u0022",
   "tileX": 7318,
   "tileY": 604,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022This is grave, indeed, Red. I could sense something had happened; a portal was opened from another, far more hellish world. I have seen this place in my dreams. According to legend, long ago the demons from this other world once claimed these lands as their own, before they were banished during the great war of the Cataclysm. I believe they have now returned to the lands they once ruled. You have already defeated one, The Rage. But 7 more await.\u0022",
   "tileX": 7321,
   "tileY": 604,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022The Sorrow, The Hunter, Plantera, The Destroyer, The Machine, the Triad, and the forgotten Golem. You\u0027ll have to brave battles with each of them if you ever hope to weaken Attraidies\u0027 power enough to kill him. With a shard taken from each of these 8 gods, you will be able to craft a catalyst strong enough to summon and face Attraidies.\u0022",
   "tileX": 7324,
   "tileY": 604,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Red: \u0022Thank you Araz, I accepted the karma of my actions the moment I took Aaron\u0027s life, and resolve to make right and bring peace back to these lands, even by my last breath.\u0022 --NEWLINE  --NEWLINE Araz: \u0022Good luck my friend. You\u0027ve taken on your father\u0027s hardy spirit more than you know.\u0022",
   "tileX": 7328,
   "tileY": 599,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Before you both depart, Araz asks to see the crest dropped by The Rage. \u0022Yes, it is as I thought. Each crest should hide a riddle like this one, which will lead you to another crest,\u0022 he says.  --NEWLINE  --NEWLINE \u0022I can see your future will have you traveling to the Frozen Ocean to the East soon. The Sorrow awaits... Good luck!\u0022",
   "tileX": 7331,
   "tileY": 599,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022Congratulations. I am quite impressed. Few have survived my game. The reward is yours.  --NEWLINE  --NEWLINE However, I would be weary, traveler; not all gifts are the treasure they appear to be.\u0022",
   "tileX": 7356,
   "tileY": 485,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "You peer below and see a great snowy island in the clouds.",
@@ -2397,14 +2677,17 @@
   "tileX": 7948,
   "tileY": 1637,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "FROZEN CATHEDRAL"
 }
 {
   "text": "A mantle where a samurai sword rested now sits empty... the home, now abandoned... --NEWLINE  --NEWLINE From the books on the shelves, it seems the warrior that once lived here was a student of Zen Buddhism...",
   "tileX": 8021,
   "tileY": 1564,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- This gate guards the path to the Frozen Cathedral -  --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Lizard Gate at the deepest point of the Frozen Ocean....\u0022",
@@ -2425,28 +2708,35 @@
   "tileX": 6655,
   "tileY": 972,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "SHARIAN'S VILLAGE"
 }
 {
   "text": "You have found the Temple of Chaos, long sealed within the Hallowed Caves. But with the death of the Attraidies and the rift between the Abyss and the world, the seal has been damaged, and a shadow has been released into these enchanted lands. Defeating Chaos will dispel the darkness...",
   "tileX": 7100,
   "tileY": 986,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "TEMPLE OF CHAOS"
 }
 {
   "text": "Although this place is absolutely terrifying, the architecture is unequally beautiful and complex.",
   "tileX": 7794,
   "tileY": 1734,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "- You\u0022ve found the Bowels of the Abyss - --NEWLINE  --NEWLINE A voice speaks to you, as if from inside your own mind: \u0022This colorless fog is from the Abyss. It seeps through cracks in the space between this world and the other, where the fabric between realms is very thin.\u0022",
   "tileX": 8240,
   "tileY": 1760,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "BOWELS OF THE ABYSS"
 }
 {
   "text": "\u0022This corridor seems endless...\u0022",
@@ -2460,7 +2750,9 @@
   "tileX": 8136,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "BLIGHT ON THE FROZEN OCEAN"
 }
 {
   "text": "There seems to be a passage underneath. --NEWLINE  --NEWLINE \u0027The way to open it can\u0027t be that far away...\u0027",
@@ -2474,140 +2766,167 @@
   "tileX": 7664,
   "tileY": 1097,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "FORGOTTEN GROVE"
 }
 {
   "text": "You\u0022ve found the Martian laboratory of the Frozen Ocean, hidden beneath the surface glacier. --NEWLINE  --NEWLINE The laboratory appears empty, yet seems fully functional. Exploring the laboratory leaves you wondering : --NEWLINE \u0022Why did this alien civilization install structures like this around the world?\u0022",
   "tileX": 8086,
   "tileY": 1119,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "MARTIAN LABORATORY"
 }
 {
   "text": "You find a worn note on the ground: --NEWLINE \u0022The Mythril, a cold ore formed in ancient ice, holds powerful magical properties. Yet the vast layer of Mythril ice on the surface does not appear to be of natural origin; perhaps it was created to act as a barrier to the Blight spreading in the ocean?\u0022",
   "tileX": 8160,
   "tileY": 1172,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "An ancient frozen kingdom was built upon this long glacier, with a thick layer of Mythril ice inside that covers the ocean. You\u0027ve never seen a sight like this in your entire life.",
   "tileX": 7597,
   "tileY": 853,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "The cavern of The Sorrow. As you step farther in, you hear a deep, booming voice begin to speak, at once everywhere and no where, \u0022You\u0027ve come far Red, I\u0027m quite pleased.\u0022 Suddenly, the Mindflayer King bursts into existence in front of you, hovering in the air. You take your sword and leap at Attraidies, and your sword blasts against the force field protecting him. ",
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Attraidies lets out a deep bellowing laugh. \u0022Red,\u0022 he says, \u0022You\u0027ve got to learn how to savor the moment. Isn\u0027t it these *little moments* that makes a life what it is? Besides, I really should thank you..\u0022 --NEWLINE  --NEWLINE Red: \u0022Enough games Attraidies, say what you will.\u0022",
   "tileX": 8160,
   "tileY": 1645,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022Ah, but it is the game that I set up and which you played so masterfully that has me so impressed.\u0022 Red is silent. Glaring. \u0022You haven\u0027t realized by now? I wanted you to kill Aaron. I corrupted his will, got him to betray you. I gave him the stone which you used to kill him, and told him precisely what he needed to hear so that he\u0027d think that he\u0027d be protecting himself by giving it to you.\u0022",
   "tileX": 8163,
   "tileY": 1645,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022But it was not just enchanted twice, but three times. Once to create the Protection Stone which I traded for the knowledge of your father\u0027s location, twice to tie his life to the stone, and a third time to unleash the most powerful force of destruction this world has ever seen.\u0022",
   "tileX": 8166,
   "tileY": 1645,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022But I needed you Red. You see, darkness thrives on darkness, and the spell that contained this army remained locked by the pure spirit of your father. To break the seal, a warrior of pure spirit and innocence had to be corrupted by the lust for vengeance.\u0022",
   "tileX": 8169,
   "tileY": 1645,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "\u0022And you played right into it. You played right into it. All you needed... Red... was a little push.\u0022 On Attraidies face was a grinning smile so wicked it becomes etched into your mind.  --NEWLINE \u0022But I\u0027ll give you a chance, Red. See if you can handle this.\u0022 And with that, Attraidies vanishes in a dark magic energy, summoning The Sorrow in his place.",
   "tileX": 8172,
   "tileY": 1645,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "You catch your breath to look far into the horizon. Nothing but a faint white blending effortlessly with the blue-green sheen glowing up through the snow. This ocean appears to go off into infinity.",
   "tileX": 8334,
   "tileY": 866,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore"
 }
 {
   "text": "Red: \u0022Miakoda, these floating islands... the Celestial Pillars... where do they come from? Why do they hover above the world?\u0022 --NEWLINE Miakoda: \u0022Long ago, Attraidies sought to control their power. To keep their power from other hands, he tore these lands from the earth, raising them to the skies. he bound each pillar with a monolithic seal, locked by his own life. As long as Attraidies is alive, the pillars will be sealed forever..\u0022",
   "tileX": 2364,
   "tileY": 384,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "- The Island of Mind - --NEWLINE  --NEWLINE The Nebula Pillar, one of the four great celestial seals, represents spirit and magic. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
   "tileX": 921,
   "tileY": 440,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "THE ISLAND OF MIND"
 }
 {
   "text": "- The Island of Fury - --NEWLINE  --NEWLINE The Solar Pillar, one of the four great celestial seals, represents anger and flames. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
   "tileX": 2151,
   "tileY": 329,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "THE ISLAND OF FURY"
 }
 {
   "text": "- The Island of Storm - --NEWLINE  --NEWLINE The Vortex Pillar, one of the four great celestial seals, represents distorsion and lightning. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
   "tileX": 5418,
   "tileY": 437,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "THE ISLAND OF STORM"
 }
 {
   "text": "- The Island of Clairvoyance - --NEWLINE  --NEWLINE The Stardust Pillar, one of the four great celestial seals, represents sight and stars. Long ago, Attraidies used the power of the celestial pillars to seal an ancient spatial complex containing a powerful cultist, a rival mage of Attraidies, who threatened the world with the summoning of a god of limitless power. Destroying the pillars will dispel the barrier and allow the great cultist to free himself...",
   "tileX": 7705,
   "tileY": 362,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "THE ISLAND OF CLAIRVOYANCE"
 }
 {
   "text": "- You\u0022ve found the Shrine of Death - --NEWLINE  --NEWLINE A terrifying and dark frost is spread over these lands at the edge of the frozen skies that remind you of your death.",
   "tileX": 8002,
   "tileY": 570,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "SHRINE OF DEATH"
 }
 {
   "text": "\u0022Where am I? Why did I stare at this mirror for so long?\u0022",
   "tileX": 6212,
   "tileY": 1759,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "Using this mirror, you now find yourself lost in the Abyss. The pressure and darkness of the Abyss slowly degrade your mind, and as you progress through these dark caves, you feel a presence intensifying and seeming strangely familiar.",
   "tileX": 6425,
   "tileY": 1686,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "story"
 }
 {
   "text": "- You have found the Origin of the Abyss - --NEWLINE  --NEWLINE It is the source from which the Abyss permeates the entire world.",
   "tileX": 6626,
   "tileY": 1876,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "ORIGIN OF THE ABYSS"
 }
-
 

@@ -61,9 +61,11 @@ namespace tsorcRevamp.Items.Tools
 
         public override bool CanUseItem(Player player)
         {
-            // Removing this restriction for BOTC players and making it a master-mode only restriction was part of our big vision overhaul for allowing more players to enjoy all the fun BOTC mechanics like flasks and stamina while moving the more hard core elements to master mode 
-            // Just don't know how to switch the restriction to master...
-            /*if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            // BotC-only restriction: the Curse blocks free-form teleportation. Unkindled and Classic
+            // players can use the Great Magic Mirror normally. This was previously commented out while
+            // the mod had a single BotC tier; with the tri-state Unkindled split, "convenience" features
+            // like this stay on for the new default mode and only get restricted at the hard tier.
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (player.whoAmI == Main.myPlayer)
                 {
@@ -71,7 +73,6 @@ namespace tsorcRevamp.Items.Tools
                 }
                 return false;
             }
-            */
             if (tsorcRevampWorld.BossAlive)
             {
                 if (player.whoAmI == Main.myPlayer)
@@ -146,16 +147,14 @@ namespace tsorcRevamp.Items.Tools
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             Player player = Main.LocalPlayer;
+            // BotC tier: warn the player the mirror won't function for them.
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1)
-                {// if we find one
-                 //insert the extra tooltip line
-
-                    //tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "BotCNoGreaterMM", LangUtils.GetTextValue("Items.GreatMagicMirror.BotCDisabled"))); //Removed this because no longer true
-
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "BotCNoGreaterMM", LangUtils.GetTextValue("Items.GreatMagicMirror.BotCDisabled")));
                 }
             }
         }

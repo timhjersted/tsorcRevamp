@@ -77,25 +77,14 @@ namespace tsorcRevamp
         public override void PostUpdateBuffs()
         {
             if (Player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && !Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200])
-                && estusChargesCurrent != estusChargesMax && Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) //When the player visits a bonfire, restore charges
+                && estusChargesCurrent != estusChargesMax && Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode) //When the player visits a bonfire, restore charges
             {
                 estusChargesCurrent = estusChargesMax;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f }, Player.position);
 
-                for (int i = 0; i <= 15; i++)
-                {
-                    int z = Dust.NewDust(Player.position, Player.width, Player.height, 270, 0f, 0f, 120, default(Color), 1f);
-                    Main.dust[z].noGravity = true;
-                    Main.dust[z].velocity *= 2.75f;
-                    Main.dust[z].fadeIn = 1.3f;
-                    Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                    vectorother.Normalize();
-                    vectorother *= (float)Main.rand.Next(80, 95) * 0.043f;
-                    Main.dust[z].velocity = vectorother;
-                    vectorother.Normalize();
-                    vectorother *= 25f;
-                    Main.dust[z].position = Player.Center - vectorother;
-                }
+                // Bonfire-refill green dust burst removed — it was firing the frame after a drink
+                // (charges drop → this block immediately refills + spawned dust at feet), which read
+                // as "the Estus drink produced dust". Sound effect alone is enough feedback.
             }
         }
         public override void PostUpdateMiscEffects()
@@ -170,7 +159,9 @@ namespace tsorcRevamp
             estusDrinkTimer += 1f / 60f;
 
             //Force player body frame to be Use3, this includes the players arm (drinking position)
-            if (estusDrinkTimer >= estusDrinkTimerMax * 0.4f)
+            // Threshold dropped from 0.4 → 0.05 so the drinking pose appears almost immediately on key
+            // press instead of after an anticipation gap that read as input lag.
+            if (estusDrinkTimer >= estusDrinkTimerMax * 0.05f)
             {
                 Player.GetModPlayer<tsorcRevampPlayer>().forcedBodyFrame = PlayerFrames.Use2;
             }
@@ -184,20 +175,8 @@ namespace tsorcRevamp
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f }, Player.position);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item3, Player.position);
 
-                for (int i = 0; i <= 15; i++)
-                {
-                    int z = Dust.NewDust(Player.position, Player.width, Player.height, 270, 0f, 0f, 120, default(Color), 1f);
-                    Main.dust[z].noGravity = true;
-                    Main.dust[z].velocity *= 2.75f;
-                    Main.dust[z].fadeIn = 1.3f;
-                    Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                    vectorother.Normalize();
-                    vectorother *= (float)Main.rand.Next(80, 95) * 0.043f;
-                    Main.dust[z].velocity = vectorother;
-                    vectorother.Normalize();
-                    vectorother *= 25f;
-                    Main.dust[z].position = Player.Center - vectorother;
-                }
+                // On-finish green dust burst removed — drink completion is already signalled
+                // by the two sound effects and the HealEffect text below.
 
                 isDrinking = false; //No longer drinking
                 estusChargesCurrent--; //Remove a charge
@@ -226,19 +205,8 @@ namespace tsorcRevamp
                         estusHealthPerTick -= (int)estusHealthPerTick;
                     }
 
-
-                    int z = Dust.NewDust(Player.position, Player.width, Player.height, 270, 0f, 0f, 120, default(Color), 1f);
-                    Main.dust[z].noGravity = true;
-                    Main.dust[z].velocity *= 2.75f;
-                    Main.dust[z].fadeIn = 1.3f;
-                    Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                    vectorother.Normalize();
-                    vectorother *= (float)Main.rand.Next(80, 95) * 0.043f;
-                    Main.dust[z].velocity = vectorother;
-                    vectorother.Normalize();
-                    vectorother *= 25f;
-                    Main.dust[z].position = Player.Center - vectorother;
-
+                    // Per-tick green dust at the player's feet was removed — it ran every frame
+                    // during the multi-second healing window, producing a constant green cloud.
                 }
 
                 if (estusHealingTimer >= estusHealingTimerMax) //Once healing process is over

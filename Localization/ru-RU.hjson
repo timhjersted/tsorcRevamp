@@ -39,6 +39,7 @@ Mods: {
 				'''
 			CorruptionCursed: Этот предмет был [c/383838:проклят] [c/701070:порчей] и пока не может быть использован
 			BotCNoHeal: Не исцеляет [c/6d8827:носителя проклятия]
+			// UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			BotCPStone: Сокращает время, необходимое для использования фляги эстуса на {0}%
 			BotCManaFlower: Сокращает время, необходимое для использования фляги лазурных слёз на {0}%
 			DSPickUpRange: " Увеличивает дальность подбора тёмных душ"
@@ -345,6 +346,12 @@ Mods: {
 			StopEditMarkers: Нажмите, чтобы остановить редактирование меток.
 			ClickToHide: " Нажмите, чтобы скрыть"
 			ClickToShow: " Нажмите, чтобы показать  "
+			ShowPrefix: Показать
+			TagStory: Сюжет
+			TagLore: Лор
+			TagHint: Подсказка
+			TagTutorial: Обучение
+			TagLocation: Локация
 			UpdateMusic: "Обновление музыкального мода: "
 			GetMusic: Нажмите сюда, чтобы установить мод Story of Red Cloud Music!
 			MusicNewUpdate: Доступно обновление музыкального мода, нажмите здесь, чтобы загрузить! (Игра перезапустится!)
@@ -3670,7 +3677,73 @@ Mods: {
 				Attraidies1: Первая фаза Аттрайдиса
 				Attraidies2: Финальная форма Аттрайдиса
 				Next: Следующий босс:
+				// Location: Where to find:
 				DeathCountText: Количество смертей:: {0}
+				// ─────────────────────────────────────────────────────────────────────────────
+				//  Clue index → boss mapping. Each clue N corresponds to the boss with NPC.rarity = N.
+				//  Hover behavior:
+				//    Defeated boss → shows "Next Boss:" + clue (rarity + 1)
+				//    Undefeated (???) → shows "Where to find:" + this boss's own clue (rarity)
+				//  Undefeated clues are gated by era (pre-hardmode/hardmode/SHM) so end-game bosses
+				//  stay hidden until the player has progressed there.
+				//
+				//  Rarity → boss mapping. Modded bosses set NPC.rarity in their own SetDefaults.
+				//  Vanilla bosses get their rarity assigned by tsorcRevamp in NPCs/VanillaChanges.cs
+				//  (search "npc.rarity = N" in that file to find/edit). [PHM] = pre-hardmode,
+				//  [HM] = hardmode, [SHM] = Super Hard Mode.
+				//
+				//    1  [PHM] Leonhard               (Special/LeonhardPhase1)             — modded
+				//    2  [PHM] Red Knight             (Enemies/RedKnight)                  — modded
+				//    3  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded
+				//    4  [PHM] Eye of Cthulhu         (VanillaChanges.cs)                  — vanilla
+				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
+				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
+				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
+				//    8  [PHM] King Slime             (VanillaChanges.cs)                  — vanilla
+				//    9  [PHM] Slogra (+ Gaibon)      (Bosses/Slogra)                      — modded
+				//   10  [PHM] Queen Bee              (VanillaChanges.cs)                  — vanilla
+				//   11  [PHM] Skeletron             (VanillaChanges.cs)                   — vanilla
+				//   12  [PHM] Deerclops              (VanillaChanges.cs)                  — vanilla
+				//   13  [PHM] Jungle Wyvern          (Bosses/JungleWyvern/JungleWyvernHead) — modded
+				//   14  [PHM] Ancient Demon          (Bosses/AncientDemon)                — modded
+				//   15  [PHM] Wall of Flesh          (VanillaChanges.cs)                  — vanilla
+				//   16  [HM]  Queen Slime            (VanillaChanges.cs)                  — vanilla
+				//   17  [HM]  The Rage               (Bosses/TheRage)                     — modded
+				//   18  [HM]  Wyvern Mage            (Bosses/WyvernMage/WyvernMage)       — modded
+				//   19  [HM]  The Sorrow             (Bosses/TheSorrow)                   — modded
+				//   20  [HM]  Serris                 (Bosses/Serris/SerrisX)              — modded
+				//   21  [HM]  Death / True Death     (Bosses/Death, Special/TrueDeath)    — modded
+				//   22  [HM]  The Hunter             (Bosses/TheHunter)                   — modded
+				//   23  [HM]  The Destroyer          (VanillaChanges.cs)                  — vanilla
+				//   24  [HM]  The Machine (PrimeV2)  (Bosses/PrimeV2/TheMachine)          — modded
+				//   25  [HM]  Plantera               (VanillaChanges.cs)                  — vanilla
+				//   26  [HM]  Golem                  (VanillaChanges.cs, GolemHeadFree)   — vanilla
+				//   27  [HM]  Empress of Light       (VanillaChanges.cs, HallowBoss)      — vanilla
+				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
+				//   29  [HM]  Dark Shogun Mask       (Bosses/Okiku/FirstForm/DarkShogunMask) — modded
+				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
+				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
+				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
+				//   33  [SHM] Moon Lord              (VanillaChanges.cs, MoonLordFreeEye) — vanilla
+				//   34  [SHM] Water Fiend Kraken     (Bosses/SuperHardMode/Fiends/WaterFiendKraken)   — modded
+				//   35  [SHM] Earth Fiend Lich       (Bosses/SuperHardMode/Fiends/EarthFiendLich)     — modded
+				//   36  [SHM] Fire Fiend Marilith    (Bosses/SuperHardMode/Fiends/FireFiendMarilith)  — modded
+				//   37  [SHM] Blight                 (Bosses/SuperHardMode/Blight)        — modded
+				//   38  [SHM] Abysmal Oolacile Sorc. (Bosses/SuperHardMode/AbysmalOolacileSorcerer)   — modded
+				//   39  [SHM] Artorias               (Bosses/SuperHardMode/Artorias)      — modded
+				//   40  [SHM] Seath the Scaleless    (Bosses/SuperHardMode/Seath/SeathTheScalelessHead) — modded
+				//   41  [SHM] Wyvern Mage Shadow     (Bosses/SuperHardMode/GhostWyvernMage/WyvernMageShadow) — modded
+				//   42  [SHM] Chaos                  (Bosses/SuperHardMode/Chaos)         — modded (currently has no rarity set; defaults to 0 — fix in its SetDefaults)
+				//   43  [SHM] Dark Cloud             (Bosses/SuperHardMode/DarkCloud)     — modded
+				//   44  [SHM] Gwyn                   (Bosses/SuperHardMode/Gwyn)          — modded
+				//   45        "True ending" message — shown as the "Next Boss" hint when hovering Gwyn
+				//
+				//  To rebind a clue to a different boss, edit that boss's `NPC.rarity = N` (or the
+				//  `npc.rarity = N` line in VanillaChanges.cs for vanilla bosses). To rewrite a clue's
+				//  text, just edit the localization line below. Many `*Desc` clues use the shared
+				//  Mods.tsorcRevamp.BossChecklist.*Desc strings (defined near the top of this file)
+				//  so the Boss Checklist mod UI and the Boss Hunting Tome stay in sync.
+				// ─────────────────────────────────────────────────────────────────────────────
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: Что находится под руководством Леонарда, или в конце пути амбиций?
 				3: "{$BossChecklist.PinwheelDesc}"
@@ -3900,6 +3973,12 @@ Mods: {
 					'''
 				Enabled: Ты стал носителем Проклятия
 				Disabled: Проклятие снято
+				// Unkindled: You rise as the Unkindled — your fire still smolders.
+				// BearerOfTheCurse: You have taken up the burden — the Curse is yours to bear.
+				// Classic: You let the flame fade. The curse is lifted.
+				// State_Classic: "[c/aaaaaa:Currently:] Classic [c/aaaaaa:— click to become] [c/6d8827:Unkindled]"
+				// State_Unkindled: "[c/6d8827:Currently:] Unkindled [c/aaaaaa:— click to take up the] [c/dd3333:Curse]"
+				// State_BotC: "[c/dd3333:Currently:] Bearer of the Curse [c/aaaaaa:— click to return to] [c/aaaaaa:Classic]"
 				Melee:
 					'''
 					[c/ff8400:Базовая скорость атаки в ближнем бою снижена до {0}%.]
@@ -3931,12 +4010,6 @@ Mods: {
 					[c/6efaff:которые временно увеличивают урон от призыва и спадают через несколько секунд, если их не обновить.]
 					[c/6efaff:Каждый стак даёт {1}% урона, до {2}% при максимальном количестве {3} стаков.]
 					[c/6efaff:При максимальном количестве стаков увеличивается продолжительность действия метки призыва на {4}%.]
-					'''
-				End:
-					'''
-					Нажмите ПКМ по этому предмету в вашем инвентаре, чтобы переключиться между описаниями новых механик для каждого класса.
-					[c/ca1e00:Этот режим предназначен для игроков, имеющих опыт в прохождении мода]
-					[c/ca1e00:Он не рекомендуется для первого прохождения.]
 					'''
 			}
 
@@ -8088,8 +8161,8 @@ Mods: {
 			}
 
 			SoulOfOccultist: {
-				// DisplayName: Soul Of Occultist
-				// Tooltip: ""
+				// DisplayName: Soul of the Occultist
+				// Tooltip: "'The essence of dark magic from the remains of Oolacile'"
 			}
 		}
 
@@ -10569,11 +10642,15 @@ Mods: {
 				Luck: Удачи.
 				Gift: Если вам когда-нибудь понадобится ещё, вы можете поджарить немного на огне костра. Прощай.
 				BotCGift: Носитель Проклятия, эти камни жизни и осколки Звёздного света, без сомнения, окажут неоценимую помощь в вашем путешествии. Прощай.
+				// UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems — may they sustain you on the road ahead. Farewell.
 				EasterEgg: Носитель... Искать... Искать... Чтобы не...
 				button1: Благославление
 				button2v1: Получить знания...
 				button2v2: Получить подарок
 				button2v3: Отдать осколок
+				// button2v4: Receive tome
+				// TomeOffer: Before we speak, take this — a [c/6d8827:Boss Hunting Tome]. Hover over any boss in its pages to learn where it dwells, and re-summon those you have already slain.
+				// TomeGiven: May it guide your path. Now then, what knowledge do you seek?
 				BringShards: Если вы случайно найдёте еще один осколок фляги, принесите его мне. Чтобы я могла облегчить вашу ношу.
 				EstusUpgrade: "Увеличень размер фляги с эстусом! Максимальное количество зарядов: "
 				CeruleanUpgrade: "Увеличен размер лазурной фляги! Максимальное количество зарядов: "
@@ -11810,6 +11887,31 @@ Mods: {
 					// Tooltip: Only takes effect when creating new map
 					// Label: Disable Soapstones
 				}
+
+				AutoOpenSoapstones: {
+					// Label: Auto Open Soapstones
+					// Tooltip: ""
+				}
+
+				DisableStorySoapstones: {
+					// Label: Disable Story Soapstones
+					// Tooltip: ""
+				}
+
+				DisableLoreSoapstones: {
+					// Label: Disable Lore Soapstones
+					// Tooltip: ""
+				}
+
+				DisableTutorialSoapstones: {
+					// Label: Disable Tutorial Soapstones
+					// Tooltip: ""
+				}
+
+				DisableLocationBanner: {
+					// Label: Disable Location Banner
+					// Tooltip: ""
+				}
 			}
 		}
 
@@ -11818,6 +11920,7 @@ Mods: {
 			AdventureModeEnabled: Только режим приключений
 			DebugModeEnabled: Только для тестирования
 			BotCEnabled: Только для носителя проклятия
+			// SoulsModeEnabled: Unkindled or Bearer of the Curse
 			// WyvernMageDowned: The Wyvern Mage has been defeated
 			SorrowDowned: Скорбь была побеждена
 			HunterDowned: Охотник был побеждён

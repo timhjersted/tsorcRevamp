@@ -387,11 +387,10 @@ namespace tsorcRevamp
 
                 Vector2 origin = sourceRectangle.Size() / 2f;
 
-                if (estusPlayer.estusDrinkTimer >= estusPlayer.estusDrinkTimerMax * 0.4f)
+                // Threshold matches the body-frame threshold in tsorcRevampPlayerEstus.cs so the flask
+                // sprite and the player's arm-up pose appear together at the start of the drink channel.
+                if (estusPlayer.estusDrinkTimer >= estusPlayer.estusDrinkTimerMax * 0.05f)
                 {
-                    //DrawData data = new DrawData(texture, new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), sourceRectangle, newColor, rotation, origin, estusScale, effects, 0);
-                    //Main.playerDrawData.Add(data);
-
                     drawInfo.DrawDataCache.Add(new DrawData(
                             texture, // The texture to render.
                             new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), // Position to render at.
@@ -440,11 +439,10 @@ namespace tsorcRevamp
 
                 Vector2 origin = sourceRectangle.Size() / 2f;
 
-                if (ceruleanPlayer.ceruleanDrinkTimer >= ceruleanPlayer.ceruleanDrinkTimerMax * 0.4f)
+                // Threshold matches the body-frame threshold in tsorcRevampPlayerCerulean.cs so the
+                // flask sprite and the player's arm-up pose appear together at the start of the channel.
+                if (ceruleanPlayer.ceruleanDrinkTimer >= ceruleanPlayer.ceruleanDrinkTimerMax * 0.05f)
                 {
-                    //DrawData data = new DrawData(texture, new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), sourceRectangle, newColor, rotation, origin, estusScale, effects, 0);
-                    //Main.playerDrawData.Add(data);
-
                     drawInfo.DrawDataCache.Add(new DrawData(
                             texture, // The texture to render.
                             new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), // Position to render at.

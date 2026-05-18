@@ -77,9 +77,35 @@ namespace tsorcRevamp.Tiles
                 bool mouseInRange = mouseDistance < 240 && mouseLineOfSight;
                 bool playerInRange = distance <= 40;
 
+                tsorcRevampConfig config = ModContent.GetInstance<tsorcRevampConfig>();
+                bool categoryDisabled = SoapstoneTileEntity.IsEntirelyDisabled(entity, config);
+                bool autoOpen = config.AutoOpenSoapstones;
+
+                // Location banner: fire when player walks near a location-tagged sign whose
+                // ID differs from the last one shown. Independent of category-disable / show-on-click.
+                if (playerInRange
+                    && !config.DisableLocationBanner
+                    && !string.IsNullOrEmpty(entity.locationName)
+                    && tsorcRevamp.LastShownLocationId != entity.ID)
+                {
+                    tsorcRevamp.LastShownLocationId = entity.ID;
+                    tsorcRevamp.LocationBannerText = entity.locationName.ToUpperInvariant();
+                    tsorcRevamp.LocationBannerTimer = tsorcRevamp.LOCATION_BANNER_TOTAL;
+                }
+
+                // If the bubble is sticky-open (user clicked Show), check whether the mouse has
+                // moved far enough from the click position to dismiss it.
+                if (entity.manuallyOpened
+                    && Vector2.Distance(Main.MouseScreen, entity.clickedAtMouse) > SoapstoneTileEntity.MANUAL_DISMISS_DISTANCE)
+                {
+                    entity.manuallyOpened = false;
+                }
+
+                bool keepOpen = autoOpen || entity.manuallyOpened;
+
                 //Main.NewText("soap " + tsorcRevamp.NearbySoapstoneMouse);
                 //If the mouse is already nearby a soapstone
-                if (tsorcRevamp.NearbySoapstoneMouse)
+                if (!categoryDisabled && tsorcRevamp.NearbySoapstoneMouse)
                 {
                     //If the mouse is closer to this soapstone than to the previous one, set this as the current soapstone
                     if (mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance && mouseInRange && distance < 600)
@@ -92,12 +118,14 @@ namespace tsorcRevamp.Tiles
 
                         tsorcRevamp.NearbySoapstoneMouse = true;
                         tsorcRevamp.NearbySoapstoneMouseDistance = mouseDistance;
-                        entity.timer = 25;
-                        entity.read = true;
+                        if (keepOpen) entity.timer = 25;
+                        // Only auto-mark as read on proximity if the bubble actually opens.
+                        // When AutoOpen is off, read is set on click (see Systems display).
+                        if (autoOpen) entity.read = true;
                         entity.nearPlayer = true;
                     }
                 }
-                else if (playerInRange || (mouseInRange && distance < 240))
+                else if (!categoryDisabled && (playerInRange || (mouseInRange && distance < 240)))
                 {
                     tsorcRevamp.NearbySoapstone = entity;
                     if (!entity.hidden)
@@ -110,8 +138,8 @@ namespace tsorcRevamp.Tiles
                         tsorcRevamp.NearbySoapstoneMouse = true;
                         tsorcRevamp.NearbySoapstoneMouseDistance = mouseDistance;
                     }
-                    entity.timer = 25;
-                    entity.read = true;
+                    if (keepOpen) entity.timer = 25;
+                    if (autoOpen) entity.read = true;
                     entity.nearPlayer = true;
                 }
 
@@ -126,6 +154,7 @@ namespace tsorcRevamp.Tiles
                         {
                             entity.timer = 0;
                             entity.nearPlayer = false;
+                            entity.manuallyOpened = false;
 
                             if (tsorcRevamp.NearbySoapstone == entity)
                             {
@@ -163,6 +192,18 @@ namespace tsorcRevamp.Tiles
         public bool nearPlayer;
         public bool read = false;
         public bool hidden = false;
+        // Comma-separated category tags (story, lore, hint, tutorial, location). Null/empty => hint.
+        public string category;
+        // Display name for the location banner. Null/empty => no banner.
+        public string locationName;
+        // Transient UI state (not saved, not synced): true while the player has clicked "Show"
+        // and the bubble is sticky. Reset to false when the player dismisses it (mouse moved
+        // far from click point, or walked out of range).
+        public bool manuallyOpened;
+        // Screen-space mouse position when the Show button was clicked. Used to detect dismissal.
+        public Vector2 clickedAtMouse;
+        // Distance the mouse must travel from clickedAtMouse to dismiss the sticky bubble.
+        public const float MANUAL_DISMISS_DISTANCE = 220f;
 
         public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
         {
@@ -214,6 +255,8 @@ namespace tsorcRevamp.Tiles
             writer.Write(text);
             writer.Write(textWidth);
             writer.Write(read);
+            writer.Write(category ?? string.Empty);
+            writer.Write(locationName ?? string.Empty);
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -221,6 +264,10 @@ namespace tsorcRevamp.Tiles
             text = reader.ReadString();
             textWidth = reader.ReadInt32();
             read = reader.ReadBoolean();
+            string cat = reader.ReadString();
+            category = string.IsNullOrEmpty(cat) ? null : cat;
+            string loc = reader.ReadString();
+            locationName = string.IsNullOrEmpty(loc) ? null : loc;
         }
 
         public override void SaveData(TagCompound tag)
@@ -228,6 +275,8 @@ namespace tsorcRevamp.Tiles
             tag.Add("text", text);
             tag.Add("boxWidth", textWidth);
             tag.Add("read", read);
+            if (!string.IsNullOrEmpty(category)) tag.Add("category", category);
+            if (!string.IsNullOrEmpty(locationName)) tag.Add("locationName", locationName);
         }
 
         public override void LoadData(TagCompound tag)
@@ -241,6 +290,86 @@ namespace tsorcRevamp.Tiles
             bool? dim = tag.GetBool("read");
             read = dim ?? false;
 
+            // category and locationName are re-applied from JSON each world load via BuildSoapstones,
+            // but we persist them so they survive even if the JSON file is missing later.
+            category = tag.ContainsKey("category") ? tag.GetString("category") : null;
+            locationName = tag.ContainsKey("locationName") ? tag.GetString("locationName") : null;
+        }
+
+        public static bool HasCategory(string categoryField, string tag)
+        {
+            if (string.IsNullOrEmpty(categoryField))
+                return tag == "hint"; // default
+            foreach (string part in categoryField.Split(','))
+            {
+                if (part.Trim().Equals(tag, System.StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+
+        // True iff every category on this entity is currently disabled by config.
+        // Hint and location are never disable-able; presence of either is enough to keep the sign live.
+        public static bool IsEntirelyDisabled(SoapstoneTileEntity entity, tsorcRevampConfig config)
+        {
+            string cat = entity.category;
+            // No category -> implicit hint -> never disabled.
+            if (string.IsNullOrEmpty(cat)) return false;
+
+            bool anyAllowed = false;
+            foreach (string part in cat.Split(','))
+            {
+                string t = part.Trim().ToLowerInvariant();
+                bool disabled = t switch
+                {
+                    "story" => config.DisableStorySoapstones,
+                    "lore" => config.DisableLoreSoapstones,
+                    "tutorial" => config.DisableTutorialSoapstones,
+                    "hint" => false,
+                    "location" => false,
+                    _ => false, // unknown tag -> treat as allowed
+                };
+                if (!disabled) { anyAllowed = true; break; }
+            }
+            return !anyAllowed;
+        }
+
+        // Returns the localized "Show X & Y" label for the click-to-open button,
+        // built from the entity's category tags.
+        public static string BuildShowButtonText(SoapstoneTileEntity entity)
+        {
+            string cat = entity.category;
+            System.Collections.Generic.List<string> parts = new();
+            if (string.IsNullOrEmpty(cat))
+            {
+                parts.Add(Utilities.LangUtils.GetTextValue("UI.TagHint"));
+            }
+            else
+            {
+                foreach (string raw in cat.Split(','))
+                {
+                    string t = raw.Trim().ToLowerInvariant();
+                    string display = t switch
+                    {
+                        "story" => Utilities.LangUtils.GetTextValue("UI.TagStory"),
+                        "lore" => Utilities.LangUtils.GetTextValue("UI.TagLore"),
+                        "hint" => Utilities.LangUtils.GetTextValue("UI.TagHint"),
+                        "tutorial" => Utilities.LangUtils.GetTextValue("UI.TagTutorial"),
+                        "location" => Utilities.LangUtils.GetTextValue("UI.TagLocation"),
+                        _ => null,
+                    };
+                    if (display != null && !parts.Contains(display)) parts.Add(display);
+                }
+                if (parts.Count == 0)
+                    parts.Add(Utilities.LangUtils.GetTextValue("UI.TagHint"));
+            }
+
+            string joined;
+            if (parts.Count == 1) joined = parts[0];
+            else if (parts.Count == 2) joined = parts[0] + " & " + parts[1];
+            else joined = string.Join(", ", parts.GetRange(0, parts.Count - 1)) + " & " + parts[parts.Count - 1];
+
+            return " " + Utilities.LangUtils.GetTextValue("UI.ShowPrefix") + " " + joined + "  ";
         }
     }
 }

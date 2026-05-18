@@ -39,6 +39,7 @@ Mods: {
 				'''
 			CorruptionCursed: This item has been [c/383838:cursed] by the [c/701070:corruption] and can't be used yet
 			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
+			UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			BotCPStone: Decreases the time needed to drink the Estus Flask by {0}%
 			BotCManaFlower: Decreases the time needed to drink the Cerulean Flask by {0}%
 			DSPickUpRange: " increases Dark Soul pick-up range"
@@ -209,7 +210,7 @@ Mods: {
 			22: The Chloranthy Ring massively improves your dodgeroll, allowing superior evasion...
 			23: Enemies in certain dark areas drop Humanity, which can reroll curse stats
 			24: Need more advice? Join the discord, and get tips without even needing to die for them.
-			25: Progression clues can be found by hovering over entries in the Boss Rematch Tome, or some unique items dropped by bosses
+			25: Progression clues can be found by hovering over entries in the Boss Hunting Tome, or some unique items dropped by bosses
 			26: Remember to dodgeroll
 			27: If you go above 100% crit chance you have a chance to multicrit, allowing you to deal 4 or more times the damage
 			GoodLuck: You've now seen almost every death tip, but your journey is nowhere near over. Good luck, we hope you enjoy it!
@@ -345,6 +346,12 @@ Mods: {
 			StopEditMarkers: Click to stop editing markers.
 			ClickToHide: " Click to Hide"
 			ClickToShow: " Click to Show  "
+			ShowPrefix: Show
+			TagStory: Story
+			TagLore: Lore
+			TagHint: Hint
+			TagTutorial: Tutorial
+			TagLocation: Location
 			UpdateMusic: "Updating Music Mod: "
 			GetMusic: Click here to get the Story of Red Cloud Music Mod!
 			MusicNewUpdate: Music mod update available, click here to download! (Will restart the game!)
@@ -411,8 +418,8 @@ Mods: {
 			SHMOnly: "[c/ff9999:Only drops in Super Hardmode]"
 			AbyssOnly: "[c/ff9999: Only drops while The Covenant of Artorias is equipped]"
 			FirstBagOnly: "[c/ff9999: Only drops from the first opened specific Bag]"
-			BotCOnly: "[c/ff9999: Only drops when the player is a Bearer of the Curse]"
-			FirstBagBotCOnly: "[c/ff9999: Only drops from the first opened specific Bag while the player is a Bearer of the Curse]"
+			BotCOnly: "[c/ff9999: Only drops when the player is Unkindled or a Bearer of the Curse]"
+			FirstBagBotCOnly: "[c/ff9999: Only drops from the first opened specific Bag while the player is Unkindled or a Bearer of the Curse]"
 			AdvModeOnly: "[c/ff9999:Only drops in Adventure Mode]"
 			SandboxModeOnly: "[c/ff9999:Only drops outside of Adventure Mode]"
 			NonExpertFirstKill: "[c/ff9999: Only drops on the first kill outside of Expert Mode]"
@@ -3689,9 +3696,10 @@ Mods: {
 			}
 
 			BossRematchTome: {
-				DisplayName: Boss Rematch Tome
+				DisplayName: Boss Hunting Tome
 				Tooltip:
 					'''
+					Hover over any boss in the menu for a hint on where to find it
 					Allows you to re-summon any boss you have defeated
 					Left click to show Boss Select Menu, then click on the Boss icon to summon
 					Use the arrows on both sides to switch between different periods
@@ -3706,7 +3714,73 @@ Mods: {
 				Attraidies1: Attraidies First Phase
 				Attraidies2: Attraidies Final Form
 				Next: Next Boss:
+				Location: Where to find:
 				DeathCountText: Death Count: {0}
+				// ─────────────────────────────────────────────────────────────────────────────
+				//  Clue index → boss mapping. Each clue N corresponds to the boss with NPC.rarity = N.
+				//  Hover behavior:
+				//    Defeated boss → shows "Next Boss:" + clue (rarity + 1)
+				//    Undefeated (???) → shows "Where to find:" + this boss's own clue (rarity)
+				//  Undefeated clues are gated by era (pre-hardmode/hardmode/SHM) so end-game bosses
+				//  stay hidden until the player has progressed there.
+				//
+				//  Rarity → boss mapping. Modded bosses set NPC.rarity in their own SetDefaults.
+				//  Vanilla bosses get their rarity assigned by tsorcRevamp in NPCs/VanillaChanges.cs
+				//  (search "npc.rarity = N" in that file to find/edit). [PHM] = pre-hardmode,
+				//  [HM] = hardmode, [SHM] = Super Hard Mode.
+				//
+				//    1  [PHM] Leonhard               (Special/LeonhardPhase1)             — modded
+				//    2  [PHM] Red Knight             (Enemies/RedKnight)                  — modded
+				//    3  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded
+				//    4  [PHM] Eye of Cthulhu         (VanillaChanges.cs)                  — vanilla
+				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
+				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
+				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
+				//    8  [PHM] King Slime             (VanillaChanges.cs)                  — vanilla
+				//    9  [PHM] Slogra (+ Gaibon)      (Bosses/Slogra)                      — modded
+				//   10  [PHM] Queen Bee              (VanillaChanges.cs)                  — vanilla
+				//   11  [PHM] Skeletron             (VanillaChanges.cs)                   — vanilla
+				//   12  [PHM] Deerclops              (VanillaChanges.cs)                  — vanilla
+				//   13  [PHM] Jungle Wyvern          (Bosses/JungleWyvern/JungleWyvernHead) — modded
+				//   14  [PHM] Ancient Demon          (Bosses/AncientDemon)                — modded
+				//   15  [PHM] Wall of Flesh          (VanillaChanges.cs)                  — vanilla
+				//   16  [HM]  Queen Slime            (VanillaChanges.cs)                  — vanilla
+				//   17  [HM]  The Rage               (Bosses/TheRage)                     — modded
+				//   18  [HM]  Wyvern Mage            (Bosses/WyvernMage/WyvernMage)       — modded
+				//   19  [HM]  The Sorrow             (Bosses/TheSorrow)                   — modded
+				//   20  [HM]  Serris                 (Bosses/Serris/SerrisX)              — modded
+				//   21  [HM]  Death / True Death     (Bosses/Death, Special/TrueDeath)    — modded
+				//   22  [HM]  The Hunter             (Bosses/TheHunter)                   — modded
+				//   23  [HM]  The Destroyer          (VanillaChanges.cs)                  — vanilla
+				//   24  [HM]  The Machine (PrimeV2)  (Bosses/PrimeV2/TheMachine)          — modded
+				//   25  [HM]  Plantera               (VanillaChanges.cs)                  — vanilla
+				//   26  [HM]  Golem                  (VanillaChanges.cs, GolemHeadFree)   — vanilla
+				//   27  [HM]  Empress of Light       (VanillaChanges.cs, HallowBoss)      — vanilla
+				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
+				//   29  [HM]  Dark Shogun Mask       (Bosses/Okiku/FirstForm/DarkShogunMask) — modded
+				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
+				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
+				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
+				//   33  [SHM] Moon Lord              (VanillaChanges.cs, MoonLordFreeEye) — vanilla
+				//   34  [SHM] Water Fiend Kraken     (Bosses/SuperHardMode/Fiends/WaterFiendKraken)   — modded
+				//   35  [SHM] Earth Fiend Lich       (Bosses/SuperHardMode/Fiends/EarthFiendLich)     — modded
+				//   36  [SHM] Fire Fiend Marilith    (Bosses/SuperHardMode/Fiends/FireFiendMarilith)  — modded
+				//   37  [SHM] Blight                 (Bosses/SuperHardMode/Blight)        — modded
+				//   38  [SHM] Abysmal Oolacile Sorc. (Bosses/SuperHardMode/AbysmalOolacileSorcerer)   — modded
+				//   39  [SHM] Artorias               (Bosses/SuperHardMode/Artorias)      — modded
+				//   40  [SHM] Seath the Scaleless    (Bosses/SuperHardMode/Seath/SeathTheScalelessHead) — modded
+				//   41  [SHM] Wyvern Mage Shadow     (Bosses/SuperHardMode/GhostWyvernMage/WyvernMageShadow) — modded
+				//   42  [SHM] Chaos                  (Bosses/SuperHardMode/Chaos)         — modded (currently has no rarity set; defaults to 0 — fix in its SetDefaults)
+				//   43  [SHM] Dark Cloud             (Bosses/SuperHardMode/DarkCloud)     — modded
+				//   44  [SHM] Gwyn                   (Bosses/SuperHardMode/Gwyn)          — modded
+				//   45        "True ending" message — shown as the "Next Boss" hint when hovering Gwyn
+				//
+				//  To rebind a clue to a different boss, edit that boss's `NPC.rarity = N` (or the
+				//  `npc.rarity = N` line in VanillaChanges.cs for vanilla bosses). To rewrite a clue's
+				//  text, just edit the localization line below. Many `*Desc` clues use the shared
+				//  Mods.tsorcRevamp.BossChecklist.*Desc strings (defined near the top of this file)
+				//  so the Boss Checklist mod UI and the Boss Hunting Tome stay in sync.
+				// ─────────────────────────────────────────────────────────────────────────────
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: What is under Leonhard, or at end of the Path of Ambition?
 				3: "{$BossChecklist.PinwheelDesc}"
@@ -3926,16 +4000,31 @@ Mods: {
 				DisplayName: Darksign
 				Tooltip:
 					'''
-					Use to become the [c/6d8827:Bearer of the Curse]
-					Playing as the [c/6d8827:Bearer of the Curse] has the following effects:
-					You gain an extra accessory slot, receive {0}% more souls and your stamina recovers much faster.
-					However, [c/dd3333:using weapons drains stamina] and life regen is halved while stamina isn't at it's maximum.
-					Instant-heal items won't heal you, but you gain an Estus Flask that can be upgraded.
-					Dying reduces your max HP by {1}% until you return to where you died.
-					Check the mod config to adjust the volume of sound effects added by becoming the [c/6d8827:Bearer of the Curse].
+					A talisman of the cycle. Left-click to cycle to the next tier:
+					[c/aaaaaa:Classic] → [c/6d8827:Unkindled] → [c/dd3333:Bearer of the Curse] → [c/aaaaaa:Classic]
+
+					[c/6d8827:Unkindled] (default): Estus and Cerulean flasks bound to
+					Quick Heal and Quick Mana. Upgrades drop from bosses.
+					Healing items work at half strength; mana regen reduced outside bonfires.
+
+					[c/dd3333:Bearer of the Curse]: All Unkindled features plus combat class
+					mechanics, an extra accessory slot, and {0}% more souls.
+					Weapons drain stamina, healing potions don't work, mana regen is
+					disabled outside bonfires, and dying costs {1}% max HP until your
+					soul is recovered.
+
+					[c/aaaaaa:Classic]: No flasks. Vanilla Terraria healing and magic systems.
+
+					Right-click to preview class-specific Bearer of the Curse mechanics.
 					'''
 				Enabled: You have become the Bearer of the Curse
 				Disabled: The curse has been lifted
+				Unkindled: You rise as the Unkindled — your fire still smolders.
+				BearerOfTheCurse: You have taken up the burden — the Curse is yours to bear.
+				Classic: You let the flame fade. The curse is lifted.
+				State_Classic: "[c/aaaaaa:Currently:] Classic [c/aaaaaa:— click to become] [c/6d8827:Unkindled]"
+				State_Unkindled: "[c/6d8827:Currently:] Unkindled [c/aaaaaa:— click to take up the] [c/dd3333:Curse]"
+				State_BotC: "[c/dd3333:Currently:] Bearer of the Curse [c/aaaaaa:— click to return to] [c/aaaaaa:Classic]"
 				Melee:
 					'''
 					[c/ff8400:Melee base attack speed is reduced to {0}%.]
@@ -3967,12 +4056,6 @@ Mods: {
 					[c/6efaff:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
 					[c/6efaff:Each stack grants {1}% damage, up to {2}% at the maximum of {3} stacks.]
 					[c/6efaff:At max stacks, gain {4}% Summon Tag Duration.]
-					'''
-				End:
-					'''
-					Right click this item in your inventory to cycle between descriptions of new mechanics for each class.
-					[c/ca1e00:This mode is intended for players experienced with the mod]
-					[c/ca1e00:It is not recommended on first playthroughs.]
 					'''
 			}
 
@@ -10619,11 +10702,15 @@ Mods: {
 				Luck: Good luck.
 				Gift: If you ever need more, you may roast some over the flames of a bonfire. Farewell.
 				BotCGift: Bearer of the Curse, these lifegems and Starlight Shards will no doubt prove to be invaluable on your journey. Farewell.
+				UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems — may they sustain you on the road ahead. Farewell.
 				EasterEgg: Bearer... Seek... Seek... Lest...
 				button1: Bless
 				button2v1: Seek knowledge...
 				button2v2: Recieve gift
 				button2v3: Give Shard
+				button2v4: Receive tome
+				TomeOffer: Before we speak, take this — a [c/6d8827:Boss Hunting Tome]. Hover over any boss in its pages to learn where it dwells, and re-summon those you have already slain.
+				TomeGiven: May it guide your path. Now then, what knowledge do you seek?
 				BringShards: If you happen to find another Restoration Flask Shard, bring it to me. So that I may ease your burden.
 				EstusUpgrade: "Estus Flask size increased! Max charges: "
 				CeruleanUpgrade: "Cerulean Flask size increased! Max charges: "
@@ -11860,6 +11947,31 @@ Mods: {
 					Tooltip: Only takes effect when creating new map
 					Label: Disable Soapstones
 				}
+
+				AutoOpenSoapstones: {
+					Label: Auto Open Soapstones
+					Tooltip: ""
+				}
+
+				DisableStorySoapstones: {
+					Label: Disable Story Soapstones
+					Tooltip: ""
+				}
+
+				DisableLoreSoapstones: {
+					Label: Disable Lore Soapstones
+					Tooltip: ""
+				}
+
+				DisableTutorialSoapstones: {
+					Label: Disable Tutorial Soapstones
+					Tooltip: ""
+				}
+
+				DisableLocationBanner: {
+					Label: Disable Location Banner
+					Tooltip: ""
+				}
 			}
 		}
 
@@ -11868,6 +11980,7 @@ Mods: {
 			AdventureModeEnabled: Adventure Mode-only
 			DebugModeEnabled: For testing-only
 			BotCEnabled: Bearer of the Curse-only
+			SoulsModeEnabled: Unkindled or Bearer of the Curse
 			WyvernMageDowned: The Wyvern Mage has been defeated
 			SorrowDowned: The Sorrow has been defeated
 			HunterDowned: The Hunter has been defeated

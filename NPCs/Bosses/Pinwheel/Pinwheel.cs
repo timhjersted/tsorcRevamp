@@ -2607,7 +2607,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
         public override void BossLoot(ref string name, ref int potionType)
         {
-            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
                 potionType = ModContent.ItemType<Lifegem>();
             }

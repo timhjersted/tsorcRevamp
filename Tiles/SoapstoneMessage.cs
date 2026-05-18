@@ -71,5 +71,11 @@ namespace tsorcRevamp.Tiles
         public int tileY { get; set; }
         public int textWidth { get; set; }
         public SoapstoneStyle style { get; set; }
+        // Optional. Comma-separated. Recognized values: story, lore, hint, tutorial, location.
+        // Missing/empty -> treated as "hint".
+        public string category { get; set; }
+        // Optional. Display name for the on-screen banner when category includes "location"
+        // (or when this field is present regardless of category). Rendered in uppercase by the UI.
+        public string locationName { get; set; }
     }
 }

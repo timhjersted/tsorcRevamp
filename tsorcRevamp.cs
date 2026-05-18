@@ -223,6 +223,17 @@ namespace tsorcRevamp
         public static bool NearbySoapstoneMouse;
         public static float NearbySoapstoneMouseDistance;
 
+        // Location banner state. Drawn by tsorcRevampSystems.PostDrawInterface.
+        // LastShownLocationId tracks the most recently announced location so re-entering the same
+        // area doesn't re-trigger until a different location is seen (or the session resets).
+        public static int LastShownLocationId = -1;
+        public static string LocationBannerText;
+        public static int LocationBannerTimer; // counts down in frames; 0 = inactive
+        public const int LOCATION_BANNER_FADE_IN = 30;
+        public const int LOCATION_BANNER_HOLD = 240;
+        public const int LOCATION_BANNER_FADE_OUT = 60;
+        public const int LOCATION_BANNER_TOTAL = LOCATION_BANNER_FADE_IN + LOCATION_BANNER_HOLD + LOCATION_BANNER_FADE_OUT;
+
         public static Texture2D NoiseTurbulent;
         public static Texture2D NoiseSplotchy;
         public static Texture2D NoiseWavy;

@@ -307,8 +307,11 @@ namespace tsorcRevamp
         public bool MiakodaNewDust2;
 
         internal bool gotPickaxe;
+        internal bool gotDarksign;
         public bool FirstEncounter;
         public bool ReceivedGift;
+        public bool ReceivedHuntingTome;
+        public int heraldChatState;
 
         public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;
@@ -347,6 +350,22 @@ namespace tsorcRevamp
         public static readonly int DashLeft = 3;
 
         public bool BearerOfTheCurse;
+        public bool Unkindled;
+        // True for either Unkindled or Bearer of the Curse — gate Souls-system features (Estus/Cerulean UI,
+        // bonfire refills, drop bonuses, recipe conditions) on this. BotC-only features keep checking BearerOfTheCurse.
+        public bool SoulsMode => Unkindled || BearerOfTheCurse;
+
+        // Tier-aware healing scalar applied to instant-heal items (food, potions, Tome of Health, etc.).
+        // Classic: full heal. Unkindled: half heal. Bearer of the Curse: zero (caller should skip heal entirely).
+        // Use this in custom UseItem implementations; for vanilla items the reduction is applied in
+        // tsorcGlobalItem.OnConsumeItem via the same multiplier.
+        public const float UnkindledHealMultiplier = 0.5f;
+        public int ApplyHealing(int baseAmount)
+        {
+            if (BearerOfTheCurse) return 0;
+            if (Unkindled) return (int)(baseAmount * UnkindledHealMultiplier);
+            return baseAmount;
+        }
         public bool LifegemHealing;
         public bool RadiantLifegemHealing;
         public bool StarlightShardRestoration;
@@ -1311,10 +1330,6 @@ namespace tsorcRevamp
                     Player.GetDamage(DamageClass.Magic) *= 1f + (BotCMagicDamageAmp / 100f);
                     Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (BotCMagicAttackSpeedAmp / 100f);
                 }
-                if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
-                {
-                    Player.manaRegenDelay = 100;
-                }
 
                 Player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) /= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus); //neutralizing Lethal Tempo attack speed changes
                 Player.GetDamage(DamageClass.Summon) *= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus);
@@ -1324,8 +1339,45 @@ namespace tsorcRevamp
                 {
                     SummonTagDuration += BotCFullConquerorBonusTagDuration;
                 }
+            }
 
+            // Tier-aware mana regen penalty.
+            // Both Unkindled and BotC magic players are expected to lean on the Cerulean Flask. The pin/penalty
+            // only fires when "in combat or away from a bonfire" — sitting at a bonfire with no boss alive lets
+            // mana regen normally for either tier.
+            // BotC: hard pin to manaRegenDelay = 100 each frame, so the countdown never reaches 0 and Stage-2
+            //       regen never starts. Mana comes exclusively from drinking Cerulean charges.
+            // Unkindled: subtract a fraction of statManaMax2 from manaRegenBonus. Vanilla's rate formula
+            //       includes stationaryBonus = M/3 when standing still, so to hit consistent percent targets
+            //       across all pool sizes we use different subtractions per velocity state:
+            //          standing  → subtract M * 2/5  (≈ −60% vs vanilla standing rate)
+            //          moving    → subtract M * 3/10 (≈ −90% vs vanilla moving rate)
+            //       Cerulean Flask remains the active recovery option; passive regen is intentionally weak.
+            if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
+            {
+                if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    Player.manaRegenDelay = 100;
+                }
+                else if (Player.GetModPlayer<tsorcRevampPlayer>().Unkindled)
+                {
+                    if (Player.velocity == Vector2.Zero)
+                    {
+                        Player.manaRegenBonus -= Player.statManaMax2 * 2 / 5;
+                    }
+                    else
+                    {
+                        Player.manaRegenBonus -= Player.statManaMax2 * 3 / 10;
+                    }
+                }
+            }
 
+            // Lifegem / RadiantLifegem / StarlightShard heal & mana-restoration ticks.
+            // These were originally inside the BotC-gated PostUpdateEquips block, which meant Unkindled
+            // players could apply the buffs but never receive HP/mana from them. Gated on SoulsMode so
+            // both Unkindled and Bearer of the Curse get the actual healing/restoration.
+            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
                 #region Lifegem Healing and Starlight Shard Restoration
 
 
@@ -1493,12 +1545,6 @@ namespace tsorcRevamp
                 Player.jumpSpeedBoost = 0f;
                 Player.wingTime = 0;
                 Player.moveSpeed *= 0.9f;
-
-                for (int d = 0; d < 3; d++)
-                {
-                    int dust = Dust.NewDust(new Vector2(Player.position.X - 6, Player.position.Y + 36), 32, 4, 184, 0, 0, 30, default(Color), 1f);
-                    Main.dust[dust].noGravity = true;
-                }
             }
 
             if (WitchkingsGrasp)
@@ -2164,6 +2210,20 @@ namespace tsorcRevamp
             if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap && Player.lifeRegen > 0)
             {
                 Player.lifeRegen /= 2;
+            }
+
+            // Unkindled life regen penalty — mirrors the mana-regen design: only fires when in combat
+            // or away from a bonfire, and at half BotC's strength (−25% vs BotC's −50%) since Unkindled
+            // is the gentler tier. The BotC halving above already covers BotC's full−50%, gated on its
+            // own "stamina not full" condition (which fires constantly in BotC combat).
+            if (Player.GetModPlayer<tsorcRevampPlayer>().Unkindled && Player.lifeRegen > 0)
+            {
+                bool inCombatOrAwayFromBonfire = Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200])
+                                                  || !Player.HasBuff(ModContent.BuffType<Bonfire>());
+                if (inCombatOrAwayFromBonfire)
+                {
+                    Player.lifeRegen = Player.lifeRegen * 3 / 4;
+                }
             }
         }
 

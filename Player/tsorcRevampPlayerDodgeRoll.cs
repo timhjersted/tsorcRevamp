@@ -373,9 +373,11 @@ namespace tsorcRevamp
             bool onGround = OnGround(Player);
 
             // Define custom roll parameters when acessories conflict.
+            // Chloranthy Rings no longer modify deaccelerationRate — their speed boost during the roll
+            // already extends travel distance; adding a per-frame deceleration bonus on top produced a
+            // persistent "slippery ice" glide after the roll that made precise stopping impossible.
             if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
             {
-                deaccelerationRate += 0.03f;
                 DodgeImmuneTime += 2;
                 dodgeCooldown = 10;
             }
@@ -385,13 +387,11 @@ namespace tsorcRevamp
                 // To make sure player does not benefit from stacking ring 1 and 2
                 if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2)
                 {
-                    deaccelerationRate += 0.06f;
                     DodgeImmuneTime += 6;
                     dodgeCooldown = 0;
                 }
                 else if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1)
                 {
-                    deaccelerationRate += 0.05f;
                     DodgeImmuneTime += 3;
                     dodgeCooldown = 10;
                 }
@@ -477,9 +477,13 @@ namespace tsorcRevamp
                 if (beforeRollSpeed > dodgeSpeed)
                     dodgeSpeed = beforeRollSpeed;
 
+                // Chloranthy Ring dodge-speed boost — intended to grant only "a little bit more dodge length"
+                // (a subtle distance increase, not a flat-out velocity multiplier). Values were previously
+                // +3 / +6 which combined with the ground multiplier and momentum carry produced an extreme
+                // total. Dialed back to +1 / +2 to restore the original tuning intent.
                 if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
                 {
-                    dodgeSpeed += 3f;
+                    dodgeSpeed += 1f;
                 }
                 else if (!(Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis))
                 {
@@ -488,12 +492,11 @@ namespace tsorcRevamp
 
                     if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2)
                     {
-                        dodgeSpeed += 6f;
-
+                        dodgeSpeed += 2f;
                     }
                     else if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1)
                     {
-                        dodgeSpeed += 3f;
+                        dodgeSpeed += 1f;
                     }
                 }
 
@@ -509,7 +512,10 @@ namespace tsorcRevamp
                 dodgeSpeed *= speedMultiplier;
                 dodgeSpeed *= dodgeDirection;
 
-                Player.velocity.X = dodgeSpeed * speedMultiplier;
+                // Bug fix: speedMultiplier was being applied twice (once into dodgeSpeed above, then
+                // again here when assigning velocity), producing ~1.96× the intended velocity on the
+                // ground and amplifying every other boost (Chloranthy rings, momentum carry, etc.).
+                Player.velocity.X = dodgeSpeed;
             }
 
             Player.pulley = false;
@@ -567,7 +573,13 @@ namespace tsorcRevamp
                     }
                 }
 
-                Player.velocity.X *= onGround ? deaccelerationRate : airDeaccelerationRate;
+                // If the player is actively running in the roll direction, use a softer decel so
+                // a roll that flows into movement doesn't feel like it hits a wall. When standing
+                // still (or pressing opposite), use the full deceleration for a snappy stop.
+                float groundDecel = KeyDirection(Player) == dodgeDirection
+                    ? MathHelper.Lerp(deaccelerationRate, 1f, 0.35f)
+                    : deaccelerationRate;
+                Player.velocity.X *= onGround ? groundDecel : airDeaccelerationRate;
             }
 
             if (dodgeTime >= DodgeTimeMax)

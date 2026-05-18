@@ -119,6 +119,26 @@ namespace tsorcRevamp
         public bool HideSoapstones { get; set; }
 
         [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        public bool AutoOpenSoapstones { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        public bool DisableStorySoapstones { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        public bool DisableLoreSoapstones { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        public bool DisableTutorialSoapstones { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        public bool DisableLocationBanner { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
         [Range(0, 100)]
         [DefaultValue(0)]
         public uint SoapstoneScale { get; set; }
