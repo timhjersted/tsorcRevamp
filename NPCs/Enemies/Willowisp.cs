@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Graveyard,
-                new FlavorTextBestiaryInfoElement("A lost spirit of the dead, which attempts to lead travelers to their demise")
+                new FlavorTextBestiaryInfoElement("A lost spirit of the dead, which attempts to lead travelers to their demise.")
             });
         }
 

@@ -54,10 +54,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DragoonLash>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 98000);
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 8);
+            recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 8);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfOccultist>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

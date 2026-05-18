@@ -9,8 +9,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CovenantOfArtorias : ModItem
     {
-        public static float Resistance = 21f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Resistance);
         public override void SetStaticDefaults()
         {
         }
@@ -28,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 17000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -36,19 +34,12 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.endurance += Resistance / 100f;
-            player.lavaImmune = true;
-            player.noKnockback = true;
-            player.fireWalk = true;
-            player.enemySpawns = true;
-            player.buffImmune[BuffID.Poisoned] = true;
-            player.buffImmune[BuffID.OnFire] = true;
-            player.buffImmune[BuffID.Oiled] = true;
-            player.buffImmune[ModContent.BuffType<Crippled>()] = true;
-            player.buffImmune[ModContent.BuffType<DarkInferno>()] = true;
-            player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss = true;
+            player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss = true;  
         }
 
-
+        public override void UpdateVanity(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss = true;
+        }
     }
 }

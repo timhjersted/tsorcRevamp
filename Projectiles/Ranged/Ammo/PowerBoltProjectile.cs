@@ -74,6 +74,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.localNPCHitCooldown = 10;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.hide = true;
+            Projectile.ArmorPenetration = 5;
         }
 
         public override void AI()

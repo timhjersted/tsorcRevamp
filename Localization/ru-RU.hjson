@@ -9845,6 +9845,7 @@ Mods: {
 			// GaiaSmash.DisplayName: Gaia Smash
 			// YianBlaze2.DisplayName: Yian Blaze2
 			// YianBlaze.DisplayName: Yian Blaze
+			// DiamondCrusherShockwave.DisplayName: Diamond Crusher Shockwave
 		}
 
 		NPCs: {
@@ -12041,6 +12042,11 @@ Mods: {
 		Bestiary: {
 			// DemonElemental: These primordial elementals are composed purely of demonic energy. They roam the Underworld with the sole purpose of fear and destruction.
 			// Dunlending: The Dunlendings are wild men from Dunland, a nearby land of vast plains. Their hatred of men and their savagery drive them to ravage the surrounding lands.
+			// DworcFleshhunter: A small, pigmy-like creature living in the jungle ruins, who ambushes strangers with his spear.
+			// DworcVenomsniper: A small, pigmy-like creature living in the jungle ruins, who secretly shoots darts at his enemies.
+			// DworcVoodoomaster: Although they appear barbaric, the dworcs have a strong sensitivity to magic and some become powerful sorcerers.
+			// DworcVoodooShaman: The emergence of powerful spirits in Terraria has strengthened the connection to the earth for some dworcs, allowing them to cast powerful elemental spells.
+			// Abysswalker: Some dworcs are interested in dark magic, and the arrival of the abyss drives some to madness, spreading shadows in the depths of the jungle.
 		}
 	}
 }

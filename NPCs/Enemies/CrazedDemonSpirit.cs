@@ -6,6 +6,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Utilities;
@@ -507,6 +508,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 20));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 20));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<FlameOfTheAbyss>()));
         }
         #region Frames
         public override void FindFrame(int currentFrame)

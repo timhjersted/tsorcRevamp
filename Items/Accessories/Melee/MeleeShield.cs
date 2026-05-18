@@ -141,7 +141,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             base.SetDefaults();
             Item.defense = Defense;
             Item.value = PriceByRarity.Cyan_9;
-            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.rare = ItemRarityID.Purple;
         }
 
         public override void UpdateEquip(Player player)
