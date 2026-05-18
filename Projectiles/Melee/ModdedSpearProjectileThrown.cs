@@ -11,22 +11,48 @@ namespace tsorcRevamp.Projectiles.Melee
     // Parent class for thrown spears where hitbox is centered on spear tip
     public abstract class ModdedSpearProjectileThrown : ModProjectile
     {
+        // Size of the hitbox at the tip of the spear
+        public abstract int HitboxSize { get; }
+        // Armor shader applied when `Projectile.ai[0] == 1`
+        public abstract int ChargedShaderID { get; }
+
+        // See Projectile.extraUpdates
+        public virtual int ExtraUpdates { get => 0; }
+        // See Projectile.light
+        public virtual float Light { get => 0f; }
+        // See Projectile.penetrate
+        public virtual int Penetrate { get => 1; }
+        // See Projectile.scale
+        public virtual float Scale { get => 1f; }
+        // See Projectile.timeLeft
+        public virtual int TimeLeft { get => 3600; }
+
+        // Dust drawing logic to use in AI(), if any
+        public virtual void AIDust() { }
+        // Dust drawing logic to use in PreKill(), if any
+        public virtual void PreKillDust() { }
+
         public override void SetDefaults()
         {
             Projectile.aiStyle = -1;
             Projectile.hostile = false;
             Projectile.friendly = true;
-            Projectile.height = 30;
-            Projectile.light = 0.7f;
+            Projectile.height = HitboxSize;
+            Projectile.light = Light;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.scale = 1.2f;
-            Projectile.width = 30;
+            Projectile.scale = Scale;
+            Projectile.width = HitboxSize;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 300;
-            Projectile.extraUpdates = 1;
+            Projectile.extraUpdates = ExtraUpdates;
+            Projectile.penetrate = Penetrate;
         }
 
-        public static Texture2D texture;
+        // Texture was being static cached in child classes but leaked when the logic was moved to
+        // a parent class. Making it an instance variable for now, but if this ends up being an
+        // efficiency issue then can probably set a static texture map / dictionary here, or have
+        // children provide their static texture.
+        public Texture2D texture;
         public override void OnSpawn(IEntitySource source)
         {
             // Since projectile is centered on spear tip for collision hitbox, offset starting
@@ -48,7 +74,7 @@ namespace tsorcRevamp.Projectiles.Melee
 
             if (Projectile.ai[0] == 1)
             {
-                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.RedDye), Main.LocalPlayer);
+                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ChargedShaderID), Main.LocalPlayer);
                 data.Apply(null);
             }
 
@@ -83,37 +109,7 @@ namespace tsorcRevamp.Projectiles.Melee
             //projectile.velocity.Y += (9.8f / 60); //This is its gravity. Comes out to about 0.16 per frame, which is actually really high!!
             Projectile.velocity.Y += 0.1f;
 
-            if (Main.rand.NextBool(3))
-            {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 90, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), 1.3f);
-                Main.dust[dust].noGravity = true;
-            }
-        }
-
-        public override void PostDraw(Color lightColor)
-        {
-            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
-            Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
-            Vector2 spearTipOffset = origin.RotatedBy(Projectile.rotation);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition + spearTipOffset;
-
-            for (int i = 1; i <= 5; i++)
-            {
-                Vector2 offset = Projectile.velocity * -i * 1.2f;
-                float alpha = 0.4f * (1f - (i / 6f));
-
-                Main.EntitySpriteDraw(
-                    texture,
-                    drawPosition + offset,
-                    null,
-                    lightColor * alpha,
-                    Projectile.rotation,
-                    origin,
-                    Projectile.scale,
-                    SpriteEffects.None
-                    
-                );
-            }
+            AIDust();
         }
 
         public override bool PreKill(int timeleft)
@@ -121,10 +117,7 @@ namespace tsorcRevamp.Projectiles.Melee
             Projectile.type = ProjectileID.WoodenArrowHostile;
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-            for (int i = 0; i < 12; i++)
-            {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 219, 0, 0, 0, default, 1.4f);
-            }
+            PreKillDust();
             return true;
         }
     }
