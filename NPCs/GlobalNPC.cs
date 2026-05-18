@@ -2220,7 +2220,7 @@ namespace tsorcRevamp.NPCs
 
             if (CrimsonBurn)
             {
-                int DoTPerS = 30;
+                int DoTPerS = 41;
 
                 if (npc.lifeRegen > 0)
                 {
@@ -2248,6 +2248,8 @@ namespace tsorcRevamp.NPCs
 
                 damage += DoTPerS * (Main.hardMode ? 2 : 1); 
 
+                npc.defense = Math.Max(0, npc.defDefense - 5);
+                
                 var N = npc;
                 for (int j = 0; j < 5; j++)
                 {

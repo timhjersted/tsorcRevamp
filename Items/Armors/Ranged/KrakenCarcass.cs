@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
     public class KrakenCarcass : ModItem
     {
         public const float AmmoReduction = 30f;
-        public const float ArmorPen = 10f;
+        public const float ArmorPen = 12f;
         public const float Velocity = 15f;
         public const int SoulCost = 70000;
         public const int TsunamiBaseDmg = 150;

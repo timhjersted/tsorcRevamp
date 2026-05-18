@@ -179,7 +179,12 @@ namespace tsorcRevamp.Projectiles
             {
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                
+
+                if (projectile.type == ProjectileID.PurificationPowder)
+                {
+                    projectile.usesIDStaticNPCImmunity = true;
+                    projectile.idStaticNPCHitCooldown = 8;
+                }
                 if (projectile.type == ProjectileID.RainbowCrystalExplosion)
                 {
                     projectile.usesLocalNPCImmunity = true;

@@ -33,6 +33,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 30;
                 NPC.knockBackResist = 0.15f;
             }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 350;
+                NPC.defense = 50;
+                NPC.damage = 80;
+                NPC.knockBackResist = 0.01f;
+            }
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

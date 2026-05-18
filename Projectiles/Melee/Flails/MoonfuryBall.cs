@@ -49,8 +49,8 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
         public override void SetDefaults()
         {
             Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-            Projectile.width = 30; // The width of your projectile
-            Projectile.height = 30; // The height of your projectile
+            Projectile.width = 29; // The width of your projectile
+            Projectile.height = 29; // The height of your projectile
             Projectile.friendly = true; // Deals damage to enemies
             Projectile.penetrate = -1; // Infinite pierce
             Projectile.DamageType = DamageClass.Melee; // Deals melee damage

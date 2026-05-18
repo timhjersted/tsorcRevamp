@@ -13,8 +13,8 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.aiStyle = 2;
             Projectile.friendly = true;
-            Projectile.width = 26;
-            Projectile.height = 60;
+            Projectile.width = 52;
+            Projectile.height = 52;
             Projectile.penetrate = 4;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
