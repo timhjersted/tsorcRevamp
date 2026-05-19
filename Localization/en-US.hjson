@@ -5967,15 +5967,6 @@ Mods: {
 					'''
 			}
 
-			Ragnarok: {
-				DisplayName: Ragnarok
-				Tooltip:
-					'''
-					Inflicts Betsy's Curse
-					Increases melee armor penetration by {0}, when you are in Underground
-					'''
-			}
-
 			RuneBlade: {
 				DisplayName: Rune Blade
 				Tooltip:

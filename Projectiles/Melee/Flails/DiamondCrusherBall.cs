@@ -554,8 +554,8 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 4;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 15;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 10;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.hide = true;
             Projectile.ArmorPenetration = 5;

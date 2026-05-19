@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Weapons.Magic.Tomes
+namespace tsorcRevamp.Items.Weapons.Magic
 {
     class AbyssalDeluge : ModItem
     {
@@ -13,11 +13,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("A lost legendary tome.");
+            Item.staff[Item.type] = true;
         }
 
         public override void SetDefaults()
         {
-            Item.damage = 290;
+            Item.damage = 300;
             Item.height = 10;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Purple;
@@ -27,11 +28,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.mana = 35;
             Item.UseSound = SoundID.Item20;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 33;
-            Item.useAnimation = 33;
+            Item.useTime = 32;
+            Item.useAnimation = 32;
             Item.value = PriceByRarity.Purple_11;
             Item.width = 34;
             Item.autoReuse = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override bool? UseItem(Player player)
@@ -47,13 +49,19 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             {
                 Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2(player.position.X + (player.width * 0.5f), player.position.Y + (player.height * 0.5f)), new Vector2((float)speedX, (float)speedY), ModContent.ProjectileType<Projectiles.Magic.AbyssalDelugeBall>(), (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.inventory[player.selectedItem].damage)), 3, player.whoAmI);
             }
+
+            float backX = 20f;
+            float downY = 0f;
+            float cosRot = (float)Math.Cos(player.itemRotation);
+            float sinRot = (float)Math.Sin(player.itemRotation);
+            player.itemLocation.X = player.itemLocation.X - backX * cosRot * player.direction - downY * sinRot * player.gravDir;
+            player.itemLocation.Y = player.itemLocation.Y - backX * sinRot * player.direction + downY * cosRot * player.gravDir;
             return true;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 15);
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);

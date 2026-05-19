@@ -5959,15 +5959,6 @@ Mods: {
 					'''
 			}
 
-			Ragnarok: {
-				DisplayName: 诸神黄昏
-				Tooltip:
-					'''
-					施加双足翼龙诅咒减益
-					在地狱时，增加 {0} 点近战护甲穿透
-					'''
-			}
-
 			RuneBlade: {
 				DisplayName: 符文之刃
 				Tooltip:

@@ -95,19 +95,19 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             int movingHitCooldown = 10; // How often your flail hits when moving
             int ricochetTimeLimit = launchTimeLimit + 5;
 
-            if (Projectile.localAI[0]++ >= 10) // Every 10 ticks
+            if (Projectile.ai[2]++ >= 10) // Every 10 ticks
             {
-                Projectile.localAI[0] = 0; // 
+                Projectile.ai[2] = 0;
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    Vector2 projectileVelocity = new Vector2(0, 5); 
+                    Vector2 projectileVelocity = new Vector2(0, 5);
                     Projectile.NewProjectile(
                         Projectile.GetSource_FromThis(),
                         Projectile.Center,
                         projectileVelocity,
                         ProjectileID.RainFriendly,
-                        (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Projectile.damage / 2) ,
-                        Projectile.knockBack / 2,
+                        (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Projectile.damage / 2),
+                        Projectile.knockBack / 3,
                         Main.myPlayer
                     );
                 }
@@ -186,7 +186,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                             Vector2 dropletvector = new Vector2(0, 5);
                             if (Main.myPlayer == Projectile.owner)
                             {
-                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dropletvector, ProjectileID.RainFriendly, Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dropletvector, ProjectileID.RainFriendly, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Projectile.damage), Projectile.knockBack / 2, Main.myPlayer);
                             }
                         }
                         player.ChangeDir((player.Center.X < Projectile.Center.X) ? 1 : (-1));
