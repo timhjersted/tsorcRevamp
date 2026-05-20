@@ -13,11 +13,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int ProjectileID => ModContent.ProjectileType<CelestialLanceProj>();
         public override int Width => 44;
         public override int Height => 44;
-        public override int BaseDmg => 350;
+        public override int BaseDmg => 300;
         public override int BaseCritChance => 6;
         public override float BaseKnockback => 10;
-        public override int UseAnimationTime => 28;
-        public override int UseTime => 28;
+        public override int UseAnimationTime => 26;
+        public override int UseTime => 26;
         public override int Rarity => ModContent.RarityType<OrangeRed>();
         public override int Value => PriceByRarity.fromItem(Item);
         public override SoundStyle UseSoundID => SoundID.Item71;

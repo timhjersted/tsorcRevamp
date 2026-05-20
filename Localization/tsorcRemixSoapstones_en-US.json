@@ -27,7 +27,7 @@
   "style": 1
 } 
 {
-  "text": "The Eternal Reef is one of the oldest biomes in the world where life has developed in a spectacular way, independently of the rest of the world. --NEWLINE But this exotic fauna and flora makes this reef very dangerous.  --NEWLINE This is also where a huge mutated creature resides, maybe here you will find the place to bait it and fight it on the surface...",
+  "text": "- The Eternal Reef - --NEWLINE  --NEWLINE The Eternal Reef is one of the oldest biomes in the world where life has developed in a spectacular way, independently of the rest of the world. --NEWLINE But this exotic fauna and flora makes this reef very dangerous.  --NEWLINE This is also where a huge mutated creature resides, maybe here you will find the place to bait it and fight it on the surface...",
   "tileX": 379,
   "tileY": 1011,
   "textWidth": 320,
@@ -356,6 +356,13 @@
   "style": 1
 }
 {
+  "text": "- The Lost Tunnels of Elengad -",
+  "tileX": 898,
+  "tileY": 1308,
+  "textWidth": 320,
+  "style": 1,
+}
+{
   "text": "\u0022A gold bow? Strange... but perhaps it\u0027ll be useful...\u0022",
   "tileX": 1636,
   "tileY": 1365,
@@ -389,6 +396,13 @@
   "tileY": 1045,
   "textWidth": 320,
   "style": 1
+}
+{
+  "text": "- You\u0022ve found the Shadow Temple -",
+  "tileX": 1460,
+  "tileY": 1168,
+  "textWidth": 320,
+  "style": 1,
 }
 {
   "text": "You hear gates opening above and below you. --NEWLINE  --NEWLINE After a quick look,  you can tell the path above leads back into the caverns near the Shadow Temple.",
@@ -496,11 +510,11 @@
   "style": 1
 }
 {
-  "text": "You come upon a deep dark and corrupted cavern. This place appears to be an abandoned mine and the way to the exit of the Shadow Temple.",
+  "text": "- The Path of Darkness - --NEWLINE  --NEWLINE You come upon a deep dark and corrupted cavern. This place appears to be an abandoned mine and the way to the exit of the Shadow Temple.",
   "tileX": 2265,
   "tileY": 1183,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
 }
 {
   "text": "Checking your compass and map, you think the path East must lead below the Corrupted Temple. --NEWLINE  --NEWLINE You can sense a terrible foe in this direction, something you have never seen before. ",
@@ -682,7 +696,7 @@
   "tileX": 3364,
   "tileY": 1412,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
 }
 {
   "text": "\u0022The lever to open this seems to be hidden, but I have the Cloud in a Bottle now.  --NEWLINE  --NEWLINE Perhaps it\u0027s time to head East, towards the jungles of the Orid Tribe.\u0022",
@@ -717,7 +731,7 @@
   "tileX": 3417,
   "tileY": 1830,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
 }
 {
   "text": "-You\u0027ve discovered the Corrupted Forest - --NEWLINE  --NEWLINE The sign reads: \u0022BEWARE: The Eater of Worlds sleeps below this forest.\u0022 --NEWLINE  --NEWLINE You take a deep breath.  --NEWLINE  --NEWLINE \u0022This must be the way forward.\u0022",
@@ -1427,11 +1441,18 @@
   "style": 1
 }
 {
-  "text": "-- The Earth Temple -- --NEWLINE  --NEWLINE You feel the air grow warm and moist. The walls around you feel like they\u0027re breathing. ",
+  "text": "You feel the air grow warm and moist. The walls around you feel like they\u0027re breathing. ",
   "tileX": 4456,
   "tileY": 854,
   "textWidth": 320,
   "style": 1
+}
+{
+  "text": "- You\u0027ve discovered the Earth Temple -",
+  "tileX": 4325,
+  "tileY": 953,
+  "textWidth": 320,
+  "style": 1,
 }
 {
   "text": "(3) \u0022They think she\u0027s weak and they can still break her, but you and I know she\u0027ll never tell the Mindflayer King, even if they take her life. I only hope you can find her before they realize this. --NEWLINE  --NEWLINE But Red, there\u0027s one last thing I need to tell you. Your friend Aaron... he\u0027s betrayed all of us. He was standing beside the Mindflayer King when they took me here. He must have told him where to find us and our father.\u0022 ",
@@ -1840,7 +1861,14 @@
   "style": 1
 }
 {
-  "text": "To the EAST--\u003E --NEWLINE The Rainforest of the Orid Tribe --NEWLINE The Old One\u0022s Tree --NEWLINE The Hallow --NEWLINE Unknown",
+  "text": "- The Rainforest of the Orid Tribe -",
+  "tileX": 5183,
+  "tileY": 852,
+  "textWidth": 320,
+  "style": 1,
+}
+{
+  "text": "To the EAST--\u003E --NEWLINE The Tree Village of the Orid Tribe --NEWLINE The Old One\u0022s Tree --NEWLINE The Hallow --NEWLINE Unknown",
   "tileX": 5338,
   "tileY": 867,
   "textWidth": 320,
@@ -2099,7 +2127,7 @@
   "style": 1
 }
 {
-  "text": "- You arrived in the enchanted lands of the Hallow -", 
+  "text": "Seeing these magical lands brings back a little light within you, after so much pain...", 
   "tileX": 6484,
   "tileY": 827,
   "textWidth": 320, 
@@ -2127,7 +2155,7 @@
   "style": 1
 }
 {
-  "text": "As you wander through these enchanted lands, you notice something. The magical and fairy creatures you\u0027ve heard about that are supposed to roam here are simply not present. You doubt the tales and stories you\u0027ve been told before but you also realize that this place seems strangely quiet.",
+  "text": "- The Hallow - --NEWLINE  --NEWLINE As you wander through these enchanted lands, you notice something. The magical and fairy creatures you\u0027ve heard about that are supposed to roam here are simply not present. You doubt the tales and stories you\u0027ve been told before but you also realize that this place seems strangely quiet.",
   "tileX": 6769,
   "tileY": 728,
   "textWidth": 320,
@@ -2498,7 +2526,7 @@
   "style": 1
 }
 {
-  "text": "The cavern of The Sorrow. As you step farther in, you hear a deep, booming voice begin to speak, at once everywhere and no where, \u0022You\u0027ve come far Red, I\u0027m quite pleased.\u0022 Suddenly, the Mindflayer King bursts into existence in front of you, hovering in the air. You take your sword and leap at Attraidies, and your sword blasts against the force field protecting him. ",
+  "text": "- The Cavern of The Sorrow - --NEWLINE --NEWLINE As you step farther in, you hear a deep, booming voice begin to speak, at once everywhere and no where, \u0022You\u0027ve come far Red, I\u0027m quite pleased.\u0022 Suddenly, the Mindflayer King bursts into existence in front of you, hovering in the air. You take your sword and leap at Attraidies, and your sword blasts against the force field protecting him. ",
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 320,
