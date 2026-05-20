@@ -56,6 +56,9 @@ namespace tsorcRevamp
 
         public static Dictionary<NPCDefinition, int> NewSlain;
         public static Dictionary<Vector2, int> MapMarkers;
+        // Tile position → location name for every location the local player has discovered.
+        // Persisted with the world so labels survive session restarts.
+        public static Dictionary<Vector2, string> DiscoveredLocations = new();
 
         public static Vector2 AbyssPortalLocation;
         public static int DwarvenContractsGiven = 0;
@@ -237,6 +240,9 @@ namespace tsorcRevamp
             tag.Add("MapMarkerKeys", MapMarkers.Keys.ToList());
             tag.Add("MapMarkerValues", MapMarkers.Values.ToList());
             tag.Add("AbyssPortal", AbyssPortalLocation);
+            DiscoveredLocations ??= new();
+            tag.Add("DiscoveredLocationKeys", DiscoveredLocations.Keys.ToList());
+            tag.Add("DiscoveredLocationValues", DiscoveredLocations.Values.ToList());
             tag["DwarvenContractsGiven"] = DwarvenContractsGiven;
         }
 
@@ -317,7 +323,15 @@ namespace tsorcRevamp
                 {
                     MapMarkers.Add(markerKeys[i], markerValues[i]);
                 }
-
+            }
+            if (tag.ContainsKey("DiscoveredLocationKeys"))
+            {
+                List<Vector2> locKeys = (List<Vector2>)tag.GetList<Vector2>("DiscoveredLocationKeys");
+                List<string> locValues = (List<string>)tag.GetList<string>("DiscoveredLocationValues");
+                for (int i = 0; i < locKeys.Count; i++)
+                {
+                    DiscoveredLocations[locKeys[i]] = locValues[i];
+                }
             }
             DwarvenContractsGiven = tag.GetInt("DwarvenContractsGiven");
         }
@@ -924,8 +938,10 @@ namespace tsorcRevamp
             foreach (KeyValuePair<int, TileEntity> entity in TileEntity.ByID)
             {
                 if (entity.Value.type == ModContent.TileEntityType<SoapstoneTileEntity>())
+                {
                     skipRead = true;
-                break;
+                    break;
+                }
             }
             if (!skipRead)
             {
@@ -1238,11 +1254,11 @@ namespace tsorcRevamp
                             Main.worldID = Main.rand.Next(9999999);
                             PlaceModdedTiles();
                             //ReadSoapstonesIntoJson();
-                            if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSoapstones)
-                            {
-                                BuildSoapstones();
-                            }
-                            
+                        }
+
+                        if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSoapstones)
+                        {
+                            BuildSoapstones();
                         }
 
                         //Spawn in NPCs

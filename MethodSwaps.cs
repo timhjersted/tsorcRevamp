@@ -2399,18 +2399,10 @@ namespace tsorcRevamp
                     ceruleanPlayer.isDrinking = true;
                     ceruleanPlayer.ceruleanDrinkTimer = 0;
 
-                    //I am so tempted
-                    //Dear god I am so tempted
-                    if (modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2)
-                    {
-                        player.AddBuff(BuffID.BrokenArmor, (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f * 2));
-                        player.AddBuff(BuffID.Ichor, (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
-                    }
-                    else
-                    {
-                        player.AddBuff(ModContent.BuffType<Crippled>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
-                        player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
-                    }
+                    // Cerulean drinks intentionally apply NO mobility/defense debuffs — drinking for
+                    // mana shouldn't lock the player down. The Chloranthy ring's "trade slowdown for
+                    // vulnerability" mechanic was moved to the Estus drink (see CustomQuickHeal below)
+                    // since healing drinks happen more often in active combat.
                 }
                 return;
             }
@@ -2472,8 +2464,20 @@ namespace tsorcRevamp
                 {
                     estusPlayer.isDrinking = true;
                     estusPlayer.estusDrinkTimer = 0;
-                    player.AddBuff(ModContent.BuffType<Crippled>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
-                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
+                    // Chloranthy Ring (I or II): trade the standard drink slowdown for temporary
+                    // vulnerability. Without the ring, the Crippled debuff blocks extra jumps, wings,
+                    // rocket boots, and reduces moveSpeed by 10% for the drink duration (ground-bound
+                    // and slowed). With the ring, those mobility losses are swapped for Ichor
+                    // (-15 defense + glow) — full mobility but more damage taken if you get hit.
+                    if (modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2)
+                    {
+                        player.AddBuff(BuffID.Ichor, (int)(estusPlayer.estusDrinkTimerMax * 60f));
+                    }
+                    else
+                    {
+                        player.AddBuff(ModContent.BuffType<Crippled>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
+                        player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
+                    }
                 }
                 return;
             }

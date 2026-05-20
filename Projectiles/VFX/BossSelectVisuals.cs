@@ -44,11 +44,18 @@ namespace tsorcRevamp.Projectiles.VFX
                 PreHardmodeRarities = new List<int>();
                 HardmodeRarities = new List<int>();
                 SHMRarities = new List<int>();
+                // Parallel lists of the boss NPC IDs to *display* (with the same Golem/MoonLord
+                // substitutions used in the defeated branches below). Lets the silhouette layer
+                // draw the actual boss texture even when the slot is currently a bunny placeholder.
+                PreHardmodeIds = new List<int>();
+                HardmodeIds = new List<int>();
+                SHMIds = new List<int>();
                 NPC tempNPC = new NPC();
                 foreach (int id in tsorcRevampWorld.PreHardmodeBossIDs.Keys)
                 {
                     tempNPC.SetDefaults(id);
                     PreHardmodeRarities.Add(tempNPC.rarity);
+                    PreHardmodeIds.Add(id);
                     PreHardmodeDownedBosses.Add(new NPC());
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == NPCID.EaterofWorldsHead && NPC.downedBoss2) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
@@ -63,6 +70,8 @@ namespace tsorcRevamp.Projectiles.VFX
                 {
                     tempNPC.SetDefaults(id);
                     HardmodeRarities.Add(tempNPC.rarity);
+                    // Display Golem as the head sprite, matching the defeated branch.
+                    HardmodeIds.Add(id == NPCID.Golem ? NPCID.GolemHeadFree : id);
                     HardmodeDownedBosses.Add(new NPC());
 
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>() && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
@@ -85,6 +94,8 @@ namespace tsorcRevamp.Projectiles.VFX
                 {
                     tempNPC.SetDefaults(id);
                     SHMRarities.Add(tempNPC.rarity);
+                    // Display Moon Lord as the floating eye sprite, matching the defeated branch.
+                    SHMIds.Add(id == NPCID.MoonLordCore ? NPCID.MoonLordFreeEye : id);
                     SHMDownedBosses.Add(new NPC());
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
@@ -100,10 +111,19 @@ namespace tsorcRevamp.Projectiles.VFX
                         SHMDownedBosses[SHMDownedBosses.Count - 1].SetDefaults(NPCID.Bunny);
                     }
                 }
+
+                // Compute the next undefeated critical path boss across all three eras. The smallest
+                // rarity in CriticalPathRarities whose slot is still a bunny.
+                nextUndefeatedCriticalPath = int.MaxValue;
+                FindNextCriticalPath(PreHardmodeDownedBosses, PreHardmodeRarities);
+                FindNextCriticalPath(HardmodeDownedBosses, HardmodeRarities);
+                FindNextCriticalPath(SHMDownedBosses, SHMRarities);
+
                 if (currentDownedList == null)
                 {
                     currentDownedList = PreHardmodeDownedBosses;
                     currentRarityList = PreHardmodeRarities;
+                    currentIdList = PreHardmodeIds;
                 }
                 inititalized = true;
             }
@@ -166,10 +186,35 @@ namespace tsorcRevamp.Projectiles.VFX
         List<int> PreHardmodeRarities;
         List<int> HardmodeRarities;
         List<int> SHMRarities;
+        // Display NPC IDs per slot — the *actual* boss NPC type even when the slot is showing as a
+        // bunny placeholder. Used to draw a black silhouette of the undefeated boss behind its
+        // question mark, with the substitutions vanilla uses for the defeated-state icons
+        // (Golem → GolemHeadFree, Moon Lord → MoonLordFreeEye).
+        List<int> PreHardmodeIds;
+        List<int> HardmodeIds;
+        List<int> SHMIds;
+        // Smallest rarity in CriticalPathRarities that is still undefeated across all three eras.
+        // Drives two things: which boss slot glows yellow (highlight = "go here next") and the
+        // upper bound for which undefeated bosses surface their "Where to find:" hint on hover.
+        // Computed once during init in AI() — bosses can't be killed while the menu is open.
+        int nextUndefeatedCriticalPath = int.MaxValue;
+        // The rarity values that progress the main storyline. Defeating one of these unlocks the
+        // optional bosses + next critical path entry for hover hints. Sets follow the mod's
+        // designed critical path; edit here if progression changes.
+        private static readonly HashSet<int> CriticalPathRarities = new()
+        {
+            // PHM
+            4,  6,  11, 13, 15,
+            // HM
+            17, 18, 19, 22, 23, 24, 25, 26, 28, 29, 30,
+            // SHM
+            34, 35, 36, 37, 39, 40, 41, 42, 44
+        };
         int spawnCountdown = 0;
         int spawnID = 0;
         List<NPC> currentDownedList;
         List<int> currentRarityList;
+        List<int> currentIdList;
         public static Texture2D buttonTexture;
         public static Texture2D questionmarkTexture;
         public override bool PreDraw(ref Color lightColor)
@@ -178,6 +223,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 currentDownedList = PreHardmodeDownedBosses;
                 currentRarityList = PreHardmodeRarities;
+                currentIdList = PreHardmodeIds;
             }
 
             if (spawnCountdown != 0)
@@ -213,11 +259,13 @@ namespace tsorcRevamp.Projectiles.VFX
                             {
                                 currentDownedList = SHMDownedBosses;
                                 currentRarityList = SHMRarities;
+                                currentIdList = SHMIds;
                             }
                             else
                             {
                                 currentDownedList = HardmodeDownedBosses;
                                 currentRarityList = HardmodeRarities;
+                                currentIdList = HardmodeIds;
                             }
                         }
                     }
@@ -240,11 +288,13 @@ namespace tsorcRevamp.Projectiles.VFX
                             {
                                 currentDownedList = PreHardmodeDownedBosses;
                                 currentRarityList = PreHardmodeRarities;
+                                currentIdList = PreHardmodeIds;
                             }
                             else
                             {
                                 currentDownedList = HardmodeDownedBosses;
                                 currentRarityList = HardmodeRarities;
+                                currentIdList = HardmodeIds;
                             }
                         }
                     }
@@ -264,13 +314,14 @@ namespace tsorcRevamp.Projectiles.VFX
                 drawPos.X *= 1.2f;
                 DeathCountText = LangUtils.GetTextValue("Items.BossRematchTome.DeathCountText", Main.player[Projectile.owner].numberOfDeathsPVE);
 
-                //Bunnies are used in place of non-defeated bosses — they draw as question marks.
-                //Hover-test the drawn question mark's bounds so the player can still surface the
-                //progression clue for bosses they haven't found yet.
+                //Bunnies are used in place of non-defeated bosses. They draw as a 
+                //a question mark. Critical-path boss question mark is yellow
+                //instead of black, signposting where to head next.
                 //
-                //Tier gating: only show the clue if the player has reached the boss's tier. Pre-hardmode
-                //clues are always visible; hardmode clues only after entering hardmode; SHM clues only
-                //after entering Super Hard Mode. This prevents end-game spoilers on a fresh character.
+                //Clue gating: hover surfaces the "Where to find:" hint only if the boss's rarity is
+                //≤ nextUndefeatedCriticalPath. That means after each critical-path defeat, the cluster
+                //of optional bosses up to the next critical path unlocks their clues - those are noted by purple question marks. Era gate also
+                //applies as a safety so HM/SHM clues don't leak in pre-hardmode.
                 if (currentDownedList[i].type == NPCID.Bunny)
                 {
                     float qmScale = currentDownedList[i].scale * 1.3f;
@@ -282,18 +333,40 @@ namespace tsorcRevamp.Projectiles.VFX
                         (int)(qmHalfSize.X * 2),
                         (int)(qmHalfSize.Y * 2));
 
-                    Main.spriteBatch.Draw(questionmarkTexture, qmCenter - Main.screenPosition, questionmarkTexture.Bounds, Color.White, 0, questionmarkTexture.Bounds.Size() / 2, qmScale, SpriteEffects.None, 0);
+                    int bossRarity = (currentRarityList != null && i < currentRarityList.Count) ? currentRarityList[i] : 0;
+                    bool isNextCriticalPath = bossRarity > 0 && bossRarity == nextUndefeatedCriticalPath;
+                    bool clueRevealed = bossRarity > 0 && bossRarity <= nextUndefeatedCriticalPath;
+                    bool isOptionalRevealed = clueRevealed && !isNextCriticalPath && !CriticalPathRarities.Contains(bossRarity);
+
+                    // Undefeated bosses just show a question mark — no boss silhouette behind it.
+                    // Previous attempts (manual texture draw, DrawNPCDirect + npc.color tint) either
+                    // missed sprites, scaled them wrong, or failed to apply the tint to mod bosses
+                    // with custom PreDraw + glowmask layers. The question mark alone is a clean,
+                    // reliable progression indicator. Once a boss is defeated, the existing defeated
+                    // branch below draws the real sprite as before.
+                    //
+                    // Question mark color signals state:
+                    //   Hidden / not revealed → white (vanilla — no hint, no progression target yet)
+                    //   Revealed optional     → purple (clue available, optional path)
+                    //   Next critical path    → yellow (go here next — main progression target)
+                    Color qmColor = Color.White;
+                    if (isNextCriticalPath) qmColor = new Color(255, 220, 80);          // warm yellow
+                    else if (isOptionalRevealed) qmColor = new Color(180, 100, 230);    // purple
+                    Main.spriteBatch.Draw(questionmarkTexture, qmCenter - Main.screenPosition, questionmarkTexture.Bounds, qmColor, 0, questionmarkTexture.Bounds.Size() / 2, qmScale, SpriteEffects.None, 0);
 
                     bool eraUnlocked =
                         currentDownedList == PreHardmodeDownedBosses ||
                         (currentDownedList == HardmodeDownedBosses && Main.hardMode) ||
                         (currentDownedList == SHMDownedBosses && tsorcRevampWorld.SuperHardMode);
+                    bool criticalPathGateOpen = bossRarity > 0 && bossRarity <= nextUndefeatedCriticalPath;
 
-                    if (eraUnlocked && Projectile.owner == Main.myPlayer && qmHitbox.Contains(Main.MouseWorld.ToPoint()) && radius >= 1 && currentRarityList != null && i < currentRarityList.Count)
+                    if (eraUnlocked && criticalPathGateOpen && Projectile.owner == Main.myPlayer && qmHitbox.Contains(Main.MouseWorld.ToPoint()) && radius >= 1 && currentRarityList != null && i < currentRarityList.Count)
                     {
                         Main.LocalPlayer.mouseInterface = true;
                         mouseOver = "???";
-                        // Undefeated boss: show its OWN clue ("Where to find") so the player can hunt it.
+                        // Undefeated boss within the current critical-path window: show its "Where to
+                        // find:" clue so the player can hunt it. Bosses beyond the next critical path
+                        // stay fully hidden (no clue) until that critical path is defeated.
                         int clueIndex = currentRarityList[i];
                         mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + clueIndex);
                         mouseOverPos = qmCenter;
@@ -575,6 +648,21 @@ namespace tsorcRevamp.Projectiles.VFX
         public override bool? CanDamage()
         {
             return false;
+        }
+
+        // Scans an era's slots and lowers nextUndefeatedCriticalPath if it finds a still-bunny
+        // critical-path slot with a smaller rarity. Called once per era from AI() init.
+        private void FindNextCriticalPath(List<NPC> list, List<int> rarities)
+        {
+            if (list == null || rarities == null) return;
+            for (int k = 0; k < list.Count && k < rarities.Count; k++)
+            {
+                int rarity = rarities[k];
+                if (list[k].type == NPCID.Bunny && CriticalPathRarities.Contains(rarity) && rarity < nextUndefeatedCriticalPath)
+                {
+                    nextUndefeatedCriticalPath = rarity;
+                }
+            }
         }
     }
 }

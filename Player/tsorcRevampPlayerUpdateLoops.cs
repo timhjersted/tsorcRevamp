@@ -2663,8 +2663,76 @@ namespace tsorcRevamp
             }
         }
 
+        // Tracks last frame's statLifeMax so PostUpdate can detect when vanilla Life Crystal use
+        // bumps the value by exactly 20 and rewrite the green "+20" floating heal popup. Initialized
+        // to -1 so the first PostUpdate after spawn doesn't trigger a false detection.
+        private int previousStatLifeMax = -1;
+
         public override void PostUpdate()
         {
+            // Souls-tier Life Crystal nerf — continuous statLifeMax2 cap.
+            //
+            // Earlier attempts at modifying the persistent statLifeMax (in UseItem, OnConsumeItem,
+            // and a +20 spike detector) all failed silently — vanilla's Life Crystal effect path
+            // and/or downstream stat recomputation kept restoring the full +20. Pattern used by
+            // Hollowed.cs works reliably: re-cap statLifeMax2 (the effective max, recomputed each
+            // frame from statLifeMax + bonuses) on every frame to the reduced value we want.
+            //
+            // We derive crystal/fruit counts from statLifeMax — vanilla's persistent base which IS
+            // saved across sessions:
+            //   statLifeMax = 100 + 20 * crystals + 5 * fruits   (crystals capped at 15)
+            //
+            // In SoulsMode, the *visible* per-crystal gain is reduced based on party size:
+            //   solo (1)      → 10 HP/crystal (cap reduces by 150 once all 15 are used)
+            //   duo / trio    → 15 HP/crystal (cap reduces by 75 once all 15 are used)
+            //   4+ players    → 20 HP/crystal (no cap, vanilla matches)
+            //
+            // Life Fruits and Classic players are unaffected. Cap is purely runtime — if a player
+            // toggles to Classic via Darksign, their statLifeMax2 jumps to full vanilla value.
+            if (SoulsMode)
+            {
+                int crystals = Math.Min(15, Math.Max(0, (Player.statLifeMax - 100) / 20));
+                int fruits = Math.Max(0, (Player.statLifeMax - 100 - crystals * 20) / 5);
+
+                int activePlayers = 0;
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i].active) activePlayers++;
+                }
+                int crystalGain;
+                if (activePlayers >= 4) crystalGain = 20;
+                else if (activePlayers >= 2) crystalGain = 15;
+                else crystalGain = 10;
+
+                int nerfedBase = 100 + crystals * crystalGain + fruits * 5;
+                int reduction = Player.statLifeMax - nerfedBase;
+                if (reduction > 0)
+                {
+                    Player.statLifeMax2 -= reduction;
+                    if (Player.statLife > Player.statLifeMax2) Player.statLife = Player.statLifeMax2;
+                }
+
+                // Rewrite the "+20" green heal popup vanilla spawned via Player.HealEffect when a
+                // Life Crystal was just consumed. Detected by the +20 spike to statLifeMax. The
+                // CombatText still exists in Main.combatText[] on this same frame, so we find and
+                // mutate it in place. MP caveat: only the player who used the crystal sees the
+                // rewritten number; other clients still see the broadcast "+20" since their own
+                // statLifeMax doesn't spike — accept this limitation rather than netcoding around it.
+                if (previousStatLifeMax >= 0 && Player.statLifeMax == previousStatLifeMax + 20)
+                {
+                    for (int i = 0; i < Main.combatText.Length; i++)
+                    {
+                        CombatText ct = Main.combatText[i];
+                        if (ct.active && ct.color == CombatText.HealLife && ct.text == "20")
+                        {
+                            ct.text = crystalGain.ToString();
+                            break;
+                        }
+                    }
+                }
+            }
+            previousStatLifeMax = Player.statLifeMax;
+
             if ((Player.HasBuff(ModContent.BuffType<MagicWeapon>()) || Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()) || Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>())) && Player.meleeEnchant > 0)
             {
                 int buffIndex = 0;

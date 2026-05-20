@@ -40,6 +40,7 @@ Mods: {
 			CorruptionCursed: This item has been [c/383838:cursed] by the [c/701070:corruption] and can't be used yet
 			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
 			UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
+			LifeCrystalSoulsMode: Permanently increases maximum life by {0}
 			BotCPStone: Decreases the time needed to drink the Estus Flask by {0}%
 			BotCManaFlower: Decreases the time needed to drink the Cerulean Flask by {0}%
 			DSPickUpRange: " increases Dark Soul pick-up range"
@@ -1483,9 +1484,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Enhances your agility and evasiveness when dodge rolling]
-					BotCOnly: "[c/ca1e00:When drinking your Cerulean Flask, your movement is no longer hindered at the cost of temporary vulnerability.]"
+					[c/ca1e00:When drinking your Estus Flask, your movement is no longer hindered, at the cost of being inflicted with Ichor (-15 defense)]
 					Increases Stamina Droplet pickup range.
-					This old ring is named for its decorative green blossom, 
+					This old ring is named for its decorative green blossom,
 					but its luster is long since faded
 					'''
 			}
@@ -1497,8 +1498,8 @@ Mods: {
 					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Further enhances your agility and evasiveness when dodge rolling]
 					[c/ffbf00:Grants the Black Belt's effect & superior mid-air dexterity]
-					BotCOnly: "[c/ca1e00:When drinking your Cerulean Flask, your movement is no longer hindered at the cost of temporary vulnerability.]"
-					This ring is named for its decorative green blossom. 
+					[c/ca1e00:When drinking your Estus Flask, your movement is no longer hindered, at the cost of being inflicted with Ichor (-15 defense)]
+					This ring is named for its decorative green blossom.
 					Its luster has now been fully restored.
 					'''
 			}
@@ -3780,48 +3781,48 @@ Mods: {
 				//  so the Boss Checklist mod UI and the Boss Hunting Tome stay in sync.
 				// ─────────────────────────────────────────────────────────────────────────────
 				1: "{$BossChecklist.LeonhardDesc}"
-				2: What is under Leonhard, or at end of the Path of Ambition?
+				2: What is under the mountain cave where Leonhard dwells, or at end of the Path of Ambition?
 				3: "{$BossChecklist.PinwheelDesc}"
-				4: Seek the chilling depths of Earth Temple, where the fountains pool their waters.
-				5: Delve deep inside the Corruption Temple, or investigate rumours about crimson on the surface.
-				6: Somewhere east of the Arazium Mountain Chasm.
+				4: Seek the chilling depths of the Earth Temple, where the fountains pool their waters.
+				5: Delve deep inside the Corruption Temple, or investigate rumours about crimson on the surface, to the East.
+				6: Seek the Corruption Temple, East of the Arazium Mountain Chasm.
 				7: "{$BossChecklist.AncientOolacileDemonDesc}"
-				8: Explore the Rainforest of the Orid Tribe, east of your burned house.
+				8: Explore the Rainforest of the Orid Tribe, East of your burned house. Gold temple ruins hide a secret.
 				9: "{$BossChecklist.SlograAndGaibonDesc}"
-				10: From the Jungle Ruins to Forgotten City, Larvas are everywhere.
-				11: Found past the Lake of Flowered Paths in underground jungle, open the shut gate.
+				10: From the Underground Jungle Ruins to the Forgotten City, Larvas are everywhere.
+				11: Found past the Lake of Flowered Paths, deep in the underground jungle. Open the shut gate.
 				12:
 					'''
-					Check the basement of Wizard's house, to an icy land.
-					Remix Map: Seek far to the east, at the entrance to the Frozen Ocean past the Hallow.
+					Check the basement of the Wizard's house.
+					Remix Map: Seek far to the East, at the entrance to the Frozen Ocean past the Hallow.
 					'''
 				13: "{$BossChecklist.JungleWyvernDesc}"
 				14: "{$BossChecklist.AncientDemonDesc}"
-				15: Pass the four gate west of the Fire Temple, will you find an answer on the altar?
-				16: Search the Hallowed Caverns which have been sealed by Cobalt.
+				15: Past the four gates West of the Fire Temple. Will you find an answer on the altar?
+				16: Search the Hallowed Caverns, which have been sealed by Cobalt.
 				17: "{$BossChecklist.TheRageDesc}"
 				18: "{$BossChecklist.WyvernMageDesc}"
 				19: "{$BossChecklist.TheSorrowDesc}"
 				20: "{$BossChecklist.SerrisDesc}"
 				21: "{$BossChecklist.DeathDesc}"
 				22: "{$BossChecklist.TheHunterDesc}"
-				23: It awaits at the end of Shadow Temple.
-				24: Below a Broken, familiar Bridge, you will find the Flooded Machine Temple.
+				23: It awaits at the end of the Shadow Temple, buried under the Western desert.
+				24: Below a broken, familiar bridge, you will find a temple flooded to protect villagers from what was sealed inside.
 				25:
 					'''
 					Why do the Great Pyramid and Hunter's arena have the same pink flowers?
-					Remix Map: Search in the Jungle Ruins the entrance to its lush and forgotten depths.
+					Remix Map: Search in the Jungle Ruins for the entrance to its lush and forgotten depths.
 					'''
 				26: Where does the Teleporter of the Great Pyramid lead to?
-				27: Golem controls the forcefield of the floating island above the village.
-				28: Atop the Twin Peaks of Arazium, they gaze at Sky Above and the Great Chasm Below.
-				29: Craft the 8 Crests with shards found at the top of Attraidies' Tower.
+				27: Golem controls the forcefield of the floating island high above Ashen Peak village.
+				28: Atop the Twin Peaks of Arazium, find the temple mouth that gazes at the sky above and the Great Chasm Below.
+				29: Craft the 8 Crests with shards found at the top of Attraidies' Dark Tower.
 				30: "{$BossChecklist.RealAttraidiesDesc}"
 				31: "{$BossChecklist.HellkiteDragonDesc}"
 				32: "{$BossChecklist.WitchkingDesc}"
 				33:
 					'''
-					Solve the puzzle of Three stone pillars on the west Side of the Ashen Cave.
+					Solve the puzzle of Three stone pillars on the West side of the Ashen Cave.
 					Remix Map: Confront the four celestial pillars and search for an ancient alien structure in the sky.
 					'''
 				34: "{$BossChecklist.WaterFiendKrakenDesc}"

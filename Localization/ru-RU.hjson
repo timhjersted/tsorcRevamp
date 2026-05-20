@@ -40,6 +40,7 @@ Mods: {
 			CorruptionCursed: Этот предмет был [c/383838:проклят] [c/701070:порчей] и пока не может быть использован
 			BotCNoHeal: Не исцеляет [c/6d8827:носителя проклятия]
 			// UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
+			// LifeCrystalSoulsMode: Permanently increases maximum life by {0}
 			BotCPStone: Сокращает время, необходимое для использования фляги эстуса на {0}%
 			BotCManaFlower: Сокращает время, необходимое для использования фляги лазурных слёз на {0}%
 			DSPickUpRange: " Увеличивает дальность подбора тёмных душ"

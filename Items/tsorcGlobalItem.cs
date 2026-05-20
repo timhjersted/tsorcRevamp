@@ -172,6 +172,37 @@ namespace tsorcRevamp.Items
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoul>()}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.RecipeTooltip")));
             }
 
+            // Life Crystal: replace the vanilla "...by 20" line with the actual party-scaled gain
+            // so SoulsMode players see what they'll actually get. Classic players see the unchanged
+            // vanilla tooltip.
+            if (item.type == ItemID.LifeCrystal && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                int activePlayers = 0;
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i].active) activePlayers++;
+                }
+                int gain = activePlayers >= 4 ? 20 : (activePlayers >= 2 ? 15 : 10);
+
+                // Find the vanilla "permanently increases maximum life" line and rewrite the number.
+                // Falls back to appending a new line if the vanilla one isn't found (other mods etc.).
+                bool replaced = false;
+                for (int i = 0; i < tooltips.Count; i++)
+                {
+                    if (tooltips[i].Mod == "Terraria" && tooltips[i].Text.Contains("20"))
+                    {
+                        tooltips[i].Text = Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.LifeCrystalSoulsMode", gain);
+                        replaced = true;
+                        break;
+                    }
+                }
+                if (!replaced)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "LifeCrystalSoulsMode",
+                        Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.LifeCrystalSoulsMode", gain)));
+                }
+            }
+
             if (badPrefixes.Contains<int>(item.prefix) && !NPC.AnyNPCs(NPCID.GoblinTinkerer))
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "ReforgeTooltip", $"[i:{ItemID.LivingFireBlock}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ReforgeTooltip")));
@@ -826,16 +857,12 @@ namespace tsorcRevamp.Items
             {
                 player.statMana += 20;
             }
-            // Souls-tier Life Crystal nerf: vanilla awards +20 max HP per crystal (and bumps current HP).
-            // For Unkindled and BotC, undo half of that so each crystal gives +10 max HP instead — keeps
-            // the early/mid-game HP curve closer to vanilla Terraria's pre-hardmode threat balance, which
-            // the Souls-style combat is tuned against.
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && item.type == ItemID.LifeCrystal)
-            {
-                player.statLifeMax -= 10;
-                player.statLife -= 10;
-                if (player.statLife < 1) player.statLife = 1;
-            }
+            // Life Crystal nerf moved to UseItem (below) — vanilla's Life Crystal handling in
+            // Player.ItemCheck bumps statLifeMax/statLife directly and consumes the stack manually,
+            // bypassing ItemLoader.ConsumeItem entirely. That means this OnConsumeItem hook never
+            // fired for Life Crystals, and the nerf was silently inert. UseItem runs immediately
+            // before vanilla's +20 effect, so we pre-subtract the nerf there and let vanilla's
+            // unconditional +20 produce the intended net gain.
         }
 
         public static void populateSoulRecipes()
@@ -879,6 +906,13 @@ namespace tsorcRevamp.Items
                 }
                 return true;
             }
+
+            // Life Crystal nerf moved to tsorcRevampPlayer.PostUpdate as a statLifeMax-spike detector.
+            // Attempts to pre-subtract here in UseItem (so vanilla's +20 nets to +10) didn't reduce
+            // statLifeMax reliably — the user observed +20 max HP still landing despite the hook
+            // running. The PostUpdate monitor watches statLifeMax across frames and claws back the
+            // nerf the frame after a Life Crystal raises it, which is timing-independent.
+
             return base.UseItem(item, player);
         }
         public override bool CanRightClick(Item item)

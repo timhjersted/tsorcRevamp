@@ -230,7 +230,7 @@ namespace tsorcRevamp
         public static string LocationBannerText;
         public static int LocationBannerTimer; // counts down in frames; 0 = inactive
         public const int LOCATION_BANNER_FADE_IN = 30;
-        public const int LOCATION_BANNER_HOLD = 240;
+        public const int LOCATION_BANNER_HOLD = 360;   // 6s hold (was 4s; +2s to give players more time to read)
         public const int LOCATION_BANNER_FADE_OUT = 60;
         public const int LOCATION_BANNER_TOTAL = LOCATION_BANNER_FADE_IN + LOCATION_BANNER_HOLD + LOCATION_BANNER_FADE_OUT;
 
@@ -246,6 +246,7 @@ namespace tsorcRevamp
 
         public override void Load()
         {
+            TextureAssets.Npc[NPCID.EyeofCthulhu] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/EyeofCthulhu/NPC_4");
             TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestralSpirit");
             TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestralSpirit_Head_Boss");
             TextureAssets.Gore[GoreID.DeerclopsHead] = ModContent.Request<Texture2D>("tsorcRevamp/Gores/AncestorSpirit_Gore_1");
@@ -1605,6 +1606,7 @@ namespace tsorcRevamp
 
         public override void Unload()
         {
+            TextureAssets.Npc[NPCID.EyeofCthulhu] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.EyeofCthulhu}");
             TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.Deerclops}");
             TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_Head_Boss_39");
             TextureAssets.Gore[GoreID.DeerclopsHead] = ModContent.Request<Texture2D>($"Terraria/Images/Gore_{GoreID.DeerclopsHead}");

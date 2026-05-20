@@ -87,7 +87,7 @@ namespace tsorcRevamp
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
-                        Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords + offsetPositon, null, Main.DiscoColor, 0, BonfireMinimapTexture.Size() / 2, 1.04f, SpriteEffects.None, 1);
+                        Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords + offsetPositon, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 1.04f, SpriteEffects.None, 1);
                     }
                     Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 1f, SpriteEffects.None, 1);
                     mouseText = LangUtils.GetTextValue("World.TPToBonfire");
@@ -196,6 +196,28 @@ namespace tsorcRevamp
                 Main.spriteBatch.Draw(mapTextures[tsorcRevamp.MarkerSelected].texture, new Vector2(Main.MouseScreen.X - 24, Main.MouseScreen.Y + 24), Color.White);
             }
             ModContent.GetInstance<tsorcRevamp>().MarkerInterface.Draw(Main.spriteBatch, new GameTime());
+
+            // Draw discovered location names on the fullscreen map.
+            // Fade out when zoomed below 0.5 so labels don't overlap at low zoom levels.
+            float labelAlpha = MathHelper.Clamp((Main.mapFullscreenScale - 0.3f) / 0.2f, 0f, 1f);
+            if (labelAlpha > 0f)
+            {
+                DynamicSpriteFont labelFont = FontAssets.ItemStack.Value;
+                float labelScale = 0.75f;
+                foreach (KeyValuePair<Vector2, string> loc in tsorcRevampWorld.DiscoveredLocations)
+                {
+                    Vector2 drawCoords = loc.Key;
+                    drawCoords.X += 1.5f;
+                    drawCoords.Y += 1f;
+                    drawCoords *= mapScale;
+                    drawCoords += scaledMapCoords;
+
+                    Vector2 labelSize = labelFont.MeasureString(loc.Value) * labelScale;
+                    Vector2 labelPos = drawCoords - new Vector2(labelSize.X / 2f, labelSize.Y + 2f);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, labelFont, loc.Value, labelPos + Vector2.One, Color.Black * 0.7f * labelAlpha, 0f, Vector2.Zero, labelScale, SpriteEffects.None, 0f);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, labelFont, loc.Value, labelPos, Color.White * 0.9f * labelAlpha, 0f, Vector2.Zero, labelScale, SpriteEffects.None, 0f);
+                }
+            }
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -451,12 +473,17 @@ namespace tsorcRevamp
             DrawLocationBanner(spriteBatch);
         }
 
-        // White all-caps location announcement. Centered horizontally, top third vertically.
+        // White all-caps location announcement. Centered horizontally, top quarter vertically.
         // Drawn entirely client-side; timer ticks here once per frame.
         private void DrawLocationBanner(SpriteBatch spriteBatch)
         {
             if (tsorcRevamp.LocationBannerTimer <= 0 || string.IsNullOrEmpty(tsorcRevamp.LocationBannerText))
                 return;
+
+            // The soapstone draw path may leave the spriteBatch in GameViewMatrix state.
+            // Restart in UIScaleMatrix so screen-space centering works at any UIScale.
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
 
             int timer = tsorcRevamp.LocationBannerTimer;
             int total = tsorcRevamp.LOCATION_BANNER_TOTAL;
@@ -477,13 +504,13 @@ namespace tsorcRevamp
             DynamicSpriteFont font = FontAssets.DeathText.Value;
             float scale = 0.85f;
             string text = tsorcRevamp.LocationBannerText;
-            Vector2 size = font.MeasureString(text) * scale;
-            Vector2 pos = new(Main.screenWidth / 2f - size.X / 2f, Main.screenHeight / 3f);
+            // Use the measured center as the draw origin so any invisible font padding cancels out.
+            // Position is the screen center point where the origin is placed.
+            Vector2 origin = font.MeasureString(text) / 2f;
+            Vector2 center = new(Main.screenWidth / 2f, Main.screenHeight / 5f);
 
-            Color textColor = Color.White * alpha;
-            Color shadowColor = Color.Black * alpha;
-            Terraria.UI.Chat.ChatManager.DrawColorCodedStringWithShadow(
-                Main.spriteBatch, font, text, pos, textColor, 0f, Vector2.Zero, new Vector2(scale), -1f, 2f);
+            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, font, text, center + new Vector2(2, 2), Color.Black * alpha, 0f, origin, scale, SpriteEffects.None, 0f);
+            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, font, text, center, Color.White * alpha, 0f, origin, scale, SpriteEffects.None, 0f);
 
             tsorcRevamp.LocationBannerTimer--;
             if (tsorcRevamp.LocationBannerTimer <= 0)

@@ -63,7 +63,12 @@ namespace tsorcRevamp.Tiles
                 Vector2 textureSize = texture.Size();
 
                 Vector2 position = new(i * 16 - ((int)Main.screenPosition.X + textureSize.X / 2) + 16, j * 16 - (int)Main.screenPosition.Y);
-                Vector2 worldPosition = new Vector2(i + 1, j + 1) * 16;
+                // worldPosition is the proximity anchor for both player-distance and mouse-distance.
+                // Soapstones are 1x1 tiles, so the visual center sits at (i*16 + 8, j*16 + 8). Earlier
+                // code used (i+1, j+1)*16 which is actually the bottom-right corner of the tile —
+                // shifting the trigger zone ~8 px right and ~8 px down from the sign, causing the
+                // location banner to fire after the player walked just past the sign.
+                Vector2 worldPosition = new Vector2(i * 16 + 8, j * 16 + 8);
                 float distance = Vector2.Distance(Main.LocalPlayer.Center, worldPosition);
                 float mouseDistance = Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, worldPosition);
 
@@ -91,6 +96,8 @@ namespace tsorcRevamp.Tiles
                     tsorcRevamp.LastShownLocationId = entity.ID;
                     tsorcRevamp.LocationBannerText = entity.locationName.ToUpperInvariant();
                     tsorcRevamp.LocationBannerTimer = tsorcRevamp.LOCATION_BANNER_TOTAL;
+                    Vector2 tilePos = new Vector2(entity.Position.X, entity.Position.Y);
+                    tsorcRevampWorld.DiscoveredLocations[tilePos] = entity.locationName.ToUpperInvariant();
                 }
 
                 // If the bubble is sticky-open (user clicked Show), check whether the mouse has

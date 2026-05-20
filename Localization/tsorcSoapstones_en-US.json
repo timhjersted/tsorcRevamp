@@ -235,7 +235,9 @@
   "tileX": 812,
   "tileY": 985,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "OCEAN CAVE"
 }
 {
   "text": "The 4 Kings of Araidius, who watch guard over the Western Sea. The sea is intimately referred to as Nora by the indiginous tribe that once lived in this region. You remember hearing of legends of the sea-god Nora, who danced for 500 years on the surface of this sea, with her lover Akaidies, stirring up great tropical storms that brought tidal tsunamis to this land many centuries ago, flooding the nearby town.",
@@ -346,7 +348,9 @@
   "tileX": 1622,
   "tileY": 971,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "CAVERN OF ANGUISH"
 }
 {
   "text": "\u0022A gold bow? Strange... but perhaps it\u0027ll be useful...\u0022",
@@ -360,14 +364,18 @@
   "tileX": 1664,
   "tileY": 966,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "PATH OF THE HUNTER"
 }
 {
   "text": "Miakoda: \u0022I once explored these ruins, but it was many decades ago, and the entrance to the old ruins below has surely been hidden by many years of sand storms. However, The Orspeak were known to use a soft, violet colored illumination to guide friendly travelers to their home...\u0022",
   "tileX": 1718,
   "tileY": 803,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "DESERT RUINS"
 }
 {
   "text": "Elengad\u0027s Desert Ruins --NEWLINE  --NEWLINE You were once told stories of a people known as the Orspeak, who built their civilization deep below the desert sun, connected by a network of tunnels. No one knows why they chose such a inhospitable place to live, but some believe a mystical energy grows far below this spot.",
@@ -391,7 +399,8 @@
   "tileY": 838,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "lore,location",
+  "locationName": "OASIS HOME"
 }
 {
   "text": "\u0022This must open from the other side.\u0022",
@@ -422,7 +431,7 @@
   "tileY": 850,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "hint,lore"
 }
 {
   "text": "Miakoda: \u0022The path forward continues down this way, Maybe there\u0027s a lever nearby.\u0022",
@@ -465,8 +474,7 @@
   "tileX": 1966,
   "tileY": 846,
   "textWidth": 320,
-  "style": 1,
-  "category": "lore"
+  "style": 1
 }
 {
   "text": "Looking back at the temple architecture, Miakoda wonders aloud, \u0022Do you think the direction and alignment of these columns have any significance?\u0022",
@@ -493,11 +501,13 @@
   "locationName": "TEMPLE OF THE DESTROYER"
 }
 {
-  "text": "- This gate guards the Path to the Catacombs, home of the Fire Fiend Spirit - --NEWLINE  --NEWLINE You get out your map journal and write a note: \u0022Lizard Gate just East of an unknown temple in the desert.\u0022",
+  "text": "- This gate guards the Path to the Catacombs, home of the Fire Fiend Spirit - --NEWLINE  --NEWLINE You get out your map and write a note: \u0022Gate just East of an unknown temple in the desert.\u0022",
   "tileX": 2238,
   "tileY": 857,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "PATH TO THE CATACOMBS"
 }
 {
   "text": "You come upon a deep hallowed cavern. As you make your way down you can feel the gravitational pull start to shift again... --NEWLINE  --NEWLINE (Try pressing the Up key)",
@@ -660,7 +670,7 @@
   "style": 1
 }
 {
-  "text": "You sense a dark force seeping into your skin. The smell reeks of rotten earth, decomposing flesh and bile. But the power you feel is immense. Twin gods of the earth - known as the Eater of Worlds -  lay possession of this drowned cavern.  --NEWLINE  --NEWLINE With a growing lust for power in your heart, you  jump into the waters below.",
+  "text": "You sense a dark force seeping into your skin. The smell reeks of rotten earth, decomposing flesh and bile. But the power you feel is immense. Twin gods of the earth - known as the Eater of Worlds -  lay possession of this drowned cavern.  --NEWLINE  --NEWLINE With a growing lust for power in your heart, you jump into the waters below.",
   "tileX": 3241,
   "tileY": 1187,
   "textWidth": 320,
@@ -903,7 +913,9 @@
   "tileX": 3758,
   "tileY": 1243,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "PATH OF AMBITION"
 }
 {
   "text": "- You\u0027ve found the Mushroom Caverns -",
@@ -959,7 +971,8 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore",
+  "locationName": "CORRUPTED TUNNEL"
 }
 {
   "text": "Try dodging mid-air to reach greater distances or evade attacks after jumping.",
@@ -974,7 +987,9 @@
   "tileX": 3923,
   "tileY": 685,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "ARAZIUM'S MOUNTAIN CAVERNS"
 }
 {
   "text": "A troll-like voice beyond the wall snickers, and then mutters, \u0022Remember to use your dodge roll.\u0022  --NEWLINE  --NEWLINE Its creepy laugh unsettles you.  --NEWLINE  --NEWLINE When you reply back, you hear nothing but a long silence, which makes you question if you\u0027ve been underground for too long...",
@@ -1079,7 +1094,7 @@
   "category": "story"
 }
 {
-  "text": "Caves can be entered by standing at the entrance and clicking on the darkness above your head.",
+  "text": "Caves can be entered by standing at the entrance and right-clicking on the darkness above your head.",
   "tileX": 4091,
   "tileY": 983,
   "textWidth": 320,
