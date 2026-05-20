@@ -30,12 +30,13 @@
   "style": 1
 } 
 {
-  "text": "The Eternal Reef is one of the oldest biomes in the world where life has developed in a spectacular way, independently of the rest of the world. --NEWLINE But this exotic fauna and flora makes this reef very dangerous.  --NEWLINE This is also where a huge mutated creature resides, maybe here you will find the place to bait it and fight it on the surface...",
+  "text": "- The Eternal Reef - --NEWLINE  --NEWLINE The Eternal Reef is one of the oldest biomes in the world where life has developed in a spectacular way, independently of the rest of the world. --NEWLINE But this exotic fauna and flora makes this reef very dangerous.  --NEWLINE This is also where a huge mutated creature resides, maybe here you will find the place to bait it and fight it on the surface...",
   "tileX": 379,
   "tileY": 1011,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore,location",
+  "locationName": "ETERNAL REEF"
 }
 {
   "text": "Here lived a group of merfolks, a mythical, forgotten aquatic race. They coexisted with the Great Duke in the reef, more or less peacefully. Long ago, when the fiends roamed the lands, the Water Fiend Kraken settled in the Eternal Reef, gradually disrupting and destroying it. It was driven back and fled east deep into the dreamlike caves, but at the cost of their territory, which has long since been in ruins.",
@@ -107,7 +108,7 @@
   "textWidth": 320,
   "style": 1,
   "category": "location",
-  "locationName": "ETERNAL REEF"
+  "locationName": "ETERNAL REEF ENTRANCE"
 }
 {
   "text": "You feel a strong presence coming from behind this Chlorophyte gate,... --NEWLINE  --NEWLINE \u0022I need the Drax...\u0022  --NEWLINE  --NEWLINE It feels urgent.",
@@ -268,6 +269,8 @@
   "tileY": 985,
   "textWidth": 320,
   "style": 1
+   "category": "hint,location",
+  "locationName": "???"
 }
 {
   "text": "\u0022You\u0027ll need something to travel through this,\u0022 Miakoda tells you.",
@@ -399,6 +402,15 @@
   "locationName": "CAVERN OF ANGUISH"
 }
 {
+  "text": "- The Lost Tunnels of Elengad -",
+  "tileX": 898,
+  "tileY": 1308,
+  "textWidth": 320,
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "LOST TUNNELS OF ELENGAD"
+}
+{
   "text": "\u0022A gold bow? Strange... but perhaps it\u0027ll be useful...\u0022",
   "tileX": 1636,
   "tileY": 1365,
@@ -434,6 +446,15 @@
   "textWidth": 320,
   "style": 1,
   "category": "hint,location",
+  "locationName": "SHADOW TEMPLE ENTRANCE"
+}
+{
+  "text": "- You\u0022ve found the Shadow Temple -",
+  "tileX": 1460,
+  "tileY": 1168,
+  "textWidth": 320,
+  "style": 1,
+  "category": "location",
   "locationName": "SHADOW TEMPLE"
 }
 {
@@ -553,11 +574,14 @@
   "locationName": "SKELETRON PRIME VAULT"
 }
 {
-  "text": "You come upon a deep dark and corrupted cavern. This place appears to be an abandoned mine and the way to the exit of the Shadow Temple.",
+  "text": "- The Path of Darkness - --NEWLINE  --NEWLINE You come upon a deep dark and corrupted cavern. This place appears to be an abandoned mine and the way to the exit of the Shadow Temple.",
   "tileX": 2265,
   "tileY": 1183,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "Path of Darkness"
+
 }
 {
   "text": "Checking your compass and map, you think the path East must lead below the Corrupted Temple. --NEWLINE  --NEWLINE You can sense a terrible foe in this direction, something you have never seen before. ",
@@ -754,7 +778,9 @@
   "tileX": 3364,
   "tileY": 1412,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "location",
+  "locationName": "CATACOMBS ENTRANCE"
 }
 {
   "text": "\u0022The lever to open this seems to be hidden, but I have the Cloud in a Bottle now.  --NEWLINE  --NEWLINE Perhaps it\u0027s time to head East, towards the jungles of the Orid Tribe.\u0022",
@@ -791,7 +817,9 @@
   "tileX": 3417,
   "tileY": 1830,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "THE ALTAR"
 }
 {
   "text": "-You\u0027ve discovered the Corrupted Forest - --NEWLINE  --NEWLINE The sign reads: \u0022BEWARE: The Eater of Worlds sleeps below this forest.\u0022 --NEWLINE  --NEWLINE You take a deep breath.  --NEWLINE  --NEWLINE \u0022This must be the way forward.\u0022",
@@ -1571,9 +1599,17 @@
   "category": "story"
 }
 {
-  "text": "-- The Earth Temple -- --NEWLINE  --NEWLINE You feel the air grow warm and moist. The walls around you feel like they\u0027re breathing. ",
+  "text": "You feel the air grow warm and moist. The walls around you feel like they\u0027re breathing. ",
   "tileX": 4456,
   "tileY": 854,
+  "textWidth": 320,
+  "style": 1,
+  "category": "lore"
+}
+{
+  "text": "- You\u0027ve discovered the Earth Temple -",
+  "tileX": 4325,
+  "tileY": 953,
   "textWidth": 320,
   "style": 1,
   "category": "lore,location",
@@ -1893,7 +1929,8 @@
   "tileY": 860,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "locationName": "THE BURNED VILLAGE"
 }
 {
   "text": "To the WEST \u003C--- --NEWLINE Ashen Peak Village --NEWLINE  --NEWLINE To the EAST---\u003E --NEWLINE The Tree Village of the Orid Tribe --NEWLINE Jungle Ruins --NEWLINE Obsidian\u0027s Volcano --NEWLINE Unknown",
@@ -2043,7 +2080,16 @@
   "locationName": "LAKE OF FLOWERED PATHS"
 }
 {
-  "text": "To the EAST--\u003E --NEWLINE The Rainforest of the Orid Tribe --NEWLINE The Old One\u0022s Tree --NEWLINE The Hallow --NEWLINE Unknown",
+  "text": "- The Rainforest of the Orid Tribe -",
+  "tileX": 5183,
+  "tileY": 852,
+  "textWidth": 320,
+  "style": 1,
+  "category": "location",
+  "locationName": "RAINFOREST OF THE ORID TRIBE"
+}
+{
+  "text": "To the EAST--\u003E --NEWLINE The Tree Village of the Orid Tribe --NEWLINE The Old One\u0022s Tree --NEWLINE The Hallow --NEWLINE Unknown",
   "tileX": 5338,
   "tileY": 867,
   "textWidth": 320,
@@ -2336,13 +2382,11 @@
   "category": "lore"
 }
 {
-  "text": "- You arrived in the enchanted lands of the Hallow -", 
+  "text": "Seeing these magical lands brings back a little light within you, after so much pain...", 
   "tileX": 6484,
   "tileY": 827,
   "textWidth": 320, 
-  "style": 1,
-  "category": "location",
-  "locationName": "THE HALLOW"
+  "style": 1
 }
 {
   "text": "You\u0027ve discovered the entrance to the Hallowed Caverns. --NEWLINE  --NEWLINE The Molten Pickaxe will be needed to enter.",
@@ -2371,12 +2415,13 @@
   "category": "lore"
 }
 {
-  "text": "As you wander through these enchanted lands, you notice something. The magical and fairy creatures you\u0027ve heard about that are supposed to roam here are simply not present. You doubt the tales and stories you\u0027ve been told before but you also realize that this place seems strangely quiet.",
+  "text": "- The Hallow - --NEWLINE  --NEWLINE As you wander through these enchanted lands, you notice something. The magical and fairy creatures you\u0027ve heard about that are supposed to roam here are simply not present. You doubt the tales and stories you\u0027ve been told before but you also realize that this place seems strangely quiet.",
   "tileX": 6769,
   "tileY": 728,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore",
+  "locationName": "THE HALLOW"
 }
 {
   "text": "- The Great Mountains of Elendaris - --NEWLINE  --NEWLINE These cold mountains are known to be the nest of the legendary wyverns. Long ago, Elendaris was the first known man to tame one, a difficult feat as wyverns are powerful and proud creatures. He became a renowned hero of the east, and these mountains were named after him for his achievement.",
@@ -2796,12 +2841,13 @@
   "category": "lore"
 }
 {
-  "text": "The cavern of The Sorrow. As you step farther in, you hear a deep, booming voice begin to speak, at once everywhere and no where, \u0022You\u0027ve come far Red, I\u0027m quite pleased.\u0022 Suddenly, the Mindflayer King bursts into existence in front of you, hovering in the air. You take your sword and leap at Attraidies, and your sword blasts against the force field protecting him. ",
+  "text": "- The Cavern of The Sorrow - --NEWLINE --NEWLINE As you step farther in, you hear a deep, booming voice begin to speak, at once everywhere and no where, \u0022You\u0027ve come far Red, I\u0027m quite pleased.\u0022 Suddenly, the Mindflayer King bursts into existence in front of you, hovering in the air. You take your sword and leap at Attraidies, and your sword blasts against the force field protecting him. ",
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story,location",
+  "locationName": "CAVERN OF THE SORROW"
 }
 {
   "text": "Attraidies lets out a deep bellowing laugh. \u0022Red,\u0022 he says, \u0022You\u0027ve got to learn how to savor the moment. Isn\u0027t it these *little moments* that makes a life what it is? Besides, I really should thank you..\u0022 --NEWLINE  --NEWLINE Red: \u0022Enough games Attraidies, say what you will.\u0022",

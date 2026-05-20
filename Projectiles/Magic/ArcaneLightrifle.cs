@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Magic
         {
             Projectile.CloneDefaults(ProjectileID.LastPrism);
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.friendly = false;
+            Projectile.friendly = true;
             Projectile.hostile = false;
         }
 

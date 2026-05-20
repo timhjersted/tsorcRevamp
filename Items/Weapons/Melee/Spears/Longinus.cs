@@ -20,8 +20,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<LonginusHeld>();
             Item.channel = true;
-            Item.damage = 1250;
-            Item.crit = 20;
+            Item.damage = 1200;
+            Item.crit = 16;
             Item.width = 24;
             Item.height = 48;
             Item.useTime = 30;
