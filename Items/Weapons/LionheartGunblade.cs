@@ -52,17 +52,9 @@ namespace tsorcRevamp.Items.Weapons
         }
         public override bool AltFunctionUse(Player player)
         {
-            if (!Main.mouseLeft && player.ItemTimeIsZero)
-            {
-                return true;
-            }
-            else
-            {
-                player.altFunctionUse = 1;
-                return false;
-            }
+            return true;
         }
-        public override void UseStyle(Player player, Rectangle heldItemFrame)
+        public override bool CanUseItem(Player player)
         {
             if (player.altFunctionUse == 2)
             {
@@ -74,6 +66,7 @@ namespace tsorcRevamp.Items.Weapons
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noMelee = false;
             }
+            return base.CanUseItem(player);
         }
         public override bool CanConsumeAmmo(Item ammo, Player player)
         {
@@ -87,8 +80,6 @@ namespace tsorcRevamp.Items.Weapons
         {
             if (player.altFunctionUse == 2)
             {
-                Item.useStyle = ItemUseStyleID.Shoot;
-                Item.noMelee = true;
                 if (Main.myPlayer == player.whoAmI)
                 {
                     Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<LionheartGunshot>(), damage, knockback);
@@ -97,8 +88,6 @@ namespace tsorcRevamp.Items.Weapons
             }
             else
             {
-                Item.useStyle = ItemUseStyleID.Swing;
-                Item.noMelee = false;
                 SoundEngine.PlaySound(SoundID.Item1);
             }
             return false;
