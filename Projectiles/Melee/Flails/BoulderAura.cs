@@ -62,8 +62,8 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
         public override void SetDefaults()
         {
-            Projectile.width = 142;
-            Projectile.height = 142;
+            Projectile.width = 154;
+            Projectile.height = 154;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
@@ -88,10 +88,10 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             Projectile.Center = ball.Center;
 
             // Dust ring
-            for (int i = 0; i < 36; i++)
+            for (int i = 0; i < 38; i++)
             {
                 float angle = MathHelper.TwoPi / 36 * i;
-                Vector2 pos = Projectile.Center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 72f;
+                Vector2 pos = Projectile.Center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 78f;
                 Dust d = Dust.NewDustPerfect(pos, DustID.WaterCandle, Vector2.Zero, 100, Color.Blue, 1.5f);
                 d.noGravity = true;
             }
