@@ -47,13 +47,13 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             var KrakensCastKey = tsorcRevamp.KrakensCast.GetAssignedKeys();
             string KrakensCastString = KrakensCastKey.Count > 0 ? KrakensCastKey[0] : LangUtils.GetTextValue("Keybinds.Krakens Cast.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
-            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip2");
             if (ttindex1 != -1)
             {
                 tooltips.RemoveAt(ttindex1);
                 tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", LangUtils.GetTextValue("Items.KrakenCarcass.Keybind1") + KrakensCastString + LangUtils.GetTextValue("Items.KrakenCarcass.Keybind2")));
             }
-            int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip2");
+            int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip3");
             if (ttindex2 != -1)
             {
                 tooltips.Insert(ttindex2 + 1, new TooltipLine(Mod, "Keybind", LangUtils.GetTextValue("Items.KrakenCarcass.Tooltip1", (int)Main.LocalPlayer.GetTotalDamage(DamageClass.Ranged).ApplyTo(TsunamiBaseDmg))));
