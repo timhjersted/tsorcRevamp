@@ -2084,6 +2084,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentChanceToSaveAmmo}
+					{$CommonItemTooltip.Ranged.ArmorPenRanged@1}
 					{$Items.KrakenCarcass.Keybind1}KrakensCast{$Items.KrakenCarcass.Keybind2}
 					The Tsunami will increase the damage of ranged projectiles that pass through it by {2}%
 					'''
