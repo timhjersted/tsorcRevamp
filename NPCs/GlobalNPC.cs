@@ -54,6 +54,15 @@ namespace tsorcRevamp.NPCs
     {
         public override bool InstancePerEntity => true;
 
+        public enum NavActionType
+        {
+            None,
+            Walk,
+            JumpTo,
+            Drop,
+            DropThroughPlatform
+        }
+
         float enemyValue;
         float multiplier = 1f;
         float divisorMultiplier = 1f;
@@ -215,6 +224,92 @@ namespace tsorcRevamp.NPCs
         public int DodgeTimer;
         public int DodgeCooldown;
         public int BoredTimer;
+        public int FighterPostAttackPauseTimer;
+        public int FighterAttacksSincePause;
+        public bool FighterRangedHitInterruptedPause;
+        public int FighterRangedStandShotsRemaining;  // >0 = standing-fire mode; decrement each shot, exit when zero
+        public int FighterNoLosPursuitBoostTimer;
+
+        // Navigation intelligence: 0 = dumb, 1 = smart pathfinding (default), 2 = waypoint scan (future)
+        public int NavigationTier = 0;
+        // Vertical jump power ceiling — default 8f reproduces vanilla hardcoded behavior at base stats
+        public float MaxJumpPower = 8f;
+        // Horizontal momentum added when jumping a gap
+        public float MaxJumpBoost = 4f;
+        // Whether this NPC can perform a mid-air second jump
+        public bool CanDoubleJump = false;
+        // Tracks whether the double jump has been used this airborne phase (reset on landing)
+        public bool UsedDoubleJump = false;
+        // Strength of the mid-air second jump
+        public float DoubleJumpPower = 6f;
+        // Counts consecutive frames stuck against a wall; triggers an escape jump when too high
+        public int StuckTimer = 0;
+        // Ledge run-up: when StuckTimer first reaches 8 against an obstacle, the NPC
+        // reverses briefly (LedgeRunUpTimer > 0) to build clearance, then charges forward
+        // and makes a powered running jump.  Prevents the endless ledge-bounce loop
+        // where the NPC is pressed too close to a wall to clear the ledge corner.
+        public int LedgeRunUpTimer = 0;
+        public int LedgeRunUpDirection = 0;
+        public int LedgeVaultTimer = 0;
+        public int LedgeVaultDirection = 0;
+        public int NavJumpCooldown = 0;
+        public bool CanStopToFire = false;
+        // Tier 2 navigation: temporary world-space X target for "go around" ledge routing
+        public Vector2 WaypointTarget = Vector2.Zero;
+        // How many frames remain on the active waypoint (0 = none)
+        public int WaypointTimer = 0;
+        public NavActionType WaypointAction = NavActionType.None;
+        public int WaypointSearchCooldown = 0;
+        public float LastWaypointDistance = 0f;
+        public int WaypointNoProgressTimer = 0;
+        public const int MaxNavRouteSteps = 10;
+        public Vector2[] NavRouteTargets = new Vector2[MaxNavRouteSteps];
+        public NavActionType[] NavRouteActions = new NavActionType[MaxNavRouteSteps];
+        public int NavRouteIndex = 0;
+        public int NavRouteCount = 0;
+        public int NavRouteTimer = 0;
+        public int NavRouteNoProgressTimer = 0;
+        public float LastNavRouteDistance = 0f;
+        public int NavBlockedDirection = 0;
+        public int NavBlockedDirectionTimer = 0;
+        public int NavExploreTimer = 0;
+        public int NavExploreDirection = 0;
+        // Frames spent voluntarily halted at a ledge; used to cap ledge-camping.
+        public int LedgeHaltTimer = 0;
+        // When true, FighterAI will halt at the edge of a significant drop when it already has
+        // line of sight to the player.  Disabled by default — only opt in for enemies that are
+        // supposed to hold the high ground (e.g. ranged enemies that shouldn't charge off ledges).
+        public bool HaltAtLedge = false;
+        // When true, the NPC teleports through solid walls it cannot navigate around.
+        public bool CanPassThroughWalls = false;
+        // Counts ticks the NPC has been grounded and blocked by a wall; triggers teleport at threshold.
+        public int GhostWallTimer = 0;
+        // Teleport visual tuning. Defaults reproduce the current smoke-flash behavior.
+        public int TeleportTelegraphTime = 140;
+        public int TeleportDustType = DustID.Smoke;
+        public Color TeleportDustColor = Color.White;
+        public float TeleportDustScale = 0.8f;
+        public int TeleportDustCount = 20;
+        // Whether this NPC has limited-use gap-closing teleports (2 total uses, 10s cooldown, 40-tile minimum)
+        public bool WeakTeleport = false;
+        // How many weak teleport charges remain for this NPC instance. These do not recharge.
+        public int WeakTeleportUses = 2;
+        // Cooldown frames remaining before the next WeakTeleport charge can fire
+        public int WeakTeleportCooldown = 0;
+        // Frames since the NPC last reached the player; triggers bored walk when it exceeds WeakTeleportBoredThreshold.
+        public int WeakTeleportReachTimer = 0;
+        public int WeakTeleportBoredThreshold = 7200;
+        // Bored walk phase: 0=normal, 1=standstill (2s), 2=walk away (5s), 3=pause (2s), 4=walk back (2s)
+        public int WeakTeleportBoredPhase = 0;
+        // Countdown for the current bored walk phase
+        public int WeakTeleportBoredTimer = 0;
+        // How long regular fighter pathing tries before using its fallback bored behavior.
+        public int BoredomThreshold = 900;
+        public string LastNavIntent = "none";
+        public string LastWaypointResult = "none";
+        public int WaypointSearchFailures = 0;
+        public int LastNavDebugLogTick = 0;
+
         public bool needsNetUpdate;
         public float ProjectileTimer;
         public float ProjectileTimerCap
@@ -232,6 +327,7 @@ namespace tsorcRevamp.NPCs
             }
         }
         public float ArcherAimDirection;
+        public Vector2 LockedShotVector;
         public int TeleportCountdown;
         public List<tsorcRevampAIs.ProjectileData> AttackList = new List<tsorcRevampAIs.ProjectileData>();
         public int AttackIndex;
@@ -328,6 +424,704 @@ namespace tsorcRevamp.NPCs
             }
             return base.PreAI(npc);
         }
+
+        public override void PostAI(NPC npc)
+        {
+            if (!CanPassThroughWalls)
+                return;
+
+            // ── Ghost wall teleport ───────────────────────────────────────────────
+            // When blocked by a solid wall for ~25 frames, scan for a valid landing
+            // spot on the far side and instantly relocate there.
+            //
+            // BUG FIX: the original code required onGround (velocity.Y == 0) before
+            // accumulating GhostWallTimer.  FighterAI's jump code fires every few
+            // frames against an impassable wall, setting velocity.Y < 0, which made
+            // onGround false and reset the timer to 0 every cycle — the threshold was
+            // never reached and the teleport (and its dust) never fired.
+            // Fix: accumulate whenever a wall tile is present in the forward column,
+            // regardless of vertical velocity.  The timer drains twice as fast when
+            // the column is clear so normal single-frame wall-grazes don't trigger.
+            //
+            // Additional guard: require the NPC to actually be moving forward (velocity in
+            // its facing direction > 0.2 px/tick).  Without this, enemies with custom AI
+            // that decelerate to 0 during attacks (e.g. GhostOfAHollowWarrior's slash) could
+            // silently accumulate the timer and teleport mid-animation.
+            float _ghostFwdVel = npc.direction * npc.velocity.X;
+            bool wallBlocked = _ghostFwdVel > 0.2f && IsWallBlockingAhead(npc);
+
+            if (wallBlocked)
+                GhostWallTimer++;
+            else
+                GhostWallTimer = Math.Max(0, GhostWallTimer - 2);
+
+            if (GhostWallTimer >= 25)
+            {
+                // Only queue if no teleport is already in progress.
+                if (TeleportCountdown == 0 && TryGhostWallTeleport(npc))
+                    ProjectileTimer = 0f;
+                // Reset regardless — let FighterAI's direction-flip move the NPC
+                // away before the next accumulation attempt starts.
+                GhostWallTimer = 0;
+            }
+        }
+
+        // ── Ghost wall teleport helpers ───────────────────────────────────────────
+
+        /// <summary>
+        /// Returns true when the tile column immediately in front of the NPC (in its
+        /// current facing direction) contains at least one solid tile at body level —
+        /// i.e. the NPC is walking into a wall it cannot step over normally.
+        /// </summary>
+        private static bool IsWallBlockingAhead(NPC npc)
+        {
+            int dir = npc.direction == 0 ? 1 : npc.direction;
+            int frontTileX = dir == -1
+                ? (int)(npc.position.X / 16f) - 1
+                : (int)((npc.position.X + npc.width) / 16f);
+            int feetTileY   = (int)((npc.position.Y + npc.height) / 16f);
+            int bodyHtTiles = (int)Math.Ceiling(npc.height / 16.0);
+
+            for (int row = feetTileY - bodyHtTiles; row < feetTileY; row++)
+            {
+                if (UsefulFunctions.IsTileReallySolid(frontTileX, row))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Scans ahead for a valid open landing spot on the far side of the wall,
+        /// teleports the NPC there, and spawns grey smoke at both positions.
+        ///
+        /// Valid landing: solid floor, PLUS at least 2 tiles wide × 3 tiles tall of clear
+        /// air space (landing column AND the next column in the direction of travel).
+        /// The 2-wide requirement prevents the NPC landing on a 1-tile ledge next to a
+        /// slope or wall where it immediately gets stuck again.
+        ///
+        /// Scans up to 10 tiles wide (wall thickness), then up to 4 tiles beyond,
+        /// checking ±3 tile Y variation to handle steps/ramps.
+        ///
+        /// Returns false if the wall leads into solid earth (no teleport occurs).
+        /// </summary>
+        private static bool TryGhostWallTeleport(NPC npc)
+        {
+            int dir = npc.direction == 0 ? 1 : npc.direction;
+            int frontTileX  = dir == -1
+                ? (int)(npc.position.X / 16f) - 1
+                : (int)((npc.position.X + npc.width) / 16f);
+            int feetTileY   = (int)((npc.position.Y + npc.height) / 16f);
+            int bodyHtTiles = (int)Math.Ceiling(npc.height / 16.0);
+
+            // Minimum vertical clearance: always at least 3 tiles even for short NPCs.
+            int minClearance = Math.Max(bodyHtTiles, 3);
+
+            // ── Phase 1: find where the wall ends ────────────────────────────────
+            // Scan forward until we find a column where the NPC's body would fit.
+            int wallEndX = -1;
+            for (int i = 0; i <= 10; i++)
+            {
+                int tx = frontTileX + dir * i;
+                bool columnClear = true;
+                for (int row = feetTileY - bodyHtTiles; row < feetTileY; row++)
+                {
+                    if (UsefulFunctions.IsTileReallySolid(tx, row))
+                    {
+                        columnClear = false;
+                        break;
+                    }
+                }
+                if (columnClear)
+                {
+                    if (i == 0) return false; // no actual wall in front (shouldn't happen)
+                    wallEndX = tx;
+                    break;
+                }
+            }
+            if (wallEndX == -1) return false; // wall > 10 tiles thick / solid earth
+
+            // ── Phase 2: find a valid floor at or near wall exit ─────────────────
+            // Try the same Y level first, then offset up/down to handle steps/ramps.
+            int[] yOffsets = { 0, -1, 1, -2, 2, -3, 3 };
+            for (int xi = 0; xi <= 4; xi++)
+            {
+                int tx = wallEndX + dir * xi;
+                foreach (int yOff in yOffsets)
+                {
+                    int groundTile = feetTileY + yOff;
+
+                    // Floor must be solid at the landing column.
+                    if (!UsefulFunctions.IsTileReallySolid(tx, groundTile))
+                        continue;
+
+                    // ── 2-wide × 3-tall clearance check ──────────────────────────
+                    // Both the landing column (tx) and the adjacent column in the travel
+                    // direction (tx + dir) must have minClearance rows of clear air above
+                    // the floor.  This stops the NPC landing on a 1-tile ledge next to a
+                    // slope/wall where it would immediately get wedged.
+                    bool bodyFits = true;
+                    int adjX = tx + dir;
+
+                    for (int col = 0; col < 2 && bodyFits; col++)
+                    {
+                        int checkX = col == 0 ? tx : adjX;
+                        for (int row = groundTile - minClearance; row < groundTile; row++)
+                        {
+                            if (UsefulFunctions.IsTileReallySolid(checkX, row))
+                            {
+                                bodyFits = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!bodyFits) continue;
+
+                    // ── Valid spot found — queue a telegraphed teleport ──────────
+                    // Use the same TeleportCountdown / TeleportTelegraph mechanism as
+                    // QueueTeleport so the player sees the ring-flash telegraph at both
+                    // origin and destination, and ExecuteQueuedTeleport handles the dust
+                    // and the actual position change when the countdown expires.
+                    Vector2 destPos = new Vector2(
+                        tx * 16f + 8f - npc.width  / 2f,
+                        groundTile * 16f - npc.height
+                    );
+                    Vector2 destCenter = destPos + new Vector2(npc.width / 2f, npc.height / 2f);
+
+                    tsorcRevampGlobalNPC gNpc = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                    int telegraphTime = gNpc.TeleportTelegraphTime;
+                    gNpc.TeleportCountdown = telegraphTime;
+                    gNpc.TeleportTelegraph = destCenter;
+                    npc.netUpdate = true;
+
+                    SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer,
+                            npc.whoAmI, telegraphTime);
+                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), destCenter, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer,
+                            ai1: telegraphTime);
+                    }
+
+                    return true;
+                }
+            }
+
+            return false; // far side is solid earth
+        }
+
+        // ── BFS pathfinding: pre-allocated static buffers (zero GC cost per scan) ──────────────
+        private const int BFS_R    = 80;
+        private const int BFS_DIM  = BFS_R * 2 + 2;   // 162 × 162
+        private const int BFS_QCAP = 32768;
+        private const int BFS_QMSK = BFS_QCAP - 1;
+
+        private static readonly int[]    _bfsQX  = new int  [BFS_QCAP];
+        private static readonly int[]    _bfsQY  = new int  [BFS_QCAP];
+        private static readonly bool[,]  _bfsVis = new bool [BFS_DIM, BFS_DIM];
+        private static readonly short[,] _bfsAnX = new short[BFS_DIM, BFS_DIM];
+        private static readonly short[,] _bfsAnY = new short[BFS_DIM, BFS_DIM];
+        private static readonly NavActionType[,] _bfsAnAction = new NavActionType[BFS_DIM, BFS_DIM];
+        private static readonly NavActionType[,] _bfsEdgeAction = new NavActionType[BFS_DIM, BFS_DIM];
+        private static readonly short[,] _bfsParentX = new short[BFS_DIM, BFS_DIM];
+        private static readonly short[,] _bfsParentY = new short[BFS_DIM, BFS_DIM];
+        private const int BFS_PATH_CAP = 256;
+        private static readonly short[] _bfsPathX = new short[BFS_PATH_CAP];
+        private static readonly short[] _bfsPathY = new short[BFS_PATH_CAP];
+        private static readonly NavActionType[] _bfsPathAction = new NavActionType[BFS_PATH_CAP];
+
+        /// <summary>
+        /// BFS from the NPC's current floor tile to the player's floor tile.
+        /// Navigates walks, ledge-falls, jumps, and platform drops.
+        /// Returns the world-space centre of the first waypoint tile on the path.
+        /// No heap allocation — uses static buffers.
+        /// </summary>
+        internal static bool BfsFindWaypoint(NPC npc, float maxJumpPower, float maxJumpBoost,
+                                              out Vector2 waypoint)
+        {
+            return BfsFindWaypoint(npc, maxJumpPower, maxJumpBoost, out waypoint, out _);
+        }
+
+        internal static bool BfsFindWaypoint(NPC npc, float maxJumpPower, float maxJumpBoost,
+                                              out Vector2 waypoint, out NavActionType action)
+        {
+            waypoint = Vector2.Zero;
+            action = NavActionType.None;
+            Span<Vector2> routeTargets = stackalloc Vector2[MaxNavRouteSteps];
+            Span<NavActionType> routeActions = stackalloc NavActionType[MaxNavRouteSteps];
+            if (BfsFindRoute(npc, maxJumpPower, maxJumpBoost, routeTargets, routeActions, out int routeCount) && routeCount > 0)
+            {
+                waypoint = routeTargets[0];
+                action = routeActions[0];
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static bool BfsFindRoute(NPC npc, float maxJumpPower, float maxJumpBoost,
+                                          Span<Vector2> routeTargets, Span<NavActionType> routeActions, out int routeCount)
+        {
+            routeCount = 0;
+            int sx = (int)(npc.Center.X / 16f);
+            int sy = BfsFindStandableFloorY(npc, sx, (int)((npc.position.Y + npc.height + 4f) / 16f), 8, 12);
+            int tx = (int)(Main.player[npc.target].Center.X / 16f);
+            int ty = BfsFindTargetFloorY(npc, ref tx, (int)((Main.player[npc.target].position.Y
+                            + Main.player[npc.target].height + 4f) / 16f));
+
+            if (sy < 0 || ty < 0)
+            {
+                return false;
+            }
+
+            if (Math.Abs(sx - tx) <= 1 && Math.Abs(sy - ty) <= 1) return false;
+
+            // Max upward tile reach: v²/(2g·tileSize), g≈0.4 px/frame², tileSize=16
+            int jumpH = Math.Max(2, (int)(maxJumpPower * maxJumpPower / 12.8f));
+            // Conservative horizontal reach during a jump arc
+            int jumpW = Math.Max(1, Math.Min((int)maxJumpBoost, 5));
+
+            Array.Clear(_bfsVis, 0, _bfsVis.Length);
+            int head = 0, tail = 0;
+
+            // Enqueue start node (anchor = itself = no step taken yet)
+            _bfsVis[BFS_R, BFS_R] = true;
+            _bfsAnX[BFS_R, BFS_R] = (short)sx;
+            _bfsAnY[BFS_R, BFS_R] = (short)sy;
+            _bfsAnAction[BFS_R, BFS_R] = NavActionType.None;
+            _bfsEdgeAction[BFS_R, BFS_R] = NavActionType.None;
+            _bfsParentX[BFS_R, BFS_R] = (short)sx;
+            _bfsParentY[BFS_R, BFS_R] = (short)sy;
+            _bfsQX[0] = sx; _bfsQY[0] = sy;
+            tail = 1;
+
+            int startScore = BfsTileScore(sx, sy, tx, ty);
+            int bestScore = startScore;
+            int bestX = sx;
+            int bestY = sy;
+
+            while (head != tail)
+            {
+                int cx = _bfsQX[head], cy = _bfsQY[head];
+                head = (head + 1) & BFS_QMSK;
+
+                int aox = cx - sx + BFS_R, aoy = cy - sy + BFS_R;
+                short anX = _bfsAnX[aox, aoy], anY = _bfsAnY[aox, aoy];
+                NavActionType anAction = _bfsAnAction[aox, aoy];
+                bool isStart = cx == sx && cy == sy;
+
+                if (!isStart)
+                {
+                    int score = BfsTileScore(cx, cy, tx, ty);
+                    if (score < bestScore)
+                    {
+                        bestScore = score;
+                        bestX = cx;
+                        bestY = cy;
+                    }
+                }
+
+                if (Math.Abs(cx - tx) <= 2 && Math.Abs(cy - ty) <= 1)
+                {
+                    return BfsBuildCompressedRoute(npc, sx, sy, cx, cy, routeTargets, routeActions, out routeCount);
+                }
+
+                // ── Walk left / right ─────────────────────────────────────────────
+                for (int d = -1; d <= 1; d += 2)
+                {
+                    int nx = cx + d;
+
+                    short ax = isStart ? (short)nx : anX;
+                    short ay = isStart ? (short)cy : anY;
+                    NavActionType nextAction = isStart ? NavActionType.Walk : anAction;
+
+                    if (BfsCanStand(npc, nx, cy))
+                    {
+                        if (isStart)
+                        {
+                            BfsFindWalkCommitment(npc, sx, sy, d, tx, ty, out ax, out ay);
+                        }
+                        BfsEnqueue(ref tail, nx, cy, ax, ay, sx, sy, cx, cy, nextAction, NavActionType.Walk);
+                    }
+                    else if (BfsCanStand(npc, nx, cy - 1))
+                    {
+                        // One-tile rises should be treated as ordinary terrain, not a full jump.
+                        BfsEnqueue(ref tail, nx, cy - 1, ax, (short)(isStart ? cy - 1 : ay), sx, sy, cx, cy, nextAction, NavActionType.Walk);
+                    }
+                    else if (BfsCanStand(npc, nx, cy + 1))
+                    {
+                        // One-tile drops/slopes are walkable. Do not convert them into jump waypoints.
+                        BfsEnqueue(ref tail, nx, cy + 1, ax, (short)(isStart ? cy + 1 : ay), sx, sy, cx, cy, nextAction, NavActionType.Walk);
+                    }
+                    else if (BfsCanStand(npc, nx, cy - 2))
+                    {
+                        NavActionType stepJumpAction = isStart ? NavActionType.JumpTo : anAction;
+                        BfsEnqueue(ref tail, nx, cy - 2, ax, (short)(isStart ? cy - 2 : ay), sx, sy, cx, cy, stepJumpAction, NavActionType.JumpTo);
+                    }
+                    else
+                    {
+                        // Gap — fall to next landing (max 20 tiles)
+                        for (int fy = cy + 2; fy <= cy + 20; fy++)
+                        {
+                            if (UsefulFunctions.IsTileReallySolid(nx, fy)) break;
+                            if (BfsCanStand(npc, nx, fy))
+                            {
+                                NavActionType dropAction = isStart ? NavActionType.Drop : anAction;
+                                BfsEnqueue(ref tail, nx, fy, ax, ay, sx, sy, cx, cy, dropAction, NavActionType.Drop);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // ── Jump up to higher floors ──────────────────────────────────────
+                for (int dh = 1; dh <= jumpH; dh++)
+                {
+                    int ry = cy - dh;
+                    // Try landing at this level BEFORE checking whether the path is blocked —
+                    // IsTileReallySolid(cx, ry) would be true for the target floor tile itself,
+                    // which previously caused the loop to break before ever checking for a landing.
+                    for (int jdx = -jumpW; jdx <= jumpW; jdx++)
+                    {
+                        int jx = cx + jdx;
+                        if (BfsCanStand(npc, jx, ry))
+                        {
+                            short ax = isStart ? (short)jx : anX;
+                            short ay = isStart ? (short)ry  : anY;
+                            NavActionType jumpAction = isStart ? NavActionType.JumpTo : anAction;
+                            BfsEnqueue(ref tail, jx, ry, ax, ay, sx, sy, cx, cy, jumpAction, NavActionType.JumpTo);
+                        }
+                    }
+                    // Stop ascending if the vertical path is blocked (solid ceiling above).
+                    if (UsefulFunctions.IsTileReallySolid(cx, ry)) break;
+                }
+
+                // ── Drop through platform ─────────────────────────────────────────
+                Tile floorTile = Framing.GetTileSafely(cx, cy);
+                if (floorTile.HasTile && !floorTile.IsActuated && TileID.Sets.Platforms[floorTile.TileType])
+                {
+                    for (int fy = cy + 1; fy <= cy + 20; fy++)
+                    {
+                        if (UsefulFunctions.IsTileReallySolid(cx, fy)) break;
+                        if (BfsCanStand(npc, cx, fy))
+                        {
+                            short ax = isStart ? (short)cx : anX;
+                            short ay = isStart ? (short)fy  : anY;
+                            NavActionType platformDropAction = isStart ? NavActionType.DropThroughPlatform : anAction;
+                            BfsEnqueue(ref tail, cx, fy, ax, ay, sx, sy, cx, cy, platformDropAction, NavActionType.DropThroughPlatform);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // If the exact player floor was not representable in the simplified graph
+            // (common around stairs, half-blocks, platforms, furniture, or cramped houses),
+            // still return the first step toward the best reachable node. This keeps bored
+            // tiered enemies from doing nothing just because the final tile failed BFS.
+            if ((bestX != sx || bestY != sy) && bestScore <= startScore - 4)
+            {
+                return BfsBuildCompressedRoute(npc, sx, sy, bestX, bestY, routeTargets, routeActions, out routeCount);
+            }
+
+            return false;
+        }
+
+        private static bool BfsBuildCompressedRoute(NPC npc, int sx, int sy, int endX, int endY,
+                                                    Span<Vector2> routeTargets, Span<NavActionType> routeActions, out int routeCount)
+        {
+            routeCount = 0;
+            int pathCount = 0;
+            int cx = endX;
+            int cy = endY;
+
+            while ((cx != sx || cy != sy) && pathCount < BFS_PATH_CAP)
+            {
+                int ox = cx - sx + BFS_R;
+                int oy = cy - sy + BFS_R;
+                if ((uint)ox >= BFS_DIM || (uint)oy >= BFS_DIM)
+                {
+                    break;
+                }
+
+                _bfsPathX[pathCount] = (short)cx;
+                _bfsPathY[pathCount] = (short)cy;
+                _bfsPathAction[pathCount] = _bfsEdgeAction[ox, oy] == NavActionType.None ? NavActionType.Walk : _bfsEdgeAction[ox, oy];
+
+                int px = _bfsParentX[ox, oy];
+                int py = _bfsParentY[ox, oy];
+                if (px == cx && py == cy)
+                {
+                    break;
+                }
+
+                cx = px;
+                cy = py;
+                pathCount++;
+            }
+
+            if (pathCount == 0)
+            {
+                return false;
+            }
+
+            int maxSteps = Math.Min(routeTargets.Length, MaxNavRouteSteps);
+            NavActionType currentAction = NavActionType.None;
+            int lastAddedX = sx;
+            int lastAddedY = sy;
+
+            for (int i = pathCount - 1; i >= 0 && routeCount < maxSteps; i--)
+            {
+                int x = _bfsPathX[i];
+                int y = _bfsPathY[i];
+                NavActionType rawAction = _bfsPathAction[i] == NavActionType.None ? NavActionType.Walk : _bfsPathAction[i];
+                NavActionType action = BfsNormalizeRouteAction(lastAddedX, lastAddedY, x, y, rawAction);
+                bool isFinal = i == 0;
+                bool actionChanged = routeCount == 0 || action != currentAction;
+                bool longWalkCommit = action == NavActionType.Walk && Math.Abs(x - lastAddedX) >= 6;
+                bool verticalChange = Math.Abs(y - lastAddedY) >= 2;
+                bool tinyOpeningWalk = routeCount == 0
+                    && action == NavActionType.Walk
+                    && !isFinal
+                    && Math.Abs(x - sx) <= 1
+                    && Math.Abs(y - sy) <= 1;
+
+                if (!tinyOpeningWalk && (actionChanged || longWalkCommit || verticalChange || isFinal))
+                {
+                    routeTargets[routeCount] = BfsFloorToNpcCenter(npc, x, y);
+                    routeActions[routeCount] = action;
+                    routeCount++;
+                    currentAction = action;
+                    lastAddedX = x;
+                    lastAddedY = y;
+                }
+            }
+
+            return routeCount > 0;
+        }
+
+        private static NavActionType BfsNormalizeRouteAction(int fromX, int fromY, int toX, int toY, NavActionType rawAction)
+        {
+            int dx = Math.Abs(toX - fromX);
+            int dy = toY - fromY; // positive means the target floor is lower.
+
+            if (rawAction == NavActionType.DropThroughPlatform)
+            {
+                return NavActionType.DropThroughPlatform;
+            }
+
+            if (dy > 1)
+            {
+                return NavActionType.Drop;
+            }
+
+            if (dy == 1)
+            {
+                return NavActionType.Walk;
+            }
+
+            if (dy == 0)
+            {
+                return rawAction == NavActionType.JumpTo && dx > 4 ? NavActionType.JumpTo : NavActionType.Walk;
+            }
+
+            if (dy == -1)
+            {
+                return NavActionType.Walk;
+            }
+
+            return NavActionType.JumpTo;
+        }
+
+        private static int BfsTileScore(int x, int y, int targetX, int targetY)
+        {
+            return Math.Abs(x - targetX) * 2 + Math.Abs(y - targetY) * 3;
+        }
+
+        private static Vector2 BfsFloorToNpcCenter(NPC npc, int floorX, int floorY)
+        {
+            return new Vector2(floorX * 16f + 8f, floorY * 16f - npc.height / 2f);
+        }
+
+        private static void BfsFindWalkCommitment(NPC npc, int startX, int startY, int direction, int targetX, int targetY, out short anchorX, out short anchorY)
+        {
+            anchorX = (short)(startX + direction);
+            anchorY = (short)startY;
+
+            int bestX = anchorX;
+            int bestY = anchorY;
+            int bestScore = BfsTileScore(bestX, bestY, targetX, targetY);
+            int previousY = startY;
+
+            for (int step = 1; step <= 18; step++)
+            {
+                int x = startX + step * direction;
+                int y = previousY;
+
+                if (!BfsCanStand(npc, x, y))
+                {
+                    int adjustedY = -1;
+                    for (int dy = -2; dy <= 3; dy++)
+                    {
+                        if (BfsCanStand(npc, x, previousY + dy))
+                        {
+                            adjustedY = previousY + dy;
+                            break;
+                        }
+                    }
+
+                    if (adjustedY < 0)
+                    {
+                        break;
+                    }
+
+                    y = adjustedY;
+                }
+
+                if (UsefulFunctions.IsTileReallySolid(x, y - 1) || UsefulFunctions.IsTileReallySolid(x, y - 2))
+                {
+                    break;
+                }
+
+                int score = BfsTileScore(x, y, targetX, targetY);
+                if (score <= bestScore)
+                {
+                    bestScore = score;
+                    bestX = x;
+                    bestY = y;
+                }
+
+                previousY = y;
+
+                if (step >= 6 && (Math.Abs(x - targetX) <= 2 || score > bestScore + 10))
+                {
+                    break;
+                }
+            }
+
+            anchorX = (short)bestX;
+            anchorY = (short)bestY;
+        }
+
+        private static int BfsFindStandableFloorY(NPC npc, int x, int approximateFloorY, int scanUp, int scanDown)
+        {
+            int bestY = -1;
+            int bestDistance = int.MaxValue;
+            for (int dy = -scanUp; dy <= scanDown; dy++)
+            {
+                int floorY = approximateFloorY + dy;
+                if (!BfsCanStand(npc, x, floorY))
+                {
+                    continue;
+                }
+
+                int distance = Math.Abs(dy);
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    bestY = floorY;
+                }
+            }
+            return bestY;
+        }
+
+        private static int BfsFindTargetFloorY(NPC npc, ref int targetX, int approximateFloorY)
+        {
+            int bestX = targetX;
+            int bestY = -1;
+            int bestScore = int.MaxValue;
+
+            for (int dx = -2; dx <= 2; dx++)
+            {
+                int x = targetX + dx;
+                int y = BfsFindStandableFloorY(npc, x, approximateFloorY, 8, 16);
+                if (y < 0)
+                {
+                    continue;
+                }
+
+                int score = Math.Abs(dx) * 4 + Math.Abs(y - approximateFloorY);
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    bestX = x;
+                    bestY = y;
+                }
+            }
+
+            if (bestY >= 0)
+            {
+                targetX = bestX;
+                return bestY;
+            }
+
+            return BfsFindStandableFloorY(npc, targetX, approximateFloorY, 8, 20);
+        }
+
+        /// <summary>True if the NPC (2 tiles tall) can stand at (x, floorY).</summary>
+        internal static bool BfsCanStand(NPC npc, int x, int floorY)
+        {
+            int widthTiles = Math.Max(1, (int)Math.Ceiling(npc.width / 16f));
+            int leftX = x - (widthTiles - 1) / 2;
+            int rightX = leftX + widthTiles - 1;
+
+            bool hasFloor = false;
+            for (int tx = leftX; tx <= rightX; tx++)
+            {
+                if (UsefulFunctions.IsTileReallySolid(tx, floorY))
+                {
+                    hasFloor = true;
+                    break;
+                }
+
+                Tile t = Framing.GetTileSafely(tx, floorY);
+                if (t.HasTile && !t.IsActuated && TileID.Sets.Platforms[t.TileType])
+                {
+                    hasFloor = true;
+                    break;
+                }
+            }
+
+            if (!hasFloor)
+            {
+                return false;
+            }
+
+            int bodyTiles = Math.Max(2, (int)Math.Ceiling(npc.height / 16f));
+            for (int tx = leftX; tx <= rightX; tx++)
+            {
+                for (int y = floorY - bodyTiles; y < floorY; y++)
+                {
+                    if (UsefulFunctions.IsTileReallySolid(tx, y))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>Add (x,y) to the BFS queue if in-bounds and not yet visited.</summary>
+        internal static void BfsEnqueue(ref int tail, int x, int y,
+                                         short ax, short ay, int sx, int sy, int parentX, int parentY,
+                                         NavActionType action, NavActionType edgeAction)
+        {
+            int ox = x - sx + BFS_R, oy = y - sy + BFS_R;
+            if ((uint)ox >= BFS_DIM || (uint)oy >= BFS_DIM) return;
+            if (_bfsVis[ox, oy]) return;
+            _bfsVis[ox, oy] = true;
+            _bfsAnX[ox, oy] = ax; _bfsAnY[ox, oy] = ay;
+            _bfsAnAction[ox, oy] = action;
+            _bfsEdgeAction[ox, oy] = edgeAction;
+            _bfsParentX[ox, oy] = (short)parentX;
+            _bfsParentY[ox, oy] = (short)parentY;
+            _bfsQX[tail] = x; _bfsQY[tail] = y;
+            tail = (tail + 1) & BFS_QMSK;
+        }
+
+        // ─────────────────────────────────────────────────────────────────────────────────────────
 
         public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
         {
@@ -1360,8 +2154,26 @@ namespace tsorcRevamp.NPCs
                 }
             }*/
         }
+        private static void TriggerNoLosPursuitBoost(NPC npc, Player player)
+        {
+            if (player == null || !player.active || player.dead)
+            {
+                return;
+            }
+
+            if (!Collision.CanHitLine(npc.Center, 1, 1, player.Center, 1, 1))
+            {
+                tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                globalNPC.FighterNoLosPursuitBoostTimer = 180;
+                globalNPC.BoredTimer = 0;
+                globalNPC.WeakTeleportReachTimer = 0;
+            }
+        }
+
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
+            TriggerNoLosPursuitBoost(npc, player);
+
             //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
             if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
             {
@@ -1378,6 +2190,21 @@ namespace tsorcRevamp.NPCs
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            if (projectile.owner >= 0 && projectile.owner < Main.maxPlayers)
+            {
+                TriggerNoLosPursuitBoost(npc, Main.player[projectile.owner]);
+            }
+
+            if (projectile.friendly && projectile.DamageType != DamageClass.Melee)
+            {
+                tsorcRevampGlobalNPC hitGlobalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                hitGlobalNPC.FighterRangedHitInterruptedPause = hitGlobalNPC.FighterPostAttackPauseTimer > 0
+                                                              || hitGlobalNPC.FighterRangedStandShotsRemaining > 0;
+                hitGlobalNPC.FighterPostAttackPauseTimer = 0;
+                hitGlobalNPC.FighterRangedStandShotsRemaining = 0;
+                hitGlobalNPC.BoredTimer = 0;
+            }
+
             Player player = Main.player[projectile.owner];
             var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             if (projectile.IsMinionOrSentryRelated && CritColorTier > 0)
@@ -3701,14 +4528,23 @@ namespace tsorcRevamp.NPCs
                 if (globalNPC.ProjectileTimer > 0f)
                     globalNPC.ProjectileTimer -= 1f; // decrement fire & reload counter
 
-                if (npc.justHit || npc.velocity.Y != 0f || globalNPC.ProjectileTimer <= 0f) // was just hit?
+                // Don't let airborne state abort a shot once the telegraph has already fired.
+                // Nav-tiered recovery states (waypoints / ledge run-up) need to keep counting
+                // so the shaman can finish a pathing escape and still reach the telegraph window.
+                bool inTelegraphWindow = globalNPC.ProjectileTimer <= (projectileCooldown / 2 + 15) && globalNPC.ProjectileTimer > (projectileCooldown / 2);
+                bool pathRecoveryActive = globalNPC.NavigationTier >= 1 && (globalNPC.WaypointTimer > 0 || globalNPC.LedgeRunUpTimer > 0);
+                if (npc.justHit || (npc.velocity.Y != 0f && !inTelegraphWindow && !pathRecoveryActive) || globalNPC.ProjectileTimer <= 0f)
                 {
                     globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed); //Reset firing time
                     globalNPC.ArcherAimDirection = 0f; //Not aiming
+                    // If standing-fire has remaining shots and we're only resetting due to cooldown,
+                    // immediately re-enter aiming state for the next volley shot.
+                    if (!npc.justHit && globalNPC.FighterRangedStandShotsRemaining > 0)
+                        globalNPC.ArcherAimDirection = 3f;
                 }
 
                 //Check if we're in range of and can hit the player
-                if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) < 700f && Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && npc.velocity.Y == 0)
+                if (!globalNPC.CanPassThroughWalls && Vector2.Distance(npc.Center, Main.player[npc.target].Center) < 700f && Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && npc.velocity.Y == 0)
                 {
                     //If so, set boredom to 0
                     globalNPC.BoredTimer = 0;
@@ -3720,25 +4556,40 @@ namespace tsorcRevamp.NPCs
                         npc.velocity.X *= 0.5f;
                         globalNPC.ArcherAimDirection = 3f;
                         globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed);
+
+                        // Standing-fire roll: tier-2 NPCs may plant their feet and fire N shots
+                        // before resuming pursuit. High Aggression skips this; high Patience adds shots.
+                        if (globalNPC.CanStopToFire && globalNPC.NavigationTier >= 2 && globalNPC.FighterRangedStandShotsRemaining == 0
+                            && Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            float stopBeforeChance = GetStandingFireChance(globalNPC, 0.1f);
+                            if (Main.rand.NextFloat() < stopBeforeChance)
+                            {
+                                // 1 shot at low Patience, up to 3 shots at high Patience
+                                globalNPC.FighterRangedStandShotsRemaining = 1 + Main.rand.Next(0, 1 + (int)globalNPC.Patience);
+                            }
+                        }
                     }
 
-                    npc.velocity.X *= 0.9f; // decelerate to stop & shoot
+                    // Standing-fire: fully pin velocity so the NPC holds position and
+                    // shows a standing animation frame rather than a walk/jump frame.
+                    if (globalNPC.FighterRangedStandShotsRemaining > 0)
+                    {
+                        npc.velocity.X = 0f;
+                        npc.velocity.Y = 0f;
+                    }
+                    else
+                    {
+                        npc.velocity.X *= 0.9f; // decelerate to stop & shoot
+                        npc.velocity.Y = 0f;    // suppress jump-frame animation while aiming
+                    }
                     npc.spriteDirection = npc.direction; // match animation to facing
 
-                    //Fire at halfway through: first half of delay is aim, 2nd half is cooldown
-                    if (globalNPC.ProjectileTimer == (projectileCooldown / 2))
-                    {
-                        //Calculate the actual ballistic trajectory to aim the projectile on
-                        Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
-                        }
-
-                        SoundEngine.PlaySound(shootSound.Value);
-                    }
+                    // Telegraph fires 15 ticks before the shot: lock the aim direction now so
+                    // a dodge-roll behind the enemy can't redirect the incoming projectile.
                     if (globalNPC.ProjectileTimer - 15 == (projectileCooldown / 2))
                     {
+                        globalNPC.LockedShotVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 spawnPosition = npc.position;
@@ -3750,27 +4601,53 @@ namespace tsorcRevamp.NPCs
                         }
                     }
 
-                    //Calculate a vector aiming at the player. This is purely for the npc's sprite visuals, so it can use the much simpler aiming code.
-                    Vector2 aimVector = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, projectileVelocity);
-
-                    if (Math.Abs(aimVector.Y) > Math.Abs(aimVector.X) * 2f) // target steeply above/below NPC
+                    //Fire at halfway through: first half of delay is aim, 2nd half is cooldown
+                    if (globalNPC.ProjectileTimer == (projectileCooldown / 2))
                     {
-                        if (aimVector.Y > 0f)
-                            globalNPC.ArcherAimDirection = 1f; // aim downward
-                        else
-                            globalNPC.ArcherAimDirection = 5f; // aim upward
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, globalNPC.LockedShotVector.X, globalNPC.LockedShotVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
+                        }
+
+                        SoundEngine.PlaySound(shootSound.Value);
+
+                        // Consume one standing-fire charge per shot
+                        if (globalNPC.FighterRangedStandShotsRemaining > 0)
+                        {
+                            if (--globalNPC.FighterRangedStandShotsRemaining == 0)
+                            {
+                                // All charges spent — exit standing-fire and resume pursuit
+                                globalNPC.ArcherAimDirection = 0f;
+                                npc.TargetClosest(true);
+                            }
+                        }
                     }
-                    else if (Math.Abs(aimVector.X) > Math.Abs(aimVector.Y) * 2f) // target on level with NPC
-                        globalNPC.ArcherAimDirection = 3f;  //  aim straight ahead
-                    else if (aimVector.Y > 0f) // target is below NPC
-                        globalNPC.ArcherAimDirection = 2f;  //  aim slight downward
-                    else // target is not below NPC
-                        globalNPC.ArcherAimDirection = 4f;  //  aim slight upward                    
+
+                    // Only track the player visually while we haven't yet committed to a shot direction
+                    if (!inTelegraphWindow)
+                    {
+                        Vector2 aimVector = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, projectileVelocity);
+
+                        if (Math.Abs(aimVector.Y) > Math.Abs(aimVector.X) * 2f) // target steeply above/below NPC
+                        {
+                            if (aimVector.Y > 0f)
+                                globalNPC.ArcherAimDirection = 1f; // aim downward
+                            else
+                                globalNPC.ArcherAimDirection = 5f; // aim upward
+                        }
+                        else if (Math.Abs(aimVector.X) > Math.Abs(aimVector.Y) * 2f) // target on level with NPC
+                            globalNPC.ArcherAimDirection = 3f;  //  aim straight ahead
+                        else if (aimVector.Y > 0f) // target is below NPC
+                            globalNPC.ArcherAimDirection = 2f;  //  aim slight downward
+                        else // target is not below NPC
+                            globalNPC.ArcherAimDirection = 4f;  //  aim slight upward
+                    }
                 }
                 //If we're out of range of the player, don't aim at them
                 else
                 {
                     globalNPC.ArcherAimDirection = 0;
+                    globalNPC.FighterRangedStandShotsRemaining = 0; // abort standing-fire if target leaves range
                 }
             }
 
@@ -3788,8 +4665,38 @@ namespace tsorcRevamp.NPCs
             npc.noTileCollide = false;
 
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (npc.target < 0 || npc.target >= Main.maxPlayers || !Main.player[npc.target].active || Main.player[npc.target].dead)
+            {
+                npc.TargetClosest(false);
+            }
             topSpeed *= globalNPC.Swiftness;
             acceleration *= globalNPC.Swiftness;
+            if (globalNPC.WaypointSearchCooldown > 0)
+            {
+                globalNPC.WaypointSearchCooldown--;
+            }
+            if (globalNPC.NavBlockedDirectionTimer > 0)
+            {
+                globalNPC.NavBlockedDirectionTimer--;
+                if (globalNPC.NavBlockedDirectionTimer == 0)
+                {
+                    globalNPC.NavBlockedDirection = 0;
+                }
+            }
+            if (globalNPC.NavExploreTimer > 0)
+            {
+                globalNPC.NavExploreTimer--;
+                if (globalNPC.NavExploreTimer == 0)
+                {
+                    globalNPC.NavExploreDirection = 0;
+                }
+            }
+            if (globalNPC.FighterNoLosPursuitBoostTimer > 0)
+            {
+                globalNPC.FighterNoLosPursuitBoostTimer--;
+                topSpeed *= 1.25f;
+                acceleration *= 1.35f;
+            }
 
             if (!globalNPC.Initialized)
             {
@@ -3812,10 +4719,126 @@ namespace tsorcRevamp.NPCs
                 globalNPC.Initialized = true;
             }
 
+            // WeakTeleport bored walk — if the NPC gave up pursuing the player, briefly
+            // disengage, pause, then hand control back to normal pursuit.
+            // Teleport charges are intentionally not restored here; WeakTeleport is a
+            // strict two-use-per-NPC fallback, not a pursuit-cycle resource.
+            if (globalNPC.WeakTeleport && globalNPC.WeakTeleportBoredPhase > 0)
+            {
+                if (npc.justHit)
+                {
+                    // Player found us during our break — resume normal pursuit
+                    globalNPC.WeakTeleportBoredPhase = 0;
+                    globalNPC.WeakTeleportReachTimer = 0;
+                    globalNPC.WeakTeleportCooldown = 0;
+                }
+                else
+                {
+                    npc.TargetClosest(false);
+                    globalNPC.WeakTeleportBoredTimer--;
+
+                    switch (globalNPC.WeakTeleportBoredPhase)
+                    {
+                        case 1: // Stand still (2 seconds = 120 frames)
+                            npc.velocity.X *= 0.85f;
+                            if (globalNPC.WeakTeleportBoredTimer <= 0)
+                            {
+                                globalNPC.WeakTeleportBoredPhase = 2;
+                                globalNPC.WeakTeleportBoredTimer = 300; // walk away 5 s
+                                npc.direction = Main.player[npc.target].Center.X < npc.Center.X ? 1 : -1;
+                                npc.spriteDirection = npc.direction;
+                            }
+                            break;
+
+                        case 2: // Walk away from the player (5 seconds = 300 frames)
+                            if (npc.velocity.X < topSpeed && npc.direction == 1) npc.velocity.X += acceleration;
+                            else if (npc.velocity.X > -topSpeed && npc.direction == -1) npc.velocity.X -= acceleration;
+                            if (globalNPC.WeakTeleportBoredTimer <= 0)
+                            {
+                                globalNPC.WeakTeleportBoredPhase = 3;
+                                globalNPC.WeakTeleportBoredTimer = 120; // pause 2 s
+                            }
+                            break;
+
+                        case 3: // Pause (2 seconds = 120 frames)
+                            npc.velocity.X *= 0.85f;
+                            if (globalNPC.WeakTeleportBoredTimer <= 0)
+                            {
+                                globalNPC.WeakTeleportBoredPhase = 4;
+                                globalNPC.WeakTeleportBoredTimer = 120; // walk back 2 s
+                                npc.direction *= -1; // turn around (toward player)
+                                npc.spriteDirection = npc.direction;
+                            }
+                            break;
+
+                        case 4: // Walk back toward the player briefly (2 seconds = 120 frames)
+                            if (npc.velocity.X < topSpeed && npc.direction == 1) npc.velocity.X += acceleration;
+                            else if (npc.velocity.X > -topSpeed && npc.direction == -1) npc.velocity.X -= acceleration;
+                            if (globalNPC.WeakTeleportBoredTimer <= 0)
+                            {
+                                // Resume pursuit without restoring spent weak teleport charges.
+                                globalNPC.WeakTeleportBoredPhase = 0;
+                                globalNPC.WeakTeleportReachTimer = 0;
+                                globalNPC.WeakTeleportCooldown = 0;
+                            }
+                            break;
+                    }
+                    return; // skip all normal movement, attacking, and boredom tracking
+                }
+            }
+
+            bool earlyLineOfSight = Main.player[npc.target].CanHit(npc);
+            bool earlyDifferentFloor = earlyLineOfSight && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) > 48f;
+            bool shouldRequestWaypoint = globalNPC.NavigationTier >= 1
+                && globalNPC.WaypointTimer == 0
+                && globalNPC.WaypointSearchCooldown == 0
+                && globalNPC.TeleportCountdown == 0
+                && globalNPC.DodgeTimer == 0
+                && globalNPC.PounceTimer == 0
+                && (!earlyLineOfSight || earlyDifferentFloor || globalNPC.BoredTimer > 0 || globalNPC.StuckTimer >= 12);
+
+            if (shouldRequestWaypoint)
+            {
+                globalNPC.LastNavIntent = !earlyLineOfSight ? "early:no-los"
+                    : earlyDifferentFloor ? "early:different-floor"
+                    : globalNPC.BoredTimer > 0 ? "early:bored"
+                    : "early:stuck";
+                bool forceWaypoint = globalNPC.BoredTimer >= globalNPC.BoredomThreshold || globalNPC.StuckTimer >= 20;
+                TrySetFighterWaypoint(npc, globalNPC, forceWaypoint);
+            }
+
             //If it has at least one attack, perform it
             if (globalNPC.AttackList.Count > 0)
             {
-                SimpleProjectile(npc);
+                bool crossableGapTowardPlayer = HasCrossableGapTowardPlayer(npc, globalNPC, out int gapTravelDirection);
+                if (crossableGapTowardPlayer)
+                {
+                    npc.direction = gapTravelDirection;
+                    npc.spriteDirection = gapTravelDirection;
+                    globalNPC.FighterRangedStandShotsRemaining = 0;
+                    if (globalNPC.CurrentAttack.needsLineOfSight)
+                    {
+                        globalNPC.ProjectileTimer = 0f;
+                    }
+                }
+                float committedAttackLeadTime = globalNPC.CurrentAttack.type == ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>()
+                    ? 90f
+                    : ProjectileTelegraphTime;
+                bool inCommittedAttack = globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - committedAttackLeadTime;
+                bool navigationNeedsControl = globalNPC.NavigationTier >= 1
+                    && globalNPC.CurrentAttack.needsLineOfSight
+                    && !inCommittedAttack
+                    && (globalNPC.WaypointTimer > 0 || globalNPC.LedgeRunUpTimer > 0 || globalNPC.LedgeVaultTimer > 0 || globalNPC.StuckTimer >= 8);
+                if (!crossableGapTowardPlayer && !navigationNeedsControl)
+                {
+                    SimpleProjectile(npc);
+                }
+                else if (navigationNeedsControl)
+                {
+                    globalNPC.ProjectileTimer = 0f;
+                    globalNPC.FighterRangedStandShotsRemaining = 0;
+                    globalNPC.ArcherAimDirection = 0f;
+                }
             }
 
             if (globalNPC.PounceTimer > 0)
@@ -3944,6 +4967,12 @@ namespace tsorcRevamp.NPCs
             if (npc.justHit)
             {
                 globalNPC.BoredTimer = 0;
+                if (globalNPC.WeakTeleport)
+                {
+                    // Being hit also resets the reach timer so the NPC doesn't give up immediately
+                    // when the player finds it before it found LOS.
+                    globalNPC.WeakTeleportReachTimer = 0;
+                }
             }
 
             //If fleeing, despawn as soon as it's offscreen (via timeLeft running out)
@@ -3983,23 +5012,214 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            //Face the player. Go the other way when bored (aka boredtimer is negative)
-
-            //Only do it when we're far enough away, to stop it from flipping back and forth at mach 10 when directly under the player
-            if (Math.Abs(Main.player[npc.target].Center.X - npc.Center.X) > 30)
+            // Compute line of sight early so waypoint cancel logic can use it before movement
+            bool lineOfSight = Main.player[npc.target].CanHit(npc);
+            bool playerOnDirectEngageFloor = lineOfSight && Math.Abs(npc.Center.Y - Main.player[npc.target].Center.Y) < 32f;
+            if (playerOnDirectEngageFloor)
             {
-                if (Main.player[npc.target].Center.X <= npc.Center.X)
+                ClearFighterWaypoint(globalNPC);
+                globalNPC.NavExploreTimer = 0;
+                globalNPC.NavExploreDirection = 0;
+                globalNPC.NavBlockedDirection = 0;
+                globalNPC.NavBlockedDirectionTimer = 0;
+                globalNPC.LedgeRunUpTimer = 0;
+                globalNPC.LedgeRunUpDirection = 0;
+            }
+
+            // WeakTeleport: limited-use gap-closing teleport for non-teleporter enemies.
+            // Up to 2 total charges for this NPC, 10-second cooldown between each, minimum 40-tile range.
+            if (globalNPC.WeakTeleport)
+            {
+                if (globalNPC.WeakTeleportCooldown > 0)
+                    globalNPC.WeakTeleportCooldown--;
+
+                if (!lineOfSight &&
+                    globalNPC.WeakTeleportUses > 0 &&
+                    globalNPC.WeakTeleportCooldown == 0 &&
+                    globalNPC.TeleportCountdown == 0 &&
+                    globalNPC.WeakTeleportBoredPhase == 0 &&
+                    npc.Distance(Main.player[npc.target].Center) > 640f && // 40 tiles minimum
+                    Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.direction = -1;
+                    Vector2 dest = FindWeakTeleportDestination(npc, Main.player[npc.target]);
+                    if (dest != Vector2.Zero)
+                    {
+                        int telegraphTime = globalNPC.TeleportTelegraphTime;
+                        globalNPC.TeleportCountdown = telegraphTime;
+                        globalNPC.TeleportTelegraph = dest;
+                        npc.velocity = Vector2.Zero;
+                        globalNPC.WeakTeleportUses--;
+                        globalNPC.WeakTeleportCooldown = 600; // 10 seconds
+                        globalNPC.BoredTimer = 0;
+                        globalNPC.WaypointTimer = 0;
+                        globalNPC.WaypointAction = tsorcRevampGlobalNPC.NavActionType.None;
+                        globalNPC.WaypointNoProgressTimer = 0;
+                        globalNPC.LastWaypointDistance = 0f;
+                        globalNPC.NavRouteIndex = 0;
+                        globalNPC.NavRouteCount = 0;
+                        globalNPC.LedgeRunUpTimer = 0;
+                        globalNPC.LedgeRunUpDirection = 0;
+                        globalNPC.WeakTeleportReachTimer = 0;
+                        npc.netUpdate = true;
+
+                        SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer,
+                            npc.whoAmI, telegraphTime);
+                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), dest, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer,
+                            ai1: telegraphTime);
+                    }
+                }
+            }
+
+            // Waypoint navigation: tick down and cancel if LOS restored or destination reached
+            if (globalNPC.WaypointTimer > 0)
+            {
+                globalNPC.WaypointTimer--;
+                if (globalNPC.WaypointTimer <= 0)
+                {
+                    globalNPC.WaypointTarget = Vector2.Zero;
+                    globalNPC.WaypointAction = tsorcRevampGlobalNPC.NavActionType.None;
+                    globalNPC.WaypointNoProgressTimer = 0;
+                    globalNPC.LastWaypointDistance = 0f;
+                }
+                // Drop waypoints (BFS found a platform-drop path) have same X as the NPC;
+                // don't cancel them on X proximity — let Y proximity signal completion instead.
+                bool isDropWaypoint = globalNPC.WaypointTarget.Y > npc.Center.Y + 48f
+                    && Math.Abs(globalNPC.WaypointTarget.X - npc.Center.X) < 32f;
+                bool reachedX = Math.Abs(npc.Center.X - globalNPC.WaypointTarget.X) < 8f;
+                bool reachedJumpTarget = Math.Abs(npc.Center.X - globalNPC.WaypointTarget.X) < 24f
+                    && Math.Abs(npc.Center.Y - globalNPC.WaypointTarget.Y) < 40f;
+                bool droppedToTarget = isDropWaypoint
+                    && Math.Abs(npc.Center.Y - globalNPC.WaypointTarget.Y) < 32f;
+
+                // Only cancel on LOS when the player is at roughly the same elevation.
+                // If they're on a different floor (e.g. above a platform ceiling), the NPC has
+                // LOS through the platform but can't actually engage — keep the waypoint so it
+                // continues navigating to a staircase/ledge rather than spinning back to centre.
+                // 32px (~2 tiles) — only cancel the waypoint when the player is truly on the
+                // same floor and directly engageable.  64 was too wide: the different-floor
+                // BFS would set a waypoint only for cancelOnLos to destroy it one tick later.
+                bool playerOnSameFloor = Math.Abs(npc.Center.Y - Main.player[npc.target].Center.Y) < 32f;
+                bool cancelOnLos = lineOfSight && playerOnSameFloor;
+
+                bool reachedWaypoint = globalNPC.WaypointAction == tsorcRevampGlobalNPC.NavActionType.JumpTo
+                    ? reachedJumpTarget
+                    : reachedX && !isDropWaypoint;
+
+                float waypointDistance = npc.Distance(globalNPC.WaypointTarget);
+                if (globalNPC.LastWaypointDistance <= 0f || waypointDistance < globalNPC.LastWaypointDistance - 4f)
+                {
+                    globalNPC.LastWaypointDistance = waypointDistance;
+                    globalNPC.WaypointNoProgressTimer = 0;
                 }
                 else
                 {
-                    npc.direction = 1;
+                    globalNPC.WaypointNoProgressTimer++;
                 }
+
+                bool waypointStalled = globalNPC.WaypointNoProgressTimer > 90;
+
+                if (cancelOnLos || reachedWaypoint || droppedToTarget || waypointStalled)
+                {
+                    bool routeStepComplete = !cancelOnLos && !waypointStalled && (reachedWaypoint || droppedToTarget)
+                        && globalNPC.NavRouteCount > 0
+                        && globalNPC.NavRouteIndex + 1 < globalNPC.NavRouteCount;
+                    if (routeStepComplete)
+                    {
+                        globalNPC.NavRouteIndex++;
+                        globalNPC.NavRouteTimer = 0;
+                        globalNPC.NavRouteNoProgressTimer = 0;
+                        globalNPC.WaypointTarget = globalNPC.NavRouteTargets[globalNPC.NavRouteIndex];
+                        globalNPC.WaypointAction = globalNPC.NavRouteActions[globalNPC.NavRouteIndex];
+                        globalNPC.WaypointTimer = 420;
+                        globalNPC.WaypointNoProgressTimer = 0;
+                        globalNPC.LastWaypointDistance = npc.Distance(globalNPC.WaypointTarget);
+                        globalNPC.LastNavRouteDistance = globalNPC.LastWaypointDistance;
+                        globalNPC.LastNavIntent = "route:advance";
+                        globalNPC.LastWaypointResult = $"route:{globalNPC.NavRouteIndex + 1}/{globalNPC.NavRouteCount} {globalNPC.WaypointAction}";
+                        npc.netUpdate = true;
+                        goto afterWaypointState;
+                    }
+
+                    Vector2 stalledWaypoint = globalNPC.WaypointTarget;
+                    globalNPC.WaypointTimer = 0;
+                    globalNPC.WaypointTarget = Vector2.Zero;
+                    globalNPC.WaypointAction = tsorcRevampGlobalNPC.NavActionType.None;
+                    globalNPC.WaypointNoProgressTimer = 0;
+                    globalNPC.LastWaypointDistance = 0f;
+                    globalNPC.NavRouteIndex = 0;
+                    globalNPC.NavRouteCount = 0;
+                    globalNPC.NavRouteTimer = 0;
+                    globalNPC.NavRouteNoProgressTimer = 0;
+                    globalNPC.LastNavRouteDistance = 0f;
+                    if (waypointStalled)
+                    {
+                        globalNPC.WaypointSearchCooldown = Math.Max(globalNPC.WaypointSearchCooldown, 30);
+                        globalNPC.LastWaypointResult = "fail:waypoint-stalled";
+                        int stalledDirection = Math.Abs(stalledWaypoint.X - npc.Center.X) < 8f
+                            ? (npc.direction == 0 ? Math.Sign(Main.player[npc.target].Center.X - npc.Center.X) : npc.direction)
+                            : Math.Sign(stalledWaypoint.X - npc.Center.X);
+                        MarkNavDirectionBlocked(globalNPC, stalledDirection, 180);
+                        StartNavExplore(npc, globalNPC, -stalledDirection, 180);
+                    }
+
+                    // Immediately chain to the next BFS step when a waypoint is completed
+                    // but the player is still not reachable at the same floor level.
+                    // Without this there is a ~2 s gap (bfsFallback interval) during which the
+                    // NPC reverts to "face player center X" and walks the wrong way.
+                    // Chain to the next BFS step whenever a waypoint is completed/reached but
+                    // the player is still not on the same floor.  Don't require BoredTimer > 20
+                    // here — the hard BoredTimer reset (LOS + close Y) keeps it at 0 for
+                    // different-floor cases, so the old guard would silently skip chaining.
+                    if (!cancelOnLos && !waypointStalled && globalNPC.NavigationTier >= 1)
+                    {
+                        globalNPC.LastNavIntent = "waypoint:chain";
+                        TrySetFighterWaypoint(npc, globalNPC, true);
+                    }
+                }
+                afterWaypointState: ;
+            }
+
+            // Face the active waypoint first. Player-facing has a dead zone to avoid jitter
+            // when directly underneath the player, but waypoint steering must not inherit it.
+            if (globalNPC.WaypointTimer > 0)
+            {
+                float waypointDeltaX = globalNPC.WaypointTarget.X - npc.Center.X;
+                if (Math.Abs(waypointDeltaX) > 4f)
+                {
+                    npc.direction = waypointDeltaX < 0f ? -1 : 1;
+                    npc.spriteDirection = npc.direction;
+                }
+            }
+            else if (!playerOnDirectEngageFloor && globalNPC.NavExploreTimer > 0 && globalNPC.NavExploreDirection != 0)
+            {
+                npc.direction = globalNPC.NavExploreDirection;
+                npc.spriteDirection = npc.direction;
+            }
+            else if (Math.Abs(Main.player[npc.target].Center.X - npc.Center.X) > 30)
+            {
+                int desiredDirection;
+                if (Main.player[npc.target].Center.X <= npc.Center.X)
+                {
+                    desiredDirection = -1;
+                }
+                else
+                {
+                    desiredDirection = 1;
+                }
+                if (!playerOnDirectEngageFloor && globalNPC.NavBlockedDirectionTimer > 0 && desiredDirection == globalNPC.NavBlockedDirection)
+                {
+                    desiredDirection *= -1;
+                    globalNPC.LastNavIntent = "avoid:blocked-direction";
+                }
+                npc.direction = desiredDirection;
                 if (globalNPC.BoredTimer < 0)
                 {
                     npc.direction *= -1;
                 }
+                npc.spriteDirection = npc.direction;
             }
 
             //If moving more than max speed, then slow down
@@ -4023,8 +5243,24 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            // Post-attack standoff: tier 2 enemies may briefly hold position after a few attacks,
+            // but ordinary LOS should not stop pursuit.
+            bool inStandoff = false;
+            if (globalNPC.FighterPostAttackPauseTimer > 0)
+            {
+                globalNPC.FighterPostAttackPauseTimer--;
+            }
+            if (globalNPC.CanStopToFire && !globalNPC.CanPassThroughWalls && globalNPC.NavigationTier >= 2 && (globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0) && lineOfSight && npc.velocity.Y == 0f && !globalNPC.Fleeing)
+            {
+                inStandoff = true;
+                if (globalNPC.FighterRangedStandShotsRemaining > 0)
+                    npc.velocity.X = 0f; // hard stop: hold position while firing a burst
+                else
+                    npc.velocity.X *= 0.8f; // gradual stop: post-attack breather
+            }
+
             //Accelerate in the direction they are facing (unless the npc is an aiming archer)
-            if (!isArcher || globalNPC.ArcherAimDirection == 0)
+            if ((!isArcher || globalNPC.ArcherAimDirection == 0) && !inStandoff)
             {
                 if (npc.velocity.X < topSpeed && npc.direction == 1)
                 {
@@ -4048,6 +5284,60 @@ namespace tsorcRevamp.NPCs
             }
 
 
+            // Ledge-halt: optionally stop before a significant drop when we already have LOS.
+            // Only halts if dropping would put the NPC meaningfully lower than the player —
+            // tiny drops and same-elevation crossings are left alone so jump/gap logic can handle them.
+            // A hard cap of 180 frames prevents indefinite ledge-camping.
+            if (!globalNPC.CanPassThroughWalls && globalNPC.HaltAtLedge && lineOfSight && npc.velocity.Y == 0f && !globalNPC.Fleeing)
+            {
+                int aheadX = npc.direction == -1
+                    ? (int)(npc.position.X / 16f) - 1
+                    : (int)((npc.position.X + npc.width) / 16f);
+                int belowY = (int)(npc.position.Y + npc.height + 8f) / 16;
+
+                if (!UsefulFunctions.IsTileReallySolid(aheadX, belowY))
+                {
+                    // Scan downward for solid ground (ignores water/air). Cap at 10 tiles.
+                    int dropDepth = 10;
+                    for (int dy = 1; dy <= 10; dy++)
+                    {
+                        if (UsefulFunctions.IsTileReallySolid(aheadX, belowY + dy))
+                        {
+                            dropDepth = dy;
+                            break;
+                        }
+                    }
+
+                    // Where would we land, in world-space Y pixels?
+                    float landingWorldY = (belowY + dropDepth) * 16f;
+                    float playerWorldY = Main.player[npc.target].Center.Y;
+
+                    // Halt only if landing would put us more than 3 tiles below the player
+                    // (losing elevation), AND the drop is at least 4 tiles deep (not a tiny step).
+                    bool wouldLoseElevation = landingWorldY > playerWorldY + 48f;
+                    bool dropIsSignificant = dropDepth >= 4;
+                    bool shouldHalt = wouldLoseElevation && dropIsSignificant && globalNPC.LedgeHaltTimer < 180;
+
+                    if (shouldHalt)
+                    {
+                        npc.velocity.X = 0f;
+                        globalNPC.LedgeHaltTimer++;
+                    }
+                    else
+                    {
+                        globalNPC.LedgeHaltTimer = 0;
+                    }
+                }
+                else
+                {
+                    globalNPC.LedgeHaltTimer = 0;
+                }
+            }
+            else
+            {
+                globalNPC.LedgeHaltTimer = 0;
+            }
+
             //Jumping and platform falling code, copied and edited from Firebomb Hollow
             int x_in_front;
             if (npc.direction == -1)
@@ -4063,6 +5353,11 @@ namespace tsorcRevamp.NPCs
             //Dust.DrawDebugBox(new Rectangle(x_in_front * 16, y_above_feet * 16, 16, 16));
             int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
             bool standing_on_solid_tile = false;
+            bool navActionHandledJump = false;
+            if (globalNPC.NavJumpCooldown > 0)
+            {
+                globalNPC.NavJumpCooldown--;
+            }
 
             //Check if standing on a solid tile
             int x_left_edge = (int)npc.position.X / 16;
@@ -4078,46 +5373,448 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            //If standing on solid tile
-            if (standing_on_solid_tile)
+            // NavigationTier 0 compatibility path: preserve the original FighterAI terrain
+            // behavior exactly, with no waypoint/BFS/ledge-run-up leakage.
+            if (globalNPC.NavigationTier < 1 && standing_on_solid_tile)
             {
-                //Moving forward
                 if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
                 {
-                    //3 blocks above ground level (head height) blocked
                     if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 2))
                     {
-                        //4 blocks above ground level (over head) blocked
                         if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 3))
                         {
-                            npc.velocity.Y = -8f; //Jump with power 8 (for 4 block steps)
+                            npc.velocity.Y = -8f;
                             npc.netUpdate = true;
                         }
                         else
                         {
-                            npc.velocity.Y = -7f; //Jump with power 7 (for 3 block steps)
+                            npc.velocity.Y = -7f;
                             npc.netUpdate = true;
                         }
                     }
-                    //For everything else, head height clear:
                     else if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1))
                     {
-                        //2 blocks above ground level(mid body height) blocked
-                        npc.velocity.Y = -6f; //Jump with power 6 (for 2 block steps)
+                        npc.velocity.Y = -6f;
                         npc.netUpdate = true;
                     }
                     else if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet))
                     {
-                        // 1 block above ground level(foot height) blocked
-                        npc.velocity.Y = -5f; //Jump with power 5 (for 1 block steps)
+                        npc.velocity.Y = -5f;
                         npc.netUpdate = true;
                     }
                     else if (npc.directionY < 0 && !UsefulFunctions.IsTileReallySolid(x_in_front, y_below_feet) && !UsefulFunctions.IsTileReallySolid(x_in_front + npc.direction, y_below_feet))
                     {
-                        //If player is above npc and no solid tile ahead to step on for 2 spaces
-                        npc.velocity.Y = -8f; //Jump with power 8
-                        npc.velocity.X += 4f * npc.direction; //Jump forward hard as well; we're trying to jump a gap
+                        npc.velocity.Y = -8f;
+                        npc.velocity.X += 4f * npc.direction;
                         npc.netUpdate = true;
+                    }
+
+                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1) && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && (doorBreakingDamage > 0))
+                    {
+                        npc.velocity.Y = 0;
+                        globalNPC.BoredTimer = 0;
+                        if (Main.GameUpdateCount % 60 == 0)
+                        {
+                            npc.velocity.X = 0.5f * -npc.direction;
+                            globalNPC.DoorBreakProgress += doorBreakingDamage;
+                            WorldGen.KillTile(x_in_front, y_above_feet - 1, true, true, false);
+                            if (globalNPC.DoorBreakProgress >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                globalNPC.DoorBreakProgress = 0;
+                                if (!WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction))
+                                {
+                                    globalNPC.BoredTimer = 999;
+                                    npc.velocity.X = 0;
+                                }
+                                else if (Main.netMode == NetmodeID.Server)
+                                {
+                                    NetMessage.SendData(MessageID.ToggleDoorState, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (standing_on_solid_tile && globalNPC.NavigationTier >= 1 && globalNPC.NavJumpCooldown == 0
+                && HasCrossableGapTowardPlayer(npc, globalNPC, out int immediateGapDirection))
+            {
+                float jumpPower = MathHelper.Clamp(globalNPC.MaxJumpPower * 0.9f, 6.5f, globalNPC.MaxJumpPower);
+                float gapBoost = MathHelper.Clamp(Math.Max(topSpeed * 1.8f, globalNPC.MaxJumpBoost * 0.6f), 2.25f, Math.Max(3f, globalNPC.MaxJumpBoost));
+                npc.direction = immediateGapDirection;
+                npc.spriteDirection = immediateGapDirection;
+                npc.velocity.X = immediateGapDirection * gapBoost;
+                npc.velocity.Y = -jumpPower;
+                globalNPC.StuckTimer = 0;
+                globalNPC.LedgeRunUpTimer = 0;
+                globalNPC.LedgeRunUpDirection = 0;
+                globalNPC.NavJumpCooldown = 18;
+                globalNPC.FighterRangedStandShotsRemaining = 0;
+                globalNPC.ProjectileTimer = 0f;
+                npc.netUpdate = true;
+                navActionHandledJump = true;
+            }
+
+            bool playerDirectlyEngageableForJumping = lineOfSight && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 32f;
+
+            if (!playerDirectlyEngageableForJumping && globalNPC.NavRouteCount == 0 && standing_on_solid_tile && !navActionHandledJump && globalNPC.NavigationTier >= 1
+                && globalNPC.NavJumpCooldown == 0 && globalNPC.StuckTimer >= 8
+                && Math.Abs(Main.player[npc.target].Center.X - npc.Center.X) > 32f)
+            {
+                int blockedDirection = npc.direction == 0
+                    ? Math.Sign(Main.player[npc.target].Center.X - npc.Center.X)
+                    : npc.direction;
+                if (blockedDirection == 0)
+                {
+                    blockedDirection = 1;
+                }
+
+                MarkNavDirectionBlocked(globalNPC, blockedDirection, 210);
+                StartNavExplore(npc, globalNPC, -blockedDirection, 150);
+                npc.velocity.X = globalNPC.NavExploreDirection * Math.Max(topSpeed * 0.9f, 1.1f);
+                globalNPC.StuckTimer = 0;
+                globalNPC.LedgeRunUpTimer = 0;
+                globalNPC.LedgeRunUpDirection = 0;
+                globalNPC.LedgeVaultTimer = 0;
+                globalNPC.LedgeVaultDirection = 0;
+                globalNPC.NavJumpCooldown = 10;
+                ClearFighterWaypoint(globalNPC);
+                globalNPC.LastNavIntent = "local:block-memory";
+                globalNPC.LastWaypointResult = "local:explore-away";
+                npc.netUpdate = true;
+                navActionHandledJump = true;
+            }
+
+            if (!standing_on_solid_tile && globalNPC.NavigationTier >= 1 && globalNPC.LedgeVaultTimer > 0)
+            {
+                int vaultDirection = globalNPC.LedgeVaultDirection == 0 ? npc.direction : globalNPC.LedgeVaultDirection;
+                globalNPC.LedgeVaultTimer--;
+                npc.direction = vaultDirection;
+                npc.spriteDirection = vaultDirection;
+
+                int vaultElapsed = 30 - globalNPC.LedgeVaultTimer;
+                if (vaultElapsed < 7 && npc.velocity.Y < -1f)
+                {
+                    npc.velocity.X *= 0.65f;
+                }
+                else
+                {
+                    float vaultBoost = MathHelper.Clamp(Math.Max(topSpeed * 1.25f, globalNPC.MaxJumpBoost * 0.3f), 0.85f, 1.65f);
+                    npc.velocity.X = vaultDirection * vaultBoost;
+                }
+
+                if (globalNPC.LedgeVaultTimer == 0 || npc.velocity.Y >= 0f)
+                {
+                    globalNPC.LedgeVaultTimer = 0;
+                    globalNPC.LedgeVaultDirection = 0;
+                }
+            }
+
+            if (standing_on_solid_tile && !navActionHandledJump && globalNPC.NavigationTier >= 1 && globalNPC.WaypointTimer > 0)
+            {
+                float waypointDeltaX = globalNPC.WaypointTarget.X - npc.Center.X;
+                int waypointDir = Math.Abs(waypointDeltaX) < 4f
+                    ? npc.direction
+                    : Math.Sign(waypointDeltaX);
+
+                if (globalNPC.WaypointAction == tsorcRevampGlobalNPC.NavActionType.JumpTo && globalNPC.NavJumpCooldown == 0)
+                {
+                    float waypointDeltaY = globalNPC.WaypointTarget.Y - npc.Center.Y;
+                    bool tinyHeightJump = waypointDeltaY > -24f && Math.Abs(waypointDeltaX) < 96f;
+                    if (waypointDeltaY > 8f || tinyHeightJump)
+                    {
+                        // Defensive guard: lower/small-height waypoints are walk/drop steering,
+                        // not jump commands. Local gap logic handles true gap jumps separately.
+                        npc.direction = waypointDir == 0 ? npc.direction : waypointDir;
+                        npc.spriteDirection = npc.direction;
+                        if (Math.Abs(npc.velocity.X) < topSpeed * 0.75f)
+                        {
+                            npc.velocity.X = npc.direction * topSpeed * 0.75f;
+                        }
+                        globalNPC.WaypointAction = tsorcRevampGlobalNPC.NavActionType.Walk;
+                    }
+                    else
+                    {
+                        float upwardTiles = Math.Max(0f, -waypointDeltaY / 16f);
+                        float jumpPower = MathHelper.Clamp(4.8f + upwardTiles * 1.35f, 5.5f, Math.Max(globalNPC.MaxJumpPower, 8f));
+                        bool mostlyVerticalJump = Math.Abs(waypointDeltaX) < 18f && waypointDeltaY < -24f;
+                        float horizontalBoost = mostlyVerticalJump
+                            ? 0f
+                            : MathHelper.Clamp(Math.Abs(waypointDeltaX) / 24f, 0.75f, Math.Max(globalNPC.MaxJumpBoost, 2f));
+                        if (mostlyVerticalJump)
+                        {
+                            waypointDir = Main.player[npc.target].Center.X < npc.Center.X ? -1 : 1;
+                        }
+                        npc.direction = waypointDir == 0 ? npc.direction : waypointDir;
+                        npc.spriteDirection = npc.direction;
+                        npc.velocity.X = npc.direction * horizontalBoost;
+                        npc.velocity.Y = -jumpPower;
+                        globalNPC.StuckTimer = 0;
+                        globalNPC.LedgeRunUpTimer = 0;
+                        globalNPC.LedgeRunUpDirection = 0;
+                        if (mostlyVerticalJump)
+                        {
+                            globalNPC.LedgeVaultTimer = 26;
+                            globalNPC.LedgeVaultDirection = npc.direction;
+                        }
+                        globalNPC.NavJumpCooldown = 24;
+                        npc.netUpdate = true;
+                        navActionHandledJump = true;
+                    }
+                }
+
+                if (globalNPC.WaypointAction == tsorcRevampGlobalNPC.NavActionType.Drop || globalNPC.WaypointAction == tsorcRevampGlobalNPC.NavActionType.DropThroughPlatform)
+                {
+                    npc.direction = waypointDir == 0 ? npc.direction : waypointDir;
+                    npc.spriteDirection = npc.direction;
+                    if (Math.Abs(npc.velocity.X) < topSpeed * 0.75f)
+                    {
+                        npc.velocity.X = npc.direction * topSpeed * 0.75f;
+                    }
+                }
+            }
+
+            //If standing on solid tile
+            if (standing_on_solid_tile && !navActionHandledJump && globalNPC.NavigationTier >= 1)
+            {
+                //Moving forward, or blocked and ready to let tiered navigation plan an escape.
+                if (npc.velocity.X * npc.direction > 0f || (globalNPC.NavigationTier >= 1 && globalNPC.StuckTimer >= 3))
+                {
+                    // Jump power scaled by per-enemy MaxJumpPower (NavigationTier >= 1) or vanilla 8f
+                    float jumpPower = globalNPC.NavigationTier >= 1 ? globalNPC.MaxJumpPower : 8f;
+
+                    // ── Ledge run-up ──────────────────────────────────────────────
+                    // When StuckTimer first reaches a low threshold (NPC has been stopped by the
+                    // same obstacle for ~8 frames), initiate a back-up: reverse velocity
+                    // until geometry shows usable headroom, then fire a ledge-clear jump.
+                    // This solves the "stuck in a pit
+                    // with a 1-tile ledge" case where the NPC is pressed too close to
+                    // the wall to clear the ledge corner with a vertical-only jump.
+                    int leftFrontX = (int)(npc.position.X / 16f) - 1;
+                    int rightFrontX = (int)((npc.position.X + npc.width) / 16f);
+                    bool obstacleLeft =
+                        UsefulFunctions.IsTileReallySolid(leftFrontX, y_above_feet    ) ||
+                        UsefulFunctions.IsTileReallySolid(leftFrontX, y_above_feet - 1) ||
+                        UsefulFunctions.IsTileReallySolid(leftFrontX, y_above_feet - 2);
+                    bool obstacleRight =
+                        UsefulFunctions.IsTileReallySolid(rightFrontX, y_above_feet    ) ||
+                        UsefulFunctions.IsTileReallySolid(rightFrontX, y_above_feet - 1) ||
+                        UsefulFunctions.IsTileReallySolid(rightFrontX, y_above_feet - 2);
+                    bool anyObstacleAhead = npc.direction == -1 ? obstacleLeft : obstacleRight;
+
+                    // Tiered navigation should commit to a ledge escape quickly instead of
+                    // spending several frames doing local wall jumps under the overhang.
+                    if (!playerDirectlyEngageableForJumping && globalNPC.NavRouteCount == 0 && globalNPC.NavigationTier >= 1 && globalNPC.StuckTimer >= 6
+                        && (anyObstacleAhead || obstacleLeft || obstacleRight) && globalNPC.LedgeRunUpTimer == 0)
+                    {
+                        int playerDirection = Main.player[npc.target].Center.X < npc.Center.X ? -1 : 1;
+                        if (!anyObstacleAhead)
+                        {
+                            if (playerDirection == -1 && obstacleLeft)
+                            {
+                                npc.direction = -1;
+                            }
+                            else if (playerDirection == 1 && obstacleRight)
+                            {
+                                npc.direction = 1;
+                            }
+                            else if (obstacleLeft)
+                            {
+                                npc.direction = -1;
+                            }
+                            else if (obstacleRight)
+                            {
+                                npc.direction = 1;
+                            }
+                            npc.spriteDirection = npc.direction;
+                        }
+
+                        globalNPC.LedgeRunUpTimer = 18;
+                        globalNPC.LedgeRunUpDirection = npc.direction == 0 ? 1 : npc.direction;
+                        MarkNavDirectionBlocked(globalNPC, globalNPC.LedgeRunUpDirection, 150);
+                    }
+
+                    if (globalNPC.LedgeRunUpTimer > 0)
+                    {
+                        int ledgeDirection = globalNPC.LedgeRunUpDirection == 0 ? npc.direction : globalNPC.LedgeRunUpDirection;
+                        if (ledgeDirection == 0)
+                        {
+                            ledgeDirection = 1;
+                        }
+
+                        if (globalNPC.LedgeRunUpTimer > 1)
+                        {
+                            int backoffDirection = -ledgeDirection;
+                            npc.direction = backoffDirection;
+                            npc.spriteDirection = backoffDirection;
+                            npc.velocity.X = backoffDirection * Math.Max(topSpeed * 0.85f, 1.1f);
+                            globalNPC.LedgeRunUpTimer--;
+                            globalNPC.LastNavIntent = "ledge:backoff";
+                            globalNPC.LastWaypointResult = "ledge:building-clearance";
+                            goto skipNormalJumps;
+                        }
+
+                        npc.direction = ledgeDirection;
+                        npc.spriteDirection = ledgeDirection;
+                        if (globalNPC.NavJumpCooldown == 0)
+                        {
+                            // Player-like ledge vault: go mostly straight up first, then drift
+                            // toward the ledge after the head has time to clear the overhang.
+                            npc.velocity.X = 0f;
+                            npc.velocity.Y = -(jumpPower * 1.08f);
+                            globalNPC.StuckTimer = 0;
+                            globalNPC.LedgeRunUpTimer = 0;
+                            globalNPC.LedgeRunUpDirection = 0;
+                            globalNPC.LedgeVaultTimer = 30;
+                            globalNPC.LedgeVaultDirection = ledgeDirection;
+                            globalNPC.NavJumpCooldown = 18;
+                            globalNPC.LastNavIntent = "ledge:vault";
+                            globalNPC.LastWaypointResult = "ledge:jump-after-backoff";
+                            npc.netUpdate = true;
+                        }
+                        else
+                        {
+                            npc.velocity.X = 0f;
+                            globalNPC.LedgeRunUpTimer = 1;
+                        }
+                        // Skip normal jump logic while the run-up is active
+                        goto skipNormalJumps;
+                    }
+
+                    // Smart navigation enemies should avoid repeated desperation wall-jumps.
+                    // Let BFS / ledge-run-up choose the escape instead of bouncing in place.
+                    bool mayJump = globalNPC.NavigationTier < 1;
+                    bool mayStepUpOneTile = globalNPC.NavigationTier >= 1
+                        && globalNPC.WaypointTimer == 0
+                        && globalNPC.StuckTimer < 6
+                        && UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet)
+                        && !UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1)
+                        && !UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 2);
+
+                    //3 blocks above ground level (head height) blocked
+                    if (mayJump && UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 2))
+                    {
+                        //4 blocks above ground level (over head) blocked
+                        if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 3))
+                        {
+                            npc.velocity.Y = -jumpPower; //Jump with full power (for 4+ block steps)
+                            npc.netUpdate = true;
+                        }
+                        else
+                        {
+                            npc.velocity.Y = -jumpPower * 0.875f; //Jump with 87.5% power (for 3 block steps)
+                            npc.netUpdate = true;
+                        }
+                    }
+                    //For everything else, head height clear:
+                    else if (mayJump && UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1))
+                    {
+                        //2 blocks above ground level (mid body height) blocked
+                        npc.velocity.Y = -jumpPower * 0.75f; //Jump with 75% power (for 2 block steps)
+                        npc.netUpdate = true;
+                    }
+                    else if ((mayJump || mayStepUpOneTile) && UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet))
+                    {
+                        // 1-tile step: smart-nav enemies should not visibly jump here.
+                        // Use only a tiny lift plus forward pressure so this reads as a step.
+                        if (npc.velocity.Y > -2.2f)
+                            npc.velocity.Y = -2.2f;
+                        float minHSpeed = Math.Max(topSpeed * 0.55f, 1.5f);
+                        if (npc.direction ==  1 && npc.velocity.X < minHSpeed)  npc.velocity.X = minHSpeed;
+                        if (npc.direction == -1 && npc.velocity.X > -minHSpeed) npc.velocity.X = -minHSpeed;
+                        npc.netUpdate = true;
+                    }
+                    else
+                    {
+                        // No wall obstacle ahead — check whether the floor continues.
+                        // If the tile directly ahead at foot level is missing, there's a gap or drop.
+                        if (!UsefulFunctions.IsTileReallySolid(x_in_front, y_below_feet))
+                        {
+                            // Scan up to 8 tiles horizontally and 20 tiles deep for a landing.
+                            // gapWidth = horizontal distance to the far edge (0 = pure step-down).
+                            // dropDepth = how many tiles lower the landing is (0 = same elevation).
+                            int gapWidth  = -1; // -1 until a landing is found
+                            int dropDepth =  0;
+                            const int maxLandingScanDepth = 20;
+                            bool waypointWantsForwardTravel = globalNPC.WaypointTimer > 0
+                                && (Math.Abs(globalNPC.WaypointTarget.X - npc.Center.X) <= 16f
+                                    || Math.Sign(globalNPC.WaypointTarget.X - npc.Center.X) == npc.direction);
+
+                            for (int scan = 0; scan <= 8; scan++)
+                            {
+                                if (gapWidth >= 0) break;
+                                int cx = x_in_front + scan * npc.direction;
+                                for (int dy = 0; dy <= maxLandingScanDepth; dy++)
+                                {
+                                    if (UsefulFunctions.IsTileReallySolid(cx, y_below_feet + dy))
+                                    {
+                                        gapWidth  = scan;
+                                        dropDepth = dy;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Only drop toward a pit when the player is clearly lower (~4 tiles).
+                            // Same-level and above cases: halt so jump/BFS logic handles traversal instead.
+                            bool playerClearlyBelow = Main.player[npc.target].Center.Y > npc.Center.Y + 64f;
+
+                            if (gapWidth < 0)
+                            {
+                                // No landing found within scan range — very deep or wide pit.
+                                // Only walk off the edge when the player is clearly below.
+                                if (!playerClearlyBelow && !waypointWantsForwardTravel)
+                                {
+                                    npc.velocity.X = 0f;
+                                    if (globalNPC.NavigationTier >= 1 && globalNPC.BoredTimer == 0)
+                                        globalNPC.BoredTimer = 60;
+                                }
+                            }
+                            else if (gapWidth == 0)
+                            {
+                                // Pure step-down (floor at same X but lower Y).
+                                // Small drops (≤ 3 tiles): let gravity handle it naturally.
+                                // Large drops: halt unless player is clearly below.
+                                if (dropDepth > 3 && !playerClearlyBelow && !waypointWantsForwardTravel)
+                                {
+                                    npc.velocity.X = 0f;
+                                    if (globalNPC.NavigationTier >= 1 && globalNPC.BoredTimer == 0)
+                                        globalNPC.BoredTimer = 60;
+                                }
+                            }
+                            else
+                            {
+                                // Genuine horizontal gap: jump across if reachable, else halt.
+                                // Base cap of 8 tiles so all enemies cross typical platform gaps;
+                                // NavigationTier >= 1 enemies scale further with their MaxJumpBoost.
+                                float maxJumpable = globalNPC.NavigationTier >= 1
+                                    ? Math.Max(8f, globalNPC.MaxJumpBoost + 3f)
+                                    : 8f;
+
+                                if (gapWidth <= maxJumpable)
+                                {
+                                    // Boost just enough to clear the gap, proportional to width.
+                                    // Capped at the NPC's jump boost (or 4f floor for tier-0 enemies).
+                                    float boostCap = globalNPC.NavigationTier >= 1
+                                        ? Math.Max(globalNPC.MaxJumpBoost, 4f)
+                                        : 4f;
+                                    float horizontalBoost = MathHelper.Clamp(gapWidth * 0.7f, 1.5f, boostCap);
+                                    npc.velocity.Y  = -jumpPower;
+                                    npc.velocity.X += horizontalBoost * npc.direction;
+                                    npc.netUpdate = true;
+                                }
+                                else
+                                {
+                                    // Gap too wide to jump — halt so the NPC doesn't walk off.
+                                    if (!waypointWantsForwardTravel)
+                                    {
+                                        npc.velocity.X = 0f;
+                                        if (globalNPC.NavigationTier >= 1 && globalNPC.BoredTimer == 0)
+                                            globalNPC.BoredTimer = 60;
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     //Door breaking
@@ -4150,6 +5847,7 @@ namespace tsorcRevamp.NPCs
                             }
                         }
                     }
+                    skipNormalJumps: ; // target for the ledge-run-up early-exit goto
                 }
             }
 
@@ -4175,36 +5873,151 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (standing_on_platforms && atLeastOnePlatform && Main.player[npc.target].Center.Y > npc.Center.Y && (globalNPC.BoredTimer > 60 || Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < 300))
+            // Drop through platforms when player is below.
+            // Threshold is 64px (4 tiles) to avoid accidental drops on tiny height differences.
+            // Gate on low horizontal speed: noTileCollide disables ALL tile collision, so a fast-moving
+            // NPC would clip through walls. Only drop when nearly stopped horizontally.
+            bool playerIsBelow = Main.player[npc.target].Center.Y > npc.Center.Y + 32f;
+            // BFS may route the NPC through a platform drop: waypoint Y is below current position.
+            bool bfsWantsDrop = globalNPC.WaypointTimer > 0
+                && globalNPC.WaypointTarget.Y > npc.Center.Y + 48f
+                && Math.Abs(globalNPC.WaypointTarget.X - npc.Center.X) < 32f;
+            bool navWantsPlatformDrop = globalNPC.WaypointTimer > 0
+                && globalNPC.WaypointAction == tsorcRevampGlobalNPC.NavActionType.DropThroughPlatform;
+            bool shouldDropPlatform = globalNPC.NavigationTier >= 1
+                ? (playerIsBelow || bfsWantsDrop || navWantsPlatformDrop)
+                : playerIsBelow && (globalNPC.BoredTimer > 60 || Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < 300);
+
+            if (standing_on_platforms && atLeastOnePlatform && shouldDropPlatform && (globalNPC.NavigationTier < 1 || Math.Abs(npc.velocity.X) < 2f || navWantsPlatformDrop))
             {
                 npc.noTileCollide = true;
             }
 
-            bool lineOfSight = Main.player[npc.target].CanHit(npc);
+            // Reset double jump and wind down StuckTimer when standing (velocity.Y == 0)
+            if (npc.velocity.Y == 0f)
+            {
+                globalNPC.UsedDoubleJump = false;
+            }
+
+            // StuckTimer: detect ground-level movement blockage and attempt an escape jump
+            if (standing_on_solid_tile && globalNPC.NavigationTier >= 1)
+            {
+                bool tryingToMoveForward = (npc.direction == 1 && npc.velocity.X >= 0f) ||
+                                           (npc.direction == -1 && npc.velocity.X <= 0f);
+                if (tryingToMoveForward && Math.Abs(npc.velocity.X) < 0.5f)
+                {
+                    globalNPC.StuckTimer++;
+                }
+                else
+                {
+                    // Don't erase wall-contact progress too aggressively. Brief wiggles,
+                    // tiny recoil, or overhang checks should not wipe the timer back to 0.
+                    if (Math.Abs(npc.velocity.X) > topSpeed * 0.5f)
+                        globalNPC.StuckTimer = Math.Max(0, globalNPC.StuckTimer - 1);
+                    // NPC is moving freely — also drain the run-up timer so a previous
+                    // stuck episode doesn't leave a stale back-up in progress.
+                    if (globalNPC.LedgeRunUpTimer > 0 && Math.Abs(npc.velocity.X) > topSpeed * 0.5f
+                        && Math.Sign(npc.velocity.X) == npc.direction)
+                    {
+                        globalNPC.LedgeRunUpTimer = 0;
+                        globalNPC.LedgeRunUpDirection = 0;
+                    }
+                }
+
+                if (globalNPC.StuckTimer > 30)
+                {
+                    int blockedDirection = npc.direction == 0 ? Math.Sign(npc.velocity.X) : npc.direction;
+                    globalNPC.StuckTimer = 0;
+                    globalNPC.LedgeRunUpTimer = 0; // cancel any pending run-up; BFS takes over
+                    globalNPC.LedgeRunUpDirection = 0;
+                    ClearFighterWaypoint(globalNPC);
+                    MarkNavDirectionBlocked(globalNPC, blockedDirection, 240);
+                    StartNavExplore(npc, globalNPC, -blockedDirection, 180);
+                    // Run BFS immediately rather than via BoredTimer — rerouting must fire
+                    // even when the NPC has LOS or an old waypoint is steering it into a wall.
+                    if (globalNPC.NavigationTier >= 1)
+                    {
+                        globalNPC.LastNavIntent = "stuck:reroute";
+                        TrySetFighterWaypoint(npc, globalNPC, true);
+                    }
+                    else if (globalNPC.BoredTimer < 21)
+                    {
+                        globalNPC.BoredTimer = 21;
+                    }
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Double jump: apex-triggered mid-air second jump for capable enemies
+            if (globalNPC.CanDoubleJump && !globalNPC.UsedDoubleJump && globalNPC.NavigationTier >= 1)
+            {
+                // Fire when clearly falling (player is still above us) — velocity.Y > 1.5f avoids
+                // triggering on the first few frames after stepping off a ledge
+                if (!standing_on_solid_tile && npc.velocity.Y > 1.5f && npc.directionY < 0)
+                {
+                    npc.velocity.Y = -globalNPC.DoubleJumpPower;
+                    globalNPC.UsedDoubleJump = true;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Refresh after movement phase — tile state may have changed (platform drop, etc.)
+            lineOfSight = Main.player[npc.target].CanHit(npc);
+
+            // "LOS but player significantly above/below" behaves like no-LOS for boredom.
+            // Threshold aligned with the different-floor BFS trigger (48px = 3 tiles) so both
+            // systems agree on what "different floor" means.
+            bool playerOnDifferentLevel = lineOfSight && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) > 48f;
 
             if (globalNPC.BoredTimer >= 0)
             {
                 //Increase boredom if it's stuck on a wall it can't pass through, walking back and forth above the player, or can teleport but can't see the player
-                if (!lineOfSight)
+                if (!lineOfSight || playerOnDifferentLevel)
                 {
                     globalNPC.BoredTimer++;
 
                     //Time it takes to get bored scales with how long it takes to accelerate
-                    if (globalNPC.BoredTimer > 180 * globalNPC.Patience)
+                    if (globalNPC.BoredTimer > globalNPC.BoredomThreshold * globalNPC.Patience)
                     {
                         if (!canTeleport)
                         {
-                            globalNPC.BoredTimer = -180;
-                            npc.direction *= -1;
+                            if (globalNPC.NavigationTier >= 1)
+                            {
+                                globalNPC.BoredTimer = globalNPC.BoredomThreshold;
+                                globalNPC.LastNavIntent = "bored:path-retry";
+                                TrySetFighterWaypoint(npc, globalNPC, true);
+                            }
+                            else
+                            {
+                                globalNPC.BoredTimer = -540;
+                                if (globalNPC.WaypointTimer == 0)
+                                    npc.direction *= -1;
+                            }
                         }
                         else
                         {
                             //Try to teleport somewhere it has line of sight to the player
                             if (globalNPC.TeleportCountdown == 0)
                             {
-                                QueueTeleport(npc, 50, true);
+                                QueueTeleport(npc, 50, true, globalNPC.TeleportTelegraphTime);
                             }
                         }
+                    }
+
+                    // BFS waypoint: trigger as soon as the NPC becomes bored, then keep a
+                    // slower fallback rescan while it remains stuck/bored.
+                    bool justBecameBored = globalNPC.BoredTimer == 1;
+                    bool stuckRescan = globalNPC.StuckTimer >= 20 && globalNPC.StuckTimer % 60 == 0;
+                    bool bfsFallback  = Main.GameUpdateCount % 120 == 0;
+
+                    if (globalNPC.NavigationTier >= 1 &&
+                        globalNPC.WaypointTimer == 0 &&
+                        (justBecameBored || stuckRescan || bfsFallback))
+                    {
+                        globalNPC.LastNavIntent = justBecameBored ? "bored:first-frame"
+                            : stuckRescan ? "bored:stuck-rescan"
+                            : "bored:fallback-rescan";
+                        TrySetFighterWaypoint(npc, globalNPC, justBecameBored || stuckRescan);
                     }
                 }
                 //If it's not stuck not and it's not bored decrease the boredom counter
@@ -4223,11 +6036,55 @@ namespace tsorcRevamp.NPCs
                 globalNPC.BoredTimer++;
             }
 
-            //If it has line of sight and is moving at full speed, and the player is near its level, instantly set boredom to 0
-            if (!globalNPC.Fleeing && lineOfSight && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 144)
+            // Only hard-reset boredom when the player is truly on the same floor (32px = 2 tiles).
+            // The old 80px threshold was killing BoredTimer for players one floor up, preventing
+            // boredom BFS from ever firing in the most common stuck scenario.
+            if (!globalNPC.Fleeing && lineOfSight && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 32f)
             {
                 globalNPC.BoredTimer = 0;
             }
+
+            // ── Different-floor BFS trigger ───────────────────────────────────────
+            // When the NPC has LOS but the player is grounded on a meaningfully
+            // different floor (> 3 tiles of vertical separation), BoredTimer is
+            // constantly reset to 0 by the block above, so the standard BFS trigger
+            // (BoredTimer > 20) never fires.  The NPC just paces left-right forever.
+            // Fix: fire BFS independently every ~3 s when this condition persists.
+            // Stagger the check by NPC id so all NPCs don't BFS on the same frame.
+            if (globalNPC.NavigationTier >= 1 && globalNPC.WaypointTimer == 0 && lineOfSight
+                && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) > 48f  // > 3 tiles apart vertically
+                && Main.player[npc.target].velocity.Y == 0f                          // player is standing (not falling)
+                && ((npc.whoAmI + (int)Main.GameUpdateCount) % 60 == 0))             // every ~1 s, staggered per NPC
+            {
+                globalNPC.LastNavIntent = "los:different-floor";
+                TrySetFighterWaypoint(npc, globalNPC, true);
+            }
+
+            // WeakTeleport reach tracking: count how long the NPC has been unable to reach the player.
+            // "Reached" means LOS within 600px (~38 tiles). After the configured threshold
+            // without reaching, briefly disengage, then turn back and resume pursuit.
+            if (globalNPC.NavigationTier < 1 && globalNPC.WeakTeleport && globalNPC.WeakTeleportBoredPhase == 0)
+            {
+                if (lineOfSight && npc.Distance(Main.player[npc.target].Center) < 600f)
+                {
+                    // NPC is engaging the player; stop counting toward the bored-walk fallback.
+                    if (globalNPC.WeakTeleportReachTimer > 0) globalNPC.WeakTeleportReachTimer = 0;
+                }
+                else
+                {
+                    globalNPC.WeakTeleportReachTimer++;
+                    if (globalNPC.WeakTeleportReachTimer >= globalNPC.WeakTeleportBoredThreshold)
+                    {
+                        // Start at phase 1 (standstill). The state machine sets direction when
+                        // it transitions into phase 2 (walk-away).
+                        globalNPC.WeakTeleportBoredPhase = 1;
+                        globalNPC.WeakTeleportBoredTimer = 120; // stand still 2 s
+                        globalNPC.WeakTeleportReachTimer = 0;
+                    }
+                }
+            }
+
+            LogFighterNavDebug(npc, globalNPC, lineOfSight);
 
             //Dodging
             if (globalNPC.BoredTimer == 0 && globalNPC.TeleportCountdown == 0 && globalNPC.DodgeCooldown == 0)
@@ -4290,10 +6147,352 @@ namespace tsorcRevamp.NPCs
 
 
 
+        /// <summary>
+        /// Searches for a valid teleport landing spot near <paramref name="player"/> that has
+        /// direct line of sight back to the player. Returns the world-space center position of
+        /// the landing spot, or <see cref="Vector2.Zero"/> if no valid spot was found.
+        /// </summary>
+        private static Vector2 FindWeakTeleportDestination(NPC npc, Player player)
+        {
+            for (int attempt = 0; attempt < 60; attempt++)
+            {
+                // Random horizontal offset: 35-50 tiles from player, random side.
+                // WeakTeleport should help the NPC re-enter pursuit, not appear on top of the player.
+                float offsetX = Main.rand.NextFloat(35f, 50f) * 16f * (Main.rand.NextBool() ? 1f : -1f);
+                // Small vertical scatter so the NPC can land on platforms above/below player
+                float offsetY = Main.rand.NextFloat(-5f, 5f) * 16f;
+                Vector2 candidate = player.Center + new Vector2(offsetX, offsetY);
+
+                int tileX = (int)(candidate.X / 16f);
+                int tileY = (int)(candidate.Y / 16f);
+
+                // Skip positions inside solid walls
+                if (UsefulFunctions.IsTileReallySolid(tileX, tileY) ||
+                    UsefulFunctions.IsTileReallySolid(tileX, tileY - 1))
+                    continue;
+
+                // Find the first ground tile below (solid tile or platform, within 6 tiles)
+                int groundY = -1;
+                for (int dy = 0; dy <= 6; dy++)
+                {
+                    Tile t = Framing.GetTileSafely(tileX, tileY + dy);
+                    if (UsefulFunctions.IsTileReallySolid(tileX, tileY + dy) ||
+                        (t.HasTile && TileID.Sets.Platforms[t.TileType]))
+                    {
+                        groundY = tileY + dy;
+                        break;
+                    }
+                }
+                if (groundY == -1) continue;
+
+                // World-space center of the NPC if it were standing on that tile
+                Vector2 centerAtDest = new Vector2(tileX * 16f + 8f, groundY * 16f - npc.height / 2f);
+
+                // Require clear LOS from landing spot center to player
+                if (!Collision.CanHitLine(centerAtDest, 1, 1, player.Center, 1, 1))
+                    continue;
+
+                return centerAtDest;
+            }
+            return Vector2.Zero;
+        }
+
         //AI snippits go here! Simply call these in the npc's main AI function to add them
         #region AI Snippets
 
         public static int ProjectileTelegraphTime = 25;
+
+        private static float GetStandingFireChance(tsorcRevampGlobalNPC globalNPC, float baseChance)
+        {
+            float aggressionMultiplier = 1f;
+            if (globalNPC.Aggression >= 0f)
+            {
+                aggressionMultiplier = MathHelper.Clamp(1f - globalNPC.Aggression / 2.5f, 0f, 1f);
+            }
+
+            return MathHelper.Clamp(baseChance * aggressionMultiplier, 0f, 1f);
+        }
+
+        private static bool HasCrossableGapTowardPlayer(NPC npc, tsorcRevampGlobalNPC globalNPC, out int travelDirection)
+        {
+            travelDirection = 0;
+            if (globalNPC.NavigationTier < 1 || npc.velocity.Y != 0f)
+            {
+                return false;
+            }
+
+            float playerDeltaX = Main.player[npc.target].Center.X - npc.Center.X;
+            if (Math.Abs(playerDeltaX) < 48f)
+            {
+                return false;
+            }
+
+            travelDirection = playerDeltaX < 0f ? -1 : 1;
+            int aheadX = travelDirection == -1
+                ? (int)(npc.position.X / 16f) - 1
+                : (int)((npc.position.X + npc.width) / 16f);
+            int belowFeetY = (int)(npc.position.Y + npc.height + 8f) / 16;
+
+            const int maxLandingScanDepth = 6;
+            const int maxGapStartScan = 3;
+            float maxJumpable = Math.Max(4f, Math.Min(8f, globalNPC.MaxJumpBoost + 2f));
+
+            for (int gapStart = 0; gapStart <= maxGapStartScan; gapStart++)
+            {
+                int gapX = aheadX + gapStart * travelDirection;
+                if (tsorcRevampGlobalNPC.BfsCanStand(npc, gapX, belowFeetY))
+                {
+                    continue;
+                }
+
+                for (int scan = gapStart + 1; scan <= maxJumpable; scan++)
+                {
+                    int scanX = aheadX + scan * travelDirection;
+                    for (int dy = 0; dy <= maxLandingScanDepth; dy++)
+                    {
+                        if (tsorcRevampGlobalNPC.BfsCanStand(npc, scanX, belowFeetY + dy))
+                        {
+                            // Only jump same-level gaps. One-tile drops/slopes should be walked
+                            // down naturally instead of being treated like pits.
+                            return dy == 0;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+        private static bool IsFighterStandableTile(int x, int y)
+        {
+            if (UsefulFunctions.IsTileReallySolid(x, y))
+            {
+                return true;
+            }
+
+            if (Main.tile.Width > x && Main.tile.Height > y && x >= 0 && y >= 0)
+            {
+                Tile tile = Main.tile[x, y];
+                return tile.HasTile && !tile.IsActuated && TileID.Sets.Platforms[tile.TileType];
+            }
+
+            return false;
+        }
+
+        private static void ClearFighterWaypoint(tsorcRevampGlobalNPC globalNPC)
+        {
+            globalNPC.WaypointTimer = 0;
+            globalNPC.WaypointTarget = Vector2.Zero;
+            globalNPC.WaypointAction = tsorcRevampGlobalNPC.NavActionType.None;
+            globalNPC.WaypointNoProgressTimer = 0;
+            globalNPC.LastWaypointDistance = 0f;
+            globalNPC.NavRouteIndex = 0;
+            globalNPC.NavRouteCount = 0;
+            globalNPC.NavRouteTimer = 0;
+            globalNPC.NavRouteNoProgressTimer = 0;
+            globalNPC.LastNavRouteDistance = 0f;
+        }
+
+        private static void MarkNavDirectionBlocked(tsorcRevampGlobalNPC globalNPC, int blockedDirection, int duration = 180)
+        {
+            if (blockedDirection == 0)
+            {
+                return;
+            }
+
+            globalNPC.NavBlockedDirection = Math.Sign(blockedDirection);
+            globalNPC.NavBlockedDirectionTimer = Math.Max(globalNPC.NavBlockedDirectionTimer, duration);
+        }
+
+        private static void StartNavExplore(NPC npc, tsorcRevampGlobalNPC globalNPC, int preferredDirection, int duration = 180)
+        {
+            int direction = preferredDirection == 0
+                ? Math.Sign(Main.player[npc.target].Center.X - npc.Center.X)
+                : Math.Sign(preferredDirection);
+
+            if (direction == 0)
+            {
+                direction = npc.direction == 0 ? 1 : npc.direction;
+            }
+
+            if (globalNPC.NavBlockedDirectionTimer > 0 && direction == globalNPC.NavBlockedDirection)
+            {
+                direction *= -1;
+            }
+
+            globalNPC.NavExploreDirection = direction;
+            globalNPC.NavExploreTimer = Math.Max(globalNPC.NavExploreTimer, duration);
+            globalNPC.FighterNoLosPursuitBoostTimer = Math.Max(globalNPC.FighterNoLosPursuitBoostTimer, 90);
+            globalNPC.BoredTimer = Math.Max(globalNPC.BoredTimer, 1);
+            npc.direction = direction;
+            npc.spriteDirection = direction;
+        }
+
+        private static bool TrySetFighterWaypoint(NPC npc, tsorcRevampGlobalNPC globalNPC, bool force = false)
+        {
+            if (globalNPC.NavigationTier < 1 || globalNPC.WaypointTimer > 0)
+            {
+                globalNPC.LastWaypointResult = globalNPC.NavigationTier < 1 ? "skip:tier0" : "skip:active";
+                return false;
+            }
+            if (!force && globalNPC.WaypointSearchCooldown > 0)
+            {
+                globalNPC.LastWaypointResult = $"skip:cooldown-{globalNPC.WaypointSearchCooldown}";
+                return false;
+            }
+
+            Span<Vector2> routeTargets = stackalloc Vector2[tsorcRevampGlobalNPC.MaxNavRouteSteps];
+            Span<tsorcRevampGlobalNPC.NavActionType> routeActions = stackalloc tsorcRevampGlobalNPC.NavActionType[tsorcRevampGlobalNPC.MaxNavRouteSteps];
+            if (tsorcRevampGlobalNPC.BfsFindRoute(npc, globalNPC.MaxJumpPower, globalNPC.MaxJumpBoost, routeTargets, routeActions, out int routeCount))
+            {
+                int routeStart = 0;
+                while (routeStart < routeCount - 1 && !IsUsefulFighterWaypoint(npc, routeTargets[routeStart], routeActions[routeStart], routeCount - routeStart))
+                {
+                    routeStart++;
+                }
+
+                Vector2 waypoint = routeTargets[routeStart];
+                tsorcRevampGlobalNPC.NavActionType action = routeActions[routeStart];
+                if (!IsUsefulFighterWaypoint(npc, waypoint, action))
+                {
+                    globalNPC.WaypointSearchFailures++;
+                    globalNPC.LastWaypointResult = $"fail:useless-{action} x{globalNPC.WaypointSearchFailures}";
+                    globalNPC.WaypointSearchCooldown = force ? 12 : 30;
+                    bool directLos = Main.player[npc.target].CanHit(npc) && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 32f;
+                    if (!directLos && (force || globalNPC.WaypointSearchFailures >= 3))
+                    {
+                        int preferredDirection = Math.Sign(Main.player[npc.target].Center.X - npc.Center.X);
+                        StartNavExplore(npc, globalNPC, preferredDirection, 150);
+                        globalNPC.LastNavIntent = "explore:useless-waypoint";
+                    }
+                    return false;
+                }
+
+                int copiedRouteCount = Math.Min(routeCount - routeStart, tsorcRevampGlobalNPC.MaxNavRouteSteps);
+                for (int i = 0; i < copiedRouteCount; i++)
+                {
+                    globalNPC.NavRouteTargets[i] = routeTargets[routeStart + i];
+                    globalNPC.NavRouteActions[i] = routeActions[routeStart + i];
+                }
+                globalNPC.NavRouteIndex = 0;
+                globalNPC.NavRouteCount = copiedRouteCount;
+                globalNPC.NavRouteTimer = 0;
+                globalNPC.NavRouteNoProgressTimer = 0;
+                globalNPC.LastNavRouteDistance = npc.Distance(waypoint);
+                globalNPC.WaypointTarget = waypoint;
+                globalNPC.WaypointTimer = 420;
+                globalNPC.WaypointAction = action;
+                globalNPC.LastWaypointDistance = npc.Distance(waypoint);
+                globalNPC.WaypointNoProgressTimer = 0;
+                globalNPC.NavExploreTimer = 0;
+                globalNPC.NavExploreDirection = 0;
+                globalNPC.BoredTimer = Math.Max(globalNPC.BoredTimer, 1);
+                globalNPC.WaypointSearchFailures = 0;
+                string skippedPrefix = routeStart > 0 ? $"skip{routeStart} " : "";
+                globalNPC.LastWaypointResult = $"{skippedPrefix}route:{globalNPC.NavRouteCount} set:{action} ({waypoint.X / 16f:F1},{waypoint.Y / 16f:F1})";
+                globalNPC.WaypointSearchCooldown = force ? 10 : 20;
+                npc.netUpdate = true;
+                return true;
+            }
+
+            globalNPC.WaypointSearchFailures++;
+            globalNPC.LastWaypointResult = $"fail:bfs x{globalNPC.WaypointSearchFailures}";
+            globalNPC.WaypointSearchCooldown = force ? 20 : 45;
+            bool hasDirectLos = Main.player[npc.target].CanHit(npc) && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 32f;
+            if (!hasDirectLos && (force || globalNPC.WaypointSearchFailures >= 3))
+            {
+                int preferredDirection = Math.Sign(Main.player[npc.target].Center.X - npc.Center.X);
+                StartNavExplore(npc, globalNPC, preferredDirection, 180);
+                globalNPC.LastNavIntent = "explore:bfs-failed";
+            }
+            return false;
+        }
+
+        private static bool IsUsefulFighterWaypoint(NPC npc, Vector2 waypoint, tsorcRevampGlobalNPC.NavActionType action, int remainingRouteSteps = 1)
+        {
+            Player player = Main.player[npc.target];
+            Vector2 delta = waypoint - npc.Center;
+
+            if (action == tsorcRevampGlobalNPC.NavActionType.Walk && Math.Abs(delta.X) < 18f && Math.Abs(delta.Y) < 18f)
+            {
+                return remainingRouteSteps > 1;
+            }
+            if (action == tsorcRevampGlobalNPC.NavActionType.Walk && Math.Abs(delta.Y) > 40f)
+            {
+                return false;
+            }
+            if (action == tsorcRevampGlobalNPC.NavActionType.JumpTo && Math.Abs(delta.X) < 16f && Math.Abs(delta.Y) < 24f)
+            {
+                return false;
+            }
+
+            bool playerClearlyAbove = player.Center.Y < npc.Center.Y - 48f;
+            bool waypointBelowNpc = waypoint.Y > npc.Center.Y + 18f;
+            if (playerClearlyAbove && waypointBelowNpc && action == tsorcRevampGlobalNPC.NavActionType.JumpTo)
+            {
+                return false;
+            }
+
+            float currentDistance = npc.Distance(player.Center);
+            float waypointDistance = Vector2.Distance(waypoint, player.Center);
+            if (waypointDistance > currentDistance + 160f && action != tsorcRevampGlobalNPC.NavActionType.Drop)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static void LogFighterNavDebug(NPC npc, tsorcRevampGlobalNPC globalNPC, bool lineOfSight)
+        {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode || globalNPC.NavigationTier < 1)
+            {
+                return;
+            }
+
+            bool interesting = globalNPC.BoredTimer > 0
+                || globalNPC.StuckTimer > 0
+                || globalNPC.WaypointTimer > 0
+                || globalNPC.WaypointSearchFailures > 0
+                || globalNPC.NavExploreTimer > 0
+                || globalNPC.NavBlockedDirectionTimer > 0
+                || !lineOfSight
+                || Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) > 48f;
+            if (!interesting)
+            {
+                return;
+            }
+
+            int now = (int)Main.GameUpdateCount;
+            if (now - globalNPC.LastNavDebugLogTick < 60)
+            {
+                return;
+            }
+            globalNPC.LastNavDebugLogTick = now;
+
+            try
+            {
+                string separator = Path.DirectorySeparatorChar.ToString();
+                string logDir = Main.SavePath + separator + "Logs";
+                Directory.CreateDirectory(logDir);
+                string logPath = logDir + separator + "tsorcRevamp-nav.log";
+                Player player = Main.player[npc.target];
+                string waypoint = globalNPC.WaypointTimer > 0
+                    ? $"{globalNPC.WaypointAction}@({globalNPC.WaypointTarget.X / 16f:F1},{globalNPC.WaypointTarget.Y / 16f:F1})/{globalNPC.WaypointTimer}"
+                    : "none";
+                string route = globalNPC.NavRouteCount > 0
+                    ? $"{globalNPC.NavRouteIndex + 1}/{globalNPC.NavRouteCount}"
+                    : "none";
+                string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI} pos=({npc.Center.X / 16f:F1},{npc.Center.Y / 16f:F1}) player=({player.Center.X / 16f:F1},{player.Center.Y / 16f:F1}) dist={npc.Distance(player.Center):F0} los={lineOfSight} yDiff={player.Center.Y - npc.Center.Y:F0} tier={globalNPC.NavigationTier} bored={globalNPC.BoredTimer} stuck={globalNPC.StuckTimer} route={route} wp={waypoint} intent={globalNPC.LastNavIntent} result={globalNPC.LastWaypointResult} cd={globalNPC.WaypointSearchCooldown} wpNoProg={globalNPC.WaypointNoProgressTimer} blocked={globalNPC.NavBlockedDirection}/{globalNPC.NavBlockedDirectionTimer} explore={globalNPC.NavExploreDirection}/{globalNPC.NavExploreTimer} ledgeRun={globalNPC.LedgeRunUpTimer} vault={globalNPC.LedgeVaultTimer} jumpCd={globalNPC.NavJumpCooldown} stopFire={globalNPC.CanStopToFire}";
+                File.AppendAllText(logPath, line + Environment.NewLine);
+            }
+            catch
+            {
+                // Debug logging should never affect NPC AI.
+            }
+        }
 
 
         public static bool SimpleProjectile(NPC npc)
@@ -4347,9 +6546,30 @@ namespace tsorcRevamp.NPCs
             }
 
             //If it's supposed to stop moving when firing, then do so
-            if (globalNPC.CurrentAttack.stopBefore && globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime)
+            if (globalNPC.CanStopToFire && globalNPC.CurrentAttack.stopBefore && !globalNPC.CanPassThroughWalls)
             {
-                npc.velocity.X = 0;
+                bool inTelegraphWindow = globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime;
+                float stopBeforeChance = GetStandingFireChance(globalNPC, globalNPC.CurrentAttack.stopBeforeChance);
+
+                if (inTelegraphWindow && Main.rand.NextFloat() < stopBeforeChance)
+                {
+                    npc.velocity.X = 0;
+                    npc.velocity.Y = 0f; // suppress jump-frame animation while aiming
+
+                    // Standing-fire roll: on the first frame of the telegraph window, tier-2 NPCs
+                    // may commit to firing N shots in a row without resuming movement.
+                    // Aggression lowers the chance to stand; Patience raises the burst count.
+                    if (globalNPC.CanStopToFire && globalNPC.NavigationTier >= 2 && globalNPC.FighterRangedStandShotsRemaining == 0
+                        && globalNPC.ProjectileTimer == globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime + 1
+                        && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float aggressionFraction = Math.Clamp(globalNPC.Aggression / 2.5f, 0f, 1f);
+                        if (Main.rand.NextFloat() > aggressionFraction)
+                        {
+                            globalNPC.FighterRangedStandShotsRemaining = 1 + Main.rand.Next(0, 1 + (int)globalNPC.Patience);
+                        }
+                    }
+                }
             }
 
             if (globalNPC.ProjectileTimer >= globalNPC.CurrentAttack.timerCap)
@@ -4370,11 +6590,38 @@ namespace tsorcRevamp.NPCs
                 }
 
                 globalNPC.AttackSucceeded = globalNPC.AttackIndex;
+                RegisterFighterAttack(npc);
                 globalNPC.AttackIndex = globalNPC.NextAttackIndex;
                 globalNPC.NextAttackIndex = WeightedRandomAttackSelection(globalNPC);
+
+                // Consume one standing-fire charge. When exhausted, exit standing mode.
+                if (globalNPC.FighterRangedStandShotsRemaining > 0)
+                {
+                    if (--globalNPC.FighterRangedStandShotsRemaining == 0)
+                    {
+                        npc.TargetClosest(true); // resume pursuit
+                    }
+                }
             }
 
             return false;
+        }
+
+        public static void RegisterFighterAttack(NPC npc, int attacksBeforePause = 4, int pauseTicks = 60)
+        {
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (globalNPC.NavigationTier < 2)
+            {
+                return;
+            }
+
+            globalNPC.FighterAttacksSincePause++;
+            if (globalNPC.FighterAttacksSincePause >= attacksBeforePause)
+            {
+                globalNPC.FighterAttacksSincePause = 0;
+                globalNPC.FighterPostAttackPauseTimer = pauseTicks;
+                globalNPC.BoredTimer = 0;
+            }
         }
 
         /// <summary>
@@ -4428,8 +6675,9 @@ namespace tsorcRevamp.NPCs
             public bool needsLineOfSight;
             public float weight;
             public Func<NPC, bool> condition;
+            public float stopBeforeChance;
 
-            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null)
+            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f)
             {
                 type = projectileType;
                 this.timerCap = timerCap;
@@ -4445,6 +6693,7 @@ namespace tsorcRevamp.NPCs
                 this.needsLineOfSight = needsLineOfSight;
                 this.weight = weight;
                 this.condition = condition;
+                this.stopBeforeChance = stopBeforeChance;
             }
         }
 
@@ -4581,7 +6830,6 @@ namespace tsorcRevamp.NPCs
         {
             Vector2? potentialNewPos;
 
-            SoundEngine.PlaySound(SoundID.Item8, npc.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 for (int i = 0; i < 100; i++)
@@ -4591,6 +6839,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown = TeleportTelegraphTime;
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph = potentialNewPos.Value;
+                        SoundEngine.PlaySound(SoundID.Item8, npc.Center);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -4601,6 +6850,19 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
                 }
+            }
+        }
+
+        private static void SpawnTeleportMist(Vector2 position, Vector2 direction, int width, int height, tsorcRevampGlobalNPC globalNPC)
+        {
+            for (int i = 0; i < globalNPC.TeleportDustCount; i++)
+            {
+                Vector2 randomVelocity = direction * Main.rand.NextFloat(2.5f, 5.5f)
+                    + Main.rand.NextVector2Circular(1.6f, 1.6f);
+                Dust dust = Dust.NewDustPerfect(position + Main.rand.NextVector2Circular(width * 0.4f, height * 0.4f),
+                    globalNPC.TeleportDustType, randomVelocity, 150, globalNPC.TeleportDustColor, globalNPC.TeleportDustScale);
+                dust.noGravity = true;
+                dust.fadeIn = 0.45f;
             }
         }
 
@@ -4617,27 +6879,10 @@ namespace tsorcRevamp.NPCs
 
             Vector2 diff = globalNPC.TeleportTelegraph - npc.Center;
             float length = diff.Length();
-            diff.Normalize();
-            Vector2 offset = Vector2.Zero;
+            if (length > 0f)
+                diff /= length;
 
-            for (int i = 0; i < length; i++)
-            {
-                offset += diff;
-                if (Main.rand.NextBool(2))
-                {
-                    Vector2 dustPoint = offset;
-                    dustPoint.X += Main.rand.NextFloat(-npc.width / 2, npc.width / 2);
-                    dustPoint.Y += Main.rand.NextFloat(-npc.height / 2, npc.height / 2);
-                    if (Main.rand.NextBool())
-                    {
-                        Dust.NewDustPerfect(npc.Center + dustPoint, 71, diff * 5, 200, default, 0.8f).noGravity = true;
-                    }
-                    else
-                    {
-                        Dust.NewDustPerfect(npc.Center + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
-                    }
-                }
-            }
+            SpawnTeleportMist(npc.Center, diff, npc.width, npc.height, globalNPC);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -4646,6 +6891,8 @@ namespace tsorcRevamp.NPCs
             }
 
             npc.Center = globalNPC.TeleportTelegraph;
+
+            SpawnTeleportMist(npc.Center, -diff, npc.width, npc.height, globalNPC);
         }
 
         public static void FighterOnHit(NPC npc, bool melee)
@@ -4654,6 +6901,8 @@ namespace tsorcRevamp.NPCs
             {
                 npc.localAI[1] = 80f; // was 100
                 npc.knockBackResist = 0.09f;
+                // Abort any standing-fire burst — the NPC will be knocked airborne anyway
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().FighterRangedStandShotsRemaining = 0;
 
                 //TELEPORT MELEE
                 if (Main.rand.NextBool(18))
@@ -4902,6 +7151,28 @@ namespace tsorcRevamp.NPCs
 
             if (!melee)
             {
+                tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                if (globalNPC.FighterRangedHitInterruptedPause || globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0)
+                {
+                    globalNPC.FighterRangedHitInterruptedPause = false;
+                    globalNPC.FighterPostAttackPauseTimer = 0;
+                    globalNPC.FighterRangedStandShotsRemaining = 0;
+                    globalNPC.BoredTimer = 0;
+                    npc.TargetClosest(true);
+                    float distance = npc.Distance(Main.player[npc.target].Center);
+                    if (distance > 320f)
+                    {
+                        npc.ai[1] = Main.rand.NextBool() ? 90f : 830f;
+                    }
+                    else
+                    {
+                        npc.velocity.Y = -5f;
+                        npc.velocity.X += npc.direction * 5f;
+                    }
+                    npc.netUpdate = true;
+                    return;
+                }
+
                 // Ensures ranged can't interrupt attack once the flash telegraph triggers
                 if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
                 {

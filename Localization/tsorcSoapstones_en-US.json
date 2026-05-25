@@ -1766,7 +1766,8 @@
   "tileY": 873,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "locationName": "THE BURNED VILLAGE"
 }
 {
   "text": "To the WEST \u003C--- --NEWLINE Ashen Peak Village --NEWLINE  --NEWLINE To the EAST---\u003E --NEWLINE The Tree Village of the Orid Tribe --NEWLINE Jungle Ruins --NEWLINE Obsidian\u0027s Volcano --NEWLINE Unknown",
@@ -1800,10 +1801,11 @@
   "tileY": 1741,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore,location",
+  "locationName": "SUN WORSHIPPER'S HOME"
 }
 {
-  "text": "This gate is sealed by Chlorophyte, an ore stronger than Adamantite.  --NEWLINE  --NEWLINE \u0022I\u0027m going to need a really powerful drill to open this. Bombs and normal drills don\u0027t put a dent in it...\u0022 --NEWLINE  --NEWLINE You jot a note in your journal.",
+  "text": "This gate is sealed by Chlorophyte, an ore stronger than Adamantite.  --NEWLINE  --NEWLINE \u0022I\u0027m going to need a really powerful drill to open this. Bombs and normal drills don\u0027t put a dent in it...\u0022 --NEWLINE  --NEWLINE You jot a note on your map.",
   "tileX": 5018,
   "tileY": 915,
   "textWidth": 320,
@@ -1864,7 +1866,7 @@
   "style": 1
 }
 {
-  "text": "This gate was created and sealed shut long ago to protect the temple inhabitants from the nameless and immortal \u0022old man.\u0022 He is now cursed to exist merely as a vessel for the demon known as  Skeletron, The First of the Dead. But do not pity him. His crimes were far greater than the fate he earned...",
+  "text": "This gate was created and sealed shut long ago to protect the temple inhabitants from the nameless and immortal \u0022old man.\u0022 He is now cursed to exist merely as a vessel for the demon known as Skeletron, The First of the Dead. But do not pity him. His crimes were far greater than the fate he earned...",
   "tileX": 5151,
   "tileY": 1366,
   "textWidth": 320,
@@ -1877,7 +1879,7 @@
   "tileY": 952,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "lore"
 }
 {
   "text": "- You have found the Lost Ruins of Artorias -",
@@ -1894,7 +1896,8 @@
   "tileY": 958,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+ "category": "lore,location",
+  "locationName": "DRYAD'S HOME"
 }
 {
   "text": "The Merchant tells you a rumor about a shower of fallen meteors that never hit the ground, remaining suspended mid-air above the jungle. Such strange mysteries...",
@@ -2032,7 +2035,7 @@
   "tileY": 821,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "lore"
 }
 {
   "text": "A dark impulse compels you to destroy one of these large flowers.  --NEWLINE  --NEWLINE You believe it is the key to gaining access to the Temple of Golem.",
@@ -2130,7 +2133,7 @@
   "style": 1
 }
 {
-  "text": "You\u0027ve found an Amethyst Gem Lock. --NEWLINE  --NEWLINE A Large Amethyst is required to unlock the forcefield blocking the teleporter. --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Need Large Amethyst. Lizard gate behind hidden Moon Temple door.... East of the Great Pyramid...\u0022 ",
+  "text": "You\u0027ve found an Amethyst Gem Lock. --NEWLINE  --NEWLINE A Large Amethyst is required to unlock the forcefield blocking the teleporter. --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Need Large Amethyst. Gate behind hidden Moon Temple door.... East of the Great Pyramid...\u0022 ",
   "tileX": 6087,
   "tileY": 1743,
   "textWidth": 320,
@@ -2232,7 +2235,9 @@
   "tileX": 6447,
   "tileY": 1126,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "UNDERGROUND JUNGLE, EAST"
 }
 {
   "text": "This gate must only open from the other side.",
@@ -2341,7 +2346,9 @@
   "tileX": 6728,
   "tileY": 1659,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "lore,location",
+  "locationName": "BOWELS OF THE ABYSS"
 }
 {
   "text": "\u0022Have you seen it?\u0022 whispers a feminine voice. --NEWLINE  --NEWLINE \u0022The sky temple that floats above the village?\u0022 --NEWLINE  --NEWLINE \u0022It is where Golem imprisoned the Empress!\u0022",
@@ -2444,7 +2451,9 @@
   "tileX": 7308,
   "tileY": 477,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "category": "hint, location",
+  "locationName": "WYVERN MAGE'S ICE MAGIC GAME"
 }
 {
   "text": "Red: \u0022Araz, can you help me? Since you were captured things have gotten so much worse. Ever since killing the snitch that gave us up to Attraidies, the world has been flooded with even more powerful beasts and demons. The corruption has been spreading farther and faster across the land. I don\u0027t know how I can stop it.\u0022",
@@ -2514,7 +2523,8 @@
   "tileY": 866,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore,location",
+  "locationName": "FROZEN OCEAN"
 }
 {
   "text": "You peer below and see a verdant island in the clouds.",
@@ -2541,7 +2551,7 @@
   "category": "lore"
 }
 {
-  "text": "- This gate guards the path to the Frozen Depths -  --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Lizard Gate at the deepest point of the Frozen Ocean....\u0022",
+  "text": "- This gate guards the path to the Frozen Depths -  --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Gate at the deepest point of the Frozen Ocean....\u0022",
   "tileX": 8070,
   "tileY": 1644,
   "textWidth": 320,

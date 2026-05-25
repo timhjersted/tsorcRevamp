@@ -57,6 +57,12 @@ namespace tsorcRevamp.NPCs.Enemies
             //BannerItem = ModContent.ItemType<Banners.LothricSpearKnightBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            //globalNPC.CanPassThroughWalls = true;
+            globalNPC.NavigationTier = 0;
+            //globalNPC.MaxJumpPower = 10f;
+            //globalNPC.MaxJumpBoost = 6f;
         }
 
         public Player player

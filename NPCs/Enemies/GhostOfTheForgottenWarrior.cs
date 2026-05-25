@@ -53,7 +53,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 warriorDamage = 50; // didn't have scaling damage before
             }
 
-            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), warriorDamage, 8, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), warriorDamage, 8, SoundID.Item17, stopBeforeFiring: false);
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.CanPassThroughWalls = true;
+            globalNPC.NavigationTier = 0;
+            globalNPC.MaxJumpPower = 9f;
+            globalNPC.MaxJumpBoost = 5f;
+            globalNPC.TeleportTelegraphTime = 80;
+            globalNPC.TeleportDustType = DustID.Smoke;
+            globalNPC.TeleportDustColor = new Color(55, 55, 65);
+            globalNPC.TeleportDustScale = 0.65f;
+            globalNPC.TeleportDustCount = 20;
         }
 
         #region Spawn
@@ -89,9 +100,25 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, topSpeed, .04f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 2.1f); // experimenting with no longer teleporting
 
-            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 149 && Main.rand.NextBool(4))
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            // Cancel the spear charge-up when we lose line of sight — don't telegraph or fire blind.
+            // Only reset when the timer is non-zero to avoid a pointless netUpdate every single tick.
+            bool hasLos = Collision.CanHit(NPC.position, NPC.width, NPC.height,
+                                            Main.player[NPC.target].position,
+                                            Main.player[NPC.target].width,
+                                            Main.player[NPC.target].height);
+            if (!hasLos && globalNPC.ProjectileTimer > 0f)
             {
-                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0f;
+                globalNPC.ProjectileTimer = 0f;
+                NPC.netUpdate = true;
+            }
+
+            // Being hit while winding up also cancels the shot (25% chance — not trivially interrupted,
+            // but a solid hit should reset the charge).
+            if (NPC.justHit && globalNPC.ProjectileTimer <= 149 && Main.rand.NextBool(4))
+            {
+                globalNPC.ProjectileTimer = 0f;
                 NPC.netUpdate = true;
             }
         }

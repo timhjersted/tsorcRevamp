@@ -79,8 +79,11 @@ namespace tsorcRevamp.Tiles
                 }
 
                 bool selectedSoapstone = false;
-                bool mouseInRange = mouseDistance < 240 && mouseLineOfSight;
+                // slightly reduced from 240 so the button only appears when the player is closer.
+                bool mouseInRange = mouseDistance < 200 && mouseLineOfSight;
                 bool playerInRange = distance <= 40;
+                // banner fires at a slightly larger radius than the soapstone button.
+                bool locationBannerInRange = distance <= 80;
 
                 tsorcRevampConfig config = ModContent.GetInstance<tsorcRevampConfig>();
                 bool categoryDisabled = SoapstoneTileEntity.IsEntirelyDisabled(entity, config);
@@ -88,7 +91,7 @@ namespace tsorcRevamp.Tiles
 
                 // Location banner: fire when player walks near a location-tagged sign whose
                 // ID differs from the last one shown. Independent of category-disable / show-on-click.
-                if (playerInRange
+                if (locationBannerInRange
                     && !config.DisableLocationBanner
                     && !string.IsNullOrEmpty(entity.locationName)
                     && tsorcRevamp.LastShownLocationId != entity.ID)
@@ -110,6 +113,15 @@ namespace tsorcRevamp.Tiles
 
                 bool keepOpen = autoOpen || entity.manuallyOpened;
 
+                
+                if (entity.manuallyOpened)
+                {
+                    tsorcRevamp.NearbySoapstone = entity;
+                    entity.nearPlayer = true;
+                    entity.timer = 25;
+                    selectedSoapstone = true;
+                }
+
                 //Main.NewText("soap " + tsorcRevamp.NearbySoapstoneMouse);
                 //If the mouse is already nearby a soapstone
                 if (!categoryDisabled && tsorcRevamp.NearbySoapstoneMouse)
@@ -117,6 +129,7 @@ namespace tsorcRevamp.Tiles
                     //If the mouse is closer to this soapstone than to the previous one, set this as the current soapstone
                     if (mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance && mouseInRange && distance < 600)
                     {
+                        selectedSoapstone = true;
                         tsorcRevamp.NearbySoapstone = entity;
                         if (!entity.hidden)
                         {
@@ -132,8 +145,9 @@ namespace tsorcRevamp.Tiles
                         entity.nearPlayer = true;
                     }
                 }
-                else if (!categoryDisabled && (playerInRange || (mouseInRange && distance < 240)))
+                else if (!categoryDisabled && (playerInRange || (mouseInRange && distance < 200)))
                 {
+                    selectedSoapstone = true;
                     tsorcRevamp.NearbySoapstone = entity;
                     if (!entity.hidden)
                     {
@@ -172,6 +186,17 @@ namespace tsorcRevamp.Tiles
                             {
                                 entity.hidden = true;
                             }
+                        }
+                    }
+                    else
+                    {
+                        // Timer was already 0 (button/no-autoopen mode) and player left range.
+                        // Clear nearPlayer immediately — without this, nearPlayer stays true
+                        // forever since the timer-decrement path never fires.
+                        entity.nearPlayer = false;
+                        if (tsorcRevamp.NearbySoapstone == entity)
+                        {
+                            tsorcRevamp.NearbySoapstone = null;
                         }
                     }
                 }

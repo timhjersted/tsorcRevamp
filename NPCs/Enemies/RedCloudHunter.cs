@@ -16,12 +16,10 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
-            AIType = NPCID.SkeletonArcher;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 18;
             NPC.lifeMax = 600;
-            NPC.scale = 0.9f;
             NPC.defense = 18;
             NPC.value = 5210; // life / 1.15 bc rare : was 650
             NPC.width = 18;
@@ -50,6 +48,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 55;
                 archerBoltDamage = 75;
             }
+
+            // Navigation tuning: above-average jumps and ledge routing for a mobile archer
+            tsorcRevampGlobalNPC hunterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            hunterGlobalNPC.NavigationTier = 0;
+            hunterGlobalNPC.MaxJumpPower = 10f;
+            hunterGlobalNPC.MaxJumpBoost = 5f;
+            // CanDoubleJump remains false for RedCloudHunter
 
         }
 
@@ -87,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FrostburnArrow, 22, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
+            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FrostburnArrow, archerBoltDamage, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
         }
 
         #region Gore

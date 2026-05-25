@@ -487,13 +487,16 @@ namespace tsorcRevamp
         ///<param name="ai1">Lets you pass a value to the projectile's ai1</param>
         ///<param name="overshoot">Lets you make it aim somewhere offset from the player. Useful for making it lob projectiles above their head.</param>
         ///<param name="telegraphColor">The color of its telegraph flash. Defaults to white.</param>
-        ///<param name="stopBeforeFiring">Should this NPC stop moving before firing?</param>
-        ///<param name="needsLineOfSight">Does this NPC need line of sight to the player to shoot?</param>
+        ///<param name="stopBeforeFiring">Should this NPC be allowed to stop moving before firing?</param>
+        ///<param name="stopBeforeChance">How likely it is to stop before firing when that behavior is allowed. Default is 10%.</param>
+        ///<param name="needsLineOfSight">Does this attack need line of sight to the player to shoot? Defaults true. Set false only for attacks that can intentionally pass through walls.</param>
         ///<param name="weight">The weight of this attack. Lower = less likely to occur and vice versa, default is 1</param>
         ///<param name="condition">The attack will only execute if this condition is true. Takes a lambda experession.</param>
-        public static void AddAttack(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null)
+        ///<param name="useStopBeforeChance">If true, this attack uses stopBeforeChance. If false, stopBeforeChance is ignored and treated as 0.</param>
+        public static void AddAttack(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null, bool useStopBeforeChance = false, float stopBeforeChance = 0.1f)
         {
-            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList.Add(new tsorcRevampAIs.ProjectileData(projectileType, timerCap, projectileDamage, projectileVelocity, shootSound, projectileGravity, ai0, ai1, overshoot, telegraphColor, stopBeforeFiring, needsLineOfSight, weight, condition));
+            float appliedStopBeforeChance = useStopBeforeChance ? stopBeforeChance : 0f;
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList.Add(new tsorcRevampAIs.ProjectileData(projectileType, timerCap, projectileDamage, projectileVelocity, shootSound, projectileGravity, ai0, ai1, overshoot, telegraphColor, stopBeforeFiring, needsLineOfSight, weight, condition, appliedStopBeforeChance));
         }
 
         ///<summary> 
@@ -728,6 +731,25 @@ namespace tsorcRevamp
                 Vector2 dustPos = center + dir;
                 Vector2 dustVel = new Vector2(dustSpeed, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
                 Dust.NewDustPerfect(dustPos, dustID, dustVel, 200).noGravity = true;
+            }
+        }
+
+        public static void DustRingPrecise(Vector2 center, float radius, int dustID, int dustCount = 32, float dustSpeed = 0f, int alpha = 80, float scale = 1f)
+        {
+            radius = Math.Max(0f, radius);
+            dustCount = Math.Max(1, dustCount);
+
+            for (int j = 0; j < dustCount; j++)
+            {
+                float rotation = MathHelper.TwoPi * j / dustCount;
+                Vector2 dir = rotation.ToRotationVector2();
+                Vector2 dustPos = center + dir * radius;
+                Vector2 dustVel = dustSpeed == 0f
+                    ? Vector2.Zero
+                    : new Vector2(dustSpeed, 0f).RotatedBy(rotation + MathHelper.PiOver2);
+                Dust dust = Dust.NewDustPerfect(dustPos, dustID, dustVel, alpha);
+                dust.noGravity = true;
+                dust.scale = scale;
             }
         }
 

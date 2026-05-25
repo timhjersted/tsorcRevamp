@@ -12,6 +12,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Tools;
+using tsorcRevamp.NPCs;
 using tsorcRevamp.Textures;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.UI;
@@ -417,15 +418,11 @@ namespace tsorcRevamp
 
                     //DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, Color.White, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
                     OurDrawBorderString(Main.spriteBatch, text, font, textPosition, Color.White, scaleMod, 0, 0, -1);
-                    return;
+                    // Fall through so DrawLocationBanner still runs.
                 }
-                else
+                else if (soapstone.nearPlayer)
                 {
-                    if (!soapstone.nearPlayer)
-                    {
-                        return;
-                    }
-
+                    // Show the "Show Hint / Show Story" click-to-open button.
                     string showButtonText = SoapstoneTileEntity.BuildShowButtonText(soapstone);
                     Vector2 textSize = FontAssets.ItemStack.Value.MeasureString(showButtonText) * scaleMod;
                     Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition - new Vector2((textSize.X / 2) - 16, 20));
@@ -458,8 +455,8 @@ namespace tsorcRevamp
                             soapstone.timer = 25;
                             soapstone.hidden = false;
                             // Sticky open: bubble stays visible until the player moves the mouse
-                            // far from this click point (or walks out of range). The proximity
-                            // refresh in SoapstoneTile.PostDraw keeps timer at 25 while open.
+                            // far from this click point.  SoapstoneTile.PostDraw holds timer at
+                            // 25 unconditionally while manuallyOpened is true.
                             soapstone.manuallyOpened = true;
                             soapstone.clickedAtMouse = Main.MouseScreen;
                             // Read state should only flip on actual viewing (i.e. now), not on
@@ -471,6 +468,63 @@ namespace tsorcRevamp
             }
 
             DrawLocationBanner(spriteBatch);
+
+            // ── FighterAI navigation debug overlay ────────────────────────────────
+            if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            {
+                DrawNavDebug(spriteBatch);
+            }
+        }
+
+        /// <summary>
+        /// Draws a small navigation-state readout in the lower-left corner for the nearest
+        /// enemy NPC that uses FighterAI (NavigationTier >= 1).  Only rendered when DebugMode
+        /// is enabled in the mod config.
+        /// </summary>
+        private static void DrawNavDebug(SpriteBatch spriteBatch)
+        {
+            // Find the nearest active enemy with navigation intelligence.
+            NPC target = null;
+            float closestDistSq = float.MaxValue;
+            foreach (NPC npc in Main.ActiveNPCs)
+            {
+                if (!npc.active || npc.friendly || npc.lifeMax <= 5) continue;
+                tsorcRevampGlobalNPC g = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                if (g.NavigationTier < 1) continue;
+                float dSq = Vector2.DistanceSquared(npc.Center, Main.LocalPlayer.Center);
+                if (dSq < closestDistSq) { closestDistSq = dSq; target = npc; }
+            }
+            if (target == null) return;
+
+            tsorcRevampGlobalNPC gNpc   = target.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            Player               tPlayer = Main.player[target.target];
+            bool   los    = tPlayer.CanHit(target);
+            float  yDiff  = tPlayer.Center.Y - target.Center.Y;   // negative = player above
+            float  dist   = target.Distance(tPlayer.Center);
+            string wpStr  = gNpc.WaypointTimer > 0
+                ? $"{gNpc.WaypointAction} ({gNpc.WaypointTarget.X / 16f:F1},{gNpc.WaypointTarget.Y / 16f:F1}) T:{gNpc.WaypointTimer}"
+                : "none";
+
+            string[] lines =
+            {
+                $"[NAV] {target.TypeName}  dist:{dist:F0}px",
+                $"NavTier:{gNpc.NavigationTier}  LOS:{los}  YDiff:{yDiff:F0}px",
+                $"Bored:{gNpc.BoredTimer}  Stuck:{gNpc.StuckTimer}  HaltAtLedge:{gNpc.HaltAtLedge}",
+                $"Waypoint: {wpStr}",
+                $"Intent:{gNpc.LastNavIntent}  Result:{gNpc.LastWaypointResult}",
+                $"CD:{gNpc.WaypointSearchCooldown}  Fail:{gNpc.WaypointSearchFailures}  JumpCD:{gNpc.NavJumpCooldown}",
+                $"RunUp:{gNpc.LedgeRunUpTimer}  Vault:{gNpc.LedgeVaultTimer}  StopFire:{gNpc.CanStopToFire}",
+            };
+
+            DynamicSpriteFont font  = FontAssets.MouseText.Value;
+            float             lineH = 18f;
+            float             startY = Main.screenHeight - (lines.Length * lineH) - 10f;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                Utils.DrawBorderStringFourWay(spriteBatch, font, lines[i],
+                    10f, startY + i * lineH,
+                    Color.White, Color.Black, Vector2.Zero, 0.85f);
+            }
         }
 
         // White all-caps location announcement. Centered horizontally, top quarter vertically.

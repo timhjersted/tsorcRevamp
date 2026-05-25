@@ -580,7 +580,7 @@
   "textWidth": 320,
   "style": 1,
   "category": "location",
-  "locationName": "Path of Darkness"
+  "locationName": "PATH OF DARKNESS"
 
 }
 {
@@ -1929,7 +1929,7 @@
   "tileY": 860,
   "textWidth": 320,
   "style": 1,
-  "category": "story",
+  "category": "story,location",
   "locationName": "THE BURNED VILLAGE"
 }
 {

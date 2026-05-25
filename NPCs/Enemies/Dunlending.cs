@@ -32,6 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.PossessedArmor;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavigationTier = 0;
             
             if (tsorcRevampWorld.SuperHardMode)
             {

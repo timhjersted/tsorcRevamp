@@ -23,11 +23,19 @@ public abstract class MeleeAnimation : ItemComponent
             return;
         }
 
+        if (item.TryGetGlobalItem(out ItemMeleeAttackAiming aiming) && aiming.Enabled && Math.Abs(aiming.AttackDirection.X) > 0.1f)
+        {
+            player.direction = Math.Sign(aiming.AttackDirection.X);
+        }
+
         float animationRotation = GetItemRotation(player, item);
         float weaponRotation = MathUtils.Modulo(animationRotation, MathHelper.TwoPi);
-        float pitch = MathUtils.RadiansToPitch(weaponRotation);
         var weaponDirection = weaponRotation.ToRotationVector2();
 
+        float pitch = MathUtils.RadiansToPitch(weaponRotation);
+
+        // Clamp pitch at the extremes when the weapon has crossed the vertical plane.
+        // After the direction fix above this should only fire in edge-case rotations.
         if (Math.Sign(weaponDirection.X) != player.direction)
         {
             pitch = weaponDirection.Y < 0f ? 1f : 0f;

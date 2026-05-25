@@ -32,8 +32,8 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
             AnimationType = NPCID.Skeleton;
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, SoundID.Item20, 0);
-            UsefulFunctions.AddAttack(NPC, 480, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, SoundID.Item100, weight: 0.2f);
-            UsefulFunctions.AddAttack(NPC, 200, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 20, 0, SoundID.Item100, weight: 0.05f);
+            UsefulFunctions.AddAttack(NPC, 480, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.2f);
+            UsefulFunctions.AddAttack(NPC, 200, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 20, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.05f);
         }
         //yes i tweaked the drop rates. Fight Me
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -47,8 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 26));
             npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofNanites, 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 26));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 24));
-            //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BandOfCosmicPower>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 24));        
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 3, 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 3, 3, 6));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 5));
@@ -122,13 +121,18 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //Big poison storm telegraph
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 390)
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool telegraphingPoisonStorm = globalNPC.CurrentAttack.type == ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();
+            float stormTelegraphStart = globalNPC.CurrentAttack.timerCap - 90f;
+            if (telegraphingPoisonStorm && globalNPC.ProjectileTimer >= stormTelegraphStart)
             {
-                UsefulFunctions.DustRing(NPC.Center, 480 - NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer, DustID.CursedTorch, 12, 4);
+                float telegraphRadius = MathHelper.Clamp(globalNPC.CurrentAttack.timerCap - globalNPC.ProjectileTimer, 0f, 90f);
+                UsefulFunctions.DustRing(NPC.Center, telegraphRadius, DustID.CursedTorch, 12, 4);
+
                 Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {
-                    NPC.velocity = Vector2.Zero;
+                    NPC.velocity *= 0.3f;
                 }
             }
 

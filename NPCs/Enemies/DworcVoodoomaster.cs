@@ -125,9 +125,13 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 0.8f, 0.02f, 0.2f, true, enragePercent: 0.5f, enrageTopSpeed: 1.6f, canPounce: false);
 
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 520)//SHRINKING CIRCLE DUST
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool telegraphingPoisonStorm = globalNPC.CurrentAttack.type == ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();
+            float stormTelegraphStart = globalNPC.CurrentAttack.timerCap - 180f;
+            if (telegraphingPoisonStorm && globalNPC.ProjectileTimer >= stormTelegraphStart)//SHRINKING CIRCLE DUST
             {
-                UsefulFunctions.DustRing(NPC.Center, 700 - NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer, DustID.CursedTorch, 12, 4);
+                float telegraphRadius = MathHelper.Clamp(globalNPC.CurrentAttack.timerCap - globalNPC.ProjectileTimer, 0f, 180f);
+                UsefulFunctions.DustRing(NPC.Center, telegraphRadius, DustID.CursedTorch, 12, 4);
                 Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {

@@ -32,7 +32,20 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = 28;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
-            UsefulFunctions.AddAttack(NPC, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, SoundID.Item17, stopBeforeFiring: false);
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.CanPassThroughWalls = true;
+            globalNPC.NavigationTier = 0;
+            globalNPC.MaxJumpPower = 11f;
+            globalNPC.MaxJumpBoost = 7f;
+            globalNPC.CanDoubleJump = true;
+            globalNPC.DoubleJumpPower = 7f;
+            globalNPC.TeleportTelegraphTime = 80;
+            globalNPC.TeleportDustType = DustID.Smoke;
+            globalNPC.TeleportDustColor = new Color(55, 55, 65);
+            globalNPC.TeleportDustScale = 0.65f;
+            globalNPC.TeleportDustCount = 20;
         }
 
         int chargeDamage = 0;
@@ -114,16 +127,26 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 1.4f, 0.175f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 3, canDodgeroll: true);
 
-            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 140f && Main.rand.NextBool(4))
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            bool hasLos = Collision.CanHit(NPC.position, NPC.width, NPC.height,
+                Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
+            if (!hasLos && globalNPC.ProjectileTimer > 0f)
             {
-                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 90f;
+                globalNPC.ProjectileTimer = 0f;
                 NPC.netUpdate = true;
             }
 
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150 && Main.rand.NextBool(3))
+            if (NPC.justHit && globalNPC.ProjectileTimer <= 140f && Main.rand.NextBool(4))
+            {
+                globalNPC.ProjectileTimer = 90f;
+                NPC.netUpdate = true;
+            }
+
+            if (globalNPC.ProjectileTimer >= 150 && Main.rand.NextBool(4))
             {
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemDiamond, NPC.velocity.X, NPC.velocity.Y);
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemDiamond, NPC.velocity.X, NPC.velocity.Y);
+                
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -195,7 +218,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150)
             {
-                Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 1f); 
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
                 spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, spearTexture.Size() / 2, 1, SpriteEffects.None, 0);
             }

@@ -36,6 +36,11 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskShifterBanner>();
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.NavigationTier = 0;
+            globalNPC.MaxJumpPower = 10f;
+            globalNPC.MaxJumpBoost = 6f;
         }
 
         float breathTimer = 60;

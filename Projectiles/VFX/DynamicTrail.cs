@@ -13,6 +13,8 @@ namespace tsorcRevamp.Projectiles.VFX
 {
     public class DynamicTrail : ModProjectile
     {
+        private const int MaxVertexStripPoints = 1024;
+
         public override string Texture => "tsorcRevamp/Projectiles/VFX/DynamicTrail";
         public override void SetStaticDefaults()
         {
@@ -451,7 +453,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 return false;
             }
 
-            if (trailPositions == null)
+            if (trailPositions == null || trailRotations == null)
             {
                 return false;
             }
@@ -497,12 +499,13 @@ namespace tsorcRevamp.Projectiles.VFX
         public bool additiveContext = false;
         public override bool PreDraw(ref Color lightColor)
         {
-            if (trailPositions == null)
+            if (trailPositions == null || trailRotations == null)
             {
                 return false;
             }
 
-            if (trailPositions.Count < 2)
+            int pointCount = Math.Min(trailPositions.Count, trailRotations.Count);
+            if (pointCount < 2)
             {
                 return false;
             }
@@ -559,8 +562,18 @@ namespace tsorcRevamp.Projectiles.VFX
             Main.graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
             Main.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);*/
 
+            int firstPoint = Math.Max(0, pointCount - MaxVertexStripPoints);
+            int drawPointCount = pointCount - firstPoint;
+            Vector2[] positions = new Vector2[drawPointCount];
+            float[] rotations = new float[drawPointCount];
+            for (int i = 0; i < drawPointCount; i++)
+            {
+                positions[i] = trailPositions[firstPoint + i];
+                rotations[i] = trailRotations[firstPoint + i];
+            }
+
             VertexStrip vertexStrip = new VertexStrip();
-            vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), ColorFunction, WidthFunction, offset, includeBacksides: true);
+            vertexStrip.PrepareStrip(positions, rotations, ColorFunction, WidthFunction, offset, includeBacksides: true);
             vertexStrip.DrawTrail();
 
             /*

@@ -85,13 +85,17 @@ namespace tsorcRevamp.NPCs
                 {
                     hit.Damage = (int)Math.Round(hit.Damage * 0.2f);
                 }
-                /*for (int i = 0; i < Main.maxNPCs; i++)
+
+                // Per-segment pierce immunity: a piercing projectile can't hit the same
+                // segment twice in quick succession, but each segment is independent so a
+                // piercing weapon can still hit multiple segments in one pass.
+                // This is intentionally weaker than Seath's cross-body immune=1, which
+                // prevents ANY segment from registering more than one hit per frame.
+                // penetrate == 1 means "last hit remaining" (or non-piercing), so skip those.
+                if (projectile.penetrate != 1)
                 {
-                    if (DestroyerSegments.Contains(Main.npc[i].type))
-                    {
-                        Main.npc[i].immune[projectile.owner] = 5;
-                    }
-                }*/
+                    npc.immune[projectile.owner] = 3;
+                }
             }
             if (tsorcRevamp.JungleWyvernSegments.Contains(npc.type))
             {

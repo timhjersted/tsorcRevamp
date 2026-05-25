@@ -1467,6 +1467,20 @@ namespace tsorcRevamp
         {
             tsorcRevamp.NearbySoapstoneMouse = false;
             tsorcRevamp.NearbySoapstoneMouseDistance = float.MaxValue;
+            // Only clear NearbySoapstone when the player has teleported far away (tile off-screen,
+            // PostDraw won't run to clean it up). The per-frame null reset caused rapid blinking
+            // because PostDraw occasionally misses a frame at draw-area boundaries.
+            if (tsorcRevamp.NearbySoapstone != null)
+            {
+                Vector2 soapWorld = new Vector2(tsorcRevamp.NearbySoapstone.Position.X, tsorcRevamp.NearbySoapstone.Position.Y) * 16f;
+                if (Vector2.Distance(Main.LocalPlayer.Center, soapWorld) > 600f)
+                {
+                    tsorcRevamp.NearbySoapstone.nearPlayer = false;
+                    tsorcRevamp.NearbySoapstone.manuallyOpened = false;
+                    tsorcRevamp.NearbySoapstone.timer = 0;
+                    tsorcRevamp.NearbySoapstone = null;
+                }
+            }
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
                 PlaceModdedTiles();
 

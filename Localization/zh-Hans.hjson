@@ -9949,6 +9949,9 @@ Mods: {
 			// YianBlaze2.DisplayName: Yian Blaze2
 			// YianBlaze.DisplayName: Yian Blaze
 			// DiamondCrusherShockwave.DisplayName: Diamond Crusher Shockwave
+			// InvaderMeleeHitbox.DisplayName: Invader Melee Hitbox
+			// InvaderThrowingStar.DisplayName: Invader Throwing Star
+			// InvaderCrossbowBolt.DisplayName: Invader Crossbow Bolt
 		}
 
 		NPCs: {
@@ -11601,6 +11604,7 @@ Mods: {
 			LeonhardRemix.DisplayName: 李奥纳德
 			TrueDeath.DisplayName: 死神
 			// DarkCloudShadow.DisplayName: Dark Cloud Shadow
+			// AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
 		}
 
 		Prefixes: {

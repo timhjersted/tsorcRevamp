@@ -33,7 +33,38 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 4;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();
-            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 10, 8, shootSound: SoundID.Item17);
+
+            int spearDamage = 10;
+
+            if (Main.hardMode)
+            {
+                NPC.lifeMax  = 260;
+                NPC.damage   = 40;
+                NPC.defense  = 12;
+                NPC.value    = 2500;
+                spearDamage  = 20;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax  = 700;
+                NPC.damage   = 70;
+                NPC.defense  = 30;
+                NPC.value    = 6000;
+                spearDamage  = 35;
+            }
+
+            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 8, shootSound: SoundID.Item17);
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.NavigationTier = 0;
+            globalNPC.MaxJumpPower   = 9f;
+            globalNPC.MaxJumpBoost   = 5f;
+            globalNPC.WeakTeleport   = true;
+
+            // Personality — calm fighter that prefers to hold ground and throw spears
+            globalNPC.Aggression = 0.6f;   // moderate chase-aggression; rolls standing-fire fairly often
+            globalNPC.Patience   = 1.2f;   // tends to fire 1–2 spears per stand
+            globalNPC.Agility    = 0.25f;  // not very dodge-y
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -71,6 +102,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             if (spawnInfo.Player.townNPCs > 0f) return 0f;
+
+            // ── Pre-Hardmode spawns ───────────────────────────────────────────────
             if (spawnInfo.Player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.Player.ZoneCrimson && !Main.dayTime) return 0.0427f;
             if (spawnInfo.Player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.Player.ZoneCrimson && Main.dayTime) return 0.038f;
 
@@ -80,6 +113,15 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime) return 0.0555f;
                 if (spawnInfo.Player.ZoneDungeon && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight)) return 0.03857f;
             }
+
+            // ── Hardmode spawns ───────────────────────────────────────────────────
+            if (Main.hardMode && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneJungle
+                && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
+            {
+                if (spawnInfo.Player.ZoneOverworldHeight) return !Main.dayTime ? 0.025f : 0.018f;
+                if (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) return !Main.dayTime ? 0.032f : 0.022f;
+            }
+
             return chance;
         }
         #endregion

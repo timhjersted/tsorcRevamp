@@ -52,7 +52,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 topSpeed = 2f;
             }
 
-            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17, stopBeforeFiring: false);
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.NavigationTier = 0;
+            globalNPC.MaxJumpPower = 10f;
+            globalNPC.MaxJumpBoost = 6f;
+            globalNPC.TeleportTelegraphTime = 80;
+            globalNPC.TeleportDustType = DustID.Smoke;
+            globalNPC.TeleportDustColor = new Color(55, 55, 65);
+            globalNPC.TeleportDustScale = 0.65f;
+            globalNPC.TeleportDustCount = 20;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -88,15 +98,25 @@ namespace tsorcRevamp.NPCs.Enemies
         float topSpeed = 1.2f;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, topSpeed, .05f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 2.4f); // now that boredom code is good, can no longer teleport
+            tsorcRevampAIs.FighterAI(NPC, topSpeed, .05f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 2.4f);
 
-            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 149 && Main.rand.NextBool(4))
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            bool hasLos = Collision.CanHit(NPC.position, NPC.width, NPC.height,
+                Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
+            if (!hasLos && globalNPC.ProjectileTimer > 0f)
             {
-                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0f;
+                globalNPC.ProjectileTimer = 0f;
                 NPC.netUpdate = true;
             }
 
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150)
+            if (NPC.justHit && globalNPC.ProjectileTimer <= 149 && Main.rand.NextBool(4))
+            {
+                globalNPC.ProjectileTimer = 0f;
+                NPC.netUpdate = true;
+            }
+
+            if (globalNPC.ProjectileTimer >= 150)
             {
                 if (Main.rand.NextBool(3))
                 {

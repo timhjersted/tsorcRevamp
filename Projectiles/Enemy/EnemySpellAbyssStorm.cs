@@ -30,13 +30,17 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         float size = 0;
         int dustCount = 0;
+        const float MaxStormRadius = 60f * 16f;
+        const float StormGrowTime = 45f;
+        const float StormGrowSpeed = MaxStormRadius / StormGrowTime;
 
         public override void AI()
         {
-            if (size < 60 * 16)
+            bool growing = size < MaxStormRadius;
+            if (size < MaxStormRadius)
             {
-                size += ((60 * 16) / 45f);
-                dustCount = (int)(2 * MathHelper.Pi * size / 10); //Spawn dust according to its size                
+                size = MathHelper.Min(size + StormGrowSpeed, MaxStormRadius);
+                dustCount = GetStormDustCount(size);
             }
             else
             {
@@ -49,14 +53,36 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
-            for (int j = 0; j < dustCount; j++)
+            DrawStormEdge(growing ? StormGrowSpeed : 0f);
+        }
+
+        private static int GetStormDustCount(float radius)
+        {
+            return (int)MathHelper.Clamp(MathHelper.TwoPi * radius / 12f, 24f, 260f);
+        }
+
+        private void DrawStormEdge(float outwardSpeed)
+        {
+            int count = dustCount < 1 ? 1 : dustCount;
+            float phase = Projectile.localAI[0] * 0.08f;
+
+            for (int j = 0; j < count; j++)
             {
-                Vector2 dir = Main.rand.NextVector2CircularEdge(size, size);
-                Vector2 dustPos = Projectile.Center + dir;
-                dir.Normalize();
-                Vector2 dustVel = dir;
-                Dust.NewDustPerfect(dustPos, DustID.BlueCrystalShard, dustVel, 200).noGravity = true;
+                float rotation = phase + MathHelper.TwoPi * j / count;
+                Vector2 direction = rotation.ToRotationVector2();
+                Dust dust = Dust.NewDustPerfect(
+                    Projectile.Center + direction * size,
+                    DustID.BlueCrystalShard,
+                    direction * outwardSpeed,
+                    170,
+                    default,
+                    1.15f);
+
+                dust.noGravity = true;
+                dust.fadeIn = 0.2f;
             }
+
+            Projectile.localAI[0]++;
         }
 
         //Circular collision

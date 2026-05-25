@@ -63,6 +63,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
             NPC.buffImmune[BuffID.Confused] = true;
 
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            //globalNPC.CanPassThroughWalls = false;
+            //globalNPC.NavigationTier = 2;
+            //globalNPC.MaxJumpPower = 10f;
+            //globalNPC.MaxJumpBoost = 6f;
         }
 
         public override void HitEffect(NPC.HitInfo hit)

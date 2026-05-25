@@ -247,6 +247,9 @@ namespace tsorcRevamp
         public override void Load()
         {
             TextureAssets.Npc[NPCID.EyeofCthulhu] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/EyeofCthulhu/NPC_4");
+            TextureAssets.Npc[NPCID.ServantofCthulhu] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/EyeofCthulhu/NPC_5");
+            //TextureAssets.Npc[NPCID.SkeletronHead] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Skeletron/NPC_35");
+            //TextureAssets.Npc[NPCID.DungeonGuardian] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Skeletron/NPC_68");
             TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestralSpirit");
             TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestralSpirit_Head_Boss");
             TextureAssets.Gore[GoreID.DeerclopsHead] = ModContent.Request<Texture2D>("tsorcRevamp/Gores/AncestorSpirit_Gore_1");
@@ -1606,7 +1609,18 @@ namespace tsorcRevamp
 
         public override void Unload()
         {
+            // ContentSamples.Initialize() runs after Unload() and calls NPC.SetDefaults() for
+            // every registered NPC type, including modded ones. By that point all mod textures are
+            // disposed, so TextureAssets.Npc[modType] is null → NullReferenceException in Utils.Width.
+            // Fix: redirect the entire modded NPC range to a valid vanilla asset before disposal.
+            var npcFallback = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.BlueSlime}");
+            for (int i = NPCID.Count; i < NPCLoader.NPCCount; i++)
+                TextureAssets.Npc[i] = npcFallback;
+
             TextureAssets.Npc[NPCID.EyeofCthulhu] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.EyeofCthulhu}");
+            TextureAssets.Npc[NPCID.ServantofCthulhu] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.ServantofCthulhu}");
+            //TextureAssets.Npc[NPCID.SkeletronHead] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.SkeletronHead}");
+            //TextureAssets.Npc[NPCID.DungeonGuardian] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.DungeonGuardian}");
             TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.Deerclops}");
             TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_Head_Boss_39");
             TextureAssets.Gore[GoreID.DeerclopsHead] = ModContent.Request<Texture2D>($"Terraria/Images/Gore_{GoreID.DeerclopsHead}");

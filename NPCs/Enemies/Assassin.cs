@@ -39,6 +39,12 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.AssassinBanner>();
 
             AnimationType = NPCID.SkeletonArcher;
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.NavigationTier = 0;
+            globalNPC.MaxJumpPower = 10f;
+            globalNPC.MaxJumpBoost = 6f;
+            // No double jump -- the Assassin relies on its teleport for escape
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
