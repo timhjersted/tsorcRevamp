@@ -11625,6 +11625,8 @@ Mods: {
 			TrueDeath.DisplayName: Absolute Death
 			DarkCloudShadow.DisplayName: Dark Cloud Shadow
 			AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
+			TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
+			TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
 		}
 
 		Prefixes: {

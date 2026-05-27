@@ -274,6 +274,9 @@ namespace tsorcRevamp.NPCs
         public int NavBlockedDirectionTimer = 0;
         public int NavExploreTimer = 0;
         public int NavExploreDirection = 0;
+        public int SmartFurniturePassTimer = 0;
+        public int SmartFurniturePassDirection = 0;
+        public int SmartFurniturePassCooldown = 0;
         // Frames spent voluntarily halted at a ledge; used to cap ledge-camping.
         public int LedgeHaltTimer = 0;
         // When true, FighterAI will halt at the edge of a significant drop when it already has
