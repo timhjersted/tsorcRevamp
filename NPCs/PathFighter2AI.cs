@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs
         private const int StaleRouteDistance = 12;
         private const int SearchHalfWidth = 70;
         private const int SearchHalfHeight = 42;
-        private const int BadEdgeMemoryTicks = 180;
+        private const int BadEdgeMemoryTicks = 900;
         private static readonly Dictionary<int, Brain> Brains = new Dictionary<int, Brain>();
 
         public static void Run(NPC npc, float topSpeed = 1.55f, float acceleration = 0.06f, float attackRange = 700f)
@@ -232,6 +232,9 @@ namespace tsorcRevamp.NPCs
             bool closeY = Math.Abs(npcNode.Y - target.Y) <= (brain.Action == MoveActionKind.Drop ? 2 : 1);
             if (closeX && closeY)
             {
+                // Critical: a Drop action sets npc.noTileCollide = true. If we don't reset it,
+                // the NPC keeps falling through every floor for the rest of its life.
+                if (brain.Action == MoveActionKind.Drop) npc.noTileCollide = false;
                 brain.RouteIndex++;
                 brain.ClearAction();
                 brain.BlockedFrames = 0;
@@ -260,6 +263,8 @@ namespace tsorcRevamp.NPCs
                 string edgeKey = Brain.EdgeKey(brain.ActionStart, brain.ActionTarget);
                 int blockedFrames = brain.ActionBlockedFrames;
                 brain.RememberBadEdge(edgeKey, BadEdgeMemoryTicks);
+                // Reset pass-through if Drop was the failing action.
+                if (brain.Action == MoveActionKind.Drop) npc.noTileCollide = false;
                 brain.Route.Clear();
                 brain.RouteIndex = 0;
                 brain.RepathTimer = 0;
@@ -272,7 +277,10 @@ namespace tsorcRevamp.NPCs
             switch (brain.Action)
             {
                 case MoveActionKind.Jump:
-                    ApplyHorizontal(npc, direction, topSpeed, acceleration * (grounded ? 1f : 0.82f));
+                    // Use full acceleration in the air so we actually reach launch X velocity
+                    // before gravity ends the jump; the old 0.82 multiplier left vx near 0.06
+                    // for the whole arc (visible in logs as stuck-in-air repeats).
+                    ApplyHorizontal(npc, direction, topSpeed, acceleration * (grounded ? 1f : 1.6f));
                     debug.Action = grounded ? "commit-jump-ground" : "commit-jump-air";
                     debug.Reason = $"target=({target.X},{target.Y}) timer={brain.ActionTimer} blocked={brain.ActionBlockedFrames}";
                     return true;
@@ -490,6 +498,13 @@ namespace tsorcRevamp.NPCs
                 brain.LastPlanResult = $"none visited={visited} score={bestScore}";
                 return;
             }
+            // Reject paths whose best reachable node scores below zero — those are usually
+            // off-cliff dead ends the NPC commits to and then can't recover from.
+            if (bestScore < 0 && DistanceTiles(best, target) > 4)
+            {
+                brain.LastPlanResult = $"rejected-negscore visited={visited} score={bestScore}";
+                return;
+            }
 
             List<Point> reversed = new List<Point>();
             Point node = best;
@@ -678,12 +693,17 @@ namespace tsorcRevamp.NPCs
 
         private static int FindGroundY(int x, int feetY, int maxUp, int maxDown)
         {
-            for (int y = feetY - maxUp; y <= feetY + maxDown; y++)
+            // Critical: prefer ground AT or BELOW the NPC's feet first, then look up.
+            // The naive top-down scan would return a roof/floor 5 tiles ABOVE the NPC,
+            // causing A* to start from the wrong floor and never find a path to the player.
+            if (IsStandable(x, feetY)) return feetY;
+            for (int d = 1; d <= maxDown; d++)
             {
-                if (IsStandable(x, y))
-                {
-                    return y;
-                }
+                if (IsStandable(x, feetY + d)) return feetY + d;
+            }
+            for (int u = 1; u <= maxUp; u++)
+            {
+                if (IsStandable(x, feetY - u)) return feetY - u;
             }
             return int.MinValue;
         }
@@ -775,15 +795,27 @@ namespace tsorcRevamp.NPCs
             while (x != to.X)
             {
                 x += direction;
-                int groundY = FindGroundY(x, y, 2, 3);
-                if (groundY == int.MinValue || Math.Abs(groundY - y) > 2 || !HasBodyClearanceAt(x, groundY))
+                // Hard limit to ±1 row per step — anything bigger is a jump or drop, not a walk.
+                int groundY = FindGroundY(x, y, 1, 1);
+                if (groundY == int.MinValue || Math.Abs(groundY - y) > 1 || !HasBodyClearanceAt(x, groundY))
                 {
                     return false;
+                }
+                // Verify the body-height column at the higher of the two rows is also clear.
+                // Without this check, BFS happily threads "walk" edges through walls because
+                // FindGroundY would just locate the floor below the wall.
+                int checkY = Math.Min(y, groundY);
+                for (int yc = checkY - 2; yc <= checkY; yc++)
+                {
+                    if (IsNavigationSolid(x, yc))
+                    {
+                        return false;
+                    }
                 }
                 y = groundY;
             }
 
-            return Math.Abs(y - to.Y) <= 2;
+            return Math.Abs(y - to.Y) <= 1;
         }
 
         private static bool HasGapBetween(Point from, Point to)

@@ -7,8 +7,33 @@ using Terraria.ID;
 
 namespace tsorcRevamp.NPCs
 {
+    // SmartFighter — Test 1 of three navigation experiments.
+    //
+    // Philosophy: smooth, committed, vanilla-feeling movement. No multi-step plan.
+    //
+    // The old BFS / route-target / vertical-search pathfinder was stripped (was the
+    // source of the 50-second wall-pace deadlock and 90% airborne thrash in logs).
+    // Behavior is now:
+    //
+    //   1. Direct chase toward the player when on the same floor or in LOS.
+    //   2. If player is on a different floor and out of LOS, scan ±24 tiles for the
+    //      nearest "ascent column" (gap in ceiling with reachable landing) or
+    //      "descent column" (gap in floor with reachable landing below) and walk
+    //      toward that column.
+    //   3. The well-tested local terrain handlers (step-hop, obstacle-jump,
+    //      gap-jump, platform-drop, platform-jump, rope-climb, door-break) handle
+    //      the actual vertical movement once the NPC arrives at the column.
+    //
+    // Compared to SmartFighter3 (true multi-step routing), this gives up optimal
+    // routing in exchange for predictable, vanilla-style behavior with no deadlock
+    // states. It will fail to reach a player behind multiple walls/corners that
+    // require non-greedy paths, but it never spends 50 seconds bouncing.
     public static class SmartFighterAI
     {
+        // Per-NPC airborne jump commitment so chase steering can't reverse a planned jump mid-flight.
+        // Keyed by NPC.whoAmI to avoid polluting tsorcRevampGlobalNPC.
+        private static readonly Dictionary<int, (int dir, int timer)> JumpCommits = new Dictionary<int, (int, int)>();
+
         public static void Run(NPC npc, float topSpeed = 1.55f, float acceleration = 0.05f, int doorBreakingDamage = 4, float attackRange = 700f, bool allowPlantAndFire = false)
         {
             Player player = Main.player[npc.target];
@@ -75,6 +100,17 @@ namespace tsorcRevamp.NPCs
             }
 
             bool grounded = IsGrounded(npc);
+            // Airborne X-commit: when a deliberate jump fires, lock X velocity toward the
+            // launch direction for ~30 frames so the chase steering can't reverse the arc.
+            if (JumpCommits.TryGetValue(npc.whoAmI, out var commit))
+            {
+                if (commit.timer > 0 && !grounded && commit.dir != 0)
+                {
+                    npc.velocity.X = MathHelper.Clamp(commit.dir * topSpeed * 1.1f, -topSpeed * 1.3f, topSpeed * 1.3f);
+                }
+                if (grounded || commit.timer <= 1) JumpCommits.Remove(npc.whoAmI);
+                else JumpCommits[npc.whoAmI] = (commit.dir, commit.timer - 1);
+            }
             if (grounded)
             {
                 globalNPC.UsedDoubleJump = false;
@@ -131,11 +167,9 @@ namespace tsorcRevamp.NPCs
                 ApplyHorizontalChase(npc, chaseDirection, topSpeed, acceleration);
             }
 
-            bool activeRouteMovement = globalNPC.LastNavIntent == "smart:route-target" && globalNPC.WaypointTimer > 0;
             bool canUseProjectile = globalNPC.AttackList.Count > 0
                 && lineOfSight
                 && npc.Distance(player.Center) <= attackRange
-                && !activeRouteMovement
                 && (!movementAction || allowPlantAndFire);
             debugFrame.AttackAllowed = canUseProjectile;
             debugFrame.Mode = GetSmartMode(globalNPC);
@@ -217,698 +251,164 @@ namespace tsorcRevamp.NPCs
                 return globalNPC.SmartFurniturePassDirection;
             }
 
+            // ====================================================================
+            // SmartFighter is the "smooth vanilla-feeling" baseline. It does NOT
+            // pathfind. It chooses a direction by answering a single question:
+            //   "what floor is the player on, and which way is the nearest staircase
+            //    or jumpable column toward that floor?"
+            // The local terrain handlers (step-hop, gap-jump, platform-jump,
+            // platform-drop, rope-climb, door-break) execute the actual movement.
+            // ====================================================================
+
             float playerDeltaX = player.Center.X - npc.Center.X;
-            bool playerWellAbove = player.Center.Y < npc.Center.Y - 72f;
-            bool playerWellBelow = player.Center.Y > npc.Center.Y + 72f;
-            int direct = GetStableDirectDirection(npc, globalNPC, playerDeltaX, playerWellAbove || playerWellBelow);
-            if (grounded && globalNPC.NavBlockedDirectionTimer > 0 && globalNPC.NavBlockedDirection == direct && !lineOfSight)
+            float playerDeltaY = player.Center.Y - npc.Center.Y;
+            bool playerWellAbove = playerDeltaY < -72f;
+            bool playerWellBelow = playerDeltaY > 72f;
+            int directToPlayer = playerDeltaX >= 0f ? 1 : -1;
+
+            // Backup state still wins — if we're actively unsticking from a wall,
+            // keep doing that until the timer expires.
+            if (globalNPC.LastNavIntent == "smart:backup" && globalNPC.NavExploreTimer > 0)
             {
-                return -direct;
+                return globalNPC.NavExploreDirection == 0 ? -directToPlayer : globalNPC.NavExploreDirection;
             }
 
-            if (!grounded && globalNPC.LastNavIntent != "smart:route-target")
+            // Anti-flap: if we recently bonked a wall going `direct`, briefly
+            // chase the opposite way to give us a chance to find a staircase.
+            if (grounded && globalNPC.NavBlockedDirectionTimer > 0
+                && globalNPC.NavBlockedDirection == directToPlayer && !lineOfSight)
             {
-                return direct;
+                globalNPC.LastNavIntent = "smart:direct";
+                return -directToPlayer;
             }
 
-            if (globalNPC.WaypointTimer > 0 && globalNPC.LastNavIntent == "smart:route-target")
+            // In the air, we don't change direction. Whatever launched us is committed.
+            if (!grounded)
             {
-                globalNPC.WaypointTimer--;
-                float targetDeltaX = globalNPC.WaypointTarget.X - npc.Center.X;
-                float targetDeltaY = globalNPC.WaypointTarget.Y - npc.Center.Y;
-                bool verticalRouteEdge = globalNPC.LastWaypointResult.Contains("edge=jump")
-                    || globalNPC.LastWaypointResult.Contains("edge=rope")
-                    || globalNPC.LastWaypointResult.Contains("edge=drop");
-                if (Math.Abs(targetDeltaX) > 20f)
-                {
-                    return targetDeltaX >= 0f ? 1 : -1;
-                }
-                if (Math.Abs(targetDeltaY) > 24f && verticalRouteEdge)
-                {
-                    return globalNPC.NavExploreDirection == 0 ? direct : globalNPC.NavExploreDirection;
-                }
-                if ((playerWellAbove || playerWellBelow) && verticalRouteEdge)
-                {
-                    return globalNPC.NavExploreDirection == 0 ? direct : globalNPC.NavExploreDirection;
-                }
-
-                bool routeTargetWasBelow = globalNPC.WaypointTarget.Y > npc.Center.Y + 20f;
-                globalNPC.WaypointTimer = 0;
-                globalNPC.LastNavIntent = routeTargetWasBelow ? "smart:direct" : "smart:vertical-search";
+                return directToPlayer;
             }
 
-            bool sameColumnDifferentFloor = Math.Abs(player.Center.X - npc.Center.X) < 180f && (playerWellAbove || playerWellBelow);
-            bool shouldPlanRoute = (!lineOfSight || sameColumnDifferentFloor) && (playerWellAbove || playerWellBelow || globalNPC.BoredTimer > 90);
-            if (shouldPlanRoute)
+            // Same floor / LOS / boredom-bored: just chase the player directly.
+            // The local terrain handlers will fire any needed hops/jumps along the way.
+            bool sameFloor = !playerWellAbove && !playerWellBelow;
+            if (sameFloor || lineOfSight)
             {
-                if ((globalNPC.WaypointTimer <= 0 || globalNPC.LastNavIntent != "smart:route-target")
-                    && TryFindPathRouteTarget(npc, globalNPC, player, out Vector2 pathTarget, out int pathDirection))
-                {
-                    globalNPC.WaypointTarget = pathTarget;
-                    globalNPC.WaypointTimer = 240;
-                    globalNPC.NavExploreDirection = pathDirection;
-                    globalNPC.NavExploreTimer = 240;
-                    globalNPC.LastNavIntent = "smart:route-target";
-                    return pathDirection;
-                }
-
-                if (globalNPC.NavExploreTimer <= 0 || globalNPC.LastNavIntent != "smart:vertical-search")
-                {
-                    globalNPC.NavExploreDirection = ChooseVerticalSearchDirection(npc, direct);
-                    globalNPC.NavExploreTimer = 150;
-                    globalNPC.LastNavIntent = "smart:vertical-search";
-                }
-
-                return globalNPC.NavExploreDirection == 0 ? direct : globalNPC.NavExploreDirection;
+                globalNPC.LastNavIntent = "smart:direct";
+                return directToPlayer;
             }
 
-            if (globalNPC.LastNavIntent == "smart:vertical-search")
-            {
-                globalNPC.NavExploreTimer = 0;
-                globalNPC.NavExploreDirection = 0;
-            }
-            globalNPC.LastNavIntent = "smart:direct";
-            return direct;
-        }
-
-        private static int GetStableDirectDirection(NPC npc, tsorcRevampGlobalNPC globalNPC, float playerDeltaX, bool verticalProblem)
-        {
-            if (Math.Abs(playerDeltaX) > 24f)
-            {
-                return playerDeltaX >= 0f ? 1 : -1;
-            }
-
-            if (verticalProblem)
-            {
-                if (globalNPC.NavExploreDirection != 0)
-                {
-                    return globalNPC.NavExploreDirection;
-                }
-                if (npc.direction != 0)
-                {
-                    return npc.direction;
-                }
-            }
-
-            return playerDeltaX >= 0f ? 1 : -1;
-        }
-
-        private static int ChooseVerticalSearchDirection(NPC npc, int direct)
-        {
+            // Different floor + no LOS: walk toward the nearest column where we can
+            // ascend (if player is above) or descend (if below) toward player's floor.
             int feetY = GetFeetTileY(npc);
-            int leftX = GetFrontTileX(npc, -1);
-            int rightX = GetFrontTileX(npc, 1);
-            int leftScore = ScoreVerticalSearchDirection(leftX, feetY, -1);
-            int rightScore = ScoreVerticalSearchDirection(rightX, feetY, 1);
-
-            if (leftScore == rightScore)
-            {
-                return direct;
-            }
-
-            return leftScore > rightScore ? -1 : 1;
-        }
-
-        private static bool TryFindPathRouteTarget(NPC npc, tsorcRevampGlobalNPC globalNPC, Player player, out Vector2 target, out int direction)
-        {
-            target = Vector2.Zero;
-            direction = 0;
-
-            if (!TryFindPathStart(npc, out int startX, out int startY))
-            {
-                globalNPC.LastWaypointResult = "smart:path no-start";
-                return false;
-            }
-
-            int playerX = (int)(player.Center.X / 16f);
             int playerFeetY = (int)((player.Bottom.Y - 1f) / 16f);
-            Point start = new Point(startX, startY);
-            Queue<Point> open = new Queue<Point>();
-            Dictionary<Point, Point> cameFrom = new Dictionary<Point, Point>();
-            Dictionary<Point, int> cost = new Dictionary<Point, int>();
-            open.Enqueue(start);
-            cameFrom[start] = start;
-            cost[start] = 0;
+            int npcCol = (int)(npc.Center.X / 16f);
+            int playerCol = (int)(player.Center.X / 16f);
+            int passageCol = playerWellAbove
+                ? FindNearestAscentColumn(npcCol, feetY, playerFeetY, playerCol)
+                : FindNearestDescentColumn(npcCol, feetY, playerFeetY, playerCol);
 
-            Point best = start;
-            int bestScore = ScorePathNode(start, playerX, playerFeetY, 0);
-            int visited = 0;
-            while (open.Count > 0 && visited < 420)
+            if (passageCol != int.MinValue)
             {
-                Point current = open.Dequeue();
-                visited++;
-                int currentCost = cost[current];
-                int score = ScorePathNode(current, playerX, playerFeetY, currentCost);
-                if (score > bestScore)
-                {
-                    bestScore = score;
-                    best = current;
-                }
-
-                foreach (Point next in GetPathNeighbors(current, startX))
-                {
-                    if (cameFrom.ContainsKey(next))
-                    {
-                        continue;
-                    }
-
-                    cameFrom[next] = current;
-                    cost[next] = currentCost + MovementCost(current, next);
-                    open.Enqueue(next);
-                }
+                globalNPC.LastNavIntent = playerWellAbove ? "smart:seek-up" : "smart:seek-down";
+                int toPassage = passageCol >= npcCol ? 1 : -1;
+                // If we're already at the passage column, fall to local handlers
+                // (which will fire platform-jump / drop / rope-climb).
+                if (Math.Abs(passageCol - npcCol) <= 1) return directToPlayer;
+                return toPassage;
             }
 
-            if (best == start || bestScore < -18)
-            {
-                globalNPC.LastWaypointResult = $"smart:path none visited={visited} best={bestScore}";
-                return false;
-            }
-
-            List<Point> route = new List<Point>();
-            Point routeNode = best;
-            route.Add(routeNode);
-            while (cameFrom[routeNode] != start && cameFrom[routeNode] != routeNode)
-            {
-                routeNode = cameFrom[routeNode];
-                route.Add(routeNode);
-            }
-            route.Reverse();
-
-            Point first = route.Count > 0 ? route[0] : best;
-            foreach (Point node in route)
-            {
-                if (Math.Abs(node.X - start.X) > 1 || Math.Abs(node.Y - start.Y) > 1)
-                {
-                    first = node;
-                    break;
-                }
-            }
-
-            target = new Vector2(first.X * 16f + 8f, first.Y * 16f - npc.height / 2f);
-            direction = first.X == start.X ? (best.X >= start.X ? 1 : -1) : (first.X > start.X ? 1 : -1);
-            string edgeAction = ClassifyPathEdge(start, first);
-            globalNPC.LastWaypointResult = $"smart:path edge={edgeAction} visited={visited} best=({best.X},{best.Y}) first=({first.X},{first.Y}) score={bestScore}";
-            return true;
+            // No passage found in scan range — just pace toward the player's column
+            // so we don't oscillate. Vanilla-style.
+            globalNPC.LastNavIntent = "smart:direct";
+            return directToPlayer;
         }
 
-        private static bool TryFindPathStart(NPC npc, out int startX, out int startY)
+        // ---- Staircase / jumpable-column finder ----
+        // We scan ±24 tiles around the NPC. A column counts as an "ascent" if it
+        // has a clear vertical opening at least (rise+2) tiles tall AND a standable
+        // platform within the NPC's jump reach (up to 8 tiles). For descents we
+        // require a clear opening down toward the player's floor.
+
+        private const int PassageScanRadius = 24;
+        private const int MaxAscentReach = 8;
+        private const int MaxDescentReach = 12;
+
+        private static int FindNearestAscentColumn(int npcCol, int feetY, int targetFeetY, int playerCol)
         {
-            int centerX = (int)(npc.Center.X / 16f);
-            int feetY = GetFeetTileY(npc);
-            for (int radius = 0; radius <= 3; radius++)
+            int rise = Math.Max(1, feetY - targetFeetY);
+            int requiredOpen = Math.Min(MaxAscentReach, rise + 2);
+            int best = int.MinValue;
+            int bestScore = int.MaxValue;
+            for (int dx = -PassageScanRadius; dx <= PassageScanRadius; dx++)
             {
-                for (int side = -1; side <= 1; side += 2)
-                {
-                    int x = centerX + radius * side;
-                    int y = FindNearbyGroundY(x, feetY, 4, 7);
-                    if (y != int.MinValue && HasBodyClearanceAt(x, y))
-                    {
-                        startX = x;
-                        startY = y;
-                        return true;
-                    }
-
-                    if (radius == 0)
-                    {
-                        break;
-                    }
-                }
+                int col = npcCol + dx;
+                if (!IsAscentColumn(col, feetY, requiredOpen)) continue;
+                int dist = Math.Abs(dx);
+                // Prefer columns toward the player's X.
+                int dirBias = Math.Sign(col - npcCol) == Math.Sign(playerCol - npcCol) ? -2 : 0;
+                int score = dist + dirBias;
+                if (score < bestScore) { bestScore = score; best = col; }
             }
+            return best;
+        }
 
-            startX = centerX;
-            startY = int.MinValue;
+        private static int FindNearestDescentColumn(int npcCol, int feetY, int targetFeetY, int playerCol)
+        {
+            int drop = Math.Max(1, targetFeetY - feetY);
+            int requiredOpen = Math.Min(MaxDescentReach, drop + 2);
+            int best = int.MinValue;
+            int bestScore = int.MaxValue;
+            for (int dx = -PassageScanRadius; dx <= PassageScanRadius; dx++)
+            {
+                int col = npcCol + dx;
+                if (!IsDescentColumn(col, feetY, requiredOpen)) continue;
+                int dist = Math.Abs(dx);
+                int dirBias = Math.Sign(col - npcCol) == Math.Sign(playerCol - npcCol) ? -2 : 0;
+                int score = dist + dirBias;
+                if (score < bestScore) { bestScore = score; best = col; }
+            }
+            return best;
+        }
+
+        // Column has enough vertical clearance above NPC's feet for a jump up.
+        private static bool IsAscentColumn(int col, int feetY, int requiredOpen)
+        {
+            int openTiles = 0;
+            for (int y = feetY - 1; y >= feetY - requiredOpen - 4; y--)
+            {
+                if (IsNavigationSolid(col, y)) break;
+                openTiles++;
+            }
+            // Must also have a standable platform at the top of the opening,
+            // OR be a wide-open column (sky/outdoor).
+            if (openTiles < requiredOpen) return false;
+            // Look for a standable tile within reach above.
+            for (int y = feetY - 2; y >= feetY - MaxAscentReach; y--)
+            {
+                if (IsStandableTile(col, y) && HasBodyClearanceAt(col, y - 1)) return true;
+            }
+            // Open ceiling counts as ascendable (player is somewhere above through the air).
+            return openTiles >= requiredOpen + 1;
+        }
+
+        // Column has a drop opening at least requiredOpen tall, with a standable landing.
+        private static bool IsDescentColumn(int col, int feetY, int requiredOpen)
+        {
+            int openTiles = 0;
+            for (int y = feetY; y <= feetY + requiredOpen + 4; y++)
+            {
+                if (IsNavigationSolid(col, y)) break;
+                openTiles++;
+            }
+            if (openTiles < requiredOpen) return false;
+            // Standable landing within drop range
+            for (int y = feetY + 2; y <= feetY + MaxDescentReach; y++)
+            {
+                if (IsStandableTile(col, y)) return true;
+            }
             return false;
         }
 
-        private static string ClassifyPathEdge(Point from, Point to)
-        {
-            int dx = Math.Abs(to.X - from.X);
-            int dy = to.Y - from.Y;
-            if (HasRopeNear(from.X, from.Y, out int ropeX) && to.X == ropeX && dy < -2)
-            {
-                return "rope";
-            }
-            if (dy > 1)
-            {
-                return "drop";
-            }
-            if (dy < -1 || dx >= 2)
-            {
-                return "jump";
-            }
-
-            return "walk";
-        }
-
-        private static int ScorePathNode(Point node, int playerX, int playerFeetY, int cost)
-        {
-            int dx = Math.Abs(node.X - playerX);
-            int dy = Math.Abs(node.Y - playerFeetY);
-            int score = 120 - dx * 4 - dy * 7 - cost;
-            if (dx <= 2)
-            {
-                score += 16;
-            }
-            if (dy <= 2)
-            {
-                score += 16;
-            }
-            if (HasBodyClearanceAt(node.X, node.Y))
-            {
-                score += 4;
-            }
-
-            return score;
-        }
-
-        private static IEnumerable<Point> GetPathNeighbors(Point current, int startX)
-        {
-            for (int dir = -1; dir <= 1; dir += 2)
-            {
-                int x = current.X + dir;
-                int y = FindNearbyGroundY(x, current.Y, 2, 3);
-                if (IsPathNodeReachable(x, y, startX) && Math.Abs(y - current.Y) <= 2)
-                {
-                    yield return new Point(x, y);
-                }
-            }
-
-            for (int dx = -4; dx <= 4; dx++)
-            {
-                int x = current.X + dx;
-                for (int dy = -2; dy >= -12; dy--)
-                {
-                    int y = current.Y + dy;
-                    if (IsPathNodeReachable(x, y, startX) && HasJumpArcClearance(current, new Point(x, y)))
-                    {
-                        yield return new Point(x, y);
-                        break;
-                    }
-                }
-            }
-
-            for (int dir = -1; dir <= 1; dir += 2)
-            {
-                for (int dx = 2; dx <= 7; dx++)
-                {
-                    int x = current.X + dir * dx;
-                    for (int dy = -8; dy <= 4; dy++)
-                    {
-                        int y = current.Y + dy;
-                        if (IsPathNodeReachable(x, y, startX) && HasJumpArcClearance(current, new Point(x, y)))
-                        {
-                            yield return new Point(x, y);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            for (int dx = -2; dx <= 2; dx++)
-            {
-                int x = current.X + dx;
-                for (int y = current.Y + 2; y <= current.Y + 12; y++)
-                {
-                    if (IsPathNodeReachable(x, y, startX) && HasDropClearance(current.X, current.Y, x, y))
-                    {
-                        yield return new Point(x, y);
-                        break;
-                    }
-                }
-            }
-
-            if (HasRopeNear(current.X, current.Y, out int ropeX))
-            {
-                for (int y = current.Y - 2; y >= current.Y - 18; y--)
-                {
-                    if (IsPathNodeReachable(ropeX, y, startX))
-                    {
-                        yield return new Point(ropeX, y);
-                        break;
-                    }
-                }
-            }
-        }
-
-        private static bool IsPathNodeReachable(int x, int y, int startX)
-        {
-            return Math.Abs(x - startX) <= 62
-                && y != int.MinValue
-                && HasBodyClearanceAt(x, y)
-                && IsStandableTile(x, y);
-        }
-
-        private static int MovementCost(Point from, Point to)
-        {
-            int dx = Math.Abs(to.X - from.X);
-            int dy = Math.Abs(to.Y - from.Y);
-            return dx + dy * 2 + (to.Y < from.Y ? 5 : 0);
-        }
-
-        private static bool HasJumpArcClearance(Point from, Point to)
-        {
-            int minY = Math.Min(from.Y, to.Y) - 4;
-            int maxY = Math.Max(from.Y, to.Y) - 1;
-            int minX = Math.Min(from.X, to.X);
-            int maxX = Math.Max(from.X, to.X);
-            for (int x = minX; x <= maxX; x++)
-            {
-                for (int y = minY; y <= maxY; y++)
-                {
-                    if (IsNavigationSolid(x, y))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private static bool HasDropClearance(int fromX, int fromY, int toX, int toY)
-        {
-            int minX = Math.Min(fromX, toX);
-            int maxX = Math.Max(fromX, toX);
-            for (int x = minX; x <= maxX; x++)
-            {
-                for (int y = fromY - 3; y <= toY - 1; y++)
-                {
-                    if (IsNavigationSolid(x, y))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private static bool HasRopeNear(int x, int feetY, out int ropeX)
-        {
-            for (int xOffset = -2; xOffset <= 2; xOffset++)
-            {
-                int checkX = x + xOffset;
-                for (int y = feetY + 3; y >= feetY - 16; y--)
-                {
-                    if (IsRopeTile(checkX, y))
-                    {
-                        ropeX = checkX;
-                        return true;
-                    }
-                }
-            }
-
-            ropeX = 0;
-            return false;
-        }
-
-        private static bool TryFindSmartRouteTarget(NPC npc, tsorcRevampGlobalNPC globalNPC, Player player, bool playerWellAbove, bool playerWellBelow, out Vector2 target, out int direction)
-        {
-            int feetY = GetFeetTileY(npc);
-            int centerX = (int)(npc.Center.X / 16f);
-            int playerTileX = (int)(player.Center.X / 16f);
-            int currentGroundY = FindNearbyGroundY(centerX, feetY, 2, 3);
-            if (currentGroundY == int.MinValue)
-            {
-                currentGroundY = feetY;
-            }
-
-            int bestScore = int.MinValue;
-            int bestX = centerX;
-            int bestGroundY = currentGroundY;
-            string bestKind = "none";
-            int direct = player.Center.X >= npc.Center.X ? 1 : -1;
-
-            if (playerWellAbove && TryFindRouteRopeTarget(npc, feetY, playerTileX, out int ropeX, out int ropeScore))
-            {
-                int routePenalty = ScoreRouteFeasibility(centerX, feetY, ropeX, out string ropeBlock);
-                ropeScore -= routePenalty;
-                if (ropeScore > bestScore)
-                {
-                    bestScore = ropeScore;
-                    bestX = ropeX;
-                    bestGroundY = currentGroundY;
-                    bestKind = $"rope penalty={routePenalty} block={ropeBlock}";
-                }
-            }
-
-            for (int dir = -1; dir <= 1; dir += 2)
-            {
-                for (int distance = 2; distance <= 42; distance++)
-                {
-                    int x = centerX + dir * distance;
-                    int groundY = FindNearbyGroundY(x, feetY, 12, 14);
-                    if (groundY == int.MinValue || !HasBodyClearanceAt(x, groundY))
-                    {
-                        continue;
-                    }
-
-                    int score = 0;
-                    int surfaceGain = currentGroundY - groundY;
-                    int surfaceDrop = groundY - currentGroundY;
-                    int playerXDistanceTiles = Math.Abs(playerTileX - x);
-                    int overheadOpening = CountOpenTilesUpward(x, groundY - 1, 12);
-                    int feasibilityPenalty = ScoreRouteFeasibility(centerX, feetY, x, out string blockedReason);
-                    bool hasPlatformAbove = HasPlatformAbove(x, groundY, 12);
-                    bool hasDropAccess = playerWellBelow && (surfaceDrop >= 2 || HasPlatformAtColumn(x, groundY + 1, 5));
-
-                    score -= distance / 2;
-                    score -= playerXDistanceTiles / 3;
-                    score -= feasibilityPenalty;
-                    if (dir == direct)
-                    {
-                        score += 4;
-                    }
-                    if (globalNPC.NavBlockedDirectionTimer > 0 && globalNPC.NavBlockedDirection == dir)
-                    {
-                        score -= 24;
-                    }
-                    if (ContainsClosedDoor(x, groundY))
-                    {
-                        score += 16;
-                    }
-
-                    if (playerWellAbove)
-                    {
-                        score += surfaceGain * 10;
-                        score += overheadOpening;
-                        if (hasPlatformAbove)
-                        {
-                            score += 18;
-                        }
-                        if (surfaceGain <= 0 && overheadOpening < 5 && !hasPlatformAbove)
-                        {
-                            score -= 14;
-                        }
-                    }
-                    else if (playerWellBelow)
-                    {
-                        score += surfaceDrop * 8;
-                        if (hasDropAccess)
-                        {
-                            score += 22;
-                        }
-                        if (surfaceGain > 2)
-                        {
-                            score -= surfaceGain * 4;
-                        }
-                    }
-                    else
-                    {
-                        score += Math.Max(0, 10 - playerXDistanceTiles);
-                    }
-
-                    if (score > bestScore)
-                    {
-                        bestScore = score;
-                        bestX = x;
-                        bestGroundY = groundY;
-                        bestKind = $"surface gain={surfaceGain} drop={surfaceDrop} open={overheadOpening} penalty={feasibilityPenalty} block={blockedReason}";
-                    }
-                }
-            }
-
-            if (bestScore < 8)
-            {
-                target = Vector2.Zero;
-                direction = 0;
-                globalNPC.LastWaypointResult = $"smart:route none best={bestScore}";
-                return false;
-            }
-
-            target = new Vector2(bestX * 16f + 8f, bestGroundY * 16f - npc.height / 2f);
-            direction = target.X >= npc.Center.X ? 1 : -1;
-            globalNPC.LastWaypointResult = $"smart:route score={bestScore} kind={bestKind}";
-            return true;
-        }
-
-        private static bool TryFindRouteRopeTarget(NPC npc, int feetY, int playerTileX, out int ropeX, out int score)
-        {
-            int centerX = (int)(npc.Center.X / 16f);
-            int bestScore = int.MinValue;
-            int bestX = 0;
-            for (int xOffset = -34; xOffset <= 34; xOffset++)
-            {
-                int x = centerX + xOffset;
-                for (int y = feetY + 4; y >= feetY - 20; y--)
-                {
-                    if (!IsRopeTile(x, y))
-                    {
-                        continue;
-                    }
-
-                    int distance = Math.Abs(xOffset);
-                    int playerDistance = Math.Abs(playerTileX - x);
-                    int candidateScore = 50 - distance - playerDistance / 2;
-                    if (HasBodyClearanceAt(x, feetY))
-                    {
-                        candidateScore += 8;
-                    }
-                    if (candidateScore > bestScore)
-                    {
-                        bestScore = candidateScore;
-                        bestX = x;
-                    }
-                }
-            }
-
-            ropeX = bestX;
-            score = bestScore;
-            return bestScore > int.MinValue;
-        }
-
-        private static bool TryFindVerticalRouteTarget(NPC npc, tsorcRevampGlobalNPC globalNPC, Player player, out Vector2 target, out int direction)
-        {
-            int feetY = GetFeetTileY(npc);
-            int centerX = (int)(npc.Center.X / 16f);
-            int currentGroundY = FindNearbyGroundY(centerX, feetY, 2, 3);
-            if (currentGroundY == int.MinValue)
-            {
-                currentGroundY = feetY;
-            }
-
-            int bestScore = int.MinValue;
-            int bestX = centerX;
-            int bestGroundY = feetY;
-            int bestFeasibilityPenalty = 0;
-            int bestSurfaceGain = 0;
-            int bestOpening = 0;
-            int direct = player.Center.X >= npc.Center.X ? 1 : -1;
-
-            for (int dir = -1; dir <= 1; dir += 2)
-            {
-                for (int distance = 3; distance <= 34; distance++)
-                {
-                    int x = centerX + dir * distance;
-                    int groundY = FindNearbyGroundY(x, feetY, 8, 7);
-                    if (groundY == int.MinValue || !HasBodyClearanceAt(x, groundY))
-                    {
-                        continue;
-                    }
-
-                    int score = 0;
-                    int surfaceGain = currentGroundY - groundY;
-                    int playerXDistanceTiles = (int)(Math.Abs(player.Center.X / 16f - x));
-                    int overheadOpening = CountOpenTilesUpward(x, groundY - 1, 12);
-                    int feasibilityPenalty = ScoreRouteFeasibility(centerX, feetY, x, out string blockedReason);
-
-                    score += surfaceGain * 10;
-                    score += overheadOpening;
-                    score -= distance / 2;
-                    score -= playerXDistanceTiles / 3;
-                    score -= feasibilityPenalty;
-
-                    if (dir == direct)
-                    {
-                        score += 4;
-                    }
-                    if (globalNPC.NavBlockedDirectionTimer > 0 && globalNPC.NavBlockedDirection == dir)
-                    {
-                        score -= 24;
-                    }
-                    if (ContainsClosedDoor(x, groundY))
-                    {
-                        score += 16;
-                    }
-                    if (HasPlatformAbove(x, groundY, 12))
-                    {
-                        score += 14;
-                    }
-                    if (surfaceGain <= 0 && overheadOpening < 5 && !HasPlatformAbove(x, groundY, 8))
-                    {
-                        score -= 12;
-                    }
-
-                    if (score > bestScore)
-                    {
-                        bestScore = score;
-                        bestX = x;
-                        bestGroundY = groundY;
-                        bestFeasibilityPenalty = feasibilityPenalty;
-                        bestSurfaceGain = surfaceGain;
-                        bestOpening = overheadOpening;
-                        globalNPC.LastWaypointResult = $"smart:route candidate score={score} gain={surfaceGain} open={overheadOpening} penalty={feasibilityPenalty} block={blockedReason}";
-                    }
-                }
-            }
-
-            if (bestScore < 8)
-            {
-                target = Vector2.Zero;
-                direction = 0;
-                globalNPC.LastWaypointResult = $"smart:route none best={bestScore}";
-                return false;
-            }
-
-            target = new Vector2(bestX * 16f + 8f, bestGroundY * 16f - npc.height / 2f);
-            direction = target.X >= npc.Center.X ? 1 : -1;
-            globalNPC.LastWaypointResult = $"smart:route score={bestScore} gain={bestSurfaceGain} open={bestOpening} penalty={bestFeasibilityPenalty}";
-            return true;
-        }
-
-        private static int ScoreVerticalSearchDirection(int frontX, int feetY, int direction)
-        {
-            int score = 0;
-            for (int offset = 0; offset <= 18; offset++)
-            {
-                int x = frontX + direction * offset;
-                int obstacle = GetObstacleHeight(x, feetY);
-                int drop = GetDropDepth(x, feetY, 7);
-
-                if (ContainsClosedDoor(x, feetY))
-                {
-                    score += 20;
-                }
-                if (obstacle == 1)
-                {
-                    score += 8;
-                }
-                else if (obstacle >= 2 && obstacle <= 4)
-                {
-                    score += 4;
-                }
-                else if (obstacle >= 5)
-                {
-                    score -= 10;
-                }
-
-                if (drop <= 2)
-                {
-                    score += 2;
-                }
-                else if (drop >= 6)
-                {
-                    score -= 4;
-                }
-
-                if (HasBodyClearanceAt(x, feetY - 1) || HasBodyClearanceAt(x, feetY - 2))
-                {
-                    score += 1;
-                }
-            }
-
-            return score;
-        }
 
         private static bool TryHandleTerrain(NPC npc, tsorcRevampGlobalNPC globalNPC, int direction, float topSpeed, int doorBreakingDamage, ref SmartNavDebugFrame debugFrame)
         {
@@ -918,18 +418,15 @@ namespace tsorcRevamp.NPCs
             debugFrame.FeetY = feetY;
             debugFrame.TerrainScan = BuildTerrainScan(frontX, feetY, direction);
 
-            bool verticalSearch = globalNPC.LastNavIntent == "smart:vertical-search"
-                && !debugFrame.LineOfSight
-                && debugFrame.PlayerDeltaY < -72f
-                && globalNPC.NavExploreTimer > 0;
-            bool routeTarget = globalNPC.LastNavIntent == "smart:route-target" && globalNPC.WaypointTimer > 0;
+            // Vertical-search and route-target modes are removed. SmartFighter now only
+            // dispatches: backup recovery, local terrain handlers, and door breaking.
             bool playerBelow = debugFrame.PlayerDeltaY > 48f;
             if (TryDropThroughPlatform(npc, globalNPC, playerBelow, debugFrame.PlayerDeltaX, ref debugFrame))
             {
                 return true;
             }
 
-            if (globalNPC.NavExploreTimer > 0 && !verticalSearch && globalNPC.LastNavIntent == "smart:backup")
+            if (globalNPC.NavExploreTimer > 0 && globalNPC.LastNavIntent == "smart:backup")
             {
                 globalNPC.NavExploreTimer--;
                 int backupDirection = globalNPC.NavExploreDirection == 0 ? -direction : globalNPC.NavExploreDirection;
@@ -952,17 +449,6 @@ namespace tsorcRevamp.NPCs
 
                 return true;
             }
-            if (verticalSearch)
-            {
-                globalNPC.NavExploreTimer--;
-                debugFrame.Action = "vertical-search";
-                debugFrame.Reason = $"timer={globalNPC.NavExploreTimer}";
-            }
-            else if (routeTarget)
-            {
-                debugFrame.Action = "route-target";
-                debugFrame.Reason = $"target=({globalNPC.WaypointTarget.X / 16f:F1},{globalNPC.WaypointTarget.Y / 16f:F1}) timer={globalNPC.WaypointTimer}";
-            }
 
             if (TryBreakDoor(npc, globalNPC, frontX, feetY, direction, doorBreakingDamage))
             {
@@ -970,33 +456,11 @@ namespace tsorcRevamp.NPCs
                 debugFrame.Reason = "door-blocking";
                 return false;
             }
-            if (routeTarget && TryExecuteRouteEdge(npc, globalNPC, direction, feetY, ref debugFrame))
-            {
-                return true;
-            }
 
             int obstacleHeight = GetObstacleHeight(frontX, feetY);
             debugFrame.ObstacleHeight = obstacleHeight;
             if (obstacleHeight > 0)
             {
-                if (routeTarget && obstacleHeight >= 5 && globalNPC.StuckTimer < 10)
-                {
-                    debugFrame.Action = "route-blocked";
-                    debugFrame.Reason = $"target-blocked height={obstacleHeight}";
-                    globalNPC.StuckTimer += 2;
-                    if (globalNPC.StuckTimer >= 6)
-                    {
-                        globalNPC.NavBlockedDirection = direction;
-                        globalNPC.NavBlockedDirectionTimer = 180;
-                        globalNPC.WaypointTimer = 0;
-                        globalNPC.NavExploreTimer = 0;
-                        globalNPC.LastNavIntent = "smart:vertical-search";
-                        globalNPC.LastWaypointResult = $"smart:route abandoned blocked-dir={direction} height={obstacleHeight}";
-                    }
-                    npc.velocity.X *= 0.5f;
-                    return true;
-                }
-
                 if (obstacleHeight == 1 && HasHeadroomForJump(npc, direction, obstacleHeight))
                 {
                     float stepHop = MathHelper.Clamp(globalNPC.MaxJumpPower * 0.48f, 3.8f, 4.6f);
@@ -1069,11 +533,8 @@ namespace tsorcRevamp.NPCs
             debugFrame.DropDepth = dropDepth;
             if (dropDepth <= 1)
             {
-                if (!routeTarget && !verticalSearch)
-                {
-                    debugFrame.Action = "walk";
-                    debugFrame.Reason = dropDepth == 0 ? "level-ground" : "small-drop";
-                }
+                debugFrame.Action = "walk";
+                debugFrame.Reason = dropDepth == 0 ? "level-ground" : "small-drop";
                 return false;
             }
 
@@ -1217,6 +678,8 @@ namespace tsorcRevamp.NPCs
             npc.direction = direction;
             npc.spriteDirection = direction;
             globalNPC.NavJumpCooldown = cooldown;
+            // Commit horizontal direction for the airborne phase so chase steering can't reverse mid-flight.
+            JumpCommits[npc.whoAmI] = (direction, 30);
             npc.netUpdate = true;
         }
 
@@ -1312,39 +775,6 @@ namespace tsorcRevamp.NPCs
             npc.velocity.Y = 0f;
         }
 
-        private static bool TryExecuteRouteEdge(NPC npc, tsorcRevampGlobalNPC globalNPC, int direction, int feetY, ref SmartNavDebugFrame debugFrame)
-        {
-            if (globalNPC.LastWaypointResult.Contains("edge=rope") && TryClimbRope(npc, globalNPC, direction, feetY, ref debugFrame))
-            {
-                debugFrame.Reason += ",route-edge";
-                return true;
-            }
-
-            if (globalNPC.LastWaypointResult.Contains("edge=jump"))
-            {
-                int targetX = (int)(globalNPC.WaypointTarget.X / 16f);
-                int targetFeetY = (int)((globalNPC.WaypointTarget.Y + npc.height / 2f) / 16f);
-                int dx = Math.Abs(targetX - (int)(npc.Center.X / 16f));
-                int rise = Math.Max(0, feetY - targetFeetY);
-                float jumpPower = MathHelper.Clamp(5.5f + rise * 0.45f + dx * 0.18f, 5.6f, globalNPC.MaxJumpPower);
-                float boost = MathHelper.Clamp(0.95f + dx * 0.24f, 1.1f, globalNPC.MaxJumpBoost);
-                Jump(npc, globalNPC, direction, jumpPower, boost, 14 + Math.Min(dx, 8));
-                debugFrame.Action = "route-jump";
-                debugFrame.Reason = $"target=({targetX},{targetFeetY}) dx={dx} rise={rise}";
-                debugFrame.JumpPower = jumpPower;
-                debugFrame.Boost = boost;
-                return true;
-            }
-
-            if (globalNPC.LastWaypointResult.Contains("edge=drop"))
-            {
-                debugFrame.Action = "route-drop";
-                debugFrame.Reason = $"target=({globalNPC.WaypointTarget.X / 16f:F1},{globalNPC.WaypointTarget.Y / 16f:F1})";
-                return false;
-            }
-
-            return false;
-        }
 
         private static void UpdateTemporaryTilePassThrough(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
@@ -1461,99 +891,6 @@ namespace tsorcRevamp.NPCs
             return int.MinValue;
         }
 
-        private static int ScoreRouteFeasibility(int startX, int feetY, int targetX, out string blockedReason)
-        {
-            int direction = targetX >= startX ? 1 : -1;
-            int penalty = 0;
-            blockedReason = "clear";
-
-            for (int x = startX + direction; x != targetX + direction; x += direction)
-            {
-                int obstacle = GetObstacleHeight(x, feetY);
-                if (ContainsClosedDoor(x, feetY))
-                {
-                    penalty += 1;
-                    continue;
-                }
-
-                if (obstacle >= 5)
-                {
-                    penalty += 80;
-                    blockedReason = $"wall@{x}";
-                    break;
-                }
-                if (obstacle >= 2)
-                {
-                    penalty += obstacle * 2;
-                }
-
-                int drop = GetDropDepth(x, feetY, 6);
-                if (drop > 2)
-                {
-                    if (!TryMeasureGap(x, feetY, direction, out int gapTiles, out int landingDrop, out _)
-                        || gapTiles > 5
-                        || landingDrop > 2)
-                    {
-                        penalty += 60;
-                        blockedReason = $"gap@{x}";
-                        break;
-                    }
-
-                    penalty += Math.Max(0, gapTiles - 2) * 3;
-                    x += direction * Math.Max(0, gapTiles - 1);
-                }
-            }
-
-            return penalty;
-        }
-
-        private static int CountOpenTilesUpward(int x, int startY, int maxTiles)
-        {
-            int count = 0;
-            for (int y = startY; y > startY - maxTiles; y--)
-            {
-                if (!WorldGen.InWorld(x, y) || IsNavigationSolid(x, y))
-                {
-                    break;
-                }
-
-                count++;
-            }
-
-            return count;
-        }
-
-        private static bool HasPlatformAbove(int x, int feetY, int maxHeight)
-        {
-            for (int y = feetY - 2; y >= feetY - maxHeight; y--)
-            {
-                if (!WorldGen.InWorld(x, y))
-                {
-                    continue;
-                }
-
-                Tile tile = Main.tile[x, y];
-                if (IsPlatformTile(x, y))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool HasPlatformAtColumn(int x, int startY, int maxDepth)
-        {
-            for (int y = startY; y <= startY + maxDepth; y++)
-            {
-                if (IsPlatformTile(x, y))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
 
         private static bool IsGrounded(NPC npc)
         {

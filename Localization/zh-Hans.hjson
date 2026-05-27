@@ -8194,6 +8194,21 @@ Mods: {
 				// DisplayName: Soul of the Occultist
 				// Tooltip: "'The essence of dark magic from the remains of Oolacile'"
 			}
+
+			RedKnightTestHelmet: {
+				// Tooltip: ""
+				// DisplayName: Red Knight Test Helmet
+			}
+
+			RedKnightTestGreaves: {
+				// Tooltip: ""
+				// DisplayName: Red Knight Test Greaves
+			}
+
+			RedKnightTestBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Red Knight Test Breastplate
+			}
 		}
 
 		Buffs: {
@@ -11607,6 +11622,9 @@ Mods: {
 			// AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
 			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
 			// TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
+			// RedKnightTest.DisplayName: Red Knight Test
+			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
+			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 		}
 
 		Prefixes: {
