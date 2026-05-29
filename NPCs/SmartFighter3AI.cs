@@ -170,12 +170,39 @@ namespace tsorcRevamp.NPCs
             {
                 int dir = player.Center.X >= npc.Center.X ? 1 : -1;
                 npc.direction = dir; npc.spriteDirection = dir;
-                actionHandled = TryLocalTerrain(s, npc, dir, jumpCeil, boostCeil, topSpeed,
-                    out actionLabel, out reasonLabel);
-                if (!actionHandled)
+
+                // Halt-at-attack-range: if we can see the player AND we're already in
+                // attack range, stand still and let the projectile attack do the work.
+                // Stops the "fired spear, then walked off ledge" behavior.
+                bool losNow = Collision.CanHit(npc.position, npc.width, npc.height,
+                    player.position, player.width, player.height);
+                bool inRange = npc.Distance(player.Center) <= attackRange;
+                if (losNow && inRange && g.AttackList.Count > 0)
                 {
-                    ApplyChase(npc, dir, topSpeed, acceleration);
-                    actionLabel = "chase"; reasonLabel = "no-plan";
+                    npc.velocity.X *= 0.6f; // brake
+                    npc.direction = dir; npc.spriteDirection = dir;
+                    actionLabel = "halt-attack"; reasonLabel = $"d={npc.Distance(player.Center):F0}";
+                    actionHandled = true;
+                }
+                else
+                {
+                    actionHandled = TryLocalTerrain(s, npc, dir, jumpCeil, boostCeil, topSpeed,
+                        out actionLabel, out reasonLabel);
+                    if (!actionHandled)
+                    {
+                        // Don't blindly walk off cliffs in fallback chase. If there's a
+                        // big drop directly ahead, brake instead.
+                        if (IsCliffAhead(npc, dir))
+                        {
+                            npc.velocity.X *= 0.6f;
+                            actionLabel = "halt-cliff"; reasonLabel = "no-plan,drop-ahead";
+                        }
+                        else
+                        {
+                            ApplyChase(npc, dir, topSpeed, acceleration);
+                            actionLabel = "chase"; reasonLabel = "no-plan";
+                        }
+                    }
                 }
             }
             else
@@ -201,6 +228,7 @@ namespace tsorcRevamp.NPCs
 
         public static void OnHit(NPC npc)
         {
+            if (npc.noGravity) npc.noGravity = false;
             if (States.TryGetValue(npc.whoAmI, out NavState s))
             {
                 // Damage unlocks commitment and forces a fresh replan.
@@ -285,7 +313,15 @@ namespace tsorcRevamp.NPCs
             int yMax = Math.Max(npcFeetY, playerFeetY) + ScanRadiusY;
 
             List<Span> spans = BuildSpans(xMin, xMax, yMin, yMax);
-            BuildEdges(spans, playerFeetY);
+            // Prune expired bad-edge entries before building.
+            int now = (int)Main.GameUpdateCount;
+            if (s.BadEdgeTargets.Count > 0)
+            {
+                List<(int, int)> dead = new List<(int, int)>();
+                foreach (var kv in s.BadEdgeTargets) if (kv.Value <= now) dead.Add(kv.Key);
+                foreach (var k in dead) s.BadEdgeTargets.Remove(k);
+            }
+            BuildEdges(spans, playerFeetY, s.BadEdgeTargets);
 
             Span start = FindContainingSpan(spans, npcCx, npcFeetY);
             Span goal = FindContainingSpan(spans, playerCx, playerFeetY);
@@ -339,7 +375,22 @@ namespace tsorcRevamp.NPCs
             return spans;
         }
 
-        private static void BuildEdges(List<Span> spans, int playerY)
+        private static int BadEdgePenalty(int landX, int spanY, Dictionary<(int x, int y), int> badEdges)
+        {
+            // If the destination of this edge corresponds to a recently-failed step
+            // target (within 2 tiles), bump the cost so A* prefers alternatives.
+            int worst = 0;
+            foreach (var kv in badEdges)
+            {
+                if (Math.Abs(kv.Key.x - landX) <= 2 && Math.Abs(kv.Key.y - spanY) <= 2)
+                {
+                    if (150 > worst) worst = 150;
+                }
+            }
+            return worst;
+        }
+
+        private static void BuildEdges(List<Span> spans, int playerY, Dictionary<(int x, int y), int> badEdges)
         {
             Dictionary<int, List<Span>> byY = new Dictionary<int, List<Span>>();
             foreach (var sp in spans)
@@ -380,14 +431,18 @@ namespace tsorcRevamp.NPCs
                     {
                         EdgeKind kind = dy >= 1 ? EdgeKind.JumpUp : EdgeKind.JumpGap;
                         int wrongDirPenalty = 0;
-                        // Penalty: going DOWN when player is above.
                         if (playerY < a.Y && b.Y > a.Y) wrongDirPenalty = 60;
+                        // Tight-squeeze penalty: a 1-2 tile landing span is risky/often
+                        // unreachable. Prefer wider landings (3+ tiles).
+                        int landingWidth = b.RightX - b.LeftX + 1;
+                        int tightPenalty = landingWidth <= 2 ? 15 : 0;
+                        int badPenalty = BadEdgePenalty(landX, b.Y, badEdges);
                         int baseCost = kind == EdgeKind.JumpUp ? 5 + dy * 2 : 5 + absDx;
-                        a.Edges.Add(new Edge(b, kind, baseCost + wrongDirPenalty, launchX, landX));
+                        a.Edges.Add(new Edge(b, kind, baseCost + wrongDirPenalty + tightPenalty + badPenalty, launchX, landX));
                     }
                 }
 
-                // ---- DROP edges (free-fall) — heavy penalty when player is above ----
+                // ---- DROP edges (free-fall through holes) ----
                 for (int dy = 2; dy <= MaxDropDepth; dy++)
                 {
                     if (!byY.TryGetValue(a.Y + dy, out var bucket)) continue;
@@ -400,34 +455,79 @@ namespace tsorcRevamp.NPCs
                             if (HasDropClearance(x, a.Y, b.Y)) { candidate = x; break; }
                         }
                         if (candidate == -1) continue;
-                        // Goal-aware cost: dropping when the player is ABOVE us is almost always wrong.
-                        int dropPenalty = playerY < a.Y ? 200 : 0;
-                        a.Edges.Add(new Edge(b, EdgeKind.Drop, 3 + dy + dropPenalty, candidate, candidate));
+                        int dropPenalty = playerY < a.Y - 3 ? 80 : 0;
+                        int badP = BadEdgePenalty(candidate, b.Y, badEdges);
+                        a.Edges.Add(new Edge(b, EdgeKind.Drop, 3 + dy + dropPenalty + badP, candidate, candidate));
                     }
                 }
 
-                // ---- PLATFORM DROP (only if A is platform-only) ----
-                if (IsSpanOnPlatformOnly(a))
+                // ---- PLATFORM DROP (per-column: any column in span A that's a platform tile
+                //      can be a drop point, not just spans that are platform-only). ----
+                for (int dy = 2; dy <= MaxDropDepth; dy++)
                 {
-                    for (int dy = 2; dy <= MaxDropDepth; dy++)
+                    if (!byY.TryGetValue(a.Y + dy, out var bucket)) continue;
+                    foreach (var b in bucket)
                     {
-                        if (!byY.TryGetValue(a.Y + dy, out var bucket)) continue;
-                        foreach (var b in bucket)
+                        if (b == a) continue;
+                        // Find a column inside both spans where the launch tile is a platform.
+                        int candidate = -1;
+                        int xMin = Math.Max(a.LeftX, b.LeftX), xMax = Math.Min(a.RightX, b.RightX);
+                        for (int x = xMin; x <= xMax; x++)
                         {
-                            if (b == a) continue;
-                            int xMin = Math.Max(a.LeftX, b.LeftX), xMax = Math.Min(a.RightX, b.RightX);
-                            if (xMin > xMax) continue;
-                            int candidate = (xMin + xMax) / 2;
-                            if (!HasDropClearance(candidate, a.Y, b.Y)) continue;
-                            // Penalty only when player is clearly above (3+ tiles).
-                            // 200 was so high the planner would never propose any drop
-                            // even when it was the only way to maneuver.
-                            int dropPenalty = playerY < a.Y - 3 ? 80 : 0;
-                            a.Edges.Add(new Edge(b, EdgeKind.PlatformDrop, 4 + dy + dropPenalty, candidate, candidate));
+                            if (IsPlatformTile(x, a.Y + 1) && HasDropClearance(x, a.Y + 2, b.Y))
+                            { candidate = x; break; }
                         }
+                        if (candidate == -1) continue;
+                        int dropPenalty = playerY < a.Y - 3 ? 80 : 0;
+                        int badP = BadEdgePenalty(candidate, b.Y, badEdges);
+                        a.Edges.Add(new Edge(b, EdgeKind.PlatformDrop, 4 + dy + dropPenalty + badP, candidate, candidate));
+                    }
+                }
+
+                // ---- ROPE-CLIMB edges ----
+                // For each column in span A, look for a rope tile column going up
+                // far enough to reach another span. Rope climbing is cheaper than
+                // jumping for tall climbs and uses no jump cooldown.
+                for (int x = a.LeftX; x <= a.RightX; x++)
+                {
+                    // Find the column the rope occupies (might be the same as x).
+                    if (!HasRopeColumn(x, a.Y, out int ropeTopY)) continue;
+                    // Find a span we can step off the rope onto, near ropeTopY.
+                    foreach (var bb in spans)
+                    {
+                        if (bb == a) continue;
+                        int dyClimb = a.Y - bb.Y;
+                        if (dyClimb < 2 || dyClimb > 14) continue;
+                        if (Math.Abs(bb.Y - ropeTopY) > 2) continue;
+                        if (x < bb.LeftX - 1 || x > bb.RightX + 1) continue;
+                        int badP = BadEdgePenalty(x, bb.Y, badEdges);
+                        // Rope climb has no jump cooldown — keep its cost low so
+                        // the planner prefers ropes for tall climbs.
+                        a.Edges.Add(new Edge(bb, EdgeKind.RopeClimb, 3 + dyClimb / 2 + badP, x, x));
+                        break;
                     }
                 }
             }
+        }
+
+        // A rope column has rope tiles for at least 3 contiguous rows above feetY.
+        private static bool HasRopeColumn(int x, int feetY, out int topY)
+        {
+            topY = feetY;
+            int run = 0;
+            for (int y = feetY - 1; y >= feetY - 16; y--)
+            {
+                if (IsRopeTile(x, y)) { run++; topY = y; }
+                else break;
+            }
+            return run >= 3;
+        }
+
+        private static bool IsRopeTile(int x, int y)
+        {
+            if (!WorldGen.InWorld(x, y)) return false;
+            Tile t = Main.tile[x, y];
+            return t.HasTile && !t.IsActuated && t.TileType == TileID.Rope;
         }
 
         private static Span FindContainingSpan(List<Span> spans, int x, int feetY)
@@ -547,6 +647,9 @@ namespace tsorcRevamp.NPCs
                     case EdgeKind.PlatformDrop:
                         steps.Add(new PlanStep(StepKind.PlatformDrop, edge.LandX, to.Y, edge.LaunchX));
                         break;
+                    case EdgeKind.RopeClimb:
+                        steps.Add(new PlanStep(StepKind.RopeClimb, edge.LandX, to.Y, edge.LaunchX));
+                        break;
                 }
             }
             // Final approach to player's column.
@@ -595,6 +698,8 @@ namespace tsorcRevamp.NPCs
             }
             if (completed)
             {
+                // Restore any rope-climb suspended gravity.
+                if (npc.noGravity) npc.noGravity = false;
                 s.PlanIndex++;
                 s.StepTimer = StepTimeoutFrames;
                 s.CommitFrames = 0;
@@ -607,6 +712,11 @@ namespace tsorcRevamp.NPCs
             // ---- Step failure timeout ----
             if (s.StepTimer == 0)
             {
+                if (npc.noGravity) npc.noGravity = false;
+                // Bad-edge memory: remember this failed step's target span so the
+                // next replan doesn't immediately pick the same route.
+                int expiry = (int)Main.GameUpdateCount + 480; // 8 seconds
+                s.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
                 s.Plan = null;
                 s.PlanIndex = 0;
                 s.CommitFrames = 0;
@@ -627,9 +737,35 @@ namespace tsorcRevamp.NPCs
                     return ExecDrop(s, npc, step, topSpeed, acceleration, grounded, out action, out reason);
                 case StepKind.PlatformDrop:
                     return ExecPlatformDrop(s, npc, step, topSpeed, acceleration, grounded, out action, out reason);
+                case StepKind.RopeClimb:
+                    return ExecRopeClimb(s, npc, step, topSpeed, acceleration, grounded, out action, out reason);
             }
             action = "?"; reason = "";
             return false;
+        }
+
+        private static bool ExecRopeClimb(NavState s, NPC npc, PlanStep step, float topSpeed, float acceleration,
+            bool grounded, out string action, out string reason)
+        {
+            float ropeCenter = step.LaunchX * TileF + 8f;
+            // Phase 1: walk to the rope column
+            if (Math.Abs(npc.Center.X - ropeCenter) > AlignTolerancePx && grounded)
+            {
+                int aDir = npc.Center.X < ropeCenter ? 1 : -1;
+                npc.direction = aDir; npc.spriteDirection = aDir;
+                ApplyChase(npc, aDir, topSpeed, acceleration);
+                action = "align-rope"; reason = $"ropeX={step.LaunchX}";
+                return true;
+            }
+            // Phase 2: climb. Set noGravity, pull toward rope center, move up.
+            npc.noGravity = true;
+            npc.velocity.X = MathHelper.Clamp((ropeCenter - npc.Center.X) * 0.1f, -1.2f, 1.2f);
+            npc.velocity.Y = -2.5f;
+            // Commit for ~80 frames or until we reach the target Y. ManagePlatformPass
+            // is unrelated; we restore gravity on step completion.
+            s.CommitFrames = 60;
+            action = "rope-climb"; reason = $"toY={step.TargetY}";
+            return true;
         }
 
         private static bool ExecWalk(NavState s, NPC npc, PlanStep step, float topSpeed, float acceleration,
@@ -667,23 +803,38 @@ namespace tsorcRevamp.NPCs
                 reason = $"commit={s.CommitFrames}";
                 return false;
             }
-            // Align phase
-            if (!IsAligned(npc, step.LaunchX))
+            int absDx = Math.Abs(step.TargetX - step.LaunchX);
+            // For pure vertical jumps we need tighter alignment (±5 px) since the
+            // body has to fit through a narrow vertical opening, and we ALSO need
+            // to bring the NPC to a near-stop before firing — otherwise residual
+            // velocity carries it past the column even with AirCommit disabled.
+            bool isVertical = absDx == 0;
+            float alignTol = isVertical ? 5f : AlignTolerancePx;
+            float launchCenter = step.LaunchX * TileF + 8f;
+            bool aligned = Math.Abs(npc.Center.X - launchCenter) <= alignTol;
+            if (!aligned)
             {
-                int aDir = AlignDir(npc, step.LaunchX);
+                int aDir = npc.Center.X < launchCenter ? 1 : -1;
                 npc.direction = aDir; npc.spriteDirection = aDir;
                 ApplyChase(npc, aDir, topSpeed, acceleration);
                 action = "align-jump";
                 reason = $"launch={step.LaunchX} cx={npc.Center.X / TileF:F1}";
                 return true;
             }
+            // For vertical jumps, additionally require near-zero residual velocity.
+            // Without this, the airborne arc drifts off-column.
+            if (isVertical && Math.Abs(npc.velocity.X) > 0.4f)
+            {
+                npc.velocity.X *= 0.5f;
+                action = "settle-jump";
+                reason = $"vx={npc.velocity.X:F2}";
+                return true;
+            }
             // Fire from arc table
             int rise = feetY - step.TargetY;          // positive = rising
-            int absDx = Math.Abs(step.TargetX - step.LaunchX);
             (int dx, int dy) key = (absDx, rise);
             if (!JumpArcs.TryGetValue(key, out var arc))
             {
-                // No matching arc — fall back to the closest one (or skip).
                 arc = NearestArc(absDx, rise, jumpCeil, boostCeil);
             }
             float power = MathHelper.Clamp(arc.power, 4.5f, jumpCeil);
@@ -692,7 +843,14 @@ namespace tsorcRevamp.NPCs
                           : step.TargetX < step.LaunchX ? -1
                           : npc.direction;
             FireJump(s, npc, launchDir, power, boost, /*airCommit*/ 35, /*planCommit*/ 45);
-            if (absDx == 0) npc.velocity.X *= 0.25f;
+            if (isVertical)
+            {
+                // Kill horizontal velocity and disable the airborne X-lock so we go
+                // straight up — the "stop and jump straight up" capability that was
+                // missing.
+                npc.velocity.X = 0f;
+                s.AirCommitDirX = 0;
+            }
             action = "jump-fire";
             reason = $"arc({absDx},{rise})=>p{power:F1}/b{boost:F1} dir={launchDir}";
             return true;
@@ -920,6 +1078,14 @@ namespace tsorcRevamp.NPCs
             for (int y = highest; y <= headY; y++)
                 if (IsNavigationSolid(frontX, y)) return false;
             return true;
+        }
+
+        private static bool IsCliffAhead(NPC npc, int direction)
+        {
+            int frontX = GetFrontTileX(npc, direction);
+            int feetY = GetFeetTileY(npc);
+            int drop = GetDropDepth(frontX, feetY, 5);
+            return drop >= 4;
         }
 
         private static int GetDropDepth(int x, int feetY, int maxDepth)
@@ -1170,10 +1336,13 @@ namespace tsorcRevamp.NPCs
             public int PlatformPassTimer;
             public float PlatformPassStartY;
             public string LastPlanResult = "";
+            // Recently-failed step targets, mapped to expiry frame. Used by the
+            // planner to prefer alternative routes after a step times out.
+            public Dictionary<(int x, int y), int> BadEdgeTargets = new Dictionary<(int, int), int>();
             public bool IsCommitted => CommitFrames > 0;
         }
 
-        private enum StepKind { Walk, JumpUp, JumpGap, Drop, PlatformDrop }
+        private enum StepKind { Walk, JumpUp, JumpGap, Drop, PlatformDrop, RopeClimb }
         private struct PlanStep
         {
             public StepKind Kind;
@@ -1181,7 +1350,7 @@ namespace tsorcRevamp.NPCs
             public PlanStep(StepKind k, int tx, int ty, int lx) { Kind = k; TargetX = tx; TargetY = ty; LaunchX = lx; }
         }
 
-        private enum EdgeKind { Walk, JumpUp, JumpGap, Drop, PlatformDrop }
+        private enum EdgeKind { Walk, JumpUp, JumpGap, Drop, PlatformDrop, RopeClimb }
         private class Edge
         {
             public Span To;
