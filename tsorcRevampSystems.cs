@@ -236,6 +236,20 @@ namespace tsorcRevamp
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
+            layers.Insert(0, new LegacyGameInterfaceLayer(
+                "tsorcRevamp: Death Fade Overlay",
+                delegate
+                {
+                    if (deathFadeAlpha > 0f)
+                    {
+                        Texture2D pixel = TextureAssets.MagicPixel.Value;
+                        Main.spriteBatch.Draw(pixel, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * deathFadeAlpha);
+                    }
+                    return true;
+                },
+                InterfaceScaleType.UI)
+            );
+
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
             int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
             if (mouseTextIndex != -1)
@@ -391,6 +405,16 @@ namespace tsorcRevamp
             if (MapMarkersUIState.Visible) mod.MarkerInterface.Update(gameTime);
 
             UpdatePortableGuideCrafting();
+
+            if (Main.player[Main.myPlayer].active && Main.player[Main.myPlayer].dead)
+            {
+                // Fade to black over 5 seconds (300 ticks)
+                deathFadeAlpha = MathHelper.Clamp(deathFadeAlpha + 1f / 300f, 0f, 1f);
+            }
+            else
+            {
+                deathFadeAlpha = 0f;
+            }
         }
 
         public static Vector2 OurDrawBorderString(SpriteBatch sb, string text, DynamicSpriteFont font, Vector2 pos, Color color, float scale = 1f, float anchorx = 0f, float anchory = 0f, int maxCharactersDisplayed = -1)
@@ -402,6 +426,8 @@ namespace tsorcRevamp
             Terraria.UI.Chat.ChatManager.DrawColorCodedStringWithShadow(sb, font, text, pos, color, 0f, new Vector2(anchorx, anchory) * vector, new Vector2(scale), -1f, 1.5f);
             return vector * scale;
         }
+
+        public static float deathFadeAlpha = 0f;
 
         public override void PostDrawInterface(SpriteBatch spriteBatch)
         {

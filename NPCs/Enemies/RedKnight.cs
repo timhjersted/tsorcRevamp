@@ -230,15 +230,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
 
-                // Spear Attack: Get targetPosition and set NPC direction (the latter part is not working)
+                // Spear Attack: Get targetPosition and set NPC direction
                 if (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f)
                 {
                     NPC.knockBackResist = 0f;
                     // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
+                    Vector2 currentStoredPos = storedPlayerPosition == Vector2.Zero ? player.Center : storedPlayerPosition;
+                    int direction = (currentStoredPos.X > NPC.Center.X) ? 1 : -1;
 
                     // Use the stored player's position to calculate the targetPosition.
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
+                    targetPosition = new Vector2(currentStoredPos.X + 10f * direction, currentStoredPos.Y);
 
                     NPC.direction = (targetPosition.X > NPC.Center.X) ? 1 : -1;
                     NPC.spriteDirection = NPC.direction;
@@ -247,6 +248,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Spear Telegraph
                 if (NPC.ai[1] == 155f)
                 {
+                    NPC.TargetClosest(true);
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
                     {
@@ -258,60 +260,42 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
                     // Store the player's center
-                    if (framesSinceStoredPosition >= 25)
+                    int targetPlayer = NPC.target;
+                    if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                     {
-                        framesSinceStoredPosition = 0;
-                        int targetPlayer = NPC.target;
-                        if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
+                        storedPlayerPosition = Main.player[targetPlayer].Center;
+                    }
+                }
+
+                // Spear Attack
+                if (NPC.ai[1] == 180f)
+                {
+                    if (hasPlayerLOS)
+                    {
+                        float distance = NPC.Distance(player.Center);
+                        if (distance > 400f)
                         {
-                            storedPlayerPosition = Main.player[targetPlayer].Center;
+                            float spearProjectileSpeed = Main.rand.NextFloat(14, 16f);
+                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
+                            speed.Y += Main.rand.NextFloat(-2f, 2f);
+                            speed += Main.player[NPC.target].velocity;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                            }
                         }
+                        else
+                        {
+                            float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
+                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
+                            speed.Y += Main.rand.NextFloat(-1f, 1f);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                            }
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
                     }
-                }
-
-                // Spear Attack Far
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400 && hasPlayerLOS)
-                {
-                    NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(14, 16f);
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
-                    //speed += Main.rand.NextVector2Circular(-6, -2);
-                    speed.Y += Main.rand.NextFloat(-2f, 2f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
-
-                    // Reset the targetPosition 
-                    targetPosition = Vector2.Zero;
-
-                    // Move closer to next attack
-                    NPC.ai[1] = 200f;
-
-                    // Chance to fire Spear again
-                    if (Main.rand.NextBool(2))
-                    {
-                        NPC.ai[1] = 90f;
-                        NPC.netUpdate = true;
-                    }
-                }
-                // Spear Attack Close
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
-                {
-                    NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
-                    //speed += Main.rand.NextVector2Circular(-6, -2);
-                    speed.Y += Main.rand.NextFloat(-1f, 1f); //adds random variation from -1 to 2
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
                     // Reset the targetPosition 
                     targetPosition = Vector2.Zero;
@@ -449,9 +433,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     NPC.knockBackResist = 0f;
                     // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
+                    Vector2 currentStoredPos = storedPlayerPosition == Vector2.Zero ? player.Center : storedPlayerPosition;
+                    int direction = (currentStoredPos.X > NPC.Center.X) ? 1 : -1;
 
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
+                    targetPosition = new Vector2(currentStoredPos.X + 10f * direction, currentStoredPos.Y);
 
                     NPC.direction = (targetPosition.X > NPC.Center.X) ? 1 : -1;
                     NPC.spriteDirection = NPC.direction;
@@ -460,6 +445,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Bomb Telegraph
                 if (NPC.ai[1] == 900f)
                 {
+                    NPC.TargetClosest(true);
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
                     {
@@ -472,61 +458,46 @@ namespace tsorcRevamp.NPCs.Enemies
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
 
                     // Store the player's center
-                    if (framesSinceStoredPosition >= 25)
+                    int targetPlayer = NPC.target;
+                    if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                     {
-                        framesSinceStoredPosition = 0;
-                        int targetPlayer = NPC.target;
-                        if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
-                        {
-                            storedPlayerPosition = Main.player[targetPlayer].Center;
-                        }
+                        storedPlayerPosition = Main.player[targetPlayer].Center;
                     }
-
                 }
-                // Bomb Attack Far
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400 && hasPlayerLOS)
+
+                // Bomb Attack
+                if (NPC.ai[1] == 925f)
                 {
-                    float bombProjectileSpeed = 14f;
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    //speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (hasPlayerLOS)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        float distance = NPC.Distance(player.Center);
+                        if (distance > 400f)
+                        {
+                            float bombProjectileSpeed = 14f;
+                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
+                            speed += Main.player[NPC.target].velocity;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                            }
+                        }
+                        else
+                        {
+                            float bombProjectileSpeed = 9f;
+                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
+                            speed.Y += Main.rand.NextFloat(-1f, -2f);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                            }
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
 
                     // Reset targetPosition 
                     targetPosition = Vector2.Zero;
 
                     // Reset attack counter
-                    NPC.ai[1] = 0f;
-
-                    // Chance to throw again
-                    if (Main.rand.NextBool(2))
-                    {
-                        NPC.ai[1] = 830f;
-                        NPC.netUpdate = true;
-                    }
-                }
-                // Bomb Attack Close
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
-                {
-                    float bombProjectileSpeed = 9f;
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
-
-                    // Reset targetPosition 
-                    targetPosition = Vector2.Zero;
-
                     NPC.ai[1] = 0f;
 
                     // Chance to throw again

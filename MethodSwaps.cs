@@ -152,6 +152,8 @@ namespace tsorcRevamp
 
             On_Player.ApplyVanillaHurtEffectModifiers += On_Player_ApplyVanillaHurtEffectModifiers;
 
+            On_Player.KillMe += On_Player_KillMe;
+
             On_NPC.AI_069_DukeFishron += DukeFishronAdjustment;
 
             On_Main.HoverOverNPCs += HidePinwheelLifeOnMouseover;
@@ -1278,6 +1280,41 @@ namespace tsorcRevamp
             if (self.defendedByPaladin && self.whoAmI == Main.myPlayer && Above25PercentLife)
             {
                 modifiers.FinalDamage *= 0.75f;
+            }
+        }
+
+        private static void On_Player_KillMe(On_Player.orig_KillMe orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
+        {
+            bool useCustom = !ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds;
+            if (useCustom && self.whoAmI == Main.myPlayer && !self.dead)
+            {
+                if (self.Male)
+                {
+                    int choice = Main.rand.Next(1, 3);
+                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-dead-{choice}"));
+                }
+                else
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-dead"));
+                }
+            }
+
+            float oldVolume = Main.soundVolume;
+            if (useCustom && self.whoAmI == Main.myPlayer)
+            {
+                Main.soundVolume = 0f;
+            }
+
+            try
+            {
+                orig(self, damageSource, dmg, hitDirection, pvp);
+            }
+            finally
+            {
+                if (useCustom && self.whoAmI == Main.myPlayer)
+                {
+                    Main.soundVolume = oldVolume;
+                }
             }
         }
 

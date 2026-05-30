@@ -1,4 +1,4 @@
-﻿using Microsoft.Build.Evaluation;
+using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -70,6 +70,8 @@ namespace tsorcRevamp
         public Dictionary<Vector2, int> soulDeathLocations = new Dictionary<Vector2, int>();
         public int LastAttackedNPCIndex;
         public int DwarvenContractsGiven = 0;
+        private int lastHealthBand = 1;
+        private bool guaranteedHurtSoundForBand = false;
 
         public override void Initialize()
         {
@@ -487,6 +489,11 @@ namespace tsorcRevamp
 
         public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds)
+            {
+                modifiers.DisableSound();
+            }
+
             float REDUCE = CheckReduceDefense(Player.position, Player.width, Player.height, Player.fireWalk);
             if (REDUCE != 0)
             {
@@ -509,6 +516,70 @@ namespace tsorcRevamp
 
         public override void PostHurt(Player.HurtInfo info)
         {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds && Player.whoAmI == Main.myPlayer && info.Damage > 0)
+            {
+                float damagePct = Player.statLifeMax2 > 0 ? (float)info.Damage / Player.statLifeMax2 : 0f;
+                int damageVoiceIndex = 1;
+                if (damagePct <= 0.30f) damageVoiceIndex = 1;
+                else if (damagePct <= 0.40f) damageVoiceIndex = 2;
+                else if (damagePct <= 0.50f) damageVoiceIndex = 3;
+                else if (damagePct <= 0.60f) damageVoiceIndex = 4;
+                else damageVoiceIndex = 5;
+
+                float healthPct = Player.statLifeMax2 > 0 ? (float)Player.statLife / Player.statLifeMax2 : 1f;
+                int currentHealthBand = 1;
+                if (healthPct < 0.30f) currentHealthBand = 5;
+                else if (healthPct < 0.45f) currentHealthBand = 4;
+                else if (healthPct < 0.60f) currentHealthBand = 3;
+                else if (healthPct <= 0.75f) currentHealthBand = 2;
+                else currentHealthBand = 1;
+
+                if (currentHealthBand != lastHealthBand)
+                {
+                    guaranteedHurtSoundForBand = true;
+                    lastHealthBand = currentHealthBand;
+                }
+
+                int voiceIndex = damageVoiceIndex;
+
+                // If the hit itself dealt low damage, calculate the voice variant based on health bands
+                if (damageVoiceIndex == 1)
+                {
+                    if (guaranteedHurtSoundForBand && currentHealthBand > 1)
+                    {
+                        voiceIndex = currentHealthBand;
+                        guaranteedHurtSoundForBand = false;
+                    }
+                    else if (currentHealthBand > 1)
+                    {
+                        // 20% chance to play the low-health variant, otherwise play mild hurt-1
+                        if (Main.rand.NextFloat() < 0.20f)
+                        {
+                            voiceIndex = currentHealthBand;
+                        }
+                        else
+                        {
+                            voiceIndex = 1;
+                        }
+                    }
+                    else
+                    {
+                        voiceIndex = 1;
+                    }
+                }
+
+                float pitchOffset = Main.rand.Next(-1, 2) * 0.08f;
+
+                if (Player.Male)
+                {
+                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-hurt-{voiceIndex}") with { Volume = 0.7f, Pitch = pitchOffset });
+                }
+                else
+                {
+                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-hurt-{voiceIndex}") with { Volume = 0.7f, Pitch = pitchOffset });
+                }
+            }
+
             if (info.Damage > 1)
             {
                 Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s

@@ -239,23 +239,25 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
 
-                // Spear Attack: Get targetPosition and set NPC direction (the latter part is not working)
+                // Spear Attack: Get targetPosition and set NPC direction
                 if (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f)
                 {
                     NPC.knockBackResist = 0f;
                     // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
+                    Vector2 currentStoredPos = storedPlayerPosition == Vector2.Zero ? player.Center : storedPlayerPosition;
+                    int direction = (currentStoredPos.X > NPC.Center.X) ? 1 : -1;
 
                     // Use the stored player's position to calculate the targetPosition.
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
+                    targetPosition = new Vector2(currentStoredPos.X + 10f * direction, currentStoredPos.Y);
 
                     NPC.direction = (targetPosition.X > NPC.Center.X) ? 1 : -1;
                     NPC.spriteDirection = NPC.direction;
                 }
 
-                // Spear Telegraph
+                // Spear Telegraph Start
                 if (NPC.ai[1] == 90f)
                 {
+                    NPC.TargetClosest(true);
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
                     {
@@ -265,23 +267,21 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
                     }
+                }
 
-                    // Store the player's center
-                    if (framesSinceStoredPosition >= 25)
+                // Lock player position for Spear (30 ticks before throw at 180f)
+                if (NPC.ai[1] == 150f)
+                {
+                    int targetPlayer = NPC.target;
+                    if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                     {
-                        framesSinceStoredPosition = 0;
-                        int targetPlayer = NPC.target;
-                        if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
-                        {
-                            storedPlayerPosition = Main.player[targetPlayer].Center;
-                        }
+                        storedPlayerPosition = Main.player[targetPlayer].Center;
                     }
                 }
 
                 // Spear Attack
                 if (NPC.ai[1] == 180f)
                 {
-                    NPC.TargetClosest(true);
                     if (hasPlayerLOS)
                     {
                         float distance = NPC.Distance(player.Center);
@@ -451,9 +451,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     NPC.knockBackResist = 0f;
                     // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
+                    Vector2 currentStoredPos = storedPlayerPosition == Vector2.Zero ? player.Center : storedPlayerPosition;
+                    int direction = (currentStoredPos.X > NPC.Center.X) ? 1 : -1;
 
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
+                    targetPosition = new Vector2(currentStoredPos.X + 10f * direction, currentStoredPos.Y);
 
                     NPC.direction = (targetPosition.X > NPC.Center.X) ? 1 : -1;
                     NPC.spriteDirection = NPC.direction;
@@ -462,6 +463,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Bomb Telegraph
                 if (NPC.ai[1] == 830f)
                 {
+                    NPC.TargetClosest(true);
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
                     {
@@ -472,19 +474,18 @@ namespace tsorcRevamp.NPCs.Enemies
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
                     }
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
-
-                    // Store the player's center
-                    if (framesSinceStoredPosition >= 25)
-                    {
-                        framesSinceStoredPosition = 0;
-                        int targetPlayer = NPC.target;
-                        if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
-                        {
-                            storedPlayerPosition = Main.player[targetPlayer].Center;
-                        }
-                    }
-
                 }
+
+                // Lock player position for Bomb (30 ticks before throw at 925f)
+                if (NPC.ai[1] == 895f)
+                {
+                    int targetPlayer = NPC.target;
+                    if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
+                    {
+                        storedPlayerPosition = Main.player[targetPlayer].Center;
+                    }
+                }
+
                 // Bomb Attack
                 if (NPC.ai[1] == 925f)
                 {

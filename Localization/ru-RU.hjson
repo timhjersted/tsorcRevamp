@@ -11845,6 +11845,16 @@ Mods: {
 						'''
 				}
 
+				UseOriginalPlayerHurtSounds: {
+					// Label: Use Original Player Hurt/Death Sounds
+					/* Tooltip:
+						'''
+						Use the vanilla Terraria player hurt and death sounds.
+						If disabled, custom Dark Souls hurt and death voices will be used.
+						Defaults to Off.
+						''' */
+				}
+
 				MiakodaVolume: {
 					Label: Громкость Миакоды
 					Tooltip:
@@ -12181,3 +12191,5 @@ Mods: {
 		}
 	}
 }
+
+// LegacyInterface.38: YOU DIED

@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
@@ -101,6 +101,7 @@ namespace tsorcRevamp.Tiles
                     tsorcRevamp.LocationBannerTimer = tsorcRevamp.LOCATION_BANNER_TOTAL;
                     Vector2 tilePos = new Vector2(entity.Position.X, entity.Position.Y);
                     tsorcRevampWorld.DiscoveredLocations[tilePos] = entity.locationName.ToUpperInvariant();
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/new-area") with { Volume = 0.5f });
                 }
 
                 // If the bubble is sticky-open (user clicked Show), check whether the mouse has

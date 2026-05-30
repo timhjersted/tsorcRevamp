@@ -25,7 +25,7 @@ namespace tsorcRevamp.MainMenu
 
         public override bool PreDrawLogo(SpriteBatch spriteBatch, ref Vector2 logoDrawCenter, ref float logoRotation, ref float logoScale, ref Color drawColor)
         {
-            DrawMenuBackground(spriteBatch);
+            //DrawMenuBackground(spriteBatch);
 
             Texture2D logoTexture = Logo.Value;
             float maxLogoWidth = Main.screenWidth * 0.58f;

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
 
@@ -161,6 +161,10 @@ namespace tsorcRevamp
 
 
         [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Sound")]
+
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        public bool UseOriginalPlayerHurtSounds { get; set; }
 
         [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(5)]
