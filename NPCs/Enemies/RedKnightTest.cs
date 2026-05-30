@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Throwing;
@@ -73,9 +74,9 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.RedKnightBanner>();
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.RedKnight.DespawnHandler"), Color.Red, DustID.RedTorch);
             spriteRenderer = new EnemySpriteRenderer(
-                ModContent.ItemType<ShadowCloakPlateHelm>(),
-                ModContent.ItemType<ShadowCloakPlateMail>(),
-                ModContent.ItemType<ShadowCloakGreaves>());
+                ModContent.ItemType<DragonScaleHelmet>(),
+                ModContent.ItemType<DragonScaleMail>(),
+                ModContent.ItemType<DragonScaleGreaves>());
             //UsefulFunctions.AddAttack(NPC, 800, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 13, SoundID.Item17);
 
             if (!Main.hardMode)
@@ -282,50 +283,36 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                // Spear Attack Far
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400 && hasPlayerLOS)
+                // Spear Attack
+                if (NPC.ai[1] == 180f)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(14, 16f);
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
-                    //speed += Main.rand.NextVector2Circular(-6, -2);
-                    speed.Y += Main.rand.NextFloat(-2f, 2f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (hasPlayerLOS)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        if (NPC.Distance(player.Center) > 400)
+                        {
+                            float spearProjectileSpeed = Main.rand.NextFloat(14, 16f);
+                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
+                            speed.Y += Main.rand.NextFloat(-2f, 2f);
+                            speed += Main.player[NPC.target].velocity;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                            }
+                        }
+                        else
+                        {
+                            float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
+                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
+                            speed.Y += Main.rand.NextFloat(-1f, 1f);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                            }
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
-                    StartVisualPose(EnemySpritePose.ThrowRelease, SpearVisualItemType, 12, false, EnemyHeldItemStyle.Spear, SpearVisualTexturePath);
 
-                    // Reset the targetPosition 
-                    targetPosition = Vector2.Zero;
-
-                    // Move closer to next attack
-                    NPC.ai[1] = 200f;
-
-                    // Chance to fire Spear again
-                    if (Main.rand.NextBool(2))
-                    {
-                        NPC.ai[1] = 90f;
-                        NPC.netUpdate = true;
-                    }
-                }
-                // Spear Attack Close
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
-                {
-                    NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
-                    //speed += Main.rand.NextVector2Circular(-6, -2);
-                    speed.Y += Main.rand.NextFloat(-1f, 1f); //adds random variation from -1 to 2
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
                     StartVisualPose(EnemySpritePose.ThrowRelease, SpearVisualItemType, 12, false, EnemyHeldItemStyle.Spear, SpearVisualTexturePath);
 
                     // Reset the targetPosition 
@@ -368,31 +355,34 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Poison Attack 1
-                if (NPC.ai[1] == 325 && hasPlayerLOS)
+                if (NPC.ai[1] == 325)
                 {
-                    float projectileSpeed = 5f;
-                    float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
-                    int numProjectiles = 4; // Number of projectiles to shoot
-
-                    for (int i = 0; i < numProjectiles; i++)
+                    if (hasPlayerLOS)
                     {
-                        float angle = i * projectileSpread - (projectileSpread * (numProjectiles - 1)) / 2f;
+                        float projectileSpeed = 5f;
+                        float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
+                        int numProjectiles = 4; // Number of projectiles to shoot
 
-                        // Adjust the angle to cover only the upward half of the circle (from 0 to 180 degrees)
-                        if (angle > MathHelper.PiOver2)
+                        for (int i = 0; i < numProjectiles; i++)
                         {
-                            angle = MathHelper.Pi - angle;
-                        }
+                            float angle = i * projectileSpread - (projectileSpread * (numProjectiles - 1)) / 2f;
 
-                        Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, projectileSpeed, 1.1f, highAngle: true, fallback: true);
-                        speed2 += Main.player[NPC.target].velocity / 2; //was 4
-                        speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
-
-                        if (((speed2.X < 0f) && (NPC.direction < 0)) || ((speed2.X > 0f) && (NPC.direction > 0)))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            // Adjust the angle to cover only the upward half of the circle (from 0 to 180 degrees)
+                            if (angle > MathHelper.PiOver2)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                                angle = MathHelper.Pi - angle;
+                            }
+
+                            Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, projectileSpeed, 1.1f, highAngle: true, fallback: true);
+                            speed2 += Main.player[NPC.target].velocity / 2; //was 4
+                            speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
+
+                            if (((speed2.X < 0f) && (NPC.direction < 0)) || ((speed2.X > 0f) && (NPC.direction > 0)))
+                            {
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                                }
                             }
                         }
                     }
@@ -400,7 +390,6 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Reset the targetPosition
                     targetPosition = Vector2.Zero;
                     StartVisualPose(EnemySpritePose.MagicRelease, MagicVisualItemType, 15, false);
-
                 }
 
                 // Poison Attack 2 Telegraph
@@ -418,31 +407,34 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Poison Attack 2
-                if (NPC.ai[1] == 405 && hasPlayerLOS)
+                if (NPC.ai[1] == 405)
                 {
-                    float projectileSpeed = 4f;
-                    float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
-                    int numProjectiles = 4; // Number of projectiles to shoot
-
-                    for (int i = 0; i < numProjectiles; i++)
+                    if (hasPlayerLOS)
                     {
-                        float angle = i * projectileSpread - (projectileSpread * (numProjectiles - 1)) / 2f;
+                        float projectileSpeed = 4f;
+                        float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
+                        int numProjectiles = 4; // Number of projectiles to shoot
 
-                        // Adjust the angle to cover only the upward half of the circle (from 0 to 180 degrees)
-                        if (angle > MathHelper.PiOver2)
+                        for (int i = 0; i < numProjectiles; i++)
                         {
-                            angle = MathHelper.Pi - angle;
-                        }
+                            float angle = i * projectileSpread - (projectileSpread * (numProjectiles - 1)) / 2f;
 
-                        Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, projectileSpeed, 1.1f, highAngle: true, fallback: true);
-                        speed2 += Main.player[NPC.target].velocity / 2; //was 4
-                        speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
-
-                        if (((speed2.X < 0f) && (NPC.direction < 0)) || ((speed2.X > 0f) && (NPC.direction > 0)))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            // Adjust the angle to cover only the upward half of the circle (from 0 to 180 degrees)
+                            if (angle > MathHelper.PiOver2)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                                angle = MathHelper.Pi - angle;
+                            }
+
+                            Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, projectileSpeed, 1.1f, highAngle: true, fallback: true);
+                            speed2 += Main.player[NPC.target].velocity / 2; //was 4
+                            speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
+
+                            if (((speed2.X < 0f) && (NPC.direction < 0)) || ((speed2.X > 0f) && (NPC.direction > 0)))
+                            {
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                                }
                             }
                         }
                     }
@@ -500,52 +492,40 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
                 }
-                // Bomb Attack Far
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400 && hasPlayerLOS)
+                // Bomb Attack
+                if (NPC.ai[1] == 925f)
                 {
-                    float bombProjectileSpeed = 14f;
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    //speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (hasPlayerLOS)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        if (NPC.Distance(player.Center) > 400)
+                        {
+                            float bombProjectileSpeed = 14f;
+                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
+                            speed += Main.player[NPC.target].velocity;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                            }
+                        }
+                        else
+                        {
+                            float bombProjectileSpeed = 9f;
+                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
+                            speed.Y += Main.rand.NextFloat(-1f, -2f);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                            }
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
+
                     StartVisualPose(EnemySpritePose.ThrowRelease, BombVisualItemType, 12, false, EnemyHeldItemStyle.Bomb, BombVisualTexturePath);
 
                     // Reset targetPosition 
                     targetPosition = Vector2.Zero;
 
                     // Reset attack counter
-                    NPC.ai[1] = 0f;
-
-                    // Chance to throw again
-                    if (Main.rand.NextBool(2))
-                    {
-                        NPC.ai[1] = 830f;
-                        NPC.netUpdate = true;
-                    }
-                }
-                // Bomb Attack Close
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
-                {
-                    float bombProjectileSpeed = 9f;
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
-                    StartVisualPose(EnemySpritePose.ThrowRelease, BombVisualItemType, 12, false, EnemyHeldItemStyle.Bomb, BombVisualTexturePath);
-
-                    // Reset targetPosition 
-                    targetPosition = Vector2.Zero;
-
                     NPC.ai[1] = 0f;
 
                     // Chance to throw again
@@ -737,9 +717,9 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spriteRenderer == null)
             {
                 spriteRenderer = new EnemySpriteRenderer(
-                    ModContent.ItemType<ShadowCloakPlateHelm>(),
-                    ModContent.ItemType<ShadowCloakPlateMail>(),
-                    ModContent.ItemType<ShadowCloakGreaves>());
+                    ModContent.ItemType<DragonScaleHelmet>(),
+                    ModContent.ItemType<DragonScaleMail>(),
+                    ModContent.ItemType<DragonScaleGreaves>());
             }
 
             UpdateSpritePose();

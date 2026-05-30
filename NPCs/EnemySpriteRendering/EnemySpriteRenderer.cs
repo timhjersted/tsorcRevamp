@@ -162,6 +162,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             puppet.body = puppet.armor[1].bodySlot;
             puppet.legs = puppet.armor[2].legSlot;
 
+            /*
             puppet.skinColor = Color.Black;
             puppet.eyeColor = Color.Black;
             puppet.hairColor = Color.Black;
@@ -169,6 +170,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             puppet.underShirtColor = Color.Black;
             puppet.pantsColor = Color.Black;
             puppet.shoeColor = Color.Black;
+            */
         }
 
         private void SyncPuppet(NPC npc)
@@ -249,9 +251,9 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
 
             int bodyRow = pose switch
             {
-                EnemySpritePose.ThrowTelegraph => GetBodyRowFromWeaponPitch(),
+                EnemySpritePose.ThrowTelegraph => 2,
                 EnemySpritePose.ThrowRelease => 3,
-                EnemySpritePose.MagicTelegraph => GetBodyRowFromWeaponPitch(),
+                EnemySpritePose.MagicTelegraph => 2,
                 EnemySpritePose.MagicRelease => 3,
                 EnemySpritePose.MagicAim => 3,
                 _ when !onGround => 5,
@@ -289,9 +291,13 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             {
                 EnemySpritePose.Carry => MathHelper.Lerp(weaponRotation, GetCarryRotation(), 0.18f),
                 EnemySpritePose.ThrowTelegraph => GetThrowTelegraphRotation(progress),
-                EnemySpritePose.ThrowRelease => MathHelper.Lerp(-0.10f, 0.45f, progress),
+                EnemySpritePose.ThrowRelease => progress < 0.15f
+                    ? MathHelper.Lerp(-1.80f, 0.40f, progress / 0.15f)
+                    : MathHelper.Lerp(0.40f, 0.60f, (progress - 0.15f) / 0.85f),
                 EnemySpritePose.MagicTelegraph => MathHelper.Lerp(weaponRotation, -1.40f, 0.12f),
-                EnemySpritePose.MagicRelease => MathHelper.Lerp(-1.40f, 0.20f, progress),
+                EnemySpritePose.MagicRelease => progress < 0.15f
+                    ? MathHelper.Lerp(-1.40f, 0.20f, progress / 0.15f)
+                    : MathHelper.Lerp(0.20f, 0.35f, (progress - 0.15f) / 0.85f),
                 EnemySpritePose.MagicAim => MathHelper.Lerp(weaponRotation, 0.05f, 0.22f),
                 _ => MathHelper.Lerp(weaponRotation, 0.35f, 0.10f)
             };
@@ -307,33 +313,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
 
             float armRotation = weaponRotation - MathHelper.PiOver2;
 
-            if (npc.direction == -1)
-            {
-                armRotation = MathHelper.Pi - armRotation;
-            }
-
             puppet.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armRotation);
-        }
-
-        private int GetBodyRowFromWeaponPitch()
-        {
-            float pitch = (1f - (float)Math.Sin(weaponRotation)) / 2f;
-            if (pitch > 0.95f)
-            {
-                return 1;
-            }
-
-            if (pitch > 0.70f)
-            {
-                return 2;
-            }
-
-            if (pitch > 0.30f)
-            {
-                return 3;
-            }
-
-            return 4;
         }
 
         private float GetCarryRotation()
@@ -348,12 +328,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
 
         private float GetThrowTelegraphRotation(float progress)
         {
-            if (progress < 0.55f)
-            {
-                return MathHelper.Lerp(GetCarryRotation(), -1.35f, progress / 0.55f);
-            }
-
-            return MathHelper.Lerp(-1.35f, -0.10f, (progress - 0.55f) / 0.45f);
+            return MathHelper.Lerp(GetCarryRotation(), -1.80f, progress);
         }
 
         private float GetPoseProgress()
@@ -363,23 +338,22 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
 
         private Vector2 GetHandPosition(NPC npc)
         {
-            if (IsWeaponPosePhase)
-            {
-                float armRotation = weaponRotation - MathHelper.PiOver2;
-                if (npc.direction == -1)
-                {
-                    armRotation = MathHelper.Pi - armRotation;
-                }
-                Vector2 handPos = puppet.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armRotation);
-                handPos.Y += puppet.gfxOffY;
-                return handPos;
-            }
-
             int bodyRow = puppet.bodyFrame.Y / FrameHeight;
+            Vector2 puppetCenter = npc.position + new Vector2(10f, 20f);
+
             if (pose == EnemySpritePose.Carry)
             {
                 Vector2 carryOffset = GetCarryHandOffset(bodyRow);
-                return npc.Center + new Vector2(carryOffset.X * npc.direction, carryOffset.Y);
+                return puppetCenter + new Vector2(carryOffset.X * npc.direction, carryOffset.Y);
+            }
+
+            if (IsWeaponPosePhase)
+            {
+                float armLength = 12f;
+                Vector2 relativeOffset = weaponRotation.ToRotationVector2() * armLength;
+                relativeOffset.X *= npc.direction;
+                Vector2 shoulder = puppetCenter + new Vector2(2f * npc.direction, -2f);
+                return shoulder + relativeOffset;
             }
 
             Vector2 offset = bodyRow switch
@@ -391,7 +365,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
                 _ => new Vector2(4f, 2f)
             };
 
-            return npc.Center + new Vector2(offset.X * npc.direction, offset.Y);
+            return puppetCenter + new Vector2(offset.X * npc.direction, offset.Y);
         }
 
         private static Vector2 GetCarryHandOffset(int bodyRow)
@@ -455,7 +429,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             }
             else if (heldItemStyle == EnemyHeldItemStyle.Spear)
             {
-                origin = new Vector2(texture.Width * 0.5f, texture.Height * 0.5f);
+                origin = new Vector2(texture.Width * 0.50f, texture.Height * 0.82f);
             }
             else
             {
@@ -472,7 +446,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
                 EnemyHeldItemStyle.MagicBall => 0.85f * 0.75f,
                 _ => 0.62f
             };
-            float rotation = GetWeaponDrawRotation();
+            float rotation = npc.direction * GetWeaponDrawRotation();
 
             drawInfo.DrawDataCache.Add(new DrawData(
                 texture,

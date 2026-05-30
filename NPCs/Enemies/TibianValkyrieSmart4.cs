@@ -82,6 +82,18 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             SmartFighter4AI.Run(NPC, topSpeed: 1.55f, acceleration: 0.10f, attackRange: 700f);
 
+            // Keep the NPC from vanishing via vanilla's timeLeft despawn while it's actively
+            // pursuing a living target within a generous range. Without this, an NPC that gets
+            // stuck (e.g. below a rope while the player climbs away) slips out of the player's
+            // active rectangle and vanilla despawns it in ~10s. Refreshing timeLeft each frame
+            // lets it persist so its behavior stays observable; it still despawns if the player
+            // truly leaves the area (> ~4000px).
+            Player target = Main.player[NPC.target];
+            if (target != null && target.active && !target.dead && NPC.Distance(target.Center) < 4000f)
+            {
+                if (NPC.timeLeft < 600) NPC.timeLeft = 600;
+            }
+
             if (!NPC.downedBoss1)
             {
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList[0].damage = 7;

@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
+using Terraria.GameInput;
 using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
@@ -24,6 +25,18 @@ namespace tsorcRevamp
     {
         public static RecipeGroup UpgradedMirrors;
         public static RecipeGroup CobaltHelmets;
+
+        private static bool portableGuideCraftingActive;
+        private static Item portableGuideItem = new Item();
+        private static int lastPortableGuideItemType;
+        private static int lastPortableGuideItemPrefix;
+        private static int lastPortableGuideItemStack;
+        private static int portableGuideRecipeScroll;
+        private static int portableGuideSelectedRecipeIndex;
+        private static int portableGuideScrollDelta;
+        private static readonly List<int> portableGuideRecipeIndices = new List<int>();
+        private const int PortableGuideSlotContext = ItemSlot.Context.BankItem;
+        private const int PortableGuideVisibleRecipes = 5;
 
 
         static ForceLoadTexture[] mapTextures = new ForceLoadTexture[6] {
@@ -260,6 +273,26 @@ namespace tsorcRevamp
             if (inventoryIndex != -1)
             {
                 layers.Insert(inventoryIndex, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Portable Guide Scroll Swallower",
+                    delegate
+                    {
+                        SwallowPortableGuideScroll();
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+
+                layers.Insert(inventoryIndex + 2, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Portable Guide Crafting Slot",
+                    delegate
+                    {
+                        DrawPortableGuideCraftingSlot(Main.spriteBatch);
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+
+                layers.Insert(inventoryIndex, new LegacyGameInterfaceLayer(
                     "tsorcRevamp: Emerald Herald UI",
                     delegate
                     {
@@ -356,6 +389,8 @@ namespace tsorcRevamp
             }
 
             if (MapMarkersUIState.Visible) mod.MarkerInterface.Update(gameTime);
+
+            UpdatePortableGuideCrafting();
         }
 
         public static Vector2 OurDrawBorderString(SpriteBatch sb, string text, DynamicSpriteFont font, Vector2 pos, Color color, float scale = 1f, float anchorx = 0f, float anchory = 0f, int maxCharactersDisplayed = -1)
@@ -569,6 +604,388 @@ namespace tsorcRevamp
             tsorcRevamp.LocationBannerTimer--;
             if (tsorcRevamp.LocationBannerTimer <= 0)
                 tsorcRevamp.LocationBannerText = null;
+        }
+
+        private static void UpdatePortableGuideCrafting()
+        {
+            if (!ShouldShowPortableGuideCraftingSlot())
+            {
+                if (portableGuideCraftingActive)
+                {
+                    ReturnPortableGuideItemToPlayer();
+                    portableGuideCraftingActive = false;
+                }
+                return;
+            }
+
+            portableGuideCraftingActive = true;
+
+            if (PortableGuideItemChanged())
+            {
+                RebuildPortableGuideRecipes();
+                StorePortableGuideItemState();
+                portableGuideRecipeScroll = 0;
+                portableGuideSelectedRecipeIndex = 0;
+            }
+        }
+
+        private static bool ShouldShowPortableGuideCraftingSlot()
+        {
+            return Main.playerInventory
+                && string.IsNullOrEmpty(Main.npcChatText)
+                && !Main.InReforgeMenu;
+        }
+
+        private static void StorePortableGuideItemState()
+        {
+            lastPortableGuideItemType = portableGuideItem.type;
+            lastPortableGuideItemPrefix = portableGuideItem.prefix;
+            lastPortableGuideItemStack = portableGuideItem.stack;
+        }
+
+        private static bool PortableGuideItemChanged()
+        {
+            return portableGuideItem.type != lastPortableGuideItemType
+                || portableGuideItem.prefix != lastPortableGuideItemPrefix
+                || portableGuideItem.stack != lastPortableGuideItemStack;
+        }
+
+        private static void ReturnPortableGuideItemToPlayer()
+        {
+            if (portableGuideItem == null || portableGuideItem.IsAir)
+                return;
+
+            Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_Misc("PortableGuide"), portableGuideItem.type, portableGuideItem.stack);
+            portableGuideItem.TurnToAir();
+            StorePortableGuideItemState();
+        }
+
+        private static void RebuildPortableGuideRecipes()
+        {
+            portableGuideRecipeIndices.Clear();
+            portableGuideSelectedRecipeIndex = 0;
+            if (portableGuideItem == null || portableGuideItem.IsAir)
+            {
+                return;
+            }
+
+            for (int i = 0; i < Recipe.maxRecipes; i++)
+            {
+                Recipe recipe = Main.recipe[i];
+                if (recipe == null || recipe.Disabled || recipe.createItem.IsAir)
+                {
+                    continue;
+                }
+
+                if (recipe.HasIngredient(portableGuideItem.type))
+                {
+                    portableGuideRecipeIndices.Add(i);
+                }
+            }
+        }
+
+        private static void DrawPortableGuideCraftingSlot(SpriteBatch spriteBatch)
+        {
+            if (!ShouldShowPortableGuideCraftingSlot())
+            {
+                return;
+            }
+
+            float oldScale = Main.inventoryScale;
+            Main.inventoryScale = 0.85f;
+
+            try
+            {
+                int slotIndexX = 13;
+                int slotIndexY = 0;
+                int slotPosX = (int)(20f + (float)(slotIndexX * 56) * Main.inventoryScale);
+                int slotPosY = (int)(20f + (float)(slotIndexY * 56) * Main.inventoryScale) + 18;
+                Vector2 slotPosition = new Vector2(slotPosX, slotPosY);
+                Rectangle slotRectangle = new Rectangle(slotPosX, slotPosY, (int)(52 * Main.inventoryScale), (int)(52 * Main.inventoryScale));
+
+                // Draw the "Guide" text label directly above the slot
+                DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, FontAssets.MouseText.Value, Lang.GetNPCNameValue(NPCID.Guide), new Vector2(slotPosX + 5f, slotPosY - 15), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0);
+
+                if (slotRectangle.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
+                {
+                    Main.LocalPlayer.mouseInterface = true;
+                    ItemSlot.Handle(ref portableGuideItem, PortableGuideSlotContext);
+                }
+
+                ItemSlot.Draw(spriteBatch, ref portableGuideItem, PortableGuideSlotContext, slotPosition);
+
+                if (PortableGuideItemChanged())
+                {
+                    RebuildPortableGuideRecipes();
+                    StorePortableGuideItemState();
+                    portableGuideRecipeScroll = 0;
+                    portableGuideSelectedRecipeIndex = 0;
+                }
+
+                DrawPortableGuideRecipeResults(spriteBatch, new Vector2(slotPosX, slotPosY + (int)(52 * Main.inventoryScale) + 10), slotPosition);
+            }
+            finally
+            {
+                Main.inventoryScale = oldScale;
+            }
+        }
+
+        private static void DrawPortableGuideRecipeResults(SpriteBatch spriteBatch, Vector2 position, Vector2 slotPosition)
+        {
+            if (portableGuideItem == null || portableGuideItem.IsAir)
+            {
+                return;
+            }
+
+            // Total recipes count text (white text, no background box)
+            string header = portableGuideRecipeIndices.Count == 1 ? "1 recipe" : portableGuideRecipeIndices.Count + " recipes";
+            DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, FontAssets.MouseText.Value, header, position, Color.White, 0f, Vector2.Zero, 0.85f, SpriteEffects.None, 0f);
+
+            if (portableGuideRecipeIndices.Count == 0)
+            {
+                return;
+            }
+
+            const int rowHeight = 48;
+            int visibleRows = Math.Min(PortableGuideVisibleRecipes, portableGuideRecipeIndices.Count);
+
+            // Bounding box for scroll interaction (covers Guide slot and the recipe icons column below)
+            int totalScrollHeight = 58 + 20 + visibleRows * rowHeight;
+            Rectangle scrollArea = new Rectangle((int)position.X - 50, (int)position.Y - 58, 150, totalScrollHeight);
+
+            // Clamp selection index within bounds
+            if (portableGuideSelectedRecipeIndex < 0)
+            {
+                portableGuideSelectedRecipeIndex = 0;
+            }
+            if (portableGuideSelectedRecipeIndex >= portableGuideRecipeIndices.Count)
+            {
+                portableGuideSelectedRecipeIndex = Math.Max(0, portableGuideRecipeIndices.Count - 1);
+            }
+
+            // Selection controlled by scroll wheel
+            if (scrollArea.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
+            {
+                Main.LocalPlayer.mouseInterface = true;
+                int scrollDelta = portableGuideScrollDelta != 0 ? portableGuideScrollDelta : PlayerInput.ScrollWheelDelta;
+                if (scrollDelta != 0)
+                {
+                    int scrollDirection = -Math.Sign(scrollDelta); // -1 for scroll up, +1 for scroll down
+                    if (portableGuideRecipeIndices.Count > 0)
+                    {
+                        portableGuideSelectedRecipeIndex += scrollDirection;
+                        if (portableGuideSelectedRecipeIndex < 0)
+                        {
+                            portableGuideSelectedRecipeIndex = 0;
+                        }
+                        if (portableGuideSelectedRecipeIndex >= portableGuideRecipeIndices.Count)
+                        {
+                            portableGuideSelectedRecipeIndex = portableGuideRecipeIndices.Count - 1;
+                        }
+
+                        // Auto-scroll viewport to keep selection in view
+                        if (portableGuideSelectedRecipeIndex < portableGuideRecipeScroll)
+                        {
+                            portableGuideRecipeScroll = portableGuideSelectedRecipeIndex;
+                        }
+                        else if (portableGuideSelectedRecipeIndex >= portableGuideRecipeScroll + PortableGuideVisibleRecipes)
+                        {
+                            portableGuideRecipeScroll = portableGuideSelectedRecipeIndex - PortableGuideVisibleRecipes + 1;
+                        }
+                    }
+                    PlayerInput.ScrollWheelDelta = 0; // swallow
+                    portableGuideScrollDelta = 0; // consume
+                }
+            }
+
+            int startRecipe = Math.Min(portableGuideRecipeScroll, Math.Max(0, portableGuideRecipeIndices.Count - PortableGuideVisibleRecipes));
+            int endRecipe = Math.Min(portableGuideRecipeIndices.Count, startRecipe + PortableGuideVisibleRecipes);
+
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Vector2 selectedRowPosition = Vector2.Zero;
+            bool foundSelectedRow = false;
+
+            for (int i = startRecipe; i < endRecipe; i++)
+            {
+                Recipe recipe = Main.recipe[portableGuideRecipeIndices[i]];
+                Item resultItem = recipe.createItem;
+
+                int drawRow = i - startRecipe;
+                Vector2 rowPosition = new Vector2(position.X, position.Y + 20 + drawRow * rowHeight);
+                Rectangle slotRect = new Rectangle((int)rowPosition.X, (int)rowPosition.Y, 44, 44);
+
+                bool isHovered = slotRect.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface;
+                bool isSelected = (i == portableGuideSelectedRecipeIndex);
+
+                if (isHovered)
+                {
+                    Main.LocalPlayer.mouseInterface = true;
+                }
+
+                if (isSelected)
+                {
+                    selectedRowPosition = rowPosition;
+                    foundSelectedRow = true;
+
+                    // Yellow highlight using the background asset swap trick
+                    ReLogic.Content.Asset<Texture2D> originalBack = TextureAssets.InventoryBack4;
+                    TextureAssets.InventoryBack4 = TextureAssets.InventoryBack14;
+
+                    // Draw recipe slot with yellow background
+                    ItemSlot.Draw(spriteBatch, ref resultItem, ItemSlot.Context.CraftingMaterial, rowPosition);
+
+                    // Restore original background
+                    TextureAssets.InventoryBack4 = originalBack;
+                }
+                else
+                {
+                    // Draw standard recipe slot
+                    ItemSlot.Draw(spriteBatch, ref resultItem, ItemSlot.Context.CraftingMaterial, rowPosition);
+                }
+
+                // If hovered, call MouseHover AFTER ItemSlot.Draw to cleanly show the tooltip
+                if (isHovered)
+                {
+                    ItemSlot.MouseHover(ref resultItem, ItemSlot.Context.CraftingMaterial);
+                }
+
+                // Click selection
+                if (isHovered && Main.mouseLeft && Main.mouseLeftRelease)
+                {
+                    portableGuideSelectedRecipeIndex = i;
+                    Main.mouseLeftRelease = false;
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
+                }
+
+                // Darken the top or bottom slot if there are more items to scroll to
+                bool isBottomRow = (i == endRecipe - 1);
+                bool hasMoreRecipesBelow = (startRecipe + PortableGuideVisibleRecipes < portableGuideRecipeIndices.Count);
+                bool isTopRow = (i == startRecipe);
+                bool hasMoreRecipesAbove = (startRecipe > 0);
+
+                if (!isSelected && ((isBottomRow && hasMoreRecipesBelow) || (isTopRow && hasMoreRecipesAbove)))
+                {
+                    // Draw a dark semi-transparent overlay to shade the slot and item
+                    spriteBatch.Draw(pixel, slotRect, new Color(0, 0, 0, 110));
+                }
+            }
+
+            // Draw details panel for the selected recipe (to the right of the Guide slot - fixed position next to it)
+            if (portableGuideSelectedRecipeIndex >= 0 && portableGuideSelectedRecipeIndex < portableGuideRecipeIndices.Count)
+            {
+                Recipe selectedRecipe = Main.recipe[portableGuideRecipeIndices[portableGuideSelectedRecipeIndex]];
+
+                // Align details to the right of the Guide slot
+                int detailsX = (int)(slotPosition.X + (52 * Main.inventoryScale) + 15);
+                int detailsY = (int)slotPosition.Y;
+
+                // 1. First line: "Showing recipes that use [Guide Item Name]"
+                string text1 = $"Showing recipes that use {portableGuideItem.Name}";
+                DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, FontAssets.MouseText.Value, text1, new Vector2(detailsX, detailsY), new Color(200, 200, 200, 255), 0f, Vector2.Zero, 0.75f, SpriteEffects.None, 0f);
+
+                // 2. Second line: "Required objects: [Station Name]"
+                List<string> reqs = new List<string>();
+                foreach (int tileID in selectedRecipe.requiredTile)
+                {
+                    reqs.Add(GetRequiredTileName(tileID));
+                }
+                foreach (Condition condition in selectedRecipe.Conditions)
+                {
+                    reqs.Add(condition.Description.Value);
+                }
+
+                string stationText = reqs.Count > 0 ? string.Join(", ", reqs) : "By Hand";
+                string text2 = $"Required objects: {stationText}";
+                DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, FontAssets.MouseText.Value, text2, new Vector2(detailsX, detailsY + 14), new Color(180, 180, 180, 255), 0f, Vector2.Zero, 0.70f, SpriteEffects.None, 0f);
+
+                // 3. Horizontal list of ingredients - drawn next to the selected recipe row
+                if (foundSelectedRow)
+                {
+                    int ingY = (int)(selectedRowPosition.Y + 6);
+                    float currentScale = Main.inventoryScale;
+
+                    int ingIndex = 0;
+                    for (int j = 0; j < selectedRecipe.requiredItem.Count; j++)
+                    {
+                        Item ingredientItem = selectedRecipe.requiredItem[j];
+                        if (ingredientItem.type <= 0) continue;
+
+                        int ingX = (int)(selectedRowPosition.X + 54 + ingIndex * (38 * currentScale));
+                        Rectangle ingRect = new Rectangle(ingX, ingY, (int)(44 * 0.75f), (int)(44 * 0.75f));
+
+                        bool isIngHovered = ingRect.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface;
+
+                        if (isIngHovered)
+                        {
+                            Main.LocalPlayer.mouseInterface = true;
+                        }
+
+                        // Draw the small ingredient slot
+                        Main.inventoryScale = currentScale * 0.75f;
+                        ItemSlot.Draw(spriteBatch, ref ingredientItem, ItemSlot.Context.CraftingMaterial, new Vector2(ingX, ingY));
+                        Main.inventoryScale = currentScale;
+
+                        if (isIngHovered)
+                        {
+                            ItemSlot.MouseHover(ref ingredientItem, ItemSlot.Context.CraftingMaterial);
+                        }
+
+                        ingIndex++;
+                    }
+                }
+            }
+        }
+
+        private static string GetRequiredTileName(int tileID)
+        {
+            if (tileID == TileID.WorkBenches) return "Work Bench";
+            if (tileID == TileID.Anvils) return "Iron Anvil";
+            if (tileID == TileID.Furnaces) return "Furnace";
+            if (tileID == TileID.DemonAltar) return "Demon Altar";
+            if (tileID == TileID.MythrilAnvil) return "Mythril Anvil";
+            if (tileID == TileID.AdamantiteForge) return "Adamantite Forge";
+            if (tileID == TileID.TinkerersWorkbench) return "Tinkerer's Workshop";
+            if (tileID == TileID.ImbuingStation) return "Imbuing Station";
+            if (tileID == TileID.DyeVat) return "Dye Vat";
+            if (tileID == TileID.Loom) return "Loom";
+            if (tileID == TileID.Sawmill) return "Sawmill";
+            if (tileID == TileID.CrystalBall) return "Crystal Ball";
+            if (tileID == TileID.Autohammer) return "Autohammer";
+
+            try
+            {
+                int lookup = Terraria.Map.MapHelper.TileToLookup(tileID, 0);
+                string name = Lang.GetMapObjectName(lookup);
+                if (!string.IsNullOrEmpty(name))
+                {
+                    return name;
+                }
+            }
+            catch {}
+
+            return "By Hand";
+        }
+
+        private static void SwallowPortableGuideScroll()
+        {
+            portableGuideScrollDelta = 0;
+            if (!ShouldShowPortableGuideCraftingSlot() || portableGuideItem == null || portableGuideItem.IsAir)
+            {
+                return;
+            }
+
+            int slotIndexX = 13;
+            int slotPosX = (int)(20f + (float)(slotIndexX * 56) * 0.85f);
+            int slotPosY = (int)(20f + (float)(0 * 56) * 0.85f) + 18;
+
+            Rectangle activeArea = new Rectangle(slotPosX - 50, slotPosY - 25, 420, 380);
+
+            if (activeArea.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
+            {
+                Main.LocalPlayer.mouseInterface = true;
+                portableGuideScrollDelta = PlayerInput.ScrollWheelDelta;
+                PlayerInput.ScrollWheelDelta = 0;
+            }
         }
 
         public override void Unload()

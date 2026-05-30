@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -1511,6 +1511,12 @@ namespace tsorcRevamp.NPCs
             {
                 trueSpawnRate /= 2;
                 trueMaxSpawns = trueMaxSpawns * 1.5f;
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
+            {
+                trueSpawnRate /= 2;
+                trueMaxSpawns *= 2;
             }
 
             if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)

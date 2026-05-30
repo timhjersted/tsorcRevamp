@@ -141,6 +141,10 @@ namespace tsorcRevamp.NPCs
 
             TickTimers(s);
             ManagePlatformPass(s, npc);
+            // Safety: never leave noTileCollide stuck on outside an active platform pass OR a rope
+            // climb (noGravity), or the NPC can phase through solid walls (the "passed through a
+            // wall" bug). Rope climb legitimately uses noTileCollide and is excluded here.
+            if (npc.noTileCollide && !s.PlatformPassActive && !npc.noGravity) npc.noTileCollide = false;
             bool grounded = IsGrounded(npc);
 
             // Airborne X-velocity lock — only active during a committed jump action.
@@ -199,7 +203,10 @@ namespace tsorcRevamp.NPCs
                 // window forces movement so the NPC doesn't get stuck standing in one spot.
                 else if (losNow && inRange && g.AttackList.Count > 0 && s.RepositionTimer == 0)
                 {
-                    npc.velocity.X *= 0.6f; // brake
+                    // Brake to a FULL stop so the idle (feet-together) frame shows instead of the
+                    // walk frame — a tiny residual velocity keeps vanilla in the walk animation.
+                    if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f;
+                    else npc.velocity.X *= 0.6f;
                     npc.direction = dir; npc.spriteDirection = dir;
                     s.HaltFrames++;
                     if (s.HaltFrames >= HaltMaxFrames)
@@ -300,9 +307,10 @@ namespace tsorcRevamp.NPCs
             if (s.RepositionTimer > 0) s.RepositionTimer--;
         }
 
-        // Stand-and-fire tuning: stand for up to ~1-2 spear throws, then move for a spell.
-        private const int HaltMaxFrames = 220;
-        private const int RepositionFrames = 100;
+        // Stand-and-fire tuning: brief stand (~1 attack), then a longer reposition window so the
+        // NPC spends most of its time pursuing/maneuvering rather than rooted firing.
+        private const int HaltMaxFrames = 110;    // ~1.8s standing
+        private const int RepositionFrames = 180; // ~3s moving before it may halt again
 
         private static void ManagePlatformPass(NavState s, NPC npc)
         {
@@ -572,9 +580,8 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        // Max climbable rope length (tiles). Ropes in this mod can be much taller than the
-        // old 16-tile scan / 14-tile edge cap, which is why tall ropes were never climbed.
-        private const int MaxRopeClimb = 40;
+        // Max climbable rope length (tiles). Generous so very tall ropes are fully traversable.
+        private const int MaxRopeClimb = 100;
         private const float RopeClimbSpeed = 3.2f; // px/frame vertical ride speed
 
         // A rope column has rope tiles for at least 3 contiguous rows above feetY.
@@ -622,6 +629,24 @@ namespace tsorcRevamp.NPCs
             if (b - t < 2) return false; // need at least 3 contiguous rope tiles
             bottomY = b; topY = t;
             return true;
+        }
+
+        // Computes the X position to snap the body to while on a rope. Normally the rope center,
+        // but if a solid block is beside the rope column, offset toward the open side so the wider
+        // body fits within the rope tile rather than jamming into the block.
+        private static float RopeSnapX(NPC npc, int ropeCol, float ropeCenter, int feetY)
+        {
+            float snapX = ropeCenter;
+            int bodyRow = feetY - 1; // mid-body sample
+            bool solidRight = IsNavigationSolid(ropeCol + 1, bodyRow) && !IsRopeTile(ropeCol + 1, bodyRow);
+            bool solidLeft = IsNavigationSolid(ropeCol - 1, bodyRow) && !IsRopeTile(ropeCol - 1, bodyRow);
+            float overhang = (npc.width - TileF) / 2f + 1f; // how far the body overhangs the rope tile
+            if (overhang > 0f)
+            {
+                if (solidRight && !solidLeft) snapX -= overhang;
+                else if (solidLeft && !solidRight) snapX += overhang;
+            }
+            return snapX - npc.width / 2f;
         }
 
         // Fallback used when there is no plan and the player is on a different level: find the
@@ -931,6 +956,7 @@ namespace tsorcRevamp.NPCs
             if (onRope && (reachedTarget || atRopeEnd || forceDismount))
             {
                 npc.noGravity = false;
+                npc.noTileCollide = false; // re-enable collision before any horizontal dismount motion
                 s.RopeStallFrames = 0;
                 int rise = feetY - step.TargetY; // > 0 means the target is still above us
 
@@ -949,7 +975,7 @@ namespace tsorcRevamp.NPCs
                 {
                     ComputeJumpArc(0, rise, npc.gravity, jumpCeil, topSpeed + boostCeil,
                                    out float vp, out _);
-                    npc.position.X = ropeCenter - npc.width / 2f;
+                    npc.position.X = RopeSnapX(npc, step.LaunchX, ropeCenter, feetY);
                     npc.velocity.X = 0f;
                     npc.velocity.Y = -Math.Max(vp, 6f);
                     s.AirCommitDirX = 0; s.AirCommitTimer = 0; s.CommittedLaunchVx = 0f;
@@ -974,8 +1000,12 @@ namespace tsorcRevamp.NPCs
                 return true;
             }
 
-            // Phase 2: steady ride. Hard-align X to the rope column so it never wobbles.
+            // Phase 2: steady vertical ride. noTileCollide lets the body ignore blocks beside the
+            // rope (and the solid underside of a destination ledge the rope passes), mimicking how
+            // a player climbs a rope between walls. Safe from sideways wall-phasing because
+            // velocity.X is zeroed and X is hard-snapped to the rope center every frame.
             npc.noGravity = true;
+            npc.noTileCollide = true;
             npc.position.X = ropeCenter - npc.width / 2f;
             npc.velocity.X = 0f;
             npc.velocity.Y = descend ? RopeClimbSpeed : -RopeClimbSpeed;
@@ -1021,8 +1051,17 @@ namespace tsorcRevamp.NPCs
         {
             if (!grounded)
             {
+                // Only abort if genuinely WEDGED against a wall mid-air (near-zero velocity in both
+                // axes), not merely brushing one during a healthy jump — the latter is normal in
+                // tight interiors and aborting on it broke upward traversal through stacked platforms.
+                if (npc.collideX && Math.Abs(npc.velocity.Y) < 0.5f && Math.Abs(npc.velocity.X) < 0.5f)
+                {
+                    int expiry = (int)Main.GameUpdateCount + 480;
+                    s.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                    s.StepTimer = Math.Min(s.StepTimer, 8);
+                }
                 action = "jump-air";
-                reason = $"commit={s.CommitFrames}";
+                reason = $"commit={s.CommitFrames} cx={npc.collideX}";
                 return false;
             }
             int absDx = Math.Abs(step.TargetX - step.LaunchX);
@@ -1053,7 +1092,26 @@ namespace tsorcRevamp.NPCs
                 return true;
             }
             // Physics-based arc (SF4): solve the exact jump from npc.gravity + jump limits.
-            int rise = feetY - step.TargetY;          // positive = rising
+            int rise = feetY - step.TargetY;          // positive = rising; negative = target below
+
+            // Descending target directly below us: NEVER jump up to go down. Drop straight
+            // through instead (noTileCollide passes wood platforms; ManagePlatformPass ends it
+            // on landing). Fixes the "bounce up to reach a target below" bug from the log.
+            if (rise < 0 && absDx <= 1)
+            {
+                npc.noTileCollide = true;
+                npc.velocity.X = 0f;
+                npc.velocity.Y = Math.Max(npc.velocity.Y, 2.0f);
+                s.PlatformPassActive = true;
+                s.PlatformPassTimer = 24;
+                s.PlatformPassStartY = npc.Bottom.Y;
+                s.CommitFrames = 25;
+                s.AirCommitDirX = 0;
+                s.CommittedLaunchVx = 0f;
+                action = "jump-dropdown"; reason = $"down rise={rise}";
+                return true;
+            }
+
             float maxLaunchVx = topSpeed + boostCeil;
             int launchDir = step.TargetX > step.LaunchX ? 1
                           : step.TargetX < step.LaunchX ? -1
@@ -1176,17 +1234,49 @@ namespace tsorcRevamp.NPCs
                 action = "align-drop"; reason = $"launch={step.LaunchX}";
                 return true;
             }
+            // Inspect the tile directly below the launch column.
+            int belowFeet = GetFeetTileY(npc) + 1;
+            bool platformBelow = IsPlatformTile(step.LaunchX, belowFeet);
+            bool solidBelow = !platformBelow && IsNavigationSolid(step.LaunchX, belowFeet);
+            if (solidBelow)
+            {
+                // Drop edge is invalid here (solid floor, nothing to fall through) — abort so the
+                // planner reroutes instead of shuffling in place (the oscillating "drop" from the log).
+                int expiry = (int)Main.GameUpdateCount + 480;
+                s.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                s.StepTimer = 0;
+                action = "drop-blocked"; reason = "solid-below";
+                return true;
+            }
             int descend = step.TargetX > step.LaunchX ? 1
                         : step.TargetX < step.LaunchX ? -1
                         : npc.direction;
             npc.direction = descend; npc.spriteDirection = descend;
-            ApplyChase(npc, descend, topSpeed, acceleration);
-            // Commit the airborne phase so we follow through and don't reverse.
-            s.AirCommitDirX = descend;
-            s.AirCommitTimer = 25;
-            s.CommitFrames = 25;
-            s.CommittedLaunchVx = 0f; // drop uses the gentle fallback clamp, not a launch arc
-            action = "drop"; reason = $"toY={step.TargetY}";
+            if (platformBelow)
+            {
+                // Pass straight down through the wood platform. CRITICAL: zero horizontal velocity
+                // while noTileCollide is active — any sideways motion would phase THROUGH walls
+                // (the "passed through a solid wall" bug). ManagePlatformPass ends it on landing.
+                npc.noTileCollide = true;
+                npc.velocity.X = 0f;
+                npc.velocity.Y = Math.Max(npc.velocity.Y, 1.6f);
+                s.PlatformPassActive = true;
+                s.PlatformPassTimer = 18;
+                s.PlatformPassStartY = npc.Bottom.Y;
+                s.AirCommitDirX = 0;
+                s.CommittedLaunchVx = 0f;
+                s.CommitFrames = 25;
+            }
+            else
+            {
+                // Free-fall through an open gap — drift toward the target column (no walls here).
+                ApplyChase(npc, descend, topSpeed, acceleration);
+                s.AirCommitDirX = descend;
+                s.AirCommitTimer = 25;
+                s.CommitFrames = 25;
+                s.CommittedLaunchVx = 0f;
+            }
+            action = "drop"; reason = $"toY={step.TargetY} plat={platformBelow}";
             return true;
         }
 
@@ -1350,6 +1440,11 @@ namespace tsorcRevamp.NPCs
         private static bool IsGrounded(NPC npc)
         {
             if (npc.velocity.Y != 0f) return false;
+            // Physical fallback: the engine reports a vertical collision and we're not moving, so
+            // we're resting on SOMETHING — including furniture/tables/slopes that the tile-type
+            // check below ignores (IsNavigationSolid excludes tileFrameImportant). Without this the
+            // NPC freezes "airborne" on a table forever (the stuck-on-table bug from the log).
+            if (npc.collideY) return true;
             int left = (int)(npc.Left.X / TileF);
             int right = (int)((npc.Right.X - 1f) / TileF);
             int belowFeet = (int)((npc.Bottom.Y + 4f) / TileF);
