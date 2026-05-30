@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -63,7 +65,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             }
             if (!restricted)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 1;
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.SupersonicBootsLevel;
 
                 /** W1K's original code
                 if (player.controlLeft) {
@@ -94,6 +96,14 @@ namespace tsorcRevamp.Items.Accessories.Mobility
                 }
             }
 
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (SoulsModeMobility.Enabled(Main.LocalPlayer))
+            {
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitRunOnly", SoulsModeMobility.SupersonicBootsRunSpeed)));
+            }
         }
 
     }

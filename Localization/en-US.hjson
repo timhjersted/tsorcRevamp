@@ -41,6 +41,10 @@ Mods: {
 			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
 			UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			LifeCrystalSoulsMode: Permanently increases maximum life by {0}
+			SoulsModeMobilityLimitRunOnly: Souls Mode mobility limit: ground speed capped at {0}.
+			SoulsModeMobilityLimitWing: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}.
+			SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
+			SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: Decreases the time needed to drink the Estus Flask by {0}%
 			BotCManaFlower: Decreases the time needed to drink the Cerulean Flask by {0}%
 			DSPickUpRange: " increases Dark Soul pick-up range"
@@ -4276,12 +4280,13 @@ Mods: {
 				Tooltip:
 					'''
 					Equip this in an accessory slot anywhere to create a new warp point.
-					Use the mirror to return to that warp point.
+					Use the mirror within {1} tiles of that point to return to it.
 					Reduces defense to 0 and slows movement while equipped and setting your warp point.
 					Teleport takes {0} seconds and you cannot move during the channel.
 					'''
 				NoLocation: You haven't set a location!
 				WrongWorld: This mirror is set in a different world!
+				TooFar: The marked location is too far away. Move within {0} tiles of it.
 				OnUse: Picking up where you left off...
 				NewLocation: New warp location set!
 				Invalid: The Village Mirror can only be set inside Ashen Peak Village.
@@ -9988,6 +9993,7 @@ Mods: {
 			InvaderMeleeHitbox.DisplayName: Invader Melee Hitbox
 			InvaderThrowingStar.DisplayName: Invader Throwing Star
 			InvaderCrossbowBolt.DisplayName: Invader Crossbow Bolt
+			GreatMagicMirrorRangeRing.DisplayName: Great Magic Mirror Range Ring
 		}
 
 		NPCs: {
@@ -11645,6 +11651,7 @@ Mods: {
 			RedKnightTest.DisplayName: Red Knight Test
 			TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
+			TibianValkyrieSmart4.DisplayName: Tibian Valkyrie Smart4
 		}
 
 		Prefixes: {
@@ -11793,6 +11800,11 @@ Mods: {
 				DisableSupersonicWings2ExtraJumps: {
 					Label: Disable Supersonic Wings II Extra Jumps
 					Tooltip: Disable the extra jumps provided by the Supersonic Wings II. Defaults to Off.
+				}
+
+				EnableSoulsModeMobilityLimit: {
+					Label: Enable Souls Mode Mobility Limit
+					Tooltip: Limits extreme running and flight speed while Unkindled or Bearer of the Curse. Classic mode is unaffected. Defaults to On.
 				}
 
 				SoulCounterPosX: {

@@ -7,13 +7,64 @@ using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Ranged.Crossbows;
+using tsorcRevamp.NPCs;
+using tsorcRevamp.NPCs.AI;
 
 namespace tsorcRevamp.NPCs.Invaders
 {
     public class AbyssalNinjaInvader : InvaderNPC
     {
+        // ── Config ────────────────────────────────────────────────────────────────
+        /// <summary>Master config toggle: when true, every spawned Abyssal Ninja has wings
+        /// and can take off, hover, strafe, and dive.  Flip to false to ship a ground-only
+        /// variant without removing the wing code paths.  Wire to ModConfig later if desired.</summary>
+        public static bool ConfigHasWings = true;
+
+        /// <summary>Wing item type used when ConfigHasWings is true.  ItemID.DemonWings reads
+        /// best on the Abyssal Ninja's dark palette; swap to taste.</summary>
+        public static int ConfigWingsItemType = ItemID.DemonWings;
+
         // ── Invasion banner ───────────────────────────────────────────────────────
         protected override string InvaderTitle => "Abyssal Ninja";
+
+        // ── Wings ─────────────────────────────────────────────────────────────────
+        protected override bool HasWings              => ConfigHasWings;
+        protected override int  WingsAccessoryItemType => ConfigWingsItemType;
+        protected override EnemyFlightConfig FlightConfig => new EnemyFlightConfig
+        {
+            HoverAltitude     = 220f,
+            HoverSideOffset   = 90f,
+            HoverTopSpeed     = 5.0f,   // ninjas are quick
+            TakeOffSpeed      = 9f,
+            DiveAcceleration  = 0.65f,
+            DiveTopSpeed      = 13f,
+            LandSpeed         = 7f,
+            MaxFlightTicks    = 600,
+            CooldownTicks     = 180,
+            TakeOffTicks      = 30,
+            HoverDwellTicks   = 75,
+            StrafeTicks       = 55,
+            DiveAttackTicks   = 45,
+            LandTicks         = 75,
+            WingFlapSpeed     = 0.10f,  // faster flap for the ninja silhouette
+        };
+        // Lean into flight: random takeoff bursts are common, and the ninja escalates aggressively below half HP.
+        protected override int   RandomTakeoffChance     => 12;
+        protected override float FlightHpEscalationFrac  => 0.55f;
+
+        // ── Movement AI ───────────────────────────────────────────────────────────
+        // Use the project's newer SmartFighter3AI movement driver — better waypoint navigation,
+        // ledge handling, and stuck-recovery than the legacy FighterAI default.  Note: this
+        // path doesn't support canDodgeroll / canPounce — the ninja trades those for cleaner
+        // pathfinding.  Override RunMovementAI again in a subclass to switch back if needed.
+        protected override void RunMovementAI(float speedMult)
+        {
+            SmartFighter3AI.Run(NPC,
+                topSpeed:           TopSpeed * speedMult,
+                acceleration:       Acceleration,
+                doorBreakingDamage: 4,
+                attackRange:        RangedRange);
+        }
 
         // ── Loadout ───────────────────────────────────────────────────────────────
         protected override int HeadArmorItemType    => ModContent.ItemType<AbyssalNinjaMask>();
@@ -85,8 +136,11 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override float RangedRange    => 480f;
         protected override float MinRangedRange => 280f;  // close range → prefer melee/stab
 
-        protected override int MeleeTelegraphTicks  => 18;
-        protected override int StabTelegraphTicks   => 24;
+        // Melee/stab telegraphs raised to satisfy the 30-tick fair-wind-up floor.
+        // Slash: 35 ticks lets the sword-raise + apex-hold animation read clearly.
+        // Stab: 40 ticks for the dipped-sword "cocked thrust" pose with brief hold.
+        protected override int MeleeTelegraphTicks  => 35;
+        protected override int StabTelegraphTicks   => 40;
         protected override int StabAttackTicks      => 9;
         protected override int StabRecoveryTicks    => 36;
         protected override int RangedTelegraphTicks  => 45;  // 45-frame arm-raise before each throw (+10 over original 35)
@@ -180,7 +234,7 @@ namespace tsorcRevamp.NPCs.Invaders
             NPC.height   = 42;
             NPC.lifeMax  = 6000;
             NPC.defense  = 28;
-            NPC.damage   = 8;
+            NPC.damage   = 0; // No contact damage — all damage delivered via weapon hitbox projectiles + dive
             NPC.knockBackResist = 0.3f;
             NPC.aiStyle  = -1;
             NPC.HitSound   = SoundID.NPCHit1;

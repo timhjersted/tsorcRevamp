@@ -235,7 +235,7 @@ namespace tsorcRevamp.Tiles
         // Screen-space mouse position when the Show button was clicked. Used to detect dismissal.
         public Vector2 clickedAtMouse;
         // Distance the mouse must travel from clickedAtMouse to dismiss the sticky bubble.
-        public const float MANUAL_DISMISS_DISTANCE = 220f;
+        public const float MANUAL_DISMISS_DISTANCE = 143f;
 
         public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
         {

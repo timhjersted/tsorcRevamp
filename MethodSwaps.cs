@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
@@ -41,6 +41,9 @@ namespace tsorcRevamp
 {
     class MethodSwaps
     {
+        private static Vector2 abyssLastScreenPosition;
+        private static Vector2 abyssCameraVelocity;
+
         internal static void ApplyMethodSwaps()
         {
             Terraria.On_Player.Spawn += SpawnPatch;
@@ -107,6 +110,8 @@ namespace tsorcRevamp
 
             Terraria.On_Main.Draw += Main_Draw;
 
+            Terraria.On_Main.DrawSurfaceBG += Main_DrawSurfaceBG;
+
             Terraria.On_Main.DrawProjectiles += Main_DrawProjectiles;
 
             Terraria.On_Main.DrawCachedProjs += Main_DrawCachedProjs;
@@ -150,6 +155,84 @@ namespace tsorcRevamp
             On_NPC.AI_069_DukeFishron += DukeFishronAdjustment;
 
             On_Main.HoverOverNPCs += HidePinwheelLifeOnMouseover;
+        }
+
+        private static void Main_DrawSurfaceBG(Terraria.On_Main.orig_DrawSurfaceBG orig, Main self)
+        {
+            if (Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true)
+            {
+                DrawAbyssSpaceBackground();
+                return;
+            }
+
+            orig(self);
+        }
+
+        private static void DrawAbyssSpaceBackground()
+        {
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Rectangle pixelSource = new Rectangle(0, 0, 1, 1);
+            Main.spriteBatch.Draw(pixel, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), pixelSource, Color.Black);
+
+            if (abyssLastScreenPosition == Vector2.Zero)
+            {
+                abyssLastScreenPosition = Main.screenPosition;
+            }
+            abyssCameraVelocity = Main.screenPosition - abyssLastScreenPosition;
+            abyssLastScreenPosition = Main.screenPosition;
+
+            DrawAbyssStarLayer(pixel, 112f, 0.012f, 0.42f, 0.7f, new Color(180, 220, 255));
+            DrawAbyssStarLayer(pixel, 76f, 0.022f, 0.62f, 1f, Color.White);
+            DrawAbyssStarLayer(pixel, 48f, 0.038f, 0.28f, 1.25f, new Color(200, 255, 230));
+        }
+
+        private static void DrawAbyssStarLayer(Texture2D pixel, float cellSize, float parallax, float density, float brightness, Color accentColor)
+        {
+            Vector2 parallaxPosition = Main.screenPosition * parallax;
+            int startCellX = (int)Math.Floor((parallaxPosition.X - 96f) / cellSize);
+            int startCellY = (int)Math.Floor((parallaxPosition.Y - 96f) / cellSize);
+            int endCellX = (int)Math.Ceiling((parallaxPosition.X + Main.screenWidth + 96f) / cellSize);
+            int endCellY = (int)Math.Ceiling((parallaxPosition.Y + Main.screenHeight + 96f) / cellSize);
+
+            for (int cellX = startCellX; cellX <= endCellX; cellX++)
+            {
+                for (int cellY = startCellY; cellY <= endCellY; cellY++)
+                {
+                    float seed = Hash01(cellX, cellY, (int)(cellSize * 10f));
+                    if (seed > density)
+                    {
+                        continue;
+                    }
+
+                    float offsetX = Hash01(cellX, cellY, 17) * cellSize;
+                    float offsetY = Hash01(cellX, cellY, 43) * cellSize;
+                    Vector2 starPosition = new Vector2(cellX * cellSize + offsetX, cellY * cellSize + offsetY) - parallaxPosition;
+                    float twinkle = 0.65f + 0.35f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * (1.2f + Hash01(cellX, cellY, 71) * 1.6f) + seed * MathHelper.TwoPi);
+                    int size = Hash01(cellX, cellY, 101) > 0.88f ? 2 : 1;
+                    Color color = (Hash01(cellX, cellY, 131) > 0.82f ? accentColor : Color.White) * ((0.2f + 0.58f * twinkle) * brightness);
+
+                    Main.spriteBatch.Draw(pixel, new Rectangle((int)starPosition.X, (int)starPosition.Y, size, size), color);
+                }
+            }
+        }
+
+        private static void DrawAbyssTrail(Texture2D pixel, Vector2 position, Vector2 trail, Color color, float thickness)
+        {
+            float length = trail.Length();
+            if (length < 1f)
+            {
+                return;
+            }
+
+            Main.spriteBatch.Draw(pixel, position + trail, null, color, trail.ToRotation(), new Vector2(1f, 0.5f), new Vector2(length, thickness), SpriteEffects.None, 0f);
+        }
+
+        private static float Hash01(int x, int y, int seed)
+        {
+            uint hash = (uint)(x * 374761393 + y * 668265263 + seed * 1442695041);
+            hash = (hash ^ (hash >> 13)) * 1274126177;
+            hash ^= hash >> 16;
+            return (hash & 0x00FFFFFF) / 16777216f;
         }
 
         private static void HidePinwheelLifeOnMouseover(On_Main.orig_HoverOverNPCs orig, Main self, Rectangle mouseRectangle)
@@ -1698,6 +1781,62 @@ namespace tsorcRevamp
                 }
                 Main.spriteBatch.End();
             }
+
+            if (Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true)
+            {
+                DrawAbyssForegroundParticles();
+            }
+        }
+
+        private static void DrawAbyssForegroundParticles()
+        {
+            if (!Main.IsGraphicsDeviceAvailable || Main.gameMenu || Main.mapFullscreen)
+            {
+                return;
+            }
+
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
+
+            float parallax = 0.08f;
+            float cellSize = 96f;
+            float density = 0.35f;
+
+            Vector2 parallaxPosition = Main.screenPosition * parallax;
+            Vector2 windOffset = new Vector2(Main.GlobalTimeWrappedHourly * 15f, Main.GlobalTimeWrappedHourly * 6f);
+            Vector2 scrollPosition = parallaxPosition + windOffset;
+
+            int startCellX = (int)Math.Floor((scrollPosition.X - cellSize) / cellSize);
+            int startCellY = (int)Math.Floor((scrollPosition.Y - cellSize) / cellSize);
+            int endCellX = (int)Math.Ceiling((scrollPosition.X + Main.screenWidth + cellSize) / cellSize);
+            int endCellY = (int)Math.Ceiling((scrollPosition.Y + Main.screenHeight + cellSize) / cellSize);
+
+            for (int cellX = startCellX; cellX <= endCellX; cellX++)
+            {
+                for (int cellY = startCellY; cellY <= endCellY; cellY++)
+                {
+                    float seed = Hash01(cellX, cellY, 523);
+                    if (seed > density)
+                    {
+                        continue;
+                    }
+
+                    float offsetX = Hash01(cellX, cellY, 29) * cellSize;
+                    float offsetY = Hash01(cellX, cellY, 61) * cellSize;
+                    Vector2 particlePosition = new Vector2(cellX * cellSize + offsetX, cellY * cellSize + offsetY) - scrollPosition;
+                    float pulse = 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * (1.5f + Hash01(cellX, cellY, 113) * 2.0f) + seed * MathHelper.TwoPi);
+                    Color color = (Hash01(cellX, cellY, 173) > 0.7f ? new Color(180, 220, 255) : Color.White) * (0.75f * pulse);
+                    int size = Hash01(cellX, cellY, 233) > 0.85f ? 2 : 1;
+
+                    Main.spriteBatch.Draw(pixel, new Rectangle((int)particlePosition.X, (int)particlePosition.Y, size, size), color);
+                }
+            }
+            Main.spriteBatch.End();
+        }
+
+        private static float PositiveModulo(float value, float modulus)
+        {
+            return (value % modulus + modulus) % modulus;
         }
 
         //Changing the rendertarget destroys everything currently in it

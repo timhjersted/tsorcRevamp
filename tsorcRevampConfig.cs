@@ -53,6 +53,10 @@ namespace tsorcRevamp
         public bool DisableModWingsFallControlDuringFlight { get; set; }
 
         [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(true)]
+        public bool EnableSoulsModeMobilityLimit { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
         public bool DebugMode { get; set; }
 

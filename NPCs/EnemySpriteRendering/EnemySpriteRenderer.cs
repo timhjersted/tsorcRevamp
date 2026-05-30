@@ -7,6 +7,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.AI;
 
 namespace tsorcRevamp.NPCs.EnemySpriteRendering
 {
@@ -54,7 +55,13 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
         private int weaponAnim;
         private EnemyHeldItemStyle heldItemStyle;
         private string heldTexturePath;
+        private float? targetDrawRotation;
         private Vector2 handleNorm = new(0.10f, 0.85f);
+
+        // Wings — populated lazily on SetWings.
+        private int wingsItemType = -1;
+        private int wingSlotCached;
+        private EnemyFlightController flightRef;
 
         internal Color LayerDrawColor { get; private set; }
 
@@ -67,7 +74,37 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
 
         public void SetHandleNorm(Vector2 value) => handleNorm = value;
 
-        public void SetPose(EnemySpritePose pose, int heldItemType = -1, bool weaponVisible = true, int poseTimer = 0, int poseDuration = 1, EnemyHeldItemStyle heldItemStyle = EnemyHeldItemStyle.Generic, string heldTexturePath = null)
+        /// <summary>
+        /// Equip wings on the puppet.  When a flight controller is supplied, its
+        /// <see cref="EnemyFlightController.WingsActiveThisTick"/> drives the vanilla wing
+        /// flap layer (set as <c>puppet.controlJump</c>), so flap-and-glide cadence matches
+        /// what the controller computes.
+        /// </summary>
+        /// <param name="wingsItemType">Vanilla wing item type, e.g. <c>ItemID.LeatherWings</c>.</param>
+        /// <param name="flight">Optional flight controller for animation cadence.  Null = static spread.</param>
+        public void SetWings(int wingsItemType, EnemyFlightController flight = null)
+        {
+            this.wingsItemType = wingsItemType;
+            this.flightRef = flight;
+            if (wingsItemType > 0)
+            {
+                var probe = new Item();
+                probe.SetDefaults(wingsItemType);
+                wingSlotCached = probe.wingSlot;
+            }
+            else
+            {
+                wingSlotCached = 0;
+            }
+            // If puppet exists already, push the slot now.
+            if (puppet != null)
+            {
+                puppet.wings = wingSlotCached;
+                puppet.wingTimeMax = 200;
+            }
+        }
+
+        public void SetPose(EnemySpritePose pose, int heldItemType = -1, bool weaponVisible = true, int poseTimer = 0, int poseDuration = 1, EnemyHeldItemStyle heldItemStyle = EnemyHeldItemStyle.Generic, string heldTexturePath = null, float? targetDrawRotation = null)
         {
             bool poseChanged = this.pose != pose || this.heldItemType != heldItemType;
             this.pose = pose;
@@ -77,6 +114,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             this.poseDuration = Math.Max(poseDuration, 1);
             this.heldItemStyle = heldItemStyle;
             this.heldTexturePath = heldTexturePath;
+            this.targetDrawRotation = targetDrawRotation;
 
             if (poseChanged && (pose == EnemySpritePose.ThrowRelease || pose == EnemySpritePose.MagicRelease))
             {
@@ -123,6 +161,14 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             puppet.head = puppet.armor[0].headSlot;
             puppet.body = puppet.armor[1].bodySlot;
             puppet.legs = puppet.armor[2].legSlot;
+
+            puppet.skinColor = Color.Black;
+            puppet.eyeColor = Color.Black;
+            puppet.hairColor = Color.Black;
+            puppet.shirtColor = Color.Black;
+            puppet.underShirtColor = Color.Black;
+            puppet.pantsColor = Color.Black;
+            puppet.shoeColor = Color.Black;
         }
 
         private void SyncPuppet(NPC npc)
@@ -135,6 +181,23 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             puppet.gravDir = 1f;
             puppet.selectedItem = 0;
             puppet.itemAnimationMax = WeaponAnimMax;
+
+            // Wings: drive vanilla wing layer animation from the flight controller.
+            if (wingsItemType > 0)
+            {
+                puppet.wings = wingSlotCached;
+                if (flightRef != null && flightRef.IsAirborne)
+                {
+                    puppet.wingTime = puppet.wingTimeMax;
+                    puppet.controlJump = flightRef.WingsActiveThisTick;
+                    puppet.wingFrame = (int)(flightRef.WingAnimPhase * 4f) % 4;
+                }
+                else
+                {
+                    puppet.wingTime = 0;
+                    puppet.controlJump = false;
+                }
+            }
 
             bool armPoseActive = IsWeaponPosePhase;
             if (armPoseActive && heldItemType > 0)
@@ -152,6 +215,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
 
             SyncFrames(npc);
             TickWeaponRotation();
+            SyncCompositeArm(npc);
         }
 
         private bool IsWeaponPosePhase => pose != EnemySpritePose.Natural && pose != EnemySpritePose.Carry;
@@ -185,9 +249,9 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
 
             int bodyRow = pose switch
             {
-                EnemySpritePose.ThrowTelegraph => GetPoseProgress() < 0.55f ? 2 : 3,
+                EnemySpritePose.ThrowTelegraph => GetBodyRowFromWeaponPitch(),
                 EnemySpritePose.ThrowRelease => 3,
-                EnemySpritePose.MagicTelegraph => GetPoseProgress() < 0.55f ? 2 : 1,
+                EnemySpritePose.MagicTelegraph => GetBodyRowFromWeaponPitch(),
                 EnemySpritePose.MagicRelease => 3,
                 EnemySpritePose.MagicAim => 3,
                 _ when !onGround => 5,
@@ -233,6 +297,45 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             };
         }
 
+        private void SyncCompositeArm(NPC npc)
+        {
+            if (!IsWeaponPosePhase)
+            {
+                puppet.SetCompositeArmFront(false, Player.CompositeArmStretchAmount.Full, 0f);
+                return;
+            }
+
+            float armRotation = weaponRotation - MathHelper.PiOver2;
+
+            if (npc.direction == -1)
+            {
+                armRotation = MathHelper.Pi - armRotation;
+            }
+
+            puppet.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armRotation);
+        }
+
+        private int GetBodyRowFromWeaponPitch()
+        {
+            float pitch = (1f - (float)Math.Sin(weaponRotation)) / 2f;
+            if (pitch > 0.95f)
+            {
+                return 1;
+            }
+
+            if (pitch > 0.70f)
+            {
+                return 2;
+            }
+
+            if (pitch > 0.30f)
+            {
+                return 3;
+            }
+
+            return 4;
+        }
+
         private float GetCarryRotation()
         {
             return heldItemStyle switch
@@ -260,6 +363,18 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
 
         private Vector2 GetHandPosition(NPC npc)
         {
+            if (IsWeaponPosePhase)
+            {
+                float armRotation = weaponRotation - MathHelper.PiOver2;
+                if (npc.direction == -1)
+                {
+                    armRotation = MathHelper.Pi - armRotation;
+                }
+                Vector2 handPos = puppet.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armRotation);
+                handPos.Y += puppet.gfxOffY;
+                return handPos;
+            }
+
             int bodyRow = puppet.bodyFrame.Y / FrameHeight;
             if (pose == EnemySpritePose.Carry)
             {
@@ -354,10 +469,10 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             float scale = heldItemStyle switch
             {
                 EnemyHeldItemStyle.Bomb => 0.58f,
-                EnemyHeldItemStyle.MagicBall => 0.85f,
+                EnemyHeldItemStyle.MagicBall => 0.85f * 0.75f,
                 _ => 0.62f
             };
-            float rotation = weaponRotation + (heldItemStyle == EnemyHeldItemStyle.Spear ? -MathHelper.PiOver2 : 0f);
+            float rotation = GetWeaponDrawRotation();
 
             drawInfo.DrawDataCache.Add(new DrawData(
                 texture,
@@ -369,6 +484,16 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
                 npc.scale * scale,
                 effects,
                 0));
+        }
+
+        private float GetWeaponDrawRotation()
+        {
+            if (heldItemStyle == EnemyHeldItemStyle.Spear && targetDrawRotation.HasValue)
+            {
+                return targetDrawRotation.Value;
+            }
+
+            return weaponRotation + (heldItemStyle == EnemyHeldItemStyle.Spear ? -MathHelper.PiOver2 : 0f);
         }
 
         private Texture2D GetHeldTexture()

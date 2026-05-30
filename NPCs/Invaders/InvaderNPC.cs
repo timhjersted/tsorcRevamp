@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.AI;
 
 namespace tsorcRevamp.NPCs.Invaders
 {
@@ -85,13 +86,16 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual float RangedRange    => 520f;
         protected virtual float MinRangedRange => 200f;   // won't use ranged if closer than this
 
-        protected virtual int MeleeTelegraphTicks  => 20;
+        // Telegraph minimum: 30 ticks = 0.5 s.  Long enough for the player to read the
+        // wind-up arc (sword raises, holds at apex, then swings).  Heavier attacks override
+        // upward; lighter attacks should not go below this floor.
+        protected virtual int MeleeTelegraphTicks  => 35;
         // MeleeAttackTicks matches WeaponAnimMax so the full swing arc completes
         // within the attack phase rather than bleeding into recovery.
         protected virtual int MeleeAttackTicks     => WeaponAnimMax; // 22 ticks = one full swing
         protected virtual int MeleeRecoveryTicks   => 25;
 
-        protected virtual int StabTelegraphTicks   => 22;
+        protected virtual int StabTelegraphTicks   => 38;
         protected virtual int StabAttackTicks      => 8;
         protected virtual int StabRecoveryTicks    => 32;
 
@@ -163,7 +167,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         // ── Spear / polearm ───────────────────────────────────────────────────────
         protected virtual float SpearRange          => 200f;   // max distance for spear poke
-        protected virtual int   SpearTelegraphTicks => 22;
+        protected virtual int   SpearTelegraphTicks => 35;
         protected virtual int   SpearAttackTicks    => 12;
         protected virtual int   SpearRecoveryTicks  => 30;
         protected virtual int   SpearCooldownAfterUse => 90;
@@ -212,6 +216,24 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual bool  InvaderCanDoubleJump  => false;
         protected virtual float InvaderDoubleJumpPower => 6f;
 
+        /// <summary>
+        /// Run the ground-movement AI for this invader.  Defaults to the project's classic
+        /// FighterAI (supports teleport / dodgeroll / pounce).  Subclasses can override to
+        /// swap in a different driver — e.g. <c>SmartFighter3AI.Run</c> — without touching
+        /// the base flow.  Called once per tick from <see cref="AI"/> while grounded.
+        /// </summary>
+        protected virtual void RunMovementAI(float speedMult)
+        {
+            tsorcRevampAIs.FighterAI(NPC,
+                topSpeed:     TopSpeed * speedMult,
+                acceleration: Acceleration,
+                brakingPower: BrakingPower,
+                canTeleport:  true,
+                doorBreakingDamage: 4,
+                canDodgeroll: Phase != AttackPhase.FleeToHeal && Phase != AttackPhase.Healing,
+                canPounce:    Phase == AttackPhase.Idle);
+        }
+
         // ── State machine ─────────────────────────────────────────────────────────
         protected enum AttackPhase
         {
@@ -241,7 +263,18 @@ namespace tsorcRevamp.NPCs.Invaders
             /// Stand still and play the estus-drinking animation.  HP is restored at the start
             /// of this phase.  Transitions back to Idle when the animation finishes.
             /// </summary>
-            Healing
+            Healing,
+            /// <summary>Initial telegraph for a multi-step melee combo (step 0).  Fires the
+            /// combo's initial flash, locks direction for the entire combo duration.</summary>
+            MeleeComboTelegraph,
+            /// <summary>Active hitbox frame of the current combo step.  Applies per-step
+            /// forward push and damage scaling.</summary>
+            MeleeComboAttack,
+            /// <summary>Inter-step pause within a combo.  Next step's attack fires when timer expires —
+            /// no per-step telegraph or flash.</summary>
+            MeleeComboPause,
+            /// <summary>Recovery after the last step of a combo.  Applies per-combo cooldown.</summary>
+            MeleeComboRecovery,
         }
         protected AttackPhase Phase = AttackPhase.Idle;
         protected int PhaseTimer;
@@ -328,7 +361,14 @@ namespace tsorcRevamp.NPCs.Invaders
             Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack ||
             Phase == AttackPhase.CrossbowBurstPause ||
             Phase == AttackPhase.SpearTelegraph  || Phase == AttackPhase.SpearAttack  ||
-            Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MagicAttack;
+            Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MagicAttack  ||
+            Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
+            Phase == AttackPhase.MeleeComboPause ||
+            (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0);
+
+        private bool IsMeleeComboPhase =>
+            Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
+            Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery;
 
         private bool IsWeaponPosePhase => IsWeaponVisiblePhase;
 
@@ -383,6 +423,127 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>True once the flash VFX for the current telegraph phase has been spawned.</summary>
         private bool _flashFired;
 
+        // ── Melee combo state ────────────────────────────────────────────────────
+        /// <summary>Pool of combos for the current melee archetype.  Cached at first use.</summary>
+        private MeleeCombo[] _meleeComboPool;
+        /// <summary>Pool of combos for the current ranged archetype.  Cached at first use.</summary>
+        private RangedCombo[] _rangedComboPool;
+        /// <summary>Per-combo cooldown counters (sized to pool length on first use).</summary>
+        private int[] _meleeComboCooldowns;
+        private int[] _rangedComboCooldowns;
+        /// <summary>The combo currently executing (only valid in MeleeCombo* phases).</summary>
+        private MeleeCombo _activeMeleeCombo;
+        /// <summary>Index of the active combo within its pool.  -1 = no combo active.</summary>
+        private int _activeMeleeComboIndex = -1;
+        /// <summary>Which step (0-indexed) of the active combo we're currently executing.</summary>
+        private int _meleeComboStepIndex;
+        /// <summary>Direction locked for the entire active combo.  Player can dodgeroll through
+        /// and end up safely behind the swing arc — FighterAI's direction flips are overridden
+        /// across all four MeleeCombo* phases.</summary>
+        private int _comboLockedDir;
+
+        // ── Ranged combo state ────────────────────────────────────────────────────
+        /// <summary>The ranged combo currently executing.</summary>
+        private RangedCombo _activeRangedCombo;
+        /// <summary>Index of the active ranged combo within its pool.  -1 = not using combo system.</summary>
+        private int _activeRangedComboIndex = -1;
+        /// <summary>Which shot (0-indexed) we're firing.</summary>
+        private int _rangedComboShotIndex;
+
+        // ── Archetype detection (lazy-cached) ─────────────────────────────────────
+        private WeaponArchetype? _autoMeleeArchetype;
+        private WeaponArchetype? _autoRangedArchetype;
+
+        /// <summary>
+        /// Weapon archetype that determines the melee combo pool for this invader.
+        /// Auto-detected from the item's useStyle/damage class; override to force a specific archetype.
+        /// </summary>
+        protected virtual WeaponArchetype MeleeArchetype
+        {
+            get
+            {
+                if (_autoMeleeArchetype.HasValue) return _autoMeleeArchetype.Value;
+                if (MeleeWeaponItemType <= 0) { _autoMeleeArchetype = WeaponArchetype.None; return WeaponArchetype.None; }
+                var probe = new Item();
+                probe.SetDefaults(MeleeWeaponItemType);
+                var a = WeaponArchetypeTables.DetectMelee(probe);
+                _autoMeleeArchetype = a;
+                return a;
+            }
+        }
+
+        /// <summary>
+        /// Weapon archetype that determines the ranged combo pool for this invader.
+        /// Auto-detected from the primary ranged item; override to force a specific archetype.
+        /// </summary>
+        protected virtual WeaponArchetype RangedArchetype
+        {
+            get
+            {
+                if (_autoRangedArchetype.HasValue) return _autoRangedArchetype.Value;
+                if (RangedWeaponItemType <= 0) { _autoRangedArchetype = WeaponArchetype.None; return WeaponArchetype.None; }
+                var probe = new Item();
+                probe.SetDefaults(RangedWeaponItemType);
+                var a = WeaponArchetypeTables.DetectRanged(probe);
+                _autoRangedArchetype = a;
+                return a;
+            }
+        }
+
+        /// <summary>Chance (0-100) of preferring a combo over the legacy slash/stab/spear path
+        /// when both are available.  Set to 0 to disable melee combos entirely.</summary>
+        protected virtual int MeleeComboChance => 65;
+        /// <summary>Chance (0-100) of preferring a ranged combo over the legacy random-burst path.
+        /// Set to 0 to disable ranged combos entirely.</summary>
+        protected virtual int RangedComboChance => 50;
+
+        /// <summary>Multiplier applied to a melee combo's first-step TelegraphTicks at runtime.
+        /// Default 1.35 = ~35% longer telegraph windows than the raw data table values, giving
+        /// the player more time to read the incoming combo.  Lower for faster, more aggressive
+        /// invaders.</summary>
+        protected virtual float ComboTelegraphMultiplier => 1.35f;
+
+        /// <summary>Hard floor on a combo's first-step telegraph duration (ticks).  Even after
+        /// applying <see cref="ComboTelegraphMultiplier"/>, no combo can start with less than
+        /// this many ticks of wind-up — guarantees the player sees the sword-raise / hold-at-apex
+        /// arc clearly before damage is delivered.  30 ticks = 0.5 s minimum.</summary>
+        protected virtual int MinComboTelegraphTicks => 30;
+
+        /// <summary>Max distance (px) at which a melee combo can begin.  Beyond this, the
+        /// invader falls through to ranged/legacy attack paths.  Default = StabRange + 80
+        /// covers thrusts + most dash lunges.</summary>
+        protected virtual float ComboMaxStartRange => StabRange + 80f;
+
+        // ── Wings / flight ────────────────────────────────────────────────────────
+        /// <summary>Master toggle: when true, this invader can take off, hover, dive, and land.
+        /// Subclasses can wire this to a static config flag or a ModConfig field.</summary>
+        protected virtual bool HasWings => false;
+
+        /// <summary>Vanilla wing item type whose sprite + wingSlot is used for the puppet draw.
+        /// Default is AngelWings; subclasses override for thematic fit.</summary>
+        protected virtual int WingsAccessoryItemType => ItemID.AngelWings;
+
+        /// <summary>Flight tuning.  Override to customize hover altitude / dive speed / cooldowns.</summary>
+        protected virtual EnemyFlightConfig FlightConfig => EnemyFlightConfig.Default;
+
+        /// <summary>Chance per second of triggering a random idle takeoff burst (0-100).
+        /// Set to 0 to only fly when tactically necessary (player above, blocked, low HP).</summary>
+        protected virtual int RandomTakeoffChance => 8;
+
+        /// <summary>Height differential (player above invader) above which the invader
+        /// will preferentially take off rather than try to navigate up on foot.</summary>
+        protected virtual float FlightHeightTrigger => 120f;
+
+        /// <summary>HP fraction at or below which the invader gains an aerial-phase preference
+        /// (random takeoff chance is amplified, dive attacks more likely).</summary>
+        protected virtual float FlightHpEscalationFrac => 0.50f;
+
+        private EnemyFlightController _flight;
+        private Item _wingsItemCache;
+        private int  _cachedWingsType = -1;
+        /// <summary>Cooldown between consecutive aerial-dive hits.  Ticks down each AI frame.</summary>
+        private int  _aerialHitCooldown;
+
         // ── Stab / spear lunge direction locks ───────────────────────────────────
         /// <summary>NPC.direction captured when StabAttack begins. Using this instead of the
         /// live NPC.direction prevents rubber-banding when the player dodgerolls through during
@@ -423,6 +584,13 @@ namespace tsorcRevamp.NPCs.Invaders
             if (_spearCooldown           > 0) _spearCooldown--;
             if (_magicCooldown           > 0) _magicCooldown--;
             if (_healCooldown            > 0) _healCooldown--;
+            if (_meleeComboCooldowns != null)
+                for (int i = 0; i < _meleeComboCooldowns.Length; i++)
+                    if (_meleeComboCooldowns[i] > 0) _meleeComboCooldowns[i]--;
+            if (_rangedComboCooldowns != null)
+                for (int i = 0; i < _rangedComboCooldowns.Length; i++)
+                    if (_rangedComboCooldowns[i] > 0) _rangedComboCooldowns[i]--;
+            if (_aerialHitCooldown > 0) _aerialHitCooldown--;
 
             // Decay recent-damage memory so old hits don't keep triggering heals forever.
             _recentDamage = Math.Max(0f, _recentDamage - RecentDamageDecayRate);
@@ -440,7 +608,6 @@ namespace tsorcRevamp.NPCs.Invaders
             // Tier 2 enables waypoint routing: when stuck, it scans for a horizontal opening,
             // an elevated ledge to jump to, or a platform edge to drop off.
             var gnpc = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            gnpc.NavigationTier  = 2;
             gnpc.MaxJumpPower    = InvaderJumpPower;
             gnpc.MaxJumpBoost    = InvaderJumpBoost;
             gnpc.CanDoubleJump   = InvaderCanDoubleJump;
@@ -453,22 +620,34 @@ namespace tsorcRevamp.NPCs.Invaders
 
             Player target = Main.player[NPC.target];
             float distToTarget = NPC.Distance(target.Center);
+
+            // ── Flight tick (before FighterAI) ────────────────────────────────────
+            // When airborne, the flight controller fully owns velocity / noGravity / direction.
+            // We skip FighterAI, rope climbing, and wall-blocked detection so they don't fight
+            // the flight controller's intent.
+            if (HasWings)
+            {
+                _flight ??= new EnemyFlightController(FlightConfig);
+                _flight.Tick(NPC, target);
+                if (_flight.IsAirborne)
+                {
+                    // Run attack AI (for aerial combos) but skip ground movement entirely.
+                    if (gnpc.DodgeTimer <= 0)
+                        InvaderAttackAI();
+                    TickWeaponAnim();
+                    return;
+                }
+            }
+
             float speedMult = (Phase == AttackPhase.CasualStroll || Phase == AttackPhase.Healing)
                 ? CasualStrollSpeedMult : 1f;
             if (Phase == AttackPhase.Idle && distToTarget > RunDistance)
                 speedMult *= RunSpeedMult;
 
-            // Capture direction before FighterAI might change it.
+            // Capture direction before the movement AI might change it.
             int dirBefore = NPC.direction;
 
-            tsorcRevampAIs.FighterAI(NPC,
-                topSpeed:     TopSpeed * speedMult,
-                acceleration: Acceleration,
-                brakingPower: BrakingPower,
-                canTeleport:  true,
-                doorBreakingDamage: 4,
-                canDodgeroll: Phase != AttackPhase.FleeToHeal && Phase != AttackPhase.Healing,
-                canPounce:    Phase == AttackPhase.Idle);
+            RunMovementAI(speedMult);
 
             // Anti-bounce: if FighterAI just reversed direction but the hold timer is still
             // running (e.g. the player dodgerolled past), revert to the previous direction so
@@ -622,6 +801,88 @@ namespace tsorcRevamp.NPCs.Invaders
                     if (!hasLOS)
                         break;
 
+                    // ── Wings: airborne behavior + takeoff triggers ───────────────
+                    if (HasWings && _flight != null)
+                    {
+                        if (_flight.IsAirborne)
+                        {
+                            // While airborne, choose aerial actions instead of ground combos.
+                            // The flight controller's Hover mode auto-refreshes itself; we
+                            // periodically interrupt with a strafe or dive for variety/damage.
+                            if (_flight.Mode == FlightMode.Hover && Main.rand.Next(90) == 0)
+                            {
+                                if (Main.rand.Next(2) == 0)
+                                {
+                                    _flight.RequestDive(target.Center);
+                                    DoAerialDiveTelegraph();
+                                }
+                                else
+                                {
+                                    float side = Math.Sign(NPC.Center.X - target.Center.X);
+                                    if (side == 0) side = -NPC.direction;
+                                    _flight.RequestStrafe(target.Center + new Vector2(-side * 240f, 0f));
+                                }
+                            }
+                            else if (_flight.IsDiving && _aerialHitCooldown <= 0)
+                            {
+                                // Dive contact: drop a hitbox at NPC center.
+                                DoAerialDiveHit();
+                                _aerialHitCooldown = 8; // brief inter-hit cooldown during dive
+                            }
+                            else if (_flight.Mode == FlightMode.Hover
+                                  && Main.rand.Next(150) == 0
+                                  && RangedWeaponItemType >= 0
+                                  && _rangedCooldown <= 0
+                                  && hasLOS)
+                            {
+                                // Aerial ranged: route through the full RangedTelegraph phase
+                                // so the player sees the weapon visibly held in hand (stars
+                                // raised, crossbow extended) and the aim animation completes
+                                // before firing — same wind-up convention as ground shots.
+                                // ForceStanding = true because the flight controller fully owns
+                                // velocity while airborne; the telegraph's velocity damping is
+                                // gated on !IsAirborne and would otherwise no-op anyway.
+                                SetupRangedBurst(useSecondary: false, shotsOverride: 1, forceStanding: true);
+                                EnterPhase(AttackPhase.RangedTelegraph, _activeRangedTelegraphTicks);
+                            }
+                            break;
+                        }
+                        else
+                        {
+                            // Grounded: roll for tactical takeoff.
+                            bool playerAbove = target.Center.Y < NPC.Center.Y - FlightHeightTrigger;
+                            bool stuck       = _wallBlockedTimer > 60;
+                            float hpFrac     = (float)NPC.life / NPC.lifeMax;
+                            int   randChance = hpFrac <= FlightHpEscalationFrac
+                                             ? RandomTakeoffChance * 3
+                                             : RandomTakeoffChance;
+                            bool randomBurst = randChance > 0
+                                             && Main.GameUpdateCount % 60 == 0
+                                             && Main.rand.Next(100) < randChance;
+
+                            if (playerAbove || stuck || randomBurst)
+                            {
+                                if (_flight.RequestTakeoff())
+                                    break;
+                            }
+                        }
+                    }
+
+                    // ── Melee combo intercept ─────────────────────────────────────
+                    // Roll first: combo system competes with the legacy slash/stab path.
+                    // Combos require grounded, height-accessible target, archetype set, AND
+                    // player within effective combo reach so the swings actually connect.
+                    if (MeleeArchetype != WeaponArchetype.None
+                        && MeleeWeaponItemType >= 0
+                        && NPC.velocity.Y == 0f
+                        && NPC.Center.Y - target.Center.Y < 48f
+                        && dist <= ComboMaxStartRange
+                        && Main.rand.Next(100) < MeleeComboChance)
+                    {
+                        if (TryStartMeleeCombo(dist))
+                            break;
+                    }
+
                     // Gate melee/stab on vertical accessibility: if the player is standing on a
                     // ledge above the invader, skip attack phases and let FighterAI navigate up
                     // first.  Without this the invader telegraphs but can never connect.
@@ -657,51 +918,9 @@ namespace tsorcRevamp.NPCs.Invaders
                     {
                         // Pick secondary when both are available (SecondaryRangedChance roll),
                         // or always if only secondary is in range.
-                        _usingSecondaryRanged = wantSecondary &&
+                        bool useSecondary = wantSecondary &&
                             (!wantPrimary || Main.rand.Next(100) < SecondaryRangedChance);
-
-                        // Cache all burst-level values so every phase in this burst is consistent.
-                        _activeRangedItemType       = _usingSecondaryRanged ? SecondaryRangedWeaponItemType : RangedWeaponItemType;
-                        _activeRangedStyle          = _usingSecondaryRanged ? SecondaryRangedAnimStyle      : RangedAnimStyle;
-                        _activeRangedFlashColor     = _usingSecondaryRanged ? SecondaryRangedFlashColor     : RangedTelegraphFlashColor;
-                        _activeRangedTelegraphTicks = _usingSecondaryRanged ? SecondaryRangedTelegraphTicks : RangedTelegraphTicks;
-                        _activeRangedAttackTicks    = _usingSecondaryRanged ? SecondaryRangedAttackTicks    : RangedAttackTicks;
-                        _activeRangedRecoveryTicks  = _usingSecondaryRanged ? SecondaryRangedRecoveryTicks  : RangedRecoveryTicks;
-
-                        int standingChance = _usingSecondaryRanged ? SecondaryStandingRangedChance : StandingRangedChance;
-                        _standingShot = Main.rand.Next(100) < standingChance;
-
-                        // Shot count: secondary weapons default to 1 shot (e.g. crossbow).
-                        int burstMax = _usingSecondaryRanged ? SecondaryMaxRangedBurst : MaxRangedBurst;
-                        _rangedShotsRemaining = !_usingSecondaryRanged && SingleRangedBurstChance > 0
-                                                && Main.rand.Next(100) < SingleRangedBurstChance
-                            ? 1
-                            : Math.Max(1, Main.rand.Next(1, burstMax + 1));
-
-                        // ── Crossbow burst-pattern selection (secondary ranged only) ──────
-                        // When SecondaryRangedBurstPatterns is defined the classic _rangedShotsRemaining
-                        // counter is replaced by a pause-array that drives the shot sequence.
-                        _interShotPauses     = null;
-                        _interShotPauseIndex = 0;
-                        if (_usingSecondaryRanged
-                            && SecondaryRangedBurstPatterns != null
-                            && SecondaryRangedBurstPatterns.Length > 0)
-                        {
-                            int patIdx = PickPatternByChance(SecondaryRangedBurstChances,
-                                                             SecondaryRangedBurstPatterns.Length);
-                            _interShotPauses = SecondaryRangedBurstPatterns[patIdx];
-
-                            // Add extra telegraph ticks for this pattern (e.g. heavier patterns telegraph longer).
-                            if (SecondaryRangedBurstTelegraphExtras != null
-                                && patIdx < SecondaryRangedBurstTelegraphExtras.Length)
-                                _activeRangedTelegraphTicks += SecondaryRangedBurstTelegraphExtras[patIdx];
-
-                            // Pattern-specific flash color overrides the base secondary flash color.
-                            if (SecondaryRangedBurstFlashColors != null
-                                && patIdx < SecondaryRangedBurstFlashColors.Length)
-                                _activeRangedFlashColor = SecondaryRangedBurstFlashColors[patIdx];
-                        }
-
+                        SetupRangedBurst(useSecondary, shotsOverride: -1, forceStanding: false);
                         EnterPhase(AttackPhase.RangedTelegraph, _activeRangedTelegraphTicks);
                     }
                     else if (wantMagic)
@@ -771,10 +990,14 @@ namespace tsorcRevamp.NPCs.Invaders
                 // clearly "prepares to throw".  Standing shots brake harder to a full
                 // stop; moving shots just slow — this still reads as deliberate aiming.
                 case AttackPhase.RangedTelegraph:
-                    if (_standingShot)
-                        NPC.velocity.X *= 0.10f; // planted shot — brake to nearly stopped
-                    else
-                        SlowDown();               // mobile shot — decelerate but still drifting
+                    // Skip ground velocity damping while airborne — flight controller owns velocity.
+                    if (_flight == null || !_flight.IsAirborne)
+                    {
+                        if (_standingShot)
+                            NPC.velocity.X *= 0.10f; // planted shot — brake to nearly stopped
+                        else
+                            SlowDown();               // mobile shot — decelerate but still drifting
+                    }
                     SetDisplayWeapon(_activeRangedItemType, swing: false);
                     CheckAndFireFlash(_activeRangedFlashColor);
                     if (--PhaseTimer <= 0)
@@ -786,10 +1009,13 @@ namespace tsorcRevamp.NPCs.Invaders
                     break;
 
                 case AttackPhase.RangedAttack:
-                    if (_standingShot)
-                        NPC.velocity.X *= 0.25f; // planted shot — bleed off any residual momentum
-                    else
-                        SlowDown();               // mobile shot — continue decelerating through follow-through
+                    if (_flight == null || !_flight.IsAirborne)
+                    {
+                        if (_standingShot)
+                            NPC.velocity.X *= 0.25f; // planted shot — bleed off any residual momentum
+                        else
+                            SlowDown();               // mobile shot — continue decelerating through follow-through
+                    }
                     if (--PhaseTimer <= 0)
                     {
                         if (_interShotPauses != null)
@@ -847,10 +1073,13 @@ namespace tsorcRevamp.NPCs.Invaders
                 // When the timer expires the next shot fires immediately — no re-telegraph.
                 // This gives a deliberate "controlled volley" feel without extra wind-up.
                 case AttackPhase.CrossbowBurstPause:
-                    if (_standingShot)
-                        NPC.velocity.X *= 0.10f; // stay planted during the pause
-                    else
-                        SlowDown();
+                    if (_flight == null || !_flight.IsAirborne)
+                    {
+                        if (_standingShot)
+                            NPC.velocity.X *= 0.10f; // stay planted during the pause
+                        else
+                            SlowDown();
+                    }
                     SetDisplayWeapon(_activeRangedItemType, swing: false);
                     if (--PhaseTimer <= 0)
                     {
@@ -971,7 +1200,289 @@ namespace tsorcRevamp.NPCs.Invaders
                     if (--PhaseTimer <= 0)
                         EnterCasualOrIdle();
                     break;
+
+                // ── Melee combo: telegraph (step 0) ───────────────────────────
+                case AttackPhase.MeleeComboTelegraph:
+                    LockComboDirection();
+                    SlowDown();
+                    SetDisplayWeapon(MeleeWeaponItemType, swing: false);
+                    CheckAndFireFlash(_activeMeleeCombo.InitialFlashColor);
+                    if (--PhaseTimer <= 0)
+                    {
+                        SetDisplayWeapon(MeleeWeaponItemType, swing: true);
+                        DoComboMeleeHit(_activeMeleeCombo.Steps[_meleeComboStepIndex]);
+                        EnterPhase(AttackPhase.MeleeComboAttack, _activeMeleeCombo.Steps[_meleeComboStepIndex].AttackTicks);
+                    }
+                    break;
+
+                // ── Melee combo: active hitbox frame ──────────────────────────
+                case AttackPhase.MeleeComboAttack:
+                {
+                    LockComboDirection();
+                    var step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                    if (step.ForwardPushMult > 0f)
+                        NPC.velocity.X = _comboLockedDir * (TopSpeed * step.ForwardPushMult);
+                    else
+                        NPC.velocity.X *= 0.65f;
+                    if (--PhaseTimer <= 0)
+                    {
+                        int nextIdx = _meleeComboStepIndex + 1;
+                        if (nextIdx < _activeMeleeCombo.Steps.Length)
+                        {
+                            int pause = Math.Max(1, step.PostStepPause);
+                            EnterPhase(AttackPhase.MeleeComboPause, pause);
+                        }
+                        else
+                        {
+                            EnterPhase(AttackPhase.MeleeComboRecovery, MeleeRecoveryTicks);
+                        }
+                    }
+                    break;
+                }
+
+                // ── Melee combo: inter-step pause ─────────────────────────────
+                // Direction UNLOCKED during the pause: if the player dodgerolled through,
+                // the invader can re-face them so the next step swings the correct way.
+                // The next step's lock direction is captured just before its attack fires.
+                case AttackPhase.MeleeComboPause:
+                    SlowDown();
+                    // Re-face the player during the pause window.
+                    {
+                        int faceDir = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction       = faceDir;
+                        NPC.spriteDirection = faceDir;
+                    }
+                    if (--PhaseTimer <= 0)
+                    {
+                        _meleeComboStepIndex++;
+                        // Recapture the lock direction for the upcoming step.
+                        _comboLockedDir = NPC.direction;
+                        var nextStep = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                        SetDisplayWeapon(MeleeWeaponItemType, swing: true);
+                        DoComboMeleeHit(nextStep);
+                        _weaponAnim = WeaponAnimMax;
+                        EnterPhase(AttackPhase.MeleeComboAttack, nextStep.AttackTicks);
+                    }
+                    break;
+
+                // ── Melee combo: final recovery ───────────────────────────────
+                // Direction unlocked during recovery — invader can re-orient toward player.
+                case AttackPhase.MeleeComboRecovery:
+                    if (--PhaseTimer <= 0)
+                    {
+                        if (_meleeComboCooldowns != null
+                            && _activeMeleeComboIndex >= 0
+                            && _activeMeleeComboIndex < _meleeComboCooldowns.Length)
+                        {
+                            _meleeComboCooldowns[_activeMeleeComboIndex] = _activeMeleeCombo.CooldownAfterUse;
+                        }
+                        _activeMeleeComboIndex = -1;
+                        EnterCasualOrIdle();
+                    }
+                    break;
             }
+        }
+
+        /// <summary>
+        /// Force direction to the value captured at combo start.  Called every tick
+        /// across all four MeleeCombo* phases so a player who dodgerolls through ends up
+        /// behind the swing arc — FighterAI's natural facing-flip is overridden.
+        /// </summary>
+        private void LockComboDirection()
+        {
+            NPC.direction       = _comboLockedDir;
+            NPC.spriteDirection = _comboLockedDir;
+            _directionHoldTicks = Math.Max(_directionHoldTicks, 5);
+        }
+
+        /// <summary>
+        /// Configure all ranged-burst state for the current weapon trigger.  Used by both the
+        /// ground Idle path and the airborne hover-shot path so they share one canonical setup.
+        ///   <paramref name="useSecondary"/>: pick secondary (crossbow) vs primary (stars/bow).
+        ///   <paramref name="shotsOverride"/>: -1 = roll randomly via MaxRangedBurst; else use this exact count.
+        ///   <paramref name="forceStanding"/>: bypass StandingRangedChance roll (used by aerial — controller owns velocity).
+        /// </summary>
+        private void SetupRangedBurst(bool useSecondary, int shotsOverride, bool forceStanding)
+        {
+            _usingSecondaryRanged = useSecondary;
+
+            _activeRangedItemType       = useSecondary ? SecondaryRangedWeaponItemType : RangedWeaponItemType;
+            _activeRangedStyle          = useSecondary ? SecondaryRangedAnimStyle      : RangedAnimStyle;
+            _activeRangedFlashColor     = useSecondary ? SecondaryRangedFlashColor     : RangedTelegraphFlashColor;
+            _activeRangedTelegraphTicks = useSecondary ? SecondaryRangedTelegraphTicks : RangedTelegraphTicks;
+            _activeRangedAttackTicks    = useSecondary ? SecondaryRangedAttackTicks    : RangedAttackTicks;
+            _activeRangedRecoveryTicks  = useSecondary ? SecondaryRangedRecoveryTicks  : RangedRecoveryTicks;
+
+            if (forceStanding)
+            {
+                _standingShot = true;
+            }
+            else
+            {
+                int standingChance = useSecondary ? SecondaryStandingRangedChance : StandingRangedChance;
+                _standingShot = Main.rand.Next(100) < standingChance;
+            }
+
+            // Shot count: explicit override (aerial = 1) takes precedence; otherwise roll.
+            if (shotsOverride > 0)
+            {
+                _rangedShotsRemaining = shotsOverride;
+            }
+            else
+            {
+                int burstMax = useSecondary ? SecondaryMaxRangedBurst : MaxRangedBurst;
+                _rangedShotsRemaining = !useSecondary && SingleRangedBurstChance > 0
+                                        && Main.rand.Next(100) < SingleRangedBurstChance
+                    ? 1
+                    : Math.Max(1, Main.rand.Next(1, burstMax + 1));
+            }
+
+            // ── Crossbow burst-pattern selection (secondary ranged only) ──────────────
+            // When SecondaryRangedBurstPatterns is defined the classic _rangedShotsRemaining
+            // counter is replaced by a pause-array that drives the shot sequence.
+            _interShotPauses     = null;
+            _interShotPauseIndex = 0;
+            if (useSecondary
+                && shotsOverride < 0   // override skips patterns (aerial single-shot)
+                && SecondaryRangedBurstPatterns != null
+                && SecondaryRangedBurstPatterns.Length > 0)
+            {
+                int patIdx = PickPatternByChance(SecondaryRangedBurstChances,
+                                                 SecondaryRangedBurstPatterns.Length);
+                _interShotPauses = SecondaryRangedBurstPatterns[patIdx];
+
+                if (SecondaryRangedBurstTelegraphExtras != null
+                    && patIdx < SecondaryRangedBurstTelegraphExtras.Length)
+                    _activeRangedTelegraphTicks += SecondaryRangedBurstTelegraphExtras[patIdx];
+
+                if (SecondaryRangedBurstFlashColors != null
+                    && patIdx < SecondaryRangedBurstFlashColors.Length)
+                    _activeRangedFlashColor = SecondaryRangedBurstFlashColors[patIdx];
+            }
+        }
+
+        /// <summary>
+        /// Lazy-init the melee combo pool and per-combo cooldown array for the active archetype.
+        /// </summary>
+        private void EnsureMeleeComboPool()
+        {
+            if (_meleeComboPool != null) return;
+            _meleeComboPool = WeaponArchetypeTables.GetMeleeCombos(MeleeArchetype);
+            if (_meleeComboPool != null)
+                _meleeComboCooldowns = new int[_meleeComboPool.Length];
+        }
+
+        private void EnsureRangedComboPool()
+        {
+            if (_rangedComboPool != null) return;
+            _rangedComboPool = WeaponArchetypeTables.GetRangedCombos(RangedArchetype);
+            if (_rangedComboPool != null)
+                _rangedComboCooldowns = new int[_rangedComboPool.Length];
+        }
+
+        /// <summary>
+        /// Try to start a melee combo from the active archetype's pool.  Selection is
+        /// range-aware (close/mid/far bands) and HP-aware (heavy combos weighted up as HP drops).
+        /// Returns true if a combo started; false if no eligible combo (cooldowns/weights).
+        /// </summary>
+        private bool TryStartMeleeCombo(float dist)
+        {
+            EnsureMeleeComboPool();
+            if (_meleeComboPool == null || _meleeComboPool.Length == 0) return false;
+
+            // Filter pool to combos whose cooldown is ready; rebuild weights array.
+            float hpFrac = (float)NPC.life / NPC.lifeMax;
+            float closeMax = MeleeRange + 30f;
+            float midMax   = StabRange + 60f;
+
+            // Walk the picker but with cooldown filter: temporarily zero the BaseWeight
+            // of any combo on cooldown.  We use a stack array of effective weights.
+            int total = 0;
+            int[] effective = new int[_meleeComboPool.Length];
+            ComboRangeBand band = dist <= closeMax ? ComboRangeBand.Close
+                               : dist <= midMax   ? ComboRangeBand.Mid
+                               : ComboRangeBand.Far;
+            float heavyMult = hpFrac <= 0.33f ? 2.5f : hpFrac <= 0.66f ? 1.5f : 1.0f;
+
+            for (int i = 0; i < _meleeComboPool.Length; i++)
+            {
+                if (_meleeComboCooldowns[i] > 0) { effective[i] = 0; continue; }
+                float w = _meleeComboPool[i].BaseWeight;
+                w *= (_meleeComboPool[i].Preferred == band
+                      || _meleeComboPool[i].Preferred == ComboRangeBand.Any) ? 2.0f : 0.4f;
+                if (_meleeComboPool[i].HeavyCommit) w *= heavyMult;
+                effective[i] = (int)w;
+                total += effective[i];
+            }
+            if (total <= 0) return false;
+
+            int roll = Main.rand.Next(total);
+            int cumulative = 0;
+            int chosen = -1;
+            for (int i = 0; i < _meleeComboPool.Length; i++)
+            {
+                cumulative += effective[i];
+                if (effective[i] > 0 && roll < cumulative) { chosen = i; break; }
+            }
+            if (chosen < 0) return false;
+
+            _activeMeleeComboIndex = chosen;
+            _activeMeleeCombo      = _meleeComboPool[chosen];
+            _meleeComboStepIndex   = 0;
+            _comboLockedDir        = NPC.direction;
+            // Minimum 30 ticks (0.5 s) so the wind-up arc has visible time to play.
+            // Lighter combos that have raw values below 22 (×1.35 → ~30) get floored here.
+            int telegraphTicks = Math.Max(MinComboTelegraphTicks,
+                                          (int)(_activeMeleeCombo.Steps[0].TelegraphTicks * ComboTelegraphMultiplier));
+            EnterPhase(AttackPhase.MeleeComboTelegraph, telegraphTicks);
+            return true;
+        }
+
+        /// <summary>
+        /// Spawn the damage hitbox for the current combo step.  Default applies the step's
+        /// DamageMult and ReachMult on top of the invader's MeleeRange × 0.7 base reach.
+        /// Subclasses can override for per-step VFX/sounds without losing the scaling.
+        /// </summary>
+        protected virtual void DoComboMeleeHit(MeleeComboStep step)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            float reach = MeleeRange * 0.7f * step.ReachMult;
+            int   dmg   = (int)(MeleeDamage * step.DamageMult);
+            Vector2 tip = NPC.Center + new Vector2(_comboLockedDir * reach, -8f);
+            Projectile.NewProjectile(
+                NPC.GetSource_FromThis(), tip, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.InvaderMeleeHitbox>(),
+                dmg, 3f, Main.myPlayer, NPC.whoAmI);
+        }
+
+        // ── Aerial actions (default implementations) ──────────────────────────────
+        /// <summary>Fire a telegraph flash + dust burst when a dive begins.  Subclass override
+        /// for thematic dive markers.  Also equips the melee weapon for the dive visual.</summary>
+        protected virtual void DoAerialDiveTelegraph()
+        {
+            if (MeleeWeaponItemType >= 0)
+                SetDisplayWeapon(MeleeWeaponItemType, swing: false);
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            SpawnTelegraphFlash(Color.OrangeRed);
+        }
+
+        /// <summary>Spawn the dive's damage hitbox.  Called repeatedly while in DiveAttack mode
+        /// to give the dive a sustained contact-damage feel.</summary>
+        protected virtual void DoAerialDiveHit()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            Projectile.NewProjectile(
+                NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.InvaderMeleeHitbox>(),
+                (int)(MeleeDamage * 1.2f), 4f, Main.myPlayer, NPC.whoAmI);
+        }
+
+        /// <summary>Fire a single aerial ranged shot.  Default delegates to DoRangedAttack
+        /// so subclass spawns its existing projectile + sound.  Override for true aerial-only
+        /// projectiles (e.g. bombs dropped straight down).</summary>
+        protected virtual void DoAerialRangedShot(Player target)
+        {
+            DoRangedAttack();
         }
 
         /// <summary>
@@ -1042,7 +1553,8 @@ namespace tsorcRevamp.NPCs.Invaders
             // Each new telegraph phase gets its own flash.
             if (phase == AttackPhase.MeleeTelegraph || phase == AttackPhase.StabTelegraph
                 || phase == AttackPhase.RangedTelegraph
-                || phase == AttackPhase.SpearTelegraph || phase == AttackPhase.MagicTelegraph)
+                || phase == AttackPhase.SpearTelegraph || phase == AttackPhase.MagicTelegraph
+                || phase == AttackPhase.MeleeComboTelegraph)
                 _flashFired = false;
         }
 
@@ -1226,6 +1738,70 @@ namespace tsorcRevamp.NPCs.Invaders
                 // t runs 0→1 over WeaponAnimMax ticks (reset when swing begins)
                 _weaponRotation = MathHelper.Lerp(-1.3f, 1.0f, t);
             }
+            else if (Phase == AttackPhase.MeleeComboTelegraph
+                  || Phase == AttackPhase.MeleeComboAttack
+                  || Phase == AttackPhase.MeleeComboPause)
+            {
+                // Drive rotation from the current step's ComboMotion.
+                var step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                bool inTel = Phase == AttackPhase.MeleeComboTelegraph;
+                bool inPause = Phase == AttackPhase.MeleeComboPause;
+
+                switch (step.Motion)
+                {
+                    case ComboMotion.OverheadArc:
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.3f, 0.30f);
+                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.0f, 0.20f);
+                        else              _weaponRotation = MathHelper.Lerp(-1.3f, 1.0f, t);
+                        break;
+                    case ComboMotion.UnderhandArc:
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.0f, 0.30f);
+                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.7f, 0.20f);
+                        else              _weaponRotation = MathHelper.Lerp(1.0f, -1.3f, t);
+                        break;
+                    case ComboMotion.HorizontalSweep:
+                        // Flat side-to-side: arm extends, weapon held near horizontal
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.4f, 0.25f);
+                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.3f, 0.18f);
+                        else              _weaponRotation = MathHelper.Lerp(-0.4f, 0.6f, t);
+                        break;
+                    case ComboMotion.VerticalChop:
+                        // Straight overhead → straight down (hammer)
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.55f, 0.32f);
+                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.2f, 0.18f);
+                        else              _weaponRotation = MathHelper.Lerp(-1.55f, 1.4f, t);
+                        break;
+                    case ComboMotion.Thrust:
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.20f);
+                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2 * 0.8f, 0.18f);
+                        else              _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.42f);
+                        break;
+                    case ComboMotion.JoustDash:
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.18f);
+                        else              _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.45f);
+                        break;
+                    case ComboMotion.Spin:
+                        // Continuous rotation; 1 full revolution per WeaponAnimMax-ish ticks
+                        _weaponRotation += 0.28f;
+                        if (_weaponRotation > MathHelper.TwoPi) _weaponRotation -= MathHelper.TwoPi;
+                        break;
+                    case ComboMotion.IaidoDraw:
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.2f, 0.15f); // weapon held low/behind
+                        else              _weaponRotation = MathHelper.Lerp(1.2f, -0.5f, t);                // fast snap forward
+                        break;
+                    case ComboMotion.GroundSlam:
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.55f, 0.25f);
+                        else              _weaponRotation = MathHelper.Lerp(-1.55f, 1.5f, t);
+                        break;
+                }
+            }
+            else if (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0)
+            {
+                // Dive thrust pose: weapon held forward+down toward the player, locked.
+                // PiOver4 (~45°) reads as a downward-forward stab when paired with the
+                // dive's downward velocity and the puppet's Use3 forward-arm pose.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.35f);
+            }
             else
             {
                 // Idle / walking / jumping / recovery:
@@ -1314,6 +1890,16 @@ namespace tsorcRevamp.NPCs.Invaders
             _puppet.body = _puppet.armor[1].bodySlot;
             _puppet.legs = _puppet.armor[2].legSlot;
 
+            // Wings — populated only when HasWings, so wing layer renders behind the body
+            if (HasWings && WingsAccessoryItemType > 0)
+            {
+                _wingsItemCache = new Item();
+                _wingsItemCache.SetDefaults(WingsAccessoryItemType);
+                _cachedWingsType = WingsAccessoryItemType;
+                _puppet.wings = _wingsItemCache.wingSlot;
+                _puppet.wingTimeMax = 200; // arbitrary > 0 so wing layer treats it as a real wing
+            }
+
             // Pre-set default weapon so it shows from the first frame
             _heldItemType = MeleeWeaponItemType >= 0 ? MeleeWeaponItemType : RangedWeaponItemType;
         }
@@ -1326,6 +1912,25 @@ namespace tsorcRevamp.NPCs.Invaders
             _puppet.width     = NPC.width;
             _puppet.height    = NPC.height;
             _puppet.gravDir   = 1f;
+
+            // Wing flap state: drive vanilla wing draw layer's animation.
+            // controlJump=true + wingTime>0 makes the wing layer pick the flap frames;
+            // false + wingTime=0 makes it pick the glide/closed frame.
+            if (HasWings && _flight != null)
+            {
+                bool airborne = _flight.IsAirborne;
+                _puppet.wings = _wingsItemCache?.wingSlot ?? 0;
+                _puppet.wingTime = airborne ? _puppet.wingTimeMax : 0;
+                _puppet.controlJump = _flight.WingsActiveThisTick;
+                // Flag the puppet as in-air so the wing layer doesn't suppress the draw.
+                _puppet.wingFrame = (int)(_flight.WingAnimPhase * 4f) % 4;
+            }
+            else
+            {
+                _puppet.wings = 0;
+                _puppet.wingTime = 0;
+                _puppet.controlJump = false;
+            }
 
             // Only real combat poses keep the weapon in hand; recovery, idle, healing,
             // and casual movement fall back to the natural arm/leg draw.
@@ -1444,6 +2049,58 @@ namespace tsorcRevamp.NPCs.Invaders
             else if (Phase == AttackPhase.MagicAttack)
             {
                 bodyRow = 3; // Use3 — arm thrusts forward as the spell fires
+            }
+            else if (Phase == AttackPhase.MeleeComboTelegraph
+                  || Phase == AttackPhase.MeleeComboAttack
+                  || Phase == AttackPhase.MeleeComboPause)
+            {
+                // Body row depends on the current step's motion to keep the arm pose
+                // aligned with the weapon-rotation lerp from TickWeaponAnim.
+                bool inTel = Phase == AttackPhase.MeleeComboTelegraph;
+                var motion = _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion;
+                switch (motion)
+                {
+                    case ComboMotion.OverheadArc:
+                    case ComboMotion.VerticalChop:
+                    case ComboMotion.GroundSlam:
+                        // Pitch-based row matches existing slash arc body selection
+                        if (inTel) bodyRow = 1;
+                        else
+                        {
+                            float pitch = (1f - (float)Math.Sin(_weaponRotation)) / 2f;
+                            if      (pitch > 0.95f) bodyRow = 1;
+                            else if (pitch > 0.70f) bodyRow = 2;
+                            else if (pitch > 0.30f) bodyRow = 3;
+                            else                   bodyRow = 4;
+                        }
+                        break;
+                    case ComboMotion.UnderhandArc:
+                        bodyRow = inTel ? 4 : (_weaponRotation < 0f ? 1 : 3);
+                        break;
+                    case ComboMotion.HorizontalSweep:
+                        bodyRow = 3; // arm level/forward
+                        break;
+                    case ComboMotion.Thrust:
+                    case ComboMotion.JoustDash:
+                        bodyRow = inTel ? 4 : 3;
+                        break;
+                    case ComboMotion.Spin:
+                        // Rotate body row to suggest motion; cycle Use1→Use3 by rotation phase
+                        bodyRow = 1 + ((int)(_weaponRotation / MathHelper.PiOver2) & 3);
+                        if (bodyRow > 4) bodyRow = 4;
+                        break;
+                    case ComboMotion.IaidoDraw:
+                        bodyRow = inTel ? 4 : 3;
+                        break;
+                    default:
+                        bodyRow = 3;
+                        break;
+                }
+            }
+            else if (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0)
+            {
+                // Dive: arm forward, weapon thrusting toward the dive target.
+                bodyRow = 3; // Use3 — arm level/forward
             }
             else if (!onGround)
             {

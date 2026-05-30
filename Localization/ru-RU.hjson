@@ -41,6 +41,10 @@ Mods: {
 			BotCNoHeal: Не исцеляет [c/6d8827:носителя проклятия]
 			// UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			// LifeCrystalSoulsMode: Permanently increases maximum life by {0}
+			// SoulsModeMobilityLimitRunOnly: Souls Mode mobility limit: ground speed capped at {0}.
+			// SoulsModeMobilityLimitWing: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}.
+			// SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
+			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: Сокращает время, необходимое для использования фляги эстуса на {0}%
 			BotCManaFlower: Сокращает время, необходимое для использования фляги лазурных слёз на {0}%
 			DSPickUpRange: " Увеличивает дальность подбора тёмных душ"
@@ -4236,6 +4240,7 @@ Mods: {
 					'''
 				NoLocation: Точка телепортации не установлена!
 				WrongWorld: Точка телепортации установлена в другом мире!
+				// TooFar: The marked location is too far away. Move within {0} tiles of it.
 				OnUse: Продолжаем с того места, где остановились...
 				NewLocation: Новая точка телепортации установлена!
 				Invalid: Зеркало деревни можно установить только в деревне Пепельных пиков.
@@ -9929,6 +9934,7 @@ Mods: {
 			// InvaderMeleeHitbox.DisplayName: Invader Melee Hitbox
 			// InvaderThrowingStar.DisplayName: Invader Throwing Star
 			// InvaderCrossbowBolt.DisplayName: Invader Crossbow Bolt
+			// GreatMagicMirrorRangeRing.DisplayName: Great Magic Mirror Range Ring
 		}
 
 		NPCs: {
@@ -11586,6 +11592,7 @@ Mods: {
 			// RedKnightTest.DisplayName: Red Knight Test
 			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
+			// TibianValkyrieSmart4.DisplayName: Tibian Valkyrie Smart4
 		}
 
 		Prefixes: {
@@ -11734,6 +11741,11 @@ Mods: {
 				DisableSupersonicWings2ExtraJumps: {
 					Label: Отключает дополнительный прыжок сверхзвуковых крыльев II
 					Tooltip: Отключает дополнительные прыжки, предоставляемые сверхзвуковыми крыльями II. По умолчанию отключено.
+				}
+
+				EnableSoulsModeMobilityLimit: {
+					// Label: Enable Souls Mode Mobility Limit
+					// Tooltip: Limits extreme running and flight speed while Unkindled or Bearer of the Curse. Classic mode is unaffected. Defaults to On.
 				}
 
 				SoulCounterPosX: {

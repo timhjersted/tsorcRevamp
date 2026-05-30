@@ -41,6 +41,10 @@ Mods: {
 			BotCNoHeal: 无法治愈[c/6d8827:被诅咒者]
 			// UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			// LifeCrystalSoulsMode: Permanently increases maximum life by {0}
+			// SoulsModeMobilityLimitRunOnly: Souls Mode mobility limit: ground speed capped at {0}.
+			// SoulsModeMobilityLimitWing: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}.
+			// SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
+			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: 减少 {0}% 元素瓶的使用时间
 			BotCManaFlower: 减少 {0}% 蓝露滴圣杯瓶的使用时间
 			DSPickUpRange: 增加黑暗之魂拾取范围
@@ -4278,6 +4282,7 @@ Mods: {
 					'''
 				NoLocation: 你还没有记录传送点！
 				WrongWorld: 保存记录的传送点不在当前世界！
+				// TooFar: The marked location is too far away. Move within {0} tiles of it.
 				OnUse: 正在传送你到上次记录的位置...
 				NewLocation: 新的折跃点已设置！
 				Invalid: 村庄魔镜的传送点只能设置在埃什峰村内部
@@ -9967,6 +9972,7 @@ Mods: {
 			// InvaderMeleeHitbox.DisplayName: Invader Melee Hitbox
 			// InvaderThrowingStar.DisplayName: Invader Throwing Star
 			// InvaderCrossbowBolt.DisplayName: Invader Crossbow Bolt
+			// GreatMagicMirrorRangeRing.DisplayName: Great Magic Mirror Range Ring
 		}
 
 		NPCs: {
@@ -11625,6 +11631,7 @@ Mods: {
 			// RedKnightTest.DisplayName: Red Knight Test
 			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
+			// TibianValkyrieSmart4.DisplayName: Tibian Valkyrie Smart4
 		}
 
 		Prefixes: {
@@ -11773,6 +11780,11 @@ Mods: {
 				DisableSupersonicWings2ExtraJumps: {
 					Label: 禁用 超音速之翼II 的额外跳跃
 					Tooltip: 禁用 超音速之翼II 的额外跳跃效果。默认为关闭
+				}
+
+				EnableSoulsModeMobilityLimit: {
+					// Label: Enable Souls Mode Mobility Limit
+					// Tooltip: Limits extreme running and flight speed while Unkindled or Bearer of the Curse. Classic mode is unaffected. Defaults to On.
 				}
 
 				SoulCounterPosX: {

@@ -832,22 +832,9 @@ namespace tsorcRevamp
             #endregion manashield
 
             #region Abyss Shader
-            bool hasCoA = false;
-
             if (Player.whoAmI == Main.myPlayer)
             {
-
-                //does the player have a covenant of artorias
-                hasCoA = Player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss;
-
-                //if they do, and the shader is inactive
-                if (hasCoA && !(Filters.Scene["tsorcRevamp:TheAbyss"].Active))
-                {
-                    Filters.Scene.Activate("tsorcRevamp:TheAbyss");
-                }
-
-                //if the abyss shader is active and the player is no longer wearing the CoA                
-                if (Filters.Scene["tsorcRevamp:TheAbyss"].Active && !hasCoA)
+                if (Filters.Scene["tsorcRevamp:TheAbyss"].Active)
                 {
                     Filters.Scene["tsorcRevamp:TheAbyss"].Deactivate();
                 }
@@ -2012,7 +1999,7 @@ namespace tsorcRevamp
                 float baseSpeed = 1;
 
                 //SupersonicBoots
-                if (supersonicLevel == 1)
+                if (supersonicLevel == SoulsModeMobility.SupersonicBootsLevel)
                 {
                     //moveSpeedPercentBoost is what percent of a player's moveSpeed bonus should be applied to their max running speed
                     //For vanilla hermes boots and their upgrades, this is 0
@@ -2022,14 +2009,14 @@ namespace tsorcRevamp
                     Player.moveSpeed += 0.2f;
                 }
                 //SupersonicWings
-                if (supersonicLevel == 2)
+                if (supersonicLevel == SoulsModeMobility.SupersonicWingsLevel || supersonicLevel == SoulsModeMobility.SupersonicWings2Level)
                 {
                     moveSpeedPercentBoost = 0.5f;
                     baseSpeed = 6.8f;
                     Player.moveSpeed += 0.3f;
                 }
-                //SupersonicWings2
-                if (supersonicLevel == 3)
+                //Wings of Seath
+                if (supersonicLevel == SoulsModeMobility.WingsOfSeathLevel)
                 {
                     moveSpeedPercentBoost = 1f;
                     baseSpeed = 7.5f;
@@ -2042,11 +2029,32 @@ namespace tsorcRevamp
                 Player.accRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
                 Player.maxRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
 
+                if (SoulsModeMobility.Enabled(Player))
+                {
+                    float cappedSpeed = supersonicLevel switch
+                    {
+                        SoulsModeMobility.SupersonicBootsLevel => SoulsModeMobility.SupersonicBootsRunSpeed,
+                        SoulsModeMobility.SupersonicWingsLevel => SoulsModeMobility.SupersonicWingsRunSpeed,
+                        SoulsModeMobility.SupersonicWings2Level => SoulsModeMobility.SupersonicWings2RunSpeed,
+                        SoulsModeMobility.WingsOfSeathLevel => SoulsModeMobility.WingsOfSeathRunSpeed,
+                        _ => Player.maxRunSpeed
+                    };
+
+                    Player.accRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+                    Player.maxRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+                }
+
                 if (FastFallTimer > 0)
                 {
                     Player.maxFallSpeed = 50;
                     FastFallTimer--;
                 }
+            }
+
+            if (SoulsModeMobility.Enabled(Player))
+            {
+                Player.accRunSpeed = Math.Min(Player.accRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+                Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
             }
 
             if (Player.HasBuff<MarilithHold>() || Player.HasBuff<MarilithWind>())

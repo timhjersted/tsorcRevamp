@@ -1506,7 +1506,7 @@ namespace tsorcRevamp
             {
                 beforeAbyss.StoreWorldState(Main.bloodMoon, Main.moonPhase, Main.dayTime, Main.time);
 
-                Main.bloodMoon = true;
+                Main.bloodMoon = false;
                 Main.moonPhase = 0;
                 Main.dayTime = false;
                 Main.time = 16240.0;

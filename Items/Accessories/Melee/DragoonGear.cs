@@ -42,7 +42,6 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.noFallDmg = true;
             player.GetModPlayer<tsorcRevampPlayer>().DragoonHorn = true;
             player.GetModPlayer<tsorcRevampPlayer>().DragoonBoots = true;
             player.moveSpeed *= 1f + MoveSpeedMult / 100f;

@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss = true;  
+            player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss = true;
         }
 
         public override void UpdateVanity(Player player)

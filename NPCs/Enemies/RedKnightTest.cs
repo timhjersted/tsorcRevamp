@@ -1,8 +1,6 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -260,7 +258,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Spear Telegraph
-                if (NPC.ai[1] == 155f)
+                if (NPC.ai[1] == 90f)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -477,7 +475,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Bomb Telegraph
-                if (NPC.ai[1] == 900f)
+                if (NPC.ai[1] == 830f)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -769,6 +767,8 @@ namespace tsorcRevamp.NPCs.Enemies
             EnemyHeldItemStyle heldItemStyle = EnemyHeldItemStyle.Generic;
             string heldTexturePath = null;
 
+            float? targetDrawRotation = GetHeldSpearDrawRotation();
+
             if (visualPoseTimer > 0)
             {
                 pose = visualPose;
@@ -830,7 +830,37 @@ namespace tsorcRevamp.NPCs.Enemies
                 SpawnMagicTelegraphDust(pose == EnemySpritePose.MagicAim);
             }
 
-            spriteRenderer.SetPose(pose, heldItemType, weaponVisible, poseTimer, poseDuration, heldItemStyle, heldTexturePath);
+            spriteRenderer.SetPose(pose, heldItemType, weaponVisible, poseTimer, poseDuration, heldItemStyle, heldTexturePath,
+                heldItemStyle == EnemyHeldItemStyle.Spear ? targetDrawRotation : null);
+        }
+
+        private float? GetHeldSpearDrawRotation()
+        {
+            if (NPC.target < 0 || NPC.target >= Main.maxPlayers)
+            {
+                return null;
+            }
+
+            Player player = Main.player[NPC.target];
+            if (!player.active || player.dead)
+            {
+                return null;
+            }
+
+            Vector2 target = storedPlayerPosition == Vector2.Zero ? player.Center : storedPlayerPosition;
+            float speed = NPC.Distance(player.Center) > 400f ? 15f : 12f;
+            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, target, speed, fallback: true);
+            if (velocity == Vector2.Zero)
+            {
+                velocity = target - NPC.Center;
+            }
+
+            if (velocity == Vector2.Zero)
+            {
+                return null;
+            }
+
+            return velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         private void SpawnMagicTelegraphDust(bool aiming)
@@ -847,21 +877,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-            DrawEyeGlow(spriteBatch);
-        }
-
-        private void DrawEyeGlow(SpriteBatch spriteBatch)
-        {
-            Texture2D pixel = TextureAssets.MagicPixel.Value;
-            Vector2 eyePosition = NPC.Center + new Vector2(NPC.direction * 4f, -14f) - Main.screenPosition;
-            float pulse = 0.65f + 0.25f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 8f);
-            Color glow = Color.Red * pulse;
-
-            spriteBatch.Draw(pixel, eyePosition, null, glow * 0.35f, 0f, new Vector2(0.5f), NPC.scale * 5f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(pixel, eyePosition, null, Color.OrangeRed * 0.85f, 0f, new Vector2(0.5f), NPC.scale * 2f, SpriteEffects.None, 0f);
-        }
     }
 
 }
