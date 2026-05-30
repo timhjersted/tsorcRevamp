@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-
+            Item.DamageType = DamageClass.Magic;
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -34,8 +34,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.mana = 50;
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
-            Item.DamageType = DamageClass.Magic;
-
             Item.channel = true;
 
             Item.shoot = ModContent.ProjectileType<Projectiles.Magic.ArcaneLightrifle>();

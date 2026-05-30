@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.ignoreWater = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 6;
-            Projectile.ArmorPenetration = 20;
+            Projectile.ArmorPenetration = 25;
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         Player owner
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         bool dying = false;
         float size = 0;
         Vector2 truePosition;
-        float maxSize = 2200;
+        float maxSize = 1560;
         float fadeIn;
         float trueSize = 1;
         public override void AI()
@@ -111,9 +111,9 @@ namespace tsorcRevamp.Projectiles.Ranged
             {
                 trueSize += 0.01f;
             }
-            if (trueSize > 1)
+            if (trueSize > 0.86f)
             {
-                trueSize = 1;
+                trueSize = 0.86f;
             }
 
             Vector2 unit = Projectile.rotation.ToRotationVector2();
@@ -209,6 +209,13 @@ namespace tsorcRevamp.Projectiles.Ranged
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire3, 300, false);
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (tsorcRevamp.WormNPCs.Contains(target.type))
+            {
+                modifiers.FinalDamage *= 0.15f;
+            }
         }
     }
 }

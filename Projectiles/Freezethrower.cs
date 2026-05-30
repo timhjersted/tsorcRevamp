@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.ignoreWater = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 8;
-            Projectile.ArmorPenetration = 10;
+            Projectile.ArmorPenetration = 15;
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         Player owner
@@ -221,6 +221,13 @@ namespace tsorcRevamp.Projectiles
             if (Main.rand.NextBool(10))
             {
                 target.AddBuff(BuffID.Frozen, 60);
+            }
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (tsorcRevamp.WormNPCs.Contains(target.type))
+            {
+                modifiers.FinalDamage *= 0.15f;
             }
         }
     }
