@@ -156,6 +156,7 @@ namespace tsorcRevamp
         public static List<int> LichKingSerpentSegments;
         public static List<int> SeathSegments;
         public static List<int> UntargetableNPCs;
+        public static List<int> HumanNPCs;
         public static List<int> MageNPCs;
         public static List<int> NatureNPCs;
         public static List<int> UndeadNPCs;
@@ -1400,6 +1401,34 @@ namespace tsorcRevamp
             #endregion
 
             //-------
+            #region Human NPC list
+            HumanNPCs = new List<int>()
+            {
+                NPCID.PirateDeckhand,
+                NPCID.PirateCorsair,
+                NPCID.PirateDeadeye,
+                NPCID.PirateCrossbower,
+                NPCID.PirateCaptain,
+                NPCID.CultistBoss,
+                NPCID.CultistDevote,
+                NPCID.Psycho,
+                NPCID.CultistArcherBlue,
+                ModContent.NPCType<HeroofLumelia>(),
+                ModContent.NPCType<Warlock>(),
+                ModContent.NPCType<TibianAmazon>(),
+                ModContent.NPCType<TibianValkyrie>(),
+                ModContent.NPCType<ManHunter>(),
+                ModContent.NPCType<Necromancer>(),
+                ModContent.NPCType<RedCloudHunter>(),
+                ModContent.NPCType<Assassin>(),
+                ModContent.NPCType<HydrisNecromancer>(),
+                ModContent.NPCType<CrystalKnight>(),
+                ModContent.NPCType<DarkBloodKnight>(),
+                ModContent.NPCType<DarkKnight>(),
+                ModContent.NPCType<Dunlending>()
+            };
+            #endregion
+
             #region Mage NPC list
             MageNPCs = new List<int>()
             {

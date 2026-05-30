@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Item.height = 26;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ItemRarityID.Quest;
         }
 
         public override void AddRecipes()
