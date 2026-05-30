@@ -2291,11 +2291,11 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Destroyer.DespawnHandler"), Color.Orange, DustID.Torch);
 
-                        npc.lifeMax = 90000;
+                        npc.lifeMax = 135000;
                         npc.value = 203430;
                         npc.scale = 1.25f;
                         npc.damage = Main.expertMode ? 40 /* x4 in expert */: 60; //legacy: 200, vanilla: 70
-                        npc.defense = 20; //legacy: 50, vanilla: 0
+                        npc.defense = 25; //legacy: 50, vanilla: 0
                         npc.rarity = 23;
                         destroyerAttackIndex = 0; //These variables are static and global, since we don't have any way to attach extra data to the destroyers NPC instance itself
                         destroyerChargeTimer = 0;
@@ -2308,7 +2308,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.scale = 1.25f;
                         npc.damage = 60; //legacy: 60, vanilla: 55
-                        npc.defense = 40; //legacy: 55, vanilla: 30
+                        npc.defense = 45; //legacy: 55, vanilla: 30
                         break;
                     }
 
@@ -2316,13 +2316,13 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.scale = 1.25f;
                         npc.damage = 80; //legacy: 80, vanilla: 40
-                        npc.defense = 0;
+                        npc.defense = 5;
                         break;
                     }
 
                 case (NPCID.Probe):
                     {
-                        npc.defense = 30;
+                        npc.defense = 32;
                         npc.damage = 55;
                         npc.value = 0;
                         break;
@@ -2494,6 +2494,7 @@ namespace tsorcRevamp.NPCs
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Betsy.DespawnHandler"), Color.Red, DustID.RedTorch);
                         npc.boss = true;
                         npc.value = 257890;
+                        npc.lifeMax = 60000;
                         break;
                     }
 
@@ -2565,12 +2566,16 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.AncientLight):
                     {
                         npc.value = 2370;
+                        npc.lifeMax = 1000;
+                        npc.defense = 30;
                         break;
                     }
 
                 case (NPCID.AncientDoom):
                     {
                         npc.value = 3410;
+                        npc.lifeMax = 1500;
+                        npc.defense = 40;
                         break;
                     }
 

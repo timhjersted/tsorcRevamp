@@ -162,6 +162,7 @@ namespace tsorcRevamp
         public static List<int> UndeadNPCs;
         public static List<int> GhostNPCs;
         public static List<int> WaterNPCs;
+        public static List<int> WormNPCs;
         public static List<int> VanillaMeleeBlackList;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
@@ -1623,6 +1624,31 @@ namespace tsorcRevamp
                 ModContent.NPCType<NPCs.Enemies.WaterSpirit>()
             };
             #endregion
+
+            WormNPCs = new List<int>();
+            {
+                WormNPCs.AddRange(GiantWormSegments);
+                WormNPCs.AddRange(DevourerSegments);
+                WormNPCs.AddRange(TombCrawlerSegments);
+                WormNPCs.AddRange(DiggerSegments);
+                WormNPCs.AddRange(LeechSegments);
+                WormNPCs.AddRange(SeekerSegments);
+                WormNPCs.AddRange(DuneSplicerSegments);
+                WormNPCs.AddRange(StardustWormSegments);
+                WormNPCs.AddRange(CrawltipedeSegments);
+                WormNPCs.AddRange(EaterOfWorldsSegments);
+                WormNPCs.AddRange(DestroyerSegments);
+                WormNPCs.AddRange(JungleWyvernSegments);
+                WormNPCs.AddRange(JuvenileJungleWyvernSegments);
+                WormNPCs.AddRange(ParasyticWormSegments);
+                WormNPCs.AddRange(SerpentOfTheAbyssSegments);
+                WormNPCs.AddRange(MechaDragonSegments);
+                WormNPCs.AddRange(SerrisSegments);
+                WormNPCs.AddRange(GhostDragonSegments);
+                WormNPCs.AddRange(HellkiteDragonSegments);
+                WormNPCs.AddRange(LichKingSerpentSegments);
+                WormNPCs.AddRange(SeathSegments);
+            }
 
             #region Vanilla Melee BlackList
             VanillaMeleeBlackList = new List<int>()

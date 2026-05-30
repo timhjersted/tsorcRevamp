@@ -17,7 +17,11 @@ namespace tsorcRevamp.NPCs
     {
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            if (tsorcRevamp.DestroyerSegments.Contains(npc.type)) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
+            if (tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type)) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
+            { 
+                modifiers.FinalDamage *= 0.75f;
+            }
+            if (tsorcRevamp.DestroyerSegments.Contains(npc.type) || tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type)) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
             { //could do some trickery with modifydamage in global item but this makes more sense
                 modifiers.FinalDamage *= 0.65f;
             }
@@ -33,8 +37,15 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+            if (tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type))
+            {
+                if (projectile.IsMinionOrSentryRelated) 
+                {
+                    modifiers.FinalDamage *= 0.8f;
+                }
+            }
 
-            if (tsorcRevamp.DestroyerSegments.Contains(npc.type))
+            if (tsorcRevamp.DestroyerSegments.Contains(npc.type) || tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type))
             {
                 if (projectile.IsMinionOrSentryRelated) //destroyer minion dmg reduction (flat, can't alter minion damage because they're mostly permanent projectiles)
                 {
@@ -75,15 +86,19 @@ namespace tsorcRevamp.NPCs
             bool IsFlamethrower = projectile.type == ModContent.ProjectileType<Projectiles.Freezethrower>()
             || projectile.type == ModContent.ProjectileType<Projectiles.Ranged.MeltdownFirestorm>();
 
-            if (tsorcRevamp.DestroyerSegments.Contains(npc.type))
+            if (tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type))
+            {
+                if (!projectile.IsMinionOrSentryRelated && !IsFlamethrower)
+                {
+                    projectile.damage = (int)(projectile.damage * 0.9f);
+                }
+            }
+
+            if (tsorcRevamp.DestroyerSegments.Contains(npc.type) || tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type))
             {
                 if (!projectile.IsMinionOrSentryRelated && !IsFlamethrower)
                 {
                     projectile.damage = (int)(projectile.damage * 0.8f);
-                }
-                if (IsFlamethrower)
-                {
-                    hit.Damage = (int)Math.Round(hit.Damage * 0.2f);
                 }
 
                 // Per-segment pierce immunity: a piercing projectile can't hit the same
@@ -92,10 +107,6 @@ namespace tsorcRevamp.NPCs
                 // This is intentionally weaker than Seath's cross-body immune=1, which
                 // prevents ANY segment from registering more than one hit per frame.
                 // penetrate == 1 means "last hit remaining" (or non-piercing), so skip those.
-                if (projectile.penetrate != 1)
-                {
-                    npc.immune[projectile.owner] = 3;
-                }
             }
             if (tsorcRevamp.JungleWyvernSegments.Contains(npc.type))
             {
@@ -103,20 +114,12 @@ namespace tsorcRevamp.NPCs
                 {
                     projectile.damage = (int)(projectile.damage * 0.85f);
                 }
-                if (IsFlamethrower)
-                {
-                    hit.Damage = (int)Math.Round(hit.Damage * 0.3f);
-                }
             }
             if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))
             {
                 if (!projectile.IsMinionOrSentryRelated && !IsFlamethrower)
                 {
                     projectile.damage = (int)(projectile.damage * 0.92f);
-                }
-                if (IsFlamethrower)
-                {
-                    hit.Damage = (int)Math.Round(hit.Damage * 0.4f);
                 }
             }
             base.OnHitByProjectile(npc, projectile, hit, damageDone);

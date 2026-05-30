@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.defense = 999999;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 15000;
+            NPC.lifeMax = 20000;
             NPC.timeLeft = 22500;
             NPC.value = 600000;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.TheMachine.DespawnHandler"), Color.DarkGray, DustID.Torch);
