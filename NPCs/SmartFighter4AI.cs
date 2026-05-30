@@ -199,31 +199,43 @@ namespace tsorcRevamp.NPCs
                     actionLabel = "rope-grab"; reasonLabel = "fallback";
                     actionHandled = true;
                 }
-                // Halt-at-attack-range: stand and fire ~1-2 attacks, then a RepositionTimer
-                // window forces movement so the NPC doesn't get stuck standing in one spot.
-                else if (losNow && inRange && g.AttackList.Count > 0 && s.RepositionTimer == 0)
-                {
-                    // Brake to a FULL stop so the idle (feet-together) frame shows instead of the
-                    // walk frame — a tiny residual velocity keeps vanilla in the walk animation.
-                    if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f;
-                    else npc.velocity.X *= 0.6f;
-                    npc.direction = dir; npc.spriteDirection = dir;
-                    s.HaltFrames++;
-                    if (s.HaltFrames >= HaltMaxFrames)
-                    {
-                        s.HaltFrames = 0;
-                        s.RepositionTimer = RepositionFrames; // move for a while before halting again
-                    }
-                    actionLabel = "halt-attack"; reasonLabel = $"d={npc.Distance(player.Center):F0} h={s.HaltFrames}";
-                    actionHandled = true;
-                }
                 else
                 {
-                    s.HaltFrames = 0; // not standing this frame — reset the budget
-                    actionHandled = TryLocalTerrain(s, npc, dir, jumpCeil, boostCeil, topSpeed,
-                        out actionLabel, out reasonLabel);
-                    if (!actionHandled)
+                    // Halt budget counts while NEAR the player — LOS-independent so a flickering
+                    // line of sight can't reset it (that flicker-reset was why it never exited the
+                    // stand-and-fire). After HaltMaxFrames it forces a RepositionTimer move window.
+                    bool nearPlayer = inRange && g.AttackList.Count > 0;
+                    if (nearPlayer && s.RepositionTimer == 0)
                     {
+                        s.HaltFrames++;
+                        if (s.HaltFrames >= HaltMaxFrames)
+                        {
+                            s.HaltFrames = 0;
+                            s.RepositionTimer = RepositionFrames;
+                        }
+                    }
+                    else if (!nearPlayer)
+                    {
+                        s.HaltFrames = 0; // only reset when genuinely out of range
+                    }
+
+                    bool doHalt = nearPlayer && losNow && s.RepositionTimer == 0;
+                    if (doHalt)
+                    {
+                        // Brake to a FULL stop so the idle (feet-together) frame shows instead of
+                        // the walk frame — a tiny residual velocity keeps vanilla in the walk anim.
+                        if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f;
+                        else npc.velocity.X *= 0.6f;
+                        npc.direction = dir; npc.spriteDirection = dir;
+                        actionLabel = "halt-attack"; reasonLabel = $"d={npc.Distance(player.Center):F0} h={s.HaltFrames}";
+                        actionHandled = true;
+                    }
+                    else
+                    {
+                        actionHandled = TryLocalTerrain(s, npc, dir, jumpCeil, boostCeil, topSpeed,
+                            out actionLabel, out reasonLabel);
+                        if (!actionHandled)
+                        {
                         // Don't blindly walk off cliffs in fallback chase. If there's a
                         // big drop directly ahead, brake instead.
                         if (IsCliffAhead(npc, dir))
@@ -236,6 +248,7 @@ namespace tsorcRevamp.NPCs
                             ApplyChase(npc, dir, topSpeed, acceleration);
                             actionLabel = "chase"; reasonLabel = "no-plan";
                         }
+                    }
                     }
                 }
             }
@@ -309,7 +322,7 @@ namespace tsorcRevamp.NPCs
 
         // Stand-and-fire tuning: brief stand (~1 attack), then a longer reposition window so the
         // NPC spends most of its time pursuing/maneuvering rather than rooted firing.
-        private const int HaltMaxFrames = 110;    // ~1.8s standing
+        private const int HaltMaxFrames = 180;    // ~3s max standing-and-firing, then forced to move
         private const int RepositionFrames = 180; // ~3s moving before it may halt again
 
         private static void ManagePlatformPass(NavState s, NPC npc)
@@ -970,8 +983,12 @@ namespace tsorcRevamp.NPCs
                     return false;
                 }
 
-                // Upward only: platform directly above the rope top — jump straight up onto it.
-                if (!descend && (atRopeEnd || forceDismount) && rise >= 2)
+                // Upward only: jump straight up onto a platform above the rope top — but ONLY if
+                // the space directly above is clear/jump-through. If a SOLID block sits above the
+                // rope top, jumping up would phase through it (the "phased through solid blocks
+                // above rope" bug); fall through to a sideways hop toward the target instead.
+                bool solidAbove = IsNavigationSolid(step.LaunchX, feetY - 2);
+                if (!descend && (atRopeEnd || forceDismount) && rise >= 2 && !solidAbove)
                 {
                     ComputeJumpArc(0, rise, npc.gravity, jumpCeil, topSpeed + boostCeil,
                                    out float vp, out _);
@@ -998,6 +1015,19 @@ namespace tsorcRevamp.NPCs
                 s.CommitFrames = 14;
                 action = descend ? "rope-exit-down" : "rope-exit"; reason = $"toY={step.TargetY} dir={offDir}";
                 return true;
+            }
+
+            // Anti-vibration guard: once we've engaged the rope and then dismounted, do NOT
+            // re-grab it just because we're still near it — that climb/dismount flip-flop is the
+            // on-rope "vibration". Only (re-)enter the ride if still on it, or if we've never
+            // engaged yet and a rope tile is at/adjacent to the feet (initial grab / float toward).
+            bool atRopeNow = IsRopeTile(step.LaunchX, feetY)
+                          || IsRopeTile(step.LaunchX, feetY - 1)
+                          || IsRopeTile(step.LaunchX, feetY + 1);
+            if (!onRope && s.RopeEngaged && !atRopeNow)
+            {
+                action = "rope-detached"; reason = "off-rope";
+                return false;
             }
 
             // Phase 2: steady vertical ride. noTileCollide lets the body ignore blocks beside the

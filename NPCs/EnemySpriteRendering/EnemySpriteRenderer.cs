@@ -132,6 +132,12 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             SyncPuppet(npc);
             LayerDrawColor = drawColor;
 
+            // High-fidelity file logging
+            if (Main.netMode != NetmodeID.Server && ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            {
+                LogRedKnightDebug(npc);
+            }
+
             DrawingRendererFor = this;
             DrawingNPC = npc;
             Main.PlayerRenderer.DrawPlayer(Main.Camera, puppet, npc.position, 0f, Vector2.Zero);
@@ -311,7 +317,15 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
                 return;
             }
 
-            float armRotation = weaponRotation - MathHelper.PiOver2;
+            float armRotation;
+            if (heldItemStyle == EnemyHeldItemStyle.Spear && targetDrawRotation.HasValue)
+            {
+                armRotation = npc.direction * (targetDrawRotation.Value - MathHelper.PiOver2);
+            }
+            else
+            {
+                armRotation = weaponRotation - MathHelper.PiOver2;
+            }
 
             puppet.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armRotation);
         }
@@ -444,9 +458,17 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             {
                 EnemyHeldItemStyle.Bomb => 0.58f,
                 EnemyHeldItemStyle.MagicBall => 0.85f * 0.75f,
-                _ => 0.62f
+                _ => 1.00f
             };
-            float rotation = npc.direction * GetWeaponDrawRotation();
+            float rotation;
+            if (heldItemStyle == EnemyHeldItemStyle.Spear && targetDrawRotation.HasValue)
+            {
+                rotation = targetDrawRotation.Value;
+            }
+            else
+            {
+                rotation = npc.direction * GetWeaponDrawRotation();
+            }
 
             drawInfo.DrawDataCache.Add(new DrawData(
                 texture,
@@ -484,6 +506,28 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             }
 
             return TextureAssets.Item[heldItemType].Value;
+        }
+
+        private void LogRedKnightDebug(NPC npc)
+        {
+            try
+            {
+                string separator = System.IO.Path.DirectorySeparatorChar.ToString();
+                string logDir = Main.SavePath + separator + "Logs";
+                System.IO.Directory.CreateDirectory(logDir);
+                string logPath = logDir + separator + "tsorcRevamp-redknight.log";
+                
+                string line = $"[{DateTime.Now:HH:mm:ss.fff}] NPC#{npc.whoAmI} pos=({npc.Center.X / 16f:F1},{npc.Center.Y / 16f:F1}) " +
+                              $"dir={npc.direction} pose={pose} weaponAnim={weaponAnim} " +
+                              $"relRot={weaponRotation:F3} absTargetRot={(targetDrawRotation.HasValue ? targetDrawRotation.Value.ToString("F3") : "null")} " +
+                              $"ai[1]={npc.ai[1]} ai[2]={npc.ai[2]} dist={npc.Distance(Main.player[npc.target].Center):F0}";
+                
+                System.IO.File.AppendAllText(logPath, line + Environment.NewLine);
+            }
+            catch
+            {
+                // Safety: never crash the client due to a logging glitch.
+            }
         }
     }
 }

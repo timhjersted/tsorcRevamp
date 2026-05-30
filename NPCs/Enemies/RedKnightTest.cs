@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.npcSlots = 5;
             AnimationType = -1;
             NPC.aiStyle = -1;
-            NPC.height = 40;
+            NPC.height = 32;
             NPC.width = 20;
             NPC.damage = 75;
             NPC.defense = 41;
@@ -234,12 +234,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 #endregion
 
-                // Skip spear if player is at melee range — it's a ranged weapon
-                if (NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f)
-                {
-                    NPC.ai[1] = 200f;
-                    NPC.netUpdate = true;
-                }
+
 
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
@@ -289,26 +284,24 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.TargetClosest(true);
                     if (hasPlayerLOS)
                     {
-                        if (NPC.Distance(player.Center) > 400)
+                        float distance = NPC.Distance(player.Center);
+                        // Scale speed linearly between 8f (at <= 100px) and 16f (at >= 800px)
+                        float spearProjectileSpeed = MathHelper.Lerp(8.0f, 16.0f, MathHelper.Clamp((distance - 100f) / 700f, 0f, 1f));
+                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
+
+                        if (distance > 400f)
                         {
-                            float spearProjectileSpeed = Main.rand.NextFloat(14, 16f);
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                             speed.Y += Main.rand.NextFloat(-2f, 2f);
                             speed += Main.player[NPC.target].velocity;
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                            }
                         }
                         else
                         {
-                            float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                             speed.Y += Main.rand.NextFloat(-1f, 1f);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                            }
+                        }
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
                     }
@@ -497,25 +490,23 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (hasPlayerLOS)
                     {
-                        if (NPC.Distance(player.Center) > 400)
+                        float distance = NPC.Distance(player.Center);
+                        // Scale speed linearly between 8f (at <= 100px) and 14f (at >= 800px)
+                        float bombProjectileSpeed = MathHelper.Lerp(8.0f, 14.0f, MathHelper.Clamp((distance - 100f) / 700f, 0f, 1f));
+                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
+
+                        if (distance > 400f)
                         {
-                            float bombProjectileSpeed = 14f;
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
                             speed += Main.player[NPC.target].velocity;
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                            }
                         }
                         else
                         {
-                            float bombProjectileSpeed = 9f;
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
                             speed.Y += Main.rand.NextFloat(-1f, -2f);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                            }
+                        }
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                     }
@@ -767,6 +758,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 weaponVisible = true;
                 heldItemStyle = EnemyHeldItemStyle.Spear;
                 heldTexturePath = SpearVisualTexturePath;
+                SpawnWeaponTelegraphDust(DustID.OrangeTorch, true);
             }
             else if (NPC.ai[1] >= 120f && NPC.ai[1] < 180f)
             {
@@ -777,6 +769,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 poseDuration = 60;
                 heldItemStyle = EnemyHeldItemStyle.Spear;
                 heldTexturePath = SpearVisualTexturePath;
+                SpawnWeaponTelegraphDust(DustID.OrangeTorch, false);
             }
             else if (NPC.ai[1] >= 830f && NPC.ai[1] < 865f)
             {
@@ -785,6 +778,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 weaponVisible = true;
                 heldItemStyle = EnemyHeldItemStyle.Bomb;
                 heldTexturePath = BombVisualTexturePath;
+                SpawnWeaponTelegraphDust(DustID.Torch, true);
             }
             else if (NPC.ai[1] >= 865f && NPC.ai[1] < 925f)
             {
@@ -795,6 +789,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 poseDuration = 60;
                 heldItemStyle = EnemyHeldItemStyle.Bomb;
                 heldTexturePath = BombVisualTexturePath;
+                SpawnWeaponTelegraphDust(DustID.Torch, false);
             }
             else if ((NPC.ai[1] >= 225f && NPC.ai[1] < 325f) || (NPC.ai[1] >= 375f && NPC.ai[1] < 405f) ||
                      (NPC.ai[2] >= 72f && NPC.ai[2] < 100f) || (NPC.ai[2] >= 522f && NPC.ai[2] < 600f) ||
@@ -853,6 +848,21 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 handOffset = aiming ? new Vector2(4f * NPC.direction, 2f) : new Vector2(4f * NPC.direction, -8f);
             Vector2 dustPosition = NPC.Center + handOffset - new Vector2(4f);
             int dust = Dust.NewDust(dustPosition, 8, 8, DustID.CursedTorch, Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(-0.8f, 0.2f), 80, Color.GreenYellow, Main.rand.NextFloat(0.7f, 1.1f));
+            Main.dust[dust].noGravity = true;
+        }
+
+        private void SpawnWeaponTelegraphDust(int dustType, bool carry)
+        {
+            if (Main.dedServ || !Main.rand.NextBool(2))
+            {
+                return;
+            }
+
+            Vector2 handOffset = carry 
+                ? new Vector2(7f * NPC.direction, 4f) 
+                : new Vector2(4f * NPC.direction, -8f);
+            Vector2 dustPosition = NPC.Center + handOffset - new Vector2(4f);
+            int dust = Dust.NewDust(dustPosition, 8, 8, dustType, Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(-0.8f, 0.2f), 80, default, Main.rand.NextFloat(0.8f, 1.2f));
             Main.dust[dust].noGravity = true;
         }
         #endregion

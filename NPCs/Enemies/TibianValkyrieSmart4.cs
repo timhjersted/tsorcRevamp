@@ -100,6 +100,38 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
+        // Custom framing for this sheet's layout (15 frames):
+        //   frame 0      = jump
+        //   frame 6 (7th)= standing / idle (feet together)
+        //   frames 1..14 = walk cycle
+        // With AnimationType = Skeleton, vanilla held the last walk frame at rest, which looked
+        // like a wide-legged walk pose. This forces the proper idle/jump frames.
+        private const int IdleFrameIndex = 6;
+        private const int JumpFrameIndex = 0;
+        public override void FindFrame(int frameHeight)
+        {
+            int frameCount = Main.npcFrameCount[NPC.type];
+            // Airborne -> jump frame.
+            if (NPC.velocity.Y != 0f)
+            {
+                NPC.frame.Y = JumpFrameIndex * frameHeight;
+                return;
+            }
+            // Idle: grounded and essentially stationary -> standing frame.
+            if (System.Math.Abs(NPC.velocity.X) < 0.2f)
+            {
+                NPC.frameCounter = 0.0;
+                NPC.frame.Y = IdleFrameIndex * frameHeight;
+                return;
+            }
+            // Walking -> cycle the walk frames (1 .. frameCount-1), paced by speed.
+            NPC.frameCounter += 0.5 + System.Math.Abs(NPC.velocity.X) * 0.12;
+            int walkFrames = frameCount - 1; // 14 frames when frameCount == 15
+            if (walkFrames < 1) walkFrames = 1;
+            int idx = 1 + (int)(NPC.frameCounter / 6.0) % walkFrames;
+            NPC.frame.Y = idx * frameHeight;
+        }
+
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone) =>
             SmartFighter4AI.OnHit(NPC);
 
