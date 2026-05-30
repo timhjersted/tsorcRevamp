@@ -34,16 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
 
-            if (target.type == ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Warlock>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.TibianAmazon>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.TibianValkyrie>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.ManHunter>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Necromancer>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.RedCloudHunter>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Assassin>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>()
-                )
+            if (tsorcRevamp.HumanNPCs.Contains(target.type))
             {
                 modifiers.FinalDamage *= 4; // *2 > *4, lets make it actually useful shall we
             }

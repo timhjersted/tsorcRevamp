@@ -13,12 +13,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Purple;
-            Item.damage = 330;
+            Item.damage = 325;
             Item.height = 80;
             Item.knockBack = 9;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 21;
-            Item.useTime = 21;
+            Item.useAnimation = 22;
+            Item.useTime = 22;
             Item.scale = 1.8f;
             Item.axe = 150 / 5; // Same as Vortex hamaxe
             Item.UseSound = SoundID.Item1;
@@ -32,18 +32,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //todo add mod NPCs to this list
-            if (target.type == ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Warlock>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.TibianAmazon>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.TibianValkyrie>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.ManHunter>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Necromancer>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.RedCloudHunter>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Assassin>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>())
+            if (tsorcRevamp.HumanNPCs.Contains(target.type))
             {
-                modifiers.FinalDamage *= 2;
+                modifiers.FinalDamage *= 1.75f;
             }
         }
     }

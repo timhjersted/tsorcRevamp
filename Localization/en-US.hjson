@@ -5557,7 +5557,6 @@ Mods: {
 				Tooltip:
 					'''
 					A lost tome fabled to deal great damage.
-
 					Slows and occasionally freezes enemies
 					Only mages will be able to realize this tome's full potential. 
 					'''
@@ -6095,10 +6094,10 @@ Mods: {
 			}
 
 			AncientWarhammer: {
-				DisplayName: Ancient Warhammer
+				DisplayName: Dwarf Warhammer
 				Tooltip:
 					'''
-					An old choice for advancing druids
+					An old choice for dwarf soldiers
 					Breaks the enemy's defense on hit
 					'''
 			}

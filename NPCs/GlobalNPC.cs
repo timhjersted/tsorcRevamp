@@ -3261,7 +3261,7 @@ namespace tsorcRevamp.NPCs
 
             if (CrescentMoonlight)
             {
-                int DoTPerS = 6;
+                int DoTPerS = 26;
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;

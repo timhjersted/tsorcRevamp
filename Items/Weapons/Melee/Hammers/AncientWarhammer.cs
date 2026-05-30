@@ -20,15 +20,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.hammer = 60; // Same as meteor hamaxe
             Item.rare = ItemRarityID.Green;
             Item.DamageType = DamageClass.Melee;
-            Item.damage = 55;
+            Item.damage = 56;
             Item.scale = 1.2f;
-            Item.width = 48;
-            Item.height = 48;
+            Item.width = 42;
+            Item.height = 42;
             Item.knockBack = 9f;
             Item.autoReuse = true;
             Item.useTurn = false;
-            Item.useAnimation = 40;
-            Item.useTime = 40;
+            Item.useAnimation = 38;
+            Item.useTime = 38;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Green_2;
@@ -38,14 +38,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<DefenseCrush>(), 400);
+            target.AddBuff(ModContent.BuffType<DefenseCrush>(), 600);
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TheBreaker);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200);
+            recipe.AddIngredient(ItemID.PlatinumBar, 10);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
