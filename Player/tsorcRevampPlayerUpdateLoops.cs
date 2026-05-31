@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -351,6 +351,7 @@ namespace tsorcRevamp
 
         public bool BearerOfTheCurse;
         public bool Unkindled;
+        public int unkindledManaDelayTimer;
         // True for either Unkindled or Bearer of the Curse — gate Souls-system features (Estus/Cerulean UI,
         // bonfire refills, drop bonuses, recipe conditions) on this. BotC-only features keep checking BearerOfTheCurse.
         public bool SoulsMode => Unkindled || BearerOfTheCurse;
@@ -627,6 +628,11 @@ namespace tsorcRevamp
         }
         public override void PreUpdate()
         {
+            if (unkindledManaDelayTimer > 0)
+            {
+                unkindledManaDelayTimer--;
+            }
+
             int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
             int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
 
@@ -1356,7 +1362,16 @@ namespace tsorcRevamp
                     {
                         Player.manaRegenBonus -= Player.statManaMax2 * 3 / 10;
                     }
+
+                    if (unkindledManaDelayTimer > 0)
+                    {
+                        Player.manaRegenDelay = Math.Max(Player.manaRegenDelay, unkindledManaDelayTimer);
+                    }
                 }
+            }
+            else
+            {
+                unkindledManaDelayTimer = 0;
             }
 
             // Lifegem / RadiantLifegem / StarlightShard heal & mana-restoration ticks.

@@ -89,7 +89,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int         SecondaryRangedTelegraphTicks  => 32;   // base crossbow telegraph (+10 over original 22)
         protected override int         SecondaryRangedCooldownAfterUse => 240; // ~4 s between crossbow shots
         protected override int         SecondaryMaxRangedBurst        => 1;    // one bolt per trigger
-        protected override int         SecondaryRangedChance          => 35;   // 35% chance when both in range
+        protected override int         SecondaryRangedChance          => 60;   // 60% chance when both in range — favor the crossbow when at range
         protected override int         SecondaryStandingRangedChance  => 80;   // almost always planted
         // SecondaryRangedFlashColor is OVERRIDDEN per-pattern by SecondaryRangedBurstFlashColors below.
         // The value here is kept as a fallback for subclasses that don't define burst patterns.
@@ -272,13 +272,21 @@ namespace tsorcRevamp.NPCs.Invaders
             if (IsSecondaryRangedActive)
             {
                 // ── Heavy crossbow: single bolt, tight spread, high speed ──────────
+                // Aim from the ninja's SHOULDER toward the target's UPPER CHEST. The bolt has very
+                // low gravity, so a center→center shot fired from a low NPC center against a target
+                // on raised / sloping ground tends to clip the slope. Raising both muzzle and aim
+                // point puts the trajectory above the slope line. The bolt still hits roughly
+                // chest-level on a standing player.
                 SoundEngine.PlaySound(SoundID.Item98 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
-                Vector2 toTarget = target.Center - NPC.Center;
+                Vector2 muzzle = NPC.Center + new Vector2(0f, -NPC.height * 0.20f); // raised shoulder
+                Vector2 aimAt  = target.Center + new Vector2(0f, -target.height * 0.25f); // upper chest
+                Vector2 toTarget = aimAt - muzzle;
+                if (toTarget == Vector2.Zero) toTarget = new Vector2(NPC.direction, 0f);
                 toTarget.Normalize();
                 float spread = MathHelper.ToRadians(Main.rand.NextFloat(-3f, 3f));
                 Vector2 vel  = toTarget.RotatedBy(spread) * 14f; // HeavyCrossbow shootSpeed (higher than friendly bolt to compensate for reduced gravity)
                 Projectile.NewProjectile(
-                    NPC.GetSource_FromThis(), NPC.Center, vel,
+                    NPC.GetSource_FromThis(), muzzle, vel,
                     ModContent.ProjectileType<Projectiles.Enemy.InvaderCrossbowBolt>(),
                     SecondaryRangedDamage, 4f, Main.myPlayer);
             }

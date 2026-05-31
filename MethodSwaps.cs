@@ -1291,11 +1291,11 @@ namespace tsorcRevamp
                 if (self.Male)
                 {
                     int choice = Main.rand.Next(1, 3);
-                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-dead-{choice}"));
+                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-dead-{choice}") with { Volume = 0.5f });
                 }
                 else
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-dead"));
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-dead") with { Volume = 0.5f });
                 }
             }
 

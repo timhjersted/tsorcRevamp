@@ -1448,11 +1448,9 @@ namespace tsorcRevamp.NPCs.Invaders
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
             float reach = MeleeRange * 0.7f * step.ReachMult;
             int   dmg   = (int)(MeleeDamage * step.DamageMult);
-            Vector2 tip = NPC.Center + new Vector2(_comboLockedDir * reach, -8f);
-            Projectile.NewProjectile(
-                NPC.GetSource_FromThis(), tip, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.InvaderMeleeHitbox>(),
-                dmg, 3f, Main.myPlayer, NPC.whoAmI);
+            // Route through the same swing-arc helper as TryMeleeHit so overlap / alignment
+            // hits behave identically across step combos and one-shot swings.
+            SpawnMeleeHitbox(_comboLockedDir, reach, dmg, knockback: 3f);
         }
 
         // ── Aerial actions (default implementations) ──────────────────────────────
@@ -1471,10 +1469,14 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual void DoAerialDiveHit()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            // Dive: 120 px wide box centered on the NPC so a player directly under the dive lands a hit.
+            int boxW = 120;
+            int boxH = 80;
+            Vector2 topLeft = NPC.Center - new Vector2(boxW / 2f, boxH / 2f);
             Projectile.NewProjectile(
-                NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.Enemy.InvaderMeleeHitbox>(),
-                (int)(MeleeDamage * 1.2f), 4f, Main.myPlayer, NPC.whoAmI);
+                (int)(MeleeDamage * 1.2f), 4f, Main.myPlayer, boxW, boxH);
         }
 
         /// <summary>Fire a single aerial ranged shot.  Default delegates to DoRangedAttack
@@ -1546,16 +1548,28 @@ namespace tsorcRevamp.NPCs.Invaders
         /// </summary>
         protected virtual  void DoMagicAttack() { }
 
+        /// <summary>
+        /// Minimum tick count a telegraph phase is allowed to last. <see cref="CheckAndFireFlash"/>
+        /// fires the warning flash when <c>PhaseTimer ≤ 30</c>, so any telegraph shorter than this
+        /// would fire the flash AT (or very near) the attack moment, defeating the purpose of the
+        /// warning. Clamping here lets subclasses set whatever telegraph value they want without
+        /// having to remember the floor — the player always gets a real 30-tick warning.
+        /// </summary>
+        private const int MinTelegraphTicks = 30;
+
         protected void EnterPhase(AttackPhase phase, int duration)
         {
+            bool isTelegraph = phase == AttackPhase.MeleeTelegraph
+                            || phase == AttackPhase.StabTelegraph
+                            || phase == AttackPhase.RangedTelegraph
+                            || phase == AttackPhase.SpearTelegraph
+                            || phase == AttackPhase.MagicTelegraph
+                            || phase == AttackPhase.MeleeComboTelegraph;
             Phase      = phase;
-            PhaseTimer = duration;
+            // Guarantee at least 30 ticks of telegraph so the flash always leads the attack by 30.
+            PhaseTimer = isTelegraph ? Math.Max(duration, MinTelegraphTicks) : duration;
             // Each new telegraph phase gets its own flash.
-            if (phase == AttackPhase.MeleeTelegraph || phase == AttackPhase.StabTelegraph
-                || phase == AttackPhase.RangedTelegraph
-                || phase == AttackPhase.SpearTelegraph || phase == AttackPhase.MagicTelegraph
-                || phase == AttackPhase.MeleeComboTelegraph)
-                _flashFired = false;
+            if (isTelegraph) _flashFired = false;
         }
 
         private void SlowDown() => NPC.velocity.X *= 0.80f;
@@ -1577,16 +1591,37 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         // ── Melee hitbox helper ───────────────────────────────────────────────────
+        // The hitbox CENTER is placed at the midpoint of the swing zone (NPC center → reach tip)
+        // and the hitbox is widened to span the full swing. This guarantees a player gets hit when:
+        //   • perfectly stacked on the invader  (inner edge of hitbox covers NPC center)
+        //   • at full swing reach                (outer edge extends past `reach`)
+        //   • slightly above / below the invader (taller 60 px hitbox covers vertical overlap)
+        // The previous tip-only placement (40×40 hitbox at NPC.Center + direction*reach)
+        // missed any player closer than ~half-reach to the NPC, including overlap.
         protected void TryMeleeHit(float reach = -1f)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
             float r = reach < 0 ? MeleeRange * 0.7f : reach;
-            Vector2 tip = NPC.Center + new Vector2(NPC.direction * r, -8f);
+            SpawnMeleeHitbox(NPC.direction, r, MeleeDamage, knockback: 3f);
+        }
+
+        /// <summary>
+        /// Spawn a swing-arc hitbox covering NPC center → outward `reach`. Width scales with
+        /// reach so long-reach stab attacks still get full coverage from the NPC out to the tip.
+        /// </summary>
+        private void SpawnMeleeHitbox(int swingDir, float reach, int damage, float knockback)
+        {
+            // Width = at least 100 (covers stacked overlap) or reach × 1.4 (covers long stabs).
+            // Height = 60 so a player jumping just above or crouching just below still registers.
+            int boxW = (int)System.MathF.Max(100f, reach * 1.4f);
+            int boxH = 60;
+            Vector2 center   = NPC.Center + new Vector2(swingDir * reach * 0.5f, -8f);
+            Vector2 topLeft  = center - new Vector2(boxW / 2f, boxH / 2f);
             Projectile.NewProjectile(
-                NPC.GetSource_FromThis(), tip, Vector2.Zero,
+                NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.Enemy.InvaderMeleeHitbox>(),
-                MeleeDamage, 3f, Main.myPlayer, NPC.whoAmI);
+                damage, knockback, Main.myPlayer, boxW, boxH);
         }
 
         // ── Telegraph dust ────────────────────────────────────────────────────────

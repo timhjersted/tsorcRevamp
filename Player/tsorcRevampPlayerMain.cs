@@ -572,11 +572,11 @@ namespace tsorcRevamp
 
                 if (Player.Male)
                 {
-                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-hurt-{voiceIndex}") with { Volume = 0.7f, Pitch = pitchOffset });
+                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-hurt-{voiceIndex}") with { Volume = 0.5f, Pitch = pitchOffset });
                 }
                 else
                 {
-                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-hurt-{voiceIndex}") with { Volume = 0.7f, Pitch = pitchOffset });
+                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-hurt-{voiceIndex}") with { Volume = 0.5f, Pitch = pitchOffset });
                 }
             }
 
@@ -1968,6 +1968,7 @@ namespace tsorcRevamp
 
         public override void OnRespawn()
         {
+            unkindledManaDelayTimer = 0;
             Player.statLife = Player.statLifeMax2;
             if (BearerOfTheCurse) Player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
             Player.AddBuff(ModContent.BuffType<Invincible>(), 360);
@@ -1993,6 +1994,14 @@ namespace tsorcRevamp
             if (modPlayer.HadBuffStrategist)
             {
                 Player.AddBuff(BuffID.WarTable, 1);
+            }
+        }
+
+        public override void OnConsumeMana(Item item, int manaConsumed)
+        {
+            if (Unkindled && manaConsumed > 0)
+            {
+                unkindledManaDelayTimer = 1800; // 30 seconds (1800 ticks at 60fps)
             }
         }
 

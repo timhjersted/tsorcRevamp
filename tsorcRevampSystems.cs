@@ -408,8 +408,8 @@ namespace tsorcRevamp
 
             if (Main.player[Main.myPlayer].active && Main.player[Main.myPlayer].dead)
             {
-                // Fade to black over 5 seconds (300 ticks)
-                deathFadeAlpha = MathHelper.Clamp(deathFadeAlpha + 1f / 300f, 0f, 1f);
+                // Fade to black over 6 seconds (360 ticks)
+                deathFadeAlpha = MathHelper.Clamp(deathFadeAlpha + 1f / 360f, 0f, 1f);
             }
             else
             {

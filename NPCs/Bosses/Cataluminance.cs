@@ -228,6 +228,23 @@ namespace tsorcRevamp.NPCs.Bosses
             finalStandTimer = reader.ReadInt32();
         }
 
+        public float GetFinalStandTimeLimit()
+        {
+            if (NPC.target >= 0 && NPC.target < Main.maxPlayers && Main.player[NPC.target].active)
+            {
+                var modPlayer = Main.player[NPC.target].GetModPlayer<tsorcRevampPlayer>();
+                if (modPlayer.BearerOfTheCurse)
+                {
+                    return 2400f; // 40 seconds
+                }
+                if (modPlayer.Unkindled)
+                {
+                    return 1800f; // 30 seconds
+                }
+            }
+            return 1200f; // 20 seconds (Classic)
+        }
+
         bool transformed;
         bool HandleRealLife()
         {
@@ -579,14 +596,16 @@ namespace tsorcRevamp.NPCs.Bosses
                 finalStandTimer--;
             }
 
-            if (finalStandTimer > 2360f)
+            float finalStandLimit = GetFinalStandTimeLimit();
+            if (finalStandTimer > finalStandLimit)
             {
                 deathTimer++;
                 HandleDeath();
                 return;
             }
 
-            if (finalStandTimer < 1300)
+            float transitionLimit = finalStandLimit * 1300f / 2360f;
+            if (finalStandTimer < transitionLimit)
             {
                 if (fireRotationRotation < 0.15)
                 {
@@ -627,7 +646,8 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                int period = 45 - (int)((finalStandTimer / 2600f) * 20f);
+                float periodScale = finalStandLimit * 2600f / 2360f;
+                int period = 45 - (int)((finalStandTimer / periodScale) * 20f);
                 if (finalStandTimer % period == 0)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1094,7 +1114,9 @@ namespace tsorcRevamp.NPCs.Bosses
 
             starRotation += 0.02f;
             Rectangle starRectangle = new Rectangle(0, 0, 600, 600);
-            if (finalStandLevel == 2 && finalStandTimer > 1300)
+            float finalStandLimit = GetFinalStandTimeLimit();
+            float transitionLimit = finalStandLimit * 1300f / 2360f;
+            if (finalStandLevel == 2 && finalStandTimer > transitionLimit)
             {
                 starRectangle = new Rectangle(0, 0, finalStandTimer - 700, finalStandTimer - 700);
             }
@@ -1106,9 +1128,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 starRectangle.Height = (int)(starRectangle.Height * (1 - attackFadePercent));
             }
 
-            if (finalStandTimer > 2360)
+            if (finalStandTimer > finalStandLimit)
             {
-                attackFadePercent = (finalStandTimer - 2360f) / 120f;
+                attackFadePercent = (finalStandTimer - finalStandLimit) / 120f;
                 if (attackFadePercent > 1)
                 {
                     attackFadePercent = 1;

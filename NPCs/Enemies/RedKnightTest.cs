@@ -15,8 +15,12 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class RedKnightTest : ModNPC
+    class RedKnightTest : ModNPC, IEnemySpriteRendererHost
     {
+        // Exposed so the SyncEnemyActivePose packet handler can fire active poses on clients.
+        public EnemySpriteRenderer SpriteRenderer => spriteRenderer;
+
+
         public override string Texture => "tsorcRevamp/NPCs/Enemies/RedKnight";
         private const bool CanStandAndShoot = true;
 
@@ -28,13 +32,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public int framesSinceStoredPosition = 0;
         NPCDespawnHandler despawnHandler;
         EnemySpriteRenderer spriteRenderer;
-        EnemySpritePose visualPose = EnemySpritePose.Natural;
-        int visualPoseTimer;
-        int visualPoseDuration;
-        int visualHeldItemType = -1;
-        bool visualWeaponVisible;
-        EnemyHeldItemStyle visualHeldItemStyle;
-        string visualHeldTexturePath;
 
         static int SpearVisualItemType => ModContent.ItemType<SpearOfMage>();
         static int BombVisualItemType => ModContent.ItemType<Firebomb>();
@@ -306,9 +303,9 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
                     }
 
-                    StartVisualPose(EnemySpritePose.ThrowRelease, SpearVisualItemType, 12, false, EnemyHeldItemStyle.Spear, SpearVisualTexturePath);
+                    spriteRenderer.StartActivePoseAndSync(NPC, EnemySpritePose.ThrowRelease, SpearVisualItemType, 12, weaponVisible: false, EnemyHeldItemStyle.Spear, SpearVisualTexturePath);
 
-                    // Reset the targetPosition 
+                    // Reset the targetPosition
                     targetPosition = Vector2.Zero;
 
                     // Move closer to next attack
@@ -382,7 +379,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     // Reset the targetPosition
                     targetPosition = Vector2.Zero;
-                    StartVisualPose(EnemySpritePose.MagicRelease, MagicVisualItemType, 15, false);
+                    spriteRenderer.StartActivePoseAndSync(NPC, EnemySpritePose.MagicRelease, MagicVisualItemType, 15, weaponVisible: false);
                 }
 
                 // Poison Attack 2 Telegraph
@@ -433,7 +430,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
                     // Shorter or longer pause before bomb attack
-                    StartVisualPose(EnemySpritePose.MagicRelease, MagicVisualItemType, 15, false);
+                    spriteRenderer.StartActivePoseAndSync(NPC, EnemySpritePose.MagicRelease, MagicVisualItemType, 15, weaponVisible: false);
                     if (Main.rand.NextBool(2))
                     {
                         NPC.ai[1] = 800f;
@@ -512,7 +509,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                     }
 
-                    StartVisualPose(EnemySpritePose.ThrowRelease, BombVisualItemType, 12, false, EnemyHeldItemStyle.Bomb, BombVisualTexturePath);
+                    spriteRenderer.StartActivePoseAndSync(NPC, EnemySpritePose.ThrowRelease, BombVisualItemType, 12, weaponVisible: false, EnemyHeldItemStyle.Bomb, BombVisualTexturePath);
 
                     // Reset targetPosition 
                     targetPosition = Vector2.Zero;
@@ -547,7 +544,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-                    StartVisualPose(EnemySpritePose.MagicRelease, MagicVisualItemType, 15, false);
+                    spriteRenderer.StartActivePoseAndSync(NPC, EnemySpritePose.MagicRelease, MagicVisualItemType, 15, weaponVisible: false);
                 }
 
                 // Slightly Delayed Fire Attack From Air
@@ -561,7 +558,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-                    StartVisualPose(EnemySpritePose.MagicRelease, MagicVisualItemType, 15, false);
+                    spriteRenderer.StartActivePoseAndSync(NPC, EnemySpritePose.MagicRelease, MagicVisualItemType, 15, weaponVisible: false);
                 }
 
                 // Breather before reset
@@ -623,7 +620,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyGreatAttack>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center); //Play flame sound
-                    StartVisualPose(EnemySpritePose.MagicRelease, MagicVisualItemType, 15, false);
+                    spriteRenderer.StartActivePoseAndSync(NPC, EnemySpritePose.MagicRelease, MagicVisualItemType, 15, weaponVisible: false);
 
                     // Insanity Hands
                     Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 6, fallback: true);
@@ -658,6 +655,19 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
             }
+
+            // ── Visual layer: runs on ALL sides (incl. MP clients) ────────────────────
+            // The renderer wipes natural pose back to idle each Tick(), so we must
+            // re-declare it every AI tick. On MP clients, NPC.ai[1] / ai[2] are only
+            // updated by vanilla netUpdates from the server (sparse but band-wide enough
+            // for the natural-pose bands to mostly match). Active poses (release anims)
+            // arrive via the SyncEnemyActivePose packet broadcast by StartActivePoseAndSync.
+            UpdateNaturalPose();
+
+            // Always tick — even when ai[1] isn't advancing (player dead, MP client between
+            // netUpdates). Walk-cycle frames, rotation lerps, and active-pose countdown
+            // still need to advance every AI tick.
+            spriteRenderer?.Tick(NPC);
         }
         #endregion
 
@@ -714,139 +724,85 @@ namespace tsorcRevamp.NPCs.Enemies
                     ModContent.ItemType<DragonScaleGreaves>());
             }
 
-            UpdateSpritePose();
+            // PreDraw is pure render now — all pose / timer state is advanced by Tick()
+            // from AI(). Safe at any frame rate, while paused, on multiple draw passes.
             return spriteRenderer.Draw(NPC, spriteBatch, screenPos, lightColor);
         }
 
-        private void StartVisualPose(EnemySpritePose pose, int heldItemType, int duration, bool weaponVisible = true, EnemyHeldItemStyle heldItemStyle = EnemyHeldItemStyle.Generic, string heldTexturePath = null)
+        /// <summary>
+        /// Pick the resting pose for this AI tick based on the current ai[1] / ai[2]
+        /// attack window and feed it to the renderer. The renderer wipes natural pose
+        /// back to idle each Tick(), so this MUST be called every AI tick.
+        ///
+        /// Active poses (throw release, magic release) are not handled here — they're
+        /// fired via spriteRenderer.StartActivePose() at the exact attack frame and
+        /// override whatever natural pose we set here for their duration.
+        /// </summary>
+        private void UpdateNaturalPose()
         {
-            visualPose = pose;
-            visualPoseTimer = duration;
-            visualPoseDuration = duration;
-            visualHeldItemType = heldItemType;
-            visualWeaponVisible = weaponVisible;
-            visualHeldItemStyle = heldItemStyle;
-            visualHeldTexturePath = heldTexturePath;
-        }
-
-        private void UpdateSpritePose()
-        {
-            EnemySpritePose pose = EnemySpritePose.Natural;
-            int heldItemType = -1;
-            bool weaponVisible = false;
-            int poseTimer = 0;
-            int poseDuration = 1;
-            EnemyHeldItemStyle heldItemStyle = EnemyHeldItemStyle.Generic;
-            string heldTexturePath = null;
-
-            float? targetDrawRotation = GetHeldSpearDrawRotation();
-
-            if (visualPoseTimer > 0)
+            if (spriteRenderer == null)
             {
-                pose = visualPose;
-                heldItemType = visualHeldItemType;
-                weaponVisible = visualWeaponVisible;
-                poseTimer = visualPoseTimer;
-                poseDuration = visualPoseDuration;
-                heldItemStyle = visualHeldItemStyle;
-                heldTexturePath = visualHeldTexturePath;
-                visualPoseTimer--;
+                return;
             }
-            else if (NPC.ai[1] >= 90f && NPC.ai[1] < 120f)
+
+            // All three weapons (spear / bomb / magic) follow the same standardized windup:
+            //   Carry           — arm forward holding the weapon out (0 rad)
+            //   ThrowTelegraph  — arm lerps up to overhead (-π/2 rad)
+            //   *Release        — arm snaps forward through to +π/4 (handled by StartActivePose
+            //                     at the attack frame; not picked here)
+            // Magic uses MagicTelegraph instead of ThrowTelegraph; MagicAim was removed to
+            // eliminate the inconsistent "arms backwards" pose the legacy branch produced.
+
+            if (NPC.ai[1] >= 90f && NPC.ai[1] < 120f)
             {
-                pose = EnemySpritePose.Carry;
-                heldItemType = SpearVisualItemType;
-                weaponVisible = true;
-                heldItemStyle = EnemyHeldItemStyle.Spear;
-                heldTexturePath = SpearVisualTexturePath;
-                SpawnWeaponTelegraphDust(DustID.OrangeTorch, true);
+                spriteRenderer.SetNaturalPose(EnemySpritePose.Carry,
+                    SpearVisualItemType, weaponVisible: true,
+                    EnemyHeldItemStyle.Spear, SpearVisualTexturePath);
+                SpawnWeaponTelegraphDust(DustID.OrangeTorch, carry: true);
             }
             else if (NPC.ai[1] >= 120f && NPC.ai[1] < 180f)
             {
-                pose = EnemySpritePose.ThrowTelegraph;
-                heldItemType = SpearVisualItemType;
-                weaponVisible = true;
-                poseTimer = (int)(180f - NPC.ai[1]);
-                poseDuration = 60;
-                heldItemStyle = EnemyHeldItemStyle.Spear;
-                heldTexturePath = SpearVisualTexturePath;
-                SpawnWeaponTelegraphDust(DustID.OrangeTorch, false);
+                spriteRenderer.SetNaturalPose(EnemySpritePose.ThrowTelegraph,
+                    SpearVisualItemType, weaponVisible: true,
+                    EnemyHeldItemStyle.Spear, SpearVisualTexturePath);
+                SpawnWeaponTelegraphDust(DustID.OrangeTorch, carry: false);
             }
             else if (NPC.ai[1] >= 830f && NPC.ai[1] < 865f)
             {
-                pose = EnemySpritePose.Carry;
-                heldItemType = BombVisualItemType;
-                weaponVisible = true;
-                heldItemStyle = EnemyHeldItemStyle.Bomb;
-                heldTexturePath = BombVisualTexturePath;
-                SpawnWeaponTelegraphDust(DustID.Torch, true);
+                spriteRenderer.SetNaturalPose(EnemySpritePose.Carry,
+                    BombVisualItemType, weaponVisible: true,
+                    EnemyHeldItemStyle.Bomb, BombVisualTexturePath);
+                SpawnWeaponTelegraphDust(DustID.Torch, carry: true);
             }
             else if (NPC.ai[1] >= 865f && NPC.ai[1] < 925f)
             {
-                pose = EnemySpritePose.ThrowTelegraph;
-                heldItemType = BombVisualItemType;
-                weaponVisible = true;
-                poseTimer = (int)(925f - NPC.ai[1]);
-                poseDuration = 60;
-                heldItemStyle = EnemyHeldItemStyle.Bomb;
-                heldTexturePath = BombVisualTexturePath;
-                SpawnWeaponTelegraphDust(DustID.Torch, false);
+                spriteRenderer.SetNaturalPose(EnemySpritePose.ThrowTelegraph,
+                    BombVisualItemType, weaponVisible: true,
+                    EnemyHeldItemStyle.Bomb, BombVisualTexturePath);
+                SpawnWeaponTelegraphDust(DustID.Torch, carry: false);
             }
             else if ((NPC.ai[1] >= 225f && NPC.ai[1] < 325f) || (NPC.ai[1] >= 375f && NPC.ai[1] < 405f) ||
                      (NPC.ai[2] >= 72f && NPC.ai[2] < 100f) || (NPC.ai[2] >= 522f && NPC.ai[2] < 600f) ||
                      (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] < 200f))
             {
-                pose = NPC.ai[1] >= 300f || NPC.ai[2] >= 75f ? EnemySpritePose.MagicAim : EnemySpritePose.MagicTelegraph;
-                heldItemType = MagicVisualItemType;
-                weaponVisible = true;
-                poseTimer = 30;
-                poseDuration = 60;
-                heldItemStyle = EnemyHeldItemStyle.MagicBall;
-                heldTexturePath = MagicVisualTexturePath;
-                SpawnMagicTelegraphDust(pose == EnemySpritePose.MagicAim);
+                spriteRenderer.SetNaturalPose(EnemySpritePose.MagicTelegraph,
+                    MagicVisualItemType, weaponVisible: true,
+                    EnemyHeldItemStyle.MagicBall, MagicVisualTexturePath);
+                SpawnMagicTelegraphDust();
             }
-
-            spriteRenderer.SetPose(pose, heldItemType, weaponVisible, poseTimer, poseDuration, heldItemStyle, heldTexturePath,
-                heldItemStyle == EnemyHeldItemStyle.Spear ? targetDrawRotation : null);
+            // else: leave natural pose at the renderer's default (idle).
         }
 
-        private float? GetHeldSpearDrawRotation()
-        {
-            if (NPC.target < 0 || NPC.target >= Main.maxPlayers)
-            {
-                return null;
-            }
-
-            Player player = Main.player[NPC.target];
-            if (!player.active || player.dead)
-            {
-                return null;
-            }
-
-            Vector2 target = storedPlayerPosition == Vector2.Zero ? player.Center : storedPlayerPosition;
-            float speed = NPC.Distance(player.Center) > 400f ? 15f : 12f;
-            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, target, speed, fallback: true);
-            if (velocity == Vector2.Zero)
-            {
-                velocity = target - NPC.Center;
-            }
-
-            if (velocity == Vector2.Zero)
-            {
-                return null;
-            }
-
-            return velocity.ToRotation() + MathHelper.PiOver2;
-        }
-
-        private void SpawnMagicTelegraphDust(bool aiming)
+        private void SpawnMagicTelegraphDust()
         {
             if (Main.dedServ || !Main.rand.NextBool(2))
             {
                 return;
             }
 
-            Vector2 handOffset = aiming ? new Vector2(4f * NPC.direction, 2f) : new Vector2(4f * NPC.direction, -8f);
+            // Dust spawns roughly where the magic ball ends up — slightly above and ahead of
+            // the body, matching the new standardized windup pose.
+            Vector2 handOffset = new Vector2(8f * NPC.direction, -4f);
             Vector2 dustPosition = NPC.Center + handOffset - new Vector2(4f);
             int dust = Dust.NewDust(dustPosition, 8, 8, DustID.CursedTorch, Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(-0.8f, 0.2f), 80, Color.GreenYellow, Main.rand.NextFloat(0.7f, 1.1f));
             Main.dust[dust].noGravity = true;
