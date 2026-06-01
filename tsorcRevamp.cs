@@ -2190,6 +2190,17 @@ namespace tsorcRevamp
                         break;
                     }
 
+                case tsorcPacketID.SyncDwarvenContract:
+                    {
+                        int dwarvenContractsGiven = reader.ReadInt32();
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            tsorcRevampWorld.DwarvenContractsGiven = dwarvenContractsGiven;
+                            NetMessage.SendData(MessageID.WorldData);
+                        }
+                        break;
+                    }
+
                 default:
                     {
                         Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
@@ -3720,6 +3731,11 @@ namespace tsorcRevamp
         /// so the packet handler can find the renderer.
         /// </summary>
         public const byte SyncEnemyActivePose = 21;
+
+        /// <summary>
+        /// Syncs tsorcRevampWorld.DwarvenContractsGiven across players
+        /// </summary>
+        public const byte SyncDwarvenContract = 22;
     }
 
     //config moved to separate file
