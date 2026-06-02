@@ -7344,7 +7344,7 @@ Mods: {
 					[c/b22222:Dragon's hits apply the Scorched debuff and can mark enemies]
 					Each hit has a {0}% [c/b22222:chance to add a mark], 6 Marks can be [c/b22222:detonated by hitting the enemy with a fireball]
 					[c/b22222:Detonating marks] will increase the debuff's strength for {1} seconds
-					The empowered debuff [c/b22222:increases fireball damage] and damage over time
+					The empowered debuff [c/b22222:greatly increases fireball damage] and damage over time(+{6}%)
 					'''
 			}
 
@@ -7370,7 +7370,7 @@ Mods: {
 					[c/b22222:Vessel's hits apply the Shocked debuff and can mark enemies]
 					Each hit has a {0}% [c/b22222:chance to add a mark], 6 Marks can be [c/b22222:detonated by hitting the enemy with a spaceship]
 					[c/b22222:Detonating marks] will increase the debuff's strength for {1} seconds
-					The empowered debuff [c/b22222:increases spaceship damage] and damage over time
+					The empowered debuff [c/b22222:greatly increases spaceship damage] and damage over time(+{6}%)
 					'''
 			}
 
@@ -7393,8 +7393,7 @@ Mods: {
 					'''
 					[c/00008b:Grand Comet deals massive damage in a huge area and leaves behind a shockwave]
 					[c/00008b:Grand Comet applies the Awestruck debuff]({$CommonItemTooltip.SecondDuration@4})
-					This further increases star damage and deals massive damage over time
-					Star damage increase is {5}%
+					This increases star damage even further beyond and deals massive damage over time(+{5}%)
 					[c/7fffd4:Turboboost increases star movement speed and increases the Star Forger's attack speed]
 					[c/7fffd4:Turboboost adds {2}% max health damage on-hit, up to {3}]
 					[c/7fffd4:Turboboost will actively drain your mana and will be cancelled by Mana Sickness]
@@ -7402,7 +7401,7 @@ Mods: {
 					[c/b22222:Star Forger's hits apply the Sunburnt debuff and can mark enemies]
 					Each hit has a {0}% [c/b22222:chance to add a mark], 6 Marks can be [c/b22222:detonated by hitting the enemy with a star]
 					[c/b22222:Detonating marks] will increase the debuff's strength for {1} seconds
-					The empowered debuff [c/b22222:increases star damage] and damage over time
+					The empowered debuff [c/b22222:greatly increases star damage] and damage over time(+{6}%)
 					'''
 				MeteorReady: Meteor ready!
 				StackGained: "{0} / 10"

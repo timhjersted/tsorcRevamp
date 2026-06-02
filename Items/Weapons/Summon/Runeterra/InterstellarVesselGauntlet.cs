@@ -15,12 +15,13 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
     [LegacyName("InterstellarVesselControls")]
     public class InterstellarVesselGauntlet : RuneterraGauntlets
     {
+        public const int BaseDmg = 40;
         public static List<InterstellarVesselShip> projectiles = null;
         public static int processedProjectilesCount = 0;
         public override float SoundVolumeAbstract => 0.5f;
         public static float SoundVolume;
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/";
-        public override int Damage => 33;
+        public override int Damage => BaseDmg;
         public override float Knockback => 5f;
         public override int Width => 30;
         public override int Height => 34;

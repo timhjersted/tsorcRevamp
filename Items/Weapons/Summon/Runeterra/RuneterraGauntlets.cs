@@ -28,26 +28,26 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public abstract string LocalizationPath { get; }
         public abstract int Tier { get; }
 
-        public static float BallSummonTagDmgMult = 80f;
-        public const float DragonSummonTagDmgMult = 40f;
-        public const float MarkChance = 20f;
-        public const int DragonDebuffDuration = 5;
-        public const int SuperBurnDuration = 5;
-        public const float SuperBurnDmgAmp = 50f;
-        public const float MarkDetonationCritDmgAmp = 2f;
+        public static float BallSummonTagDmgMult = 110f;
+        public const float DragonSummonTagDmgMult = 20f;
+        public const float MarkChance = 12f;
+        public const int DragonDebuffDuration = 3;
+        public const int SuperBurnDuration = 4;
+        public const float SuperBurnDmgAmp = 125f;
+        public const float MarkDetonationCritDmgAmp = 4f;
 
         public const float BoostPercentHPDmg = 0.05f;
-        public const int BoostPercentHPDmgCap = (int)(450000f * BoostPercentHPDmg / 100f);
+        public const int BoostPercentHPDmgCap = (int)(500000f * BoostPercentHPDmg / 100f);
 
-        public const int AwestruckDebuffDuration = 10;
-        public const float AwestruckStarDamageAmp = 10f;
+        public const int AwestruckDebuffDuration = 5;
+        public const float AwestruckStarDamageAmp = 150f;
 
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 0.5f;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1f;
         }
         public override void SetDefaults()
         {
@@ -148,7 +148,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details", ScorchingPoint.MarkChance, ScorchingPoint.SuperBurnDuration, InterstellarVesselGauntlet.BoostPercentHPDmg, InterstellarVesselGauntlet.BoostPercentHPDmgCap, CenterOfTheUniverse.AwestruckDebuffDuration, CenterOfTheUniverse.AwestruckStarDamageAmp)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details", ScorchingPoint.MarkChance, ScorchingPoint.SuperBurnDuration, InterstellarVesselGauntlet.BoostPercentHPDmg, InterstellarVesselGauntlet.BoostPercentHPDmgCap, CenterOfTheUniverse.AwestruckDebuffDuration, CenterOfTheUniverse.AwestruckStarDamageAmp, ScorchingPoint.SuperBurnDmgAmp)));
                 }
             }
             else

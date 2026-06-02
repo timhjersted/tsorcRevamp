@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Drawing;
@@ -2869,56 +2870,56 @@ namespace tsorcRevamp.NPCs
                 damage += DoTPerS;
             }
 
-            if (Scorched)
+            if (Scorched && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
-                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(10);
+                float DoTPerS = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)ScorchingPoint.BaseDmg / 3f);
                 if (SuperScorchDuration > 0)
                 {
-                    DoTPerS *= 3;
+                    DoTPerS *= 1f + RuneterraGauntlets.SuperBurnDmgAmp / 100f;
                 }
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     DoTPerS += 25 * DragonStone.Potency;
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+                npc.lifeRegen -= (int)DoTPerS * 2;
+                damage += (int)DoTPerS;
             }
 
-            if (Shocked)
+            if (Shocked && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
-                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(30);
+                float DoTPerS = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)InterstellarVesselGauntlet.BaseDmg / 3f);
                 if (SuperShockDuration > 0)
                 {
-                    DoTPerS *= 3;
+                    DoTPerS *= 1f + RuneterraGauntlets.SuperBurnDmgAmp / 100f;
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+                npc.lifeRegen -= (int)DoTPerS * 2;
+                damage += (int)DoTPerS;
             }
 
-            if (Sunburnt)
+            if (Sunburnt && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
-                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(110);
+                float DoTPerS = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)CenterOfTheUniverse.BaseDmg / 3f);
                 if (SuperSunburnDuration > 0)
                 {
-                    DoTPerS *= 3;
+                    DoTPerS *= 1f + RuneterraGauntlets.SuperBurnDmgAmp / 100f;
                 }
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     DoTPerS += 25 * DragonStone.Potency;
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+                npc.lifeRegen -= (int)DoTPerS * 2;
+                damage += (int)DoTPerS;
             }
 
-            if (Awestruck)
+            if (Awestruck && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
-                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(440);
+                float DoTPerS = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)CenterOfTheUniverse.BaseDmg);
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     DoTPerS += 25 * DragonStone.Potency;
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+                npc.lifeRegen -= (int)DoTPerS * 2;
+                damage += (int)DoTPerS;
             }
 
             if (DarkInferno)
