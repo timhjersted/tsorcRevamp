@@ -14,12 +14,13 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
     public class ScorchingPoint : RuneterraGauntlets
     {
+        public const int BaseDmg = 15;
         public static List<ScorchingPointFireball> projectiles = null;
         public static int processedProjectilesCount = 0;
         public override float SoundVolumeAbstract => 0.35f;
         public static float SoundVolume;
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/";
-        public override int Damage => 18;
+        public override int Damage => BaseDmg;
         public override float Knockback => 3f;
         public override int Width => 32;
         public override int Height => 34;

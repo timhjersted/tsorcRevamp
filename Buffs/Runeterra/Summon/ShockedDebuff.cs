@@ -16,7 +16,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         {
             npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Shocked = true;
 
-            if (Main.GameUpdateCount % 5 == 0)
+            if (Main.GameUpdateCount % 5 == 0 && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
                 Dust.NewDust(npc.Center, 10, 10, DustID.Electric);
             }

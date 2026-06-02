@@ -16,7 +16,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         {
             npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Awestruck = true;
 
-            if (Main.GameUpdateCount % 5 == 0)
+            if (Main.GameUpdateCount % 5 == 0 && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
                 Dust.NewDust(npc.Center, 20, 20, DustID.CosmicCarKeys);
             }
