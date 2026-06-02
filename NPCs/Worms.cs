@@ -15,6 +15,14 @@ namespace tsorcRevamp.NPCs
 {
     class Worms : GlobalNPC
     {
+        public override void SetStaticDefaults()
+        {
+            foreach (int npcType in tsorcRevamp.EaterOfWorldsSegments)
+            {
+                NPCID.Sets.ImmuneToRegularBuffs[npcType] = true;
+            }
+        }
+
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type)) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
