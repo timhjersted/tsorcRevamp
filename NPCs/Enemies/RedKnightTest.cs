@@ -236,6 +236,26 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
 
+                // ── Pre-throw plant ────────────────────────────────────────────────────
+                // During the Carry windows (the "hold weapon out" prep before the telegraph
+                // wind-up), gently brake horizontal velocity so the NPC visually slows to a
+                // near-stop before raising the arm. Smooths the walking → throwing transition
+                // — without this the NPC keeps walking through carry/telegraph and the throw
+                // animation looks tacked-on.
+                //   Spear carry  ai[1] 90–120  (30 ticks)
+                //   Bomb carry   ai[1] 830–865 (35 ticks)
+                if ((NPC.ai[1] >= 90f && NPC.ai[1] < 120f) ||
+                    (NPC.ai[1] >= 830f && NPC.ai[1] < 865f))
+                {
+                    NPC.velocity.X *= 0.80f;
+                }
+                // Telegraph wind-up: keep firmly braked so the arm-raise reads as deliberate.
+                if ((NPC.ai[1] >= 120f && NPC.ai[1] < 180f) ||
+                    (NPC.ai[1] >= 865f && NPC.ai[1] < 925f))
+                {
+                    NPC.velocity.X *= 0.70f;
+                }
+
                 // Spear Attack: Get targetPosition and set NPC direction
                 if (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f)
                 {

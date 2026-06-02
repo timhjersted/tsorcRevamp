@@ -37,10 +37,15 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
 
         public override void UpdateEquip(Player player)
         {
-            player.endurance += DamageReduction / 100f;
+            // Knockback immunity and fire-walking are utility effects that stay passive.
             player.noKnockback = true;
             player.fireWalk = true;
-            player.thorns += Thorns;
+            // Under Active Shields Revamp the % DR + passive thorns become an on-block reflect instead.
+            if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))
+            {
+                player.endurance += DamageReduction / 100f;
+                player.thorns += Thorns;
+            }
         }
 
         public override void AddRecipes()

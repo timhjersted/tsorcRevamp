@@ -528,32 +528,24 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
         // Held-weapon draw (called by EnemyWeaponDrawLayer during DrawPlayer)
         // ────────────────────────────────────────────────────────────────────────────
 
-        // Hand position: shoulder + (cos, sin) of the WORLD arm angle × armLength.
-        // World arm angle = npc.direction × weaponRotation, so left-facing mirrors automatically.
+        // Hand position is looked up FROM THE BODY ROW (Use1–Use4) — these offsets match
+        // where the vanilla player arm sprite's tip actually ends up in each Use frame.
+        // (Same approach as InvaderNPC.GetHandPosition.) This guarantees the held weapon
+        // visually pins to the rendered arm regardless of pitch/rotation math, eliminating
+        // the "weapon hovering an inch off the hand" drift that math-derived positions had.
         private Vector2 GetHandPosition(NPC npc)
         {
             int bodyRow = puppet.bodyFrame.Y / FrameHeight;
             Vector2 puppetCenter = npc.position + new Vector2(10f, 20f);
 
-            if (IsArmAnimatedPose(resolvedPose))
-            {
-                // Project the hand from the shoulder along the WORLD arm angle.
-                // worldAngle = npc.direction * weaponRotation handles the left-facing mirror,
-                // so we apply (cos, sin) directly without a second direction multiplier.
-                const float armLength = 12f;
-                float worldAngle = npc.direction * weaponRotation;
-                Vector2 relativeOffset = worldAngle.ToRotationVector2() * armLength;
-                Vector2 shoulder = puppetCenter + new Vector2(2f * npc.direction, -2f);
-                return shoulder + relativeOffset;
-            }
-
             Vector2 offset = bodyRow switch
             {
-                1 => new Vector2(-8f, -9f),
-                2 => new Vector2(4f, -8f),
-                3 => new Vector2(4f, 2f),
-                4 => new Vector2(4f, 7f),
-                _ => new Vector2(4f, 2f)
+                1 => new Vector2(-8f, -9f),  // Use1 — arm fully raised
+                2 => new Vector2( 4f, -8f),  // Use2 — arm raised
+                3 => new Vector2( 4f,  2f),  // Use3 — arm level forward
+                4 => new Vector2( 4f,  7f),  // Use4 — arm dipped forward-down
+                5 => new Vector2( 4f,  2f),  // Jump — fall back to level (legs jump independently)
+                _ => new Vector2( 4f,  2f),  // Idle / walk — level reach
             };
 
             return puppetCenter + new Vector2(offset.X * npc.direction, offset.Y);
@@ -582,17 +574,15 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             bool centeredGrip = resolvedHeldStyle == EnemyHeldItemStyle.Bomb
                              || resolvedHeldStyle == EnemyHeldItemStyle.MagicBall;
 
-            // Origin: where on the texture the "grip" is. The grip lands at the hand position.
+            // Origin: where on the texture the "grip" sits.
+            //   Spear / Bomb / MagicBall — grip at texture CENTER so the held sprite floats
+            //   level with the hand and doesn't pivot wildly when the arm raises (the user
+            //   doesn't want the spear "flailing" — keep it balanced on the hand).
+            //   Generic items — handle-norm corner (Terraria-standard diagonal weapons).
             Vector2 origin;
-            if (centeredGrip)
+            if (centeredGrip || resolvedHeldStyle == EnemyHeldItemStyle.Spear)
             {
                 origin = texture.Bounds.Center.ToVector2();
-            }
-            else if (resolvedHeldStyle == EnemyHeldItemStyle.Spear)
-            {
-                // Spear texture is upright (tip at top of texture, handle near bottom).
-                // 50 % width × 82 % height pins the grip at the bottom-center of the texture.
-                origin = new Vector2(texture.Width * 0.50f, texture.Height * 0.82f);
             }
             else
             {
@@ -624,10 +614,14 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             float rotation;
             if (resolvedHeldStyle == EnemyHeldItemStyle.Spear)
             {
-                // Spear texture points UP at rotation 0. Add +π/2 so a forward-pointing arm
-                // (worldArmAngle = 0) draws the spear horizontally; arm overhead (-π/2) draws
-                // the spear straight up; arm 45° down (+π/4) draws the spear forward-and-down.
-                rotation = worldArmAngle + MathHelper.PiOver2;
+                // Spear is held horizontal regardless of arm angle — gripped at the middle
+                // so it stays balanced on the hand throughout the wind-up. (User: "spear
+                // should always be horizontal flat while raising and throwing with hand to
+                // avoid it flailing around.") The actual thrown projectile rotates with its
+                // velocity; the HELD telegraph spear does not.
+                // Spear texture points UP at rotation 0; +π/2 makes it point right when
+                // facing right, -π/2 makes it point left when facing left.
+                rotation = npc.direction == 1 ? MathHelper.PiOver2 : -MathHelper.PiOver2;
             }
             else
             {
@@ -662,21 +656,95 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             return TextureAssets.Item[resolvedHeldItemType].Value;
         }
 
+        // ── Debug log ────────────────────────────────────────────────────────────────
+        // Logs only when something the player can see changes:
+        //   pose, held item type, weapon visibility, body row, rotation crossing π/8 bands,
+        //   on-ground / airborne, or movement starting / stopping.
+        // This compresses the previous frame-by-frame dump into a sparse event timeline
+        // that's actually readable when debugging animation issues.
+        private EnemySpritePose _logLastPose = (EnemySpritePose)(-1);
+        private int _logLastHeldItem = int.MinValue;
+        private bool _logLastWeaponVisible;
+        private int _logLastBodyRow = -1;
+        private int _logLastRotBand = int.MinValue;
+        private bool _logLastOnGround;
+        private bool _logLastMoving;
+        private float _logLastAi1 = float.NaN;
+        private float _logLastAi2 = float.NaN;
+        private bool _logHeaderWritten;
+
         private void LogDebug(NPC npc)
         {
             try
             {
+                bool onGround = npc.velocity.Y == 0f;
+                bool moving = Math.Abs(npc.velocity.X) > 0.15f;
+                int bodyRow = puppet != null ? puppet.bodyFrame.Y / FrameHeight : -1;
+                // Quantise rotation to 8 bands (π/8 each) so small lerps don't spam the log.
+                int rotBand = (int)Math.Round(weaponRotation / (MathHelper.Pi / 8f));
+                // Log ai[1]/ai[2] when they cross "interesting" boundaries (multiples of 30
+                // is enough granularity for the RedKnight band system without flooding).
+                int ai1Band = (int)(npc.ai[1] / 30f);
+                int ai2Band = (int)(npc.ai[2] / 30f);
+                int lastAi1Band = float.IsNaN(_logLastAi1) ? int.MinValue : (int)(_logLastAi1 / 30f);
+                int lastAi2Band = float.IsNaN(_logLastAi2) ? int.MinValue : (int)(_logLastAi2 / 30f);
+
+                bool changed = resolvedPose != _logLastPose
+                            || resolvedHeldItemType != _logLastHeldItem
+                            || resolvedWeaponVisible != _logLastWeaponVisible
+                            || bodyRow != _logLastBodyRow
+                            || rotBand != _logLastRotBand
+                            || onGround != _logLastOnGround
+                            || moving != _logLastMoving
+                            || ai1Band != lastAi1Band
+                            || ai2Band != lastAi2Band;
+
+                if (!changed && _logHeaderWritten)
+                {
+                    return;
+                }
+
                 string separator = System.IO.Path.DirectorySeparatorChar.ToString();
                 string logDir = Main.SavePath + separator + "Logs";
                 System.IO.Directory.CreateDirectory(logDir);
                 string logPath = logDir + separator + "tsorcRevamp-redknight.log";
 
-                string line = $"[{DateTime.Now:HH:mm:ss.fff}] NPC#{npc.whoAmI} pos=({npc.Center.X / 16f:F1},{npc.Center.Y / 16f:F1}) " +
-                              $"dir={npc.direction} pose={resolvedPose} weaponAnim={weaponAnim} " +
-                              $"rot={weaponRotation:F3} bodyRow={puppet?.bodyFrame.Y / FrameHeight} " +
-                              $"ai[1]={npc.ai[1]} ai[2]={npc.ai[2]} dist={npc.Distance(Main.player[npc.target].Center):F0}";
+                if (!_logHeaderWritten)
+                {
+                    string header = "[time] NPC# pose held vis bodyRow legRow rotation(rad/deg) wAnim onGround moving vel ai[1] ai[2] dist";
+                    System.IO.File.AppendAllText(logPath, "----- session start " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " -----" + Environment.NewLine);
+                    System.IO.File.AppendAllText(logPath, header + Environment.NewLine);
+                    _logHeaderWritten = true;
+                }
+
+                int legRow = puppet != null ? puppet.legFrame.Y / FrameHeight : -1;
+                float dist = (npc.target >= 0 && npc.target < Main.maxPlayers)
+                    ? npc.Distance(Main.player[npc.target].Center)
+                    : -1f;
+
+                string line = $"[{DateTime.Now:HH:mm:ss.fff}] " +
+                              $"NPC#{npc.whoAmI} " +
+                              $"pose={resolvedPose} " +
+                              $"held={resolvedHeldItemType} " +
+                              $"vis={(resolvedWeaponVisible ? 1 : 0)} " +
+                              $"body={bodyRow} legs={legRow} " +
+                              $"rot={weaponRotation:F2}rad/{MathHelper.ToDegrees(weaponRotation):F0}° " +
+                              $"wAnim={weaponAnim} " +
+                              $"ground={(onGround ? 1 : 0)} moving={(moving ? 1 : 0)} " +
+                              $"vel=({npc.velocity.X:F2},{npc.velocity.Y:F2}) " +
+                              $"ai[1]={npc.ai[1]:F0} ai[2]={npc.ai[2]:F0} dist={dist:F0}";
 
                 System.IO.File.AppendAllText(logPath, line + Environment.NewLine);
+
+                _logLastPose = resolvedPose;
+                _logLastHeldItem = resolvedHeldItemType;
+                _logLastWeaponVisible = resolvedWeaponVisible;
+                _logLastBodyRow = bodyRow;
+                _logLastRotBand = rotBand;
+                _logLastOnGround = onGround;
+                _logLastMoving = moving;
+                _logLastAi1 = npc.ai[1];
+                _logLastAi2 = npc.ai[2];
             }
             catch
             {

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 using TerraUI.Objects;
 using tsorcRevamp.Items.Materials;
@@ -21,6 +22,62 @@ namespace tsorcRevamp
             }
             return true;
         }
+
+        // Filter for the Right-Click (2nd) slot: weapons (without their own alt-fire), throwables,
+        // consumables, tools, and shields. Rejects passive-only accessories and alt-fire weapons.
+        internal static bool RightClickSlotCondition(Item item)
+        {
+            if (item == null || item.IsAir)
+            {
+                return true; // allow emptying the slot
+            }
+            // Shield of Cthulhu is excluded from the 2nd slot: its signature is a dash, which vanilla only grants
+            // from a real accessory slot (no eocDash ram window when it's merely held in the 2nd slot), so it would
+            // show no shield and do no dash here. It belongs in an accessory slot. All other shields are fine.
+            if (item.type == ItemID.EoCShield)
+            {
+                return false;
+            }
+            // Registered shields are allowed — but only one shield total at a time (active mode): reject if a
+            // registered shield is already worn in an accessory slot.
+            if (tsorcRevamp.ActiveShieldRegistry != null && tsorcRevamp.ActiveShieldRegistry.ContainsKey(item.type))
+            {
+                Player p = Main.LocalPlayer;
+                if (tsorcRevampActiveShieldPlayer.ActiveFor(p))
+                {
+                    for (int i = 3; i < 8 + p.extraAccessorySlots; i++)
+                    {
+                        Item acc = p.armor[i];
+                        if (acc != null && !acc.IsAir && tsorcRevamp.ActiveShieldRegistry.ContainsKey(acc.type))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            // Weapons that have their own right-click (alt) function belong in the hand, not here.
+            if (ItemLoader.AltFunctionUse(item, Main.LocalPlayer))
+            {
+                return false;
+            }
+            // Allow usable items: weapons, throwables/consumables, tools.
+            if (item.damage > 0 || item.consumable || item.pick > 0 || item.axe > 0 || item.hammer > 0)
+            {
+                return true;
+            }
+            if (item.useStyle != ItemUseStyleID.None && !item.accessory)
+            {
+                return true;
+            }
+            // Reject passive-only accessories and everything else.
+            return false;
+        }
+
+        internal void DrawRightClickSlotBackground(UIObject sender, SpriteBatch spriteBatch)
+        {
+            ((UIItemSlot)sender).OnDrawBackground(spriteBatch);
+        }
         internal void DrawSoulSlotBackground(UIObject sender, SpriteBatch spriteBatch)
         {
             UIItemSlot slot = (UIItemSlot)sender;
@@ -32,12 +89,16 @@ namespace tsorcRevamp
                 if (slot.Item.stack == 0)
                 {
                     Texture2D tex = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/SoulSlotBackground");
-                    Vector2 origin = tex.Size() / 2f * Main.inventoryScale;
-                    Vector2 position = slot.Rectangle.TopLeft();
+                    // Center the placeholder icon on the slot: draw the texture's center point at the slot's
+                    // center, scaled by the inventory scale. (Origin is in TEXTURE pixels, not scaled — the engine
+                    // applies the scale. The old math scaled the origin and compensated with Rectangle.Size()/2,
+                    // which silently broke when Rectangle became the scaled slot size.)
+                    Vector2 origin = tex.Size() / 2f;
+                    Vector2 slotCenter = slot.Rectangle.TopLeft() + (slot.Rectangle.Size() / 2f);
 
                     spriteBatch.Draw(
                         tex,
-                        position + (slot.Rectangle.Size() / 2f) - (origin / 2f),
+                        slotCenter,
                         null,
                         Color.White * 0.35f,
                         0f,
@@ -72,9 +133,24 @@ namespace tsorcRevamp
 
             SoulSlot.Draw(spriteBatch);
 
+            // The Right-Click (2nd) slot sits directly below the souls slot, SoulsMode only.
+            bool drawRightClick = SoulsMode;
+            if (drawRightClick)
+            {
+                int rcPosY = slotPosY + (int)(56 * Main.inventoryScale);
+                RightClickSlot.Position = new Vector2(slotPosX, rcPosY);
+                RightClickSlot.Draw(spriteBatch);
+                // "2nd" label sits below the slot.
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, LangUtils.GetTextValue("UI.SecondSlot"), new Vector2(slotPosX + 6f, rcPosY + (int)(52 * Main.inventoryScale) + 2), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0);
+            }
+
             Main.inventoryScale = origScale;
 
             SoulSlot.Update();
+            if (drawRightClick)
+            {
+                RightClickSlot.Update();
+            }
 
         }
     }

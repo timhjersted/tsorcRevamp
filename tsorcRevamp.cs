@@ -172,6 +172,11 @@ namespace tsorcRevamp
         public static Dictionary<int, List<(int ID, int Count)>> ModifiedRecipes;
         public static Dictionary<int, Vector2> WhipTipBases;
         public static Dictionary<int, float> WhipRanges;
+        //Active Shields Revamp: maps shield item type -> block balance data. Populated in PopulateArrays().
+        public static Dictionary<int, ActiveShieldData> ActiveShieldRegistry;
+        //Active Shields Revamp: NPC types that the shield "body-block" wall should stop even though they're flagged
+        //as bosses (mini-boss / elite knight types). Populated in PopulateArrays().
+        public static HashSet<int> BodyBlockableNPCs;
 
         internal BonfireUIState BonfireUIState;
         internal UserInterface _bonfireUIState; //"but zeo!", you say
@@ -249,7 +254,7 @@ namespace tsorcRevamp
         public override void Load()
         {
             TextureAssets.Npc[NPCID.EyeofCthulhu] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/EyeofCthulhu/NPC_4");
-            TextureAssets.Npc[NPCID.ServantofCthulhu] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/EyeofCthulhu/NPC_5");
+            //TextureAssets.Npc[NPCID.ServantofCthulhu] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/EyeofCthulhu/NPC_5"); // reverted to vanilla servant (custom 2-frame sprite framed/animated wrong)
             //TextureAssets.Npc[NPCID.SkeletronHead] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Skeletron/NPC_35");
             //TextureAssets.Npc[NPCID.DungeonGuardian] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Skeletron/NPC_68");
             TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestralSpirit");
@@ -384,6 +389,56 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.NonAdventureModeRule = new NonAdventureModeRule();
             tsorcItemDropRuleConditions.NonExpertFirstKillRule = new NonExpertFirstKillRule();
             tsorcItemDropRuleConditions.DownedSkeletronRule = new DownedSkeletronRule();
+            #endregion
+            //--------
+            #region Active Shields Revamp registry
+            //Block cost = ceil(BaseCost + incomingDamage * DamageFactor). Lower = better shield.
+            //See Documentation/ActiveShieldsRevamp.md for the full balance table and design.
+            //ActiveShieldData(baseCost, damageFactor, moveSpeedMult, resource). Lower base/factor = better; higher moveSpeedMult = slows less.
+            //Base pool is 125 stamina, growing to ~250-275 fully upgraded; costs are ordered by progression so each shield is a step up.
+            ActiveShieldRegistry = new Dictionary<int, ActiveShieldData>
+            {
+                //--- Mod physical shields (stamina) --- ActiveShieldData(base, factor, moveMult, activeDefense, knockback[, resource]). moveMult slow ~12%(0.88)→1%(0.99); knockback 4→7.
+                { ModContent.ItemType<Items.Accessories.Defensive.Shields.IronShield>(),          new ActiveShieldData(32f, 0.42f, 0.88f, 2, 4.0f) },
+                { ModContent.ItemType<Items.Accessories.Defensive.Shields.SpikedIronShield>(),     new ActiveShieldData(29f, 0.39f, 0.89f, 3, 4.2f) },
+                { ModContent.ItemType<Items.Accessories.Defensive.Shields.AncientDemonShield>(),    new ActiveShieldData(25f, 0.36f, 0.91f, 5, 4.8f) },
+                { ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>(),     new ActiveShieldData(24f, 0.35f, 0.91f, 5, 5.0f) }, // repositioned to mid pre-hardmode
+                { ModContent.ItemType<Items.Accessories.Damage.MythrilBulwark>(),                   new ActiveShieldData(22f, 0.32f, 0.92f, 6, 5.2f) },
+                { ModContent.ItemType<Items.Accessories.Defensive.Shields.IceboundMythrilAegis>(),  new ActiveShieldData(9f,  0.14f, 0.99f, 15, 7.0f) },
+
+                //--- Melee Shield family (stamina) ---
+                { ModContent.ItemType<Items.Accessories.Melee.GazingShield>(),                      new ActiveShieldData(24f, 0.34f, 0.91f, 6, 5.0f) },
+                { ModContent.ItemType<Items.Accessories.Melee.BeholderShield>(),                    new ActiveShieldData(20f, 0.29f, 0.94f, 8, 5.6f) },
+                { ModContent.ItemType<Items.Accessories.Melee.BeholderShield2>(),                   new ActiveShieldData(14f, 0.21f, 0.96f, 11, 6.2f) },
+                { ModContent.ItemType<Items.Accessories.Melee.EnchantedBeholderShield2>(),          new ActiveShieldData(11f, 0.18f, 0.98f, 13, 6.6f) },
+
+                //--- Magic wards (mana + a flat stamina sip) --- activeDefense 0
+                { ModContent.ItemType<Items.Accessories.Defensive.Shields.ManaShield>(),            new ActiveShieldData(40f, 0.45f, 0.95f, 0, 5.0f, ShieldResource.Mana) },
+                { ModContent.ItemType<Items.Accessories.Defensive.Celestriad>(),                    new ActiveShieldData(30f, 0.35f, 0.97f, 0, 4.0f, ShieldResource.Mana) },
+
+                //--- Vanilla physical shields (stamina) --- keep native vanilla defense (activeDefense unused for these)
+                { ItemID.CobaltShield,    new ActiveShieldData(30f, 0.40f, 0.89f, 0, 4.4f) },
+                { ItemID.ObsidianShield,  new ActiveShieldData(27f, 0.38f, 0.90f, 0, 4.6f) },
+                { ItemID.PaladinsShield,  new ActiveShieldData(21f, 0.30f, 0.93f, 0, 5.4f) },
+                { ItemID.AnkhShield,      new ActiveShieldData(18f, 0.27f, 0.95f, 0, 5.8f) },
+                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.96f, 0, 6.0f) },
+                { ItemID.HeroShield,      new ActiveShieldData(12f, 0.20f, 0.97f, 0, 6.5f) }, // top vanilla shield (Ankh + Frozen + Berserker)
+                // Shield of Cthulhu: early-game right-click block (7% slow, def 2). Its vanilla double-tap dash is
+                // untouched and shows the shield while dashing (see tsorcRevampActiveShieldPlayer.PostUpdate).
+                { ItemID.EoCShield,       new ActiveShieldData(30f, 0.40f, 0.93f, 2, 4.0f) },
+            };
+
+            //Mini-boss / elite enemies that are flagged npc.boss but should still be stopped by the shield wall.
+            //(True bosses not in this set push straight through, as intended.)
+            BodyBlockableNPCs = new HashSet<int>
+            {
+                ModContent.NPCType<NPCs.Enemies.RedKnight>(),
+                ModContent.NPCType<NPCs.Enemies.BlackKnight>(),
+                ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(),
+                ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(),
+                ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(),
+                ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(),
+            };
             #endregion
             //--------
             #region Unbreakable list
@@ -1673,7 +1728,7 @@ namespace tsorcRevamp
                 TextureAssets.Npc[i] = npcFallback;
 
             TextureAssets.Npc[NPCID.EyeofCthulhu] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.EyeofCthulhu}");
-            TextureAssets.Npc[NPCID.ServantofCthulhu] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.ServantofCthulhu}");
+            //TextureAssets.Npc[NPCID.ServantofCthulhu] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.ServantofCthulhu}"); // servant swap reverted (see Load)
             //TextureAssets.Npc[NPCID.SkeletronHead] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.SkeletronHead}");
             //TextureAssets.Npc[NPCID.DungeonGuardian] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.DungeonGuardian}");
             TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.Deerclops}");
@@ -1842,6 +1897,17 @@ namespace tsorcRevamp
                         if (Main.netMode == NetmodeID.Server)
                         {
                             modPlayer.SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, modPlayer.SoulSlot.Item, -1, whoAmI);
+                        }
+                        break;
+                    }
+                case tsorcPacketID.SyncRightClickSlot:
+                    {
+                        byte player = reader.ReadByte(); //player.whoAmI
+                        tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+                        modPlayer.RightClickSlot.Item = ItemIO.Receive(reader);
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            modPlayer.SendSingleItemPacket(tsorcPacketID.SyncRightClickSlot, modPlayer.RightClickSlot.Item, -1, whoAmI);
                         }
                         break;
                     }
@@ -2107,6 +2173,27 @@ namespace tsorcRevamp
                             whipPacket.Write(player);
                             whipPacket.Write(modPlayer.FinishedChargingWhip);
                             whipPacket.Send();
+                        }
+                        break;
+                    }
+                case tsorcPacketID.SyncActiveShield:
+                    {
+                        byte player = reader.ReadByte(); //player.whoAmI
+                        bool blocking = reader.ReadBoolean();
+                        int shieldType = reader.ReadInt32();
+
+                        tsorcRevampActiveShieldPlayer shieldPlayer = Main.player[player].GetModPlayer<tsorcRevampActiveShieldPlayer>();
+                        shieldPlayer.isBlocking = blocking;
+                        shieldPlayer.activeShieldType = shieldType;
+
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            ModPacket shieldPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                            shieldPacket.Write(tsorcPacketID.SyncActiveShield);
+                            shieldPacket.Write(player);
+                            shieldPacket.Write(blocking);
+                            shieldPacket.Write(shieldType);
+                            shieldPacket.Send();
                         }
                         break;
                     }
@@ -3720,6 +3807,17 @@ namespace tsorcRevamp
         /// so the packet handler can find the renderer.
         /// </summary>
         public const byte SyncEnemyActivePose = 21;
+
+        /// <summary>
+        /// Active Shields Revamp: syncs a player's raised-shield state (isBlocking + shield item type)
+        /// so remote clients draw the raised shield and the server can run the body-block authoritatively.
+        /// </summary>
+        public const byte SyncActiveShield = 22;
+
+        /// <summary>
+        /// Active Shields Revamp: syncs the contents of a player's "Right-Click" (2nd) item slot.
+        /// </summary>
+        public const byte SyncRightClickSlot = 23;
     }
 
     //config moved to separate file

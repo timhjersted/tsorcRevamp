@@ -287,6 +287,10 @@ namespace tsorcRevamp.NPCs
         public bool CanPassThroughWalls = false;
         // Counts ticks the NPC has been grounded and blocked by a wall; triggers teleport at threshold.
         public int GhostWallTimer = 0;
+        // Set true each frame the NPC runs the mod's custom BasicAI/Fighter/Archer AI. Lets PostAI apply
+        // confusion (reversed movement) only to these NPCs — vanilla-AI NPCs already handle Confused themselves,
+        // so we must not double-flip them. Consumed (reset) in PostAI.
+        public bool RunningCustomFighterAI = false;
         // Teleport visual tuning. Defaults reproduce the current smoke-flash behavior.
         public int TeleportTelegraphTime = 140;
         public int TeleportDustType = DustID.Smoke;
@@ -430,6 +434,21 @@ namespace tsorcRevamp.NPCs
 
         public override void PostAI(NPC npc)
         {
+            // Confusion: the mod's custom AI computes movement toward the player and ignores npc.confused, so a
+            // confused enemy still walked straight at you (only showing the "?" emote). Here, after the AI has
+            // run, we reverse a confused custom-AI enemy's horizontal movement so it stumbles AWAY instead.
+            // Vertical velocity (jumps) is left intact so it still hops terrain — just in the wrong direction.
+            // Only applies to NPCs that ran our BasicAI this frame; vanilla-AI NPCs handle Confused on their own.
+            if (RunningCustomFighterAI && npc.confused && npc.target >= 0 && npc.target < Main.maxPlayers)
+            {
+                int away = npc.Center.X < Main.player[npc.target].Center.X ? -1 : 1;
+                float speed = Math.Max(Math.Abs(npc.velocity.X), 1.5f);
+                npc.velocity.X = away * speed;
+                npc.direction = away;
+                npc.spriteDirection = away;
+            }
+            RunningCustomFighterAI = false;
+
             if (!CanPassThroughWalls)
                 return;
 
@@ -4615,7 +4634,12 @@ namespace tsorcRevamp.NPCs
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, globalNPC.LockedShotVector.X, globalNPC.LockedShotVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
+                            // Spawn the shot just in front of the NPC rather than at its center. These projectiles
+                            // are spawned player-owned (friendly) and flipped hostile a frame later, so a spawn
+                            // overlapping the shooter's own hitbox lets the still-friendly projectile damage it.
+                            Vector2 shotDir = globalNPC.LockedShotVector.SafeNormalize(new Vector2(npc.direction, 0f));
+                            Vector2 shotSpawn = npc.Center + shotDir * (npc.width / 2f + 10f);
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), shotSpawn.X, shotSpawn.Y, globalNPC.LockedShotVector.X, globalNPC.LockedShotVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
                         }
 
                         SoundEngine.PlaySound(shootSound.Value);
@@ -4674,6 +4698,7 @@ namespace tsorcRevamp.NPCs
             npc.noTileCollide = false;
 
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.RunningCustomFighterAI = true; // mark for PostAI's confusion handling
             if (npc.target < 0 || npc.target >= Main.maxPlayers || !Main.player[npc.target].active || Main.player[npc.target].dead)
             {
                 npc.TargetClosest(false);

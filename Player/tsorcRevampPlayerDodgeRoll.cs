@@ -135,12 +135,14 @@ namespace tsorcRevamp
 
 
 
-            #region BotC Stamina Usage
+            #region Souls Mode Stamina Usage
 
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            // Bearer of the Curse pays full weapon stamina; Unkindled pays half 5/10th (mult = 0.5).
+            if (Player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
             {
 
                 tsorcRevampStaminaPlayer modPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
                 int scaledUseAnimation = (int)(item.useAnimation / Player.GetAttackSpeed(item.DamageType));
 
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
@@ -161,7 +163,7 @@ namespace tsorcRevamp
 
                 if (item.type == ItemID.CoinGun) //coin gun has a damage stat of zero but can still do damage!
                 {
-                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
+                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult;
                 }
 
                 else if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
@@ -171,30 +173,30 @@ namespace tsorcRevamp
 
                 if (item.useAnimation * 0.8f > modPlayer.staminaResourceMax2)
                 {
-                    modPlayer.staminaResourceCurrent -= modPlayer.staminaResourceMax2;
+                    modPlayer.staminaResourceCurrent -= modPlayer.staminaResourceMax2 * mult;
                 }
 
                 //Note: This is where EVERY other weapon aside from these exceptions applies its stamina usage
                 else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>() && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()
                     && !(item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
                 {
-                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
+                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult;
                 }
 
                 //i have no clue how they made this item behave the way it does, but it is deeply cursed
                 else if (item.type == ItemID.Harpoon && Player.itemAnimation == 4)
                 {
-                    modPlayer.staminaResourceCurrent -= 14;
+                    modPlayer.staminaResourceCurrent -= 14 * mult;
                 }
 
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()))
                 {
-                    modPlayer.staminaResourceCurrent -= 0.7f;
+                    modPlayer.staminaResourceCurrent -= 0.7f * mult;
                 }
 
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
                 {
-                    modPlayer.staminaResourceCurrent -= 1.2f;
+                    modPlayer.staminaResourceCurrent -= 1.2f * mult;
                 }
             }
 

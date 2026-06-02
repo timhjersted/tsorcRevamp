@@ -408,8 +408,8 @@ namespace tsorcRevamp
 
             if (Main.player[Main.myPlayer].active && Main.player[Main.myPlayer].dead)
             {
-                // Fade to black over 6 seconds (360 ticks)
-                deathFadeAlpha = MathHelper.Clamp(deathFadeAlpha + 1f / 360f, 0f, 1f);
+                // Fade to black over 8 seconds (480 ticks)
+                deathFadeAlpha = MathHelper.Clamp(deathFadeAlpha + 1f / 480f, 0f, 1f);
             }
             else
             {
@@ -748,7 +748,10 @@ namespace tsorcRevamp
                     portableGuideSelectedRecipeIndex = 0;
                 }
 
-                DrawPortableGuideRecipeResults(spriteBatch, new Vector2(slotPosX, slotPosY + (int)(52 * Main.inventoryScale) + 10), slotPosition);
+                // Align the first recipe icon's top with the 2nd slot beside it. Both share slotPosY (38) and
+                // inventoryScale (0.85). The 2nd slot top = 38 + (int)(56*0.85) = 85; the recipe top =
+                // 38 + (int)(52*0.85) + offset = 82 + offset. So offset = 3 puts them on the same line.
+                DrawPortableGuideRecipeResults(spriteBatch, new Vector2(slotPosX, slotPosY + (int)(52 * Main.inventoryScale) + 3), slotPosition);
             }
             finally
             {
@@ -763,12 +766,15 @@ namespace tsorcRevamp
                 return;
             }
 
-            // Total recipes count text (white text, no background box)
-            string header = portableGuideRecipeIndices.Count == 1 ? "1 recipe" : portableGuideRecipeIndices.Count + " recipes";
-            DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, FontAssets.MouseText.Value, header, position, Color.White, 0f, Vector2.Zero, 0.85f, SpriteEffects.None, 0f);
-
+            // The recipe count is now folded into the "Showing N recipes that use X" line beside the Guide slot
+            // (drawn below), so there's no separate count text under the slot anymore — that lets the first recipe
+            // icon sit higher, in line with the 2nd slot.
             if (portableGuideRecipeIndices.Count == 0)
             {
+                int noneX = (int)(slotPosition.X + (52 * Main.inventoryScale) + 15);
+                int noneY = (int)slotPosition.Y;
+                string none = $"Showing 0 recipes that use {portableGuideItem.Name}";
+                DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, FontAssets.MouseText.Value, none, new Vector2(noneX, noneY), new Color(200, 200, 200, 255), 0f, Vector2.Zero, 0.75f, SpriteEffects.None, 0f);
                 return;
             }
 
@@ -837,7 +843,8 @@ namespace tsorcRevamp
                 Item resultItem = recipe.createItem;
 
                 int drawRow = i - startRecipe;
-                Vector2 rowPosition = new Vector2(position.X, position.Y + 20 + drawRow * rowHeight);
+                // No header above anymore, so the first icon starts at the top of the recipe column (in line with the 2nd slot).
+                Vector2 rowPosition = new Vector2(position.X, position.Y + drawRow * rowHeight);
                 Rectangle slotRect = new Rectangle((int)rowPosition.X, (int)rowPosition.Y, 44, 44);
 
                 bool isHovered = slotRect.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface;
@@ -905,8 +912,11 @@ namespace tsorcRevamp
                 int detailsX = (int)(slotPosition.X + (52 * Main.inventoryScale) + 15);
                 int detailsY = (int)slotPosition.Y;
 
-                // 1. First line: "Showing recipes that use [Guide Item Name]"
-                string text1 = $"Showing recipes that use {portableGuideItem.Name}";
+                // 1. First line: "Showing N recipes that use [Guide Item Name]" (count folded in here)
+                int recipeCount = portableGuideRecipeIndices.Count;
+                string text1 = recipeCount == 1
+                    ? $"Showing 1 recipe that uses {portableGuideItem.Name}"
+                    : $"Showing {recipeCount} recipes that use {portableGuideItem.Name}";
                 DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, FontAssets.MouseText.Value, text1, new Vector2(detailsX, detailsY), new Color(200, 200, 200, 255), 0f, Vector2.Zero, 0.75f, SpriteEffects.None, 0f);
 
                 // 2. Second line: "Required objects: [Station Name]"

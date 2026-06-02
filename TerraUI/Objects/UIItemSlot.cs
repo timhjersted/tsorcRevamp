@@ -71,6 +71,12 @@ namespace TerraUI.Objects
         /// </summary>
         public bool ScaleToInventory { get; set; }
         /// <summary>
+        /// When true, the item can't be manually taken out of (or swapped out of) the slot once present —
+        /// only deposited into an empty slot. Used by the souls slot so Dark Souls can't be moved to the
+        /// inventory / piggy bank (they're auto-deposited on pickup and spent at altars).
+        /// </summary>
+        public bool DisallowManualRemoval { get; set; }
+        /// <summary>
         /// The item shown in the slot.
         /// </summary>
         public Item Item
@@ -140,6 +146,13 @@ namespace TerraUI.Objects
                 return;
             }
 
+            // Locked slots (e.g. the souls slot) accept a deposit into an EMPTY slot, but once occupied the item
+            // can't be picked up or swapped out — that's the path that let Dark Souls leak into the inventory.
+            if (DisallowManualRemoval && item.stack > 0)
+            {
+                return;
+            }
+
             if (Main.mouseItem.stack < 1 || Conditions == null || Conditions(Main.mouseItem))
             {
                 Swap(ref item, ref Main.mouseItem);
@@ -151,6 +164,10 @@ namespace TerraUI.Objects
         /// </summary>
         public override void OnRightClick()
         {
+            if (DisallowManualRemoval && item.stack > 0)
+            {
+                return;
+            }
             if (Conditions(Main.mouseItem))
             {
                 Swap(ref item, ref Main.mouseItem);
@@ -238,7 +255,11 @@ namespace TerraUI.Objects
         /// <param name="spriteBatch">drawing SpriteBatch</param>
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Rectangle = new Rectangle((int)RelativePosition.X, (int)RelativePosition.Y, (int)Size.X, (int)Size.Y);
+            // The slot is drawn scaled (by inventory scale) from its top-left, so the clickable hitbox must use the
+            // SAME scaled dimensions — otherwise, when the UI/inventory scale is above 1, the drawn slot is larger
+            // than the unscaled 52px box and only its center registers clicks (corners miss).
+            float hitScale = Scale(false);
+            Rectangle = new Rectangle((int)RelativePosition.X, (int)RelativePosition.Y, (int)(Size.X * hitScale), (int)(Size.Y * hitScale));
 
             if (DrawAsNormalSlot)
             {
@@ -321,8 +342,10 @@ namespace TerraUI.Objects
             }
 
             Vector2 origin = rectangle.Size() / 2f;
-            Vector2 position = new Rectangle(Rectangle.X, Rectangle.Y, (int)(Rectangle.Width * Scale(false)),
-                (int)(Rectangle.Height * Scale(false))).Center.ToVector2();
+            // Rectangle is now the scaled visual size of the slot, so center the item directly in it. (Previously
+            // Rectangle was unscaled and this multiplied by Scale(false) to find the visual center; doing that now
+            // would double-apply the scale and push the icon into the upper-left, smaller than the slot.)
+            Vector2 position = Rectangle.Center.ToVector2();
 
             spriteBatch.Draw(
                 texture2D,

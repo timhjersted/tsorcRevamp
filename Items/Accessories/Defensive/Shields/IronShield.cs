@@ -39,8 +39,13 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
 
         public override void UpdateEquip(Player player)
         {
-            player.endurance += DR / 100f;
-            player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
+            // Under Active Shields Revamp the % damage reduction (and its paired move-speed penalty)
+            // is replaced by on-demand active blocking; only the flat Item.defense stays passive.
+            if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))
+            {
+                player.endurance += DR / 100f;
+                player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
+            }
         }
 
         public override void AddRecipes()

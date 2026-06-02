@@ -57,6 +57,10 @@ namespace tsorcRevamp
         public bool EnableSoulsModeMobilityLimit { get; set; }
 
         [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(true)]
+        public bool ActiveShieldsRevamp { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
         public bool DebugMode { get; set; }
 

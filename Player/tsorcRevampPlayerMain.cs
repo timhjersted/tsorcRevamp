@@ -84,8 +84,16 @@ namespace tsorcRevamp
 
             SoulSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LangUtils.GetTextValue("UI.DarkSouls"), null, SoulSlotCondition, DrawSoulSlotBackground, null, null, false, true);
             SoulSlot.BackOpacity = 0.8f;
+            // Dark Souls can't be pulled out of the slot into the inventory / piggy bank — they auto-deposit on
+            // pickup and are spent at Demon Altars.
+            SoulSlot.DisallowManualRemoval = true;
             SoulSlot.Item = new Item();
             SoulSlot.Item.SetDefaults(0, true);
+
+            RightClickSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LangUtils.GetTextValue("UI.SecondSlotHover"), null, RightClickSlotCondition, DrawRightClickSlotBackground, null, null, false, true);
+            RightClickSlot.BackOpacity = 0.8f;
+            RightClickSlot.Item = new Item();
+            RightClickSlot.Item.SetDefaults(0, true);
 
             chestBankOpen = false;
             chestBank = -1;
@@ -104,6 +112,7 @@ namespace tsorcRevamp
             if (clone == null) { return; }
 
             SoulSlot.Item.CopyNetStateTo(clone.SoulSlot.Item);
+            RightClickSlot.Item.CopyNetStateTo(clone.RightClickSlot.Item);
         }
         public override void SendClientChanges(ModPlayer clientPlayer)
         {
@@ -113,6 +122,10 @@ namespace tsorcRevamp
             if (oldClone.SoulSlot.Item.IsNotSameTypePrefixAndStack(SoulSlot.Item))
             {
                 SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, SoulSlot.Item, -1, Player.whoAmI);
+            }
+            if (oldClone.RightClickSlot.Item.IsNotSameTypePrefixAndStack(RightClickSlot.Item))
+            {
+                SendSingleItemPacket(tsorcPacketID.SyncRightClickSlot, RightClickSlot.Item, -1, Player.whoAmI);
             }
         }
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
@@ -124,6 +137,13 @@ namespace tsorcRevamp
             packet.Write((byte)Player.whoAmI);
             ItemIO.Send(SoulSlot.Item, packet);
             packet.Send(toWho, fromWho);
+
+            //Sync Right-Click slot
+            ModPacket rightClickPacket = Mod.GetPacket();
+            rightClickPacket.Write((byte)tsorcPacketID.SyncRightClickSlot);
+            rightClickPacket.Write((byte)Player.whoAmI);
+            ItemIO.Send(RightClickSlot.Item, rightClickPacket);
+            rightClickPacket.Send(toWho, fromWho);
 
             /*
             ModPacket packet2 = Mod.GetPacket();
@@ -162,6 +182,7 @@ namespace tsorcRevamp
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
             tag.Add("Unkindled", Unkindled);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
+            tag.Add("rightClickSlot", ItemIO.Save(RightClickSlot.Item));
             tag.Add("Curse", CurseActive);
             tag.Add("CurseMaxLifeMult", CurseMaxLifeMultiplier);
             tag.Add("CurseLifeRegen", CurseLifeRegenerationBonus);
@@ -265,6 +286,10 @@ namespace tsorcRevamp
             }
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
+            if (tag.ContainsKey("rightClickSlot"))
+            {
+                RightClickSlot.Item = ItemIO.Load(tag.GetCompound("rightClickSlot")).Clone();
+            }
             CurseActive = tag.GetBool("Curse");
             CurseMaxLifeMultiplier = tag.GetFloat("CurseMaxLifeMult");
             CurseLifeRegenerationBonus = tag.GetFloat("CurseLifeRegen");
@@ -1815,7 +1840,7 @@ namespace tsorcRevamp
             {
                 if (Player.statMana >= Items.Accessories.Defensive.Shields.ManaShield.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.Defensive.Shields.ManaShield.manaCost;
+                    SpendManaOnHit(Items.Accessories.Defensive.Shields.ManaShield.manaCost); // also applies the Unkindled mana-regen delay
                     Player.manaRegenDelay = Items.Accessories.Defensive.Shields.ManaShield.regenDelay * 60;
                     Player.maxRegenDelay = Items.Accessories.Defensive.Shields.ManaShield.regenDelay * 60;
                 }
@@ -1824,7 +1849,7 @@ namespace tsorcRevamp
             {
                 if (Player.statMana >= Items.Accessories.Defensive.Celestriad.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.Defensive.Celestriad.manaCost;
+                    SpendManaOnHit(Items.Accessories.Defensive.Celestriad.manaCost);
                     Player.manaRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay * 60;
                     Player.maxRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay * 60;
                 }
@@ -2002,6 +2027,24 @@ namespace tsorcRevamp
             if (Unkindled && manaConsumed > 0)
             {
                 unkindledManaDelayTimer = 1800; // 30 seconds (1800 ticks at 60fps)
+            }
+        }
+
+        /// <summary>
+        /// Spend mana from a source that ISN'T a normal item use (shields/wards blocking, on-hit drains, etc.).
+        /// Vanilla's OnConsumeMana — which triggers Unkindled's 30s mana-regen delay — only fires for item use,
+        /// so anything subtracting statMana directly must call this to apply the same Unkindled penalty.
+        /// </summary>
+        public void SpendManaOnHit(int amount)
+        {
+            if (amount <= 0)
+            {
+                return;
+            }
+            Player.statMana = System.Math.Max(0, Player.statMana - amount);
+            if (Unkindled)
+            {
+                unkindledManaDelayTimer = 1800;
             }
         }
 

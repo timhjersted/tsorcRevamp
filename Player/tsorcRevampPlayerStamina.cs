@@ -114,8 +114,10 @@ namespace tsorcRevamp
 
             for (int p = 0; p < 1000; p++) //To-do add a check before this making this loop only run if there are actually any projectiles in the array
             {
-                if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                if (Player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
                 {
+                    // Bearer of the Curse drains full per-frame; Unkindled drains half.
+                    float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
                     //if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //find boomerangs, if so, cut regen by 2/3
                     //{
                     //    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
@@ -125,7 +127,7 @@ namespace tsorcRevamp
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.ChainGuillotine
                         || Main.projectile[p].type == ProjectileID.MechanicalPiranha))
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= SpecialHeldProjectileDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= SpecialHeldProjectileDrainPerFrame * mult;
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();
@@ -145,7 +147,7 @@ namespace tsorcRevamp
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater
                         || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife))
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame * mult;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
@@ -160,7 +162,7 @@ namespace tsorcRevamp
                         || Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.DD2PhoenixBowShot
                         || Main.projectile[p].type == ProjectileID.Phantasm))
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame * mult;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
@@ -172,7 +174,7 @@ namespace tsorcRevamp
                         || Main.projectile[p].type == ProjectileID.Anchor || Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail))
 
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= FlailDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= FlailDrainPerFrame * mult;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
@@ -184,7 +186,7 @@ namespace tsorcRevamp
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Yoyo))
 
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= YoyoDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= YoyoDrainPerFrame * mult;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
@@ -194,7 +196,7 @@ namespace tsorcRevamp
 
                     if (Main.projectile[p].active && Main.projectile[p].type > 0 && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip && !Player.GetModPlayer<tsorcRevampPlayer>().FinishedChargingWhip)
                     {
-                        staminaResourceCurrent -= ChargedWhipDrainPerFrame;
+                        staminaResourceCurrent -= ChargedWhipDrainPerFrame * mult;
                         staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
@@ -217,6 +219,14 @@ namespace tsorcRevamp
             if (Player.velocity == Vector2.Zero)
             {
                 staminaResourceGain *= 1.5f;
+            }
+
+            // Active Shields Revamp: no stamina recovery while a shield is raised (Dark-Souls "guard up = no regen").
+            // Applied here, at the point regen is computed, because setting staminaResourceGainMult from the shield
+            // ModPlayer's hooks raced this calc and never landed. Reads isBlocking, which is set earlier in the frame.
+            if (Player.GetModPlayer<tsorcRevampActiveShieldPlayer>().isBlocking)
+            {
+                staminaResourceGain *= tsorcRevampActiveShieldPlayer.BlockStaminaRegenMult;
             }
 
             // For our resource lets make it regen slowly over time to keep it simple, let's use exampleResourceRegenTimer to count up to whatever value we want, then increase currentResource.
@@ -279,7 +289,8 @@ namespace tsorcRevamp
         {
             public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
             {
-                if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) return;
+                if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina) return;
+                float staminaMult = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
                 if (!ModContent.GetInstance<tsorcRevampConfig>().ShowStaminaTooltip) return;
                 if (item.DamageType == DamageClass.Summon) return;
                 if (item.damage <= 0 && item.type != ItemID.CoinGun) return;
@@ -353,7 +364,7 @@ namespace tsorcRevamp
                 if (tipToAdd.Length == preModificationLength)
                 {
                     int staminaUse = (int)(item.useAnimation / Main.LocalPlayer.GetAttackSpeed(item.DamageType));
-                    staminaUse = (int)tsorcRevampPlayer.ReduceStamina(staminaUse);
+                    staminaUse = (int)(tsorcRevampPlayer.ReduceStamina(staminaUse) * staminaMult);
                     tipToAdd.Append($"{staminaUse}");
                 }
 
@@ -374,7 +385,7 @@ namespace tsorcRevamp
                 #region drain per frame tooltips
                 if (drainPerFrame != 0f)
                 {
-                    tipToAdd.Append($" + {drainPerFrame * 60} " + LangUtils.GetTextValue("UI.PerSecond"));
+                    tipToAdd.Append($" + {drainPerFrame * 60 * staminaMult} " + LangUtils.GetTextValue("UI.PerSecond"));
                 }
 
                 if (inhibitsRegen)

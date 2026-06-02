@@ -550,6 +550,72 @@ namespace tsorcRevamp
             }
             #endregion
 
+            #region active mana ward
+            // Active Shields Revamp: draw the mana bubble while a magic ward (Mana Shield / Celestriad) is raised.
+            // The passive bubble above is disabled in active mode, so this provides the held-ward visual.
+            tsorcRevampActiveShieldPlayer wardPlayer = drawPlayer.GetModPlayer<tsorcRevampActiveShieldPlayer>();
+            if (tsorcRevampActiveShieldPlayer.RevampActive && wardPlayer.isBlocking && !drawPlayer.dead
+                && tsorcRevamp.ActiveShieldRegistry != null
+                && tsorcRevamp.ActiveShieldRegistry.TryGetValue(wardPlayer.activeShieldType, out ActiveShieldData wardData)
+                && wardData.Resource == ShieldResource.Mana)
+            {
+                Lighting.AddLight(drawPlayer.Center, 0f, 0.2f, 0.3f);
+
+                int shieldFrameCount = 8;
+                float shieldScale = 2.5f;
+                Texture2D wardTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ManaShield];
+                int wardDrawX = (int)(drawInfo.Position.X + drawInfo.drawPlayer.width / 2f - Main.screenPosition.X);
+                int wardDrawY = (int)(drawInfo.Position.Y + drawInfo.drawPlayer.height / 2f - Main.screenPosition.Y);
+                int wardFrameHeight = wardTexture.Height / shieldFrameCount;
+                // Animate off a global tick since the passive shieldFrame counter doesn't advance in active mode.
+                int wardStartY = wardFrameHeight * ((int)(Main.GameUpdateCount % 24) / 3);
+                Rectangle wardSource = new Rectangle(0, wardStartY, wardTexture.Width, wardFrameHeight);
+                Vector2 wardOrigin = wardSource.Size() / 2f;
+
+                drawInfo.DrawDataCache.Add(new DrawData(
+                    wardTexture,
+                    new Vector2(wardDrawX, wardDrawY),
+                    wardSource,
+                    Color.White,
+                    0f,
+                    wardOrigin,
+                    shieldScale,
+                    SpriteEffects.None,
+                    0));
+            }
+            #endregion
+
+            #region EoC dash shield (2nd slot)
+            // Vanilla only draws the Shield of Cthulhu dash sprite when the shield is in a real accessory slot, so a
+            // Shield of Cthulhu sitting in the Right-Click (2nd) slot dashes with no shield shown. Render it here:
+            // the shield held out in front of the player for the whole dash. (Accessory-slot EoC is left to vanilla.)
+            if (tsorcRevampActiveShieldPlayer.RevampActive && !drawPlayer.dead && wardPlayer.DashShieldActive)
+            {
+                Item rcItem = drawPlayer.GetModPlayer<tsorcRevampPlayer>().RightClickSlot?.Item;
+                if (rcItem != null && !rcItem.IsAir && rcItem.type == ItemID.EoCShield)
+                {
+                    Texture2D eocTex = Terraria.GameContent.TextureAssets.Item[ItemID.EoCShield].Value;
+                    if (eocTex != null)
+                    {
+                        Vector2 dashDir = drawPlayer.velocity.SafeNormalize(new Vector2(drawPlayer.direction, 0f));
+                        Vector2 drawPos = drawPlayer.Center + dashDir * 16f - Main.screenPosition;
+                        SpriteEffects fx = drawPlayer.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                        Color shieldColor = Lighting.GetColor((int)(drawPlayer.Center.X / 16f), (int)(drawPlayer.Center.Y / 16f));
+                        drawInfo.DrawDataCache.Add(new DrawData(
+                            eocTex,
+                            drawPos,
+                            null,
+                            shieldColor,
+                            0f,
+                            eocTex.Size() / 2f,
+                            1.1f,
+                            fx,
+                            0));
+                    }
+                }
+            }
+            #endregion
+
             #region stamina bar
             if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
             {

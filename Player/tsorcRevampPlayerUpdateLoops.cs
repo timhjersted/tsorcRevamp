@@ -356,6 +356,11 @@ namespace tsorcRevamp
         // bonfire refills, drop bonuses, recipe conditions) on this. BotC-only features keep checking BearerOfTheCurse.
         public bool SoulsMode => Unkindled || BearerOfTheCurse;
 
+        // Weapon stamina usage. Bearer of the Curse pays full stamina for attacks; Unkindled pays half (so stamina still matters but isn't punishing); Classic pays none. Gate weapon-stamina
+        // drains on UsesWeaponStamina and scale the amount by WeaponStaminaMult.
+        public bool UsesWeaponStamina => BearerOfTheCurse || Unkindled;
+        public float WeaponStaminaMult => BearerOfTheCurse ? 1f : (Unkindled ? 0.5f : 0f);
+
         // Tier-aware healing scalar applied to instant-heal items (food, potions, Tome of Health, etc.).
         // Classic: full heal. Unkindled: half heal. Bearer of the Curse: zero (caller should skip heal entirely).
         // Use this in custom UseItem implementations; for vanilla items the reduction is applied in
@@ -377,6 +382,9 @@ namespace tsorcRevamp
         public int potionBagCountdown = 0; //You can't move items around if an item is still 'in use'. This lets us delay opening the bag until that finishes.
 
         public UIItemSlot SoulSlot;
+
+        //Active Shields Revamp: the SoulsMode-only "Right-Click" (2nd) slot. Holds a usable item or shield that activates on right click.
+        public UIItemSlot RightClickSlot;
 
         public int PiercingGazeCharge;
 

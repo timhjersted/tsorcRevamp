@@ -1,5 +1,30 @@
 Mods: {
 	tsorcRevamp: {
+		ActiveShield: {
+			// Header: "[Active Shield]"
+			// Defense: Grants {0} defense
+			// Use: Hold Right Click (with a weapon that has no right-click function) to raise it and fully block frontal hits
+			// Cost: Each blocked hit costs {0} {1} + {2}% of the damage blocked
+			// Wall: Stops non-boss enemies from pushing through you
+			// Break: Running out of {0} mid-block breaks your guard (Ichor, Slow, and a brief stagger)
+			// Parry: Perfect parry — raise the shield just as a hit lands to block it at half the cost
+			// Slow: Slows your movement by {0}% while raised
+			// Regen: Stamina does not recover while raised
+			// Stamina: stamina
+			// Mana: mana
+			// ReflectEffect: A perfect parry reflects the blocked damage back at the attacker
+			// Watchful: Watchful — reveals nearby enemies
+			// GazeConfuse: A perfect parry may confuse the attacker
+			// GazePetrify: A perfect parry may confuse or briefly freeze the attacker
+			// GazeBeam: A perfect parry may confuse/freeze the attacker and fires an eye beam back
+			// FireCone: A perfect parry breathes a cone of fire that grows stronger with your defense
+			// BulwarkEffect: A perfect parry applies Vulnerability and deflects projectiles
+			// FrostNova: A perfect parry unleashes a frost nova
+			// WardPulse: Lowering the ward releases a 360° knockback pulse, stronger the longer held
+			// WardPulseBolts: Lowering the ward releases a knockback pulse; held 2s+ also looses 3 homing bolts (50 mana)
+			// DashEffect: Double-tap a direction to dash
+		}
+
 		CommonItemTooltip: {
 			Details: 按住 左Shift 以显示详细信息
 			AggroBoost: 敌人更可能瞄准你
@@ -324,6 +349,8 @@ Mods: {
 
 		UI: {
 			Souls: 黑暗之魂
+			// SecondSlot: 2nd
+			// SecondSlotHover: Right-Click Slot — its item or shield activates on right click
 			StaminaUse: "耐力消耗: "
 			StaminaUseOnHitOnly: "命中时耐力消耗: "
 			Tired: 疲惫
@@ -9246,6 +9273,11 @@ Mods: {
 					Increases life regeneration and slightly reduces aggro
 					''' */
 			}
+
+			ShieldGuardBreak: {
+				// Description: Mods.tsorcRevamp.Buffs.ShieldGuardBreak.Description
+				// DisplayName: Shield Guard Break
+			}
 		}
 
 		Projectiles: {
@@ -11785,6 +11817,15 @@ Mods: {
 				EnableSoulsModeMobilityLimit: {
 					// Label: Enable Souls Mode Mobility Limit
 					// Tooltip: Limits extreme running and flight speed while Unkindled or Bearer of the Curse. Classic mode is unaffected. Defaults to On.
+				}
+
+				ActiveShieldsRevamp: {
+					// Label: Active Shields Revamp
+					/* Tooltip:
+						'''
+						Reworks shields into Dark Souls-style active blocking: hold Right Click (with a shield equipped and a weapon that has no right-click function) to raise it and fully block frontal hits at the cost of stamina (or mana, for magic wards).
+						Only functions while Unkindled or Bearer of the Curse. Turn off to keep the classic passive shield behavior. Defaults to On.
+						''' */
 				}
 
 				SoulCounterPosX: {

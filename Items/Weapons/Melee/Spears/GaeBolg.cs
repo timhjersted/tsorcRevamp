@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             //Prevents a bug where, if the player uses this weapon with *exactly* the stamina required, it instantly throws it without letting them charge up
             //This happens constantly if they hold left mouse, as it gets used the instant stamina refills to that level
             int staminaUse = (int)(Item.useAnimation / player.GetAttackSpeed(Item.DamageType));
-            staminaUse = (int)tsorcRevampPlayer.ReduceStamina(staminaUse);
+            staminaUse = (int)(tsorcRevampPlayer.ReduceStamina(staminaUse) * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult);
             if (player.altFunctionUse != 2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < staminaUse * 2)
             {
                 return false;

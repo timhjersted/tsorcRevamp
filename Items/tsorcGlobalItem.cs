@@ -548,11 +548,11 @@ namespace tsorcRevamp.Items
                 player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
             }
             #endregion
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (item.pick != 0 || item.axe != 0 || item.hammer != 0))
+            if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina && (item.pick != 0 || item.axe != 0 || item.hammer != 0))
             {
                 tsorcRevampStaminaPlayer StaminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 int scaledUseAnimation = (int)(item.useAnimation / player.GetAttackSpeed(item.DamageType));
-                StaminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation);
+                StaminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation) * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
             }
         }
 

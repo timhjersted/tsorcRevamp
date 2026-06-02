@@ -118,18 +118,29 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
             // Idle: grounded and essentially stationary -> standing frame.
+            // NOTE: do NOT reset frameCounter here. The AI frequently dips velocity below this threshold
+            // for a frame or two while maneuvering; zeroing the counter on every dip pinned the walk cycle
+            // to frame 1 ("stuck walking"). Holding the counter lets the cycle resume seamlessly.
             if (System.Math.Abs(NPC.velocity.X) < 0.2f)
             {
-                NPC.frameCounter = 0.0;
                 NPC.frame.Y = IdleFrameIndex * frameHeight;
                 return;
             }
-            // Walking -> cycle the walk frames (1 .. frameCount-1), paced by speed.
-            NPC.frameCounter += 0.5 + System.Math.Abs(NPC.velocity.X) * 0.12;
-            int walkFrames = frameCount - 1; // 14 frames when frameCount == 15
-            if (walkFrames < 1) walkFrames = 1;
-            int idx = 1 + (int)(NPC.frameCounter / 6.0) % walkFrames;
-            NPC.frame.Y = idx * frameHeight;
+            // Walking -> the standard vanilla fighter walk cycle over frames 1..frameCount-1, speed-paced.
+            // This matches how the other Valkyrie testbeds animate (AnimationType = Skeleton, no override);
+            // the custom walk math here previously broke it. Only the idle/jump frames above are intentional
+            // custom overrides — the walk itself is back to the known-good vanilla pacing.
+            NPC.frameCounter += 1.0 + System.Math.Abs(NPC.velocity.X) * 0.5;
+            if (NPC.frameCounter > 6.0)
+            {
+                NPC.frame.Y += frameHeight;
+                NPC.frameCounter = 0.0;
+            }
+            int walkIndex = NPC.frame.Y / frameHeight;
+            if (walkIndex < 1 || walkIndex >= frameCount)
+            {
+                NPC.frame.Y = frameHeight; // wrap to the first walk frame (frame 0 is reserved for the jump pose)
+            }
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone) =>

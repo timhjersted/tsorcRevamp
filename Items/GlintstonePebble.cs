@@ -117,7 +117,10 @@ namespace tsorcRevamp.Items
                 if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                 {
                     damage = (int)(damage * 1.2f); //because player.GetDamage(DamageClass.Generic)Mult isnt taking it into accound for some reason :/
-                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 20;
+                }
+                if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
+                {
+                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 20 * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
                 }
 
                 if (player.whoAmI == Main.myPlayer)

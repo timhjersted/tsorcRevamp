@@ -24,8 +24,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void SetDefaults()
         {
-            Item.width = 22;
-            Item.height = 26;
+            Item.width = 24;
+            Item.height = 32;
             Item.accessory = true;
             Item.value = PriceByRarity.Purple_11;
             Item.rare = ItemRarityID.Purple;
@@ -46,8 +46,17 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
+            // Kept in both modes (and in either slot): the stamina-regen and max-mana boosts.
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRegen / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier += MaxManaPercentIncrease;
+
+            // Under Active Shields Revamp this ward blocks on demand (held, via FreeDodge, 360°, mana + a stamina
+            // sip) — no passive mana-tank, no DR, and the damage penalty is dropped so other classes can use it.
+            if (tsorcRevampActiveShieldPlayer.ActiveFor(player))
+            {
+                return;
+            }
+
             player.GetDamage(DamageClass.Ranged) *= 1f - BadDmgMultiplier / 100f;
             player.GetDamage(DamageClass.Magic) *= 1f - BadDmgMultiplier / 100f;
             player.GetDamage(DamageClass.Summon) *= 1f - BadDmgMultiplier / 100f;
