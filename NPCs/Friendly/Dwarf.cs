@@ -141,7 +141,18 @@ namespace tsorcRevamp.NPCs.Friendly
             // Consume the Contract
             player.ConsumeItem(ModContent.ItemType<DwarvenContract>());
             givenContract++;
-            tsorcRevampWorld.DwarvenContractsGiven = givenContract;
+            
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                tsorcRevampWorld.DwarvenContractsGiven = givenContract;
+            }
+            else
+            {
+                ModPacket dwarvenContractPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                dwarvenContractPacket.Write(tsorcPacketID.SyncDwarvenContract);
+                dwarvenContractPacket.Write(givenContract);
+                dwarvenContractPacket.Send();
+            }
 
             // Rewards
             switch (givenContract)

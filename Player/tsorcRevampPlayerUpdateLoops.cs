@@ -2724,6 +2724,11 @@ namespace tsorcRevamp
                     Player.ZoneHallow = true;
                 }
             }
+
+            if (Player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
+            {
+                // TODO: Slightly reduce the volume and pitch of the music when the player is in the abyss
+            }
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame)
