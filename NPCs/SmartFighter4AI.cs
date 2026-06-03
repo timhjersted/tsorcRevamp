@@ -741,7 +741,7 @@ namespace tsorcRevamp.NPCs
             s.PlanIndex = 0;
             s.StepTimer = StepTimeoutFrames;
             s.CommitFrames = 0;
-            s.RopeEngaged = false;
+            s.RopeEngaged = false; s.RopeDirLatched = false; s.RopeDismounting = false;
             s.LastPlanResult = $"rope-fallback {(goUp ? "up" : "down")} toY={bestTargetY} x={bestX}";
             return true;
         }
@@ -920,6 +920,7 @@ namespace tsorcRevamp.NPCs
                 s.StepTimer = StepTimeoutFrames;
                 s.CommitFrames = 0;
                 s.AirCommitTimer = 0;
+                s.RopeEngaged = false; s.RopeDirLatched = false; s.RopeDismounting = false;
                 action = "step-done";
                 reason = $"#{s.PlanIndex - 1}={step.Kind}";
                 return false;
@@ -936,6 +937,7 @@ namespace tsorcRevamp.NPCs
                 s.Plan = null;
                 s.PlanIndex = 0;
                 s.CommitFrames = 0;
+                s.RopeEngaged = false; s.RopeDirLatched = false; s.RopeDismounting = false;
                 action = "step-timeout";
                 reason = $"{step.Kind} target=({step.TargetX},{step.TargetY})";
                 return false;
@@ -973,7 +975,12 @@ namespace tsorcRevamp.NPCs
             float ropeCenter = step.LaunchX * TileF + 8f;
             int feetY = GetFeetTileY(npc);
             bool onRope = npc.noGravity; // we set this true once riding begins
-            bool descend = step.TargetY > feetY; // target below the NPC -> ride down
+            // Travel direction is LATCHED for the step. Recomputing `step.TargetY > feetY` every
+            // frame flips it to false the instant the feet reach the target row, which made the
+            // dismount take the "up" branch and pop the NPC back up a tile — then descend re-armed
+            // and it rode back down: that frame-by-frame flip was the on-rope vibration at the
+            // target. Latch once we commit to the ride (Phase 2) and hold it for the whole step.
+            bool descend = s.RopeDirLatched ? s.RopeDescend : step.TargetY > feetY; // target below -> ride down
 
             // Mark engagement once feet are actually within the rope tiles. Lets the NPC float
             // up to (or drop onto) a rope whose end hangs away from its starting position without
@@ -982,7 +989,7 @@ namespace tsorcRevamp.NPCs
                 s.RopeEngaged = true;
 
             // Reset per-step flags whenever we're grounded and off the rope (fresh entry).
-            if (grounded && !onRope) { s.RopeJumpedThisStep = false; }
+            if (grounded && !onRope) { s.RopeJumpedThisStep = false; s.RopeDirLatched = false; s.RopeDismounting = false; }
 
             // Phase 1: align horizontally with the rope column while grounded.
             if (grounded && !onRope && Math.Abs(npc.Center.X - ropeCenter) > 4f)
@@ -1060,6 +1067,7 @@ namespace tsorcRevamp.NPCs
                     npc.velocity.Y = -Math.Max(vp, 6f);
                     s.AirCommitDirX = 0; s.AirCommitTimer = 0; s.CommittedLaunchVx = 0f;
                     s.CommitFrames = 24;
+                    s.RopeDismounting = true; // don't let Phase 2 re-grab/re-snap while leaving
                     if (forceDismount) s.RopeJumpedThisStep = true;
                     action = "rope-jumpup"; reason = $"rise={rise} p={Math.Max(vp, 6f):F1}";
                     return true;
@@ -1076,6 +1084,7 @@ namespace tsorcRevamp.NPCs
                 s.AirCommitTimer = 14;
                 s.CommittedLaunchVx = 0f;
                 s.CommitFrames = 14;
+                s.RopeDismounting = true; // don't let Phase 2 re-grab/re-snap while stepping off
                 action = descend ? "rope-exit-down" : "rope-exit"; reason = $"toY={step.TargetY} dir={offDir}";
                 return true;
             }
@@ -1087,11 +1096,19 @@ namespace tsorcRevamp.NPCs
             bool atRopeNow = IsRopeTile(step.LaunchX, feetY)
                           || IsRopeTile(step.LaunchX, feetY - 1)
                           || IsRopeTile(step.LaunchX, feetY + 1);
-            if (!onRope && s.RopeEngaged && !atRopeNow)
+            // RopeDismounting: we've already fired an intentional dismount (reached target / ran off
+            // the end / jumped up) this step. Do NOT re-enter Phase 2 even though we're still next to
+            // the rope — Phase 2 hard-snaps X back to the rope center, which was erasing the step-off
+            // and pinning the NPC on the rope (the dismount that "never took"). Let the committed
+            // dismount velocity carry it clear; the step completes once grounded near the target.
+            if (!onRope && (s.RopeDismounting || (s.RopeEngaged && !atRopeNow)))
             {
-                action = "rope-detached"; reason = "off-rope";
+                action = "rope-detached"; reason = s.RopeDismounting ? "dismounting" : "off-rope";
                 return false;
             }
+
+            // Commit the travel direction for the rest of this step now that we're actually riding.
+            if (!s.RopeDirLatched) { s.RopeDescend = descend; s.RopeDirLatched = true; }
 
             // Phase 2: steady vertical ride. noTileCollide lets the body ignore blocks beside the
             // rope (and the solid underside of a destination ledge the rope passes), mimicking how
@@ -1456,6 +1473,22 @@ namespace tsorcRevamp.NPCs
                     action = "gap-halt"; reason = $"infeasible gap={gap},drop={landDrop} g={npc.gravity:F2}";
                     return true;
                 }
+            }
+
+            // Ledge self-catch: a steep drop is directly ahead with no makeable gap across it (the
+            // gap block above didn't fire). A Walk step never legitimately descends a cliff — those
+            // are Drop/JumpGap steps — so a steep drop here means residual momentum (typically from a
+            // jump landing) is about to carry us off. Brake hard to catch ourselves at the edge.
+            // Look one tile farther ahead when moving fast so a high landing speed can be bled off
+            // before the body clears the edge. Shared by Walk steps and the no-plan chase.
+            int lookahead = Math.Abs(npc.velocity.X) > 3f ? 2 : 1;
+            int edgeDrop = GetDropDepth(frontX + direction * (lookahead - 1), feetY, 6);
+            if (drop >= 4 || edgeDrop >= 4)
+            {
+                npc.velocity.X *= 0.3f;
+                if (Math.Abs(npc.velocity.X) < 1f) npc.velocity.X = 0f;
+                action = "cliff-halt"; reason = $"drop={drop} edge={edgeDrop} la={lookahead}";
+                return true;
             }
             action = ""; reason = "";
             return false;
@@ -1824,13 +1857,14 @@ namespace tsorcRevamp.NPCs
                     var rs = s.Plan[s.PlanIndex];
                     int lx = rs.LaunchX;
                     int feetY = GetFeetTileY(npc);
-                    bool descend = rs.TargetY > feetY;
+                    bool descend = s.RopeDirLatched ? s.RopeDescend : rs.TargetY > feetY;
                     bool atEnd = s.RopeEngaged && (descend ? !IsRopeTile(lx, feetY + 1) : !IsRopeTile(lx, feetY - 1));
                     bool reached = descend ? feetY >= rs.TargetY : feetY <= rs.TargetY;
                     ropeStr = $" [rope {(descend ? "DN" : "UP")} toY={rs.TargetY} feetY={feetY} lastFeetY={s.LastRopeFeetY}"
                         + $" ropeU1={IsRopeTile(lx, feetY - 1)} ropeHead={IsRopeTile(lx, feetY - 2)} ropeD1={IsRopeTile(lx, feetY + 1)}"
                         + $" solidU2={IsNavigationSolid(lx, feetY - 2)} solidU3={IsNavigationSolid(lx, feetY - 3)}"
-                        + $" eng={s.RopeEngaged} stall={s.RopeStallFrames} atEnd={atEnd} reached={reached}]";
+                        + $" eng={s.RopeEngaged} latch={s.RopeDirLatched} dismount={s.RopeDismounting}"
+                        + $" stall={s.RopeStallFrames} atEnd={atEnd} reached={reached}]";
                 }
                 string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI}"
                     + $" pos=({npc.Center.X / TileF:F1},{npc.Center.Y / TileF:F1})"
@@ -1884,6 +1918,13 @@ namespace tsorcRevamp.NPCs
             // True once the NPC's feet have actually entered the rope tiles. Lets the NPC float up
             // to a rope whose bottom hangs above its head WITHOUT prematurely triggering atRopeTop.
             public bool RopeEngaged;
+            // Travel direction latched for the current rope step (true = ride down). Prevents the
+            // per-frame descend recompute from flipping at the target row (the vibration source).
+            public bool RopeDirLatched;
+            public bool RopeDescend;
+            // Set once an intentional dismount has fired this step; blocks Phase 2 from re-grabbing
+            // and re-snapping X to the rope center before the step-off velocity can carry it clear.
+            public bool RopeDismounting;
             public string LastPlanResult = "";
             // Recently-failed step targets, mapped to expiry frame. Used by the
             // planner to prefer alternative routes after a step times out.
