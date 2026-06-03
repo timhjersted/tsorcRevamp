@@ -2176,6 +2176,16 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.SyncDwarvenContract:
+                    {
+                        int dwarvenContractsGiven = reader.ReadInt32();
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            tsorcRevampWorld.DwarvenContractsGiven = dwarvenContractsGiven;
+                            NetMessage.SendData(MessageID.WorldData);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.SyncActiveShield:
                     {
                         byte player = reader.ReadByte(); //player.whoAmI
@@ -3812,12 +3822,14 @@ namespace tsorcRevamp
         /// Active Shields Revamp: syncs a player's raised-shield state (isBlocking + shield item type)
         /// so remote clients draw the raised shield and the server can run the body-block authoritatively.
         /// </summary>
+        /// 
         public const byte SyncActiveShield = 22;
 
         /// <summary>
         /// Active Shields Revamp: syncs the contents of a player's "Right-Click" (2nd) item slot.
         /// </summary>
         public const byte SyncRightClickSlot = 23;
+        public const byte SyncDwarvenContract = 24;
     }
 
     //config moved to separate file

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Potions
     public class BoostPotion : ModItem
     {
         public static float MovementSpeedMultiplier = 20f;
-        public static int Duration = 300;
+        public static int Duration = 360;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MovementSpeedMultiplier);
         public override void SetStaticDefaults()
         {
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Potions
         {
             Item.width = 24;
             Item.height = 30;
-            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useStyle = ItemUseStyleID.DrinkLiquid;
             Item.useAnimation = 15;
             Item.useTime = 15;
             Item.useTurn = true;

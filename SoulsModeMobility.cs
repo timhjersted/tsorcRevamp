@@ -11,28 +11,28 @@ namespace tsorcRevamp
         public const int SupersonicWings2Level = 3;
         public const int WingsOfSeathLevel = 4;
 
-        public const float SupersonicBootsRunSpeed = 6.85f;
-        public const float SupersonicWingsRunSpeed = 7.00f;
-        public const float SupersonicWings2RunSpeed = 7.00f;
-        public const float WingsOfSeathRunSpeed = 8.00f;
+        public const float SupersonicBootsRunSpeed = 7f;
+        public const float SupersonicWingsRunSpeed = 7.25f;
+        public const float SupersonicWings2RunSpeed = 7.5f;
+        public const float WingsOfSeathRunSpeed = 8.25f;
 
         public const int SupersonicWings2FlightTime = 600;
         public const int WingsOfSeathFlightTime = 1200;
 
-        public const float SupersonicWingsFlightSpeed = 6.00f;
-        public const float SupersonicWingsFlightAcceleration = 0.10f;
+        public const float SupersonicWingsFlightSpeed = 6.25f;
+        public const float SupersonicWingsFlightAcceleration = 0.12f;
 
-        public const float SupersonicWings2FlightSpeed = 6.25f;
-        public const float SupersonicWings2FlightAcceleration = 0.12f;
+        public const float SupersonicWings2FlightSpeed = 6.55f;
+        public const float SupersonicWings2FlightAcceleration = 0.15f;
 
-        public const float WingsOfSeathFlightSpeed = 7.00f;
-        public const float WingsOfSeathFlightAcceleration = 0.18f;
-        public const float WingsOfSeathHoverFlightSpeed = 7.50f;
-        public const float WingsOfSeathHoverFlightAcceleration = 0.25f;
+        public const float WingsOfSeathFlightSpeed = 7.25f;
+        public const float WingsOfSeathFlightAcceleration = 0.2f;
+        public const float WingsOfSeathHoverFlightSpeed = 7.75f;
+        public const float WingsOfSeathHoverFlightAcceleration = 0.26f;
 
-        public const float GlobalRunSpeedCap = 8.00f;
-        public const float GlobalFlightSpeedCap = 8.00f;
-        public const float GlobalFlightAccelerationCap = 0.30f;
+        public const float GlobalRunSpeedCap = 10.00f;
+        public const float GlobalFlightSpeedCap = 10.00f;
+        public const float GlobalFlightAccelerationCap = 0.32f;
 
         public static bool Enabled(Player player)
         {
