@@ -554,47 +554,62 @@ namespace tsorcRevamp.NPCs
                 }
 
                 // ---- ROPE-CLIMB edges ----
-                // For each column in span A, look for a rope tile column going up
-                // far enough to reach another span. Rope climbing is cheaper than
-                // jumping for tall climbs and uses no jump cooldown.
+                // Model what a PLAYER can actually do with a rope, so the NPC only commits to ropes it can truly
+                // use to get off toward the player. A rope is only a valid edge to span bb if bb is reachable by
+                // one of the two real dismount options:
+                //   (1) SIDE EXIT — the rope runs up PAST a ledge/platform; ride to that level and step off
+                //       left/right onto it. Works at ANY height the rope passes a standable ledge.
+                //   (2) TOP JUMP-UP — at the rope's top there's a jump-through platform above with room to land
+                //       on top; ride to the top and jump straight up onto it. Requires a CLEAR (no solid)
+                //       vertical path — you can never jump up through a solid block, so that's never valid.
+                // Multiple valid exits along one rope => A* naturally picks the one on the cheapest path to the
+                // player's span (i.e. the floor the player is nearest).
                 for (int x = a.LeftX - 1; x <= a.RightX + 1; x++)
                 {
-                    // Robust rope detection: the rope's bottom may hang a few tiles above this
-                    // span's floor (HasRopeColumn required a rope tile at feetY-1 and missed those).
-                    if (!FindRopeSpan(x, a.Y, 5, out int _, out int ropeTopY)) continue;
-                    if (ropeTopY >= a.Y) continue; // rope must extend above the span to climb
-                    // Find a span we can step off the rope onto. Two cases:
-                    //   (1) a ledge at/near the rope top (±2 rows) → sideways dismount.
-                    //   (2) a platform DIRECTLY ABOVE the rope top, within vertical jump reach,
-                    //       whose horizontal extent covers the rope column → climb then jump
-                    //       straight up onto it (ExecRopeClimb handles the rope-top jump).
+                    if (!FindRopeSpan(x, a.Y, 5, out int ropeBottomY, out int ropeTopY)) continue;
+                    if (ropeTopY >= a.Y) continue; // rope must extend above this span to climb
                     foreach (var bb in spans)
                     {
                         if (bb == a) continue;
                         int dyClimb = a.Y - bb.Y;
                         if (dyClimb < 2 || dyClimb > MaxRopeClimb) continue;
-                        // The rope column must sit under (or at the edge of) the landing span.
-                        if (x < bb.LeftX - 1 || x > bb.RightX + 1) continue;
+                        if (x < bb.LeftX - 1 || x > bb.RightX + 1) continue; // rope must sit under/adjacent the landing span
 
-                        bool sideAtTop = Math.Abs(bb.Y - ropeTopY) <= 2;
-                        int aboveTop = ropeTopY - bb.Y; // > 0 means bb is above the rope top
-                        bool jumpAboveTop = aboveTop >= 1
-                            && ComputeJumpArc(0, aboveTop, _planGravity, _planJumpCeil, _planMaxLaunchVx, out _, out _);
-                        if (!sideAtTop && !jumpAboveTop) continue;
+                        bool valid = false;
+                        int extra = 0;
+                        int landX = x;
 
+                        if (bb.Y >= ropeTopY && bb.Y <= ropeBottomY && RopeSideExitClear(x, bb))
+                        {
+                            // Case 1: ride up to bb's level, step off sideways onto the ledge.
+                            valid = true;
+                            landX = x < bb.LeftX ? bb.LeftX : (x > bb.RightX ? bb.RightX : x);
+                        }
+                        else if (bb.Y < ropeTopY)
+                        {
+                            // Case 2: ride to the rope top, jump straight up onto the platform above it.
+                            int jumpRise = ropeTopY - bb.Y;
+                            if (jumpRise >= 1 && RopeTopJumpClear(x, ropeTopY, bb)
+                                && ComputeJumpArc(0, jumpRise, _planGravity, _planJumpCeil, _planMaxLaunchVx, out _, out _))
+                            {
+                                valid = true;
+                                extra = 2 + jumpRise; // top jumps cost a bit more than a plain side step
+                                landX = Math.Clamp(x, bb.LeftX, bb.RightX);
+                            }
+                        }
+
+                        if (!valid) continue;
                         int badP = BadEdgePenalty(x, bb.Y, badEdges);
-                        // Rope climb has no jump cooldown — keep its cost low so the planner
-                        // prefers ropes for tall climbs. A rope-top jump costs a little more.
-                        int extra = jumpAboveTop && !sideAtTop ? 2 + aboveTop : 0;
-                        a.Edges.Add(new Edge(bb, EdgeKind.RopeClimb, 3 + dyClimb / 2 + extra + badP, x, x));
-                        break;
+                        // No break: register an edge to EVERY valid exit on this rope (each floor / the top jump).
+                        // A* then picks the exit on the cheapest path to the player — i.e. the floor nearest them.
+                        a.Edges.Add(new Edge(bb, EdgeKind.RopeClimb, 3 + dyClimb / 2 + extra + badP, x, landX));
                     }
                 }
             }
         }
 
         // Max climbable rope length (tiles). Generous so very tall ropes are fully traversable.
-        private const int MaxRopeClimb = 100;
+        private const int MaxRopeClimb = 200; // generous so very tall ropes (100+ tiles) are detected & climbable in one go
         private const float RopeClimbSpeed = 3.2f; // px/frame vertical ride speed
 
         // A rope column has rope tiles for at least 3 contiguous rows above feetY.
@@ -641,6 +656,34 @@ namespace tsorcRevamp.NPCs
             for (int y = seed - 1; y >= seed - MaxRopeClimb; y--) { if (IsRopeTile(x, y)) t = y; else break; }
             if (b - t < 2) return false; // need at least 3 contiguous rope tiles
             bottomY = b; topY = t;
+            return true;
+        }
+
+        // Case 1 validation — can step sideways off a rope (column ropeCol) onto span bb at bb's level. The tile
+        // beside the rope toward bb must be standable (floor below + body clearance) so the NPC walks straight off
+        // onto the ledge. Returns false if bb is directly above the rope (that's a jump-up, not a side step).
+        private static bool RopeSideExitClear(int ropeCol, Span bb)
+        {
+            int sideX = ropeCol < bb.LeftX ? bb.LeftX : (ropeCol > bb.RightX ? bb.RightX : ropeCol);
+            if (sideX == ropeCol) return false; // bb sits over the rope column — not a sideways exit
+            return IsStandableTile(sideX, bb.Y + 1) && HasBodyClearanceAtRow(sideX, bb.Y);
+        }
+
+        // Case 2 validation — from the rope top, can jump straight up onto span bb above it. The vertical path
+        // must be free of SOLID tiles (jump-through platforms are fine — you can pass up through them), and there
+        // must be room to land/stand on bb: a 3-wide x 2-tall clear footprint over a standable floor at the rope
+        // column. A solid block anywhere in the path makes this impossible (you can't jump through solid).
+        private static bool RopeTopJumpClear(int ropeCol, int ropeTopY, Span bb)
+        {
+            for (int y = ropeTopY - 1; y >= bb.Y; y--)
+            {
+                if (IsNavigationSolid(ropeCol, y)) return false; // solid in the way — can't jump through it
+            }
+            if (!IsStandableTile(ropeCol, bb.Y + 1)) return false; // must actually land on the platform above the rope
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                if (IsNavigationSolid(ropeCol + dx, bb.Y) || IsNavigationSolid(ropeCol + dx, bb.Y - 1)) return false;
+            }
             return true;
         }
 
@@ -958,6 +1001,12 @@ namespace tsorcRevamp.NPCs
                 : !IsRopeTile(step.LaunchX, feetY - 1));
             bool reachedTarget = descend ? feetY >= step.TargetY : feetY <= step.TargetY;
 
+            // Climbing up into a SOLID (non-rope) ceiling at head height. The ride uses noTileCollide so the
+            // body would otherwise phase up into the blocks above the rope. Treat this as a stop point so the
+            // dismount logic resolves it instead of riding into the solid.
+            bool ceilingCapped = !descend && s.RopeEngaged
+                && IsNavigationSolid(step.LaunchX, feetY - 2) && !IsRopeTile(step.LaunchX, feetY - 2);
+
             // Stall detection: blocked in the travel direction with no progress.
             bool noProgress = descend ? feetY <= s.LastRopeFeetY : feetY >= s.LastRopeFeetY;
             bool blocked = onRope && npc.collideY && noProgress;
@@ -965,13 +1014,27 @@ namespace tsorcRevamp.NPCs
             else s.RopeStallFrames = 0;
             bool forceDismount = s.RopeStallFrames > 12;
 
-            // Phase 3: dismount — reached target, ran off the rope end, or stalled.
-            if (onRope && (reachedTarget || atRopeEnd || forceDismount))
+            // Phase 3: dismount — reached target, ran off the rope end, hit a ceiling, or stalled.
+            if (onRope && (reachedTarget || atRopeEnd || forceDismount || ceilingCapped))
             {
                 npc.noGravity = false;
                 npc.noTileCollide = false; // re-enable collision before any horizontal dismount motion
                 s.RopeStallFrames = 0;
                 int rise = feetY - step.TargetY; // > 0 means the target is still above us
+
+                // DEAD END (up): a solid ceiling is above us and we have NOT reached the (higher) target — this
+                // rope physically can't deliver us there (the planner aimed at a span sitting above solid blocks).
+                // Abandon the route and replan instead of looping dismount<->re-grab at the rope top, which is the
+                // on-rope vibration, with the head stuck phasing in the ceiling. Bad-edge it so we don't immediately
+                // retry the same dead-end rope.
+                if (!descend && !reachedTarget && IsNavigationSolid(step.LaunchX, feetY - 2))
+                {
+                    s.BadEdgeTargets[(step.TargetX, step.TargetY)] = (int)Main.GameUpdateCount + 480;
+                    s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0;
+                    s.RopeEngaged = false;
+                    action = "rope-deadend"; reason = $"toY={step.TargetY} ropeTop~{feetY} solidAbove";
+                    return false;
+                }
 
                 // Second forced dismount = real ceiling/floor block, not a jump-through platform.
                 if (forceDismount && s.RopeJumpedThisStep)
@@ -1360,7 +1423,10 @@ namespace tsorcRevamp.NPCs
                         return true;
                     }
                 }
-                if (oh <= 4 && HasHeadroomForJump(npc, direction, oh))
+                // Cap raised 4 -> 6 to match this NPC's jump power (MaxJumpPower 9 ≈ 8 tiles of height).
+                // It was giving up ("too-tall") on walls it can actually clear; ComputeJumpArc still gates
+                // feasibility, so an unmakeable jump falls through to the blocked brake below.
+                if (oh <= 6 && HasHeadroomForJump(npc, direction, oh))
                 {
                     if (ComputeJumpArc(2, oh, npc.gravity, jumpCeil, maxLaunchVx, out float op, out float ovx))
                     {
@@ -1370,7 +1436,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
                 npc.velocity.X *= 0.4f;
-                action = "blocked"; reason = oh > 4 ? "too-tall" : "no-headroom";
+                action = "blocked"; reason = oh > 6 ? "too-tall" : "no-headroom";
                 return true;
             }
             int drop = GetDropDepth(frontX, feetY, 6);
@@ -1722,7 +1788,11 @@ namespace tsorcRevamp.NPCs
             bool attack, string action, string reason)
         {
             int now = (int)Main.GameUpdateCount;
-            if (now - _lastLogTick < 12) return;
+            // Sample finer while on/working a rope so fast vibration & phasing are actually captured between lines.
+            bool ropeContext = npc.noGravity
+                || (s.Plan != null && s.PlanIndex < s.Plan.Count && s.Plan[s.PlanIndex].Kind == StepKind.RopeClimb);
+            int interval = ropeContext ? 3 : 12;
+            if (now - _lastLogTick < interval) return;
             _lastLogTick = now;
             try
             {
@@ -1740,6 +1810,28 @@ namespace tsorcRevamp.NPCs
                         planStr += $" {st.Kind}->{st.TargetX},{st.TargetY}@launch{st.LaunchX}";
                     }
                 }
+
+                // Rope diagnostics: the exact tile state around the NPC at the rope column, so we can see WHY it
+                // vibrates / phases. Key tells:
+                //  - solidU2/solidU3 = a solid (non-rope) block at head height while still climbing (noGravity) =>
+                //    it's phasing the body up into blocks above the rope.
+                //  - ropeU1/ropeHead/ropeD1 = where the rope actually ends relative to the feet.
+                //  - eng/stall/lastFeetY + the feetY trend across lines = whether the ride is progressing or
+                //    flip-flopping (dismount->regrab). atEnd/reached show which dismount branch is about to fire.
+                string ropeStr = "";
+                if (s.Plan != null && s.PlanIndex < s.Plan.Count && s.Plan[s.PlanIndex].Kind == StepKind.RopeClimb)
+                {
+                    var rs = s.Plan[s.PlanIndex];
+                    int lx = rs.LaunchX;
+                    int feetY = GetFeetTileY(npc);
+                    bool descend = rs.TargetY > feetY;
+                    bool atEnd = s.RopeEngaged && (descend ? !IsRopeTile(lx, feetY + 1) : !IsRopeTile(lx, feetY - 1));
+                    bool reached = descend ? feetY >= rs.TargetY : feetY <= rs.TargetY;
+                    ropeStr = $" [rope {(descend ? "DN" : "UP")} toY={rs.TargetY} feetY={feetY} lastFeetY={s.LastRopeFeetY}"
+                        + $" ropeU1={IsRopeTile(lx, feetY - 1)} ropeHead={IsRopeTile(lx, feetY - 2)} ropeD1={IsRopeTile(lx, feetY + 1)}"
+                        + $" solidU2={IsNavigationSolid(lx, feetY - 2)} solidU3={IsNavigationSolid(lx, feetY - 3)}"
+                        + $" eng={s.RopeEngaged} stall={s.RopeStallFrames} atEnd={atEnd} reached={reached}]";
+                }
                 string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI}"
                     + $" pos=({npc.Center.X / TileF:F1},{npc.Center.Y / TileF:F1})"
                     + $" player=({player.Center.X / TileF:F1},{player.Center.Y / TileF:F1})"
@@ -1750,7 +1842,8 @@ namespace tsorcRevamp.NPCs
                     + $" stepT={s.StepTimer} commit={s.CommitFrames} air={s.AirCommitDirX}/{s.AirCommitTimer}"
                     + $" rcd={s.ReplanCooldown} pdrop={s.PlatformPassActive}/{s.PlatformPassTimer}"
                     + $" plan=\"{s.LastPlanResult}\""
-                    + $" action={action} reason={reason} attack={attack}";
+                    + $" action={action} reason={reason} attack={attack}"
+                    + ropeStr;
                 File.AppendAllText(path, line + Environment.NewLine);
             }
             catch { }
