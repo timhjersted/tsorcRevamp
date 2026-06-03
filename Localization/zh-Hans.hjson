@@ -8126,8 +8126,13 @@ Mods: {
 			}
 
 			SoulOfOccultist: {
-				// DisplayName: Soul Of Occultist
-				// Tooltip: ""
+				// DisplayName: Soul of the Occultist
+				// Tooltip: "'The essence of dark magic from the remains of Oolacile'"
+			}
+
+			AbyssalFabric: {
+				// DisplayName: Abyssal Fabric
+				// Tooltip: A fine and rare cloth from the abyss capable of resonating with the darkness.
 			}
 		}
 
@@ -9161,6 +9166,11 @@ Mods: {
 					Increases life regeneration and slightly reduces aggro
 					''' */
 			}
+
+			PlaguesmithBuff: {
+				// DisplayName: Plaguesmith Buff
+				// Description: Mods.tsorcRevamp.Buffs.PlaguesmithBuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -9884,6 +9894,8 @@ Mods: {
 			// YianBlaze2.DisplayName: Yian Blaze2
 			// YianBlaze.DisplayName: Yian Blaze
 			// DiamondCrusherShockwave.DisplayName: Diamond Crusher Shockwave
+			// AbyssBreath.DisplayName: Abyss Breath
+			// AbyssFlames.DisplayName: Abyss Flames
 		}
 
 		NPCs: {
@@ -11532,6 +11544,8 @@ Mods: {
 			LeonhardRemix.DisplayName: 李奥纳德
 			TrueDeath.DisplayName: 死神
 			// DarkCloudShadow.DisplayName: Dark Cloud Shadow
+			// AbyssLurker.DisplayName: Abyss Lurker
+			// OmnirsPlaguesmith.DisplayName: Omnirs Plaguesmith
 		}
 
 		Prefixes: {

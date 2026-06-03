@@ -2050,6 +2050,16 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.SyncDwarvenContract:
+                    {
+                        int dwarvenContractsGiven = reader.ReadInt32();
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            tsorcRevampWorld.DwarvenContractsGiven = dwarvenContractsGiven;
+                            NetMessage.SendData(MessageID.WorldData);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -3652,6 +3662,7 @@ namespace tsorcRevamp
         public const byte SpawnNPCLunarTowerNebula = 18;
         public const byte SpawnNPCLunarTowerStardust = 19;
         public const byte SpawnNPCLunarTowerSolar = 20;
+        public const byte SyncDwarvenContract = 24;
     }
 
     //config moved to separate file

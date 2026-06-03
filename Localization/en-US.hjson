@@ -9903,6 +9903,8 @@ Mods: {
 			YianBlaze2.DisplayName: Yian Blaze2
 			YianBlaze.DisplayName: Yian Blaze
 			DiamondCrusherShockwave.DisplayName: Diamond Crusher Shockwave
+			AbyssBreath.DisplayName: Abyss Breath
+			AbyssFlames.DisplayName: Abyss Flames
 		}
 
 		NPCs: {
@@ -11550,6 +11552,8 @@ Mods: {
 			LeonhardRemix.DisplayName: Leonhard
 			TrueDeath.DisplayName: Absolute Death
 			DarkCloudShadow.DisplayName: Dark Cloud Shadow
+			AbyssLurker.DisplayName: Abyss Lurker
+			OmnirsPlaguesmith.DisplayName: Omnirs Plaguesmith
 		}
 
 		Prefixes: {
