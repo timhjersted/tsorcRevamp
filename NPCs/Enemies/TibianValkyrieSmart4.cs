@@ -62,7 +62,9 @@ namespace tsorcRevamp.NPCs.Enemies
             // Spear throw velocity bumped 8 -> 11: the ballistic solver under-threw (landed at the
             // NPC's feet) when the player was above and far. More launch speed extends the arc so
             // shots reach an elevated player; if still short, the player is simply out of range.
-            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 11, shootSound: SoundID.Item17);
+            // overshoot (0,-16): aim ~1 tile ABOVE the player so standoff shots clear the ledge the
+            // player stands on instead of grazing its lip (the "aim a bit low" report). Tunable.
+            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 11, shootSound: SoundID.Item17, overshoot: new Vector2(0, -16));
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.NavigationTier = 0;
@@ -70,6 +72,14 @@ namespace tsorcRevamp.NPCs.Enemies
             globalNPC.MaxJumpBoost = 5f;
             globalNPC.WeakTeleport = false;
             globalNPC.CanStopToFire = false;
+
+            // Patrol/Pursue FSM (Phase 1) — full pathfinding + observable give-up/patrol for testing.
+            globalNPC.NavSearchRadius = 80;        // full A* window (testbed wants smart nav)
+            globalNPC.NavGiveUpTicks = 90;         // ~1.5s of no-LOS-no-progress before disengaging
+            globalNPC.RemembersLastKnownPos = true; // investigate last-seen spot before patrolling
+            globalNPC.PatrolMode = PatrolMode.Pace;
+            globalNPC.PatrolAnchorSource = PatrolAnchorSource.GiveUpLocation; // sweep around where it lost the player
+            globalNPC.PatrolRange = 25;            // Pace sweeps +/-25 tiles around the anchor (both sides)
 
             globalNPC.Aggression = 0.6f;
             globalNPC.Patience = 1.2f;

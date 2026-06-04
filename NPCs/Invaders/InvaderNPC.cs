@@ -219,7 +219,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>
         /// Run the ground-movement AI for this invader.  Defaults to the project's classic
         /// FighterAI (supports teleport / dodgeroll / pounce).  Subclasses can override to
-        /// swap in a different driver — e.g. <c>SmartFighter3AI.Run</c> — without touching
+        /// swap in a different driver — e.g. <c>SmartFighter4AI.Run</c> — without touching
         /// the base flow.  Called once per tick from <see cref="AI"/> while grounded.
         /// </summary>
         protected virtual void RunMovementAI(float speedMult)

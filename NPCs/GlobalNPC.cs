@@ -51,6 +51,30 @@ using tsorcRevamp;
 
 namespace tsorcRevamp.NPCs
 {
+    // === Patrol/Pursue FSM enums (namespace-scoped so the matching fields on tsorcRevampGlobalNPC
+    // can share the type name via C#'s "Color Color" rule). See
+    // Documentation/PatrolPursue_and_NavTier_Removal.md. ===
+    public enum PursuitState
+    {
+        Pursue, // has LOS, or a valid target + making progress
+        Search, // lost LOS: move to LastKnownPlayerPos and look around (gated by RemembersLastKnownPos)
+        Patrol  // gave up: calm patrol around an anchor, no pursuit jumps
+    }
+
+    public enum PatrolMode
+    {
+        Idle,          // mostly stand; occasional short walk routine
+        Pace,          // walk back and forth within a leg around the anchor
+        Wander,        // commit to a direction for many tiles before reconsidering
+        ReturnToSpawn  // walk back to the spawn anchor, then idle there
+    }
+
+    public enum PatrolAnchorSource
+    {
+        SpawnPoint,    // patrol around where the NPC spawned (recorded on first tick)
+        GiveUpLocation // patrol around where pursuit was abandoned
+    }
+
     public partial class tsorcRevampGlobalNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
@@ -317,6 +341,39 @@ namespace tsorcRevamp.NPCs
         public string LastWaypointResult = "none";
         public int WaypointSearchFailures = 0;
         public int LastNavDebugLogTick = 0;
+
+        // === Patrol/Pursue FSM state (Phase 1 — see Documentation/PatrolPursue_and_NavTier_Removal.md) ===
+        // Defaults reproduce a dumb chase-on-sight enemy. Per-enemy levers override in SetDefaults.
+        public PursuitState PursuitState = PursuitState.Pursue;
+        // Give-up clock: ticks of FAILED pursuit (no LOS AND not progressing toward the player/last-known).
+        // Resets on LOS or clear progress. Disengages when it exceeds NavGiveUpTicks. (Replaces BoredTimer.)
+        public int DisengageTimer = 0;
+        // Last position the NPC had line of sight to the player; target for the Search state.
+        public Vector2 LastKnownPlayerPos = Vector2.Zero;
+
+        // -- Deterministic intelligence levers --
+        // SF4 A* search-window radius in tiles. 0 = no global pathfinding (chase-on-sight + give up);
+        // ~16-24 = routes around local dead ends (needs radius >= dead-end depth); 40-50 = solves mazes.
+        // Smaller is both dumber and cheaper. NOTE: size != intelligence (size -> clearance, handled automatically).
+        public int NavSearchRadius = 0;
+        // DisengageTimer threshold. Short = skittish (gives up fast); long = relentless hunter.
+        public int NavGiveUpTicks = 600;
+        // When true, on losing LOS the NPC investigates LastKnownPlayerPos (Search) before patrolling.
+        public bool RemembersLastKnownPos = false;
+
+        // -- Patrol configuration --
+        public PatrolMode PatrolMode = PatrolMode.Idle;
+        public PatrolAnchorSource PatrolAnchorSource = PatrolAnchorSource.SpawnPoint;
+        // Leash radius (tiles) for Pace/Wander around PatrolAnchor.
+        public int PatrolRange = 30;
+        // World-space anchor the patrol centres on; set per PatrolAnchorSource.
+        public Vector2 PatrolAnchor = Vector2.Zero;
+        public bool PatrolAnchorSet = false;
+
+        // -- Patrol working state (managed by NavBehavior) --
+        public int PatrolDirection = 0;     // current patrol facing (-1 / +1)
+        public int PatrolLegRemaining = 0;  // tiles left on the current leg before reconsidering direction
+        public int PatrolIdleTimer = 0;     // sub-timer driving the idle stand/walk routine
 
         public bool needsNetUpdate;
         public float ProjectileTimer;

@@ -164,7 +164,7 @@ namespace tsorcRevamp.NPCs
 
                         // Standing-fire roll: tier-2 NPCs may plant their feet and fire N shots
                         // before resuming pursuit. High Aggression skips this; high Patience adds shots.
-                        if (globalNPC.CanStopToFire && globalNPC.NavigationTier >= 2 && globalNPC.FighterRangedStandShotsRemaining == 0
+                        if (globalNPC.CanStopToFire && globalNPC.FighterRangedStandShotsRemaining == 0
                             && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float stopBeforeChance = GetStandingFireChance(globalNPC, 0.1f);
@@ -861,7 +861,7 @@ namespace tsorcRevamp.NPCs
             {
                 globalNPC.FighterPostAttackPauseTimer--;
             }
-            if (globalNPC.CanStopToFire && !globalNPC.CanPassThroughWalls && globalNPC.NavigationTier >= 2 && (globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0) && lineOfSight && npc.velocity.Y == 0f && !globalNPC.Fleeing)
+            if (globalNPC.CanStopToFire && !globalNPC.CanPassThroughWalls && (globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0) && lineOfSight && npc.velocity.Y == 0f && !globalNPC.Fleeing)
             {
                 inStandoff = true;
                 if (globalNPC.FighterRangedStandShotsRemaining > 0)
@@ -1559,8 +1559,9 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            // Double jump: apex-triggered mid-air second jump for capable enemies
-            if (globalNPC.CanDoubleJump && !globalNPC.UsedDoubleJump && globalNPC.NavigationTier >= 1)
+            // Double jump: apex-triggered mid-air second jump for capable enemies.
+            // Gated purely by the CanDoubleJump bool (default false) — tier-independent.
+            if (globalNPC.CanDoubleJump && !globalNPC.UsedDoubleJump)
             {
                 // Fire when clearly falling (player is still above us) — velocity.Y > 1.5f avoids
                 // triggering on the first few frames after stepping off a ledge
@@ -2190,7 +2191,7 @@ namespace tsorcRevamp.NPCs
                     // Standing-fire roll: on the first frame of the telegraph window, tier-2 NPCs
                     // may commit to firing N shots in a row without resuming movement.
                     // Aggression lowers the chance to stand; Patience raises the burst count.
-                    if (globalNPC.CanStopToFire && globalNPC.NavigationTier >= 2 && globalNPC.FighterRangedStandShotsRemaining == 0
+                    if (globalNPC.CanStopToFire && globalNPC.FighterRangedStandShotsRemaining == 0
                         && globalNPC.ProjectileTimer == globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime + 1
                         && Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -2241,7 +2242,9 @@ namespace tsorcRevamp.NPCs
         public static void RegisterFighterAttack(NPC npc, int attacksBeforePause = 4, int pauseTicks = 60)
         {
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.NavigationTier < 2)
+            // Post-attack pauses only matter for stop-to-fire enemies (the standoff branch in BasicAI
+            // requires CanStopToFire). Gated by the bool now, not NavigationTier — tier-independent.
+            if (!globalNPC.CanStopToFire)
             {
                 return;
             }

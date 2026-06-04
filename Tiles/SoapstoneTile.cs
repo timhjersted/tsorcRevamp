@@ -72,16 +72,17 @@ namespace tsorcRevamp.Tiles
                 float distance = Vector2.Distance(Main.LocalPlayer.Center, worldPosition);
                 float mouseDistance = Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, worldPosition);
 
-                bool mouseLineOfSight = (Collision.CanHitLine(Main.LocalPlayer.Center, 1, 1, worldPosition, 1, 1));
-                if (entity.read)
-                {
-                    mouseLineOfSight = true;
-                }
-
                 bool selectedSoapstone = false;
-                // slightly reduced from 240 so the button only appears when the player is closer.
-                bool mouseInRange = mouseDistance < 200 && mouseLineOfSight;
-                bool playerInRange = distance <= 40;
+                // Distances are center-to-center. ~+28px covers player/tile half-sizes, so a 64px
+                // center range ≈ "standing adjacent" (an edge gap of ~32px). The old 40px check
+                // measured center-to-center too, which missed signs the player was standing right
+                // below (center distance there is ~60px even at a 32px edge gap).
+                bool playerInRange = distance <= 64;
+                // Mouse reveal: the cursor is essentially on the sign. No line-of-sight requirement —
+                // the previous LOS check was computed from the player's center, so standing right
+                // beside/below a sign with a tile in between made LOS false and the button vanished
+                // for the very sign you were touching (while a farther sign with clear LOS still showed).
+                bool mouseInRange = mouseDistance <= 48;
                 // banner fires at a slightly larger radius than the soapstone button.
                 bool locationBannerInRange = distance <= 80;
 
@@ -123,12 +124,36 @@ namespace tsorcRevamp.Tiles
                     selectedSoapstone = true;
                 }
 
-                //Main.NewText("soap " + tsorcRevamp.NearbySoapstoneMouse);
-                //If the mouse is already nearby a soapstone
-                if (!categoryDisabled && tsorcRevamp.NearbySoapstoneMouse)
+                // Selection runs once per on-screen soapstone per frame. NearbySoapstoneMouse /
+                // NearbySoapstoneMouseDistance are reset each frame in PostUpdateEverything, so the
+                // logic below picks a single global winner regardless of tile draw order.
+                if (!categoryDisabled)
                 {
-                    //If the mouse is closer to this soapstone than to the previous one, set this as the current soapstone
-                    if (mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance && mouseInRange && distance < 600)
+                    // Mouse takes priority: the soapstone whose center the cursor is closest to wins.
+                    // Checking mouseDistance against the running minimum means a later sign with the
+                    // mouse closer still overrides an earlier one, and a player-proximity pick can be
+                    // overridden by a mouse pick (but never the reverse).
+                    if (mouseInRange && mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance)
+                    {
+                        selectedSoapstone = true;
+                        tsorcRevamp.NearbySoapstone = entity;
+                        tsorcRevamp.NearbySoapstoneMouse = true;
+                        tsorcRevamp.NearbySoapstoneMouseDistance = mouseDistance;
+                        if (!entity.hidden)
+                        {
+                            Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
+                        }
+                        if (keepOpen) entity.timer = 25;
+                        // Only auto-mark as read on proximity if the bubble actually opens.
+                        // When AutoOpen is off, read is set on click (see Systems display).
+                        if (autoOpen) entity.read = true;
+                        entity.nearPlayer = true;
+                    }
+                    // Player proximity is an independent trigger, used only when no soapstone has
+                    // claimed the mouse this frame. This is the fix for the button not appearing
+                    // while standing right next to a sign: it is no longer gated behind the mouse
+                    // latch, so simply being near reveals the button.
+                    else if (!tsorcRevamp.NearbySoapstoneMouse && playerInRange)
                     {
                         selectedSoapstone = true;
                         tsorcRevamp.NearbySoapstone = entity;
@@ -136,33 +161,10 @@ namespace tsorcRevamp.Tiles
                         {
                             Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
                         }
-
-                        tsorcRevamp.NearbySoapstoneMouse = true;
-                        tsorcRevamp.NearbySoapstoneMouseDistance = mouseDistance;
                         if (keepOpen) entity.timer = 25;
-                        // Only auto-mark as read on proximity if the bubble actually opens.
-                        // When AutoOpen is off, read is set on click (see Systems display).
                         if (autoOpen) entity.read = true;
                         entity.nearPlayer = true;
                     }
-                }
-                else if (!categoryDisabled && (playerInRange || (mouseInRange && distance < 200)))
-                {
-                    selectedSoapstone = true;
-                    tsorcRevamp.NearbySoapstone = entity;
-                    if (!entity.hidden)
-                    {
-                        Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
-                    }
-
-                    if (mouseInRange)
-                    {
-                        tsorcRevamp.NearbySoapstoneMouse = true;
-                        tsorcRevamp.NearbySoapstoneMouseDistance = mouseDistance;
-                    }
-                    if (keepOpen) entity.timer = 25;
-                    if (autoOpen) entity.read = true;
-                    entity.nearPlayer = true;
                 }
 
 

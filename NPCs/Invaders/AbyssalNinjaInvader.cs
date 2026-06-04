@@ -53,13 +53,17 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override float FlightHpEscalationFrac  => 0.55f;
 
         // ── Movement AI ───────────────────────────────────────────────────────────
-        // Use the project's newer SmartFighter3AI movement driver — better waypoint navigation,
-        // ledge handling, and stuck-recovery than the legacy FighterAI default.  Note: this
-        // path doesn't support canDodgeroll / canPounce — the ninja trades those for cleaner
-        // pathfinding.  Override RunMovementAI again in a subclass to switch back if needed.
+        // Use the project's SmartFighter4AI movement driver — A* span-graph pathfinding with
+        // rope climbing, ledge self-catch, and stuck-recovery, far ahead of the legacy FighterAI
+        // default.  Note: this path doesn't support canDodgeroll / canPounce — the ninja trades
+        // those for cleaner pathfinding.  Override RunMovementAI again in a subclass to switch back.
         protected override void RunMovementAI(float speedMult)
         {
-            SmartFighter3AI.Run(NPC,
+            // Smart hunter: full A* search window + investigates last-known position before giving up.
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.NavSearchRadius = 80;
+            g.RemembersLastKnownPos = true;
+            SmartFighter4AI.Run(NPC,
                 topSpeed:           TopSpeed * speedMult,
                 acceleration:       Acceleration,
                 doorBreakingDamage: 4,
