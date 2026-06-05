@@ -33,6 +33,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 8000; // life / 2.5 : was 1043 w 3k health
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DarkBloodKnightBanner>();
+
+            // Step 6 archer levers: blink to elevated firing spots, reposition toward last-known before patrolling.
+            tsorcRevampGlobalNPC archerGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            archerGlobalNPC.PrefersHighGround = true;
+            archerGlobalNPC.RemembersLastKnownPos = true;
         }
 
 

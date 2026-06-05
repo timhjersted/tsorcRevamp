@@ -2026,7 +2026,7 @@ namespace tsorcRevamp
         {
             if (Unkindled && manaConsumed > 0)
             {
-                unkindledManaDelayTimer = 1800; // 30 seconds (1800 ticks at 60fps)
+                unkindledManaDelayTimer = 3600; // 60 seconds (3600 ticks at 60fps)
             }
         }
 
@@ -2044,7 +2044,7 @@ namespace tsorcRevamp
             Player.statMana = System.Math.Max(0, Player.statMana - amount);
             if (Unkindled)
             {
-                unkindledManaDelayTimer = 1800;
+                unkindledManaDelayTimer = 3600;
             }
         }
 

@@ -35,6 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             tsorcRevampGlobalNPC sprogletGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             sprogletGlobalNPC.Cowardice = 0.1f; //low cowardice
+            sprogletGlobalNPC.PatrolMode = NPCs.PatrolMode.Wander; // Step 6: roam when it gives up
 
 
             if (Main.hardMode)

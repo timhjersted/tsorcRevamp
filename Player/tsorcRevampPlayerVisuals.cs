@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -619,33 +619,60 @@ namespace tsorcRevamp
             #region stamina bar
             if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
-                float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
-                float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
-                float staminaPercentage = (float)staminaCurrent / staminaMax;
-                if (staminaPercentage < 1f && !drawPlayer.dead)
+                var config = ModContent.GetInstance<tsorcRevampConfig>();
+                if (!config.HideOverheadStaminaBar)
                 {
-                    float abovePlayer = 45f; //how far above the player should the bar be?
-                    Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
-                    Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
+                    float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+                    float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+                    float staminaPercentage = staminaCurrent / staminaMax;
+                    float visualStamina = tsorcRevampSystems.visualStamina;
+                    if (visualStamina < 0f || visualStamina < staminaCurrent)
+                    {
+                        visualStamina = staminaCurrent;
+                    }
 
-                    //this is the position on the screen. it should remain relatively constant unless the window is resized
-                    Point barOrigin = (drawPlayer.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
-                    //Main.NewText("" + barOrigin.X + ", " + barOrigin.Y);
+                    if ((staminaPercentage < 1f || visualStamina > staminaCurrent) && !drawPlayer.dead)
+                    {
+                        float abovePlayer = 45f; //how far above the player should the bar be?
+                        Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
+                        Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
 
-                    Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
+                        //this is the position on the screen. it should remain relatively constant unless the window is resized
+                        Point barOrigin = (drawPlayer.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
 
-                    //empty bar has detailing, so offset the filled bar's destination
-                    int padding = 5;
-                    //scale the width by the stam percentage
-                    Rectangle fillDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, (int)(staminaPercentage * barFill.Width), barFill.Height);
+                        Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
 
-                    //draw a line at the amount of stamina needed to roll
-                    float stamPercentToRoll = 30 / staminaMax;
-                    Rectangle minRollStamDestination = new Rectangle(barOrigin.X + padding + (int)(stamPercentToRoll * barFill.Width), barOrigin.Y, 2, barFill.Height); //displays 2px of the bar
+                        //empty bar has detailing, so offset the filled bar's destination
+                        int padding = 5;
+                        
+                        int currentFillWidth = (int)(staminaPercentage * barFill.Width);
+                        Rectangle fillDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, currentFillWidth, barFill.Height);
 
-                    Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
-                    Main.spriteBatch.Draw(barFill, fillDestination, Color.DodgerBlue);
-                    Main.spriteBatch.Draw(barFill, minRollStamDestination, Color.White);
+                        Rectangle yellowDestination = new Rectangle(0, 0, 0, 0);
+                        bool showYellow = false;
+                        if (visualStamina > staminaCurrent)
+                        {
+                            float visualPercentage = visualStamina / staminaMax;
+                            int visualFillWidth = (int)(visualPercentage * barFill.Width);
+                            if (visualFillWidth > currentFillWidth)
+                            {
+                                yellowDestination = new Rectangle(barOrigin.X + padding + currentFillWidth, barOrigin.Y, visualFillWidth - currentFillWidth, barFill.Height);
+                                showYellow = true;
+                            }
+                        }
+
+                        //draw a line at the amount of stamina needed to roll
+                        float stamPercentToRoll = 30 / staminaMax;
+                        Rectangle minRollStamDestination = new Rectangle(barOrigin.X + padding + (int)(stamPercentToRoll * barFill.Width), barOrigin.Y, 2, barFill.Height); //displays 2px of the bar
+
+                        Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
+                        if (showYellow)
+                        {
+                            Main.spriteBatch.Draw(barFill, yellowDestination, new Color(240, 190, 50));
+                        }
+                        Main.spriteBatch.Draw(barFill, fillDestination, Color.DodgerBlue);
+                        Main.spriteBatch.Draw(barFill, minRollStamDestination, Color.White);
+                    }
                 }
             }
             #endregion

@@ -1348,11 +1348,13 @@ namespace tsorcRevamp
             // mana regen normally for either tier.
             // BotC: hard pin to manaRegenDelay = 100 each frame, so the countdown never reaches 0 and Stage-2
             //       regen never starts. Mana comes exclusively from drinking Cerulean charges.
-            // Unkindled: subtract a fraction of statManaMax2 from manaRegenBonus. Vanilla's rate formula
-            //       includes stationaryBonus = M/3 when standing still, so to hit consistent percent targets
-            //       across all pool sizes we use different subtractions per velocity state:
-            //          standing  → subtract M * 2/5  (≈ −60% vs vanilla standing rate)
-            //          moving    → subtract M * 3/10 (≈ −90% vs vanilla moving rate)
+            // Unkindled: first cut the positive manaRegenBonus to 40% to dampen late-game item/armor scaling
+            //       (vanilla multiplies regen by (1 + manaRegenBonus/100), which gear inflates past any flat
+            //       subtraction), then subtract a fraction of statManaMax2 from manaRegenBonus. Vanilla's rate
+            //       formula includes stationaryBonus = M/3 when standing still, so to hit consistent percent
+            //       targets across all pool sizes we use different subtractions per velocity state:
+            //          standing  → subtract M * 2/5
+            //          moving    → subtract M * 3/10
             //       Cerulean Flask remains the active recovery option; passive regen is intentionally weak.
             if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
             {
@@ -1362,6 +1364,16 @@ namespace tsorcRevamp
                 }
                 else if (Player.GetModPlayer<tsorcRevampPlayer>().Unkindled)
                 {
+                    // Dampen gear scaling first. Vanilla's regen rate is multiplied by (1 + manaRegenBonus/100),
+                    // and late-game items/armor inflate manaRegenBonus enough that a flat subtraction alone can't
+                    // keep up. Cut the positive bonus to 40% so item/armor contributions lose most of their
+                    // effect, THEN apply the flat per-velocity subtraction below. Only dampen when positive so
+                    // we never weaken an already-negative (nerfed) bonus.
+                    if (Player.manaRegenBonus > 0)
+                    {
+                        Player.manaRegenBonus = Player.manaRegenBonus * 2 / 5;
+                    }
+
                     if (Player.velocity == Vector2.Zero)
                     {
                         Player.manaRegenBonus -= Player.statManaMax2 * 2 / 5;

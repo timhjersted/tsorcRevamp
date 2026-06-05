@@ -209,8 +209,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>Max ticks spent fleeing before drinking anyway (in case player is chasing).</summary>
         protected virtual int   FleeToHealMaxTicks      => 150;
 
-        // ── Navigation (Tier 2 = waypoint routing, best available) ───────────────
-        /// <summary>NavigationTier: 1 = smart jumps, 2 = adds ledge/gap waypoint routing.</summary>
+        // ── Navigation (SF4 A* pathfinding; jump tuning below) ───────────────────
         protected virtual float InvaderJumpPower      => 10f;
         protected virtual float InvaderJumpBoost      => 6f;
         protected virtual bool  InvaderCanDoubleJump  => false;
@@ -707,14 +706,13 @@ namespace tsorcRevamp.NPCs.Invaders
                 // Accumulate when stuck (no LOS, on ground, not moving); drain when LOS restored.
                 if (freePhase && !wallLOS && NPC.velocity.Y == 0f && Math.Abs(NPC.velocity.X) < 0.5f)
                     _wallBlockedTimer++;
-                else if (wallLOS || gnpc.WaypointTimer > 0)
+                else if (wallLOS)
                     _wallBlockedTimer = Math.Max(0, _wallBlockedTimer - 3);
 
-                // > 1 s stuck: freeze so the Tier-2 route scan can work without jump-bounce noise.
+                // > 1 s stuck: nearly stop (cuts jump-bounce noise) before the teleport fallback below.
                 if (_wallBlockedTimer > 60 && !wallLOS)
                 {
-                    NPC.velocity.X *= 0.15f;            // nearly stop — jump code needs velocity > 0
-                    if (gnpc.BoredTimer < 21) gnpc.BoredTimer = 21; // wake scanner
+                    NPC.velocity.X *= 0.15f;
                 }
 
                 // > 5 s with no progress: teleport.

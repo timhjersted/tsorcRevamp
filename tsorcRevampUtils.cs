@@ -1555,6 +1555,44 @@ namespace tsorcRevamp
             return false;
         }
 
+        public static bool IsValidWalkableTile(int X, int Y)
+        {
+            if (Main.tile.Width > X && Main.tile.Height > Y && X >= 0 && Y >= 0)
+            {
+                Tile thisTile = Main.tile[X, Y];
+                if (thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
+                {
+                    if (thisTile.Slope == 0 && !thisTile.IsHalfBlock && !TileID.Sets.Platforms[thisTile.TileType])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool IsPartOfValidSurface(int targetX, int targetY, int minWidth)
+        {
+            for (int offset = 0; offset < minWidth; offset++)
+            {
+                bool windowValid = true;
+                for (int i = 0; i < minWidth; i++)
+                {
+                    int x = targetX - offset + i;
+                    if (!IsValidWalkableTile(x, targetY))
+                    {
+                        windowValid = false;
+                        break;
+                    }
+                }
+                if (windowValid)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static tsorcRevampPlayer ModPlayer(Player player) => player.GetModPlayer<tsorcRevampPlayer>();
     }
 }

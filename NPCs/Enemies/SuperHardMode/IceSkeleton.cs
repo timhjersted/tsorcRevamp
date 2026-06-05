@@ -32,6 +32,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lifeMax = 2200;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.IceSkeletonBanner>();
+
+            // Step 6 beast levers: fast skirmisher — roam (Wander) around where it lost the player.
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
+            globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
         }
 
         int dashCounter = 0;

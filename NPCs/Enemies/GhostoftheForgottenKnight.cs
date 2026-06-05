@@ -55,9 +55,11 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17, stopBeforeFiring: false);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavigationTier = 0;
             globalNPC.MaxJumpPower = 10f;
             globalNPC.MaxJumpBoost = 6f;
+            // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
+            globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
+            globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
             globalNPC.TeleportTelegraphTime = 80;
             globalNPC.TeleportDustType = DustID.Smoke;
             globalNPC.TeleportDustColor = new Color(55, 55, 65);

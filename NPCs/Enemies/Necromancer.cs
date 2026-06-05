@@ -31,6 +31,11 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.NecromancerBanner>();
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, SoundID.Item17);
+
+            // Step 6 caster levers: remember last-known position; pace when it does patrol.
+            tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            casterGlobalNPC.RemembersLastKnownPos = true;
+            casterGlobalNPC.PatrolMode = NPCs.PatrolMode.Pace;
         }
 
         float skeletonTimer;

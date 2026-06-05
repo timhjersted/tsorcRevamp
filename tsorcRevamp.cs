@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -2398,6 +2398,16 @@ namespace tsorcRevamp
                     ModContent.ItemType<SpiritBell>(),
                     ModContent.BuffType<SpiritAshKnightBuff>(),
                     ModContent.ProjectileType<SpiritAshKnightMinion>()
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<Items.Weapons.Summon.ArcherSpiritBell>(),
+                    ModContent.BuffType<ArcherSpiritBuff>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["ProjID"] = ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherSpirit>(),
+                        ["Slot"] = 2f,
+                    }
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",

@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -51,10 +51,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Navigation tuning: above-average jumps and ledge routing for a mobile archer
             tsorcRevampGlobalNPC hunterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            hunterGlobalNPC.NavigationTier = 0;
-            hunterGlobalNPC.MaxJumpPower = 10f;
+            hunterGlobalNPC.MaxJumpPower = 12f;
             hunterGlobalNPC.MaxJumpBoost = 5f;
             // CanDoubleJump remains false for RedCloudHunter
+            // Step 6 archer levers: blink to elevated firing spots, and reposition toward last-known before patrolling.
+            hunterGlobalNPC.PrefersHighGround = true;
+            hunterGlobalNPC.RemembersLastKnownPos = true;
 
         }
 
@@ -65,6 +67,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 1, 30, 60));
             npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 3, 1, 1));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 6, 8));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Summon.ArcherSpiritBell>(), 1));
         }
 
         #region Spawn
@@ -92,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FrostburnArrow, archerBoltDamage, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyFrostburnArrow>(), archerBoltDamage, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
         }
 
         #region Gore

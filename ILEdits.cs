@@ -1,6 +1,7 @@
-﻿using Mono.Cecil.Cil;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
+using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -15,6 +16,12 @@ namespace tsorcRevamp
             Terraria.IL_Player.TileInteractionsUse += PowerCell_Patch;
 
             Terraria.IL_Player.Update += Player_Update;
+
+            MethodInfo drawMapIconButtons = typeof(Main).GetMethod("DrawMapIconButtons", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (drawMapIconButtons != null)
+            {
+                MonoModHooks.Modify(drawMapIconButtons, new ILContext.Manipulator(MapButtons_Patch));
+            }
             //IL.Terraria.Player.Update += Chest_Patch;
 
             //Disable drawing of wires when in adventure mode
@@ -74,7 +81,6 @@ namespace tsorcRevamp
 
         internal static void UnloadILs()
         {
-
         }
 
         internal static void PowerCell_Patch(ILContext il)
@@ -239,5 +245,15 @@ namespace tsorcRevamp
             throw new NotImplementedException();
         }
         */
+
+        internal static void MapButtons_Patch(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            if (c.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(22)))
+            {
+                c.Remove();
+                c.EmitDelegate<Func<int>>(() => ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars ? 90 : 22);
+            }
+        }
     }
 }

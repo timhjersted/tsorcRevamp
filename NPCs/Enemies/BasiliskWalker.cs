@@ -55,10 +55,10 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavigationTier = 0;
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;
-            globalNPC.WeakTeleport = true;
+            globalNPC.CanTeleport = true;        // was WeakTeleport: limited re-acquire blinks
+            globalNPC.TeleportMaxCharges = 2;    // 2 non-recharging charges, Normal style
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

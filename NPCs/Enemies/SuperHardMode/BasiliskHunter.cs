@@ -42,11 +42,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.BasiliskHunterBanner>();
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavigationTier = 0;
             globalNPC.MaxJumpPower = 11f;
             globalNPC.MaxJumpBoost = 7f;
             globalNPC.CanDoubleJump = true;
             globalNPC.DoubleJumpPower = 7f;
+            // Step 6 beast levers: lurk (Wander) around where it lost the player when it gives up.
+            globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
+            globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {

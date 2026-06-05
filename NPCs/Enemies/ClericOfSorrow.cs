@@ -36,6 +36,10 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 9, SoundID.Item17, 0.1f, 120, 1, telegraphColor: Color.Blue);
             UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 8, SoundID.Item17);
             UsefulFunctions.AddAttack(NPC, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceBallDamage, 12, SoundID.Item17, 0, 1, 0, new Vector2(0, -240), Color.Cyan);
+
+            // Step 6 caster lever: remember last-known position before patrolling.
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
+
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 1200; 

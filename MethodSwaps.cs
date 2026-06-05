@@ -99,6 +99,21 @@ namespace tsorcRevamp
 
             Terraria.On_Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
 
+            // Hide ONLY the vanilla life & mana bars when custom resource bars are enabled. The life/mana bars
+            // are drawn by the active resource-display set's Draw(); there's one concrete set per HUD style, so
+            // we detour all three. The breath (bubbles) meter and buff/debuff icons are drawn elsewhere in
+            // GUIBarsDrawInner and are left untouched.
+            Terraria.GameContent.UI.ResourceSets.On_ClassicPlayerResourcesDisplaySet.Draw += SuppressVanillaResourceSet_Classic;
+            Terraria.GameContent.UI.ResourceSets.On_FancyClassicPlayerResourcesDisplaySet.Draw += SuppressVanillaResourceSet_Fancy;
+            // HorizontalBars resource set: hook its Draw() via reflection + MonoModHooks (works regardless of
+            // whether a generated On_ hook is present for this type).
+            MethodInfo horizontalBarsDraw = typeof(Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet)
+                .GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance);
+            if (horizontalBarsDraw != null)
+            {
+                MonoModHooks.Add(horizontalBarsDraw, (Action<Action<Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet>, Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet>)SuppressVanillaResourceSet_Horizontal);
+            }
+
             Terraria.On_Player.InZonePurity += Player_InZonePurity;
             //On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
 
@@ -2121,6 +2136,29 @@ namespace tsorcRevamp
                 }
                 Main.spriteBatch.DrawString(FontAssets.DeathText.Value, textValue2, new Vector2((float)(Main.screenWidth / 2) - 40 - FontAssets.MouseText.Value.MeasureString(textValue2).X / 2f, (float)(Main.screenHeight / 2) + 220), textColor, 0f, default(Vector2), scale, SpriteEffects.None, 0f);
             }
+        }
+
+        // The active resource-display set's Draw() renders the vanilla life & mana bars. When custom resource
+        // bars are enabled we skip it so only life & mana are hidden — the breath meter and buff/debuff icons
+        // (drawn elsewhere in GUIBarsDrawInner) keep rendering. One detour per concrete HUD style.
+        private static void SuppressVanillaResourceSet_Classic(Terraria.GameContent.UI.ResourceSets.On_ClassicPlayerResourcesDisplaySet.orig_Draw orig, Terraria.GameContent.UI.ResourceSets.ClassicPlayerResourcesDisplaySet self)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars) return;
+            orig(self);
+        }
+
+        private static void SuppressVanillaResourceSet_Fancy(Terraria.GameContent.UI.ResourceSets.On_FancyClassicPlayerResourcesDisplaySet.orig_Draw orig, Terraria.GameContent.UI.ResourceSets.FancyClassicPlayerResourcesDisplaySet self)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars) return;
+            orig(self);
+        }
+
+        // Hooked manually via MonoModHooks (no generated On_ hook for this set), so the orig is a plain
+        // Action<self> rather than a generated orig_Draw delegate.
+        private static void SuppressVanillaResourceSet_Horizontal(Action<Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet> orig, Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet self)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars) return;
+            orig(self);
         }
 
         /*

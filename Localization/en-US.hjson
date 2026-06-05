@@ -6728,12 +6728,24 @@ Mods: {
 			}
 
 			SpiritBell: {
-				DisplayName: Spirit Bell
+				DisplayName: Knight Spirit Bell
 				Tooltip:
 					'''
 					Summons a Spirit Ash Knight to fight for you
 					The Knight will bounce from walls towards enemies
 					{$CommonItemTooltip.CritDmg}
+					'''
+			}
+
+			ArcherSpiritBell: {
+				DisplayName: Archer Spirit Bell
+				Tooltip:
+					'''
+					Summons an Archer Spirit to fight for you
+					Looses frostburn arrows that inflict Frostburn on hit
+					Uses 2 summoner slots and costs 100 mana
+					The spirit targets the highest HP enemy nearby
+					Fades away after 3 minutes
 					'''
 			}
 
@@ -9143,6 +9155,11 @@ Mods: {
 				Description: The Spirit Ash Knight will fight for you!
 			}
 
+			ArcherSpiritBuff: {
+				DisplayName: Archer Spirit
+				Description: The Archer Spirit will shoot down your enemies!
+			}
+
 			RustedChainDebuff: {
 				DisplayName: Rusted Chain Debuff
 				Description: ""
@@ -9715,6 +9732,9 @@ Mods: {
 			ArcherToken.DisplayName: Archer
 			NondescriptOwlProjectile.DisplayName: Owl Archer
 			OwlsArrow.DisplayName: Owls Arrow
+			ArcherSpirit.DisplayName: Archer Spirit
+			ArcherSpiritArrow.DisplayName: Archer Spirit Arrow
+			EnemyFrostburnArrow.DisplayName: Enemy Frostburn Arrow
 			FriendlyCataluminance.DisplayName: Friendly Cataluminance
 			FriendlyDragonsBreath.DisplayName: Friendly Dragons Breath
 			FriendlyRedLaser.DisplayName: Laser
@@ -11684,6 +11704,66 @@ Mods: {
 			TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 			TibianValkyrieSmart4.DisplayName: Tibian Valkyrie Smart4
+			OmnirsDemonLordApocalypse.DisplayName: Demon Lord Apocalypse
+			OmnirsEland.DisplayName: Omnir Eland
+			OmnirsEvilEye.DisplayName: Omnir Evil Eye
+			OmnirsGigas.DisplayName: Omnir Gigas
+			OmnirsHydra.DisplayName: Omnir Hydra
+			OmnirsIceGigas.DisplayName: Omnir Ice Gigas
+			OmnirsMassacre.DisplayName: Omnir Massacre
+			OmnirsMinotaurMage.DisplayName: Omnir Minotaur Mage
+			OmnirsPlaguesmith.DisplayName: Omnir Plaguesmith
+			OmnirsQuaraMantassin.DisplayName: Omnir Quara Mantassin
+			OmnirsQuaraPincher.DisplayName: Omnir Quara Pincher
+			OmnirsSahagin.DisplayName: Omnir Sahagin
+
+			OmnirsBlackMage: {
+				DisplayName: Omnirs Black Mage
+
+				TownNPCMood: {
+					Content: I am content.
+					NoHome: I hate not having a home.
+					FarFromHome: I am too far from home.
+					LoveSpace: I love having so much space.
+					DislikeCrowded: I dislike how crowded I am.
+					HateCrowded: I hate how crowded I am.
+					LikeNPC_Princess: I like {NPCName}.
+					Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			OmnirsCaravanMerchant: {
+				DisplayName: Omnirs Caravan Merchant
+
+				TownNPCMood: {
+					Content: I am content.
+					NoHome: I hate not having a home.
+					FarFromHome: I am too far from home.
+					LoveSpace: I love having so much space.
+					DislikeCrowded: I dislike how crowded I am.
+					HateCrowded: I hate how crowded I am.
+					LikeNPC_Princess: I like {NPCName}.
+					Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			OmnirsWhiteMage: {
+				DisplayName: Omnirs White Mage
+
+				TownNPCMood: {
+					Content: I am content.
+					NoHome: I hate not having a home.
+					FarFromHome: I am too far from home.
+					LoveSpace: I love having so much space.
+					DislikeCrowded: I dislike how crowded I am.
+					HateCrowded: I hate how crowded I am.
+					LikeNPC_Princess: I like {NPCName}.
+					Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			TibianValkyrieTier2.DisplayName: Tibian Valkyrie Tier2
+			GreatBlackKnight.DisplayName: Great Black Knight
 		}
 
 		Prefixes: {
@@ -11749,15 +11829,21 @@ Mods: {
 		}
 
 		Configs: {
-			tsorcRevampConfig: {
-				DisplayName: Config
+			tsorcRevampGameplayConfig: {
+				DisplayName: Gameplay
+
+				Headers: {
+					AdventureMode: Adventure Mode
+					GameplayChanges: Gameplay Changes
+					GameplayTweaks: Gameplay Tweaks
+				}
 
 				AdventureMode: {
 					Label: Adventure Mode: Main
 					Tooltip:
 						'''
-						Prevents breaking and placing most blocks. 
-						It also enables some features intended for the custom map. 
+						Prevents breaking and placing most blocks.
+						It also enables some features intended for the custom map.
 						"If the game lets you break it or place it, it's allowed!"
 						Leave this enabled if you're playing with the custom map!
 						'''
@@ -11768,7 +11854,7 @@ Mods: {
 					Tooltip:
 						'''
 						Drop all your Dark Souls when you die.
-						If "Delete Dropped Souls on Death" is enabled, 
+						If "Delete Dropped Souls on Death" is enabled,
 						your Souls will drop after old Souls are deleted.
 						Does not take effect in multiplayer.
 						Defaults to On
@@ -11796,6 +11882,25 @@ Mods: {
 						'''
 				}
 
+				SoulsModeMobilityLimit: {
+					Label: Souls Mode Mobility Limit
+					Tooltip: Limits extreme running and flight speed while Unkindled or Bearer of the Curse. Classic mode is unaffected. Defaults to On.
+				}
+
+				ActiveShieldsRevamp: {
+					Label: Active Shields Revamp
+					Tooltip:
+						'''
+						Reworks shields into Dark Souls-style active blocking: hold Right Click (with a shield equipped and a weapon that has no right-click function) to raise it and fully block frontal hits at the cost of stamina (or mana, for magic wards).
+						Only functions while Unkindled or Bearer of the Curse. Turn off to keep the classic passive shield behavior. Defaults to On.
+						'''
+				}
+
+				DebugMode: {
+					Label: Debug Mode
+					Tooltip: ""
+				}
+
 				DisableGloveAutoswing: {
 					Label: Disable Melee/Whip Glove's Autoswing
 					Tooltip:
@@ -11819,7 +11924,7 @@ Mods: {
 					Tooltip:
 						'''
 						Disable the Off-Screen Zooming feature provided by the Rifle Scope and it's upgrades,
-						doesn't affect weapons like the Sniper Rifle which have this natively, 
+						doesn't affect weapons like the Sniper Rifle which have this natively,
 						useful for guns that have a right-click function. Defaults to Off.
 						'''
 				}
@@ -11834,17 +11939,105 @@ Mods: {
 					Tooltip: Disable the extra jumps provided by the Supersonic Wings II. Defaults to Off.
 				}
 
-				EnableSoulsModeMobilityLimit: {
-					Label: Enable Souls Mode Mobility Limit
-					Tooltip: Limits extreme running and flight speed while Unkindled or Bearer of the Curse. Classic mode is unaffected. Defaults to On.
+				DisableModWingsFallControlDuringFlight: {
+					Label: Disable Mod Wings Fall Control During Flight
+					Tooltip: ""
+				}
+			}
+
+			tsorcRevampVisualConfig: {
+				DisplayName: Visual
+
+				Headers: {
+					Soapstones: Soapstones
+					UI: UI
+					Other: Other
 				}
 
-				ActiveShieldsRevamp: {
-					Label: Active Shields Revamp
+				DisableSoapstones: {
+					Label: Disable Soapstones
+					Tooltip: Only takes effect when creating new map
+				}
+
+				HideSoapstones: {
+					Label: Hide Read Soapstones
 					Tooltip:
 						'''
-						Reworks shields into Dark Souls-style active blocking: hold Right Click (with a shield equipped and a weapon that has no right-click function) to raise it and fully block frontal hits at the cost of stamina (or mana, for magic wards).
-						Only functions while Unkindled or Bearer of the Curse. Turn off to keep the classic passive shield behavior. Defaults to On.
+						If enabled, soapstone messages that have been read will
+						not be shown until a button is clicked to show them.
+						Defaults to on.
+						'''
+				}
+
+				AutoOpenSoapstones: {
+					Label: Auto Open Soapstones
+					Tooltip: ""
+				}
+
+				DisableStorySoapstones: {
+					Label: Disable Story Soapstones
+					Tooltip: ""
+				}
+
+				DisableLoreSoapstones: {
+					Label: Disable Lore Soapstones
+					Tooltip: ""
+				}
+
+				DisableTutorialSoapstones: {
+					Label: Disable Tutorial Soapstones
+					Tooltip: ""
+				}
+
+				SoapstoneScale: {
+					Label: Soapstone Size Increase
+					Tooltip:
+						'''
+						Increases the size of all soapstone dialogue boxes by a percentage.
+						Defaults to 0%.
+						'''
+				}
+
+				UseCustomResourceBars: {
+					Label: Use Custom Resource Bars
+					Tooltip: ""
+				}
+
+				HideOverheadStaminaBar: {
+					Label: Hide Overhead Stamina Bar
+					Tooltip: ""
+				}
+
+				HideCeruleanFlask: {
+					Label: Hide the Cerulean Flask
+					Tooltip:
+						'''
+						Hide the Cerulean Flask obtained in Bearer of the Curse mode,
+						if you don't use it. Defaults to Off.
+						'''
+				}
+
+				ChargeCircleOpacity: {
+					Label: Charged Weapon Indicator Opacity
+					Tooltip:
+						'''
+						Some charged weapons draw a circle around the cursor to indicate the
+						current charge level. The opacity of that circle can be set here.
+						Set to 0 to disable charge circles.
+						'''
+				}
+
+				DisableLocationBanner: {
+					Label: Disable Location Banner
+					Tooltip: ""
+				}
+
+				ShowStaminaTooltip: {
+					Label: Show Stamina Use Tooltip
+					Tooltip:
+						'''
+						Show the stamina consumption tooltip for Bearer of the Curse mode.
+						Defaults to On.
 						'''
 				}
 
@@ -11878,53 +12071,6 @@ Mods: {
 					Tooltip: The Y position of the Cerulean Flask.
 				}
 
-				HideCeruleanFlask: {
-					Label: Hide the Cerulean Flask
-					Tooltip:
-						'''
-						Hide the Cerulean Flask obtained in Bearer of the Curse mode,
-						if you don't use it. Defaults to Off.
-						'''
-				}
-
-				ChargeCircleOpacity: {
-					Label: Charged Weapon Indicator Opacity
-					Tooltip:
-						'''
-						Some charged weapons draw a circle around the cursor to indicate the
-						current charge level. The opacity of that circle can be set here.
-						Set to 0 to disable charge circles.
-						'''
-				}
-
-				HideSoapstones: {
-					Label: Hide Read Soapstones
-					Tooltip:
-						'''
-						If enabled, soapstone messages that have been read will
-						not be shown until a button is clicked to show them.
-						Defaults to on.
-						'''
-				}
-
-				SoapstoneScale: {
-					Label: Soapstone Size Increase
-					Tooltip:
-						'''
-						Increases the size of all soapstone dialogue boxes by a percentage.
-						Defaults to 0%.
-						'''
-				}
-
-				ShowStaminaTooltip: {
-					Label: Show Stamina Use Tooltip
-					Tooltip:
-						'''
-						Show the stamina consumption tooltip for Bearer of the Curse mode.
-						Defaults to On.
-						'''
-				}
-
 				GravityFix: {
 					Label: Gravitation No Longer Flips Screen
 					Tooltip:
@@ -11934,16 +12080,10 @@ Mods: {
 						Only disable if it is hard-incompatible with another mod
 						'''
 				}
+			}
 
-				BroadswordRework: {
-					Label: Broadsword Rework
-					Tooltip:
-						'''
-						IN BETA! 
-						Make broadswords great again. 
-						Requires reloading the world to have an effect.
-						'''
-				}
+			tsorcRevampSoundConfig: {
+				DisplayName: Sound
 
 				UseOriginalPlayerHurtSounds: {
 					Label: Use Original Player Hurt/Death Sounds
@@ -11983,73 +12123,6 @@ Mods: {
 						This slider controls their volume.
 						Set to 0 to disable them.
 						'''
-				}
-
-				Headers: {
-					Mods: {
-						tsorcRevamp: {
-							Configs: {
-								tsorcRevampConfig: {
-									Headers: {
-										AdventureMode: Adventure Mode
-										GameplayChanges: Gameplay Changes
-										Visual: Visual
-										Sound: Sound
-									}
-								}
-							}
-						}
-					}
-				}
-
-				BotCMechanicsVolumeSlider: {
-					Label: Bot C Mechanics Volume Slider
-					Tooltip: ""
-				}
-
-				AdjustBotCMechanicsVolume: {
-					Label: Adjust Bot C Mechanics Volume
-					Tooltip: ""
-				}
-
-				DebugMode: {
-					Tooltip: ""
-					Label: Debug Mode
-				}
-
-				DisableModWingsFallControlDuringFlight: {
-					Tooltip: ""
-					Label: Disable Mod Wings Fall Control During Flight
-				}
-
-				DisableSoapstones: {
-					Tooltip: Only takes effect when creating new map
-					Label: Disable Soapstones
-				}
-
-				AutoOpenSoapstones: {
-					Label: Auto Open Soapstones
-					Tooltip: ""
-				}
-
-				DisableStorySoapstones: {
-					Label: Disable Story Soapstones
-					Tooltip: ""
-				}
-
-				DisableLoreSoapstones: {
-					Label: Disable Lore Soapstones
-					Tooltip: ""
-				}
-
-				DisableTutorialSoapstones: {
-					Label: Disable Tutorial Soapstones
-					Tooltip: ""
-				}
-
-				DisableLocationBanner: {
-					Label: Disable Location Banner
-					Tooltip: ""
 				}
 			}
 		}

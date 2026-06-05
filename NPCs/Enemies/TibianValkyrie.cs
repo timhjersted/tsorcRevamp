@@ -56,10 +56,10 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 8, shootSound: SoundID.Item17);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavigationTier = 0;
             globalNPC.MaxJumpPower   = 9f;
             globalNPC.MaxJumpBoost   = 5f;
-            globalNPC.WeakTeleport   = true;
+            globalNPC.CanTeleport = true;        // was WeakTeleport: limited re-acquire blinks
+            globalNPC.TeleportMaxCharges = 2;    // 2 non-recharging charges, Normal style
 
             // Personality — calm fighter that prefers to hold ground and throw spears
             globalNPC.Aggression = 0.6f;   // moderate chase-aggression; rolls standing-fire fairly often

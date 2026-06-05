@@ -58,11 +58,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             redKnightGlobalNPC.Agility = 0.45f;
 
             // Navigation tuning: maximum jumps, double jump, and ledge routing
-            redKnightGlobalNPC.NavigationTier = 0;
             redKnightGlobalNPC.MaxJumpPower = 12f;
             redKnightGlobalNPC.MaxJumpBoost = 8f;
             redKnightGlobalNPC.CanDoubleJump = true;
             redKnightGlobalNPC.DoubleJumpPower = 8f;
+            // Step 6 boss lever: blink aggressively the moment it loses LOS (keeps arena pressure).
+            redKnightGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
@@ -113,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.BoredTimer < 0 || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
                                           (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||

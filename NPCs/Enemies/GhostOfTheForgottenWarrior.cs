@@ -57,9 +57,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
-            globalNPC.NavigationTier = 0;
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;
+            // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
+            globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
+            globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
             globalNPC.TeleportTelegraphTime = 80;
             globalNPC.TeleportDustType = DustID.Smoke;
             globalNPC.TeleportDustColor = new Color(55, 55, 65);

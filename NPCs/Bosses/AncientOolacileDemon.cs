@@ -51,6 +51,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.boss = true;
             NPC.rarity = 7;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.AncientOolacileDemon.DespawnHandler"), Color.Gold, DustID.GoldFlame);
+            // Step 6 boss lever: blink aggressively the moment it loses LOS (keeps arena pressure).
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportStyle = NPCs.TeleportStyle.Aggressive;
 
             //alt code: if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead))
             if (NPC.downedBoss1)

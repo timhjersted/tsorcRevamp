@@ -86,7 +86,6 @@ namespace tsorcRevamp.NPCs.Enemies
             redKnightGlobalNPC.Agility = 0.3f;
 
             // Navigation tuning: smart pathfinding with above-average jumps + ledge routing
-            redKnightGlobalNPC.NavigationTier = 0;
             redKnightGlobalNPC.MaxJumpPower = 10f;
             redKnightGlobalNPC.MaxJumpBoost = 6f;
             // CanDoubleJump remains false for RedKnight
@@ -149,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.BoredTimer < 0 || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
                                           (NPC.ai[1] >= 300f && NPC.ai[1] <= 405f) ||

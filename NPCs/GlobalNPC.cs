@@ -75,18 +75,17 @@ namespace tsorcRevamp.NPCs
         GiveUpLocation // patrol around where pursuit was abandoned
     }
 
+    // When the disengage resolver decides to blink to re-acquire the player (see 4b in the doc).
+    public enum TeleportStyle
+    {
+        Relaxed,    // gives up, wanders into Patrol a few seconds, THEN blinks. Long cooldown.
+        Normal,     // blinks at the disengage point instead of patrolling (≈ legacy canTeleport). Medium cooldown.
+        Aggressive  // blinks the moment LOS is lost (short debounce), bypassing Search/Patrol. Short cooldown.
+    }
+
     public partial class tsorcRevampGlobalNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
-
-        public enum NavActionType
-        {
-            None,
-            Walk,
-            JumpTo,
-            Drop,
-            DropThroughPlatform
-        }
 
         float enemyValue;
         float multiplier = 1f;
@@ -248,15 +247,12 @@ namespace tsorcRevamp.NPCs
         public int PounceCooldown;
         public int DodgeTimer;
         public int DodgeCooldown;
-        public int BoredTimer;
         public int FighterPostAttackPauseTimer;
         public int FighterAttacksSincePause;
         public bool FighterRangedHitInterruptedPause;
         public int FighterRangedStandShotsRemaining;  // >0 = standing-fire mode; decrement each shot, exit when zero
         public int FighterNoLosPursuitBoostTimer;
 
-        // Navigation intelligence: 0 = dumb, 1 = smart pathfinding (default), 2 = waypoint scan (future)
-        public int NavigationTier = 0;
         // Vertical jump power ceiling — default 8f reproduces vanilla hardcoded behavior at base stats
         public float MaxJumpPower = 8f;
         // Horizontal momentum added when jumping a gap
@@ -267,41 +263,15 @@ namespace tsorcRevamp.NPCs
         public bool UsedDoubleJump = false;
         // Strength of the mid-air second jump
         public float DoubleJumpPower = 6f;
-        // Counts consecutive frames stuck against a wall; triggers an escape jump when too high
+        // Counts consecutive frames the NPC has barely moved while pursuing; the position-immobility
+        // anti-stuck uses it to disengage a walled/unreachable chase to the FSM (Search/Patrol/teleport).
         public int StuckTimer = 0;
-        // Ledge run-up: when StuckTimer first reaches 8 against an obstacle, the NPC
-        // reverses briefly (LedgeRunUpTimer > 0) to build clearance, then charges forward
-        // and makes a powered running jump.  Prevents the endless ledge-bounce loop
-        // where the NPC is pressed too close to a wall to clear the ledge corner.
-        public int LedgeRunUpTimer = 0;
-        public int LedgeRunUpDirection = 0;
-        public int LedgeVaultTimer = 0;
-        public int LedgeVaultDirection = 0;
-        public int NavJumpCooldown = 0;
         public bool CanStopToFire = false;
-        // Tier 2 navigation: temporary world-space X target for "go around" ledge routing
-        public Vector2 WaypointTarget = Vector2.Zero;
-        // How many frames remain on the active waypoint (0 = none)
-        public int WaypointTimer = 0;
-        public NavActionType WaypointAction = NavActionType.None;
-        public int WaypointSearchCooldown = 0;
-        public float LastWaypointDistance = 0f;
-        public int WaypointNoProgressTimer = 0;
-        public const int MaxNavRouteSteps = 10;
-        public Vector2[] NavRouteTargets = new Vector2[MaxNavRouteSteps];
-        public NavActionType[] NavRouteActions = new NavActionType[MaxNavRouteSteps];
-        public int NavRouteIndex = 0;
-        public int NavRouteCount = 0;
-        public int NavRouteTimer = 0;
-        public int NavRouteNoProgressTimer = 0;
-        public float LastNavRouteDistance = 0f;
-        public int NavBlockedDirection = 0;
-        public int NavBlockedDirectionTimer = 0;
-        public int NavExploreTimer = 0;
-        public int NavExploreDirection = 0;
-        public int SmartFurniturePassTimer = 0;
-        public int SmartFurniturePassDirection = 0;
-        public int SmartFurniturePassCooldown = 0;
+        // SizeMatters Navigation fields
+        public bool SizeMatters = false;
+        public int MinSurfaceWidth = 2; // minimum solid tiles wide surface to walk on/hop to
+        // Backwards Walking (Moonwalk) fields
+        public bool CanWalkBackwards = false;
         // Frames spent voluntarily halted at a ledge; used to cap ledge-camping.
         public int LedgeHaltTimer = 0;
         // When true, FighterAI will halt at the edge of a significant drop when it already has
@@ -322,24 +292,7 @@ namespace tsorcRevamp.NPCs
         public Color TeleportDustColor = Color.White;
         public float TeleportDustScale = 0.8f;
         public int TeleportDustCount = 20;
-        // Whether this NPC has limited-use gap-closing teleports (2 total uses, 10s cooldown, 40-tile minimum)
-        public bool WeakTeleport = false;
-        // How many weak teleport charges remain for this NPC instance. These do not recharge.
-        public int WeakTeleportUses = 2;
-        // Cooldown frames remaining before the next WeakTeleport charge can fire
-        public int WeakTeleportCooldown = 0;
-        // Frames since the NPC last reached the player; triggers bored walk when it exceeds WeakTeleportBoredThreshold.
-        public int WeakTeleportReachTimer = 0;
-        public int WeakTeleportBoredThreshold = 7200;
-        // Bored walk phase: 0=normal, 1=standstill (2s), 2=walk away (5s), 3=pause (2s), 4=walk back (2s)
-        public int WeakTeleportBoredPhase = 0;
-        // Countdown for the current bored walk phase
-        public int WeakTeleportBoredTimer = 0;
-        // How long regular fighter pathing tries before using its fallback bored behavior.
-        public int BoredomThreshold = 900;
-        public string LastNavIntent = "none";
-        public string LastWaypointResult = "none";
-        public int WaypointSearchFailures = 0;
+        // Throttle tick for the LogFighterNavDebug file logger.
         public int LastNavDebugLogTick = 0;
 
         // === Patrol/Pursue FSM state (Phase 1 — see Documentation/PatrolPursue_and_NavTier_Removal.md) ===
@@ -374,6 +327,27 @@ namespace tsorcRevamp.NPCs
         public int PatrolDirection = 0;     // current patrol facing (-1 / +1)
         public int PatrolLegRemaining = 0;  // tiles left on the current leg before reconsidering direction
         public int PatrolIdleTimer = 0;     // sub-timer driving the idle stand/walk routine
+        public int PatrolElapsed = 0;       // frames spent in the current Patrol stint (drives Relaxed-teleport delay)
+        // Last frame's distance to the pursuit target; drives the FSM "made progress" (closing distance) test.
+        public float LastPursuitDist = 0f;
+        // Reference position for the position-immobility anti-stuck (robust to wall-bouncing / LOS flicker).
+        public Vector2 StuckCheckPos = Vector2.Zero;
+
+        // === Unified teleport (Phase 1 — 4b; see Documentation/PatrolPursue_and_NavTier_Removal.md) ===
+        // Merges the legacy `canTeleport` AI param and the WeakTeleport system into one re-acquire-on-give-up
+        // blink (reusing TeleportCountdown / QueueTeleport / ExecuteQueuedTeleport for the actual smoke + warp).
+        public bool CanTeleport = false;
+        public TeleportStyle TeleportStyle = TeleportStyle.Normal;
+        // -1 = unlimited (legacy canTeleport). A positive value = limited charges that DO NOT recharge
+        // (legacy WeakTeleport = 2). Spent down via TeleportChargesRemaining.
+        public int TeleportMaxCharges = -1;
+        public int TeleportChargesRemaining = -1; // initialised from TeleportMaxCharges on first AI tick
+        public int TeleportCooldownTimer = 0;     // frames until the next blink is allowed (per-style cooldown)
+        // Bias teleport (and, later, patrol/standoff) destinations toward elevated spots with LOS — for archers
+        // and high-ground hunters.
+        public bool PrefersHighGround = false;
+        // Set once TeleportChargesRemaining has been seeded from TeleportMaxCharges (so SetDefaults overrides win).
+        public bool TeleportChargesInitialized = false;
 
         public bool needsNetUpdate;
         public float ProjectileTimer;
@@ -691,29 +665,6 @@ namespace tsorcRevamp.NPCs
 
             return false; // far side is solid earth
         }
-
-        // ── BFS pathfinding: pre-allocated static buffers (zero GC cost per scan) ──────────────
-        private const int BFS_R    = 80;
-        private const int BFS_DIM  = BFS_R * 2 + 2;   // 162 × 162
-        private const int BFS_QCAP = 32768;
-        private const int BFS_QMSK = BFS_QCAP - 1;
-
-        private static readonly int[]    _bfsQX  = new int  [BFS_QCAP];
-        private static readonly int[]    _bfsQY  = new int  [BFS_QCAP];
-        private static readonly bool[,]  _bfsVis = new bool [BFS_DIM, BFS_DIM];
-        private static readonly short[,] _bfsAnX = new short[BFS_DIM, BFS_DIM];
-        private static readonly short[,] _bfsAnY = new short[BFS_DIM, BFS_DIM];
-        private static readonly NavActionType[,] _bfsAnAction = new NavActionType[BFS_DIM, BFS_DIM];
-        private static readonly NavActionType[,] _bfsEdgeAction = new NavActionType[BFS_DIM, BFS_DIM];
-        private static readonly short[,] _bfsParentX = new short[BFS_DIM, BFS_DIM];
-        private static readonly short[,] _bfsParentY = new short[BFS_DIM, BFS_DIM];
-        private const int BFS_PATH_CAP = 256;
-        private static readonly short[] _bfsPathX = new short[BFS_PATH_CAP];
-        private static readonly short[] _bfsPathY = new short[BFS_PATH_CAP];
-        private static readonly NavActionType[] _bfsPathAction = new NavActionType[BFS_PATH_CAP];
-
-
-        // ─────────────────────────────────────────────────────────────────────────────────────────
 
         public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
         {
@@ -1763,8 +1714,6 @@ namespace tsorcRevamp.NPCs
             {
                 tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
                 globalNPC.FighterNoLosPursuitBoostTimer = 180;
-                globalNPC.BoredTimer = 0;
-                globalNPC.WeakTeleportReachTimer = 0;
             }
         }
 
@@ -1800,7 +1749,6 @@ namespace tsorcRevamp.NPCs
                                                               || hitGlobalNPC.FighterRangedStandShotsRemaining > 0;
                 hitGlobalNPC.FighterPostAttackPauseTimer = 0;
                 hitGlobalNPC.FighterRangedStandShotsRemaining = 0;
-                hitGlobalNPC.BoredTimer = 0;
             }
 
             Player player = Main.player[projectile.owner];

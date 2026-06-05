@@ -75,7 +75,6 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.Patience = 2f;
 
             // Navigation tuning: high jumps, double jump, and ledge routing
-            blackKnightGlobalNPC.NavigationTier = 0;
             blackKnightGlobalNPC.MaxJumpPower = 11f;
             blackKnightGlobalNPC.MaxJumpBoost = 7f;
             blackKnightGlobalNPC.CanDoubleJump = true;
@@ -126,7 +125,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.BoredTimer < 0 || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
                                           (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||

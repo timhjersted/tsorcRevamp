@@ -137,6 +137,7 @@ namespace tsorcRevamp.NPCs
             g.PatrolDirection = npc.direction != 0 ? npc.direction : 1;
             g.PatrolLegRemaining = 0;
             g.PatrolIdleTimer = 0;
+            g.PatrolElapsed = 0;
         }
 
         // =====================================================================================
@@ -146,6 +147,7 @@ namespace tsorcRevamp.NPCs
         /// <summary>Run one tick of patrol movement for the NPC's configured PatrolMode.</summary>
         public static void RunPatrol(NPC npc, tsorcRevampGlobalNPC g, float topSpeed, float acceleration)
         {
+            g.PatrolElapsed++; // time spent patrolling this stint (Relaxed teleport waits on this)
             switch (g.PatrolMode)
             {
                 case PatrolMode.Idle: RunIdle(npc, g, topSpeed, acceleration); break;

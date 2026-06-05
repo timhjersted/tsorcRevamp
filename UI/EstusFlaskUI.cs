@@ -68,17 +68,21 @@ namespace tsorcRevamp.UI
                     numbercolor = Color.White;
                 }
 
+                const float spriteScale = 0.7f; // shrink the flask sprite by 30%
+                int scaledWidth = (int)(textureFull.Width * spriteScale);
+                int scaledHeight = (int)(textureFull.Height * spriteScale);
+
                 int cropAmount = (int)(textureFull.Height * (1 - chargesPercentage));
-                Main.spriteBatch.Draw(textureEmpty, new Rectangle(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
+                Main.spriteBatch.Draw(textureEmpty, new Rectangle(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY, scaledWidth, scaledHeight), Color.White);
                 //Main.spriteBatch.Draw(textureCharges, new Vector2(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY - 40), sourceRectangle, numbercolor, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 1);
                 //The line above displayed the original number of charges left but became a duplicate with the new draw code below
 
-                // the cropped texture is shorter, so its Y position needs to be offset by the height difference
+                // the cropped texture is shorter, so its Y position needs to be offset by the height difference (scaled to match the shrunk sprite)
                 Rectangle overlaySourceRectangle = new Rectangle(0, cropAmount, textureFull.Width, textureFull.Height - cropAmount);
-                Main.spriteBatch.Draw(textureFull, new Vector2(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY + cropAmount), overlaySourceRectangle, numbercolor, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
+                Main.spriteBatch.Draw(textureFull, new Vector2(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY + cropAmount * spriteScale), overlaySourceRectangle, numbercolor, 0, new Vector2(0, 0), spriteScale, SpriteEffects.None, 1);
 
                 // Draw the number next to the sprite (new)
-                Vector2 numberPosition = new Vector2(Main.screenWidth - ConfigInstance.EstusFlaskPosX + textureFull.Width + 8, Main.screenHeight - ConfigInstance.EstusFlaskPosY + (textureFull.Height / 2) - 10);
+                Vector2 numberPosition = new Vector2(Main.screenWidth - ConfigInstance.EstusFlaskPosX + scaledWidth + 8, Main.screenHeight - ConfigInstance.EstusFlaskPosY + (scaledHeight / 2) - 10);
                 Utils.DrawBorderString(spriteBatch, estusPlayer.estusChargesCurrent.ToString(), numberPosition, numbercolor, 1f);
             }
             base.Draw(spriteBatch);

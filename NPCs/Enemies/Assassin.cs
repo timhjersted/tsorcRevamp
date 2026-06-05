@@ -41,10 +41,12 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.SkeletonArcher;
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavigationTier = 0;
             globalNPC.MaxJumpPower = 10f;
             globalNPC.MaxJumpBoost = 6f;
             // No double jump -- the Assassin relies on its teleport for escape
+            // Step 6 archer levers: blink to elevated firing spots, reposition toward last-known before patrolling.
+            globalNPC.PrefersHighGround = true;
+            globalNPC.RemembersLastKnownPos = true;
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

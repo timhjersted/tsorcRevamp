@@ -26,6 +26,10 @@ namespace tsorcRevamp
         public static RecipeGroup UpgradedMirrors;
         public static RecipeGroup CobaltHelmets;
 
+        internal static float visualLife = -1f;
+        internal static float visualMana = -1f;
+        internal static float visualStamina = -1f;
+
         private static bool portableGuideCraftingActive;
         private static Item portableGuideItem = new Item();
         private static int lastPortableGuideItemType;
@@ -272,6 +276,25 @@ namespace tsorcRevamp
             int resourceBarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
             if (resourceBarIndex != -1)
             {
+                if (ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars)
+                {
+                    // NOTE: We intentionally do NOT disable the whole "Vanilla: Resource Bars" layer here.
+                    // That layer (Main.GUIBarsDrawInner) draws the breath meter and buff/debuff icons in
+                    // addition to the life & mana bars, so disabling it hid all of them. Instead, only the
+                    // vanilla life & mana drawing is suppressed via the GUIBarsDrawInner detour in
+                    // MethodSwaps.cs (it swaps ActivePlayerResourcesSet to a no-op set), leaving breath and
+                    // buffs intact. Our custom bars draw on top.
+                    layers.Insert(resourceBarIndex + 1, new LegacyGameInterfaceLayer(
+                        "tsorcRevamp: Custom Resource Bars",
+                        delegate
+                        {
+                            DrawCustomResourceBars(Main.spriteBatch);
+                            return true;
+                        },
+                        InterfaceScaleType.UI)
+                    );
+                }
+
                 layers.Insert(resourceBarIndex, new LegacyGameInterfaceLayer(
                     "tsorcRevamp: Dark Soul Counter UI",
                     delegate
@@ -415,6 +438,40 @@ namespace tsorcRevamp
             {
                 deathFadeAlpha = 0f;
             }
+
+            // Smooth visual decay for damage indicators (both overhead and custom top-right bars)
+            if (!Main.gameMenu)
+            {
+                Player player = Main.LocalPlayer;
+                if (player != null && player.active && !player.dead)
+                {
+                    int healthCurrent = player.statLife;
+                    int manaCurrent = player.statMana;
+                    var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                    float staminaCurrent = staminaPlayer.staminaResourceCurrent;
+
+                    if (visualLife < 0f || visualLife < healthCurrent) visualLife = healthCurrent;
+                    else if (visualLife > healthCurrent)
+                    {
+                        visualLife -= Math.Max(0.2f, (visualLife - healthCurrent) * 0.08f);
+                        if (visualLife < healthCurrent) visualLife = healthCurrent;
+                    }
+
+                    if (visualMana < 0f || visualMana < manaCurrent) visualMana = manaCurrent;
+                    else if (visualMana > manaCurrent)
+                    {
+                        visualMana -= Math.Max(0.1f, (visualMana - manaCurrent) * 0.08f);
+                        if (visualMana < manaCurrent) visualMana = manaCurrent;
+                    }
+
+                    if (visualStamina < 0f || visualStamina < staminaCurrent) visualStamina = staminaCurrent;
+                    else if (visualStamina > staminaCurrent)
+                    {
+                        visualStamina -= Math.Max(0.1f, (visualStamina - staminaCurrent) * 0.08f);
+                        if (visualStamina < staminaCurrent) visualStamina = staminaCurrent;
+                    }
+                }
+            }
         }
 
         public static Vector2 OurDrawBorderString(SpriteBatch sb, string text, DynamicSpriteFont font, Vector2 pos, Color color, float scale = 1f, float anchorx = 0f, float anchory = 0f, int maxCharactersDisplayed = -1)
@@ -529,63 +586,6 @@ namespace tsorcRevamp
             }
 
             DrawLocationBanner(spriteBatch);
-
-            // ── FighterAI navigation debug overlay ────────────────────────────────
-            if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
-            {
-                DrawNavDebug(spriteBatch);
-            }
-        }
-
-        /// <summary>
-        /// Draws a small navigation-state readout in the lower-left corner for the nearest
-        /// enemy NPC that uses FighterAI (NavigationTier >= 1).  Only rendered when DebugMode
-        /// is enabled in the mod config.
-        /// </summary>
-        private static void DrawNavDebug(SpriteBatch spriteBatch)
-        {
-            // Find the nearest active enemy with navigation intelligence.
-            NPC target = null;
-            float closestDistSq = float.MaxValue;
-            foreach (NPC npc in Main.ActiveNPCs)
-            {
-                if (!npc.active || npc.friendly || npc.lifeMax <= 5) continue;
-                tsorcRevampGlobalNPC g = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-                if (g.NavigationTier < 1) continue;
-                float dSq = Vector2.DistanceSquared(npc.Center, Main.LocalPlayer.Center);
-                if (dSq < closestDistSq) { closestDistSq = dSq; target = npc; }
-            }
-            if (target == null) return;
-
-            tsorcRevampGlobalNPC gNpc   = target.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            Player               tPlayer = Main.player[target.target];
-            bool   los    = tPlayer.CanHit(target);
-            float  yDiff  = tPlayer.Center.Y - target.Center.Y;   // negative = player above
-            float  dist   = target.Distance(tPlayer.Center);
-            string wpStr  = gNpc.WaypointTimer > 0
-                ? $"{gNpc.WaypointAction} ({gNpc.WaypointTarget.X / 16f:F1},{gNpc.WaypointTarget.Y / 16f:F1}) T:{gNpc.WaypointTimer}"
-                : "none";
-
-            string[] lines =
-            {
-                $"[NAV] {target.TypeName}  dist:{dist:F0}px",
-                $"NavTier:{gNpc.NavigationTier}  LOS:{los}  YDiff:{yDiff:F0}px",
-                $"Bored:{gNpc.BoredTimer}  Stuck:{gNpc.StuckTimer}  HaltAtLedge:{gNpc.HaltAtLedge}",
-                $"Waypoint: {wpStr}",
-                $"Intent:{gNpc.LastNavIntent}  Result:{gNpc.LastWaypointResult}",
-                $"CD:{gNpc.WaypointSearchCooldown}  Fail:{gNpc.WaypointSearchFailures}  JumpCD:{gNpc.NavJumpCooldown}",
-                $"RunUp:{gNpc.LedgeRunUpTimer}  Vault:{gNpc.LedgeVaultTimer}  StopFire:{gNpc.CanStopToFire}",
-            };
-
-            DynamicSpriteFont font  = FontAssets.MouseText.Value;
-            float             lineH = 18f;
-            float             startY = Main.screenHeight - (lines.Length * lineH) - 10f;
-            for (int i = 0; i < lines.Length; i++)
-            {
-                Utils.DrawBorderStringFourWay(spriteBatch, font, lines[i],
-                    10f, startY + i * lineH,
-                    Color.White, Color.Black, Vector2.Zero, 0.85f);
-            }
         }
 
         // White all-caps location announcement. Centered horizontally, top quarter vertically.
@@ -1030,6 +1030,13 @@ namespace tsorcRevamp
             CobaltHelmets = null;
         }
 
+        public override void OnWorldLoad()
+        {
+            visualLife = -1f;
+            visualMana = -1f;
+            visualStamina = -1f;
+        }
+
         public override void PreSaveAndQuit()
         {
             TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun");
@@ -1038,6 +1045,182 @@ namespace tsorcRevamp
             for (int i = 0; i < TextureAssets.Moon.Length; i++)
             {
                 TextureAssets.Moon[i] = ModContent.Request<Texture2D>("Terraria/Images/Moon_" + i);
+            }
+            visualLife = -1f;
+            visualMana = -1f;
+            visualStamina = -1f;
+        }
+
+        private static void DrawCustomResourceBars(SpriteBatch spriteBatch)
+        {
+            Player player = Main.LocalPlayer;
+            if (player == null || !player.active || player.dead) return;
+
+            int healthCurrent = player.statLife;
+            int healthMax = player.statLifeMax2;
+            int manaCurrent = player.statMana;
+            int manaMax = player.statManaMax2;
+
+            var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            float staminaCurrent = staminaPlayer.staminaResourceCurrent;
+            float staminaMax = staminaPlayer.staminaResourceMax2;
+
+            // Dimensions
+            int barHeight = 12;
+            int gap = 8;
+
+            // Aligns the right edge of the bars to the far right of the screen (aligned with the map right edge)
+            // Shifts leftwards when the inventory is open to make room for numbers on the right side.
+            int rightX = Main.playerInventory ? (Main.screenWidth - 90) : (Main.screenWidth - 10);
+            int startY = 15;
+
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Texture2D barEmpty = ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty").Value;            // Helper to get compressed bar width based on max capacity:
+            // - Under or equal to 400: 1.0x scale
+            // - 401 to 500: 20% compressed (0.8x scale for all chunks)
+            // - 501 or more: 30% compressed (0.7x scale for all chunks)
+            int GetBarWidth(float maxVal)
+            {
+                float scale = 1f;
+                if (maxVal > 400f && maxVal <= 500f)
+                {
+                    scale = 0.8f;
+                }
+                else if (maxVal > 500f)
+                {
+                    scale = 0.7f;
+                }
+                return (int)(maxVal * scale);
+            }
+
+            int GetFillWidth(float val, float maxVal)
+            {
+                float currentVal = Math.Min(val, maxVal);
+                if (currentVal <= 0f) return 0;
+
+                float scale = 1f;
+                if (maxVal > 400f && maxVal <= 500f)
+                {
+                    scale = 0.8f;
+                }
+                else if (maxVal > 500f)
+                {
+                    scale = 0.7f;
+                }
+                return (int)(currentVal * scale);
+            }
+
+            // Reusable bar drawing helper using 3-slice rendering of the overhead stamina bar sprite
+            void DrawBar(int y, float current, float visualCurrent, float max, Color fillColor, Color bgColor)
+            {
+                int maxBarWidth = GetBarWidth(max);
+                int startX = rightX - maxBarWidth;
+
+                float ratio = max > 0 ? (current / max) : 0f;
+                ratio = MathHelper.Clamp(ratio, 0f, 1f);
+
+                float visualRatio = max > 0 ? (visualCurrent / max) : 0f;
+                visualRatio = MathHelper.Clamp(visualRatio, 0f, 1f);
+
+                // Draw the 3-sliced empty bar sprite as the border casing
+                // Left slice (5px wide)
+                spriteBatch.Draw(barEmpty, new Rectangle(startX - 5, y, 5, barHeight), new Rectangle(0, 0, 5, 12), Color.White);
+                // Middle slice (maxBarWidth wide)
+                spriteBatch.Draw(barEmpty, new Rectangle(startX, y, maxBarWidth, barHeight), new Rectangle(5, 0, 30, 12), Color.White);
+                // Right slice (4px wide)
+                spriteBatch.Draw(barEmpty, new Rectangle(startX + maxBarWidth, y, 4, barHeight), new Rectangle(35, 0, 4, 12), Color.White);
+
+                // Draw solid black inside the fill area to hide the textured empty center (so colors look clean)
+                spriteBatch.Draw(pixel, new Rectangle(startX, y + 2, maxBarWidth, barHeight - 3), Color.Black * 0.8f);
+
+                // Draw dark resource background container
+                spriteBatch.Draw(pixel, new Rectangle(startX, y + 2, maxBarWidth, barHeight - 3), bgColor);
+
+                // Draw damage yellow indicator (if visualCurrent > current)
+                if (visualRatio > ratio)
+                {
+                    int fillStart = GetFillWidth(current, max);
+                    int fillWidth = GetFillWidth(visualCurrent, max) - fillStart;
+                    spriteBatch.Draw(pixel, new Rectangle(startX + fillStart, y + 2, fillWidth, barHeight - 3), new Color(240, 190, 50));
+                }
+
+                // Draw current resource fill
+                int currentFillWidth = GetFillWidth(current, max);
+                spriteBatch.Draw(pixel, new Rectangle(startX, y + 2, currentFillWidth, barHeight - 3), fillColor);
+
+                // Draw faint vertical segment lines every 20 points (compressed uniformly)
+                int maxSegments = (int)(max / 20f) + 1;
+                for (int i = 1; i < maxSegments; i++)
+                {
+                    float segmentVal = i * 20f;
+                    if (segmentVal < max)
+                    {
+                        int lineX = startX + GetFillWidth(segmentVal, max);
+                        spriteBatch.Draw(pixel, new Rectangle(lineX, y + 2, 1, barHeight - 3), Color.White * 0.15f);
+                    }
+                }
+
+                // Draw custom pixelated black and gold outline borders over the casing
+                int L = startX - 5;
+                int T = y;
+                int W = maxBarWidth + 9;
+                int H = barHeight;
+
+                // 1. Draw outer black border (1px thick outline)
+                // Top line
+                spriteBatch.Draw(pixel, new Rectangle(L, T, W, 1), Color.Black);
+                // Bottom line
+                spriteBatch.Draw(pixel, new Rectangle(L, T + H - 1, W, 1), Color.Black);
+                // Left line
+                spriteBatch.Draw(pixel, new Rectangle(L, T + 1, 1, H - 2), Color.Black);
+                // Right line
+                spriteBatch.Draw(pixel, new Rectangle(L + W - 1, T + 1, 1, H - 2), Color.Black);
+
+                // 2. Draw inner gold border (1px thick outline inside top, left, right)
+                Color borderGoldColor = new Color(200, 160, 60);
+                // Top gold line
+                spriteBatch.Draw(pixel, new Rectangle(L + 1, T + 1, W - 2, 1), borderGoldColor);
+                // Left gold line
+                spriteBatch.Draw(pixel, new Rectangle(L + 1, T + 2, 1, H - 3), borderGoldColor);
+                // Right gold line
+                spriteBatch.Draw(pixel, new Rectangle(L + W - 2, T + 2, 1, H - 3), borderGoldColor);
+            }
+
+            // Health (Red)
+            DrawBar(startY, healthCurrent, visualLife, healthMax, new Color(230, 45, 45), new Color(45, 10, 10, 180));
+
+            // Mana (Blue)
+            DrawBar(startY + barHeight + gap, manaCurrent, visualMana, manaMax, new Color(30, 110, 230), new Color(10, 20, 50, 180));
+
+            // Stamina (Green)
+            int stamY = startY + (barHeight + gap) * 2;
+            DrawBar(stamY, staminaCurrent, visualStamina, staminaMax, new Color(40, 190, 80), new Color(10, 40, 15, 180));
+
+            // Retain divider line on Stamina bar (dodge threshold at 30 stamina)
+            if (staminaMax > 30)
+            {
+                int stamStartX = rightX - GetBarWidth(staminaMax);
+                int dividerX = stamStartX + GetFillWidth(30, staminaMax);
+                spriteBatch.Draw(pixel, new Rectangle(dividerX, stamY + 2, 1, barHeight - 3), Color.White * 0.75f);
+            }
+
+            // Render numeric text on the right when inventory is open
+            if (Main.playerInventory)
+            {
+                void DrawText(int y, float current, float max, int endX)
+                {
+                    string text = $"{(int)current}/{(int)max}";
+                    Vector2 textSize = FontAssets.MouseText.Value.MeasureString(text);
+                    // Draw close to the right of the bar (e.g. 8px margin)
+                    Vector2 textPos = new Vector2(endX + 8, y - (textSize.Y - barHeight) / 2f + 1f);
+                    Terraria.UI.Chat.ChatManager.DrawColorCodedStringWithShadow(
+                        spriteBatch, FontAssets.MouseText.Value, text, textPos, Color.White, 0f, Vector2.Zero, new Vector2(0.85f)
+                    );
+                }
+
+                DrawText(startY, healthCurrent, healthMax, rightX);
+                DrawText(startY + barHeight + gap, manaCurrent, manaMax, rightX);
+                DrawText(stamY, staminaCurrent, staminaMax, rightX);
             }
         }
     }

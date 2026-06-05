@@ -32,7 +32,9 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.PossessedArmor;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavigationTier = 0;
+
+            // Step 6: humanoid soldier — paces around its post when it gives up.
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PatrolMode = NPCs.PatrolMode.Pace;
             
             if (tsorcRevampWorld.SuperHardMode)
             {

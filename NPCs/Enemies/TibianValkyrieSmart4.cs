@@ -67,10 +67,8 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 11, shootSound: SoundID.Item17, overshoot: new Vector2(0, -16));
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavigationTier = 0;
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;
-            globalNPC.WeakTeleport = false;
             globalNPC.CanStopToFire = false;
 
             // Patrol/Pursue FSM (Phase 1) — full pathfinding + observable give-up/patrol for testing.

@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public static float damageResistance = 35f;
         public static int manaCost = 90;
-        public static float MaxManaPercentIncrease = 100f;
+        public static float MaxManaPercentIncrease = 50f;
         public static float StaminaRegen = 15f;
         public static int regenDelay = 13;
         public static float BadDmgMultiplier = 25f;

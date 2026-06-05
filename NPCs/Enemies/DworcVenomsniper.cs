@@ -34,6 +34,12 @@ namespace tsorcRevamp.NPCs.Enemies
             Main.npcFrameCount[NPC.type] = 15;
             UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 9, 8, SoundID.Item63, telegraphColor: Color.GreenYellow);
 
+            // Step 6: sniper gains a single re-acquire blink toward an elevated firing spot.
+            tsorcRevampGlobalNPC sniperGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            sniperGlobalNPC.CanTeleport = true;
+            sniperGlobalNPC.TeleportMaxCharges = 1;
+            sniperGlobalNPC.PrefersHighGround = true;
+
             if (Main.hardMode)
             {
                 NPC.lifeMax = 100;

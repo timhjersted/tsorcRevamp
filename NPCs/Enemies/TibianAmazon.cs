@@ -47,6 +47,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 throwingKnifeDamage = 20;
             }
             UsefulFunctions.AddAttack(NPC, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
+
+            // Step 6: humanoid soldier — paces around its post when it gives up.
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PatrolMode = NPCs.PatrolMode.Pace;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

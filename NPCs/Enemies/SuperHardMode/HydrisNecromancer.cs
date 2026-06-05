@@ -38,6 +38,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17, telegraphColor: Color.Black);
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, SoundID.Item17, telegraphColor: Color.Black);
 
+            // Step 6 caster levers: remember last-known position; pace when it does patrol.
+            tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            casterGlobalNPC.RemembersLastKnownPos = true;
+            casterGlobalNPC.PatrolMode = NPCs.PatrolMode.Pace;
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {

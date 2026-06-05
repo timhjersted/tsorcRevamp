@@ -6722,6 +6722,18 @@ Mods: {
 					'''
 			}
 
+			ArcherSpiritBell: {
+				// DisplayName: Archer Spirit Bell
+				/* Tooltip:
+					'''
+					Summons an Archer Spirit to fight for you
+					Looses frostburn arrows that inflict Frostburn on hit
+					Uses 2 summoner slots and costs 100 mana
+					The spirit targets the highest HP enemy nearby
+					Fades away after 3 minutes
+					''' */
+			}
+
 			SunsetQuasar: {
 				DisplayName: 落日类星体
 				Tooltip:
@@ -9122,6 +9134,11 @@ Mods: {
 				Description: 灵灰骑士将为你而战
 			}
 
+			ArcherSpiritBuff: {
+				// DisplayName: Archer Spirit
+				// Description: The Archer Spirit will shoot down your enemies!
+			}
+
 			RustedChainDebuff: {
 				DisplayName: 锈蚀铁链护甲穿透
 				Description: ""
@@ -9694,6 +9711,9 @@ Mods: {
 			ArcherToken.DisplayName: 箭
 			NondescriptOwlProjectile.DisplayName: 芜！芜！
 			OwlsArrow.DisplayName: 芜！芜！
+			// ArcherSpirit.DisplayName: Archer Spirit
+			// ArcherSpiritArrow.DisplayName: Archer Spirit Arrow
+			// EnemyFrostburnArrow.DisplayName: Enemy Frostburn Arrow
 			FriendlyCataluminance.DisplayName: 耀翳眼
 			FriendlyDragonsBreath.DisplayName: 龙息
 			FriendlyRedLaser.DisplayName: 激光
@@ -11664,6 +11684,66 @@ Mods: {
 			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 			// TibianValkyrieSmart4.DisplayName: Tibian Valkyrie Smart4
+			// OmnirsDemonLordApocalypse.DisplayName: Demon Lord Apocalypse
+			// OmnirsEland.DisplayName: Omnir Eland
+			// OmnirsEvilEye.DisplayName: Omnir Evil Eye
+			// OmnirsGigas.DisplayName: Omnir Gigas
+			// OmnirsHydra.DisplayName: Omnir Hydra
+			// OmnirsIceGigas.DisplayName: Omnir Ice Gigas
+			// OmnirsMassacre.DisplayName: Omnir Massacre
+			// OmnirsMinotaurMage.DisplayName: Omnir Minotaur Mage
+			// OmnirsPlaguesmith.DisplayName: Omnir Plaguesmith
+			// OmnirsQuaraMantassin.DisplayName: Omnir Quara Mantassin
+			// OmnirsQuaraPincher.DisplayName: Omnir Quara Pincher
+			// OmnirsSahagin.DisplayName: Omnir Sahagin
+
+			OmnirsBlackMage: {
+				// DisplayName: Omnirs Black Mage
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			OmnirsCaravanMerchant: {
+				// DisplayName: Omnirs Caravan Merchant
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			OmnirsWhiteMage: {
+				// DisplayName: Omnirs White Mage
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			// TibianValkyrieTier2.DisplayName: Tibian Valkyrie Tier2
+			// GreatBlackKnight.DisplayName: Great Black Knight
 		}
 
 		Prefixes: {
@@ -11729,93 +11809,61 @@ Mods: {
 		}
 
 		Configs: {
-			tsorcRevampConfig: {
-				DisplayName: "[c/ad4c9f:红][c/ad4c9f:云][c/ad4c9f:物][c/ad4c9f:语] [c/8d9be7:模][c/8d9be7:组][c/8d9be7:设][c/8d9be7:置]"
+			tsorcRevampGameplayConfig: {
+				// DisplayName: Gameplay
+
+				Headers: {
+					// AdventureMode: Adventure Mode
+					// GameplayChanges: Gameplay Changes
+					// GameplayTweaks: Gameplay Tweaks
+				}
 
 				AdventureMode: {
-					Label: 冒险模式：模组游玩基础
-					Tooltip:
+					// Label: Adventure Mode: Main
+					/* Tooltip:
 						'''
-						防止破坏和放置大多数物块
-						它还启用了一些模组配套地图的特性
-						“如果游戏允许你打破它或放置它，那就是允许的，存在即合理！"
-						如果你正在使用模组配套的地图，请启用此功能！
-						'''
+						Prevents breaking and placing most blocks.
+						It also enables some features intended for the custom map.
+						"If the game lets you break it or place it, it's allowed!"
+						Leave this enabled if you're playing with the custom map!
+						''' */
 				}
 
 				SoulsDropOnDeath: {
-					Label: 黑暗之魂在死亡时掉落
-					Tooltip:
+					// Label: Souls Drop On Death
+					/* Tooltip:
 						'''
-						当你死的时候，掉落你所有的黑暗之魂
-						如果启用“死亡时删除掉落的黑暗之魂”
-						在你之前掉落的魂被删除后，开始掉落新的魂
-						多人模式下无效
-						默认为开启
-						'''
+						Drop all your Dark Souls when you die.
+						If "Delete Dropped Souls on Death" is enabled,
+						your Souls will drop after old Souls are deleted.
+						Does not take effect in multiplayer.
+						Defaults to On
+						''' */
 				}
 
 				DeleteDroppedSoulsOnDeath: {
-					Label: 死亡时删除掉落的黑暗之魂
-					Tooltip:
+					// Label: Delete Dropped Souls On Death
+					/* Tooltip:
 						'''
-						当玩家再次死亡时，之前掉落在世界上的黑暗之魂都会被删除
-						如果你在掉落的黑暗之还未被捡起的时候退出游戏，
-						即使这个选项被禁用，你的黑暗之魂也会被删除
-						多人模式下无效
-						默认为开启
-						'''
+						Dark Souls dropped by dying will be deleted if you die again
+						before picking them up. Even if this option is disabled, your
+						Souls will be deleted if you exit the game while your Souls
+						are still on the ground. Does not take effect in multiplayer.
+						Defaults to On
+						''' */
 				}
 
 				BossZenConfig: {
-					Label: Boss禅定
-					Tooltip:
+					// Label: Boss Zen Config
+					/* Tooltip:
 						'''
-						当Boss在场时，会阻止其他敌怪生成
-						默认为开启
-						'''
+						Boss Zen disables enemy spawns while a boss is alive.
+						Defaults to On
+						''' */
 				}
 
-				DisableGloveAutoswing: {
-					Label: 禁用近战武器和鞭子自动挥舞
-					Tooltip:
-						'''
-						禁用猛爪手套及合成物为近战武器和鞭子带来的自动挥舞效果，“自动开火”选项优先级高于此项
-						对于鞭子Buff堆叠来说很有用。默认为关闭
-						'''
-				}
-
-				DisableAutomaticQuickMana: {
-					Label: 禁止自动使用魔力回复药水
-					Tooltip:
-						'''
-						禁用魔力花及合成物的自动使用魔力回复药水效果，对于防止在被诅咒者模式下不小心使用蓝露滴圣杯瓶很有用
-						默认为关闭
-						'''
-				}
-
-				DisableRifleScopeZoom: {
-					Label: 禁用步枪瞄准镜视野缩放
-					Tooltip:
-						'''
-						禁用步枪瞄准镜及其升级物提供的屏幕外缩放功能
-						不会影响像狙击步枪这样的武器
-						对于具有右键能力的枪很有用。默认为关闭
-						'''
-				}
-
-				DisableDragoonGreavesDoubleJump: {
-					Label: 禁用 龙骑士腿甲 的二段跳
-					Tooltip: 禁用 龙骑士腿甲 的额外跳跃效果。默认为关闭
-				}
-
-				DisableSupersonicWings2ExtraJumps: {
-					Label: 禁用 超音速之翼II 的额外跳跃
-					Tooltip: 禁用 超音速之翼II 的额外跳跃效果。默认为关闭
-				}
-
-				EnableSoulsModeMobilityLimit: {
-					// Label: Enable Souls Mode Mobility Limit
+				SoulsModeMobilityLimit: {
+					// Label: Souls Mode Mobility Limit
 					// Tooltip: Limits extreme running and flight speed while Unkindled or Bearer of the Curse. Classic mode is unaffected. Defaults to On.
 				}
 
@@ -11828,183 +11876,77 @@ Mods: {
 						''' */
 				}
 
-				SoulCounterPosX: {
-					Label: 黑暗之魂数量显示 X 轴
-					Tooltip: 黑暗之魂数量显示 X 轴的位置坐标
+				DebugMode: {
+					// Label: Debug Mode
+					// Tooltip: ""
 				}
 
-				SoulCounterPosY: {
-					Label: 黑暗之魂数量显示 Y 轴
-					Tooltip: 黑暗之魂数量显示 Y 轴的位置坐标
-				}
-
-				EstusFlaskPosX: {
-					Label: 元素瓶数量显示 X 轴
-					Tooltip: 元素瓶数量显示 X 轴的位置坐标
-				}
-
-				EstusFlaskPosY: {
-					Label: 元素瓶数量显示 Y 轴
-					Tooltip: 元素瓶数量显示 Y 轴的位置坐标
-				}
-
-				CeruleanFlaskPosX: {
-					Label: 蓝露滴圣杯瓶数量显示 X 轴
-					Tooltip: 蓝露滴圣杯瓶数量显示 X 轴的位置坐标
-				}
-
-				CeruleanFlaskPosY: {
-					Label: 蓝露滴圣杯瓶数量显示 Y 轴
-					Tooltip: 蓝露滴圣杯瓶数量显示 Y 轴的位置坐标
-				}
-
-				HideCeruleanFlask: {
-					Label: 隐藏蓝露滴圣杯瓶的显示
-					Tooltip:
-						'''
-						如果你不用蓝露滴圣杯瓶，可以用此选项隐藏其在被诅咒模式下的显示
-						默认为关闭
-						'''
-				}
-
-				ChargeCircleOpacity: {
-					Label: 蓄力（充能）武器显示蓄力条
-					Tooltip:
-						'''
-						一些可充能武器在光标周围有一个圆圈，表示当前的充能水平
-						可以在此处设置该圆的不透明度
-						设置为 0 可不显示充能条
-						'''
-				}
-
-				HideSoapstones: {
-					Label: 隐藏阅读过的箴言文字泡
-					Tooltip:
-						'''
-						如果开启, 除非点击显示按钮，
-						否则阅读过的箴言文字泡将不会再显示
-						默认为开启
-						'''
-				}
-
-				SoapstoneScale: {
-					Label: 箴言文字泡缩放比率
-					Tooltip:
-						'''
-						增加所有箴言文字泡对话框的大小比率
-						默认为 0%
-						'''
-				}
-
-				ShowStaminaTooltip: {
-					Label: 耐力消耗提示
-					Tooltip:
-						'''
-						在被诅咒者模式下显示武器的耐力消耗
-						默认为开启
-						'''
-				}
-
-				GravityFix: {
-					Label: 重力药水不再翻转屏幕
-					Tooltip:
-						'''
-						翻转重力时只会翻转你的角色，而不是整个屏幕
-						强烈推荐游玩本模组时开启
-						当它与另一个模组不兼容时可以禁用此选项
-						'''
-				}
-
-				BroadswordRework: {
-					Label: 近战挥舞动作重制
-					Tooltip:
-						'''
-						仍在测试中！  
-						让近战剑再次伟大！  
-						需要重新加载世界以生效
-						'''
-				}
-
-				UseOriginalPlayerHurtSounds: {
-					// Label: Use Original Player Hurt/Death Sounds
+				DisableGloveAutoswing: {
+					// Label: Disable Melee/Whip Glove's Autoswing
 					/* Tooltip:
 						'''
-						Use the vanilla Terraria player hurt and death sounds.
-						If disabled, custom Dark Souls hurt and death voices will be used.
-						Defaults to Off.
+						Disable the Melee/Whip Autoswing feature provided by the Feral Claws and it's upgrades,
+						the Autofire option overrides this. Useful for whip stacking. Defaults to Off.
 						''' */
 				}
 
-				MiakodaVolume: {
-					Label: Miakoda的音量
-					Tooltip:
+				DisableAutomaticQuickMana: {
+					// Label: Disable Automatic Mana Potion drinking
+					/* Tooltip:
 						'''
-						让Miakoda带着你深入游戏探索？
-						这个滑块控制Miakoda的音量
-						设置为 0 禁用Miakoda的声音
-						'''
+						Disable the automatic quick mana feature provided by the Mana Flower and it's upgrades,
+						useful for not accidentally drinking the Cerulean Flask in BotC-mode. Defaults to Off.
+						''' */
 				}
 
-				BonfireFlyVolume: {
-					Label: 篝火虫的音量
-					Tooltip:
+				DisableRifleScopeZoom: {
+					// Label: Disable Rifle Scope Zoom
+					/* Tooltip:
 						'''
-						不想让篝火虫再挑逗你去找不到的篝火？
-						这个滑块控制篝火虫的音量
-						设置为 0 禁用篝火虫的声音
-						'''
+						Disable the Off-Screen Zooming feature provided by the Rifle Scope and it's upgrades,
+						doesn't affect weapons like the Sniper Rifle which have this natively,
+						useful for guns that have a right-click function. Defaults to Off.
+						''' */
 				}
 
-				BotCMechanicsVolume: {
-					Label: 被诅咒者机制音量
-					Tooltip:
-						'''
-						被诅咒者机制的音量是不是过于吵闹和烦人了？
-						这个滑块控制篝被诅咒者机制的音量
-						设置为 0 禁用被诅咒者机制的声音
-						'''
+				DisableDragoonGreavesDoubleJump: {
+					// Label: Disable Dragoon Greaves Double Jump
+					// Tooltip: Disable the extra jump provided by both Dragoon Greaves. Defaults to Off.
 				}
 
-				Headers: {
-					Mods: {
-						tsorcRevamp: {
-							Configs: {
-								tsorcRevampConfig: {
-									Headers: {
-										AdventureMode: 冒险模式
-										GameplayChanges: 游戏玩法变化
-										Visual: 视觉效果
-										Sound: 声音
-									}
-								}
-							}
-						}
-					}
-				}
-
-				BotCMechanicsVolumeSlider: {
-					Label: 被诅咒者机制音效滑块
-					Tooltip: ""
-				}
-
-				AdjustBotCMechanicsVolume: {
-					Label: 被诅咒者机制音量
-					Tooltip: ""
-				}
-
-				DebugMode: {
-					Tooltip: ""
-					Label: Debug模式
+				DisableSupersonicWings2ExtraJumps: {
+					// Label: Disable Supersonic Wings II Extra Jumps
+					// Tooltip: Disable the extra jumps provided by the Supersonic Wings II. Defaults to Off.
 				}
 
 				DisableModWingsFallControlDuringFlight: {
-					Tooltip: ""
-					Label: 禁用模组翅膀的加速下落
+					// Label: Disable Mod Wings Fall Control During Flight
+					// Tooltip: ""
+				}
+			}
+
+			tsorcRevampVisualConfig: {
+				// DisplayName: Visual
+
+				Headers: {
+					// Soapstones: Soapstones
+					// UI: UI
+					// Other: Other
 				}
 
 				DisableSoapstones: {
-					Tooltip: 只有在创建新地图时才生效
-					Label: 禁用箴言文字泡
+					// Label: Disable Soapstones
+					// Tooltip: Only takes effect when creating new map
+				}
+
+				HideSoapstones: {
+					// Label: Hide Read Soapstones
+					/* Tooltip:
+						'''
+						If enabled, soapstone messages that have been read will
+						not be shown until a button is clicked to show them.
+						Defaults to on.
+						''' */
 				}
 
 				AutoOpenSoapstones: {
@@ -12027,9 +11969,140 @@ Mods: {
 					// Tooltip: ""
 				}
 
+				SoapstoneScale: {
+					// Label: Soapstone Size Increase
+					/* Tooltip:
+						'''
+						Increases the size of all soapstone dialogue boxes by a percentage.
+						Defaults to 0%.
+						''' */
+				}
+
+				UseCustomResourceBars: {
+					// Label: Use Custom Resource Bars
+					// Tooltip: ""
+				}
+
+				HideOverheadStaminaBar: {
+					// Label: Hide Overhead Stamina Bar
+					// Tooltip: ""
+				}
+
+				HideCeruleanFlask: {
+					// Label: Hide the Cerulean Flask
+					/* Tooltip:
+						'''
+						Hide the Cerulean Flask obtained in Bearer of the Curse mode,
+						if you don't use it. Defaults to Off.
+						''' */
+				}
+
+				ChargeCircleOpacity: {
+					// Label: Charged Weapon Indicator Opacity
+					/* Tooltip:
+						'''
+						Some charged weapons draw a circle around the cursor to indicate the
+						current charge level. The opacity of that circle can be set here.
+						Set to 0 to disable charge circles.
+						''' */
+				}
+
 				DisableLocationBanner: {
 					// Label: Disable Location Banner
 					// Tooltip: ""
+				}
+
+				ShowStaminaTooltip: {
+					// Label: Show Stamina Use Tooltip
+					/* Tooltip:
+						'''
+						Show the stamina consumption tooltip for Bearer of the Curse mode.
+						Defaults to On.
+						''' */
+				}
+
+				SoulCounterPosX: {
+					// Label: Soul Counter X Position
+					// Tooltip: The X position of the Soul Counter.
+				}
+
+				SoulCounterPosY: {
+					// Label: Soul Counter Y Position
+					// Tooltip: The Y Position of the Soul Counter.
+				}
+
+				EstusFlaskPosX: {
+					// Label: Estus Flask X Position
+					// Tooltip: The X position of the Estus Flask.
+				}
+
+				EstusFlaskPosY: {
+					// Label: Estus Flask Y Position
+					// Tooltip: The Y position of the Estus Flask.
+				}
+
+				CeruleanFlaskPosX: {
+					// Label: Cerulean Flask X Position
+					// Tooltip: The X position of the Cerulean Flask.
+				}
+
+				CeruleanFlaskPosY: {
+					// Label: Cerulean Flask Y Position
+					// Tooltip: The Y position of the Cerulean Flask.
+				}
+
+				GravityFix: {
+					// Label: Gravitation No Longer Flips Screen
+					/* Tooltip:
+						'''
+						Flipping gravity will only flip your character instead of the whole screen.
+						WARNING! Some parts of the mod rely on this, and will be very disorienting otherwise
+						Only disable if it is hard-incompatible with another mod
+						''' */
+				}
+			}
+
+			tsorcRevampSoundConfig: {
+				// DisplayName: Sound
+
+				UseOriginalPlayerHurtSounds: {
+					// Label: Use Original Player Hurt/Death Sounds
+					/* Tooltip:
+						'''
+						Use the vanilla Terraria player hurt and death sounds.
+						If disabled, custom Dark Souls hurt and death voices will be used.
+						Defaults to Off.
+						''' */
+				}
+
+				MiakodaVolume: {
+					// Label: Miakoda Volume
+					/* Tooltip:
+						'''
+						Revamp Miakoda giving you Navi flashbacks?
+						This slider controls Miakoda's volume.
+						Set to 0 to disable Miakoda sounds.
+						''' */
+				}
+
+				BonfireFlyVolume: {
+					// Label: Bonfirefly Volume
+					/* Tooltip:
+						'''
+						Bonfirefly teasing you about a Bonfire which you can't reach yet?
+						This slider controls Bonfirefly's volume.
+						Set to 0 to disable Bonfirefly sounds.
+						''' */
+				}
+
+				BotCMechanicsVolume: {
+					// Label: Bearer of the Curse Class Mechanics Volume
+					/* Tooltip:
+						'''
+						Are the new Curse Bearer mechanics too loud or simply annoying?
+						This slider controls their volume.
+						Set to 0 to disable them.
+						''' */
 				}
 			}
 		}

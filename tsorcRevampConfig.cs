@@ -1,198 +1,402 @@
 using System.ComponentModel;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp
 {
-    [Label("Config")]
-    [BackgroundColor(30, 60, 40, 220)]
-    public class tsorcRevampConfig : ModConfig
+    public class tsorcRevampConfig : ILoadable
     {
-        public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) => true;
+        public void Load(Mod mod)
+        {
+        }
+
+        public void Unload()
+        {
+        }
+
+        // Forwarding properties for backward compatibility
+        public bool AdventureMode
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().AdventureMode;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().AdventureMode = value;
+        }
+
+        public bool SoulsDropOnDeath
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsDropOnDeath;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsDropOnDeath = value;
+        }
+
+        public bool DeleteDroppedSoulsOnDeath
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DeleteDroppedSoulsOnDeath;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().DeleteDroppedSoulsOnDeath = value;
+        }
+
+        public bool BossZenConfig
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().BossZenConfig;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().BossZenConfig = value;
+        }
+
+        public bool DisableGloveAutoswing
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableGloveAutoswing;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableGloveAutoswing = value;
+        }
+
+        public bool DisableAutomaticQuickMana
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableAutomaticQuickMana;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableAutomaticQuickMana = value;
+        }
+
+        public bool DisableRifleScopeZoom
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableRifleScopeZoom;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableRifleScopeZoom = value;
+        }
+
+        public bool DisableDragoonGreavesDoubleJump
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableDragoonGreavesDoubleJump;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableDragoonGreavesDoubleJump = value;
+        }
+
+        public bool DisableSupersonicWings2ExtraJumps
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableSupersonicWings2ExtraJumps;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableSupersonicWings2ExtraJumps = value;
+        }
+
+        public bool DisableModWingsFallControlDuringFlight
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableModWingsFallControlDuringFlight;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableModWingsFallControlDuringFlight = value;
+        }
+
+        public bool EnableSoulsModeMobilityLimit
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsModeMobilityLimit;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsModeMobilityLimit = value;
+        }
+
+        public bool SoulsModeMobilityLimit
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsModeMobilityLimit;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsModeMobilityLimit = value;
+        }
+
+        public bool ActiveShieldsRevamp
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().ActiveShieldsRevamp;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().ActiveShieldsRevamp = value;
+        }
+
+        public bool DebugMode
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DebugMode;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().DebugMode = value;
+        }
+
+        public int SoulCounterPosX
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().SoulCounterPosX;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().SoulCounterPosX = value;
+        }
+
+        public int SoulCounterPosY
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().SoulCounterPosY;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().SoulCounterPosY = value;
+        }
+
+        public int EstusFlaskPosX
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().EstusFlaskPosX;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().EstusFlaskPosX = value;
+        }
+
+        public int EstusFlaskPosY
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().EstusFlaskPosY;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().EstusFlaskPosY = value;
+        }
+
+        public int CeruleanFlaskPosX
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().CeruleanFlaskPosX;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().CeruleanFlaskPosX = value;
+        }
+
+        public int CeruleanFlaskPosY
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().CeruleanFlaskPosY;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().CeruleanFlaskPosY = value;
+        }
+
+        public bool HideCeruleanFlask
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().HideCeruleanFlask;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().HideCeruleanFlask = value;
+        }
+
+        public uint ChargeCircleOpacity
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().ChargeCircleOpacity;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().ChargeCircleOpacity = value;
+        }
+
+        public bool DisableSoapstones
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableSoapstones;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableSoapstones = value;
+        }
+
+        public bool HideSoapstones
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().HideSoapstones;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().HideSoapstones = value;
+        }
+
+        public bool AutoOpenSoapstones
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().AutoOpenSoapstones;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().AutoOpenSoapstones = value;
+        }
+
+        public bool DisableStorySoapstones
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableStorySoapstones;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableStorySoapstones = value;
+        }
+
+        public bool DisableLoreSoapstones
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableLoreSoapstones;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableLoreSoapstones = value;
+        }
+
+        public bool DisableTutorialSoapstones
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableTutorialSoapstones;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableTutorialSoapstones = value;
+        }
+
+        public bool DisableLocationBanner
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableLocationBanner;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableLocationBanner = value;
+        }
+
+        public uint SoapstoneScale
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().SoapstoneScale;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().SoapstoneScale = value;
+        }
+
+        public bool ShowStaminaTooltip
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().ShowStaminaTooltip;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().ShowStaminaTooltip = value;
+        }
+
+        public bool UseCustomResourceBars
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().UseCustomResourceBars;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().UseCustomResourceBars = value;
+        }
+
+        public bool HideOverheadStaminaBar
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().HideOverheadStaminaBar;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().HideOverheadStaminaBar = value;
+        }
+
+        public bool GravityFix
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().GravityFix;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().GravityFix = value;
+        }
+
+        public bool UseOriginalPlayerHurtSounds
+        {
+            get => ModContent.GetInstance<tsorcRevampSoundConfig>().UseOriginalPlayerHurtSounds;
+            set => ModContent.GetInstance<tsorcRevampSoundConfig>().UseOriginalPlayerHurtSounds = value;
+        }
+
+        public uint MiakodaVolume
+        {
+            get => ModContent.GetInstance<tsorcRevampSoundConfig>().MiakodaVolume;
+            set => ModContent.GetInstance<tsorcRevampSoundConfig>().MiakodaVolume = value;
+        }
+
+        public uint BonfireFlyVolume
+        {
+            get => ModContent.GetInstance<tsorcRevampSoundConfig>().BonfireFlyVolume;
+            set => ModContent.GetInstance<tsorcRevampSoundConfig>().BonfireFlyVolume = value;
+        }
+
+        public uint BotCMechanicsVolume
+        {
+            get => ModContent.GetInstance<tsorcRevampSoundConfig>().BotCMechanicsVolume;
+            set => ModContent.GetInstance<tsorcRevampSoundConfig>().BotCMechanicsVolume = value;
+        }
+    }
+
+    [Label("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.DisplayName")]
+    public class tsorcRevampGameplayConfig : ModConfig
+    {
         public override ConfigScope Mode => ConfigScope.ServerSide;
-        [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.AdventureMode")]
-        [BackgroundColor(60, 140, 80, 192)]
+        public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) => true;
+
+        [Header("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.Headers.AdventureMode")]
         [DefaultValue(true)]
         public bool AdventureMode { get; set; }
 
-        [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.GameplayChanges")]
-        [BackgroundColor(60, 140, 80, 192)]
+        [Header("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.Headers.GameplayChanges")]
         [DefaultValue(true)]
         public bool SoulsDropOnDeath { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(true)]
         public bool DeleteDroppedSoulsOnDeath { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(true)]
         public bool BossZenConfig { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
-        [DefaultValue(false)]
-        public bool DisableGloveAutoswing { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [DefaultValue(false)]
-        public bool DisableAutomaticQuickMana { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [DefaultValue(false)]
-        public bool DisableRifleScopeZoom { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [DefaultValue(false)]
-        public bool DisableDragoonGreavesDoubleJump { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [DefaultValue(false)]
-        public bool DisableSupersonicWings2ExtraJumps { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [DefaultValue(false)]
-        public bool DisableModWingsFallControlDuringFlight { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(true)]
-        public bool EnableSoulsModeMobilityLimit { get; set; }
+        public bool SoulsModeMobilityLimit { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(true)]
         public bool ActiveShieldsRevamp { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
         public bool DebugMode { get; set; }
 
-        [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Visual")]
-
-        /*
-        [Label("Legacy Music")]
-        [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Warning! This music was disabled to protect streamers and youtubers who were having copyright issues with it, despite being fair use. Enable it for the classic experience, but we do not advise streaming or recording while it is active.")]
+        [Header("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.Headers.GameplayTweaks")]
         [DefaultValue(false)]
-        public bool LegacyMusic { get; set; }*/
+        public bool DisableGloveAutoswing { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
-        [SliderColor(224, 165, 56, 128)]
-        [Range(0, 3840)]
-        [DefaultValue(460)]
-        public int SoulCounterPosX { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [SliderColor(224, 165, 56, 128)]
-        [Range(0, 2160)]
-        [DefaultValue(907)]
-        public int SoulCounterPosY { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [SliderColor(224, 165, 56, 128)]
-        [Range(0, 3840)]
-        [DefaultValue(111)]
-        public int EstusFlaskPosX { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [SliderColor(224, 165, 56, 128)]
-        [Range(0, 2160)]
-        [DefaultValue(124)]
-        public int EstusFlaskPosY { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [SliderColor(224, 165, 56, 128)]
-        [Range(0, 3840)]
-        [DefaultValue(130)]
-        public int CeruleanFlaskPosX { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
-        [SliderColor(224, 165, 56, 128)]
-        [Range(0, 2160)]
-        [DefaultValue(224)]
-        public int CeruleanFlaskPosY { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
-        public bool HideCeruleanFlask { get; set; }
+        public bool DisableAutomaticQuickMana { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
-        [DefaultValue(224)]
-        public uint ChargeCircleOpacity { get; set; }
+        [DefaultValue(false)]
+        public bool DisableRifleScopeZoom { get; set; }
 
+        [DefaultValue(false)]
+        public bool DisableDragoonGreavesDoubleJump { get; set; }
+
+        [DefaultValue(false)]
+        public bool DisableSupersonicWings2ExtraJumps { get; set; }
+
+        [DefaultValue(false)]
+        public bool DisableModWingsFallControlDuringFlight { get; set; }
+    }
+
+    [Label("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.DisplayName")]
+    public class tsorcRevampVisualConfig : ModConfig
+    {
+        public override ConfigScope Mode => ConfigScope.ClientSide;
+
+        [Header("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.Headers.Soapstones")]
         [BackgroundColor(200, 80, 80, 192)]
         [ReloadRequired]
         [DefaultValue(false)]
         public bool DisableSoapstones { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(true)]
         public bool HideSoapstones { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
         public bool AutoOpenSoapstones { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
         public bool DisableStorySoapstones { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
         public bool DisableLoreSoapstones { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
         public bool DisableTutorialSoapstones { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
-        [DefaultValue(false)]
-        public bool DisableLocationBanner { get; set; }
-
-        [BackgroundColor(60, 140, 80, 192)]
         [Range(0, 100)]
         [DefaultValue(0)]
         public uint SoapstoneScale { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
+        [Header("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.Headers.UI")]
+        [DefaultValue(false)]
+        public bool UseCustomResourceBars { get; set; }
+
+        [DefaultValue(false)]
+        public bool HideOverheadStaminaBar { get; set; }
+
+        [DefaultValue(false)]
+        public bool HideCeruleanFlask { get; set; }
+
+        [DefaultValue(224)]
+        public uint ChargeCircleOpacity { get; set; }
+
+        [DefaultValue(false)]
+        public bool DisableLocationBanner { get; set; }
+
         [Range(0, 100)]
         [DefaultValue(true)]
         public bool ShowStaminaTooltip { get; set; }
 
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 3840)]
+        [DefaultValue(460)]
+        public int SoulCounterPosX { get; set; }
+
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 2160)]
+        [DefaultValue(907)]
+        public int SoulCounterPosY { get; set; }
+
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 3840)]
+        [DefaultValue(111)]
+        public int EstusFlaskPosX { get; set; }
+
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 2160)]
+        [DefaultValue(124)]
+        public int EstusFlaskPosY { get; set; }
+
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 3840)]
+        [DefaultValue(130)]
+        public int CeruleanFlaskPosX { get; set; }
+
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 2160)]
+        [DefaultValue(224)]
+        public int CeruleanFlaskPosY { get; set; }
+
+        [Header("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.Headers.Other")]
         [BackgroundColor(200, 80, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [ReloadRequired]
         [DefaultValue(true)]
         public bool GravityFix { get; set; }
+    }
 
+    [Label("$Mods.tsorcRevamp.Configs.tsorcRevampSoundConfig.DisplayName")]
+    public class tsorcRevampSoundConfig : ModConfig
+    {
+        public override ConfigScope Mode => ConfigScope.ClientSide;
 
-
-        [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Sound")]
-
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
         public bool UseOriginalPlayerHurtSounds { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(5)]
         public uint MiakodaVolume { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(100)]
         public uint BonfireFlyVolume { get; set; }
 
-        [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(50)]
         public uint BotCMechanicsVolume { get; set; }
-
-        /*
-        [Label("Auto-Update Adventure Map")]
-        [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Automatically download updates to the adventure map.\nAround 6MB, updates every few weeks.\nAdventure map updates will not affect existing worlds, only newly created ones.")]
-        [DefaultValue(true)]
-        public bool AutoUpdateMap { get; set; }
-
-        [Label("Auto-Update Music Mod")]
-        [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Automatically download updates to the music mod.\nAround 100MB, updates every few months.")]
-        [DefaultValue(true)]
-        public bool AutoUpdateMusic { get; set; }*/
     }
 }

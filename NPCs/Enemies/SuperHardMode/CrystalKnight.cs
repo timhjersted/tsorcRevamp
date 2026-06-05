@@ -34,6 +34,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 8000; // life / 2.5 : was 723 with a bit less health - 2.5 seems a good average to equalize the numbers
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CrystalKnightBanner>();
+
+            // Step 6 archer levers: blink to elevated firing spots, reposition toward last-known before patrolling.
+            tsorcRevampGlobalNPC archerGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            archerGlobalNPC.PrefersHighGround = true;
+            archerGlobalNPC.RemembersLastKnownPos = true;
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
