@@ -670,7 +670,7 @@ namespace tsorcRevamp
                         {
                             Main.spriteBatch.Draw(barFill, yellowDestination, new Color(240, 190, 50));
                         }
-                        Main.spriteBatch.Draw(barFill, fillDestination, Color.DodgerBlue);
+                        Main.spriteBatch.Draw(barFill, fillDestination, new Color(40, 190, 80));
                         Main.spriteBatch.Draw(barFill, minRollStamDestination, Color.White);
                     }
                 }

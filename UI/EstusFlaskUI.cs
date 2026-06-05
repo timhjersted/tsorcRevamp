@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
@@ -68,7 +68,7 @@ namespace tsorcRevamp.UI
                     numbercolor = Color.White;
                 }
 
-                const float spriteScale = 0.7f; // shrink the flask sprite by 30%
+                const float spriteScale = 0.721f; // 3% bigger (original 0.7f * 1.03)
                 int scaledWidth = (int)(textureFull.Width * spriteScale);
                 int scaledHeight = (int)(textureFull.Height * spriteScale);
 

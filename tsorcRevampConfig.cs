@@ -346,32 +346,32 @@ namespace tsorcRevamp
 
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 3840)]
-        [DefaultValue(460)]
+        [DefaultValue(178)]
         public int SoulCounterPosX { get; set; }
 
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 2160)]
-        [DefaultValue(907)]
+        [DefaultValue(70)]
         public int SoulCounterPosY { get; set; }
 
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 3840)]
-        [DefaultValue(111)]
+        [DefaultValue(93)]
         public int EstusFlaskPosX { get; set; }
 
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 2160)]
-        [DefaultValue(124)]
+        [DefaultValue(127)]
         public int EstusFlaskPosY { get; set; }
 
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 3840)]
-        [DefaultValue(130)]
+        [DefaultValue(179)]
         public int CeruleanFlaskPosX { get; set; }
 
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 2160)]
-        [DefaultValue(224)]
+        [DefaultValue(130)]
         public int CeruleanFlaskPosY { get; set; }
 
         [Header("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.Headers.Other")]

@@ -299,7 +299,10 @@ namespace tsorcRevamp
                     "tsorcRevamp: Dark Soul Counter UI",
                     delegate
                     {
-                        mod._darkSoulCounterUIState.Draw(Main.spriteBatch, new GameTime());
+                        if (!Main.playerInventory)
+                        {
+                            mod._darkSoulCounterUIState.Draw(Main.spriteBatch, new GameTime());
+                        }
                         return true;
                     },
                     InterfaceScaleType.UI)
@@ -347,7 +350,10 @@ namespace tsorcRevamp
                     "tsorcRevamp: Estus Flask UI",
                     delegate
                     {
-                        mod._estusFlaskUIState.Draw(Main.spriteBatch, new GameTime());
+                        if (!Main.playerInventory)
+                        {
+                            mod._estusFlaskUIState.Draw(Main.spriteBatch, new GameTime());
+                        }
                         return true;
                     },
                     InterfaceScaleType.UI)
@@ -360,7 +366,10 @@ namespace tsorcRevamp
                     "tsorcRevamp: Cerulean Flask UI",
                     delegate
                     {
-                        mod._ceruleanFlaskUIState.Draw(Main.spriteBatch, new GameTime());
+                        if (!Main.playerInventory)
+                        {
+                            mod._ceruleanFlaskUIState.Draw(Main.spriteBatch, new GameTime());
+                        }
                         return true;
                     },
                     InterfaceScaleType.UI)
@@ -1111,7 +1120,7 @@ namespace tsorcRevamp
             }
 
             // Reusable bar drawing helper using 3-slice rendering of the overhead stamina bar sprite
-            void DrawBar(int y, float current, float visualCurrent, float max, Color fillColor, Color bgColor)
+            void DrawBar(int y, float current, float visualCurrent, float max, Color fillColor, Color highlightColor, Color shadowColor, Color bgColor)
             {
                 int maxBarWidth = GetBarWidth(max);
                 int startX = rightX - maxBarWidth;
@@ -1141,12 +1150,28 @@ namespace tsorcRevamp
                 {
                     int fillStart = GetFillWidth(current, max);
                     int fillWidth = GetFillWidth(visualCurrent, max) - fillStart;
-                    spriteBatch.Draw(pixel, new Rectangle(startX + fillStart, y + 2, fillWidth, barHeight - 3), new Color(240, 190, 50));
+                    if (fillWidth > 0)
+                    {
+                        // Draw yellow highlight (top row, 2px high)
+                        spriteBatch.Draw(pixel, new Rectangle(startX + fillStart, y + 2, fillWidth, 2), new Color(255, 225, 120));
+                        // Draw yellow main (middle row, 5px high)
+                        spriteBatch.Draw(pixel, new Rectangle(startX + fillStart, y + 4, fillWidth, 5), new Color(240, 190, 50));
+                        // Draw yellow shadow (bottom row, 2px high)
+                        spriteBatch.Draw(pixel, new Rectangle(startX + fillStart, y + 9, fillWidth, 2), new Color(160, 110, 10));
+                    }
                 }
 
                 // Draw current resource fill
                 int currentFillWidth = GetFillWidth(current, max);
-                spriteBatch.Draw(pixel, new Rectangle(startX, y + 2, currentFillWidth, barHeight - 3), fillColor);
+                if (currentFillWidth > 0)
+                {
+                    // Draw highlight (top row, 2px high)
+                    spriteBatch.Draw(pixel, new Rectangle(startX, y + 2, currentFillWidth, 2), highlightColor);
+                    // Draw main fill (middle row, 5px high)
+                    spriteBatch.Draw(pixel, new Rectangle(startX, y + 4, currentFillWidth, 5), fillColor);
+                    // Draw shadow (bottom row, 2px high)
+                    spriteBatch.Draw(pixel, new Rectangle(startX, y + 9, currentFillWidth, 2), shadowColor);
+                }
 
                 // Draw faint vertical segment lines every 20 points (compressed uniformly)
                 int maxSegments = (int)(max / 20f) + 1;
@@ -1187,14 +1212,14 @@ namespace tsorcRevamp
             }
 
             // Health (Red)
-            DrawBar(startY, healthCurrent, visualLife, healthMax, new Color(230, 45, 45), new Color(45, 10, 10, 180));
+            DrawBar(startY, healthCurrent, visualLife, healthMax, new Color(230, 45, 45), new Color(255, 130, 120), new Color(140, 20, 45), new Color(45, 10, 10, 180));
 
             // Mana (Blue)
-            DrawBar(startY + barHeight + gap, manaCurrent, visualMana, manaMax, new Color(30, 110, 230), new Color(10, 20, 50, 180));
+            DrawBar(startY + barHeight + gap, manaCurrent, visualMana, manaMax, new Color(30, 110, 230), new Color(100, 175, 255), new Color(20, 45, 140), new Color(10, 20, 50, 180));
 
             // Stamina (Green)
             int stamY = startY + (barHeight + gap) * 2;
-            DrawBar(stamY, staminaCurrent, visualStamina, staminaMax, new Color(40, 190, 80), new Color(10, 40, 15, 180));
+            DrawBar(stamY, staminaCurrent, visualStamina, staminaMax, new Color(40, 190, 80), new Color(120, 230, 150), new Color(15, 90, 40), new Color(10, 40, 15, 180));
 
             // Retain divider line on Stamina bar (dodge threshold at 30 stamina)
             if (staminaMax > 30)
