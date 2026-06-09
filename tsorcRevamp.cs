@@ -192,6 +192,11 @@ namespace tsorcRevamp
         internal CustomMapUIState DownloadUIState;
         internal UserInterface DownloadUI;
         internal MapMarkersUIState MarkerState;
+
+        internal EnemySelectionUIState EnemySelectionUI;
+        internal UserInterface _enemySelectionUI;
+        internal SpawnPointConfigUIState SpawnPointConfigUI;
+        internal UserInterface _spawnPointConfigUI;
         internal UserInterface MarkerInterface;
 
         public static FieldInfo AudioLockInfo;
@@ -302,6 +307,11 @@ namespace tsorcRevamp
             DownloadUI = new UserInterface();
 
             MarkerState = new MapMarkersUIState();
+
+            EnemySelectionUI = new EnemySelectionUIState();
+            _enemySelectionUI = new UserInterface();
+            SpawnPointConfigUI = new SpawnPointConfigUIState();
+            _spawnPointConfigUI = new UserInterface();
             MarkerInterface = new UserInterface();
 
 
@@ -322,6 +332,9 @@ namespace tsorcRevamp
 
             PotionBagUserInterface.SetState(PotionUIState);
             DownloadUI.SetState(DownloadUIState);
+
+            _enemySelectionUI.SetState(EnemySelectionUI);
+            _spawnPointConfigUI.SetState(SpawnPointConfigUI);
             MarkerState.Activate();
             MarkerInterface.SetState(MarkerState);
 

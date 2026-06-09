@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Debug
         public override bool? UseItem(Player player)
         {
             tsorcScriptedEvents.InitializeScriptedEvents();
+            tsorcScriptedEvents.LoadDynamicEvents();
             tsorcRevampWorld.NewSlain = new System.Collections.Generic.Dictionary<NPCDefinition, int>();
             return true;
         }

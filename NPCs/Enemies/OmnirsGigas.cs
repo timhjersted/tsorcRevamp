@@ -118,7 +118,7 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
 			int shotRate = enraged?100:70;
 			float accel=enraged? npcEnrAcSPD:npcAcSPD;  //  how fast it can speed up
 			float topSpeed=enraged? npcEnrSPD:npcSPD;  //  max walking speed, also affects jump length
-            tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: false, sizeMatters: true, minSurfaceWidth: 2, canWalkBackwards: true);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: false, minSurfaceWidth: 2, canWalkBackwards: true);
             Vector2 angle = Main.player[NPC.target].Center - NPC.Center;
             angle.Y = angle.Y - (Math.Abs(angle.X) * .1f);
             angle.X += (float)Main.rand.Next(-20, 21);

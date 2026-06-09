@@ -267,9 +267,9 @@ namespace tsorcRevamp.NPCs
         // anti-stuck uses it to disengage a walled/unreachable chase to the FSM (Search/Patrol/teleport).
         public int StuckTimer = 0;
         public bool CanStopToFire = false;
-        // SizeMatters Navigation fields
-        public bool SizeMatters = false;
-        public int MinSurfaceWidth = 2; // minimum solid tiles wide surface to walk on/hop to
+        // Flat-ground navigation for large enemies (avoid slopes / narrow ledges where a big sprite hangs off).
+        public int MinSurfaceWidth = 0;                        // 0 = off; >=2 = only stand/walk/jump on flat ground that wide
+        public bool RequiresFlatGround => MinSurfaceWidth > 0; // read-only; single source of truth is MinSurfaceWidth
         // Backwards Walking (Moonwalk) fields
         public bool CanWalkBackwards = false;
         // Frames spent voluntarily halted at a ledge; used to cap ledge-camping.

@@ -8253,6 +8253,11 @@ Mods: {
 				// Tooltip: ""
 				// DisplayName: Red Knight Test Breastplate
 			}
+
+			EnemyDebugTome: {
+				// DisplayName: Enemy Debug Tome
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {

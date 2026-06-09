@@ -617,7 +617,7 @@ namespace tsorcRevamp
             #endregion
 
             #region stamina bar
-            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
+            if (drawPlayer == Main.LocalPlayer && !Main.gameMenu)
             {
                 var config = ModContent.GetInstance<tsorcRevampConfig>();
                 if (!config.HideOverheadStaminaBar)

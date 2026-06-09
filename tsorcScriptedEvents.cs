@@ -2,6 +2,9 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Reflection;
+using Newtonsoft.Json;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -1614,6 +1617,269 @@ namespace tsorcRevamp
             }
         }
 
+        public static List<DynamicSpawnEvent> DynamicEvents = new List<DynamicSpawnEvent>();
+
+        public static void LoadDynamicEvents()
+        {
+            EnabledEvents.RemoveAll(ev => !string.IsNullOrEmpty(ev.DynamicEventID));
+
+            string relativePath = "Content/DynamicEvents.json";
+            string fullPath = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", relativePath);
+            string json = "";
+
+            try
+            {
+                if (File.Exists(fullPath)) // Prioritize local file if developer has it
+                {
+                    json = File.ReadAllText(fullPath);
+                }
+                else
+                {
+                    var stream = ModContent.GetInstance<tsorcRevamp>().GetFileStream(relativePath);
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        json = reader.ReadToEnd();
+                    }
+                }
+            }
+            catch
+            {
+                // File doesn't exist yet, ignore
+                return;
+            }
+
+            if (string.IsNullOrEmpty(json)) return;
+
+            DynamicEvents = JsonConvert.DeserializeObject<List<DynamicSpawnEvent>>(json);
+            if (DynamicEvents == null) return;
+
+            // Deduplicate dynamic events at the exact same or very close coordinates (within 2 tiles)
+            List<DynamicSpawnEvent> uniqueEvents = new List<DynamicSpawnEvent>();
+            bool changed = false;
+            foreach (var ev in DynamicEvents)
+            {
+                bool isDuplicate = false;
+                foreach (var unique in uniqueEvents)
+                {
+                    if (Math.Abs(unique.CenterX - ev.CenterX) < 2 && Math.Abs(unique.CenterY - ev.CenterY) < 2)
+                    {
+                        isDuplicate = true;
+                        changed = true;
+                        break;
+                    }
+                }
+                if (!isDuplicate)
+                {
+                    uniqueEvents.Add(ev);
+                }
+            }
+            if (changed)
+            {
+                DynamicEvents = uniqueEvents;
+                try
+                {
+                    string cleanJson = JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+                    File.WriteAllText(fullPath, cleanJson);
+                }
+                catch (Exception)
+                {
+                    // Ignore startup write errors, it will save later anyway
+                }
+            }
+
+            foreach (var dEvent in DynamicEvents)
+            {
+                // If it's saved as completed and not repeatable, don't add it.
+                if (dEvent.SaveOnCompletion && tsorcRevampWorld.CompletedDynamicEvents.Contains(dEvent.EventID))
+                    continue;
+
+                // Resolve conditions and actions via reflection
+                Func<bool> condition = () => true;
+                if (!string.IsNullOrEmpty(dEvent.MapCondition))
+                {
+                    var method = typeof(tsorcScriptedEvents).GetMethod(dEvent.MapCondition, BindingFlags.Public | BindingFlags.Static);
+                    if (method != null)
+                        condition = (Func<bool>)Delegate.CreateDelegate(typeof(Func<bool>), method);
+                }
+
+                Func<ScriptedEvent, EventActionStatus> action = null;
+                if (!string.IsNullOrEmpty(dEvent.CustomAction))
+                {
+                    var method = typeof(tsorcScriptedEvents).GetMethod(dEvent.CustomAction, BindingFlags.Public | BindingFlags.Static);
+                    if (method != null)
+                        action = (Func<ScriptedEvent, EventActionStatus>)Delegate.CreateDelegate(typeof(Func<ScriptedEvent, EventActionStatus>), method);
+                }
+
+                // Convert NPCs
+                List<int> npcTypes = new List<int>();
+                List<Vector2> npcCoords = new List<Vector2>();
+                foreach (var npc in dEvent.Npcs)
+                {
+                    npcTypes.Add(npc.NpcID);
+                    npcCoords.Add(new Vector2(npc.SpawnX, npc.SpawnY));
+                }
+
+                // Construct ScriptedEvent
+                ScriptedEvent newEvent = new ScriptedEvent(
+                    new Vector2(dEvent.CenterX, dEvent.CenterY),
+                    (float)System.Math.Sqrt(dEvent.Radius) / 16f,
+                    npcTypes,
+                    npcCoords,
+                    dEvent.TriggerDust,
+                    dEvent.SaveOnCompletion,
+                    dEvent.VisibleRing,
+                    false, // bossEvent
+                    string.IsNullOrEmpty(dEvent.TextToDisplay) ? "default" : dEvent.TextToDisplay,
+                    ParseColor(dEvent.TextColorHex),
+                    dEvent.Square,
+                    condition,
+                    action
+                );
+
+                for (int i = 0; i < dEvent.Npcs.Count; i++)
+                {
+                    var npc = dEvent.Npcs[i];
+                    if (npc.CustomHealth.HasValue || npc.CustomDamage.HasValue || npc.CustomDefense.HasValue || npc.CustomSouls.HasValue)
+                    {
+                        newEvent.SetCustomStatsForOne(i, npc.CustomHealth, npc.CustomDefense, npc.CustomDamage, npc.CustomSouls);
+                    }
+                }
+
+                if (dEvent.ExtraLootItems != null && dEvent.ExtraLootAmounts != null && dEvent.ExtraLootItems.Count == dEvent.ExtraLootAmounts.Count)
+                {
+                    newEvent.SetCustomDrops(dEvent.ExtraLootItems, dEvent.ExtraLootAmounts, true);
+                }
+                
+                // Track the EventID internally so we can save it on completion!
+                newEvent.DynamicEventID = dEvent.EventID;
+
+                EnabledEvents.Add(newEvent);
+            }
+
+            // Remove any hardcoded events from EnabledEvents that have a corresponding dynamic event (within 2 tiles)
+            EnabledEvents.RemoveAll(hardcoded => {
+                if (!string.IsNullOrEmpty(hardcoded.DynamicEventID)) return false;
+                foreach (var dyn in DynamicEvents)
+                {
+                    float dx = Math.Abs(dyn.CenterX - (hardcoded.centerpoint.X / 16f));
+                    float dy = Math.Abs(dyn.CenterY - (hardcoded.centerpoint.Y / 16f));
+                    if (dx < 2 && dy < 2)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+        
+        public static void SaveDynamicEvents()
+        {
+            string relativePath = "Content/DynamicEvents.json";
+            string fullPath = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", relativePath);
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+                string json = JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+                File.WriteAllText(fullPath, json);
+                LoadDynamicEvents();
+
+                // Re-link the UI's CurrentEvent reference to the newly loaded object instance
+                var configUI = ModContent.GetInstance<tsorcRevamp>().SpawnPointConfigUI;
+                if (configUI != null && configUI.CurrentEvent != null)
+                {
+                    var newEvent = DynamicEvents.Find(ev => ev.EventID == configUI.CurrentEvent.EventID);
+                    if (newEvent != null)
+                    {
+                        configUI.CurrentEvent = newEvent;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Error("Failed to save DynamicEvents.json: " + ex.Message);
+            }
+        }
+
+        public static Color ParseColor(string hex)
+        {
+            if (string.IsNullOrEmpty(hex)) return new Color();
+            if (hex.StartsWith("#")) hex = hex.Substring(1);
+            if (hex.Length != 6 && hex.Length != 8) return new Color();
+            byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+            byte a = 255;
+            if (hex.Length == 8) a = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+            return new Color(r, g, b, a);
+        }
+
+        public static void DumpOldEventsToJson()
+        {
+            int addedCount = 0;
+            foreach (var pair in ScriptedEventDict)
+            {
+                var ev = pair.Value;
+                
+                // Try to prevent dumping identical events if the user runs this multiple times
+                // We check if an event with exactly the same coordinates and radius already exists
+                bool alreadyExists = false;
+                foreach (var existing in DynamicEvents)
+                {
+                    if (existing.CenterX == (int)(ev.centerpoint.X / 16) && existing.CenterY == (int)(ev.centerpoint.Y / 16) && existing.Radius == ev.radius)
+                    {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+                if (alreadyExists) continue;
+
+                var dynamicEvent = new DynamicSpawnEvent();
+                dynamicEvent.EventID = Guid.NewGuid().ToString();
+                dynamicEvent.CenterX = (int)(ev.centerpoint.X / 16);
+                dynamicEvent.CenterY = (int)(ev.centerpoint.Y / 16);
+                dynamicEvent.Radius = ev.radius;
+                dynamicEvent.Square = ev.square;
+                dynamicEvent.TriggerDust = ev.dustID;
+                dynamicEvent.VisibleRing = ev.visible;
+                dynamicEvent.SaveOnCompletion = ev.save;
+                dynamicEvent.TextToDisplay = ev.eventText;
+                dynamicEvent.TextColorHex = $"{ev.eventTextColor.R:X2}{ev.eventTextColor.G:X2}{ev.eventTextColor.B:X2}{ev.eventTextColor.A:X2}";
+                
+                if (ev.condition != null && ev.condition.Method != null)
+                    dynamicEvent.MapCondition = ev.condition.Method.Name;
+                if (ev.CustomAction != null && ev.CustomAction.Method != null)
+                    dynamicEvent.CustomAction = ev.CustomAction.Method.Name;
+
+                if (ev.eventNPCs != null)
+                {
+                    foreach (var npc in ev.eventNPCs)
+                    {
+                        var dynamicNpc = new DynamicSpawnEntry();
+                        dynamicNpc.NpcID = npc.type;
+                        dynamicNpc.SpawnX = npc.spawnCoords.X;
+                        dynamicNpc.SpawnY = npc.spawnCoords.Y;
+                        dynamicNpc.CustomHealth = npc.customHealth;
+                        dynamicNpc.CustomDamage = npc.customDamage;
+                        dynamicNpc.CustomDefense = npc.customDefense;
+                        dynamicNpc.CustomSouls = npc.customSouls;
+                        dynamicEvent.Npcs.Add(dynamicNpc);
+                    }
+                }
+
+                if (ev.FinalNPCCustomDrops != null && ev.FinalNPCDropAmounts != null)
+                {
+                    dynamicEvent.ExtraLootItems = new List<int>(ev.FinalNPCCustomDrops);
+                    dynamicEvent.ExtraLootAmounts = new List<int>(ev.FinalNPCDropAmounts);
+                }
+
+                DynamicEvents.Add(dynamicEvent);
+                addedCount++;
+            }
+
+            SaveDynamicEvents();
+            UsefulFunctions.BroadcastText($"Dumped {addedCount} events to JSON.");
+        }
+
         //Experimenting with spreading the checks out over a long period so each one isn't running every tick
         //Counts up each time PlayerScriptedEventCheck is called (aka every tick)
         //int tick = 0;
@@ -1637,93 +1903,98 @@ namespace tsorcRevamp
                 }
 
                 //Check if the player is in range of any inactive events
-                for (int i = 0; i < EnabledEvents.Count; i++)
+                if (Main.player[index].HeldItem.type != ModContent.ItemType<Items.Debug.EnemyDebugTome>())
                 {
-                    if (EnabledEvents[i].condition())
+                    for (int i = 0; i < EnabledEvents.Count; i++)
                     {
-                        float distance = Vector2.DistanceSquared(Main.player[index].position, EnabledEvents[i].centerpoint);
-
-                        if (distance < EnabledEvents[i].radius * 6 && !Main.player[index].dead && EnabledEvents[i].bossEvent && !EnabledEvents[i].disablePeaceCandle)
+                        if (EnabledEvents[i].condition())
                         {
-                            Main.player[index].AddBuff(BuffID.PeaceCandle, 30, false);
-                        }
+                            float distance = Vector2.DistanceSquared(Main.player[index].position, EnabledEvents[i].centerpoint);
 
-                        if (!EnabledEvents[i].square)
-                        {
-
-                            //If the player is nearby, display some dust to make the region visible to them
-                            //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
-                            if (EnabledEvents[i].eventNPCs != null)
+                            if (distance < EnabledEvents[i].radius * 6 && !Main.player[index].dead && EnabledEvents[i].bossEvent && !EnabledEvents[i].disablePeaceCandle)
                             {
-                                if ((EnabledEvents[i].visible && distance < 6000000) || EnabledEvents[i].eventNPCs[0].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000
-                                        || EnabledEvents[i].eventNPCs[0].type == NPCID.HallowBoss && distance < 50000000)
+                                Main.player[index].AddBuff(BuffID.PeaceCandle, 30, false);
+                            }
+
+                            if (!EnabledEvents[i].square)
+                            {
+
+                                //If the player is nearby, display some dust to make the region visible to them
+                                //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
+                                if (EnabledEvents[i].eventNPCs != null && EnabledEvents[i].eventNPCs.Count > 0)
                                 {
-                                    //Add the event to the list of events that need to be synced to clients. These will be sent to the client once we're done here.
-                                    if (Main.netMode == NetmodeID.Server && EnabledEvents[i].visible)
+                                    if ((EnabledEvents[i].visible && distance < 6000000) || EnabledEvents[i].eventNPCs[0].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000
+                                            || EnabledEvents[i].eventNPCs[0].type == NPCID.HallowBoss && distance < 50000000)
                                     {
-                                        bool duplicate = false;
-                                        for (int j = 0; j < NetworkEvents.Count; j++)
+                                        //Add the event to the list of events that need to be synced to clients. These will be sent to the client once we're done here.
+                                        if (Main.netMode == NetmodeID.Server && EnabledEvents[i].visible)
                                         {
-                                            if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
+                                            bool duplicate = false;
+                                            for (int j = 0; j < NetworkEvents.Count; j++)
                                             {
-                                                duplicate = true;
+                                                if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
+                                                {
+                                                    duplicate = true;
+                                                }
+                                            }
+
+                                            if (!duplicate)
+                                            {
+                                                NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, false));
                                             }
                                         }
 
-                                        if (!duplicate)
+                                        DrawCircularEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
+                                    }
+                                }
+
+                                if (distance < EnabledEvents[i].radius && !Main.player[index].dead)
+                                {
+                                    if (EnabledEvents[i].visible)
+                                    {
+                                        for (int j = 0; j < 100; j++)
                                         {
-                                            NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, false));
+                                            Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
                                         }
                                     }
-
-                                    DrawCircularEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
+                                    RunningEvents.Add(EnabledEvents[i]);
+                                    EnabledEvents.RemoveAt(i);
+                                    i--;
                                 }
                             }
-
-                            if (distance < EnabledEvents[i].radius && !Main.player[index].dead)
+                            //Do the same thing, but square
+                            else
                             {
-                                if (EnabledEvents[i].visible)
+                                if (EnabledEvents[i].visible && distance < 6000000)
+                                {
+                                    bool duplicate = false;
+                                    for (int j = 0; j < NetworkEvents.Count; j++)
+                                    {
+                                        if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
+                                        {
+                                            duplicate = true;
+                                        }
+                                    }
+                                    if (!duplicate)
+                                    {
+                                        NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, true));
+                                    }
+
+                                    DrawSquareEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
+                                }
+
+                                float sqrtRadius = (float)Math.Sqrt(EnabledEvents[i].radius);
+                                if (!Main.player[index].dead && (Math.Abs(Main.player[index].position.X - EnabledEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(Main.player[index].position.Y - EnabledEvents[i].centerpoint.Y) < sqrtRadius))
                                 {
                                     for (int j = 0; j < 100; j++)
                                     {
                                         Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
                                     }
-                                }
-                                RunningEvents.Add(EnabledEvents[i]);
-                                EnabledEvents.RemoveAt(i);
-                            }
-                        }
-                        //Do the same thing, but square
-                        else
-                        {
-                            if (EnabledEvents[i].visible && distance < 6000000)
-                            {
-                                bool duplicate = false;
-                                for (int j = 0; j < NetworkEvents.Count; j++)
-                                {
-                                    if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
-                                    {
-                                        duplicate = true;
-                                    }
-                                }
-                                if (!duplicate)
-                                {
-                                    NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, true));
-                                }
 
-                                DrawSquareEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
-                            }
-
-                            float sqrtRadius = (float)Math.Sqrt(EnabledEvents[i].radius);
-                            if (!Main.player[index].dead && (Math.Abs(Main.player[index].position.X - EnabledEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(Main.player[index].position.Y - EnabledEvents[i].centerpoint.Y) < sqrtRadius))
-                            {
-                                for (int j = 0; j < 100; j++)
-                                {
-                                    Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                    RunningEvents.Add(EnabledEvents[i]);
+                                    EnabledEvents.RemoveAt(i);
+                                    i--;
                                 }
-
-                                RunningEvents.Add(EnabledEvents[i]);
-                                EnabledEvents.RemoveAt(i);
                             }
                         }
                     }
@@ -1765,7 +2036,7 @@ namespace tsorcRevamp
             }
 
             //Run any active events
-            for (int i = 0; i < RunningEvents.Count; i++)
+            for (int i = RunningEvents.Count - 1; i >= 0; i--)
             {
                 RunningEvents[i].RunEvent();
             }
@@ -2028,6 +2299,7 @@ namespace tsorcRevamp
     //Class to keep each scripted event encapsulated
     public class ScriptedEvent
     {
+        public string DynamicEventID { get; set; } = null;
         //Condition controls when the event an occur. If it's false, the event will not run.
         //For example, if you only want an event to run in superhardmode, you'd pass tsorcRevampMain.SuperHardMode as condition
         //If you only wanted it to occur between certain times, you would pass (Main.time > 0700 && Main.time < 1800), for example.
@@ -2139,7 +2411,7 @@ namespace tsorcRevamp
         {
             get
             {
-                if (eventNPCs == null)
+                if (eventNPCs == null || eventNPCs.Count == 0)
                 {
                     return true;
                 }
@@ -2286,13 +2558,9 @@ namespace tsorcRevamp
         //Runs the event
         public void RunEvent()
         {
-            //If this is its first time running, spawn the NPC's and display the text
+            //If this is its first time running, display the text
             if (eventTimer == 0)
             {
-                if (!noNPCEvent)
-                {
-                    SpawnNPCs();
-                }
                 if (eventText != "default")
                 {
                     UsefulFunctions.BroadcastText(eventText, eventTextColor);
@@ -2311,11 +2579,38 @@ namespace tsorcRevamp
                 }
             }
 
-            //If it has a custom action, then run it
+            // Fill spawn area with smoke dust warning effect for 1 second (60 frames) before actual spawn
+            if (!noNPCEvent && eventTimer < 60)
+            {
+                for (int j = 0; j < eventNPCs.Count; j++)
+                {
+                    Vector2 spawnPos = new Vector2(eventNPCs[j].spawnCoords.X * 16 + 8, eventNPCs[j].spawnCoords.Y * 16 + 8);
+                    
+                    // Spawn warning smoke dust around the spawn point
+                    for (int k = 0; k < 2; k++)
+                    {
+                        int dust = Dust.NewDust(spawnPos - new Vector2(16, 24), 32, 48, DustID.Smoke, 0f, 0f, 100, Color.LightGray, 1.5f);
+                        Main.dust[dust].velocity *= 0.4f;
+                        Main.dust[dust].velocity.Y -= 0.6f; // float up slightly
+                        Main.dust[dust].noGravity = true;
+                    }
+                }
+            }
+
+            // Spawn the NPCs after the 1-second warning effect
+            if (eventTimer == 60)
+            {
+                if (!noNPCEvent)
+                {
+                    SpawnNPCs();
+                }
+            }
+
+            //If it has a custom action, then run it (ensure NPCs have spawned first if applicable)
             //If it returns EndAction, mark its action as finished and do not run it again
             //If it returns FailedEvent then immediately mark the event as failed and end it
             //If it returns CompletedEvent then immediately mark the event as completed and end it
-            if (hasCustomAction && !finishedCustomAction)
+            if (hasCustomAction && !finishedCustomAction && (noNPCEvent || eventTimer >= 60))
             {
                 EventActionStatus status = CustomAction(this);
                 if (status == EventActionStatus.EndAction)
@@ -2337,9 +2632,9 @@ namespace tsorcRevamp
             //Updates timer *after* running actions
             eventTimer++;
 
-            //Only perform these checks if an event has NPCs
+            //Only perform these checks if an event has NPCs and they have actually spawned
             //No NPC events must be ended by their actions
-            if (!noNPCEvent)
+            if (!noNPCEvent && eventTimer > 60)
             {
                 if (!bossEvent)
                 {
@@ -2444,11 +2739,18 @@ namespace tsorcRevamp
             {
                 if (save)
                 {
-                    foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
+                    if (DynamicEventID != null)
                     {
-                        if (pair.Value == this)
+                        tsorcRevampWorld.CompletedDynamicEvents.Add(DynamicEventID);
+                    }
+                    else
+                    {
+                        foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
                         {
-                            tsorcScriptedEvents.ScriptedEventValues[pair.Key] = true;
+                            if (pair.Value == this)
+                            {
+                                tsorcScriptedEvents.ScriptedEventValues[pair.Key] = true;
+                            }
                         }
                     }
                 }
@@ -2583,4 +2885,35 @@ namespace tsorcRevamp
         CompletedEvent
     }
 
+    public class DynamicSpawnEntry
+    {
+        public int NpcID { get; set; }
+        public float SpawnX { get; set; }
+        public float SpawnY { get; set; }
+        public int? CustomHealth { get; set; }
+        public int? CustomDamage { get; set; }
+        public int? CustomDefense { get; set; }
+        public int? CustomSouls { get; set; }
+    }
+
+    public class DynamicSpawnEvent
+    {
+        public string EventID { get; set; }
+        public float CenterX { get; set; }
+        public float CenterY { get; set; }
+        public float Radius { get; set; }
+        public bool Square { get; set; }
+        public int TriggerDust { get; set; }
+        public bool VisibleRing { get; set; }
+        public bool SaveOnCompletion { get; set; }
+        public string TextToDisplay { get; set; }
+        public string TextColorHex { get; set; }
+        public string MapCondition { get; set; }
+        public string CustomAction { get; set; }
+        public List<DynamicSpawnEntry> Npcs { get; set; } = new List<DynamicSpawnEntry>();
+
+        // Optional custom drops, mostly used for simple single-item drops.
+        public List<int> ExtraLootItems { get; set; }
+        public List<int> ExtraLootAmounts { get; set; }
+    }
 }

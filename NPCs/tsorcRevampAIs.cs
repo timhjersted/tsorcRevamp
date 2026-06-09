@@ -68,12 +68,11 @@ namespace tsorcRevamp.NPCs
         ///<param name="enragePercent">Accelerates twice as fast when below this % health</param> 
         ///<param name="enrageTopSpeed">Its new top speed when enraged</param>
         ///<param name="lavaJumping">Lets it hop around in lava</param>
-        public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 4, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, bool canDodgeroll = true, bool canPounce = true, bool sizeMatters = false, int minSurfaceWidth = 2, bool canWalkBackwards = false)
+        public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 4, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, bool canDodgeroll = true, bool canPounce = true, int minSurfaceWidth = 0, bool canWalkBackwards = false)
         {
             npc.aiStyle = -1;
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.SizeMatters = sizeMatters;
-            globalNPC.MinSurfaceWidth = minSurfaceWidth;
+            globalNPC.MinSurfaceWidth = minSurfaceWidth; // > 0 => RequiresFlatGround (large enemies; avoid slopes/narrow ledges)
             globalNPC.CanWalkBackwards = canWalkBackwards;
             BasicAI(npc, topSpeed, acceleration, brakingPower, false, canTeleport, doorBreakingDamage, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping, canDodgeroll, canPounce);
         }
@@ -322,102 +321,21 @@ namespace tsorcRevamp.NPCs
                 globalNPC.TeleportChargesInitialized = true;
             }
 
-            //If it has at least one attack, perform it
-            if (globalNPC.AttackList.Count > 0)
-            {
-                SimpleProjectile(npc);
-            }
-
-            if (globalNPC.PounceTimer > 0)
-            {
-                globalNPC.PounceTimer--;
-
-                if (globalNPC.PounceTimer % 5 == 0)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Vector2 spawnPosition = npc.position;
-                        spawnPosition.Y += npc.height;
-                        spawnPosition.X += Main.rand.NextFloat(npc.width);
-                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2), ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer);
-                    }
-                }
-
-                if (globalNPC.PounceTimer == 0)
-                {
-                    float pounceSpeed = topSpeed * 5;
-                    bool hasTrajectory = false;
-                    while (!hasTrajectory)
-                    {
-                        Vector2 trajectory = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), pounceSpeed, npc.gravity, false, false);
-                        if (trajectory == Vector2.Zero)
-                        {
-                            pounceSpeed += topSpeed * 2;
-
-                            //If it requires more than 20 units of speed to make it to the player, give up and just launch normally instead of using a ballistic trajectory
-                            if (pounceSpeed > 20)
-                            {
-                                npc.velocity = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), 20);
-                                npc.netUpdate = true;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            hasTrajectory = true;
-                            npc.velocity = trajectory;
-                            npc.netUpdate = true;
-                        }
-                    }
-                }
-            }
-            else if (globalNPC.PounceCooldown > 0)
-            {
-                globalNPC.PounceCooldown--;
-            }
-
-            if (globalNPC.DodgeTimer > 0)
-            {
-                npc.rotation += MathHelper.TwoPi / 30f * npc.direction;
-                npc.velocity.X = 5 * npc.direction;
-
-                globalNPC.DodgeTimer--;
-                if (globalNPC.DodgeTimer == 0)
-                {
-                    npc.velocity.X = 0;
-                }
-            }
-            else
-            {
-                npc.rotation = 0;
-
-                if (globalNPC.DodgeCooldown > 0)
-                {
-                    globalNPC.DodgeCooldown--;
-                }
-            }
-
             // Fleeing: a low-HP flee (set on hit) or a hatesLight enemy caught in daylight above ground.
             // Replaces the old BoredTimer = -999 sentinel; gates firing + reverses facing below.
+            // (Hoisted above the combat layer so RunFighterCombatExec can read it; nothing in attacks/
+            //  pounce/dodge depends on it, so this move is order-safe.)
             bool fleeing = globalNPC.Fleeing || (hatesLight && Main.dayTime && (npc.position.Y / 16f) < Main.worldSurface);
 
-            //Stop moving when teleporting, and handle the logic to execute it
-            if (globalNPC.TeleportCountdown > 0)
-            {
-                npc.velocity.X = 0;
-                globalNPC.TeleportCountdown--;
-                if (globalNPC.TeleportCountdown == 0)
-                {
-                    ExecuteQueuedTeleport(npc);
-                }
-            }
-
-            //Block firing and reset cooldowns if it's busy doing other things (incl. fleeing)
-            if (globalNPC.TeleportCountdown > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
-            {
-                globalNPC.ProjectileTimer = 0;
-                globalNPC.ArcherAimDirection = 0;
-            }
+            // ── Combat layer (Phase 2 Step 1: combat/movement separation) ────────────────────────────
+            // Combat is being pulled out of this god-method so the movement half can later be swapped for
+            // SmartFighter4AI. RunFighterCombatExec runs the start-of-frame combat: fire attacks, advance an
+            // in-progress pounce/dodge, the teleport countdown, and block-firing-while-busy. It fills `intent`
+            // (SeizesBody / HoldForAttack). NOTE: the movement code below does NOT yet read `intent` — wiring
+            // movement to honor it is Step 3; it's populated now only so the contract surface exists.
+            // See Documentation/CombatMovementSeparation_Plan.md.
+            FighterCombatIntent intent = default;
+            RunFighterCombatExec(npc, globalNPC, topSpeed, fleeing, ref intent);
 
             //Apply scaling to SHM enemies
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
@@ -568,389 +486,155 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            // Compute line of sight early (used by movement + boredom logic below).
+            // ── Combat sense + movement substrate (Phase 2 Step 2/3: combat/movement separation) ─────
+            // Compute LOS once here, then let the combat layer DECIDE whether to stop-and-fire
+            // (SenseHoldForAttack → intent.HoldForAttack). The movement substrate — LocalMover.Run, the cheap
+            // no-pathfinding mover, symmetric twin of SmartFighter4AI.Run that Step 4's NavSearchRadius dispatch
+            // chooses between — then OBEYS the hold and returns the refreshed post-movement LOS for the log +
+            // combat triggers below. (SeizesBody is still only populated here; its mover no-op is wired for SF4
+            // in Step 4 — LocalMover intentionally keeps interleaving with pounce/dodge.)
             bool lineOfSight = Main.player[npc.target].CanHit(npc);
-
-            // Face the player (dead zone avoids jitter when nearly aligned). Fleeing walks away.
-            if (Math.Abs(Main.player[npc.target].Center.X - npc.Center.X) > 30)
-            {
-                npc.direction = Main.player[npc.target].Center.X <= npc.Center.X ? -1 : 1;
-                if (fleeing) // walk away from the player
-                {
-                    npc.direction *= -1;
-                }
-                npc.spriteDirection = npc.direction;
-
-                if (globalNPC.CanWalkBackwards && !fleeing)
-                {
-                    float playerDist = npc.Distance(Main.player[npc.target].Center);
-                    if (playerDist < 180f)
-                    {
-                        // Reverse physical direction to walk backwards
-                        npc.direction *= -1;
-                        // Keep sprite facing the player
-                        npc.spriteDirection = Main.player[npc.target].Center.X <= npc.Center.X ? -1 : 1;
-                    }
-                }
-            }
-
-            //If moving more than max speed, then slow down
-            if (globalNPC.PounceCooldown <= 240)
-            {
-                if (npc.velocity.X > topSpeed)
-                {
-                    npc.velocity.X -= brakingPower;
-                    if (npc.velocity.X < 0)
-                    {
-                        npc.velocity.X = 0;
-                    }
-                }
-                if (npc.velocity.X < -topSpeed)
-                {
-                    npc.velocity.X += brakingPower;
-                    if (npc.velocity.X > 0)
-                    {
-                        npc.velocity.X = 0;
-                    }
-                }
-            }
-
-            // Post-attack standoff: tier 2 enemies may briefly hold position after a few attacks,
-            // but ordinary LOS should not stop pursuit.
-            bool inStandoff = false;
-            if (globalNPC.FighterPostAttackPauseTimer > 0)
-            {
-                globalNPC.FighterPostAttackPauseTimer--;
-            }
-            if (globalNPC.CanStopToFire && !globalNPC.CanPassThroughWalls && (globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0) && lineOfSight && npc.velocity.Y == 0f && !globalNPC.Fleeing)
-            {
-                inStandoff = true;
-                if (globalNPC.FighterRangedStandShotsRemaining > 0)
-                    npc.velocity.X = 0f; // hard stop: hold position while firing a burst
-                else
-                    npc.velocity.X *= 0.8f; // gradual stop: post-attack breather
-            }
-
-            //Accelerate in the direction they are facing (unless the npc is an aiming archer)
-            if ((!isArcher || globalNPC.ArcherAimDirection == 0) && !inStandoff)
-            {
-                if (npc.velocity.X < topSpeed && npc.direction == 1)
-                {
-                    npc.velocity.X += acceleration;
-                    if (npc.velocity.X > topSpeed)
-                    {
-                        npc.velocity.X = topSpeed;
-                    }
-                }
-                else
-                {
-                    if (npc.velocity.X > -topSpeed && npc.direction == -1)
-                    {
-                        npc.velocity.X -= acceleration;
-                        if (npc.velocity.X < -topSpeed)
-                        {
-                            npc.velocity.X = -topSpeed;
-                        }
-                    }
-                }
-            }
-
-
-            // Ledge-halt: optionally stop before a significant drop when we already have LOS.
-            // Only halts if dropping would put the NPC meaningfully lower than the player —
-            // tiny drops and same-elevation crossings are left alone so jump/gap logic can handle them.
-            // A hard cap of 180 frames prevents indefinite ledge-camping.
-            if (!globalNPC.CanPassThroughWalls && globalNPC.HaltAtLedge && lineOfSight && npc.velocity.Y == 0f && !globalNPC.Fleeing)
-            {
-                int aheadX = npc.direction == -1
-                    ? (int)(npc.position.X / 16f) - 1
-                    : (int)((npc.position.X + npc.width) / 16f);
-                int belowY = (int)(npc.position.Y + npc.height + 8f) / 16;
-
-                if (!UsefulFunctions.IsTileReallySolid(aheadX, belowY))
-                {
-                    // Scan downward for solid ground (ignores water/air). Cap at 10 tiles.
-                    int dropDepth = 10;
-                    for (int dy = 1; dy <= 10; dy++)
-                    {
-                        if (UsefulFunctions.IsTileReallySolid(aheadX, belowY + dy))
-                        {
-                            dropDepth = dy;
-                            break;
-                        }
-                    }
-
-                    // Where would we land, in world-space Y pixels?
-                    float landingWorldY = (belowY + dropDepth) * 16f;
-                    float playerWorldY = Main.player[npc.target].Center.Y;
-
-                    // Halt only if landing would put us more than 3 tiles below the player
-                    // (losing elevation), AND the drop is at least 4 tiles deep (not a tiny step).
-                    bool wouldLoseElevation = landingWorldY > playerWorldY + 48f;
-                    bool dropIsSignificant = dropDepth >= 4;
-                    bool shouldHalt = wouldLoseElevation && dropIsSignificant && globalNPC.LedgeHaltTimer < 180;
-
-                    if (shouldHalt)
-                    {
-                        npc.velocity.X = 0f;
-                        globalNPC.LedgeHaltTimer++;
-                    }
-                    else
-                    {
-                        globalNPC.LedgeHaltTimer = 0;
-                    }
-                }
-                else
-                {
-                    globalNPC.LedgeHaltTimer = 0;
-                }
-            }
-            else
-            {
-                globalNPC.LedgeHaltTimer = 0;
-            }
-
-            //Jumping and platform falling code, copied and edited from Firebomb Hollow
-            int x_in_front;
-            if (npc.direction == -1)
-            {
-                x_in_front = (int)(npc.position.X / 16f) - 1;
-            }
-            else
-            {
-                x_in_front = (int)((npc.position.X + npc.width) / 16f);
-            }
-
-            int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
-            //Dust.DrawDebugBox(new Rectangle(x_in_front * 16, y_above_feet * 16, 16, 16));
-            int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-            bool standing_on_solid_tile = false;
-
-            //Check if standing on a solid tile
-            int x_left_edge = (int)npc.position.X / 16;
-            int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
-            if (npc.velocity.Y == 0)
-            {
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (UsefulFunctions.IsTileReallySolid(l, y_below_feet)) // tile exists and is solid
-                    {
-                        standing_on_solid_tile = true;
-                    }
-                }
-            }
-
-            // SizeMatters Navigation check
-            if (globalNPC.SizeMatters)
-            {
-                int minWidth = globalNPC.MinSurfaceWidth;
-                int centerTileX = (int)(npc.Center.X / 16f);
-                
-                bool currentValid = UsefulFunctions.IsPartOfValidSurface(centerTileX, y_below_feet, minWidth);
-                bool targetValid = UsefulFunctions.IsPartOfValidSurface(x_in_front, y_below_feet, minWidth) 
-                                || UsefulFunctions.IsPartOfValidSurface(x_in_front, y_below_feet - 1, minWidth);
-                                
-                if (!currentValid || !targetValid)
-                {
-                    if (standing_on_solid_tile)
-                    {
-                        npc.velocity.Y = -globalNPC.MaxJumpPower * 0.8f;
-                        npc.velocity.X = globalNPC.MaxJumpBoost * npc.direction;
-                        npc.netUpdate = true;
-                    }
-                    else
-                    {
-                        if (!targetValid)
-                        {
-                            npc.velocity.X *= 0.8f;
-                        }
-                    }
-                }
-            }
-
-            // Terrain handling: height-aware wall climbs (scaled to MaxJumpPower) + gap jump + door breaking.
-            if (standing_on_solid_tile)
-            {
-                if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
-                {
-                    // Step 4a — height-aware climb scaled to THIS enemy's jump power. Sense the full wall
-                    // height ahead, work out how high its own MaxJumpPower (default 8f = vanilla) can actually
-                    // reach given gravity, and jump only walls within that reach AND with clearance above the
-                    // top to land on (headroom). Walls taller than it can clear, or capped by a ceiling, are
-                    // NOT jumped — it stands pressed and the position-immobility anti-stuck below disengages it
-                    // (→ Patrol/teleport) instead of bouncing forever (see the RedKnight wall-bounce log).
-                    // This also wires the per-enemy MaxJumpPower / MaxJumpBoost levers into the dumb (tier-0)
-                    // path for the first time (they were tier-≥1-only before).
-                    float jumpPower = globalNPC.MaxJumpPower;
-                    float grav = npc.gravity > 0.01f ? npc.gravity : 0.3f;
-                    bool wallAhead = UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1)
-                                  || UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 2);
-                    if (wallAhead)
-                    {
-                        // Contiguous wall height ahead (solid tiles stacked up from the step row).
-                        int wallTiles = 0;
-                        while (wallTiles < 12 && UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - wallTiles))
-                            wallTiles++;
-                        int topY = y_above_feet - wallTiles; // first open row above the wall
-
-                        // ~2 tiles of headroom above the wall top at both the wall and the landing column.
-                        bool headroom = !UsefulFunctions.IsTileReallySolid(x_in_front, topY)
-                                     && !UsefulFunctions.IsTileReallySolid(x_in_front, topY - 1)
-                                     && !UsefulFunctions.IsTileReallySolid(x_in_front + npc.direction, topY)
-                                     && !UsefulFunctions.IsTileReallySolid(x_in_front + npc.direction, topY - 1);
-
-                        // Apex height (tiles) this jump can reach; 0.9 margin so it clears the corner, not just
-                        // grazes the apex.
-                        int reachableTiles = (int)((jumpPower * jumpPower) / (2f * grav) / 16f * 0.9f);
-
-                        if (wallTiles >= 2 && wallTiles <= reachableTiles && headroom)
-                        {
-                            // Jump just hard enough to clear (wallTiles + 1) tiles, capped at MaxJumpPower.
-                            float neededV = (float)Math.Sqrt(2f * grav * (wallTiles + 1) * 16f);
-                            npc.velocity.Y = -Math.Min(neededV, jumpPower);
-                            npc.netUpdate = true;
-                        }
-                        // wallTiles == 1 -> AutoStepUp glide handles it; too tall / capped / no headroom -> no
-                        // jump, stand and give up.
-                    }
-                    // (1-tile step removed: the smooth AutoStepUp glide below replaces the old -5f hop so
-                    //  tier-0 walkers no longer visibly bounce over every single-tile bump.)
-                    else if (npc.directionY < 0 && !UsefulFunctions.IsTileReallySolid(x_in_front, y_below_feet) && !UsefulFunctions.IsTileReallySolid(x_in_front + npc.direction, y_below_feet))
-                    {
-                        // Cross a gap toward an above player — vertical from MaxJumpPower, horizontal from MaxJumpBoost.
-                        npc.velocity.Y = -jumpPower;
-                        npc.velocity.X += globalNPC.MaxJumpBoost * npc.direction;
-                        npc.netUpdate = true;
-                    }
-
-                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1) && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && (doorBreakingDamage > 0))
-                    {
-                        npc.velocity.Y = 0;
-                        if (Main.GameUpdateCount % 60 == 0)
-                        {
-                            npc.velocity.X = 0.5f * -npc.direction;
-                            globalNPC.DoorBreakProgress += doorBreakingDamage;
-                            WorldGen.KillTile(x_in_front, y_above_feet - 1, true, true, false);
-                            if (globalNPC.DoorBreakProgress >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                globalNPC.DoorBreakProgress = 0;
-                                if (!WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction))
-                                {
-                                    // Door is jammed (e.g. blocked above): stop ramming. The position-immobility
-                                    // anti-stuck disengages it to Patrol/teleport after ~1.5s.
-                                    npc.velocity.X = 0;
-                                }
-                                else if (Main.netMode == NetmodeID.Server)
-                                {
-                                    NetMessage.SendData(MessageID.ToggleDoorState, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-
-            //Can fall through platforms
-            bool standing_on_platforms = true;
-            bool atLeastOnePlatform = false;
-            if (npc.velocity.Y == 0)
-            {
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (TileID.Sets.Platforms[Main.tile[l, y_below_feet].TileType])
-                    {
-                        atLeastOnePlatform = true;
-                    }
-                    else
-                    {
-                        if (Main.tile[l, y_below_feet].HasTile)
-                        {
-                            standing_on_platforms = false;
-                        }
-                    }
-                }
-            }
-
-            // Drop through platforms when player is below.
-            // Threshold is 64px (4 tiles) to avoid accidental drops on tiny height differences.
-            // Gate on low horizontal speed: noTileCollide disables ALL tile collision, so a fast-moving
-            // NPC would clip through walls. Only drop when nearly stopped horizontally.
-            bool playerIsBelow = Main.player[npc.target].Center.Y > npc.Center.Y + 32f;
-            // Drop when the player is below AND either roughly overhead, or we've failed to make progress for
-            // ~1s (DisengageTimer) — the FSM-clean replacement for the old "BoredTimer > 60" fallback.
-            bool shouldDropPlatform = playerIsBelow && (globalNPC.DisengageTimer > 60 || Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < 300);
-
-            if (standing_on_platforms && atLeastOnePlatform && shouldDropPlatform)
-            {
-                npc.noTileCollide = true;
-            }
-
-            // Smoothly glide up 1-tile steps instead of the removed -5f hop. Skip while platform-dropping
-            // (noTileCollide) so the lift doesn't fight the drop.
-            if (!npc.noTileCollide && !npc.noGravity)
-            {
-                AutoStepUp(npc);
-            }
-
-            // Reset double jump when standing (velocity.Y == 0)
-            if (npc.velocity.Y == 0f)
-            {
-                globalNPC.UsedDoubleJump = false;
-            }
-
-            // Double jump: apex-triggered mid-air second jump for capable enemies.
-            // Gated purely by the CanDoubleJump bool (default false) — tier-independent.
-            if (globalNPC.CanDoubleJump && !globalNPC.UsedDoubleJump)
-            {
-                // Fire when clearly falling (player is still above us) — velocity.Y > 1.5f avoids
-                // triggering on the first few frames after stepping off a ledge
-                if (!standing_on_solid_tile && npc.velocity.Y > 1.5f && npc.directionY < 0)
-                {
-                    npc.velocity.Y = -globalNPC.DoubleJumpPower;
-                    globalNPC.UsedDoubleJump = true;
-                    npc.netUpdate = true;
-                }
-            }
-
-            // Refresh after movement phase — tile state may have changed (platform drop, etc.)
-            lineOfSight = Main.player[npc.target].CanHit(npc);
-
-            // Step 4a LOS fix: boredom is now "no LOS" only — the old `playerOnDifferentLevel`
-            // (|Δy| > 48f) qualifier is dropped, since with the FSM a vertical offset no longer means
-            // "can't reach" (the give-up clock + anti-stuck handle genuinely unreachable players).
-
-            // ── Tier-0 position-immobility anti-stuck (Step 4a) ──────────────────────────────────────
-            // A visible-but-walled player must not trap the NPC forever, so this fires regardless of LOS.
-            // It is keyed on the NPC's OWN position (not velocity / distance), so the repeated wall-jump
-            // bounce — which keeps velocity.Y != 0 and makes the player distance oscillate — can no longer
-            // hide the stuck state (see the RedKnight wall-bounce log). If the NPC hasn't moved ~2 tiles for
-            // ~1.5s while unable to engage, hand off to the FSM give-up (→ Search/Patrol/teleport). Adjacent
-            // melee and aiming archers reset the timer so legitimate "stand and fight" doesn't read as stuck.
-            if (globalNPC.PursuitState != PursuitState.Patrol)
-            {
-                bool canEngage = lineOfSight && npc.Distance(Main.player[npc.target].Center) < 64f;
-                bool aiming = globalNPC.ArcherAimDirection != 0f || globalNPC.FighterRangedStandShotsRemaining > 0;
-                if (canEngage || aiming || npc.Distance(globalNPC.StuckCheckPos) > 32f)
-                {
-                    globalNPC.StuckCheckPos = npc.Center;
-                    globalNPC.StuckTimer = 0;
-                }
-                else
-                {
-                    globalNPC.StuckTimer++;
-                    if (globalNPC.StuckTimer > 90) // ~1.5s without moving 2 tiles and unable to engage
-                    {
-                        globalNPC.StuckTimer = 0;
-                        globalNPC.StuckCheckPos = npc.Center;
-                        NavBehavior.ForceDisengage(npc, globalNPC);
-                    }
-                }
-            }
+            intent.HoldForAttack = SenseHoldForAttack(npc, globalNPC, lineOfSight);
+            lineOfSight = LocalMover.Run(npc, globalNPC, topSpeed, acceleration, brakingPower, isArcher, doorBreakingDamage, fleeing, lineOfSight, ref intent);
 
             LogFighterNavDebug(npc, globalNPC, lineOfSight);
 
+            // Combat triggers (Step 1): the end-of-frame decision to START a dodge or pounce. Runs after the
+            // movement phase refreshed `lineOfSight`; the timers it sets are executed at the top of the NEXT
+            // frame by RunFighterCombatExec.
+            RunFighterCombatTriggers(npc, globalNPC, fleeing, lineOfSight, canDodgeroll, canPounce);
+        }
+
+
+
+
+
+        // The combat→movement hand-off struct `FighterCombatIntent` now lives at namespace scope in
+        // NPCs/LocalMover.cs (shared by this combat layer + both movers). Referenced here by simple name.
+
+        // Start-of-frame combat execution, extracted verbatim from BasicAI's top (pure refactor, same order):
+        // fire attacks, advance an in-progress pounce/dodge (incl. their cooldown ticks), run the teleport
+        // countdown, and block firing while busy. Fills `intent.SeizesBody`. `topSpeed` is the PRE-enrage value
+        // (this code runs before enrage scaling), preserving the original pounceSpeed = topSpeed * 5.
+        private static void RunFighterCombatExec(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, bool fleeing, ref FighterCombatIntent intent)
+        {
+            //If it has at least one attack, perform it
+            if (globalNPC.AttackList.Count > 0)
+            {
+                SimpleProjectile(npc);
+            }
+
+            if (globalNPC.PounceTimer > 0)
+            {
+                globalNPC.PounceTimer--;
+
+                if (globalNPC.PounceTimer % 5 == 0)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 spawnPosition = npc.position;
+                        spawnPosition.Y += npc.height;
+                        spawnPosition.X += Main.rand.NextFloat(npc.width);
+                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2), ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer);
+                    }
+                }
+
+                if (globalNPC.PounceTimer == 0)
+                {
+                    float pounceSpeed = topSpeed * 5;
+                    bool hasTrajectory = false;
+                    while (!hasTrajectory)
+                    {
+                        Vector2 trajectory = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), pounceSpeed, npc.gravity, false, false);
+                        if (trajectory == Vector2.Zero)
+                        {
+                            pounceSpeed += topSpeed * 2;
+
+                            //If it requires more than 20 units of speed to make it to the player, give up and just launch normally instead of using a ballistic trajectory
+                            if (pounceSpeed > 20)
+                            {
+                                npc.velocity = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), 20);
+                                npc.netUpdate = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            hasTrajectory = true;
+                            npc.velocity = trajectory;
+                            npc.netUpdate = true;
+                        }
+                    }
+                }
+            }
+            else if (globalNPC.PounceCooldown > 0)
+            {
+                globalNPC.PounceCooldown--;
+            }
+
+            if (globalNPC.DodgeTimer > 0)
+            {
+                npc.rotation += MathHelper.TwoPi / 30f * npc.direction;
+                npc.velocity.X = 5 * npc.direction;
+
+                globalNPC.DodgeTimer--;
+                if (globalNPC.DodgeTimer == 0)
+                {
+                    npc.velocity.X = 0;
+                }
+            }
+            else
+            {
+                npc.rotation = 0;
+
+                if (globalNPC.DodgeCooldown > 0)
+                {
+                    globalNPC.DodgeCooldown--;
+                }
+            }
+
+            //Stop moving when teleporting, and handle the logic to execute it
+            if (globalNPC.TeleportCountdown > 0)
+            {
+                npc.velocity.X = 0;
+                globalNPC.TeleportCountdown--;
+                if (globalNPC.TeleportCountdown == 0)
+                {
+                    ExecuteQueuedTeleport(npc);
+                }
+            }
+
+            //Block firing and reset cooldowns if it's busy doing other things (incl. fleeing)
+            if (globalNPC.TeleportCountdown > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            {
+                globalNPC.ProjectileTimer = 0;
+                globalNPC.ArcherAimDirection = 0;
+            }
+
+            // A pounce/dodge owns the body this frame (it set velocity above). Populated here; its mover no-op is
+            // wired at the SF4 dispatch in Step 4 — LocalMover intentionally keeps interleaving (current feel).
+            intent.SeizesBody = globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0;
+        }
+
+        // Stop-to-fire DECISION (Step 3): should the mover pin position so the combat layer can fire? This is the
+        // standoff condition that used to live mid-BasicAI as `inStandoff`, lifted into the combat layer so BOTH
+        // movers (LocalMover now, SmartFighter4AI in Step 4) can honor it via intent.HoldForAttack without knowing
+        // anything about post-attack pauses / standing-fire bursts. Also ticks the post-attack pause timer (its
+        // single owner now). Computed in BasicAI right after retarget, where LOS + grounded state match the old
+        // in-mover decision point exactly — so behavior is unchanged.
+        private static bool SenseHoldForAttack(NPC npc, tsorcRevampGlobalNPC globalNPC, bool lineOfSight)
+        {
+            if (globalNPC.FighterPostAttackPauseTimer > 0) globalNPC.FighterPostAttackPauseTimer--;
+            return globalNPC.CanStopToFire && !globalNPC.CanPassThroughWalls
+                && (globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0)
+                && lineOfSight && npc.velocity.Y == 0f && !globalNPC.Fleeing;
+        }
+
+        // End-of-frame combat triggers, extracted verbatim from BasicAI's tail (pure refactor): decide whether
+        // to START a dodge (vs an incoming projectile) or a pounce. Reads the post-movement `lineOfSight`; the
+        // timers it sets here are executed next frame by RunFighterCombatExec.
+        private static void RunFighterCombatTriggers(NPC npc, tsorcRevampGlobalNPC globalNPC, bool fleeing, bool lineOfSight, bool canDodgeroll, bool canPounce)
+        {
             //Dodging — only while actively pursuing (not searching/patrolling/fleeing/teleporting)
             if (globalNPC.PursuitState == PursuitState.Pursue && !fleeing && globalNPC.TeleportCountdown == 0 && globalNPC.DodgeCooldown == 0)
             {
@@ -1008,10 +692,6 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-
-
-
-
         // Strict geometric line of sight (solids block, platforms don't). Pairs the permissive Collision.CanHit
         // (trajectory/step check) with the strict Collision.CanHitLine — the same combo the archer uses to decide
         // it can shoot. Plain Player.CanHit / Collision.CanHit alone reports LOS through complex terrain.
@@ -1023,7 +703,8 @@ namespace tsorcRevamp.NPCs
         // into a <=1-tile step or half-block, lift its position onto the step and add to gfxOffY so the
         // SPRITE glides up instead of snapping/jumping. Call each grounded, non-rope/non-platform-drop frame.
         // This replaces the old desperation 1-tile wall-jump for tier-0 walkers.
-        private static void AutoStepUp(NPC npc)
+        // internal (not private) so the extracted LocalMover class can share this single copy.
+        internal static void AutoStepUp(NPC npc)
         {
             if (npc.velocity.Y < 0f) return; // only while grounded / descending, like vanilla
             int offset = 0;
@@ -1038,7 +719,7 @@ namespace tsorcRevamp.NPCs
             if (!WorldGen.InWorld(tileX, tileY, 5)) return;
 
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.SizeMatters)
+            if (globalNPC.RequiresFlatGround)
             {
                 if (!UsefulFunctions.IsPartOfValidSurface(tileX, tileY, globalNPC.MinSurfaceWidth) &&
                     !UsefulFunctions.IsPartOfValidSurface(tileX, tileY - 1, globalNPC.MinSurfaceWidth))

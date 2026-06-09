@@ -50,6 +50,8 @@ namespace tsorcRevamp
         public static bool EnteredPyramid;
         public static bool TalkedToShaman;
 
+        public static List<string> CompletedDynamicEvents = new List<string>();
+
         public static List<int> PairedBosses;
 
         public static List<Vector2> LitBonfireList;
@@ -178,7 +180,9 @@ namespace tsorcRevamp
             boundShaders = new List<string>();
             initialized = false;
             NewSlain = new();
+            CompletedDynamicEvents = new();
             tsorcScriptedEvents.InitializeScriptedEvents();
+            tsorcScriptedEvents.LoadDynamicEvents();
             MapMarkers = new();
             BossIDsAndCoordinatesInternal = null;
             beforeAbyss = new();
@@ -235,6 +239,7 @@ namespace tsorcRevamp
             tag.Add("world_state", world_state);
             SaveSlain(tag);
             tsorcScriptedEvents.SaveScriptedEvents(tag);
+            tag.Add("CompletedDynamicEvents", CompletedDynamicEvents);
 
             MapMarkers ??= new();
             tag.Add("MapMarkerKeys", MapMarkers.Keys.ToList());
@@ -250,6 +255,7 @@ namespace tsorcRevamp
         {
             LoadSlain(tag);
             tsorcScriptedEvents.LoadScriptedEvents(tag);
+            CompletedDynamicEvents = tag.GetList<string>("CompletedDynamicEvents").ToList();
 
             IList<string> downedList = tag.GetList<string>("downed");
             DownedBetsy = downedList.Contains("DownedBetsy");
@@ -334,6 +340,7 @@ namespace tsorcRevamp
                 }
             }
             DwarvenContractsGiven = tag.GetInt("DwarvenContractsGiven");
+            tsorcScriptedEvents.LoadDynamicEvents();
         }
 
         private void SaveSlain(TagCompound tag)
@@ -1621,6 +1628,14 @@ namespace tsorcRevamp
             tsorcRevamp.LastShownLocationId = -1;
             tsorcRevamp.LocationBannerText = null;
             tsorcRevamp.LocationBannerTimer = 0;
+
+            // Clear all scripted events on world unload to prevent old events
+            // carrying over to the next world load and causing index out of range exceptions.
+            tsorcScriptedEvents.RunningEvents.Clear();
+            tsorcScriptedEvents.EnabledEvents.Clear();
+            tsorcScriptedEvents.QueuedEvents.Clear();
+            tsorcScriptedEvents.NetworkEvents.Clear();
+            tsorcScriptedEvents.DynamicEvents.Clear();
         }
 
         //Called upon the death of Gwyn, Lord of Cinder. Disables both hardmode and superhardmode, and sets the world state to "The End".

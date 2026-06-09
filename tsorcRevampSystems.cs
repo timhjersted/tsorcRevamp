@@ -273,6 +273,27 @@ namespace tsorcRevamp
                 );
             }
 
+            int enemyDebugIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
+            if (enemyDebugIndex != -1)
+            {
+                layers.Insert(enemyDebugIndex, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: EnemyDebugUI",
+                    delegate
+                    {
+                        if (mod.EnemySelectionUI.Visible)
+                        {
+                            mod._enemySelectionUI.Draw(Main.spriteBatch, new GameTime());
+                        }
+                        if (mod.SpawnPointConfigUI.Visible)
+                        {
+                            mod._spawnPointConfigUI.Draw(Main.spriteBatch, new GameTime());
+                        }
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+            }
+
             int resourceBarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
             if (resourceBarIndex != -1)
             {
@@ -408,6 +429,11 @@ namespace tsorcRevamp
 
         public override void UpdateUI(GameTime gameTime)
         {
+            if (Items.Debug.EnemyDebugTome.JustClosedUI && !Main.mouseLeft && !Main.mouseRight)
+            {
+                Items.Debug.EnemyDebugTome.JustClosedUI = false;
+            }
+
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
             if (BonfireUIState.Visible)
             {
@@ -431,7 +457,15 @@ namespace tsorcRevamp
 
             if (PotionBagUIState.Visible)
             {
-                mod.PotionBagUserInterface.Update(gameTime);
+                mod.PotionBagUserInterface?.Update(gameTime);
+            }
+            if (mod.EnemySelectionUI.Visible)
+            {
+                mod._enemySelectionUI?.Update(gameTime);
+            }
+            if (mod.SpawnPointConfigUI.Visible)
+            {
+                mod._spawnPointConfigUI?.Update(gameTime);
             }
 
             if (MapMarkersUIState.Visible) mod.MarkerInterface.Update(gameTime);
@@ -1246,6 +1280,239 @@ namespace tsorcRevamp
                 DrawText(startY, healthCurrent, healthMax, rightX);
                 DrawText(startY + barHeight + gap, manaCurrent, manaMax, rightX);
                 DrawText(stamY, staminaCurrent, staminaMax, rightX);
+            }
+        }
+
+        private static Color GetDustColor(int dustId)
+        {
+            return dustId switch
+            {
+                Terraria.ID.DustID.Shadowflame => Color.MediumPurple,
+                Terraria.ID.DustID.Torch => Color.OrangeRed,
+                Terraria.ID.DustID.HallowedTorch => Color.HotPink,
+                Terraria.ID.DustID.IceTorch => Color.SkyBlue,
+                Terraria.ID.DustID.GreenTorch => Color.LightGreen,
+                Terraria.ID.DustID.GoldFlame => Color.Gold,
+                Terraria.ID.DustID.BoneTorch => Color.White,
+                Terraria.ID.DustID.PurpleTorch => Color.Purple,
+                _ => Color.White
+            };
+        }
+
+        private static void DrawLineScreen(SpriteBatch spriteBatch, Vector2 startScreen, Vector2 endScreen, Color color, float thickness)
+        {
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Vector2 segment = endScreen - startScreen;
+            Vector2 scale = new Vector2(segment.Length() / pixel.Width, thickness / pixel.Height);
+            Vector2 origin = new Vector2(0f, pixel.Height / 2f);
+            spriteBatch.Draw(pixel, startScreen, null, color, segment.ToRotation(), origin, scale, SpriteEffects.None, 0f);
+        }
+
+        private void DrawHardcodedEvent(ScriptedEvent ev, bool isDormant)
+        {
+            if (ev.DynamicEventID != null) return;
+            Vector2 centerPos = ev.centerpoint;
+            
+            // Only draw if within 3000 pixels of the screen center to save performance
+            Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth / 2f, Main.screenHeight / 2f);
+            if (Vector2.DistanceSquared(centerPos, screenCenter) > 3000 * 3000)
+            {
+                return;
+            }
+
+            // Draw the ring (always drawn in editor mode: white/faint for invisible, correct color for visible)
+            Color ringColor = ev.visible ? GetDustColor(ev.dustID) : Color.White * 0.4f;
+            if (isDormant)
+            {
+                ringColor = ringColor * 0.4f;
+            }
+            float thickness = 2f;
+
+            float radiusInPixels = (float)System.Math.Sqrt(ev.radius);
+
+            if (ev.square)
+            {
+                Vector2 topLeft = centerPos + new Vector2(-radiusInPixels, -radiusInPixels) - Main.screenPosition;
+                Vector2 topRight = centerPos + new Vector2(radiusInPixels, -radiusInPixels) - Main.screenPosition;
+                Vector2 bottomLeft = centerPos + new Vector2(-radiusInPixels, radiusInPixels) - Main.screenPosition;
+                Vector2 bottomRight = centerPos + new Vector2(radiusInPixels, radiusInPixels) - Main.screenPosition;
+                DrawLineScreen(Main.spriteBatch, topLeft, topRight, ringColor, thickness);
+                DrawLineScreen(Main.spriteBatch, topRight, bottomRight, ringColor, thickness);
+                DrawLineScreen(Main.spriteBatch, bottomRight, bottomLeft, ringColor, thickness);
+                DrawLineScreen(Main.spriteBatch, bottomLeft, topLeft, ringColor, thickness);
+            }
+            else
+            {
+                int points = 60;
+                float step = MathHelper.TwoPi / points;
+                for (int i = 0; i < points; i++)
+                {
+                    Vector2 p1 = centerPos + new Vector2(radiusInPixels, 0).RotatedBy(i * step) - Main.screenPosition;
+                    Vector2 p2 = centerPos + new Vector2(radiusInPixels, 0).RotatedBy((i + 1) * step) - Main.screenPosition;
+                    DrawLineScreen(Main.spriteBatch, p1, p2, ringColor, thickness);
+                }
+            }
+
+            // Draw the center icon
+            Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            if (icon != null)
+            {
+                Color iconColor = isDormant ? Color.White * 0.4f : Color.White;
+                Main.spriteBatch.Draw(icon, centerPos - Main.screenPosition, null, iconColor, 0f, icon.Size() / 2f, 1.0f, SpriteEffects.None, 0f);
+            }
+
+            // Draw the NPCs
+            if (ev.eventNPCs != null)
+            {
+                foreach (var npc in ev.eventNPCs)
+                {
+                    NPC dummyNPC = new NPC();
+                    dummyNPC.SetDefaults(npc.type);
+                    dummyNPC.active = true;
+                    dummyNPC.Bottom = new Vector2(npc.spawnCoords.X * 16 + 8, npc.spawnCoords.Y * 16 + 16);
+                    if (isDormant)
+                    {
+                        dummyNPC.color = Color.White * 0.4f;
+                    }
+                    Main.instance.LoadNPC(npc.type);
+                    Main.instance.DrawNPCDirect(Main.spriteBatch, dummyNPC, false, Main.screenPosition);
+                }
+            }
+        }
+
+        public override void PostDrawTiles()
+        {
+            if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<Items.Debug.EnemyDebugTome>())
+            {
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
+                
+                // Draw hardcoded EnabledEvents safely
+                if (tsorcScriptedEvents.EnabledEvents != null)
+                {
+                    var enabledCopy = tsorcScriptedEvents.EnabledEvents.ToArray();
+                    foreach (var ev in enabledCopy)
+                    {
+                        if (ev != null)
+                        {
+                            DrawHardcodedEvent(ev, false);
+                        }
+                    }
+                }
+
+                // Draw hardcoded RunningEvents safely
+                if (tsorcScriptedEvents.RunningEvents != null)
+                {
+                    var runningCopy = tsorcScriptedEvents.RunningEvents.ToArray();
+                    foreach (var ev in runningCopy)
+                    {
+                        if (ev != null)
+                        {
+                            DrawHardcodedEvent(ev, false);
+                        }
+                    }
+                }
+
+                // Draw hardcoded DisabledEvents safely
+                if (tsorcScriptedEvents.DisabledEvents != null)
+                {
+                    var disabledCopy = tsorcScriptedEvents.DisabledEvents.ToArray();
+                    foreach (var ev in disabledCopy)
+                    {
+                        if (ev != null)
+                        {
+                            DrawHardcodedEvent(ev, true);
+                        }
+                    }
+                }
+
+                var dynamicCopy = tsorcScriptedEvents.DynamicEvents != null ? tsorcScriptedEvents.DynamicEvents.ToArray() : System.Array.Empty<DynamicSpawnEvent>();
+                foreach (var ev in dynamicCopy)
+                {
+                    if (ev == null) continue;
+
+                    Vector2 centerPos = new Vector2(ev.CenterX * 16 + 8, ev.CenterY * 16 + 8);
+
+                    // Only draw if within 3000 pixels of the screen center to save performance
+                    Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth / 2f, Main.screenHeight / 2f);
+                    if (Vector2.DistanceSquared(centerPos, screenCenter) > 3000 * 3000)
+                    {
+                        continue;
+                    }
+
+                    var configUI = ModContent.GetInstance<tsorcRevamp>().SpawnPointConfigUI;
+                    bool isSelected = configUI.Visible && configUI.CurrentEvent == ev;
+
+                    // Draw the ring (always drawn in editor mode: white/faint for invisible, correct color for visible)
+                    Color ringColor = ev.VisibleRing ? GetDustColor(ev.TriggerDust) : Color.White * 0.4f;
+                    float thickness = 2f;
+
+                    if (isSelected)
+                    {
+                        ringColor = Color.Gold;
+                        thickness = 3f;
+                    }
+
+                    int points = 60;
+                    float step = MathHelper.TwoPi / points;
+                    float radiusInPixels = (float)System.Math.Sqrt(ev.Radius);
+                    for (int i = 0; i < points; i++)
+                    {
+                        Vector2 p1 = centerPos + new Vector2(radiusInPixels, 0).RotatedBy(i * step) - Main.screenPosition;
+                        Vector2 p2 = centerPos + new Vector2(radiusInPixels, 0).RotatedBy((i + 1) * step) - Main.screenPosition;
+                        DrawLineScreen(Main.spriteBatch, p1, p2, ringColor, thickness);
+                    }
+
+                    // Draw the center icon
+                    Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                    if (icon != null)
+                    {
+                        Main.spriteBatch.Draw(icon, centerPos - Main.screenPosition, null, Color.White, 0f, icon.Size() / 2f, 1f, SpriteEffects.None, 0f);
+                    }
+
+                    // Draw the NPCs
+                    foreach (var npc in ev.Npcs)
+                    {
+                        NPC dummyNPC = new NPC();
+                        dummyNPC.SetDefaults(npc.NpcID);
+                        dummyNPC.active = true;
+                        dummyNPC.Bottom = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16);
+                        
+                        if (isSelected)
+                        {
+                            float pulse = (float)System.Math.Sin(Main.GlobalTimeWrappedHourly * 4f) * 0.2f + 0.8f;
+                            dummyNPC.color = new Color(255, 230, 100) * pulse;
+                        }
+
+                        // Load the texture safely
+                        Main.instance.LoadNPC(npc.NpcID);
+                        
+                        Main.instance.DrawNPCDirect(Main.spriteBatch, dummyNPC, false, Main.screenPosition);
+                    }
+                }
+
+                // Draw cursor preview hologram if selecting an NPC to place
+                var enemyUI = ModContent.GetInstance<tsorcRevamp>().EnemySelectionUI;
+                if (enemyUI.SelectedNpcType != 0)
+                {
+                    int selectedType = enemyUI.SelectedNpcType;
+                    Main.instance.LoadNPC(selectedType);
+
+                    NPC previewNPC = new NPC();
+                    previewNPC.SetDefaults(selectedType);
+                    previewNPC.active = true;
+
+                    // Align hologram to the world grid (matching spawn coords)
+                    int tileX = (int)(Main.MouseWorld.X / 16);
+                    int tileY = (int)(Main.MouseWorld.Y / 16);
+                    previewNPC.Bottom = new Vector2(tileX * 16 + 8, tileY * 16 + 16);
+
+                    // Make it semi-transparent for the hologram effect
+                    previewNPC.color = Color.White * 0.6f;
+
+                    Main.instance.DrawNPCDirect(Main.spriteBatch, previewNPC, false, Main.screenPosition);
+                }
+
+                Main.spriteBatch.End();
             }
         }
     }
