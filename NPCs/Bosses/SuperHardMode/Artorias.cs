@@ -50,6 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             artoriasGlobalNPC.Agility = 0.1f;
             // Step 6 boss lever: blink aggressively the moment it loses LOS (keeps arena pressure).
             artoriasGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
+            artoriasGlobalNPC.NavSearchRadius = 100; // Phase 2: SmartFighter4AI movement (boss)
         }
 
         public int attackPatternCounter = 0;

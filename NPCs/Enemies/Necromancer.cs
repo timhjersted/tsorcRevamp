@@ -32,10 +32,11 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, SoundID.Item17);
 
-            // Step 6 caster levers: remember last-known position; pace when it does patrol.
+            // Caster levers: remember last-known position; pace when it does patrol.
             tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             casterGlobalNPC.RemembersLastKnownPos = true;
             casterGlobalNPC.PatrolMode = NPCs.PatrolMode.Pace;
+            casterGlobalNPC.NavSearchRadius = 80;
         }
 
         float skeletonTimer;
@@ -80,7 +81,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f, canTeleport: true, lavaJumping: true);
+            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f, canTeleport: true, lavaJumping: true, canPounce: false);
 
             skeletonTimer++;
             bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);

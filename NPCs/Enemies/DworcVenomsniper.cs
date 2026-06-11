@@ -39,6 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
             sniperGlobalNPC.CanTeleport = true;
             sniperGlobalNPC.TeleportMaxCharges = 1;
             sniperGlobalNPC.PrefersHighGround = true;
+            sniperGlobalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
 
             if (Main.hardMode)
             {

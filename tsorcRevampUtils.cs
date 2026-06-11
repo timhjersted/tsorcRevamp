@@ -1593,6 +1593,23 @@ namespace tsorcRevamp
             return false;
         }
 
+        /// <summary>
+        /// True if a `width`-tile flat walkable floor sits CENTERED under `centerX` at row `targetY`.
+        /// Stricter than IsPartOfValidSurface: that one accepts `centerX` anywhere inside a wide-enough run, so a
+        /// large enemy can stand at the run's EDGE with its body hanging off the lip. This requires the enemy's
+        /// whole footprint [centerX - width/2 .. +width] to be solid, so a MinSurfaceWidth beast stands FULLY on
+        /// its floor (and refuses floors narrower than its footprint entirely).
+        /// </summary>
+        public static bool IsFootprintSupported(int centerX, int targetY, int width)
+        {
+            int left = centerX - width / 2;
+            for (int i = 0; i < width; i++)
+            {
+                if (!IsValidWalkableTile(left + i, targetY)) return false;
+            }
+            return true;
+        }
+
         public static tsorcRevampPlayer ModPlayer(Player player) => player.GetModPlayer<tsorcRevampPlayer>();
     }
 }

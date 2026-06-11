@@ -8220,6 +8220,21 @@ Mods: {
 				// DisplayName: Enemy Debug Tome
 				// Tooltip: ""
 			}
+
+			FaraamDraftHelmet: {
+				// Tooltip: ""
+				// DisplayName: Faraam Draft Helmet
+			}
+
+			FaraamDraftGreaves: {
+				// Tooltip: ""
+				// DisplayName: Faraam Draft Greaves
+			}
+
+			FaraamDraftBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Faraam Draft Breastplate
+			}
 		}
 
 		Buffs: {
@@ -9321,7 +9336,6 @@ Mods: {
 			BlackBreath.DisplayName: Черное дыхание
 			BlackKnightGhostSpear.DisplayName: Призрачное копье Черного рыцаря
 			BlackKnightSpear.DisplayName: Копье Черного рыцаря
-			BlackKnightsSpear.DisplayName: Копье Черного рыцаря
 			BoulderDropLeft.DisplayName: Взрыв
 			BoulderDropRight.DisplayName: Взрыв
 			Bubble.DisplayName: Пузырь
@@ -9365,7 +9379,7 @@ Mods: {
 			EnemyLingeringLaser.DisplayName: Имя лазера по умолчанию
 			EnemyMeteor.DisplayName: Вражеский метеор
 			EnemyPlasmaOrb.DisplayName: Омега-взрыв
-			EnemyRedirectingShark.DisplayName: Вражеская перенаправляющая акула
+			EnemyRedirectingShark.DisplayName: Pulsing Water Fiend Virus
 			EnemyRedLaser.DisplayName: Имя лазера по умолчанию
 			EnemySmokebomb.DisplayName: Вражеская дымовая шашка
 			EnemySpellAbyssPoisonStrike.DisplayName: Вражеское заклинание "Ядовитый удар бездны"
@@ -11710,6 +11724,7 @@ Mods: {
 
 			// TibianValkyrieTier2.DisplayName: Tibian Valkyrie Tier2
 			// GreatBlackKnight.DisplayName: Great Black Knight
+			// FaraamSpriteTestInvader.DisplayName: Faraam Sprite Test Invader
 		}
 
 		Prefixes: {
@@ -11946,7 +11961,7 @@ Mods: {
 
 				UseCustomResourceBars: {
 					// Label: Use Custom Resource Bars
-					// Tooltip: ""
+					// Tooltip: Adds custom health, mana, and stamina bars in the upper right corner. Turn off to use vanilla options.
 				}
 
 				HideOverheadStaminaBar: {

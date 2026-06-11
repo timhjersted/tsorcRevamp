@@ -44,6 +44,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower = 11f;
             globalNPC.MaxJumpBoost = 7f;
+            globalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
+            globalNPC.CanUseRopes = true;
             globalNPC.CanDoubleJump = true;
             globalNPC.DoubleJumpPower = 7f;
             // Step 6 beast levers: lurk (Wander) around where it lost the player when it gives up.

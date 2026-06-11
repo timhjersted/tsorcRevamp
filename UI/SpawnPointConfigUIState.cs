@@ -35,22 +35,38 @@ namespace tsorcRevamp.UI
         private UIText radiusValue;
         private UIText radiusPlus;
 
+        private UIText worldConditionLabel;
+        private UIText worldConditionValue;
+
         private UIText conditionLabel;
         private UIText conditionValue;
+
+        private UIText spawnsTitle;
+        private UIText searchTitle;
 
         private UIEnemySearchBar searchBar;
         private UIList npcSearchList;
         private UIScrollbar searchScrollbar;
 
-        private static readonly string[] ConditionMethods = new string[]
+        // Tracks whether the multi-NPC sections (configured spawns + add-enemy search) are currently attached.
+        private bool lowerSectionsAttached = true;
+
+        // World-level gate. Stored in DynamicSpawnEvent.WorldCondition.
+        internal static readonly string[] WorldConditionMethods = new string[]
         {
             "", // Always Active
+            "OnlyAdventureMapCondition",
+            "RemixMapCondition"
+        };
+
+        // Spawn condition (progression / time-of-day). Stored in DynamicSpawnEvent.MapCondition. "" = None.
+        internal static readonly string[] SpawnConditionMethods = new string[]
+        {
+            "", // None
             "NormalModeCustomCondition",
             "HardModeCustomCondition",
             "SuperHardModeCustomCondition",
             "NightCustomCondition",
-            "OnlyAdventureMapCondition",
-            "RemixMapCondition",
             "PreEoCCustomCondition",
             "PreEoWCustomCondition",
             "PostEoWCustomCondition",
@@ -61,7 +77,23 @@ namespace tsorcRevamp.UI
             "CultistDownedCondition"
         };
 
-        private static string GetConditionDisplayName(string methodName)
+        internal static string GetWorldConditionDisplayName(string methodName)
+        {
+            return methodName switch
+            {
+                "" => "Always Active",
+                "OnlyAdventureMapCondition" => "Adventure Map Only",
+                "RemixMapCondition" => "Remix Map Only",
+                _ => methodName
+            };
+        }
+
+        internal static string GetSpawnConditionDisplayName(string methodName)
+        {
+            return string.IsNullOrEmpty(methodName) ? "None" : GetConditionDisplayName(methodName);
+        }
+
+        internal static string GetConditionDisplayName(string methodName)
         {
             return methodName switch
             {
@@ -84,7 +116,7 @@ namespace tsorcRevamp.UI
             };
         }
 
-        private static Color GetConditionColor(string methodName)
+        internal static Color GetConditionColor(string methodName)
         {
             return methodName switch
             {
@@ -99,7 +131,7 @@ namespace tsorcRevamp.UI
             };
         }
 
-        private static readonly int[] PopularDusts = new int[]
+        internal static readonly int[] PopularDusts = new int[]
         {
             DustID.Shadowflame,
             DustID.Torch,
@@ -111,7 +143,7 @@ namespace tsorcRevamp.UI
             DustID.PurpleTorch
         };
 
-        private static string GetDustName(int dustId)
+        internal static string GetDustName(int dustId)
         {
             return dustId switch
             {
@@ -127,7 +159,7 @@ namespace tsorcRevamp.UI
             };
         }
 
-        private static Color GetDustColor(int dustId)
+        internal static Color GetDustColor(int dustId)
         {
             return dustId switch
             {
@@ -150,7 +182,7 @@ namespace tsorcRevamp.UI
             panel.Left.Set(-200f, 0.833f); // Centered in the right third of screen
             panel.Top.Set(-300f, 0.5f); // Centered vertically
             panel.Width.Set(400f, 0f); // 20px wider single column width
-            panel.Height.Set(600f, 0f); // Taller height to stack everything
+            panel.Height.Set(625f, 0f); // Taller height to stack everything (extra row for World Condition)
             panel.BackgroundColor = new Color(30, 30, 40) * 0.95f; // Sleek dark panel
             Append(panel);
 
@@ -258,16 +290,46 @@ namespace tsorcRevamp.UI
             };
             panel.Append(ringValue);
 
-            // Option 3: Spawn Condition
+            // Option 3: World Condition (Adventure / Remix / Always Active)
+            worldConditionLabel = new UIText("World Condition:", 0.85f);
+            worldConditionLabel.Left.Set(10, 0);
+            worldConditionLabel.Top.Set(110, 0);
+            panel.Append(worldConditionLabel);
+
+            worldConditionValue = new UIText("[ Always Active ]", 0.85f);
+            worldConditionValue.HAlign = 1f;
+            worldConditionValue.Left.Set(-20f, 0f);
+            worldConditionValue.Top.Set(110, 0);
+            worldConditionValue.TextColor = Color.White;
+            worldConditionValue.OnMouseOver += (UIMouseEvent evt, UIElement listeningElement) => {
+                worldConditionValue.TextColor = Color.Gold;
+            };
+            worldConditionValue.OnMouseOut += (UIMouseEvent evt, UIElement listeningElement) => {
+                RefreshDetails();
+            };
+            worldConditionValue.OnLeftClick += (UIMouseEvent evt, UIElement listeningElement) => {
+                if (CurrentEvent != null)
+                {
+                    int currentIndex = System.Array.IndexOf(WorldConditionMethods, CurrentEvent.WorldCondition ?? "");
+                    if (currentIndex == -1) currentIndex = 0;
+                    int nextIndex = (currentIndex + 1) % WorldConditionMethods.Length;
+                    CurrentEvent.WorldCondition = WorldConditionMethods[nextIndex];
+                    tsorcScriptedEvents.SaveDynamicEvents();
+                    RefreshDetails();
+                }
+            };
+            panel.Append(worldConditionValue);
+
+            // Option 4: Spawn Condition (progression / time-of-day, None by default)
             conditionLabel = new UIText("Spawn Condition:", 0.85f);
             conditionLabel.Left.Set(10, 0);
-            conditionLabel.Top.Set(110, 0);
+            conditionLabel.Top.Set(135, 0);
             panel.Append(conditionLabel);
 
-            conditionValue = new UIText("[ Always Active ]", 0.85f);
+            conditionValue = new UIText("[ None ]", 0.85f);
             conditionValue.HAlign = 1f;
             conditionValue.Left.Set(-20f, 0f);
-            conditionValue.Top.Set(110, 0);
+            conditionValue.Top.Set(135, 0);
             conditionValue.TextColor = Color.White;
             conditionValue.OnMouseOver += (UIMouseEvent evt, UIElement listeningElement) => {
                 conditionValue.TextColor = Color.Gold;
@@ -278,26 +340,26 @@ namespace tsorcRevamp.UI
             conditionValue.OnLeftClick += (UIMouseEvent evt, UIElement listeningElement) => {
                 if (CurrentEvent != null)
                 {
-                    int currentIndex = System.Array.IndexOf(ConditionMethods, CurrentEvent.MapCondition ?? "");
+                    int currentIndex = System.Array.IndexOf(SpawnConditionMethods, CurrentEvent.MapCondition ?? "");
                     if (currentIndex == -1) currentIndex = 0;
-                    int nextIndex = (currentIndex + 1) % ConditionMethods.Length;
-                    CurrentEvent.MapCondition = ConditionMethods[nextIndex];
+                    int nextIndex = (currentIndex + 1) % SpawnConditionMethods.Length;
+                    CurrentEvent.MapCondition = SpawnConditionMethods[nextIndex];
                     tsorcScriptedEvents.SaveDynamicEvents();
                     RefreshDetails();
                 }
             };
             panel.Append(conditionValue);
 
-            // Option 4: Trigger Dust Type
+            // Option 5: Trigger Dust Type
             dustLabel = new UIText("Trigger Dust:", 0.85f);
             dustLabel.Left.Set(10, 0);
-            dustLabel.Top.Set(135, 0);
+            dustLabel.Top.Set(160, 0);
             panel.Append(dustLabel);
 
             dustValue = new UIText("[ Shadowflame ]", 0.85f);
             dustValue.HAlign = 1f;
             dustValue.Left.Set(-20f, 0f);
-            dustValue.Top.Set(135, 0);
+            dustValue.Top.Set(160, 0);
             dustValue.TextColor = Color.Violet;
             dustValue.OnMouseOver += (UIMouseEvent evt, UIElement listeningElement) => {
                 dustValue.TextColor = Color.White;
@@ -325,15 +387,15 @@ namespace tsorcRevamp.UI
             };
             panel.Append(dustValue);
 
-            // Option 5: Trigger Radius Control
+            // Option 6: Trigger Radius Control
             radiusLabel = new UIText("Trigger Radius:", 0.85f);
             radiusLabel.Left.Set(10, 0);
-            radiusLabel.Top.Set(160, 0);
+            radiusLabel.Top.Set(185, 0);
             panel.Append(radiusLabel);
 
             radiusMinus = new UIText("[ - ]", 0.85f);
             radiusMinus.Left.Set(-140f, 1f);
-            radiusMinus.Top.Set(160, 0);
+            radiusMinus.Top.Set(185, 0);
             radiusMinus.TextColor = Color.LightSkyBlue;
             radiusMinus.OnMouseOver += (UIMouseEvent evt, UIElement listeningElement) => {
                 radiusMinus.TextColor = Color.White;
@@ -355,13 +417,13 @@ namespace tsorcRevamp.UI
 
             radiusValue = new UIText("30 tiles", 0.85f);
             radiusValue.Left.Set(-105f, 1f);
-            radiusValue.Top.Set(160, 0);
+            radiusValue.Top.Set(185, 0);
             radiusValue.TextColor = Color.White;
             panel.Append(radiusValue);
 
             radiusPlus = new UIText("[ + ]", 0.85f);
             radiusPlus.Left.Set(-40f, 1f);
-            radiusPlus.Top.Set(160, 0);
+            radiusPlus.Top.Set(185, 0);
             radiusPlus.TextColor = Color.LightSkyBlue;
             radiusPlus.OnMouseOver += (UIMouseEvent evt, UIElement listeningElement) => {
                 radiusPlus.TextColor = Color.White;
@@ -382,16 +444,16 @@ namespace tsorcRevamp.UI
             panel.Append(radiusPlus);
 
             // Configured spawns title (large = false)
-            UIText spawnsTitle = new UIText("CONFIGURED ENEMY SPAWNS:", 0.8f);
+            spawnsTitle = new UIText("CONFIGURED ENEMY SPAWNS:", 0.8f);
             spawnsTitle.Left.Set(10, 0);
-            spawnsTitle.Top.Set(190, 0);
+            spawnsTitle.Top.Set(215, 0);
             spawnsTitle.TextColor = Color.SkyBlue;
             panel.Append(spawnsTitle);
 
             // Scrollable NPC List
             npcList = new UIList();
             npcList.Left.Set(10, 0);
-            npcList.Top.Set(215, 0);
+            npcList.Top.Set(240, 0);
             npcList.Width.Set(355, 0); // Wider list
             npcList.Height.Set(110, 0); // Shorter list (stacked vertically)
             panel.Append(npcList);
@@ -400,21 +462,21 @@ namespace tsorcRevamp.UI
             scrollbar = new UIScrollbar();
             scrollbar.SetView(100f, 1000f);
             scrollbar.Height.Set(110, 0);
-            scrollbar.Top.Set(215, 0);
+            scrollbar.Top.Set(240, 0);
             scrollbar.Left.Set(370, 0); // Moved to right edge of 400px panel
             panel.Append(scrollbar);
             npcList.SetScrollbar(scrollbar);
 
             // ================= NPC SEARCH & SELECTION (STACKED BELOW) =================
-            UIText searchTitle = new UIText("SELECT ENEMY TO PLACE:", 0.8f);
+            searchTitle = new UIText("SELECT ENEMY TO PLACE:", 0.8f);
             searchTitle.Left.Set(10, 0);
-            searchTitle.Top.Set(335, 0); // Stacked below configured spawns
+            searchTitle.Top.Set(360, 0); // Stacked below configured spawns
             searchTitle.TextColor = new Color(255, 204, 0); // Gold Title
             panel.Append(searchTitle);
 
             searchBar = new UIEnemySearchBar();
             searchBar.Left.Set(10, 0);
-            searchBar.Top.Set(360, 0);
+            searchBar.Top.Set(385, 0);
             searchBar.Width.Set(355, 0); // Wider search bar
             searchBar.Height.Set(30, 0);
             searchBar.BackgroundColor = new Color(40, 40, 50) * 0.95f;
@@ -423,7 +485,7 @@ namespace tsorcRevamp.UI
 
             npcSearchList = new UIList();
             npcSearchList.Left.Set(10, 0);
-            npcSearchList.Top.Set(400, 0);
+            npcSearchList.Top.Set(425, 0);
             npcSearchList.Width.Set(355, 0); // Wider search list
             npcSearchList.Height.Set(185, 0); // Fills remaining height
             panel.Append(npcSearchList);
@@ -431,7 +493,7 @@ namespace tsorcRevamp.UI
             searchScrollbar = new UIScrollbar();
             searchScrollbar.SetView(100f, 1000f);
             searchScrollbar.Height.Set(185, 0);
-            searchScrollbar.Top.Set(400, 0);
+            searchScrollbar.Top.Set(425, 0);
             searchScrollbar.Left.Set(370, 0); // Moved to right edge of 400px panel
             panel.Append(searchScrollbar);
             npcSearchList.SetScrollbar(searchScrollbar);
@@ -449,8 +511,51 @@ namespace tsorcRevamp.UI
         public void SetEvent(DynamicSpawnEvent ev)
         {
             CurrentEvent = ev;
+
+            // Backward-compat: older events stored Adventure/Remix in MapCondition. Migrate it to WorldCondition
+            // so the split menus display and cycle correctly.
+            if (ev != null && string.IsNullOrEmpty(ev.WorldCondition)
+                && (ev.MapCondition == "OnlyAdventureMapCondition" || ev.MapCondition == "RemixMapCondition"))
+            {
+                ev.WorldCondition = ev.MapCondition;
+                ev.MapCondition = "";
+                tsorcScriptedEvents.SaveDynamicEvents();
+            }
+
+            // Quick-add events are locked to a single NPC, so hide the multi-NPC add/list sections.
+            SetLowerSectionsVisible(ev == null || !ev.SingleNpcMarker);
+
             RefreshDetails();
             RefreshList();
+        }
+
+        // Attaches/detaches the "configured spawns" list and the "select enemy to place" search section.
+        private void SetLowerSectionsVisible(bool visible)
+        {
+            if (visible == lowerSectionsAttached) return;
+
+            if (visible)
+            {
+                panel.Append(spawnsTitle);
+                panel.Append(npcList);
+                panel.Append(scrollbar);
+                panel.Append(searchTitle);
+                panel.Append(searchBar);
+                panel.Append(npcSearchList);
+                panel.Append(searchScrollbar);
+            }
+            else
+            {
+                panel.RemoveChild(spawnsTitle);
+                panel.RemoveChild(npcList);
+                panel.RemoveChild(scrollbar);
+                panel.RemoveChild(searchTitle);
+                panel.RemoveChild(searchBar);
+                panel.RemoveChild(npcSearchList);
+                panel.RemoveChild(searchScrollbar);
+            }
+
+            lowerSectionsAttached = visible;
         }
 
         public void RefreshDetails()
@@ -481,7 +586,10 @@ namespace tsorcRevamp.UI
                 ringValue.TextColor = Color.Red;
             }
 
-            conditionValue.SetText($"[ {GetConditionDisplayName(CurrentEvent.MapCondition ?? "")} ]");
+            worldConditionValue.SetText($"[ {GetWorldConditionDisplayName(CurrentEvent.WorldCondition ?? "")} ]");
+            worldConditionValue.TextColor = GetConditionColor(CurrentEvent.WorldCondition ?? "");
+
+            conditionValue.SetText($"[ {GetSpawnConditionDisplayName(CurrentEvent.MapCondition ?? "")} ]");
             conditionValue.TextColor = GetConditionColor(CurrentEvent.MapCondition ?? "");
 
             dustValue.SetText($"[ {GetDustName(CurrentEvent.TriggerDust)} ]");
@@ -559,6 +667,7 @@ namespace tsorcRevamp.UI
                 npcItem.OnLeftClick += (UIMouseEvent evt, UIElement listeningElement) => {
                     var enemyUI = ModContent.GetInstance<tsorcRevamp>().EnemySelectionUI;
                     enemyUI.SelectedNpcType = type;
+                    enemyUI.QuickAddMode = false; // Placing into the currently-open event, not a new quick-add event
                     Main.NewText("Selected " + npc.TypeName + " for spawning. Left click in world to place. Right click to cancel.");
                 };
                 npcSearchList.Add(npcItem);

@@ -122,8 +122,13 @@ namespace tsorcRevamp.NPCs
 
         private static readonly Dictionary<int, NavState> States = new Dictionary<int, NavState>();
 
+        // movementOnly (Phase 2 Step 4): act as BasicAI's pluggable MOVEMENT substrate instead of a standalone
+        // driver. When true, BasicAI already advanced the shared FSM and fired combat this frame, so SF4 must NOT
+        // re-run UpdateState (side effects → double give-up clock) or fire its own attacks (double shot) — it
+        // reads g.PursuitState and only moves. holdForAttack = combat wants to stop-and-fire → hold this frame.
+        // Defaults false → standalone behavior (Invaders, TibianValkyrieSmart4 testbed) is byte-identical.
         public static void Run(NPC npc, float topSpeed = 1.55f, float acceleration = 0.10f,
-            int doorBreakingDamage = 4, float attackRange = 700f)
+            int doorBreakingDamage = 4, float attackRange = 700f, bool movementOnly = false, bool holdForAttack = false)
         {
             Player player = Main.player[npc.target];
             if (!player.active || player.dead)
@@ -139,6 +144,11 @@ namespace tsorcRevamp.NPCs
 
             NavState s = GetState(npc);
             tsorcRevampGlobalNPC g = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            _minSurfaceWidth = g.MinSurfaceWidth; // beast flat-ground gate for IsStandableTile this frame (0 = off)
+            // Headroom: beasts (MinSurfaceWidth > 0) require their full sprite height of clearance; others keep the
+            // old fixed 3 tiles. Auto-derived from the sprite so a tall beast won't path into a too-short space.
+            _clearanceHeight = g.MinSurfaceWidth > 0 ? Math.Max(3, (int)Math.Ceiling(npc.height / 16f)) : 3;
+            _canUseRopes = g.CanUseRopes; // per-enemy rope opt-in (default off)
             float jumpCeil = Math.Max(g.MaxJumpPower, 5f);
             float boostCeil = Math.Max(g.MaxJumpBoost, 2f);
 
@@ -178,12 +188,27 @@ namespace tsorcRevamp.NPCs
             bool madeProgress = distNow < s.LastPursuitDist - 1f
                 || (s.Plan != null && s.PlanIndex < s.Plan.Count);
             s.LastPursuitDist = distNow;
-            PursuitState pstate = NavBehavior.UpdateState(npc, g, player, los, madeProgress, attackRange);
+            // movementOnly: BasicAI already advanced the shared FSM this frame; calling UpdateState again would
+            // double-step its side effects (give-up clock, re-aggro, last-known-pos). Read the state it set.
+            PursuitState pstate = movementOnly
+                ? g.PursuitState
+                : NavBehavior.UpdateState(npc, g, player, los, madeProgress, attackRange);
 
             string actionLabel = "idle", reasonLabel = "";
             bool actionHandled = false;
 
-            if (pstate == PursuitState.Patrol)
+            // Hold-to-fire (movementOnly): combat (RunFighterCombat in BasicAI) wants to stop-and-fire, so hold
+            // position this frame and skip pathing — the shot comes from BasicAI, not SF4. Mirrors halt-attack.
+            if (movementOnly && holdForAttack && pstate != PursuitState.Patrol)
+            {
+                if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f;
+                else npc.velocity.X *= 0.6f;
+                int hdir = player.Center.X >= npc.Center.X ? 1 : -1;
+                npc.direction = hdir; npc.spriteDirection = hdir;
+                actionHandled = true;
+                actionLabel = "hold-fire"; reasonLabel = "combat";
+            }
+            else if (pstate == PursuitState.Patrol)
             {
                 // Gave up the chase: patrol instead of pathing/standing-forever. Drop any stale plan.
                 s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0; s.StuckGiveUpFrames = 0;
@@ -344,7 +369,9 @@ namespace tsorcRevamp.NPCs
             // Attacks are allowed on the rope: SF4 forces CanStopToFire=false below, so firing
             // never halts the climb/descent. (Attacking mid-rope is fine per design.)
             bool canAttack = g.AttackList.Count > 0 && los && npc.Distance(player.Center) <= attackRange;
-            if (g.AttackList.Count > 0)
+            // movementOnly: BasicAI's RunFighterCombat already fired this enemy's attacks — SF4 must NOT also fire
+            // (double shot). Standalone (Invader/testbed) still fires its own AttackList here.
+            if (!movementOnly && g.AttackList.Count > 0)
             {
                 bool oldStop = g.CanStopToFire;
                 g.CanStopToFire = false;
@@ -442,6 +469,18 @@ namespace tsorcRevamp.NPCs
         private static float _planGravity = 0.3f;
         private static float _planJumpCeil = 9f;
         private static float _planMaxLaunchVx = 6.5f;
+        // Beast flat-ground constraint (set per-frame in Run from g.MinSurfaceWidth). When > 0, IsStandableTile
+        // requires a flat run >= this many tiles wide, CENTERED under the enemy, so A* only builds spans / lands
+        // jumps on surfaces a large enemy can actually stand FULLY on (no 1-tile-ledge hopping, no edge-perching).
+        // Single-threaded main loop → static stash is safe.
+        private static int _minSurfaceWidth = 0;
+        // Required vertical headroom in tiles for the body clearance check (HasBodyClearanceAtRow). Default 3 (the
+        // old fixed value); for beasts it's auto-derived from sprite height in Run, so a tall beast won't path
+        // into a space too short for it.
+        private static int _clearanceHeight = 3;
+        // May this enemy climb ropes this frame (set in Run from g.CanUseRopes)? Default off — gates both the
+        // RopeClimb edge planner and the no-plan TryGrabNearbyRope fallback.
+        private static bool _canUseRopes = false;
 
         private static void Replan(NavState s, NPC npc, Player player)
         {
@@ -649,6 +688,7 @@ namespace tsorcRevamp.NPCs
                 //       vertical path — you can never jump up through a solid block, so that's never valid.
                 // Multiple valid exits along one rope => A* naturally picks the one on the cheapest path to the
                 // player's span (i.e. the floor the player is nearest).
+                if (!_canUseRopes) continue; // ropes are a per-enemy opt-in (CanUseRopes); skip building rope edges
                 for (int x = a.LeftX - 1; x <= a.RightX + 1; x++)
                 {
                     if (!FindRopeSpan(x, a.Y, 5, out int ropeBottomY, out int ropeTopY)) continue;
@@ -796,6 +836,7 @@ namespace tsorcRevamp.NPCs
         // Handles BOTH directions — climb up to a player above, descend to a player below.
         private static bool TryGrabNearbyRope(NavState s, NPC npc, Player player)
         {
+            if (!_canUseRopes) return false;  // ropes are a per-enemy opt-in (CanUseRopes)
             if (s.Plan != null) return false; // only as a no-plan fallback
             int now = (int)Main.GameUpdateCount;
             int npcCx = (int)(npc.Center.X / TileF);
@@ -1489,21 +1530,34 @@ namespace tsorcRevamp.NPCs
             // Physics-based arc (SF4): solve the exact jump from npc.gravity + jump limits.
             int rise = feetY - step.TargetY;          // positive = rising; negative = target below
 
-            // Descending target directly below us: NEVER jump up to go down. Drop straight
-            // through instead (noTileCollide passes wood platforms; ManagePlatformPass ends it
-            // on landing). Fixes the "bounce up to reach a target below" bug from the log.
+            // Descending target directly below us: NEVER jump up to go down. Drop straight down instead.
+            // CRITICAL: noTileCollide passes SOLID tiles too, not just platforms — so gate it on what's
+            // actually below (mirrors ExecDrop). A solid floor below = invalid drop → bad-edge + replan
+            // (this was the "Invader moved THROUGH solid tiles to change levels" bug); a platform =
+            // phase through it; open air = just fall (no noTileCollide). ManagePlatformPass ends the pass.
             if (rise < 0 && absDx <= 1)
             {
-                npc.noTileCollide = true;
+                int belowFeet = GetFeetTileY(npc) + 1;
+                bool platformBelow = IsPlatformTile(step.LaunchX, belowFeet);
+                bool solidBelow = !platformBelow && IsNavigationSolid(step.LaunchX, belowFeet);
+                if (solidBelow)
+                {
+                    int expiry = (int)Main.GameUpdateCount + 480;
+                    s.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                    s.StepTimer = 0;
+                    action = "jump-dropdown-blocked"; reason = "solid-below";
+                    return true;
+                }
+                npc.noTileCollide = platformBelow; // only phase an actual platform; open air falls naturally
                 npc.velocity.X = 0f;
                 npc.velocity.Y = Math.Max(npc.velocity.Y, 2.0f);
-                s.PlatformPassActive = true;
+                s.PlatformPassActive = platformBelow;
                 s.PlatformPassTimer = 24;
                 s.PlatformPassStartY = npc.Bottom.Y;
                 s.CommitFrames = 25;
                 s.AirCommitDirX = 0;
                 s.CommittedLaunchVx = 0f;
-                action = "jump-dropdown"; reason = $"down rise={rise}";
+                action = "jump-dropdown"; reason = $"down rise={rise} plat={platformBelow}";
                 return true;
             }
 
@@ -1865,7 +1919,13 @@ namespace tsorcRevamp.NPCs
             if (!WorldGen.InWorld(x, y)) return false;
             Tile t = Main.tile[x, y];
             if (!t.HasTile || t.IsActuated) return false;
-            return IsNavigationSolid(x, y) || IsPlatformTile(x, y);
+            if (!(IsNavigationSolid(x, y) || IsPlatformTile(x, y))) return false;
+            // Beast flat-ground gate: a large enemy (MinSurfaceWidth > 0) may only treat this as standable if its
+            // full footprint sits CENTERED on a flat run that wide — so it stands fully on, never edge-perched, and
+            // refuses floors narrower than its footprint. (IsGrounded still detects a beast resting on a too-narrow
+            // perch via its npc.collideY physical fallback.)
+            if (_minSurfaceWidth > 0 && !UsefulFunctions.IsFootprintSupported(x, y, _minSurfaceWidth)) return false;
+            return true;
         }
 
         private static int GetFrontTileX(NPC npc, int direction) =>
@@ -1983,7 +2043,9 @@ namespace tsorcRevamp.NPCs
 
         private static bool HasBodyClearanceAtRow(int x, int feetY)
         {
-            for (int y = feetY - 2; y <= feetY; y++)
+            // _clearanceHeight rows of headroom (3 by default; a beast's full sprite height) measured up from feet.
+            int rows = _clearanceHeight > 0 ? _clearanceHeight : 3;
+            for (int y = feetY - (rows - 1); y <= feetY; y++)
                 if (IsNavigationSolid(x, y)) return false;
             return true;
         }

@@ -1008,6 +1008,22 @@ namespace tsorcRevamp
             return RemixMapCondition() && tsorcRevampWorld.SuperHardMode;
         }
 
+        /// <summary>
+        /// Whether a dynamic event should be shown/editable in the Enemy Debug Tome for the current world.
+        /// Adventure-Map-only events are hidden in a Remix world, and Remix-only events are hidden in a
+        /// classic Adventure world. Events with no world condition show everywhere.
+        /// </summary>
+        public static bool IsEventVisibleInCurrentWorld(DynamicSpawnEvent ev)
+        {
+            if (ev == null)
+                return false;
+            if (tsorcRevampWorld.RemixMap && ev.WorldCondition == "OnlyAdventureMapCondition")
+                return false;
+            if (tsorcRevampWorld.OnlyAdventureMap && ev.WorldCondition == "RemixMapCondition")
+                return false;
+            return true;
+        }
+
         public static bool MarilithCustomCondition()
         {
             if (tsorcRevampWorld.RemixMap || tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<FireFiendMarilith>())) || NPC.AnyNPCs(ModContent.NPCType<FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<MarilithIntro>()))
@@ -1693,14 +1709,26 @@ namespace tsorcRevamp
                 if (dEvent.SaveOnCompletion && tsorcRevampWorld.CompletedDynamicEvents.Contains(dEvent.EventID))
                     continue;
 
-                // Resolve conditions and actions via reflection
-                Func<bool> condition = () => true;
+                // Resolve conditions and actions via reflection.
+                // The World condition (Adventure/Remix/Always) and the Spawn condition are evaluated
+                // independently and ANDed together, so an event can be e.g. "Adventure Map Only" + "Hardmode Only".
+                Func<bool> worldCondition = null;
+                if (!string.IsNullOrEmpty(dEvent.WorldCondition))
+                {
+                    var method = typeof(tsorcScriptedEvents).GetMethod(dEvent.WorldCondition, BindingFlags.Public | BindingFlags.Static);
+                    if (method != null)
+                        worldCondition = (Func<bool>)Delegate.CreateDelegate(typeof(Func<bool>), method);
+                }
+
+                Func<bool> spawnCondition = null;
                 if (!string.IsNullOrEmpty(dEvent.MapCondition))
                 {
                     var method = typeof(tsorcScriptedEvents).GetMethod(dEvent.MapCondition, BindingFlags.Public | BindingFlags.Static);
                     if (method != null)
-                        condition = (Func<bool>)Delegate.CreateDelegate(typeof(Func<bool>), method);
+                        spawnCondition = (Func<bool>)Delegate.CreateDelegate(typeof(Func<bool>), method);
                 }
+
+                Func<bool> condition = () => (worldCondition == null || worldCondition()) && (spawnCondition == null || spawnCondition());
 
                 Func<ScriptedEvent, EventActionStatus> action = null;
                 if (!string.IsNullOrEmpty(dEvent.CustomAction))
@@ -2908,8 +2936,14 @@ namespace tsorcRevamp
         public bool SaveOnCompletion { get; set; }
         public string TextToDisplay { get; set; }
         public string TextColorHex { get; set; }
+        // World-level gate (Adventure Map Only / Remix Map Only / "" = Always). ANDed with MapCondition at runtime.
+        public string WorldCondition { get; set; }
+        // Spawn condition (progression / time-of-day gate). "" = None (no extra restriction).
         public string MapCondition { get; set; }
         public string CustomAction { get; set; }
+        // True for "Quick Add" events: a single NPC acts as the event marker/center (no book icon drawn),
+        // and the event is locked to exactly one NPC.
+        public bool SingleNpcMarker { get; set; }
         public List<DynamicSpawnEntry> Npcs { get; set; } = new List<DynamicSpawnEntry>();
 
         // Optional custom drops, mostly used for simple single-item drops.

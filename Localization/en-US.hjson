@@ -8279,6 +8279,21 @@ Mods: {
 				DisplayName: Enemy Debug Tome
 				Tooltip: ""
 			}
+
+			FaraamDraftHelmet: {
+				Tooltip: ""
+				DisplayName: Faraam Draft Helmet
+			}
+
+			FaraamDraftGreaves: {
+				Tooltip: ""
+				DisplayName: Faraam Draft Greaves
+			}
+
+			FaraamDraftBreastplate: {
+				Tooltip: ""
+				DisplayName: Faraam Draft Breastplate
+			}
 		}
 
 		Buffs: {
@@ -9380,7 +9395,6 @@ Mods: {
 			BlackBreath.DisplayName: Black Breath
 			BlackKnightGhostSpear.DisplayName: Black Knight Ghost Spear
 			BlackKnightSpear.DisplayName: Black Knight Spear
-			BlackKnightsSpear.DisplayName: Black Knights Spear
 			BoulderDropLeft.DisplayName: Explosion
 			BoulderDropRight.DisplayName: Explosion
 			Bubble.DisplayName: Bubble
@@ -9424,7 +9438,7 @@ Mods: {
 			EnemyLingeringLaser.DisplayName: DefaultLaserName
 			EnemyMeteor.DisplayName: Enemy Meteor
 			EnemyPlasmaOrb.DisplayName: Omega Blast
-			EnemyRedirectingShark.DisplayName: Enemy Redirecting Shark
+			EnemyRedirectingShark.DisplayName: Pulsing Water Fiend Virus
 			EnemyRedLaser.DisplayName: DefaultLaserName
 			EnemySmokebomb.DisplayName: Enemy Smokebomb
 			EnemySpellAbyssPoisonStrike.DisplayName: Enemy Spell Abyss Poison Strike
@@ -11769,6 +11783,7 @@ Mods: {
 
 			TibianValkyrieTier2.DisplayName: Tibian Valkyrie Tier2
 			GreatBlackKnight.DisplayName: Great Black Knight
+			FaraamSpriteTestInvader.DisplayName: Faraam Sprite Test Invader
 		}
 
 		Prefixes: {
@@ -12005,7 +12020,7 @@ Mods: {
 
 				UseCustomResourceBars: {
 					Label: Use Custom Resource Bars
-					Tooltip: ""
+					Tooltip: Adds custom health, mana, and stamina bars in the upper right corner. Turn off to use vanilla options.
 				}
 
 				HideOverheadStaminaBar: {

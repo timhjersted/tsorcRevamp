@@ -28,10 +28,10 @@ namespace tsorcRevamp.NPCs.Enemies{
         int drowningRisk = 3000;
 
         float npcAcSPD = 1.5f; //How fast they accelerate.
-        float npcSPD = 5.3f; //Max speed
+        float npcSPD = 2.65f; //Max speed (Phase2: 50% slower, was 5.3f)
 
         float npcEnrAcSPD = 2.1f; //How fast they accelerate.
-        float npcEnrSPD = 7.1f; //Max speed
+        float npcEnrSPD = 3.55f; //Max speed (Phase2: 50% slower, was 7.1f)
 
         bool tooBig = true;
         bool lavaJumping = true;
@@ -64,6 +64,14 @@ namespace tsorcRevamp.NPCs.Enemies{
 			NPC.buffImmune[BuffID.Confused] = true;
 			NPC.buffImmune[BuffID.CursedInferno] = true;
 			NPC.buffImmune[BuffID.OnFire] = true;
+
+			// Phase 2: SmartFighter4AI movement + beast levers. minSurfaceWidth:4 (in AI) keeps this giant off
+			// narrow ledges; NavSearchRadius enables A*; MaxJumpPower above the 8 default for a strong jump given
+			// its size (NPC.gravity is read-only, so no true heavy "weighty" fall). Tune to taste.
+			tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+			g.NavSearchRadius = 24;
+			g.MaxJumpPower = 10f;
+			g.MaxJumpBoost = 6f;
 		}
         public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
 public float CanSpawnLegacy(NPCSpawnInfo s)
@@ -110,7 +118,7 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
 			int shotRate = enraged?100:70;
 			float accel=enraged? npcEnrAcSPD:npcAcSPD;  //  how fast it can speed up
 			float topSpeed=enraged? npcEnrSPD:npcSPD;  //  max walking speed, also affects jump length
-            tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: false, minSurfaceWidth: 4, canWalkBackwards: true);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: false, minSurfaceWidth: 6, canWalkBackwards: true);
             Vector2 angle = Main.player[NPC.target].Center - NPC.Center;
             angle.Y = angle.Y - (Math.Abs(angle.X) * .1f);
             angle.X += (float)Main.rand.Next(-20, 21);

@@ -325,7 +325,7 @@ namespace tsorcRevamp
         public uint SoapstoneScale { get; set; }
 
         [Header("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.Headers.UI")]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool UseCustomResourceBars { get; set; }
 
         [DefaultValue(false)]

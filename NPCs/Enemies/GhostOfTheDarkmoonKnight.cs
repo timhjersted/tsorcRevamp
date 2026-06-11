@@ -41,6 +41,8 @@ namespace tsorcRevamp.NPCs.Enemies
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
             globalNPC.MaxJumpPower = 11f;
             globalNPC.MaxJumpBoost = 7f;
+            globalNPC.NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
+            globalNPC.CanUseRopes = true;
             globalNPC.CanDoubleJump = true;
             globalNPC.DoubleJumpPower = 7f;
             globalNPC.TeleportTelegraphTime = 80;

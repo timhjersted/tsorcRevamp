@@ -50,6 +50,8 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             casterGlobalNPC.RemembersLastKnownPos = true;
             casterGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
+            casterGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
+            casterGlobalNPC.CanUseRopes = true;
         }
 
         //Never despawn except by timing out

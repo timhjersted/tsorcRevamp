@@ -7,7 +7,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     public class EnemyArrowOfBard : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
+        // Use the PROJECTILE sprite (oriented for aiStyle-1 velocity rotation), same as the friendly
+        // ArrowOfBardProjectile. The old item sprite (Items/Ammo/ArrowOfBard) is drawn diagonally, so under the
+        // arrow's velocity-rotation it rendered pointing backwards.
+        public override string Texture => "tsorcRevamp/Projectiles/Ranged/Ammo/ArrowOfBardProjectile";
 
         public override void SetStaticDefaults()
         {

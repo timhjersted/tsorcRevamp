@@ -11,8 +11,12 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
 {
     public class ArcherSpirit : ModProjectile
     {
+        private const int ArcherNavSearchRadius = 100;
+        private const int AimWindupFrames = 12;
+
         public int lifetime = 10800; // 3 minutes in ticks
         public int shootCooldown = 0;
+        public int aimWindupTimer = 0;
         public int stuckTimer = 0;
         public int patrolTimer = 0;
         public int patrolDirection = 0;
@@ -93,9 +97,10 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
             {
                 isAiming = false;
                 isBackingAway = false;
+                aimWindupTimer = 0;
                 isTryingToMove = true;
 
-                bool navigating = SmartProjectileFighterAI.Run(Projectile, player, topSpeed: 2.4f, acceleration: 0.1f, navSearchRadius: 24, gravity: 0.4f);
+                bool navigating = SmartProjectileFighterAI.Run(Projectile, player, topSpeed: 2.4f, acceleration: 0.1f, navSearchRadius: ArcherNavSearchRadius, gravity: 0.4f);
                 if (!navigating)
                 {
                     // Move towards player horizontally (slower returning speed: 2.4f)
@@ -284,9 +289,10 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
 
                     if (!isAiming)
                     {
+                        aimWindupTimer = 0;
                         isTryingToMove = true;
 
-                        bool navigating = SmartProjectileFighterAI.Run(Projectile, targetNPC, topSpeed: 2.4f, acceleration: 0.1f, navSearchRadius: 24, gravity: 0.4f);
+                        bool navigating = SmartProjectileFighterAI.Run(Projectile, targetNPC, topSpeed: 2.4f, acceleration: 0.1f, navSearchRadius: ArcherNavSearchRadius, gravity: 0.4f);
                         if (!navigating)
                         {
                             // Walk towards target to close distance (slower walk speed: 2.4f)
@@ -332,43 +338,64 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                     }
                     else
                     {
-                        // Shoot arrow (Always attempt to shoot when isAiming is true, even while backing away)
                         if (shootCooldown > 0)
                         {
                             shootCooldown--;
+                            aimWindupTimer = 0;
                         }
 
-                        if (shootCooldown <= 0)
+                        bool readyToFire = shootCooldown <= 0;
+                        if (readyToFire)
                         {
-                            shootCooldown = 80; // reset cooldown
-
-                            if (Main.myPlayer == Projectile.owner)
+                            // Stop and visibly aim before firing. Backpedaling stays movement-only.
+                            Projectile.velocity.X *= 0.65f;
+                            if (Math.Abs(Projectile.velocity.X) < 0.1f)
                             {
-                                Vector2 shootVel = UsefulFunctions.BallisticTrajectory(Projectile.Center, targetCenter, 13f, 0.035f);
-                                if (shootVel == Vector2.Zero)
-                                {
-                                    shootVel = UsefulFunctions.Aim(Projectile.Center, targetCenter, 13f);
-                                }
-
-                                // Nerfed damage to max mana / 4
-                                int damage = player.statManaMax2 / 4;
-                                Projectile.NewProjectile(
-                                    Projectile.GetSource_FromThis(),
-                                    Projectile.Center.X,
-                                    Projectile.Center.Y,
-                                    shootVel.X,
-                                    shootVel.Y,
-                                    ModContent.ProjectileType<ArcherSpiritArrow>(),
-                                    damage,
-                                    2f,
-                                    Projectile.owner
-                                );
+                                Projectile.velocity.X = 0f;
                             }
 
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, Projectile.Center);
-                        }
+                            SetAimingFrame(targetCenter);
 
-                        if (isBackingAway)
+                            if (Projectile.velocity.Y == 0f && Math.Abs(Projectile.velocity.X) <= 0.1f)
+                            {
+                                aimWindupTimer++;
+                                if (aimWindupTimer >= AimWindupFrames)
+                                {
+                                    aimWindupTimer = 0;
+                                    shootCooldown = 80; // reset cooldown
+
+                                    if (Main.myPlayer == Projectile.owner)
+                                    {
+                                        Vector2 shootVel = UsefulFunctions.BallisticTrajectory(Projectile.Center, targetCenter, 13f, 0.035f);
+                                        if (shootVel == Vector2.Zero)
+                                        {
+                                            shootVel = UsefulFunctions.Aim(Projectile.Center, targetCenter, 13f);
+                                        }
+
+                                        // Nerfed damage to max mana / 4
+                                        int damage = player.statManaMax2 / 4;
+                                        Projectile.NewProjectile(
+                                            Projectile.GetSource_FromThis(),
+                                            Projectile.Center.X,
+                                            Projectile.Center.Y,
+                                            shootVel.X,
+                                            shootVel.Y,
+                                            ModContent.ProjectileType<ArcherSpiritArrow>(),
+                                            damage,
+                                            2f,
+                                            Projectile.owner
+                                        );
+                                    }
+
+                                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, Projectile.Center);
+                                }
+                            }
+                            else
+                            {
+                                aimWindupTimer = 0;
+                            }
+                        }
+                        else if (isBackingAway)
                         {
                             // Back away from target, but only if we stay within 20 tiles of player
                             int backDir = -targetDir;
@@ -438,22 +465,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                             // In shooting range, not backing away: plant feet
                             Projectile.velocity.X *= 0.8f;
 
-                            // Aiming animation: angle calculation (0 jump, 1 down, 2 slight down/forward, 3 straight forward, 4 slight up, 5 up)
-                            int aimFrame = 3;
-                            Vector2 aimVector = targetCenter - Projectile.Center;
-                            if (Math.Abs(aimVector.Y) > Math.Abs(aimVector.X) * 2f)
-                            {
-                                aimFrame = aimVector.Y > 0f ? 1 : 5;
-                            }
-                            else if (Math.Abs(aimVector.X) > Math.Abs(aimVector.Y) * 2f)
-                            {
-                                aimFrame = 3;
-                            }
-                            else
-                            {
-                                aimFrame = aimVector.Y > 0f ? 2 : 4;
-                            }
-                            Projectile.frame = aimFrame;
+                            SetAimingFrame(targetCenter);
                         }
                     }
                 }
@@ -461,6 +473,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                 {
                     isAiming = false;
                     isBackingAway = false;
+                    aimWindupTimer = 0;
 
                     // Idle behavior: random pacing / patrol within 20 tiles of player
                     patrolTimer--;
@@ -605,6 +618,26 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                     Projectile.velocity.Y = 10f;
                 }
             }
+        }
+
+        private void SetAimingFrame(Vector2 targetCenter)
+        {
+            // Aiming animation: angle calculation (0 jump, 1 down, 2 slight down/forward, 3 straight forward, 4 slight up, 5 up)
+            int aimFrame = 3;
+            Vector2 aimVector = targetCenter - Projectile.Center;
+            if (Math.Abs(aimVector.Y) > Math.Abs(aimVector.X) * 2f)
+            {
+                aimFrame = aimVector.Y > 0f ? 1 : 5;
+            }
+            else if (Math.Abs(aimVector.X) > Math.Abs(aimVector.Y) * 2f)
+            {
+                aimFrame = 3;
+            }
+            else
+            {
+                aimFrame = aimVector.Y > 0f ? 2 : 4;
+            }
+            Projectile.frame = aimFrame;
         }
 
         private Vector2 FindTeleportPosition(Player player)

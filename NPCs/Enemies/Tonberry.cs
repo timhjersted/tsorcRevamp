@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Step 6: inexorable stalker — investigate last-known position to keep creeping after the player.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 60; // Phase 2: SmartFighter4AI movement
         }
         // (O_O;) //I haven't played that game so wtf is this
         int throwingKnifeDamage = 9999;

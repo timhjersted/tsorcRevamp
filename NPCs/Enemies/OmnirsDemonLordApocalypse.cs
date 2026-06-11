@@ -41,6 +41,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
+
+            // Phase 2: SmartFighter4AI movement. minSurfaceWidth (in AI) keeps this big demon off 1-tile ledges;
+            // NavSearchRadius enables A*. Already slow + teleports, so no speed/jump tuning.
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 16;
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
@@ -53,7 +57,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (attackState == 0)
             {
                 // Walk slowly (60% slower of 1.2f is 0.48f), jump modestly, teleport closer if player is too far
-                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.48f, acceleration: 0.02f, canTeleport: true, lavaJumping: true, canDodgeroll: false, canPounce: false);
+                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.48f, acceleration: 0.02f, canTeleport: true, lavaJumping: true, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
 
                 // Increment attack cooldown timer
                 NPC.localAI[1]++;

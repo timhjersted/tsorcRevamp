@@ -37,6 +37,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             casterGlobalNPC.RemembersLastKnownPos = true;
             casterGlobalNPC.PatrolMode = NPCs.PatrolMode.Pace;
+            casterGlobalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
         }
         //Spawns in the Underground and Cavern before 4.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
 

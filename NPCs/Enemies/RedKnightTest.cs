@@ -97,6 +97,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 redMagicDamage = 26;
             }
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            redKnightGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
+            redKnightGlobalNPC.CanUseRopes = true;
 
             //redKnightGlobalNPC.Aggression = 2.5f;
             //redKnightGlobalNPC.Patience = 2;

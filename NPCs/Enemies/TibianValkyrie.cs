@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = .5f;
-            NPC.value = 450;
+            NPC.value = 500;
             NPC.defense = 4;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();
@@ -57,8 +57,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower   = 9f;
+            globalNPC.NavSearchRadius = 80;  
+            globalNPC.CanUseRopes = true;
             globalNPC.MaxJumpBoost   = 5f;
-            globalNPC.CanTeleport = true;        // was WeakTeleport: limited re-acquire blinks
+            globalNPC.CanTeleport = true;       
             globalNPC.TeleportMaxCharges = 2;    // 2 non-recharging charges, Normal style
 
             // Personality — calm fighter that prefers to hold ground and throw spears

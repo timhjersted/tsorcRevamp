@@ -435,6 +435,22 @@ namespace tsorcRevamp
             }
 
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
+
+            // If the player is no longer holding the Enemy Debug Tome, close its menus and drop any selection.
+            if (Main.LocalPlayer.HeldItem.type != ModContent.ItemType<Items.Debug.EnemyDebugTome>())
+            {
+                if (mod.SpawnPointConfigUI.Visible)
+                {
+                    mod.SpawnPointConfigUI.Hide();
+                }
+                if (mod.EnemySelectionUI.Visible)
+                {
+                    mod.EnemySelectionUI.Hide();
+                }
+                mod.EnemySelectionUI.SelectedNpcType = 0;
+                mod.EnemySelectionUI.QuickAddMode = false;
+            }
+
             if (BonfireUIState.Visible)
             {
                 mod._bonfireUIState?.Update(gameTime);
@@ -1384,7 +1400,10 @@ namespace tsorcRevamp
         {
             if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<Items.Debug.EnemyDebugTome>())
             {
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
+                // Use TransformationMatrix (not ZoomMatrix) so world-space draws line up with Main.MouseWorld.
+                // ZoomMatrix anchors/translates differently than the matrix vanilla uses to draw NPCs, which makes
+                // world draws drift from the cursor proportionally to its distance from screen center when zoomed.
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
                 
                 // Draw hardcoded EnabledEvents safely
                 if (tsorcScriptedEvents.EnabledEvents != null)
@@ -1430,6 +1449,9 @@ namespace tsorcRevamp
                 {
                     if (ev == null) continue;
 
+                    // Hide events that don't belong to the current world (e.g. Adventure-only events in a Remix world).
+                    if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(ev)) continue;
+
                     Vector2 centerPos = new Vector2(ev.CenterX * 16 + 8, ev.CenterY * 16 + 8);
 
                     // Only draw if within 3000 pixels of the screen center to save performance
@@ -1462,11 +1484,14 @@ namespace tsorcRevamp
                         DrawLineScreen(Main.spriteBatch, p1, p2, ringColor, thickness);
                     }
 
-                    // Draw the center icon
-                    Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-                    if (icon != null)
+                    // Draw the center icon. Quick-add events use their single NPC as the marker, so no book icon.
+                    if (!ev.SingleNpcMarker)
                     {
-                        Main.spriteBatch.Draw(icon, centerPos - Main.screenPosition, null, Color.White, 0f, icon.Size() / 2f, 1f, SpriteEffects.None, 0f);
+                        Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                        if (icon != null)
+                        {
+                            Main.spriteBatch.Draw(icon, centerPos - Main.screenPosition, null, Color.White, 0f, icon.Size() / 2f, 1f, SpriteEffects.None, 0f);
+                        }
                     }
 
                     // Draw the NPCs

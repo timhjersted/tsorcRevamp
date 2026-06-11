@@ -32,6 +32,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 12000; // was 600
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.SlograIIBanner>();
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
 
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 11, SoundID.Item17);
         }

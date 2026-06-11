@@ -37,6 +37,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Step 6 caster lever: remember last-known position before patrolling.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
         }
         //yes i tweaked the drop rates. Fight Me
         public override void ModifyNPCLoot(NPCLoot npcLoot)

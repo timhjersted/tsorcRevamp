@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
+            globalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
 
             AnimationType = NPCID.Skeleton;
 

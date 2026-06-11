@@ -35,6 +35,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Step 6: humanoid soldier — paces around its post when it gives up.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PatrolMode = NPCs.PatrolMode.Pace;
+            // Phase 2 Step 4: mid-tier SmartFighter4AI movement test (radius 10 — routes local dead-ends/cliffs
+            // but can't solve a maze; smaller = dumber + cheaper). Pure melee, so it exercises movement only.
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 10;
             
             if (tsorcRevampWorld.SuperHardMode)
             {

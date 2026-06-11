@@ -158,6 +158,11 @@ namespace tsorcRevamp.NPCs
                         npc.velocity.X *= 0.5f;
                         globalNPC.ArcherAimDirection = 3f;
                         globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed);
+                        // Clear any stale lock from a previous aim cycle. The lock (15 ticks before the shot)
+                        // only sets LockedShotVector while grounded; if this cycle's lock frame is missed (e.g.
+                        // the archer is airborne then), the fire-time fallback below re-aims instead of firing a
+                        // stale/zero vector (which spawned a zero-velocity arrow that just dropped — the Assassin bug).
+                        globalNPC.LockedShotVector = Vector2.Zero;
 
                         // Standing-fire roll: tier-2 NPCs may plant their feet and fire N shots
                         // before resuming pursuit. High Aggression skips this; high Patience adds shots.
@@ -208,6 +213,15 @@ namespace tsorcRevamp.NPCs
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
+                            // Fallback: if the early lock was skipped this cycle (archer airborne at the lock
+                            // frame), LockedShotVector is still Zero — re-aim now so the shot fires properly
+                            // instead of spawning with zero velocity and dropping. When the lock DID happen the
+                            // value is non-zero and is preserved (the anti-dodgeroll aim-lock stays intact).
+                            if (globalNPC.LockedShotVector == Vector2.Zero)
+                            {
+                                globalNPC.LockedShotVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
+                            }
+
                             // Spawn the shot just in front of the NPC rather than at its center. These projectiles
                             // are spawned player-owned (friendly) and flipped hostile a frame later, so a spawn
                             // overlapping the shooter's own hitbox lets the still-friendly projectile damage it.
@@ -486,16 +500,30 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            // ── Combat sense + movement substrate (Phase 2 Step 2/3: combat/movement separation) ─────
-            // Compute LOS once here, then let the combat layer DECIDE whether to stop-and-fire
-            // (SenseHoldForAttack → intent.HoldForAttack). The movement substrate — LocalMover.Run, the cheap
-            // no-pathfinding mover, symmetric twin of SmartFighter4AI.Run that Step 4's NavSearchRadius dispatch
-            // chooses between — then OBEYS the hold and returns the refreshed post-movement LOS for the log +
-            // combat triggers below. (SeizesBody is still only populated here; its mover no-op is wired for SF4
-            // in Step 4 — LocalMover intentionally keeps interleaving with pounce/dodge.)
+            // ── Combat sense + pluggable movement substrate (Phase 2 Step 2/3/4: combat/movement separation) ─
+            // Compute LOS once, let the combat layer DECIDE the stop-and-fire (SenseHoldForAttack →
+            // intent.HoldForAttack), then run ONE of two interchangeable movers and refresh LOS for the log +
+            // triggers. The enemy's "smartness" is the single NavSearchRadius lever:
+            //   NavSearchRadius == 0  → LocalMover (cheap reactive; keeps interleaving with pounce/dodge).
+            //   NavSearchRadius  > 0  → SmartFighter4AI A* pathing in movementOnly mode (FSM + attacks already
+            //                           done here, so it ONLY moves). Combat (attacks/pounce/dodge/teleport/aim)
+            //                           is unchanged either way — it lives above this line.
             bool lineOfSight = Main.player[npc.target].CanHit(npc);
             intent.HoldForAttack = SenseHoldForAttack(npc, globalNPC, lineOfSight);
-            lineOfSight = LocalMover.Run(npc, globalNPC, topSpeed, acceleration, brakingPower, isArcher, doorBreakingDamage, fleeing, lineOfSight, ref intent);
+            if (globalNPC.NavSearchRadius > 0)
+            {
+                // SF4 has no isArcher accel-gate of its own, so fold the archer-aim hold into holdForAttack HERE
+                // (only at the SF4 call-site, leaving the verified LocalMover path untouched).
+                bool sf4Hold = intent.HoldForAttack || (isArcher && globalNPC.ArcherAimDirection != 0f);
+                // SeizesBody guard: a pounce/dodge owns the body this frame → don't let A* pathing fight the arc.
+                if (!intent.SeizesBody)
+                    SmartFighter4AI.Run(npc, topSpeed, acceleration, doorBreakingDamage, 700f, movementOnly: true, holdForAttack: sf4Hold);
+                lineOfSight = Main.player[npc.target].CanHit(npc); // refresh for the log + triggers
+            }
+            else
+            {
+                lineOfSight = LocalMover.Run(npc, globalNPC, topSpeed, acceleration, brakingPower, isArcher, doorBreakingDamage, fleeing, lineOfSight, ref intent);
+            }
 
             LogFighterNavDebug(npc, globalNPC, lineOfSight);
 

@@ -60,6 +60,8 @@ namespace tsorcRevamp.NPCs.Enemies
             // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
+            globalNPC.NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
+            globalNPC.CanUseRopes = true;
             globalNPC.TeleportTelegraphTime = 80;
             globalNPC.TeleportDustType = DustID.Smoke;
             globalNPC.TeleportDustColor = new Color(55, 55, 65);

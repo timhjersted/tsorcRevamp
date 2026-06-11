@@ -27,10 +27,10 @@ namespace tsorcRevamp.NPCs.Enemies{
         int drowningRisk = 2000;
 
         float npcAcSPD = 0.5f; //How fast they accelerate.
-        float npcSPD = 1.0f; //Max speed
+        float npcSPD = 0.5f; //Max speed (Phase2: 50% slower, was 1.0f)
 
         float npcEnrAcSPD = .6f; //How fast they accelerate.
-        float npcEnrSPD = 1.4f; //Max speed
+        float npcEnrSPD = 0.7f; //Max speed (Phase2: 50% slower, was 1.4f)
 
         bool tooBig = true;
         bool lavaJumping = false;
@@ -60,6 +60,15 @@ namespace tsorcRevamp.NPCs.Enemies{
 			NPC.knockBackResist = 0.1f;
 			Main.npcFrameCount[NPC.type] = 16;
 			AnimationType = 28;
+
+			// Phase 2: SmartFighter4AI movement + beast levers. minSurfaceWidth (in AI) keeps it off 1-tile
+			// ledges; NavSearchRadius enables A* (small — it's slow). MaxJumpPower modestly above the 8 default
+			// for a strong jump (NPC.gravity is read-only, so a true "weighty" heavy fall isn't available — feel
+			// comes from the slow walk + strong jump). Tuning values — adjust to taste.
+			tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+			g.NavSearchRadius = 60; // larger window so A* can find valid flat ledges above/across to jump to
+			g.MaxJumpPower = 9f;
+			g.MaxJumpBoost = 5f;
 		}
         public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
 public float CanSpawnLegacy(NPCSpawnInfo s)

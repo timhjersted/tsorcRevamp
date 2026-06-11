@@ -57,6 +57,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;
+            globalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
             globalNPC.CanTeleport = true;        // was WeakTeleport: limited re-acquire blinks
             globalNPC.TeleportMaxCharges = 2;    // 2 non-recharging charges, Normal style
         }

@@ -309,6 +309,9 @@ namespace tsorcRevamp.NPCs
         // ~16-24 = routes around local dead ends (needs radius >= dead-end depth); 40-50 = solves mazes.
         // Smaller is both dumber and cheaper. NOTE: size != intelligence (size -> clearance, handled automatically).
         public int NavSearchRadius = 0;
+        // May this enemy climb ropes (SF4 only)? Default OFF — opt-in per enemy. Invaders default it ON, and the
+        // TibianValkyrieSmart4 rope testbed sets it. A giant beast grabbing a rope looks wrong, hence default off.
+        public bool CanUseRopes = false;
         // DisengageTimer threshold. Short = skittish (gives up fast); long = relentless hunter.
         public int NavGiveUpTicks = 600;
         // When true, on losing LOS the NPC investigates LastKnownPlayerPos (Search) before patrolling.

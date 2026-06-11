@@ -46,6 +46,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // Step 6 caster lever: remember last-known position before patrolling.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Summon
 {
     public static class SmartProjectileFighterAI
     {
-        private const int ScanRadiusX = 80;
+        private const int ScanRadiusX = 100;
         private const int ScanRadiusY = 48;
         private const int MaxDropDepth = 10;
         private const int StepTimeoutFrames = 180;

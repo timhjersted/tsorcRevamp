@@ -8258,6 +8258,21 @@ Mods: {
 				// DisplayName: Enemy Debug Tome
 				// Tooltip: ""
 			}
+
+			FaraamDraftHelmet: {
+				// Tooltip: ""
+				// DisplayName: Faraam Draft Helmet
+			}
+
+			FaraamDraftGreaves: {
+				// Tooltip: ""
+				// DisplayName: Faraam Draft Greaves
+			}
+
+			FaraamDraftBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Faraam Draft Breastplate
+			}
 		}
 
 		Buffs: {
@@ -9359,7 +9374,6 @@ Mods: {
 			BlackBreath.DisplayName: 暗黑之息
 			BlackKnightGhostSpear.DisplayName: 黑骑士幽灵之矛
 			BlackKnightSpear.DisplayName: 黑骑士之矛
-			BlackKnightsSpear.DisplayName: 黑骑士之矛
 			BoulderDropLeft.DisplayName: 爆炸
 			BoulderDropRight.DisplayName: 爆炸
 			Bubble.DisplayName: 泡泡
@@ -9403,7 +9417,7 @@ Mods: {
 			EnemyLingeringLaser.DisplayName: 激光
 			EnemyMeteor.DisplayName: 敌方陨石
 			EnemyPlasmaOrb.DisplayName: Ω爆破
-			EnemyRedirectingShark.DisplayName: 追踪鲨鱼
+			EnemyRedirectingShark.DisplayName: Pulsing Water Fiend Virus
 			EnemyRedLaser.DisplayName: 激光
 			EnemySmokebomb.DisplayName: 高能烟气喷发
 			EnemySpellAbyssPoisonStrike.DisplayName: 深渊毒击
@@ -11749,6 +11763,7 @@ Mods: {
 
 			// TibianValkyrieTier2.DisplayName: Tibian Valkyrie Tier2
 			// GreatBlackKnight.DisplayName: Great Black Knight
+			// FaraamSpriteTestInvader.DisplayName: Faraam Sprite Test Invader
 		}
 
 		Prefixes: {
@@ -11985,7 +12000,7 @@ Mods: {
 
 				UseCustomResourceBars: {
 					// Label: Use Custom Resource Bars
-					// Tooltip: ""
+					// Tooltip: Adds custom health, mana, and stamina bars in the upper right corner. Turn off to use vanilla options.
 				}
 
 				HideOverheadStaminaBar: {

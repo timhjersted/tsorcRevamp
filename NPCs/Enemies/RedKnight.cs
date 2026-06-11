@@ -87,6 +87,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Navigation tuning: smart pathfinding with above-average jumps + ledge routing
             redKnightGlobalNPC.MaxJumpPower = 10f;
+            redKnightGlobalNPC.NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
+            redKnightGlobalNPC.CanUseRopes = true;
             redKnightGlobalNPC.MaxJumpBoost = 6f;
             // CanDoubleJump remains false for RedKnight
 
@@ -280,7 +282,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             speed += Main.player[NPC.target].velocity;
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                             }
                         }
                         else
@@ -290,7 +292,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             speed.Y += Main.rand.NextFloat(-1f, 1f);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                             }
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
@@ -700,49 +702,102 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Draw Attack Sprites
         static Texture2D spearTexture;
         static Texture2D bombTexture;
+        static Texture2D handTexture;
+
+        // Held weapons anchor to the knight's gripping hand, tracked per animation frame (70x56 sheet, raw art faces LEFT).
+        // frame 0 = idle, frame 1 = jump (hands up by the head), frames 2-15 = walk cycle. Tune these to the sheet.
+        const float FrameW = 70f;
+        const float FrameH = 56f;
+        static readonly Vector2[] HandPixel = new Vector2[16]
+        {
+            new Vector2(58, 42), // 0 idle
+            new Vector2(33, 12), // 1 jump — hands raised near the head
+            new Vector2(57, 42), // 2
+            new Vector2(58, 43), // 3
+            new Vector2(59, 43), // 4
+            new Vector2(60, 44), // 5
+            new Vector2(60, 43), // 6
+            new Vector2(59, 42), // 7
+            new Vector2(58, 42), // 8
+            new Vector2(57, 42), // 9
+            new Vector2(57, 43), // 10
+            new Vector2(58, 44), // 11
+            new Vector2(59, 44), // 12
+            new Vector2(60, 43), // 13
+            new Vector2(59, 42), // 14
+            new Vector2(58, 42), // 15
+        };
+        // Global correction if the whole overlay is consistently off by a few px (tune once).
+        static readonly Vector2 OverlayFudge = new Vector2(0f, 0f);
+        static readonly Vector2 SpearGripOrigin = new Vector2(7f, 31f); // BlackKnightSpear (Valkyrie's spear) is 14x62, tip up — grip the MIDDLE (was 7,70 = the butt of the old 14x84 spear)
+        static readonly Vector2 BombGripOrigin = new Vector2(11f, 18f); // EnemyFirebomb is 22x24, hand near the bottom
+        static readonly Vector2 HandGripOrigin = new Vector2(7f, 4f);   // RedKnight_Hand is 14x8, centered on the grip
+
+        // World position of the body's gripping hand for the current animation frame.
+        Vector2 CurrentHandWorld()
+        {
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame < 0 || frame >= HandPixel.Length)
+            {
+                frame = 0;
+            }
+            Vector2 fp = HandPixel[frame];
+            // Jump frame uses a separate raised-hand anchor.
+            if (frame == 1)
+            {
+                fp = new Vector2(58, 33);
+            }
+            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
+            float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
+            return new Vector2(x, y) + OverlayFudge;
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (spearTexture == null)
             {
-                //spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/RedKnightsSpear");
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyForgottenPearlSpearProj");
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightSpear"); // the spear Tibian Valkyrie uses (14x62)
             }
 
             if (bombTexture == null)
             {
                 bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyFirebomb");
             }
-            // Spear
-            if (NPC.ai[1] >= 120 && NPC.ai[1] <= 180f)
+
+            if (handTexture == null)
             {
-                float spriteScale = 0.7f;
+                // Loose PNG (no content class): ImmediateLoad + full path so .Value is the real texture.
+                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/RedKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            SpriteEffects handEffects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            // Spear (held during telegraph, aimed at the throw target)
+            if (spearTexture != null && NPC.ai[1] >= 120 && NPC.ai[1] <= 180f)
+            {
+                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
                 Vector2 spearAimPoint = NPC.ai[1] >= 155f ? storedPlayerPosition : Main.player[NPC.target].Center;
                 float rotation = UsefulFunctions.Aim(NPC.Center, spearAimPoint, 1).ToRotation() + MathHelper.PiOver2;
 
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == -1)
+                // Weapon behind the hand, pivoting on the grip so it aims at the throw target.
+                spriteBatch.Draw(spearTexture, handWorld, null, drawColor, rotation, SpearGripOrigin, NPC.scale, SpriteEffects.None, 0);
+                // Hand on top, unrotated and facing like the body, covering the grip.
+                if (handTexture != null)
                 {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, effects, 0); // facing left (8, 38 work)
+                    spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
                 }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, effects, 0); // facing right, first value is height, higher number is higher
-                }
-
             }
             // Bomb
             if (NPC.ai[1] >= 865)
             {
+                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
                 Vector2 bombAimPoint = NPC.ai[1] >= 900f ? storedPlayerPosition : Main.player[NPC.target].Center;
                 float rotation = UsefulFunctions.Aim(NPC.Center, bombAimPoint, 1).ToRotation() + MathHelper.PiOver2;
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == -1)
+
+                spriteBatch.Draw(bombTexture, handWorld, null, drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
+                if (handTexture != null)
                 {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale * 0.8f, effects, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale * 0.8f, effects, 0); // facing right, first value is height, higher number is higher
+                    spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
                 }
             }
 
@@ -751,5 +806,3 @@ namespace tsorcRevamp.NPCs.Enemies
     }
 
 }
-
-

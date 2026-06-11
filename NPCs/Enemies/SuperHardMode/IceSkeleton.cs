@@ -37,6 +37,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
+            globalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
         }
 
         int dashCounter = 0;

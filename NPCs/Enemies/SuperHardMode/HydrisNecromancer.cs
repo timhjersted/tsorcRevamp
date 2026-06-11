@@ -42,6 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             casterGlobalNPC.RemembersLastKnownPos = true;
             casterGlobalNPC.PatrolMode = NPCs.PatrolMode.Pace;
+            casterGlobalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {

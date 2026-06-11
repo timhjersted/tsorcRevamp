@@ -39,6 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Step 6 caster lever: remember last-known position before patrolling.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
 
             if (tsorcRevampWorld.SuperHardMode)
             {

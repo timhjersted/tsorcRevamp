@@ -10,8 +10,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Pinwheel turns its glance to you.",
     "TextColorHex": "B22222FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 718,
@@ -37,8 +39,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Black Knight appears from the shadows...",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "LothricBlackKnightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 835,
@@ -64,8 +68,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A cursed Fire Lurker appears...",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "FireLurkerPainCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 815,
@@ -104,8 +110,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The fated day of your death has arrived.",
     "TextColorHex": "000000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 692,
@@ -131,8 +139,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Black Knight appears from the shadows...",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "BlackKnightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 797,
@@ -164,8 +174,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Red Knight has invaded your world!",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "RedKnightMountainCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 869,
@@ -201,8 +213,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Queen Slime emerges from her Hallowed cave!",
     "TextColorHex": "FFC0CBFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 657,
@@ -228,8 +242,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Black Knight appears from the shadows...",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "BlackKnightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 797,
@@ -261,8 +277,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Hemogoblin Shark is thirsty for blood!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 620,
@@ -296,8 +314,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Great Red Knight has invaded your world!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "SuperHardModeCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 758,
@@ -331,8 +351,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Ancestral Spirit has been disturbed!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 668,
@@ -358,8 +380,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "default",
     "TextColorHex": "FFFFFFFF",
+    "WorldCondition": null,
     "MapCondition": "<InitializeScriptedEvents>b__10_0",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 37,
@@ -385,8 +409,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Skeletron, Lord of Graves, has awoken!",
     "TextColorHex": "EE82EEFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 35,
@@ -412,8 +438,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Alien life form detected",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "PreMechCustomCondition",
     "CustomAction": "AlienAmbushAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 427,
@@ -484,8 +512,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Eye sees you!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 4,
@@ -511,8 +541,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "The Eater of Worlds is ready to feed!",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "PreEoWCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 13,
@@ -538,8 +570,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "What did you expect to find here human?... Your hubris will be your undoing...",
     "TextColorHex": "9370DBFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 689,
@@ -571,8 +605,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Lich King awakens!",
     "TextColorHex": "FFD700FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 741,
@@ -598,8 +634,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Lich King awakens!",
     "TextColorHex": "FFD700FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 741,
@@ -625,8 +663,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The hunt begins...",
     "TextColorHex": "006400FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 777,
@@ -652,8 +692,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Rage awakens!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 779,
@@ -679,8 +721,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "You foolish human... pitiful arrogance...",
     "TextColorHex": "9370DBFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 690,
@@ -712,8 +756,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "You're arrogant, Red. You were a fool to come here...",
     "TextColorHex": "9370DBFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 471,
@@ -745,8 +791,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "You think you're clever, Red?",
     "TextColorHex": "9370DBFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 471,
@@ -778,8 +826,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "8A2BE2FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": "StormCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 87,
@@ -814,8 +864,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 243,
@@ -841,8 +893,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "King Slime appears!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 50,
@@ -868,8 +922,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ",
     "TextColorHex": "FAFAD2FF",
+    "WorldCondition": null,
     "MapCondition": "LumeliaCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 696,
@@ -895,8 +951,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A cursed Fire Lurker appears...",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "FireLurkerPainCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 815,
@@ -928,8 +986,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Red Knight has invaded your world!",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "RedKnightPainCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 869,
@@ -963,8 +1023,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Red Knight has invaded your world!",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "RedKnightMountainCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 869,
@@ -998,8 +1060,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "You have disturbed the Ancient Wyvern of the Forgotten City!",
     "TextColorHex": "008000FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 700,
@@ -1025,8 +1089,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Seath the Scaleless rises!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 770,
@@ -1052,8 +1118,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "You impress me Red! But this is where your journey ends...",
     "TextColorHex": "E0FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "StormCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 787,
@@ -1088,8 +1156,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "Slogra and Gaibon have risen from the depths!",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "SlograGaibonCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 732,
@@ -1124,8 +1194,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "The Serris Triplets have been enraged!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "SerrisCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 729,
@@ -1169,8 +1241,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "default",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "MarilithCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 748,
@@ -1196,8 +1270,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "default",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMarilithCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 748,
@@ -1223,8 +1299,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "default",
     "TextColorHex": "808080FF",
+    "WorldCondition": null,
     "MapCondition": "PrimeCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 722,
@@ -1250,8 +1328,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Water Fiend rises!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "SuperHardModeCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 749,
@@ -1277,8 +1357,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "default",
     "TextColorHex": "00000000",
+    "WorldCondition": null,
     "MapCondition": "AbyssPortalCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 933,
@@ -1304,8 +1386,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Gwyn has awoken to bring your journey to its final end...",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 759,
@@ -1331,8 +1415,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Gwyn has awoken to bring your journey to its final end...",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 759,
@@ -1358,8 +1444,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Grand Occultist of Oolacile shall now disembowel you...",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 734,
@@ -1385,8 +1473,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Grand Occultist of Oolacile shall now disembowel you...",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 734,
@@ -1412,8 +1502,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Witchking has been waiting for you...",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 775,
@@ -1439,8 +1531,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Witchking has been waiting for you...",
     "TextColorHex": "008000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 775,
@@ -1466,8 +1560,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Chaos has entered this dimension!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapConditionSHM",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 737,
@@ -1493,8 +1589,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Chaos has entered this dimension!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapConditionSHM",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 737,
@@ -1520,8 +1618,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Wyvern Mage has been freed from its cage!",
     "TextColorHex": "FF4500FF",
+    "WorldCondition": null,
     "MapCondition": "SuperHardModeCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 757,
@@ -1547,8 +1647,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Blight surfaces from the ocean!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "SuperHardModeCustomCondition",
     "CustomAction": "RainCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 736,
@@ -1574,8 +1676,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Your shadow self has manifested from your darkest fears...",
     "TextColorHex": "E0FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapConditionSHM",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 738,
@@ -1601,8 +1705,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Your shadow self has manifested from your darkest fears...",
     "TextColorHex": "E0FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapConditionSHM",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 738,
@@ -1628,8 +1734,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Artorias, the Abysswalker arrives to tear you from this plane...",
     "TextColorHex": "FFD700FF",
+    "WorldCondition": null,
     "MapCondition": "SuperHardModeCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 735,
@@ -1655,8 +1763,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Black Knight appears from the shadows...",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "BlackKnightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 797,
@@ -1688,8 +1798,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "",
     "TextColorHex": "00000000",
+    "WorldCondition": null,
     "MapCondition": "UndeadMerchantCondition",
     "CustomAction": "UndeadMerchantAction",
+    "SingleNpcMarker": false,
     "Npcs": [],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
@@ -1705,8 +1817,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "",
     "TextColorHex": "00000000",
+    "WorldCondition": null,
     "MapCondition": "TinkererCondition",
     "CustomAction": "TinkererAction",
+    "SingleNpcMarker": false,
     "Npcs": [],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
@@ -1722,8 +1836,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "",
     "TextColorHex": "00000000",
+    "WorldCondition": null,
     "MapCondition": "FairyCondition",
     "CustomAction": "FairyAction",
+    "SingleNpcMarker": false,
     "Npcs": [],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
@@ -1739,8 +1855,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"",
     "TextColorHex": "FF4500FF",
+    "WorldCondition": null,
     "MapCondition": "AttraidiesTheSorrowCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 934,
@@ -1766,8 +1884,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Twin Eaters surface from the depths!",
     "TextColorHex": "800080FF",
+    "WorldCondition": null,
     "MapCondition": "TwinEoWCustomCondition",
     "CustomAction": "TwinEoWAction",
+    "SingleNpcMarker": false,
     "Npcs": [],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
@@ -1783,8 +1903,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": "DundledingAmbushAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 808,
@@ -1832,8 +1954,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "DundledingAmbushAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 808,
@@ -1881,8 +2005,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "",
     "TextColorHex": "00000000",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "BoulderfallEvent1Action",
+    "SingleNpcMarker": false,
     "Npcs": [],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
@@ -1898,8 +2024,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "",
     "TextColorHex": "00000000",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "BoulderfallEvent2Action",
+    "SingleNpcMarker": false,
     "Npcs": [],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
@@ -1915,8 +2043,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "",
     "TextColorHex": "00000000",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "BoulderfallEvent3Action",
+    "SingleNpcMarker": false,
     "Npcs": [],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
@@ -1932,8 +2062,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "You hear footsteps...",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "LeonhardPhase1Undefeated",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 939,
@@ -1959,8 +2091,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "PreEoCCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 825,
@@ -1995,8 +2129,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 788,
@@ -2044,8 +2180,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "PreSkeletronCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 823,
@@ -2080,8 +2218,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "PostEoWCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 825,
@@ -2134,8 +2274,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "PreMechCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 836,
@@ -2174,8 +2316,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "PreMechCustomCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 836,
@@ -2205,8 +2349,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": "FirebombHollowAmbushAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 824,
@@ -2241,8 +2387,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "",
     "TextColorHex": "00000000",
+    "WorldCondition": null,
     "MapCondition": "MechanicCondition",
     "CustomAction": "MechanicAction",
+    "SingleNpcMarker": false,
     "Npcs": [],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
@@ -2258,8 +2406,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "",
     "TextColorHex": "00000000",
+    "WorldCondition": null,
     "MapCondition": "WizardCondition",
     "CustomAction": "WizardAction",
+    "SingleNpcMarker": false,
     "Npcs": [],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
@@ -2275,8 +2425,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The village is under attack! A Hellkite Dragon has come to feed...",
     "TextColorHex": "AF4BFFFF",
+    "WorldCondition": null,
     "MapCondition": "SuperHardModeCustomCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 763,
@@ -2302,8 +2454,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "The Empress of Light awakens!",
     "TextColorHex": "FFC0CBFF",
+    "WorldCondition": null,
     "MapCondition": "EoLDownedCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 636,
@@ -2329,8 +2483,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "default",
     "TextColorHex": "AF4BFFFF",
+    "WorldCondition": null,
     "MapCondition": "<InitializeScriptedEvents>b__10_1",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 68,
@@ -2356,8 +2512,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 845,
@@ -2396,8 +2554,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 819,
@@ -2427,8 +2587,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 819,
@@ -2458,8 +2620,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 901,
@@ -2494,8 +2658,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapConditionSHM",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 879,
@@ -2521,8 +2687,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "OnlyAdventureMapConditionSHM",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 895,
@@ -2548,8 +2716,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapConditionSHM",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 879,
@@ -2575,8 +2745,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A strange vision has manifested itself from your fears...",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 521,
@@ -2602,8 +2774,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A paladin appears to smite you!",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 290,
@@ -2629,8 +2803,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FFA500FF",
+    "WorldCondition": null,
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 898,
@@ -2656,8 +2832,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FFA500FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 325,
@@ -2683,8 +2861,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A powerful elemental is summoned!",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 541,
@@ -2710,8 +2890,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "00FF00FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 878,
@@ -2737,8 +2919,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 586,
@@ -2787,8 +2971,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Blood Eel is coming to devour you...",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 621,
@@ -2822,8 +3008,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Hemogoblin Shark is thirsty for blood!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 620,
@@ -2857,8 +3045,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Dreadnautilus, demon of the blood moon, has awakened!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetBloodMoonCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 618,
@@ -2897,8 +3087,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "008000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 125,
@@ -2933,8 +3125,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 900,
@@ -2960,8 +3154,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "You want to be frozen like the fools before you, Red?",
     "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 345,
@@ -2987,8 +3183,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "An angry Queen Bee appears!",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 222,
@@ -3022,8 +3220,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FFA500FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 895,
@@ -3049,8 +3249,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 901,
@@ -3076,8 +3278,10 @@
     "SaveOnCompletion": false,
     "TextToDisplay": "You can't beat what's coming, Red.",
     "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 439,
@@ -3107,8 +3311,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "King Slime appears!",
     "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 50,
@@ -3134,8 +3340,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 243,
@@ -3167,8 +3375,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Ancestral Spirit has been disturbed!",
     "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 668,
@@ -3194,8 +3404,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "FFA500FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 325,
@@ -3230,8 +3442,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Three Wings have united again, ready to fight you!",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 779,
@@ -3287,8 +3501,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 87,
@@ -3314,8 +3530,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Skeletron Prime, the forgotten mech, has awoken!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 127,
@@ -3347,8 +3565,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A powerful elemental is summoned!",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 541,
@@ -3374,8 +3594,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The fated day of your death has arrived.",
     "TextColorHex": "000000FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 692,
@@ -3401,8 +3623,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A powerful mage from the Atraidies army confronts you!",
     "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 806,
@@ -3428,8 +3652,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A flying Dutchman invades the tropics!",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "RemixMapCondition",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 491,
@@ -3455,8 +3681,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Grand Thunder Bird appears!",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "<.cctor>b__83_0",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 0,
@@ -3482,8 +3710,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Grand Thunder Bird appears!",
     "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
     "MapCondition": "<.cctor>b__83_0",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 0,
@@ -3509,8 +3739,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Queen Jellyfish has spotted you in the lake...",
     "TextColorHex": "FFC0CBFF",
+    "WorldCondition": null,
     "MapCondition": "<.cctor>b__83_0",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 0,
@@ -3536,8 +3768,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Viscount is bloodthirsty!",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "<.cctor>b__83_0",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 0,
@@ -3563,8 +3797,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Star Scouter descends from the sky...",
     "TextColorHex": "008000FF",
+    "WorldCondition": null,
     "MapCondition": "<.cctor>b__83_0",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 0,
@@ -3590,8 +3826,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "!!!",
     "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
     "MapCondition": "<.cctor>b__83_0",
     "CustomAction": "RainCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 0,
@@ -3617,8 +3855,10 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Lich wants your soul...",
     "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
     "MapCondition": "<.cctor>b__83_0",
     "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 0,
@@ -3644,13 +3884,187 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "The Forgotten One sees you!",
     "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
     "MapCondition": "<.cctor>b__83_0",
     "CustomAction": null,
+    "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 0,
         "SpawnX": 218.0,
         "SpawnY": 1027.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItems": null,
+    "ExtraLootAmounts": null
+  },
+  {
+    "EventID": "3a5739f6-b9eb-44f7-adf6-9c7ab46f9e1e",
+    "CenterX": 4768.0,
+    "CenterY": 863.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": null,
+    "MapCondition": "NormalModeCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcID": 872,
+        "SpawnX": 4772.0,
+        "SpawnY": 868.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcID": 890,
+        "SpawnX": 4764.0,
+        "SpawnY": 867.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcID": 426,
+        "SpawnX": 4760.0,
+        "SpawnY": 868.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcID": 797,
+        "SpawnX": 4779.0,
+        "SpawnY": 868.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItems": null,
+    "ExtraLootAmounts": null
+  },
+  {
+    "EventID": "18e62912-b218-4d96-b25c-68d9b9c6dba4",
+    "CenterX": 4897.0,
+    "CenterY": 842.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcID": 939,
+        "SpawnX": 4888.0,
+        "SpawnY": 842.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItems": null,
+    "ExtraLootAmounts": null
+  },
+  {
+    "EventID": "858ad93b-00f5-4d14-8ab0-21890505a659",
+    "CenterX": 4943.0,
+    "CenterY": 841.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "RemixMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcID": 872,
+        "SpawnX": 4930.0,
+        "SpawnY": 855.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItems": null,
+    "ExtraLootAmounts": null
+  },
+  {
+    "EventID": "4c3553ff-9e34-444d-b956-4374fabfeb7b",
+    "CenterX": 4839.0,
+    "CenterY": 857.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcID": 31,
+        "SpawnX": 4839.0,
+        "SpawnY": 857.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItems": null,
+    "ExtraLootAmounts": null
+  },
+  {
+    "EventID": "6fab3c09-3af8-4fbd-86f3-d0d47add8b27",
+    "CenterX": 4844.0,
+    "CenterY": 851.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcID": 31,
+        "SpawnX": 4844.0,
+        "SpawnY": 851.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

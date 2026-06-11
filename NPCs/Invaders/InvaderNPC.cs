@@ -607,6 +607,7 @@ namespace tsorcRevamp.NPCs.Invaders
             // Tier 2 enables waypoint routing: when stuck, it scans for a horizontal opening,
             // an elevated ledge to jump to, or a platform edge to drop off.
             var gnpc = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            gnpc.CanUseRopes     = true; // Invaders default to rope-climbing (only takes effect on SF4-mover invaders)
             gnpc.MaxJumpPower    = InvaderJumpPower;
             gnpc.MaxJumpBoost    = InvaderJumpBoost;
             gnpc.CanDoubleJump   = InvaderCanDoubleJump;

@@ -76,6 +76,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Navigation tuning: high jumps, double jump, and ledge routing
             blackKnightGlobalNPC.MaxJumpPower = 11f;
+            blackKnightGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
+            blackKnightGlobalNPC.CanUseRopes = true;
             blackKnightGlobalNPC.MaxJumpBoost = 7f;
             blackKnightGlobalNPC.CanDoubleJump = true;
             blackKnightGlobalNPC.DoubleJumpPower = 7f;

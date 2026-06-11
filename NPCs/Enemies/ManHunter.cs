@@ -56,6 +56,8 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC archerGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             archerGlobalNPC.PrefersHighGround = true;
             archerGlobalNPC.RemembersLastKnownPos = true;
+            archerGlobalNPC.NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
+            archerGlobalNPC.CanUseRopes = true;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

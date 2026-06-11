@@ -37,6 +37,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.knockBackResist = 0f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.OolacileKnightBanner>();
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 80;             
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
             NPC.lavaImmune = true;
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), earthTridentDamage, 11, SoundID.Item17);
         }

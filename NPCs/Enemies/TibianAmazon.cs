@@ -50,6 +50,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Step 6: humanoid soldier — paces around its post when it gives up.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PatrolMode = NPCs.PatrolMode.Pace;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

@@ -23,10 +23,10 @@ namespace tsorcRevamp.NPCs.Enemies
         int drowningRisk = 2000;
 
         float npcAcSPD = 0.5f; //How fast they accelerate.
-        float npcSPD = 1.0f; //Max speed
+        float npcSPD = 0.5f; //Max speed (Phase2: 50% slower, was 1.0f)
 
         float npcEnrAcSPD = .6f; //How fast they accelerate.
-        float npcEnrSPD = 1.4f; //Max speed
+        float npcEnrSPD = 0.7f; //Max speed (Phase2: 50% slower, was 1.4f)
 
         bool tooBig = true;
         bool lavaJumping = false;
@@ -59,6 +59,14 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.1f;
             AnimationType = 28; // Zombie frame structure
+
+            // Phase 2: SmartFighter4AI movement + beast levers (mirrors OmnirsGigas). minSurfaceWidth (in AI)
+            // keeps it off 1-tile ledges; NavSearchRadius enables A*; MaxJumpPower modestly above the 8 default
+            // for a strong jump (NPC.gravity is read-only, so no true heavy "weighty" fall). Tune to taste.
+            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.NavSearchRadius = 60; // larger window so A* can find valid flat ledges above/across to jump to (mirrors Gigas)
+            g.MaxJumpPower = 9f;
+            g.MaxJumpBoost = 5f;
         }
 
         /*

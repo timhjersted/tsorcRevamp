@@ -65,6 +65,13 @@ namespace tsorcRevamp.NPCs.Enemies{
 			NPC.buffImmune[BuffID.Confused] = true;
 			NPC.buffImmune[BuffID.CursedInferno] = true;
 			NPC.buffImmune[BuffID.OnFire] = true;
+
+			// Phase 2: SmartFighter4AI movement + beast levers (migrated off MNPC). MaxJumpPower above the 8
+			// default so this huge beast clears ledges given minSurfaceWidth:4. Tuning values — adjust to taste.
+			tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+			g.NavSearchRadius = 24;
+			g.MaxJumpPower = 10f;
+			g.MaxJumpBoost = 6f;
 		}
         public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
 public float CanSpawnLegacy(NPCSpawnInfo s)
@@ -120,37 +127,11 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
 			int shotRate = enraged?100:70;
 			float accel=enraged? npcEnrAcSPD:npcAcSPD;  //  how fast it can speed up
 			float topSpeed=enraged? npcEnrSPD:npcSPD;  //  max walking speed, also affects jump length
-			MNPC.teleporterAI
-			(
-				NPC, 
-				ref NPC.ai, 
-				false, 		// immobile		Whether or not this NPC should move while its teleporting.
-				20, 		// tpRadius		Radius around the player where the NPC will try to move.
-				13,			// distToPlayer	Minimum distance to keep from the player as the NPC teleports.
-				60,			// tpInterval	How often the NPC will try to teleport, tied to NPC.ai[3].
-				true, 		// aerial		Whether or not an NPC will try to move to an airborne position.
-				teleport	// tpEffect		The effect that the NPC will create as it moves.
-			);
-			MNPC.fighterAI
-			(
-				NPC, 
-				ref NPC.ai,
-				false,		// nocturnal  	If true, flees when it is daytime.
-				true,		// focused 		If true, NPC wont get interrupted when hit or confused.
-				60, 		// boredom 		The amount of ticks until the NPC gets 'bored' following a target.
-				2, 			// knockPower 	0 == do not interact with doors, attempt to open the doors by this value, negative numbers will break instead
-				accel, 		// accel 		The rate velocity X increases by when moving.
-				topSpeed,	// topSpeed 	the maximum velocity on the X axis.
-				2, 			// leapReq 		-1 NPC wont jump over gaps, more than 0 NPC will leap at players
-				5, 			// leapSpeed	The max tiles it can jump across and over, horizontally. 
-				9, 			// leapHeight 	The max tiles it can jump across and over, vertically. 
-				100,		// leapRangeX 	The distance from a player before the NPC initiates leap, horizontally. 
-				50,			// leapRangeY 	The distance from a player before the NPC initiates leap, vertically. 
-				0, 			// shotType 	If higher than 0, allows an NPC to fire a Projectile, archer style.
-				40,			// shotRate 	The rate of fire of the Projectile, if there is one.
-				70,			// shotPow 		The Projectile's damage, if -1 it will use the Projectile's default.
-				14			// shotSpeed	The Projectile's velocity.
-			);
+			// Phase 2: migrated OFF the legacy MNPC.teleporterAI + MNPC.fighterAI onto the modern shared AI +
+			// SmartFighter4AI movement (NavSearchRadius set in SetDefaults). Mapping: teleporterAI -> canTeleport;
+			// knockPower 2 -> doorBreakingDamage; leapReq>0 -> canPounce; shotType 0 -> no projectile. minSurfaceWidth:4
+			// keeps this 10-tile-wide beast off narrow ledges.
+			tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: true, doorBreakingDamage: 2, minSurfaceWidth: 6, canWalkBackwards: true, canPounce: true);
             Vector2 angle = Main.player[NPC.target].Center - NPC.Center;
             angle.Y = angle.Y - (Math.Abs(angle.X) * .1f);
             angle.X += (float)Main.rand.Next(-20, 21);

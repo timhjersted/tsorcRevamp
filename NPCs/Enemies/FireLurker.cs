@@ -36,6 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.FireLurkerBanner>();
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
             UsefulFunctions.AddAttack(NPC, 160, ProjectileID.LostSoulHostile, lostSoulDamage, 6, SoundID.NPCDeath9, 0);
 
             if (Main.hardMode)

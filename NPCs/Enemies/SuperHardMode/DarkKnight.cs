@@ -38,6 +38,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             tsorcRevampGlobalNPC archerGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             archerGlobalNPC.PrefersHighGround = true;
             archerGlobalNPC.RemembersLastKnownPos = true;
+            archerGlobalNPC.NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
+            archerGlobalNPC.CanUseRopes = true;
         }
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */

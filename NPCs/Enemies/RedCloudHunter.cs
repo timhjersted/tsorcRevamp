@@ -57,6 +57,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // Step 6 archer levers: blink to elevated firing spots, and reposition toward last-known before patrolling.
             hunterGlobalNPC.PrefersHighGround = true;
             hunterGlobalNPC.RemembersLastKnownPos = true;
+            hunterGlobalNPC.NavSearchRadius = 80;
 
         }
 

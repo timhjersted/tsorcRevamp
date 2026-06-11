@@ -31,6 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.25f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.QuaraHydromancerBanner>();
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 60; // Phase 2: SmartFighter4AI movement
 
             if (Main.hardMode) { NPC.lifeMax = 500; NPC.defense = 22; NPC.value = 1500; bubbleDamage = 45; }
             if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 1500; NPC.defense = 50; NPC.value = 3600; bubbleDamage = 55; }

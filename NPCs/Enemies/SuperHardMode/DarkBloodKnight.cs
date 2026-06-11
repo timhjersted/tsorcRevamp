@@ -38,6 +38,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             tsorcRevampGlobalNPC archerGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             archerGlobalNPC.PrefersHighGround = true;
             archerGlobalNPC.RemembersLastKnownPos = true;
+            archerGlobalNPC.NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
+            archerGlobalNPC.CanUseRopes = true;
         }
 
 

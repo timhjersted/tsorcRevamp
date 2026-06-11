@@ -73,6 +73,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Patrol/Pursue FSM (Phase 1) — full pathfinding + observable give-up/patrol for testing.
             globalNPC.NavSearchRadius = 80;        // full A* window (testbed wants smart nav)
+            globalNPC.CanUseRopes = true;          // rope testbed — the whole rope system is developed/verified on this
             globalNPC.NavGiveUpTicks = 90;         // ~1.5s of no-LOS-no-progress before disengaging
             globalNPC.RemembersLastKnownPos = true; // investigate last-seen spot before patrolling
             globalNPC.PatrolMode = PatrolMode.Pace;
