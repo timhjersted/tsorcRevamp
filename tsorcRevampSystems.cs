@@ -1515,29 +1515,37 @@ namespace tsorcRevamp
                     }
                 }
 
-                // Draw cursor preview hologram if selecting an NPC to place
+                Main.spriteBatch.End();
+
+                // Draw cursor preview in a separate identity-matrix batch so it is immune to zoom drift.
+                // TransformationMatrix scales from the top-left corner, not the screen center where Terraria
+                // anchors zoom — so any world-space or screen-relative draw drifts proportionally to distance
+                // from screen center. Drawing at Main.MouseScreen with no matrix has zero drift at any zoom level.
                 var enemyUI = ModContent.GetInstance<tsorcRevamp>().EnemySelectionUI;
                 if (enemyUI.SelectedNpcType != 0)
                 {
                     int selectedType = enemyUI.SelectedNpcType;
                     Main.instance.LoadNPC(selectedType);
 
-                    NPC previewNPC = new NPC();
-                    previewNPC.SetDefaults(selectedType);
-                    previewNPC.active = true;
+                    var textureAsset = Terraria.GameContent.TextureAssets.Npc[selectedType];
+                    Texture2D npcTexture = textureAsset?.Value;
+                    if (npcTexture != null)
+                    {
+                        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
 
-                    // Align hologram to the world grid (matching spawn coords)
-                    int tileX = (int)(Main.MouseWorld.X / 16);
-                    int tileY = (int)(Main.MouseWorld.Y / 16);
-                    previewNPC.Bottom = new Vector2(tileX * 16 + 8, tileY * 16 + 16);
+                        int frameCount = Main.npcFrameCount[selectedType];
+                        if (frameCount < 1) frameCount = 1;
+                        Rectangle sourceRect = npcTexture.Frame(1, frameCount, 0, 0);
 
-                    // Make it semi-transparent for the hologram effect
-                    previewNPC.color = Color.White * 0.6f;
+                        // Bottom-center of sprite sits at mouse cursor — matches placement which snaps to the hovered tile
+                        Vector2 origin = new Vector2(sourceRect.Width / 2f, sourceRect.Height);
+                        // Scale by zoom so the preview matches the in-game NPC size at the current zoom level.
+                        float zoom = Main.GameViewMatrix.Zoom.X;
+                        Main.spriteBatch.Draw(npcTexture, Main.MouseScreen, sourceRect, Color.White * 0.6f, 0f, origin, zoom, SpriteEffects.None, 0f);
 
-                    Main.instance.DrawNPCDirect(Main.spriteBatch, previewNPC, false, Main.screenPosition);
+                        Main.spriteBatch.End();
+                    }
                 }
-
-                Main.spriteBatch.End();
             }
         }
     }

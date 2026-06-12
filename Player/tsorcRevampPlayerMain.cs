@@ -1995,6 +1995,15 @@ namespace tsorcRevamp
         {
             unkindledManaDelayTimer = 0;
             Player.statLife = Player.statLifeMax2;
+
+            // Restore non-permanent completed events (SaveOnCompletion=false) so their spawn rings reappear.
+            // They were parked in DisabledEvents on completion instead of the 5-second QueuedEvents timer.
+            if (Player.whoAmI == Main.myPlayer && tsorcScriptedEvents.DisabledEvents != null && tsorcScriptedEvents.QueuedEvents != null)
+            {
+                foreach (var ev in tsorcScriptedEvents.DisabledEvents)
+                    tsorcScriptedEvents.QueuedEvents.Add(ev);
+                tsorcScriptedEvents.DisabledEvents.Clear();
+            }
             if (BearerOfTheCurse) Player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
             Player.AddBuff(ModContent.BuffType<Invincible>(), 360);
 

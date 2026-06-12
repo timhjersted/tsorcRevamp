@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -24,6 +25,15 @@ namespace tsorcRevamp.Projectiles.Enemy
             target.AddBuff(22, 600, false);
         }
 
+        public override void AI()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(8f, 8f), DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120, default, 0.65f);
+                dust.noGravity = true;
+            }
+        }
+
         public override bool PreKill(int timeLeft)
         {
             Projectile.type = 0;
@@ -31,9 +41,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             //Terraria.Audio.SoundEngine.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
             for (int i = 0; i < 10; i++)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 169, 0, 0, 0, default, 1f); //6 is a flame dust
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 169, 0, 0, 0, default, 2f);
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 169, 0, 0, 0, default, 2f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 169, 0, 0, 0, default, 1f);
+                Main.dust[dust].noGravity = true;
+                dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 169, 0, 0, 0, default, 2f);
+                Main.dust[dust].noGravity = true;
+                dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 169, 0, 0, 0, default, 2f);
+                Main.dust[dust].noGravity = true;
             }
             return true;
         }
@@ -71,6 +84,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 int arg_1422_6 = 100;
                 newColor = default(Color);
                 num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
+                Main.dust[num41].noGravity = true;
             }
             Projectile.active = false;
         }

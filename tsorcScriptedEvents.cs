@@ -1009,6 +1009,21 @@ namespace tsorcRevamp
         }
 
         /// <summary>
+        /// Returns a stable name string for <paramref name="type"/>.
+        /// Modded NPCs return their full mod-relative name (e.g. "tsorcRevamp/LeonhardPhase1") which is used to
+        /// re-resolve the runtime ID on load. Vanilla NPCs return their display name (e.g. "Eye of Cthulhu")
+        /// for JSON readability only — TryFind will not match it and the stored integer ID is used instead.
+        /// </summary>
+        public static string GetNpcStableName(int type)
+        {
+            var modNpc = NPCLoader.GetNPC(type);
+            if (modNpc != null) return modNpc.FullName;
+            var temp = new NPC();
+            temp.SetDefaults(type);
+            return temp.TypeName;
+        }
+
+        /// <summary>
         /// Whether a dynamic event should be shown/editable in the Enemy Debug Tome for the current world.
         /// Adventure-Map-only events are hidden in a Remix world, and Remix-only events are hidden in a
         /// classic Adventure world. Events with no world condition show everywhere.
@@ -1017,9 +1032,17 @@ namespace tsorcRevamp
         {
             if (ev == null)
                 return false;
-            if (tsorcRevampWorld.RemixMap && ev.WorldCondition == "OnlyAdventureMapCondition")
+            // Legacy events (dumped from hardcoded data) stored world type in MapCondition, not WorldCondition.
+            // Check WorldCondition first; fall back to MapCondition if it contains an Adventure/Remix token.
+            string worldCond = ev.WorldCondition;
+            if (string.IsNullOrEmpty(worldCond) &&
+                (ev.MapCondition?.Contains("OnlyAdventureMap") == true || ev.MapCondition?.Contains("RemixMap") == true))
+            {
+                worldCond = ev.MapCondition;
+            }
+            if (tsorcRevampWorld.RemixMap && worldCond?.Contains("OnlyAdventureMap") == true)
                 return false;
-            if (tsorcRevampWorld.OnlyAdventureMap && ev.WorldCondition == "RemixMapCondition")
+            if (tsorcRevampWorld.OnlyAdventureMap && worldCond?.Contains("RemixMap") == true)
                 return false;
             return true;
         }
@@ -1738,11 +1761,13 @@ namespace tsorcRevamp
                         action = (Func<ScriptedEvent, EventActionStatus>)Delegate.CreateDelegate(typeof(Func<ScriptedEvent, EventActionStatus>), method);
                 }
 
-                // Convert NPCs
+                // Convert NPCs — resolve NpcName to current runtime ID if available (modded IDs shift between builds)
                 List<int> npcTypes = new List<int>();
                 List<Vector2> npcCoords = new List<Vector2>();
                 foreach (var npc in dEvent.Npcs)
                 {
+                    if (!string.IsNullOrEmpty(npc.NpcName) && ModContent.TryFind<ModNPC>(npc.NpcName, out ModNPC modNpc))
+                        npc.NpcID = modNpc.Type; // update in-place so subsequent saves write the correct integer
                     npcTypes.Add(npc.NpcID);
                     npcCoords.Add(new Vector2(npc.SpawnX, npc.SpawnY));
                 }
@@ -1848,18 +1873,30 @@ namespace tsorcRevamp
             {
                 var ev = pair.Value;
                 
-                // Try to prevent dumping identical events if the user runs this multiple times
-                // We check if an event with exactly the same coordinates and radius already exists
-                bool alreadyExists = false;
+                // Try to prevent dumping identical events if the user runs this multiple times.
+                // If the event already exists, backfill any missing NpcName values (e.g. from a pre-fix dump).
+                DynamicSpawnEvent existingEvent = null;
                 foreach (var existing in DynamicEvents)
                 {
                     if (existing.CenterX == (int)(ev.centerpoint.X / 16) && existing.CenterY == (int)(ev.centerpoint.Y / 16) && existing.Radius == ev.radius)
                     {
-                        alreadyExists = true;
+                        existingEvent = existing;
                         break;
                     }
                 }
-                if (alreadyExists) continue;
+                if (existingEvent != null)
+                {
+                    if (ev.eventNPCs != null)
+                    {
+                        int count = Math.Min(existingEvent.Npcs.Count, ev.eventNPCs.Count);
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (string.IsNullOrEmpty(existingEvent.Npcs[i].NpcName))
+                                existingEvent.Npcs[i].NpcName = GetNpcStableName(ev.eventNPCs[i].type);
+                        }
+                    }
+                    continue;
+                }
 
                 var dynamicEvent = new DynamicSpawnEvent();
                 dynamicEvent.EventID = Guid.NewGuid().ToString();
@@ -1884,6 +1921,7 @@ namespace tsorcRevamp
                     {
                         var dynamicNpc = new DynamicSpawnEntry();
                         dynamicNpc.NpcID = npc.type;
+                        dynamicNpc.NpcName = GetNpcStableName(npc.type);
                         dynamicNpc.SpawnX = npc.spawnCoords.X;
                         dynamicNpc.SpawnY = npc.spawnCoords.Y;
                         dynamicNpc.CustomHealth = npc.customHealth;
@@ -2784,10 +2822,12 @@ namespace tsorcRevamp
                 }
                 else
                 {
-                    tsorcScriptedEvents.QueuedEvents.Add(this);
+                    // Non-permanent event completed: park in DisabledEvents until the player dies and respawns.
+                    // QueuedEvents auto-restores after a 5-second timer which is too fast for Dark Souls intent.
+                    tsorcScriptedEvents.DisabledEvents.Add(this);
                 }
             }
-            //Otherwise if it wasn't completed, then despawn the NPC's and re-add it to DisabledEvents to be re-initialized once the player respawns
+            //Otherwise if it wasn't completed, then despawn the NPC's and re-add it to QueuedEvents to be re-initialized once the player respawns
             else
             {
                 tsorcScriptedEvents.QueuedEvents.Add(this);
@@ -2916,6 +2956,8 @@ namespace tsorcRevamp
     public class DynamicSpawnEntry
     {
         public int NpcID { get; set; }
+        /// <summary>Stable mod-relative name (e.g. "tsorcRevamp/LeonhardPhase1"). Empty for vanilla. Re-resolves the runtime NpcID on load so ID shifts between builds don't corrupt saved events.</summary>
+        public string NpcName { get; set; }
         public float SpawnX { get; set; }
         public float SpawnY { get; set; }
         public int? CustomHealth { get; set; }

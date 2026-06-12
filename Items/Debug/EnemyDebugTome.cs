@@ -22,8 +22,8 @@ namespace tsorcRevamp.Items.Debug
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot; // For pointing at the mouse
-            Item.useAnimation = 20;
-            Item.useTime = 20;
+            Item.useAnimation = 5;
+            Item.useTime = 5;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Red;
             Item.noMelee = true;
@@ -76,9 +76,12 @@ namespace tsorcRevamp.Items.Debug
                     float closestNpcDist = float.MaxValue;
                     foreach (var npc in ev.Npcs)
                     {
-                        Vector2 npcPos = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16);
-                        float dist = Vector2.Distance(Main.MouseWorld, npcPos);
-                        if (dist < 24 && dist < closestNpcDist)
+                        NPC tempSize = new NPC();
+                        tempSize.SetDefaults(npc.NpcID);
+                        Vector2 npcCenter = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16 - tempSize.height / 2f);
+                        float removeRadius = System.Math.Max(24f, System.Math.Max(tempSize.width, tempSize.height) / 2f);
+                        float dist = Vector2.Distance(Main.MouseWorld, npcCenter);
+                        if (dist < removeRadius && dist < closestNpcDist)
                         {
                             closestNpcDist = dist;
                             npcToRemove = npc;
@@ -186,6 +189,7 @@ namespace tsorcRevamp.Items.Debug
 
                         var entry = new DynamicSpawnEntry();
                         entry.NpcID = enemyUI.SelectedNpcType;
+                        entry.NpcName = tsorcScriptedEvents.GetNpcStableName(enemyUI.SelectedNpcType);
                         entry.SpawnX = tileX;
                         entry.SpawnY = tileY;
                         quickEvent.Npcs.Add(entry);
@@ -207,6 +211,7 @@ namespace tsorcRevamp.Items.Debug
                         var ev = configUI.CurrentEvent;
                         var npc = new DynamicSpawnEntry();
                         npc.NpcID = enemyUI.SelectedNpcType;
+                        npc.NpcName = tsorcScriptedEvents.GetNpcStableName(enemyUI.SelectedNpcType);
                         npc.SpawnX = (int)(Main.MouseWorld.X / 16);
                         npc.SpawnY = (int)(Main.MouseWorld.Y / 16);
                         ev.Npcs.Add(npc);
@@ -236,9 +241,13 @@ namespace tsorcRevamp.Items.Debug
                     float closestNpcDist = float.MaxValue;
                     foreach (var npc in ev.Npcs)
                     {
-                        Vector2 npcPos = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16);
-                        float dist = Vector2.Distance(Main.MouseWorld, npcPos);
-                        if (dist < 24 && dist < closestNpcDist)
+                        NPC tempSize = new NPC();
+                        tempSize.SetDefaults(npc.NpcID);
+                        // Use sprite center (not bottom) and a radius derived from actual NPC dimensions.
+                        Vector2 npcCenter = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16 - tempSize.height / 2f);
+                        float grabRadius = System.Math.Max(24f, System.Math.Max(tempSize.width, tempSize.height) / 2f);
+                        float dist = Vector2.Distance(Main.MouseWorld, npcCenter);
+                        if (dist < grabRadius && dist < closestNpcDist)
                         {
                             closestNpcDist = dist;
                             npcToGrab = npc;
@@ -261,35 +270,53 @@ namespace tsorcRevamp.Items.Debug
                     }
                 }
 
-                // Priority 3: Check if clicking on/near an existing event center (or quick-add NPC marker) to open it.
+                // Priority 3: Check if clicking on/near an existing event center OR any placed NPC sprite.
+                // Checking sprites (not just centers) lets you click on an NPC that's far from its event's center
+                // marker to open that event, and prevents P4 from opening the Quick Add panel over existing sprites.
                 Vector2 mousePos = Main.MouseWorld;
                 DynamicSpawnEvent closestEvent = null;
                 float closestDist = float.MaxValue;
                 foreach (var ev in tsorcScriptedEvents.DynamicEvents)
                 {
                     if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(ev)) continue;
-                    float dist = Vector2.Distance(mousePos, new Vector2(ev.CenterX * 16 + 8, ev.CenterY * 16 + 8));
-                    if (dist < 48 && dist < closestDist)
+
+                    // Event center / book marker
+                    float centerDist = Vector2.Distance(mousePos, new Vector2(ev.CenterX * 16 + 8, ev.CenterY * 16 + 8));
+                    if (centerDist < 48 && centerDist < closestDist)
                     {
-                        closestDist = dist;
+                        closestDist = centerDist;
                         closestEvent = ev;
+                    }
+
+                    // Placed NPC sprites
+                    foreach (var npc in ev.Npcs)
+                    {
+                        NPC tempSize = new NPC();
+                        tempSize.SetDefaults(npc.NpcID);
+                        Vector2 npcCenter = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16 - tempSize.height / 2f);
+                        float clickRadius = System.Math.Max(24f, System.Math.Max(tempSize.width, tempSize.height) / 2f);
+                        float dist = Vector2.Distance(mousePos, npcCenter);
+                        if (dist < clickRadius && dist < closestDist)
+                        {
+                            closestDist = dist;
+                            closestEvent = ev;
+                        }
                     }
                 }
 
                 if (closestEvent != null)
                 {
                     // Opening an event closes the Quick Add panel.
-                    if (enemyUI.Visible)
-                    {
-                        enemyUI.Hide();
-                    }
+                    if (enemyUI.Visible) enemyUI.Hide();
                     configUI.SetEvent(closestEvent);
                     configUI.Show();
                     return true;
                 }
 
-                // Priority 4: Clicked empty space with nothing selected -> open the Quick Add panel.
-                if (!enemyUI.Visible)
+                // Priority 4: Clicked empty space with nothing near -> open the Quick Add panel.
+                // Don't open if the event config is already showing; clicking empty space while editing an event
+                // should do nothing rather than opening a second panel.
+                if (!enemyUI.Visible && !configUI.Visible)
                 {
                     enemyUI.Show();
                     return true;

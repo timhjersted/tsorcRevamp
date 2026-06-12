@@ -17,6 +17,7 @@
     "Npcs": [
       {
         "NpcID": 718,
+        "NpcName": "tsorcRevamp/Pinwheel",
         "SpawnX": 4139.0,
         "SpawnY": 923.0,
         "CustomHealth": null,
@@ -46,6 +47,7 @@
     "Npcs": [
       {
         "NpcID": 835,
+        "NpcName": "tsorcRevamp/LothricBlackKnight",
         "SpawnX": 4137.0,
         "SpawnY": 895.0,
         "CustomHealth": 1100,
@@ -75,6 +77,7 @@
     "Npcs": [
       {
         "NpcID": 815,
+        "NpcName": "tsorcRevamp/FireLurker",
         "SpawnX": 3559.0,
         "SpawnY": 1248.0,
         "CustomHealth": 500,
@@ -84,6 +87,7 @@
       },
       {
         "NpcID": 815,
+        "NpcName": "tsorcRevamp/FireLurker",
         "SpawnX": 3629.0,
         "SpawnY": 1248.0,
         "CustomHealth": 500,
@@ -117,6 +121,7 @@
     "Npcs": [
       {
         "NpcID": 692,
+        "NpcName": "tsorcRevamp/Death",
         "SpawnX": 1066.0,
         "SpawnY": 529.0,
         "CustomHealth": null,
@@ -146,6 +151,7 @@
     "Npcs": [
       {
         "NpcID": 797,
+        "NpcName": "tsorcRevamp/BlackKnight",
         "SpawnX": 2282.0,
         "SpawnY": 1650.0,
         "CustomHealth": 25000,
@@ -181,6 +187,7 @@
     "Npcs": [
       {
         "NpcID": 869,
+        "NpcName": "tsorcRevamp/RedKnight",
         "SpawnX": 5596.0,
         "SpawnY": 926.0,
         "CustomHealth": 1000,
@@ -220,6 +227,7 @@
     "Npcs": [
       {
         "NpcID": 657,
+        "NpcName": "Queen Slime",
         "SpawnX": 7059.0,
         "SpawnY": 1289.0,
         "CustomHealth": null,
@@ -249,6 +257,7 @@
     "Npcs": [
       {
         "NpcID": 797,
+        "NpcName": "tsorcRevamp/BlackKnight",
         "SpawnX": 7454.0,
         "SpawnY": 1413.0,
         "CustomHealth": 6000,
@@ -284,6 +293,7 @@
     "Npcs": [
       {
         "NpcID": 620,
+        "NpcName": "Hemogoblin Shark",
         "SpawnX": 7874.0,
         "SpawnY": 390.0,
         "CustomHealth": 5000,
@@ -321,6 +331,7 @@
     "Npcs": [
       {
         "NpcID": 758,
+        "NpcName": "tsorcRevamp/GreatRedKnight",
         "SpawnX": 2229.0,
         "SpawnY": 856.0,
         "CustomHealth": null,
@@ -358,6 +369,7 @@
     "Npcs": [
       {
         "NpcID": 668,
+        "NpcName": "Ancestral Spirit",
         "SpawnX": 4043.0,
         "SpawnY": 143.0,
         "CustomHealth": null,
@@ -387,6 +399,7 @@
     "Npcs": [
       {
         "NpcID": 37,
+        "NpcName": "Old Man",
         "SpawnX": 4979.0,
         "SpawnY": 1398.0,
         "CustomHealth": null,
@@ -416,6 +429,7 @@
     "Npcs": [
       {
         "NpcID": 35,
+        "NpcName": "Skeletron",
         "SpawnX": 5563.0,
         "SpawnY": 1676.0,
         "CustomHealth": null,
@@ -445,6 +459,7 @@
     "Npcs": [
       {
         "NpcID": 427,
+        "NpcName": "Alien Hornet",
         "SpawnX": 6069.0,
         "SpawnY": 69.0,
         "CustomHealth": null,
@@ -454,6 +469,7 @@
       },
       {
         "NpcID": 427,
+        "NpcName": "Alien Hornet",
         "SpawnX": 6010.0,
         "SpawnY": 79.0,
         "CustomHealth": null,
@@ -463,6 +479,7 @@
       },
       {
         "NpcID": 427,
+        "NpcName": "Alien Hornet",
         "SpawnX": 6010.0,
         "SpawnY": 79.0,
         "CustomHealth": null,
@@ -472,6 +489,7 @@
       },
       {
         "NpcID": 427,
+        "NpcName": "Alien Hornet",
         "SpawnX": 6079.0,
         "SpawnY": 79.0,
         "CustomHealth": null,
@@ -481,6 +499,7 @@
       },
       {
         "NpcID": 427,
+        "NpcName": "Alien Hornet",
         "SpawnX": 6041.0,
         "SpawnY": 69.0,
         "CustomHealth": null,
@@ -490,6 +509,7 @@
       },
       {
         "NpcID": 427,
+        "NpcName": "Alien Hornet",
         "SpawnX": 6079.0,
         "SpawnY": 79.0,
         "CustomHealth": null,
@@ -519,6 +539,7 @@
     "Npcs": [
       {
         "NpcID": 4,
+        "NpcName": "Eye of Cthulhu",
         "SpawnX": 3900.0,
         "SpawnY": 1138.0,
         "CustomHealth": null,
@@ -548,6 +569,7 @@
     "Npcs": [
       {
         "NpcID": 13,
+        "NpcName": "Eater of Worlds",
         "SpawnX": 3633.0,
         "SpawnY": 996.0,
         "CustomHealth": null,
@@ -577,6 +599,7 @@
     "Npcs": [
       {
         "NpcID": 689,
+        "NpcName": "tsorcRevamp/AncientDemon",
         "SpawnX": 5317.0,
         "SpawnY": 1800.0,
         "CustomHealth": null,
@@ -612,6 +635,7 @@
     "Npcs": [
       {
         "NpcID": 741,
+        "NpcName": "tsorcRevamp/EarthFiendLich",
         "SpawnX": 364.0,
         "SpawnY": 1897.0,
         "CustomHealth": null,
@@ -641,6 +665,7 @@
     "Npcs": [
       {
         "NpcID": 741,
+        "NpcName": "tsorcRevamp/EarthFiendLich",
         "SpawnX": 3152.0,
         "SpawnY": 1685.0,
         "CustomHealth": null,
@@ -670,6 +695,7 @@
     "Npcs": [
       {
         "NpcID": 777,
+        "NpcName": "tsorcRevamp/TheHunter",
         "SpawnX": 296.0,
         "SpawnY": 1560.0,
         "CustomHealth": null,
@@ -699,6 +725,7 @@
     "Npcs": [
       {
         "NpcID": 779,
+        "NpcName": "tsorcRevamp/TheRage",
         "SpawnX": 7000.0,
         "SpawnY": 1845.0,
         "CustomHealth": null,
@@ -728,6 +755,7 @@
     "Npcs": [
       {
         "NpcID": 690,
+        "NpcName": "tsorcRevamp/AncientOolacileDemon",
         "SpawnX": 5652.0,
         "SpawnY": 971.0,
         "CustomHealth": null,
@@ -763,6 +791,7 @@
     "Npcs": [
       {
         "NpcID": 471,
+        "NpcName": "Goblin Warlock",
         "SpawnX": 7153.0,
         "SpawnY": 411.0,
         "CustomHealth": null,
@@ -798,6 +827,7 @@
     "Npcs": [
       {
         "NpcID": 471,
+        "NpcName": "Goblin Warlock",
         "SpawnX": 7822.0,
         "SpawnY": 118.0,
         "CustomHealth": null,
@@ -833,6 +863,7 @@
     "Npcs": [
       {
         "NpcID": 87,
+        "NpcName": "Wyvern",
         "SpawnX": 7776.0,
         "SpawnY": 829.0,
         "CustomHealth": null,
@@ -842,6 +873,7 @@
       },
       {
         "NpcID": 243,
+        "NpcName": "Ice Golem",
         "SpawnX": 7800.0,
         "SpawnY": 868.0,
         "CustomHealth": null,
@@ -871,6 +903,7 @@
     "Npcs": [
       {
         "NpcID": 243,
+        "NpcName": "Ice Golem",
         "SpawnX": 7651.0,
         "SpawnY": 1020.0,
         "CustomHealth": null,
@@ -900,6 +933,7 @@
     "Npcs": [
       {
         "NpcID": 50,
+        "NpcName": "King Slime",
         "SpawnX": 5995.0,
         "SpawnY": 1117.0,
         "CustomHealth": null,
@@ -929,6 +963,7 @@
     "Npcs": [
       {
         "NpcID": 696,
+        "NpcName": "tsorcRevamp/HeroofLumelia",
         "SpawnX": 2108.0,
         "SpawnY": 849.0,
         "CustomHealth": null,
@@ -958,6 +993,7 @@
     "Npcs": [
       {
         "NpcID": 815,
+        "NpcName": "tsorcRevamp/FireLurker",
         "SpawnX": 3245.0,
         "SpawnY": 1252.0,
         "CustomHealth": 1800,
@@ -993,6 +1029,7 @@
     "Npcs": [
       {
         "NpcID": 869,
+        "NpcName": "tsorcRevamp/RedKnight",
         "SpawnX": 3897.0,
         "SpawnY": 1219.0,
         "CustomHealth": 2660,
@@ -1030,6 +1067,7 @@
     "Npcs": [
       {
         "NpcID": 869,
+        "NpcName": "tsorcRevamp/RedKnight",
         "SpawnX": 3287.0,
         "SpawnY": 495.0,
         "CustomHealth": 2000,
@@ -1067,6 +1105,7 @@
     "Npcs": [
       {
         "NpcID": 700,
+        "NpcName": "tsorcRevamp/JungleWyvernHead",
         "SpawnX": 4331.0,
         "SpawnY": 1713.0,
         "CustomHealth": null,
@@ -1096,6 +1135,7 @@
     "Npcs": [
       {
         "NpcID": 770,
+        "NpcName": "tsorcRevamp/SeathTheScalelessHead",
         "SpawnX": 7737.0,
         "SpawnY": 1546.0,
         "CustomHealth": null,
@@ -1125,6 +1165,7 @@
     "Npcs": [
       {
         "NpcID": 787,
+        "NpcName": "tsorcRevamp/WyvernMage",
         "SpawnX": 7192.0,
         "SpawnY": 364.0,
         "CustomHealth": null,
@@ -1134,6 +1175,7 @@
       },
       {
         "NpcID": 784,
+        "NpcName": "tsorcRevamp/MechaDragonHead",
         "SpawnX": 7192.0,
         "SpawnY": 364.0,
         "CustomHealth": null,
@@ -1163,6 +1205,7 @@
     "Npcs": [
       {
         "NpcID": 732,
+        "NpcName": "tsorcRevamp/Slogra",
         "SpawnX": 6192.0,
         "SpawnY": 1267.0,
         "CustomHealth": null,
@@ -1172,6 +1215,7 @@
       },
       {
         "NpcID": 694,
+        "NpcName": "tsorcRevamp/Gaibon",
         "SpawnX": 6192.0,
         "SpawnY": 1267.0,
         "CustomHealth": null,
@@ -1201,6 +1245,7 @@
     "Npcs": [
       {
         "NpcID": 729,
+        "NpcName": "tsorcRevamp/SerrisHead",
         "SpawnX": 1186.0,
         "SpawnY": 1042.6025,
         "CustomHealth": null,
@@ -1210,6 +1255,7 @@
       },
       {
         "NpcID": 729,
+        "NpcName": "tsorcRevamp/SerrisHead",
         "SpawnX": 1186.0,
         "SpawnY": 869.39746,
         "CustomHealth": null,
@@ -1219,6 +1265,7 @@
       },
       {
         "NpcID": 729,
+        "NpcName": "tsorcRevamp/SerrisHead",
         "SpawnX": 1036.0,
         "SpawnY": 956.0,
         "CustomHealth": null,
@@ -1248,6 +1295,7 @@
     "Npcs": [
       {
         "NpcID": 748,
+        "NpcName": "tsorcRevamp/MarilithIntro",
         "SpawnX": 3235.0,
         "SpawnY": 1770.0,
         "CustomHealth": null,
@@ -1277,6 +1325,7 @@
     "Npcs": [
       {
         "NpcID": 748,
+        "NpcName": "tsorcRevamp/MarilithIntro",
         "SpawnX": 305.0,
         "SpawnY": 1914.0,
         "CustomHealth": null,
@@ -1306,6 +1355,7 @@
     "Npcs": [
       {
         "NpcID": 722,
+        "NpcName": "tsorcRevamp/PrimeIntro",
         "SpawnX": 5090.0,
         "SpawnY": 1103.0,
         "CustomHealth": null,
@@ -1335,6 +1385,7 @@
     "Npcs": [
       {
         "NpcID": 749,
+        "NpcName": "tsorcRevamp/WaterFiendKraken",
         "SpawnX": 1821.0,
         "SpawnY": 1702.0,
         "CustomHealth": null,
@@ -1364,6 +1415,7 @@
     "Npcs": [
       {
         "NpcID": 933,
+        "NpcName": "tsorcRevamp/AbyssPortal",
         "SpawnX": 670.0,
         "SpawnY": 1164.0,
         "CustomHealth": null,
@@ -1393,6 +1445,7 @@
     "Npcs": [
       {
         "NpcID": 759,
+        "NpcName": "tsorcRevamp/Gwyn",
         "SpawnX": 832.0,
         "SpawnY": 1244.0,
         "CustomHealth": null,
@@ -1422,6 +1475,7 @@
     "Npcs": [
       {
         "NpcID": 759,
+        "NpcName": "tsorcRevamp/Gwyn",
         "SpawnX": 822.0,
         "SpawnY": 1241.0,
         "CustomHealth": null,
@@ -1451,6 +1505,7 @@
     "Npcs": [
       {
         "NpcID": 734,
+        "NpcName": "tsorcRevamp/AbysmalOolacileSorcerer",
         "SpawnX": 6721.0,
         "SpawnY": 1905.0,
         "CustomHealth": null,
@@ -1480,6 +1535,7 @@
     "Npcs": [
       {
         "NpcID": 734,
+        "NpcName": "tsorcRevamp/AbysmalOolacileSorcerer",
         "SpawnX": 8239.0,
         "SpawnY": 1870.0,
         "CustomHealth": null,
@@ -1509,6 +1565,7 @@
     "Npcs": [
       {
         "NpcID": 775,
+        "NpcName": "tsorcRevamp/Witchking",
         "SpawnX": 2484.0,
         "SpawnY": 1795.0,
         "CustomHealth": null,
@@ -1538,6 +1595,7 @@
     "Npcs": [
       {
         "NpcID": 775,
+        "NpcName": "tsorcRevamp/Witchking",
         "SpawnX": 2487.0,
         "SpawnY": 1803.0,
         "CustomHealth": null,
@@ -1567,6 +1625,7 @@
     "Npcs": [
       {
         "NpcID": 737,
+        "NpcName": "tsorcRevamp/Chaos",
         "SpawnX": 6415.0,
         "SpawnY": 1888.0,
         "CustomHealth": null,
@@ -1596,6 +1655,7 @@
     "Npcs": [
       {
         "NpcID": 737,
+        "NpcName": "tsorcRevamp/Chaos",
         "SpawnX": 7034.0,
         "SpawnY": 968.0,
         "CustomHealth": null,
@@ -1625,6 +1685,7 @@
     "Npcs": [
       {
         "NpcID": 757,
+        "NpcName": "tsorcRevamp/WyvernMageShadow",
         "SpawnX": 6432.0,
         "SpawnY": 196.0,
         "CustomHealth": null,
@@ -1654,6 +1715,7 @@
     "Npcs": [
       {
         "NpcID": 736,
+        "NpcName": "tsorcRevamp/Blight",
         "SpawnX": 8174.0,
         "SpawnY": 866.0,
         "CustomHealth": null,
@@ -1683,6 +1745,7 @@
     "Npcs": [
       {
         "NpcID": 738,
+        "NpcName": "tsorcRevamp/DarkCloud",
         "SpawnX": 5828.0,
         "SpawnY": 1760.0,
         "CustomHealth": null,
@@ -1712,6 +1775,7 @@
     "Npcs": [
       {
         "NpcID": 738,
+        "NpcName": "tsorcRevamp/DarkCloud",
         "SpawnX": 6500.0,
         "SpawnY": 1858.0,
         "CustomHealth": null,
@@ -1741,6 +1805,7 @@
     "Npcs": [
       {
         "NpcID": 735,
+        "NpcName": "tsorcRevamp/Artorias",
         "SpawnX": 5344.0,
         "SpawnY": 1692.0,
         "CustomHealth": null,
@@ -1770,6 +1835,7 @@
     "Npcs": [
       {
         "NpcID": 797,
+        "NpcName": "tsorcRevamp/BlackKnight",
         "SpawnX": 4508.0,
         "SpawnY": 1745.0,
         "CustomHealth": 3000,
@@ -1862,6 +1928,7 @@
     "Npcs": [
       {
         "NpcID": 934,
+        "NpcName": "tsorcRevamp/AttraidiesApparition",
         "SpawnX": 8216.5,
         "SpawnY": 1630.0,
         "CustomHealth": null,
@@ -1903,13 +1970,14 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
-    "WorldCondition": null,
-    "MapCondition": "OnlyAdventureMapCondition",
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
     "CustomAction": "DundledingAmbushAction",
     "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 808,
+        "NpcName": "tsorcRevamp/Dunlending",
         "SpawnX": 4697.0,
         "SpawnY": 858.0,
         "CustomHealth": 200,
@@ -1919,6 +1987,7 @@
       },
       {
         "NpcID": 808,
+        "NpcName": "tsorcRevamp/Dunlending",
         "SpawnX": 4645.0,
         "SpawnY": 858.0,
         "CustomHealth": 200,
@@ -1928,6 +1997,7 @@
       },
       {
         "NpcID": 808,
+        "NpcName": "tsorcRevamp/Dunlending",
         "SpawnX": 4645.0,
         "SpawnY": 841.0,
         "CustomHealth": 200,
@@ -1954,13 +2024,14 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
-    "WorldCondition": null,
-    "MapCondition": "RemixMapCondition",
+    "WorldCondition": "RemixMapCondition",
+    "MapCondition": "",
     "CustomAction": "DundledingAmbushAction",
     "SingleNpcMarker": false,
     "Npcs": [
       {
         "NpcID": 808,
+        "NpcName": "tsorcRevamp/Dunlending",
         "SpawnX": 4691.0,
         "SpawnY": 854.0,
         "CustomHealth": 200,
@@ -1970,6 +2041,7 @@
       },
       {
         "NpcID": 808,
+        "NpcName": "tsorcRevamp/Dunlending",
         "SpawnX": 4733.0,
         "SpawnY": 854.0,
         "CustomHealth": 200,
@@ -1979,6 +2051,7 @@
       },
       {
         "NpcID": 808,
+        "NpcName": "tsorcRevamp/Dunlending",
         "SpawnX": 4698.0,
         "SpawnY": 853.0,
         "CustomHealth": 200,
@@ -2069,6 +2142,7 @@
     "Npcs": [
       {
         "NpcID": 939,
+        "NpcName": "tsorcRevamp/LeonhardPhase1",
         "SpawnX": 3314.0,
         "SpawnY": 355.0,
         "CustomHealth": null,
@@ -2098,6 +2172,7 @@
     "Npcs": [
       {
         "NpcID": 825,
+        "NpcName": "tsorcRevamp/HollowWarrior",
         "SpawnX": 4446.0,
         "SpawnY": 1211.0,
         "CustomHealth": null,
@@ -2107,6 +2182,7 @@
       },
       {
         "NpcID": 814,
+        "NpcName": "tsorcRevamp/FirebombHollow",
         "SpawnX": 4456.0,
         "SpawnY": 1211.0,
         "CustomHealth": null,
@@ -2136,6 +2212,7 @@
     "Npcs": [
       {
         "NpcID": 788,
+        "NpcName": "tsorcRevamp/AbandonedStump",
         "SpawnX": 5012.0,
         "SpawnY": 851.0,
         "CustomHealth": 400,
@@ -2145,6 +2222,7 @@
       },
       {
         "NpcID": 29,
+        "NpcName": "Goblin Sorcerer",
         "SpawnX": 5013.0,
         "SpawnY": 823.0,
         "CustomHealth": 400,
@@ -2154,6 +2232,7 @@
       },
       {
         "NpcID": 73,
+        "NpcName": "Goblin Scout",
         "SpawnX": 5049.0,
         "SpawnY": 839.0,
         "CustomHealth": 400,
@@ -2187,6 +2266,7 @@
     "Npcs": [
       {
         "NpcID": 823,
+        "NpcName": "tsorcRevamp/HollowSoldier",
         "SpawnX": 4029.0,
         "SpawnY": 1429.0,
         "CustomHealth": 700,
@@ -2196,6 +2276,7 @@
       },
       {
         "NpcID": 875,
+        "NpcName": "tsorcRevamp/ShadowMage",
         "SpawnX": 4074.0,
         "SpawnY": 1399.0,
         "CustomHealth": 700,
@@ -2225,6 +2306,7 @@
     "Npcs": [
       {
         "NpcID": 825,
+        "NpcName": "tsorcRevamp/HollowWarrior",
         "SpawnX": 4593.0,
         "SpawnY": 858.0,
         "CustomHealth": null,
@@ -2234,6 +2316,7 @@
       },
       {
         "NpcID": 823,
+        "NpcName": "tsorcRevamp/HollowSoldier",
         "SpawnX": 4640.0,
         "SpawnY": 858.0,
         "CustomHealth": null,
@@ -2243,6 +2326,7 @@
       },
       {
         "NpcID": 838,
+        "NpcName": "tsorcRevamp/ManHunter",
         "SpawnX": 4643.0,
         "SpawnY": 841.0,
         "CustomHealth": null,
@@ -2252,6 +2336,7 @@
       },
       {
         "NpcID": 824,
+        "NpcName": "tsorcRevamp/HollowSpearman",
         "SpawnX": 4588.0,
         "SpawnY": 858.0,
         "CustomHealth": null,
@@ -2281,6 +2366,7 @@
     "Npcs": [
       {
         "NpcID": 836,
+        "NpcName": "tsorcRevamp/LothricKnight",
         "SpawnX": 5148.0,
         "SpawnY": 1757.0,
         "CustomHealth": null,
@@ -2290,6 +2376,7 @@
       },
       {
         "NpcID": 837,
+        "NpcName": "tsorcRevamp/LothricSpearKnight",
         "SpawnX": 5197.0,
         "SpawnY": 1757.0,
         "CustomHealth": null,
@@ -2323,6 +2410,7 @@
     "Npcs": [
       {
         "NpcID": 836,
+        "NpcName": "tsorcRevamp/LothricKnight",
         "SpawnX": 4596.0,
         "SpawnY": 946.0,
         "CustomHealth": null,
@@ -2356,6 +2444,7 @@
     "Npcs": [
       {
         "NpcID": 824,
+        "NpcName": "tsorcRevamp/HollowSpearman",
         "SpawnX": 3386.0,
         "SpawnY": 367.0,
         "CustomHealth": null,
@@ -2365,6 +2454,7 @@
       },
       {
         "NpcID": 814,
+        "NpcName": "tsorcRevamp/FirebombHollow",
         "SpawnX": 3451.0,
         "SpawnY": 367.0,
         "CustomHealth": null,
@@ -2432,6 +2522,7 @@
     "Npcs": [
       {
         "NpcID": 763,
+        "NpcName": "tsorcRevamp/HellkiteDragonHead",
         "SpawnX": 4282.0,
         "SpawnY": 405.0,
         "CustomHealth": null,
@@ -2461,6 +2552,7 @@
     "Npcs": [
       {
         "NpcID": 636,
+        "NpcName": "Empress of Light",
         "SpawnX": 4484.0,
         "SpawnY": 350.0,
         "CustomHealth": null,
@@ -2490,6 +2582,7 @@
     "Npcs": [
       {
         "NpcID": 68,
+        "NpcName": "Dungeon Guardian",
         "SpawnX": 4228.0,
         "SpawnY": 1800.0,
         "CustomHealth": null,
@@ -2519,6 +2612,7 @@
     "Npcs": [
       {
         "NpcID": 845,
+        "NpcName": "tsorcRevamp/MountedSandsprogMage",
         "SpawnX": 2606.0,
         "SpawnY": 806.0,
         "CustomHealth": 400,
@@ -2528,6 +2622,7 @@
       },
       {
         "NpcID": 844,
+        "NpcName": "tsorcRevamp/MountedSandsprog",
         "SpawnX": 2673.0,
         "SpawnY": 817.0,
         "CustomHealth": 400,
@@ -2561,6 +2656,7 @@
     "Npcs": [
       {
         "NpcID": 819,
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
         "SpawnX": 4294.0,
         "SpawnY": 778.0,
         "CustomHealth": null,
@@ -2594,6 +2690,7 @@
     "Npcs": [
       {
         "NpcID": 819,
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
         "SpawnX": 4117.0,
         "SpawnY": 823.0,
         "CustomHealth": null,
@@ -2627,6 +2724,7 @@
     "Npcs": [
       {
         "NpcID": 901,
+        "NpcName": "tsorcRevamp/TaurusKnight",
         "SpawnX": 3690.0,
         "SpawnY": 1545.0,
         "CustomHealth": null,
@@ -2636,6 +2734,7 @@
       },
       {
         "NpcID": 878,
+        "NpcName": "tsorcRevamp/Abysswalker",
         "SpawnX": 3675.0,
         "SpawnY": 1545.0,
         "CustomHealth": null,
@@ -2665,6 +2764,7 @@
     "Npcs": [
       {
         "NpcID": 879,
+        "NpcName": "tsorcRevamp/AncientDemonOfTheAbyss",
         "SpawnX": 1578.0,
         "SpawnY": 1895.0,
         "CustomHealth": null,
@@ -2694,6 +2794,7 @@
     "Npcs": [
       {
         "NpcID": 895,
+        "NpcName": "tsorcRevamp/OolacileKnight",
         "SpawnX": 2382.0,
         "SpawnY": 1882.0,
         "CustomHealth": null,
@@ -2723,6 +2824,7 @@
     "Npcs": [
       {
         "NpcID": 879,
+        "NpcName": "tsorcRevamp/AncientDemonOfTheAbyss",
         "SpawnX": 6761.0,
         "SpawnY": 1081.0,
         "CustomHealth": null,
@@ -2752,6 +2854,7 @@
     "Npcs": [
       {
         "NpcID": 521,
+        "NpcName": "Ancient Vision",
         "SpawnX": 1460.0,
         "SpawnY": 1364.0,
         "CustomHealth": null,
@@ -2781,6 +2884,7 @@
     "Npcs": [
       {
         "NpcID": 290,
+        "NpcName": "Paladin",
         "SpawnX": 1734.0,
         "SpawnY": 1297.0,
         "CustomHealth": null,
@@ -2810,6 +2914,7 @@
     "Npcs": [
       {
         "NpcID": 898,
+        "NpcName": "tsorcRevamp/SerpentOfTheAbyssHead",
         "SpawnX": 1040.0,
         "SpawnY": 1865.0,
         "CustomHealth": null,
@@ -2839,6 +2944,7 @@
     "Npcs": [
       {
         "NpcID": 325,
+        "NpcName": "Mourning Wood",
         "SpawnX": 90.0,
         "SpawnY": 1893.0,
         "CustomHealth": null,
@@ -2868,6 +2974,7 @@
     "Npcs": [
       {
         "NpcID": 541,
+        "NpcName": "Sand Elemental",
         "SpawnX": 2021.0,
         "SpawnY": 351.0,
         "CustomHealth": null,
@@ -2897,6 +3004,7 @@
     "Npcs": [
       {
         "NpcID": 878,
+        "NpcName": "tsorcRevamp/Abysswalker",
         "SpawnX": 5781.0,
         "SpawnY": 1525.0,
         "CustomHealth": null,
@@ -2926,6 +3034,7 @@
     "Npcs": [
       {
         "NpcID": 586,
+        "NpcName": "Zombie Merman",
         "SpawnX": 2999.0,
         "SpawnY": 889.0,
         "CustomHealth": null,
@@ -2935,6 +3044,7 @@
       },
       {
         "NpcID": 587,
+        "NpcName": "Wandering Eye Fish",
         "SpawnX": 3009.0,
         "SpawnY": 889.0,
         "CustomHealth": null,
@@ -2978,6 +3088,7 @@
     "Npcs": [
       {
         "NpcID": 621,
+        "NpcName": "Blood Eel",
         "SpawnX": 2914.0,
         "SpawnY": 526.0,
         "CustomHealth": null,
@@ -3015,6 +3126,7 @@
     "Npcs": [
       {
         "NpcID": 620,
+        "NpcName": "Hemogoblin Shark",
         "SpawnX": 2765.0,
         "SpawnY": 620.0,
         "CustomHealth": null,
@@ -3052,6 +3164,7 @@
     "Npcs": [
       {
         "NpcID": 618,
+        "NpcName": "Dreadnautilus",
         "SpawnX": 2893.0,
         "SpawnY": 610.0,
         "CustomHealth": null,
@@ -3094,6 +3207,7 @@
     "Npcs": [
       {
         "NpcID": 125,
+        "NpcName": "Retinazer",
         "SpawnX": 2864.0,
         "SpawnY": 236.0,
         "CustomHealth": null,
@@ -3103,6 +3217,7 @@
       },
       {
         "NpcID": 126,
+        "NpcName": "Spazmatism",
         "SpawnX": 2904.0,
         "SpawnY": 236.0,
         "CustomHealth": null,
@@ -3132,6 +3247,7 @@
     "Npcs": [
       {
         "NpcID": 900,
+        "NpcName": "tsorcRevamp/SlograII",
         "SpawnX": 3181.0,
         "SpawnY": 1334.0,
         "CustomHealth": 9000,
@@ -3161,6 +3277,7 @@
     "Npcs": [
       {
         "NpcID": 345,
+        "NpcName": "Ice Queen",
         "SpawnX": 7635.0,
         "SpawnY": 1735.0,
         "CustomHealth": null,
@@ -3190,6 +3307,7 @@
     "Npcs": [
       {
         "NpcID": 222,
+        "NpcName": "Queen Bee",
         "SpawnX": 5954.0,
         "SpawnY": 401.0,
         "CustomHealth": null,
@@ -3227,6 +3345,7 @@
     "Npcs": [
       {
         "NpcID": 895,
+        "NpcName": "tsorcRevamp/OolacileKnight",
         "SpawnX": 5229.0,
         "SpawnY": 1254.0,
         "CustomHealth": null,
@@ -3256,6 +3375,7 @@
     "Npcs": [
       {
         "NpcID": 901,
+        "NpcName": "tsorcRevamp/TaurusKnight",
         "SpawnX": 5801.0,
         "SpawnY": 1381.0,
         "CustomHealth": null,
@@ -3285,6 +3405,7 @@
     "Npcs": [
       {
         "NpcID": 439,
+        "NpcName": "Lunatic Cultist",
         "SpawnX": 171.0,
         "SpawnY": 210.0,
         "CustomHealth": null,
@@ -3318,6 +3439,7 @@
     "Npcs": [
       {
         "NpcID": 50,
+        "NpcName": "King Slime",
         "SpawnX": 4749.0,
         "SpawnY": 639.0,
         "CustomHealth": null,
@@ -3347,6 +3469,7 @@
     "Npcs": [
       {
         "NpcID": 243,
+        "NpcName": "Ice Golem",
         "SpawnX": 7691.0,
         "SpawnY": 357.0,
         "CustomHealth": null,
@@ -3382,6 +3505,7 @@
     "Npcs": [
       {
         "NpcID": 668,
+        "NpcName": "Ancestral Spirit",
         "SpawnX": 7344.0,
         "SpawnY": 768.0,
         "CustomHealth": null,
@@ -3411,6 +3535,7 @@
     "Npcs": [
       {
         "NpcID": 325,
+        "NpcName": "Mourning Wood",
         "SpawnX": 7189.0,
         "SpawnY": 1650.0,
         "CustomHealth": null,
@@ -3420,6 +3545,7 @@
       },
       {
         "NpcID": 325,
+        "NpcName": "Mourning Wood",
         "SpawnX": 7164.0,
         "SpawnY": 1650.0,
         "CustomHealth": null,
@@ -3449,6 +3575,7 @@
     "Npcs": [
       {
         "NpcID": 779,
+        "NpcName": "tsorcRevamp/TheRage",
         "SpawnX": 3838.0,
         "SpawnY": 1425.0,
         "CustomHealth": null,
@@ -3458,6 +3585,7 @@
       },
       {
         "NpcID": 780,
+        "NpcName": "tsorcRevamp/TheSorrow",
         "SpawnX": 3879.0,
         "SpawnY": 1425.0,
         "CustomHealth": null,
@@ -3467,6 +3595,7 @@
       },
       {
         "NpcID": 777,
+        "NpcName": "tsorcRevamp/TheHunter",
         "SpawnX": 3858.0,
         "SpawnY": 1410.0,
         "CustomHealth": null,
@@ -3508,6 +3637,7 @@
     "Npcs": [
       {
         "NpcID": 87,
+        "NpcName": "Wyvern",
         "SpawnX": 7022.0,
         "SpawnY": 288.0,
         "CustomHealth": null,
@@ -3537,6 +3667,7 @@
     "Npcs": [
       {
         "NpcID": 127,
+        "NpcName": "Skeletron Prime",
         "SpawnX": 1765.0,
         "SpawnY": 1479.0,
         "CustomHealth": null,
@@ -3572,6 +3703,7 @@
     "Npcs": [
       {
         "NpcID": 541,
+        "NpcName": "Sand Elemental",
         "SpawnX": 950.0,
         "SpawnY": 1503.0,
         "CustomHealth": null,
@@ -3601,6 +3733,7 @@
     "Npcs": [
       {
         "NpcID": 692,
+        "NpcName": "tsorcRevamp/Death",
         "SpawnX": 8091.0,
         "SpawnY": 557.0,
         "CustomHealth": null,
@@ -3630,6 +3763,7 @@
     "Npcs": [
       {
         "NpcID": 806,
+        "NpcName": "tsorcRevamp/DiscipleOfAttraidies",
         "SpawnX": 6971.0,
         "SpawnY": 1113.0,
         "CustomHealth": null,
@@ -3659,6 +3793,7 @@
     "Npcs": [
       {
         "NpcID": 491,
+        "NpcName": "Flying Dutchman",
         "SpawnX": 597.0,
         "SpawnY": 848.0,
         "CustomHealth": null,
@@ -3688,6 +3823,7 @@
     "Npcs": [
       {
         "NpcID": 0,
+        "NpcName": "",
         "SpawnX": 3818.0,
         "SpawnY": 416.0,
         "CustomHealth": null,
@@ -3717,6 +3853,7 @@
     "Npcs": [
       {
         "NpcID": 0,
+        "NpcName": "",
         "SpawnX": 5029.0,
         "SpawnY": 770.0,
         "CustomHealth": null,
@@ -3746,6 +3883,7 @@
     "Npcs": [
       {
         "NpcID": 0,
+        "NpcName": "",
         "SpawnX": 5233.0,
         "SpawnY": 1422.0,
         "CustomHealth": null,
@@ -3775,6 +3913,7 @@
     "Npcs": [
       {
         "NpcID": 0,
+        "NpcName": "",
         "SpawnX": 4660.0,
         "SpawnY": 1432.0,
         "CustomHealth": null,
@@ -3804,6 +3943,7 @@
     "Npcs": [
       {
         "NpcID": 0,
+        "NpcName": "",
         "SpawnX": 5412.0,
         "SpawnY": 426.0,
         "CustomHealth": null,
@@ -3833,6 +3973,7 @@
     "Npcs": [
       {
         "NpcID": 0,
+        "NpcName": "",
         "SpawnX": 7877.0,
         "SpawnY": 855.0,
         "CustomHealth": null,
@@ -3862,6 +4003,7 @@
     "Npcs": [
       {
         "NpcID": 0,
+        "NpcName": "",
         "SpawnX": 1401.0,
         "SpawnY": 299.0,
         "CustomHealth": null,
@@ -3891,93 +4033,9 @@
     "Npcs": [
       {
         "NpcID": 0,
+        "NpcName": "",
         "SpawnX": 218.0,
         "SpawnY": 1027.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ],
-    "ExtraLootItems": null,
-    "ExtraLootAmounts": null
-  },
-  {
-    "EventID": "3a5739f6-b9eb-44f7-adf6-9c7ab46f9e1e",
-    "CenterX": 4768.0,
-    "CenterY": 863.0,
-    "Radius": 160000.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": true,
-    "TextToDisplay": null,
-    "TextColorHex": null,
-    "WorldCondition": null,
-    "MapCondition": "NormalModeCustomCondition",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcID": 872,
-        "SpawnX": 4772.0,
-        "SpawnY": 868.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      },
-      {
-        "NpcID": 890,
-        "SpawnX": 4764.0,
-        "SpawnY": 867.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      },
-      {
-        "NpcID": 426,
-        "SpawnX": 4760.0,
-        "SpawnY": 868.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      },
-      {
-        "NpcID": 797,
-        "SpawnX": 4779.0,
-        "SpawnY": 868.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ],
-    "ExtraLootItems": null,
-    "ExtraLootAmounts": null
-  },
-  {
-    "EventID": "18e62912-b218-4d96-b25c-68d9b9c6dba4",
-    "CenterX": 4897.0,
-    "CenterY": 842.0,
-    "Radius": 57600.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": true,
-    "TextToDisplay": null,
-    "TextColorHex": null,
-    "WorldCondition": "OnlyAdventureMapCondition",
-    "MapCondition": "",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcID": 939,
-        "SpawnX": 4888.0,
-        "SpawnY": 842.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
@@ -4005,37 +4063,9 @@
     "Npcs": [
       {
         "NpcID": 872,
+        "NpcName": null,
         "SpawnX": 4930.0,
         "SpawnY": 855.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ],
-    "ExtraLootItems": null,
-    "ExtraLootAmounts": null
-  },
-  {
-    "EventID": "4c3553ff-9e34-444d-b956-4374fabfeb7b",
-    "CenterX": 4839.0,
-    "CenterY": 857.0,
-    "Radius": 160000.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": false,
-    "TextToDisplay": null,
-    "TextColorHex": null,
-    "WorldCondition": "OnlyAdventureMapCondition",
-    "MapCondition": "",
-    "CustomAction": null,
-    "SingleNpcMarker": true,
-    "Npcs": [
-      {
-        "NpcID": 31,
-        "SpawnX": 4839.0,
-        "SpawnY": 857.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
@@ -4053,7 +4083,7 @@
     "Square": false,
     "TriggerDust": 27,
     "VisibleRing": true,
-    "SaveOnCompletion": false,
+    "SaveOnCompletion": true,
     "TextToDisplay": null,
     "TextColorHex": null,
     "WorldCondition": "OnlyAdventureMapCondition",
@@ -4063,8 +4093,109 @@
     "Npcs": [
       {
         "NpcID": 31,
+        "NpcName": null,
         "SpawnX": 4844.0,
         "SpawnY": 851.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItems": null,
+    "ExtraLootAmounts": null
+  },
+  {
+    "EventID": "13f06df9-8bfc-42bb-9058-d3ca54f0b2df",
+    "CenterX": 4800.0,
+    "CenterY": 826.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcID": 891,
+        "NpcName": "tsorcRevamp/HydrisNecromancer",
+        "SpawnX": 4812.0,
+        "SpawnY": 838.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcID": 890,
+        "NpcName": "tsorcRevamp/HydrisElemental",
+        "SpawnX": 4791.0,
+        "SpawnY": 835.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItems": null,
+    "ExtraLootAmounts": null
+  },
+  {
+    "EventID": "ccf09bb3-6aa0-43b1-812c-666030152a96",
+    "CenterX": 4910.0,
+    "CenterY": 850.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcID": 188,
+        "NpcName": "Zombie",
+        "SpawnX": 4889.0,
+        "SpawnY": 867.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcID": 188,
+        "NpcName": "Zombie",
+        "SpawnX": 4885.0,
+        "SpawnY": 847.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcID": 890,
+        "NpcName": "tsorcRevamp/HydrisElemental",
+        "SpawnX": 4915.0,
+        "SpawnY": 849.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcID": 188,
+        "NpcName": "Zombie",
+        "SpawnX": 4878.0,
+        "SpawnY": 847.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

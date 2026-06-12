@@ -517,7 +517,7 @@ namespace tsorcRevamp.NPCs
                 bool sf4Hold = intent.HoldForAttack || (isArcher && globalNPC.ArcherAimDirection != 0f);
                 // SeizesBody guard: a pounce/dodge owns the body this frame → don't let A* pathing fight the arc.
                 if (!intent.SeizesBody)
-                    SmartFighter4AI.Run(npc, topSpeed, acceleration, doorBreakingDamage, 700f, movementOnly: true, holdForAttack: sf4Hold);
+                    SmartFighter4AI.Run(npc, topSpeed, acceleration, doorBreakingDamage, 700f, movementOnly: true, holdForAttack: sf4Hold, brakingPower: brakingPower);
                 lineOfSight = Main.player[npc.target].CanHit(npc); // refresh for the log + triggers
             }
             else

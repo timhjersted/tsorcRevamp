@@ -126,9 +126,11 @@ namespace tsorcRevamp.NPCs
         // driver. When true, BasicAI already advanced the shared FSM and fired combat this frame, so SF4 must NOT
         // re-run UpdateState (side effects → double give-up clock) or fire its own attacks (double shot) — it
         // reads g.PursuitState and only moves. holdForAttack = combat wants to stop-and-fire → hold this frame.
-        // Defaults false → standalone behavior (Invaders, TibianValkyrieSmart4 testbed) is byte-identical.
+        // Defaults false → standalone behavior (Invaders, TibianValkyrieSmart4 testbed) still owns its own
+        // combat, but shares the grounded overspeed brake below.
         public static void Run(NPC npc, float topSpeed = 1.55f, float acceleration = 0.10f,
-            int doorBreakingDamage = 4, float attackRange = 700f, bool movementOnly = false, bool holdForAttack = false)
+            int doorBreakingDamage = 4, float attackRange = 700f, bool movementOnly = false, bool holdForAttack = false,
+            float brakingPower = 0.2f)
         {
             Player player = Main.player[npc.target];
             if (!player.active || player.dead)
@@ -159,6 +161,11 @@ namespace tsorcRevamp.NPCs
             // wall" bug). Rope climb legitimately uses noTileCollide and is excluded here.
             if (npc.noTileCollide && !s.PlatformPassActive && !npc.noGravity) npc.noTileCollide = false;
             bool grounded = IsGrounded(npc);
+
+            // Landing from an SF4 jump can leave much more horizontal speed than normal walking
+            // allows. Bleed that overspeed immediately while grounded so path jumps do not feel
+            // like ice-skating after touchdown.
+            ApplyGroundedOverspeedBrake(npc, topSpeed, brakingPower);
 
             // Airborne X-velocity lock — only active during a committed jump action.
             // SF4: re-assert the exact launch velocity computed by ComputeJumpArc so the
@@ -1892,6 +1899,31 @@ namespace tsorcRevamp.NPCs
                 npc.velocity.X -= acceleration;
                 if (npc.velocity.X < t) npc.velocity.X = t;
             }
+        }
+
+        private static void ApplyGroundedOverspeedBrake(NPC npc, float topSpeed, float brakingPower)
+        {
+            if (npc.velocity.Y != 0f) return;
+
+            float speed = Math.Abs(npc.velocity.X);
+            if (speed <= topSpeed) return;
+
+            float sign = Math.Sign(npc.velocity.X);
+            float excess = speed - topSpeed;
+
+            // Old fighterAI multiplied grounded overspeed by 0.8. Keep that tight feel, but
+            // also guarantee at least brakingPower worth of excess is removed each frame.
+            float reducedByMultiplier = speed * 0.8f;
+            float reducedByBrake = speed - Math.Max(brakingPower, 0.05f);
+            float targetSpeed = Math.Max(topSpeed, Math.Min(reducedByMultiplier, reducedByBrake));
+
+            // If only a tiny bit of excess remains, snap to walk speed instead of wobbling.
+            if (targetSpeed - topSpeed < Math.Max(0.05f, excess * 0.15f))
+            {
+                targetSpeed = topSpeed;
+            }
+
+            npc.velocity.X = sign * targetSpeed;
         }
 
         // ================================================================================

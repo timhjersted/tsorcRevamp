@@ -118,10 +118,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
-                bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
+                bool inProtectedAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
                                           (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
                                           (NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
-                                          (NPC.ai[1] >= 725f && NPC.ai[1] <= 925f) ||
+                                          (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f) ||
                                           (NPC.ai[2] >= 165f && NPC.ai[2] <= 235f);
                 if (!inProtectedAttack)
                 {
@@ -135,14 +135,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.ai[1]++;
                 NPC.ai[2]++;
 
-                bool inActiveAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
+                bool inActiveAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 485f) ||
-                                       (NPC.ai[1] >= 725f && NPC.ai[1] <= 925f) ||
+                                       (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f) ||
                                        (NPC.ai[2] >= 165f && NPC.ai[2] <= 235f);
 
                 // Gate projectile firing on LOS — prevents shooting through floors/ceilings
                 bool hasPlayerLOS = Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1);
-                if (hasPlayerLOS && (NPC.ai[1] == 180f || NPC.ai[1] == 325f || NPC.ai[1] == 375f || NPC.ai[1] == 480f || NPC.ai[1] == 750f || NPC.ai[1] == 850f || NPC.ai[1] == 925f))
+                if (hasPlayerLOS && (NPC.ai[1] == 210f || NPC.ai[1] == 325f || NPC.ai[1] == 375f || NPC.ai[1] == 480f || NPC.ai[1] == 750f || NPC.ai[1] == 850f || NPC.ai[1] == 955f))
                 {
                     tsorcRevampAIs.RegisterFighterAttack(NPC);
                 }
@@ -190,7 +190,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Skip spear if player is at melee range — it's a ranged weapon
                 if (NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f)
                 {
-                    NPC.ai[1] = 200f;
+                    NPC.ai[1] = 230f;
                     NPC.netUpdate = true;
                 }
 
@@ -198,7 +198,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 framesSinceStoredPosition++;
 
                 // Spear Attack: Get targetPosition 
-                if (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f)
+                if (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f)
                 {
                     NPC.knockBackResist = 0f;
                     // Calculate the direction towards the stored player position.
@@ -209,7 +209,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Spear Telegraph
-                if (NPC.ai[1] == 155f)
+                if (NPC.ai[1] == 180f)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -234,7 +234,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Spear Attack Far
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400)
+                if (NPC.ai[1] == 210f && NPC.Distance(player.Center) > 400)
                 {
                     NPC.TargetClosest(true);
                     float spearProjectileSpeed = Main.rand.NextFloat(16, 19f);
@@ -253,7 +253,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     targetPosition = Vector2.Zero;
 
                     // Move closer to next attack
-                    NPC.ai[1] = 200f;
+                    NPC.ai[1] = 230f;
 
                     // Chance to fire Spear again
                     if (Main.rand.NextBool(2))
@@ -263,7 +263,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 // Spear Attack Close
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400)
+                if (NPC.ai[1] == 210f && NPC.Distance(player.Center) <= 400)
                 {
                     NPC.TargetClosest(true);
                     float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
@@ -282,7 +282,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     targetPosition = Vector2.Zero;
 
                     // Move closer to next attack
-                    NPC.ai[1] = 200f;
+                    NPC.ai[1] = 230f;
 
                     // Chance to fire Spear again
                     if (Main.rand.NextBool(3))
@@ -293,17 +293,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Poison Attack 1 Telegraph 
-                // Part 1: Dusts
-                if (NPC.ai[1] >= 225 && NPC.ai[1] <= 300)
-                {
-                    if (Main.rand.NextBool(2))
-                    {
-                        int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Yellow, 2f);
-                        Main.dust[dust2].noGravity = true;
-                    }
-                }
-
-                // Part 2: Flash 
                 if (NPC.ai[1] == 300)
                 {
                     Vector2 spawnPosition = NPC.position;
@@ -400,17 +389,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                 }
-                // Poison Attack 3 Telegraph: Dusts
-                // Part 1: Dusts
-                if (NPC.ai[1] >= 400 && NPC.ai[1] <= 449)
-                {
-                    if (Main.rand.NextBool(2))
-                    {
-                        int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Yellow, 2f);
-                        Main.dust[dust2].noGravity = true;
-                    }
-                }
-                // Part 2: Flash
+                // Poison Attack 3 Telegraph
                 if (NPC.ai[1] == 450)
                 {
                     Vector2 spawnPosition = NPC.position;
@@ -505,7 +484,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Code for Bomb Telegraph & Attack: 
-                if (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f)
+                if (NPC.ai[1] >= 925f && NPC.ai[1] <= 955f)
                 {
                     NPC.knockBackResist = 0f;
                     // Calculate the direction towards the stored player position.
@@ -515,7 +494,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Bomb Telegraph
-                if (NPC.ai[1] == 900f)
+                if (NPC.ai[1] == 925f)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -541,7 +520,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 }
                 // Bomb Attack Far
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400)
+                if (NPC.ai[1] == 955f && NPC.Distance(player.Center) > 400)
                 {
                     float bombProjectileSpeed = 14f;
 
@@ -570,7 +549,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 // Bomb Attack Close
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400)
+                if (NPC.ai[1] == 955f && NPC.Distance(player.Center) <= 400)
                 {
                     float bombProjectileSpeed = 9f;
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
@@ -822,6 +801,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Draw Attack Sprites
         static Texture2D spearTexture;
         static Texture2D bombTexture;
+        static Texture2D magicBallTexture;
         static Texture2D handTexture;
 
         // --- Hand-overlay experiment ---
@@ -834,22 +814,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float FrameH = 56f;
         static readonly Vector2[] HandPixel = new Vector2[16]
         {
-            new Vector2(58, 42), // 0 idle
+            new Vector2(47, 42), // 0 idle
             new Vector2(33, 12), // 1 jump — hands raised near the head
-            new Vector2(57, 42), // 2
-            new Vector2(58, 43), // 3
-            new Vector2(59, 43), // 4
-            new Vector2(60, 44), // 5
-            new Vector2(60, 43), // 6
-            new Vector2(59, 42), // 7
-            new Vector2(58, 42), // 8
-            new Vector2(57, 42), // 9
-            new Vector2(57, 43), // 10
-            new Vector2(58, 44), // 11
-            new Vector2(59, 44), // 12
-            new Vector2(60, 43), // 13
-            new Vector2(59, 42), // 14
-            new Vector2(58, 42), // 15
+            new Vector2(40, 35), // 2
+            new Vector2(40, 35), // 3
+            new Vector2(41, 35), // 4
+            new Vector2(41, 35), // 5
+            new Vector2(42, 35), // 6
+            new Vector2(42, 35), // 7
+            new Vector2(43, 35), // 8
+            new Vector2(43, 35), // 9
+            new Vector2(43, 35), // 10
+            new Vector2(43, 35), // 11
+            new Vector2(42, 35), // 12
+            new Vector2(42, 35), // 13
+            new Vector2(41, 35), // 14
+            new Vector2(41, 35), // 15
         };
         // Global correction if the whole overlay is consistently off by a few px (tune once, applies to all frames).
         static readonly Vector2 OverlayFudge = new Vector2(0f, 0f);
@@ -857,6 +837,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Grip pixel ON each sprite = the point that should land on the knight's hand (rotation pivot for the weapon).
         static readonly Vector2 SpearGripOrigin = new Vector2(7f, 31f);  // BlackKnightSpear (Valkyrie's spear) is 14x62, tip up — grip the MIDDLE (was 7,70 = the butt of the old 14x84 BlackThrowingSpear)
         static readonly Vector2 BombGripOrigin = new Vector2(11f, 18f);  // EnemyFirebomb is 22x24, hand near the bottom
+        static readonly Vector2 MagicBallGripOrigin = new Vector2(8f, 8f);
         static readonly Vector2 HandGripOrigin = new Vector2(7f, 4f);    // RedKnight_Hand is 14x8, centered on the grip
 
         // World position of the body's gripping hand for the current animation frame.
@@ -871,7 +852,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // Jump frame uses a separate raised-hand anchor.
             if (frame == 1)
             {
-                fp = new Vector2(58, 33);
+                fp = new Vector2(44, 23);
             }
             // Map a 70x56 frame pixel to world: horizontally centered on the hitbox, bottom of frame 4px below the hitbox bottom.
             float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
@@ -891,6 +872,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyFirebomb");
             }
 
+            if (magicBallTexture == null)
+            {
+                magicBallTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemySpellAbyssPoisonStrikeBall");
+            }
+
             if (handTexture == null)
             {
                 // Loose PNG (no content class): ImmediateLoad + full path so .Value is the real texture.
@@ -900,11 +886,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             SpriteEffects handEffects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             // Spear
-            if (NPC.ai[1] >= 120 && NPC.ai[1] <= 180f)
+            if (NPC.ai[1] >= 120 && NPC.ai[1] <= 210f)
             {
                 Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
-                Vector2 spearAimPoint = NPC.ai[1] >= 155f ? storedPlayerPosition : Main.player[NPC.target].Center;
-                float rotation = UsefulFunctions.Aim(NPC.Center, spearAimPoint, 1).ToRotation() + MathHelper.PiOver2;
+                Vector2 spearAim = NPC.ai[1] >= 180f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
+                float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
 
                 // Weapon behind the hand, pivoting on the grip so it aims at the throw target.
                 spriteBatch.Draw(spearTexture, handWorld, null, drawColor, rotation, SpearGripOrigin, NPC.scale, SpriteEffects.None, 0);
@@ -914,14 +900,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
                 }
             }
+            // Magic ball
+            if (magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] >= 350 && NPC.ai[1] <= 375f) || (NPC.ai[1] >= 400 && NPC.ai[1] <= 480f)))
+            {
+                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                spriteBatch.Draw(magicBallTexture, handWorld, null, drawColor, 0f, MagicBallGripOrigin, 1f, SpriteEffects.None, 0);
+                if (Main.rand.NextBool(2))
+                {
+                    Dust dust = Dust.NewDustPerfect(CurrentHandWorld() + Main.rand.NextVector2Circular(6f, 6f), DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120, default, 0.65f);
+                    dust.noGravity = true;
+                }
+                if (handTexture != null)
+                {
+                    spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
+                }
+            }
             // Bomb
             if (NPC.ai[1] >= 865)
             {
                 Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
-                Vector2 bombAimPoint = NPC.ai[1] >= 900f ? storedPlayerPosition : Main.player[NPC.target].Center;
-                float rotation = UsefulFunctions.Aim(NPC.Center, bombAimPoint, 1).ToRotation() + MathHelper.PiOver2;
+                Vector2 bombAim = NPC.ai[1] >= 925f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
+                float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
 
-                spriteBatch.Draw(bombTexture, handWorld, null, drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(bombTexture, handWorld, null, drawColor, rotation, BombGripOrigin, 1f, SpriteEffects.None, 0);
                 if (handTexture != null)
                 {
                     spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
