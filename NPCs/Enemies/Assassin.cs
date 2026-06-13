@@ -47,8 +47,15 @@ namespace tsorcRevamp.NPCs.Enemies
             // Step 6 archer levers: blink to elevated firing spots, reposition toward last-known before patrolling.
             globalNPC.PrefersHighGround = true;
             globalNPC.RemembersLastKnownPos = true;
+            globalNPC.StandoffDistance = 15;
             globalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
             globalNPC.CanUseRopes = true;
+            globalNPC.CanGoInvisible = true;
+            globalNPC.InvisibleAlpha = 220;
+            globalNPC.InvisibilityStyle = InvisibilityStyle.Predator;
+            globalNPC.GoInvisibleChance = 60;
+            globalNPC.GoVisibleChance = 250;
+            globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
@@ -212,7 +219,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             NPC.timeLeft = 100;
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .05f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .05f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green, telegraphTicks: 30);
         }
 
 

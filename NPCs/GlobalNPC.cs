@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -81,6 +82,19 @@ namespace tsorcRevamp.NPCs
         Relaxed,    // gives up, wanders into Patrol a few seconds, THEN blinks. Long cooldown.
         Normal,     // blinks at the disengage point instead of patrolling (≈ legacy canTeleport). Medium cooldown.
         Aggressive  // blinks the moment LOS is lost (short debounce), bypassing Search/Patrol. Short cooldown.
+    }
+
+    public enum TeleportVisualStyle
+    {
+        Default,    // one burst of white smoke + shockwave flash (current behavior)
+        GreySmoke,  // heavy grey smoke cloud lingering ~1.5s at both exit and entry
+        Fire,       // fire + dark smoke cloud lingering ~1.5s at both exit and entry
+    }
+
+    public enum InvisibilityStyle
+    {
+        Random,
+        Predator
     }
 
     public partial class tsorcRevampGlobalNPC : GlobalNPC
@@ -253,8 +267,12 @@ namespace tsorcRevamp.NPCs
         public int FighterRangedStandShotsRemaining;  // >0 = standing-fire mode; decrement each shot, exit when zero
         public int FighterNoLosPursuitBoostTimer;
 
-        // Vertical jump power ceiling — default 8f reproduces vanilla hardcoded behavior at base stats
-        public float MaxJumpPower = 8f;
+        // Vertical jump power ceiling. Default 9f (apex ≈ 8.4 tiles) so a base-stat enemy can clear a
+        // typical 6-7 tile ledge: ComputeJumpArc requires apex = rise + 1-tile lip, which for a 6-tile
+        // rise needs power ≈ 8.2 — the old default of 8 fell just short and made the jump "infeasible",
+        // so default enemies could never be issued a 6-tile climb. Per-enemy SetDefaults still overrides
+        // (e.g. Assassin at 10f) for nimbler or heavier jumpers.
+        public float MaxJumpPower = 9f;
         // Horizontal momentum added when jumping a gap
         public float MaxJumpBoost = 4f;
         // Whether this NPC can perform a mid-air second jump
@@ -351,6 +369,69 @@ namespace tsorcRevamp.NPCs
         public bool PrefersHighGround = false;
         // Set once TeleportChargesRemaining has been seeded from TeleportMaxCharges (so SetDefaults overrides win).
         public bool TeleportChargesInitialized = false;
+
+        // === Health-scaled top speed ===
+        // When HealthScaledSpeedBase >= 0, BasicAI replaces the topSpeed parameter each frame with:
+        //   speed = (life/lifeMax) * HealthScaledSpeedMultiplier + HealthScaledSpeedBase
+        // The multiplier uses the 0.0–1.0 life fraction (NOT 0–100 integer percent).
+        // Negative multiplier → enemy speeds up as it loses HP (most common usage).
+        // Example: base=2, multiplier=-1.5 → 0.5 at full HP, 2.0 near death.
+        //   (Equivalent to the legacy inline: intPercent(0-100) * -0.015 + 2)
+        // HealthScaledSpeedBase = -1 (default) disables the feature; the FighterAI topSpeed param is used as-is.
+        public float HealthScaledSpeedBase = -1f;
+        public float HealthScaledSpeedMultiplier = -1.5f;
+
+        // Convenience method for enemies not yet on FighterAI that still want the formula.
+        public float ComputeHealthScaledSpeed(NPC npc, float fallback) =>
+            HealthScaledSpeedBase >= 0
+                ? (npc.life / (float)npc.lifeMax) * HealthScaledSpeedMultiplier + HealthScaledSpeedBase
+                : fallback;
+
+        // === Standoff distance ===
+        // When > 0, PostAI zeroes horizontal velocity while the NPC is grounded, has LOS to its
+        // target, and is within this many tiles horizontally.  Use for ranged enemies that should
+        // stop advancing once in range rather than walking into the player.
+        public int StandoffDistance = 0;
+
+        // === Teleport visual style ===
+        public TeleportVisualStyle TeleportVisualStyle = TeleportVisualStyle.Default;
+        // Frames remaining before NPC position snaps to TeleportTelegraph (smoke/fire styles only).
+        // Set to 90 by ExecuteQueuedTeleport so the NPC moves 1.5s into the 2s smoke cloud.
+        public int TeleportAppearanceTimer = 0;
+
+        // === Ally heal aura ===
+        // When true, PostAI has a 1-in-HealAlliesChance chance each frame to restore
+        // HealAlliesPercent% of max HP to every enemy NPC within HealAlliesRange tiles.
+        public bool CanHealAllies = false;
+        public int HealAlliesChance = 500;   // 1-in-N per frame
+        public int HealAlliesRange = 50;     // tile radius
+        public int HealAlliesPercent = 10;   // % of lifeMax restored per proc
+
+        // === Passive random self-heal ===
+        // When true, PostAI has a 1-in-SelfHealChance chance per frame to restore SelfHealAmount HP,
+        // capped at lifeMax.  Fires netUpdate so MP clients stay in sync.
+        public bool CanSelfHeal = false;
+        // HP restored per proc (default 5).
+        public int SelfHealAmount = 5;
+        // 1-in-N chance per frame to proc (default 250 ≈ once every ~4 seconds).
+        public int SelfHealChance = 250;
+
+        // === Random-flicker invisibility ===
+        // When true, PostAI randomly flickers the NPC between visible and nearly-transparent each frame,
+        // and snaps it fully visible on hit.  All alpha changes fire netUpdate so MP clients stay in sync.
+        public bool CanGoInvisible = false;
+        // Target alpha when hidden (0 = opaque, 255 = invisible; ~205-230 = ghost-like but still targetable).
+        public int InvisibleAlpha = 210;
+        // 1-in-N chance per frame to go invisible (lower = hides more often).
+        public int GoInvisibleChance = 100;
+        // 1-in-N chance per frame to snap back to fully visible (lower = reappears more often).
+        public int GoVisibleChance = 200;
+        public InvisibilityStyle InvisibilityStyle = InvisibilityStyle.Random;
+        public bool IsInvisible = false;
+        private const int HunterVisionInvisibleAlpha = 50;
+        private int InvisibilityRevealTimer = 0;
+        private readonly Vector2[] InvisibilityTrailPositions = new Vector2[8];
+        private bool InvisibilityTrailInitialized = false;
 
         public bool needsNetUpdate;
         public float ProjectileTimer;
@@ -467,6 +548,132 @@ namespace tsorcRevamp.NPCs
             return base.PreAI(npc);
         }
 
+        private void UpdateInvisibility(NPC npc)
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (npc.justHit)
+                {
+                    if (InvisibilityStyle == InvisibilityStyle.Predator)
+                    {
+                        InvisibilityRevealTimer = 90;
+                    }
+                    SetInvisible(npc, false);
+                }
+                else if (InvisibilityStyle == InvisibilityStyle.Predator && InvisibilityRevealTimer > 0)
+                {
+                    InvisibilityRevealTimer--;
+                    SetInvisible(npc, false);
+                }
+                else if (InvisibilityStyle == InvisibilityStyle.Predator)
+                {
+                    SetInvisible(npc, ShouldPredatorBeInvisible(npc));
+                }
+                else if (Main.rand.NextBool(GoVisibleChance))
+                {
+                    SetInvisible(npc, false);
+                }
+                else if (Main.rand.NextBool(GoInvisibleChance))
+                {
+                    SetInvisible(npc, true);
+                }
+                else
+                {
+                    ApplyInvisibilityAlpha(npc, false);
+                }
+            }
+            else
+            {
+                ApplyInvisibilityAlpha(npc, false);
+            }
+        }
+
+        private void SetInvisible(NPC npc, bool invisible)
+        {
+            if (IsInvisible != invisible)
+            {
+                IsInvisible = invisible;
+                npc.netUpdate = true;
+            }
+
+            ApplyInvisibilityAlpha(npc, true);
+        }
+
+        private void ApplyInvisibilityAlpha(NPC npc, bool syncAlphaChanges)
+        {
+            int targetAlpha = IsInvisible ? (LocalPlayerRevealsInvisibleNPCs() ? HunterVisionInvisibleAlpha : InvisibleAlpha) : 0;
+
+            if (npc.alpha != targetAlpha)
+            {
+                npc.alpha = targetAlpha;
+                if (syncAlphaChanges)
+                {
+                    npc.netUpdate = true;
+                }
+            }
+        }
+
+        private bool LocalPlayerRevealsInvisibleNPCs()
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return false;
+            }
+
+            Player player = Main.LocalPlayer;
+            return player != null && player.active && !player.dead && (player.detectCreature || player.HasBuff(BuffID.Hunter));
+        }
+
+        private bool ShouldPredatorBeInvisible(NPC npc)
+        {
+            if (IsUsingAttackTell())
+            {
+                return false;
+            }
+
+            return Math.Abs(npc.velocity.X) > 0.25f || Math.Abs(npc.velocity.Y) > 0.25f;
+        }
+
+        private bool IsUsingAttackTell()
+        {
+            if (ArcherAimDirection != 0f || FighterRangedStandShotsRemaining > 0 || TeleportCountdown > 0 || TeleportAppearanceTimer > 0)
+            {
+                return true;
+            }
+
+            if (AttackList.Count > 0 && AttackIndex >= 0 && AttackIndex < AttackList.Count)
+            {
+                int telegraphStart = Math.Max(0, CurrentAttack.timerCap - 24);
+                return ProjectileTimer >= telegraphStart;
+            }
+
+            return false;
+        }
+
+        private void UpdateInvisibilityTrail(NPC npc)
+        {
+            if (!InvisibilityTrailInitialized)
+            {
+                for (int i = 0; i < InvisibilityTrailPositions.Length; i++)
+                {
+                    InvisibilityTrailPositions[i] = npc.Center;
+                }
+                InvisibilityTrailInitialized = true;
+                return;
+            }
+
+            if (Vector2.DistanceSquared(InvisibilityTrailPositions[0], npc.Center) < 4f)
+            {
+                return;
+            }
+
+            for (int i = InvisibilityTrailPositions.Length - 1; i > 0; i--)
+            {
+                InvisibilityTrailPositions[i] = InvisibilityTrailPositions[i - 1];
+            }
+            InvisibilityTrailPositions[0] = npc.Center;
+        }
+
         public override void PostAI(NPC npc)
         {
             // Confusion: the mod's custom AI computes movement toward the player and ignores npc.confused, so a
@@ -483,6 +690,50 @@ namespace tsorcRevamp.NPCs
                 npc.spriteDirection = away;
             }
             RunningCustomFighterAI = false;
+
+            if (StandoffDistance > 0 && npc.HasValidTarget && npc.velocity.Y == 0)
+            {
+                Player standoffTarget = Main.player[npc.target];
+                if (Collision.CanHitLine(npc.position, npc.width, npc.height, standoffTarget.position, standoffTarget.width, standoffTarget.height)
+                    && Math.Abs(npc.Center.X - standoffTarget.Center.X) < StandoffDistance * 16f)
+                {
+                    npc.velocity.X = 0;
+                }
+            }
+
+            if (CanHealAllies && Main.rand.NextBool(HealAlliesChance) && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float healRange = HealAlliesRange * 16f;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC ally = Main.npc[i];
+                    if (!ally.active || ally.whoAmI == npc.whoAmI || ally.friendly || ally.life <= 0 || ally.life >= ally.lifeMax)
+                        continue;
+                    if (ally.Distance(npc.Center) > healRange)
+                        continue;
+                    int heal = Math.Max(1, (int)(ally.lifeMax * (HealAlliesPercent / 100f)));
+                    ally.life = Math.Min(ally.life + heal, ally.lifeMax);
+                    ally.HealEffect(heal);
+                    ally.netUpdate = true;
+                    if (Main.netMode != NetmodeID.Server)
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), ally.Center, Microsoft.Xna.Framework.Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.HealSpriteVFX>(), 0, 0);
+                }
+            }
+
+            if (CanSelfHeal && Main.rand.NextBool(SelfHealChance))
+            {
+                npc.life = Math.Min(npc.life + SelfHealAmount, npc.lifeMax);
+                npc.HealEffect(SelfHealAmount);
+                npc.netUpdate = true;
+                if (Main.netMode != NetmodeID.Server)
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Microsoft.Xna.Framework.Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.HealSpriteVFX>(), 0, 0);
+            }
+
+            if (CanGoInvisible)
+            {
+                UpdateInvisibility(npc);
+                UpdateInvisibilityTrail(npc);
+            }
 
             if (!CanPassThroughWalls)
                 return;
@@ -515,7 +766,7 @@ namespace tsorcRevamp.NPCs
             if (GhostWallTimer >= 25)
             {
                 // Only queue if no teleport is already in progress.
-                if (TeleportCountdown == 0 && TryGhostWallTeleport(npc))
+                if (TeleportCountdown == 0 && TeleportAppearanceTimer == 0 && TryGhostWallTeleport(npc))
                     ProjectileTimer = 0f;
                 // Reset regardless — let FighterAI's direction-flip move the NPC
                 // away before the next accumulation attempt starts.
@@ -675,7 +926,9 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(DodgeTimer);
             binaryWriter.Write(ProjectileTimer);
             binaryWriter.Write(TeleportCountdown);
+            binaryWriter.Write(TeleportAppearanceTimer);
             binaryWriter.WriteVector2(TeleportTelegraph);
+            binaryWriter.Write(IsInvisible);
 
             binaryWriter.Write(Aggression);
             binaryWriter.Write(Patience);
@@ -685,6 +938,14 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(CastingSpeed);
             binaryWriter.Write(Strength);
             binaryWriter.Write(Agility);
+
+            // FSM state — divergence here causes lasting behavioral differences on clients
+            binaryWriter.Write((byte)PursuitState);
+            binaryWriter.Write(DisengageTimer);
+            binaryWriter.WriteVector2(LastKnownPlayerPos);
+            // Permanent resources — charge counts deplete and never refill, so they must stay in sync
+            binaryWriter.Write(TeleportChargesRemaining);
+            binaryWriter.Write(AttackIndex);
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
@@ -693,7 +954,9 @@ namespace tsorcRevamp.NPCs
             DodgeTimer = binaryReader.ReadInt32();
             ProjectileTimer = binaryReader.ReadSingle();
             TeleportCountdown = binaryReader.ReadInt32();
+            TeleportAppearanceTimer = binaryReader.ReadInt32();
             TeleportTelegraph = binaryReader.ReadVector2();
+            IsInvisible = binaryReader.ReadBoolean();
 
             Aggression = binaryReader.ReadSingle();
             Patience = binaryReader.ReadSingle();
@@ -703,6 +966,12 @@ namespace tsorcRevamp.NPCs
             CastingSpeed = binaryReader.ReadSingle();
             Strength = binaryReader.ReadSingle();
             Agility = binaryReader.ReadSingle();
+
+            PursuitState = (PursuitState)binaryReader.ReadByte();
+            DisengageTimer = binaryReader.ReadInt32();
+            LastKnownPlayerPos = binaryReader.ReadVector2();
+            TeleportChargesRemaining = binaryReader.ReadInt32();
+            AttackIndex = binaryReader.ReadInt32();
         }
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
@@ -2003,6 +2272,16 @@ namespace tsorcRevamp.NPCs
         Texture2D ScorchMarksSprite;
         Texture2D ShockMarksSprite;
         Texture2D SunburnMarksSprite;
+        public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            if (CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs())
+            {
+                return false;
+            }
+
+            return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
+        }
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (npc.HasBuff(ModContent.BuffType<LionheartMark>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks > 0)
@@ -2190,6 +2469,49 @@ namespace tsorcRevamp.NPCs
                 Main.spriteBatch.Draw(barFill, fillDestination, Color.DodgerBlue);
             }
             return preDraw;
+        }
+
+        public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (!CanGoInvisible || !IsInvisible || LocalPlayerRevealsInvisibleNPCs())
+            {
+                return;
+            }
+
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Vector2 drawPosition = npc.Center - screenPos + new Vector2(0f, npc.gfxOffY);
+            Vector2 origin = npc.frame.Size() / 2f;
+            float time = (float)Main.timeForVisualEffects;
+            float baseOpacity = MathHelper.Clamp((255 - InvisibleAlpha) / 255f, 0.06f, 0.35f);
+            float endOpacity = MathHelper.Clamp((255 - Math.Min(InvisibleAlpha + 20, 250)) / 255f, 0.02f, baseOpacity);
+
+            int trailCount = InvisibilityTrailPositions.Length;
+            for (int k = trailCount - 1; k >= 0; k--)
+            {
+                if (InvisibilityTrailPositions[k] == Vector2.Zero)
+                {
+                    continue;
+                }
+
+                float fade = (trailCount - k) / (float)trailCount;
+                Vector2 trailPosition = InvisibilityTrailPositions[k] - screenPos + new Vector2(0f, npc.gfxOffY);
+                Color trailColor = Color.White * MathHelper.Lerp(endOpacity, baseOpacity, fade);
+                spriteBatch.Draw(texture, trailPosition, npc.frame, trailColor, npc.rotation, origin, npc.scale * (1f - k * 0.035f), effects, 0f);
+            }
+
+            UsefulFunctions.StartAdditiveSpritebatch(ref spriteBatch);
+
+            float waveX = (float)Math.Sin(time * 0.16f + npc.whoAmI) * 2.2f;
+            float waveY = (float)Math.Cos(time * 0.11f + npc.whoAmI * 0.7f) * 1.4f;
+            Color coolEdge = Color.Cyan * (0.5f * baseOpacity);
+            Color paleEdge = new Color(150, 230, 255) * (0.32f * baseOpacity);
+            Color blueEdge = new Color(80, 180, 255) * (0.45f * baseOpacity);
+
+            spriteBatch.Draw(texture, drawPosition + new Vector2(waveX, waveY), npc.frame, coolEdge, npc.rotation, origin, npc.scale, effects, 0f);
+            spriteBatch.Draw(texture, drawPosition - new Vector2(waveY, waveX) * 0.75f, npc.frame, blueEdge, npc.rotation, origin, npc.scale, effects, 0f);
+            spriteBatch.Draw(texture, drawPosition + new Vector2((float)Math.Sin(time * 0.31f) * 1.1f, -waveY), npc.frame, paleEdge, npc.rotation, origin, npc.scale, effects, 0f);
+            UsefulFunctions.RestartSpritebatch(ref spriteBatch);
         }
 
         public override void ModifyGlobalLoot(GlobalLoot globalLoot)

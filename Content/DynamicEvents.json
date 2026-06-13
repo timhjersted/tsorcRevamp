@@ -46,7 +46,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 835,
+        "NpcID": 836,
         "NpcName": "tsorcRevamp/LothricBlackKnight",
         "SpawnX": 4137.0,
         "SpawnY": 895.0,
@@ -76,7 +76,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 815,
+        "NpcID": 816,
         "NpcName": "tsorcRevamp/FireLurker",
         "SpawnX": 3559.0,
         "SpawnY": 1248.0,
@@ -86,7 +86,7 @@
         "CustomSouls": 650
       },
       {
-        "NpcID": 815,
+        "NpcID": 816,
         "NpcName": "tsorcRevamp/FireLurker",
         "SpawnX": 3629.0,
         "SpawnY": 1248.0,
@@ -150,7 +150,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 797,
+        "NpcID": 798,
         "NpcName": "tsorcRevamp/BlackKnight",
         "SpawnX": 2282.0,
         "SpawnY": 1650.0,
@@ -186,7 +186,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 869,
+        "NpcID": 870,
         "NpcName": "tsorcRevamp/RedKnight",
         "SpawnX": 5596.0,
         "SpawnY": 926.0,
@@ -256,7 +256,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 797,
+        "NpcID": 798,
         "NpcName": "tsorcRevamp/BlackKnight",
         "SpawnX": 7454.0,
         "SpawnY": 1413.0,
@@ -694,7 +694,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 777,
+        "NpcID": 778,
         "NpcName": "tsorcRevamp/TheHunter",
         "SpawnX": 296.0,
         "SpawnY": 1560.0,
@@ -724,7 +724,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 779,
+        "NpcID": 780,
         "NpcName": "tsorcRevamp/TheRage",
         "SpawnX": 7000.0,
         "SpawnY": 1845.0,
@@ -992,7 +992,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 815,
+        "NpcID": 816,
         "NpcName": "tsorcRevamp/FireLurker",
         "SpawnX": 3245.0,
         "SpawnY": 1252.0,
@@ -1028,7 +1028,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 869,
+        "NpcID": 870,
         "NpcName": "tsorcRevamp/RedKnight",
         "SpawnX": 3897.0,
         "SpawnY": 1219.0,
@@ -1066,7 +1066,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 869,
+        "NpcID": 870,
         "NpcName": "tsorcRevamp/RedKnight",
         "SpawnX": 3287.0,
         "SpawnY": 495.0,
@@ -1134,7 +1134,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 770,
+        "NpcID": 771,
         "NpcName": "tsorcRevamp/SeathTheScalelessHead",
         "SpawnX": 7737.0,
         "SpawnY": 1546.0,
@@ -1164,7 +1164,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 787,
+        "NpcID": 788,
         "NpcName": "tsorcRevamp/WyvernMage",
         "SpawnX": 7192.0,
         "SpawnY": 364.0,
@@ -1174,7 +1174,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 784,
+        "NpcID": 785,
         "NpcName": "tsorcRevamp/MechaDragonHead",
         "SpawnX": 7192.0,
         "SpawnY": 364.0,
@@ -1414,7 +1414,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 933,
+        "NpcID": 934,
         "NpcName": "tsorcRevamp/AbyssPortal",
         "SpawnX": 670.0,
         "SpawnY": 1164.0,
@@ -1444,7 +1444,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 759,
+        "NpcID": 760,
         "NpcName": "tsorcRevamp/Gwyn",
         "SpawnX": 832.0,
         "SpawnY": 1244.0,
@@ -1474,7 +1474,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 759,
+        "NpcID": 760,
         "NpcName": "tsorcRevamp/Gwyn",
         "SpawnX": 822.0,
         "SpawnY": 1241.0,
@@ -1564,7 +1564,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 775,
+        "NpcID": 776,
         "NpcName": "tsorcRevamp/Witchking",
         "SpawnX": 2484.0,
         "SpawnY": 1795.0,
@@ -1594,7 +1594,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 775,
+        "NpcID": 776,
         "NpcName": "tsorcRevamp/Witchking",
         "SpawnX": 2487.0,
         "SpawnY": 1803.0,
@@ -1834,7 +1834,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 797,
+        "NpcID": 798,
         "NpcName": "tsorcRevamp/BlackKnight",
         "SpawnX": 4508.0,
         "SpawnY": 1745.0,
@@ -1927,7 +1927,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 934,
+        "NpcID": 935,
         "NpcName": "tsorcRevamp/AttraidiesApparition",
         "SpawnX": 8216.5,
         "SpawnY": 1630.0,
@@ -2030,7 +2030,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 808,
+        "NpcID": 809,
         "NpcName": "tsorcRevamp/Dunlending",
         "SpawnX": 4691.0,
         "SpawnY": 854.0,
@@ -2040,7 +2040,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 808,
+        "NpcID": 809,
         "NpcName": "tsorcRevamp/Dunlending",
         "SpawnX": 4733.0,
         "SpawnY": 854.0,
@@ -2050,7 +2050,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 808,
+        "NpcID": 809,
         "NpcName": "tsorcRevamp/Dunlending",
         "SpawnX": 4698.0,
         "SpawnY": 853.0,
@@ -2141,7 +2141,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 939,
+        "NpcID": 940,
         "NpcName": "tsorcRevamp/LeonhardPhase1",
         "SpawnX": 3314.0,
         "SpawnY": 355.0,
@@ -2171,7 +2171,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 825,
+        "NpcID": 826,
         "NpcName": "tsorcRevamp/HollowWarrior",
         "SpawnX": 4446.0,
         "SpawnY": 1211.0,
@@ -2181,7 +2181,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 814,
+        "NpcID": 815,
         "NpcName": "tsorcRevamp/FirebombHollow",
         "SpawnX": 4456.0,
         "SpawnY": 1211.0,
@@ -2211,7 +2211,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 788,
+        "NpcID": 789,
         "NpcName": "tsorcRevamp/AbandonedStump",
         "SpawnX": 5012.0,
         "SpawnY": 851.0,
@@ -2265,7 +2265,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 823,
+        "NpcID": 824,
         "NpcName": "tsorcRevamp/HollowSoldier",
         "SpawnX": 4029.0,
         "SpawnY": 1429.0,
@@ -2275,7 +2275,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 875,
+        "NpcID": 876,
         "NpcName": "tsorcRevamp/ShadowMage",
         "SpawnX": 4074.0,
         "SpawnY": 1399.0,
@@ -2305,7 +2305,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 825,
+        "NpcID": 826,
         "NpcName": "tsorcRevamp/HollowWarrior",
         "SpawnX": 4593.0,
         "SpawnY": 858.0,
@@ -2315,7 +2315,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 823,
+        "NpcID": 824,
         "NpcName": "tsorcRevamp/HollowSoldier",
         "SpawnX": 4640.0,
         "SpawnY": 858.0,
@@ -2325,7 +2325,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 838,
+        "NpcID": 839,
         "NpcName": "tsorcRevamp/ManHunter",
         "SpawnX": 4643.0,
         "SpawnY": 841.0,
@@ -2335,7 +2335,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 824,
+        "NpcID": 825,
         "NpcName": "tsorcRevamp/HollowSpearman",
         "SpawnX": 4588.0,
         "SpawnY": 858.0,
@@ -2365,7 +2365,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 836,
+        "NpcID": 837,
         "NpcName": "tsorcRevamp/LothricKnight",
         "SpawnX": 5148.0,
         "SpawnY": 1757.0,
@@ -2375,7 +2375,7 @@
         "CustomSouls": 500
       },
       {
-        "NpcID": 837,
+        "NpcID": 838,
         "NpcName": "tsorcRevamp/LothricSpearKnight",
         "SpawnX": 5197.0,
         "SpawnY": 1757.0,
@@ -2409,7 +2409,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 836,
+        "NpcID": 837,
         "NpcName": "tsorcRevamp/LothricKnight",
         "SpawnX": 4596.0,
         "SpawnY": 946.0,
@@ -2443,7 +2443,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 824,
+        "NpcID": 825,
         "NpcName": "tsorcRevamp/HollowSpearman",
         "SpawnX": 3386.0,
         "SpawnY": 367.0,
@@ -2453,7 +2453,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 814,
+        "NpcID": 815,
         "NpcName": "tsorcRevamp/FirebombHollow",
         "SpawnX": 3451.0,
         "SpawnY": 367.0,
@@ -2521,7 +2521,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 763,
+        "NpcID": 764,
         "NpcName": "tsorcRevamp/HellkiteDragonHead",
         "SpawnX": 4282.0,
         "SpawnY": 405.0,
@@ -2611,7 +2611,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 845,
+        "NpcID": 846,
         "NpcName": "tsorcRevamp/MountedSandsprogMage",
         "SpawnX": 2606.0,
         "SpawnY": 806.0,
@@ -2621,7 +2621,7 @@
         "CustomSouls": 300
       },
       {
-        "NpcID": 844,
+        "NpcID": 845,
         "NpcName": "tsorcRevamp/MountedSandsprog",
         "SpawnX": 2673.0,
         "SpawnY": 817.0,
@@ -2655,7 +2655,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 819,
+        "NpcID": 820,
         "NpcName": "tsorcRevamp/GhostOfTheDrowned",
         "SpawnX": 4294.0,
         "SpawnY": 778.0,
@@ -2689,7 +2689,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 819,
+        "NpcID": 820,
         "NpcName": "tsorcRevamp/GhostOfTheDrowned",
         "SpawnX": 4117.0,
         "SpawnY": 823.0,
@@ -2723,7 +2723,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 901,
+        "NpcID": 902,
         "NpcName": "tsorcRevamp/TaurusKnight",
         "SpawnX": 3690.0,
         "SpawnY": 1545.0,
@@ -2733,7 +2733,7 @@
         "CustomSouls": null
       },
       {
-        "NpcID": 878,
+        "NpcID": 879,
         "NpcName": "tsorcRevamp/Abysswalker",
         "SpawnX": 3675.0,
         "SpawnY": 1545.0,
@@ -2763,7 +2763,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 879,
+        "NpcID": 880,
         "NpcName": "tsorcRevamp/AncientDemonOfTheAbyss",
         "SpawnX": 1578.0,
         "SpawnY": 1895.0,
@@ -2793,7 +2793,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 895,
+        "NpcID": 896,
         "NpcName": "tsorcRevamp/OolacileKnight",
         "SpawnX": 2382.0,
         "SpawnY": 1882.0,
@@ -2823,7 +2823,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 879,
+        "NpcID": 880,
         "NpcName": "tsorcRevamp/AncientDemonOfTheAbyss",
         "SpawnX": 6761.0,
         "SpawnY": 1081.0,
@@ -2913,7 +2913,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 898,
+        "NpcID": 899,
         "NpcName": "tsorcRevamp/SerpentOfTheAbyssHead",
         "SpawnX": 1040.0,
         "SpawnY": 1865.0,
@@ -3003,7 +3003,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 878,
+        "NpcID": 879,
         "NpcName": "tsorcRevamp/Abysswalker",
         "SpawnX": 5781.0,
         "SpawnY": 1525.0,
@@ -3246,7 +3246,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 900,
+        "NpcID": 901,
         "NpcName": "tsorcRevamp/SlograII",
         "SpawnX": 3181.0,
         "SpawnY": 1334.0,
@@ -3344,7 +3344,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 895,
+        "NpcID": 896,
         "NpcName": "tsorcRevamp/OolacileKnight",
         "SpawnX": 5229.0,
         "SpawnY": 1254.0,
@@ -3374,7 +3374,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 901,
+        "NpcID": 902,
         "NpcName": "tsorcRevamp/TaurusKnight",
         "SpawnX": 5801.0,
         "SpawnY": 1381.0,
@@ -3574,7 +3574,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 779,
+        "NpcID": 780,
         "NpcName": "tsorcRevamp/TheRage",
         "SpawnX": 3838.0,
         "SpawnY": 1425.0,
@@ -3584,7 +3584,7 @@
         "CustomSouls": 40000
       },
       {
-        "NpcID": 780,
+        "NpcID": 781,
         "NpcName": "tsorcRevamp/TheSorrow",
         "SpawnX": 3879.0,
         "SpawnY": 1425.0,
@@ -3594,7 +3594,7 @@
         "CustomSouls": 40000
       },
       {
-        "NpcID": 777,
+        "NpcID": 778,
         "NpcName": "tsorcRevamp/TheHunter",
         "SpawnX": 3858.0,
         "SpawnY": 1410.0,
@@ -3762,7 +3762,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcID": 806,
+        "NpcID": 807,
         "NpcName": "tsorcRevamp/DiscipleOfAttraidies",
         "SpawnX": 6971.0,
         "SpawnY": 1113.0,
@@ -4096,106 +4096,6 @@
         "NpcName": null,
         "SpawnX": 4844.0,
         "SpawnY": 851.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ],
-    "ExtraLootItems": null,
-    "ExtraLootAmounts": null
-  },
-  {
-    "EventID": "13f06df9-8bfc-42bb-9058-d3ca54f0b2df",
-    "CenterX": 4800.0,
-    "CenterY": 826.0,
-    "Radius": 230400.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": false,
-    "TextToDisplay": null,
-    "TextColorHex": null,
-    "WorldCondition": "OnlyAdventureMapCondition",
-    "MapCondition": "",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcID": 891,
-        "NpcName": "tsorcRevamp/HydrisNecromancer",
-        "SpawnX": 4812.0,
-        "SpawnY": 838.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      },
-      {
-        "NpcID": 890,
-        "NpcName": "tsorcRevamp/HydrisElemental",
-        "SpawnX": 4791.0,
-        "SpawnY": 835.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ],
-    "ExtraLootItems": null,
-    "ExtraLootAmounts": null
-  },
-  {
-    "EventID": "ccf09bb3-6aa0-43b1-812c-666030152a96",
-    "CenterX": 4910.0,
-    "CenterY": 850.0,
-    "Radius": 230400.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": true,
-    "TextToDisplay": null,
-    "TextColorHex": null,
-    "WorldCondition": "OnlyAdventureMapCondition",
-    "MapCondition": "",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcID": 188,
-        "NpcName": "Zombie",
-        "SpawnX": 4889.0,
-        "SpawnY": 867.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      },
-      {
-        "NpcID": 188,
-        "NpcName": "Zombie",
-        "SpawnX": 4885.0,
-        "SpawnY": 847.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      },
-      {
-        "NpcID": 890,
-        "NpcName": "tsorcRevamp/HydrisElemental",
-        "SpawnX": 4915.0,
-        "SpawnY": 849.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      },
-      {
-        "NpcID": 188,
-        "NpcName": "Zombie",
-        "SpawnX": 4878.0,
-        "SpawnY": 847.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

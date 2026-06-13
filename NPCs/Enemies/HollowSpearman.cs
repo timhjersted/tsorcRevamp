@@ -55,6 +55,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //BannerItem = ModContent.ItemType<Banners.LothricSpearKnightBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealthScaledSpeedBase = 2f;
         }
 
         public Player player
@@ -111,9 +112,8 @@ namespace tsorcRevamp.NPCs.Enemies
             Player player = Main.player[NPC.target];
 
 
-            int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
             float acceleration = 0.02f;
-            float top_speed = (lifePercentage * -0.015f) + 2f; //Increase speed the lower the enemy HP%
+            float top_speed = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ComputeHealthScaledSpeed(NPC, 2f);
             float braking_power = 0.11f; //Breaking power to slow down after moving above top_speed
 
 

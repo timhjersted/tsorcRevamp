@@ -8239,6 +8239,11 @@ Mods: {
 				// Tooltip: "'The essence of dark magic from the remains of Oolacile'"
 			}
 
+			SoulOfAbyssalInvader: {
+				// DisplayName: Soul of the Abyssal Invader
+				// Tooltip: "'The essence of a shadow warrior claimed by the Abyss'"
+			}
+
 			RedKnightTestHelmet: {
 				// Tooltip: ""
 				// DisplayName: Red Knight Test Helmet
@@ -10044,6 +10049,8 @@ Mods: {
 			// InvaderThrowingStar.DisplayName: Invader Throwing Star
 			// InvaderCrossbowBolt.DisplayName: Invader Crossbow Bolt
 			// GreatMagicMirrorRangeRing.DisplayName: Great Magic Mirror Range Ring
+			// HealSpriteVFX.DisplayName: Heal Sprite V F X
+			// TeleportMistLinger.DisplayName: Teleport Mist Linger
 		}
 
 		NPCs: {
@@ -10597,6 +10604,7 @@ Mods: {
 				Destroy: 一位来自深渊的卓越赭骑士正赶来摧毁你...
 			}
 
+			// GreatRedKnightTest.DisplayName: Great Red Knight Test
 			GuardianCorruptor.DisplayName: 腐化守护者
 			HydrisElemental.DisplayName: 海德里斯元素
 			HydrisNecromancer.DisplayName: 海德里斯死灵法师
@@ -11764,6 +11772,7 @@ Mods: {
 			// TibianValkyrieTier2.DisplayName: Tibian Valkyrie Tier2
 			// GreatBlackKnight.DisplayName: Great Black Knight
 			// FaraamSpriteTestInvader.DisplayName: Faraam Sprite Test Invader
+			// FirebombHollowOriginal.DisplayName: Firebomb Hollow Original
 		}
 
 		Prefixes: {

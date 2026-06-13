@@ -81,7 +81,10 @@ namespace tsorcRevamp.NPCs
                     if (madeProgress) g.DisengageTimer = 0;
                     else g.DisengageTimer++;
 
-                    if (g.DisengageTimer >= g.NavGiveUpTicks)
+                    // whoAmI % 61 gives 0–60 ticks (0–1 s) of deterministic per-instance spread so a pack of
+                    // same-type enemies doesn't all disengage simultaneously. whoAmI is server-assigned and
+                    // consistent across all clients, so no sync overhead.
+                    if (g.DisengageTimer >= g.NavGiveUpTicks + (npc.whoAmI % 61))
                     {
                         if (g.RemembersLastKnownPos)
                         {
@@ -95,7 +98,7 @@ namespace tsorcRevamp.NPCs
                 case PursuitState.Search:
                     g.DisengageTimer++;
                     bool reachedLastKnown = npc.Distance(g.LastKnownPlayerPos) < ReachLastKnownPx;
-                    if (reachedLastKnown || g.DisengageTimer >= SearchTimeoutTicks)
+                    if (reachedLastKnown || g.DisengageTimer >= SearchTimeoutTicks + (npc.whoAmI % 31))
                         EnterPatrol(npc, g);
                     break;
 

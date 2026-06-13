@@ -10,10 +10,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class HydrisElemental : ModNPC
     {
-        private const float LeapSpeedX = 4.5f;
-        private const float LeapSpeedY = 4.6f;
-        private const float LeapMinimumSpeed = 2.2f;
-        private const float LandingTraction = 0.72f;
+        private const float FighterTopSpeed = 3f;
+        private const float LeapSpeedX = 3f;
+        private const float LeapSpeedY = 3.4f;
+        private const float LeapMinimumSpeed = 2.5f;
+        private const float LandingTraction = 0.58f;
         private const int LeapCooldownFrames = 75;
         private const int LandingTractionFrames = 16;
 
@@ -94,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 landingTractionTimer = LandingTractionFrames;
             }
 
-            tsorcRevampAIs.FighterAI(NPC, 4.8f, 0.08f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 5.6f);
+            tsorcRevampAIs.FighterAI(NPC, FighterTopSpeed, 0.08f, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 5f);
 
             if (landingTractionTimer > 0 && NPC.velocity.Y == 0f)
             {

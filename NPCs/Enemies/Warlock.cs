@@ -52,6 +52,14 @@ namespace tsorcRevamp.NPCs.Enemies
             casterGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
             casterGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
             casterGlobalNPC.CanUseRopes = true;
+            casterGlobalNPC.CanGoInvisible = true;
+            casterGlobalNPC.InvisibleAlpha = 230;
+            casterGlobalNPC.GoInvisibleChance = 150;
+            casterGlobalNPC.GoVisibleChance = 230;
+            casterGlobalNPC.CanHealAllies = true;
+            casterGlobalNPC.HealAlliesChance = 300;
+            casterGlobalNPC.HealAlliesRange = 60;
+            casterGlobalNPC.HealAlliesPercent = 15;
         }
 
         //Never despawn except by timing out
@@ -163,23 +171,6 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.justHit && Main.rand.NextBool(8))
             {
                 tsorcRevampAIs.QueueTeleport(NPC, 20, true, 60);
-            }
-
-            //Transparency. Higher alpha = more invisible
-            if (NPC.justHit)
-            {
-                NPC.alpha = 0;
-                NPC.netUpdate = true;
-            }
-            if (Main.rand.NextBool(230))
-            {
-                NPC.alpha = 0;
-                NPC.netUpdate = true;
-            }
-            if (Main.rand.NextBool(150))
-            {
-                NPC.alpha = 230;
-                NPC.netUpdate = true;
             }
 
             Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0.4f, 0.4f);

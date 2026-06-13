@@ -58,7 +58,10 @@ namespace tsorcRevamp.NPCs.Enemies
             hunterGlobalNPC.PrefersHighGround = true;
             hunterGlobalNPC.RemembersLastKnownPos = true;
             hunterGlobalNPC.NavSearchRadius = 80;
-
+            hunterGlobalNPC.CanGoInvisible = true;
+            hunterGlobalNPC.InvisibleAlpha = 200;
+            hunterGlobalNPC.GoInvisibleChance = 120;
+            hunterGlobalNPC.GoVisibleChance = 180;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

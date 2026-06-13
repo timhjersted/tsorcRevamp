@@ -39,6 +39,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanGoInvisible = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().InvisibleAlpha = 205;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoInvisibleChance = 100;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoVisibleChance = 200;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanSelfHeal = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 50;
         }
         //yes i tweaked the drop rates. Fight Me
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -141,29 +147,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            //Higher alpha = more invisible
-            if (NPC.justHit)
-            {
-                NPC.alpha = 0;
-            }
-            if (Main.rand.NextBool(100))
-            {
-                NPC.alpha = 205;
-                NPC.netUpdate = true;
-            }
-            if (Main.rand.NextBool(200))
-            {
-                NPC.alpha = 0; //0 is fully visible 205 is almost invisible
-                NPC.netUpdate = true;
-            }
-            if (Main.rand.NextBool(250))
-            {
-                NPC.ai[3] = 1;
-                NPC.life += 5;
-                if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
-                NPC.ai[1] = 1f;
-                NPC.netUpdate = true;
-            }
         }
 
         public override void HitEffect(NPC.HitInfo hit)

@@ -32,7 +32,12 @@ namespace tsorcRevamp.NPCs
         // no plan -> dumb-chase wedged on a ledge). Smaller per-NPC NavSearchRadius still = dumber+cheaper.
         private const int ScanRadiusX = 80;
         private const int ScanRadiusY = 48;
-        private const int MaxDropDepth = 10;
+        // Max tiles a single free-fall / platform-drop edge may span. Raised 10->24: a player one floor/cliff
+        // below (a house ledge is often 12-20 tiles) was unreachable when there was no intermediate landing,
+        // so the NPC just stood at the edge and refused to drop. NPCs take no fall damage and HasDropClearance
+        // still requires a clear shaft; deeper drops cost more and are penalized when the player is ABOVE, so
+        // this only enables descending toward a lower target, not suicidal pit-diving.
+        private const int MaxDropDepth = 24;
         private const int StepTimeoutFrames = 180;
         private const float TileF = 16f;
         private const float AlignTolerancePx = 12f;
@@ -206,7 +211,11 @@ namespace tsorcRevamp.NPCs
 
             // Hold-to-fire (movementOnly): combat (RunFighterCombat in BasicAI) wants to stop-and-fire, so hold
             // position this frame and skip pathing — the shot comes from BasicAI, not SF4. Mirrors halt-attack.
-            if (movementOnly && holdForAttack && pstate != PursuitState.Patrol)
+            // Suppressed while a plan step is in progress: the NPC should finish navigating to its destination
+            // before standing still to shoot. Without this guard an archer on a raised tile zeroes its own X
+            // velocity before it can step down, bouncing on the ledge edge indefinitely.
+            bool hasPlanStep = s.Plan != null && s.PlanIndex < s.Plan.Count;
+            if (movementOnly && holdForAttack && pstate != PursuitState.Patrol && !hasPlanStep)
             {
                 if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f;
                 else npc.velocity.X *= 0.6f;
@@ -229,7 +238,17 @@ namespace tsorcRevamp.NPCs
                 // mid-commit. Radius 0 = no global pathfinding: clear any plan and chase on sight.
                 if (g.NavSearchRadius > 0)
                 {
-                    if (!s.IsCommitted && grounded && s.ReplanCooldown == 0 && ShouldReplan(s, npc, player))
+                    // Commit to a jump in progress: IsCommitted only covers the airborne arc, NOT the grounded
+                    // "walk to the launch column + settle" setup. Without this guard, every replan window (the
+                    // player twitches -> A* returns a slightly different jump-staircase) makes the NPC ABANDON
+                    // its current approach and start a new one, so it never commits long enough to finish a
+                    // climb — the multi-second shuffle + 3-4 aborted jumps at a player perched just above. So
+                    // while grounded and actively setting up a jump step, suppress the replan. The escape hatch
+                    // is ExecJump's own StepTimer: a jump that can't be completed times out (<=3s), bad-edges
+                    // its target, and forces a clean reroute — deliberate commit, then reroute, never churn.
+                    bool approachingJump = s.Plan != null && s.PlanIndex < s.Plan.Count
+                        && (s.Plan[s.PlanIndex].Kind == StepKind.JumpUp || s.Plan[s.PlanIndex].Kind == StepKind.JumpGap);
+                    if (!s.IsCommitted && !approachingJump && grounded && s.ReplanCooldown == 0 && ShouldReplan(s, npc, player))
                     {
                         Replan(s, npc, player);
                         s.ReplanCooldown = ReplanCooldown;
@@ -302,22 +321,32 @@ namespace tsorcRevamp.NPCs
                         }
                         else
                         {
+                            // The player is BELOW and a real landing exists within MaxDropDepth → let the
+                            // drop off the ledge be the way down. Without this, TryLocalTerrain's cliff-halt
+                            // brakes the NPC at the edge forever (the "frozen on a ledge above me, won't drop
+                            // to chase" exploit). Bounded by GetDropDepth so it won't dive a bottomless pit.
+                            bool playerBelow = player.Center.Y > npc.Center.Y + 24f;
+                            int frontXc = GetFrontTileX(npc, dir);
+                            int feetYc = GetFeetTileY(npc);
+                            bool dropLands = GetDropDepth(frontXc, feetYc, MaxDropDepth) <= MaxDropDepth;
+                            bool allowCliffDrop = playerBelow && dropLands;
                             actionHandled = TryLocalTerrain(s, npc, dir, jumpCeil, boostCeil, topSpeed,
-                                out actionLabel, out reasonLabel);
+                                allowCliffDrop, out actionLabel, out reasonLabel);
                             if (!actionHandled)
                             {
-                                // Don't blindly walk off cliffs in fallback chase — UNLESS the player is
-                                // below us, in which case the drop IS the way down: descend to pursue
-                                // instead of braking at the edge (the "stood on the platform while I went
-                                // down" regression). For a same-level / above player, still brake.
-                                bool playerBelow = player.Center.Y > npc.Center.Y + 24f;
                                 // Already lined up under/over the player (and on a different level we can't
                                 // reach with no plan): chasing toward their X just oscillates across it —
                                 // the "rapid left-right directly below you" jitter. Hold still instead; the
                                 // give-up clock then trips -> Patrol, which sweeps for a firing angle.
                                 bool xAlignedDiffLevel = Math.Abs(npc.Center.X - player.Center.X) < TileF * 1.5f
                                                          && Math.Abs(player.Center.Y - npc.Center.Y) > 24f;
-                                if (xAlignedDiffLevel)
+                                if (allowCliffDrop)
+                                {
+                                    // Cliff ahead + player below + reachable landing → walk off to descend.
+                                    ApplyChase(npc, dir, topSpeed, acceleration);
+                                    actionLabel = "chase-drop"; reasonLabel = "player-below-ledge";
+                                }
+                                else if (xAlignedDiffLevel)
                                 {
                                     if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f;
                                     else npc.velocity.X *= 0.6f;
@@ -364,6 +393,30 @@ namespace tsorcRevamp.NPCs
                     }
                 }
                 else { s.StuckCheckX = npc.Center.X; s.StuckGiveUpFrames = 0; }
+
+                // Plan-execution immobility guard (the "stuck till I hit it" freeze). The per-step
+                // StepTimer escape is defeated for Walk steps because every replan (player twitch → A*
+                // rebuild) resets StepTimer to full, so a wedged walk-into-a-lip never times out. This
+                // guard is keyed on the NPC's OWN X immobility and is NOT reset by replan — only by real
+                // movement — so it survives the StepTimer churn. When a movement step makes no horizontal
+                // progress for ~0.66s, bad-edge the step target and drop the plan: the next replan routes
+                // AROUND it. If every route is genuinely walled, the bad-edges pile up until A* finds no
+                // path → the no-plan StuckGiveUpFrames above then disengages to patrol.
+                bool execMove = s.Plan != null && s.PlanIndex < s.Plan.Count && grounded
+                    && (actionLabel == "walk" || actionLabel == "align-jump" || actionLabel == "align-drop"
+                        || actionLabel == "align-pdrop" || actionLabel == "obstacle-jump");
+                if (execMove)
+                {
+                    if (Math.Abs(npc.Center.X - s.MoveCheckX) > 2f) { s.MoveCheckX = npc.Center.X; s.StepNoMoveFrames = 0; }
+                    else if (++s.StepNoMoveFrames > 40)
+                    {
+                        var bs = s.Plan[s.PlanIndex];
+                        s.BadEdgeTargets[(bs.TargetX, bs.TargetY)] = (int)Main.GameUpdateCount + 480;
+                        s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0; s.ReplanCooldown = 0;
+                        s.StepNoMoveFrames = 0;
+                    }
+                }
+                else { s.MoveCheckX = npc.Center.X; s.StepNoMoveFrames = 0; }
             }
 
             // Vanilla-style smooth auto-step: glide over <=1-tile bumps/half-blocks via gfxOffY (no jump),
@@ -461,7 +514,12 @@ namespace tsorcRevamp.NPCs
         {
             if (s.Plan == null) return true;
             if (s.PlanIndex >= s.Plan.Count) return true;
-            if (s.StepTimer == 0) return true;
+            // NOTE: do NOT replan here on StepTimer == 0. The replan check runs BEFORE ExecuteStep each
+            // frame, so triggering a rebuild on timeout would reset StepTimer to full and skip ExecuteStep's
+            // timeout handler — which is what records the failed step's target in BadEdgeTargets. The result
+            // was A* re-picking the identical un-bad-edged edge forever (the "jump-into-the-ceiling on repeat"
+            // loop). Let the timeout fall through to ExecuteStep: it bad-edges the target and nulls the plan,
+            // and the (Plan == null) check above then drives a clean replan that routes AROUND the bad edge.
             // Big drift = player switched rooms / floors â†’ replan.
             float planEndX = s.Plan[s.Plan.Count - 1].TargetX * TileF;
             float planEndY = s.Plan[s.Plan.Count - 1].TargetY * TileF;
@@ -544,6 +602,7 @@ namespace tsorcRevamp.NPCs
             s.PlanIndex = 0;
             s.StepTimer = StepTimeoutFrames;
             s.CommitFrames = 0;
+            s.JumpFiredThisStep = false;
             s.LastPlanResult = $"plan steps={s.Plan.Count} spans={spans.Count} pathLen={path.Count}";
         }
 
@@ -584,7 +643,7 @@ namespace tsorcRevamp.NPCs
             {
                 if (Math.Abs(kv.Key.x - landX) <= 2 && Math.Abs(kv.Key.y - spanY) <= 2)
                 {
-                    if (150 > worst) worst = 150;
+                    if (9999 > worst) worst = 9999;
                 }
             }
             return worst;
@@ -614,6 +673,13 @@ namespace tsorcRevamp.NPCs
                         int joinX = b.LeftX > a.RightX ? b.LeftX : b.RightX < a.LeftX ? b.RightX : a.LeftX;
                         int joinY = Math.Min(a.Y, b.Y);
                         if (!HasBodyClearanceAtRow(joinX, joinY)) continue;
+                        // Stepping UP one row (dy == -1, b is higher) is only a real WALK if there's a
+                        // SOLID 1-tile step to climb onto at the join (b's floor sits at row a.Y). When the
+                        // higher span rests on a platform or is offset across a lip, AutoStepUp can't take it
+                        // and the body just paces in place (the 30s wedge in the log). Skip the Walk edge so
+                        // A* uses the JumpUp edge the jump builder already adds for this pair — it actually
+                        // gains elevation. (Cheap Walk cost 2 was always out-bidding the JumpUp cost ~7.)
+                        if (dy == -1 && !IsNavigationSolid(joinX, a.Y)) continue;
                         a.Edges.Add(new Edge(b, EdgeKind.Walk, 1 + Math.Abs(dy)));
                     }
                 }
@@ -1146,7 +1212,15 @@ namespace tsorcRevamp.NPCs
             float tgtPx = step.TargetX * TileF + 8f;
             bool xClose = Math.Abs(npc.Center.X - tgtPx) <= AlignTolerancePx + 4f;
             bool xNear  = Math.Abs(npc.Center.X - tgtPx) <= TileF * 3f;
-            bool yClose = Math.Abs(feetY - step.TargetY) <= 2;
+            // yErr > 0 means the feet are still BELOW the node (we haven't climbed to it yet).
+            // The old symmetric |yErr| <= 2 was half this 3-tall sprite's height, so a Walk step
+            // would "complete" while the body was still 2 tiles under the node — advancing the plan
+            // up a span-staircase without ever gaining elevation, then wedging one tile short on the
+            // next step. A walk-along node must be level-or-above (never left hanging below it).
+            int yErr = feetY - step.TargetY;
+            bool yClose = step.Kind == StepKind.Walk
+                ? (yErr <= 1 && yErr >= -2)
+                : Math.Abs(yErr) <= 2;
             bool completed = false;
             switch (step.Kind)
             {
@@ -1161,6 +1235,7 @@ namespace tsorcRevamp.NPCs
                 s.StepTimer = StepTimeoutFrames;
                 s.CommitFrames = 0;
                 s.AirCommitTimer = 0;
+                s.JumpFiredThisStep = false;
                 s.RopeEngaged = false; s.RopeDirLatched = false; s.RopeDismounting = false;
                 action = "step-done";
                 reason = $"#{s.PlanIndex - 1}={step.Kind}";
@@ -1178,6 +1253,7 @@ namespace tsorcRevamp.NPCs
                 s.Plan = null;
                 s.PlanIndex = 0;
                 s.CommitFrames = 0;
+                s.JumpFiredThisStep = false;
                 s.RopeEngaged = false; s.RopeDirLatched = false; s.RopeDismounting = false;
                 action = "step-timeout";
                 reason = $"{step.Kind} target=({step.TargetX},{step.TargetY})";
@@ -1464,7 +1540,8 @@ namespace tsorcRevamp.NPCs
             if (!grounded) { action = "walk-air"; reason = ""; return false; }
             // Step-hop / door pass â€” but if a tall wall blocks, mark this walk as failed.
             if (doorDamage > 0 && TryDoor(npc, dir, doorDamage, g, out action, out reason)) return true;
-            if (TryLocalTerrain(s, npc, dir, jumpCeil, boostCeil, topSpeed, out action, out reason))
+            // Walk steps never legitimately descend a cliff (those are Drop/JumpGap steps) → keep cliff-halt.
+            if (TryLocalTerrain(s, npc, dir, jumpCeil, boostCeil, topSpeed, false, out action, out reason))
             {
                 if (action == "blocked")
                 {
@@ -1496,6 +1573,19 @@ namespace tsorcRevamp.NPCs
                 reason = $"commit={s.CommitFrames} cx={npc.collideX}";
                 return false;
             }
+            // Grounded again after this step already fired its jump arc, yet the step didn't complete
+            // (ExecuteStep checks completion BEFORE dispatching here) → the jump physically undershot/missed
+            // its target span. Don't re-align and re-fire (that's the ~3s / 3-jump shuffle); bad-edge this
+            // target and reroute now, after the single committed attempt (~1s). A makeable jump completes on
+            // the first aligned try, so this only trips on bad proposals.
+            if (s.JumpFiredThisStep)
+            {
+                s.BadEdgeTargets[(step.TargetX, step.TargetY)] = (int)Main.GameUpdateCount + 480;
+                s.StepTimer = 0; // ExecuteStep nulls the plan next frame → clean replan around the bad edge
+                npc.velocity.X *= 0.5f;
+                action = "jump-missed"; reason = $"undershot target=({step.TargetX},{step.TargetY})";
+                return true;
+            }
             int absDx = Math.Abs(step.TargetX - step.LaunchX);
             // For pure vertical jumps we need tighter alignment (Â±5 px) since the
             // body has to fit through a narrow vertical opening, and we ALSO need
@@ -1509,17 +1599,30 @@ namespace tsorcRevamp.NPCs
             {
                 int aDir = npc.Center.X < launchCenter ? 1 : -1;
                 npc.direction = aDir; npc.spriteDirection = aDir;
-                ApplyChase(npc, aDir, topSpeed, acceleration);
-                // Blocked by a wall while shuffling to the launch column — it's unreachable (A* picked a
-                // launch behind a wall). Don't press the wall facing AWAY from the player for the whole
-                // StepTimer (~2-3s, the "stares the wrong way standing still" bug); bail after ~0.3s so
-                // it replans a reachable route. Mirrors the Walk step's "blocked -> StepTimer = 0" abort.
-                if (npc.collideX)
+                // Final-approach creep: within ~2 tiles of the launch column, bleed speed fast and cap the
+                // approach low so the NPC settles ONTO the column instead of skating across it and
+                // oscillating (the jittery pre-jump left-right shuffle). Outside that, chase at full speed.
+                // ApplyChase keeps driving toward the column at the creep speed, so it still converges into
+                // the alignment window (no deadlock) just deliberately instead of overshooting.
+                if (Math.Abs(npc.Center.X - launchCenter) < TileF * 2f)
                 {
-                    s.AlignStallFrames++;
-                    if (s.AlignStallFrames > 18) { s.StepTimer = 0; s.AlignStallFrames = 0; }
+                    if (Math.Abs(npc.velocity.X) > 0.7f) npc.velocity.X *= 0.6f;
+                    ApplyChase(npc, aDir, Math.Min(topSpeed, 0.7f), acceleration);
                 }
-                else s.AlignStallFrames = 0;
+                else
+                {
+                    ApplyChase(npc, aDir, topSpeed, acceleration);
+                }
+                // Can't reach the launch column — it's unreachable (A* picked a launch behind a wall or
+                // up a step the approach-creep can't take). Don't press toward it for the whole StepTimer
+                // (~2-3s, the "stares the wrong way standing still" wedge); bail after ~0.3s so it replans
+                // a reachable route. POSITION-keyed, not collideX-keyed: when the body rests against the
+                // wall, vanilla zeroes velocity.X and the next frame's tiny re-accelerate doesn't re-touch
+                // it, so collideX flickers false every other frame and the old gate never reached the abort
+                // (the permanent align-jump freeze in the log). Track raw X progress toward the column
+                // instead — no movement for ~18 frames = wedged.
+                if (Math.Abs(npc.Center.X - s.AlignLastX) > 1.5f) { s.AlignLastX = npc.Center.X; s.AlignStallFrames = 0; }
+                else if (++s.AlignStallFrames > 18) { s.StepTimer = 0; s.AlignStallFrames = 0; }
                 action = "align-jump";
                 reason = $"launch={step.LaunchX} cx={npc.Center.X / TileF:F1} stall={s.AlignStallFrames}";
                 return true;
@@ -1555,10 +1658,13 @@ namespace tsorcRevamp.NPCs
                     action = "jump-dropdown-blocked"; reason = "solid-below";
                     return true;
                 }
-                npc.noTileCollide = platformBelow; // only phase an actual platform; open air falls naturally
+                // Phase a platform OR clear the lips of a too-narrow open shaft (the 18px body is wider
+                // than a 1-tile hole and gets caught otherwise). solidBelow is excluded above, so this
+                // only ever phases lips, never a solid floor; ManagePlatformPass ends the pass.
+                npc.noTileCollide = true;
                 npc.velocity.X = 0f;
                 npc.velocity.Y = Math.Max(npc.velocity.Y, 2.0f);
-                s.PlatformPassActive = platformBelow;
+                s.PlatformPassActive = true;
                 s.PlatformPassTimer = 24;
                 s.PlatformPassStartY = npc.Bottom.Y;
                 s.CommitFrames = 25;
@@ -1586,6 +1692,7 @@ namespace tsorcRevamp.NPCs
                 return true;
             }
             FireJump(s, npc, launchDir, power, launchVx, /*airCommit*/ 35, /*planCommit*/ 45);
+            s.JumpFiredThisStep = true;
             if (isVertical)
             {
                 // Kill horizontal velocity and disable the airborne X-lock so we go
@@ -1682,6 +1789,11 @@ namespace tsorcRevamp.NPCs
             bool grounded, out string action, out string reason)
         {
             if (!grounded) { action = "drop-air"; reason = ""; return false; }
+            // Chase onto the launch column. Do NOT brake before we're aligned — an earlier attempt to
+            // "settle" here created a 12-16px dead band (brake zone wider than the align tolerance) where
+            // the body halted ~0.8 tile short and never closed the gap, deadlocking align-drop for 30s+.
+            // Overshoot past the column is instead handled at commit: the straight-drop branch below zeroes
+            // horizontal velocity so we fall cleanly even if we arrive with residual walk speed.
             if (!IsAligned(npc, step.LaunchX))
             {
                 int aDir = AlignDir(npc, step.LaunchX);
@@ -1708,11 +1820,18 @@ namespace tsorcRevamp.NPCs
                         : step.TargetX < step.LaunchX ? -1
                         : npc.direction;
             npc.direction = descend; npc.spriteDirection = descend;
-            if (platformBelow)
+            if (platformBelow || step.TargetX == step.LaunchX)
             {
-                // Pass straight down through the wood platform. CRITICAL: zero horizontal velocity
-                // while noTileCollide is active — any sideways motion would phase THROUGH walls
-                // (the "passed through a solid wall" bug). ManagePlatformPass ends it on landing.
+                // Straight drop down the same column — through a wood platform OR an open shaft. CRITICAL
+                // for the open-shaft case: this NPC's hitbox (18px) is WIDER than a 1-tile hole, so it
+                // rests on the 1px lips of the gap and plain gravity can NEVER pull it through (the
+                // "stuck on a platform, won't drop, vel=0, plat=False" freeze). So briefly noTileCollide
+                // to clear the lips, exactly like a platform pass. SAFE: solidBelow was already excluded
+                // above and the shaft was validated clear by HasDropClearance, so we only phase the lips,
+                // not a solid floor; ManagePlatformPass ends the pass after ~1 tile of descent or on
+                // landing, and the Run-loop safety clears noTileCollide the moment the pass ends.
+                // CRITICAL: zero horizontal velocity while noTileCollide is active — any sideways motion
+                // would phase THROUGH walls (the "passed through a solid wall" bug).
                 npc.noTileCollide = true;
                 npc.velocity.X = 0f;
                 npc.velocity.Y = Math.Max(npc.velocity.Y, 1.6f);
@@ -1768,7 +1887,7 @@ namespace tsorcRevamp.NPCs
         // ================================================================================
 
         private static bool TryLocalTerrain(NavState s, NPC npc, int direction, float jumpCeil,
-            float boostCeil, float topSpeed, out string action, out string reason)
+            float boostCeil, float topSpeed, bool allowCliffDrop, out string action, out string reason)
         {
             int frontX = GetFrontTileX(npc, direction);
             int feetY = GetFeetTileY(npc);
@@ -1822,7 +1941,10 @@ namespace tsorcRevamp.NPCs
             // before the body clears the edge. Shared by Walk steps and the no-plan chase.
             int lookahead = Math.Abs(npc.velocity.X) > 3f ? 2 : 1;
             int edgeDrop = GetDropDepth(frontX + direction * (lookahead - 1), feetY, 6);
-            if (drop >= 4 || edgeDrop >= 4)
+            // allowCliffDrop: the no-plan chase sets this when the player is BELOW and a real landing
+            // exists within reach — the drop IS the way down, so let the caller walk off the ledge
+            // instead of braking here forever (the "two enemies frozen on a ledge above me" exploit).
+            if ((drop >= 4 || edgeDrop >= 4) && !allowCliffDrop)
             {
                 npc.velocity.X *= 0.3f;
                 if (Math.Abs(npc.velocity.X) < 1f) npc.velocity.X = 0f;
@@ -2130,9 +2252,24 @@ namespace tsorcRevamp.NPCs
                 {
                     int oMin = Math.Max(a.LeftX, b.LeftX);
                     int oMax = Math.Min(a.RightX, b.RightX);
-                    lands.Add(lx); // same column = pure vertical
-                    if (lx + 1 <= oMax) lands.Add(lx + 1);
-                    if (lx - 1 >= oMin) lands.Add(lx - 1);
+                    // Climbing onto a higher overlapping span (dy > 0): prefer an up-and-OVER arc (offset
+                    // landing) so the body clears the lip and lands on top, instead of a pure-vertical jump
+                    // that drives straight into the ledge wall and wedges at the launch column (the
+                    // align-jump freeze in the log). Pure vertical stays as the last resort — it's still
+                    // valid for jumping straight up through a platform directly overhead. For level or
+                    // descending targets, vertical-first remains correct.
+                    if (dy > 0)
+                    {
+                        if (lx + 1 <= oMax) lands.Add(lx + 1);
+                        if (lx - 1 >= oMin) lands.Add(lx - 1);
+                        lands.Add(lx); // same column = pure vertical (fallback)
+                    }
+                    else
+                    {
+                        lands.Add(lx); // same column = pure vertical
+                        if (lx + 1 <= oMax) lands.Add(lx + 1);
+                        if (lx - 1 >= oMin) lands.Add(lx - 1);
+                    }
                 }
 
                 foreach (int la in lands)
@@ -2205,7 +2342,14 @@ namespace tsorcRevamp.NPCs
         {
             if (!WorldGen.InWorld(x, y)) return false;
             Tile t = Main.tile[x, y];
-            return t.HasTile && !t.IsActuated && TileID.Sets.Platforms[t.TileType];
+            if (!t.HasTile || t.IsActuated) return false;
+            // A "platform" for navigation = anything solid only on its top: wood platforms AND solid-top
+            // furniture (tables, fireplaces, work benches, etc.). Gameplay-wise these can all be stood on,
+            // jumped up through, and dropped down through — but they aren't in TileID.Sets.Platforms and are
+            // tileFrameImportant, so IsNavigationSolid rejects them. Without this the planner saw a table as
+            // neither solid nor platform: NPCs couldn't path onto one and stood frozen on top (the stuck-on-
+            // table report), and couldn't drop through one to reach a lower target.
+            return TileID.Sets.Platforms[t.TileType] || Main.tileSolidTop[t.TileType];
         }
 
         private static bool IsNavigationSolid(int x, int y)
@@ -2337,8 +2481,17 @@ namespace tsorcRevamp.NPCs
             public int RopeFallbackFails;
             // Frames spent pressing a wall while trying to reach a jump launch column it can't get to
             // (A* picked a launch behind a wall). Trips an early step abort so the NPC doesn't face
-            // away from the player, pinned at the wall, for the whole StepTimer.
+            // away from the player, pinned at the wall, for the whole StepTimer. Position-keyed via
+            // AlignLastX (collideX flickers off against a wall and never reached the abort).
             public int AlignStallFrames;
+            public float AlignLastX = float.MaxValue;
+            // Plan-execution immobility (survives replans): a wedged Walk/align step whose StepTimer keeps
+            // getting reset by replans (the player twitching → A* rebuilds) never times out — the "stuck
+            // till hit" freeze. These track raw X immobility WHILE a movement step executes; they reset
+            // ONLY on real X movement, so a replan re-issuing the same wedged step keeps accumulating until
+            // it bad-edges the step target and forces a reroute. MoveCheckX = X at the last progress mark.
+            public float MoveCheckX = float.MaxValue;
+            public int StepNoMoveFrames;
             public int AirCommitTimer;
             public int AirCommitDirX;
             // Signed horizontal launch velocity computed by ComputeJumpArc, re-asserted each
@@ -2346,6 +2499,10 @@ namespace tsorcRevamp.NPCs
             public float CommittedLaunchVx;
             // CommitFrames > 0 means an action is in flight; replan is locked.
             public int CommitFrames;
+            // True once this jump step has fired its arc. If we land grounded again with this still set
+            // (and the step hasn't completed), the jump physically missed its target → reroute after the
+            // ONE attempt instead of re-aligning and re-firing for the full StepTimer (the ~3s shuffle).
+            public bool JumpFiredThisStep;
             public bool PlatformPassActive;
             public int PlatformPassTimer;
             public float PlatformPassStartY;

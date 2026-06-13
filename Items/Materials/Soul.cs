@@ -289,4 +289,16 @@ namespace tsorcRevamp.Items.Materials
             Lighting.AddLight(Item.Center, 0.7f, 0f, 0.25f);
         }
     }
+    public class SoulOfAbyssalInvader : Soul
+    {
+        public override string Texture => "tsorcRevamp/Items/Materials/SoulOfOccultist";
+        public override void SetStaticDefaults()
+        {
+            base.SetStaticDefaults();
+        }
+        public override void PostUpdate()
+        {
+            Lighting.AddLight(Item.Center, 0.45f, 0f, 0.7f);
+        }
+    }
 }

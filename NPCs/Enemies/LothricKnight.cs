@@ -76,6 +76,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.LothricKnightBanner>();
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.HealthScaledSpeedBase = 2.5f;
+            g.HealthScaledSpeedMultiplier = -2.0f;
         }
 
 
@@ -117,8 +120,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
             float acceleration = 0.02f;
-            //float top_speed = (lifePercentage * 0.02f) + .2f; //good calculation to remember for decreasing speed the lower the enemy HP%
-            float top_speed = (lifePercentage * -0.02f) + 2.5f; //good calculation to remember for increasing speed the lower the enemy HP%
+            float top_speed = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ComputeHealthScaledSpeed(NPC, 2.5f);
             float braking_power = 0.1f; //Breaking power to slow down after moving above top_speed
                                         //Main.NewText(Math.Abs(npc.velocity.X));
 

@@ -65,6 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
+            globalNPC.HealthScaledSpeedBase = 2f;
         }
 
         public Player player
@@ -125,9 +126,8 @@ namespace tsorcRevamp.NPCs.Enemies
             Player player = Main.player[NPC.target];
 
 
-            int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
             float acceleration = 0.02f;
-            float top_speed = (lifePercentage * -0.015f) + 2f; //Increase speed the lower the enemy HP%
+            float top_speed = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ComputeHealthScaledSpeed(NPC, 2f);
             float braking_power = 0.11f; //Breaking power to slow down after moving above top_speed
 
 

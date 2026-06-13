@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -13,9 +12,10 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
-    [AutoloadBossHead]
-    class GreatRedKnight : ModNPC
+    class GreatRedKnightTest : ModNPC
     {
+        public override string Texture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/GreatRedKnight";
+
         public int poisonStrikeDamage = 35;
         public int redKnightsSpearDamage = 45;
         public int redMagicDamage = 40;
@@ -803,7 +803,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D spearTexture;
         static Texture2D bombTexture;
         static Texture2D magicBallTexture;
-        static Texture2D armOverlayTexture;
+        static Texture2D handTexture;
 
         // --- Hand-overlay experiment ---
         // The held weapon and the hand both anchor to the knight's gripping hand, which we track per animation frame.
@@ -832,25 +832,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             new Vector2(41, 35), // 14
             new Vector2(41, 35), // 15
         };
-        static readonly Vector2[] OverlayHandPixel = new Vector2[16]
-        {
-            new Vector2(48, 47), // 0 idle
-            new Vector2(49, 26), // 1 jump
-            new Vector2(48, 33), // 2
-            new Vector2(50, 31), // 3
-            new Vector2(50, 31), // 4
-            new Vector2(50, 31), // 5
-            new Vector2(50, 33), // 6
-            new Vector2(48, 33), // 7
-            new Vector2(48, 33), // 8
-            new Vector2(48, 33), // 9
-            new Vector2(46, 31), // 10
-            new Vector2(44, 31), // 11
-            new Vector2(44, 31), // 12
-            new Vector2(46, 33), // 13
-            new Vector2(48, 33), // 14
-            new Vector2(48, 33), // 15
-        };
         // Global correction if the whole overlay is consistently off by a few px (tune once, applies to all frames).
         static readonly Vector2 OverlayFudge = new Vector2(0f, 0f);
 
@@ -858,41 +839,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static readonly Vector2 SpearGripOrigin = new Vector2(7f, 31f);  // BlackKnightSpear (Valkyrie's spear) is 14x62, tip up — grip the MIDDLE (was 7,70 = the butt of the old 14x84 BlackThrowingSpear)
         static readonly Vector2 BombGripOrigin = new Vector2(11f, 18f);  // EnemyFirebomb is 22x24, hand near the bottom
         static readonly Vector2 MagicBallGripOrigin = new Vector2(8f, 8f);
-        const float MagicBallBodyInset = 8f;
+        static readonly Vector2 HandGripOrigin = new Vector2(7f, 4f);    // RedKnight_Hand is 14x8, centered on the grip
 
         // World position of the body's gripping hand for the current animation frame.
         Vector2 CurrentHandWorld()
         {
             int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame < 0 || frame >= OverlayHandPixel.Length)
+            if (frame < 0 || frame >= HandPixel.Length)
             {
                 frame = 0;
             }
-            Vector2 fp = OverlayHandPixel[frame];
+            Vector2 fp = HandPixel[frame];
+            // Jump frame uses a separate raised-hand anchor.
+            if (frame == 1)
+            {
+                fp = new Vector2(44, 23);
+            }
             // Map a 70x56 frame pixel to world: horizontally centered on the hitbox, bottom of frame 4px below the hitbox bottom.
             float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
             float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
             return new Vector2(x, y) + OverlayFudge;
-        }
-
-        Vector2 CurrentMagicBallWorld()
-        {
-            Vector2 handWorld = CurrentHandWorld();
-            float bodyDirection = Math.Sign(NPC.Center.X - handWorld.X);
-            return handWorld + new Vector2(bodyDirection * MagicBallBodyInset, 0f);
-        }
-
-        void DrawArmOverlay(SpriteBatch spriteBatch, Color drawColor)
-        {
-            if (armOverlayTexture == null)
-            {
-                return;
-            }
-
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
-            Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
-            spriteBatch.Draw(armOverlayTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -912,10 +878,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 magicBallTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemySpellAbyssPoisonStrikeBall");
             }
 
-            if (armOverlayTexture == null)
+            if (handTexture == null)
             {
-                armOverlayTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/RedKnight_LeftArm", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                // Loose PNG (no content class): ImmediateLoad + full path so .Value is the real texture.
+                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/RedKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
+
+            SpriteEffects handEffects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             // Spear
             if (NPC.ai[1] >= 120 && NPC.ai[1] <= 210f)
@@ -926,19 +895,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 // Weapon behind the hand, pivoting on the grip so it aims at the throw target.
                 spriteBatch.Draw(spearTexture, handWorld, null, drawColor, rotation, SpearGripOrigin, NPC.scale, SpriteEffects.None, 0);
-                DrawArmOverlay(spriteBatch, drawColor);
+                // Hand on top, unrotated and facing like the body, covering the grip.
+                if (handTexture != null)
+                {
+                    spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
+                }
             }
             // Magic ball
             if (magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] >= 350 && NPC.ai[1] <= 375f) || (NPC.ai[1] >= 400 && NPC.ai[1] <= 480f)))
             {
-                Vector2 magicBallWorld = CurrentMagicBallWorld();
-                spriteBatch.Draw(magicBallTexture, magicBallWorld - Main.screenPosition, null, drawColor, 0f, MagicBallGripOrigin, 1f, SpriteEffects.None, 0);
+                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                spriteBatch.Draw(magicBallTexture, handWorld, null, drawColor, 0f, MagicBallGripOrigin, 1f, SpriteEffects.None, 0);
                 if (Main.rand.NextBool(2))
                 {
-                    Dust dust = Dust.NewDustPerfect(magicBallWorld + Main.rand.NextVector2Circular(6f, 6f), DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120, default, 1.3f);
+                    Dust dust = Dust.NewDustPerfect(CurrentHandWorld() + Main.rand.NextVector2Circular(6f, 6f), DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120, default, 0.65f);
                     dust.noGravity = true;
                 }
-                DrawArmOverlay(spriteBatch, drawColor);
+                if (handTexture != null)
+                {
+                    spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
+                }
             }
             // Bomb
             if (NPC.ai[1] >= 865)
@@ -948,7 +924,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
 
                 spriteBatch.Draw(bombTexture, handWorld, null, drawColor, rotation, BombGripOrigin, 1f, SpriteEffects.None, 0);
-                DrawArmOverlay(spriteBatch, drawColor);
+                if (handTexture != null)
+                {
+                    spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
+                }
             }
 
         }

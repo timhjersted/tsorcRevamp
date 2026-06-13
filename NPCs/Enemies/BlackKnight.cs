@@ -127,7 +127,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
                                           (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
@@ -689,6 +689,58 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Draw Attack Sprites
         static Texture2D spearTexture;
         static Texture2D bombTexture;
+        static Texture2D handTexture;
+        const float FrameW = 70f;
+        const float FrameH = 56f;
+        static readonly Vector2[] HandPixel = new Vector2[16]
+        {
+            new Vector2(47, 30), // 0 idle
+            new Vector2(47, 25), // 1 jump
+            new Vector2(48, 33), // 2
+            new Vector2(50, 31), // 3
+            new Vector2(50, 31), // 4
+            new Vector2(50, 31), // 5
+            new Vector2(50, 33), // 6
+            new Vector2(48, 33), // 7
+            new Vector2(48, 33), // 8
+            new Vector2(48, 33), // 9
+            new Vector2(46, 31), // 10
+            new Vector2(44, 31), // 11
+            new Vector2(44, 31), // 12
+            new Vector2(45, 32), // 13
+            new Vector2(48, 33), // 14
+            new Vector2(48, 33), // 15
+        };
+        static readonly Vector2 SpearGripOrigin = new Vector2(8f, 38f);
+        static readonly Vector2 BombGripOrigin = new Vector2(14f, 4f);
+
+        Vector2 CurrentHandWorld()
+        {
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame < 0 || frame >= HandPixel.Length)
+            {
+                frame = 0;
+            }
+
+            Vector2 fp = HandPixel[frame];
+            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
+            float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
+            return new Vector2(x, y);
+        }
+
+        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
+        {
+            if (handTexture == null)
+            {
+                return;
+            }
+
+            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
+            Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
+            spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (spearTexture == null || spearTexture.IsDisposed)
@@ -700,38 +752,30 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyMoonfuryBomb");
             }
+
+            if (handTexture == null || handTexture.IsDisposed)
+            {
+                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/BlackKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
             // Spear
             if (NPC.ai[1] >= 120 && NPC.ai[1] <= 180f)
             {
                 float spriteScale = 0.8f;
-                Vector2 spearAimPoint = NPC.ai[1] >= 155f ? storedPlayerPosition : Main.player[NPC.target].Center;
-                float rotation = UsefulFunctions.Aim(NPC.Center, spearAimPoint, 1).ToRotation() + MathHelper.PiOver2;
-
-
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, SpriteEffects.None, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, SpriteEffects.None, 0); // facing right, first value is height, higher number is higher
-                }
-
+                Vector2 spearAim = NPC.ai[1] >= 155f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
+                float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
+                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                spriteBatch.Draw(spearTexture, handWorld, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, SpearGripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0);
+                DrawHandOverlay(spriteBatch, drawColor);
             }
             // Bomb
             if (NPC.ai[1] >= 865)
             {
-                Vector2 bombAimPoint = NPC.ai[1] >= 900f ? storedPlayerPosition : Main.player[NPC.target].Center;
-                float rotation = UsefulFunctions.Aim(NPC.Center, bombAimPoint, 1).ToRotation() + MathHelper.PiOver2;
-
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale, SpriteEffects.None, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale, SpriteEffects.None, 0); // facing right, first value is height, higher number is higher
-                }
+                Vector2 bombAim = NPC.ai[1] >= 900f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
+                float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
+                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
+                DrawHandOverlay(spriteBatch, drawColor);
             }
 
         }

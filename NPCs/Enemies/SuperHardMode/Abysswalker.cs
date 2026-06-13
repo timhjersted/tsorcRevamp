@@ -48,6 +48,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanGoInvisible = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().InvisibleAlpha = 210;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoInvisibleChance = 50;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoVisibleChance = 200;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanSelfHeal = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 300;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanHealAllies = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesChance = 400;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesRange = 50;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesPercent = 12;
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
@@ -117,25 +127,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
 
-            //Transparency. Higher alpha = more invisible
-            if (NPC.justHit)
-            {
-                NPC.alpha = 0;
-            }
-            if (Main.rand.NextBool(200))
-            {
-                NPC.alpha = 0;
-            }
-            if (Main.rand.NextBool(50))
-            {
-                NPC.alpha = 210;
-            }
-            if (Main.rand.NextBool(250))
-            {
-                NPC.life += 5;
-                if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
-                NPC.netUpdate = true;
-            }
         }
 
         #region Gore

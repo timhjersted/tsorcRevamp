@@ -49,6 +49,16 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanGoInvisible = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().InvisibleAlpha = 220;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoInvisibleChance = 50;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoVisibleChance = 200;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanSelfHeal = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 100;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanHealAllies = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesChance = 500;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesRange = 40;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesPercent = 8;
         }
         //excuse me while i drop Every Potion Known To Mankind holy hell
         //these dudes oughtta be called alchemists or something
@@ -166,25 +176,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.netUpdate = true;
             }
 
-            //Transparency. Higher alpha = more invisible
-            if (NPC.justHit)
-            {
-                NPC.alpha = 0;
-            }
-            if (Main.rand.NextBool(200))
-            {
-                NPC.alpha = 0;
-            }
-            if (Main.rand.NextBool(50))
-            {
-                NPC.alpha = 220;
-            }
-            if (Main.rand.NextBool(250))
-            {
-                NPC.life += 5;
-                if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
-                NPC.netUpdate = true;
-            }
         }
 
         #region Gore

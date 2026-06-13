@@ -113,6 +113,44 @@ namespace tsorcRevamp
         {
             return (Main.playerInventory);
         }
+        private void PositionInventorySlots(out bool drawRightClick)
+        {
+            int slotIndexX = 12;
+            int slotIndexY = 0;
+            int slotPosX = (int)(20f + (float)(slotIndexX * 56) * Main.inventoryScale);
+            int slotPosY = (int)(20f + (float)(slotIndexY * 56) * Main.inventoryScale) + 18;
+
+            SoulSlot.Position = new Vector2(slotPosX, slotPosY);
+            drawRightClick = SoulsMode;
+
+            if (drawRightClick)
+            {
+                int rcPosY = slotPosY + (int)(56 * Main.inventoryScale);
+                RightClickSlot.Position = new Vector2(slotPosX, rcPosY);
+            }
+        }
+
+        public void UpdateCustomInventorySlots()
+        {
+            if (!ShouldDrawSoulSlot())
+            {
+                return;
+            }
+
+            float origScale = Main.inventoryScale;
+            Main.inventoryScale = 0.85f;
+
+            PositionInventorySlots(out bool drawRightClick);
+
+            SoulSlot.Update();
+            if (drawRightClick)
+            {
+                RightClickSlot.Update();
+            }
+
+            Main.inventoryScale = origScale;
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             if (!ShouldDrawSoulSlot())
@@ -123,34 +161,24 @@ namespace tsorcRevamp
             float origScale = Main.inventoryScale;
             Main.inventoryScale = 0.85f;
 
-            int slotIndexX = 12;
-            int slotIndexY = 0;
-            int slotPosX = (int)(20f + (float)(slotIndexX * 56) * Main.inventoryScale);
-            int slotPosY = (int)(20f + (float)(slotIndexY * 56) * Main.inventoryScale) + 18;
+            PositionInventorySlots(out bool drawRightClick);
 
-            SoulSlot.Position = new Vector2(slotPosX, slotPosY);
+            int slotPosX = (int)SoulSlot.Position.X;
+            int slotPosY = (int)SoulSlot.Position.Y;
             DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, LangUtils.GetTextValue("UI.Souls"), new Vector2(slotPosX + 6f, slotPosY - 15), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0);
 
             SoulSlot.Draw(spriteBatch);
 
             // The Right-Click (2nd) slot sits directly below the souls slot, SoulsMode only.
-            bool drawRightClick = SoulsMode;
             if (drawRightClick)
             {
-                int rcPosY = slotPosY + (int)(56 * Main.inventoryScale);
-                RightClickSlot.Position = new Vector2(slotPosX, rcPosY);
+                int rcPosY = (int)RightClickSlot.Position.Y;
                 RightClickSlot.Draw(spriteBatch);
                 // "2nd" label sits below the slot.
                 DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, LangUtils.GetTextValue("UI.SecondSlot"), new Vector2(slotPosX + 6f, rcPosY + (int)(52 * Main.inventoryScale) + 2), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0);
             }
 
             Main.inventoryScale = origScale;
-
-            SoulSlot.Update();
-            if (drawRightClick)
-            {
-                RightClickSlot.Update();
-            }
 
         }
     }

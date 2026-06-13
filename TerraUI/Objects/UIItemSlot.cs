@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.UI;
@@ -70,6 +69,14 @@ namespace TerraUI.Objects
         /// Whether to scale the slot with the inventory's scale.
         /// </summary>
         public bool ScaleToInventory { get; set; }
+        /// <summary>
+        /// Extra pixels added around the slot rectangle for mouse interaction only.
+        /// </summary>
+        public int HitboxPadding { get; set; }
+        /// <summary>
+        /// Extra pixels added to the right and bottom edges for mouse interaction only.
+        /// </summary>
+        public int HitboxRightAndBottomPadding { get; set; }
         /// <summary>
         /// When true, the item can't be manually taken out of (or swapped out of) the slot once present —
         /// only deposited into an empty slot. Used by the souls slot so Dark Souls can't be moved to the
@@ -204,48 +211,51 @@ namespace TerraUI.Objects
         /// </summary>
         public override void Update()
         {
-            if (!PlayerInput.IgnoreMouseInterface)
+            UpdateRectangle();
+
+            Rectangle hitbox = GetHitboxRectangle();
+            bool intersectsTick = MouseUtils.Rectangle.Intersects(tickRect) && HasTick();
+            bool intersectsRect = MouseUtils.Rectangle.Intersects(hitbox);
+
+            if (intersectsRect || intersectsTick)
             {
-                bool intersectsTick = MouseUtils.Rectangle.Intersects(tickRect) && HasTick();
-                bool intersectsRect = MouseUtils.Rectangle.Intersects(Rectangle);
+                Main.player[Main.myPlayer].mouseInterface = true;
+            }
 
-                if (intersectsRect || intersectsTick)
+            if (intersectsTick)
+            {
+                Main.hoverItemName =
+                    (ItemVisible ? Language.GetTextValue("LegacyInterface.59") : Language.GetTextValue("GameUI.Hidden"));
+
+                if (MouseUtils.JustPressed(MouseButtons.Left))
                 {
-                    Main.player[Main.myPlayer].mouseInterface = true;
+                    ToggleVisibility();
                 }
+            }
+            else if (intersectsRect)
+            {
+                Main.HoverItem = Item;
 
-                if (intersectsTick)
+                if (Item.stack < 1)
                 {
-                    Main.hoverItemName =
-                        (ItemVisible ? Language.GetTextValue("LegacyInterface.59") : Language.GetTextValue("GameUI.Hidden"));
-
-                    if (MouseUtils.JustPressed(MouseButtons.Left))
-                    {
-                        ToggleVisibility();
-                    }
+                    Main.hoverItemName = HoverText;
                 }
-                else if (intersectsRect)
+                else if (Item.stack > 0)
                 {
-                    Main.HoverItem = Item;
-
-                    if (Item.stack < 1)
-                    {
-                        Main.hoverItemName = HoverText;
-                    }
-                    else if (Item.stack > 0)
-                    {
-                        Main.hoverItemName = Item.Name;
-                    }
-                    else if (Item.stack > 1)
-                    {
-                        Main.hoverItemName = Item.Name + " (" + Item.stack + ")";
-                    }
+                    Main.hoverItemName = Item.Name;
                 }
-
-                if (!intersectsTick)
+                else if (Item.stack > 1)
                 {
-                    base.Update();
+                    Main.hoverItemName = Item.Name + " (" + Item.stack + ")";
                 }
+            }
+
+            if (!intersectsTick && intersectsRect)
+            {
+                Rectangle visualRectangle = Rectangle;
+                Rectangle = hitbox;
+                Handle();
+                Rectangle = visualRectangle;
             }
         }
 
@@ -255,11 +265,7 @@ namespace TerraUI.Objects
         /// <param name="spriteBatch">drawing SpriteBatch</param>
         public override void Draw(SpriteBatch spriteBatch)
         {
-            // The slot is drawn scaled (by inventory scale) from its top-left, so the clickable hitbox must use the
-            // SAME scaled dimensions — otherwise, when the UI/inventory scale is above 1, the drawn slot is larger
-            // than the unscaled 52px box and only its center registers clicks (corners miss).
-            float hitScale = Scale(false);
-            Rectangle = new Rectangle((int)RelativePosition.X, (int)RelativePosition.Y, (int)(Size.X * hitScale), (int)(Size.Y * hitScale));
+            UpdateRectangle();
 
             if (DrawAsNormalSlot)
             {
@@ -302,6 +308,43 @@ namespace TerraUI.Objects
             }
 
             base.Draw(spriteBatch);
+        }
+
+        /// <summary>
+        /// Refresh the visual rectangle using the slot's current scale.
+        /// </summary>
+        protected void UpdateRectangle()
+        {
+            // The slot is drawn scaled (by inventory scale) from its top-left, so the clickable hitbox must use the
+            // same scaled dimensions. Use Ceiling so sub-pixel scale values don't shave off the bottom/right edge.
+            float hitScale = Scale(false);
+            Rectangle rectangle = new Rectangle(
+                (int)RelativePosition.X,
+                (int)RelativePosition.Y,
+                (int)System.Math.Ceiling(Size.X * hitScale),
+                (int)System.Math.Ceiling(Size.Y * hitScale));
+
+            Rectangle = rectangle;
+        }
+
+        /// <summary>
+        /// Gets the mouse interaction rectangle without changing where the slot is drawn.
+        /// </summary>
+        protected Rectangle GetHitboxRectangle()
+        {
+            Rectangle hitbox = Rectangle;
+
+            if (HitboxPadding > 0)
+            {
+                hitbox.Inflate(HitboxPadding, HitboxPadding);
+            }
+            if (HitboxRightAndBottomPadding > 0)
+            {
+                hitbox.Width += HitboxRightAndBottomPadding;
+                hitbox.Height += HitboxRightAndBottomPadding;
+            }
+
+            return hitbox;
         }
 
         /// <summary>

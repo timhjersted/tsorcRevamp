@@ -97,7 +97,8 @@ namespace tsorcRevamp.NPCs
         ///<param name="lavaJumping">Lets it hop around in lava</param>
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Set 0 for projectiles with no gravity. If your projectile has custom gravity dropoff, stick that here.</param>
         ///<param name="shootSound">The type of sound to play when it shoots. Defaults to bow.</param>
-        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 4, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, SoundStyle? shootSound = null, bool canDodgeroll = true, bool canPounce = false, Color? telegraphColor = null)
+        ///<param name="telegraphTicks">How many ticks before firing to flash the telegraph and lock aim.</param>
+        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 4, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, SoundStyle? shootSound = null, bool canDodgeroll = true, bool canPounce = false, Color? telegraphColor = null, int telegraphTicks = 15)
         {
             BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, doorBreakingDamage, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping, canDodgeroll, false);
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -106,6 +107,7 @@ namespace tsorcRevamp.NPCs
             {
                 telegraphColor = Color.Gray;
             }
+            telegraphTicks = Math.Max(1, telegraphTicks);
 
             //Set default shoot sound
             if (shootSound == null)
@@ -137,7 +139,7 @@ namespace tsorcRevamp.NPCs
                     globalNPC.ProjectileTimer -= 1f; // decrement fire & reload counter
 
                 // Don't let airborne state abort a shot once the telegraph has already fired.
-                bool inTelegraphWindow = globalNPC.ProjectileTimer <= (projectileCooldown / 2 + 15) && globalNPC.ProjectileTimer > (projectileCooldown / 2);
+                bool inTelegraphWindow = globalNPC.ProjectileTimer <= (projectileCooldown / 2 + telegraphTicks) && globalNPC.ProjectileTimer > (projectileCooldown / 2);
                 if (npc.justHit || (npc.velocity.Y != 0f && !inTelegraphWindow) || globalNPC.ProjectileTimer <= 0f)
                 {
                     globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed); //Reset firing time
@@ -158,7 +160,7 @@ namespace tsorcRevamp.NPCs
                         npc.velocity.X *= 0.5f;
                         globalNPC.ArcherAimDirection = 3f;
                         globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed);
-                        // Clear any stale lock from a previous aim cycle. The lock (15 ticks before the shot)
+                        // Clear any stale lock from a previous aim cycle. The lock before the shot
                         // only sets LockedShotVector while grounded; if this cycle's lock frame is missed (e.g.
                         // the archer is airborne then), the fire-time fallback below re-aims instead of firing a
                         // stale/zero vector (which spawned a zero-velocity arrow that just dropped — the Assassin bug).
@@ -192,9 +194,9 @@ namespace tsorcRevamp.NPCs
                     }
                     npc.spriteDirection = npc.direction; // match animation to facing
 
-                    // Telegraph fires 15 ticks before the shot: lock the aim direction now so
+                    // Telegraph fires before the shot: lock the aim direction now so
                     // a dodge-roll behind the enemy can't redirect the incoming projectile.
-                    if (globalNPC.ProjectileTimer - 15 == (projectileCooldown / 2))
+                    if (globalNPC.ProjectileTimer - telegraphTicks == (projectileCooldown / 2))
                     {
                         globalNPC.LockedShotVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -291,6 +293,8 @@ namespace tsorcRevamp.NPCs
             {
                 npc.TargetClosest(false);
             }
+            if (globalNPC.HealthScaledSpeedBase >= 0)
+                topSpeed = (npc.life / (float)npc.lifeMax) * globalNPC.HealthScaledSpeedMultiplier + globalNPC.HealthScaledSpeedBase;
             topSpeed *= globalNPC.Swiftness;
             acceleration *= globalNPC.Swiftness;
             if (globalNPC.FighterNoLosPursuitBoostTimer > 0)
@@ -427,7 +431,7 @@ namespace tsorcRevamp.NPCs
                 // Disengage resolver (4b): blink to re-acquire when the give-up condition for this style is met.
                 // Charges + per-style cooldown gate it; out of charges / on cooldown / no valid spot → falls
                 // through to Patrol. After a blink the NPC has LOS → FSM → Pursue.
-                if (globalNPC.CanTeleport && globalNPC.TeleportCountdown == 0
+                if (globalNPC.CanTeleport && globalNPC.TeleportCountdown == 0 && globalNPC.TeleportAppearanceTimer == 0
                     && globalNPC.TeleportChargesRemaining > 0 && globalNPC.TeleportCooldownTimer == 0)
                 {
                     bool fireTeleport;
@@ -456,8 +460,8 @@ namespace tsorcRevamp.NPCs
 
                 if (fsmState == PursuitState.Patrol)
                 {
-                    // Mid-blink (a teleport was just queued, or is counting down) → hold; otherwise patrol.
-                    if (globalNPC.TeleportCountdown == 0)
+                    // Mid-blink (a teleport was just queued, counting down, or appearance is pending) → hold; otherwise patrol.
+                    if (globalNPC.TeleportCountdown == 0 && globalNPC.TeleportAppearanceTimer == 0)
                     {
                         NavBehavior.RunPatrol(npc, globalNPC, topSpeed, acceleration);
                         if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
@@ -632,8 +636,21 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            // Smoke/fire style: snap position to destination after 1.5s into the 2s smoke cloud
+            if (globalNPC.TeleportAppearanceTimer > 0)
+            {
+                npc.velocity.X = 0;
+                globalNPC.TeleportAppearanceTimer--;
+                if (globalNPC.TeleportAppearanceTimer == 0)
+                {
+                    npc.Center = globalNPC.TeleportTelegraph;
+                    globalNPC.TeleportTelegraph = Vector2.Zero;
+                    npc.netUpdate = true;
+                }
+            }
+
             //Block firing and reset cooldowns if it's busy doing other things (incl. fleeing)
-            if (globalNPC.TeleportCountdown > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 globalNPC.ProjectileTimer = 0;
                 globalNPC.ArcherAimDirection = 0;
@@ -664,7 +681,7 @@ namespace tsorcRevamp.NPCs
         private static void RunFighterCombatTriggers(NPC npc, tsorcRevampGlobalNPC globalNPC, bool fleeing, bool lineOfSight, bool canDodgeroll, bool canPounce)
         {
             //Dodging — only while actively pursuing (not searching/patrolling/fleeing/teleporting)
-            if (globalNPC.PursuitState == PursuitState.Pursue && !fleeing && globalNPC.TeleportCountdown == 0 && globalNPC.DodgeCooldown == 0)
+            if (globalNPC.PursuitState == PursuitState.Pursue && !fleeing && globalNPC.TeleportCountdown == 0 && globalNPC.TeleportAppearanceTimer == 0 && globalNPC.DodgeCooldown == 0)
             {
                 if (canDodgeroll && npc.Distance(Main.player[npc.target].Center) > 160)
                 {
@@ -1259,8 +1276,21 @@ namespace tsorcRevamp.NPCs
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, npc.whoAmI, TeleportTelegraphTime);
-                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: TeleportTelegraphTime);
+                            var visualStyle = npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportVisualStyle;
+                            if (visualStyle == TeleportVisualStyle.Default)
+                            {
+                                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, npc.whoAmI, TeleportTelegraphTime);
+                                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: TeleportTelegraphTime);
+                            }
+                            else
+                            {
+                                float mistStyle = visualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
+                                float radius = Math.Max(npc.width, npc.height) * 0.5f;
+                                var srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
+                                srcMist.timeLeft = TeleportTelegraphTime;
+                                var dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
+                                dstMist.timeLeft = TeleportTelegraphTime;
+                            }
                         }
 
                         break;
@@ -1292,23 +1322,44 @@ namespace tsorcRevamp.NPCs
 
             SoundEngine.PlaySound(SoundID.Item8, npc.Center);
 
-
             Vector2 diff = globalNPC.TeleportTelegraph - npc.Center;
             float length = diff.Length();
             if (length > 0f)
                 diff /= length;
 
-            SpawnTeleportMist(npc.Center, diff, npc.width, npc.height, globalNPC);
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (globalNPC.TeleportVisualStyle == TeleportVisualStyle.Default)
             {
-                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
-                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                SpawnTeleportMist(npc.Center, diff, npc.width, npc.height, globalNPC);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                    Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                }
+
+                npc.Center = globalNPC.TeleportTelegraph;
+                SpawnTeleportMist(npc.Center, -diff, npc.width, npc.height, globalNPC);
             }
+            else
+            {
+                float style = globalNPC.TeleportVisualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
+                float radius = Math.Max(npc.width, npc.height) * 0.5f;
 
-            npc.Center = globalNPC.TeleportTelegraph;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    // Both clouds start simultaneously. NPC moves 1.5s later (TeleportAppearanceTimer).
+                    var exitMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                        ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
+                    exitMist.timeLeft = 120;
 
-            SpawnTeleportMist(npc.Center, -diff, npc.width, npc.height, globalNPC);
+                    var entryMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero,
+                        ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
+                    entryMist.timeLeft = 120;
+                }
+
+                // Position snaps to destination after 1.5s (90 frames), handled by FighterAI.
+                globalNPC.TeleportAppearanceTimer = 90;
+            }
         }
 
         public static void FighterOnHit(NPC npc, bool melee)

@@ -334,6 +334,16 @@ namespace tsorcRevamp
             if (inventoryIndex != -1)
             {
                 layers.Insert(inventoryIndex, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Custom Inventory Slots Input",
+                    delegate
+                    {
+                        Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().UpdateCustomInventorySlots();
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+
+                layers.Insert(inventoryIndex, new LegacyGameInterfaceLayer(
                     "tsorcRevamp: Portable Guide Scroll Swallower",
                     delegate
                     {

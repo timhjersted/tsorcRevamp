@@ -92,6 +92,7 @@ namespace tsorcRevamp
 
             RightClickSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LangUtils.GetTextValue("UI.SecondSlotHover"), null, RightClickSlotCondition, DrawRightClickSlotBackground, null, null, false, true);
             RightClickSlot.BackOpacity = 0.8f;
+            RightClickSlot.HitboxRightAndBottomPadding = 24;
             RightClickSlot.Item = new Item();
             RightClickSlot.Item.SetDefaults(0, true);
 

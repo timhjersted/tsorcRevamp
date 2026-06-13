@@ -720,7 +720,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 if (_wallBlockedTimer > 300)
                 {
                     _wallBlockedTimer = 0;
-                    if (gnpc.TeleportCountdown == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                    if (gnpc.TeleportCountdown == 0 && gnpc.TeleportAppearanceTimer == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                         tsorcRevampAIs.QueueTeleport(NPC, 50, true, 90);
                     EnterPhase(AttackPhase.Idle, 0);
                 }
@@ -740,7 +740,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     NPC.velocity.X      = (float)awayX * TopSpeed * 2f;
                     NPC.direction       = (int)awayX;
                     _directionHoldTicks = 5;
-                    if (_retreatBeforeTeleportTimer == 0 && gnpc.TeleportCountdown == 0
+                    if (_retreatBeforeTeleportTimer == 0 && gnpc.TeleportCountdown == 0 && gnpc.TeleportAppearanceTimer == 0
                         && Main.netMode != NetmodeID.MultiplayerClient)
                         tsorcRevampAIs.QueueTeleport(NPC, 50, true, 60);
                 }

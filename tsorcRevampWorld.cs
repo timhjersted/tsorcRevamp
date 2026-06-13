@@ -62,6 +62,10 @@ namespace tsorcRevamp
         // Persisted with the world so labels survive session restarts.
         public static Dictionary<Vector2, string> DiscoveredLocations = new();
 
+        private static List<Vector2> PendingDroppedSoulPositions = new();
+        private static List<int> PendingDroppedSoulStacks = new();
+        private static List<string> PendingDroppedSoulOwnerNames = new();
+
         public static Vector2 AbyssPortalLocation;
         public static int DwarvenContractsGiven = 0;
 
@@ -184,6 +188,9 @@ namespace tsorcRevamp
             tsorcScriptedEvents.InitializeScriptedEvents();
             tsorcScriptedEvents.LoadDynamicEvents();
             MapMarkers = new();
+            PendingDroppedSoulPositions = new();
+            PendingDroppedSoulStacks = new();
+            PendingDroppedSoulOwnerNames = new();
             BossIDsAndCoordinatesInternal = null;
             beforeAbyss = new();
             DwarvenContractsGiven = 0;
@@ -249,6 +256,7 @@ namespace tsorcRevamp
             tag.Add("DiscoveredLocationKeys", DiscoveredLocations.Keys.ToList());
             tag.Add("DiscoveredLocationValues", DiscoveredLocations.Values.ToList());
             tag["DwarvenContractsGiven"] = DwarvenContractsGiven;
+            SaveDroppedDeathSouls(tag);
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -340,7 +348,63 @@ namespace tsorcRevamp
                 }
             }
             DwarvenContractsGiven = tag.GetInt("DwarvenContractsGiven");
+            LoadDroppedDeathSouls(tag);
             tsorcScriptedEvents.LoadDynamicEvents();
+        }
+
+        private static void SaveDroppedDeathSouls(TagCompound tag)
+        {
+            List<Vector2> positions = new();
+            List<int> stacks = new();
+            List<string> ownerNames = new();
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (!projectile.active || projectile.type != ModContent.ProjectileType<Projectiles.SoulDrop>())
+                {
+                    continue;
+                }
+
+                int stack = (int)projectile.ai[0];
+                if (stack <= 0)
+                {
+                    continue;
+                }
+
+                int ownerIndex = (int)projectile.ai[1];
+                string ownerName = "";
+                if (ownerIndex >= 0 && ownerIndex < Main.maxPlayers && Main.player[ownerIndex].active)
+                {
+                    ownerName = Main.player[ownerIndex].name;
+                }
+
+                positions.Add(projectile.Center);
+                stacks.Add(stack);
+                ownerNames.Add(ownerName);
+            }
+
+            tag.Add("DroppedDeathSoulPositions", positions);
+            tag.Add("DroppedDeathSoulStacks", stacks);
+            tag.Add("DroppedDeathSoulOwnerNames", ownerNames);
+        }
+
+        private static void LoadDroppedDeathSouls(TagCompound tag)
+        {
+            PendingDroppedSoulPositions = new();
+            PendingDroppedSoulStacks = new();
+            PendingDroppedSoulOwnerNames = new();
+
+            if (!tag.ContainsKey("DroppedDeathSoulPositions"))
+            {
+                return;
+            }
+
+            PendingDroppedSoulPositions = tag.GetList<Vector2>("DroppedDeathSoulPositions").ToList();
+            PendingDroppedSoulStacks = tag.GetList<int>("DroppedDeathSoulStacks").ToList();
+            PendingDroppedSoulOwnerNames = tag.ContainsKey("DroppedDeathSoulOwnerNames")
+                ? tag.GetList<string>("DroppedDeathSoulOwnerNames").ToList()
+                : new List<string>();
         }
 
         private void SaveSlain(TagCompound tag)
@@ -1207,7 +1271,80 @@ namespace tsorcRevamp
 
         public override void PostUpdateWorld()
         {
+            RestoreDroppedDeathSouls();
             Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(false);
+        }
+
+        private static void RestoreDroppedDeathSouls()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || PendingDroppedSoulPositions == null || PendingDroppedSoulPositions.Count == 0)
+            {
+                return;
+            }
+
+            List<Vector2> remainingPositions = new();
+            List<int> remainingStacks = new();
+            List<string> remainingOwnerNames = new();
+
+            for (int i = 0; i < PendingDroppedSoulPositions.Count; i++)
+            {
+                if (i >= PendingDroppedSoulStacks.Count || PendingDroppedSoulStacks[i] <= 0)
+                {
+                    continue;
+                }
+
+                string ownerName = i < PendingDroppedSoulOwnerNames.Count ? PendingDroppedSoulOwnerNames[i] : "";
+                int ownerIndex = FindDroppedSoulOwner(ownerName);
+                if (ownerIndex == -1)
+                {
+                    remainingPositions.Add(PendingDroppedSoulPositions[i]);
+                    remainingStacks.Add(PendingDroppedSoulStacks[i]);
+                    remainingOwnerNames.Add(ownerName);
+                    continue;
+                }
+
+                int soulDropIndex = Projectile.NewProjectile(new EntitySource_Misc("DroppedDeathSoulWorldLoad"), PendingDroppedSoulPositions[i], Vector2.Zero, ModContent.ProjectileType<Projectiles.SoulDrop>(), 0, 0, ownerIndex, PendingDroppedSoulStacks[i], ownerIndex);
+                int bloodsignIndex = Projectile.NewProjectile(new EntitySource_Misc("DroppedDeathSoulWorldLoad"), PendingDroppedSoulPositions[i], Vector2.Zero, ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, ownerIndex);
+
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    if (soulDropIndex >= 0 && soulDropIndex < Main.maxProjectiles)
+                    {
+                        NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, soulDropIndex);
+                    }
+                    if (bloodsignIndex >= 0 && bloodsignIndex < Main.maxProjectiles)
+                    {
+                        NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, bloodsignIndex);
+                    }
+                }
+            }
+
+            PendingDroppedSoulPositions = remainingPositions;
+            PendingDroppedSoulStacks = remainingStacks;
+            PendingDroppedSoulOwnerNames = remainingOwnerNames;
+        }
+
+        private static int FindDroppedSoulOwner(string ownerName)
+        {
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (!Main.player[i].active)
+                {
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(ownerName) && Main.player[i].name == ownerName)
+                {
+                    return i;
+                }
+            }
+
+            if (Main.netMode == NetmodeID.SinglePlayer && Main.myPlayer >= 0 && Main.myPlayer < Main.maxPlayers && Main.player[Main.myPlayer].active)
+            {
+                return Main.myPlayer;
+            }
+
+            return -1;
         }
 
         bool initialized = false;

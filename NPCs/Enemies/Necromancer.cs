@@ -37,6 +37,7 @@ namespace tsorcRevamp.NPCs.Enemies
             casterGlobalNPC.RemembersLastKnownPos = true;
             casterGlobalNPC.PatrolMode = NPCs.PatrolMode.Pace;
             casterGlobalNPC.NavSearchRadius = 80;
+            casterGlobalNPC.CanHealAllies = true;
         }
 
         float skeletonTimer;

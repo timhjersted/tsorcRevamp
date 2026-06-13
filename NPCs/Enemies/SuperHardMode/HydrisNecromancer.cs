@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -10,7 +9,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class HydrisNecromancer : ModNPC
     {
+        private const int SpawnDustDuration = 30;
+
         int deathStrikeDamage = 65;
+        int spawnDustTimer = 0;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
@@ -43,6 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             casterGlobalNPC.RemembersLastKnownPos = true;
             casterGlobalNPC.PatrolMode = NPCs.PatrolMode.Pace;
             casterGlobalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
+            casterGlobalNPC.CanHealAllies = true;
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
@@ -128,6 +132,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (skeletonTimer > 300 && lineOfSight)
             {
                 skeletonTimer = 0;
+                spawnDustTimer = SpawnDustDuration;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -148,38 +153,35 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                 }
             }
+
+            if (spawnDustTimer > 0)
+            {
+                EmitSummonDust();
+                spawnDustTimer--;
+            }
         }
 
-        #region DRAW
-        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        private void EmitSummonDust()
         {
-            //BlACK DUST is used to show stunlock worked, PINK is used to show unstoppable attack incoming
-            //BLACK DUST
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimerCap * 0.4f)
+            if (Main.dedServ)
             {
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    //Dust.NewDust(npc.position, npc.width, npc.height, 41, npc.velocity.X, npc.velocity.Y); //41 wassss weird anti-gravity blue dust but now I'm seeing grass clippings; not sure what happened
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 54, (NPC.velocity.X * 0.2f), NPC.velocity.Y * 0.2f, 100, default, 1f); //54 is black smoke
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 54, (NPC.velocity.X * 0.2f), NPC.velocity.Y * 0.2f, 100, default, 2f);
-
-                }
+                return;
             }
 
-            //PINK DUST
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer * 11f / 15f)
+            Lighting.AddLight(NPC.Center, Color.HotPink.ToVector3() * 0.8f);
+            for (int i = 0; i < 3; i++)
             {
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
-
-                    Main.dust[pink].noGravity = true;
-                }
+                Dust dust = Dust.NewDustPerfect(
+                    NPC.Center + Main.rand.NextVector2Circular(NPC.width * 0.7f, NPC.height * 0.7f),
+                    DustID.CrystalSerpent,
+                    NPC.velocity * 0.2f + Main.rand.NextVector2Circular(1.6f, 1.6f),
+                    100,
+                    default,
+                    1.5f
+                );
+                dust.noGravity = true;
             }
         }
-        #endregion
 
 
         #region Gore

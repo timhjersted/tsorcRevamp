@@ -1,9 +1,11 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Ranged.Crossbows;
@@ -81,12 +83,12 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int MeleeWeaponItemType  => ModContent.ItemType<SteelTempest>();
         protected override int RangedWeaponItemType => ModContent.ItemType<AbyssalStar>();
 
-        protected override int MeleeDamage  => 40;
-        protected override int RangedDamage => 30;
+        protected override int MeleeDamage  => (int)(80 * tsorcRevampWorld.SHMScale);
+        protected override int RangedDamage => (int)(55 * tsorcRevampWorld.SHMScale);
 
         // ── Secondary ranged: HeavyCrossbow ──────────────────────────────────────
         protected override int         SecondaryRangedWeaponItemType  => ModContent.ItemType<HeavyCrossbow>();
-        protected override int         SecondaryRangedDamage          => 35;  // bolt hits harder than stars
+        protected override int         SecondaryRangedDamage          => (int)(70 * tsorcRevampWorld.SHMScale);  // bolt hits harder than stars
         protected override RangedStyle SecondaryRangedAnimStyle       => RangedStyle.Crossbow;
         protected override float       SecondaryRangedRange           => 600f;
         protected override float       SecondaryRangedMinRange        => 350f; // must be far enough to bother aiming
@@ -180,14 +182,14 @@ namespace tsorcRevamp.NPCs.Invaders
         //   Telegraph: 18 ticks (slow down, arm raised; white flash at 30 ticks remaining)
         //   Attack:    WeaponAnimMax ticks (swing arc + melee hitbox spawned)
         //   Recovery:  25 ticks
-        //   Damage:    MeleeDamage = 40
+        //   Damage:    MeleeDamage = 80 × SHMScale
         //
         // STAB / LUNGE — 90px < dist ≤ 200px, on-ground, heightDiff < 48px, no cooldown
         //   Telegraph: 24 ticks (slow down, arm dipped — "cocked" read; flash fires immediately)
         //   Attack:    9 ticks  (lunge: TopSpeed × StabLungeSpeedMult = 3.2 × 2.0 = 6.4 px/f)
         //   Recovery:  36 ticks
         //   Cooldown:  120 ticks after each stab
-        //   Damage:    MeleeDamage = 40, reach = StabRange × 0.55 = 110px
+        //   Damage:    MeleeDamage = 80 × SHMScale, reach = StabRange × 0.55 = 110px
         //
         // PRIMARY RANGED: THROWING STARS — 280px ≤ dist ≤ 480px, _rangedCooldown == 0
         //   Style:     RangedStyle.Throw — arm lifts up then swings forward
@@ -196,7 +198,7 @@ namespace tsorcRevamp.NPCs.Invaders
         //   Burst:     rolls 1–3; 25% chance of single shot
         //   Recovery:  55 ticks
         //   Cooldown:  180 ticks (forces melee/stab first)
-        //   Damage:    RangedDamage = 30
+        //   Damage:    RangedDamage = 55 × SHMScale
         //
         // SECONDARY RANGED: CROSSBOW — 350px ≤ dist ≤ 600px, _secondaryRangedCooldown == 0
         //   35% chance to use when both primary and secondary are in range.
@@ -204,7 +206,7 @@ namespace tsorcRevamp.NPCs.Invaders
         //   Base telegraph: 32 ticks (80% standing); bolt speed 14, gravity 0.02f (flat trajectory)
         //   Recovery:  50 ticks
         //   Cooldown:  240 ticks (~4 s between bursts)
-        //   Damage:    SecondaryRangedDamage = 35, knockback 4
+        //   Damage:    SecondaryRangedDamage = 70 × SHMScale, knockback 4
         //
         //   PATTERN 0 — single shot (55% chance)
         //     Telegraph: 32 ticks; white flash at 30 ticks remaining
@@ -236,14 +238,20 @@ namespace tsorcRevamp.NPCs.Invaders
         {
             NPC.width    = 20;
             NPC.height   = 42;
-            NPC.lifeMax  = 6000;
-            NPC.defense  = 28;
+            NPC.lifeMax  = (int)(30000 * tsorcRevampWorld.SHMScale);
+            NPC.defense  = 65;
             NPC.damage   = 0; // No contact damage — all damage delivered via weapon hitbox projectiles + dive
-            NPC.knockBackResist = 0.3f;
+            NPC.knockBackResist = 0.15f;
             NPC.aiStyle  = -1;
             NPC.HitSound   = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.value    = 50000f;
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AbyssalStar>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfAbyssalInvader>(), 1, 3, 3));
         }
 
         // ─────────────────────────────────────────────────────────────────────────
