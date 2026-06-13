@@ -53,6 +53,10 @@ namespace tsorcRevamp.NPCs
 {
     public static class tsorcRevampAIs
     {
+        private const int SmokeFireTeleportCloudTicks = 60;
+        private const int SmokeFireTeleportSnapTicks = 30;
+        private const float TeleportMistVisualScale = 1.25f;
+
         ///<summary> 
         ///Walking AI that walks toward the player. Can be used with SimpleProjectile to fire projectiles, or LeapAtPlayer to leap when the player is close
         ///</summary>
@@ -135,14 +139,18 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
+                int scaledProjectileCooldown = Math.Max(telegraphTicks * 2, (int)(projectileCooldown * globalNPC.CastingSpeed));
+                int fireTick = scaledProjectileCooldown / 2;
+                int telegraphTick = fireTick + telegraphTicks;
+
                 if (globalNPC.ProjectileTimer > 0f)
                     globalNPC.ProjectileTimer -= 1f; // decrement fire & reload counter
 
                 // Don't let airborne state abort a shot once the telegraph has already fired.
-                bool inTelegraphWindow = globalNPC.ProjectileTimer <= (projectileCooldown / 2 + telegraphTicks) && globalNPC.ProjectileTimer > (projectileCooldown / 2);
+                bool inTelegraphWindow = globalNPC.ProjectileTimer <= telegraphTick && globalNPC.ProjectileTimer > fireTick;
                 if (npc.justHit || (npc.velocity.Y != 0f && !inTelegraphWindow) || globalNPC.ProjectileTimer <= 0f)
                 {
-                    globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed); //Reset firing time
+                    globalNPC.ProjectileTimer = scaledProjectileCooldown; //Reset firing time
                     globalNPC.ArcherAimDirection = 0f; //Not aiming
                     // If standing-fire has remaining shots and we're only resetting due to cooldown,
                     // immediately re-enter aiming state for the next volley shot.
@@ -159,7 +167,7 @@ namespace tsorcRevamp.NPCs
                         //Aim at them, and start the shot cooldown
                         npc.velocity.X *= 0.5f;
                         globalNPC.ArcherAimDirection = 3f;
-                        globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed);
+                        globalNPC.ProjectileTimer = scaledProjectileCooldown;
                         // Clear any stale lock from a previous aim cycle. The lock before the shot
                         // only sets LockedShotVector while grounded; if this cycle's lock frame is missed (e.g.
                         // the archer is airborne then), the fire-time fallback below re-aims instead of firing a
@@ -196,7 +204,7 @@ namespace tsorcRevamp.NPCs
 
                     // Telegraph fires before the shot: lock the aim direction now so
                     // a dodge-roll behind the enemy can't redirect the incoming projectile.
-                    if (globalNPC.ProjectileTimer - telegraphTicks == (projectileCooldown / 2))
+                    if (globalNPC.ProjectileTimer == telegraphTick)
                     {
                         globalNPC.LockedShotVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -211,7 +219,7 @@ namespace tsorcRevamp.NPCs
                     }
 
                     //Fire at halfway through: first half of delay is aim, 2nd half is cooldown
-                    if (globalNPC.ProjectileTimer == (projectileCooldown / 2))
+                    if (globalNPC.ProjectileTimer == fireTick)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -289,6 +297,11 @@ namespace tsorcRevamp.NPCs
 
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.RunningCustomFighterAI = true; // mark for PostAI's confusion handling
+            globalNPC.CanDodgeroll = canDodgeroll;   // expose for the on-hit wall-pin escape
+            if (globalNPC.FighterEvasionCooldown > 0)
+            {
+                globalNPC.FighterEvasionCooldown--;
+            }
             if (npc.target < 0 || npc.target >= Main.maxPlayers || !Main.player[npc.target].active || Main.player[npc.target].dead)
             {
                 npc.TargetClosest(false);
@@ -306,6 +319,10 @@ namespace tsorcRevamp.NPCs
 
             if (!globalNPC.Initialized)
             {
+                // Capture the pristine SetDefaults knockback resist before any AI tick mutates it — the poise flinch and
+                // attack-state restores read this so the per-enemy SetDefaults value stays the source of truth.
+                globalNPC.BaseKnockBackResist = npc.knockBackResist;
+
                 //Make damage and health scale with strength
                 npc.damage = (int)(npc.damage * globalNPC.Strength);
                 npc.life = (int)(npc.life * globalNPC.Strength);
@@ -519,7 +536,7 @@ namespace tsorcRevamp.NPCs
                 // SF4 has no isArcher accel-gate of its own, so fold the archer-aim hold into holdForAttack HERE
                 // (only at the SF4 call-site, leaving the verified LocalMover path untouched).
                 bool sf4Hold = intent.HoldForAttack || (isArcher && globalNPC.ArcherAimDirection != 0f);
-                // SeizesBody guard: a pounce/dodge owns the body this frame → don't let A* pathing fight the arc.
+                // SeizesBody guard: combat/teleport owns the body this frame, so don't let A* pathing fight it.
                 if (!intent.SeizesBody)
                     SmartFighter4AI.Run(npc, topSpeed, acceleration, doorBreakingDamage, 700f, movementOnly: true, holdForAttack: sf4Hold, brakingPower: brakingPower);
                 lineOfSight = Main.player[npc.target].CanHit(npc); // refresh for the log + triggers
@@ -628,7 +645,12 @@ namespace tsorcRevamp.NPCs
             //Stop moving when teleporting, and handle the logic to execute it
             if (globalNPC.TeleportCountdown > 0)
             {
-                npc.velocity.X = 0;
+                npc.velocity *= 0.1f;
+                if (npc.velocity.LengthSquared() < 0.01f)
+                {
+                    npc.velocity = Vector2.Zero;
+                }
+
                 globalNPC.TeleportCountdown--;
                 if (globalNPC.TeleportCountdown == 0)
                 {
@@ -636,10 +658,15 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            // Smoke/fire style: snap position to destination after 1.5s into the 2s smoke cloud
+            // Smoke/fire style: snap position to destination halfway through the 1s smoke cloud
             if (globalNPC.TeleportAppearanceTimer > 0)
             {
-                npc.velocity.X = 0;
+                npc.velocity *= 0.1f;
+                if (npc.velocity.LengthSquared() < 0.01f)
+                {
+                    npc.velocity = Vector2.Zero;
+                }
+
                 globalNPC.TeleportAppearanceTimer--;
                 if (globalNPC.TeleportAppearanceTimer == 0)
                 {
@@ -656,9 +683,18 @@ namespace tsorcRevamp.NPCs
                 globalNPC.ArcherAimDirection = 0;
             }
 
-            // A pounce/dodge owns the body this frame (it set velocity above). Populated here; its mover no-op is
-            // wired at the SF4 dispatch in Step 4 — LocalMover intentionally keeps interleaving (current feel).
-            intent.SeizesBody = globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0;
+            // Combat/teleport owns the body this frame (it set velocity above). Populated here so movement no-ops.
+            bool teleportBusy = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
+            if (teleportBusy)
+            {
+                npc.velocity *= 0.1f;
+                if (npc.velocity.LengthSquared() < 0.01f)
+                {
+                    npc.velocity = Vector2.Zero;
+                }
+            }
+
+            intent.SeizesBody = teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0;
         }
 
         // Stop-to-fire DECISION (Step 3): should the mover pin position so the combat layer can fire? This is the
@@ -1285,11 +1321,11 @@ namespace tsorcRevamp.NPCs
                             else
                             {
                                 float mistStyle = visualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
-                                float radius = Math.Max(npc.width, npc.height) * 0.5f;
+                                float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
                                 var srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
-                                srcMist.timeLeft = TeleportTelegraphTime;
+                                srcMist.timeLeft = Math.Min(TeleportTelegraphTime, SmokeFireTeleportCloudTicks);
                                 var dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
-                                dstMist.timeLeft = TeleportTelegraphTime;
+                                dstMist.timeLeft = Math.Min(TeleportTelegraphTime, SmokeFireTeleportCloudTicks);
                             }
                         }
 
@@ -1301,12 +1337,13 @@ namespace tsorcRevamp.NPCs
 
         private static void SpawnTeleportMist(Vector2 position, Vector2 direction, int width, int height, tsorcRevampGlobalNPC globalNPC)
         {
-            for (int i = 0; i < globalNPC.TeleportDustCount; i++)
+            int dustCount = (int)Math.Ceiling(globalNPC.TeleportDustCount * TeleportMistVisualScale);
+            for (int i = 0; i < dustCount; i++)
             {
                 Vector2 randomVelocity = direction * Main.rand.NextFloat(2.5f, 5.5f)
                     + Main.rand.NextVector2Circular(1.6f, 1.6f);
-                Dust dust = Dust.NewDustPerfect(position + Main.rand.NextVector2Circular(width * 0.4f, height * 0.4f),
-                    globalNPC.TeleportDustType, randomVelocity, 150, globalNPC.TeleportDustColor, globalNPC.TeleportDustScale);
+                Dust dust = Dust.NewDustPerfect(position + Main.rand.NextVector2Circular(width * 0.4f * TeleportMistVisualScale, height * 0.4f * TeleportMistVisualScale),
+                    globalNPC.TeleportDustType, randomVelocity, 150, globalNPC.TeleportDustColor, globalNPC.TeleportDustScale * TeleportMistVisualScale);
                 dust.noGravity = true;
                 dust.fadeIn = 0.45f;
             }
@@ -1343,22 +1380,22 @@ namespace tsorcRevamp.NPCs
             else
             {
                 float style = globalNPC.TeleportVisualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
-                float radius = Math.Max(npc.width, npc.height) * 0.5f;
+                float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    // Both clouds start simultaneously. NPC moves 1.5s later (TeleportAppearanceTimer).
+                    // Both clouds start simultaneously. NPC moves halfway through the 1s cloud.
                     var exitMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
                         ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
-                    exitMist.timeLeft = 120;
+                    exitMist.timeLeft = SmokeFireTeleportCloudTicks;
 
                     var entryMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero,
                         ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
-                    entryMist.timeLeft = 120;
+                    entryMist.timeLeft = SmokeFireTeleportCloudTicks;
                 }
 
-                // Position snaps to destination after 1.5s (90 frames), handled by FighterAI.
-                globalNPC.TeleportAppearanceTimer = 90;
+                // Position snaps to destination after 0.5s (30 frames), handled by FighterAI.
+                globalNPC.TeleportAppearanceTimer = SmokeFireTeleportSnapTicks;
             }
         }
 
@@ -1370,6 +1407,11 @@ namespace tsorcRevamp.NPCs
                 npc.knockBackResist = 0.09f;
                 // Abort any standing-fire burst — the NPC will be knocked airborne anyway
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().FighterRangedStandShotsRemaining = 0;
+
+                if (!Main.rand.NextBool(2))
+                {
+                    return;
+                }
 
                 //TELEPORT MELEE
                 if (Main.rand.NextBool(18))
@@ -1403,7 +1445,7 @@ namespace tsorcRevamp.NPCs
                 }
 
             }
-            if (!melee && Main.rand.NextBool())
+            if (!melee && Main.rand.NextBool(4))
             {
                 if (Main.rand.NextBool(4))
                 {
@@ -1451,356 +1493,144 @@ namespace tsorcRevamp.NPCs
             }
 
         }
-        #region Red Knight Hit AI
-        public static void RedKnightOnHit(NPC npc, bool melee) //ref int stunlockBreak
+        #region Fighter Evasive On-Hit Reaction
+        /// <summary>
+        /// Occasional evasive reaction when a fighter is hit: hop/dash/leap away, or teleport — and if it's being pinned
+        /// against a wall, escape TOWARD the player instead. This is PURELY repositioning: it never cancels an attack
+        /// (that is the poise stagger's job) and only fires in pure neutral — never during a windup/attack (InAttack) or
+        /// while staggered. <paramref name="melee"/> lets ranged hits trigger the stand-and-fire snap-out. Shared by the
+        /// Red Knight family for now; intended to grow into the general fighter evasion layer. See
+        /// project_poise_stagger_system.
+        /// </summary>
+        public static void FighterEvasiveOnHit(NPC npc, bool melee)
         {
-            /*
-            // Ensure that the stunlockBreak timer is always decreasing
-            stunlockBreak--;
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            // Increment the stunlockBreak timer
-            stunlockBreak += 600;
-
-            // Check if the stunlockBreak timer is greater than or equal to 3000
-            if (stunlockBreak >= 2000)
+            // Never react while attacking (windup or committed) or staggered — interruption is the poise stagger's job.
+            if (globalNPC.InAttack || globalNPC.StaggerTimer > 0)
             {
-                
-                // Set knockback to 0 and decrement the stunlockBreak timer
-                npc.knockBackResist = 0;
-                
-            }
- 
-            if (stunlockBreak < 0)
-            {
-                stunlockBreak = 0;
-            }
-            */
-            if (melee)
-            {
-                // Ensures melee can't interrupt attack once the flash telegraph triggers
-                if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
-                {
-                    int randomChoice = Main.rand.Next(10);
-
-                    switch (randomChoice)
-                    {
-                        case 0:
-                            npc.ai[1] = 0f;
-                            break;
-
-                        case 1:
-                            npc.ai[1] = 700f;
-                            break;
-
-                        case 2:
-                            npc.ai[1] = 200f;
-                            break;
-
-                        case 3:
-                            npc.ai[1] = 800f;
-                            break;
-                        case 4:
-                            // Big jump back - Spear
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -9f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 140f;
-                                npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                npc.ai[1] = 0f;
-                            }
-                            break;
-                        case 5:
-                            // Small dash back - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = -8f * npc.direction;
-                                npc.ai[1] = 860f;
-                                npc.netUpdate = true;
-
-
-                            }
-                            // Alt dash - Bomb
-                            else if (Main.rand.NextBool(4))
-                            {
-                                npc.ai[1] = 850f;
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -4f;
-                                npc.velocity.X = -9f * npc.direction;
-                            }
-                            break;
-                        case 6:
-                            // Big dash back - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.ai[1] = 880f;
-                                npc.velocity.Y = -8f;
-                                npc.velocity.X = -11f * npc.direction;
-                                npc.netUpdate = true;
-                            }                          
-                            break;
-                        case 7:
-                            // Teleport
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.spriteDirection = npc.direction;
-                                TeleportImmediately(npc, 22, true);
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            {
-                                // Poison TP
-                                npc.spriteDirection = npc.direction;
-                                TeleportImmediately(npc, 22, true);
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -6f * npc.direction;
-                                npc.ai[1] = 260f;
-                            }
-                            break;
-                        case 8:
-                            //Small dash back - Spear
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -3f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 130f;
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(2))
-                            {
-                                // Jump high
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -11f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 130f;
-
-                            }
-                            break;
-                        case 9:
-                            // Dash back - Poison
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 280f;
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 280f;
-                            }
-                            break;
-
-
-                    }
-                    npc.netUpdate = true;
-                }
-                else
-                {
-                    //npc.knockBackResist = 0;
-                }
-
-                //npc.knockBackResist = 0.4f; //was 0.9            
+                return;
             }
 
-            if (!melee)
+            // Getting shot out of a stand-and-fire / post-attack pause snaps the archer out of it and repositions.
+            if (!melee && (globalNPC.FighterRangedHitInterruptedPause || globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0))
             {
-                tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-                if (globalNPC.FighterRangedHitInterruptedPause || globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0)
+                if (!Main.rand.NextBool(2))
                 {
-                    globalNPC.FighterRangedHitInterruptedPause = false;
-                    globalNPC.FighterPostAttackPauseTimer = 0;
-                    globalNPC.FighterRangedStandShotsRemaining = 0;
-                    npc.TargetClosest(true);
-                    float distance = npc.Distance(Main.player[npc.target].Center);
-                    if (distance > 320f)
-                    {
-                        npc.ai[1] = Main.rand.NextBool() ? 90f : 830f;
-                    }
-                    else
-                    {
-                        npc.velocity.Y = -5f;
-                        npc.velocity.X += npc.direction * 5f;
-                    }
-                    npc.netUpdate = true;
                     return;
                 }
 
-                // Ensures ranged can't interrupt attack once the flash telegraph triggers
-                if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
-                {
-                    int randomChoice = Main.rand.Next(9);
-
-                    switch (randomChoice)
-                    {
-                        case 0:
-                            // Burst forward
-                            if (Main.rand.NextBool(5))
-                            {
-                                npc.velocity.Y = -9f;
-                                npc.velocity.X = 4f * npc.direction;
-                                npc.TargetClosest(true);
-
-                                if ((float)npc.direction * npc.velocity.X > 4)
-                                {
-                                    npc.velocity.X = (float)npc.direction * 3;  //  3 was 4 - this caps the top speed
-                                }
-                                npc.netUpdate = true;
-                            }
-                            break;
-
-                        case 1:
-                            // Burst forward
-                            if (Main.rand.NextBool(6))
-                            {
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X *= 4f; // burst forward
-                                npc.TargetClosest(true);
-
-                                npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
-                                if ((float)npc.direction * npc.velocity.X > 5)
-                                {
-                                    npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
-                                }
-
-                                // Chance to jump after dash
-                                if (Main.rand.NextBool(6))
-                                {
-                                    npc.TargetClosest(true);
-                                    npc.spriteDirection = npc.direction;
-                                    npc.velocity.Y = -6f;
-                                }
-
-                                npc.netUpdate = true;
-                            }
-                            break;
-
-                        case 2:
-                            // Teleport
-                            if (npc.Distance(Main.player[npc.target].Center) > 400 && Main.rand.NextBool(4))
-                            {
-                                TeleportImmediately(npc, 15, false);
-                            }
-                            break;
-
-                        case 3:
-                            // Dash backwards - Poison
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 290f;
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 290f;
-                            }
-                            break;
-                        case 4:
-                            // Chance to big jump backwards - Spear
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -9f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 140f;
-                                npc.netUpdate = true;
-                            }
-                            break;
-                        case 5:
-                            // Small dash backwards - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = 6f * npc.direction;
-                                npc.ai[1] = 860f;
-                                npc.netUpdate = true;
-                            }
-                            // Alt dash backwards - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.ai[1] = 850f;
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -4f;
-                                npc.velocity.X = -9f * npc.direction;
-                            }
-                            break;
-                        case 6:
-                            // Big dash backwards - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.ai[1] = 880f;
-                                npc.velocity.Y = -8f;
-                                npc.velocity.X = -11f * npc.direction;
-                                npc.netUpdate = true;
-                            }
-                            break;
-                        case 7:
-                            // Teleport
-                            if (Main.rand.NextBool(4))
-                            {
-                                TeleportImmediately(npc, 20, true);
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            // Poision Teleport
-                            {
-                                TeleportImmediately(npc, 20, true);
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -5f * npc.direction;
-                                npc.ai[1] = 250f;
-                            }
-                            break;
-                        case 8:
-                            // Small dash backwards - Spear
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -3f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 140f;
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            // Jump high, slightly forward
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = 3f * npc.direction;
-                                npc.ai[1] = 130f;
-                                npc.netUpdate = true;
-                            }
-                            break;
-                        case 9:
-                            // Attack interrupt; for Great Red Knight it cycles to DD2 attack at 1/2 health
-                            npc.ai[1] = 700f;
-                            break;
-                    }
-                    npc.netUpdate = true;
-                }
+                globalNPC.FighterRangedHitInterruptedPause = false;
+                globalNPC.FighterPostAttackPauseTimer = 0;
+                globalNPC.FighterRangedStandShotsRemaining = 0;
+                npc.TargetClosest(true);
+                npc.velocity.Y = -5f;
+                npc.velocity.X += npc.direction * 5f;
+                npc.netUpdate = true;
+                return;
             }
+
+            // Rate-limit so a fighter doesn't react to every hit of a fast combo.
+            if (globalNPC.FighterEvasionCooldown > 0)
+            {
+                return;
+            }
+
+            // If pinned against a wall, escape toward the player rather than evading into it.
+            if (TryWallEscape(npc, globalNPC))
+            {
+                return;
+            }
+
+            // Only react to a fraction of hits — keeps the knight slippery without spasming.
+            if (!Main.rand.NextBool(6))
+            {
+                return;
+            }
+
+            npc.TargetClosest(true);
+            int away = -npc.direction; // npc.direction faces the player after TargetClosest
+            bool grounded = npc.velocity.Y == 0f;
+
+            switch (Main.rand.Next(5))
+            {
+                case 0: // small hop back
+                    npc.velocity.Y = -6f;
+                    npc.velocity.X = 7f * away;
+                    break;
+                case 1: // big leap back
+                    npc.velocity.Y = -9f;
+                    npc.velocity.X = 9f * away;
+                    break;
+                case 2: // low dash back
+                    npc.velocity.X = 8f * away;
+                    if (grounded)
+                    {
+                        npc.velocity.Y = -3f;
+                    }
+                    break;
+                case 3: // jump high, drifting back
+                    npc.velocity.Y = -11f;
+                    npc.velocity.X = 4f * away;
+                    break;
+                case 4: // teleport away if able, else leap back
+                    if (globalNPC.CanTeleport)
+                    {
+                        TeleportImmediately(npc, 20, melee);
+                    }
+                    else
+                    {
+                        npc.velocity.Y = -6f;
+                        npc.velocity.X = 8f * away;
+                    }
+                    break;
+            }
+
+            globalNPC.FighterEvasionCooldown = 40; // ~0.66s before another reaction
+            npc.netUpdate = true;
         }
+
+        /// <summary>
+        /// If the enemy is pinned against a wall on the side knockback pushes it (away from the player), break the pin by
+        /// moving TOWARD the player: dodgeroll if able (rolls toward the player), else an optional teleport, else a jump.
+        /// Returns true if it escaped (and sets the shared evasion cooldown). See project_poise_stagger_system.
+        /// </summary>
+        private static bool TryWallEscape(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            npc.TargetClosest(true);
+            int toward = npc.direction; // toward the player = the open side
+            int away = -toward;         // the side knockback pushes it / where a pinning wall would be
+
+            // Probe an 8px column just past the NPC's edge on the wall side, spanning its body height.
+            float edgeX = npc.Center.X + away * (npc.width / 2f);
+            Vector2 probePos = new Vector2(away > 0 ? edgeX : edgeX - 8f, npc.Center.Y - npc.height / 2f + 2f);
+            if (!Collision.SolidCollision(probePos, 8, npc.height - 4))
+            {
+                return false; // not pinned
+            }
+
+            bool grounded = npc.velocity.Y == 0f;
+            if (globalNPC.CanDodgeroll && grounded)
+            {
+                npc.spriteDirection = npc.direction;
+                globalNPC.DodgeTimer = 30; // BasicAI rolls at 5 * npc.direction → toward the player, out of the pin
+                globalNPC.DodgeCooldown = (int)(300 * (1 - globalNPC.Agility));
+            }
+            else if (globalNPC.CanTeleport && Main.rand.NextBool(2))
+            {
+                TeleportImmediately(npc, 18, false);
+            }
+            else
+            {
+                npc.velocity.Y = -8f;        // jump toward the player to clear the wall
+                npc.velocity.X = 5f * toward;
+            }
+
+            globalNPC.FighterEvasionCooldown = 45;
+            npc.netUpdate = true;
+            return true;
+        }
+
         #endregion
 
         #region Gwyn Hit AI

@@ -9,9 +9,9 @@ namespace tsorcRevamp.NPCs
 {
     // The combat→movement hand-off contract (Phase 2). Shared by the combat layer (tsorcRevampAIs.RunFighterCombat*)
     // and BOTH movement substrates — LocalMover (here) and SmartFighter4AI.Run (wired in Step 4).
-    //   SeizesBody    — a pounce/dodge owns velocity this frame → the mover should no-op those frames.
+    //   SeizesBody    — combat/teleport owns velocity this frame → the mover should no-op those frames.
     //   HoldForAttack — stop-and-fire: the mover should pin position / hold its standoff so combat can shoot.
-    // NOTE (Step 2): populated by the combat layer but NOT yet read by the mover — wiring that is Step 3.
+    // Populated by the combat layer and obeyed by the movement layer.
     // See Documentation/CombatMovementSeparation_Plan.md.
     internal struct FighterCombatIntent
     {
@@ -42,6 +42,16 @@ namespace tsorcRevamp.NPCs
             // `lineOfSight` is the PRE-movement LOS the caller (BasicAI) already computed (and used to decide
             // intent.HoldForAttack). It is refreshed near the end of this method — tile state can change
             // mid-frame via a platform drop — and the refreshed value is returned.
+
+            if (intent.SeizesBody)
+            {
+                npc.velocity *= 0.1f;
+                if (npc.velocity.LengthSquared() < 0.01f)
+                {
+                    npc.velocity = Vector2.Zero;
+                }
+                return lineOfSight;
+            }
 
             // Face the player (dead zone avoids jitter when nearly aligned). Fleeing walks away.
             if (Math.Abs(Main.player[npc.target].Center.X - npc.Center.X) > 30)

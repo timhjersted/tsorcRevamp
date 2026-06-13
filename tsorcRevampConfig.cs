@@ -214,6 +214,12 @@ namespace tsorcRevamp
             set => ModContent.GetInstance<tsorcRevampVisualConfig>().HideOverheadStaminaBar = value;
         }
 
+        public bool EnemyHealthBars
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyHealthBars;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyHealthBars = value;
+        }
+
         public bool GravityFix
         {
             get => ModContent.GetInstance<tsorcRevampVisualConfig>().GravityFix;
@@ -330,6 +336,9 @@ namespace tsorcRevamp
 
         [DefaultValue(false)]
         public bool HideOverheadStaminaBar { get; set; }
+
+        [DefaultValue(false)]
+        public bool EnemyHealthBars { get; set; }
 
         [DefaultValue(false)]
         public bool HideCeruleanFlask { get; set; }

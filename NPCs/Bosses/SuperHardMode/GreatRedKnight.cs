@@ -58,6 +58,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             redKnightGlobalNPC.Agility = 0.45f;
 
+            // Poise: boss-tier — many hits to stagger, and the impulse is halved for bosses. Tunable lever.
+            redKnightGlobalNPC.PoiseMax = 80f;
+            redKnightGlobalNPC.PoiseStaggerResetsAI = true; // a stagger cancels a windup attack → neutral
+
             // Navigation tuning: maximum jumps, double jump, and ledge routing
             redKnightGlobalNPC.MaxJumpPower = 12f;
             redKnightGlobalNPC.MaxJumpBoost = 8f;
@@ -86,12 +90,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region On Hit
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.FighterEvasiveOnHit(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.FighterEvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
         #endregion
         
@@ -117,6 +121,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            // Hyper-armor window: FLASH telegraph → fire only. Windup excluded so a stagger can interrupt it.
+            // Spear 180→210, poison 300→375, attack4 450→485, DD2/bomb 725→955.
+            globalNPC.AttackCommitted = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
+                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                        (NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
+                                        (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f);
+
+            // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
+            globalNPC.AttackTelegraphing = (NPC.ai[1] >= 150f && NPC.ai[1] < 180f) ||
+                                           (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
+                                           (NPC.ai[1] >= 420f && NPC.ai[1] < 450f) ||
+                                           (NPC.ai[1] >= 695f && NPC.ai[1] < 725f);
+
             if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
@@ -133,8 +151,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (Main.netMode != 1 && !Main.player[NPC.target].dead)
             {
-                NPC.ai[1]++;
-                NPC.ai[2]++;
+                // Freeze the attack timer while staggered so the ~1s stun holds (and a reset windup stays neutral).
+                if (globalNPC.StaggerTimer <= 0)
+                {
+                    NPC.ai[1]++;
+                    NPC.ai[2]++;
+                }
 
                 bool inActiveAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 485f) ||
@@ -697,7 +719,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 300 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Player closestPlayer = UsefulFunctions.GetClosestPlayer(NPC.Center);
-                    if (closestPlayer != null && Collision.CanHit(NPC, closestPlayer))
+                    if (closestPlayer != null)
                     {
                         Vector2 targetVector = UsefulFunctions.Aim(NPC.Center, closestPlayer.Center, 1);
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
@@ -882,6 +904,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return handWorld + new Vector2(bodyDirection * MagicBallBodyInset, 0f);
         }
 
+        Vector2 CurrentSpearWorld()
+        {
+            Vector2 handWorld = CurrentHandWorld();
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame == 0)
+            {
+                handWorld.Y -= 21f;
+            }
+            return handWorld;
+        }
+
         void DrawArmOverlay(SpriteBatch spriteBatch, Color drawColor)
         {
             if (armOverlayTexture == null)
@@ -920,7 +953,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // Spear
             if (NPC.ai[1] >= 120 && NPC.ai[1] <= 210f)
             {
-                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
                 Vector2 spearAim = NPC.ai[1] >= 180f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
 

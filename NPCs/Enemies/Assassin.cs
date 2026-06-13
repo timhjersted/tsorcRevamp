@@ -219,7 +219,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             NPC.timeLeft = 100;
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .05f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green, telegraphTicks: 30);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .1f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green, telegraphTicks: 30);
         }
 
 

@@ -41,6 +41,9 @@ namespace tsorcRevamp.NPCs
         private const int StepTimeoutFrames = 180;
         private const float TileF = 16f;
         private const float AlignTolerancePx = 12f;
+        // Minimum acceleration used when settling onto a jump launch column (see ExecJump). Decouples
+        // alignment precision from the enemy's chase acceleration so low-accel pursuers still line up jumps.
+        private const float AlignAccelFloor = 0.1f;
 
         // Replan cooldown is the minimum frames between *successful* replans.
         // The committed action lock overrides this entirely while an action runs.
@@ -215,12 +218,13 @@ namespace tsorcRevamp.NPCs
             // before standing still to shoot. Without this guard an archer on a raised tile zeroes its own X
             // velocity before it can step down, bouncing on the ledge edge indefinitely.
             bool hasPlanStep = s.Plan != null && s.PlanIndex < s.Plan.Count;
-            if (movementOnly && holdForAttack && pstate != PursuitState.Patrol && !hasPlanStep)
+            int holdDir = player.Center.X >= npc.Center.X ? 1 : -1;
+            bool needsStepUp = grounded && !hasPlanStep && HasOneTileStepAhead(npc, holdDir);
+            if (movementOnly && holdForAttack && pstate != PursuitState.Patrol && !hasPlanStep && !needsStepUp)
             {
                 if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f;
                 else npc.velocity.X *= 0.6f;
-                int hdir = player.Center.X >= npc.Center.X ? 1 : -1;
-                npc.direction = hdir; npc.spriteDirection = hdir;
+                npc.direction = holdDir; npc.spriteDirection = holdDir;
                 actionHandled = true;
                 actionLabel = "hold-fire"; reasonLabel = "combat";
             }
@@ -424,6 +428,16 @@ namespace tsorcRevamp.NPCs
             // while walking on the ground — skipped during a rope ride (noGravity) or a platform-drop
             // (noTileCollide), where stepping up would cancel the intended descent. Replaces 1-tile hops.
             if (!npc.noGravity && !npc.noTileCollide) AutoStepUp(npc);
+
+            // ArcherAI sets bow/aim frames before SF4 movement runs. If the movement step then faces toward
+            // a launch column/rope/path target, the bow frame can flash facing away for one tick. While the
+            // archer animation is active, let movement keep its velocity but make the sprite face the player.
+            if (movementOnly && g.ArcherAimDirection != 0f)
+            {
+                int aimFace = player.Center.X >= npc.Center.X ? 1 : -1;
+                npc.direction = aimFace;
+                npc.spriteDirection = aimFace;
+            }
 
             // Attacks (reuse the LOS computed above for the FSM).
             // Attacks are allowed on the rope: SF4 forces CanStopToFire=false below, so firing
@@ -1344,7 +1358,9 @@ namespace tsorcRevamp.NPCs
                     if (s.AlignStallFrames > 18) { s.StepTimer = 0; s.AlignStallFrames = 0; }
                 }
                 else s.AlignStallFrames = 0;
-                ApplyChase(npc, aDir, topSpeed, acceleration);
+                // Same alignment-precision floor as the jump launch column (see ExecJump): a low chase accel
+                // shouldn't make the rope-column approach oscillate.
+                ApplyChase(npc, aDir, topSpeed, Math.Max(acceleration, AlignAccelFloor));
                 action = "align-rope"; reason = $"ropeX={step.LaunchX} cx={npc.Center.X / TileF:F1} {(descend ? "down" : "up")}";
                 return true;
             }
@@ -1599,6 +1615,14 @@ namespace tsorcRevamp.NPCs
             {
                 int aDir = npc.Center.X < launchCenter ? 1 : -1;
                 npc.direction = aDir; npc.spriteDirection = aDir;
+                // Settling onto a launch column needs decisive acceleration regardless of how the enemy
+                // CHASES. Acceleration is doing double duty (chase responsiveness vs alignment precision):
+                // a deliberately-low chase accel (e.g. 0.05 archers, 0.03 casters) made the creep take ~14
+                // frames to reach even the 0.7 creep cap, so every settle-and-reset overshot the column and
+                // oscillated forever (306 align-jump vs 5 jump-fire in the log). Floor the accel used for
+                // alignment ONLY — the enemy's chase feel elsewhere is untouched; here it just positions
+                // crisply. Heavy beasts keep their ponderous pursuit but can still line up a jump.
+                float alignAccel = Math.Max(acceleration, AlignAccelFloor);
                 // Final-approach creep: within ~2 tiles of the launch column, bleed speed fast and cap the
                 // approach low so the NPC settles ONTO the column instead of skating across it and
                 // oscillating (the jittery pre-jump left-right shuffle). Outside that, chase at full speed.
@@ -1607,11 +1631,11 @@ namespace tsorcRevamp.NPCs
                 if (Math.Abs(npc.Center.X - launchCenter) < TileF * 2f)
                 {
                     if (Math.Abs(npc.velocity.X) > 0.7f) npc.velocity.X *= 0.6f;
-                    ApplyChase(npc, aDir, Math.Min(topSpeed, 0.7f), acceleration);
+                    ApplyChase(npc, aDir, Math.Min(topSpeed, 0.7f), alignAccel);
                 }
                 else
                 {
-                    ApplyChase(npc, aDir, topSpeed, acceleration);
+                    ApplyChase(npc, aDir, topSpeed, alignAccel);
                 }
                 // Can't reach the launch column — it's unreachable (A* picked a launch behind a wall or
                 // up a step the approach-creep can't take). Don't press toward it for the whole StepTimer
@@ -1955,6 +1979,13 @@ namespace tsorcRevamp.NPCs
             return false;
         }
 
+        private static bool HasOneTileStepAhead(NPC npc, int direction)
+        {
+            int frontX = GetFrontTileX(npc, direction);
+            int feetY = GetFeetTileY(npc);
+            return GetObstacleHeight(frontX, feetY) == 1;
+        }
+
         private static bool TryDoor(NPC npc, int direction, int doorDamage, tsorcRevampGlobalNPC g,
             out string action, out string reason)
         {
@@ -2252,17 +2283,24 @@ namespace tsorcRevamp.NPCs
                 {
                     int oMin = Math.Max(a.LeftX, b.LeftX);
                     int oMax = Math.Min(a.RightX, b.RightX);
-                    // Climbing onto a higher overlapping span (dy > 0): prefer an up-and-OVER arc (offset
-                    // landing) so the body clears the lip and lands on top, instead of a pure-vertical jump
-                    // that drives straight into the ledge wall and wedges at the launch column (the
-                    // align-jump freeze in the log). Pure vertical stays as the last resort — it's still
-                    // valid for jumping straight up through a platform directly overhead. For level or
-                    // descending targets, vertical-first remains correct.
+                    // Climbing onto a higher overlapping span (dy > 0). A PURE-VERTICAL jump (straight up,
+                    // zero horizontal momentum) is the cleanest, most reliable climb and the maneuver the
+                    // executor does best — but it only works when the destination floor directly overhead is
+                    // a JUMP-THROUGH surface (wood platform or solid-top furniture like a table): the body
+                    // phases straight up through it and lands on top. When that's the case, prefer vertical —
+                    // this restores the "stop, jump straight up, then walk" behavior (the diagonal-only
+                    // preference made every climb a dx=1 up-and-over that drifted sideways and undershot tall
+                    // arcs). When a SOLID block sits overhead instead, a vertical jump just drives the head
+                    // into its underside and wedges at the launch column, so there we keep the up-and-OVER
+                    // offset arc that clears the lip and lands on top from the side. (Floor of span b at the
+                    // launch column is row b.Y + 1 — spans store the FEET row, floor one below.)
                     if (dy > 0)
                     {
-                        if (lx + 1 <= oMax) lands.Add(lx + 1);
+                        bool cleanVertical = IsPlatformTile(lx, b.Y + 1);
+                        if (cleanVertical) lands.Add(lx);            // straight-up through the platform first
+                        if (lx + 1 <= oMax) lands.Add(lx + 1);       // up-and-over fallbacks (clear a solid lip)
                         if (lx - 1 >= oMin) lands.Add(lx - 1);
-                        lands.Add(lx); // same column = pure vertical (fallback)
+                        if (!cleanVertical) lands.Add(lx);           // vertical only as last resort over solid
                     }
                     else
                     {
@@ -2439,10 +2477,14 @@ namespace tsorcRevamp.NPCs
                         + $" eng={s.RopeEngaged} latch={s.RopeDirLatched} dismount={s.RopeDismounting}"
                         + $" stall={s.RopeStallFrames} atEnd={atEnd} reached={reached}]";
                 }
+                int facePlayer = player.Center.X >= npc.Center.X ? 1 : -1;
+                bool wrongAimFace = npc.ai[2] != 0f && npc.spriteDirection != facePlayer;
                 string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI}"
                     + $" pos=({npc.Center.X / TileF:F1},{npc.Center.Y / TileF:F1})"
                     + $" player=({player.Center.X / TileF:F1},{player.Center.Y / TileF:F1})"
                     + $" vel=({npc.velocity.X:F2},{npc.velocity.Y:F2})"
+                    + $" dir={npc.direction} spr={npc.spriteDirection} faceP={facePlayer}"
+                    + $" ai2={npc.ai[2]:F1} frameY={npc.frame.Y} wrongAimFace={wrongAimFace}"
                     + $" g={grounded} cx={npc.collideX} cy={npc.collideY}"
                     + $" pass=({npc.noTileCollide},{npc.noGravity}) los={los}"
                     + $" plan={planStr}"

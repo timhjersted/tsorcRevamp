@@ -87,8 +87,8 @@ namespace tsorcRevamp.NPCs
     public enum TeleportVisualStyle
     {
         Default,    // one burst of white smoke + shockwave flash (current behavior)
-        GreySmoke,  // heavy grey smoke cloud lingering ~1.5s at both exit and entry
-        Fire,       // fire + dark smoke cloud lingering ~1.5s at both exit and entry
+        GreySmoke,  // heavy grey smoke cloud lingering ~1s at both exit and entry
+        Fire,       // fire + dark smoke cloud lingering ~1s at both exit and entry
     }
 
     public enum InvisibilityStyle
@@ -267,6 +267,219 @@ namespace tsorcRevamp.NPCs
         public int FighterRangedStandShotsRemaining;  // >0 = standing-fire mode; decrement each shot, exit when zero
         public int FighterNoLosPursuitBoostTimer;
 
+        // Single source of truth for "this enemy is committed to an attack and cannot be interrupted/knocked back".
+        // Each enemy sets this every AI tick from its own flash-telegraph→fire windows (windup ≈25t before the flash
+        // through the fire frame). FighterEvasiveOnHit reads it (via InAttack) to gate the on-hit reaction. The poise system below
+        // treats AttackCommitted as hyper-armor. See memory: project_poise_stagger_system.
+        public bool AttackCommitted;
+
+        // Windup phase: from when an attack begins through the flash telegraph (pre-AttackCommitted). Poise CAN build
+        // here (a stagger interrupts a windup), but ordinary hits do NOT — the evasive on-hit reaction is suppressed
+        // during any attack. Each enemy sets this each AI tick alongside AttackCommitted.
+        public bool AttackTelegraphing;
+
+        /// <summary>True during any attack (windup or committed). The evasive on-hit reaction only fires when this is
+        /// false (pure neutral); attack interruption is handled solely by the poise stagger.</summary>
+        public bool InAttack => AttackTelegraphing || AttackCommitted;
+
+        // Shared cooldown for the on-hit evasive reaction + wall-pin escape, so an enemy doesn't react every frame of a combo.
+        public int FighterEvasionCooldown;
+
+        // The enemy's SetDefaults knockBackResist, captured once by BasicAI before any AI tick mutates it. Enemies whose
+        // AI zeroes knockBackResist during attacks restore to THIS each tick, so the SetDefaults value (the per-enemy
+        // "weight") stays the source of truth that shapes the poise flinch. -1 = not yet captured.
+        public float BaseKnockBackResist = -1f;
+
+        #region Poise / Stagger (Dark-Souls-style)
+        // Deterministic stagger system (see project_poise_stagger_system).
+        //  • Ordinary hits apply a LIGHT flinch knockback (PoiseFlinchFactor) so weapons feel like they connect, and
+        //    accumulate poise damage equal to the weapon's knockback stat.
+        //  • AttackCommitted (post-flash) = hyper-armor: zero knockback, no poise. Windup is NOT committed, so a stagger
+        //    there cancels the attack.
+        //  • When poise fills → STAGGER: launch + ~2s freeze (movement + attack timer) + cancel windup.
+        //  • Anti-stunlock: the break cooldown OUTLASTS the stun, giving a recovery window where the enemy can't be
+        //    re-staggered and takes REDUCED (but non-zero) flinch knockback. Escalation stacks on top — each stagger
+        //    within a long (~120s) window raises EffectivePoiseMax by 60%, so chained re-staggers get progressively harder.
+        // Set PoiseMax > 0 in an enemy's SetDefaults to opt in; PoiseMax <= 0 keeps vanilla knockback behaviour.
+        public float PoiseMax = 0f;               // per-enemy lever; <=0 disables the whole system for that NPC
+        public float Poise = 0f;                  // current accumulated poise damage (0 → EffectivePoiseMax)
+        public int StaggerTimer = 0;              // >0 = currently staggered (frozen; bar shows full + flashes)
+        public int PoiseBreakCooldown = 0;        // >0 = i-frames after a break: zero knockback + immune to poise damage
+        public int PoiseRegenDelay = 0;           // ticks remaining before accumulated poise starts decaying
+        public float StaggerKnockback = 6f;       // horizontal launch magnitude applied on a poise break
+        public float PoiseFlinchFactor = 0.4f;    // fraction of normal knockback applied on ordinary (non-breaking) hits
+        public float PoiseCooldownFlinchFactor = 0.5f; // extra multiplier on flinch during the post-stagger recovery window (still registers, just sturdier)
+        public bool PoiseStaggerResetsAI = false; // opt-in: a stagger sets ai[1]=60/ai[2]=-100 (cancels a windup attack)
+        // Tunable durations (ticks). Defaults: ~2s stagger, then the cooldown OUTLASTS it (~2s recovery), ~3s decay grace.
+        public int StaggerDurationTicks = 120;
+        public int PoiseBreakCooldownTicks = 240;
+        public int PoiseRegenDelayTicks = 180;
+        // Escalation ("the enemy learns"): each recent stagger adds a stack (raising the threshold by 60%) and refreshes
+        // the window. Stacks reset only after the full window elapses with NO new stagger — so chaining staggers makes
+        // each one progressively much harder over a long fight.
+        public int PoiseEscalationStacks = 0;
+        public int PoiseEscalationTimer = 0;       // ticks until stacks reset
+        public const int PoiseEscalationMaxStacks = 8;        // up to +480% threshold (×5.8) for a much-staggered enemy
+        public const float PoiseEscalationPerStack = 0.6f;    // +60% EffectivePoiseMax per stack
+        public const int PoiseEscalationDurationTicks = 7200; // ~120s window (refreshed by each stagger)
+        // Set in ModifyHitBy*, consumed in OnHitBy*: did the pre-strike calc decide this hit breaks poise?
+        internal bool PoiseWillBreakThisHit = false;
+        private float staggerSlideVelocity = 0f;  // horizontal knockback slide held across the stun
+
+        /// <summary>PoiseMax scaled up by current escalation stacks — the actual threshold a hit must cross.</summary>
+        public float EffectivePoiseMax => PoiseMax * (1f + PoiseEscalationPerStack * PoiseEscalationStacks);
+
+        /// <summary>True when the poise bar should be drawn (and the stamina bar suppressed).</summary>
+        public bool PoiseBarVisible => PoiseMax > 0f && (Poise > 0f || StaggerTimer > 0);
+
+        /// <summary>Pre-strike: hyper-armor and active stagger take zero vanilla knockback; everything else gets a light
+        /// flinch (including the post-stagger cooldown). Also decides (deterministically) whether this hit breaks poise,
+        /// so OnHit and the knockback agree.</summary>
+        private void ApplyPoiseToKnockback(NPC npc, float poiseDamage, ref NPC.HitModifiers modifiers)
+        {
+            if (PoiseMax <= 0f)
+            {
+                return;
+            }
+            if (AttackCommitted || StaggerTimer > 0)
+            {
+                modifiers.DisableKnockback(); // hyper-armor or already-staggered (manual slide drives it)
+                PoiseWillBreakThisHit = false;
+                return;
+            }
+            // Neutral / windup / post-stagger recovery: light flinch so the hit always reads. During the recovery window
+            // (PoiseBreakCooldown) the flinch is reduced further — the enemy is sturdier right after a stun but still
+            // visibly reacts — and it can't be re-staggered (anti-stunlock).
+            float flinch = PoiseFlinchFactor;
+            if (PoiseBreakCooldown > 0)
+            {
+                flinch *= PoiseCooldownFlinchFactor;
+            }
+            modifiers.Knockback *= flinch;
+            PoiseWillBreakThisHit = PoiseBreakCooldown <= 0 && (Poise + poiseDamage) >= EffectivePoiseMax;
+        }
+
+        /// <summary>Post-strike: accumulate poise and trigger the stagger if it broke. Source is the attacker's center,
+        /// used to pick the knockback direction.</summary>
+        private void HandlePoiseOnHit(NPC npc, float poiseDamage, Vector2 sourceCenter)
+        {
+            if (PoiseMax <= 0f || AttackCommitted)
+            {
+                PoiseWillBreakThisHit = false;
+                return; // hyper-armor: no poise, no knockback
+            }
+            if (StaggerTimer > 0)
+            {
+                ApplyStaggerImpulse(npc, sourceCenter, 0.5f); // already broken — a lighter follow-up shove
+                PoiseWillBreakThisHit = false;
+                return;
+            }
+            if (PoiseBreakCooldown > 0)
+            {
+                PoiseWillBreakThisHit = false;
+                return; // post-stagger i-frames: immune to further poise damage (anti-stunlock)
+            }
+
+            Poise += poiseDamage;
+            PoiseRegenDelay = PoiseRegenDelayTicks;
+
+            if (PoiseWillBreakThisHit || Poise >= EffectivePoiseMax)
+            {
+                TriggerStagger(npc, sourceCenter);
+            }
+            PoiseWillBreakThisHit = false;
+        }
+
+        /// <summary>Enter the staggered state: launch, freeze, cancel a windup attack, and escalate.</summary>
+        private void TriggerStagger(NPC npc, Vector2 sourceCenter)
+        {
+            Poise = 0f;
+            StaggerTimer = StaggerDurationTicks;
+            // Escalation: add a stack and refresh the (long) window. The rising EffectivePoiseMax is what makes re-staggers
+            // progressively harder — the recovery cooldown stays a flat ~recovery window (not stack-scaled, or it'd balloon).
+            PoiseEscalationStacks = Math.Min(PoiseEscalationStacks + 1, PoiseEscalationMaxStacks);
+            PoiseEscalationTimer = PoiseEscalationDurationTicks;
+            PoiseBreakCooldown = PoiseBreakCooldownTicks;
+            ApplyStaggerImpulse(npc, sourceCenter, 1f);
+            if (PoiseStaggerResetsAI)
+            {
+                npc.ai[1] = 60f;   // cancel a windup attack → return to neutral approach
+                npc.ai[2] = -100f;
+            }
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.3f, Volume = 0.8f }, npc.Center);
+            npc.netUpdate = true;
+        }
+
+        private void ApplyStaggerImpulse(NPC npc, Vector2 sourceCenter, float scale)
+        {
+            if (npc.boss)
+            {
+                scale *= 0.5f; // bosses shrug off some of the launch
+            }
+            int dir = npc.Center.X >= sourceCenter.X ? 1 : -1;
+            staggerSlideVelocity = dir * StaggerKnockback * scale;
+            npc.velocity.X = staggerSlideVelocity; // ApplyStaggerMovement carries/decays it across the stun
+            npc.netUpdate = true;
+        }
+
+        /// <summary>Per-tick poise bookkeeping (timers, escalation reset, poise decay). Called at the start of PostAI.</summary>
+        private void UpdatePoise(NPC npc)
+        {
+            if (PoiseMax <= 0f)
+            {
+                return;
+            }
+            if (StaggerTimer > 0)
+            {
+                StaggerTimer--;
+            }
+            if (PoiseBreakCooldown > 0)
+            {
+                PoiseBreakCooldown--;
+            }
+            if (PoiseEscalationTimer > 0)
+            {
+                PoiseEscalationTimer--;
+                if (PoiseEscalationTimer == 0)
+                {
+                    PoiseEscalationStacks = 0;
+                }
+            }
+            if (PoiseRegenDelay > 0)
+            {
+                PoiseRegenDelay--;
+            }
+            else if (Poise > 0f && StaggerTimer <= 0)
+            {
+                Poise -= PoiseMax / 240f; // full decay in ~4s once the grace window elapses
+                if (Poise < 0f)
+                {
+                    Poise = 0f;
+                }
+            }
+        }
+
+        /// <summary>While staggered, override the AI's pursuit: hold the enemy in place (sliding from the knockback) and
+        /// stop it jumping. Called at the END of PostAI so it wins over the movement the AI set this tick.</summary>
+        private void ApplyStaggerMovement(NPC npc)
+        {
+            if (PoiseMax <= 0f || StaggerTimer <= 0)
+            {
+                return;
+            }
+            npc.velocity.X = staggerSlideVelocity;
+            staggerSlideVelocity *= 0.72f;        // knockback slide bleeds off quickly — a staggered enemy is near-rooted
+            if (Math.Abs(staggerSlideVelocity) < 0.1f)
+            {
+                staggerSlideVelocity = 0f;        // settle fully so it stands stunned rather than drifting
+            }
+            if (npc.velocity.Y < 0f)
+            {
+                npc.velocity.Y = 0f;              // cancel any jump the AI tried to start while stunned
+            }
+        }
+        #endregion
+
         // Vertical jump power ceiling. Default 9f (apex ≈ 8.4 tiles) so a base-stat enemy can clear a
         // typical 6-7 tile ledge: ComputeJumpArc requires apex = rise + 1-tile lip, which for a 6-tile
         // rise needs power ≈ 8.2 — the old default of 8 fell just short and made the jump "infeasible",
@@ -358,6 +571,7 @@ namespace tsorcRevamp.NPCs
         // Merges the legacy `canTeleport` AI param and the WeakTeleport system into one re-acquire-on-give-up
         // blink (reusing TeleportCountdown / QueueTeleport / ExecuteQueuedTeleport for the actual smoke + warp).
         public bool CanTeleport = false;
+        public bool CanDodgeroll = false; // mirrors the FighterAI canDodgeroll param; read by the wall-pin escape
         public TeleportStyle TeleportStyle = TeleportStyle.Normal;
         // -1 = unlimited (legacy canTeleport). A positive value = limited charges that DO NOT recharge
         // (legacy WeakTeleport = 2). Spent down via TeleportChargesRemaining.
@@ -396,7 +610,7 @@ namespace tsorcRevamp.NPCs
         // === Teleport visual style ===
         public TeleportVisualStyle TeleportVisualStyle = TeleportVisualStyle.Default;
         // Frames remaining before NPC position snaps to TeleportTelegraph (smoke/fire styles only).
-        // Set to 90 by ExecuteQueuedTeleport so the NPC moves 1.5s into the 2s smoke cloud.
+        // Set to 30 by ExecuteQueuedTeleport so the NPC moves halfway through the 1s smoke cloud.
         public int TeleportAppearanceTimer = 0;
 
         // === Ally heal aura ===
@@ -676,6 +890,8 @@ namespace tsorcRevamp.NPCs
 
         public override void PostAI(NPC npc)
         {
+            UpdatePoise(npc);
+
             // Confusion: the mod's custom AI computes movement toward the player and ignores npc.confused, so a
             // confused enemy still walked straight at you (only showing the "?" emote). Here, after the AI has
             // run, we reverse a confused custom-AI enemy's horizontal movement so it stumbles AWAY instead.
@@ -734,6 +950,10 @@ namespace tsorcRevamp.NPCs
                 UpdateInvisibility(npc);
                 UpdateInvisibilityTrail(npc);
             }
+
+            // Stagger freeze: override the AI's movement so a staggered enemy is stunned in place. Last write to
+            // velocity in the common PostAI path so it wins over pursuit/confusion/standoff set above.
+            ApplyStaggerMovement(npc);
 
             if (!CanPassThroughWalls)
                 return;
@@ -1649,6 +1869,9 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+            // Poise damage scales with the projectile's knockback stat (see project_poise_stagger_system).
+            ApplyPoiseToKnockback(npc, projectile.knockBack, ref modifiers);
+
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             if (ProjectileID.Sets.IsAWhip[projectile.type])
@@ -1947,6 +2170,9 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
+            // Poise damage scales with the weapon's knockback stat (see project_poise_stagger_system).
+            ApplyPoiseToKnockback(npc, item.knockBack, ref modifiers);
+
             if (npc.type == NPCID.DukeFishron && player.wet)
             {
                 modifiers.FinalDamage *= 4;
@@ -1991,6 +2217,8 @@ namespace tsorcRevamp.NPCs
 
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
+            HandlePoiseOnHit(npc, item.knockBack, player.Center);
+
             TriggerNoLosPursuitBoost(npc, player);
 
             //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
@@ -2009,6 +2237,8 @@ namespace tsorcRevamp.NPCs
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            HandlePoiseOnHit(npc, projectile.knockBack, projectile.Center);
+
             if (projectile.owner >= 0 && projectile.owner < Main.maxPlayers)
             {
                 TriggerNoLosPursuitBoost(npc, Main.player[projectile.owner]);
@@ -2274,6 +2504,11 @@ namespace tsorcRevamp.NPCs
         Texture2D SunburnMarksSprite;
         public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
         {
+            if (!ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyHealthBars)
+            {
+                return false;
+            }
+
             if (CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs())
             {
                 return false;
@@ -2445,30 +2680,58 @@ namespace tsorcRevamp.NPCs
 
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            float staminaMax = (int)(300 * (1 - globalNPC.Agility));
-            float staminaCurrent = staminaMax - globalNPC.DodgeCooldown;
-            float staminaPercentage = (float)staminaCurrent / staminaMax;
-            if (globalNPC.DodgeCooldown != 0)
+            // Poise bar takes priority over the stamina bar — they share the same container so only one shows at a time.
+            if (globalNPC.PoiseBarVisible)
             {
-                float abovePlayer = 45f; //how far above the player should the bar be?
-                Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
-                Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
-
-                //this is the position on the screen. it should remain relatively constant unless the window is resized
-                Point barOrigin = (npc.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
-                //Main.NewText("" + barOrigin.X + ", " + barOrigin.Y);
-
-                Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
-
-                //empty bar has detailing, so offset the filled bar's destination
-                int padding = 5;
-                //scale the width by the stam percentage
-                Rectangle fillDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, (int)(staminaPercentage * barFill.Width), barFill.Height);
-
-                Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
-                Main.spriteBatch.Draw(barFill, fillDestination, Color.DodgerBlue);
+                float poisePercentage = globalNPC.StaggerTimer > 0 ? 1f : globalNPC.Poise / globalNPC.EffectivePoiseMax;
+                // Flash brighter while actively staggered so the "broken" window reads clearly.
+                Color poiseColor = globalNPC.StaggerTimer > 0 && Main.GameUpdateCount % 10 < 5 ? Color.Yellow : Color.Orange;
+                DrawResourceBar(npc, poisePercentage, poiseColor);
+            }
+            else if (globalNPC.DodgeCooldown != 0)
+            {
+                float staminaMax = (int)(300 * (1 - globalNPC.Agility));
+                float staminaCurrent = staminaMax - globalNPC.DodgeCooldown;
+                float staminaPercentage = staminaCurrent / staminaMax;
+                DrawResourceBar(npc, staminaPercentage, new Color(40, 190, 80)); // matches the player's green stamina bar
             }
             return preDraw;
+        }
+
+        /// <summary>Draws the enemy stat bar above the NPC using the shared StaminaBar container. The fill area is split
+        /// horizontally: a thin red HEALTH bar on top, and the active resource (green stamina / orange poise) on the
+        /// bottom. Only called while the bar should be visible (stagger or dodge active).</summary>
+        private static void DrawResourceBar(NPC npc, float resourcePercentage, Color resourceColor)
+        {
+            resourcePercentage = MathHelper.Clamp(resourcePercentage, 0f, 1f);
+            float healthPercentage = MathHelper.Clamp(npc.lifeMax > 0 ? (float)npc.life / npc.lifeMax : 0f, 0f, 1f);
+
+            const float abovePlayer = 45f; // how far above the NPC the bar sits
+            Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
+            Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
+
+            Point barOrigin = (npc.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
+            Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
+
+            // The StaminaBar_full sprite is only solid in its bottom rows; use that solid region as the source so the
+            // fills stay crisp instead of squishing the (mostly transparent) sprite into a thin sliver.
+            Rectangle fillSource = new Rectangle(0, 6, barFill.Width, barFill.Height - 6);
+
+            // Keep the fills strictly inside the container's recessed track so the (drawn-on-top) fills tuck BEHIND the
+            // frame's top/left/right border rows. The 39x12 container's track is rows 6-10, cols 6-34 (1px in from the
+            // left/right frame and from the track's top border row 5). Health on top, resource below, no gap.
+            int fillX = barOrigin.X + 6;          // 1px past the left frame
+            int fillWidth = 35 - 6;               // right edge at col 35 = just inside the right cap
+            int trackTop = barOrigin.Y + 6;       // leaves row 5 (track top border) uncovered
+            const int healthHeight = 2;           // rows 6-7
+            const int resourceHeight = 3;         // rows 8-10
+
+            Rectangle healthDestination = new Rectangle(fillX, trackTop, (int)(healthPercentage * fillWidth), healthHeight);
+            Rectangle resourceDestination = new Rectangle(fillX, trackTop + healthHeight, (int)(resourcePercentage * fillWidth), resourceHeight);
+
+            Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
+            Main.spriteBatch.Draw(barFill, healthDestination, fillSource, Color.Red);
+            Main.spriteBatch.Draw(barFill, resourceDestination, fillSource, resourceColor);
         }
 
         public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

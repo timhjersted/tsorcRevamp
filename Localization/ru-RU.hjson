@@ -11978,6 +11978,11 @@ Mods: {
 					// Tooltip: ""
 				}
 
+				EnemyHealthBars: {
+					// Label: Enemy Health Bars
+					// Tooltip: Show vanilla health bars below non-boss enemies. Defaults to Off.
+				}
+
 				HideCeruleanFlask: {
 					// Label: Hide the Cerulean Flask
 					/* Tooltip:

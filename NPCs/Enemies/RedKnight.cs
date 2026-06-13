@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 20000; // life / 1.25 in HM
-            NPC.knockBackResist = 0.0f;
+            NPC.knockBackResist = 0.3f; // poise flinch dial: × PoiseFlinchFactor(0.4) ≈ 0.12 of full knockback per ordinary hit
             NPC.lavaImmune = true;
             NPC.rarity =2;
             Banner = NPC.type;
@@ -85,6 +85,10 @@ namespace tsorcRevamp.NPCs.Enemies
             //redKnightGlobalNPC.Strength = Main.rand.NextFloat(0.7f, 1.4f);
 
             redKnightGlobalNPC.Agility = 0.3f;
+
+            // Poise: needs sustained pressure to stagger (poise damage = weapon knockback). Tunable lever.
+            redKnightGlobalNPC.PoiseMax = 40f;
+            redKnightGlobalNPC.PoiseStaggerResetsAI = true; // a stagger cancels a windup attack → neutral
 
             // Navigation tuning: smart pathfinding with above-average jumps + ledge routing
             redKnightGlobalNPC.MaxJumpPower = 12f;
@@ -125,11 +129,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Hit logic is stored in GlobalNPC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.FighterEvasiveOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.FighterEvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player
@@ -153,6 +157,20 @@ namespace tsorcRevamp.NPCs.Enemies
 
             //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            // Hyper-armor window: FLASH telegraph → fire only. Windup is intentionally excluded so a poise stagger can
+            // interrupt during windup; once the flash fires the attack is uninterruptible (only the stagger breaks it).
+            // Spear 180→210, poison1 300→325, poison2 375→405, bomb 925→955.
+            globalNPC.AttackCommitted = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
+                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 325f) ||
+                                        (NPC.ai[1] >= 375f && NPC.ai[1] <= 405f) ||
+                                        (NPC.ai[1] >= 925f && NPC.ai[1] <= 955f);
+
+            // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
+            globalNPC.AttackTelegraphing = (NPC.ai[1] >= 150f && NPC.ai[1] < 180f) ||
+                                           (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
+                                           (NPC.ai[1] >= 345f && NPC.ai[1] < 375f) ||
+                                           (NPC.ai[1] >= 895f && NPC.ai[1] < 925f);
             if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
@@ -168,9 +186,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.netMode != 1 && !Main.player[NPC.target].dead)
             {
-                NPC.ai[1]++;
-                NPC.ai[2]++;
-                NPC.knockBackResist = 0f;
+                // Freeze the attack timer while staggered so the ~1s stun actually holds (and a windup that was reset to
+                // 60 by the stagger stays neutral instead of advancing back into an attack).
+                if (globalNPC.StaggerTimer <= 0)
+                {
+                    NPC.ai[1]++;
+                    NPC.ai[2]++;
+                }
+                NPC.knockBackResist = globalNPC.BaseKnockBackResist; // restore the SetDefaults value; poise scales it to a light flinch
 
                 bool inActiveAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 405f) ||
@@ -617,7 +640,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 500 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Player closestPlayer = UsefulFunctions.GetClosestPlayer(NPC.Center);
-                    if (closestPlayer != null && Collision.CanHit(NPC, closestPlayer))
+                    if (closestPlayer != null)
                     {
                         Vector2 targetVector = UsefulFunctions.Aim(NPC.Center, closestPlayer.Center, 1);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -768,6 +791,17 @@ namespace tsorcRevamp.NPCs.Enemies
             return handWorld + new Vector2(bodyDirection * MagicBallBodyInset, 0f);
         }
 
+        Vector2 CurrentSpearWorld()
+        {
+            Vector2 handWorld = CurrentHandWorld();
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame == 0)
+            {
+                handWorld.Y -= 21f;
+            }
+            return handWorld;
+        }
+
         void DrawArmOverlay(SpriteBatch spriteBatch, Color drawColor)
         {
             if (armOverlayTexture == null)
@@ -806,7 +840,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // Spear (held during telegraph, aimed at the throw target)
             if (spearTexture != null && NPC.ai[1] >= 120 && NPC.ai[1] <= 210f)
             {
-                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
                 Vector2 spearAim = NPC.ai[1] >= 180f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
 

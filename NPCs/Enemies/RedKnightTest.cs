@@ -132,11 +132,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Hit logic is stored in GlobalNPC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.FighterEvasiveOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.FighterEvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player
@@ -161,6 +161,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
             //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            // Single source of truth for "committed to an attack, cannot be interrupted/knocked back" — read by RedKnightOnHit.
+            globalNPC.AttackCommitted = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
+                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 405f) ||
+                                        (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f);
+
+            // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
+            globalNPC.AttackTelegraphing = (NPC.ai[1] >= 125f && NPC.ai[1] < 155f) ||
+                                           (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
+                                           (NPC.ai[1] >= 870f && NPC.ai[1] < 900f);
+
             if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||

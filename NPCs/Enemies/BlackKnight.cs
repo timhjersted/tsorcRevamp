@@ -64,7 +64,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
 
-            NPC.knockBackResist = 0f;
+            NPC.knockBackResist = 0.25f; // poise flinch dial: × PoiseFlinchFactor(0.4) ≈ 0.14 of full knockback per ordinary hit
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BlackKnightBanner>();
             //UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 9, SoundID.Item17);
@@ -73,6 +73,10 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.Agility = 0.5f;
             blackKnightGlobalNPC.Aggression = 1f;
             blackKnightGlobalNPC.Patience = 2f;
+
+            // Poise: lighter than the Red Knight — staggers a bit more readily. Tunable lever.
+            blackKnightGlobalNPC.PoiseMax = 24f;
+            blackKnightGlobalNPC.PoiseStaggerResetsAI = true; // a stagger cancels a windup attack → neutral
 
             // Navigation tuning: high jumps, double jump, and ledge routing
             blackKnightGlobalNPC.MaxJumpPower = 11f;
@@ -100,11 +104,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Hit logic is stored in GlobalNPC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.FighterEvasiveOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.FighterEvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player
@@ -127,6 +131,18 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            // Hyper-armor window: FLASH telegraph → fire only. Windup excluded so a stagger can interrupt it.
+            // Spear 155→180, poison 300→375, bomb 900→925.
+            globalNPC.AttackCommitted = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
+                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                        (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f);
+
+            // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
+            globalNPC.AttackTelegraphing = (NPC.ai[1] >= 125f && NPC.ai[1] < 155f) ||
+                                           (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
+                                           (NPC.ai[1] >= 870f && NPC.ai[1] < 900f);
+
             if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
@@ -142,9 +158,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.netMode != 1 && !Main.player[NPC.target].dead)
             {
-                NPC.ai[1]++;
-                NPC.ai[2]++;
-                NPC.knockBackResist = 0.15f;
+                // Freeze the attack timer while staggered so the ~1s stun holds (and a reset windup stays neutral).
+                if (globalNPC.StaggerTimer <= 0)
+                {
+                    NPC.ai[1]++;
+                    NPC.ai[2]++;
+                }
+                NPC.knockBackResist = globalNPC.BaseKnockBackResist; // restore the SetDefaults value; poise scales it to a light flinch
 
                 bool inActiveAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
@@ -245,7 +265,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400 && hasPlayerLOS)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(14, 16f);
+                    float spearProjectileSpeed = Main.rand.NextFloat(16, 18f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
@@ -274,7 +294,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(9, 10f);
+                    float spearProjectileSpeed = Main.rand.NextFloat(12, 14f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
@@ -592,7 +612,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 }
                 // Ultrakill Attack
-                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 235f && hasPlayerLOS)
+                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 235f)
                 {
                     NPC.velocity.X *= 0.25f;
 
@@ -728,6 +748,17 @@ namespace tsorcRevamp.NPCs.Enemies
             return new Vector2(x, y);
         }
 
+        Vector2 CurrentSpearWorld()
+        {
+            Vector2 handWorld = CurrentHandWorld();
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame == 0)
+            {
+                handWorld.Y -= 21f;
+            }
+            return handWorld;
+        }
+
         void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
         {
             if (handTexture == null)
@@ -764,7 +795,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 float spriteScale = 0.8f;
                 Vector2 spearAim = NPC.ai[1] >= 155f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
-                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
                 spriteBatch.Draw(spearTexture, handWorld, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, SpearGripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
