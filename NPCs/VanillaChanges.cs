@@ -3542,7 +3542,6 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.FungiBulb
                     || npc.type == NPCID.Shark
                     || npc.type == NPCID.ArmoredSkeleton
-                    || npc.type == NPCID.HeavySkeleton
                     || npc.type == NPCID.GiantCursedSkull
                     || npc.type == NPCID.IceMimic)
                 {

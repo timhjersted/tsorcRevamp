@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Projectile.width = 20;
             Projectile.height = 20;
             Projectile.scale = 1.1f;
-            Projectile.timeLeft = 200;
+            Projectile.timeLeft = 240;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.friendly = false;
@@ -31,6 +31,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             trailYOffset = 50;
             trailMaxLength = 200;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+        }
+        public override void AI()
+        {
+            if (Projectile.timeLeft < 60) 
+            {
+                Projectile.hostile = false;
+                Projectile.damage = 0;
+                Projectile.width = 0;
+                Projectile.height = 0;
+            }
+            base.AI();
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 

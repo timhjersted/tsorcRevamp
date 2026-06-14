@@ -5272,8 +5272,8 @@ Mods: {
 			}
 
 			DivineBoomCannon: {
-				DisplayName: Divine Boom Cannon
-				Tooltip: Obliterates everything upon contact.
+				DisplayName: Ultimate Boom Cannon
+				Tooltip: Obliterates everything upon contact!
 			}
 
 			DivineSpark: {
@@ -8138,6 +8138,11 @@ Mods: {
 				DisplayName: Soul of the Occultist
 				Tooltip: "'The essence of dark magic from the remains of Oolacile'"
 			}
+
+			AbyssalFabric: {
+				DisplayName: Abyssal Fabric
+				Tooltip: A fine and rare cloth from the abyss capable of resonating with the darkness.
+			}
 		}
 
 		Buffs: {
@@ -9124,8 +9129,8 @@ Mods: {
 			}
 
 			AbyssInferno: {
-				DisplayName: Abyss Inferno
-				Description: Mods.tsorcRevamp.Buffs.AbyssInferno.Description
+				DisplayName: Abyssal Inferno
+				Description: Greatly losing life!
 			}
 
 			TrinityBuff: {
@@ -9169,6 +9174,11 @@ Mods: {
 					Your bond of love with the wearer is strong! 
 					Increases life regeneration and slightly reduces aggro
 					'''
+			}
+
+			PlaguesmithBuff: {
+				DisplayName: Plaguesmith Buff
+				Description: Mods.tsorcRevamp.Buffs.PlaguesmithBuff.Description
 			}
 		}
 

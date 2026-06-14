@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         int sproutDamage = 26;
         int cursedBreathDamage = 30;
-        public const int BaseHP = 28000;
+        public const int BaseHP = 35000;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = -1;
             NPC.lifeMax = BaseHP;
             NPC.damage = 70;
-            NPC.defense = 36;
+            NPC.defense = 38;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
             NPC.value = 220000;
@@ -280,7 +280,22 @@ namespace tsorcRevamp.NPCs.Bosses
                             {
                                 Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
                                 breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
+                                Vector2 Position = new Vector2(NPC.Center.X + (5 * NPC.direction), NPC.Center.Y);
+
+                                Projectile newProj = Projectile.NewProjectileDirect(
+                                    NPC.GetSource_FromThis(),
+                                    Position,
+                                    breathVel,
+                                    ProjectileID.Flames,
+                                    cursedBreathDamage,
+                                    0f,
+                                    Main.myPlayer
+                                );
+                                newProj.hostile = true;
+                                newProj.friendly = false;
+                                newProj.netUpdate = true;
+
+
                             }
 
                             //play breath sound
