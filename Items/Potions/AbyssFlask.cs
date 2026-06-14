@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Potions
 {
 	public class AbyssFlask : ModItem
 	{
-        public const float DamageCritIncrease = 6f;
+        public const float DamageCritIncrease = 5f;
 		public override void SetStaticDefaults() 
         {
 			ItemID.Sets.DrinkParticleColors[Type] = [

@@ -1684,7 +1684,7 @@ namespace tsorcRevamp
                     NPC nPC = Main.npc[l];
                     if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(Player.Center, nPC.Center) <= 240)
                     {
-                        nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 2);
+                        nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 60);
                     }
                 }
 
@@ -2165,6 +2165,35 @@ namespace tsorcRevamp
                 }
             }
 
+            if (AbyssInferno)
+            {
+                if (Player.lifeRegen > 0)
+                {
+                    Player.lifeRegen = 0;
+                }
+                Player.lifeRegenTime = 0;
+                Player.lifeRegen -= 16;
+                for (int j = 0; j < 2; j++)
+                {
+                    int dust = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, DustID.PinkTorch, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1.2f);
+                    Main.dust[dust].noGravity = true;
+
+                    int dust2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 223, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1.2f); //54 was 58
+                    Main.dust[dust2].noGravity = true;
+                }
+
+                if (Main.rand.NextBool(4))
+                {
+                    // Render fire particles [every frame]
+                    int particle = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, DustID.PinkTorch, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 160, default(Color), 2.3f);
+                    Main.dust[particle].noGravity = true;
+                    Main.dust[particle].velocity *= 1.4f;
+                    int lol = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 223, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 160, default(Color), 2.3f);
+                    Main.dust[lol].noGravity = true;
+                    Main.dust[lol].velocity *= 1.4f;
+                }
+            }
+
             if (PhazonCorruption)
             {
                 if (Player.lifeRegen > 0)
@@ -2509,6 +2538,7 @@ namespace tsorcRevamp
 
                 DarkInferno = false;
                 AbyssInferno = false;
+                MorgulPoisoning = false;
                 PhazonCorruption = false;
                 Falling = false;
                 FracturingArmor = 1;

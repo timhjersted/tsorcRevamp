@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 2000f;
 			NPC.npcSlots = 100;
-            NPC.scale = 1.1f;
+            NPC.scale = 1f;
 			NPC.knockBackResist = 0.1f;
 			Main.npcFrameCount[NPC.type] = 16;
 			AnimationType = 28;

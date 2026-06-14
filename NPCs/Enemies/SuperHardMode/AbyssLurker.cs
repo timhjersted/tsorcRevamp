@@ -9,56 +9,37 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
-    class FireLurker : ModNPC
+    class AbyssLurker : ModNPC
     {
-        public int lostSoulDamage = 8;
+        public int lostSoulDamage = 40;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<AbyssInferno>()] = true;
         }
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
             AnimationType = 28;
-            NPC.knockBackResist = 0.4f;
+            NPC.knockBackResist = 0f;
             NPC.aiStyle = -1;//was 3
-            NPC.damage = 20;
-            NPC.defense = 10;
+            NPC.damage = 70;
+            NPC.defense = 90;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 120;
+            NPC.lifeMax = 1600;
+            NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 600; // was 43 for 100 life
+            NPC.value = 6000; // was 43 for 100 life
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.FireLurkerBanner>();
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
-            UsefulFunctions.AddAttack(NPC, 160, ProjectileID.LostSoulHostile, lostSoulDamage, 6, SoundID.NPCDeath9, 0);
-
-            if (Main.hardMode)
-            {
-                NPC.lifeMax = 250;
-                NPC.defense = 22;
-                NPC.value = 1250; // was 65
-                NPC.damage = 30;
-                lostSoulDamage = 22;
-                NPC.knockBackResist = 0.2f;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                NPC.lifeMax = 1200;
-                NPC.defense = 70;
-                NPC.value = 5000; // was 365 with 1330 life
-                NPC.damage = 65;
-                lostSoulDamage = 35;
-                NPC.knockBackResist = 0.05f;
-
-            }
+            UsefulFunctions.AddAttack(NPC, 120, ProjectileID.LostSoulHostile, lostSoulDamage, 6, SoundID.NPCDeath9, 0);
         }
 
 
@@ -86,21 +67,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.Water) return 0f;
 
-            //ONLY SPAWNS IN HELL PRE-HM, THEN CAN SPAWN IN CORRUPTION IN HM
-            if (!Main.hardMode && InHell && Main.rand.NextBool(6)) return 1;
-
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(5)) return 1;
-
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && Corruption && Main.rand.NextBool(20)) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(20)) return 1; //8 is 3%, 5 is 5, 3 IS 3%???
+            if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(5)) return 1; //8 is 3%, 5 is 5, 3 IS 3%???
             return 0;
         }
         #endregion
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.07f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.36f, enrageTopSpeed: 3f, lavaJumping: true); //sound type was 26
+            tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.08f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 950, enragePercent: 0.38f, enrageTopSpeed: 3.5f, lavaJumping: true); //sound type was 26
         }
 
         #region Find Frame
@@ -154,16 +128,13 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            if (Main.rand.NextBool(2))
-            {
-                target.AddBuff(BuffID.OnFire, 10 * 60, false);
-            }
+            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false); //-20 life if counter hits 100
 
-            if (Main.rand.NextBool(10))
+            if (Main.rand.NextBool(8))
             {
                 target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
-                target.AddBuff(BuffID.Darkness, 3 * 60, false);
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 life if counter hits 100
+                target.AddBuff(BuffID.Darkness, 5 * 60, false);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 360 * 60, false); //-20 life if counter hits 100
             }
         }
         #endregion
@@ -188,10 +159,9 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 12));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 100, 1, 1, 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 10));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 4));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 16));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<FlameOfTheAbyss>()));
             IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 1, 2);
             SuperHardmodeRule SHM = new();
             IItemDropRule condition = new LeadingConditionRule(SHM);

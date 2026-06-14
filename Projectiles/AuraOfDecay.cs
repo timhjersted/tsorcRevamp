@@ -92,7 +92,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.MorgulPoisoning>(), 90);
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.MorgulPoisoning>(), 60);
         }
 
         float timeFactor = 0;

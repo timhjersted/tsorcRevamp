@@ -9,54 +9,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using tsorcRevamp.Items.Materials;
+using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 
-namespace tsorcRevamp.NPCs.Enemies{
+namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
+{
 	public class OmnirsMassacre : ModNPC
 	{
-        float customAi1;
-        float customspawn1;
-        int OTimeLeft = 2000;
-        int movedTowards = 0;
-        int num94 = 0;
-        int num95 = 0;
-        int noJump = 0;
-        bool walkAndShoot = true;
-
-        bool canDrown = true;
-        int drownTimerMax = 10000;
-        int drownTimer = 10000;
-        int drowningRisk = 3000;
-
         float npcAcSPD = 1.5f; //How fast they accelerate.
         float npcSPD = 2.65f; //Max speed (Phase2: 50% slower, was 5.3f)
 
         float npcEnrAcSPD = 2.1f; //How fast they accelerate.
         float npcEnrSPD = 3.55f; //Max speed (Phase2: 50% slower, was 7.1f)
 
-        bool tooBig = true;
-        bool lavaJumping = true;
-        bool thruWalls = true;
-        int oNPCNoReach = 0;
-        bool phaseThruWalls = false;
-        bool oPhasing1 = false;
-        bool oPhasing2 = false;
-        bool oDigSound = false;
-        int oAtt = 130;
-        int oDef = 65;
         public override void SetDefaults()
 		{
-			
-			
 			NPC.width = 140;
 			NPC.height = 130;
 			NPC.damage = 110;
 			NPC.defense = 65;
-			NPC.lifeMax = 32000;
+			NPC.lifeMax = 15000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 450000f;
-			NPC.npcSlots = 100;
-			NPC.knockBackResist = 0.1f;
+            NPC.value = 400000;
+			NPC.npcSlots = 5;
+			NPC.knockBackResist = 0f;
 			Main.npcFrameCount[NPC.type] = 16;
 			AnimationType = 28;
 			NPC.lavaImmune = true;
@@ -73,29 +51,19 @@ namespace tsorcRevamp.NPCs.Enemies{
 			g.MaxJumpPower = 10f;
 			g.MaxJumpBoost = 6f;
 		}
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
-public float CanSpawnLegacy(NPCSpawnInfo s)
-        {
-            int x = s.SpawnTileX;
-            int y = s.SpawnTileY;
-            bool oSky = (y < (Main.maxTilesY * 0.1f));
-            bool oSurface = (y >= (Main.maxTilesY * 0.1f) && y < (Main.maxTilesY * 0.2f));
-            bool oUnderSurface = (y >= (Main.maxTilesY * 0.2f) && y < (Main.maxTilesY * 0.3f));
-            bool oUnderground = (y >= (Main.maxTilesY * 0.3f) && y < (Main.maxTilesY * 0.4f));
-            bool oCavern = (y >= (Main.maxTilesY * 0.4f) && y < (Main.maxTilesY * 0.6f));
-            bool oMagmaCavern = (y >= (Main.maxTilesY * 0.6f) && y < (Main.maxTilesY * 0.8f));
-            bool oUnderworld = (y >= (Main.maxTilesY * 0.8f));
-            int tile = (int)Main.tile[x, y].TileType;
-            Player p = s.Player;
-            if (!oUnderworld || Main.pumpkinMoon || Main.snowMoon)
-            {
-                return 0f;
-            }
-            if (Main.hardMode && Main.rand.Next(2500) == 1) return 1f;
-            else if (NPC.downedPlantBoss && Main.rand.Next(250) == 1) return 1f;
-            return 0f;
-        }
         //Spawns in the Underworld on hardmode.
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        {
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                if ((spawnInfo.Player.ZoneUnderworldHeight || (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime)) && Main.rand.NextBool(45))
+                {
+                    return 1;
+                }
+                else return 0;
+            }
+            else return 0;
+        }
         public void teleport(bool pre)
 		{
 			if (Main.netMode != 2)
@@ -112,13 +80,11 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
 		}
 		public override void AI()  //  warrior ai
 		{
-
-
             bool enraged = (NPC.life < (float)NPC.lifeMax*.2f);  //  speed up at low life
 			int shotRate = enraged?100:70;
 			float accel=enraged? npcEnrAcSPD:npcAcSPD;  //  how fast it can speed up
 			float topSpeed=enraged? npcEnrSPD:npcSPD;  //  max walking speed, also affects jump length
-            tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: false, minSurfaceWidth: 6, canWalkBackwards: true);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canPounce: false, canDodgeroll: false, canTeleport: true, minSurfaceWidth: 6, canWalkBackwards: true);
             Vector2 angle = Main.player[NPC.target].Center - NPC.Center;
             angle.Y = angle.Y - (Math.Abs(angle.X) * .1f);
             angle.X += (float)Main.rand.Next(-20, 21);
@@ -164,38 +130,13 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore3").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore3").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore2").Type, 1f);
-            if (Main.rand.Next(3) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsDemonRageSword"));
-            }
-            if (Main.rand.Next(3) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsDemonGreaves"));
-            }
-            if (Main.rand.Next(3) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsDemonHelmet"));
-            }
-            if (Main.rand.Next(3) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsDemonArmor"));
-            }
-            if (Main.rand.Next(1) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsGiantSword"));
-            }
-            if (Main.rand.Next(2) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsStuffedDragon"));
-            }
-            if (Main.rand.Next(3) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsArbalest"));
-            }
-            if (Main.rand.Next(7) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsGreatShield"));
-            }
+        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BlueTitanite>(), 1, 2, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 2, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<WhiteTitanite>(), 1, 2, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 4, 6));
         }
     }
 }

@@ -8278,6 +8278,11 @@ Mods: {
 				// Tooltip: ""
 				// DisplayName: Faraam Draft Breastplate
 			}
+
+			AbyssalFabric: {
+				// DisplayName: Abyssal Fabric
+				// Tooltip: A fine and rare cloth from the abyss capable of resonating with the darkness.
+			}
 		}
 
 		Buffs: {
@@ -9320,6 +9325,11 @@ Mods: {
 				// Description: Mods.tsorcRevamp.Buffs.ShieldGuardBreak.Description
 				// DisplayName: Shield Guard Break
 			}
+
+			PlaguesmithBuff: {
+				// DisplayName: Plaguesmith Buff
+				// Description: Mods.tsorcRevamp.Buffs.PlaguesmithBuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -10051,6 +10061,8 @@ Mods: {
 			// GreatMagicMirrorRangeRing.DisplayName: Great Magic Mirror Range Ring
 			// HealSpriteVFX.DisplayName: Heal Sprite V F X
 			// TeleportMistLinger.DisplayName: Teleport Mist Linger
+			// AbyssBreath.DisplayName: Abyss Breath
+			// AbyssFlames.DisplayName: Abyss Flames
 		}
 
 		NPCs: {
@@ -11712,20 +11724,20 @@ Mods: {
 			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 			// TibianValkyrieSmart4.DisplayName: Tibian Valkyrie Smart4
 			// OmnirsDemonLordApocalypse.DisplayName: Demon Lord Apocalypse
-			// OmnirsEland.DisplayName: Omnir Eland
-			// OmnirsEvilEye.DisplayName: Omnir Evil Eye
-			// OmnirsGigas.DisplayName: Omnir Gigas
-			// OmnirsHydra.DisplayName: Omnir Hydra
-			// OmnirsIceGigas.DisplayName: Omnir Ice Gigas
-			// OmnirsMassacre.DisplayName: Omnir Massacre
-			// OmnirsMinotaurMage.DisplayName: Omnir Minotaur Mage
-			// OmnirsPlaguesmith.DisplayName: Omnir Plaguesmith
-			// OmnirsQuaraMantassin.DisplayName: Omnir Quara Mantassin
-			// OmnirsQuaraPincher.DisplayName: Omnir Quara Pincher
-			// OmnirsSahagin.DisplayName: Omnir Sahagin
+			// OmnirsEland.DisplayName: Eland
+			// OmnirsEvilEye.DisplayName: Evil Eye
+			// OmnirsGigas.DisplayName: Gigas
+			// OmnirsHydra.DisplayName: Hydra
+			// OmnirsIceGigas.DisplayName: Ice Gigas
+			// OmnirsMassacre.DisplayName: Juggernaut
+			// OmnirsMinotaurMage.DisplayName: Minotaur Mage
+			// OmnirsPlaguesmith.DisplayName: Plaguesmith
+			// OmnirsQuaraMantassin.DisplayName: Quara Mantassin
+			// OmnirsQuaraPincher.DisplayName: Quara Pincher
+			// OmnirsSahagin.DisplayName: Sahagin
 
 			OmnirsBlackMage: {
-				// DisplayName: Omnirs Black Mage
+				// DisplayName: Black Mage
 
 				TownNPCMood: {
 					// Content: I am content.
@@ -11737,10 +11749,12 @@ Mods: {
 					// LikeNPC_Princess: I like {NPCName}.
 					// Princess_LovesNPC: I like {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			OmnirsCaravanMerchant: {
-				// DisplayName: Omnirs Caravan Merchant
+				// DisplayName: Caravan Merchant
 
 				TownNPCMood: {
 					// Content: I am content.
@@ -11752,10 +11766,12 @@ Mods: {
 					// LikeNPC_Princess: I like {NPCName}.
 					// Princess_LovesNPC: I like {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			OmnirsWhiteMage: {
-				// DisplayName: Omnirs White Mage
+				// DisplayName: White Mage
 
 				TownNPCMood: {
 					// Content: I am content.
@@ -11767,12 +11783,15 @@ Mods: {
 					// LikeNPC_Princess: I like {NPCName}.
 					// Princess_LovesNPC: I like {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			// TibianValkyrieTier2.DisplayName: Tibian Valkyrie Tier2
 			// GreatBlackKnight.DisplayName: Great Black Knight
 			// FaraamSpriteTestInvader.DisplayName: Faraam Sprite Test Invader
 			// FirebombHollowOriginal.DisplayName: Firebomb Hollow Original
+			// AbyssLurker.DisplayName: Abyssal Strider
 		}
 
 		Prefixes: {

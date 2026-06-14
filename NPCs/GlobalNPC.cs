@@ -171,6 +171,7 @@ namespace tsorcRevamp.NPCs
 
         public bool DarkInferno;
         public bool AbyssInferno;
+        public bool MorgulPoisoning;
         public bool WitchkingCurse;
         public bool AbyssalSinking;
         public bool CCShocked;
@@ -189,6 +190,7 @@ namespace tsorcRevamp.NPCs
         public bool CrescentMoonlight;
         public bool Soulstruck;
         public bool PhazonCorruption;
+        public bool PlaguesmithBuff;
 
         public int LionheartMarks = 0;
 
@@ -700,6 +702,7 @@ namespace tsorcRevamp.NPCs
         {
             DarkInferno = false;
             AbyssInferno = false;
+            MorgulPoisoning = false;
             WitchkingCurse = false;
             AbyssalSinking = false;
             CCShocked = false;
@@ -718,6 +721,7 @@ namespace tsorcRevamp.NPCs
             CrescentMoonlight = false;
             Soulstruck = false;
             PhazonCorruption = false;
+            PlaguesmithBuff = false;
             Venomized = false;
             Electrified = false;
             Irradiated = false;
@@ -1827,6 +1831,10 @@ namespace tsorcRevamp.NPCs
             {
                 modifiers.FlatBonusDamage += MagmaBreastplate.OnHitDmg;
             }
+            if (PlaguesmithBuff)
+            {
+                modifiers.FinalDamage *= 0.65f; 
+            }
             if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
             {
                 float debuffCounter = 0;
@@ -2479,6 +2487,10 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitPlayer(NPC npc, Player target, ref Player.HurtModifiers modifiers)
         {
+            if (PlaguesmithBuff)
+            {
+                modifiers.FinalDamage *= 1.25f;
+            }
         }
 
         public override bool? CanBeHitByItem(NPC npc, Player player, Item item)
@@ -3029,28 +3041,34 @@ namespace tsorcRevamp.NPCs
 
             if (DarkInferno)
             {
-                int DoTPerS = 20;
-                if (npc.lifeRegen > 0)
+                int DoTPerS = 30;
+				if (npc.lifeRegen > 0)
                 {
-                    npc.lifeRegen = 0;
+					npc.lifeRegen = 0;
                 }
-                if (tsorcRevampPlayer.DragonStonePotency)
+				npc.lifeRegen -= (int)DoTPerS * 2; 
+
+				if (damage < 10)
                 {
-                    DoTPerS *= DragonStone.Potency;
-                }
+					damage = 10; 
+				}
+
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency;
+					damage = 40;
+				}
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     if (tsorcRevampPlayer.DragonStonePotency)
                     {
-                        DoTPerS += 25 * DragonStone.Potency;
+                        npc.lifeRegen += 25 * DragonStone.Potency;
                     }
                     else
                     {
-                        DoTPerS += 25;
+                        npc.lifeRegen += 25;
                     }
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
 
                 var N = npc;
                 for (int j = 0; j < 6; j++)
@@ -3065,28 +3083,34 @@ namespace tsorcRevamp.NPCs
 
             if (AbyssInferno)
             {
-                int DoTPerS = 121;
-                if (npc.lifeRegen > 0)
+                int DoTPerS = 150;
+				if (npc.lifeRegen > 0)
                 {
-                    npc.lifeRegen = 0;
+					npc.lifeRegen = 0;
                 }
-                if (tsorcRevampPlayer.DragonStonePotency)
+				npc.lifeRegen -= (int)DoTPerS * 2; 
+
+				if (damage < 75)
                 {
-                    DoTPerS *= DragonStone.Potency / 2;
-                }
+					damage = 75; 
+				}
+
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency / 2;
+					damage = 150;
+				}
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     if (tsorcRevampPlayer.DragonStonePotency)
                     {
-                        DoTPerS += 25 * DragonStone.Potency;
+                        npc.lifeRegen += 25 * DragonStone.Potency;
                     }
                     else
                     {
-                        DoTPerS += 25;
+                        npc.lifeRegen += 25;
                     }
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
 
                 var N = npc;
                 if (Main.rand.NextBool(7))
@@ -3105,19 +3129,50 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            if (MorgulPoisoning)
+            {
+                int DoTPerS = 200;
+				if (npc.lifeRegen > 0)
+					npc.lifeRegen = 0;
+
+				npc.lifeRegen -= (int)DoTPerS * 2; 
+
+				if (damage < 30)
+                {
+					damage = 30; 
+				}
+
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency / 2;
+					damage = 60;
+				}
+
+                if (Main.rand.NextBool(10))
+                { 
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.ToxicBubble, npc.velocity.X * 0.2f, npc.velocity.Y * 0.2f, 100, Color.Green, 1.5f);
+                }
+            }
+
             if (WitchkingCurse)
             {
-                int DoTPerS = 401;
-                if (npc.lifeRegen > 0)
+                int DoTPerS = 400;
+				if (npc.lifeRegen > 0)
                 {
-                    npc.lifeRegen = 0;
+					npc.lifeRegen = 0;
                 }
-                if (tsorcRevampPlayer.DragonStonePotency)
+				npc.lifeRegen -= (int)DoTPerS * 2; 
+
+				if (damage < 100)
                 {
-                    DoTPerS *= (DragonStone.Potency / 2);
-                }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+					damage = 100; 
+				}
+
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency / 2;
+					damage = 200;
+				}
 
                 npc.damage = (int)(npc.damage * 0.8f);
                 npc.defense = Math.Max(0, npc.defDefense - 40);
@@ -3181,36 +3236,37 @@ namespace tsorcRevamp.NPCs
 
             if (CrimsonBurn)
             {
-                int DoTPerS = 41;
-
-                if (npc.lifeRegen > 0)
+                int DoTPerS = 40;
+				if (npc.lifeRegen > 0)
                 {
-                    npc.lifeRegen = 0;
+					npc.lifeRegen = 0;
                 }
+				npc.lifeRegen -= (int) DoTPerS * 2 * (Main.hardMode ? 2 : 1);
 
-                if (tsorcRevampPlayer.DragonStonePotency)
+				if (damage < 10)
                 {
-                    DoTPerS *= DragonStone.Potency;
-                }
+					damage = 10 * (Main.hardMode ? 2 : 1); 
+				}
 
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency / 2;
+					damage = 20 * (Main.hardMode ? 2 : 1);
+				}
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     if (tsorcRevampPlayer.DragonStonePotency)
                     {
-                        DoTPerS += 25 * DragonStone.Potency;
+                        npc.lifeRegen += 25 * DragonStone.Potency;
                     }
                     else
                     {
-                        DoTPerS += 25;
+                        npc.lifeRegen += 25;
                     }
                 }
 
-                npc.lifeRegen -= DoTPerS * (Main.hardMode ? 2 : 1);
-
-                damage += DoTPerS * (Main.hardMode ? 2 : 1); 
-
                 npc.defense = Math.Max(0, npc.defDefense - 5);
-                
+
                 var N = npc;
                 for (int j = 0; j < 5; j++)
                 {
@@ -3398,6 +3454,24 @@ namespace tsorcRevamp.NPCs
                     npc.lifeRegen -= DoTPerS * 2;
                     damage += DoTPerS;
                 }
+            }
+
+            if (PlaguesmithBuff)
+            {
+                if (Main.rand.NextBool(4)) 
+                { 
+                    int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, 298, 0f, 0f, 100, default, 1.6f);
+                    Main.dust[dustIndex].noGravity = true; 
+                    Main.dust[dustIndex].velocity *= 0.99f;
+                    Main.dust[dustIndex].fadeIn = 1.2f;
+                }
+            }
+        }
+        public override void OnHitPlayer(NPC npc, Player target, Player.HurtInfo hurtInfo)
+        {
+            if (PlaguesmithBuff)
+            {
+                target.AddBuff(BuffID.Venom, 120);
             }
         }
 
@@ -3824,6 +3898,19 @@ namespace tsorcRevamp.NPCs
             {
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .5f);
                 Main.dust[dust].noGravity = true;
+            }
+
+            if (MorgulPoisoning)
+            {
+                drawColor = Color.Lerp(drawColor, Color.Green, 0.25f);
+
+                if (Main.rand.NextBool(5)) 
+                { 
+                    int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, DustID.ToxicBubble, 0f, 0f, 100, Color.Green, 2f);
+                    Main.dust[dustIndex].noGravity = true; 
+                    Main.dust[dustIndex].velocity *= 0.75f;
+                    Main.dust[dustIndex].fadeIn = 1.3f; 
+                }
             }
 
             if (PolarisElectrocutedEffect)

@@ -14,14 +14,14 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.width = 58;
             Item.height = 58;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 40;
-            Item.useTime = 40;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
             Item.autoReuse = true;
             Item.crit = 10;
-            Item.damage = 400;
+            Item.damage = 500;
             Item.knockBack = 2;
             Item.UseSound = SoundID.Item1;
-            Item.shootSpeed = 19;
+            Item.shootSpeed = 15;
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.rare = ItemRarityID.Purple;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         }
         public override bool CanUseItem(Player player)
         {
-            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Melee.AbyssalStarProj>()] < 3;
+            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Melee.AbyssalStarProj>()] < 5;
         }
 
         public override void AddRecipes()

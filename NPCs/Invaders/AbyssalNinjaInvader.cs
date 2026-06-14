@@ -251,7 +251,7 @@ namespace tsorcRevamp.NPCs.Invaders
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AbyssalStar>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfAbyssalInvader>(), 1, 3, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AbyssalFabric>(), 1, 3, 3));
         }
 
         // ─────────────────────────────────────────────────────────────────────────
