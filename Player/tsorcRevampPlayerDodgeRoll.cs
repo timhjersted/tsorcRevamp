@@ -137,7 +137,7 @@ namespace tsorcRevamp
 
             #region Souls Mode Stamina Usage
 
-            // Bearer of the Curse pays full weapon stamina; Unkindled pays half 5/10th (mult = 0.5).
+            // Bearer of the Curse pays full weapon stamina; Unkindled pays 75% (mult = 0.75).
             if (Player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
             {
 

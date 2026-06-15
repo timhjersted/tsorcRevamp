@@ -36,6 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.value = Item.buyPrice(2, 0, 0, 0);
             Item.UseSound = SoundID.Item44;
             Item.rare = ItemRarityID.Purple;
+            Item.mana = 10;
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;

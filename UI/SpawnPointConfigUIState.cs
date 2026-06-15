@@ -74,7 +74,8 @@ namespace tsorcRevamp.UI
             "PreMechCustomCondition",
             "GolemDownedCustomCondition",
             "EoLDownedCondition",
-            "CultistDownedCondition"
+            "CultistDownedCondition",
+            "ThoriumActiveCondition"
         };
 
         internal static string GetWorldConditionDisplayName(string methodName)
@@ -112,6 +113,7 @@ namespace tsorcRevamp.UI
                 "GolemDownedCustomCondition" => "After Golem",
                 "EoLDownedCondition" => "Before Empress of Light",
                 "CultistDownedCondition" => "Before Lunatic Cultist",
+                "ThoriumActiveCondition" => "Thorium Mod Active",
                 _ => methodName
             };
         }
@@ -127,6 +129,7 @@ namespace tsorcRevamp.UI
                 "NightCustomCondition" => Color.MediumPurple,
                 "OnlyAdventureMapCondition" => Color.SkyBlue,
                 "RemixMapCondition" => Color.Pink,
+                "ThoriumActiveCondition" => Color.Turquoise,
                 _ => Color.Yellow
             };
         }

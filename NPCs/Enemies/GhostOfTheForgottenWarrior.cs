@@ -53,10 +53,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 warriorDamage = 50; // didn't have scaling damage before
             }
 
-            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), warriorDamage, 8, SoundID.Item17, stopBeforeFiring: false);
+            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemyEphemeralThrowingAxeProj>(), warriorDamage, 8, SoundID.Item17, telegraphColor: Color.Orange, stopBeforeFiring: false, telegraphTime: 25);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
+            globalNPC.HasGhostAfterimages = true;
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;
             // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
@@ -106,7 +107,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            // Cancel the spear charge-up when we lose line of sight — don't telegraph or fire blind.
+            // Cancel the axe charge-up when we lose line of sight — don't telegraph or fire blind.
             // Only reset when the timer is non-zero to avoid a pointless netUpdate every single tick.
             bool hasLos = Collision.CanHit(NPC.position, NPC.width, NPC.height,
                                             Main.player[NPC.target].position,
@@ -120,31 +121,94 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Being hit while winding up also cancels the shot (25% chance — not trivially interrupted,
             // but a solid hit should reset the charge).
-            if (NPC.justHit && globalNPC.ProjectileTimer <= 149 && Main.rand.NextBool(4))
+            if (NPC.justHit && globalNPC.ProjectileTimer < globalNPC.ProjectileTelegraphStart && Main.rand.NextBool(4))
             {
                 globalNPC.ProjectileTimer = 0f;
                 NPC.netUpdate = true;
             }
         }
 
-        static Texture2D spearTexture;
+        #region Draw Axe Texture
+        static Texture2D axeTexture;
+        static Texture2D handTexture;
+        const float FrameW = 66f;
+        const float FrameH = 56f;
+        const float HeldAxeWindupTicks = 90f;
+        const float HeldAxeScale = 0.8f;
+        static readonly float HeldAxeRotationOffset = MathHelper.Pi / 4f;
+        static readonly Vector2[] HandPixel = new Vector2[16]
+        {
+            new Vector2(45, 30), // 0 idle
+            new Vector2(45, 25), // 1 jump
+            new Vector2(46, 33), // 2
+            new Vector2(48, 31), // 3
+            new Vector2(48, 31), // 4
+            new Vector2(48, 31), // 5
+            new Vector2(48, 33), // 6
+            new Vector2(46, 33), // 7
+            new Vector2(46, 33), // 8
+            new Vector2(46, 33), // 9
+            new Vector2(44, 31), // 10
+            new Vector2(42, 31), // 11
+            new Vector2(42, 31), // 12
+            new Vector2(43, 32), // 13
+            new Vector2(46, 33), // 14
+            new Vector2(46, 33), // 15
+        };
+        static readonly Vector2 AxeGripOrigin = new Vector2(13f, 42f);
+
+        Vector2 CurrentHandWorld()
+        {
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame < 0 || frame >= HandPixel.Length)
+            {
+                frame = 0;
+            }
+
+            Vector2 fp = HandPixel[frame];
+            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
+            float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
+            return new Vector2(x, y);
+        }
+
+        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
+        {
+            if (handTexture == null)
+            {
+                return;
+            }
+
+            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
+            Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
+            spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (spearTexture == null)
+            if (axeTexture == null || axeTexture.IsDisposed)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightGhostSpear");
+                axeTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyEphemeralThrowingAxeProj", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150)
+            if (handTexture == null || handTexture.IsDisposed)
+            {
+                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/GhostOfTheForgottenWarrior_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (globalNPC.ProjectileTimer >= globalNPC.ProjectileTimerCap - HeldAxeWindupTicks)
             {
                 Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(3))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
                 }
-                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-                spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, spearTexture.Size() / 2, 1, SpriteEffects.None, 0);
+                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2 - (NPC.spriteDirection * HeldAxeRotationOffset);
+                spriteBatch.Draw(axeTexture, CurrentHandWorld() - Main.screenPosition, new Rectangle(0, 0, axeTexture.Width, axeTexture.Height), drawColor, rotation, AxeGripOrigin, NPC.scale * HeldAxeScale, SpriteEffects.None, 0);
+                DrawHandOverlay(spriteBatch, drawColor);
             }
         }
+        #endregion
+
         public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 5; i++)

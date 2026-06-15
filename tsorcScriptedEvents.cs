@@ -126,11 +126,13 @@ namespace tsorcRevamp
         //Each scripted event should have a definition here. I added some theoretical examples commented out
         //This name is what the event handler uses to save an event, and marks them as unique.
         private static int GetThoriumNPCType(string name) =>
-        ModLoader.TryGetMod("ThoriumMod", out Mod thorium) 
-            ? thorium.Find<ModNPC>(name).Type 
+        ModLoader.TryGetMod("ThoriumMod", out Mod thorium)
+            ? thorium.Find<ModNPC>(name).Type
             : NPCID.None;
 
-        private static readonly Func<bool> ThoriumActive = () => ModLoader.HasMod("ThoriumMod");
+        // Named method (not lambda) so ev.condition.Method.Name is stable and reflection can re-create it on load.
+        public static bool ThoriumActiveCondition() => ModLoader.HasMod("ThoriumMod");
+        private static readonly Func<bool> ThoriumActive = ThoriumActiveCondition;
         public enum ScriptedEventType
         {
             Pinwheel,
@@ -1893,8 +1895,14 @@ namespace tsorcRevamp
                         {
                             if (string.IsNullOrEmpty(existingEvent.Npcs[i].NpcName))
                                 existingEvent.Npcs[i].NpcName = GetNpcStableName(ev.eventNPCs[i].type);
+                            // Fix NpcID=0 entries (mod wasn't loaded at first dump time, e.g. Thorium events).
+                            if (existingEvent.Npcs[i].NpcID == 0 && ev.eventNPCs[i].type != 0)
+                                existingEvent.Npcs[i].NpcID = ev.eventNPCs[i].type;
                         }
                     }
+                    // Fix compiler-generated condition names (anonymous lambdas whose Method.Name contains "b__").
+                    if (existingEvent.MapCondition?.Contains("b__") == true && ev.condition?.Method != null)
+                        existingEvent.MapCondition = ev.condition.Method.Name;
                     continue;
                 }
 

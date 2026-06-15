@@ -300,7 +300,7 @@ namespace tsorcRevamp
             CurseAttackSpeedBonus = tag.GetFloat("CurseAtkSpd");
             CurseMovementSpeedBonus = tag.GetFloat("CurseMoveSpd");
             powerfulCurseActive = tag.GetBool("powerfulCurse");
-            CurseMaxLifeMultiplier = tag.GetFloat("CurseMaxLifeMult");
+            powerfulCurseMaxLifeMultiplier = tag.GetFloat("powerfulCurseMaxLifeMult");
             powerfulCurseLifeRegenerationBonus = tag.GetFloat("powerfulCurseLifeRegen");
             powerfulCurseDefenseBonus = tag.GetFloat("powerfulCurseDefense");
             powerfulCurseResistanceBonus = tag.GetFloat("powerfulCurseResist");

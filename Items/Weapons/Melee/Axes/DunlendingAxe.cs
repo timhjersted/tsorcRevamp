@@ -19,8 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.height = 28;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 11;
-            Item.useTime = 11;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 3500;
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
 
             if (tsorcRevamp.HumanNPCs.Contains(target.type))
             {
-                modifiers.FinalDamage *= 4; // *2 > *4, lets make it actually useful shall we
+                modifiers.FinalDamage *= 3;
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
             {

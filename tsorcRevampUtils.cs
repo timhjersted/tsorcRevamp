@@ -493,10 +493,11 @@ namespace tsorcRevamp
         ///<param name="weight">The weight of this attack. Lower = less likely to occur and vice versa, default is 1</param>
         ///<param name="condition">The attack will only execute if this condition is true. Takes a lambda experession.</param>
         ///<param name="useStopBeforeChance">If true, this attack uses stopBeforeChance. If false, stopBeforeChance is ignored and treated as 0.</param>
-        public static void AddAttack(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null, bool useStopBeforeChance = false, float stopBeforeChance = 0.1f)
+        ///<param name="telegraphTime">How many ticks before firing to spawn the telegraph flash. Defaults to the shared projectile telegraph time.</param>
+        public static void AddAttack(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null, bool useStopBeforeChance = false, float stopBeforeChance = 0.1f, int? telegraphTime = null)
         {
             float appliedStopBeforeChance = useStopBeforeChance ? stopBeforeChance : 0f;
-            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList.Add(new tsorcRevampAIs.ProjectileData(projectileType, timerCap, projectileDamage, projectileVelocity, shootSound, projectileGravity, ai0, ai1, overshoot, telegraphColor, stopBeforeFiring, needsLineOfSight, weight, condition, appliedStopBeforeChance));
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList.Add(new tsorcRevampAIs.ProjectileData(projectileType, timerCap, projectileDamage, projectileVelocity, shootSound, projectileGravity, ai0, ai1, overshoot, telegraphColor, stopBeforeFiring, needsLineOfSight, weight, condition, appliedStopBeforeChance, telegraphTime));
         }
 
         ///<summary> 

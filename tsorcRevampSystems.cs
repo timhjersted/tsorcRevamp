@@ -570,7 +570,13 @@ namespace tsorcRevamp
                     font = FontAssets.ItemStack.Value;
                 }
 
-                if (soapstone.timer > 0 && !soapstone.hidden)
+                // The bubble should only stay up while it's genuinely meant to be open: AutoOpen
+                // mode, or a sticky message the player clicked Show on. Standing on a sign holds the
+                // timer alive via proximity (selectedSoapstone), so without this gate a dismissed
+                // message stays frozen on screen when the player is right on top of the sign.
+                bool keepBubbleOpen = ModContent.GetInstance<tsorcRevampConfig>().AutoOpenSoapstones || soapstone.manuallyOpened;
+
+                if (keepBubbleOpen && soapstone.timer > 0 && !soapstone.hidden)
                 {
                     float textWidth = soapstone.textWidth > 0 ? soapstone.textWidth : SoapstoneMessage.DEFAULT_WIDTH;
                     textWidth *= scaleMod;
@@ -646,6 +652,9 @@ namespace tsorcRevamp
                             // 25 unconditionally while manuallyOpened is true.
                             soapstone.manuallyOpened = true;
                             soapstone.clickedAtMouse = Main.MouseScreen;
+                            // Grace window so the click-release cursor motion doesn't immediately
+                            // trip the mouse-move dismiss in SoapstoneTile.PostDraw.
+                            soapstone.manualOpenGraceTimer = SoapstoneTileEntity.MANUAL_OPEN_GRACE;
                             // Read state should only flip on actual viewing (i.e. now), not on
                             // mere proximity when AutoOpen is off.
                             soapstone.read = true;
@@ -655,6 +664,69 @@ namespace tsorcRevamp
             }
 
             DrawLocationBanner(spriteBatch);
+
+            // Soapstone / location-banner diagnostic overlay (lower-left, DebugMode only).
+            // Re-enable by uncommenting if a banner ever fails to fire again.
+            //if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            //{
+            //    DrawSoapstoneDebug(spriteBatch);
+            //}
+        }
+
+        // Lower-left diagnostic readout for the nearest soapstone, gated behind DebugMode.
+        // Built to diagnose the location-banner trigger: it shows, for the closest sign, the values
+        // every condition in SoapstoneTile.PostDraw's banner check reads — distance vs the 80px
+        // trigger radius, the entity's locationName, and LastShownLocationId vs this entity's ID.
+        private static void DrawSoapstoneDebug(SpriteBatch spriteBatch)
+        {
+            // The soapstone/banner draw paths may leave the batch in a camera (GameViewMatrix)
+            // state, which would shove this screen-space text off-frame. Restart in UI space.
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
+
+            SoapstoneTileEntity nearest = null;
+            float nearestDist = float.MaxValue;
+            foreach (KeyValuePair<int, Terraria.DataStructures.TileEntity> kv in Terraria.DataStructures.TileEntity.ByID)
+            {
+                if (kv.Value is not SoapstoneTileEntity se) continue;
+                // Match the banner anchor: tile center (i*16+8, j*16+8).
+                Vector2 center = new(se.Position.X * 16 + 8, se.Position.Y * 16 + 8);
+                float d = Vector2.Distance(Main.LocalPlayer.Center, center);
+                if (d < nearestDist) { nearestDist = d; nearest = se; }
+            }
+
+            string[] lines;
+            if (nearest == null)
+            {
+                lines = new[] { "[SOAPSTONE] no tile entities found" };
+            }
+            else
+            {
+                bool bannerDisabled = ModContent.GetInstance<tsorcRevampConfig>().DisableLocationBanner;
+                string loc = string.IsNullOrEmpty(nearest.locationName) ? "<null/empty>" : nearest.locationName;
+                bool inRange = nearestDist <= 80;
+                bool freshId = tsorcRevamp.LastShownLocationId != nearest.ID;
+                bool wouldFire = inRange && !bannerDisabled && !string.IsNullOrEmpty(nearest.locationName) && freshId;
+                lines = new[]
+                {
+                    $"[SOAPSTONE] nearest ID:{nearest.ID} @({nearest.Position.X},{nearest.Position.Y})  dist:{nearestDist:F0}px (trigger<=80: {inRange})",
+                    $"locationName: {loc}",
+                    $"category: {(string.IsNullOrEmpty(nearest.category) ? "<null>" : nearest.category)}",
+                    $"DisableLocationBanner:{bannerDisabled}  LastShown:{tsorcRevamp.LastShownLocationId} vs ID:{nearest.ID} (fresh:{freshId})",
+                    $"BannerTimer:{tsorcRevamp.LocationBannerTimer}  Text:{(string.IsNullOrEmpty(tsorcRevamp.LocationBannerText) ? "<null>" : tsorcRevamp.LocationBannerText)}",
+                    $"==> banner WOULD fire this frame: {wouldFire}",
+                };
+            }
+
+            DynamicSpriteFont font = FontAssets.MouseText.Value;
+            float lineH = 18f;
+            float startY = Main.screenHeight - (lines.Length * lineH) - 10f;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                Utils.DrawBorderStringFourWay(spriteBatch, font, lines[i],
+                    10f, startY + i * lineH,
+                    Color.White, Color.Black, Vector2.Zero, 0.85f);
+            }
         }
 
         // White all-caps location announcement. Centered horizontally, top quarter vertically.

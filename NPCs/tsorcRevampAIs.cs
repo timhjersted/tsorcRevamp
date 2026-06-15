@@ -56,6 +56,9 @@ namespace tsorcRevamp.NPCs
         private const int SmokeFireTeleportCloudTicks = 60;
         private const int SmokeFireTeleportSnapTicks = 30;
         private const float TeleportMistVisualScale = 1.25f;
+        private const float FireTeleportFlameSpeed = 5.6f;
+        private const int FireTeleportFlameCount = 12;
+        private const float FireTeleportFlameDamageMultiplier = 0.25f;
 
         ///<summary> 
         ///Walking AI that walks toward the player. Can be used with SimpleProjectile to fire projectiles, or LeapAtPlayer to leap when the player is close
@@ -302,6 +305,12 @@ namespace tsorcRevamp.NPCs
             {
                 globalNPC.FighterEvasionCooldown--;
             }
+            // Poise enemies: restore the captured SetDefaults knockback resist every tick so it stays the flinch dial even
+            // if the enemy's own AI zeroes knockBackResist during its attacks (those lines run after this and still apply).
+            if (globalNPC.PoiseMax > 0f && globalNPC.BaseKnockBackResist >= 0f)
+            {
+                npc.knockBackResist = globalNPC.BaseKnockBackResist;
+            }
             if (npc.target < 0 || npc.target >= Main.maxPlayers || !Main.player[npc.target].active || Main.player[npc.target].dead)
             {
                 npc.TargetClosest(false);
@@ -480,10 +489,28 @@ namespace tsorcRevamp.NPCs
                     // Mid-blink (a teleport was just queued, counting down, or appearance is pending) → hold; otherwise patrol.
                     if (globalNPC.TeleportCountdown == 0 && globalNPC.TeleportAppearanceTimer == 0)
                     {
-                        NavBehavior.RunPatrol(npc, globalNPC, topSpeed, acceleration);
-                        if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
+                        if (globalNPC.CanPassThroughWalls)
+                        {
+                            // Ghost enemies always drift toward the player even in "patrol" — wandering away from
+                            // a wall they can't pathfind through means TryGhostWallTeleport never fires.
+                            // By maintaining forward velocity they will walk into the wall, build GhostWallTimer,
+                            // and phase through via the wall teleport as designed.
+                            float dirX = Math.Sign(fsmPlayer.Center.X - npc.Center.X);
+                            if (dirX != 0f)
+                            {
+                                npc.direction = (int)dirX;
+                                npc.spriteDirection = npc.direction;
+                            }
+                            npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.direction * topSpeed, acceleration / topSpeed);
+                            if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
+                        }
+                        else
+                        {
+                            NavBehavior.RunPatrol(npc, globalNPC, topSpeed, acceleration);
+                            if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
+                        }
                     }
-                    // Don't pursue, attack, dodge, or pounce while patrolling.
+                    // Don't attack while patrolling (no LOS).
                     globalNPC.ProjectileTimer = 0f;
                     globalNPC.ArcherAimDirection = 0f;
                     LogFighterNavDebug(npc, globalNPC, fsmLos);
@@ -577,48 +604,40 @@ namespace tsorcRevamp.NPCs
             {
                 globalNPC.PounceTimer--;
 
-                if (globalNPC.PounceTimer % 5 == 0)
+                SpawnHighArcPounceTelegraph(npc, globalNPC);
+
+                if (globalNPC.PounceStyle == PounceStyle.DirectPounce)
                 {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Vector2 spawnPosition = npc.position;
-                        spawnPosition.Y += npc.height;
-                        spawnPosition.X += Main.rand.NextFloat(npc.width);
-                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2), ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer);
-                    }
+                    RunDirectPounce(npc, globalNPC, topSpeed);
                 }
-
-                if (globalNPC.PounceTimer == 0)
+                else if (globalNPC.PounceTimer == 0)
                 {
-                    float pounceSpeed = topSpeed * 5;
-                    bool hasTrajectory = false;
-                    while (!hasTrajectory)
-                    {
-                        Vector2 trajectory = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), pounceSpeed, npc.gravity, false, false);
-                        if (trajectory == Vector2.Zero)
-                        {
-                            pounceSpeed += topSpeed * 2;
-
-                            //If it requires more than 20 units of speed to make it to the player, give up and just launch normally instead of using a ballistic trajectory
-                            if (pounceSpeed > 20)
-                            {
-                                npc.velocity = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), 20);
-                                npc.netUpdate = true;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            hasTrajectory = true;
-                            npc.velocity = trajectory;
-                            npc.netUpdate = true;
-                        }
-                    }
+                    LaunchHighArcPounce(npc, topSpeed);
                 }
             }
             else if (globalNPC.PounceCooldown > 0)
             {
                 globalNPC.PounceCooldown--;
+            }
+
+            if (globalNPC.DirectPounceAfterimageTimer > 0)
+            {
+                if (globalNPC.DirectPounceAfterimages && globalNPC.DirectPounceAfterimageTimer % 2 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    SpawnDirectPounceAfterimage(npc);
+                }
+
+                globalNPC.DirectPounceAfterimageTimer--;
+            }
+
+            if (globalNPC.DirectPounceRecoveryTimer > 0)
+            {
+                if (globalNPC.DirectPounceAfterimageTimer == 0 && npc.velocity.Y == 0f)
+                {
+                    npc.velocity.X *= 0.85f;
+                }
+
+                globalNPC.DirectPounceRecoveryTimer--;
             }
 
             if (globalNPC.DodgeTimer > 0)
@@ -651,6 +670,10 @@ namespace tsorcRevamp.NPCs
                     npc.velocity = Vector2.Zero;
                 }
 
+                // Non-Default styles hide the NPC inside its departure cloud for the full telegraph.
+                if (globalNPC.TeleportVisualStyle != TeleportVisualStyle.Default)
+                    npc.alpha = 255;
+
                 globalNPC.TeleportCountdown--;
                 if (globalNPC.TeleportCountdown == 0)
                 {
@@ -658,7 +681,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            // Smoke/fire style: snap position to destination halfway through the 1s smoke cloud
+            // Smoke/fire/plague: NPC is still hidden during snap delay; revealed at destination.
             if (globalNPC.TeleportAppearanceTimer > 0)
             {
                 npc.velocity *= 0.1f;
@@ -667,17 +690,21 @@ namespace tsorcRevamp.NPCs
                     npc.velocity = Vector2.Zero;
                 }
 
+                if (globalNPC.TeleportVisualStyle != TeleportVisualStyle.Default)
+                    npc.alpha = 255;
+
                 globalNPC.TeleportAppearanceTimer--;
                 if (globalNPC.TeleportAppearanceTimer == 0)
                 {
                     npc.Center = globalNPC.TeleportTelegraph;
                     globalNPC.TeleportTelegraph = Vector2.Zero;
+                    npc.alpha = 0; // reveal at destination
                     npc.netUpdate = true;
                 }
             }
 
             //Block firing and reset cooldowns if it's busy doing other things (incl. fleeing)
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0)
             {
                 globalNPC.ProjectileTimer = 0;
                 globalNPC.ArcherAimDirection = 0;
@@ -694,7 +721,118 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            intent.SeizesBody = teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0;
+            intent.SeizesBody = teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0;
+        }
+
+        private static void SpawnHighArcPounceTelegraph(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            if (globalNPC.PounceTimer % 5 != 0 || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Vector2 spawnPosition = npc.position;
+            spawnPosition.Y += npc.height;
+            spawnPosition.X += Main.rand.NextFloat(npc.width);
+            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2), ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer);
+        }
+
+        private static void LaunchHighArcPounce(NPC npc, float topSpeed)
+        {
+            float pounceSpeed = topSpeed * 5;
+            bool hasTrajectory = false;
+            while (!hasTrajectory)
+            {
+                Vector2 trajectory = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), pounceSpeed, npc.gravity, false, false);
+                if (trajectory == Vector2.Zero)
+                {
+                    pounceSpeed += topSpeed * 2;
+
+                    //If it requires more than 20 units of speed to make it to the player, give up and just launch normally instead of using a ballistic trajectory
+                    if (pounceSpeed > 20)
+                    {
+                        npc.velocity = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), 20);
+                        npc.netUpdate = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    hasTrajectory = true;
+                    npc.velocity = trajectory;
+                    npc.netUpdate = true;
+                }
+            }
+        }
+
+        private static void RunDirectPounce(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed)
+        {
+            if (globalNPC.PounceTimer > 0)
+            {
+                int direction = Math.Sign(globalNPC.PounceTarget.X - npc.Center.X);
+                if (direction == 0)
+                {
+                    direction = npc.direction == 0 ? 1 : npc.direction;
+                }
+
+                npc.direction = direction;
+                npc.spriteDirection = direction;
+
+                if (npc.velocity.Y == 0f)
+                {
+                    float runSpeed = MathHelper.Clamp(topSpeed * 1.35f, 1.5f, 4.5f);
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, direction * runSpeed, 0.35f);
+                }
+
+                if (globalNPC.PounceTimer % 8 == 0)
+                {
+                    SoundEngine.PlaySound(SoundID.Run, npc.Center);
+                }
+
+                return;
+            }
+
+            LaunchDirectPounce(npc, globalNPC);
+        }
+
+        private static void LaunchDirectPounce(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            if (globalNPC.PounceTarget == Vector2.Zero)
+            {
+                globalNPC.PounceTarget = Main.player[npc.target].Center;
+            }
+
+            float aggressionCurve = GetPounceAggressionCurve(globalNPC);
+            float dashSpeed = MathHelper.Lerp(10f, 12.5f, aggressionCurve);
+            int direction = Math.Sign(globalNPC.PounceTarget.X - npc.Center.X);
+            if (direction == 0)
+            {
+                direction = npc.direction == 0 ? 1 : npc.direction;
+            }
+
+            Vector2 velocity = UsefulFunctions.Aim(npc.Center, globalNPC.PounceTarget, dashSpeed);
+            if (velocity == Vector2.Zero)
+            {
+                velocity = new Vector2(direction * dashSpeed, -2.5f);
+            }
+            else if (velocity.Y > -2f)
+            {
+                velocity.Y = -2f;
+            }
+
+            npc.velocity = velocity;
+            globalNPC.DirectPounceAfterimageTimer = globalNPC.DirectPounceAfterimages ? 8 : 0;
+            globalNPC.DirectPounceRecoveryTimer = 18;
+            globalNPC.PounceTarget = Vector2.Zero;
+            npc.netUpdate = true;
+        }
+
+        private static void SpawnDirectPounceAfterimage(NPC npc)
+        {
+            float encodedFrame = npc.spriteDirection < 0 ? -(npc.frame.Y + 1) : npc.frame.Y + 1;
+            Projectile afterimage = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.NPCAfterimage>(), 0, 0, Main.myPlayer, npc.type, encodedFrame);
+            afterimage.Center = npc.Center;
+            afterimage.netUpdate = true;
         }
 
         // Stop-to-fire DECISION (Step 3): should the mover pin position so the combat layer can fire? This is the
@@ -760,17 +898,69 @@ namespace tsorcRevamp.NPCs
                 //Pouncing
                 if (canPounce && globalNPC.PounceCooldown == 0 && lineOfSight)
                 {
-                    if (npc.DistanceSQ(Main.player[npc.target].Center) > 40000 / globalNPC.Aggression)
+                    switch (globalNPC.PounceStyle)
                     {
-                        if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextFloat() * 180 < globalNPC.Aggression)
-                        {
-                            globalNPC.PounceTimer = 30;
-                            globalNPC.PounceCooldown = 300;
-                            npc.netUpdate = true;
-                        }
+                        case PounceStyle.DirectPounce:
+                            TryStartDirectPounce(npc, globalNPC);
+                            break;
+                        case PounceStyle.HighArcPounce:
+                            TryStartHighArcPounce(npc, globalNPC);
+                            break;
                     }
                 }
             }
+        }
+
+        private static void TryStartHighArcPounce(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            if (npc.DistanceSQ(Main.player[npc.target].Center) > 40000 / globalNPC.Aggression)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextFloat() * 180 < globalNPC.Aggression)
+                {
+                    globalNPC.PounceTimer = 30;
+                    globalNPC.PounceCooldown = 300;
+                    npc.netUpdate = true;
+                }
+            }
+        }
+
+        private static void TryStartDirectPounce(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || npc.velocity.Y != 0f || SmartFighter4AI.HasActiveMovementPlan(npc))
+            {
+                return;
+            }
+
+            Player player = Main.player[npc.target];
+            float distance = npc.Distance(player.Center);
+            float aggressionCurve = GetPounceAggressionCurve(globalNPC);
+            float minDistance = MathHelper.Lerp(340f, 260f, aggressionCurve);
+            float maxDistance = MathHelper.Lerp(760f, 1100f, aggressionCurve);
+
+            if (distance < minDistance || distance > maxDistance)
+            {
+                return;
+            }
+
+            int direction = Math.Sign(player.Center.X - npc.Center.X);
+            if (direction == 0)
+            {
+                direction = npc.direction == 0 ? 1 : npc.direction;
+            }
+
+            float overshoot = MathHelper.Lerp(48f, 96f, aggressionCurve);
+            overshoot = Math.Max(overshoot, (npc.width + player.width) * 0.35f);
+
+            globalNPC.PounceTarget = player.Center + new Vector2(direction * overshoot, -8f);
+            globalNPC.PounceTimer = (int)MathHelper.Lerp(36f, 24f, aggressionCurve);
+            globalNPC.PounceCooldown = (int)MathHelper.Lerp(420f, 180f, aggressionCurve);
+            npc.netUpdate = true;
+        }
+
+        private static float GetPounceAggressionCurve(tsorcRevampGlobalNPC globalNPC)
+        {
+            float aggression01 = MathHelper.Clamp(globalNPC.Aggression / 2.5f, 0f, 1f);
+            return (float)Math.Sqrt(aggression01);
         }
 
         // Strict geometric line of sight (solids block, platforms don't). Pairs the permissive Collision.CanHit
@@ -950,12 +1140,12 @@ namespace tsorcRevamp.NPCs
             }
 
             //Increment the timer. Stop increasing it once we reach the telegraph time. Only continue once it is actually firing. Once it is actually firing do not stop incrementing the timer, so that it can not stop firing after telegraphing a shot.
-            if (globalNPC.ProjectileTimer < globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime || actuallyFire || globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime)
+            if (globalNPC.ProjectileTimer < globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime || actuallyFire || globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime)
             {
                 globalNPC.ProjectileTimer++;
 
                 //Spawn a telegraph flash once the telegraph time is reached
-                if (globalNPC.ProjectileTimer == 1 + globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime)
+                if (globalNPC.ProjectileTimer == 1 + globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime)
                 {
                     Vector2 spawnPosition = npc.position;
                     if (npc.direction == 1)
@@ -972,7 +1162,7 @@ namespace tsorcRevamp.NPCs
             //If it's supposed to stop moving when firing, then do so
             if (globalNPC.CanStopToFire && globalNPC.CurrentAttack.stopBefore && !globalNPC.CanPassThroughWalls)
             {
-                bool inTelegraphWindow = globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime;
+                bool inTelegraphWindow = globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime;
                 float stopBeforeChance = GetStandingFireChance(globalNPC, globalNPC.CurrentAttack.stopBeforeChance);
 
                 if (inTelegraphWindow && Main.rand.NextFloat() < stopBeforeChance)
@@ -984,7 +1174,7 @@ namespace tsorcRevamp.NPCs
                     // may commit to firing N shots in a row without resuming movement.
                     // Aggression lowers the chance to stand; Patience raises the burst count.
                     if (globalNPC.CanStopToFire && globalNPC.FighterRangedStandShotsRemaining == 0
-                        && globalNPC.ProjectileTimer == globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime + 1
+                        && globalNPC.ProjectileTimer == globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime + 1
                         && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float aggressionFraction = Math.Clamp(globalNPC.Aggression / 2.5f, 0f, 1f);
@@ -1100,8 +1290,9 @@ namespace tsorcRevamp.NPCs
             public float weight;
             public Func<NPC, bool> condition;
             public float stopBeforeChance;
+            public int telegraphTime;
 
-            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f)
+            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f, int? telegraphTime = null)
             {
                 type = projectileType;
                 this.timerCap = timerCap;
@@ -1118,6 +1309,7 @@ namespace tsorcRevamp.NPCs
                 this.weight = weight;
                 this.condition = condition;
                 this.stopBeforeChance = stopBeforeChance;
+                this.telegraphTime = telegraphTime ?? ProjectileTelegraphTime;
             }
         }
 
@@ -1146,7 +1338,7 @@ namespace tsorcRevamp.NPCs
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="range">The max range from the player it can teleport. Minimum is 12 blocks.</param>
         ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
-        public static Vector2? GenerateTeleportPosition(NPC npc, int range, bool requireLineofSight = true, bool preferHighGround = false)
+        public static Vector2? GenerateTeleportPosition(NPC npc, int range, bool requireLineofSight = true, bool preferHighGround = false, int minRange = 11)
         {
             int playerTileY = (int)(Main.player[npc.target].Center.Y / 16f);
             //Do not teleport if the player is way way too far away (stops enemies following you home if you mirror away)
@@ -1155,16 +1347,19 @@ namespace tsorcRevamp.NPCs
                 return null;
             }
 
+            // Clamp minRange so it's always strictly less than range.
+            minRange = Math.Max(1, Math.Min(minRange, range - 1));
+
             //Try 100 times at most
             for (int i = 0; i < 100; i++)
             {
-                //Pick a random point to target. Make sure it's at least 11 blocks away from the player to avoid cheap hits.
+                //Pick a random point to target. Make sure it's at least minRange blocks away from the player to avoid cheap hits.
                 Vector2 teleportTarget = Vector2.Zero;
                 if (range < 13)
                 {
                     range = 13;
                 }
-                teleportTarget.X = Main.rand.Next(11, range);
+                teleportTarget.X = Main.rand.Next(minRange, range);
                 if (Main.rand.NextBool())
                 {
                     teleportTarget.X *= -1;
@@ -1272,7 +1467,8 @@ namespace tsorcRevamp.NPCs
                 return false; // already mid-blink
             }
 
-            QueueTeleport(npc, 50, true, globalNPC.TeleportTelegraphTime, globalNPC.PrefersHighGround);
+            // minRange: 5 tiles so the blink can land inside small rooms (default 11 is too large for tight spaces).
+            QueueTeleport(npc, 50, true, globalNPC.TeleportTelegraphTime, globalNPC.PrefersHighGround, minRange: 5);
 
             // QueueTeleport only sets TeleportCountdown when it actually found a valid destination.
             if (globalNPC.TeleportCountdown <= 0)
@@ -1295,7 +1491,7 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
-        public static void QueueTeleport(NPC npc, int range, bool requireLineofSight = true, int TeleportTelegraphTime = 140, bool preferHighGround = false)
+        public static void QueueTeleport(NPC npc, int range, bool requireLineofSight = true, int TeleportTelegraphTime = 140, bool preferHighGround = false, int minRange = 11)
         {
             Vector2? potentialNewPos;
 
@@ -1303,7 +1499,7 @@ namespace tsorcRevamp.NPCs
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    potentialNewPos = GenerateTeleportPosition(npc, range, requireLineofSight, preferHighGround);
+                    potentialNewPos = GenerateTeleportPosition(npc, range, requireLineofSight, preferHighGround, minRange);
                     if (potentialNewPos.HasValue && (!requireLineofSight || (Collision.CanHit(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1))))
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown = TeleportTelegraphTime;
@@ -1320,12 +1516,34 @@ namespace tsorcRevamp.NPCs
                             }
                             else
                             {
-                                float mistStyle = visualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
-                                float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
-                                var srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
-                                srcMist.timeLeft = Math.Min(TeleportTelegraphTime, SmokeFireTeleportCloudTicks);
-                                var dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
-                                dstMist.timeLeft = Math.Min(TeleportTelegraphTime, SmokeFireTeleportCloudTicks);
+                                if (visualStyle == TeleportVisualStyle.Plague)
+                                {
+                                    // Plague telegraph cloud must outlast the full countdown so there's no gap
+                                    // before ExecuteQueuedTeleport spawns the real clouds. Cap at LifetimeTicks
+                                    // so we don't exceed the projectile's intended maximum duration.
+                                    int plagueTelegraphLife = Math.Min(TeleportTelegraphTime, PlagueTeleportCloud.LifetimeTicks);
+                                    var srcCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
+                                    srcCloud.timeLeft = plagueTelegraphLife;
+                                    var dstCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
+                                    dstCloud.timeLeft = plagueTelegraphLife;
+                                }
+                                else
+                                {
+                                    float mistStyle = visualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
+                                    float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
+                                    var srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
+                                    srcMist.timeLeft = TeleportTelegraphTime;
+                                    var dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
+                                    dstMist.timeLeft = TeleportTelegraphTime;
+
+                                    if (visualStyle == TeleportVisualStyle.Fire)
+                                    {
+                                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                                            ModContent.ProjectileType<Projectiles.VFX.FireTeleportBlast>(), 0, 0, Main.myPlayer);
+                                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero,
+                                            ModContent.ProjectileType<Projectiles.VFX.FireTeleportBlast>(), 0, 0, Main.myPlayer);
+                                    }
+                                }
                             }
                         }
 
@@ -1346,6 +1564,22 @@ namespace tsorcRevamp.NPCs
                     globalNPC.TeleportDustType, randomVelocity, 150, globalNPC.TeleportDustColor, globalNPC.TeleportDustScale * TeleportMistVisualScale);
                 dust.noGravity = true;
                 dust.fadeIn = 0.45f;
+            }
+        }
+
+        private static void SpawnFireTeleportBurst(NPC npc, Vector2 position)
+        {
+            int damage = Math.Max(1, (int)(npc.damage * FireTeleportFlameDamageMultiplier));
+            float rotationOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.4f }, position);
+
+            for (int i = 0; i < FireTeleportFlameCount; i++)
+            {
+                Vector2 velocity = (rotationOffset + MathHelper.TwoPi * i / FireTeleportFlameCount).ToRotationVector2() * FireTeleportFlameSpeed;
+                Projectile flame = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), position, velocity,
+                    ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), damage, 5f, Main.myPlayer);
+                flame.timeLeft = 30;
             }
         }
 
@@ -1379,19 +1613,42 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
-                float style = globalNPC.TeleportVisualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
-                float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (globalNPC.TeleportVisualStyle == TeleportVisualStyle.Plague)
                 {
-                    // Both clouds start simultaneously. NPC moves halfway through the 1s cloud.
-                    var exitMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
-                    exitMist.timeLeft = SmokeFireTeleportCloudTicks;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        var exitCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 1f, PlagueTeleportCloud.MaxCloudRadius);
+                        exitCloud.timeLeft = PlagueTeleportCloud.LifetimeTicks;
 
-                    var entryMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
-                    entryMist.timeLeft = SmokeFireTeleportCloudTicks;
+                        var entryCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
+                        entryCloud.timeLeft = PlagueTeleportCloud.LifetimeTicks;
+                    }
+                }
+                else
+                {
+                    bool isFireTeleport = globalNPC.TeleportVisualStyle == TeleportVisualStyle.Fire;
+                    float style = isFireTeleport ? 1f : 0f;
+                    float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        // Both clouds start simultaneously. NPC moves halfway through the 1s cloud.
+                        var exitMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
+                        exitMist.timeLeft = SmokeFireTeleportCloudTicks;
+
+                        var entryMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
+                        entryMist.timeLeft = SmokeFireTeleportCloudTicks;
+
+                        if (isFireTeleport)
+                        {
+                            SpawnFireTeleportBurst(npc, npc.Center);
+                            SpawnFireTeleportBurst(npc, globalNPC.TeleportTelegraph);
+                        }
+                    }
                 }
 
                 // Position snaps to destination after 0.5s (30 frames), handled by FighterAI.
@@ -1512,22 +1769,13 @@ namespace tsorcRevamp.NPCs
                 return;
             }
 
-            // Getting shot out of a stand-and-fire / post-attack pause snaps the archer out of it and repositions.
+            // Getting shot out of a stand-and-fire / post-attack pause clears those pause flags so the shared base
+            // react-roll below can reposition the archer, instead of a separate 50%-gated snap-out reaction.
             if (!melee && (globalNPC.FighterRangedHitInterruptedPause || globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0))
             {
-                if (!Main.rand.NextBool(2))
-                {
-                    return;
-                }
-
                 globalNPC.FighterRangedHitInterruptedPause = false;
                 globalNPC.FighterPostAttackPauseTimer = 0;
                 globalNPC.FighterRangedStandShotsRemaining = 0;
-                npc.TargetClosest(true);
-                npc.velocity.Y = -5f;
-                npc.velocity.X += npc.direction * 5f;
-                npc.netUpdate = true;
-                return;
             }
 
             // Rate-limit so a fighter doesn't react to every hit of a fast combo.
@@ -1543,7 +1791,7 @@ namespace tsorcRevamp.NPCs
             }
 
             // Only react to a fraction of hits — keeps the knight slippery without spasming.
-            if (!Main.rand.NextBool(6))
+            if (!Main.rand.NextBool(5))
             {
                 return;
             }
@@ -1558,9 +1806,9 @@ namespace tsorcRevamp.NPCs
                     npc.velocity.Y = -6f;
                     npc.velocity.X = 7f * away;
                     break;
-                case 1: // big leap back
-                    npc.velocity.Y = -9f;
-                    npc.velocity.X = 9f * away;
+                case 1: // big leap back (toned down)
+                    npc.velocity.Y = -8f;
+                    npc.velocity.X = 7f * away;
                     break;
                 case 2: // low dash back
                     npc.velocity.X = 8f * away;

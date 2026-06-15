@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 0;
-            NPC.knockBackResist = 0f;
+            NPC.knockBackResist = 0.2f; // poise flinch dial (boss). BasicAI restores this each tick despite the attack-state =0f lines.
             NPC.scale = 1.15f;
             NPC.boss = true;
             Banner = NPC.type;
@@ -68,7 +68,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             redKnightGlobalNPC.CanDoubleJump = true;
             redKnightGlobalNPC.DoubleJumpPower = 8f;
             // Step 6 boss lever: blink aggressively the moment it loses LOS (keeps arena pressure).
+            redKnightGlobalNPC.CanTeleport = true;
             redKnightGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
+            redKnightGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Fire;
             redKnightGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
             redKnightGlobalNPC.CanUseRopes = true;
         }

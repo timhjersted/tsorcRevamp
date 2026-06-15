@@ -40,6 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.knockBack = 2f;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
+            Item.mana = 10;
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();

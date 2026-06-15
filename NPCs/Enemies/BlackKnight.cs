@@ -73,9 +73,13 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.Agility = 0.5f;
             blackKnightGlobalNPC.Aggression = 1f;
             blackKnightGlobalNPC.Patience = 2f;
+            blackKnightGlobalNPC.PounceStyle = NPCs.PounceStyle.DirectPounce;
+            blackKnightGlobalNPC.CanTeleport = true;
+            blackKnightGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
+            blackKnightGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Plague;
 
-            // Poise: lighter than the Red Knight — staggers a bit more readily. Tunable lever.
-            blackKnightGlobalNPC.PoiseMax = 24f;
+            // Poise: sturdier than the Red Knight (40) — takes more to stagger. Tunable lever.
+            blackKnightGlobalNPC.PoiseMax = 60f;
             blackKnightGlobalNPC.PoiseStaggerResetsAI = true; // a stagger cancels a windup attack → neutral
 
             // Navigation tuning: high jumps, double jump, and ledge routing
@@ -143,7 +147,7 @@ namespace tsorcRevamp.NPCs.Enemies
                                            (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
                                            (NPC.ai[1] >= 870f && NPC.ai[1] < 900f);
 
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
                                           (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||

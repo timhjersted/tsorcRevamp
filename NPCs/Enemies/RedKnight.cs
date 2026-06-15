@@ -97,6 +97,7 @@ namespace tsorcRevamp.NPCs.Enemies
             redKnightGlobalNPC.MaxJumpBoost = 6f;
             redKnightGlobalNPC.NavGiveUpTicks = 200;
             // CanDoubleJump remains false for RedKnight
+            redKnightGlobalNPC.CanTeleport = true;
             redKnightGlobalNPC.TeleportStyle = TeleportStyle.Aggressive;
             redKnightGlobalNPC.TeleportVisualStyle = TeleportVisualStyle.Fire;
         }

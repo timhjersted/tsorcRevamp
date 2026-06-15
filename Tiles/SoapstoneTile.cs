@@ -105,12 +105,26 @@ namespace tsorcRevamp.Tiles
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/new-area") with { Volume = 0.5f });
                 }
 
-                // If the bubble is sticky-open (user clicked Show), check whether the mouse has
-                // moved far enough from the click position to dismiss it.
-                if (entity.manuallyOpened
-                    && Vector2.Distance(Main.MouseScreen, entity.clickedAtMouse) > SoapstoneTileEntity.MANUAL_DISMISS_DISTANCE)
+                // Sticky-open dismissal. After a short grace period (so the click-release cursor
+                // motion doesn't instantly close it), the message dismisses when the player either
+                // starts walking (taps left/right) or moves the mouse a medium distance — 20% of the
+                // screen width — from where they clicked.
+                if (entity.manuallyOpened)
                 {
-                    entity.manuallyOpened = false;
+                    if (entity.manualOpenGraceTimer > 0)
+                    {
+                        entity.manualOpenGraceTimer--;
+                    }
+                    else
+                    {
+                        bool movedMouse = Vector2.Distance(Main.MouseScreen, entity.clickedAtMouse)
+                            > Main.screenWidth * SoapstoneTileEntity.MANUAL_DISMISS_SCREEN_FRACTION;
+                        bool startedWalking = Main.LocalPlayer.controlLeft || Main.LocalPlayer.controlRight;
+                        if (movedMouse || startedWalking)
+                        {
+                            entity.manuallyOpened = false;
+                        }
+                    }
                 }
 
                 bool keepOpen = autoOpen || entity.manuallyOpened;
@@ -133,7 +147,10 @@ namespace tsorcRevamp.Tiles
                     // Checking mouseDistance against the running minimum means a later sign with the
                     // mouse closer still overrides an earlier one, and a player-proximity pick can be
                     // overridden by a mouse pick (but never the reverse).
-                    if (mouseInRange && mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance)
+                    // The `distance <= 200` gate is the player-proximity requirement: you can only
+                    // reveal/click a sign by hovering it when your character is actually near it.
+                    // Without this you could click any on-screen sign from across the map.
+                    if (mouseInRange && distance <= 200 && mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance)
                     {
                         selectedSoapstone = true;
                         tsorcRevamp.NearbySoapstone = entity;
@@ -237,8 +254,17 @@ namespace tsorcRevamp.Tiles
         public bool manuallyOpened;
         // Screen-space mouse position when the Show button was clicked. Used to detect dismissal.
         public Vector2 clickedAtMouse;
-        // Distance the mouse must travel from clickedAtMouse to dismiss the sticky bubble.
-        public const float MANUAL_DISMISS_DISTANCE = 143f;
+        // Frames remaining after a manual open during which dismissal is suppressed, so the
+        // click-release cursor motion (or a movement key held at click time) can't instantly close
+        // the message before the player has a chance to read it.
+        public int manualOpenGraceTimer;
+        // Fraction of screen width the mouse must travel from clickedAtMouse to dismiss the sticky
+        // bubble. ~20%: a deliberate, medium move — large enough that normal reading motion doesn't
+        // trip it. (The signs that used to feel impossible to dismiss were the proximity timer-freeze,
+        // now fixed by the keepBubbleOpen gate in tsorcRevampSystems — not this threshold.)
+        public const float MANUAL_DISMISS_SCREEN_FRACTION = 0.20f;
+        // Grace frames granted on each manual open (~0.4s at 60fps).
+        public const int MANUAL_OPEN_GRACE = 24;
 
         public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
         {

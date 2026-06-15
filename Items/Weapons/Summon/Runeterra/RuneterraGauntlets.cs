@@ -63,6 +63,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             Item.useTurn = false;
             Item.value = Value;
             Item.rare = Rarity;
+            Item.mana = 10;
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;

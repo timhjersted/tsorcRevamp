@@ -59,7 +59,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.Confused] = true;
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            //globalNPC.CanPassThroughWalls = true;
+            globalNPC.CanPassThroughWalls = true;
+            globalNPC.HasGhostAfterimages = true;
             //globalNPC.MaxJumpPower = 10f;
             //globalNPC.MaxJumpBoost = 6f;
             // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
@@ -1093,4 +1094,3 @@ namespace tsorcRevamp.NPCs.Enemies
 
     }
 }
-

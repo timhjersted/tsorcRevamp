@@ -89,6 +89,7 @@ namespace tsorcRevamp.NPCs
         Default,    // one burst of white smoke + shockwave flash (current behavior)
         GreySmoke,  // heavy grey smoke cloud lingering ~1s at both exit and entry
         Fire,       // fire + dark smoke cloud lingering ~1s at both exit and entry
+        Plague,     // black/purple lingering cloud; origin cloud applies controlled curse buildup
     }
 
     public enum InvisibilityStyle
@@ -97,9 +98,26 @@ namespace tsorcRevamp.NPCs
         Predator
     }
 
+    public enum PounceStyle
+    {
+        HighArcPounce,
+        DirectPounce,
+        None
+    }
+
     public partial class tsorcRevampGlobalNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
+        private const int GhostWallTeleportSmokeTicks = 30;
+        private const int GhostWallTeleportSnapTicks = 15;
+        private const int GhostWallMaxThicknessTiles = 4;
+        private const float GhostWallTeleportMistRadiusScale = 1.25f;
+        private const float GhostMagicKnockbackResist = 0.5f;
+        private const float GhostMagicPoiseKnockbackFloor = 0.5f;
+        private const float GhostMagicPoiseMax = 12f;
+        // Magic weapons usually have a 0 knockback STAT, and no HitModifier can inject knockback into a 0-knockback hit
+        // (the multiply yields 0). So the ghost's magic flinch is applied as a direct velocity impulse instead. Tune here.
+        private const float GhostMagicFlinchVelocity = 2.5f;
 
         float enemyValue;
         float multiplier = 1f;
@@ -261,6 +279,11 @@ namespace tsorcRevamp.NPCs
         public bool Initialized;
         public int PounceTimer;
         public int PounceCooldown;
+        public PounceStyle PounceStyle = PounceStyle.HighArcPounce;
+        public Vector2 PounceTarget;
+        public int DirectPounceAfterimageTimer;
+        public int DirectPounceRecoveryTimer;
+        public bool DirectPounceAfterimages = true;
         public int DodgeTimer;
         public int DodgeCooldown;
         public int FighterPostAttackPauseTimer;
@@ -295,7 +318,7 @@ namespace tsorcRevamp.NPCs
         #region Poise / Stagger (Dark-Souls-style)
         // Deterministic stagger system (see project_poise_stagger_system).
         //  • Ordinary hits apply a LIGHT flinch knockback (PoiseFlinchFactor) so weapons feel like they connect, and
-        //    accumulate poise damage equal to the weapon's knockback stat.
+        //    accumulate poise damage = weapon knockback × PoiseDamageMultiplier (global stagger-rate knob).
         //  • AttackCommitted (post-flash) = hyper-armor: zero knockback, no poise. Windup is NOT committed, so a stagger
         //    there cancels the attack.
         //  • When poise fills → STAGGER: launch + ~2s freeze (movement + attack timer) + cancel windup.
@@ -311,10 +334,14 @@ namespace tsorcRevamp.NPCs
         public float StaggerKnockback = 6f;       // horizontal launch magnitude applied on a poise break
         public float PoiseFlinchFactor = 0.4f;    // fraction of normal knockback applied on ordinary (non-breaking) hits
         public float PoiseCooldownFlinchFactor = 0.5f; // extra multiplier on flinch during the post-stagger recovery window (still registers, just sturdier)
+        // GLOBAL stagger-rate knob: poise damage per hit = weapon knockback × this. Lower = more hits to stagger across
+        // ALL enemies (doesn't touch flinch). Tune this rather than re-editing every PoiseMax.
+        public static float PoiseDamageMultiplier = 0.5f;
         public bool PoiseStaggerResetsAI = false; // opt-in: a stagger sets ai[1]=60/ai[2]=-100 (cancels a windup attack)
-        // Tunable durations (ticks). Defaults: ~2s stagger, then the cooldown OUTLASTS it (~2s recovery), ~3s decay grace.
+        // Tunable durations (ticks). Defaults: ~2s stagger, then the cooldown OUTLASTS it (6s total from trigger → ~4s
+        // reduced-flinch + no-re-stagger recovery after the stun), ~3s decay grace.
         public int StaggerDurationTicks = 120;
-        public int PoiseBreakCooldownTicks = 240;
+        public int PoiseBreakCooldownTicks = 360;
         public int PoiseRegenDelayTicks = 180;
         // Escalation ("the enemy learns"): each recent stagger adds a stack (raising the threshold by 60%) and refreshes
         // the window. Stacks reset only after the full window elapses with NO new stagger — so chaining staggers makes
@@ -327,12 +354,150 @@ namespace tsorcRevamp.NPCs
         // Set in ModifyHitBy*, consumed in OnHitBy*: did the pre-strike calc decide this hit breaks poise?
         internal bool PoiseWillBreakThisHit = false;
         private float staggerSlideVelocity = 0f;  // horizontal knockback slide held across the stun
+        private bool ghostKnockbackRestorePending = false;
+        private float ghostKnockbackRestoreValue = 0f;
 
         /// <summary>PoiseMax scaled up by current escalation stacks — the actual threshold a hit must cross.</summary>
         public float EffectivePoiseMax => PoiseMax * (1f + PoiseEscalationPerStack * PoiseEscalationStacks);
 
         /// <summary>True when the poise bar should be drawn (and the stamina bar suppressed).</summary>
         public bool PoiseBarVisible => PoiseMax > 0f && (Poise > 0f || StaggerTimer > 0);
+
+        private bool IsMagicKnockbackGhost(NPC npc)
+            => HasGhostAfterimages && (npc.knockBackResist <= 0f || ghostKnockbackRestorePending);
+
+        private bool IsPhysicalGhost(NPC npc)
+            => HasGhostAfterimages && npc.knockBackResist <= 0f;
+
+        private static bool HasMagicWeaponBuff(Player player)
+            => player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>())
+            || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>())
+            || player.HasBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>());
+
+        private bool ShouldMagicKnockbackGhost(NPC npc, Player player, Item item)
+            => IsMagicKnockbackGhost(npc)
+            && (item.CountsAsClass(DamageClass.Magic)
+                || (item.CountsAsClass(DamageClass.Melee) && HasMagicWeaponBuff(player)));
+
+        private bool ShouldMagicKnockbackGhost(NPC npc, Projectile projectile)
+            => IsMagicKnockbackGhost(npc)
+            && projectile.DamageType == DamageClass.Magic;
+
+        private void EnableMagicGhostPoise(NPC npc)
+        {
+            if (PoiseMax <= 0f)
+            {
+                PoiseMax = GhostMagicPoiseMax;
+            }
+
+            if (!ghostKnockbackRestorePending)
+            {
+                ghostKnockbackRestoreValue = npc.knockBackResist;
+                ghostKnockbackRestorePending = true;
+            }
+
+            npc.knockBackResist = GhostMagicKnockbackResist;
+        }
+
+        private void RestoreMagicGhostKnockback(NPC npc)
+        {
+            if (!ghostKnockbackRestorePending)
+            {
+                return;
+            }
+
+            npc.knockBackResist = ghostKnockbackRestoreValue;
+            ghostKnockbackRestorePending = false;
+        }
+
+        /// <summary>Magic flinch for the pass-through-walls ghosts: a manual horizontal nudge away from the attacker,
+        /// since their magic weapons usually have 0 knockback stat (so the normal multiplicative flinch can't move them).
+        /// Skipped if this hit already staggered (that launch wins); reduced during the post-stagger recovery window.</summary>
+        private void ApplyGhostMagicFlinch(NPC npc, Vector2 sourceCenter)
+        {
+            if (StaggerTimer > 0)
+            {
+                return;
+            }
+            float speed = GhostMagicFlinchVelocity;
+            if (PoiseBreakCooldown > 0)
+            {
+                speed *= PoiseCooldownFlinchFactor;
+            }
+            int dir = npc.Center.X >= sourceCenter.X ? 1 : -1;
+            npc.velocity.X = dir * speed;
+            npc.netUpdate = true;
+        }
+
+        /// <summary>Central poise tuning table (NPC type → knockback-resist flinch dial + PoiseMax), applied in
+        /// SetDefaults. Single source of truth for the rollout — retune here. The Red Knight family configure themselves
+        /// in-file; the lore ghosts and anything not listed are left out of the system. See project_poise_stagger_system.</summary>
+        public static readonly Dictionary<int, (float knockBackResist, float poiseMax)> PoiseProfiles = new();
+
+        public static void PopulatePoiseProfiles()
+        {
+            PoiseProfiles.Clear();
+            static void Add<T>(float kbResist, float poiseMax) where T : ModNPC => PoiseProfiles[ModContent.NPCType<T>()] = (kbResist, poiseMax);
+
+            // Bosses
+            Add<Bosses.SuperHardMode.Gwyn>(0.15f, 120f);
+            Add<Bosses.SuperHardMode.Artorias>(0.15f, 120f);
+            Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
+            Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
+            Add<Enemies.SuperHardMode.SlograII>(0.4f, 50f);
+            // Heavy giants / demons
+            Add<Bosses.AncientDemon>(0.15f, 80f);
+            Add<Bosses.AncientOolacileDemon>(0.15f, 80f);
+            Add<Enemies.SuperHardMode.AncientDemonOfTheAbyss>(0.15f, 80f);
+            Add<Enemies.OmnirsGigas>(0.15f, 80f);
+            Add<Enemies.OmnirsIceGigas>(0.15f, 80f);
+            Add<Enemies.OmnirsDemonLordApocalypse>(0.15f, 80f);
+            // Big bruisers
+            Add<Enemies.OmnirsHydra>(0.2f, 60f);
+            Add<Enemies.SuperHardMode.OmnirsMassacre>(0.2f, 60f);
+            // Elite / heavy knight
+            Add<Enemies.SuperHardMode.TaurusKnight>(0.2f, 55f);
+            Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
+            // Standard fighters
+            Add<Enemies.SuperHardMode.DarkBloodKnight>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.OolacileKnight>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.BasiliskHunter>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.Abysswalker>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.HydrisElemental>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.CorruptedElemental>(0.3f, 35f);
+            // Standard+
+            Add<Enemies.SuperHardMode.DarkKnight>(0.35f, 30f);
+            Add<Enemies.Warlock>(0.35f, 30f);
+            Add<Enemies.FireLurker>(0.35f, 30f);
+            Add<Enemies.Tonberry>(0.35f, 30f);
+            Add<Enemies.QuaraHydromancer>(0.35f, 30f);
+            // Human / skilled
+            Add<Enemies.FallenNecromancer>(0.4f, 26f);
+            Add<Enemies.Necromancer>(0.4f, 26f);
+            Add<Enemies.SuperHardMode.HydrisNecromancer>(0.4f, 26f);
+            Add<Enemies.SuperHardMode.IceSkeleton>(0.4f, 26f);
+            Add<Enemies.FirebombHollow>(0.4f, 26f);
+            Add<Enemies.BasiliskShifter>(0.4f, 26f);
+            // Light / agile
+            Add<Enemies.ClericOfSorrow>(0.45f, 20f);
+            Add<Enemies.Assassin>(0.45f, 20f);
+            Add<Enemies.TibianAmazon>(0.45f, 20f);
+            Add<Enemies.TibianValkyrie>(0.45f, 20f);
+            // Lighter / hunters
+            Add<Enemies.BasiliskWalker>(0.5f, 18f);
+            Add<Enemies.ManHunter>(0.5f, 18f);
+            Add<Enemies.RedCloudHunter>(0.5f, 18f);
+            // Small
+            Add<Enemies.Sandsprog>(0.55f, 15f);
+            Add<Enemies.SandsprogMage>(0.55f, 15f);
+            // Lightest
+            Add<Enemies.DworcFleshhunter>(0.6f, 13f);
+            Add<Enemies.DworcVenomsniper>(0.6f, 13f);
+            Add<Enemies.Dunlending>(0.6f, 13f);   // small
+            // Light to knock, but higher HP → sturdier to actually stagger
+            Add<Enemies.DworcVoodoomaster>(0.6f, 25f);
+            Add<Enemies.DworcVoodooShaman>(0.6f, 25f);
+        }
 
         /// <summary>Pre-strike: hyper-armor and active stagger take zero vanilla knockback; everything else gets a light
         /// flinch (including the post-stagger cooldown). Also decides (deterministically) whether this hit breaks poise,
@@ -343,6 +508,7 @@ namespace tsorcRevamp.NPCs
             {
                 return;
             }
+            poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob (affects meter only, not the flinch below)
             if (AttackCommitted || StaggerTimer > 0)
             {
                 modifiers.DisableKnockback(); // hyper-armor or already-staggered (manual slide drives it)
@@ -370,6 +536,7 @@ namespace tsorcRevamp.NPCs
                 PoiseWillBreakThisHit = false;
                 return; // hyper-armor: no poise, no knockback
             }
+            poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob — keep in sync with ApplyPoiseToKnockback
             if (StaggerTimer > 0)
             {
                 ApplyStaggerImpulse(npc, sourceCenter, 0.5f); // already broken — a lighter follow-up shove
@@ -403,7 +570,14 @@ namespace tsorcRevamp.NPCs
             PoiseEscalationTimer = PoiseEscalationDurationTicks;
             PoiseBreakCooldown = PoiseBreakCooldownTicks;
             ApplyStaggerImpulse(npc, sourceCenter, 1f);
-            if (PoiseStaggerResetsAI)
+            // Cancel a windup attack. Enemies with bespoke attack STATE (C# flags / custom timer slots) implement
+            // IStaggerable to clear exactly their own state; simple ai[1]/ai[2]-timer enemies use PoiseStaggerResetsAI.
+            // The interface wins when both are present — it's strictly more capable.
+            if (npc.ModNPC is IStaggerable staggerable)
+            {
+                staggerable.OnStagger(npc);
+            }
+            else if (PoiseStaggerResetsAI)
             {
                 npc.ai[1] = 60f;   // cancel a windup attack → return to neutral approach
                 npc.ai[2] = -100f;
@@ -644,6 +818,8 @@ namespace tsorcRevamp.NPCs
         public int GoVisibleChance = 200;
         public InvisibilityStyle InvisibilityStyle = InvisibilityStyle.Random;
         public bool IsInvisible = false;
+        // Draws the same ghostly afterimage/shimmer used while invisible, without changing alpha or targeting.
+        public bool HasGhostAfterimages = false;
         private const int HunterVisionInvisibleAlpha = 50;
         private int InvisibilityRevealTimer = 0;
         private readonly Vector2[] InvisibilityTrailPositions = new Vector2[8];
@@ -662,7 +838,7 @@ namespace tsorcRevamp.NPCs
         {
             get
             {
-                return ProjectileTimerCap - 24;
+                return ProjectileTimerCap - CurrentAttack.telegraphTime;
             }
         }
         public float ArcherAimDirection;
@@ -952,6 +1128,10 @@ namespace tsorcRevamp.NPCs
             if (CanGoInvisible)
             {
                 UpdateInvisibility(npc);
+            }
+
+            if (CanGoInvisible || HasGhostAfterimages)
+            {
                 UpdateInvisibilityTrail(npc);
             }
 
@@ -987,7 +1167,7 @@ namespace tsorcRevamp.NPCs
             else
                 GhostWallTimer = Math.Max(0, GhostWallTimer - 2);
 
-            if (GhostWallTimer >= 25)
+            if (GhostWallTimer >= 1)
             {
                 // Only queue if no teleport is already in progress.
                 if (TeleportCountdown == 0 && TeleportAppearanceTimer == 0 && TryGhostWallTeleport(npc))
@@ -1031,7 +1211,7 @@ namespace tsorcRevamp.NPCs
         /// The 2-wide requirement prevents the NPC landing on a 1-tile ledge next to a
         /// slope or wall where it immediately gets stuck again.
         ///
-        /// Scans up to 10 tiles wide (wall thickness), then up to 4 tiles beyond,
+        /// Scans up to 4 tiles wide (wall thickness), then up to 4 tiles beyond,
         /// checking ±3 tile Y variation to handle steps/ramps.
         ///
         /// Returns false if the wall leads into solid earth (no teleport occurs).
@@ -1051,7 +1231,7 @@ namespace tsorcRevamp.NPCs
             // ── Phase 1: find where the wall ends ────────────────────────────────
             // Scan forward until we find a column where the NPC's body would fit.
             int wallEndX = -1;
-            for (int i = 0; i <= 10; i++)
+            for (int i = 0; i <= GhostWallMaxThicknessTiles; i++)
             {
                 int tx = frontTileX + dir * i;
                 bool columnClear = true;
@@ -1070,7 +1250,7 @@ namespace tsorcRevamp.NPCs
                     break;
                 }
             }
-            if (wallEndX == -1) return false; // wall > 10 tiles thick / solid earth
+            if (wallEndX == -1) return false; // wall > max thickness / solid earth
 
             // ── Phase 2: find a valid floor at or near wall exit ─────────────────
             // Try the same Y level first, then offset up/down to handle steps/ramps.
@@ -1108,11 +1288,9 @@ namespace tsorcRevamp.NPCs
                     }
                     if (!bodyFits) continue;
 
-                    // ── Valid spot found — queue a telegraphed teleport ──────────
-                    // Use the same TeleportCountdown / TeleportTelegraph mechanism as
-                    // QueueTeleport so the player sees the ring-flash telegraph at both
-                    // origin and destination, and ExecuteQueuedTeleport handles the dust
-                    // and the actual position change when the countdown expires.
+                    // ── Valid spot found — queue a fast smoke teleport ───────────
+                    // Spawn 0.5s smoke at both ends immediately, then let FighterAI's
+                    // TeleportAppearanceTimer freeze the NPC and snap it halfway through.
                     Vector2 destPos = new Vector2(
                         tx * 16f + 8f - npc.width  / 2f,
                         groundTile * 16f - npc.height
@@ -1120,21 +1298,22 @@ namespace tsorcRevamp.NPCs
                     Vector2 destCenter = destPos + new Vector2(npc.width / 2f, npc.height / 2f);
 
                     tsorcRevampGlobalNPC gNpc = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-                    int telegraphTime = gNpc.TeleportTelegraphTime;
-                    gNpc.TeleportCountdown = telegraphTime;
                     gNpc.TeleportTelegraph = destCenter;
+                    gNpc.TeleportCountdown = 0;
+                    gNpc.TeleportAppearanceTimer = GhostWallTeleportSnapTicks;
                     npc.netUpdate = true;
 
                     SoundEngine.PlaySound(SoundID.Item8, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer,
-                            npc.whoAmI, telegraphTime);
-                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), destCenter, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer,
-                            ai1: telegraphTime);
+                        float radius = Math.Max(npc.width, npc.height) * GhostWallTeleportMistRadiusScale;
+                        Projectile srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                            ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, 0f, radius);
+                        srcMist.timeLeft = GhostWallTeleportSmokeTicks;
+                        Projectile dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), destCenter, Vector2.Zero,
+                            ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, 0f, radius);
+                        dstMist.timeLeft = GhostWallTeleportSmokeTicks;
                     }
 
                     return true;
@@ -1251,6 +1430,15 @@ namespace tsorcRevamp.NPCs
             int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
             int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
             Player player = spawnInfo.Player;
+
+            //Human enemies can't swim — never let them spawn in water, regardless of their own SpawnChance.
+            if (spawnInfo.Water)
+            {
+                foreach (int humanType in tsorcRevamp.HumanNPCs)
+                {
+                    pool.Remove(humanType);
+                }
+            }
 
             //VANILLA AND SOME MOD NPC SPAWN EDITS
 
@@ -1878,7 +2066,18 @@ namespace tsorcRevamp.NPCs
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             // Poise damage scales with the projectile's knockback stat (see project_poise_stagger_system).
-            ApplyPoiseToKnockback(npc, projectile.knockBack, ref modifiers);
+            float poiseKnockback = projectile.knockBack;
+            bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
+            if (magicGhostHit)
+            {
+                poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
+                EnableMagicGhostPoise(npc);
+            }
+            else if (IsPhysicalGhost(npc))
+            {
+                return;
+            }
+            ApplyPoiseToKnockback(npc, poiseKnockback, ref modifiers);
 
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
@@ -2179,7 +2378,18 @@ namespace tsorcRevamp.NPCs
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             // Poise damage scales with the weapon's knockback stat (see project_poise_stagger_system).
-            ApplyPoiseToKnockback(npc, item.knockBack, ref modifiers);
+            float poiseKnockback = item.knockBack;
+            bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
+            if (magicGhostHit)
+            {
+                poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
+                EnableMagicGhostPoise(npc);
+            }
+            else if (IsPhysicalGhost(npc))
+            {
+                return;
+            }
+            ApplyPoiseToKnockback(npc, poiseKnockback, ref modifiers);
 
             if (npc.type == NPCID.DukeFishron && player.wet)
             {
@@ -2225,7 +2435,21 @@ namespace tsorcRevamp.NPCs
 
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            HandlePoiseOnHit(npc, item.knockBack, player.Center);
+            float poiseKnockback = item.knockBack;
+            bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
+            if (magicGhostHit)
+            {
+                poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
+            }
+            if (magicGhostHit || !IsPhysicalGhost(npc))
+            {
+                HandlePoiseOnHit(npc, poiseKnockback, player.Center);
+            }
+            if (magicGhostHit)
+            {
+                ApplyGhostMagicFlinch(npc, player.Center);
+            }
+            RestoreMagicGhostKnockback(npc);
 
             TriggerNoLosPursuitBoost(npc, player);
 
@@ -2245,7 +2469,21 @@ namespace tsorcRevamp.NPCs
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            HandlePoiseOnHit(npc, projectile.knockBack, projectile.Center);
+            float poiseKnockback = projectile.knockBack;
+            bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
+            if (magicGhostHit)
+            {
+                poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
+            }
+            if (magicGhostHit || !IsPhysicalGhost(npc))
+            {
+                HandlePoiseOnHit(npc, poiseKnockback, projectile.Center);
+            }
+            if (magicGhostHit)
+            {
+                ApplyGhostMagicFlinch(npc, projectile.Center);
+            }
+            RestoreMagicGhostKnockback(npc);
 
             if (projectile.owner >= 0 && projectile.owner < Main.maxPlayers)
             {
@@ -2748,7 +2986,8 @@ namespace tsorcRevamp.NPCs
 
         public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (!CanGoInvisible || !IsInvisible || LocalPlayerRevealsInvisibleNPCs())
+            bool drawInvisibleAfterimages = CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs();
+            if (!drawInvisibleAfterimages && !HasGhostAfterimages)
             {
                 return;
             }
@@ -2758,8 +2997,12 @@ namespace tsorcRevamp.NPCs
             Vector2 drawPosition = npc.Center - screenPos + new Vector2(0f, npc.gfxOffY);
             Vector2 origin = npc.frame.Size() / 2f;
             float time = (float)Main.timeForVisualEffects;
-            float baseOpacity = MathHelper.Clamp((255 - InvisibleAlpha) / 255f, 0.06f, 0.35f);
-            float endOpacity = MathHelper.Clamp((255 - Math.Min(InvisibleAlpha + 20, 250)) / 255f, 0.02f, baseOpacity);
+            float baseOpacity = drawInvisibleAfterimages
+                ? MathHelper.Clamp((255 - InvisibleAlpha) / 255f, 0.06f, 0.35f)
+                : 0.16f;
+            float endOpacity = drawInvisibleAfterimages
+                ? MathHelper.Clamp((255 - Math.Min(InvisibleAlpha + 20, 250)) / 255f, 0.02f, baseOpacity)
+                : 0.03f;
 
             int trailCount = InvisibilityTrailPositions.Length;
             for (int k = trailCount - 1; k >= 0; k--)
@@ -3836,6 +4079,14 @@ namespace tsorcRevamp.NPCs
                         npc.damage = (int)(tsorcRevampWorld.SubtleSHMScale * npc.damage);
                     }
                 }
+            }
+
+            // Poise/stagger rollout: apply the central tuning table LAST so it's the source of truth for these enemies'
+            // knockback-resist (flinch dial) + PoiseMax. Knights configure themselves in-file and aren't listed here.
+            if (PoiseProfiles.TryGetValue(npc.type, out var poiseProfile))
+            {
+                npc.knockBackResist = poiseProfile.knockBackResist;
+                PoiseMax = poiseProfile.poiseMax;
             }
         }
 

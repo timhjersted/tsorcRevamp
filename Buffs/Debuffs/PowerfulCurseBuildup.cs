@@ -28,6 +28,7 @@ namespace tsorcRevamp.Buffs.Debuffs
                 modPlayer.powerfulCurseActive = true;
 
                 modPlayer.PowerfulCurseLevel = 0; // Reset to 0
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.75f, Pitch = -0.35f, PitchVariance = 0.1f }, player.Center);
                 player.AddBuff(ModContent.BuffType<Invincible>(), 5 * 60); 
                 player.AddBuff(ModContent.BuffType<Strength>(), 120 * 60); 
                 player.AddBuff(ModContent.BuffType<GreenBlossom>(), 120 * 60); 

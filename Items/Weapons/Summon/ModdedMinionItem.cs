@@ -43,6 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.rare = Rarity;
             Item.value = PriceByRarity.fromItem(Item);
             Item.UseSound = SoundID.Item44;
+            Item.mana = 10;
             Item.DamageType = DamageClass.Summon;
             Item.shoot = MinionProjectileType;
             Item.buffType = MinionBuffType;

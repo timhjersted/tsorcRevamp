@@ -130,6 +130,21 @@ namespace tsorcRevamp.NPCs
 
         private static readonly Dictionary<int, NavState> States = new Dictionary<int, NavState>();
 
+        public static bool HasActiveMovementPlan(NPC npc)
+        {
+            if (!States.TryGetValue(npc.whoAmI, out NavState s))
+            {
+                return false;
+            }
+
+            return s.IsCommitted
+                || s.AirCommitTimer > 0
+                || s.PlatformPassActive
+                || s.RopeEngaged
+                || s.RopeDismounting
+                || (s.Plan != null && s.PlanIndex < s.Plan.Count);
+        }
+
         // movementOnly (Phase 2 Step 4): act as BasicAI's pluggable MOVEMENT substrate instead of a standalone
         // driver. When true, BasicAI already advanced the shared FSM and fired combat this frame, so SF4 must NOT
         // re-run UpdateState (side effects → double give-up clock) or fire its own attacks (double shot) — it
@@ -159,6 +174,7 @@ namespace tsorcRevamp.NPCs
             // old fixed 3 tiles. Auto-derived from the sprite so a tall beast won't path into a too-short space.
             _clearanceHeight = g.MinSurfaceWidth > 0 ? Math.Max(3, (int)Math.Ceiling(npc.height / 16f)) : 3;
             _canUseRopes = g.CanUseRopes; // per-enemy rope opt-in (default off)
+            _canPassWalls = g.CanPassThroughWalls; // ghosts: refuse wall-wedging near-vertical jump launches (pit escape)
             float jumpCeil = Math.Max(g.MaxJumpPower, 5f);
             float boostCeil = Math.Max(g.MaxJumpBoost, 2f);
 
@@ -560,6 +576,12 @@ namespace tsorcRevamp.NPCs
         // May this enemy climb ropes this frame (set in Run from g.CanUseRopes)? Default off — gates both the
         // RopeClimb edge planner and the no-plan TryGrabNearbyRope fallback.
         private static bool _canUseRopes = false;
+        // Does this enemy pass through walls this frame (set in Run from g.CanPassThroughWalls)? Ghosts walk into
+        // walls and teleport through (see GlobalNPC.TryGhostWallTeleport). Default off. When on, the jump planner
+        // refuses near-vertical jump launches that would wedge the body against a wall on its trailing side (see
+        // LaunchTrailClear in TryFindJumpEdge) — so a ghost pinned in a pit backs off to a clear launch column and
+        // arcs up-and-over instead of re-committing to an unmakeable wall-hug jump forever (the pit-wedge loop).
+        private static bool _canPassWalls = false;
 
         private static void Replan(NavState s, NPC npc, Player player)
         {
@@ -2235,6 +2257,28 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
+        // Ghost-only launch viability for a near-vertical RISING jump (see TryFindJumpEdge): is the body free to
+        // rise off launch column lx without a wall pinning it from behind? The body is wider than one tile, so a
+        // solid tile in the TRAILING column (the side opposite the landing) at body height jams it against that wall
+        // mid-rise — the launch never gets off the ground. landX/lx pick the trailing side; a pure-vertical jump
+        // (landX == lx) has no horizontal escape from EITHER side, so both neighbors must be clear. Checks the body's
+        // full height (3 rows up from the feet row) where the wedge actually happens; higher tiles are the lip the
+        // arc clears, not a launch obstruction.
+        private static bool LaunchTrailClear(int lx, int landX, int feetY)
+        {
+            int landDir = Math.Sign(landX - lx);
+            const int rows = 3; // body footprint height in tiles
+            for (int y = feetY; y > feetY - rows; y--)
+            {
+                if (landDir == 0)
+                {
+                    if (IsNavigationSolid(lx - 1, y) || IsNavigationSolid(lx + 1, y)) return false;
+                }
+                else if (IsNavigationSolid(lx - landDir, y)) return false; // trailing side = opposite the landing
+            }
+            return true;
+        }
+
         // Try several launch/land column pairs to find one with a clear trajectory.
         // Critical fix vs. the old single-column attempt: a pit's overhead ceiling
         // blocks any jump launched directly under it, but a launch one tile away
@@ -2317,6 +2361,14 @@ namespace tsorcRevamp.NPCs
                     // (gravity + jump/boost limits). Replaces the static-table membership test,
                     // so flat wide gaps (no table entry) are now correctly considered.
                     if (!ComputeJumpArc(adx, dy, _planGravity, _planJumpCeil, _planMaxLaunchVx, out _, out _)) continue;
+                    // Ghost pit-wedge guard: a near-vertical RISING jump launched right against a wall on its
+                    // TRAILING side (the side opposite the landing) pins the wider-than-a-tile body to that wall
+                    // every frame — it brushes collideX, rises ~half a tile, falls back, and never completes, so A*
+                    // re-picks the same edge forever (the "kept walking into the wall in a pit" loop). A wall-passing
+                    // enemy can't pathfind THROUGH the wall, so refuse the wedging launch and let A* pick a launch
+                    // backed off the wall (clear trailing side) that arcs up-and-over instead — i.e. walk back, then
+                    // jump out. Scoped to ghosts so the verified non-ghost jump behavior is untouched.
+                    if (_canPassWalls && dy >= 1 && adx <= 1 && !LaunchTrailClear(lx, la, a.Y)) continue;
                     if (!HasTrajectoryClearance(lx, a.Y, la, b.Y, dy)) continue;
                     launchX = lx; landX = la; absDx = adx;
                     return true;

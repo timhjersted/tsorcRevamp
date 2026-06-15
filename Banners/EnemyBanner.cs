@@ -329,7 +329,7 @@ namespace tsorcRevamp.Banners
     {
         public override int PlaceStyle => 34;
 
-        public override int NPCType => ModContent.NPCType<GhostoftheForgottenKnight>();
+        public override int NPCType => ModContent.NPCType<GhostOfTheForgottenKnight>();
     }
 
     public class GhostOfTheForgottenWarriorBanner : EnemyBanner

@@ -116,7 +116,7 @@ namespace tsorcRevamp
             {
                 if (Player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
                 {
-                    // Bearer of the Curse drains full per-frame; Unkindled drains half.
+                    // Bearer of the Curse drains full per-frame; Unkindled drains 75%.
                     float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
                     //if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //find boomerangs, if so, cut regen by 2/3
                     //{

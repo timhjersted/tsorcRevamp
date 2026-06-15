@@ -392,6 +392,9 @@ namespace tsorcRevamp
         }
         private void PopulateArrays()
         {
+            // Poise/stagger per-enemy tuning table (knockback-resist flinch dial + PoiseMax).
+            NPCs.tsorcRevampGlobalNPC.PopulatePoiseProfiles();
+
             #region tsorcItemDropRuleConditions class
             tsorcItemDropRuleConditions.SuperHardmodeRule = new SuperHardmodeRule();
             tsorcItemDropRuleConditions.AbyssRule = new WithinTheAbyssRule();
@@ -1640,7 +1643,7 @@ namespace tsorcRevamp
                 NPCID.AncientCultistSquidhead,
                 NPCID.DesertDjinn,
                 NPCID.PirateGhost,
-                ModContent.NPCType<GhostoftheForgottenKnight>(), 
+                ModContent.NPCType<GhostOfTheForgottenKnight>(), 
                 ModContent.NPCType<GhostOfTheForgottenWarrior>(),
                 ModContent.NPCType<DemonSpirit>(),
                 ModContent.NPCType<CrazedDemonSpirit>(), 

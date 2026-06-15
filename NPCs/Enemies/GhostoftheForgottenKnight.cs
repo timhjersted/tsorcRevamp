@@ -8,7 +8,7 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class GhostoftheForgottenKnight : ModNPC
+    class GhostOfTheForgottenKnight : ModNPC
     {
         public int spearDamage = 15;
         public override void SetStaticDefaults()
@@ -55,6 +55,8 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17, stopBeforeFiring: false);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.CanPassThroughWalls = true;
+            globalNPC.HasGhostAfterimages = true;
             globalNPC.MaxJumpPower = 10f;
             globalNPC.MaxJumpBoost = 6f;
             // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
@@ -131,18 +133,85 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #region Draw Spear Texture
         public static Texture2D spearTexture;
+        static Texture2D handTexture;
+        const float FrameW = 70f;
+        const float FrameH = 56f;
+        static readonly Vector2[] HandPixel = new Vector2[16]
+        {
+            new Vector2(47, 30), // 0 idle
+            new Vector2(47, 25), // 1 jump
+            new Vector2(48, 33), // 2
+            new Vector2(50, 31), // 3
+            new Vector2(50, 31), // 4
+            new Vector2(50, 31), // 5
+            new Vector2(50, 33), // 6
+            new Vector2(48, 33), // 7
+            new Vector2(48, 33), // 8
+            new Vector2(48, 33), // 9
+            new Vector2(46, 31), // 10
+            new Vector2(44, 31), // 11
+            new Vector2(44, 31), // 12
+            new Vector2(45, 32), // 13
+            new Vector2(48, 33), // 14
+            new Vector2(48, 33), // 15
+        };
+        static readonly Vector2 SpearGripOrigin = new Vector2(8f, 38f);
+
+        Vector2 CurrentHandWorld()
+        {
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame < 0 || frame >= HandPixel.Length)
+            {
+                frame = 0;
+            }
+
+            Vector2 fp = HandPixel[frame];
+            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
+            float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
+            return new Vector2(x, y);
+        }
+
+        Vector2 CurrentSpearWorld()
+        {
+            Vector2 handWorld = CurrentHandWorld();
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame == 0)
+            {
+                handWorld.Y -= 21f;
+            }
+            return handWorld;
+        }
+
+        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
+        {
+            if (handTexture == null)
+            {
+                return;
+            }
+
+            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
+            Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
+            spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (spearTexture == null)
+            if (spearTexture == null || spearTexture.IsDisposed)
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightGhostSpear");
+            }
+            if (handTexture == null || handTexture.IsDisposed)
+            {
+                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/GhostOfTheForgottenKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150)
             {
                 Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.3f);
 
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-                spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, spearTexture.Size() / 2, 1, SpriteEffects.None, 0);
+                spriteBatch.Draw(spearTexture, CurrentSpearWorld() - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, SpearGripOrigin, NPC.scale * 0.8f, SpriteEffects.None, 0);
+                DrawHandOverlay(spriteBatch, drawColor);
             }
         }
         #endregion

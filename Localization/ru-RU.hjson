@@ -10025,6 +10025,11 @@ Mods: {
 			// TeleportMistLinger.DisplayName: Teleport Mist Linger
 			// AbyssBreath.DisplayName: Abyss Breath
 			// AbyssFlames.DisplayName: Abyss Flames
+			// NPCAfterimage.DisplayName: N P C Afterimage
+			// PlagueTeleportCloud.DisplayName: Plague Teleport Cloud
+			// FireTeleportBlast.DisplayName: Fire Teleport Blast
+			// TeleportFireFlame.DisplayName: Teleport Fire Flame
+			// EnemyEphemeralThrowingAxeProj.DisplayName: Enemy Ephemeral Throwing Axe Proj
 		}
 
 		NPCs: {
@@ -11751,8 +11756,10 @@ Mods: {
 			// TibianValkyrieTier2.DisplayName: Tibian Valkyrie Tier2
 			// GreatBlackKnight.DisplayName: Great Black Knight
 			// FaraamSpriteTestInvader.DisplayName: Faraam Sprite Test Invader
-			// FirebombHollowOriginal.DisplayName: Firebomb Hollow Original
-			// AbyssLurker.DisplayName: Abyssal Strider
+			// FirebombHollowOriginal.DisplayName: Old Firebomb Hollow
+			// AbyssLurker.DisplayName: Old Abyssal Strider
+			// HollowWarriorOriginal.DisplayName: Old Hollow Warrior
+			// GhostOfTheForgottenKnight.DisplayName: Ghost Of The Forgotten Knight
 		}
 
 		Prefixes: {

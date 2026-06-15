@@ -356,10 +356,10 @@ namespace tsorcRevamp
         // bonfire refills, drop bonuses, recipe conditions) on this. BotC-only features keep checking BearerOfTheCurse.
         public bool SoulsMode => Unkindled || BearerOfTheCurse;
 
-        // Weapon stamina usage. Bearer of the Curse pays full stamina for attacks; Unkindled pays half (so stamina still matters but isn't punishing); Classic pays none. Gate weapon-stamina
+        // Weapon stamina usage. Bearer of the Curse pays full stamina for attacks; Unkindled pays 75% (so stamina still matters but isn't punishing); Classic pays none. Gate weapon-stamina
         // drains on UsesWeaponStamina and scale the amount by WeaponStaminaMult.
         public bool UsesWeaponStamina => BearerOfTheCurse || Unkindled;
-        public float WeaponStaminaMult => BearerOfTheCurse ? 1f : (Unkindled ? 0.5f : 0f);
+        public float WeaponStaminaMult => BearerOfTheCurse ? 1f : (Unkindled ? 0.75f : 0f);
 
         // Tier-aware healing scalar applied to instant-heal items (food, potions, Tome of Health, etc.).
         // Classic: full heal. Unkindled: half heal. Bearer of the Curse: zero (caller should skip heal entirely).
@@ -3019,6 +3019,17 @@ namespace tsorcRevamp
 
             int pickedNegativeStats = 0;
             int NegativeStatsAmount = Main.rand.Next(isCursePowerful ? 4 : 3) + 1;
+            pickedMaxHealth = true;
+            pickedNegativeStats++;
+            if (isCursePowerful)
+            {
+                powerfulCurseMaxLifeMultiplier = -powerfulCurseBonus / (float)NegativeStatsAmount;
+            }
+            else
+            {
+                CurseMaxLifeMultiplier = -weakCurseBonus / (float)NegativeStatsAmount;
+            }
+
             //calculating negative stats
             while (pickedNegativeStats < NegativeStatsAmount)
             {
@@ -3127,21 +3138,7 @@ namespace tsorcRevamp
             //calculating positive stats
             while (pickedPositiveStats < PositiveStatsAmount)
             {
-                if (Main.rand.NextBool(7) && !pickedMaxHealth)
-                {
-                    pickedMaxHealth = true;
-                    pickedPositiveStats++;
-
-                    if (isCursePowerful)
-                    {
-                        powerfulCurseMaxLifeMultiplier = (powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
-                    }
-                    else
-                    {
-                        CurseMaxLifeMultiplier = (weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
-                    }
-                }
-                else if (Main.rand.NextBool(7) && !pickedLifeRegeneration)
+                if (Main.rand.NextBool(7) && !pickedLifeRegeneration)
                 {
                     pickedLifeRegeneration = true;
                     pickedPositiveStats++;
@@ -3336,7 +3333,10 @@ namespace tsorcRevamp
                 powerfulCurseAttackSpeedBonus = 0;
                 powerfulCurseMovementSpeedBonus = 0;
             }
-            Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f + ((CurseMaxLifeMultiplier / 100f) * ((CurseMaxLifeMultiplier > 0) ? CursePositiveStatsMultiplier : 1f)) + ((powerfulCurseMaxLifeMultiplier / 100f) * ((powerfulCurseMaxLifeMultiplier > 0) ? CursePositiveStatsMultiplier : 1f))));
+            float curseMaxLifeMultiplier = Math.Min(CurseMaxLifeMultiplier, 0f);
+            float powerfulCurseMaxLifeMultiplierToApply = Math.Min(powerfulCurseMaxLifeMultiplier, 0f);
+            Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f + (curseMaxLifeMultiplier / 100f) + (powerfulCurseMaxLifeMultiplierToApply / 100f)));
+            Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
             //life regen is in updateregen functions
             Player.statDefense += (int)MathF.Round((CurseDefenseBonus * ((CurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseDefenseBonus * ((powerfulCurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)));
             Player.endurance += ((CurseResistanceBonus * ((CurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseResistanceBonus * ((powerfulCurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
