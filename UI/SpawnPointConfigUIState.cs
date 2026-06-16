@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,31 @@ namespace tsorcRevamp.UI
 
         // Tracks whether the multi-NPC sections (configured spawns + add-enemy search) are currently attached.
         private bool lowerSectionsAttached = true;
+
+        // ── Edit NPC stats panel ──────────────────────────────────────────────────
+        private DynamicSpawnEntry editingNpc;
+        private int editingNpcIndex = -1; // index of editingNpc within CurrentEvent.Npcs, for rebinding after a save/reload
+        private bool editPanelAttached;
+
+        private UIText editTitle;
+
+        private UIText healthLabel;
+        private UINumericInputField healthInput;
+
+        private UIText soulsLabel;
+        private UINumericInputField soulsInput;
+
+        private UIText damageLabel;
+        private UINumericInputField damageInput;
+
+        private UIText defenseLabel;
+        private UINumericInputField defenseInput;
+
+        private UIText spawnTextLabel;
+        private UIEnemySearchBar spawnTextInput;
+
+        private UIText editBackButton;
+        // ─────────────────────────────────────────────────────────────────────────
 
         // World-level gate. Stored in DynamicSpawnEvent.WorldCondition.
         internal static readonly string[] WorldConditionMethods = new string[]
@@ -377,13 +403,13 @@ namespace tsorcRevamp.UI
                     if (currentIndex == -1) currentIndex = 0;
                     int nextIndex = (currentIndex + 1) % PopularDusts.Length;
                     CurrentEvent.TriggerDust = PopularDusts[nextIndex];
-                    
+
                     // Spawn dust burst around the player to visually preview it!
                     for (int i = 0; i < 20; i++)
                     {
                         Dust.NewDust(Main.LocalPlayer.position, 16, 16, CurrentEvent.TriggerDust, Main.rand.Next(-4, 4), Main.rand.Next(-4, 4));
                     }
-                    
+
                     tsorcScriptedEvents.SaveDynamicEvents();
                     RefreshDetails();
                 }
@@ -500,6 +526,232 @@ namespace tsorcRevamp.UI
             searchScrollbar.Left.Set(370, 0); // Moved to right edge of 400px panel
             panel.Append(searchScrollbar);
             npcSearchList.SetScrollbar(searchScrollbar);
+
+            // ================= EDIT NPC STATS PANEL =================
+            // Elements are permanently appended here at Y=-2000 (off-screen / clipped).
+            // ShowEditPanel() moves them to visible positions; DetachEditElements() returns them here.
+            InitEditPanel();
+        }
+
+        // Creates all edit-panel elements and immediately appends them to the panel at Y=-2000
+        // so they are always part of the layout tree but invisible until ShowEditPanel positions them.
+        private void InitEditPanel()
+        {
+            const float hidden = -2000f;
+
+            editTitle = new UIText("EDIT NPC", 0.8f);
+            editTitle.Left.Set(10, 0);
+            editTitle.Top.Set(hidden, 0);
+            editTitle.TextColor = new Color(255, 204, 0);
+            panel.Append(editTitle);
+
+            healthLabel = MakeStatLabel("Health:");
+            healthLabel.Top.Set(hidden, 0);
+            panel.Append(healthLabel);
+            healthInput = MakeStatInput(v => { if (editingNpc != null) editingNpc.CustomHealth = v; });
+            healthInput.Top.Set(hidden, 0);
+            panel.Append(healthInput);
+
+            soulsLabel = MakeStatLabel("Souls (Value):");
+            soulsLabel.Top.Set(hidden, 0);
+            panel.Append(soulsLabel);
+            soulsInput = MakeStatInput(v => { if (editingNpc != null) editingNpc.CustomSouls = v; });
+            soulsInput.Top.Set(hidden, 0);
+            panel.Append(soulsInput);
+
+            damageLabel = MakeStatLabel("Damage:");
+            damageLabel.Top.Set(hidden, 0);
+            panel.Append(damageLabel);
+            damageInput = MakeStatInput(v => { if (editingNpc != null) editingNpc.CustomDamage = v; });
+            damageInput.Top.Set(hidden, 0);
+            panel.Append(damageInput);
+
+            defenseLabel = MakeStatLabel("Defense:");
+            defenseLabel.Top.Set(hidden, 0);
+            panel.Append(defenseLabel);
+            defenseInput = MakeStatInput(v => { if (editingNpc != null) editingNpc.CustomDefense = v; });
+            defenseInput.Top.Set(hidden, 0);
+            panel.Append(defenseInput);
+
+            spawnTextLabel = new UIText("Spawn Text:", 0.85f);
+            spawnTextLabel.Left.Set(10, 0);
+            spawnTextLabel.Top.Set(hidden, 0);
+            spawnTextLabel.TextColor = Color.White;
+            panel.Append(spawnTextLabel);
+
+            spawnTextInput = new UIEnemySearchBar();
+            spawnTextInput.Left.Set(10, 0);
+            spawnTextInput.Top.Set(hidden, 0);
+            spawnTextInput.Width.Set(355, 0);
+            spawnTextInput.Height.Set(28, 0);
+            spawnTextInput.BackgroundColor = new Color(40, 40, 50) * 0.95f;
+            spawnTextInput.OnTextChanged += () =>
+            {
+                if (CurrentEvent != null)
+                {
+                    CurrentEvent.TextToDisplay = spawnTextInput.Text;
+                    tsorcScriptedEvents.SaveDynamicEvents();
+                }
+            };
+            panel.Append(spawnTextInput);
+
+            editBackButton = new UIText("[ ← Back ]", 0.85f);
+            editBackButton.Left.Set(10, 0);
+            editBackButton.Top.Set(hidden, 0);
+            editBackButton.TextColor = Color.LightSkyBlue;
+            editBackButton.OnMouseOver += (e, el) => editBackButton.TextColor = Color.White;
+            editBackButton.OnMouseOut += (e, el) => editBackButton.TextColor = Color.LightSkyBlue;
+            editBackButton.OnLeftClick += (e, el) => HideEditPanel();
+            panel.Append(editBackButton);
+        }
+
+        private UIText MakeStatLabel(string text)
+        {
+            var label = new UIText(text, 0.85f);
+            label.Left.Set(10, 0);
+            label.TextColor = Color.White;
+            return label;
+        }
+
+        // Builds a typeable numeric field, right-aligned. setValue receives the parsed value
+        // (null when the field is empty → revert to the NPC default) and is saved immediately.
+        private UINumericInputField MakeStatInput(Action<int?> setValue)
+        {
+            var input = new UINumericInputField();
+            input.Left.Set(-130f, 1f);
+            input.Width.Set(120f, 0f);
+            input.Height.Set(24f, 0f);
+            input.BackgroundColor = new Color(40, 40, 50) * 0.95f;
+            input.OnValueChanged += () =>
+            {
+                setValue(input.Value);
+                tsorcScriptedEvents.SaveDynamicEvents();
+            };
+            return input;
+        }
+
+        // Loads a stat field's current text + placeholder for the NPC being edited.
+        private void PopulateStatField(UINumericInputField input, int? custom, int defaultValue)
+        {
+            input.Focused = false;
+            input.Text = custom.HasValue ? custom.Value.ToString() : "";
+            input.Placeholder = $"Default ({defaultValue})";
+        }
+
+        // All elements that make up the edit panel, for bulk attach/detach.
+        private UIElement[] EditElements() => new UIElement[]
+        {
+            editTitle,
+            healthLabel, healthInput,
+            soulsLabel, soulsInput,
+            damageLabel, damageInput,
+            defenseLabel, defenseInput,
+            spawnTextLabel, spawnTextInput,
+            editBackButton
+        };
+
+        public void ShowEditPanel(DynamicSpawnEntry npc)
+        {
+            editingNpc = npc;
+            // Remember its position so we can rebind after SaveDynamicEvents() reloads (and replaces) the list.
+            editingNpcIndex = CurrentEvent != null ? CurrentEvent.Npcs.IndexOf(npc) : -1;
+
+            // Single-NPC events: lower sections hidden, so edit panel starts at Y=215.
+            // Multi-NPC events: edit panel appears below the spawns list at Y=360.
+            bool isSingle = CurrentEvent?.SingleNpcMarker == true;
+            float startY = isSingle ? 215f : 360f;
+
+            editTitle.Top.Set(startY, 0);
+
+            float rowY = startY + 25f;
+            float rowH = 28f;
+
+            PositionStatRow(healthLabel, healthInput, rowY); rowY += rowH;
+            PositionStatRow(soulsLabel, soulsInput, rowY); rowY += rowH;
+            PositionStatRow(damageLabel, damageInput, rowY); rowY += rowH;
+            PositionStatRow(defenseLabel, defenseInput, rowY); rowY += rowH + 5f;
+
+            spawnTextLabel.Top.Set(rowY, 0); rowY += 20f;
+            spawnTextInput.Top.Set(rowY, 0); rowY += 35f;
+
+            // Back button only shown for multi-NPC (single-NPC has nothing to go back to).
+            editBackButton.Top.Set(isSingle ? -2000f : rowY, 0);
+
+            // Populate fields from the NPC's custom values / defaults.
+            NPC temp = new NPC();
+            temp.SetDefaults(npc.NpcID);
+            editTitle.SetText($"EDIT  {temp.TypeName.ToUpper()}");
+            PopulateStatField(healthInput, npc.CustomHealth, temp.lifeMax);
+            PopulateStatField(soulsInput, npc.CustomSouls, (int)(temp.value / 10));
+            PopulateStatField(damageInput, npc.CustomDamage, temp.damage);
+            PopulateStatField(defenseInput, npc.CustomDefense, temp.defense);
+            spawnTextInput.Text = CurrentEvent?.TextToDisplay ?? "";
+
+            // For multi-NPC: hide the search section the first time to make room for the edit panel.
+            if (!editPanelAttached && !isSingle)
+            {
+                panel.RemoveChild(searchTitle);
+                panel.RemoveChild(searchBar);
+                panel.RemoveChild(npcSearchList);
+                panel.RemoveChild(searchScrollbar);
+            }
+
+            editPanelAttached = true;
+
+            // Recompute all layout now that positions have been updated.
+            panel.Recalculate();
+        }
+
+        // Lays out a stat row: label on the left, numeric field on the right, at vertical position y.
+        private void PositionStatRow(UIText label, UINumericInputField input, float y)
+        {
+            label.Top.Set(y + 2f, 0); // nudge label to vertically center against the field
+            input.Top.Set(y, 0);
+        }
+
+        public void HideEditPanel()
+        {
+            if (!editPanelAttached) return;
+
+            DetachEditElements();
+
+            // Restore search section (for multi-NPC events).
+            if (CurrentEvent != null && !CurrentEvent.SingleNpcMarker)
+            {
+                panel.Append(searchTitle);
+                panel.Append(searchBar);
+                panel.Append(npcSearchList);
+                panel.Append(searchScrollbar);
+            }
+        }
+
+        // Moves all edit elements off-screen (Y=-2000) and clears edit state.
+        // Elements remain in the panel's child list so they don't need to be re-appended later.
+        // Does NOT restore the search section — callers that need it (HideEditPanel) handle that.
+        private void DetachEditElements()
+        {
+            foreach (var el in EditElements())
+            {
+                el.Top.Set(-2000f, 0);
+            }
+            spawnTextInput.Focused = false;
+            Main.blockInput = false;
+            editingNpc = null;
+            editingNpcIndex = -1;
+            editPanelAttached = false;
+            panel.Recalculate();
+        }
+
+        // SaveDynamicEvents() serializes then reloads the event list, replacing every object instance.
+        // After it re-links CurrentEvent, it calls this so the edit panel points at the live entry again —
+        // otherwise stat edits after the first keystroke land on an orphaned object and never persist.
+        public void RebindEditingNpc()
+        {
+            if (editingNpc == null) return;
+            if (CurrentEvent != null && editingNpcIndex >= 0 && editingNpcIndex < CurrentEvent.Npcs.Count)
+            {
+                editingNpc = CurrentEvent.Npcs[editingNpcIndex];
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -525,11 +777,25 @@ namespace tsorcRevamp.UI
                 tsorcScriptedEvents.SaveDynamicEvents();
             }
 
+            // Dismiss any open edit panel from a previous event.
+            // HideEditPanel restores the search section for multi-NPC events before SetLowerSectionsVisible
+            // decides which sections to show next.
+            if (editPanelAttached)
+            {
+                HideEditPanel();
+            }
+
             // Quick-add events are locked to a single NPC, so hide the multi-NPC add/list sections.
             SetLowerSectionsVisible(ev == null || !ev.SingleNpcMarker);
 
             RefreshDetails();
             RefreshList();
+
+            // For single-NPC events, auto-open the edit panel for the one NPC.
+            if (ev != null && ev.SingleNpcMarker && ev.Npcs.Count > 0)
+            {
+                ShowEditPanel(ev.Npcs[0]);
+            }
         }
 
         // Attaches/detaches the "configured spawns" list and the "select enemy to place" search section.
@@ -564,7 +830,7 @@ namespace tsorcRevamp.UI
         public void RefreshDetails()
         {
             if (CurrentEvent == null) return;
-            
+
             eventDetailsText.SetText($"Event ID: {CurrentEvent.EventID.Substring(0, 8)}...");
 
             if (CurrentEvent.SaveOnCompletion)
@@ -611,21 +877,50 @@ namespace tsorcRevamp.UI
             {
                 NPC temp = new NPC();
                 temp.SetDefaults(npc.NpcID);
-                UIText npcItem = new UIText($"{temp.TypeName} at ({npc.SpawnX}, {npc.SpawnY}) [Right Click to Remove]", 0.8f);
-                npcItem.TextColor = Color.White;
-                npcItem.OnMouseOver += (UIMouseEvent evt, UIElement listeningElement) => {
-                    npcItem.TextColor = Color.Red;
-                };
-                npcItem.OnMouseOut += (UIMouseEvent evt, UIElement listeningElement) => {
-                    npcItem.TextColor = Color.White;
-                };
+
                 var capturedNpc = npc;
-                npcItem.OnRightClick += (UIMouseEvent evt, UIElement listeningElement) => {
+
+                // Row container — UIList stacks these vertically.
+                UIElement row = new UIElement();
+                row.Width.Set(0f, 1f);
+                row.Height.Set(22f, 0f);
+
+                // NPC name (truncated at 22 chars to leave room for buttons)
+                string nameText = temp.TypeName;
+                if (nameText.Length > 22) nameText = nameText.Substring(0, 20) + "..";
+                UIText nameLabel = new UIText(nameText, 0.78f);
+                nameLabel.Left.Set(0, 0);
+                nameLabel.Top.Set(2, 0);
+                nameLabel.TextColor = Color.White;
+                row.Append(nameLabel);
+
+                // [Edit] button
+                UIText editBtn = new UIText("[Edit]", 0.78f);
+                editBtn.Left.Set(-85f, 1f);
+                editBtn.Top.Set(2, 0);
+                editBtn.TextColor = Color.SkyBlue;
+                editBtn.OnMouseOver += (e, el) => editBtn.TextColor = Color.White;
+                editBtn.OnMouseOut += (e, el) => editBtn.TextColor = Color.SkyBlue;
+                editBtn.OnLeftClick += (e, el) => ShowEditPanel(capturedNpc);
+                row.Append(editBtn);
+
+                // [Del] button
+                UIText delBtn = new UIText("[Del]", 0.78f);
+                delBtn.Left.Set(-30f, 1f);
+                delBtn.Top.Set(2, 0);
+                delBtn.TextColor = Color.Crimson;
+                delBtn.OnMouseOver += (e, el) => delBtn.TextColor = Color.Red;
+                delBtn.OnMouseOut += (e, el) => delBtn.TextColor = Color.Crimson;
+                delBtn.OnLeftClick += (e, el) =>
+                {
+                    if (editingNpc == capturedNpc) HideEditPanel();
                     CurrentEvent.Npcs.Remove(capturedNpc);
                     tsorcScriptedEvents.SaveDynamicEvents();
                     RefreshList();
                 };
-                npcList.Add(npcItem);
+                row.Append(delBtn);
+
+                npcList.Add(row);
             }
 
             if (!string.IsNullOrEmpty(CurrentEvent.CustomAction) && CurrentEvent.CustomAction.Contains("Boulderfall"))
@@ -646,7 +941,7 @@ namespace tsorcRevamp.UI
             {
                 NPC npc = new NPC();
                 npc.SetDefaults(i);
-                
+
                 if (npc.type != 0 && (string.IsNullOrEmpty(filter) || npc.TypeName.ToLower().Contains(filter)))
                 {
                     matchingNpcs.Add(npc);
@@ -690,6 +985,13 @@ namespace tsorcRevamp.UI
         public void Hide()
         {
             Visible = false;
+
+            // Clean up edit panel state on close; HideEditPanel also restores search section.
+            if (editPanelAttached)
+            {
+                HideEditPanel();
+            }
+
             CurrentEvent = null;
             if (searchBar != null)
             {
@@ -708,6 +1010,92 @@ namespace tsorcRevamp.UI
         public override bool ContainsPoint(Vector2 point)
         {
             return panel != null && panel.ContainsPoint(point);
+        }
+    }
+
+    // A click-to-focus text field that only accepts digits. Empty = no override (the Placeholder,
+    // e.g. "Default (200)", shows what value will be used instead). Fires OnValueChanged on edit;
+    // read the parsed result from Value (null when empty).
+    class UINumericInputField : UIPanel
+    {
+        public string Text = "";
+        public bool Focused = false;
+        public string Placeholder = "";
+        private int textBlinkerCount = 0;
+        private int textBlinkerState = 0;
+        private const int MaxDigits = 9; // keeps values within int range
+
+        public event System.Action OnValueChanged;
+
+        /// <summary>Parsed integer value, or null when the field is empty (use the default).</summary>
+        public int? Value => int.TryParse(Text, out int v) ? v : (int?)null;
+
+        public UINumericInputField()
+        {
+            OnLeftClick += (UIMouseEvent evt, UIElement listeningElement) => {
+                Focused = true;
+            };
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+
+            if (ContainsPoint(Main.MouseScreen))
+            {
+                Main.LocalPlayer.mouseInterface = true;
+            }
+
+            Vector2 textPos = GetInnerDimensions().Position();
+            textPos.Y -= 2f;
+
+            if (!Focused)
+            {
+                if (string.IsNullOrEmpty(Text))
+                {
+                    Utils.DrawBorderString(spriteBatch, Placeholder, textPos, Color.Gray, 0.85f);
+                }
+                else
+                {
+                    Utils.DrawBorderString(spriteBatch, Text, textPos, Color.Yellow, 0.85f);
+                }
+            }
+            else
+            {
+                Main.blockInput = true;
+                Terraria.GameInput.PlayerInput.WritingText = true;
+
+                if (Main.keyState.IsKeyDown(Keys.Escape) || Main.keyState.IsKeyDown(Keys.Enter) || (Main.mouseLeft && !ContainsPoint(Main.MouseScreen)))
+                {
+                    Focused = false;
+                    Main.blockInput = false;
+                }
+                else
+                {
+                    string newText = Main.GetInputText(Text);
+                    if (newText != Text)
+                    {
+                        // Keep digits only and cap the length so it stays a valid int.
+                        string filtered = new string(newText.Where(char.IsDigit).ToArray());
+                        if (filtered.Length > MaxDigits) filtered = filtered.Substring(0, MaxDigits);
+                        if (filtered != Text)
+                        {
+                            Text = filtered;
+                            OnValueChanged?.Invoke();
+                        }
+                    }
+                }
+
+                textBlinkerCount++;
+                if (textBlinkerCount >= 20)
+                {
+                    textBlinkerState = (textBlinkerState + 1) % 2;
+                    textBlinkerCount = 0;
+                }
+
+                string displayString = Text + (textBlinkerState == 1 ? "|" : "");
+                Utils.DrawBorderString(spriteBatch, displayString, textPos, Color.White, 0.85f);
+            }
         }
     }
 }

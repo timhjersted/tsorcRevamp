@@ -26,6 +26,52 @@ namespace tsorcRevamp
         public static RecipeGroup UpgradedMirrors;
         public static RecipeGroup CobaltHelmets;
 
+        // Set each PostDrawTiles frame; consumed by the EnemyDebugUI interface layer.
+        internal static string EditorHoverTooltip;
+
+        // ── Editor NPC placement geometry (single source of truth for placement, preview, marker, hit-tests) ──
+        // The in-game spawn is NPC.NewNPC(SpawnX*16, SpawnY*16, type), which puts the NPC's BOTTOM-CENTER at
+        // exactly (SpawnX*16, SpawnY*16). So everything in the editor must use that same anchor to stay WYSIWYG.
+
+        /// <summary>
+        /// World-space bottom-center where the NPC at (tileX, tileY) will actually spawn in-game.
+        /// Matches NPC.NewNPC's placement so the editor marker/preview line up with the real spawn.
+        /// </summary>
+        public static Vector2 NpcSpawnBottom(float tileX, float tileY) => new Vector2(tileX * 16, tileY * 16);
+
+        /// <summary>
+        /// World-space sprite center of the NPC placed at (tileX, tileY), for hover/grab/remove hit-tests.
+        /// </summary>
+        public static Vector2 NpcSpawnCenter(int npcType, float tileX, float tileY)
+        {
+            NPC temp = new NPC();
+            temp.SetDefaults(npcType);
+            return new Vector2(tileX * 16, tileY * 16 - temp.height / 2f);
+        }
+
+        /// <summary>
+        /// Hit-test radius (world px) for clicking on a placed NPC of the given type.
+        /// </summary>
+        public static float NpcHitRadius(int npcType)
+        {
+            NPC temp = new NPC();
+            temp.SetDefaults(npcType);
+            return System.Math.Max(24f, System.Math.Max(temp.width, temp.height) / 2f);
+        }
+
+        /// <summary>
+        /// Tile coords to store so an NPC of the given type lands centered on the cursor (Main.MouseWorld).
+        /// Because the spawn anchors the NPC's bottom-center, we offset down by half the NPC's height so the
+        /// sprite's center — not its feet — ends up under the cursor (matching the centered cursor preview).
+        /// </summary>
+        public static void GetPlacementTile(int npcType, out int tileX, out int tileY)
+        {
+            NPC temp = new NPC();
+            temp.SetDefaults(npcType);
+            tileX = (int)System.Math.Round(Main.MouseWorld.X / 16f);
+            tileY = (int)System.Math.Round((Main.MouseWorld.Y + temp.height / 2f) / 16f);
+        }
+
         internal static float visualLife = -1f;
         internal static float visualMana = -1f;
         internal static float visualStamina = -1f;
@@ -287,6 +333,13 @@ namespace tsorcRevamp
                         if (mod.SpawnPointConfigUI.Visible)
                         {
                             mod._spawnPointConfigUI.Draw(Main.spriteBatch, new GameTime());
+                        }
+                        if (!string.IsNullOrEmpty(EditorHoverTooltip))
+                        {
+                            float lineH = FontAssets.MouseText.Value.LineSpacing * 0.85f;
+                            Vector2 tipPos = new Vector2(10f, Main.screenHeight - lineH - 10f);
+                            Utils.DrawBorderStringFourWay(Main.spriteBatch, FontAssets.MouseText.Value,
+                                EditorHoverTooltip, tipPos.X, tipPos.Y, Color.White, Color.Black, Vector2.Zero, 0.85f);
                         }
                         return true;
                     },
@@ -1467,7 +1520,8 @@ namespace tsorcRevamp
                     NPC dummyNPC = new NPC();
                     dummyNPC.SetDefaults(npc.type);
                     dummyNPC.active = true;
-                    dummyNPC.Bottom = new Vector2(npc.spawnCoords.X * 16 + 8, npc.spawnCoords.Y * 16 + 16);
+                    // Match NewNPC's actual spawn anchor (bottom-center at spawnCoords*16), not the tile center.
+                    dummyNPC.Bottom = new Vector2(npc.spawnCoords.X * 16, npc.spawnCoords.Y * 16);
                     if (isDormant)
                     {
                         dummyNPC.color = Color.White * 0.4f;
@@ -1480,8 +1534,30 @@ namespace tsorcRevamp
 
         public override void PostDrawTiles()
         {
+            EditorHoverTooltip = null; // always clear so tooltip doesn't persist after unequipping the tome
+
             if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<Items.Debug.EnemyDebugTome>())
             {
+                var mod = ModContent.GetInstance<tsorcRevamp>();
+                var enemyUI = mod.EnemySelectionUI;
+                var configUI = mod.SpawnPointConfigUI;
+
+                // Compute a state-based tooltip that always shows in the lower-left.
+                // NPC hover detection below overrides this with a more specific message.
+                if (enemyUI.SelectedNpcType != 0)
+                {
+                    if (enemyUI.MovingEvent != null)
+                        EditorHoverTooltip = "Left click to drop event here  ·  Right click to cancel";
+                    else if (enemyUI.QuickAddMode)
+                        EditorHoverTooltip = "Left click to place (repeats)  ·  Right click to cancel";
+                    else
+                        EditorHoverTooltip = "Left click to place NPC  ·  Right click to cancel";
+                }
+                else
+                {
+                    EditorHoverTooltip = "Left click opens Quick Event menu  ·  Right click creates New Event";
+                }
+
                 // Use TransformationMatrix (not ZoomMatrix) so world-space draws line up with Main.MouseWorld.
                 // ZoomMatrix anchors/translates differently than the matrix vanilla uses to draw NPCs, which makes
                 // world draws drift from the cursor proportionally to its distance from screen center when zoomed.
@@ -1527,6 +1603,7 @@ namespace tsorcRevamp
                 }
 
                 var dynamicCopy = tsorcScriptedEvents.DynamicEvents != null ? tsorcScriptedEvents.DynamicEvents.ToArray() : System.Array.Empty<DynamicSpawnEvent>();
+                bool npcHovered = false; // NPC hover overrides the base tooltip; first hovered NPC wins
                 foreach (var ev in dynamicCopy)
                 {
                     if (ev == null) continue;
@@ -1543,10 +1620,10 @@ namespace tsorcRevamp
                         continue;
                     }
 
-                    var configUI = ModContent.GetInstance<tsorcRevamp>().SpawnPointConfigUI;
                     bool isSelected = configUI.Visible && configUI.CurrentEvent == ev;
 
                     // Draw the ring (always drawn in editor mode: white/faint for invisible, correct color for visible)
+
                     Color ringColor = ev.VisibleRing ? GetDustColor(ev.TriggerDust) : Color.White * 0.4f;
                     float thickness = 2f;
 
@@ -1576,14 +1653,15 @@ namespace tsorcRevamp
                         }
                     }
 
-                    // Draw the NPCs
+                    // Draw the NPCs and check for mouse hover (used for the cursor tooltip in the UI layer).
                     foreach (var npc in ev.Npcs)
                     {
                         NPC dummyNPC = new NPC();
                         dummyNPC.SetDefaults(npc.NpcID);
                         dummyNPC.active = true;
-                        dummyNPC.Bottom = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16);
-                        
+                        // Anchor to the exact bottom-center where NewNPC will spawn it, so the marker matches reality.
+                        dummyNPC.Bottom = NpcSpawnBottom(npc.SpawnX, npc.SpawnY);
+
                         if (isSelected)
                         {
                             float pulse = (float)System.Math.Sin(Main.GlobalTimeWrappedHourly * 4f) * 0.2f + 0.8f;
@@ -1592,42 +1670,47 @@ namespace tsorcRevamp
 
                         // Load the texture safely
                         Main.instance.LoadNPC(npc.NpcID);
-                        
+
                         Main.instance.DrawNPCDirect(Main.spriteBatch, dummyNPC, false, Main.screenPosition);
+
+                        // Hover detection: same center + radius as the grab/remove hit-test in EnemyDebugTome.
+                        if (!npcHovered)
+                        {
+                            Vector2 npcCenter = new Vector2(npc.SpawnX * 16, npc.SpawnY * 16 - dummyNPC.height / 2f);
+                            float hoverRadius = System.Math.Max(24f, System.Math.Max(dummyNPC.width, dummyNPC.height) / 2f);
+                            if (Vector2.Distance(Main.MouseWorld, npcCenter) < hoverRadius)
+                            {
+                                if (isSelected && ev.SingleNpcMarker)
+                                    EditorHoverTooltip = "Left click to grab NPC and move event";
+                                else if (isSelected)
+                                    EditorHoverTooltip = "Left click to grab NPC  ·  Right click to remove";
+                                else
+                                    EditorHoverTooltip = "Left click to open event";
+                                npcHovered = true;
+                            }
+                        }
                     }
                 }
 
-                Main.spriteBatch.End();
-
-                // Draw cursor preview in a separate identity-matrix batch so it is immune to zoom drift.
-                // TransformationMatrix scales from the top-left corner, not the screen center where Terraria
-                // anchors zoom — so any world-space or screen-relative draw drifts proportionally to distance
-                // from screen center. Drawing at Main.MouseScreen with no matrix has zero drift at any zoom level.
-                var enemyUI = ModContent.GetInstance<tsorcRevamp>().EnemySelectionUI;
+                // Cursor preview: draw the selected NPC translucently at the EXACT tile it will be placed on,
+                // through the same DrawNPCDirect path as placed markers. Preview == marker == in-game spawn,
+                // by construction — no offset math to drift out of sync.
                 if (enemyUI.SelectedNpcType != 0)
                 {
                     int selectedType = enemyUI.SelectedNpcType;
+                    GetPlacementTile(selectedType, out int pTileX, out int pTileY);
+
+                    NPC previewNPC = new NPC();
+                    previewNPC.SetDefaults(selectedType);
+                    previewNPC.active = true;
+                    previewNPC.Bottom = NpcSpawnBottom(pTileX, pTileY);
+                    previewNPC.alpha = 100; // ~60% opacity so it reads as a ghost preview
+
                     Main.instance.LoadNPC(selectedType);
-
-                    var textureAsset = Terraria.GameContent.TextureAssets.Npc[selectedType];
-                    Texture2D npcTexture = textureAsset?.Value;
-                    if (npcTexture != null)
-                    {
-                        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
-
-                        int frameCount = Main.npcFrameCount[selectedType];
-                        if (frameCount < 1) frameCount = 1;
-                        Rectangle sourceRect = npcTexture.Frame(1, frameCount, 0, 0);
-
-                        // Bottom-center of sprite sits at mouse cursor — matches placement which snaps to the hovered tile
-                        Vector2 origin = new Vector2(sourceRect.Width / 2f, sourceRect.Height);
-                        // Scale by zoom so the preview matches the in-game NPC size at the current zoom level.
-                        float zoom = Main.GameViewMatrix.Zoom.X;
-                        Main.spriteBatch.Draw(npcTexture, Main.MouseScreen, sourceRect, Color.White * 0.6f, 0f, origin, zoom, SpriteEffects.None, 0f);
-
-                        Main.spriteBatch.End();
-                    }
+                    Main.instance.DrawNPCDirect(Main.spriteBatch, previewNPC, false, Main.screenPosition);
                 }
+
+                Main.spriteBatch.End();
             }
         }
     }

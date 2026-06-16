@@ -64,6 +64,7 @@ namespace tsorcRevamp.Items.Debug
                 {
                     enemyUI.SelectedNpcType = 0;
                     enemyUI.QuickAddMode = false;
+                    enemyUI.MovingEvent = null;
                     Main.NewText("Cancelled NPC placement.");
                     return false;
                 }
@@ -76,10 +77,8 @@ namespace tsorcRevamp.Items.Debug
                     float closestNpcDist = float.MaxValue;
                     foreach (var npc in ev.Npcs)
                     {
-                        NPC tempSize = new NPC();
-                        tempSize.SetDefaults(npc.NpcID);
-                        Vector2 npcCenter = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16 - tempSize.height / 2f);
-                        float removeRadius = System.Math.Max(24f, System.Math.Max(tempSize.width, tempSize.height) / 2f);
+                        Vector2 npcCenter = tsorcRevampSystems.NpcSpawnCenter(npc.NpcID, npc.SpawnX, npc.SpawnY);
+                        float removeRadius = tsorcRevampSystems.NpcHitRadius(npc.NpcID);
                         float dist = Vector2.Distance(Main.MouseWorld, npcCenter);
                         if (dist < removeRadius && dist < closestNpcDist)
                         {
@@ -169,11 +168,35 @@ namespace tsorcRevamp.Items.Debug
                 // Priority 1: If an NPC is currently selected/grabbed, place it.
                 if (enemyUI.SelectedNpcType != 0)
                 {
+                    // Relocating a single-NPC event: move both the event center and its one NPC to the new tile.
+                    if (enemyUI.MovingEvent != null)
+                    {
+                        var moveEv = enemyUI.MovingEvent;
+                        int moveType = moveEv.Npcs.Count > 0 ? moveEv.Npcs[0].NpcID : enemyUI.SelectedNpcType;
+                        tsorcRevampSystems.GetPlacementTile(moveType, out int tileX, out int tileY);
+
+                        moveEv.CenterX = tileX;
+                        moveEv.CenterY = tileY;
+                        if (moveEv.Npcs.Count > 0)
+                        {
+                            moveEv.Npcs[0].SpawnX = tileX;
+                            moveEv.Npcs[0].SpawnY = tileY;
+                        }
+                        tsorcScriptedEvents.SaveDynamicEvents();
+
+                        enemyUI.SelectedNpcType = 0;
+                        enemyUI.MovingEvent = null;
+
+                        NPC moved = new NPC();
+                        moved.SetDefaults(moveEv.Npcs.Count > 0 ? moveEv.Npcs[0].NpcID : 0);
+                        Main.NewText($"Moved {moved.TypeName} event to ({tileX}, {tileY})");
+                        return true;
+                    }
+
                     if (enemyUI.QuickAddMode)
                     {
                         // Quick Add: each placement becomes its own single-NPC event using the panel defaults.
-                        int tileX = (int)(Main.MouseWorld.X / 16);
-                        int tileY = (int)(Main.MouseWorld.Y / 16);
+                        tsorcRevampSystems.GetPlacementTile(enemyUI.SelectedNpcType, out int tileX, out int tileY);
 
                         var quickEvent = new DynamicSpawnEvent();
                         quickEvent.EventID = System.Guid.NewGuid().ToString();
@@ -212,8 +235,9 @@ namespace tsorcRevamp.Items.Debug
                         var npc = new DynamicSpawnEntry();
                         npc.NpcID = enemyUI.SelectedNpcType;
                         npc.NpcName = tsorcScriptedEvents.GetNpcStableName(enemyUI.SelectedNpcType);
-                        npc.SpawnX = (int)(Main.MouseWorld.X / 16);
-                        npc.SpawnY = (int)(Main.MouseWorld.Y / 16);
+                        tsorcRevampSystems.GetPlacementTile(enemyUI.SelectedNpcType, out int placeX, out int placeY);
+                        npc.SpawnX = placeX;
+                        npc.SpawnY = placeY;
                         ev.Npcs.Add(npc);
                         configUI.RefreshList();
                         tsorcScriptedEvents.SaveDynamicEvents();
@@ -241,11 +265,9 @@ namespace tsorcRevamp.Items.Debug
                     float closestNpcDist = float.MaxValue;
                     foreach (var npc in ev.Npcs)
                     {
-                        NPC tempSize = new NPC();
-                        tempSize.SetDefaults(npc.NpcID);
-                        // Use sprite center (not bottom) and a radius derived from actual NPC dimensions.
-                        Vector2 npcCenter = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16 - tempSize.height / 2f);
-                        float grabRadius = System.Math.Max(24f, System.Math.Max(tempSize.width, tempSize.height) / 2f);
+                        // Use sprite center + a radius derived from actual NPC dimensions (matches the marker).
+                        Vector2 npcCenter = tsorcRevampSystems.NpcSpawnCenter(npc.NpcID, npc.SpawnX, npc.SpawnY);
+                        float grabRadius = tsorcRevampSystems.NpcHitRadius(npc.NpcID);
                         float dist = Vector2.Distance(Main.MouseWorld, npcCenter);
                         if (dist < grabRadius && dist < closestNpcDist)
                         {
@@ -270,6 +292,29 @@ namespace tsorcRevamp.Items.Debug
                     }
                 }
 
+                // Priority 2b: A single-NPC (quick-add) event that's already open — clicking its NPC grabs the
+                // whole event to relocate it (the NPC is the event marker, so moving it moves the event).
+                if (configUI.Visible && configUI.CurrentEvent != null && configUI.CurrentEvent.SingleNpcMarker)
+                {
+                    var ev = configUI.CurrentEvent;
+                    if (ev.Npcs.Count > 0)
+                    {
+                        var npc = ev.Npcs[0];
+                        Vector2 npcCenter = tsorcRevampSystems.NpcSpawnCenter(npc.NpcID, npc.SpawnX, npc.SpawnY);
+                        float grabRadius = tsorcRevampSystems.NpcHitRadius(npc.NpcID);
+                        if (Vector2.Distance(Main.MouseWorld, npcCenter) < grabRadius)
+                        {
+                            NPC tempSize = new NPC();
+                            tempSize.SetDefaults(npc.NpcID);
+                            enemyUI.SelectedNpcType = npc.NpcID;
+                            enemyUI.QuickAddMode = false;
+                            enemyUI.MovingEvent = ev;
+                            Main.NewText($"Grabbed {tempSize.TypeName} event. Left click to move it, right click to cancel.");
+                            return true;
+                        }
+                    }
+                }
+
                 // Priority 3: Check if clicking on/near an existing event center OR any placed NPC sprite.
                 // Checking sprites (not just centers) lets you click on an NPC that's far from its event's center
                 // marker to open that event, and prevents P4 from opening the Quick Add panel over existing sprites.
@@ -291,10 +336,8 @@ namespace tsorcRevamp.Items.Debug
                     // Placed NPC sprites
                     foreach (var npc in ev.Npcs)
                     {
-                        NPC tempSize = new NPC();
-                        tempSize.SetDefaults(npc.NpcID);
-                        Vector2 npcCenter = new Vector2(npc.SpawnX * 16 + 8, npc.SpawnY * 16 + 16 - tempSize.height / 2f);
-                        float clickRadius = System.Math.Max(24f, System.Math.Max(tempSize.width, tempSize.height) / 2f);
+                        Vector2 npcCenter = tsorcRevampSystems.NpcSpawnCenter(npc.NpcID, npc.SpawnX, npc.SpawnY);
+                        float clickRadius = tsorcRevampSystems.NpcHitRadius(npc.NpcID);
                         float dist = Vector2.Distance(mousePos, npcCenter);
                         if (dist < clickRadius && dist < closestDist)
                         {

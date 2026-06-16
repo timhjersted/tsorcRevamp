@@ -26,6 +26,9 @@ namespace tsorcRevamp.UI
         public int SelectedNpcType = 0;
         // True while the cursor enemy came from this Quick Add panel (place => new single-NPC event).
         public bool QuickAddMode = false;
+        // When set, the cursor enemy is a single-NPC event being relocated: placing it moves both the
+        // event center and its one NPC to the new tile (rather than creating a new event).
+        public DynamicSpawnEvent MovingEvent = null;
         public UIPanel panel;
 
         // ---- Defaults applied to each newly placed quick-add event ----
@@ -303,6 +306,7 @@ namespace tsorcRevamp.UI
             Visible = false;
             SelectedNpcType = 0;
             QuickAddMode = false;
+            MovingEvent = null;
             if (searchBar != null)
             {
                 searchBar.Focused = false;

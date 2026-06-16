@@ -1846,6 +1846,9 @@ namespace tsorcRevamp
                     if (newEvent != null)
                     {
                         configUI.CurrentEvent = newEvent;
+                        // Reload replaced every entry object too; rebind the edit panel to the live NPC entry
+                        // so subsequent stat keystrokes persist instead of editing an orphaned instance.
+                        configUI.RebindEditingNpc();
                     }
                 }
             }

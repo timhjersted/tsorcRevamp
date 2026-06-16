@@ -942,6 +942,20 @@ namespace tsorcRevamp.NPCs
             return base.PreAI(npc);
         }
 
+        public override bool CheckActive(NPC npc)
+        {
+            // NPCs spawned by a player-placed dynamic event are positioned deliberately in the editor; don't let
+            // them despawn the vanilla "no players nearby / off-screen" way. Otherwise a freshly-spawned event NPC
+            // that lands just off-screen vanishes a tick after spawning, which fails the event's all-or-nothing
+            // despawn check and tears the whole event down (seen as warning dust but no NPCs, esp. multi-NPC events).
+            // Scoped to dynamic (editor) events so existing hardcoded encounters keep their original despawn behavior.
+            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
+            {
+                return false;
+            }
+            return base.CheckActive(npc);
+        }
+
         private void UpdateInvisibility(NPC npc)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
