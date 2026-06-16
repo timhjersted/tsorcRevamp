@@ -939,6 +939,16 @@ namespace tsorcRevamp.NPCs
                 needsNetUpdate = false;
                 npc.netUpdate = true;
             }
+
+            // Keep dynamic-event NPCs from despawning on their own. CheckActive blocks the distance despawn, but
+            // many enemies (e.g. dungeon skeletons placed outside the dungeon) call EncourageDespawn every tick,
+            // which caps timeLeft back down — so a one-time set isn't enough. Re-pin it each tick. Without this,
+            // one self-despawning NPC fails the event's all-or-nothing alive check and tears the whole event down.
+            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
+            {
+                npc.timeLeft = int.MaxValue;
+            }
+
             return base.PreAI(npc);
         }
 
@@ -1084,6 +1094,17 @@ namespace tsorcRevamp.NPCs
 
         public override void PostAI(NPC npc)
         {
+            // Anti-despawn for dynamic-event NPCs. Some enemies (e.g. dungeon BoneThrowingSkeleton variants placed
+            // outside the dungeon) set active=false directly the tick they spawn — neither CheckActive nor a timeLeft
+            // pin stops that. PostAI runs after the vanilla AI, so revive them here as long as they're still alive
+            // (life > 0). A player kill drops life to 0, so we never resurrect something that was legitimately killed.
+            // Without this, one self-despawning NPC fails the event's all-or-nothing alive check and tears it down.
+            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID) && !npc.active && npc.life > 0)
+            {
+                npc.active = true;
+                npc.timeLeft = int.MaxValue;
+            }
+
             UpdatePoise(npc);
 
             // Confusion: the mod's custom AI computes movement toward the player and ignores npc.confused, so a

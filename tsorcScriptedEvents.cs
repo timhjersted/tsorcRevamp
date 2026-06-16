@@ -1018,9 +1018,9 @@ namespace tsorcRevamp
                 _vanillaIdToName = new Dictionary<int, string>();
                 foreach (var f in typeof(NPCID).GetFields(BindingFlags.Public | BindingFlags.Static))
                 {
-                    if (f.IsLiteral && f.FieldType == typeof(short))
+                    if (f.IsLiteral && (f.FieldType == typeof(short) || f.FieldType == typeof(int)))
                     {
-                        int id = (short)f.GetRawConstantValue();
+                        int id = Convert.ToInt32(f.GetRawConstantValue());
                         if (!_vanillaIdToName.ContainsKey(id))
                             _vanillaIdToName[id] = f.Name;
                     }
@@ -1049,9 +1049,20 @@ namespace tsorcRevamp
         public static int ResolveNpcType(string npcName)
         {
             if (string.IsNullOrEmpty(npcName)) return 0;
-            if (ModContent.TryFind<ModNPC>(npcName, out ModNPC modNpc)) return modNpc.Type;
+            // Modded names are "Mod/Name". Only those go through TryFind (it can throw on a slash-less string).
+            if (npcName.Contains('/'))
+            {
+                try
+                {
+                    if (ModContent.TryFind<ModNPC>(npcName, out ModNPC modNpc)) return modNpc.Type;
+                }
+                catch { /* mod not loaded / malformed name — fall through */ }
+                return 0;
+            }
+            // Vanilla NPCID field name (e.g. "BoneThrowingSkeleton2"). Accept short OR int constants.
             var field = typeof(NPCID).GetField(npcName, BindingFlags.Public | BindingFlags.Static);
-            if (field != null && field.FieldType == typeof(short)) return (short)field.GetRawConstantValue();
+            if (field != null && (field.FieldType == typeof(short) || field.FieldType == typeof(int)))
+                return Convert.ToInt32(field.GetRawConstantValue());
             if (int.TryParse(npcName, out int raw)) return raw;
             return 0;
         }
@@ -2808,6 +2819,8 @@ namespace tsorcRevamp
                         else
                         {
                             //If they aren't marked as killed by a player, but also are dead or the wrong type, then they despawned. End the event as failed.
+                            Main.NewText($"[Event] Torn down: NPC #{i} (type {eventNPCs[i].type}) " +
+                                $"active={eventNPCs[i].npc.active}, type now {eventNPCs[i].npc.type}", Color.Orange);
                             EndEvent(false);
                             return;
                         }
@@ -2826,7 +2839,20 @@ namespace tsorcRevamp
         {
             for (int i = 0; i < eventNPCs.Count; i++)
             {
+                // Diagnostic: a type of 0 means the NpcName failed to resolve; the "spawn" would be a no-op.
+                if (eventNPCs[i].type == 0)
+                {
+                    Main.NewText($"[Event] NPC #{i} failed to resolve (type 0) — check its NpcName in DynamicEvents.json", Color.OrangeRed);
+                    continue;
+                }
+
                 eventNPCs[i].index = NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)eventNPCs[i].spawnCoords.X * 16, (int)eventNPCs[i].spawnCoords.Y * 16, eventNPCs[i].type);
+
+                if (eventNPCs[i].index >= Main.maxNPCs)
+                {
+                    Main.NewText($"[Event] NPC.NewNPC failed for type {eventNPCs[i].type} (no free slot)", Color.OrangeRed);
+                    continue;
+                }
 
                 NPC thisNPC = eventNPCs[i].npc;
 
@@ -2839,6 +2865,11 @@ namespace tsorcRevamp
 
                 thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventOwner = this;
                 thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventIndex = i;
+
+                // Keep event NPCs from despawning on their own (e.g. dungeon/surface enemies fleeing at dawn via
+                // timeLeft). CheckActive blocks the distance-based despawn, but not timeLeft. If even one event NPC
+                // despawns, the all-or-nothing alive check tears the whole (multi-NPC) event down — so pin them.
+                thisNPC.timeLeft = int.MaxValue;
 
                 if (eventNPCs[i].customHealth != null)
                 {

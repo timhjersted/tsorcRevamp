@@ -1046,8 +1046,11 @@ namespace tsorcRevamp.UI
                 Main.LocalPlayer.mouseInterface = true;
             }
 
-            Vector2 textPos = GetInnerDimensions().Position();
-            textPos.Y -= 2f;
+            // Vertically center the text within the field box (was top-aligned, which read a few px low next to labels).
+            CalculatedStyle inner = GetInnerDimensions();
+            Vector2 textPos = inner.Position();
+            float lineH = Terraria.GameContent.FontAssets.MouseText.Value.LineSpacing * 0.85f;
+            textPos.Y += (inner.Height - lineH) / 2f;
 
             if (!Focused)
             {

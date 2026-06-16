@@ -3903,15 +3903,15 @@
     "ExtraLootAmounts": null
   },
   {
-    "EventID": "59bc91fc-4cdc-4e72-98a4-8e767be64cda",
-    "CenterX": 4803.0,
-    "CenterY": 858.0,
+    "EventID": "77bac78c-cd50-4d65-8542-dffd0f2f4450",
+    "CenterX": 4904.0,
+    "CenterY": 869.0,
     "Radius": 160000.0,
     "Square": false,
     "TriggerDust": 27,
     "VisibleRing": false,
     "SaveOnCompletion": false,
-    "TextToDisplay": "Zombie attack!",
+    "TextToDisplay": null,
     "TextColorHex": null,
     "WorldCondition": "OnlyAdventureMapCondition",
     "MapCondition": "",
@@ -3919,46 +3919,8 @@
     "SingleNpcMarker": true,
     "Npcs": [
       {
-        "NpcName": "ArmedZombiePincussion",
-        "SpawnX": 4803.0,
-        "SpawnY": 858.0,
-        "CustomHealth": 300,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": 50
-      }
-    ],
-    "ExtraLootItems": null,
-    "ExtraLootAmounts": null
-  },
-  {
-    "EventID": "ffca7d6d-1307-48df-a1c9-f884e1789e49",
-    "CenterX": 4741.0,
-    "CenterY": 860.0,
-    "Radius": 230400.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": true,
-    "TextToDisplay": null,
-    "TextColorHex": null,
-    "WorldCondition": "OnlyAdventureMapCondition",
-    "MapCondition": "",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcName": "BoneThrowingSkeleton2",
-        "SpawnX": 4756.0,
-        "SpawnY": 869.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      },
-      {
-        "NpcName": "ZombieMushroomHat",
-        "SpawnX": 4743.0,
+        "NpcName": "TravellingMerchant",
+        "SpawnX": 4904.0,
         "SpawnY": 869.0,
         "CustomHealth": null,
         "CustomDamage": null,

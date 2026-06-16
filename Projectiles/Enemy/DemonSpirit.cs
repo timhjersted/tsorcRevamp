@@ -10,8 +10,8 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         const int ExtraLifetime = 120;
         const int HomingCutoffTime = 60;
-        const float ExplosionDamageRadius = 72f;
-        const float ExplosionDustRadius = 108f;
+        const float ExplosionDamageRadius = 92f;
+        const float ExplosionDustRadius = 128f;
         const float ArcOffset = 160f;
 
         public override void SetDefaults()
@@ -44,6 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = (int)(ExplosionDamageRadius * 2f);
             Projectile.penetrate = 10;
             Projectile.Damage();
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.5f }, explosionCenter);
 
             if (Projectile.owner == Main.myPlayer)
             {

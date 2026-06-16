@@ -233,6 +233,16 @@ namespace tsorcRevamp.UI
             }
         }
 
+        // Hide entries that can't work as an event encounter: town/friendly NPCs, catchable critters
+        // (bunnies, birds, etc.), and the target dummy. Real enemies and bosses are kept.
+        //private static bool IsSelectableEnemy(NPC npc)
+        //{
+            //if (npc.townNPC || npc.friendly) return false;
+            //if (npc.type < Main.npcCatchable.Length && Main.npcCatchable[npc.type]) return false;
+            //if (npc.type == NPCID.TargetDummy) return false;
+            //return true;
+        //}
+
         public void PopulateList(string filter)
         {
             npcList.Clear();
@@ -243,8 +253,9 @@ namespace tsorcRevamp.UI
             {
                 NPC npc = new NPC();
                 npc.SetDefaults(i);
-
-                if (npc.type != 0 && (string.IsNullOrEmpty(filter) || npc.TypeName.ToLower().Contains(filter)))
+// removed to allow friendly NPCs and critters in event list: && IsSelectableEnemy(npc)
+                if (npc.type != 0 
+                    && (string.IsNullOrEmpty(filter) || npc.TypeName.ToLower().Contains(filter)))
                 {
                     matchingNpcs.Add(npc);
                 }

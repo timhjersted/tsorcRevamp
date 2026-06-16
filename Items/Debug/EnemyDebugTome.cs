@@ -79,7 +79,7 @@ namespace tsorcRevamp.Items.Debug
                     {
                         Vector2 npcCenter = tsorcRevampSystems.NpcSpawnCenter(npc.NpcID, npc.SpawnX, npc.SpawnY);
                         float removeRadius = tsorcRevampSystems.NpcHitRadius(npc.NpcID);
-                        float dist = Vector2.Distance(Main.MouseWorld, npcCenter);
+                        float dist = Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, npcCenter);
                         if (dist < removeRadius && dist < closestNpcDist)
                         {
                             closestNpcDist = dist;
@@ -114,7 +114,7 @@ namespace tsorcRevamp.Items.Debug
                 }
 
                 // Otherwise, Right click creates a new event!
-                Vector2 mousePos = Main.MouseWorld;
+                Vector2 mousePos = tsorcRevampPlayer.RealMouseWorld;
                 bool eventTooClose = false;
                 foreach (var ev in tsorcScriptedEvents.DynamicEvents)
                 {
@@ -136,8 +136,8 @@ namespace tsorcRevamp.Items.Debug
                 // Create new event
                 var newEvent = new DynamicSpawnEvent();
                 newEvent.EventID = System.Guid.NewGuid().ToString();
-                newEvent.CenterX = (int)(Main.MouseWorld.X / 16);
-                newEvent.CenterY = (int)(Main.MouseWorld.Y / 16);
+                newEvent.CenterX = (int)(tsorcRevampPlayer.RealMouseWorld.X / 16);
+                newEvent.CenterY = (int)(tsorcRevampPlayer.RealMouseWorld.Y / 16);
                 newEvent.Radius = (float)System.Math.Pow(30 * 16, 2); // default (30 tiles squared pixel distance)
                 newEvent.TriggerDust = DustID.Shadowflame;
                 newEvent.SaveOnCompletion = true; // default
@@ -268,7 +268,7 @@ namespace tsorcRevamp.Items.Debug
                         // Use sprite center + a radius derived from actual NPC dimensions (matches the marker).
                         Vector2 npcCenter = tsorcRevampSystems.NpcSpawnCenter(npc.NpcID, npc.SpawnX, npc.SpawnY);
                         float grabRadius = tsorcRevampSystems.NpcHitRadius(npc.NpcID);
-                        float dist = Vector2.Distance(Main.MouseWorld, npcCenter);
+                        float dist = Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, npcCenter);
                         if (dist < grabRadius && dist < closestNpcDist)
                         {
                             closestNpcDist = dist;
@@ -302,7 +302,7 @@ namespace tsorcRevamp.Items.Debug
                         var npc = ev.Npcs[0];
                         Vector2 npcCenter = tsorcRevampSystems.NpcSpawnCenter(npc.NpcID, npc.SpawnX, npc.SpawnY);
                         float grabRadius = tsorcRevampSystems.NpcHitRadius(npc.NpcID);
-                        if (Vector2.Distance(Main.MouseWorld, npcCenter) < grabRadius)
+                        if (Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, npcCenter) < grabRadius)
                         {
                             NPC tempSize = new NPC();
                             tempSize.SetDefaults(npc.NpcID);
@@ -318,7 +318,7 @@ namespace tsorcRevamp.Items.Debug
                 // Priority 3: Check if clicking on/near an existing event center OR any placed NPC sprite.
                 // Checking sprites (not just centers) lets you click on an NPC that's far from its event's center
                 // marker to open that event, and prevents P4 from opening the Quick Add panel over existing sprites.
-                Vector2 mousePos = Main.MouseWorld;
+                Vector2 mousePos = tsorcRevampPlayer.RealMouseWorld;
                 DynamicSpawnEvent closestEvent = null;
                 float closestDist = float.MaxValue;
                 foreach (var ev in tsorcScriptedEvents.DynamicEvents)

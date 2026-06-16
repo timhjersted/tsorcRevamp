@@ -68,8 +68,12 @@ namespace tsorcRevamp
         {
             NPC temp = new NPC();
             temp.SetDefaults(npcType);
-            tileX = (int)System.Math.Round(Main.MouseWorld.X / 16f);
-            tileY = (int)System.Math.Round((Main.MouseWorld.Y + temp.height / 2f) / 16f);
+            // RealMouseWorld is a stable snapshot of the cursor's world pos taken in the player update. Main.MouseWorld
+            // is recomputed mid-frame and drifts with the mod's camera/zoom during the draw phase, so the preview
+            // (drawn in PostDrawTiles) and the placement (CanUseItem) would disagree. Use the snapshot for both.
+            Vector2 mouse = tsorcRevampPlayer.RealMouseWorld;
+            tileX = (int)System.Math.Round(mouse.X / 16f);
+            tileY = (int)System.Math.Round((mouse.Y + temp.height / 2f) / 16f);
         }
 
         internal static float visualLife = -1f;
@@ -1679,7 +1683,7 @@ namespace tsorcRevamp
                         {
                             Vector2 npcCenter = new Vector2(npc.SpawnX * 16, npc.SpawnY * 16 - dummyNPC.height / 2f);
                             float hoverRadius = System.Math.Max(24f, System.Math.Max(dummyNPC.width, dummyNPC.height) / 2f);
-                            if (Vector2.Distance(Main.MouseWorld, npcCenter) < hoverRadius)
+                            if (Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, npcCenter) < hoverRadius)
                             {
                                 if (isSelected && ev.SingleNpcMarker)
                                     EditorHoverTooltip = "Left click to grab NPC and move event";
