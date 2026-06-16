@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BallSummonTagDmgMult, DragonSummonTagDmgMult);
         public override void CustomSetDefaults()
         {
-            Item.mana = 40;
+            Item.mana = 10;
             projectiles = new List<ScorchingPointFireball>() { };
             SoundVolume = SoundVolumeAbstract;
         }
@@ -67,7 +67,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             recipe.AddIngredient(ItemID.FeralClaws);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
 
             recipe.AddTile(TileID.DemonAltar);
 

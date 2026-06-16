@@ -105,25 +105,25 @@ namespace tsorcRevamp.Tiles
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/new-area") with { Volume = 0.5f });
                 }
 
-                // Sticky-open dismissal. After a short grace period (so the click-release cursor
-                // motion doesn't instantly close it), the message dismisses when the player either
-                // starts walking (taps left/right) or moves the mouse a medium distance — 20% of the
-                // screen width — from where they clicked.
+                // Sticky-open dismissal. The message closes when the character walks ~16px from where
+                // it was opened, or when the mouse moves ~10% of screen width from the click point.
+                // The walk check is immediate (so a small step closes it); the mouse check waits out a
+                // short grace so the click-release cursor motion can't instantly trip it.
                 if (entity.manuallyOpened)
                 {
                     if (entity.manualOpenGraceTimer > 0)
                     {
                         entity.manualOpenGraceTimer--;
                     }
-                    else
-                    {
-                        bool movedMouse = Vector2.Distance(Main.MouseScreen, entity.clickedAtMouse)
+
+                    bool walkedAway = System.Math.Abs(Main.LocalPlayer.Center.X - entity.openedAtPlayerX)
+                        > SoapstoneTileEntity.MANUAL_DISMISS_WALK_DISTANCE;
+                    bool movedMouse = entity.manualOpenGraceTimer <= 0
+                        && Vector2.Distance(Main.MouseScreen, entity.clickedAtMouse)
                             > Main.screenWidth * SoapstoneTileEntity.MANUAL_DISMISS_SCREEN_FRACTION;
-                        bool startedWalking = Main.LocalPlayer.controlLeft || Main.LocalPlayer.controlRight;
-                        if (movedMouse || startedWalking)
-                        {
-                            entity.manuallyOpened = false;
-                        }
+                    if (walkedAway || movedMouse)
+                    {
+                        entity.manuallyOpened = false;
                     }
                 }
 
@@ -254,16 +254,19 @@ namespace tsorcRevamp.Tiles
         public bool manuallyOpened;
         // Screen-space mouse position when the Show button was clicked. Used to detect dismissal.
         public Vector2 clickedAtMouse;
-        // Frames remaining after a manual open during which dismissal is suppressed, so the
-        // click-release cursor motion (or a movement key held at click time) can't instantly close
-        // the message before the player has a chance to read it.
+        // Player world-X when the Show button was clicked. The message dismisses once the character
+        // walks past MANUAL_DISMISS_WALK_DISTANCE from here — independent of the mouse grace.
+        public float openedAtPlayerX;
+        // Frames remaining after a manual open during which the *mouse-move* dismiss is suppressed,
+        // so the click-release cursor motion can't instantly close the message. Does NOT gate the
+        // walk dismiss — moving the character should always close it promptly.
         public int manualOpenGraceTimer;
         // Fraction of screen width the mouse must travel from clickedAtMouse to dismiss the sticky
-        // bubble. ~20%: a deliberate, medium move — large enough that normal reading motion doesn't
-        // trip it. (The signs that used to feel impossible to dismiss were the proximity timer-freeze,
-        // now fixed by the keepBubbleOpen gate in tsorcRevampSystems — not this threshold.)
-        public const float MANUAL_DISMISS_SCREEN_FRACTION = 0.20f;
-        // Grace frames granted on each manual open (~0.4s at 60fps).
+        // bubble. ~10%: a deliberate move, large enough that normal reading motion doesn't trip it.
+        public const float MANUAL_DISMISS_SCREEN_FRACTION = 0.10f;
+        // Horizontal world distance the character must walk from openedAtPlayerX to dismiss.
+        public const float MANUAL_DISMISS_WALK_DISTANCE = 16f;
+        // Grace frames granted on each manual open (~0.4s at 60fps), mouse dismiss only.
         public const int MANUAL_OPEN_GRACE = 24;
 
         public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)

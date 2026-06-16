@@ -732,8 +732,8 @@ Mods: {
 			}
 
 			AbysswalkerBanner: {
-				DisplayName: "{$NPCs.Abysswalker.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Abysswalker.DisplayName}"
+				DisplayName: "{$NPCs.DworcAbysswalker.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcAbysswalker.DisplayName}"
 			}
 
 			AncientDemonOfTheAbyssBanner: {
@@ -872,8 +872,8 @@ Mods: {
 			}
 
 			DworcVoodoomasterBanner: {
-				DisplayName: "{$NPCs.DworcVoodoomaster.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcVoodoomaster.DisplayName}"
+				DisplayName: "{$NPCs.DworcAlchemist.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcAlchemist.DisplayName}"
 			}
 
 			DworcVoodooShamanBanner: {
@@ -10553,7 +10553,7 @@ Mods: {
 			Dunlending.DisplayName: Dunlending
 			DworcFleshhunter.DisplayName: Dworc Fleshhunter
 			DworcVenomsniper.DisplayName: Dworc Venomsniper
-			DworcVoodoomaster.DisplayName: Dworc Alchemist
+			DworcAlchemist.DisplayName: Dworc Alchemist
 			DworcVoodooShaman.DisplayName: Dworc Shaman
 			FirebombHollow.DisplayName: Firebomb Hollow
 			FireLurker.DisplayName: Fire Lurker
@@ -10619,7 +10619,7 @@ Mods: {
 			ShadowMage.DisplayName: Shadow Mage
 			SnowOwl.DisplayName: Snow Owl
 			StoneGolem.DisplayName: Stone Golem
-			Abysswalker.DisplayName: Dworc Abysswalker
+			DworcAbysswalker.DisplayName: Dworc Abysswalker
 
 			AncientDemonOfTheAbyss: {
 				DisplayName: Great Demon of the Abyss
@@ -12418,9 +12418,9 @@ Mods: {
 			Dunlending: The Dunlendings are wild men from Dunland, a nearby land of vast plains. Their hatred of men and their savagery drive them to ravage the surrounding lands.
 			DworcFleshhunter: A small, pigmy-like creature living in the jungle ruins, who ambushes strangers with his spear.
 			DworcVenomsniper: A small, pigmy-like creature living in the jungle ruins, who secretly shoots darts at his enemies.
-			DworcVoodoomaster: Although they appear barbaric, the dworcs have a strong sensitivity to magic and some become powerful sorcerers.
+			DworcAlchemist: Although they appear barbaric, the dworcs have a strong sensitivity to magic and some become powerful sorcerers.
 			DworcVoodooShaman: The emergence of powerful spirits in Terraria has strengthened the connection to the earth for some dworcs, allowing them to cast powerful elemental spells.
-			Abysswalker: Some dworcs are interested in dark magic, and the arrival of the abyss drives some to madness, spreading shadows in the depths of the jungle.
+			DworcAbysswalker: Some dworcs are interested in dark magic, and the arrival of the abyss drives some to madness, spreading shadows in the depths of the jungle.
 		}
 	}
 }

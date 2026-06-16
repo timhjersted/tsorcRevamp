@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
     class GhostOfTheDrowned : ModNPC
     {

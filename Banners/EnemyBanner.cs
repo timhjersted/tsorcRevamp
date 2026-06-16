@@ -10,6 +10,9 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Enemies.Basilisk;
+using tsorcRevamp.NPCs.Enemies.Dworc;
+using tsorcRevamp.NPCs.Enemies.GhostFighter;
 using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Friendly;
@@ -301,7 +304,7 @@ namespace tsorcRevamp.Banners
     {
         public override int PlaceStyle => 29;
 
-        public override int NPCType => ModContent.NPCType<DworcVoodoomaster>();
+        public override int NPCType => ModContent.NPCType<DworcAlchemist>();
     }
 
     public class DworcVoodooShamanBanner : EnemyBanner
@@ -511,7 +514,7 @@ namespace tsorcRevamp.Banners
     {
         public override int PlaceStyle => 61;
 
-        public override int NPCType => ModContent.NPCType<Abysswalker>();
+        public override int NPCType => ModContent.NPCType<DworcAbysswalker>();
     }
 
     public class AncientDemonOfTheAbyssBanner : EnemyBanner

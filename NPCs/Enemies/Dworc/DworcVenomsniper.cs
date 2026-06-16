@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
     public class DworcVenomsniper : ModNPC
     {
@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTelegraphStart)
             {
-                Texture2D blowpipeTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/DworcVenomsniper_Telegraph");
+                Texture2D blowpipeTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/Dworc/DworcVenomsniper_Telegraph");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {

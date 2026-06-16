@@ -6,9 +6,9 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
-    public class DworcVoodoomaster : ModNPC
+    public class DworcAlchemist : ModNPC
     {
         public override void SetStaticDefaults()
         {

@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
     public class DworcVoodooShaman : ModNPC
     {

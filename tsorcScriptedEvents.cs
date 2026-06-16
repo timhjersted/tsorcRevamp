@@ -611,13 +611,13 @@ namespace tsorcRevamp
             LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.RadiantLifegem>() }, new List<int>() { 5 });
 
             //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
-            List<int> DrownedAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostOfTheDrowned>() };
+            List<int> DrownedAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostFighter.GhostOfTheDrowned>() };
             List<Vector2> DrownedAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4294, 778) };
             ScriptedEvent DrownedAmbush1 = new ScriptedEvent(new Vector2(4318, 768), 11, DrownedAmbush1EnemyTypeList, DrownedAmbush1EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
             DrownedAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.HealingElixir>() }, new List<int>() { 1 });
 
             //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
-            List<int> DrownedAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostOfTheDrowned>() };
+            List<int> DrownedAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostFighter.GhostOfTheDrowned>() };
             List<Vector2> DrownedAmbush2EnemyLocations = new List<Vector2>() { new Vector2(4117, 823) };
             ScriptedEvent DrownedAmbush2 = new ScriptedEvent(new Vector2(4090, 828), 11, DrownedAmbush2EnemyTypeList, DrownedAmbush2EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
             DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.BoostPotion>() }, new List<int>() { 2 }); 
@@ -632,7 +632,7 @@ namespace tsorcRevamp
             ScriptedEvent ShadowTempleEvent2 = new ScriptedEvent(new Vector2(1734, 1297), 20, NPCID.Paladin, 133, true, true, false, LangUtils.GetTextValue("Events.ShadowTempleEvent2"), Color.Yellow);
 
             //Mushroom Cavern AMBUSH
-            List<int> MushroomCavernEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), ModContent.NPCType<NPCs.Enemies.SuperHardMode.Abysswalker>(), };
+            List<int> MushroomCavernEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), ModContent.NPCType<NPCs.Enemies.Dworc.DworcAbysswalker>(), };
             List<Vector2> MushroomCavernEnemyLocations = new List<Vector2>() { new Vector2(3690, 1545), new Vector2(3675, 1545) };
             ScriptedEvent MushroomCavern = new ScriptedEvent(new Vector2(3690, 1535), 30, MushroomCavernEnemyTypeList, MushroomCavernEnemyLocations, DustID.Water, true, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
 
@@ -663,7 +663,7 @@ namespace tsorcRevamp
             
             ScriptedEvent KingSlime2Event = new ScriptedEvent(new Vector2(4749, 639), 25, NPCID.KingSlime, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.KingSlime"), Color.Cyan, false, RemixMapCondition);
 
-            ScriptedEvent AbysswalkerEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.Abysswalker>(), 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
+            ScriptedEvent AbysswalkerEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, ModContent.NPCType<NPCs.Enemies.Dworc.DworcAbysswalker>(), 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
 
             List<int> BloodLakeEventEnemyTypeList = new List<int>() { NPCID.ZombieMerman, NPCID.EyeballFlyingFish };
             List<Vector2> BloodLakeEventEnemyLocations = new List<Vector2>() { new Vector2(2999, 889), new Vector2(3009, 889) };
@@ -1010,19 +1010,50 @@ namespace tsorcRevamp
             return RemixMapCondition() && tsorcRevampWorld.SuperHardMode;
         }
 
+        private static Dictionary<int, string> _vanillaIdToName;
+        private static string GetVanillaFieldName(int type)
+        {
+            if (_vanillaIdToName == null)
+            {
+                _vanillaIdToName = new Dictionary<int, string>();
+                foreach (var f in typeof(NPCID).GetFields(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if (f.IsLiteral && f.FieldType == typeof(short))
+                    {
+                        int id = (short)f.GetRawConstantValue();
+                        if (!_vanillaIdToName.ContainsKey(id))
+                            _vanillaIdToName[id] = f.Name;
+                    }
+                }
+            }
+            return _vanillaIdToName.TryGetValue(type, out var name) ? name : null;
+        }
+
         /// <summary>
         /// Returns a stable name string for <paramref name="type"/>.
-        /// Modded NPCs return their full mod-relative name (e.g. "tsorcRevamp/LeonhardPhase1") which is used to
-        /// re-resolve the runtime ID on load. Vanilla NPCs return their display name (e.g. "Eye of Cthulhu")
-        /// for JSON readability only — TryFind will not match it and the stored integer ID is used instead.
+        /// Modded: full mod-relative name e.g. "tsorcRevamp/LeonhardPhase1".
+        /// Vanilla: NPCID field name e.g. "EyeofCthulhu" (resolvable by reflection on load).
         /// </summary>
         public static string GetNpcStableName(int type)
         {
             var modNpc = NPCLoader.GetNPC(type);
             if (modNpc != null) return modNpc.FullName;
-            var temp = new NPC();
-            temp.SetDefaults(type);
-            return temp.TypeName;
+            return GetVanillaFieldName(type) ?? type.ToString();
+        }
+
+        /// <summary>
+        /// Resolves a stored NpcName back to its current runtime NPC type. Modded names go through
+        /// ModContent.TryFind; vanilla names are NPCID field names resolved by reflection (with a raw-int fallback).
+        /// Returns 0 if it can't be resolved.
+        /// </summary>
+        public static int ResolveNpcType(string npcName)
+        {
+            if (string.IsNullOrEmpty(npcName)) return 0;
+            if (ModContent.TryFind<ModNPC>(npcName, out ModNPC modNpc)) return modNpc.Type;
+            var field = typeof(NPCID).GetField(npcName, BindingFlags.Public | BindingFlags.Static);
+            if (field != null && field.FieldType == typeof(short)) return (short)field.GetRawConstantValue();
+            if (int.TryParse(npcName, out int raw)) return raw;
+            return 0;
         }
 
         /// <summary>
@@ -1728,6 +1759,19 @@ namespace tsorcRevamp
                 }
             }
 
+            // Resolve every entry's runtime NpcID up front, independent of whether the event is enabled this load.
+            // NpcID is normally not serialized, so this must run for ALL events (including completed ones) or the
+            // editor's sprite preview would draw nothing for them.
+            foreach (var dEvent in DynamicEvents)
+                foreach (var npc in dEvent.Npcs)
+                {
+                    if (!string.IsNullOrEmpty(npc.NpcName))
+                        npc.NpcID = ResolveNpcType(npc.NpcName);
+                    else if (npc.NpcID != 0)
+                        // Legacy entry: name missing but a stored ID survives. Backfill the name so it's stable from now on.
+                        npc.NpcName = GetNpcStableName(npc.NpcID);
+                }
+
             foreach (var dEvent in DynamicEvents)
             {
                 // If it's saved as completed and not repeatable, don't add it.
@@ -1763,13 +1807,11 @@ namespace tsorcRevamp
                         action = (Func<ScriptedEvent, EventActionStatus>)Delegate.CreateDelegate(typeof(Func<ScriptedEvent, EventActionStatus>), method);
                 }
 
-                // Convert NPCs — resolve NpcName to current runtime ID if available (modded IDs shift between builds)
+                // NpcIDs were already resolved from NpcName in the pass above; just collect them here.
                 List<int> npcTypes = new List<int>();
                 List<Vector2> npcCoords = new List<Vector2>();
                 foreach (var npc in dEvent.Npcs)
                 {
-                    if (!string.IsNullOrEmpty(npc.NpcName) && ModContent.TryFind<ModNPC>(npc.NpcName, out ModNPC modNpc))
-                        npc.NpcID = modNpc.Type; // update in-place so subsequent saves write the correct integer
                     npcTypes.Add(npc.NpcID);
                     npcCoords.Add(new Vector2(npc.SpawnX, npc.SpawnY));
                 }
@@ -1896,7 +1938,10 @@ namespace tsorcRevamp
                         int count = Math.Min(existingEvent.Npcs.Count, ev.eventNPCs.Count);
                         for (int i = 0; i < count; i++)
                         {
-                            if (string.IsNullOrEmpty(existingEvent.Npcs[i].NpcName))
+                            string existing = existingEvent.Npcs[i].NpcName;
+                            // Backfill if missing OR if it's a stale display-name (has spaces, e.g. "Eye of Cthulhu").
+                            // Display names were written by an older version; we now use NPCID field names instead.
+                            if (string.IsNullOrEmpty(existing) || existing.Contains(' '))
                                 existingEvent.Npcs[i].NpcName = GetNpcStableName(ev.eventNPCs[i].type);
                             // Fix NpcID=0 entries (mod wasn't loaded at first dump time, e.g. Thorium events).
                             if (existingEvent.Npcs[i].NpcID == 0 && ev.eventNPCs[i].type != 0)
@@ -2027,7 +2072,8 @@ namespace tsorcRevamp
 
                                 if (distance < EnabledEvents[i].radius && !Main.player[index].dead)
                                 {
-                                    if (EnabledEvents[i].visible)
+                                    // NPC events burst dust at spawn time (end of the telegraph) instead of here at trigger.
+                                    if (EnabledEvents[i].visible && EnabledEvents[i].noNPCEvent)
                                     {
                                         for (int j = 0; j < 100; j++)
                                         {
@@ -2063,9 +2109,13 @@ namespace tsorcRevamp
                                 float sqrtRadius = (float)Math.Sqrt(EnabledEvents[i].radius);
                                 if (!Main.player[index].dead && (Math.Abs(Main.player[index].position.X - EnabledEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(Main.player[index].position.Y - EnabledEvents[i].centerpoint.Y) < sqrtRadius))
                                 {
-                                    for (int j = 0; j < 100; j++)
+                                    // NPC events burst dust at spawn time (end of the telegraph) instead of here at trigger.
+                                    if (EnabledEvents[i].noNPCEvent)
                                     {
-                                        Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                        for (int j = 0; j < 100; j++)
+                                        {
+                                            Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                        }
                                     }
 
                                     RunningEvents.Add(EnabledEvents[i]);
@@ -2661,12 +2711,20 @@ namespace tsorcRevamp
             {
                 for (int j = 0; j < eventNPCs.Count; j++)
                 {
-                    Vector2 spawnPos = new Vector2(eventNPCs[j].spawnCoords.X * 16 + 8, eventNPCs[j].spawnCoords.Y * 16 + 8);
-                    
-                    // Spawn warning smoke dust around the spawn point
+                    // Size the smoke cloud to the NPC's bounding box (×1.25) so the telegraph matches the enemy that appears.
+                    NPC sizeRef = new NPC();
+                    sizeRef.SetDefaults(eventNPCs[j].type);
+                    int boxW = (int)(sizeRef.width * 1.25f);
+                    int boxH = (int)(sizeRef.height * 1.25f);
+
+                    // NPC.NewNPC places the sprite centered horizontally and bottom-aligned at (spawnCoords*16).
+                    Vector2 spawnBottom = new Vector2(eventNPCs[j].spawnCoords.X * 16, eventNPCs[j].spawnCoords.Y * 16);
+                    Vector2 boxTopLeft = spawnBottom - new Vector2(boxW / 2f, boxH);
+                    float dustScale = MathHelper.Clamp(System.Math.Max(boxW, boxH) / 32f, 1f, 3f);
+
                     for (int k = 0; k < 2; k++)
                     {
-                        int dust = Dust.NewDust(spawnPos - new Vector2(16, 24), 32, 48, DustID.Smoke, 0f, 0f, 100, Color.LightGray, 1.5f);
+                        int dust = Dust.NewDust(boxTopLeft, boxW, boxH, DustID.Smoke, 0f, 0f, 100, Color.LightGray, dustScale);
                         Main.dust[dust].velocity *= 0.4f;
                         Main.dust[dust].velocity.Y -= 0.6f; // float up slightly
                         Main.dust[dust].noGravity = true;
@@ -2771,6 +2829,13 @@ namespace tsorcRevamp
                 eventNPCs[i].index = NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)eventNPCs[i].spawnCoords.X * 16, (int)eventNPCs[i].spawnCoords.Y * 16, eventNPCs[i].type);
 
                 NPC thisNPC = eventNPCs[i].npc;
+
+                // Burst of trigger dust as the enemy materializes — the payoff at the end of the smoke telegraph.
+                // (The old burst fired at trigger time; it now coincides with the actual spawn.)
+                for (int d = 0; d < 50; d++)
+                {
+                    Dust.NewDustPerfect(thisNPC.Center, dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3).noGravity = true;
+                }
 
                 thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventOwner = this;
                 thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventIndex = i;
@@ -2966,8 +3031,12 @@ namespace tsorcRevamp
 
     public class DynamicSpawnEntry
     {
+        // Resolved from NpcName each load. Normally NOT written to JSON (avoids modded-ID drift across builds),
+        // but IS written as a fallback when NpcName is missing so a legacy entry never loses its identity.
         public int NpcID { get; set; }
-        /// <summary>Stable mod-relative name (e.g. "tsorcRevamp/LeonhardPhase1"). Empty for vanilla. Re-resolves the runtime NpcID on load so ID shifts between builds don't corrupt saved events.</summary>
+        public bool ShouldSerializeNpcID() => string.IsNullOrEmpty(NpcName);
+
+        /// <summary>Stable identifier. Modded: "tsorcRevamp/LeonhardPhase1". Vanilla: NPCID field name e.g. "EyeofCthulhu". Resolved to a runtime ID by LoadDynamicEvents.</summary>
         public string NpcName { get; set; }
         public float SpawnX { get; set; }
         public float SpawnY { get; set; }

@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -33,6 +34,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void AI()
         {
+            for (int i = 0; i < 2; i++)
+            {
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkTorch, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 120, default, 1f);
+                Main.dust[dust].noGravity = true;
+            }
+
             Projectile.rotation += 0.9f;
             if (Projectile.velocity.X <= 10 && Projectile.velocity.Y <= 10 && Projectile.velocity.X >= -10 && Projectile.velocity.Y >= -10)
             {

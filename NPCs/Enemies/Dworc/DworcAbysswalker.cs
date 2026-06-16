@@ -8,9 +8,9 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
-namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
+namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
-    class Abysswalker : ModNPC
+    class DworcAbysswalker : ModNPC
     {
         int poisonBallDamage = 27;
         int stormBallDamage = 30;

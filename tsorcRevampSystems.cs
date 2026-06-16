@@ -705,6 +705,7 @@ namespace tsorcRevamp
                             // 25 unconditionally while manuallyOpened is true.
                             soapstone.manuallyOpened = true;
                             soapstone.clickedAtMouse = Main.MouseScreen;
+                            soapstone.openedAtPlayerX = Main.LocalPlayer.Center.X;
                             // Grace window so the click-release cursor motion doesn't immediately
                             // trip the mouse-move dismiss in SoapstoneTile.PostDraw.
                             soapstone.manualOpenGraceTimer = SoapstoneTileEntity.MANUAL_OPEN_GRACE;

@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
+namespace tsorcRevamp.NPCs.Enemies.Basilisk
 {
     class BasiliskHunter : ModNPC
     {

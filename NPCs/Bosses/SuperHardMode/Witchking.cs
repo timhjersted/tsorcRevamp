@@ -271,7 +271,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if ((customspawn1 < 36) && Main.rand.NextBool(20 + (int)lifeThreshold / 2))
                 { //was 2 and 900
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                     NPC.ai[0] = 20 - Main.rand.Next(180); //was 80

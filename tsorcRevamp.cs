@@ -51,6 +51,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Enemies.GhostFighter;
 using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
 using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;

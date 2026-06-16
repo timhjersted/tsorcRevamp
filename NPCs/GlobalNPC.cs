@@ -461,8 +461,8 @@ namespace tsorcRevamp.NPCs
             // Standard fighters
             Add<Enemies.SuperHardMode.DarkBloodKnight>(0.3f, 35f);
             Add<Enemies.SuperHardMode.OolacileKnight>(0.3f, 35f);
-            Add<Enemies.SuperHardMode.BasiliskHunter>(0.3f, 35f);
-            Add<Enemies.SuperHardMode.Abysswalker>(0.3f, 35f);
+            Add<Enemies.Basilisk.BasiliskHunter>(0.3f, 35f);
+            Add<Enemies.Dworc.DworcAbysswalker>(0.3f, 35f);
             Add<Enemies.SuperHardMode.HydrisElemental>(0.3f, 35f);
             Add<Enemies.SuperHardMode.CorruptedElemental>(0.3f, 35f);
             // Standard+
@@ -477,26 +477,26 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.SuperHardMode.HydrisNecromancer>(0.4f, 26f);
             Add<Enemies.SuperHardMode.IceSkeleton>(0.4f, 26f);
             Add<Enemies.FirebombHollow>(0.4f, 26f);
-            Add<Enemies.BasiliskShifter>(0.4f, 26f);
+            Add<Enemies.Basilisk.BasiliskShifter>(0.4f, 26f);
             // Light / agile
             Add<Enemies.ClericOfSorrow>(0.45f, 20f);
             Add<Enemies.Assassin>(0.45f, 20f);
             Add<Enemies.TibianAmazon>(0.45f, 20f);
             Add<Enemies.TibianValkyrie>(0.45f, 20f);
             // Lighter / hunters
-            Add<Enemies.BasiliskWalker>(0.5f, 18f);
+            Add<Enemies.Basilisk.BasiliskWalker>(0.5f, 18f);
             Add<Enemies.ManHunter>(0.5f, 18f);
             Add<Enemies.RedCloudHunter>(0.5f, 18f);
             // Small
             Add<Enemies.Sandsprog>(0.55f, 15f);
             Add<Enemies.SandsprogMage>(0.55f, 15f);
             // Lightest
-            Add<Enemies.DworcFleshhunter>(0.6f, 13f);
-            Add<Enemies.DworcVenomsniper>(0.6f, 13f);
+            Add<Enemies.Dworc.DworcFleshhunter>(0.6f, 13f);
+            Add<Enemies.Dworc.DworcVenomsniper>(0.6f, 13f);
             Add<Enemies.Dunlending>(0.6f, 13f);   // small
             // Light to knock, but higher HP → sturdier to actually stagger
-            Add<Enemies.DworcVoodoomaster>(0.6f, 25f);
-            Add<Enemies.DworcVoodooShaman>(0.6f, 25f);
+            Add<Enemies.Dworc.DworcAlchemist>(0.6f, 25f);
+            Add<Enemies.Dworc.DworcVoodooShaman>(0.6f, 25f);
         }
 
         /// <summary>Pre-strike: hyper-armor and active stagger take zero vanilla knockback; everything else gets a light
@@ -1533,7 +1533,7 @@ namespace tsorcRevamp.NPCs
                     // Add specific NPCs back into the pool with their spawn weights
                     pool.Add(NPCID.GreenJellyfish, 10f);                  
                     pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
-                    pool.Add(ModContent.NPCType<Enemies.GhostOfTheDrowned>(), 2f);
+                    pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 2f);
 
 
 
@@ -1542,7 +1542,7 @@ namespace tsorcRevamp.NPCs
             if (!spawnInfo.Water && playerY < 1430 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
             {
                 pool.Clear();
-                pool.Add(ModContent.NPCType<Enemies.GhostOfTheDrowned>(), 3f);
+                pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 3f);
                 pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 1f);
 
             }

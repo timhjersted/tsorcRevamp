@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Tools;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
     public class GhostOfTheForgottenWarrior : ModNPC
     {
@@ -192,7 +192,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (handTexture == null || handTexture.IsDisposed)
             {
-                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/GhostOfTheForgottenWarrior_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/GhostFighter/GhostOfTheForgottenWarrior_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (globalNPC.ProjectileTimer >= globalNPC.ProjectileTimerCap - HeldAxeWindupTicks)
