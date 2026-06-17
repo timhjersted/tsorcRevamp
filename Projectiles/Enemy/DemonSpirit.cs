@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class DemonSpirit : ModProjectile
     {
-        const int ExtraLifetime = 120;
+        const int ExtraLifetime = 0;
         const int HomingCutoffTime = 60;
         const float ExplosionDamageRadius = 92f;
         const float ExplosionDustRadius = 128f;
@@ -123,7 +123,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 move = Vector2.Zero;
             float distance = 900f;
             bool target = false;
-            float speed = 3;
+            float speed = 2.25f;
             if (!target)
             {
                 int targetIndex = GetClosestPlayer();

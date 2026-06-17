@@ -31,8 +31,13 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
             AnimationType = NPCID.Skeleton;
+            // "Poison Strike" — fast aimed poison bolt
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, SoundID.Item20, 0);
-            UsefulFunctions.AddAttack(NPC, 480, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.2f);
+            // "Poison Storm" — heavy lobbed ball that bursts into a poison storm (no LOS needed). The shrinking-ring
+            // telegraph runs 90t (see AI()), so telegraphTime: 90 makes the poise telegraph/commit window match the
+            // visible ring; commitFraction: 0.5f = first half of the shrink is cancellable, second half committed.
+            UsefulFunctions.AddAttack(NPC, 480, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.2f, telegraphTime: 90, commitFraction: 0.5f);
+            // "Demon Spirit" — summons a homing spirit (rare; no LOS needed)
             UsefulFunctions.AddAttack(NPC, 200, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 20, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.05f);
 
             // Step 6 caster lever: remember last-known position before patrolling.
@@ -41,10 +46,12 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanGoInvisible = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().InvisibleAlpha = 205;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoInvisibleChance = 100;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoVisibleChance = 200;
+            EvasiveProfile.EvasiveCloak(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), cloakChance: 0.30f, threatRange: 220);
+            // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
+            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
+            EvasiveProfile.DworcShaman(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>());
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanSelfHeal = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 50;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 20;
         }
         //yes i tweaked the drop rates. Fight Me
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -104,32 +111,21 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             return chance;
         }
 
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
+
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3f, canPounce: false);
 
-
-            //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
-            //(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
-            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 109)
-            {
-                if (Main.rand.NextBool(3))
-                {
-                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 110;
-                    NPC.netUpdate = true;
-                }
-                else
-                {
-                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
-                    NPC.netUpdate = true;
-                }
-            }
-            if (NPC.justHit && Main.rand.NextBool(22) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
-            {
-                tsorcRevampAIs.QueueTeleport(NPC, 20, true);
-                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 10f;
-                NPC.netUpdate = true;
-            }
+            // (Removed the old justHit cast-timer reset + 1/22 hit-teleport — superseded by the universal poise
+            //  stagger windup-cancel and the EvasiveOnHit reactions, incl. the evasive teleport in the DworcShaman profile.)
 
             //Big poison storm telegraph
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();

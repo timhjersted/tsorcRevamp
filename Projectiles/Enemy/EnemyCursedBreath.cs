@@ -36,6 +36,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             Main.dust[dust].noGravity = true;
         }
 
+        public override bool PreKill(int timeLeft)
+        {
+            return false;
+        }
+
         /*
 		public override bool PreKill(int timeLeft)
 		{

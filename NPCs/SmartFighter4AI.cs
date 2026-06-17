@@ -424,7 +424,10 @@ namespace tsorcRevamp.NPCs
                 // path → the no-plan StuckGiveUpFrames above then disengages to patrol.
                 bool execMove = s.Plan != null && s.PlanIndex < s.Plan.Count && grounded
                     && (actionLabel == "walk" || actionLabel == "align-jump" || actionLabel == "align-drop"
-                        || actionLabel == "align-pdrop" || actionLabel == "obstacle-jump");
+                        || actionLabel == "align-pdrop" || actionLabel == "obstacle-jump"
+                        // Fix B: a "blocked" no-headroom/too-tall wall braking in place counts as a wedged step, so
+                        // StepNoMoveFrames bad-edges it and A* reroutes around the obstacle instead of standing forever.
+                        || actionLabel == "blocked");
                 if (execMove)
                 {
                     if (Math.Abs(npc.Center.X - s.MoveCheckX) > 2f) { s.MoveCheckX = npc.Center.X; s.StepNoMoveFrames = 0; }
@@ -437,6 +440,34 @@ namespace tsorcRevamp.NPCs
                     }
                 }
                 else { s.MoveCheckX = npc.Center.X; s.StepNoMoveFrames = 0; }
+
+                // Fix C v3: hard-stuck catch-all keyed on PERIODIC net progress. A wedged NPC LURCHES a variable
+                // distance toward the lip each failed jump then falls back, so any per-frame/instantaneous check is
+                // reset by the lurch. Instead, sample net X displacement every ~2s window: <~3 tiles net = no real
+                // progress that window. While pursuing + unable to actually engage (no clear shot / out of range) +
+                // trying to move (a plan, or braking "blocked"), TWO consecutive dead windows (~4s) = truly wedged
+                // (e.g. an overhanging/watery pit the jump can't clear) → blink out (CanTeleport) else disengage. The
+                // !canEngage gate keeps a legitimately-firing enemy from being yanked off its spot.
+                if (pstate == PursuitState.Pursue && !canEngage && (s.Plan != null || actionLabel == "blocked"))
+                {
+                    if (s.HardStuckCheckX == float.MaxValue) s.HardStuckCheckX = npc.Center.X; // open a fresh window
+                    if (++s.HardStuckFrames >= 120) // ~2s window elapsed
+                    {
+                        if (Math.Abs(npc.Center.X - s.HardStuckCheckX) > 48f) s.HardStuckStrikes = 0; // made real ground
+                        else s.HardStuckStrikes++;                                                    // confined this window
+                        s.HardStuckCheckX = npc.Center.X; // next window measures from here
+                        s.HardStuckFrames = 0;
+                        if (s.HardStuckStrikes >= 2) // ~4s with no net progress
+                        {
+                            s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0;
+                            if (g.CanTeleport) tsorcRevampAIs.QueueTeleport(npc, 20, false);
+                            else NavBehavior.ForceDisengage(npc, g);
+                            s.HardStuckStrikes = 0;
+                            s.HardStuckCheckX = float.MaxValue;
+                        }
+                    }
+                }
+                else { s.HardStuckCheckX = float.MaxValue; s.HardStuckFrames = 0; s.HardStuckStrikes = 0; }
             }
 
             // Vanilla-style smooth auto-step: glide over <=1-tile bumps/half-blocks via gfxOffY (no jump),
@@ -2210,7 +2241,11 @@ namespace tsorcRevamp.NPCs
             int frontX = GetFrontTileX(npc, direction);
             int headY = (int)((npc.Top.Y + 4f) / TileF);
             int feetY = GetFeetTileY(npc);
-            int highest = Math.Max(headY - 2, feetY - obstacleHeight - 4);
+            // Require ~1 tile of clearance above the head (was 2). The extra tile was over-conservative: standing on a
+            // 1-tile bump raises headY by one, which pushed a fixed overhang into the old 2-tile window and made the
+            // NPC refuse to hop a small ledge out of a pit (the "no-headroom only on the bumped/left side" stuck case),
+            // while the same ledge from flat ground (one tile lower) cleared fine.
+            int highest = Math.Max(headY - 1, feetY - obstacleHeight - 3);
             for (int y = highest; y <= headY; y++)
                 if (IsNavigationSolid(frontX, y)) return false;
             return true;
@@ -2341,8 +2376,13 @@ namespace tsorcRevamp.NPCs
                     if (dy > 0)
                     {
                         bool cleanVertical = IsPlatformTile(lx, b.Y + 1);
-                        if (cleanVertical) lands.Add(lx);            // straight-up through the platform first
-                        if (lx + 1 <= oMax) lands.Add(lx + 1);       // up-and-over fallbacks (clear a solid lip)
+                        if (cleanVertical) lands.Add(lx);            // straight-up through a platform first
+                        // Solid lip: PREFER a flatter up-and-over (adx=2) — launching 2 tiles back, the arc rises over
+                        // the pit and clears the lip's vertical FACE, instead of a steep adx=1 arc that drifts into the
+                        // lip base and wedges (cx=True). Fall back to adx=1, then a last-resort vertical.
+                        if (lx + 2 <= oMax) lands.Add(lx + 2);
+                        if (lx - 2 >= oMin) lands.Add(lx - 2);
+                        if (lx + 1 <= oMax) lands.Add(lx + 1);
                         if (lx - 1 >= oMin) lands.Add(lx - 1);
                         if (!cleanVertical) lands.Add(lx);           // vertical only as last resort over solid
                     }
@@ -2361,14 +2401,14 @@ namespace tsorcRevamp.NPCs
                     // (gravity + jump/boost limits). Replaces the static-table membership test,
                     // so flat wide gaps (no table entry) are now correctly considered.
                     if (!ComputeJumpArc(adx, dy, _planGravity, _planJumpCeil, _planMaxLaunchVx, out _, out _)) continue;
-                    // Ghost pit-wedge guard: a near-vertical RISING jump launched right against a wall on its
-                    // TRAILING side (the side opposite the landing) pins the wider-than-a-tile body to that wall
-                    // every frame — it brushes collideX, rises ~half a tile, falls back, and never completes, so A*
-                    // re-picks the same edge forever (the "kept walking into the wall in a pit" loop). A wall-passing
-                    // enemy can't pathfind THROUGH the wall, so refuse the wedging launch and let A* pick a launch
-                    // backed off the wall (clear trailing side) that arcs up-and-over instead — i.e. walk back, then
-                    // jump out. Scoped to ghosts so the verified non-ghost jump behavior is untouched.
-                    if (_canPassWalls && dy >= 1 && adx <= 1 && !LaunchTrailClear(lx, la, a.Y)) continue;
+                    // Pit-wedge guard: a near-vertical RISING jump launched right against a wall on its TRAILING side
+                    // (the side opposite the landing) pins the wider-than-a-tile body to that wall every frame — it
+                    // brushes collideX, rises ~half a tile, falls back, and never completes, so A* re-picks the same
+                    // edge forever (the "wedged in a pit, jumps straight into the lip" loop). Refuse the wedging launch
+                    // so A* picks one backed off the wall (clear trailing side) that arcs UP-AND-OVER the lip instead —
+                    // i.e. walk back 1-2 tiles, then jump out. Now applies to ALL enemies (was ghost-only): non-ghosts
+                    // wedge in pits the same way (e.g. the Dworc that hopped straight into the lip on the bumped side).
+                    if (dy >= 1 && adx <= 1 && !LaunchTrailClear(lx, la, a.Y)) continue;
                     if (!HasTrajectoryClearance(lx, a.Y, la, b.Y, dy)) continue;
                     launchX = lx; landX = la; absDx = adx;
                     return true;
@@ -2568,6 +2608,11 @@ namespace tsorcRevamp.NPCs
             public float LastPursuitDist = float.MaxValue;
             public int StuckGiveUpFrames;
             public float StuckCheckX = float.MaxValue; // NPC X at the last anti-stuck checkpoint
+            // Hard-stuck catch-all (Fix C): raw X-immobility while trying to move, independent of canEngage/LOS, so a
+            // wedged-but-"engaged" NPC (no-headroom pit with the player adjacent) still escapes via blink/disengage.
+            public int HardStuckFrames;
+            public float HardStuckCheckX = float.MaxValue;
+            public int HardStuckStrikes;   // consecutive ~2s windows with no real net progress (Fix C v3)
             // Rope-fallback retry memory: detects the on/off loop where TryGrabNearbyRope re-grabs the
             // same rope that can't actually reach the player. After 2 rapid retries the rope is bad-edged.
             public int RopeFallbackX = int.MinValue;

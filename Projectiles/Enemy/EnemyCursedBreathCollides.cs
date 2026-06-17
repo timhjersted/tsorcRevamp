@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
@@ -7,6 +8,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class EnemyCursedBreathCollides : ModProjectile
     {
+        static ulong nextTileImpactSoundFrame;
+
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Cursed Breath");
@@ -33,6 +36,24 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.Chartreuse, 3.0f);
             Main.dust[dust].noGravity = true;
+        }
+
+        public override bool PreKill(int timeLeft)
+        {
+            return false;
+        }
+
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Main.GameUpdateCount >= nextTileImpactSoundFrame)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.15f, Pitch = 0.1f }, Projectile.Center);
+                nextTileImpactSoundFrame = Main.GameUpdateCount + 30;
+            }
+
+            Projectile.active = false;
+            Projectile.netUpdate = true;
+            return false;
         }
 
         /*

@@ -1913,9 +1913,10 @@ namespace tsorcRevamp
 
         public static Color ParseColor(string hex)
         {
-            if (string.IsNullOrEmpty(hex)) return new Color();
+            // Default to white (not transparent black) so events with no saved color show readable spawn text.
+            if (string.IsNullOrEmpty(hex)) return Color.White;
             if (hex.StartsWith("#")) hex = hex.Substring(1);
-            if (hex.Length != 6 && hex.Length != 8) return new Color();
+            if (hex.Length != 6 && hex.Length != 8) return Color.White;
             byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
             byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
             byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
@@ -2878,11 +2879,15 @@ namespace tsorcRevamp
                 }
                 if (eventNPCs[i].customDefense != null)
                 {
+                    // Set the default backing field too: mod code (debuffs, scaling) recomputes npc.defense from
+                    // npc.defDefense, which would otherwise reset the custom value back to the vanilla base.
                     thisNPC.defense = eventNPCs[i].customDefense.Value;
+                    thisNPC.defDefense = eventNPCs[i].customDefense.Value;
                 }
                 if (eventNPCs[i].customDamage != null)
                 {
                     thisNPC.damage = eventNPCs[i].customDamage.Value;
+                    thisNPC.defDamage = eventNPCs[i].customDamage.Value;
                 }
                 if (eventNPCs[i].customSouls != null)
                 {

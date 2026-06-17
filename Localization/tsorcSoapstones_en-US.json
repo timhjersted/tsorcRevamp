@@ -1721,7 +1721,7 @@
   "style": 1
 }
 {
-  "text": "\u003C*\u003E Press Left Alt to dodge roll through enemies while avoiding harm. --NEWLINE  --NEWLINE You can change the input via TML\u0027s controller settings, in the mod section. --NEWLINE  --NEWLINE Swapping Left Alt with Left Shift may also be worth trying. Find what works for you. It will be essential to your journey. \u003C*\u003E",
+  "text": "Press Left Shift to dodge roll through enemies while avoiding harm. --NEWLINE  --NEWLINE Auto Select is now on Left Alt. --NEWLINE  --NEWLINE You can change both keybinds in Controls. Find what works for you. It will be essential to your journey.",
   "tileX": 4855,
   "tileY": 866,
   "textWidth": 320,

@@ -284,7 +284,8 @@ namespace tsorcRevamp
             {
                 // Abort if the situation changes out from under us.
                 if (!RevampActive || !Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode
-                    || Main.playerInventory || Player.dead || Player.selectedItem != swappedSlotIndex)
+                    || Main.playerInventory || Player.dead || Player.selectedItem != swappedSlotIndex
+                    || IsVanillaContextRightClickAvailable())
                 {
                     EndSecondSlotUse();
                     return;
@@ -318,6 +319,12 @@ namespace tsorcRevamp
             {
                 return; // can't right-click while a left-click action is already in progress
             }
+            // Vanilla contextual right-clicks (talking to NPCs, opening nearby interactible projectiles like the
+            // Void Bag, tile interactions, etc.) take priority over the 2nd slot.
+            if (IsVanillaContextRightClickAvailable())
+            {
+                return;
+            }
             // Held-weapon alt-fire takes priority over the slot.
             if (Player.HeldItem != null && !Player.HeldItem.IsAir && ItemLoader.AltFunctionUse(Player.HeldItem, Player))
             {
@@ -340,6 +347,85 @@ namespace tsorcRevamp
             }
 
             BeginSecondSlotUse();
+        }
+
+        private bool IsVanillaContextRightClickAvailable()
+        {
+            if (IsHoveringTalkableNPC() || IsHoveringInteractibleProjectile())
+            {
+                return true;
+            }
+
+            Player.SmartInteractLookup();
+
+            if (!Main.SmartInteractShowingGenuine)
+            {
+                return false;
+            }
+
+            return Main.SmartInteractNPC >= 0
+                || Main.SmartInteractProj >= 0
+                || Main.SmartInteractPotionOfReturn
+                || Main.HasInteractibleObjectThatIsNotATile
+                || (Main.SmartInteractTileCoordsSelected != null && Main.SmartInteractTileCoordsSelected.Count > 0);
+        }
+
+        private bool IsHoveringTalkableNPC()
+        {
+            const float TalkRange = 400f;
+            Point mouseWorld = Main.MouseWorld.ToPoint();
+
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC npc = Main.npc[i];
+                if (npc == null || !npc.active || !npc.CanBeTalkedTo)
+                {
+                    continue;
+                }
+                if (!npc.Hitbox.Contains(mouseWorld))
+                {
+                    continue;
+                }
+                if (Player.Distance(npc.Center) <= TalkRange)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsHoveringInteractibleProjectile()
+        {
+            Point mouseWorld = Main.MouseWorld.ToPoint();
+            Vector2 playerCenter = Player.Center;
+
+            Player.UpdateNearbyInteractibleProjectilesList();
+            foreach (int projectileIndex in Player.GetListOfProjectilesToInteractWithHack())
+            {
+                if (projectileIndex < 0 || projectileIndex >= Main.maxProjectiles)
+                {
+                    continue;
+                }
+
+                Projectile projectile = Main.projectile[projectileIndex];
+                if (projectile == null || !projectile.active || !projectile.IsInteractible())
+                {
+                    continue;
+                }
+                Rectangle hoverHitbox = projectile.Hitbox;
+                hoverHitbox.Inflate(16, 16);
+                if (!hoverHitbox.Contains(mouseWorld))
+                {
+                    continue;
+                }
+                if (Player.IsProjectileInteractibleAndInInteractionRange(projectile, ref playerCenter))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void BeginSecondSlotUse()

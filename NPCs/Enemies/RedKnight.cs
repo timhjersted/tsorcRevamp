@@ -100,6 +100,9 @@ namespace tsorcRevamp.NPCs.Enemies
             redKnightGlobalNPC.CanTeleport = true;
             redKnightGlobalNPC.TeleportStyle = TeleportStyle.Aggressive;
             redKnightGlobalNPC.TeleportVisualStyle = TeleportVisualStyle.Fire;
+
+            // Evasive on-hit: hop/leap/dash away, or blink away when able (TeleportAway uses CanTeleport above).
+            EvasiveProfile.RedKnight(redKnightGlobalNPC);
         }
 
 
@@ -130,11 +133,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Hit logic is stored in GlobalNPC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterEvasiveOnHit(NPC, true);
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterEvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player

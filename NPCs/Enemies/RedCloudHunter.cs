@@ -60,8 +60,9 @@ namespace tsorcRevamp.NPCs.Enemies
             hunterGlobalNPC.NavSearchRadius = 80;
             hunterGlobalNPC.CanGoInvisible = true;
             hunterGlobalNPC.InvisibleAlpha = 200;
-            hunterGlobalNPC.GoInvisibleChance = 120;
-            hunterGlobalNPC.GoVisibleChance = 180;
+            EvasiveProfile.EvasiveCloak(hunterGlobalNPC, cloakChance: 0.20f, threatRange: 220);
+            // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
+            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

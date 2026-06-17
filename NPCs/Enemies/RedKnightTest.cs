@@ -99,6 +99,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             redKnightGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
             redKnightGlobalNPC.CanUseRopes = true;
+            EvasiveProfile.RedKnight(redKnightGlobalNPC); // hop/leap/dash away, or blink away when able
 
             //redKnightGlobalNPC.Aggression = 2.5f;
             //redKnightGlobalNPC.Patience = 2;
@@ -132,11 +133,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Hit logic is stored in GlobalNPC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterEvasiveOnHit(NPC, true);
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterEvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player

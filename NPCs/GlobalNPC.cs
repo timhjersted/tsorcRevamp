@@ -94,8 +94,9 @@ namespace tsorcRevamp.NPCs
 
     public enum InvisibilityStyle
     {
-        Random,
-        Predator
+        Random,    // ambient per-frame flicker between visible/invisible; any hit snaps fully visible
+        Predator,  // invisible while moving (and not attack-telling); a hit reveals for ~1.5s
+        Evasive    // threat-reactive cloak: a hit or a nearby threat rolls the cloak; lingers, then fades
     }
 
     public enum PounceStyle
@@ -294,7 +295,7 @@ namespace tsorcRevamp.NPCs
 
         // Single source of truth for "this enemy is committed to an attack and cannot be interrupted/knocked back".
         // Each enemy sets this every AI tick from its own flash-telegraph→fire windows (windup ≈25t before the flash
-        // through the fire frame). FighterEvasiveOnHit reads it (via InAttack) to gate the on-hit reaction. The poise system below
+        // through the fire frame). EvasiveOnHit reads it (via InAttack) to gate the on-hit reaction. The poise system below
         // treats AttackCommitted as hyper-armor. See memory: project_poise_stagger_system.
         public bool AttackCommitted;
 
@@ -307,8 +308,64 @@ namespace tsorcRevamp.NPCs
         /// false (pure neutral); attack interruption is handled solely by the poise stagger.</summary>
         public bool InAttack => AttackTelegraphing || AttackCommitted;
 
+        // === Pre-attack jump (global attack variation) ===
+        // When an attack COMMITS (hyperarmor begins), optionally launch the enemy upward so the shot — fired later in
+        // the committed window — goes off mid-air. Requires attack-phase tagging (it keys off AttackCommitted). The
+        // SERVER rolls + applies the launch and netUpdates, so MP stays consistent (clients just receive the velocity).
+        // Chance 1f = deterministic (every attack); <1f = a random variation. NOTE: incompatible with CanStopToFire
+        // (its stop-to-fire zeroes velocity.Y each tick and cancels the jump) — use on enemies that don't stand to fire.
+        public bool CanJumpBeforeAttack = false;
+        public float JumpBeforeAttackChance = 0.5f;
+        public float JumpBeforeAttackPower = 8f;   // upward launch velocity
+        public int JumpBeforeAttackDelay = 10;     // frames after commit before the launch (so it's rising at the shot)
+        // Per-tick veto: an enemy sets this true (in its AI) during attacks that should NOT pre-jump (e.g. a stationary
+        // channel like the basilisk magic-ring breath). Checked at the commit edge below. Defaults false each tick.
+        public bool SuppressPreAttackJump = false;
+        private bool wasAttackCommitted = false;   // rising-edge detector for AttackCommitted
+        private int preAttackJumpTimer = -1;        // >0 counting down to the launch; <=0 inactive
+
         // Shared cooldown for the on-hit evasive reaction + wall-pin escape, so an enemy doesn't react every frame of a combo.
         public int FighterEvasionCooldown;
+
+        // === Evasive on-hit capability flags (see EvasiveProfile + tsorcRevampAIs.EvasiveOnHit) ===
+        // Opt-in per enemy in SetDefaults (directly, or via an EvasiveProfile.* bundle). The shared EvasiveOnHit
+        // selector builds a weighted pool from whichever of these are set and samples one when the enemy is hit in
+        // neutral. Each behavior carries its own melee/ranged/both affinity inside the selector, not here.
+        public bool EvasiveRetreatJump;     // hop / leap / high-arc drift away (instant)
+        public bool EvasiveRetreatDash;     // low fast dash away (instant)
+        public bool EvasiveTeleportAway;    // blink away if CanTeleport, else leap (instant)
+        public bool EvasiveLeapForward;     // lunge toward the player to close the gap (instant, ranged-hit counter)
+        public bool EvasiveRunningDash;     // flash telegraph → grounded top-speed burst toward the player (sustained)
+        public bool EvasiveRetreatAndShoot; // forced-flee back-off, then resume firing (sustained, melee-hit counter)
+        public bool EvasiveQuickStep;       // i-frame quick step that passes through the player (sustained)
+
+        // === Sustained evasion state (driven each AI tick by UpdateEvasion; armed by EvasiveOnHit) ===
+        // Only RunningDash / RetreatAndShoot live here; QuickStep has its own timer (it mirrors the dodgeroll), and
+        // the instant behaviors don't need state. CurrentEvasion is only meaningful while InSustainedEvasion.
+        public bool InSustainedEvasion;
+        public EvasiveBehavior CurrentEvasion;
+        public int EvasiveTimer;            // ticks left in the current phase
+        public bool EvasiveTelegraphing;    // true during a windup/telegraph phase (RunningDash's flash)
+        public float EvasiveDashSpeedMult = 2.2f;   // RunningDash: multiplier on top speed during the burst
+        public int EvasiveDashTelegraphTicks = 20;  // RunningDash: flash/windup length before the burst
+        public int EvasiveDashTicks = 110;          // RunningDash: burst length (~1.8s)
+        public int EvasiveRetreatTicks = 80;        // RetreatAndShoot: back-off length (~1.3s)
+        public float EvasiveRetreatSpeed = 3.5f;    // RetreatAndShoot: grounded back-off speed (away from player)
+        public int QuickStepTimer;          // >0 = mid quick-step: i-frames + passes through player (mirrors DodgeTimer)
+        public int QuickStepDir;            // horizontal direction of the active quick step
+        public float QuickStepSpeed = 7f;   // horizontal speed of the quick step
+        public int QuickStepTicks = 16;     // quick-step duration
+        // True while a behavior should draw the ghost afterimage trail (quick step, or the running-dash burst).
+        public bool EvasiveAfterimagesActive => QuickStepTimer > 0 || (InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RunningDash && !EvasiveTelegraphing);
+        /// <summary>True during any multi-tick evasive action — a parallel to <see cref="InAttack"/> for deference.</summary>
+        public bool InEvasion => InSustainedEvasion || QuickStepTimer > 0;
+        /// <summary>True during a RetreatAndShoot back-off — seizes the body so the driver can drive the retreat velocity.</summary>
+        public bool EvasiveRetreating => InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RetreatAndShoot;
+
+        // AI-tick (NOT on-hit) capability: jump straight up to dodge an incoming aimed projectile. Split out of the
+        // dodgeroll scan (RunFighterCombatTriggers) so a non-rolling enemy can still pre-jump. canDodgeroll already
+        // grants the jump option on its own, so Red/Black Knights keep today's roll-or-jump without setting this.
+        public bool CanJumpToEvade = false;
 
         // The enemy's SetDefaults knockBackResist, captured once by BasicAI before any AI tick mutates it. Enemies whose
         // AI zeroes knockBackResist during attacks restore to THIS each tick, so the SetDefaults value (the per-enemy
@@ -361,7 +418,7 @@ namespace tsorcRevamp.NPCs
         public float EffectivePoiseMax => PoiseMax * (1f + PoiseEscalationPerStack * PoiseEscalationStacks);
 
         /// <summary>True when the poise bar should be drawn (and the stamina bar suppressed).</summary>
-        public bool PoiseBarVisible => PoiseMax > 0f && (Poise > 0f || StaggerTimer > 0);
+        public bool PoiseBarVisible => PoiseMax > 0f && (Poise > 0f || StaggerTimer > 0 || PoiseBreakCooldown > 0);
 
         private bool IsMagicKnockbackGhost(NPC npc)
             => HasGhostAfterimages && (npc.knockBackResist <= 0f || ghostKnockbackRestorePending);
@@ -415,15 +472,13 @@ namespace tsorcRevamp.NPCs
         /// Skipped if this hit already staggered (that launch wins); reduced during the post-stagger recovery window.</summary>
         private void ApplyGhostMagicFlinch(NPC npc, Vector2 sourceCenter)
         {
-            if (StaggerTimer > 0)
+            // No flinch while staggered (the launch wins) OR during the post-stagger recovery i-frames (white bar = 0
+            // knockback, matching ApplyPoiseToKnockback).
+            if (StaggerTimer > 0 || PoiseBreakCooldown > 0)
             {
                 return;
             }
             float speed = GhostMagicFlinchVelocity;
-            if (PoiseBreakCooldown > 0)
-            {
-                speed *= PoiseCooldownFlinchFactor;
-            }
             int dir = npc.Center.X >= sourceCenter.X ? 1 : -1;
             npc.velocity.X = dir * speed;
             npc.netUpdate = true;
@@ -509,22 +564,18 @@ namespace tsorcRevamp.NPCs
                 return;
             }
             poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob (affects meter only, not the flinch below)
-            if (AttackCommitted || StaggerTimer > 0)
+            // ZERO knockback whenever the enemy can't take stagger damage = the white-bar states: hyper-armor
+            // (AttackCommitted), already-staggered (manual slide drives it), OR the post-stagger recovery i-frames
+            // (PoiseBreakCooldown). Previously the recovery window took REDUCED flinch; now it's fully immune.
+            if (AttackCommitted || StaggerTimer > 0 || PoiseBreakCooldown > 0)
             {
-                modifiers.DisableKnockback(); // hyper-armor or already-staggered (manual slide drives it)
+                modifiers.DisableKnockback();
                 PoiseWillBreakThisHit = false;
                 return;
             }
-            // Neutral / windup / post-stagger recovery: light flinch so the hit always reads. During the recovery window
-            // (PoiseBreakCooldown) the flinch is reduced further — the enemy is sturdier right after a stun but still
-            // visibly reacts — and it can't be re-staggered (anti-stunlock).
-            float flinch = PoiseFlinchFactor;
-            if (PoiseBreakCooldown > 0)
-            {
-                flinch *= PoiseCooldownFlinchFactor;
-            }
-            modifiers.Knockback *= flinch;
-            PoiseWillBreakThisHit = PoiseBreakCooldown <= 0 && (Poise + poiseDamage) >= EffectivePoiseMax;
+            // Neutral / windup: light flinch so the hit always reads.
+            modifiers.Knockback *= PoiseFlinchFactor;
+            PoiseWillBreakThisHit = (Poise + poiseDamage) >= EffectivePoiseMax;
         }
 
         /// <summary>Post-strike: accumulate poise and trigger the stagger if it broke. Source is the attacker's center,
@@ -575,15 +626,76 @@ namespace tsorcRevamp.NPCs
             // The interface wins when both are present — it's strictly more capable.
             if (npc.ModNPC is IStaggerable staggerable)
             {
-                staggerable.OnStagger(npc);
+                staggerable.OnStagger(npc); // bespoke-state enemies clear exactly their own attack state
             }
-            else if (PoiseStaggerResetsAI)
+            else
             {
-                npc.ai[1] = 60f;   // cancel a windup attack → return to neutral approach
-                npc.ai[2] = -100f;
+                if (PoiseStaggerResetsAI)
+                {
+                    npc.ai[1] = 60f;   // simple ai[1]-timer enemies (Red Knight family): cancel a windup attack → neutral
+                    npc.ai[2] = -100f;
+                }
+                // Universal AddAttack reset: the shared projectile system (Dworcs, casters, archers) drives its windup
+                // off ProjectileTimer, not ai[1]. Resetting it cancels a telegraphing shot and restarts the cooldown.
+                if (AttackList.Count > 0)
+                {
+                    ProjectileTimer = 0f;
+                    AttackTelegraphing = false;
+                    AttackCommitted = false;
+                    FighterRangedStandShotsRemaining = 0;
+                }
             }
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.3f, Volume = 0.8f }, npc.Center);
             npc.netUpdate = true;
+        }
+
+        // Pre-attack jump driver: on the rising edge of AttackCommitted, roll the jump and schedule the launch a few
+        // frames later, so the shot (fired later in the committed window) goes off while the enemy is airborne. Server-
+        // only; the launch netUpdates so MP clients receive the velocity. See CanJumpBeforeAttack.
+        private void UpdatePreAttackJump(NPC npc)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                wasAttackCommitted = AttackCommitted;
+                return;
+            }
+
+            if (CanJumpBeforeAttack && AttackCommitted && !wasAttackCommitted && !SuppressPreAttackJump
+                && npc.velocity.Y == 0f && Main.rand.NextFloat() < JumpBeforeAttackChance)
+            {
+                preAttackJumpTimer = Math.Max(1, JumpBeforeAttackDelay);
+            }
+            wasAttackCommitted = AttackCommitted;
+
+            if (preAttackJumpTimer > 0)
+            {
+                preAttackJumpTimer--;
+                if (preAttackJumpTimer == 0)
+                {
+                    preAttackJumpTimer = -1;
+                    // Headroom check: don't launch into a ceiling. Scan up to the full-power apex; if a solid tile is
+                    // closer, cap the launch so the apex tucks ~1 tile under it (or skip entirely if there's < 2 tiles —
+                    // the attack then just fires grounded). apex(tiles) = power² / (2·gravity·16).
+                    float gravity = npc.gravity > 0f ? npc.gravity : 0.3f;
+                    int wantTiles = (int)Math.Ceiling(JumpBeforeAttackPower * JumpBeforeAttackPower / (2f * gravity * 16f));
+                    int clearTiles = 0;
+                    for (int i = 1; i <= wantTiles; i++)
+                    {
+                        if (UsefulFunctions.IsTileReallySolid(npc.Center + new Vector2(0f, -npc.height / 2f - i * 16f))) break;
+                        clearTiles = i;
+                    }
+                    float power = JumpBeforeAttackPower;
+                    if (clearTiles < wantTiles)
+                    {
+                        power = clearTiles < 2 ? 0f : (float)Math.Sqrt(2f * gravity * (clearTiles - 1) * 16f);
+                    }
+                    if (power > 0f)
+                    {
+                        npc.velocity.Y = -power;
+                        npc.netUpdate = true; // sync the launch to MP clients
+                    }
+                }
+            }
         }
 
         private void ApplyStaggerImpulse(NPC npc, Vector2 sourceCenter, float scale)
@@ -803,8 +915,9 @@ namespace tsorcRevamp.NPCs
         public bool CanSelfHeal = false;
         // HP restored per proc (default 5).
         public int SelfHealAmount = 5;
-        // 1-in-N chance per frame to proc (default 250 ≈ once every ~4 seconds).
-        public int SelfHealChance = 250;
+        // 1-in-N chance per frame to proc (default 360 ≈ once every ~6 seconds — raised from 250 to cut heal
+        // frequency ~30% across all self-heal enemies; no enemy overrides this).
+        public int SelfHealChance = 360;
 
         // === Random-flicker invisibility ===
         // When true, PostAI randomly flickers the NPC between visible and nearly-transparent each frame,
@@ -817,6 +930,14 @@ namespace tsorcRevamp.NPCs
         // 1-in-N chance per frame to snap back to fully visible (lower = reappears more often).
         public int GoVisibleChance = 200;
         public InvisibilityStyle InvisibilityStyle = InvisibilityStyle.Random;
+        // === Evasive style tuning (only used when InvisibilityStyle == Evasive; see EvasiveProfile.EvasiveCloak) ===
+        public float EvasiveCloakChance = 0.3f;        // probability to cloak WHEN a hit/threat triggers it (sneakier enemy = higher)
+        public float InvisibleHitRevealChance = 0.7f;  // chance a hit taken while cloaked ends it early
+        public int EvasiveThreatRange = 0;             // >0 = also cloak when the player is within this many px (melee approach)
+        public int EvasiveCloakDurationTicks = 300;    // how long each cloak lasts (set equal to the cooldown by EvasiveCloak)
+        public int EvasiveCloakCooldownTicks = 300;    // downtime after a reveal before it can cloak again (balances easy cloakers)
+        private int EvasiveCloakTimer = 0;             // ticks left of the current cloak (server-only)
+        private int EvasiveCloakCooldown = 0;          // ticks left of post-reveal downtime (server-only)
         public bool IsInvisible = false;
         // Draws the same ghostly afterimage/shimmer used while invisible, without changing alpha or targeting.
         public bool HasGhostAfterimages = false;
@@ -970,8 +1091,10 @@ namespace tsorcRevamp.NPCs
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (npc.justHit)
+                if (npc.justHit && InvisibilityStyle != InvisibilityStyle.Evasive)
                 {
+                    // Random/Predator: any hit snaps fully visible. Evasive owns its own hit handling (a hit is a
+                    // cloak TRIGGER when visible, and only a CHANCE to reveal when already cloaked) — see below.
                     if (InvisibilityStyle == InvisibilityStyle.Predator)
                     {
                         InvisibilityRevealTimer = 90;
@@ -986,6 +1109,10 @@ namespace tsorcRevamp.NPCs
                 else if (InvisibilityStyle == InvisibilityStyle.Predator)
                 {
                     SetInvisible(npc, ShouldPredatorBeInvisible(npc));
+                }
+                else if (InvisibilityStyle == InvisibilityStyle.Evasive)
+                {
+                    UpdateEvasiveInvisibility(npc);
                 }
                 else if (Main.rand.NextBool(GoVisibleChance))
                 {
@@ -1052,6 +1179,77 @@ namespace tsorcRevamp.NPCs
             return Math.Abs(npc.velocity.X) > 0.25f || Math.Abs(npc.velocity.Y) > 0.25f;
         }
 
+        // Evasive style: cloak is a reaction to danger, not an ambient flicker. Runs only when not justHit-handled
+        // above (which it isn't, since Evasive is excluded there) — this method handles hits itself.
+        //  • Cloaked: count the guaranteed-cloak floor down; a hit rolls InvisibleHitRevealChance to drop the cloak,
+        //    and once past the floor GoVisibleChance is the per-frame reveal roll (so it tunes cloak duration).
+        //  • Visible: a hit OR a nearby threat rolls GoInvisibleChance to cloak (and arms the floor).
+        private void UpdateEvasiveInvisibility(NPC npc)
+        {
+            if (IsInvisible)
+            {
+                if (EvasiveCloakTimer > 0)
+                {
+                    EvasiveCloakTimer--;
+                }
+
+                // A poise break always rips the cloak off (the two systems talk via the shared StaggerTimer). An
+                // ordinary hit only has a chance — and higher-tier cloakers (see EvasiveCloak) resist it more.
+                bool staggerReveal = StaggerTimer > 0;
+                bool hitReveal = npc.justHit && Main.rand.NextFloat() < InvisibleHitRevealChance;
+                if (staggerReveal || hitReveal || EvasiveCloakTimer == 0) // staggered, shot out early, or full duration elapsed
+                {
+                    SetInvisible(npc, false);
+                    EvasiveCloakCooldown = EvasiveCloakCooldownTicks; // downtime before it can cloak again
+                }
+                else
+                {
+                    ApplyInvisibilityAlpha(npc, false);
+                }
+            }
+            else
+            {
+                if (EvasiveCloakCooldown > 0)
+                {
+                    EvasiveCloakCooldown--;
+                }
+
+                bool triggered = (npc.justHit || EvasiveThreatNearby(npc)) && EvasiveCloakCooldown == 0;
+                if (triggered && Main.rand.NextFloat() < EvasiveCloakChance)
+                {
+                    SetInvisible(npc, true);
+                    EvasiveCloakTimer = EvasiveCloakDurationTicks;
+                }
+                else
+                {
+                    ApplyInvisibilityAlpha(npc, false);
+                }
+            }
+        }
+
+        // A friendly projectile heading roughly at this NPC, OR (when EvasiveThreatRange > 0) the target player within
+        // that range. Mirrors the incoming-projectile predicate used by the dodge/jump-to-evade scan.
+        private bool EvasiveThreatNearby(NPC npc)
+        {
+            if (EvasiveThreatRange > 0 && npc.HasValidTarget &&
+                npc.DistanceSQ(Main.player[npc.target].Center) < EvasiveThreatRange * EvasiveThreatRange)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile proj = Main.projectile[i];
+                if (proj.active && proj.friendly && proj.damage > 0 && proj.DistanceSQ(npc.Center) < 40000 &&
+                    UsefulFunctions.CompareAngles(proj.velocity, UsefulFunctions.Aim(proj.Center, npc.Center, 1)) < 0.3f)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private bool IsUsingAttackTell()
         {
             if (ArcherAimDirection != 0f || FighterRangedStandShotsRemaining > 0 || TeleportCountdown > 0 || TeleportAppearanceTimer > 0)
@@ -1106,6 +1304,7 @@ namespace tsorcRevamp.NPCs
             }
 
             UpdatePoise(npc);
+            UpdatePreAttackJump(npc);
 
             // Confusion: the mod's custom AI computes movement toward the player and ignores npc.confused, so a
             // confused enemy still walked straight at you (only showing the "?" emote). Here, after the AI has
@@ -1165,7 +1364,7 @@ namespace tsorcRevamp.NPCs
                 UpdateInvisibility(npc);
             }
 
-            if (CanGoInvisible || HasGhostAfterimages)
+            if (CanGoInvisible || HasGhostAfterimages || EvasiveAfterimagesActive)
             {
                 UpdateInvisibilityTrail(npc);
             }
@@ -2025,7 +2224,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
-            if (DodgeTimer > 0)
+            if (DodgeTimer > 0 || QuickStepTimer > 0) // quick step passes through the player (no contact damage)
             {
                 return false;
             }
@@ -2768,7 +2967,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool? CanBeHitByItem(NPC npc, Player player, Item item)
         {
-            if (DodgeTimer > 0)
+            if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / quick step
             {
                 return false;
             }
@@ -2777,7 +2976,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool? CanBeHitByProjectile(NPC npc, Projectile projectile)
         {
-            if (DodgeTimer > 0)
+            if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / quick step
             {
                 return false;
             }
@@ -2968,9 +3167,26 @@ namespace tsorcRevamp.NPCs
             // Poise bar takes priority over the stamina bar — they share the same container so only one shows at a time.
             if (globalNPC.PoiseBarVisible)
             {
-                float poisePercentage = globalNPC.StaggerTimer > 0 ? 1f : globalNPC.Poise / globalNPC.EffectivePoiseMax;
-                // Flash brighter while actively staggered so the "broken" window reads clearly.
-                Color poiseColor = globalNPC.StaggerTimer > 0 && Main.GameUpdateCount % 10 < 5 ? Color.Yellow : Color.Orange;
+                // The bar's COLOUR tells you whether the enemy can be staggered right now:
+                //   orange = vulnerable (poise filling toward a break);
+                //   white  = can't take stagger damage — hyperarmor (committed attack) OR the post-stagger recovery i-frames;
+                //   yellow (flashing) = actively staggered/broken.
+                // The "can't stagger" states show a full/locked bar so the white reads as a shield, not an empty sliver.
+                bool cantStagger = globalNPC.AttackCommitted || globalNPC.PoiseBreakCooldown > 0;
+                float poisePercentage = (globalNPC.StaggerTimer > 0 || globalNPC.PoiseBreakCooldown > 0) ? 1f : globalNPC.Poise / globalNPC.EffectivePoiseMax;
+                Color poiseColor;
+                if (globalNPC.StaggerTimer > 0)
+                {
+                    poiseColor = Main.GameUpdateCount % 10 < 5 ? Color.Yellow : Color.Orange; // flash while broken
+                }
+                else if (cantStagger)
+                {
+                    poiseColor = Color.White; // hyperarmor / recovery i-frames
+                }
+                else
+                {
+                    poiseColor = Color.Orange;
+                }
                 DrawResourceBar(npc, poisePercentage, poiseColor);
             }
             else if (globalNPC.DodgeCooldown != 0)
@@ -3022,7 +3238,7 @@ namespace tsorcRevamp.NPCs
         public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             bool drawInvisibleAfterimages = CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs();
-            if (!drawInvisibleAfterimages && !HasGhostAfterimages)
+            if (!drawInvisibleAfterimages && !HasGhostAfterimages && !EvasiveAfterimagesActive)
             {
                 return;
             }

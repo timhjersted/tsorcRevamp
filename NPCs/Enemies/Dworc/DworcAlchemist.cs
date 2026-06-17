@@ -42,7 +42,9 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                 NPC.knockBackResist = 0.1f;
             }
 
+            // "Poison Strike" — fast aimed poison bolt
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, SoundID.Item20);
+            // "Poison Storm" — heavy lobbed storm ball (long cooldown)  [magic-ring candidate: set commitFraction: 0.5f if this is the shrinking ring]
             UsefulFunctions.AddAttack(NPC, 700, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, SoundID.Item100);
 
             // Step 6 caster lever: remember last-known position before patrolling.
@@ -51,10 +53,12 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanGoInvisible = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().InvisibleAlpha = 220;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoInvisibleChance = 50;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoVisibleChance = 200;
+            EvasiveProfile.EvasiveCloak(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), cloakChance: 0.45f, threatRange: 220);
+            // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
+            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
+            EvasiveProfile.DworcShaman(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>());
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanSelfHeal = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 100;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 30;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanHealAllies = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesChance = 500;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesRange = 40;
@@ -135,6 +139,15 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
         }
 
         #endregion
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
 
         public override void AI()
         {

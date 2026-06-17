@@ -325,6 +325,13 @@ namespace tsorcRevamp.NPCs
                 topSpeed *= 1.25f;
                 acceleration *= 1.35f;
             }
+            // RunningDash burst: a grounded sprint toward the player. Driven as a top-speed multiplier (NOT a velocity
+            // override) so whichever mover is active stays in control of pursuit + terrain. Telegraph phase excluded.
+            if (globalNPC.InSustainedEvasion && globalNPC.CurrentEvasion == EvasiveBehavior.RunningDash && !globalNPC.EvasiveTelegraphing)
+            {
+                topSpeed *= globalNPC.EvasiveDashSpeedMult;
+                acceleration *= globalNPC.EvasiveDashSpeedMult;
+            }
 
             if (!globalNPC.Initialized)
             {
@@ -510,8 +517,13 @@ namespace tsorcRevamp.NPCs
                             if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
                         }
                     }
-                    // Don't attack while patrolling (no LOS).
-                    globalNPC.ProjectileTimer = 0f;
+                    // Don't advance an LOS-REQUIRING attack while patrolling (it gave up / can't see the target).
+                    // Attacks that don't need LOS keep charging + firing (so AOEs like the poison storm aren't frozen
+                    // when the player ducks out of sight). Aim direction always clears (aiming needs LOS).
+                    if (globalNPC.AttackList.Count == 0 || globalNPC.CurrentAttack.needsLineOfSight)
+                    {
+                        globalNPC.ProjectileTimer = 0f;
+                    }
                     globalNPC.ArcherAimDirection = 0f;
                     LogFighterNavDebug(npc, globalNPC, fsmLos);
                     return;
@@ -661,6 +673,21 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            // Quick step: a dodgeroll-style i-frame dash WITHOUT the sprite rotation (a flat horizontal step). The
+            // i-frames + pass-through are handled by the CanBeHit*/CanHitPlayer hooks reading QuickStepTimer.
+            if (globalNPC.QuickStepTimer > 0)
+            {
+                npc.velocity.X = globalNPC.QuickStepSpeed * globalNPC.QuickStepDir;
+                globalNPC.QuickStepTimer--;
+                if (globalNPC.QuickStepTimer == 0)
+                {
+                    npc.velocity.X = 0;
+                }
+            }
+
+            // Advance the multi-tick evasion windows (RunningDash telegraph→burst, RetreatAndShoot back-off).
+            UpdateEvasion(npc, globalNPC);
+
             //Stop moving when teleporting, and handle the logic to execute it
             if (globalNPC.TeleportCountdown > 0)
             {
@@ -703,8 +730,8 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            //Block firing and reset cooldowns if it's busy doing other things (incl. fleeing)
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0)
+            //Block firing and reset cooldowns if it's busy doing other things (incl. fleeing / evading)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.InSustainedEvasion)
             {
                 globalNPC.ProjectileTimer = 0;
                 globalNPC.ArcherAimDirection = 0;
@@ -721,7 +748,10 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            intent.SeizesBody = teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0;
+            // Quick step drives its own velocity; the running-dash TELEGRAPH holds the enemy still while it flashes
+            // (the burst itself does NOT seize the body — it runs via the topSpeed multiplier so the mover pursues).
+            bool dashTelegraphHold = globalNPC.InSustainedEvasion && globalNPC.CurrentEvasion == EvasiveBehavior.RunningDash && globalNPC.EvasiveTelegraphing;
+            intent.SeizesBody = teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
         }
 
         private static void SpawnHighArcPounceTelegraph(NPC npc, tsorcRevampGlobalNPC globalNPC)
@@ -857,7 +887,9 @@ namespace tsorcRevamp.NPCs
             //Dodging — only while actively pursuing (not searching/patrolling/fleeing/teleporting)
             if (globalNPC.PursuitState == PursuitState.Pursue && !fleeing && globalNPC.TeleportCountdown == 0 && globalNPC.TeleportAppearanceTimer == 0 && globalNPC.DodgeCooldown == 0)
             {
-                if (canDodgeroll && npc.Distance(Main.player[npc.target].Center) > 160)
+                // Roll OR jump out of the way of an incoming aimed projectile. canDodgeroll grants both options (the
+                // original roll-or-jump 50/50); CanJumpToEvade is an additive opt-in so a non-rolling enemy can still pre-jump.
+                if ((canDodgeroll || globalNPC.CanJumpToEvade) && npc.Distance(Main.player[npc.target].Center) > 160)
                 {
                     for (int i = 0; i < Main.maxProjectiles; i++)
                     {
@@ -875,14 +907,21 @@ namespace tsorcRevamp.NPCs
                                         break;
                                     }
                                 }
-                                //Randomly choose whether to roll or jump
-                                if (Main.rand.NextBool() && heightToJump)
+                                if (canDodgeroll)
+                                {
+                                    //Randomly choose whether to roll or jump (jump needs headroom, else roll) — unchanged
+                                    if (Main.rand.NextBool() && heightToJump)
+                                    {
+                                        npc.velocity.Y -= 8;
+                                    }
+                                    else
+                                    {
+                                        globalNPC.DodgeTimer = 30;
+                                    }
+                                }
+                                else if (heightToJump) //CanJumpToEvade-only: jump when there's room, otherwise hold
                                 {
                                     npc.velocity.Y -= 8;
-                                }
-                                else
-                                {
-                                    globalNPC.DodgeTimer = 30;
                                 }
 
                                 globalNPC.DodgeCooldown = (int)(300 * (1 - globalNPC.Agility));
@@ -1128,7 +1167,10 @@ namespace tsorcRevamp.NPCs
             globalNPC.AttackSucceeded = -1;
 
             //Do not fire if it needs line of sight and does not have it
-            if (globalNPC.CurrentAttack.needsLineOfSight && !Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+            // True (hitscan) LOS: CanHitLine is the strict straight-line check (blocked by solids, ignores platforms),
+            // i.e. "is there a clear shot?" — NOT the permissive CanHit that tolerates stepping over terrain. So a
+            // needsLineOfSight attack (a terrain-killed projectile: spear, bomb, etc.) only fires with a real clear path.
+            if (globalNPC.CurrentAttack.needsLineOfSight && !Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
             {
                 actuallyFire = false;
             }
@@ -1158,6 +1200,16 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
+
+            // Poise flags (Level 2): the telegraph window is the last `telegraphTime` ticks before the shot. Split it at
+            // commitFraction — TELEGRAPHING (poise builds, a stagger cancels it) until the commit point, then COMMITTED
+            // (hyper-armor, fires through). Before the flash the enemy is neutral (free to evade); a stagger there still
+            // cancels the pending shot via the ProjectileTimer reset in TriggerStagger.
+            int flashTick = globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime;
+            int commitTick = flashTick + (int)Math.Round(globalNPC.CurrentAttack.telegraphTime * globalNPC.CurrentAttack.commitFraction);
+            bool inTell = globalNPC.ProjectileTimer > flashTick;
+            globalNPC.AttackTelegraphing = inTell && globalNPC.ProjectileTimer <= commitTick;
+            globalNPC.AttackCommitted = inTell && globalNPC.ProjectileTimer > commitTick;
 
             //If it's supposed to stop moving when firing, then do so
             if (globalNPC.CanStopToFire && globalNPC.CurrentAttack.stopBefore && !globalNPC.CanPassThroughWalls)
@@ -1291,8 +1343,13 @@ namespace tsorcRevamp.NPCs
             public Func<NPC, bool> condition;
             public float stopBeforeChance;
             public int telegraphTime;
+            // Fraction of the telegraph window (flash→fire) that is still TELEGRAPHING (cancellable) before the attack
+            // COMMITS to hyper-armor. 0 = committed the instant it flashes ("after the flash it's committed"); 0.5 =
+            // first half of the tell is cancellable, second half committed (e.g. a shrinking magic ring); 1 = cancellable
+            // right up to the shot. Drives AttackTelegraphing/AttackCommitted in SimpleProjectile → the poise system.
+            public float commitFraction;
 
-            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f, int? telegraphTime = null)
+            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f)
             {
                 type = projectileType;
                 this.timerCap = timerCap;
@@ -1310,6 +1367,7 @@ namespace tsorcRevamp.NPCs
                 this.condition = condition;
                 this.stopBeforeChance = stopBeforeChance;
                 this.telegraphTime = telegraphTime ?? ProjectileTelegraphTime;
+                this.commitFraction = commitFraction;
             }
         }
 
@@ -1750,27 +1808,31 @@ namespace tsorcRevamp.NPCs
             }
 
         }
-        #region Fighter Evasive On-Hit Reaction
+        #region Evasive On-Hit Reaction
+        // Reusable scratch buffer for building the weighted behavior pool (single-threaded AI, so a shared static is safe).
+        private static readonly List<EvasiveBehavior> EvasionPool = new List<EvasiveBehavior>(4);
+
         /// <summary>
-        /// Occasional evasive reaction when a fighter is hit: hop/dash/leap away, or teleport — and if it's being pinned
-        /// against a wall, escape TOWARD the player instead. This is PURELY repositioning: it never cancels an attack
-        /// (that is the poise stagger's job) and only fires in pure neutral — never during a windup/attack (InAttack) or
-        /// while staggered. <paramref name="melee"/> lets ranged hits trigger the stand-and-fire snap-out. Shared by the
-        /// Red Knight family for now; intended to grow into the general fighter evasion layer. See
-        /// project_poise_stagger_system.
+        /// Occasional evasive reaction when an enemy is hit in neutral: it builds a weighted pool from whichever
+        /// <c>Evasive*</c> capability flags the enemy has enabled (see <see cref="EvasiveProfile"/>) and samples one.
+        /// PURELY repositioning — it never cancels an attack (the poise stagger does that) and only fires in pure
+        /// neutral, never during a windup/attack (InAttack) or while staggered. If pinned against a wall it escapes
+        /// TOWARD the player instead. <paramref name="melee"/> selects which behaviors are eligible (each carries its
+        /// own <see cref="EvasiveHitSource"/>). See project_poise_stagger_system.
         /// </summary>
-        public static void FighterEvasiveOnHit(NPC npc, bool melee)
+        public static void EvasiveOnHit(NPC npc, bool melee)
         {
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            // Never react while attacking (windup or committed) or staggered — interruption is the poise stagger's job.
-            if (globalNPC.InAttack || globalNPC.StaggerTimer > 0)
+            // Never react while attacking (windup or committed), staggered, or already mid-evasion (don't let a hit
+            // restart/override an in-progress dash/retreat/quick-step) — interruption is the poise stagger's job.
+            if (globalNPC.InAttack || globalNPC.StaggerTimer > 0 || globalNPC.InEvasion)
             {
                 return;
             }
 
-            // Getting shot out of a stand-and-fire / post-attack pause clears those pause flags so the shared base
-            // react-roll below can reposition the archer, instead of a separate 50%-gated snap-out reaction.
+            // Getting shot out of a stand-and-fire / post-attack pause clears those pause flags so the react-roll
+            // below can reposition the archer, instead of a separate 50%-gated snap-out reaction.
             if (!melee && (globalNPC.FighterRangedHitInterruptedPause || globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0))
             {
                 globalNPC.FighterRangedHitInterruptedPause = false;
@@ -1778,7 +1840,7 @@ namespace tsorcRevamp.NPCs
                 globalNPC.FighterRangedStandShotsRemaining = 0;
             }
 
-            // Rate-limit so a fighter doesn't react to every hit of a fast combo.
+            // Rate-limit so an enemy doesn't react to every hit of a fast combo.
             if (globalNPC.FighterEvasionCooldown > 0)
             {
                 return;
@@ -1790,38 +1852,88 @@ namespace tsorcRevamp.NPCs
                 return;
             }
 
-            // Only react to a fraction of hits — keeps the knight slippery without spasming.
+            // Build the weighted pool from this enemy's enabled behaviors that match this hit type. Weights reproduce
+            // the original 5-case spread: RetreatJump (3 cosmetic variants) 3/5, RetreatDash 1/5, TeleportAway 1/5.
+            EvasionPool.Clear();
+            AddEvasion(globalNPC.EvasiveRetreatJump, EvasiveHitSource.Both, 3, EvasiveBehavior.RetreatJump, melee);
+            AddEvasion(globalNPC.EvasiveRetreatDash, EvasiveHitSource.Both, 1, EvasiveBehavior.RetreatDash, melee);
+            AddEvasion(globalNPC.EvasiveTeleportAway, EvasiveHitSource.Both, 1, EvasiveBehavior.TeleportAway, melee);
+            AddEvasion(globalNPC.EvasiveLeapForward, EvasiveHitSource.Ranged, 1, EvasiveBehavior.LeapForward, melee);
+            AddEvasion(globalNPC.EvasiveRunningDash, EvasiveHitSource.Both, 1, EvasiveBehavior.RunningDash, melee);
+            AddEvasion(globalNPC.EvasiveRetreatAndShoot, EvasiveHitSource.Melee, 1, EvasiveBehavior.RetreatAndShoot, melee);
+            AddEvasion(globalNPC.EvasiveQuickStep, EvasiveHitSource.Both, 2, EvasiveBehavior.QuickStep, melee);
+            if (EvasionPool.Count == 0)
+            {
+                return;
+            }
+
+            // Only react to a fraction of hits — keeps the enemy slippery without spasming.
             if (!Main.rand.NextBool(5))
             {
                 return;
             }
 
             npc.TargetClosest(true);
-            int away = -npc.direction; // npc.direction faces the player after TargetClosest
+            ExecuteEvasion(npc, globalNPC, EvasionPool[Main.rand.Next(EvasionPool.Count)], melee);
+
+            globalNPC.FighterEvasionCooldown = 40; // ~0.66s before another reaction
+            npc.netUpdate = true;
+        }
+
+        // Adds an enabled behavior to the pool `weight` times, but only if its hit-source matches this hit.
+        private static void AddEvasion(bool enabled, EvasiveHitSource source, int weight, EvasiveBehavior behavior, bool melee)
+        {
+            if (!enabled)
+            {
+                return;
+            }
+            if (source == EvasiveHitSource.Melee && !melee)
+            {
+                return;
+            }
+            if (source == EvasiveHitSource.Ranged && melee)
+            {
+                return;
+            }
+            for (int i = 0; i < weight; i++)
+            {
+                EvasionPool.Add(behavior);
+            }
+        }
+
+        // Executes one instantaneous evasive behavior. Assumes npc.direction already faces the player (TargetClosest).
+        private static void ExecuteEvasion(NPC npc, tsorcRevampGlobalNPC globalNPC, EvasiveBehavior behavior, bool melee)
+        {
+            int away = -npc.direction;
             bool grounded = npc.velocity.Y == 0f;
 
-            switch (Main.rand.Next(5))
+            switch (behavior)
             {
-                case 0: // small hop back
-                    npc.velocity.Y = -6f;
-                    npc.velocity.X = 7f * away;
+                case EvasiveBehavior.RetreatJump: // hop / big leap / high-arc drift (was switch cases 0,1,3)
+                    switch (Main.rand.Next(3))
+                    {
+                        case 0: // small hop back
+                            npc.velocity.Y = -6f;
+                            npc.velocity.X = 7f * away;
+                            break;
+                        case 1: // big leap back (toned down)
+                            npc.velocity.Y = -8f;
+                            npc.velocity.X = 7f * away;
+                            break;
+                        case 2: // jump high, drifting back
+                            npc.velocity.Y = -11f;
+                            npc.velocity.X = 4f * away;
+                            break;
+                    }
                     break;
-                case 1: // big leap back (toned down)
-                    npc.velocity.Y = -8f;
-                    npc.velocity.X = 7f * away;
-                    break;
-                case 2: // low dash back
+                case EvasiveBehavior.RetreatDash: // low dash back (was case 2)
                     npc.velocity.X = 8f * away;
                     if (grounded)
                     {
                         npc.velocity.Y = -3f;
                     }
                     break;
-                case 3: // jump high, drifting back
-                    npc.velocity.Y = -11f;
-                    npc.velocity.X = 4f * away;
-                    break;
-                case 4: // teleport away if able, else leap back
+                case EvasiveBehavior.TeleportAway: // teleport away if able, else leap back (was case 4)
                     if (globalNPC.CanTeleport)
                     {
                         TeleportImmediately(npc, 20, melee);
@@ -1832,10 +1944,105 @@ namespace tsorcRevamp.NPCs
                         npc.velocity.X = 8f * away;
                     }
                     break;
+                case EvasiveBehavior.LeapForward: // lunge TOWARD the player to close the gap (instant, arced spread)
+                    npc.velocity.X = -away * Main.rand.NextFloat(9f, 12f); // -away = toward the player
+                    npc.velocity.Y = Main.rand.NextFloat(-4f, -7f);
+                    break;
+                case EvasiveBehavior.RunningDash: // arm the flash telegraph → grounded speed burst (sustained)
+                    globalNPC.InSustainedEvasion = true;
+                    globalNPC.CurrentEvasion = EvasiveBehavior.RunningDash;
+                    globalNPC.EvasiveTelegraphing = true;
+                    globalNPC.EvasiveTimer = globalNPC.EvasiveDashTelegraphTicks;
+                    break;
+                case EvasiveBehavior.RetreatAndShoot: // arm a forced-flee back-off window (sustained)
+                    globalNPC.InSustainedEvasion = true;
+                    globalNPC.CurrentEvasion = EvasiveBehavior.RetreatAndShoot;
+                    globalNPC.EvasiveTelegraphing = false;
+                    globalNPC.EvasiveTimer = globalNPC.EvasiveRetreatTicks;
+                    break;
+                case EvasiveBehavior.QuickStep: // arm an i-frame quick step (mirrors the dodgeroll, no rotation)
+                    // Step toward the player when far (close the gap / dodge through), away when point-blank.
+                    globalNPC.QuickStepDir = npc.Distance(Main.player[npc.target].Center) < 120f ? away : -away;
+                    globalNPC.QuickStepTimer = globalNPC.QuickStepTicks;
+                    break;
+            }
+        }
+
+        // Drives the multi-tick evasion windows each AI tick. RunningDash: hold + flash during the telegraph, then a
+        // hyper-armored grounded burst (the actual speed comes from the topSpeed multiplier in BasicAI; the mover keeps
+        // pursuing). RetreatAndShoot: seizes the body and drives a grounded back-off away from the player, firing
+        // resuming when the window ends. QuickStep has its own exec block above and is not handled here.
+        private static void UpdateEvasion(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            if (!globalNPC.InSustainedEvasion)
+            {
+                return;
             }
 
-            globalNPC.FighterEvasionCooldown = 40; // ~0.66s before another reaction
-            npc.netUpdate = true;
+            if (globalNPC.EvasiveTimer > 0)
+            {
+                globalNPC.EvasiveTimer--;
+            }
+
+            switch (globalNPC.CurrentEvasion)
+            {
+                case EvasiveBehavior.RunningDash:
+                    if (globalNPC.EvasiveTelegraphing)
+                    {
+                        if (globalNPC.EvasiveTimer % 6 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            SpawnEvasiveTelegraph(npc);
+                        }
+                        if (globalNPC.EvasiveTimer == 0) // telegraph done → start the burst
+                        {
+                            globalNPC.EvasiveTelegraphing = false;
+                            globalNPC.EvasiveTimer = globalNPC.EvasiveDashTicks;
+                            npc.TargetClosest(true);
+                            npc.netUpdate = true;
+                        }
+                    }
+                    else
+                    {
+                        npc.knockBackResist = 0f; // hyper-armor: no knockback for the duration of the burst
+                        if (globalNPC.EvasiveTimer == 0)
+                        {
+                            EndSustainedEvasion(npc, globalNPC);
+                        }
+                    }
+                    break;
+                case EvasiveBehavior.RetreatAndShoot:
+                    // Drive a grounded back-off directly (SeizesBody makes the mover yield). Firing is blocked while
+                    // InSustainedEvasion, so the enemy backs off, then resumes shooting at range when the window ends.
+                    npc.TargetClosest(true);
+                    npc.velocity.X = globalNPC.EvasiveRetreatSpeed * -npc.direction; // -direction = away from the player
+                    if (globalNPC.EvasiveTimer == 0)
+                    {
+                        EndSustainedEvasion(npc, globalNPC);
+                    }
+                    break;
+                default:
+                    EndSustainedEvasion(npc, globalNPC);
+                    break;
+            }
+        }
+
+        private static void EndSustainedEvasion(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            // RunningDash zeroed knockBackResist for hyper-armor; restore the captured SetDefaults value. Poise enemies
+            // also get this back at the top of BasicAI each tick, but non-poise enemies rely on this restore.
+            if (globalNPC.CurrentEvasion == EvasiveBehavior.RunningDash && globalNPC.BaseKnockBackResist >= 0f)
+            {
+                npc.knockBackResist = globalNPC.BaseKnockBackResist;
+            }
+            globalNPC.InSustainedEvasion = false;
+            globalNPC.EvasiveTelegraphing = false;
+            globalNPC.EvasiveTimer = 0;
+        }
+
+        private static void SpawnEvasiveTelegraph(NPC npc)
+        {
+            Vector2 spawnPosition = npc.Center + new Vector2(Main.rand.NextFloat(-npc.width / 2f, npc.width / 2f), Main.rand.NextFloat(-npc.height / 2f, npc.height / 2f));
+            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer);
         }
 
         /// <summary>

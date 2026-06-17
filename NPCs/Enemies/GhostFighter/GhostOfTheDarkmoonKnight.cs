@@ -32,10 +32,12 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             AnimationType = 28;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
-            UsefulFunctions.AddAttack(NPC, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, SoundID.Item17, stopBeforeFiring: false);
+            // "Shadow Shot" — commitFraction 0.5: first half of the tell cancellable (by magic), second half hyperarmor.
+            UsefulFunctions.AddAttack(NPC, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, SoundID.Item17, stopBeforeFiring: false, commitFraction: 0.5f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
+            EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
             globalNPC.HasGhostAfterimages = true;
             // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
@@ -126,6 +128,15 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 3));
 
 
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public override void AI()

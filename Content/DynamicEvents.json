@@ -3901,34 +3901,5 @@
     ],
     "ExtraLootItems": null,
     "ExtraLootAmounts": null
-  },
-  {
-    "EventID": "77bac78c-cd50-4d65-8542-dffd0f2f4450",
-    "CenterX": 4904.0,
-    "CenterY": 869.0,
-    "Radius": 160000.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": false,
-    "TextToDisplay": null,
-    "TextColorHex": null,
-    "WorldCondition": "OnlyAdventureMapCondition",
-    "MapCondition": "",
-    "CustomAction": null,
-    "SingleNpcMarker": true,
-    "Npcs": [
-      {
-        "NpcName": "TravellingMerchant",
-        "SpawnX": 4904.0,
-        "SpawnY": 869.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ],
-    "ExtraLootItems": null,
-    "ExtraLootAmounts": null
   }
 ]

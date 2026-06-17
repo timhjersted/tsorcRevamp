@@ -34,6 +34,9 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
             globalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
+            // Melee rusher: close the gap when shot, and occasionally flash-charge the player (one-off, inline flags).
+            globalNPC.EvasiveLeapForward = true;
+            globalNPC.EvasiveRunningDash = true;
 
             AnimationType = NPCID.Skeleton;
 
@@ -93,6 +96,15 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
         }
 
         #endregion
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
 
         public override void AI()
         {

@@ -31,8 +31,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             NPC.knockBackResist = 0.03f;
             NPC.damage = 48;
             NPC.defense = 80; //was 105
-            NPC.height = 54;
-            NPC.width = 54;
+            NPC.height = 46;
+            NPC.width = 38;
             NPC.lifeMax = 2500;
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower = 11f;
             globalNPC.MaxJumpBoost = 7f;
-            globalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
+            globalNPC.NavSearchRadius = 90; // Phase 2: SmartFighter4AI movement
             globalNPC.CanUseRopes = true;
             globalNPC.CanDoubleJump = true;
             globalNPC.DoubleJumpPower = 7f;
@@ -143,6 +143,10 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         //float drownTimer;
         //float drownTimerMax;
         //float tBored;
+
+        private const int BreathWindupStart = 540;
+        private const int BreathWindupEnd = 635;
+        private const int BreathCommitTime = 636;
 
 
 
@@ -265,13 +269,13 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center);
                 }
 
-                if (NPC.localAI[2] >= 300 && NPC.life >= NPC.lifeMax / 5)
+                if (NPC.localAI[2] >= BreathWindupStart && NPC.life >= NPC.lifeMax / 5)
                 {
                     //BREATH ATTACK                  
-                    if (NPC.localAI[2] >= 301 && NPC.localAI[2] <= 395 && NPC.Distance(player.Center) > 20 && NPC.life >= NPC.lifeMax / 5)
+                    if (NPC.localAI[2] >= BreathWindupStart + 1 && NPC.localAI[2] <= BreathWindupEnd && NPC.Distance(player.Center) > 20 && NPC.life >= NPC.lifeMax / 5)
                     {
 
-                        if (NPC.localAI[2] == 301)
+                        if (NPC.localAI[2] == BreathWindupStart + 1)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item6 with { Volume = 0.01f, Pitch = -0.5f }, NPC.Center); //magic mirror
                         }
@@ -291,7 +295,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                         }
 
                     }
-                    if (NPC.localAI[2] == 396)
+                    if (NPC.localAI[2] == BreathCommitTime)
                     {
                         breath = true;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit30 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center); //3, 21 demon; 3,30 nimbus
@@ -306,7 +310,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
 
                         //play breath sound
-                        if (Main.rand.NextBool(3))
+                        if (breathCD % 20 == 0)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
                         }
@@ -327,11 +331,11 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
                         if (breathCD == 120)
                         {
-                            tsorcRevampAIs.TeleportImmediately(NPC, 15, true);
+                            BreathSideTeleport(player);
                         }
                         if (breathCD == 60)
                         {
-                            tsorcRevampAIs.TeleportImmediately(NPC, 15, true);
+                            BreathSideTeleport(player);
                         }
 
                     }
@@ -511,6 +515,76 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         }
 
         #endregion
+
+        private void BreathSideTeleport(Player player)
+        {
+            int side = NPC.Center.X < player.Center.X ? 1 : -1;
+            float[] distances = new float[] { 120f, 160f, 200f };
+            int[] verticalOffsets = new int[] { 0, -3, 3, -6, 6 };
+
+            for (int distanceIndex = 0; distanceIndex < distances.Length; distanceIndex++)
+            {
+                for (int verticalIndex = 0; verticalIndex < verticalOffsets.Length; verticalIndex++)
+                {
+                    Vector2 searchPoint = player.Center + new Vector2(side * distances[distanceIndex], verticalOffsets[verticalIndex] * 16f);
+                    if (TryFindBreathTeleportPosition(searchPoint, player, out Vector2 teleportPosition))
+                    {
+                        SpawnBreathTeleportDust(NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                        NPC.position = teleportPosition;
+                        NPC.velocity = Vector2.Zero;
+                        NPC.TargetClosest(true);
+                        NPC.netUpdate = true;
+                        SpawnBreathTeleportDust(NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                        return;
+                    }
+                }
+            }
+
+            tsorcRevampAIs.TeleportImmediately(NPC, 15, true);
+        }
+
+        private bool TryFindBreathTeleportPosition(Vector2 searchPoint, Player player, out Vector2 teleportPosition)
+        {
+            int tileX = (int)(searchPoint.X / 16f);
+            int startTileY = (int)(searchPoint.Y / 16f) - 8;
+
+            for (int yOffset = 0; yOffset <= 18; yOffset++)
+            {
+                int groundTileY = startTileY + yOffset;
+                if (!WorldGen.InWorld(tileX, groundTileY, 10) || !UsefulFunctions.IsTileReallySolid(tileX, groundTileY))
+                {
+                    continue;
+                }
+
+                Vector2 candidate = new Vector2(tileX * 16 - NPC.width / 2f, groundTileY * 16 - NPC.height);
+                if (Collision.SolidCollision(candidate, NPC.width, NPC.height))
+                {
+                    continue;
+                }
+
+                if (!Collision.CanHit(candidate, NPC.width, NPC.height, player.position, player.width, player.height))
+                {
+                    continue;
+                }
+
+                teleportPosition = candidate;
+                return true;
+            }
+
+            teleportPosition = Vector2.Zero;
+            return false;
+        }
+
+        private void SpawnBreathTeleportDust(Vector2 center)
+        {
+            for (int i = 0; i < 18; i++)
+            {
+                Dust dust = Dust.NewDustPerfect(center + Main.rand.NextVector2Circular(NPC.width / 2f, NPC.height / 2f), DustID.CursedTorch, Main.rand.NextVector2Circular(3f, 3f), 100, Color.GreenYellow, 1.5f);
+                dust.noGravity = true;
+            }
+        }
 
         #region FindFrame
         public override void FindFrame(int currentFrame)

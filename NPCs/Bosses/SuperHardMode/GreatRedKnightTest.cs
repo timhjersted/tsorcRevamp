@@ -57,6 +57,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             redKnightGlobalNPC.Agility = 0.45f;
+            EvasiveProfile.RedKnight(redKnightGlobalNPC); // hop/leap/dash away, or blink away when able
 
             // Navigation tuning: maximum jumps, double jump, and ledge routing
             redKnightGlobalNPC.MaxJumpPower = 12f;
@@ -86,12 +87,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region On Hit
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterEvasiveOnHit(NPC, true);
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterEvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
         #endregion
         

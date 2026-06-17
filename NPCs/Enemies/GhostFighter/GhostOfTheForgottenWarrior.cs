@@ -53,10 +53,13 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 warriorDamage = 50; // didn't have scaling damage before
             }
 
-            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemyEphemeralThrowingAxeProj>(), warriorDamage, 8, SoundID.Item17, telegraphColor: Color.Orange, stopBeforeFiring: false, telegraphTime: 25);
+            // "Ephemeral Axe Throw" — commitFraction 0.5: first half of the tell is stagger-cancellable (by magic, per
+            // the ghost poise), second half is committed/hyperarmor.
+            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemyEphemeralThrowingAxeProj>(), warriorDamage, 8, SoundID.Item17, telegraphColor: Color.Orange, stopBeforeFiring: false, telegraphTime: 25, commitFraction: 0.5f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
+            EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
             globalNPC.HasGhostAfterimages = true;
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;
@@ -100,6 +103,15 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
 
         float topSpeed = 0.8f;
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
 
         public override void AI()
         {

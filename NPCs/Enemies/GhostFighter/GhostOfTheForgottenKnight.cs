@@ -52,10 +52,12 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 topSpeed = 2f;
             }
 
-            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17, stopBeforeFiring: false);
+            // "Spectral Spear Throw" — commitFraction 0.5: first half cancellable (by magic), second half hyperarmor.
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17, stopBeforeFiring: false, commitFraction: 0.5f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
+            EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
             globalNPC.HasGhostAfterimages = true;
             globalNPC.MaxJumpPower = 10f;
             globalNPC.MaxJumpBoost = 6f;
@@ -102,6 +104,15 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         }
 
         float topSpeed = 1.2f;
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
+
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, topSpeed, .05f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 2.4f);

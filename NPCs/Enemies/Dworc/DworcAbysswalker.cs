@@ -40,8 +40,11 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
+            // "Abyss Poison Strike" — fast aimed poison bolt (green telegraph)
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, SoundID.Item20, telegraphColor: Color.GreenYellow);
+            // "Abyss Storm" — heavy lobbed storm ball (blue telegraph)  [magic-ring candidate: set commitFraction: 0.5f if this is the shrinking ring]
             UsefulFunctions.AddAttack(NPC, 400, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, SoundID.Item100, weight: 0.3f, telegraphColor: Color.Blue);
+            // "Demon Spirit" — summons a homing spirit (purple telegraph)
             UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 35, 0, SoundID.Item100, weight: 0.2f, telegraphColor: Color.Purple);
 
             // Step 6 caster lever: remember last-known position before patrolling.
@@ -50,10 +53,12 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanGoInvisible = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().InvisibleAlpha = 210;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoInvisibleChance = 50;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().GoVisibleChance = 200;
+            EvasiveProfile.EvasiveCloak(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), cloakChance: 0.45f, threatRange: 220);
+            // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
+            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
+            EvasiveProfile.DworcShaman(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>());
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanSelfHeal = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 300;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 60;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanHealAllies = true;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesChance = 400;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesRange = 50;
@@ -108,6 +113,15 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             return chance;
         }
         #endregion
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
 
         public override void AI()
         {

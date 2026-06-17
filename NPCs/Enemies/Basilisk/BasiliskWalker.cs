@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             NPC.knockBackResist = 0.3f;
             NPC.damage = 23;
             NPC.defense = 8;
-            NPC.height = 50;
+            NPC.height = 46;
             NPC.width = 24;
             NPC.lifeMax = 100;
             NPC.HitSound = SoundID.NPCHit20;
@@ -51,15 +51,21 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
-            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow);
-            UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple);
+            // "Bio Spit" — aimed acid glob. commitFraction 0.5: the flash→fire tell is half cancellable (poise-stagger
+            // can interrupt the windup), half committed (hyperarmor). telegraphTime 40 gives a readable stun window.
+            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow, telegraphTime: 40, commitFraction: 0.5f);
+            // "Hypnotic Disrupter" — rare heavy lob (longer tell)
+            UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple, telegraphTime: 50, commitFraction: 0.5f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;
-            globalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
+            globalNPC.NavSearchRadius = 70; // Phase 2: SmartFighter4AI movement
             globalNPC.CanTeleport = true;        // was WeakTeleport: limited re-acquire blinks
             globalNPC.TeleportMaxCharges = 2;    // 2 non-recharging charges, Normal style
+            // Evasive on-hit: hop/dash away or i-frame quick-step; can also blink away (limited charges above).
+            EvasiveProfile.Basilisk(globalNPC);
+            globalNPC.EvasiveTeleportAway = true;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -114,6 +120,15 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             return 0;
         }
 
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
+
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
@@ -124,25 +139,9 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
             }
 
-            //JUSTHIT CODE
+            // (Removed the old close-range justHit ProjectileTimer reset + jump reactions — superseded by the poise
+            //  stagger windup-cancel and the EvasiveOnHit reactions. The charge below is movement, not a hit-reaction.)
             Player player = Main.player[NPC.target];
-            if (NPC.justHit && NPC.Distance(player.Center) < 150)
-            {
-                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0f;
-            }
-            if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(2))
-            {
-                shotTimer = 80f;
-                NPC.velocity.Y = Main.rand.NextFloat(-6f, -3f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-5f, -3f);
-                NPC.netUpdate = true;
-            }
-            if (NPC.justHit && NPC.Distance(player.Center) > 150 && Main.rand.NextBool(2))
-            {
-                NPC.velocity.Y = Main.rand.NextFloat(-5f, -2f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-5f, 3f);
-                NPC.netUpdate = true;
-            }
 
             //Shift toward the player randomly
             if (Main.netMode != NetmodeID.MultiplayerClient)

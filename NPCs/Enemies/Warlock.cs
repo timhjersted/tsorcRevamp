@@ -54,8 +54,9 @@ namespace tsorcRevamp.NPCs.Enemies
             casterGlobalNPC.CanUseRopes = true;
             casterGlobalNPC.CanGoInvisible = true;
             casterGlobalNPC.InvisibleAlpha = 230;
-            casterGlobalNPC.GoInvisibleChance = 150;
-            casterGlobalNPC.GoVisibleChance = 230;
+            EvasiveProfile.EvasiveCloak(casterGlobalNPC, cloakChance: 0.15f, threatRange: 220);
+            // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
+            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
             casterGlobalNPC.CanHealAllies = true;
             casterGlobalNPC.HealAlliesChance = 300;
             casterGlobalNPC.HealAlliesRange = 60;

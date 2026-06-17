@@ -16,6 +16,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.UI;
+using Terraria.GameInput;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -273,7 +274,7 @@ namespace tsorcRevamp
 
             toggleDragoonBoots = KeybindLoader.RegisterKeybind(this, "Dragoon Boots", Microsoft.Xna.Framework.Input.Keys.Z);
             reflectionShiftKey = KeybindLoader.RegisterKeybind(this, "Reflection Shift", Microsoft.Xna.Framework.Input.Keys.O);
-            DodgerollKey = KeybindLoader.RegisterKeybind(this, "Dodge Roll", Microsoft.Xna.Framework.Input.Keys.LeftAlt);
+            DodgerollKey = KeybindLoader.RegisterKeybind(this, "Dodge Roll", Microsoft.Xna.Framework.Input.Keys.LeftShift);
             specialAbility = KeybindLoader.RegisterKeybind(this, "Special Ability", Microsoft.Xna.Framework.Input.Keys.Q);
             WolfRing = KeybindLoader.RegisterKeybind(this, "Wolf Ring", Microsoft.Xna.Framework.Input.Keys.Y);
             WingsOfSeath = KeybindLoader.RegisterKeybind(this, "Wings of Seath speed toggle", Microsoft.Xna.Framework.Input.Keys.U);
@@ -2324,6 +2325,8 @@ namespace tsorcRevamp
         public static bool VanillaBossesRemadeEnabled = false;
         public override void PostSetupContent()
         {
+            ApplyFirstRunControlDefaults();
+
             #region Summoners Association Compatibility
 
             if (ModLoader.TryGetMod("SummonersAssociation", out Mod summonersAssociation))
@@ -3067,6 +3070,61 @@ namespace tsorcRevamp
                     ModifiedRecipes[entry.Key].AddRange(entry.Value);
                 }
             }
+        }
+
+        private static void ApplyFirstRunControlDefaults()
+        {
+            if (Main.dedServ || PlayerInput.CurrentProfile == null || PlayerInput.Profiles == null)
+            {
+                return;
+            }
+
+            string dataDir = Path.Combine(Main.SavePath, "ModConfigs", "tsorcRevampData");
+            string markerPath = Path.Combine(dataDir, "control-defaults-v1.txt");
+            if (File.Exists(markerPath))
+            {
+                return;
+            }
+
+            bool changed = false;
+            foreach (PlayerInputProfile profile in PlayerInput.Profiles.Values)
+            {
+                if (!profile.InputModes.TryGetValue(InputMode.Keyboard, out KeyConfiguration keyboard))
+                {
+                    continue;
+                }
+
+                changed |= MoveBindingIfExactly(keyboard, "SmartSelect", "LeftShift", "LeftAlt");
+                changed |= MoveBindingIfExactly(keyboard, "tsorcRevamp/Dodge Roll", "LeftAlt", "LeftShift");
+            }
+
+            try
+            {
+                Directory.CreateDirectory(dataDir);
+                if (changed && !PlayerInput.Save())
+                {
+                    ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Could not save first-run control defaults; will retry next load.");
+                    return;
+                }
+                File.WriteAllText(markerPath, "Applied tsorcRevamp control defaults v1.");
+            }
+            catch (Exception e)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Failed to apply first-run control defaults: " + e);
+            }
+        }
+
+        private static bool MoveBindingIfExactly(KeyConfiguration keyboard, string trigger, string oldKey, string newKey)
+        {
+            if (!keyboard.KeyStatus.TryGetValue(trigger, out List<string> keys)
+                || keys.Count != 1
+                || keys[0] != oldKey)
+            {
+                return false;
+            }
+
+            keys[0] = newKey;
+            return true;
         }
 
         internal async void UpdateCheck()

@@ -77,6 +77,7 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.CanTeleport = true;
             blackKnightGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
             blackKnightGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Plague;
+            EvasiveProfile.RedKnight(blackKnightGlobalNPC); // shared knight-family evasion: hop/leap/dash/blink away
 
             // Poise: sturdier than the Red Knight (40) — takes more to stagger. Tunable lever.
             blackKnightGlobalNPC.PoiseMax = 60f;
@@ -108,11 +109,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Hit logic is stored in GlobalNPC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterEvasiveOnHit(NPC, true);
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterEvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player

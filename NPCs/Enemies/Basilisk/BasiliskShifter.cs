@@ -11,7 +11,7 @@ using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies.Basilisk
 {
-    class BasiliskShifter : ModNPC
+    class BasiliskShifter : ModNPC, IStaggerable
     {
         //HARD MODE VARIANT 
         public override void SetStaticDefaults()
@@ -27,8 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             NPC.aiStyle = 3;
             NPC.damage = 30;
             NPC.defense = 55;
-            NPC.height = 54;
-            NPC.width = 54;
+            NPC.height = 46;
+            NPC.width = 38;
             NPC.lifeMax = 350;
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
@@ -40,15 +40,28 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower = 10f;
             globalNPC.MaxJumpBoost = 6f;
-            globalNPC.NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
+            globalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
             globalNPC.CanUseRopes = true;
             // Step 6 beast levers: lurk (Wander) around where it lost the player when it gives up.
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
+            // Evasive on-hit: hop/dash away or i-frame quick-step.
+            EvasiveProfile.Basilisk(globalNPC);
+            // Re-adds the old "jump before attack" flourish via the global pre-attack-jump variation: ~40% of attacks
+            // it launches at commit so the shot (and the lob spray) fire mid-air.
+            globalNPC.CanJumpBeforeAttack = true;
+            globalNPC.JumpBeforeAttackChance = 0.4f;
         }
 
         float breathTimer = 60;
 
+        // Deterministic projectile-attack timing (decide → dust telegraph → colored flash at commit → fire). The
+        // attack is rolled+locked once at AtkDecide so the flash colour and the shot match. See attack-phase tagging.
+        private const int AtkDecide = 60;    // roll + lock the attack; dust telegraph (interruptible) starts
+        private const int AtkFlash = 85;     // colored TelegraphFlash spawns = the commit instant (hyperarmor begins)
+        private const int AtkFire = 110;     // projectile(s) launch
+        private const int AtkSprayEnd = 140; // lob sprays AtkFire..AtkSprayEnd; single shots reset ~10t after AtkFire
+        private int lockedAttack = -1;       // -1 none; 0 lob(purple), 1 spit(green), 2 final(green,low-HP), 3 disrupter(purple)
 
         float shotTimer;
         int chargeDamage = 0;
@@ -121,232 +134,152 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         }
         #endregion
 
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
+
+        // Stagger (poise break) cancels a telegraphing attack — reset the timers to neutral. A committed attack is
+        // hyperarmored, so a stagger can't happen during one; this only ever fires during a telegraph/neutral.
+        public void OnStagger(NPC npc)
+        {
+            shotTimer = 0f;
+            lockedAttack = -1;
+            if (breathTimer > 0f) breathTimer = 0f; // drop a breath wind-up (leave a mid-fire breath alone)
+        }
+
         public override void AI()
         {
             Player player = Main.player[NPC.target];
             tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.5f, enrageTopSpeed: 2);
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool lowHP = NPC.life < NPC.lifeMax / 2;
 
-            shotTimer++;
-
-            if (shotTimer >= 85)
-            {
-                Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 1f);
-                if (Main.rand.NextBool(3))
-                {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
-                }
-
-
-                if (shotTimer >= 100f)
-                {
-                    NPC.TargetClosest(true);
-                    //DISRUPTOR ATTACK
-                    Player player3 = Main.player[NPC.target];
-                    if (Main.rand.NextBool(200) && NPC.Distance(player3.Center) > 190)
-                    {
-                        Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 4f, 1.06f, true, true);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer);
-                        }
-                        //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, player.Center); //wobble
-                                                                                                                                   //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                        shotTimer = 1f;
-
-                        NPC.netUpdate = true;
-                    }
-
-                    //CHANCE TO JUMP BEFORE ATTACK
-                    //FOR MAIN
-                    if (shotTimer == 105 && Main.rand.NextBool(3) && NPC.life >= NPC.lifeMax / 2)
-                    {
-
-                        NPC.velocity.Y = Main.rand.NextFloat(-10f, -4f);
-                    }
-                    //FOR FINAL
-                    if (shotTimer >= 185 && Main.rand.NextBool(2) && NPC.life <= NPC.lifeMax / 2)
-                    {
-                        NPC.velocity.Y = Main.rand.NextFloat(-10f, 3f);
-                    }
-
-
-                }
-
-            }
-
-
-            // NEW BREATH ATTACK 
-            breathTimer++;
-            if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && NPC.life >= NPC.lifeMax / 2)
-            {
-                breathTimer = -60;
-                shotTimer = -60f;
-            }
-
-            if (breathTimer < 0)
-            {
-                NPC.velocity.X = 0f;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
-                    breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreathCollides>(), cursedBreathDamage, 0f, Main.myPlayer);
-                    NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
-                }
-            }
-
-            if (breathTimer > 360 && NPC.life >= NPC.lifeMax / 2)
-            {
-                shotTimer = -60f;
-                UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.CursedTorch, 48, 4);
-                Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 5);
-            }
-
-            if (breathTimer == 0)
-            {
-                shotTimer = 1f;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
-                }
-            }
-
-            int choice = Main.rand.Next(4);
-            //PURPLE MAGIC LOB ATTACK; && Main.rand.NextBool(2)
-            if (shotTimer >= 110f && NPC.life >= NPC.lifeMax / 2 && choice <= 1)
-            {
-                bool clearSpace = true;
-                for (int i = 0; i < 15; i++)
-                {
-                    if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i))
-                    {
-                        clearSpace = false;
-                    }
-                }
-                if (clearSpace)
-                {
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
-
-                    speed.Y += Main.rand.NextFloat(-2f, -6f);
-                    if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-                    }
-
-                    if (shotTimer >= 154f)
-                    {
-                        shotTimer = 1f;
-                    }
-                }
-            }
-            //NORMAL SPIT ATTACK
-            if (shotTimer >= 115f && NPC.life >= NPC.lifeMax / 2 && choice >= 2)
-            {
-                if (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                {
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 9);
-
-                    if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int num555 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
-                            Main.projectile[num555].timeLeft = 300; //40
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-                        shotTimer = 1f;
-                    }
-                }
-            }
-            //FINAL DESPERATE ATTACK
-            if (shotTimer >= 175f && Main.rand.NextBool(2) && NPC.life <= NPC.lifeMax / 2)
-            {
-                int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 1f);
-                Main.dust[dust2].noGravity = true;
-
-                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10);
-
-                if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
-                    }
-                    //Terraria.Audio.SoundEngine.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 9);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.1f }, NPC.Center);
-                    //customAi1 = 1f;
-                }
-                if (shotTimer >= 206f)
-                {
-                    shotTimer = 1f;
-                }
-            }
-            //KNOCKBACK CONDITIONAL
-            if (NPC.life >= NPC.lifeMax / 2)
-            {
-                NPC.knockBackResist = 0.04f;
-            }
-            else
-            {
-                NPC.knockBackResist = 0.0f;
-            }
             //MAKE SOUND WHEN JUMPING/HOVERING
             if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
             }
-            //TELEGRAPH DUSTS
-            if (shotTimer >= 100)
+
+            // ===== MAGIC RING (breath) ATTACK — own clock: shrinking DustRing "magic ring" telegraph 360→480, then
+            //       committed cursed-breath fire (breathTimer<0). Stationary channel; no pre-attack jump (see below). =====
+            breathTimer++;
+            if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && !lowHP && lockedAttack == -1)
             {
-                Lighting.AddLight(NPC.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(3))
+                breathTimer = -60;
+                shotTimer = -60f; // pause the projectile machine while the breath fires
+            }
+            if (breathTimer < 0) // committed: spew breath
+            {
+                NPC.velocity.X = 0f;
+                if ((int)breathTimer % 30 == 0)
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
-                    //Dust.NewDust(npc.position, npc.width, npc.height, DustID.GemEmerald, npc.velocity.X, npc.velocity.Y);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, player.Center, 9) + Main.rand.NextVector2Circular(-1.5f, 1.5f);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreathCollides>(), cursedBreathDamage, 0f, Main.myPlayer);
+                    NPC.ai[3] = 0; // no teleporting mid-breath
                 }
             }
-            //reset attack timer when hit in melee range
-            if (NPC.justHit && NPC.Distance(player.Center) < 100 && NPC.life >= NPC.lifeMax / 2)
+            if (breathTimer > 360 && breathTimer <= 480 && !lowHP) // shrinking-ring telegraph
+            {
+                UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.CursedTorch, 48, 4);
+                Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 5);
+            }
+            if (breathTimer == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+            }
+            bool breathTelegraph = breathTimer > 360 && breathTimer <= 480 && !lowHP;
+            bool breathCommitted = breathTimer < 0;
+
+            // ===== PROJECTILE ATTACKS (decide → dust → flash → commit → fire) =====
+            // The breath owns the body while it winds up (DustRing) or fires — pause + cancel the projectile machine.
+            bool breathActive = breathTimer > 360 || breathTimer < 0;
+            if (breathActive)
             {
                 shotTimer = 0f;
+                lockedAttack = -1;
             }
-            //jump back when hit at close range
-            if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(3))
+            else
             {
-                NPC.velocity.Y = Main.rand.NextFloat(-6f, -4f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-7f, -4f);
-                shotTimer = 50f;
-                NPC.netUpdate = true;
+                shotTimer++;
+                // Roll + LOCK the attack once when the wind-up begins, so the dust/flash colour and the fired shot match.
+                if (lockedAttack == -1 && shotTimer >= AtkDecide)
+                {
+                    lockedAttack = lowHP ? (Main.rand.NextBool(4) ? 3 : 2)
+                                         : Main.rand.Next(3) switch { 0 => 0, 1 => 1, _ => 3 };
+                }
             }
-            //jump forward when hit at range
-            if (NPC.justHit && NPC.Distance(player.Center) > 150 && Main.rand.NextBool(2))
+            bool atkActive = lockedAttack != -1;
+            bool purpleAttack = lockedAttack == 0 || lockedAttack == 3; // lob + disrupter = purple; spit + final = green
+            bool telegraphing = atkActive && shotTimer >= AtkDecide && shotTimer < AtkFlash;
+            bool committed = atkActive && shotTimer >= AtkFlash;
+
+            // Dust telegraph (interruptible) — colour matches the locked attack.
+            if (telegraphing && Main.rand.NextBool(3))
             {
-                NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(7f, 3f);
-                NPC.netUpdate = true;
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, purpleAttack ? DustID.CursedTorch : DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
+                Lighting.AddLight(NPC.Center, (purpleAttack ? Color.Purple : Color.GreenYellow).ToVector3() * 0.6f);
             }
-            //Shift toward the player randomly
+            // Colored flash at the commit instant — hyperarmor begins here.
+            if (atkActive && (int)shotTimer == AtkFlash && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(purpleAttack ? Color.Purple : Color.GreenYellow));
+            }
+            // Fire (committed). Lob sprays AtkFire..AtkSprayEnd every 8t; the others are single shots at AtkFire.
+            if (committed && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (lockedAttack == 0)
+                {
+                    if (shotTimer >= AtkFire && shotTimer <= AtkSprayEnd && ((int)shotTimer - AtkFire) % 8 == 0)
+                    {
+                        FireLob(player);
+                    }
+                }
+                else if ((int)shotTimer == AtkFire)
+                {
+                    if (lockedAttack == 1) FireSpit(player);
+                    else if (lockedAttack == 2) FireFinal(player);
+                    else if (lockedAttack == 3) FireDisrupter(player);
+                }
+            }
+            // Reset when the shot/spray is done (single shots keep a short committed recovery tail).
+            if (atkActive && shotTimer >= (lockedAttack == 0 ? AtkSprayEnd : AtkFire + 10))
+            {
+                shotTimer = 0f;
+                lockedAttack = -1;
+            }
+
+            // Attack-phase flags → poise (telegraph = stagger-cancellable; committed = hyperarmor).
+            globalNPC.AttackTelegraphing = telegraphing || breathTelegraph;
+            globalNPC.AttackCommitted = committed || breathCommitted;
+            // The magic-ring breath is a stationary channel — veto the pre-attack jump for it (projectile attacks still jump).
+            globalNPC.SuppressPreAttackJump = breathActive;
+
+            // ===== Shift-toward-player lunge (movement flourish; unchanged) =====
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 200)
                 {
-                    Lighting.AddLight(NPC.Center, Color.Red.ToVector3() * 3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    Lighting.AddLight(NPC.Center, Color.Red.ToVector3() * 3f);
                     chargeDamageFlag = true;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    float rotation = (float)Math.Atan2(vector8.Y - (player.position.Y + (player.height * 0.5f)), vector8.X - (player.position.X + (player.width * 0.5f)));
                     NPC.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;
                     NPC.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
                     NPC.netUpdate = true;
                 }
-                if (chargeDamageFlag == true)
+                if (chargeDamageFlag)
                 {
-                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 5f);
                     NPC.damage = 35;
                     chargeDamage++;
                 }
@@ -357,6 +290,41 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                     chargeDamage = 0;
                 }
             }
+        }
+
+        // Fire helpers — called only server-side from the committed window. The lob needs vertical clearance to arc.
+        private void FireLob(Player player)
+        {
+            for (int i = 0; i < 15; i++)
+            {
+                if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i)) return;
+            }
+            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 5);
+            speed.Y += Main.rand.NextFloat(-2f, -6f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+        }
+
+        private void FireSpit(Player player)
+        {
+            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 9);
+            int p = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+            Main.projectile[p].timeLeft = 300;
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+        }
+
+        private void FireFinal(Player player)
+        {
+            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 10);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.1f }, NPC.Center);
+        }
+
+        private void FireDisrupter(Player player)
+        {
+            Vector2 vel = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 4f, 1.06f, true, true);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, player.Center);
         }
 
         #region Find Frame
