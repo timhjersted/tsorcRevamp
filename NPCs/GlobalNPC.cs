@@ -106,6 +106,19 @@ namespace tsorcRevamp.NPCs
         None
     }
 
+    public enum PreAttackJumpBehavior
+    {
+        VerticalPop,
+        MainAttackHop,
+        ShortForwardHop,
+        HighForwardHop,
+        OffensiveLeap,
+        AttackDashHop,
+        DesperateHighHop,
+        DesperateSprayHop,
+        ErraticFinalHover
+    }
+
     public partial class tsorcRevampGlobalNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
@@ -318,11 +331,24 @@ namespace tsorcRevamp.NPCs
         public float JumpBeforeAttackChance = 0.5f;
         public float JumpBeforeAttackPower = 8f;   // upward launch velocity
         public int JumpBeforeAttackDelay = 10;     // frames after commit before the launch (so it's rising at the shot)
+        public bool JumpBeforeAttackRequiresGrounded = true;
+        public float JumpBeforeAttackDesperateLifeFraction = 0.5f;
+        public bool JumpBeforeAttackVerticalPop = false;
+        public bool JumpBeforeAttackMainAttackHop = false;
+        public bool JumpBeforeAttackShortForwardHop = false;
+        public bool JumpBeforeAttackHighForwardHop = false;
+        public bool JumpBeforeAttackOffensiveLeap = false;
+        public bool JumpBeforeAttackDashHop = false;
+        public bool JumpBeforeAttackDesperateHighHop = false;
+        public bool JumpBeforeAttackDesperateSprayHop = false;
+        public bool JumpBeforeAttackErraticFinalHover = false;
         // Per-tick veto: an enemy sets this true (in its AI) during attacks that should NOT pre-jump (e.g. a stationary
         // channel like the basilisk magic-ring breath). Checked at the commit edge below. Defaults false each tick.
         public bool SuppressPreAttackJump = false;
         private bool wasAttackCommitted = false;   // rising-edge detector for AttackCommitted
         private int preAttackJumpTimer = -1;        // >0 counting down to the launch; <=0 inactive
+        private PreAttackJumpBehavior queuedPreAttackJump = PreAttackJumpBehavior.VerticalPop;
+        private static readonly List<PreAttackJumpBehavior> PreAttackJumpPool = new List<PreAttackJumpBehavior>(8);
 
         // Shared cooldown for the on-hit evasive reaction + wall-pin escape, so an enemy doesn't react every frame of a combo.
         public int FighterEvasionCooldown;
@@ -338,9 +364,13 @@ namespace tsorcRevamp.NPCs
         public bool EvasiveRunningDash;     // flash telegraph → grounded top-speed burst toward the player (sustained)
         public bool EvasiveRetreatAndShoot; // forced-flee back-off, then resume firing (sustained, melee-hit counter)
         public bool EvasiveQuickStep;       // i-frame quick step that passes through the player (sustained)
+        public bool EvasiveBasiliskWalkerCloseBackhop;
+        public bool EvasiveBasiliskWalkerFarScrambleHop;
+        public bool EvasiveBasiliskShifterCloseBackhop;
+        public bool EvasiveBasiliskShifterFarForwardHop;
 
         // === Sustained evasion state (driven each AI tick by UpdateEvasion; armed by EvasiveOnHit) ===
-        // Only RunningDash / RetreatAndShoot live here; QuickStep has its own timer (it mirrors the dodgeroll), and
+        // Only RunningDash / RetreatAndShoot live here; QuickStep has its own standing-dash timer, and
         // the instant behaviors don't need state. CurrentEvasion is only meaningful while InSustainedEvasion.
         public bool InSustainedEvasion;
         public EvasiveBehavior CurrentEvasion;
@@ -351,14 +381,15 @@ namespace tsorcRevamp.NPCs
         public int EvasiveDashTicks = 110;          // RunningDash: burst length (~1.8s)
         public int EvasiveRetreatTicks = 80;        // RetreatAndShoot: back-off length (~1.3s)
         public float EvasiveRetreatSpeed = 3.5f;    // RetreatAndShoot: grounded back-off speed (away from player)
-        public int QuickStepTimer;          // >0 = mid quick-step: i-frames + passes through player (mirrors DodgeTimer)
+        public int QuickStepTimer;          // >0 = mid quick-step: i-frames + passes through player (standing dash, no roll)
+        public int QuickStepRecoveryTimer;  // short post-step pause before pursuit resumes
         public int QuickStepDir;            // horizontal direction of the active quick step
-        public float QuickStepSpeed = 7f;   // horizontal speed of the quick step
+        public float QuickStepSpeed = 5f;   // horizontal speed of the quick step
         public int QuickStepTicks = 16;     // quick-step duration
         // True while a behavior should draw the ghost afterimage trail (quick step, or the running-dash burst).
         public bool EvasiveAfterimagesActive => QuickStepTimer > 0 || (InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RunningDash && !EvasiveTelegraphing);
         /// <summary>True during any multi-tick evasive action — a parallel to <see cref="InAttack"/> for deference.</summary>
-        public bool InEvasion => InSustainedEvasion || QuickStepTimer > 0;
+        public bool InEvasion => InSustainedEvasion || QuickStepTimer > 0 || QuickStepRecoveryTimer > 0;
         /// <summary>True during a RetreatAndShoot back-off — seizes the body so the driver can drive the retreat velocity.</summary>
         public bool EvasiveRetreating => InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RetreatAndShoot;
 
@@ -395,6 +426,11 @@ namespace tsorcRevamp.NPCs
         // ALL enemies (doesn't touch flinch). Tune this rather than re-editing every PoiseMax.
         public static float PoiseDamageMultiplier = 0.5f;
         public bool PoiseStaggerResetsAI = false; // opt-in: a stagger sets ai[1]=60/ai[2]=-100 (cancels a windup attack)
+        // Set true per-tick by an enemy holding a directional block (shield up). A FRONT hit then builds reduced poise
+        // (ShieldGuardPoiseMult); backstabs are unaffected. The matching damage reduction lives in the enemy's own
+        // front-facing ModifyHitBy block. The enemy re-sets this each frame, so it self-clears when not guarding.
+        public bool ShieldGuarding = false;
+        public const float ShieldGuardPoiseMult = 0.5f; // front hits build half poise while guarding
         // Tunable durations (ticks). Defaults: ~2s stagger, then the cooldown OUTLASTS it (6s total from trigger → ~4s
         // reduced-flinch + no-re-stagger recovery after the stun), ~3s decay grace.
         public int StaggerDurationTicks = 120;
@@ -557,13 +593,18 @@ namespace tsorcRevamp.NPCs
         /// <summary>Pre-strike: hyper-armor and active stagger take zero vanilla knockback; everything else gets a light
         /// flinch (including the post-stagger cooldown). Also decides (deterministically) whether this hit breaks poise,
         /// so OnHit and the knockback agree.</summary>
-        private void ApplyPoiseToKnockback(NPC npc, float poiseDamage, ref NPC.HitModifiers modifiers)
+        private void ApplyPoiseToKnockback(NPC npc, float poiseDamage, ref NPC.HitModifiers modifiers, Vector2 sourceCenter)
         {
             if (PoiseMax <= 0f)
             {
                 return;
             }
             poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob (affects meter only, not the flinch below)
+            // Shield guard: a FRONT block soaks stagger buildup (backstabs unaffected). Keep in sync with HandlePoiseOnHit.
+            if (ShieldGuarding && Math.Sign(sourceCenter.X - npc.Center.X) == npc.direction)
+            {
+                poiseDamage *= ShieldGuardPoiseMult;
+            }
             // ZERO knockback whenever the enemy can't take stagger damage = the white-bar states: hyper-armor
             // (AttackCommitted), already-staggered (manual slide drives it), OR the post-stagger recovery i-frames
             // (PoiseBreakCooldown). Previously the recovery window took REDUCED flinch; now it's fully immune.
@@ -588,6 +629,11 @@ namespace tsorcRevamp.NPCs
                 return; // hyper-armor: no poise, no knockback
             }
             poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob — keep in sync with ApplyPoiseToKnockback
+            // Shield guard: a FRONT block soaks stagger buildup (backstabs unaffected). Mirrors ApplyPoiseToKnockback.
+            if (ShieldGuarding && Math.Sign(sourceCenter.X - npc.Center.X) == npc.direction)
+            {
+                poiseDamage *= ShieldGuardPoiseMult;
+            }
             if (StaggerTimer > 0)
             {
                 ApplyStaggerImpulse(npc, sourceCenter, 0.5f); // already broken — a lighter follow-up shove
@@ -661,8 +707,9 @@ namespace tsorcRevamp.NPCs
             }
 
             if (CanJumpBeforeAttack && AttackCommitted && !wasAttackCommitted && !SuppressPreAttackJump
-                && npc.velocity.Y == 0f && Main.rand.NextFloat() < JumpBeforeAttackChance)
+                && (!JumpBeforeAttackRequiresGrounded || npc.velocity.Y == 0f) && Main.rand.NextFloat() < JumpBeforeAttackChance)
             {
+                queuedPreAttackJump = ChoosePreAttackJump(npc);
                 preAttackJumpTimer = Math.Max(1, JumpBeforeAttackDelay);
             }
             wasAttackCommitted = AttackCommitted;
@@ -676,26 +723,126 @@ namespace tsorcRevamp.NPCs
                     // Headroom check: don't launch into a ceiling. Scan up to the full-power apex; if a solid tile is
                     // closer, cap the launch so the apex tucks ~1 tile under it (or skip entirely if there's < 2 tiles —
                     // the attack then just fires grounded). apex(tiles) = power² / (2·gravity·16).
-                    float gravity = npc.gravity > 0f ? npc.gravity : 0.3f;
-                    int wantTiles = (int)Math.Ceiling(JumpBeforeAttackPower * JumpBeforeAttackPower / (2f * gravity * 16f));
-                    int clearTiles = 0;
-                    for (int i = 1; i <= wantTiles; i++)
-                    {
-                        if (UsefulFunctions.IsTileReallySolid(npc.Center + new Vector2(0f, -npc.height / 2f - i * 16f))) break;
-                        clearTiles = i;
-                    }
-                    float power = JumpBeforeAttackPower;
-                    if (clearTiles < wantTiles)
-                    {
-                        power = clearTiles < 2 ? 0f : (float)Math.Sqrt(2f * gravity * (clearTiles - 1) * 16f);
-                    }
-                    if (power > 0f)
-                    {
-                        npc.velocity.Y = -power;
-                        npc.netUpdate = true; // sync the launch to MP clients
-                    }
+                    ApplyPreAttackJump(npc, queuedPreAttackJump);
                 }
             }
+        }
+
+        private PreAttackJumpBehavior ChoosePreAttackJump(NPC npc)
+        {
+            PreAttackJumpPool.Clear();
+            bool desperate = npc.life <= npc.lifeMax * JumpBeforeAttackDesperateLifeFraction;
+
+            if (desperate)
+            {
+                AddPreAttackJump(JumpBeforeAttackDesperateHighHop, PreAttackJumpBehavior.DesperateHighHop);
+                AddPreAttackJump(JumpBeforeAttackDesperateSprayHop, PreAttackJumpBehavior.DesperateSprayHop);
+                AddPreAttackJump(JumpBeforeAttackErraticFinalHover, PreAttackJumpBehavior.ErraticFinalHover);
+            }
+
+            if (PreAttackJumpPool.Count == 0)
+            {
+                AddPreAttackJump(JumpBeforeAttackVerticalPop, PreAttackJumpBehavior.VerticalPop);
+                AddPreAttackJump(JumpBeforeAttackMainAttackHop, PreAttackJumpBehavior.MainAttackHop);
+                AddPreAttackJump(JumpBeforeAttackShortForwardHop, PreAttackJumpBehavior.ShortForwardHop);
+                AddPreAttackJump(JumpBeforeAttackHighForwardHop, PreAttackJumpBehavior.HighForwardHop);
+                AddPreAttackJump(JumpBeforeAttackOffensiveLeap, PreAttackJumpBehavior.OffensiveLeap);
+                AddPreAttackJump(JumpBeforeAttackDashHop, PreAttackJumpBehavior.AttackDashHop);
+            }
+
+            return PreAttackJumpPool.Count == 0 ? PreAttackJumpBehavior.VerticalPop : PreAttackJumpPool[Main.rand.Next(PreAttackJumpPool.Count)];
+        }
+
+        private static void AddPreAttackJump(bool enabled, PreAttackJumpBehavior behavior)
+        {
+            if (enabled)
+            {
+                PreAttackJumpPool.Add(behavior);
+            }
+        }
+
+        private void ApplyPreAttackJump(NPC npc, PreAttackJumpBehavior behavior)
+        {
+            float velocityY;
+            float velocityX = 0f;
+
+            switch (behavior)
+            {
+                case PreAttackJumpBehavior.ShortForwardHop:
+                    velocityY = Main.rand.NextFloat(-4f, -2f);
+                    velocityX = npc.direction * Main.rand.NextFloat(1f, 2f);
+                    break;
+                case PreAttackJumpBehavior.MainAttackHop:
+                    velocityY = Main.rand.NextFloat(-10f, -4f);
+                    break;
+                case PreAttackJumpBehavior.HighForwardHop:
+                    velocityY = Main.rand.NextFloat(-10f, -3f);
+                    velocityX = npc.direction * Main.rand.NextFloat(1f, 3f);
+                    break;
+                case PreAttackJumpBehavior.OffensiveLeap:
+                    Lighting.AddLight(npc.Center, Color.OrangeRed.ToVector3());
+                    if (Main.rand.NextBool(2))
+                    {
+                        Dust.NewDust(npc.position, npc.width, npc.height, DustID.Torch, npc.velocity.X, npc.velocity.Y);
+                    }
+                    velocityY = -8f;
+                    velocityX = npc.direction * Main.rand.NextFloat(1f, 5f);
+                    break;
+                case PreAttackJumpBehavior.AttackDashHop:
+                    velocityY = Main.rand.NextFloat(-10f, -2f);
+                    velocityX = npc.direction * Main.rand.NextFloat(2f, 5f);
+                    break;
+                case PreAttackJumpBehavior.DesperateHighHop:
+                    velocityY = Main.rand.NextFloat(-11f, -4f);
+                    velocityX = npc.direction * Main.rand.NextFloat(0f, 1f);
+                    break;
+                case PreAttackJumpBehavior.DesperateSprayHop:
+                    Lighting.AddLight(npc.Center, Color.OrangeRed.ToVector3() * 2f);
+                    if (Main.rand.NextBool(2))
+                    {
+                        int dust = Dust.NewDust(npc.position, npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.OrangeRed);
+                        Main.dust[dust].noGravity = true;
+                    }
+                    velocityY = Main.rand.NextFloat(-7f, -3f);
+                    break;
+                case PreAttackJumpBehavior.ErraticFinalHover:
+                    velocityY = Main.rand.NextFloat(-10f, 3f);
+                    break;
+                default:
+                    velocityY = -JumpBeforeAttackPower;
+                    break;
+            }
+
+            if (velocityY < 0f)
+            {
+                velocityY = -CapPreAttackJumpPower(npc, -velocityY);
+            }
+
+            if (velocityY != 0f || velocityX != 0f)
+            {
+                npc.velocity.Y = velocityY;
+                npc.velocity.X += velocityX;
+                npc.netUpdate = true; // sync the launch to MP clients
+            }
+        }
+
+        private static float CapPreAttackJumpPower(NPC npc, float requestedPower)
+        {
+            // Headroom check: don't launch into a ceiling. Scan up to the full-power apex; if a solid tile is
+            // closer, cap the launch so the apex tucks about 1 tile under it.
+            float gravity = npc.gravity > 0f ? npc.gravity : 0.3f;
+            int wantTiles = (int)Math.Ceiling(requestedPower * requestedPower / (2f * gravity * 16f));
+            int clearTiles = 0;
+            for (int i = 1; i <= wantTiles; i++)
+            {
+                if (UsefulFunctions.IsTileReallySolid(npc.Center + new Vector2(0f, -npc.height / 2f - i * 16f))) break;
+                clearTiles = i;
+            }
+            if (clearTiles >= wantTiles)
+            {
+                return requestedPower;
+            }
+            return clearTiles < 2 ? 0f : (float)Math.Sqrt(2f * gravity * (clearTiles - 1) * 16f);
         }
 
         private void ApplyStaggerImpulse(NPC npc, Vector2 sourceCenter, float scale)
@@ -786,6 +933,13 @@ namespace tsorcRevamp.NPCs
         // anti-stuck uses it to disengage a walled/unreachable chase to the FSM (Search/Patrol/teleport).
         public int StuckTimer = 0;
         public bool CanStopToFire = false;
+        // === Ranged kiting (smart positioning) ===
+        // When KiteRangeMax > 0, a ranged enemy maintains a preferred DISTANCE BAND from a same-level, visible player
+        // instead of pathing into melee. Read by SmartFighter4AI.TryRangedKite. KiteRangeMax <= 0 = off (normal walk-in
+        // fighter). Closer than Min → back off; in [Min,Max] → slow drift + fire; farther than Max → let pursuit close in.
+        public float KiteRangeMin = 0f;    // tiles
+        public float KiteRangeMax = 0f;    // tiles (0 = kiting off)
+        public float KiteLooseness = 0.3f; // 0..1 — chance per re-roll window to NOT back off, so melee can sometimes close
         // Flat-ground navigation for large enemies (avoid slopes / narrow ledges where a big sprite hangs off).
         public int MinSurfaceWidth = 0;                        // 0 = off; >=2 = only stand/walk/jump on flat ground that wide
         public bool RequiresFlatGround => MinSurfaceWidth > 0; // read-only; single source of truth is MinSurfaceWidth
@@ -2311,7 +2465,7 @@ namespace tsorcRevamp.NPCs
             {
                 return;
             }
-            ApplyPoiseToKnockback(npc, poiseKnockback, ref modifiers);
+            ApplyPoiseToKnockback(npc, poiseKnockback, ref modifiers, projectile.Center);
 
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
@@ -2623,7 +2777,7 @@ namespace tsorcRevamp.NPCs
             {
                 return;
             }
-            ApplyPoiseToKnockback(npc, poiseKnockback, ref modifiers);
+            ApplyPoiseToKnockback(npc, poiseKnockback, ref modifiers, player.Center);
 
             if (npc.type == NPCID.DukeFishron && player.wet)
             {
@@ -2967,7 +3121,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool? CanBeHitByItem(NPC npc, Player player, Item item)
         {
-            if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / quick step
+            if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / standing quick step
             {
                 return false;
             }
@@ -2976,7 +3130,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool? CanBeHitByProjectile(NPC npc, Projectile projectile)
         {
-            if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / quick step
+            if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / standing quick step
             {
                 return false;
             }

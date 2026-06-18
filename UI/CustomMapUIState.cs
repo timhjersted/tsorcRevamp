@@ -248,7 +248,9 @@ namespace tsorcRevamp.UI
 
                         try
                         {
-                            fileToCopy.CopyTo(worldsFolder + userMapFileName, false);
+                            string copiedWorldPath = worldsFolder + userMapFileName;
+                            fileToCopy.CopyTo(copiedWorldPath, false);
+                            tsorcRevamp.StampWorldFileAsCreatedNow(copiedWorldPath, mod.Logger);
                         }
                         catch (System.Security.SecurityException e)
                         {
@@ -285,7 +287,9 @@ namespace tsorcRevamp.UI
                                 }
                             } while (!validName);
 
-                            fileToCopy.CopyTo(worldsFolder + newFileName, false);
+                            string copiedWorldPath = worldsFolder + newFileName;
+                            fileToCopy.CopyTo(copiedWorldPath, false);
+                            tsorcRevamp.StampWorldFileAsCreatedNow(copiedWorldPath, mod.Logger);
                         }
                         catch (System.Security.SecurityException e)
                         {
@@ -334,7 +338,9 @@ namespace tsorcRevamp.UI
 
                         try
                         {
-                            fileToCopy.CopyTo(worldsFolder + userRemixMapFileName, false);
+                            string copiedWorldPath = worldsFolder + userRemixMapFileName;
+                            fileToCopy.CopyTo(copiedWorldPath, false);
+                            tsorcRevamp.StampWorldFileAsCreatedNow(copiedWorldPath, mod.Logger);
                         }
                         catch (System.Security.SecurityException e)
                         {
@@ -371,7 +377,9 @@ namespace tsorcRevamp.UI
                                 }
                             } while (!validName);
 
-                            fileToCopy.CopyTo(worldsFolder + newFileName, false);
+                            string copiedWorldPath = worldsFolder + newFileName;
+                            fileToCopy.CopyTo(copiedWorldPath, false);
+                            tsorcRevamp.StampWorldFileAsCreatedNow(copiedWorldPath, mod.Logger);
                         }
                         catch (System.Security.SecurityException e)
                         {

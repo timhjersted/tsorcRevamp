@@ -31,7 +31,11 @@ namespace tsorcRevamp.NPCs
         LeapForward,     // lunge TOWARD the player to close the gap (counter to ranged harassment) — instant
         RunningDash,     // flash telegraph, then a grounded ~2s top-speed burst toward the player (hyper-armor) — sustained
         RetreatAndShoot, // back off (forced flee) for ~1-1.5s, then resume firing at range — sustained
-        QuickStep        // Bloodborne-style i-frame quick step (no rotation, passes through the player) — sustained
+        QuickStep,       // standing i-frame dash step (no rotation, can pass through the player) — sustained
+        BasiliskWalkerCloseBackhop,     // close-hit basilisk walker backhop; keeps its old proximity gate
+        BasiliskWalkerFarScrambleHop,   // far-hit basilisk walker scramble hop; keeps its old proximity gate
+        BasiliskShifterCloseBackhop,    // close-hit basilisk shifter backhop; keeps its old proximity gate
+        BasiliskShifterFarForwardHop    // far-hit basilisk shifter forward hop; keeps its old proximity gate
     }
 
     /// <summary>
@@ -67,6 +71,10 @@ namespace tsorcRevamp.NPCs
             // but the shamans pass canTeleport:true to FighterAI so they actually blink.
             globalNPC.EvasiveTeleportAway = true;
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
+            // Smart positioning: hold a CLOSEISH 6-12 tile band — close enough to land the magic ring, far enough to
+            // keep casting. Backs off below 6, lets pursuit close above 12, with looseness so melee can sometimes rush.
+            globalNPC.KiteRangeMin = 6f;
+            globalNPC.KiteRangeMax = 12f;
         }
 
         /// <summary>
@@ -77,6 +85,10 @@ namespace tsorcRevamp.NPCs
         {
             globalNPC.EvasiveRetreatAndShoot = true;
             globalNPC.EvasiveQuickStep = true;
+            // Smart positioning: a sniper wants LONG range — hold a 10-25 tile band (only on the same level; its
+            // high-ground perches are handled by the standoff). Backs off hard if you close inside 10.
+            globalNPC.KiteRangeMin = 10f;
+            globalNPC.KiteRangeMax = 25f;
         }
 
         /// <summary>
@@ -89,6 +101,30 @@ namespace tsorcRevamp.NPCs
             globalNPC.EvasiveRetreatJump = true;
             globalNPC.EvasiveRetreatDash = true;
             globalNPC.EvasiveQuickStep = true;
+        }
+
+        public static void BasiliskHunterAttackJumps(tsorcRevampGlobalNPC globalNPC)
+        {
+            globalNPC.CanJumpBeforeAttack = true;
+            globalNPC.JumpBeforeAttackChance = 0.4f;
+            globalNPC.JumpBeforeAttackDesperateLifeFraction = 0.2f;
+            globalNPC.JumpBeforeAttackRequiresGrounded = false;
+            globalNPC.JumpBeforeAttackShortForwardHop = true;
+            globalNPC.JumpBeforeAttackHighForwardHop = true;
+            globalNPC.JumpBeforeAttackOffensiveLeap = true;
+            globalNPC.JumpBeforeAttackDashHop = true;
+            globalNPC.JumpBeforeAttackDesperateHighHop = true;
+            globalNPC.JumpBeforeAttackDesperateSprayHop = true;
+        }
+
+        public static void BasiliskShifterAttackJumps(tsorcRevampGlobalNPC globalNPC)
+        {
+            globalNPC.CanJumpBeforeAttack = true;
+            globalNPC.JumpBeforeAttackChance = 0.4f;
+            globalNPC.JumpBeforeAttackDesperateLifeFraction = 0.5f;
+            globalNPC.JumpBeforeAttackRequiresGrounded = false;
+            globalNPC.JumpBeforeAttackMainAttackHop = true;
+            globalNPC.JumpBeforeAttackErraticFinalHover = true;
         }
 
         /// <summary>

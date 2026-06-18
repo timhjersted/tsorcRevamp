@@ -47,10 +47,10 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
             // Evasive on-hit: hop/dash away or i-frame quick-step.
             EvasiveProfile.Basilisk(globalNPC);
-            // Re-adds the old "jump before attack" flourish via the global pre-attack-jump variation: ~40% of attacks
-            // it launches at commit so the shot (and the lob spray) fire mid-air.
-            globalNPC.CanJumpBeforeAttack = true;
-            globalNPC.JumpBeforeAttackChance = 0.4f;
+            // Re-adds the old main-attack vertical hop and low-HP rising-hover final hop.
+            EvasiveProfile.BasiliskShifterAttackJumps(globalNPC);
+            globalNPC.EvasiveBasiliskShifterCloseBackhop = true;
+            globalNPC.EvasiveBasiliskShifterFarForwardHop = true;
         }
 
         float breathTimer = 60;
@@ -61,6 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         private const int AtkFlash = 85;     // colored TelegraphFlash spawns = the commit instant (hyperarmor begins)
         private const int AtkFire = 110;     // projectile(s) launch
         private const int AtkSprayEnd = 140; // lob sprays AtkFire..AtkSprayEnd; single shots reset ~10t after AtkFire
+        private const int PostAttackDowntime = 120;
         private int lockedAttack = -1;       // -1 none; 0 lob(purple), 1 spit(green), 2 final(green,low-HP), 3 disrupter(purple)
 
         float shotTimer;
@@ -70,6 +71,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         int darkExplosionDamage = 18;
         int hypnoticDisruptorDamage = 18;
         int bioSpitDamage = 18;
+        int leechTongueDamage = 10;
+        int leechTongueTimer;
 
 
         #region Spawn
@@ -149,11 +152,18 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         {
             shotTimer = 0f;
             lockedAttack = -1;
+            leechTongueTimer = 0;
             if (breathTimer > 0f) breathTimer = 0f; // drop a breath wind-up (leave a mid-fire breath alone)
         }
 
         public override void AI()
         {
+            bool canStartLeechTongue = lockedAttack == -1 && breathTimer >= 0f && breathTimer <= 360f;
+            if (BasiliskLeechTongueAttack.Update(NPC, ref leechTongueTimer, 430, leechTongueDamage, canStartLeechTongue))
+            {
+                return;
+            }
+
             Player player = Main.player[NPC.target];
             tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.5f, enrageTopSpeed: 2);
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -168,7 +178,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             // ===== MAGIC RING (breath) ATTACK — own clock: shrinking DustRing "magic ring" telegraph 360→480, then
             //       committed cursed-breath fire (breathTimer<0). Stationary channel; no pre-attack jump (see below). =====
             breathTimer++;
-            if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && !lowHP && lockedAttack == -1)
+            if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer >= 0f && shotTimer <= 99f && !lowHP && lockedAttack == -1)
             {
                 breathTimer = -60;
                 shotTimer = -60f; // pause the projectile machine while the breath fires
@@ -196,6 +206,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             if (breathTimer == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+                shotTimer = -PostAttackDowntime;
             }
             bool breathTelegraph = breathTimer > 360 && breathTimer <= 480 && !lowHP;
             bool breathCommitted = breathTimer < 0;
@@ -254,7 +265,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             // Reset when the shot/spray is done (single shots keep a short committed recovery tail).
             if (atkActive && shotTimer >= (lockedAttack == 0 ? AtkSprayEnd : AtkFire + 10))
             {
-                shotTimer = 0f;
+                shotTimer = -PostAttackDowntime;
                 lockedAttack = -1;
             }
 

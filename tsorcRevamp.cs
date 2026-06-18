@@ -3374,6 +3374,91 @@ namespace tsorcRevamp
             return false;
         }
 
+        public static void StampWorldFileAsCreatedNow(string worldPath, log4net.ILog logger = null)
+        {
+            DateTime now = DateTime.Now;
+            PatchWorldCreationTime(worldPath, now, logger);
+            StampFileTimes(worldPath, now, logger);
+            StampFileTimes(Path.ChangeExtension(worldPath, ".twld"), now, logger);
+        }
+
+        private static void PatchWorldCreationTime(string worldPath, DateTime time, log4net.ILog logger)
+        {
+            try
+            {
+                Terraria.IO.WorldFileData worldData = Terraria.IO.WorldFile.GetAllMetadata(worldPath, false);
+                if (worldData == null || !worldData.IsValid)
+                {
+                    logger?.Warn($"Failed to update world creation date: metadata was invalid for {worldPath}.");
+                    return;
+                }
+
+                byte[] oldCreationTime = BitConverter.GetBytes(worldData.CreationTime.ToBinary());
+                byte[] newCreationTime = BitConverter.GetBytes(time.ToBinary());
+                byte[] worldBytes = File.ReadAllBytes(worldPath);
+
+                int creationTimeOffset = -1;
+                for (int i = 0; i <= worldBytes.Length - oldCreationTime.Length; i++)
+                {
+                    bool matches = true;
+                    for (int j = 0; j < oldCreationTime.Length; j++)
+                    {
+                        if (worldBytes[i + j] != oldCreationTime[j])
+                        {
+                            matches = false;
+                            break;
+                        }
+                    }
+
+                    if (!matches)
+                    {
+                        continue;
+                    }
+
+                    if (creationTimeOffset != -1)
+                    {
+                        logger?.Warn($"Failed to update world creation date: multiple timestamp matches found in {worldPath}.");
+                        return;
+                    }
+
+                    creationTimeOffset = i;
+                }
+
+                if (creationTimeOffset == -1)
+                {
+                    logger?.Warn($"Failed to update world creation date: timestamp was not found in {worldPath}.");
+                    return;
+                }
+
+                using FileStream worldStream = File.Open(worldPath, FileMode.Open, FileAccess.Write);
+                worldStream.Position = creationTimeOffset;
+                worldStream.Write(newCreationTime, 0, newCreationTime.Length);
+            }
+            catch (Exception e)
+            {
+                logger?.Warn("Failed to update world creation date.", e);
+            }
+        }
+
+        private static void StampFileTimes(string path, DateTime time, log4net.ILog logger)
+        {
+            if (!File.Exists(path))
+            {
+                return;
+            }
+
+            try
+            {
+                File.SetCreationTime(path, time);
+                File.SetLastWriteTime(path, time);
+                File.SetLastAccessTime(path, time);
+            }
+            catch (Exception e)
+            {
+                logger?.Warn("Failed to update world file timestamp.", e);
+            }
+        }
+
         public void MapDownload()
         {
             char separator = Path.DirectorySeparatorChar;
@@ -3518,7 +3603,9 @@ namespace tsorcRevamp
                 thisLogger.Info("Attempting to copy world.");
                 try
                 {
-                    fileToCopy2.CopyTo(worldsFolder + userMapFileName, false);
+                    string copiedWorldPath = worldsFolder + userMapFileName;
+                    fileToCopy2.CopyTo(copiedWorldPath, false);
+                    StampWorldFileAsCreatedNow(copiedWorldPath, thisLogger);
                 }
                 catch (System.Security.SecurityException e)
                 {

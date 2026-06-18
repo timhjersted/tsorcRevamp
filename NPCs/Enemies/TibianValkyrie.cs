@@ -28,7 +28,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.knockBackResist = .5f;
             NPC.value = 500;
             NPC.defense = 4;
             Banner = NPC.type;
@@ -53,7 +52,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 spearDamage  = 35;
             }
 
-            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 8, shootSound: SoundID.Item17);
+            // "Throwing Spear" - calm aimed spear toss.
+            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, telegraphTime: 30, commitFraction: 0f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower   = 9f;
@@ -67,6 +67,13 @@ namespace tsorcRevamp.NPCs.Enemies
             globalNPC.Aggression = 0.6f;   // moderate chase-aggression; rolls standing-fire fairly often
             globalNPC.Patience   = 1.2f;   // tends to fire 1–2 spears per stand
             globalNPC.Agility    = 0.25f;  // not very dodge-y
+            // Poise (a stagger cancels the wind-up) + knockback flinch are tuned centrally in
+            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) - not here.
+            globalNPC.EvasiveRetreatAndShoot = true;
+            globalNPC.EvasiveQuickStep = true;
+            globalNPC.KiteRangeMin = 4f;
+            globalNPC.KiteRangeMax = 10f;
+            globalNPC.KiteLooseness = 0.65f;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -140,12 +147,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterOnHit(NPC, true);
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

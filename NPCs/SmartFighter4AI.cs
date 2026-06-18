@@ -209,6 +209,26 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            // Shaft escape (see TryShaftEscape): launched straight up out of a pit. Rise vertically (vx=0) until the
+            // target side clears the overhang lip, THEN drift onto the ledge. A ballistic up-and-over arc can't clear
+            // a lip that sits IN its path; this late-drift is the only way out. Cleared when we land.
+            if (grounded)
+            {
+                s.ShaftEscapeDir = 0;
+            }
+            else if (s.ShaftEscapeDir != 0)
+            {
+                int escCol = (int)(npc.Center.X / TileF);
+                int escFeetY = GetFeetTileY(npc);
+                int escSide = escCol + s.ShaftEscapeDir;
+                bool sideClear = !IsNavigationSolid(escSide, escFeetY)
+                              && !IsNavigationSolid(escSide, escFeetY - 1)
+                              && !IsNavigationSolid(escSide, escFeetY - 2);
+                // Drift a touch faster than the (possibly low health-scaled) top speed so it reliably carries onto
+                // the ledge before gravity pulls it back past the lip.
+                npc.velocity.X = sideClear ? s.ShaftEscapeDir * Math.Max(topSpeed, 2.5f) : 0f;
+            }
+
             // ---- Macro-state FSM (Pursue / Search / Patrol) ----
             // LOS is geometric (vanilla CanHit); computed once and reused for the FSM and attacks.
             bool los = Collision.CanHit(npc.position, npc.width, npc.height,
@@ -254,9 +274,19 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
+                // Kiting override: a ranged kiter holds / backs off to keep its preferred distance from a same-level
+                // player, instead of pathing into melee. Takes priority over the pursuit plan + reactive chase below.
+                bool kiting = grounded && !s.IsCommitted
+                    && TryRangedKite(s, npc, player, g, topSpeed, acceleration, los, out actionLabel, out reasonLabel);
+                if (kiting)
+                {
+                    actionHandled = true;
+                    if (s.Plan != null) { s.Plan = null; s.PlanIndex = 0; } // drop the pursue-into-melee plan
+                }
+
                 // PURSUE / SEARCH. Replan only when pathfinding is enabled (NavSearchRadius > 0) and not
                 // mid-commit. Radius 0 = no global pathfinding: clear any plan and chase on sight.
-                if (g.NavSearchRadius > 0)
+                if (!kiting && g.NavSearchRadius > 0)
                 {
                     // Commit to a jump in progress: IsCommitted only covers the airborne arc, NOT the grounded
                     // "walk to the launch column + settle" setup. Without this guard, every replan window (the
@@ -274,15 +304,15 @@ namespace tsorcRevamp.NPCs
                         s.ReplanCooldown = ReplanCooldown;
                     }
                 }
-                else if (s.Plan != null) { s.Plan = null; s.PlanIndex = 0; }
+                else if (!kiting && s.Plan != null) { s.Plan = null; s.PlanIndex = 0; }
 
-                if (s.Plan != null && s.PlanIndex < s.Plan.Count)
+                if (!kiting && s.Plan != null && s.PlanIndex < s.Plan.Count)
                 {
                     actionHandled = ExecuteStep(s, npc, player, topSpeed, acceleration,
                         jumpCeil, boostCeil, grounded, doorBreakingDamage, g,
                         out actionLabel, out reasonLabel);
                 }
-                else if (grounded)
+                else if (!kiting && grounded)
                 {
                     int dir = player.Center.X >= npc.Center.X ? 1 : -1;
                     npc.direction = dir; npc.spriteDirection = dir;
@@ -296,6 +326,11 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.velocity.X *= 0.7f; // settle this frame; executor takes over next frame
                         actionLabel = "rope-grab"; reasonLabel = "fallback";
+                        actionHandled = true;
+                    }
+                    else if (TryShaftEscape(s, npc, player, jumpCeil, topSpeed, acceleration, out actionLabel, out reasonLabel))
+                    {
+                        // Boxed under an overhang with the player above → rise straight up the shaft, then drift out.
                         actionHandled = true;
                     }
                     else if (TryRangedStandoff(npc, player, g, topSpeed, acceleration, los, inRange,
@@ -1038,6 +1073,90 @@ namespace tsorcRevamp.NPCs
             foreach (var kv in s.BadEdgeTargets)
                 if (kv.Value > now && Math.Abs(kv.Key.x - x) <= 1 && Math.Abs(kv.Key.y - y) <= 2) return true;
             return false;
+        }
+
+        // Ranged kiting: maintain a preferred DISTANCE BAND from a SAME-LEVEL, visible player (KiteRangeMin/Max),
+        // instead of pathing into melee. Three zones: too close → back off (face the player, backpedal; hold if a
+        // wall/cliff is behind it); in the band → slow forward/back drift + fire; farther than Max → return false
+        // so normal pursuit closes the gap. Looseness: a drifting target distance + an occasional "let them close" window are re-rolled
+        // every ~1.5-4s so spacing is non-robotic and melee can sometimes rush in. Returns true if it took control
+        // this frame (which suppresses the pursuit plan). Firing itself is the attack block's job; this only positions.
+        private static bool TryRangedKite(NavState s, NPC npc, Player player, tsorcRevampGlobalNPC g,
+            float topSpeed, float acceleration, bool los, out string action, out string reason)
+        {
+            action = ""; reason = "";
+            if (g.KiteRangeMax <= 0f || g.AttackList.Count == 0 || !los) return false;
+            // Horizontal kiting only — a player on a different level is the standoff's / pursuit's job.
+            if (Math.Abs(player.Center.Y - npc.Center.Y) > 48f) return false;
+
+            float distTiles = npc.Distance(player.Center) / TileF;
+            if (distTiles > g.KiteRangeMax) return false; // too far → let pursuit close in (don't take control)
+
+            int faceP = player.Center.X >= npc.Center.X ? 1 : -1;
+            npc.direction = faceP; npc.spriteDirection = faceP; // always face the player to shoot
+
+            // Re-roll the drifting target distance + the looseness window occasionally → non-robotic spacing.
+            if (s.KiteRerollTimer <= 0)
+            {
+                s.KiteTargetDist = MathHelper.Lerp(g.KiteRangeMin, g.KiteRangeMax, Main.rand.NextFloat());
+                s.KiteLetClose = Main.rand.NextFloat() < g.KiteLooseness;
+                s.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1; // +1 = forward toward player, -1 = backward from player
+                s.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s
+            }
+            else s.KiteRerollTimer--;
+
+            const float deadband = 1.5f; // hysteresis so it doesn't jitter at the target ring
+            if (distTiles < s.KiteTargetDist - deadband && !s.KiteLetClose)
+            {
+                // Too close → back off, but don't reverse into a wall/cliff (hold + fire if cornered).
+                int away = -faceP;
+                int fX = GetFrontTileX(npc, away);
+                if (IsCliffAhead(npc, away) || GetObstacleHeight(fX, GetFeetTileY(npc)) > 1)
+                {
+                    if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f; else npc.velocity.X *= 0.6f;
+                    action = "kite-hold"; reason = $"d={distTiles:F0} cornered";
+                }
+                else
+                {
+                    ApplyChase(npc, away, topSpeed, acceleration); // ApplyChase toward `away` = backpedal
+                    npc.spriteDirection = faceP;                   // keep facing the player while moving back
+                    action = "kite-back"; reason = $"d={distTiles:F0}<t{s.KiteTargetDist:F0}";
+                }
+                return true;
+            }
+
+            // In the band (or a let-close window) → creep forward/back slowly and fire.
+            const float holdDriftSpeedMult = 0.35f;
+            if (s.KiteHoldDrift == 0) s.KiteHoldDrift = -1;
+            int drift = s.KiteHoldDrift;
+            int driftDir = drift * faceP;
+            int driftFrontX = GetFrontTileX(npc, driftDir);
+            if (IsCliffAhead(npc, driftDir) || GetObstacleHeight(driftFrontX, GetFeetTileY(npc)) > 1)
+            {
+                int otherDir = -driftDir;
+                int otherFrontX = GetFrontTileX(npc, otherDir);
+                if (!IsCliffAhead(npc, otherDir) && GetObstacleHeight(otherFrontX, GetFeetTileY(npc)) <= 1)
+                {
+                    s.KiteHoldDrift *= -1;
+                    driftDir = otherDir;
+                    drift *= -1;
+                }
+            }
+
+            driftFrontX = GetFrontTileX(npc, driftDir);
+            if (IsCliffAhead(npc, driftDir) || GetObstacleHeight(driftFrontX, GetFeetTileY(npc)) > 1)
+            {
+                if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f; else npc.velocity.X *= 0.6f;
+                action = "kite-hold"; reason = s.KiteLetClose ? $"d={distTiles:F0} let-close blocked" : $"d={distTiles:F0} band blocked";
+            }
+            else
+            {
+                ApplyChase(npc, driftDir, topSpeed * holdDriftSpeedMult, acceleration);
+                npc.spriteDirection = faceP;
+                action = drift > 0 ? "kite-drift-forward" : "kite-drift-back";
+                reason = s.KiteLetClose ? $"d={distTiles:F0} let-close" : $"d={distTiles:F0} band";
+            }
+            return true;
         }
 
         // Ranged standoff: the NPC can SEE and SHOOT the player but can't reach them on foot (player on a
@@ -1963,6 +2082,65 @@ namespace tsorcRevamp.NPCs
         //  and the no-plan fallback chase.
         // ================================================================================
 
+        // Pit/shaft escape: the player is well ABOVE and a normal sideways jump is blocked by an overhang lip —
+        // HasTrajectoryClearance (A* edge) and HasHeadroomForJump (local obstacle-jump) both test the column TOWARD
+        // the player, which the lip blocks, so A* makes no edge and the local jump refuses. A ballistic up-and-over
+        // arc can't clear a lip that sits IN its path; the only way out is to rise straight up the shaft, then drift
+        // sideways onto the ledge once above the lip. Fires a near-full VERTICAL jump and arms ShaftEscapeDir; the
+        // Run airborne handler applies the late horizontal drift. Only triggers when genuinely boxed in a shaft
+        // (a wall/overhang at the sides) with clear vertical room — open ground / reachable ledges fall through.
+        // Clear vertical tiles straight up from the feet row in column `col` (capped at 8).
+        private static int ColumnUpClear(int col, int feetY)
+        {
+            int n = 0;
+            for (int u = 1; u <= 8; u++)
+            {
+                if (IsNavigationSolid(col, feetY - u)) break;
+                n = u;
+            }
+            return n;
+        }
+
+        private static bool TryShaftEscape(NavState s, NPC npc, Player player, float jumpCeil, float topSpeed, float acceleration, out string action, out string reason)
+        {
+            action = ""; reason = "";
+            if (player.Center.Y >= npc.Center.Y - 2f * TileF) return false; // player not meaningfully above
+            int feetY = GetFeetTileY(npc);
+            int col = (int)(npc.Center.X / TileF);
+
+            // Boxed? a wall/overhang on at least one side at body height (we're in a shaft / under a lip). If both
+            // sides are open AND there's clear room straight up, it's not a shaft — let the normal jump handle it.
+            bool leftWalled = IsNavigationSolid(col - 1, feetY) || IsNavigationSolid(col - 1, feetY - 1) || IsNavigationSolid(col - 1, feetY - 2);
+            bool rightWalled = IsNavigationSolid(col + 1, feetY) || IsNavigationSolid(col + 1, feetY - 1) || IsNavigationSolid(col + 1, feetY - 2);
+            int curUp = ColumnUpClear(col, feetY);
+            if (!leftWalled && !rightWalled && curUp >= 4) return false;
+
+            int driftDir = player.Center.X >= npc.Center.X ? 1 : -1;
+
+            if (curUp >= 4)
+            {
+                // On a launch column → rise straight up; drift toward the player's side once above the lip.
+                FireJump(s, npc, driftDir, jumpCeil, 0f, 35, 45);
+                npc.velocity.X = 0f;   // pure vertical rise; the sideways drift comes later (ShaftEscapeDir, in Run)
+                s.AirCommitDirX = 0;   // disable the normal airborne X-lock so we don't drift early into the lip
+                s.CommittedLaunchVx = 0f;
+                s.ShaftEscapeDir = driftDir;
+                action = "shaft-escape"; reason = $"up={curUp} drift={driftDir}";
+                return true;
+            }
+
+            // Under an overhang lip (e.g. standing on the floor-bump in the wedge) → no room to rise here. STEP
+            // SIDEWAYS to a column that has clearance (out from under the lip), then jump on a later frame. Prefer
+            // the more-open side; ties go AWAY from the player, since we usually pin into the corner chasing them.
+            int upAway = ColumnUpClear(col - driftDir, feetY);   // away from the player
+            int upToward = ColumnUpClear(col + driftDir, feetY); // toward the player
+            int stepDir = (upAway >= upToward) ? -driftDir : driftDir;
+            npc.direction = stepDir; npc.spriteDirection = stepDir;
+            ApplyChase(npc, stepDir, topSpeed, Math.Max(acceleration, AlignAccelFloor));
+            action = "shaft-align"; reason = $"backup {stepDir} (under lip, curUp={curUp})";
+            return true;
+        }
+
         private static bool TryLocalTerrain(NavState s, NPC npc, int direction, float jumpCeil,
             float boostCeil, float topSpeed, bool allowCliffDrop, out string action, out string reason)
         {
@@ -2523,6 +2701,7 @@ namespace tsorcRevamp.NPCs
         private static void LogFrame(NPC npc, Player player, NavState s, bool grounded, bool los,
             bool attack, string action, string reason)
         {
+            tsorcRevampGlobalNPC g = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             int now = (int)Main.GameUpdateCount;
             // Sample finer while on/working a rope so fast vibration & phasing are actually captured between lines.
             bool ropeContext = npc.noGravity
@@ -2583,8 +2762,12 @@ namespace tsorcRevamp.NPCs
                     + $" stepT={s.StepTimer} commit={s.CommitFrames} air={s.AirCommitDirX}/{s.AirCommitTimer}"
                     + $" rcd={s.ReplanCooldown} pdrop={s.PlatformPassActive}/{s.PlatformPassTimer}"
                     + $" plan=\"{s.LastPlanResult}\""
-                    + $" pursuit={npc.GetGlobalNPC<tsorcRevampGlobalNPC>().PursuitState}"
-                    + $" disengage={npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DisengageTimer}/{npc.GetGlobalNPC<tsorcRevampGlobalNPC>().NavGiveUpTicks}"
+                    + $" pursuit={g.PursuitState}"
+                    + $" disengage={g.DisengageTimer}/{g.NavGiveUpTicks}"
+                    // Combat-layer state folded in from tsorcRevamp-nav.log so the smart log is a single superset
+                    // for SF4 enemies: teleport (style/charges/cooldown/countdown) + stop-to-fire intent.
+                    + $" tp={(g.CanTeleport ? $"{g.TeleportStyle}/ch{(g.TeleportChargesRemaining == int.MaxValue ? "inf" : g.TeleportChargesRemaining.ToString())}/cd{g.TeleportCooldownTimer}/cnt{g.TeleportCountdown}" : "off")}"
+                    + $" stopFire={g.CanStopToFire}"
                     + $" action={action} reason={reason} attack={attack}"
                     + ropeStr;
                 File.AppendAllText(path, line + Environment.NewLine);
@@ -2613,6 +2796,12 @@ namespace tsorcRevamp.NPCs
             public int HardStuckFrames;
             public float HardStuckCheckX = float.MaxValue;
             public int HardStuckStrikes;   // consecutive ~2s windows with no real net progress (Fix C v3)
+            // Ranged kiting (TryRangedKite): drifting target distance, hold-drift direction,
+            // re-roll timer, and a per-window "let melee close".
+            public float KiteTargetDist;
+            public int KiteRerollTimer;
+            public bool KiteLetClose;
+            public int KiteHoldDrift;
             // Rope-fallback retry memory: detects the on/off loop where TryGrabNearbyRope re-grabs the
             // same rope that can't actually reach the player. After 2 rapid retries the rope is bad-edged.
             public int RopeFallbackX = int.MinValue;
@@ -2633,6 +2822,9 @@ namespace tsorcRevamp.NPCs
             public int StepNoMoveFrames;
             public int AirCommitTimer;
             public int AirCommitDirX;
+            // Shaft/pit escape (TryShaftEscape): we launched STRAIGHT UP out of a pit and must rise vertically until
+            // above the overhang lip, THEN drift this direction onto the ledge. 0 = not escaping. Cleared on landing.
+            public int ShaftEscapeDir;
             // Signed horizontal launch velocity computed by ComputeJumpArc, re-asserted each
             // airborne frame so the physics arc isn't eroded by chase steering. 0 = use fallback.
             public float CommittedLaunchVx;

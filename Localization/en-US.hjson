@@ -215,22 +215,22 @@ Mods: {
 
 		DeathText: {
 			01: The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!
-			02: Glowing green skulls often hold important secrets...Right Click to open them
-			03: The dodgeroll keybind can be changed in Controls. Try LeftShift for dodge and LeftAlt for Auto Select
+			02: Glowing green skulls hold important secrets...Right Click to open them
+			03: The dodgeroll keybind can be changed in Controls.
 			04: Crystal shards often hint at secrets, chests or hidden paths nearby...
-			05: Losing souls on death can be disabled in the config. Try it for more of a Legend of Zelda experience
+			05: Losing souls on death can be disabled in the config.
 			06: Check the description of your items to see if any can be upgraded with Dark Souls
 			07: Teal Pressure Pads can only be activated with small projectiles
 			08: If you can do something, you're intended to! Be clever, and use 'cheap' tricks to gain every advantage
 			09: Using potions during normal combat is often necessary to survive
 			PermaPot: Permanent potions need special crystals, but normal shards can be refined into them
 			10: You can dodge mid-air to avoid attacks, cross longer gaps and reverse your momentum instantly...
-			11: Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald. She can remove it with her Blessing
+			11: Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald, outside Ashenpeak Village. She can remove it with her Blessing
 			12: If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction
 			13: Soapstones offer many important hints
-			14: Play with the Recipe Browser mod to easily see what your loot can be transformed into
+			14: Use the Guide Slot in your inventory to easily see what your loot can be transformed into
 			15: Hitting enemies with the tip of a whip will always result in a crit
-			16: I am so fucking mad
+			16: Lao Tzu: "Let your workings remain a mystery. Just show people the results."
 			PermaPot2: Some perma potions can be strengthened, and eventually surpass their normal variants.
 			17: Some vanilla recipes have been removed. You must find these items in the world by exploring
 			18: Item tooltips often have information vital to your survival...
@@ -259,7 +259,7 @@ Mods: {
 			TotallyNotMeantToBeToxic: Get Good :)
 			HeavyRoll: Heavy roll you got there!
 			BossDeath1: Don't give up! Some bosses might take several tries to defeat
-			BossDeath2: Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful
+			BossDeath2: Certain bosses can be fought earlier than necessary. If you're struggling, try coming back when you're more powerful
 			DarkCloud: You can't outrun your shadow
 			Tonberry: (O_O;)
 			Marilith: Some powerful attacks can only be avoided by dodgerolling!
@@ -10089,6 +10089,7 @@ Mods: {
 			FireTeleportBlast.DisplayName: Fire Teleport Blast
 			TeleportFireFlame.DisplayName: Teleport Fire Flame
 			EnemyEphemeralThrowingAxeProj.DisplayName: Enemy Ephemeral Throwing Axe Proj
+			BasiliskLeechTongue.DisplayName: Basilisk Leech Tongue
 		}
 
 		NPCs: {
@@ -11818,6 +11819,10 @@ Mods: {
 			FirebombHollowOriginal.DisplayName: Old Firebomb Hollow
 			AbyssLurker.DisplayName: Old Abyssal Strider
 			HollowWarriorOriginal.DisplayName: Old Hollow Warrior
+			HollowSoldierOriginal.DisplayName: Old Hollow Soldier
+			GhostOfAHollowWarriorOriginal.DisplayName: Old Ghost of a Hollow Warrior
+			HollowSpearmanOriginal.DisplayName: Old Hollow Spearman
+			GhostOfTheDrownedOriginal.DisplayName: Old Ghost of the Drowned
 			GhostOfTheForgottenKnight.DisplayName: Ghost Of The Forgotten Knight
 		}
 

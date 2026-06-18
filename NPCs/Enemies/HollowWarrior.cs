@@ -66,10 +66,10 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             // Movement: shared fighter mover + SF4 A* nav (Phase-3 migration off the bespoke jump-ladder).
             globalNPC.HealthScaledSpeedBase = 2f;
-            globalNPC.HealthScaledSpeedMultiplier = -1.25f; // full-health topSpeed 0.75 (compensates SF4 overhead; matches FirebombHollow)
-            globalNPC.NavSearchRadius = 60;
+            globalNPC.HealthScaledSpeedMultiplier = -0.75f; // full-health topSpeed 1.25 — was 0.75, sluggish under SF4 nav; speeds toward 2.0 when wounded (compensates SF4 overhead; matches FirebombHollow)
+            globalNPC.NavSearchRadius = 80;
             globalNPC.CanUseRopes = true;
-            globalNPC.MaxJumpPower = 8f;            // preserves the old -8f max jump reach
+            globalNPC.MaxJumpPower = 9f;            // default reach; SF4's up-and-over arc needs this to climb out of ~6-tile pits (TibianAmazon escapes the same pit on 9)
             globalNPC.RemembersLastKnownPos = true; // melee pursuer: investigate last-seen spot before patrolling
             // Poise / stagger: opt in. A stagger cancels a windup attack via IStaggerable.OnStagger below
             // (clears the slashing/jumpSlashing/shielding flags + resets the attack timers).
@@ -113,6 +113,11 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             bool grounded = NPC.velocity.Y == 0; // proxy for the old standing-on-solid-tile scan (gates attacks)
+            bool los = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
+            // The player is a same-level shield/melee threat only when roughly level with us AND visible. When
+            // they're on another level (e.g. above on a ledge), shielding would just pin us in place and stop SF4
+            // from pathing toward them — so the shield + jump-slash telegraph below are gated on this.
+            bool playerMeleeLevel = los && Math.Abs(player.Center.Y - NPC.Center.Y) <= 4 * 16;
 
             // Movement is now the shared fighter mover (SF4 A* nav via the SetDefaults levers). This REPLACES the
             // deleted bespoke accel/brake + -5/-6/-7/-8 jump-ladder + platform-drop + boredom block (Phase-3
@@ -136,10 +141,11 @@ namespace tsorcRevamp.NPCs.Enemies
             // suppressed) = the swing's wind-in. COMMITTED = hyper-armor (uninterruptible except by a stagger) =
             // the active swing. Basic slash: ai[3] windup <26, active 26-35. Jump-slash: ai[1] windup <436, active
             // lunge→hit 436-446. (Recovery after each is intentionally vulnerable — punishable, Souls-style.)
-            globalNPC.AttackTelegraphing = (slashing && NPC.ai[3] < 26)
-                                           || (jumpSlashing && NPC.ai[1] < 436);
+            globalNPC.AttackTelegraphing = (slashing && NPC.ai[3] < 26);
+            // Jump-slash is hyper-armored for its whole committed wind-up→hit (red flash fires on commit at
+            // ai[1]==420, slash connects at 442) — only a stagger can stop it. Recovery (>446) is vulnerable.
             globalNPC.AttackCommitted = (slashing && NPC.ai[3] >= 26 && NPC.ai[3] <= 35)
-                                        || (jumpSlashing && NPC.ai[1] >= 436 && NPC.ai[1] <= 446);
+                                        || (jumpSlashing && NPC.ai[1] <= 455);
 
             #region overhead air-slash (hop straight up to a player directly above)
             // Kept as an ATTACK trigger (not a movement reflex): when the player is right above and in reach,
@@ -250,7 +256,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 ++NPC.ai[1]; //Used for Jump-slash
             }
-            if (NPC.ai[1] >= 390 && NPC.ai[1] <= 400)
+            if (NPC.ai[1] >= 390 && NPC.ai[1] <= 400 && playerMeleeLevel && NPC.Distance(player.Center) < 150)
             {
                 if (NPC.direction == 1) //Large eye dust to warn player that a jump-slash is ready...
                 {
@@ -271,7 +277,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
             }
-            if (NPC.ai[1] >= 400 && NPC.ai[1] < 442)
+            if (NPC.ai[1] >= 400 && NPC.ai[1] < 442 && playerMeleeLevel && NPC.Distance(player.Center) < 150)
             {
                 if (NPC.direction == 1) //Small eye dust to warn player that a jump-slash is ready...
                 {
@@ -298,12 +304,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     jumpSlashing = true;
                     shielding = false;
+
+                    // Red telegraph flash on commit (the wind-up→hit below is hyper-armored, so only a stagger stops it).
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
+                    }
                 }
 
                 if (jumpSlashing)
                 {
                     ++NPC.ai[1];
-                    if (NPC.ai[1] < 436)
+                    if (NPC.ai[1] < 445) // extended wind-up: 25 ticks of hyper-armor after the red commit-flash (420) before the leap
                     {
                         if (NPC.direction == 1)
                         {
@@ -324,7 +336,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                     }
 
-                    if (NPC.ai[1] == 436) //If timer is 46
+                    if (NPC.ai[1] == 445) //leap (25 ticks after the commit-flash at 420)
                     {
                         if (NPC.direction == 1)
                         {
@@ -339,7 +351,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                     }
 
-                    if (NPC.ai[1] == 442) //If timer is 50
+                    if (NPC.ai[1] == 451) //slash hit
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
@@ -389,7 +401,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             //Shielding
 
-            if (shielding || NPC.Distance(player.Center) < 220 || NPC.ai[2] > 300)
+            if (playerMeleeLevel && (shielding || NPC.Distance(player.Center) < 220 || NPC.ai[2] > 300))
             {
                 NPC.ai[2]++;
 
@@ -419,6 +431,17 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
             }
+            else if (!playerMeleeLevel)
+            {
+                // Player on another level → don't shield-pin; pursue via SF4 and bleed the timer so a stale value
+                // doesn't re-pin us the instant we reach their level.
+                shielding = false;
+                if (NPC.ai[2] > 0) NPC.ai[2] -= 2;
+            }
+
+            // Block stance this frame: a FRONT hit takes reduced poise (see GlobalNPC.ShieldGuarding + the doubled
+            // front damage reduction in ModifyHitBy). Backstabs are unaffected.
+            globalNPC.ShieldGuarding = shielding;
             #endregion
         }
 
@@ -467,7 +490,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (player.position.X > NPC.position.X)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position); //Play dig
-                        modifiers.SourceDamage.Flat -= 15;
+                        modifiers.SourceDamage.Flat -= 30;
                         if (NPC.ai[2] > 350)
                         {
                             NPC.ai[2] -= 20;
@@ -479,7 +502,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (player.position.X < NPC.position.X)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position); //Play dig
-                        modifiers.SourceDamage.Flat -= 15;
+                        modifiers.SourceDamage.Flat -= 30;
                         if (NPC.ai[2] > 350)
                         {
                             NPC.ai[2] -= 20;
@@ -536,7 +559,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
 
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 15;
+                            modifiers.SourceDamage.Flat -= 30;
                             modifiers.Knockback *= 0.2f;
 
                             if (NPC.ai[1] < 370)
@@ -553,7 +576,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         else if (direction == -1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 15;
+                            modifiers.SourceDamage.Flat -= 30;
                             modifiers.Knockback *= 0.1f;
 
                             if (NPC.ai[1] < 380)
@@ -573,7 +596,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 15;
+                            modifiers.SourceDamage.Flat -= 30;
                             modifiers.Knockback *= 0.2f;
 
                             if (NPC.ai[1] < 370)
@@ -589,7 +612,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         else if (direction == 1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 15;
+                            modifiers.SourceDamage.Flat -= 30;
 
                             modifiers.Knockback *= 0.1f;
                             if (NPC.ai[1] < 370)
@@ -797,23 +820,23 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.spriteDirection = NPC.direction;
 
-                if (NPC.ai[1] < 428)
+                if (NPC.ai[1] < 437)
                 {
                     NPC.frame.Y = 11 * frameHeight;
                 }
-                else if (NPC.ai[1] < 436)
+                else if (NPC.ai[1] < 445)
                 {
                     NPC.frame.Y = 12 * frameHeight;
                 }
-                else if (NPC.ai[1] < 439)
+                else if (NPC.ai[1] < 448)
                 {
                     NPC.frame.Y = 13 * frameHeight;
                 }
-                else if (NPC.ai[1] < 442)
+                else if (NPC.ai[1] < 451)
                 {
                     NPC.frame.Y = 14 * frameHeight;
                 }
-                else if (NPC.ai[1] < 445)
+                else if (NPC.ai[1] < 454)
                 {
                     NPC.frame.Y = 15 * frameHeight;
                 }

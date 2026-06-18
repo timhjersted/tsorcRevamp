@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 using tsorcRevamp.Items.Armors.Melee;
+using tsorcRevamp.NPCs;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Buffs;
 
@@ -682,7 +683,7 @@ namespace tsorcRevamp.Items.VanillaItems
                     //Main.NewText("Effect: " + effect);
                     tsorcRevampPlayer.SameHit = false;
                 }
-                if (tsorcRevampPlayer.DiffHit && Main.rand.NextBool(8))
+                if (tsorcRevampPlayer.DiffHit && target.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0 && Main.rand.NextBool(10))
                 {
                     //CombatText.NewText(targetRect, Color.White, "DiffHit");
                     target.AddBuff(BuffID.Confused, 60 * 5);

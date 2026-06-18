@@ -11,8 +11,12 @@ using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
-    public class GhostOfAHollowWarrior : ModNPC, IStaggerable //Don't look at the code, it's muy malo. Look at Lothric Spear Knight for a better example code management-wise
+    // Pre-Phase-3-migration backup of GhostOfAHollowWarrior (bespoke jump-ladder movement). Kept for A/B
+    // reference; reuses the live sprite. The live version now runs the shared FighterAI + SF4 nav + poise.
+    public class GhostOfAHollowWarriorOriginal : ModNPC //Don't look at the code, it's muy malo. Look at Lothric Spear Knight for a better example code management-wise
     {
+        public override string Texture => "tsorcRevamp/NPCs/Enemies/GhostFighter/GhostOfAHollowWarrior";
+
         bool slashing = false;
         bool jumpSlashing = false;
         bool shielding = false;
@@ -66,19 +70,12 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
             globalNPC.HasGhostAfterimages = true;
+            //globalNPC.MaxJumpPower = 10f;
+            //globalNPC.MaxJumpBoost = 6f;
             // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
-            // Movement: shared fighter mover + SF4 A* nav (Phase-3 migration off the bespoke jump-ladder).
-            // (Ground nav; its wall-phase escape via CanPassThroughWalls still works independently.)
             globalNPC.HealthScaledSpeedBase = 2f;
-            globalNPC.HealthScaledSpeedMultiplier = -0.75f; // full-health topSpeed 1.25 — was 0.75, sluggish under SF4 nav; speeds toward 2.0 when wounded (compensates SF4 overhead)
-            globalNPC.NavSearchRadius = 80;
-            globalNPC.CanUseRopes = true;
-            globalNPC.MaxJumpPower = 9f;            // default reach; SF4's up-and-over arc needs this to climb out of ~6-tile pits (TibianAmazon escapes the same pit on 9)
-            globalNPC.RemembersLastKnownPos = true; // pursuer: investigate last-seen spot before drifting off
-            // Poise / stagger: opt in. A stagger cancels a windup attack via IStaggerable.OnStagger below.
-            globalNPC.PoiseMax = 15f;
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -106,63 +103,226 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         public override void AI()
         {
             Player player = Main.player[NPC.target];
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            // Staggered (poise broken): frozen. GlobalNPC.ApplyStaggerMovement drives the knockback slide in
-            // PostAI; OnStagger already cancelled any in-progress attack. Freeze here so attack timers don't advance.
-            if (globalNPC.StaggerTimer > 0)
+            float acceleration = 0.02f;
+            if (shielding) { acceleration = 0.01f; }
+            float top_speed = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ComputeHealthScaledSpeed(NPC, 2f);
+            float braking_power = 0.1f; //Breaking power to slow down after moving above top_speed
+            //Main.NewText(Math.Abs(npc.velocity.X));
+
+            #region target/face player, respond to boredom
+
+            /*if (!jumpSlashing && !slashing)
             {
-                globalNPC.AttackTelegraphing = false;
-                globalNPC.AttackCommitted = false;
-                return;
+                npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
             }
 
-            bool grounded = NPC.velocity.Y == 0; // proxy for the old standing-on-solid-tile scan (gates attacks)
-            bool los = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-            // The player is a same-level shield/melee threat only when roughly level with us AND visible. When
-            // they're on another level (e.g. above on a ledge), shielding would just pin us in place and stop SF4
-            // from pathing toward them — so the shield + jump-slash telegraph below are gated on this.
-            bool playerMeleeLevel = los && Math.Abs(player.Center.Y - NPC.Center.Y) <= 4 * 16;
-
-            // Movement is now the shared fighter mover (SF4 A* nav via the SetDefaults levers). This REPLACES the
-            // deleted bespoke accel/brake + -5/-6/-7/-8 jump-ladder + platform-drop + boredom block (Phase-3
-            // migration). Gated OUT during the melee lunges (slash / jump-slash) so they fully own velocity AND
-            // facing. It STILL runs while shielding so the block tracks/faces the player (the shield code zeroes
-            // velocity afterward). The ghost's wall-phase escape (CanPassThroughWalls) is independent of this.
-            if (!slashing && !jumpSlashing)
+            if (npc.velocity.X == 0f && !jumpSlashing && !shielding && !slashing)
             {
-                tsorcRevampAIs.FighterAI(NPC, 2f, 0.08f, 0.1f, canPounce: false, canDodgeroll: false);
+                if (npc.velocity.Y == 0f)
+                { // not moving
+                    if (npc.ai[0] == 0f)
+                        npc.ai[0] = 1f; // facing change delay
+                    else
+                    { // change movement and facing direction, reset delay
+                        npc.direction *= -1;
+                        npc.spriteDirection = npc.direction;
+                        npc.ai[0] = 0f;
+                    }
+                }
+            }
+            else // moving in x direction,
+                npc.ai[0] = 0f; // reset facing change delay
+
+            if (npc.direction == 0) // what does it mean if direction is 0?
+                npc.direction = 1; // flee right if direction not set? or is initial direction?*/
+            if (NPC.ai[0] == 0 && !jumpSlashing && !slashing)
+            {
+                NPC.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
             }
 
-            // Restore the SetDefaults knockBackResist each tick (0 = ghost is knockback-immune); poise owns the
-            // stagger (a poise break still launches it via ApplyStaggerImpulse) and hyper-armor (AttackCommitted).
-            if (globalNPC.BaseKnockBackResist >= 0f)
+            if (NPC.velocity.X == 0 && !jumpSlashing && !shielding && !slashing)
             {
-                NPC.knockBackResist = globalNPC.BaseKnockBackResist;
+                NPC.ai[0]++;
+                if (NPC.ai[0] > 120 && NPC.velocity.Y == 0)
+                {
+                    NPC.direction *= -1;
+                    NPC.spriteDirection = NPC.direction;
+                    NPC.ai[0] = 50;
+                }
             }
 
-            // Poise labels (RedKnight / BlackKnight pattern). WINDUP (poise CAN break it, evasive reaction
-            // suppressed) = the swing's wind-in. COMMITTED = hyper-armor (uninterruptible except by a stagger) =
-            // the active swing. Basic slash: ai[3] windup <26, active 26-35. Jump-slash: ai[1] windup <436, active
-            // lunge→hit 436-446. (Recovery after each is intentionally vulnerable — punishable, Souls-style.)
-            globalNPC.AttackTelegraphing = (slashing && NPC.ai[3] < 26);
-            // Jump-slash is hyper-armored for its whole committed wind-up→hit (red flash fires on commit at
-            // ai[1]==420, slash connects at 442) — only a stagger can stop it. Recovery (>446) is vulnerable.
-            globalNPC.AttackCommitted = (slashing && NPC.ai[3] >= 26 && NPC.ai[3] <= 35)
-                                        || (jumpSlashing && NPC.ai[1] <= 455);
-
-            #region overhead air-slash (hop straight up to a player directly above)
-            // Kept as an ATTACK trigger: when the player is right above and in reach, hop up and slash.
-            if (grounded && !slashing && !shielding && !jumpSlashing
-                && NPC.position.Y > player.position.Y + 3 * 16
-                && Math.Abs(NPC.Center.X - player.Center.X) < 4f * 16
-                && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+            if (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
             {
-                slashing = true;
-                NPC.ai[3] = 16;
-                NPC.velocity.Y = -8f; // hop up to slash the overhead player
+                NPC.ai[0] = 0;
+            }
+
+
+            #endregion
+
+            #region melee movement
+
+            if (Math.Abs(NPC.velocity.X) > top_speed && NPC.velocity.Y == 0)
+            {
+                NPC.velocity *= (1f - braking_power); //breaking
+            }
+            if (NPC.velocity.X > 5f) //hard limit of 8f
+            {
+                NPC.velocity.X = 5f;
+            }
+            if (NPC.velocity.X < -5f) //both directions
+            {
+                NPC.velocity.X = -5f;
+            }
+            else
+            {
+                NPC.velocity.X += NPC.direction * acceleration; //accelerating
+            }
+
+            //breaking power after turning, to turn fast or to "slip"
+            if (NPC.direction == 1)
+            {
+                if (NPC.velocity.X > -top_speed)
+                {
+                    NPC.velocity.X += 0.085f;
+                }
                 NPC.netUpdate = true;
             }
+            if (NPC.direction == -1)
+            {
+                if (NPC.velocity.X < top_speed)
+                {
+                    NPC.velocity.X += -0.085f;
+                }
+                NPC.netUpdate = true;
+            }
+
+
+            if (Math.Abs(NPC.velocity.X) > 4f) //If moving at high speed, become knockback immune
+            {
+                NPC.knockBackResist = 0;
+            }
+            if (Math.Abs(NPC.velocity.Y) > 0.1f) //If moving vertically, become knockback immune
+            {
+                NPC.knockBackResist = 0;
+            }
+
+            NPC.noTileCollide = false;
+
+            int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
+            if (Main.tile[(int)NPC.position.X / 16, y_below_feet].TileType == TileID.Platforms && Main.tile[(int)(NPC.position.X + (float)NPC.width) / 16, y_below_feet].TileType == TileID.Platforms && NPC.position.Y < (player.position.Y - 4 * 16))
+            {
+                NPC.noTileCollide = true;
+            }
+
+            #endregion
+
+            #region check if standing on a solid tile
+            bool standing_on_solid_tile = false;
+            if (NPC.velocity.Y == 0f) // no jump/fall
+            {
+                int x_left_edge = (int)NPC.position.X / 16;
+                int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
+                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
+                {
+                    if (Main.tile[l, y_below_feet] == null) // null tile means ??
+                        return;
+
+                    if (Main.tile[l, y_below_feet].HasTile && Main.tileSolid[(int)Main.tile[l, y_below_feet].TileType]) // tile exists and is solid
+                    {
+                        standing_on_solid_tile = true;
+                        break; // one is enough so stop checking
+                    }
+                } // END traverse blocks under feet
+            } // END no jump/fall
+            #endregion
+
+            #region new Tile()s, jumping
+            if (standing_on_solid_tile && !slashing && !shielding && !jumpSlashing)  //  if standing on solid tile
+            {
+                int x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f); // 15 pix in front of center of mass
+                int y_above_feet = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f); // 15 pix above feet
+
+                if (NPC.position.Y > player.position.Y + 3 * 16 && Math.Abs(NPC.Center.X - player.Center.X) < 4f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+                {
+                    slashing = true;
+                    NPC.ai[3] = 16;
+                    NPC.velocity.Y = -8f; // jump with power 8 if directly under player
+                    NPC.netUpdate = true;
+                }
+
+                if (Main.tile[x_in_front, y_above_feet] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet].ClearTile();
+                }
+
+                if (Main.tile[x_in_front, y_above_feet - 1] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet - 1].ClearTile();
+                }
+
+                if (Main.tile[x_in_front, y_above_feet - 2] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet - 2].ClearTile();
+                }
+
+                if (Main.tile[x_in_front, y_above_feet - 3] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet - 3].ClearTile();
+                }
+
+                if (Main.tile[x_in_front, y_above_feet + 1] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet + 1].ClearTile();
+                }
+                //  create? 2 other tiles farther in front
+                if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
+                {
+                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
+                }
+
+                if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
+                {
+                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
+                }
+
+                else // standing on solid tile but not in front of a passable door
+                {
+                    if ((NPC.velocity.X < 0f && NPC.spriteDirection == -1) || (NPC.velocity.X > 0f && NPC.spriteDirection == 1))
+                    {  //  moving forward
+                        if (Main.tile[x_in_front, y_above_feet - 2].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].TileType])
+                        { // 3 blocks above ground level(head height) blocked
+                            if (Main.tile[x_in_front, y_above_feet - 3].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].TileType])
+                            { // 4 blocks above ground level(over head) blocked
+                                NPC.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
+                                NPC.netUpdate = true;
+                            }
+                            else
+                            {
+                                NPC.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
+                                NPC.netUpdate = true;
+                            }
+                        } // for everything else, head height clear:
+                        else if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].TileType])
+                        { // 2 blocks above ground level(mid body height) blocked
+                            NPC.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
+                            NPC.netUpdate = true;
+                        }
+                        else if (Main.tile[x_in_front, y_above_feet].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].TileType])
+                        { // 1 block above ground level(foot height) blocked
+                            NPC.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
+                            NPC.netUpdate = true;
+                        }
+                        else if (NPC.directionY < 0 && (!Main.tile[x_in_front, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].TileType]) && (!Main.tile[x_in_front + NPC.direction, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front + NPC.direction, y_above_feet + 1].TileType]))
+                        { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
+                            NPC.velocity.Y = -8f; // jump with power 8
+                            NPC.velocity.X = NPC.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
+                            NPC.netUpdate = true;
+                        }
+                    } // END moving forward, still: standing on solid tile but not in front of a passable door
+                }
+            }
+
             #endregion
 
             #region attacks
@@ -216,7 +376,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         {
                             if (NPC.direction == 1)
                             {
-                                if (!grounded)
+                                if (!standing_on_solid_tile)
                                 {
                                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -56), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
 
@@ -229,7 +389,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
                             else
                             {
-                                if (!grounded)
+                                if (!standing_on_solid_tile)
                                 {
                                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -56), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
 
@@ -259,7 +419,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             {
                 ++NPC.ai[1]; //Used for Jump-slash
             }
-            if (NPC.ai[1] >= 390 && NPC.ai[1] <= 400 && playerMeleeLevel && NPC.Distance(player.Center) < 150)
+            if (NPC.ai[1] >= 390 && NPC.ai[1] <= 400)
             {
                 if (NPC.direction == 1) //Large eye dust to warn player that a jump-slash is ready...
                 {
@@ -280,7 +440,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 }
 
             }
-            if (NPC.ai[1] >= 400 && NPC.ai[1] < 442 && playerMeleeLevel && NPC.Distance(player.Center) < 150)
+            if (NPC.ai[1] >= 400 && NPC.ai[1] < 442)
             {
                 if (NPC.direction == 1) //Small eye dust to warn player that a jump-slash is ready...
                 {
@@ -303,22 +463,17 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
             if (/*!shielding && */!slashing)
             {
-                if (NPC.ai[1] == 420 && NPC.Distance(player.Center) < 120 && NPC.Distance(player.Center) >= 45 && NPC.velocity.Y == 0 && grounded && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0)) //If timer is at 0 and player is within slash range
+                if (NPC.ai[1] == 420 && NPC.Distance(player.Center) < 120 && NPC.Distance(player.Center) >= 45 && NPC.velocity.Y == 0 && standing_on_solid_tile && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0)) //If timer is at 0 and player is within slash range
                 {
                     jumpSlashing = true;
                     shielding = false;
-
-                    // Red telegraph flash on commit (the wind-up→hit below is hyper-armored, so only a stagger stops it).
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
-                    }
                 }
 
                 if (jumpSlashing)
                 {
+                    NPC.knockBackResist = 0;
                     ++NPC.ai[1];
-                    if (NPC.ai[1] < 445) // extended wind-up: 25 ticks of hyper-armor after the red commit-flash (420) before the leap
+                    if (NPC.ai[1] < 436)
                     {
                         if (NPC.direction == 1)
                         {
@@ -339,7 +494,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         }
                     }
 
-                    if (NPC.ai[1] == 445) //leap (25 ticks after the commit-flash at 420)
+                    if (NPC.ai[1] == 436) //If timer is 46
                     {
                         if (NPC.direction == 1)
                         {
@@ -354,7 +509,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         }
                     }
 
-                    if (NPC.ai[1] == 451) //slash hit
+                    if (NPC.ai[1] == 442) //If timer is 50
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
@@ -404,7 +559,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
             //Shielding
 
-            if (playerMeleeLevel && (shielding || NPC.Distance(player.Center) < 220 || NPC.ai[2] > 300))
+            if (shielding || NPC.Distance(player.Center) < 220 || NPC.ai[2] > 300)
             {
                 NPC.ai[2]++;
 
@@ -429,29 +584,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     }
                 }
             }
-            else if (!playerMeleeLevel)
-            {
-                // Player on another level → don't shield-pin; pursue via SF4 and bleed the timer so a stale value
-                // doesn't re-pin us the instant we reach their level.
-                shielding = false;
-                if (NPC.ai[2] > 0) NPC.ai[2] -= 2;
-            }
-
-            // Block stance this frame: a FRONT hit takes reduced poise (see GlobalNPC.ShieldGuarding + the doubled
-            // front damage reduction in ModifyHitBy). Backstabs are unaffected.
-            globalNPC.ShieldGuarding = shielding;
             #endregion
-        }
-
-        // IStaggerable: a poise break cancels any in-progress attack and returns to neutral approach.
-        public void OnStagger(NPC npc)
-        {
-            slashing = false;
-            jumpSlashing = false;
-            shielding = false;
-            npc.ai[1] = 60f;   // jump-slash timer → neutral (well below the 420 trigger)
-            npc.ai[2] = -100f; // shield timer → delayed
-            npc.ai[3] = 0f;    // basic-slash timer → neutral
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
@@ -502,7 +635,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     if (player.position.X > NPC.position.X)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position); //Play dig
-                        modifiers.SourceDamage.Flat -= 30;
+                        modifiers.SourceDamage.Flat -= 15;
                         if (NPC.ai[2] > 350)
                         {
                             NPC.ai[2] -= 20;
@@ -514,7 +647,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     if (player.position.X < NPC.position.X)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position); //Play dig
-                        modifiers.SourceDamage.Flat -= 30;
+                        modifiers.SourceDamage.Flat -= 15;
                         if (NPC.ai[2] > 350)
                         {
                             NPC.ai[2] -= 20;
@@ -572,7 +705,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         {
 
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 30;
+                            modifiers.SourceDamage.Flat -= 15;
                             modifiers.Knockback *= 0.2f;
 
                             if (NPC.ai[1] < 370)
@@ -589,7 +722,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         else if (direction == -1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 30;
+                            modifiers.SourceDamage.Flat -= 15;
                             modifiers.Knockback *= 0.1f;
 
                             if (NPC.ai[1] < 380)
@@ -609,7 +742,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 30;
+                            modifiers.SourceDamage.Flat -= 15;
                             modifiers.Knockback *= 0.2f;
 
                             if (NPC.ai[1] < 370)
@@ -625,7 +758,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         else if (direction == 1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 30;
+                            modifiers.SourceDamage.Flat -= 15;
 
                             modifiers.Knockback *= 0.1f;
                             if (NPC.ai[1] < 370)
@@ -806,23 +939,23 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             {
                 NPC.spriteDirection = NPC.direction;
 
-                if (NPC.ai[1] < 437)
+                if (NPC.ai[1] < 428)
                 {
                     NPC.frame.Y = 11 * frameHeight;
                 }
-                else if (NPC.ai[1] < 445)
+                else if (NPC.ai[1] < 436)
                 {
                     NPC.frame.Y = 12 * frameHeight;
                 }
-                else if (NPC.ai[1] < 448)
+                else if (NPC.ai[1] < 439)
                 {
                     NPC.frame.Y = 13 * frameHeight;
                 }
-                else if (NPC.ai[1] < 451)
+                else if (NPC.ai[1] < 442)
                 {
                     NPC.frame.Y = 14 * frameHeight;
                 }
-                else if (NPC.ai[1] < 454)
+                else if (NPC.ai[1] < 445)
                 {
                     NPC.frame.Y = 15 * frameHeight;
                 }

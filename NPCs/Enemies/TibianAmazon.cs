@@ -22,13 +22,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 85;
+            NPC.lifeMax = 100;
             NPC.damage = 20;
             NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.knockBackResist = .6f;
-            NPC.value = 430;
+            NPC.value = 450;
             NPC.defense = 2;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianAmazonBanner>();
@@ -40,18 +39,27 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode)
             {
-                NPC.lifeMax = 180;
+                NPC.lifeMax = 250;
                 NPC.defense = 16;
-                NPC.value = 900;
+                NPC.value = 950;
                 NPC.damage = 50;
                 throwingKnifeDamage = 20;
             }
-            UsefulFunctions.AddAttack(NPC, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
+            // "Throwing Knife" - quick aimed knife toss.
+            UsefulFunctions.AddAttack(NPC, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, telegraphTime: 25, commitFraction: 0f);
 
-            // Step 6: humanoid soldier — paces around its post when it gives up.
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PatrolMode = NPCs.PatrolMode.Pace;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
+            // paces around its post when it gives up.
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.PatrolMode = NPCs.PatrolMode.Pace;
+            globalNPC.NavSearchRadius = 70; // SmartFighter4AI movement
+            globalNPC.CanUseRopes = true;
+            // Poise (a stagger cancels the wind-up) + knockback flinch are tuned centrally in
+            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) - not here.
+            globalNPC.EvasiveRetreatAndShoot = true;
+            globalNPC.EvasiveQuickStep = true;
+            globalNPC.KiteRangeMin = 4f;
+            globalNPC.KiteRangeMax = 10f;
+            globalNPC.KiteLooseness = 0.65f;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -104,23 +112,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterOnHit(NPC, true);
-            if (Main.rand.NextBool(3))
-            {
-                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
-                NPC.netUpdate = true;
-            }
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterOnHit(NPC, projectile.DamageType == DamageClass.Melee);
-
-            if (projectile.DamageType == DamageClass.Melee)
-            {
-                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
-                NPC.netUpdate = true;
-            }
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public override void OnKill()

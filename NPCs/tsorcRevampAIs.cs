@@ -585,7 +585,12 @@ namespace tsorcRevamp.NPCs
                 lineOfSight = LocalMover.Run(npc, globalNPC, topSpeed, acceleration, brakingPower, isArcher, doorBreakingDamage, fleeing, lineOfSight, ref intent);
             }
 
-            LogFighterNavDebug(npc, globalNPC, lineOfSight);
+            // SF4 enemies already logged this frame's movement via the smart log (LogFrame) on the Pursue/Search
+            // path, so only emit the FSM-layer line here when the SF4 mover was SKIPPED (combat seized the body —
+            // pounce/dodge/teleport). LocalMover enemies (radius 0) always log. Patrol frames are logged via the
+            // early-return path above. This keeps SF4 enemies to a single, non-duplicated shared log file.
+            if (globalNPC.NavSearchRadius == 0 || intent.SeizesBody)
+                LogFighterNavDebug(npc, globalNPC, lineOfSight);
 
             // Combat triggers (Step 1): the end-of-frame decision to START a dodge or pounce. Runs after the
             // movement phase refreshed `lineOfSight`; the timers it sets are executed at the top of the NEXT
@@ -673,7 +678,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            // Quick step: a dodgeroll-style i-frame dash WITHOUT the sprite rotation (a flat horizontal step). The
+            // Quick step: a standing i-frame dash WITHOUT sprite rotation. The
             // i-frames + pass-through are handled by the CanBeHit*/CanHitPlayer hooks reading QuickStepTimer.
             if (globalNPC.QuickStepTimer > 0)
             {
@@ -682,7 +687,17 @@ namespace tsorcRevamp.NPCs
                 if (globalNPC.QuickStepTimer == 0)
                 {
                     npc.velocity.X = 0;
+                    globalNPC.QuickStepRecoveryTimer = 30;
                 }
+            }
+            else if (globalNPC.QuickStepRecoveryTimer > 0)
+            {
+                npc.velocity.X *= 0.4f;
+                if (Math.Abs(npc.velocity.X) < 0.2f)
+                {
+                    npc.velocity.X = 0;
+                }
+                globalNPC.QuickStepRecoveryTimer--;
             }
 
             // Advance the multi-tick evasion windows (RunningDash telegraph→burst, RetreatAndShoot back-off).
@@ -730,10 +745,15 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            //Block firing and reset cooldowns if it's busy doing other things (incl. fleeing / evading)
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.InSustainedEvasion)
+            // Busy states can optionally reset attack timing after SimpleProjectile has run. Evasive moves choose
+            // that policy in ShouldEvasionResetProjectileTimer, so individual moves can keep or reset shot progress.
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || globalNPC.InSustainedEvasion)
             {
-                globalNPC.ProjectileTimer = 0;
+                bool nonEvasiveBusy = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0;
+                if (nonEvasiveBusy || ShouldEvasionResetProjectileTimer(globalNPC))
+                {
+                    globalNPC.ProjectileTimer = 0;
+                }
                 globalNPC.ArcherAimDirection = 0;
             }
 
@@ -751,7 +771,28 @@ namespace tsorcRevamp.NPCs
             // Quick step drives its own velocity; the running-dash TELEGRAPH holds the enemy still while it flashes
             // (the burst itself does NOT seize the body — it runs via the topSpeed multiplier so the mover pursues).
             bool dashTelegraphHold = globalNPC.InSustainedEvasion && globalNPC.CurrentEvasion == EvasiveBehavior.RunningDash && globalNPC.EvasiveTelegraphing;
-            intent.SeizesBody = teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
+            intent.SeizesBody = teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
+        }
+
+        private static bool ShouldEvasionResetProjectileTimer(tsorcRevampGlobalNPC globalNPC)
+        {
+            if (globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0)
+            {
+                return false;
+            }
+
+            if (!globalNPC.InSustainedEvasion)
+            {
+                return false;
+            }
+
+            switch (globalNPC.CurrentEvasion)
+            {
+                case EvasiveBehavior.RetreatAndShoot:
+                    return false;
+                default:
+                    return true;
+            }
         }
 
         private static void SpawnHighArcPounceTelegraph(NPC npc, tsorcRevampGlobalNPC globalNPC)
@@ -1136,9 +1177,12 @@ namespace tsorcRevamp.NPCs
                 string separator = Path.DirectorySeparatorChar.ToString();
                 string logDir = Main.SavePath + separator + "Logs";
                 Directory.CreateDirectory(logDir);
-                string logPath = logDir + separator + "tsorcRevamp-nav.log";
+                // SF4-routed enemies write into the SAME file as the smart log so one shared log holds the full
+                // timeline (Pursue/Search nav lines from LogFrame + these FSM-layer lines for Patrol / combat-seize
+                // frames where the SF4 mover is skipped). The `[fsm]` tag distinguishes the two line formats.
+                string logPath = logDir + separator + (globalNPC.NavSearchRadius > 0 ? "tsorcRevamp-smartfighter4.log" : "tsorcRevamp-nav.log");
                 Player player = Main.player[npc.target];
-                string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI} pos=({npc.Center.X / 16f:F1},{npc.Center.Y / 16f:F1}) player=({player.Center.X / 16f:F1},{player.Center.Y / 16f:F1}) vel=({npc.velocity.X:F2},{npc.velocity.Y:F2}) g={!airborne} cx={npc.collideX} cy={npc.collideY} dist={npc.Distance(player.Center):F0} los={lineOfSight} yDiff={player.Center.Y - npc.Center.Y:F0} pursuit={globalNPC.PursuitState} disengage={globalNPC.DisengageTimer}/{globalNPC.NavGiveUpTicks} immobile={globalNPC.StuckTimer} tp={(globalNPC.CanTeleport ? $"{globalNPC.TeleportStyle}/ch{(globalNPC.TeleportChargesRemaining == int.MaxValue ? "inf" : globalNPC.TeleportChargesRemaining.ToString())}/cd{globalNPC.TeleportCooldownTimer}/cnt{globalNPC.TeleportCountdown}" : "off")} stopFire={globalNPC.CanStopToFire}";
+                string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI} [fsm] pos=({npc.Center.X / 16f:F1},{npc.Center.Y / 16f:F1}) player=({player.Center.X / 16f:F1},{player.Center.Y / 16f:F1}) vel=({npc.velocity.X:F2},{npc.velocity.Y:F2}) g={!airborne} cx={npc.collideX} cy={npc.collideY} dist={npc.Distance(player.Center):F0} los={lineOfSight} yDiff={player.Center.Y - npc.Center.Y:F0} pursuit={globalNPC.PursuitState} disengage={globalNPC.DisengageTimer}/{globalNPC.NavGiveUpTicks} immobile={globalNPC.StuckTimer} tp={(globalNPC.CanTeleport ? $"{globalNPC.TeleportStyle}/ch{(globalNPC.TeleportChargesRemaining == int.MaxValue ? "inf" : globalNPC.TeleportChargesRemaining.ToString())}/cd{globalNPC.TeleportCooldownTimer}/cnt{globalNPC.TeleportCountdown}" : "off")} stopFire={globalNPC.CanStopToFire}";
                 File.AppendAllText(logPath, line + Environment.NewLine);
             }
             catch
@@ -1862,6 +1906,11 @@ namespace tsorcRevamp.NPCs
             AddEvasion(globalNPC.EvasiveRunningDash, EvasiveHitSource.Both, 1, EvasiveBehavior.RunningDash, melee);
             AddEvasion(globalNPC.EvasiveRetreatAndShoot, EvasiveHitSource.Melee, 1, EvasiveBehavior.RetreatAndShoot, melee);
             AddEvasion(globalNPC.EvasiveQuickStep, EvasiveHitSource.Both, 2, EvasiveBehavior.QuickStep, melee);
+            float targetDistance = npc.Distance(Main.player[npc.target].Center);
+            AddEvasion(globalNPC.EvasiveBasiliskWalkerCloseBackhop && targetDistance < 150f, EvasiveHitSource.Both, 1, EvasiveBehavior.BasiliskWalkerCloseBackhop, melee);
+            AddEvasion(globalNPC.EvasiveBasiliskWalkerFarScrambleHop && targetDistance > 150f, EvasiveHitSource.Both, 1, EvasiveBehavior.BasiliskWalkerFarScrambleHop, melee);
+            AddEvasion(globalNPC.EvasiveBasiliskShifterCloseBackhop && targetDistance < 150f, EvasiveHitSource.Both, 1, EvasiveBehavior.BasiliskShifterCloseBackhop, melee);
+            AddEvasion(globalNPC.EvasiveBasiliskShifterFarForwardHop && targetDistance > 150f, EvasiveHitSource.Both, 1, EvasiveBehavior.BasiliskShifterFarForwardHop, melee);
             if (EvasionPool.Count == 0)
             {
                 return;
@@ -1927,7 +1976,7 @@ namespace tsorcRevamp.NPCs
                     }
                     break;
                 case EvasiveBehavior.RetreatDash: // low dash back (was case 2)
-                    npc.velocity.X = 8f * away;
+                    npc.velocity.X = 5f * away;
                     if (grounded)
                     {
                         npc.velocity.Y = -3f;
@@ -1960,18 +2009,47 @@ namespace tsorcRevamp.NPCs
                     globalNPC.EvasiveTelegraphing = false;
                     globalNPC.EvasiveTimer = globalNPC.EvasiveRetreatTicks;
                     break;
-                case EvasiveBehavior.QuickStep: // arm an i-frame quick step (mirrors the dodgeroll, no rotation)
-                    // Step toward the player when far (close the gap / dodge through), away when point-blank.
-                    globalNPC.QuickStepDir = npc.Distance(Main.player[npc.target].Center) < 120f ? away : -away;
-                    globalNPC.QuickStepTimer = globalNPC.QuickStepTicks;
+                case EvasiveBehavior.QuickStep: // arm an i-frame standing dash step (no rotation)
+                    Player target = Main.player[npc.target];
+                    const int maxForwardQuickStepTicks = 30;
+                    float crossDistance = Math.Abs(target.Center.X - npc.Center.X) + (target.width + npc.width) * 0.5f + 16f;
+                    bool canCrossThrough = crossDistance <= globalNPC.QuickStepSpeed * maxForwardQuickStepTicks;
+                    bool stepForward = canCrossThrough && Main.rand.NextBool();
+                    globalNPC.QuickStepDir = stepForward ? -away : away;
+                    globalNPC.QuickStepRecoveryTimer = 0;
+                    if (stepForward)
+                    {
+                        globalNPC.QuickStepTimer = Math.Clamp((int)Math.Ceiling(crossDistance / globalNPC.QuickStepSpeed), globalNPC.QuickStepTicks, maxForwardQuickStepTicks);
+                    }
+                    else
+                    {
+                        globalNPC.QuickStepTimer = globalNPC.QuickStepTicks;
+                    }
+                    break;
+                case EvasiveBehavior.BasiliskWalkerCloseBackhop:
+                    npc.velocity.Y = Main.rand.NextFloat(-6f, -3f);
+                    npc.velocity.X += npc.direction * Main.rand.NextFloat(-5f, -3f);
+                    break;
+                case EvasiveBehavior.BasiliskWalkerFarScrambleHop:
+                    npc.velocity.Y = Main.rand.NextFloat(-5f, -2f);
+                    npc.velocity.X += npc.direction * Main.rand.NextFloat(-5f, 3f);
+                    break;
+                case EvasiveBehavior.BasiliskShifterCloseBackhop:
+                    npc.velocity.Y = Main.rand.NextFloat(-6f, -4f);
+                    npc.velocity.X += npc.direction * Main.rand.NextFloat(-7f, -4f);
+                    break;
+                case EvasiveBehavior.BasiliskShifterFarForwardHop:
+                    npc.velocity.Y = Main.rand.NextFloat(-10f, -3f);
+                    npc.velocity.X += npc.direction * Main.rand.NextFloat(3f, 7f);
                     break;
             }
         }
 
         // Drives the multi-tick evasion windows each AI tick. RunningDash: hold + flash during the telegraph, then a
         // hyper-armored grounded burst (the actual speed comes from the topSpeed multiplier in BasicAI; the mover keeps
-        // pursuing). RetreatAndShoot: seizes the body and drives a grounded back-off away from the player, firing
-        // resuming when the window ends. QuickStep has its own exec block above and is not handled here.
+        // pursuing). RetreatAndShoot: seizes the body and drives a grounded back-off away from the player. Whether it
+        // preserves or resets shot progress is controlled by ShouldEvasionResetProjectileTimer. QuickStep has its own
+        // exec block above and is not handled here.
         private static void UpdateEvasion(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
             if (!globalNPC.InSustainedEvasion)
@@ -2011,8 +2089,7 @@ namespace tsorcRevamp.NPCs
                     }
                     break;
                 case EvasiveBehavior.RetreatAndShoot:
-                    // Drive a grounded back-off directly (SeizesBody makes the mover yield). Firing is blocked while
-                    // InSustainedEvasion, so the enemy backs off, then resumes shooting at range when the window ends.
+                    // Drive a grounded back-off directly (SeizesBody makes the mover yield).
                     npc.TargetClosest(true);
                     npc.velocity.X = globalNPC.EvasiveRetreatSpeed * -npc.direction; // -direction = away from the player
                     if (globalNPC.EvasiveTimer == 0)

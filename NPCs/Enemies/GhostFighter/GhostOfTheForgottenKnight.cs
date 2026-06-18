@@ -53,11 +53,14 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             }
 
             // "Spectral Spear Throw" — commitFraction 0.5: first half cancellable (by magic), second half hyperarmor.
-            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17, stopBeforeFiring: false, commitFraction: 0.5f);
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17, stopBeforeFiring: false, commitFraction: 0f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
             EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
+            // Smart positioning: spear-thrower holds a medium 5-16 band.
+            globalNPC.KiteRangeMin = 5f;
+            globalNPC.KiteRangeMax = 16f;
             globalNPC.HasGhostAfterimages = true;
             globalNPC.MaxJumpPower = 10f;
             globalNPC.MaxJumpBoost = 6f;

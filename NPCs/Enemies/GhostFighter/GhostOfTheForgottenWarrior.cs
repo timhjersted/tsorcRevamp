@@ -55,11 +55,14 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
             // "Ephemeral Axe Throw" — commitFraction 0.5: first half of the tell is stagger-cancellable (by magic, per
             // the ghost poise), second half is committed/hyperarmor.
-            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemyEphemeralThrowingAxeProj>(), warriorDamage, 8, SoundID.Item17, telegraphColor: Color.Orange, stopBeforeFiring: false, telegraphTime: 25, commitFraction: 0.5f);
+            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemyEphemeralThrowingAxeProj>(), warriorDamage, 8, SoundID.Item17, telegraphColor: Color.Orange, stopBeforeFiring: false, telegraphTime: 25, commitFraction: 0f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
             EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
+            // Smart positioning: the thrown axe is short-range, so hold a closer 5-15 band.
+            globalNPC.KiteRangeMin = 5f;
+            globalNPC.KiteRangeMax = 15f;
             globalNPC.HasGhostAfterimages = true;
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;

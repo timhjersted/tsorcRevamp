@@ -10068,6 +10068,7 @@ Mods: {
 			// FireTeleportBlast.DisplayName: Fire Teleport Blast
 			// TeleportFireFlame.DisplayName: Teleport Fire Flame
 			// EnemyEphemeralThrowingAxeProj.DisplayName: Enemy Ephemeral Throwing Axe Proj
+			// BasiliskLeechTongue.DisplayName: Basilisk Leech Tongue
 		}
 
 		NPCs: {
@@ -11798,6 +11799,10 @@ Mods: {
 			// FirebombHollowOriginal.DisplayName: Old Firebomb Hollow
 			// AbyssLurker.DisplayName: Old Abyssal Strider
 			// HollowWarriorOriginal.DisplayName: Old Hollow Warrior
+			// HollowSoldierOriginal.DisplayName: Old Hollow Soldier
+			// GhostOfAHollowWarriorOriginal.DisplayName: Old Ghost of a Hollow Warrior
+			// HollowSpearmanOriginal.DisplayName: Old Hollow Spearman
+			// GhostOfTheDrownedOriginal.DisplayName: Old Ghost of the Drowned
 			// GhostOfTheForgottenKnight.DisplayName: Ghost Of The Forgotten Knight
 		}
 

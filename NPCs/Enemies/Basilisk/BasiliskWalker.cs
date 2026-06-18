@@ -18,6 +18,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         bool chargeDamageFlag = false;
         int hypnoticDisruptorDamage = 15;
         int bioSpitDamage = 10;
+        int leechTongueDamage = 5;
+        int leechTongueTimer;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 12;
@@ -47,6 +49,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 NPC.damage = 33;
                 hypnoticDisruptorDamage = 23;
                 bioSpitDamage = 18;
+                leechTongueDamage = 5;
             }
 
             Banner = NPC.type;
@@ -66,6 +69,11 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             // Evasive on-hit: hop/dash away or i-frame quick-step; can also blink away (limited charges above).
             EvasiveProfile.Basilisk(globalNPC);
             globalNPC.EvasiveTeleportAway = true;
+            globalNPC.EvasiveBasiliskWalkerCloseBackhop = true;
+            globalNPC.EvasiveBasiliskWalkerFarScrambleHop = true;
+            // Smart positioning: medium-range bio-spitter — hold a 7-18 band (backs off below 7, lets you close above 18).
+            globalNPC.KiteRangeMin = 7f;
+            globalNPC.KiteRangeMax = 18f;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -131,6 +139,11 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
         public override void AI()
         {
+            if (BasiliskLeechTongueAttack.Update(NPC, ref leechTongueTimer, 360, leechTongueDamage))
+            {
+                return;
+            }
+
             tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
 
             //MAKE SOUND WHEN JUMPING/HOVERING

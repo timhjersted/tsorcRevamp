@@ -33,11 +33,14 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
             // "Shadow Shot" — commitFraction 0.5: first half of the tell cancellable (by magic), second half hyperarmor.
-            UsefulFunctions.AddAttack(NPC, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, SoundID.Item17, stopBeforeFiring: false, commitFraction: 0.5f);
+            UsefulFunctions.AddAttack(NPC, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, SoundID.Item17, stopBeforeFiring: false, commitFraction: 0f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
             EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
+            // Smart positioning: the Shadow Shot is a ranged caster — keep more distance, a 7-18 band.
+            globalNPC.KiteRangeMin = 7f;
+            globalNPC.KiteRangeMax = 18f;
             globalNPC.HasGhostAfterimages = true;
             // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
