@@ -496,6 +496,8 @@ namespace tsorcRevamp
 
         public override void UpdateUI(GameTime gameTime)
         {
+            SyncRecommendedControlsConfig();
+
             if (Items.Debug.EnemyDebugTome.JustClosedUI && !Main.mouseLeft && !Main.mouseRight)
             {
                 Items.Debug.EnemyDebugTome.JustClosedUI = false;
@@ -612,6 +614,58 @@ namespace tsorcRevamp
 
         public static float deathFadeAlpha = 0f;
 
+        private static void SyncRecommendedControlsConfig()
+        {
+            if (Main.dedServ || !tsorcRevampControlsConfig.Loaded)
+            {
+                return;
+            }
+
+            tsorcRevampControlsConfig controlsConfig = ModContent.GetInstance<tsorcRevampControlsConfig>();
+            if (controlsConfig.RecommendedControls && !tsorcRevamp.RecommendedControlBindingsMatch())
+            {
+                controlsConfig.RecommendedControls = false;
+                tsorcRevampControlsConfig.LastRecommendedControls = false;
+            }
+        }
+
+        private static string FormatSoapstoneText(string text)
+        {
+            if (string.IsNullOrEmpty(text) || !text.Contains("{"))
+            {
+                return text;
+            }
+
+            return text
+                .Replace("{DodgeRoll}", GetKeyboardBindingText("tsorcRevamp/Dodge Roll"))
+                .Replace("{QuickHeal}", GetKeyboardBindingText("QuickHeal"))
+                .Replace("{QuickMana}", GetKeyboardBindingText("QuickMana"))
+                .Replace("{Inventory}", GetKeyboardBindingText("Inventory"))
+                .Replace("{QuickMount}", GetKeyboardBindingText("QuickMount"))
+                .Replace("{AutoSelect}", GetKeyboardBindingText("SmartSelect"));
+        }
+
+        private static string GetKeyboardBindingText(string trigger)
+        {
+            if (PlayerInput.CurrentProfile == null
+                || !PlayerInput.CurrentProfile.InputModes.TryGetValue(InputMode.Keyboard, out KeyConfiguration keyboard)
+                || !keyboard.KeyStatus.TryGetValue(trigger, out List<string> keys))
+            {
+                return "Unbound";
+            }
+
+            List<string> boundKeys = new List<string>();
+            foreach (string key in keys)
+            {
+                if (!string.IsNullOrWhiteSpace(key))
+                {
+                    boundKeys.Add(key);
+                }
+            }
+
+            return boundKeys.Count > 0 ? string.Join(" / ", boundKeys) : "Unbound";
+        }
+
         public override void PostDrawInterface(SpriteBatch spriteBatch)
         {
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
@@ -639,7 +693,7 @@ namespace tsorcRevamp
                     textWidth *= scaleMod;
 
                     //Wrap when find blank between words, but chinese language don't have " ", so manually edit all the textWidth in Soapstones_zh-Hans.json
-                    string text = UsefulFunctions.WrapString(soapstone.text, font, textWidth, scaleMod);
+                    string text = UsefulFunctions.WrapString(FormatSoapstoneText(soapstone.text), font, textWidth, scaleMod);
                     textWidth += font.MeasureString(" ").X * scaleMod;
                     float alpha = (soapstone.timer / 20f);
                     if (soapstone.timer >= 20)

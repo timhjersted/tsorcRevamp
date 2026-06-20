@@ -108,6 +108,17 @@ namespace tsorcRevamp
 
     }
 
+    public class FirstBossKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        public virtual bool CanDrop(DropAttemptInfo info)
+        {
+            return !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type)) && info.npc.boss;
+        }
+
+        public bool CanShowItemDropInUI() => true;
+
+        public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.FirstBossKill");
+    }
     public class FirstBagCursedRule : FirstBagRule
     {
         public override bool CanDrop(DropAttemptInfo info)

@@ -495,10 +495,10 @@ namespace tsorcRevamp
         ///<param name="useStopBeforeChance">If true, this attack uses stopBeforeChance. If false, stopBeforeChance is ignored and treated as 0.</param>
         ///<param name="telegraphTime">How many ticks before firing to spawn the telegraph flash. Defaults to the shared projectile telegraph time.</param>
         // needsLineOfSight defaults to FALSE — attacks fire even without LOS; opt in per-attack with needsLineOfSight: true.
-        public static void AddAttack(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, bool useStopBeforeChance = false, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f)
+        public static void AddAttack(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, bool useStopBeforeChance = false, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f, bool lockAimAtTelegraph = false)
         {
             float appliedStopBeforeChance = useStopBeforeChance ? stopBeforeChance : 0f;
-            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList.Add(new tsorcRevampAIs.ProjectileData(projectileType, timerCap, projectileDamage, projectileVelocity, shootSound, projectileGravity, ai0, ai1, overshoot, telegraphColor, stopBeforeFiring, needsLineOfSight, weight, condition, appliedStopBeforeChance, telegraphTime, commitFraction));
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList.Add(new tsorcRevampAIs.ProjectileData(projectileType, timerCap, projectileDamage, projectileVelocity, shootSound, projectileGravity, ai0, ai1, overshoot, telegraphColor, stopBeforeFiring, needsLineOfSight, weight, condition, appliedStopBeforeChance, telegraphTime, commitFraction, lockAimAtTelegraph));
         }
 
         ///<summary> 

@@ -1,4 +1,4 @@
-ï»¿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
@@ -203,6 +203,24 @@ namespace tsorcRevamp.Items
                 }
             }
 
+            if (item.type == ItemID.ManaCrystal && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                bool replaced = false;
+                for (int i = 0; i < tooltips.Count; i++)
+                {
+                    if (tooltips[i].Mod == "Terraria" && tooltips[i].Text.Contains("20"))
+                    {
+                        tooltips[i].Text = Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ManaCrystalSoulsMode", 10);
+                        replaced = true;
+                        break;
+                    }
+                }
+                if (!replaced)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "ManaCrystalSoulsMode",
+                        Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ManaCrystalSoulsMode", 10)));
+                }
+            }
             if (badPrefixes.Contains<int>(item.prefix) && !NPC.AnyNPCs(NPCID.GoblinTinkerer))
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "ReforgeTooltip", $"[i:{ItemID.LivingFireBlock}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ReforgeTooltip")));
@@ -857,7 +875,7 @@ namespace tsorcRevamp.Items
             {
                 player.statMana += 20;
             }
-            // Life Crystal nerf moved to UseItem (below) â€” vanilla's Life Crystal handling in
+            // Life Crystal nerf moved to UseItem (below) — vanilla's Life Crystal handling in
             // Player.ItemCheck bumps statLifeMax/statLife directly and consumes the stack manually,
             // bypassing ItemLoader.ConsumeItem entirely. That means this OnConsumeItem hook never
             // fired for Life Crystals, and the nerf was silently inert. UseItem runs immediately
@@ -909,7 +927,7 @@ namespace tsorcRevamp.Items
 
             // Life Crystal nerf moved to tsorcRevampPlayer.PostUpdate as a statLifeMax-spike detector.
             // Attempts to pre-subtract here in UseItem (so vanilla's +20 nets to +10) didn't reduce
-            // statLifeMax reliably â€” the user observed +20 max HP still landing despite the hook
+            // statLifeMax reliably — the user observed +20 max HP still landing despite the hook
             // running. The PostUpdate monitor watches statLifeMax across frames and claws back the
             // nerf the frame after a Life Crystal raises it, which is timing-independent.
 

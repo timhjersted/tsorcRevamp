@@ -1868,7 +1868,7 @@
   "style": 1
 }
 {
-  "text": "\u003C*\u003E Press Left Alt to dodge roll through enemies while avoiding harm. --NEWLINE  --NEWLINE You can change the input via TML\u0027s controller settings, in the mod section. --NEWLINE  --NEWLINE Swapping Left Alt with Left Shift may also be worth trying. Find what works for you. It will be essential to your journey. \u003C*\u003E",
+  "text": "\u003C*\u003E Press {DodgeRoll} to dodge roll through enemies while avoiding harm. --NEWLINE  --NEWLINE Estus Flask / Quick Heal = {QuickHeal} --NEWLINE Cerulean Tear / Quick Mana = {QuickMana} --NEWLINE Inventory = {Inventory} --NEWLINE  --NEWLINE You can change keybinds in Controls. \u003C*\u003E",
   "tileX": 4795,
   "tileY": 851,
   "textWidth": 320,

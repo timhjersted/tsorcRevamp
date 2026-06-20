@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;
@@ -12,9 +12,9 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    public class RingedKnight : ModNPC //Do I win the award for messiest code 2022 yet?
+    public class RingedKnight : ModNPC, IStaggerable
     {
-        //AI 
+        //AI
         bool slashing = false;
         bool jumpSlashing = false;
         bool shielding = false;
@@ -26,21 +26,16 @@ namespace tsorcRevamp.NPCs.Enemies
         public int ringedKnightDamage = 14;
         public int fireDamage = 18;
 
-        //Anim
-        //int shieldFrame;
-        //int shieldAnimTimer;
-        //bool countingUP = false;
-
-
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 19;
-            NPCID.Sets.TrailCacheLength[NPC.type] = 5; //How many copies of shadow/trail
+            NPCID.Sets.TrailCacheLength[NPC.type] = 5;
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
         }
+
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
@@ -51,7 +46,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 400;
-            //stats not doubled with scale expert method yet (!)(oops)
             if (Main.hardMode)
             {
                 NPC.lifeMax = 800;
@@ -66,19 +60,34 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 2500;
                 NPC.defense = 100;
                 NPC.damage = 130;
-                NPC.value = 10000; // was 600
+                NPC.value = 10000;
                 NPC.knockBackResist = 0.0f;
                 ringedKnightDamage = 35;
                 fireDamage = 38;
             }
-            NPC.value = 2000; // was 150
+            NPC.value = 2000;
             NPC.HitSound = SoundID.NPCHit48;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.RingedKnightBanner>();
-        }
 
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            // Movement: shared fighter mover + SF4 A* nav. Replaces the deleted bespoke jump-ladder + boredom/lava
+            // teleport. This is the slow, zoning fire knight, so topSpeed is computed in AI (1.5 → 2.0 enraged).
+            globalNPC.NavSearchRadius = 80;
+            globalNPC.CanUseRopes = true;
+            globalNPC.MaxJumpPower = 9.5f;
+            globalNPC.RemembersLastKnownPos = true;
+            // Unified teleport (replaces the hand-rolled boredom/lava blink) — fire-themed VFX to match the theme.
+            globalNPC.CanTeleport = true;
+            globalNPC.TeleportStyle = TeleportStyle.Aggressive;
+            globalNPC.TeleportVisualStyle = TeleportVisualStyle.Fire;
+            // Poise (a stagger cancels the wind-up) — knights configure in-file, not in PopulatePoiseProfiles.
+            globalNPC.PoiseMax = 30f;
+            // Evasive on-hit: shared knight-family reactions (hop/dash away, blink when able).
+            EvasiveProfile.RedKnight(globalNPC);
+        }
 
         public override void HitEffect(NPC.HitInfo hit)
         {
@@ -105,32 +114,28 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             Player player = Main.player[NPC.target];
-            var projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>();
-            var projStab = ModContent.ProjectileType<Projectiles.Enemy.Spearhead>();
-            int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
-            float acceleration = 0.01f;
-            //float top_speed = (lifePercentage * 0.02f) + .2f; //good calculation to remember for decreasing speed the lower the enemy HP%
-            float top_speed = /*(lifePercentage * -0.02f) +*/ 1f; //good calculation to remember for increasing speed the lower the enemy HP%
-            float braking_power = 0.15f; //Breaking power to slow down after moving above top_speed
-                                         //Main.NewText(Math.Abs(npc.velocity.X));
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            //Main.NewText(NPC.ai[1]);
-            //int damage = NPC.damage / 4;
+            if (globalNPC.StaggerTimer > 0)
+            {
+                globalNPC.AttackTelegraphing = false;
+                globalNPC.AttackCommitted = false;
+                return;
+            }
 
             Lighting.AddLight(NPC.Center, .28f, .16f, .04f);
 
-            #region enrage
+            int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
+            var projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>();
+            var projStab = ModContent.ProjectileType<Projectiles.Enemy.Spearhead>();
 
+            #region enrage (≤60% HP: fire projectiles + one-time +25% damage + ambient flame)
             if (lifePercentage <= 60)
             {
-                top_speed *= 1.4f;
                 projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlashFire>();
                 projStab = ModContent.ProjectileType<Projectiles.Enemy.SpearheadFire>();
-
                 if (!hasEnraged)
-                {
                     enrage = true;
-                }
             }
 
             if (enrage)
@@ -156,13 +161,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     hasEnraged = true;
                     enrage = false;
+                    ringedKnightDamage += (int)(ringedKnightDamage * 0.25f); // one-time enrage damage boost
                 }
-
-                if (hasEnraged)
-                {
-                    ringedKnightDamage += (int)(ringedKnightDamage * 0.25f);
-                }
-
             }
 
             if (!stabbing && !slashing && !jumpSlashing && lifePercentage <= 60 && Main.rand.NextBool(4))
@@ -178,344 +178,49 @@ namespace tsorcRevamp.NPCs.Enemies
                     Main.dust[dust].noGravity = true;
                 }
             }
-
             #endregion
 
-            #region target/face player, respond to boredom
+            bool grounded = NPC.velocity.Y == 0;
+            bool los = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
+            bool playerMeleeLevel = los && Math.Abs(player.Center.Y - NPC.Center.Y) <= 4 * 16;
 
-            //keeping this here just in case
-            /*if (!jumpSlashing && !slashing && !stabbing)
-            {
-                npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
-            }
+            // Shared fighter mover + SF4 nav (with Fire teleport + lava hopping for the Underworld). Gated OUT during
+            // the melee attacks so they own velocity/facing.
+            float topSpeed = lifePercentage <= 60 ? 2f : 1.5f;
+            if (!slashing && !jumpSlashing && !stabbing)
+                tsorcRevampAIs.FighterAI(NPC, topSpeed, 0.05f, 0.15f, canTeleport: true, lavaJumping: true, canPounce: false, canDodgeroll: false);
 
-            if (npc.velocity.X == 0f && !jumpSlashing && !shielding && !slashing && !stabbing)
-            {
-                if (npc.velocity.Y == 0f)
-                { // not moving
-                    if (npc.ai[0] == 0f)
-                        npc.ai[0] = 1f; // facing change delay
-                    else
-                    { // change movement and facing direction, reset delay
-                        npc.direction *= -1;
-                        npc.spriteDirection = npc.direction;
-                        npc.ai[0] = 0f;
-                    }
-                }
-            }
-            else // moving in x direction,
-                npc.ai[0] = 0f; // reset facing change delay
+            if (globalNPC.BaseKnockBackResist >= 0f)
+                NPC.knockBackResist = globalNPC.BaseKnockBackResist;
 
-            if (npc.direction == 0) // what does it mean if direction is 0?
-                npc.direction = 1; // flee right if direction not set? or is initial direction?*/
+            // Poise labels. Basic slash: interruptible windup (<26), hyper-armor active (26-35). Jump-slash & dash-stab
+            // hyper-armored from their commit flash. Flamethrower hyper-armored while channeling (355 flash → 460).
+            globalNPC.AttackTelegraphing = (slashing && NPC.ai[3] < 26);
+            globalNPC.AttackCommitted = (slashing && NPC.ai[3] >= 26 && NPC.ai[3] <= 35)
+                || (jumpSlashing && NPC.ai[1] <= 455)
+                || stabbing
+                || (shielding && NPC.ai[2] >= 355 && NPC.ai[2] <= 460);
 
-            if (NPC.ai[0] == 0 && !jumpSlashing && !slashing && !stabbing)
+            // overhead air-slash when standing below player
+            if (grounded && !slashing && !shielding && !jumpSlashing && !stabbing
+                && NPC.position.Y > player.position.Y + 3 * 16
+                && Math.Abs(NPC.Center.X - player.Center.X) < 3f * 16 && los)
             {
-                NPC.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
-            }
-            if (NPC.velocity.X == 0 && !jumpSlashing && !shielding && !slashing && !stabbing)
-            {
-                NPC.ai[0]++;
-                if (NPC.ai[0] > 120 && NPC.velocity.Y == 0)
-                {
-                    NPC.direction *= -1;
-                    NPC.spriteDirection = NPC.direction;
-                    NPC.ai[0] = 50;
-                }
-            }
-
-            if (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-            {
-                NPC.ai[0] = 0;
-            }
-
-            #endregion
-
-            #region melee movement
-
-            if (Math.Abs(NPC.velocity.X) > top_speed && NPC.velocity.Y == 0)
-            {
-                NPC.velocity *= (1f - braking_power); //breaking
-            }
-            if (NPC.velocity.X > 10.5f) //hard limit of 10.5f
-            {
-                NPC.velocity.X = 10.5f;
-            }
-            if (NPC.velocity.X < -10.5f) //both directions
-            {
-                NPC.velocity.X = -10.5f;
-            }
-            else
-            {
-                NPC.velocity.X += NPC.direction * acceleration; //accelerating
-            }
-
-            //breaking power after turning, to turn fast or to "slip"
-            if (NPC.direction == 1)
-            {
-                if (NPC.velocity.X > -top_speed)
-                {
-                    NPC.velocity.X += 0.085f;
-                }
+                slashing = true;
+                NPC.ai[3] = NPC.position.Y < player.position.Y + 8 * 16 ? 22 : 10;
+                NPC.velocity.Y = NPC.position.Y < player.position.Y + 8 * 16 ? -8f : -9.5f;
                 NPC.netUpdate = true;
             }
-            if (NPC.direction == -1)
-            {
-                if (NPC.velocity.X < top_speed)
-                {
-                    NPC.velocity.X += -0.085f;
-                }
-                NPC.netUpdate = true;
-            }
-
-
-            if (Math.Abs(NPC.velocity.X) > 4f) //If moving at high speed, become knockback immune
-            {
-                NPC.knockBackResist = 0;
-            }
-            if (Math.Abs(NPC.velocity.Y) > 0.1f) //If moving vertically, become knockback immune
-            {
-                NPC.knockBackResist = 0;
-            }
-            if (stabbing || jumpSlashing) //If stabbing or jumpslashing, become kb immune. I like how I made 3 ifs all separate, to do the same thing
-            {
-                NPC.knockBackResist = 0;
-            }
-
-            else
-            {
-                NPC.knockBackResist = 0.1f; //If not moving at high speed, default back to taking some knockback
-            }
-
-            NPC.noTileCollide = false;
-
-            int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
-            if (Main.tile[(int)NPC.position.X / 16, y_below_feet].TileType == TileID.Platforms && Main.tile[(int)(NPC.position.X + (float)NPC.width) / 16, y_below_feet].TileType == TileID.Platforms && NPC.position.Y < (player.position.Y - 4 * 16))
-            {
-                NPC.noTileCollide = true;
-            }
-
-
-            #endregion
-
-            #region check if standing on a solid tile
-            bool standing_on_solid_tile = false;
-            if (NPC.velocity.Y == 0f) // no jump/fall
-            {
-                int x_left_edge = (int)NPC.position.X / 16;
-                int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (Main.tile[l, y_below_feet] == null) // null tile means ??
-                        return;
-
-                    if (Main.tile[l, y_below_feet].HasTile && Main.tileSolid[(int)Main.tile[l, y_below_feet].TileType]) // tile exists and is solid
-                    {
-                        standing_on_solid_tile = true;
-                        break; // one is enough so stop checking
-                    }
-                } // END traverse blocks under feet
-            } // END no jump/fall
-            #endregion
-
-            #region new Tile()s, jumping
-            if (standing_on_solid_tile && !slashing && !shielding && !jumpSlashing && !stabbing)  //  if standing on solid tile
-            {
-                int x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f); // 15 pix in front of center of mass
-                int y_above_feet = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f); // 15 pix above feet
-
-                if (NPC.position.Y > player.position.Y + 3 * 16 && NPC.position.Y < player.position.Y + 8 * 16 && Math.Abs(NPC.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                {
-                    slashing = true;
-                    NPC.ai[3] = 22;
-                    NPC.velocity.Y = -8f; // jump with power 8 if directly under player
-                    NPC.netUpdate = true;
-                }
-
-                if (NPC.position.Y >= player.position.Y + 8 * 16 && Math.Abs(NPC.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                {
-                    slashing = true;
-                    NPC.ai[3] = 10;
-                    NPC.velocity.Y = -9.5f; // jump with power 9.5 if directly under player
-                    NPC.netUpdate = true;
-                }
-
-
-                if (Main.tile[x_in_front, y_above_feet] == null)
-                {
-                    Main.tile[x_in_front, y_above_feet].ClearTile();
-                }
-
-                if (Main.tile[x_in_front, y_above_feet - 1] == null)
-                {
-                    Main.tile[x_in_front, y_above_feet - 1].ClearTile();
-                }
-
-                if (Main.tile[x_in_front, y_above_feet - 2] == null)
-                {
-                    Main.tile[x_in_front, y_above_feet - 2].ClearTile();
-                }
-
-                if (Main.tile[x_in_front, y_above_feet - 3] == null)
-                {
-                    Main.tile[x_in_front, y_above_feet - 3].ClearTile();
-                }
-
-                if (Main.tile[x_in_front, y_above_feet + 1] == null)
-                {
-                    Main.tile[x_in_front, y_above_feet + 1].ClearTile();
-                }
-                //  create? 2 other tiles farther in front
-                if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
-                {
-                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
-                }
-
-                if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
-                {
-                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
-                }
-
-                else // standing on solid tile but not in front of a passable door
-                {
-                    if ((NPC.velocity.X < 0f && NPC.spriteDirection == -1) || (NPC.velocity.X > 0f && NPC.spriteDirection == 1))
-                    {  //  moving forward
-                        if (Main.tile[x_in_front, y_above_feet - 2].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].TileType])
-                        { // 3 blocks above ground level(head height) blocked
-                            if (Main.tile[x_in_front, y_above_feet - 3].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].TileType])
-                            { // 4 blocks above ground level(over head) blocked
-                                NPC.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
-                                NPC.netUpdate = true;
-                            }
-                            else
-                            {
-                                NPC.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
-                                NPC.netUpdate = true;
-                            }
-                        } // for everything else, head height clear:
-                        else if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].TileType])
-                        { // 2 blocks above ground level(mid body height) blocked
-                            NPC.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
-                            NPC.netUpdate = true;
-                        }
-                        else if (Main.tile[x_in_front, y_above_feet].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].TileType])
-                        { // 1 block above ground level(foot height) blocked
-                            NPC.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
-                            NPC.netUpdate = true;
-                        }
-                        else if (NPC.directionY < 0 && (!Main.tile[x_in_front, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].TileType]) && (!Main.tile[x_in_front + NPC.direction, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front + NPC.direction, y_above_feet + 1].TileType]))
-                        { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
-                            NPC.velocity.Y = -8f; // jump with power 8
-                            NPC.velocity.X = NPC.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
-                            NPC.netUpdate = true;
-                        }
-                    } // END moving forward, still: standing on solid tile but not in front of a passable door
-                }
-            }
-
-            #endregion
-
-            #region teleporting
-
-            if (NPC.lavaWet)
-            {
-                NPC.ai[2] += 4;
-            }
-
-            //using the same timer as shielding
-            if (NPC.ai[2] >= -120f && NPC.ai[2] < -100f)  //  boredom goes negative? I think this makes disappear/arrival effects after it just teleported
-            {
-                NPC.velocity *= 0f; // stop moving
-                NPC.ai[2] = 0f; // reset boredom to 0
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-                Vector2 vector = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f); // current location
-                float num6 = NPC.oldPos[2].X + (float)NPC.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
-                float num7 = NPC.oldPos[2].Y + (float)NPC.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
-                float num8 = (float)Math.Sqrt((double)(num6 * num6 + num7 * num7)); // distance to where it was 3 frames ago?
-                num8 = 2f / num8; // to normalize to 2 unit long vector
-                num6 *= num8; // direction to where it was 3 frames ago, vector normalized
-                num7 *= num8; // direction to where it was 3 frames ago, vector normalized
-                for (int j = 0; j < 20; j++) // make 20 dusts at current position
-                {
-                    int num9 = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, num6, num7, 200, default(Color), 2f);
-                    Main.dust[num9].noGravity = true; // floating
-                    Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
-                    expr_19EE_cp_0.velocity.X *= 2f; // faster in x direction
-                }
-                for (int k = 0; k < 20; k++) // more dust effects at old position
-                {
-                    int num10 = Dust.NewDust(NPC.oldPos[2], NPC.width, NPC.height, 6, -num6, -num7, 200, default(Color), 2f);
-                    Main.dust[num10].noGravity = true;
-                    Dust expr_1A6F_cp_0 = Main.dust[num10];
-                    expr_1A6F_cp_0.velocity.X *= 2f;
-                }
-            }
-
-            if (Main.netMode != 1 && NPC.ai[2] >= 1000) // is server & bored
-            {
-                int target_x_blockpos = (int)Main.player[NPC.target].position.X / 16; // corner not center
-                int target_y_blockpos = (int)Main.player[NPC.target].position.Y / 16; // corner not center
-                int x_blockpos = (int)NPC.position.X / 16; // corner not center
-                int y_blockpos = (int)NPC.position.Y / 16; // corner not center
-                int tp_radius = 25; // radius around target(upper left corner) in blocks to teleport into
-                int tp_counter = 0;
-                bool flag7 = false;
-                if (Math.Abs(NPC.position.X - Main.player[NPC.target].position.X) + Math.Abs(NPC.position.Y - Main.player[NPC.target].position.Y) > 2000f)
-                { // far away from target; 2000 pixels = 125 blocks
-                    tp_counter = 100;
-                    flag7 = true; // no teleport
-                }
-                while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
-                {
-                    if (tp_counter >= 100) // run 100 times
-                        break; //return;
-                    tp_counter++;
-
-                    int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                    int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                    for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
-                    { // (tp_x_target,m) is block under its feet I think
-                        if ((m < target_y_blockpos - 20 || m > target_y_blockpos + 20 || tp_x_target < target_x_blockpos - 20 || tp_x_target > target_x_blockpos + 20) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].HasTile)
-                        { // over 6 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
-                            bool safe_to_stand = true;
-                            bool dark_caster = false; // not a fighter type AI...
-                            if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
-                                safe_to_stand = false;
-                            else if (Main.tile[tp_x_target, m - 1].LiquidType == LiquidID.Lava) // feet submerged in lava
-                                safe_to_stand = false;
-
-                            if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].TileType] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
-                            { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
-                                NPC.position.X = (float)(tp_x_target * 16 - NPC.width / 2); // center x at target
-                                NPC.position.Y = (float)(m * 16 - NPC.height); // y so block is under feet
-                                NPC.netUpdate = true;
-                                NPC.ai[2] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
-                                flag7 = true; // end the loop (after testing every lower point :/)
-                            }
-                        } // END over 6 blocks distant from player...
-                    } // END traverse y down to edge of radius
-                } // END try 100 times
-            }
-            #endregion
 
             #region attacks
 
-
-            //Basic Slash Attack
-            //Main.NewText(npc.ai[1]);
-            //Main.NewText(npc.ai[2]);
-            //Main.NewText(npc.ai[3]);
-            // Main.NewText(top_speed);
-            //Main.NewText(Math.Abs(npc.velocity.X));
-
+            // Basic Slash (ai[3])
             if (NPC.ai[3] < 10)
-            {
-                ++NPC.ai[3]; //Used for Basic Slash
-            }
+                ++NPC.ai[3];
 
-            if (/*!shielding && */!jumpSlashing && !stabbing)
+            if (!jumpSlashing && !stabbing)
             {
-                if (NPC.ai[3] == 10 && NPC.Distance(player.Center) <= 55 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+                if (NPC.ai[3] == 10 && NPC.Distance(player.Center) <= 55 && los)
                 {
                     slashing = true;
                     shielding = false;
@@ -530,214 +235,140 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (NPC.direction == 1)
                         {
                             NPC.velocity.X -= 0.25f;
-                            if (NPC.velocity.X < 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
+                            if (NPC.velocity.X < 0) NPC.velocity.X = 0;
                         }
-
                         else
                         {
                             NPC.velocity.X += 0.25f;
-                            if (NPC.velocity.X > 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
+                            if (NPC.velocity.X > 0) NPC.velocity.X = 0;
                         }
                     }
 
-                    if (NPC.ai[3] == 26) //If timer is 46
+                    if (NPC.ai[3] == 26)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
-
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             if (NPC.direction == 1)
                             {
-                                if (!standing_on_solid_tile)
-                                {
+                                if (!grounded)
                                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
-                                }
                                 else
-                                {
                                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
-                                }
-
                             }
-
                             else
                             {
-                                if (!standing_on_solid_tile)
-                                {
+                                if (!grounded)
                                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
-
-                                }
                                 else
-                                {
                                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
-                                }
                             }
-                        }                           
+                        }
                     }
 
-                    if (NPC.ai[3] >= 49) //If timer is 69
+                    if (NPC.ai[3] >= 49)
                     {
                         slashing = false;
-                        NPC.ai[3] = 0; //Reset timer
+                        NPC.ai[3] = 0;
                     }
                 }
             }
 
-
-
-
-            //Telegraphed Jump-slash
-
+            // Telegraphed Jump-slash (ai[1]) — red flash at 420, 25-tick wind-up, leap 445, hit 451
             if (NPC.ai[1] < 420)
+                ++NPC.ai[1];
+
+            // Eye-dust "primed" tell: the 60 ticks before the attack can commit (ai[1] reaches 420).
+            if (NPC.ai[1] >= 360 && NPC.ai[1] < 390)
             {
-                ++NPC.ai[1]; //Used for Jump-slash
+                Vector2 dustPos = NPC.direction == 1 ? new Vector2(NPC.position.X + 9, NPC.position.Y) : new Vector2(NPC.position.X + 3, NPC.position.Y);
+                Dust dust2 = Main.dust[Dust.NewDust(dustPos, 4, 4, 183, NPC.velocity.X, NPC.velocity.Y, 180, default(Color), 1.5f)];
+                dust2.noGravity = true;
+                dust2.fadeIn = .3f;
+                dust2.velocity += NPC.velocity;
             }
 
-            if (NPC.ai[1] >= 390 && NPC.ai[1] <= 400)
+            if (NPC.ai[1] >= 390 && NPC.ai[1] < 420)
             {
-                if (NPC.direction == 1) //Large eye dust to warn player that a jump-slash is ready...
-                {
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(NPC.position.X + 9, NPC.position.Y), 4, 4, 183, NPC.velocity.X, NPC.velocity.Y, 180, default(Color), 1.5f)];
-                    //dust2.velocity *= 0f;
-                    dust2.noGravity = true;
-                    dust2.fadeIn = .3f;
-                    dust2.velocity += NPC.velocity;
-                }
-
-                else
-                {
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(NPC.position.X + 3, NPC.position.Y), 4, 4, 183, NPC.velocity.X, NPC.velocity.Y, 180, default(Color), 1.5f)];
-                    //dust2.velocity *= 0f;
-                    dust2.noGravity = true;
-                    dust2.fadeIn = .3f;
-                    dust2.velocity += NPC.velocity;
-                }
-
+                Vector2 dustPos = NPC.direction == 1 ? new Vector2(NPC.position.X + 9, NPC.position.Y) : new Vector2(NPC.position.X + 3, NPC.position.Y);
+                Dust dust2 = Main.dust[Dust.NewDust(dustPos, 4, 4, 183, NPC.velocity.X, NPC.velocity.Y, 180, default(Color), 0.8f)];
+                dust2.noGravity = true;
+                dust2.fadeIn = .3f;
+                dust2.velocity += NPC.velocity;
             }
 
-            if (NPC.ai[1] >= 400 && NPC.ai[1] < 442)
+            if (!slashing)
             {
-                if (NPC.direction == 1) //Small eye dust to warn player that a jump-slash is ready...
-                {
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(NPC.position.X + 9, NPC.position.Y), 4, 4, 183, NPC.velocity.X, NPC.velocity.Y, 180, default(Color), 0.8f)];
-                    //dust2.velocity *= 0f;
-                    dust2.noGravity = true;
-                    dust2.fadeIn = .3f;
-                    dust2.velocity += NPC.velocity;
-                }
-
-                else
-                {
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(NPC.position.X + 3, NPC.position.Y), 4, 4, 183, NPC.velocity.X, NPC.velocity.Y, 180, default(Color), 0.8f)];
-                    //dust2.velocity *= 0f;
-                    dust2.noGravity = true;
-                    dust2.fadeIn = .3f;
-                    dust2.velocity += NPC.velocity;
-                }
-            }
-
-            if (/*!shielding && */!slashing /*&& !stabbing*/)
-            {
-                if (NPC.ai[1] == 420 && NPC.Distance(player.Center) < 150 && NPC.Distance(player.Center) >= 55 && NPC.velocity.Y == 0 && standing_on_solid_tile && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0)) //If timer is at 0 and player is within range
+                if (NPC.ai[1] == 420 && NPC.Distance(player.Center) < 150 && NPC.Distance(player.Center) >= 55 && grounded && los)
                 {
                     jumpSlashing = true;
                     shielding = false;
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
                 }
 
                 if (jumpSlashing)
                 {
                     ++NPC.ai[1];
-                    if (NPC.ai[1] < 436)
+
+                    if (NPC.ai[1] < 445) // 25-tick hyper-armored wind-up after the red commit-flash (420) before the leap
                     {
                         if (NPC.direction == 1)
                         {
                             NPC.velocity.X -= 0.15f;
-                            if (NPC.velocity.X < 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
+                            if (NPC.velocity.X < 0) NPC.velocity.X = 0;
                         }
-
                         else
                         {
                             NPC.velocity.X += 0.15f;
-                            if (NPC.velocity.X > 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
+                            if (NPC.velocity.X > 0) NPC.velocity.X = 0;
                         }
                     }
 
-                    if (NPC.ai[1] == 436) //If timer is 46
+                    if (NPC.ai[1] == 445) // leap
                     {
-                        if (NPC.direction == 1)
-                        {
-                            NPC.velocity.X += 5f;
-                            NPC.velocity.Y -= 3f;
-                        }
-
-                        else
-                        {
-                            NPC.velocity.X -= 5f;
-                            NPC.velocity.Y -= 3f;
-                        }
+                        if (NPC.direction == 1) { NPC.velocity.X += 5f; NPC.velocity.Y -= 3f; }
+                        else { NPC.velocity.X -= 5f; NPC.velocity.Y -= 3f; }
                     }
 
-                    if (NPC.ai[1] == 442) //If timer is 50
+                    if (NPC.ai[1] == 451) // slash hit
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
-
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             if (NPC.direction == 1)
-                            {
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
-                            }
-
                             else
-                            {
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
-                            }
                         }
                     }
+
                     if (NPC.ai[1] > 470 && NPC.ai[1] < 489)
                     {
                         if (NPC.direction == 1)
                         {
                             NPC.velocity.X -= 0.3f;
-                            if (NPC.velocity.X < 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
+                            if (NPC.velocity.X < 0) NPC.velocity.X = 0;
                         }
-
                         else
                         {
                             NPC.velocity.X += 0.3f;
-                            if (NPC.velocity.X > 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
+                            if (NPC.velocity.X > 0) NPC.velocity.X = 0;
                         }
                     }
-                    if (NPC.ai[1] >= 489) //If timer is 489
+
+                    if (NPC.ai[1] >= 489)
                     {
                         jumpSlashing = false;
-                        NPC.ai[1] = 150; //Reset timer
+                        NPC.ai[1] = 150;
                     }
                 }
             }
 
-
-            //Dash Stab
-            //if (/*!shielding && !slashing && !jumpSlashing*/)
-            //{
-            if (NPC.Distance(player.Center) < 160 && NPC.Distance(player.Center) >= 55 && NPC.velocity.Y == 0 && Math.Abs(NPC.Center.Y - player.Center.Y) < 4.5f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0) && (NPC.ai[3] >= 48 || (NPC.ai[1] == 488 && jumpSlashing))) //If timer is at 0 and player is within range
+            // Dash-stab COMBO finisher: chains off the end of a basic slash (ai[3] >= 48) or the jump-slash recovery
+            // (ai[1] == 488). Fast (~6t) — it's earned by landing the prior attack — with a brief yellow tell.
+            if (!stabbing && NPC.Distance(player.Center) < 160 && NPC.Distance(player.Center) >= 55 && grounded
+                && Math.Abs(NPC.Center.Y - player.Center.Y) < 4.5f * 16 && los
+                && (NPC.ai[3] >= 48 || (NPC.ai[1] == 488 && jumpSlashing)))
             {
                 NPC.TargetClosest(true);
                 stabbing = true;
@@ -745,7 +376,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 jumpSlashing = false;
                 NPC.ai[1] = 430;
                 slashing = false;
-                NPC.ai[3] = 0; //Reset timer
+                NPC.ai[3] = 0;
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Yellow));
             }
 
             if (stabbing)
@@ -757,26 +389,18 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (NPC.direction == 1)
                     {
                         NPC.velocity.X -= 0.15f;
-                        if (NPC.velocity.X < 0)
-                        {
-                            NPC.velocity.X = 0;
-                        }
+                        if (NPC.velocity.X < 0) NPC.velocity.X = 0;
                     }
-
                     else
                     {
                         NPC.velocity.X += 0.15f;
-                        if (NPC.velocity.X > 0)
-                        {
-                            NPC.velocity.X = 0;
-                        }
+                        if (NPC.velocity.X > 0) NPC.velocity.X = 0;
                     }
                 }
 
-                if (NPC.ai[1] == 436) //If timer is 46
+                if (NPC.ai[1] == 436)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45 with { Volume = 1.0f, PitchVariance = 0.3f }, player.Center); //Play slash/swing sound
-
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45 with { Volume = 1.0f, PitchVariance = 0.3f }, player.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         if (lifePercentage <= 60)
@@ -785,14 +409,11 @@ namespace tsorcRevamp.NPCs.Enemies
                             {
                                 Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(48, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                                 NPC.velocity.X += 10.5f;
-                                //npc.velocity.Y -= 2f;
                             }
-
                             else
                             {
                                 Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-48, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                                 NPC.velocity.X -= 10.5f;
-                                //npc.velocity.Y -= 2f;
                             }
                         }
                         else
@@ -801,14 +422,11 @@ namespace tsorcRevamp.NPCs.Enemies
                             {
                                 Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                                 NPC.velocity.X += 10.5f;
-                                //npc.velocity.Y -= 2f;
                             }
-
                             else
                             {
                                 Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                                 NPC.velocity.X -= 10.5f;
-                                //npc.velocity.Y -= 2f;
                             }
                         }
                     }
@@ -819,19 +437,12 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (NPC.direction == 1)
                     {
                         NPC.velocity.X -= 0.3f;
-                        if (NPC.velocity.X < 0)
-                        {
-                            NPC.velocity.X = 0;
-                        }
+                        if (NPC.velocity.X < 0) NPC.velocity.X = 0;
                     }
-
                     else
                     {
                         NPC.velocity.X += 0.3f;
-                        if (NPC.velocity.X > 0)
-                        {
-                            NPC.velocity.X = 0;
-                        }
+                        if (NPC.velocity.X > 0) NPC.velocity.X = 0;
                     }
                 }
 
@@ -840,55 +451,79 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.ai[1] = 280;
                     stabbing = false;
                 }
-
             }
-            //}
 
-
-            //Shielding Flame/Fire Attack
-
-            //if (shielding || npc.ai[2] > 300 || )
-            //{
-            NPC.ai[2]++;
-
-            if (!jumpSlashing && !slashing && !stabbing && NPC.velocity.Y == 0 && (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0) || shielding))
+            // Shielding → Flamethrower breath (ai[2]). Gated on the player being on our level (don't shield-pin when
+            // they're above/below — pursue via SF4 instead). Orange commit-flash at 355, 25 ticks before the breath.
+            if (playerMeleeLevel)
             {
-                if (NPC.ai[2] > 300 && NPC.ai[2] <= 310)
-                {
-                    if (NPC.direction == 1) { NPC.velocity.X -= 0.15f; }
-                    else { NPC.velocity.X += 0.15f; }
-                }
+                NPC.ai[2]++;
 
-                if (NPC.ai[2] > 310)
+                if (!jumpSlashing && !slashing && !stabbing && NPC.velocity.Y == 0)
                 {
-                    NPC.velocity.X = 0;
-                    shielding = true;
-                }
-
-                if (NPC.ai[2] > 380 && NPC.ai[2] < 460 && NPC.Distance(player.Center) > 55 && NPC.Distance(player.Center) < 300)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (NPC.ai[2] > 300 && NPC.ai[2] <= 310)
                     {
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1.5f, 0f), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), fireDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 25;
-                        //play breath sound
-                        if (Main.rand.NextBool(3))
+                        if (NPC.direction == 1) NPC.velocity.X -= 0.15f;
+                        else NPC.velocity.X += 0.15f;
+                    }
+
+                    if (NPC.ai[2] > 310)
+                    {
+                        NPC.velocity.X = 0;
+                        shielding = true;
+                    }
+
+                    if (NPC.ai[2] == 355 && NPC.Distance(player.Center) > 55 && NPC.Distance(player.Center) < 300)
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Orange));
+
+                    if (NPC.ai[2] > 380 && NPC.ai[2] < 460 && NPC.Distance(player.Center) > 55 && NPC.Distance(player.Center) < 300)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, PitchVariance = 0.1f }, NPC.Center); //flame thrower sound
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1.5f, 0f), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), fireDamage, 0f, Main.myPlayer);
+                            Main.projectile[num54].timeLeft = 25;
+                            if (Main.rand.NextBool(3))
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, PitchVariance = 0.1f }, NPC.Center);
                         }
                     }
-                }
 
-                if (NPC.ai[2] > 530)
-                {
-                    shielding = false;
-                    NPC.ai[2] = 0;
+                    if (NPC.ai[2] > 530)
+                    {
+                        shielding = false;
+                        NPC.ai[2] = 0;
+                    }
                 }
             }
-            //}
+            else
+            {
+                shielding = false;
+                if (NPC.ai[2] > 0) NPC.ai[2] -= 2;
+            }
+
+            globalNPC.ShieldGuarding = shielding;
             #endregion
         }
 
+        public void OnStagger(NPC npc)
+        {
+            slashing = false;
+            jumpSlashing = false;
+            shielding = false;
+            stabbing = false;
+            npc.ai[1] = 60f;
+            npc.ai[2] = -100f;
+            npc.ai[3] = 0f;
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
@@ -900,44 +535,38 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (player.position.X > NPC.position.X)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center);
                         modifiers.SourceDamage.Flat -= shieldPower;
-                        if (NPC.ai[2] > 355)
-                        {
-                            NPC.ai[2] -= 25;
-                        }
+                        if (NPC.ai[2] > 355) NPC.ai[2] -= 25;
                     }
                 }
                 else
                 {
                     if (player.position.X < NPC.position.X)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center);
                         modifiers.SourceDamage.Flat -= shieldPower;
-                        if (NPC.ai[2] > 355)
-                        {
-                            NPC.ai[2] -= 25;
-                        }
+                        if (NPC.ai[2] > 355) NPC.ai[2] -= 25;
                     }
                 }
             }
 
-            if (NPC.direction == 1) //if enemy facing right
+            if (NPC.direction == 1)
             {
-                if (player.position.X < NPC.position.X) //if hit in the back
+                if (player.position.X < NPC.position.X)
                 {
                     CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
-                    modifiers.FinalDamage *= 2; //bonus damage
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
+                    modifiers.FinalDamage *= 2;
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center);
                 }
             }
-            else //if enemy facing left
+            else
             {
-                if (player.position.X > NPC.position.X) //if hit in the back
+                if (player.position.X > NPC.position.X)
                 {
                     CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
-                    modifiers.FinalDamage *= 2; //bonus damage
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
+                    modifiers.FinalDamage *= 2;
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center);
                 }
             }
 
@@ -955,9 +584,7 @@ namespace tsorcRevamp.NPCs.Enemies
             int? over = (int?)prop.GetValue(modifiers);
 
             if (over != null && over != 0)
-            {
                 direction = over.Value;
-            }
 
             int shieldPower = NPC.defense * 3;
 
@@ -965,119 +592,82 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (shielding)
                 {
-                    if (NPC.direction == 1) //if npc facing right
+                    if (NPC.direction == 1)
                     {
-                        if (projectile.Center.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if proj moving toward npc front
+                        if (projectile.Center.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19)
                         {
-
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center);
                             modifiers.SourceDamage.Flat -= shieldPower;
                             modifiers.Knockback *= 0f;
-                            if (NPC.ai[1] < 340)
-                            {
-                                NPC.ai[1] += 70; //Used for Jump-slash
-                            }
-                            if (NPC.ai[2] > 355)
-                            {
-                                NPC.ai[2] -= 25;
-                            }
+                            if (NPC.ai[1] < 340) NPC.ai[1] += 70;
+                            if (NPC.ai[2] > 355) NPC.ai[2] -= 25;
                         }
-
                         else if (direction == -1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center);
                             modifiers.SourceDamage.Flat -= shieldPower;
                             modifiers.Knockback *= 0f;
-
-                            if (NPC.ai[1] < 340)
-                            {
-                                NPC.ai[1] += 80; //Used for Jump-slash
-                            }
-
-
-                            if (NPC.ai[2] > 355)
-                            {
-                                NPC.ai[2] -= 25;
-                            }
+                            if (NPC.ai[1] < 340) NPC.ai[1] += 80;
+                            if (NPC.ai[2] > 355) NPC.ai[2] -= 25;
                         }
                     }
-                    else //if npc facing left
+                    else
                     {
-                        if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if proj moving toward npc front
+                        if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19)
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center);
                             modifiers.SourceDamage.Flat -= shieldPower;
                             modifiers.Knockback *= 0f;
-                            if (NPC.ai[1] < 340)
-                            {
-                                NPC.ai[1] += 70; //Used for Jump-slash
-                            }
-                            if (NPC.ai[2] > 355)
-                            {
-                                NPC.ai[2] -= 25;
-                            }
+                            if (NPC.ai[1] < 340) NPC.ai[1] += 70;
+                            if (NPC.ai[2] > 355) NPC.ai[2] -= 25;
                         }
                         else if (direction == 1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center);
                             modifiers.SourceDamage.Flat -= shieldPower;
-
                             modifiers.Knockback *= 0f;
-                            if (NPC.ai[1] < 340)
-                            {
-                                NPC.ai[1] += 80; //Used for Jump-slash
-                            }
-
-
-                            if (NPC.ai[2] > 355)
-                            {
-                                NPC.ai[2] -= 25;
-                            }
+                            if (NPC.ai[1] < 340) NPC.ai[1] += 80;
+                            if (NPC.ai[2] > 355) NPC.ai[2] -= 25;
                         }
                     }
                 }
 
-
-                if (NPC.direction == 1) //if enemy facing right
+                if (NPC.direction == 1)
                 {
-                    if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if hit in the back
+                    if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19)
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
-                        modifiers.FinalDamage *= 2; //bonus damage
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
+                        modifiers.FinalDamage *= 2;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center);
                     }
                     else if (direction == 1)
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
-                        modifiers.FinalDamage *= 2; //bonus damage
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
+                        modifiers.FinalDamage *= 2;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center);
                     }
                 }
-                else //if enemy facing left
+                else
                 {
-                    if (projectile.oldPosition.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if hit in the back
+                    if (projectile.oldPosition.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19)
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
-                        modifiers.FinalDamage *= 2; //bonus damage
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
+                        modifiers.FinalDamage *= 2;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center);
                     }
                     else if (direction == -1)
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
-                        modifiers.FinalDamage *= 2; //bonus damage
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
+                        modifiers.FinalDamage *= 2;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center);
                     }
                 }
 
                 if (NPC.Distance(player.Center) > 220 && !shielding)
-                {
                     NPC.ai[2] += 120;
-                }
 
                 if (NPC.ai[1] < 400)
-                {
                     NPC.ai[1] += 10;
-                }
             }
         }
 
@@ -1108,27 +698,25 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new CommonDrop(ItemID.RagePotion, 100, 1, 1, 10));
             npcLoot.Add(new CommonDrop(ItemID.WrathPotion, 100, 1, 1, 10));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<CrimsonPotion>(), 100, 1, 1, 10));
-
         }
 
         #region Drawing and Animation
 
         public override void DrawEffects(ref Color drawColor)
         {
-            /*Color color = Color.DimGray;
-            drawColor = color;*/
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor) //PreDraw for trails
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             Vector2 drawOrigin = new Vector2(NPC.position.X, NPC.position.Y);
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally; //Flip texture depending on spriteDirection
+            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             if ((NPC.velocity.X > 5f || NPC.velocity.X < -5f) && stabbing)
             {
                 for (int k = 0; k < NPC.oldPos.Length; k++)
                 {
-                    Vector2 drawPos = NPC.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, NPC.gfxOffY); //Where to draw trails
+                    Vector2 drawPos = NPC.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, NPC.gfxOffY);
                     Color color = NPC.GetAlpha(lightColor) * ((float)(NPC.oldPos.Length - k) / (float)NPC.oldPos.Length);
-                    spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, drawPos, new Rectangle(NPC.frame.X, NPC.frame.Y, 74, 56), color, NPC.rotation, new Vector2(NPC.position.X + 26, NPC.position.Y + 12), NPC.scale, effects, 0f); //Vector2 Origin made 0 sense in this case
+                    spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, drawPos, new Rectangle(NPC.frame.X, NPC.frame.Y, 74, 56), color, NPC.rotation, new Vector2(NPC.position.X + 26, NPC.position.Y + 12), NPC.scale, effects, 0f);
                 }
             }
             return true;
@@ -1141,165 +729,71 @@ namespace tsorcRevamp.NPCs.Enemies
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            if (NPC.spriteDirection == 1)
-            {
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 94, 58), Color.White, NPC.rotation, new Vector2(47, 34), NPC.scale, effects, 0f);
-            }
-            else
-            {
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 94, 58), Color.White, NPC.rotation, new Vector2(47, 34), NPC.scale, effects, 0f);
-            }
+            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 94, 58), Color.White, NPC.rotation, new Vector2(47, 34), NPC.scale, effects, 0f);
 
             if (lifePercentage <= 60)
             {
-                if (NPC.spriteDirection == 1)
-                {
-                    spriteBatch.Draw(firesword, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 94, 58), Color.White, NPC.rotation, new Vector2(47, 34), NPC.scale, effects, 0f);
-                }
-                else
-                {
-                    spriteBatch.Draw(firesword, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 94, 58), Color.White, NPC.rotation, new Vector2(47, 34), NPC.scale, effects, 0f);
-                }
+                spriteBatch.Draw(firesword, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 94, 58), Color.White, NPC.rotation, new Vector2(47, 34), NPC.scale, effects, 0f);
             }
         }
 
         public override void FindFrame(int frameHeight)
         {
-            //Main.NewText(shieldAnimTimer);
-            //Main.NewText(shieldFrame);
-
-            if (NPC.velocity.X != 0) //Walking
+            if (NPC.velocity.X != 0)
             {
                 float framecountspeed = Math.Abs(NPC.velocity.X) * 2.2f;
                 NPC.frameCounter += framecountspeed;
                 NPC.spriteDirection = NPC.direction;
 
-                if (NPC.frameCounter < 12)
-                {
-                    NPC.frame.Y = 2 * frameHeight;
-                }
-                else if (NPC.frameCounter < 24)
-                {
-                    NPC.frame.Y = 3 * frameHeight;
-                }
-                else if (NPC.frameCounter < 36)
-                {
-                    NPC.frame.Y = 4 * frameHeight;
-                }
-                else if (NPC.frameCounter < 48)
-                {
-                    NPC.frame.Y = 5 * frameHeight;
-                }
-                else if (NPC.frameCounter < 60)
-                {
-                    NPC.frame.Y = 6 * frameHeight;
-                }
-                else if (NPC.frameCounter < 72)
-                {
-                    NPC.frame.Y = 7 * frameHeight;
-                }
-                else if (NPC.frameCounter < 84)
-                {
-                    NPC.frame.Y = 8 * frameHeight;
-                }
-                else if (NPC.frameCounter < 96)
-                {
-                    NPC.frame.Y = 9 * frameHeight;
-                }
-                else
-                {
-                    NPC.frameCounter = 0;
-                }
+                if (NPC.frameCounter < 12) NPC.frame.Y = 2 * frameHeight;
+                else if (NPC.frameCounter < 24) NPC.frame.Y = 3 * frameHeight;
+                else if (NPC.frameCounter < 36) NPC.frame.Y = 4 * frameHeight;
+                else if (NPC.frameCounter < 48) NPC.frame.Y = 5 * frameHeight;
+                else if (NPC.frameCounter < 60) NPC.frame.Y = 6 * frameHeight;
+                else if (NPC.frameCounter < 72) NPC.frame.Y = 7 * frameHeight;
+                else if (NPC.frameCounter < 84) NPC.frame.Y = 8 * frameHeight;
+                else if (NPC.frameCounter < 96) NPC.frame.Y = 9 * frameHeight;
+                else NPC.frameCounter = 0;
             }
 
-            if (NPC.velocity.Y != 0 && (!jumpSlashing && !shielding && !stabbing)) //If falling/jumping
-            {
+            if (NPC.velocity.Y != 0 && (!jumpSlashing && !shielding && !stabbing))
                 NPC.frame.Y = 1 * frameHeight;
-            }
 
-            if (slashing) //If slashing
+            if (slashing)
             {
                 NPC.spriteDirection = NPC.direction;
 
-                if (NPC.ai[3] < 18)
-                {
-                    NPC.frame.Y = 12 * frameHeight;
-                }
-                else if (NPC.ai[3] < 26)
-                {
-                    NPC.frame.Y = 13 * frameHeight;
-                }
-                else if (NPC.ai[3] < 29)
-                {
-                    NPC.frame.Y = 14 * frameHeight;
-                }
-                else if (NPC.ai[3] < 32)
-                {
-                    NPC.frame.Y = 15 * frameHeight;
-                }
-                else if (NPC.ai[3] < 35)
-                {
-                    NPC.frame.Y = 16 * frameHeight;
-                }
-                else if (NPC.ai[3] < 49)
-                {
-                    NPC.frame.Y = 17 * frameHeight;
-                }
+                if (NPC.ai[3] < 18) NPC.frame.Y = 12 * frameHeight;
+                else if (NPC.ai[3] < 26) NPC.frame.Y = 13 * frameHeight;
+                else if (NPC.ai[3] < 29) NPC.frame.Y = 14 * frameHeight;
+                else if (NPC.ai[3] < 32) NPC.frame.Y = 15 * frameHeight;
+                else if (NPC.ai[3] < 35) NPC.frame.Y = 16 * frameHeight;
+                else if (NPC.ai[3] < 49) NPC.frame.Y = 17 * frameHeight;
             }
 
-            if (jumpSlashing) //If jumpslashing
+            if (jumpSlashing)
             {
                 NPC.spriteDirection = NPC.direction;
 
-                if (NPC.ai[1] < 428)
-                {
-                    NPC.frame.Y = 12 * frameHeight;
-                }
-                else if (NPC.ai[1] < 436)
-                {
-                    NPC.frame.Y = 13 * frameHeight;
-                }
-                else if (NPC.ai[1] < 439)
-                {
-                    NPC.frame.Y = 14 * frameHeight;
-                }
-                else if (NPC.ai[1] < 442)
-                {
-                    NPC.frame.Y = 15 * frameHeight;
-                }
-                else if (NPC.ai[1] < 445)
-                {
-                    NPC.frame.Y = 16 * frameHeight;
-                }
-                else if (NPC.ai[1] < 489)
-                {
-                    NPC.frame.Y = 17 * frameHeight;
-                }
+                if (NPC.ai[1] < 437) NPC.frame.Y = 12 * frameHeight;
+                else if (NPC.ai[1] < 445) NPC.frame.Y = 13 * frameHeight;
+                else if (NPC.ai[1] < 448) NPC.frame.Y = 14 * frameHeight;
+                else if (NPC.ai[1] < 451) NPC.frame.Y = 15 * frameHeight;
+                else if (NPC.ai[1] < 454) NPC.frame.Y = 16 * frameHeight;
+                else if (NPC.ai[1] < 489) NPC.frame.Y = 17 * frameHeight;
             }
 
             if (stabbing)
             {
                 NPC.spriteDirection = NPC.direction;
 
-                if (NPC.ai[1] < 436)
-                {
-                    NPC.frame.Y = 2 * frameHeight;
-                }
-                else if (NPC.ai[1] < 470)
-                {
-                    NPC.frame.Y = 18 * frameHeight;
-                }
-                else if (NPC.ai[1] < 475)
-                {
-                    NPC.frame.Y = 16 * frameHeight;
-                }
-                else if (NPC.ai[1] < 520)
-                {
-                    NPC.frame.Y = 17 * frameHeight;
-                }
-
+                if (NPC.ai[1] < 436) NPC.frame.Y = 2 * frameHeight;
+                else if (NPC.ai[1] < 470) NPC.frame.Y = 18 * frameHeight;
+                else if (NPC.ai[1] < 475) NPC.frame.Y = 16 * frameHeight;
+                else if (NPC.ai[1] < 520) NPC.frame.Y = 17 * frameHeight;
             }
-            if (NPC.velocity.X == 0 && NPC.velocity.Y == 0 && shielding && !jumpSlashing && !slashing && !stabbing) //If not moving at all (shielding)
+
+            if (NPC.velocity.X == 0 && NPC.velocity.Y == 0 && shielding && !jumpSlashing && !slashing && !stabbing)
             {
                 NPC.spriteDirection = NPC.direction;
                 NPC.frame.Y = 10 * frameHeight;
@@ -1310,31 +804,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.spriteDirection = NPC.direction;
                 NPC.frame.Y = 11 * frameHeight;
             }
-
-            /*if (shielding) //this is the shield shine anim
-            {
-                shieldFrame = shieldAnimTimer / 4; //Me smart, me figure out how to make loop AND simplify code at the same time!
-
-                if (shieldFrame == 0)
-                {
-                    countingUP = true;
-                }
-                if (shieldFrame <= 14 && countingUP)
-                {
-                    shieldAnimTimer++;
-                }
-                if (shieldFrame == 14)
-                {
-                    countingUP = false;
-                }
-                if (shieldFrame >= 0 && !countingUP)
-                {
-                    shieldAnimTimer--;
-                }
-            }*/
         }
 
         #endregion
-
     }
 }

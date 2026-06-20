@@ -34,6 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Demon Spirit");
+            Main.projFrames[Type] = 6;
         }
 
         public override bool PreKill(int timeLeft)
@@ -97,6 +98,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
+            Animate();
+
             if (Projectile.localAI[0] == 0f)
             {
                 Projectile.timeLeft += ExtraLifetime;
@@ -154,6 +157,16 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.velocity.Y = (move.Y / distance) * speed;
             }
             #endregion
+        }
+
+        void Animate()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 6)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+            }
         }
 
         private int GetClosestPlayer()

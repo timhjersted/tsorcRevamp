@@ -10,6 +10,8 @@ namespace tsorcRevamp.Items
 {
     class StaminaVessel : ModItem
     {
+        public const float PermanentStaminaCap = 200f;
+
         public override void SetStaticDefaults()
         {
             /* Tooltip.SetDefault("Permanently increases max stamina by 5%" +
@@ -40,7 +42,7 @@ namespace tsorcRevamp.Items
 
         public override bool CanUseItem(Player player)
         {
-            return (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax < 185);
+            return (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax < PermanentStaminaCap);
         }
 
         public override bool? UseItem(Player player)

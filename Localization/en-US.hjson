@@ -66,6 +66,7 @@ Mods: {
 			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
 			UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			LifeCrystalSoulsMode: Permanently increases maximum life by {0}
+			ManaCrystalSoulsMode: Permanently increases maximum mana by {0}
 			SoulsModeMobilityLimitRunOnly: Souls Mode mobility limit: ground speed capped at {0}.
 			SoulsModeMobilityLimitWing: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}.
 			SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
@@ -216,7 +217,7 @@ Mods: {
 		DeathText: {
 			01: The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!
 			02: Glowing green skulls hold important secrets...Right Click to open them
-			03: The dodgeroll keybind can be changed in Controls.
+			03: The dodgeroll keybind can be changed in Controls. Recommended Controls can be turned on via Mod Config: Controls.
 			04: Crystal shards often hint at secrets, chests or hidden paths nearby...
 			05: Losing souls on death can be disabled in the config.
 			06: Check the description of your items to see if any can be upgraded with Dark Souls
@@ -394,6 +395,11 @@ Mods: {
 			RemixMapUpdated: Remix Map Update Complete!
 			Bless: Place an item here to bless
 			SelectWorld: Select World Type:
+			ChooseStartingClass: Choose Starting Class
+			StartingClassMelee: Melee
+			StartingClassRanged: Ranged
+			StartingClassMagic: Magic
+			StartingClassSummoner: Summoner
 			TSORCMap: New Story of Red Cloud Adventure Map
 			VanillaMap: New Vanilla Map
 			TSORCXelvaaRemix: New Story of Red Cloud Remix Map
@@ -454,6 +460,7 @@ Mods: {
 			FirstBagBotCOnly: "[c/ff9999: Only drops from the first opened specific Bag while the player is Unkindled or a Bearer of the Curse]"
 			AdvModeOnly: "[c/ff9999:Only drops in Adventure Mode]"
 			SandboxModeOnly: "[c/ff9999:Only drops outside of Adventure Mode]"
+			FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Only drops on the first kill outside of Expert Mode]"
 			DownedSkeletron: "[c/ff9999: Drops after defeating Skeletron]"
 		}
@@ -1924,6 +1931,39 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedRangedDamageCritChance}
 					Violently flings defeated enemies' bones around 
 					'''
+			}
+
+			NormansRing: {
+				DisplayName: Norman's Ring
+				Tooltip:
+					'''
+					The ring your father gave you.
+					A keepsake passed down by your family for generations.
+					'''
+
+				Stats: {
+					Melee:
+						'''
+						+{0}% melee damage
+						+{1} defense
+						'''
+					Ranged:
+						'''
+						+{0}% ranged damage
+						{2}% chance to not consume ammo
+						'''
+					Magic:
+						'''
+						+{0}% magic damage
+						-{3}% mana cost
+						'''
+					Summoner:
+						'''
+						+{0}% summon damage
+						+{4}% whip range
+						'''
+					None: Choose a starting class to awaken this ring's power
+				}
 			}
 
 			SoulReaper: {
@@ -5226,7 +5266,7 @@ Mods: {
 				Tooltip:
 					'''
 					Permanently increases max stamina by 5
-					Stamina maxes out after consuming 12
+					Stamina maxes out after consuming 15
 					'''
 				UsedCounter: "Consumed so far: "
 			}
@@ -10090,6 +10130,8 @@ Mods: {
 			TeleportFireFlame.DisplayName: Teleport Fire Flame
 			EnemyEphemeralThrowingAxeProj.DisplayName: Enemy Ephemeral Throwing Axe Proj
 			BasiliskLeechTongue.DisplayName: Basilisk Leech Tongue
+			FireLurkerMeteor.DisplayName: Fire Lurker Meteor
+			FireLurkerFlameOrb.DisplayName: Fire Lurker Flame Orb
 		}
 
 		NPCs: {
@@ -11824,6 +11866,10 @@ Mods: {
 			HollowSpearmanOriginal.DisplayName: Old Hollow Spearman
 			GhostOfTheDrownedOriginal.DisplayName: Old Ghost of the Drowned
 			GhostOfTheForgottenKnight.DisplayName: Ghost Of The Forgotten Knight
+			LothricKnightOriginal.DisplayName: Old Lothric Knight
+			LothricSpearKnightOriginal.DisplayName: Old Lothric Spear Knight
+			LothricBlackKnightOriginal.DisplayName: Old Lothric Black Knight
+			RingedKnightOriginal.DisplayName: Old Ringed Knight
 		}
 
 		Prefixes: {
@@ -11889,6 +11935,11 @@ Mods: {
 		}
 
 		Configs: {
+			01Gameplay.DisplayName: Gameplay
+			02Visuals.DisplayName: Visuals
+			03Sound.DisplayName: Sound
+			04Controls.DisplayName: Controls
+
 			tsorcRevampGameplayConfig: {
 				DisplayName: Gameplay
 
@@ -12006,7 +12057,7 @@ Mods: {
 			}
 
 			tsorcRevampVisualConfig: {
-				DisplayName: Visual
+				DisplayName: Visuals
 
 				Headers: {
 					Soapstones: Soapstones
@@ -12187,6 +12238,26 @@ Mods: {
 						Are the new Curse Bearer mechanics too loud or simply annoying?
 						This slider controls their volume.
 						Set to 0 to disable them.
+						'''
+				}
+			}
+
+			tsorcRevampControlsConfig: {
+				DisplayName: Controls
+
+				RecommendedControls: {
+					Label: Recommended Controls
+					Tooltip:
+						'''
+						Applies TSORC's recommended keyboard controls.
+						On first load, only bindings still on vanilla are changed.
+						Turning this on manually applies the full preset:
+						Quick Heal / Estus Flask: F
+						Quick Mana / Cerulean Tear: R
+						Inventory: Q
+						Dodge Roll: Left Shift
+						Auto Select: Left Alt
+						Quick Mount: G
 						'''
 				}
 			}

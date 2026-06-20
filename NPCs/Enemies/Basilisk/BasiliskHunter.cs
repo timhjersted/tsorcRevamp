@@ -57,6 +57,9 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             // Poise (a stagger cancels the wind-up) + knockback flinch are tuned centrally in
             // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) - not here.
             EvasiveProfile.BasiliskHunterAttackJumps(globalNPC);
+            globalNPC.KiteRangeMin = 9f;
+            globalNPC.KiteRangeMax = 18f;
+            globalNPC.KiteLooseness = 0.15f;
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
@@ -78,11 +81,13 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
+            Projectiles.Enemy.BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
             tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            Projectiles.Enemy.BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
             tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
@@ -154,17 +159,25 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         private const int BreathWindupStart = 540;
         private const int BreathWindupEnd = 635;
         private const int BreathCommitTime = 636;
-        private const int PostAttackDowntime = 120;
+        private const int PostAttackDowntime = 90;
         private const int AtkDecide = 85;    // roll + lock the attack; dust telegraph (interruptible) starts
         private const int AtkFlash = 100;    // colored TelegraphFlash spawns = the commit instant (hyperarmor begins)
         private const int AtkFire = 115;     // projectile(s) launch
         private const int AtkSprayEnd = 155; // lob/final sprays AtkFire..AtkSprayEnd; single shots reset shortly after
+        private const float DisrupterMinSpacing = 250f;
+        private const int DisrupterShotInterval = 30;
+        private const int DisrupterShotCount = 3;
         private int lockedAttack = -1;       // -1 none; 0 lob, 1 spit, 2 wounded spit, 3 desperate spray, 4 disrupter
+        private Vector2 lockedTargetPosition = Vector2.Zero;
+        private int lockedFacingDirection = 1;
+        private int disrupterPattern = 0;
+        private bool disrupterVerticalTargets = false;
 
         public void OnStagger(NPC npc)
         {
             NPC.localAI[1] = 0f;
             lockedAttack = -1;
+            lockedTargetPosition = Vector2.Zero;
             leechTongueTimer = 0;
             if (!breath)
             {
@@ -318,6 +331,15 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             bool committed = atkActive && NPC.localAI[1] >= AtkFlash;
             bool purpleAttack = lockedAttack == 0 || lockedAttack == 4;
             Color telegraphColor = lockedAttack == 3 ? Color.OrangeRed : (purpleAttack ? Color.Purple : Color.GreenYellow);
+            if (committed && lockedTargetPosition != Vector2.Zero)
+            {
+                NPC.direction = lockedFacingDirection;
+                NPC.spriteDirection = lockedFacingDirection;
+            }
+            if (telegraphing && lockedAttack == 4)
+            {
+                CreateDisrupterSpacing(player);
+            }
 
             if (telegraphing && Main.rand.NextBool(3))
             {
@@ -326,9 +348,18 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 Lighting.AddLight(NPC.Center, telegraphColor.ToVector3() * 0.6f);
             }
 
-            if (atkActive && (int)NPC.localAI[1] == AtkFlash && Main.netMode != NetmodeID.MultiplayerClient)
+            if (atkActive && (int)NPC.localAI[1] == AtkFlash)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(telegraphColor));
+                LockAttackAim(player);
+                if (lockedAttack == 4)
+                {
+                    disrupterPattern = Main.rand.Next(4);
+                    disrupterVerticalTargets = Main.rand.NextBool(2);
+                }
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(telegraphColor));
+                }
             }
 
             if (committed && Main.netMode != NetmodeID.MultiplayerClient)
@@ -349,18 +380,22 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                         FireFinalSpit(player);
                     }
                 }
+                else if (lockedAttack == 4 && NPC.localAI[1] >= AtkFire && NPC.localAI[1] <= AtkFire + DisrupterShotInterval * (DisrupterShotCount - 1) && ((int)NPC.localAI[1] - AtkFire) % DisrupterShotInterval == 0)
+                {
+                    FireDisrupter(player, ((int)NPC.localAI[1] - AtkFire) / DisrupterShotInterval);
+                }
                 else if ((int)NPC.localAI[1] == AtkFire)
                 {
                     if (lockedAttack == 1) FireSpit(player, false);
                     else if (lockedAttack == 2) FireSpit(player, true);
-                    else if (lockedAttack == 4) FireDisrupter(player);
                 }
             }
 
-            if (atkActive && NPC.localAI[1] >= (lockedAttack == 0 || lockedAttack == 3 ? AtkSprayEnd : AtkFire + 10))
+            if (atkActive && NPC.localAI[1] >= GetAttackEndTime())
             {
                 NPC.localAI[1] = -PostAttackDowntime;
                 lockedAttack = -1;
+                lockedTargetPosition = Vector2.Zero;
             }
 
             // Attack-phase flags -> poise (telegraph = stagger-cancellable; committed = hyperarmor).
@@ -378,22 +413,22 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 return 3;
             }
 
-            bool canDisrupt = NPC.Distance(player.Center) > 230 && Collision.CanHit(NPC.position, NPC.width, NPC.height, player.position, player.width, player.height);
+            bool canDisrupt = NPC.Distance(player.Center) > 160 && Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1);
             if (wounded)
             {
-                return Main.rand.Next(3) switch
+                return Main.rand.Next(4) switch
                 {
                     0 => 2,
-                    1 when canDisrupt => 4,
+                    1 or 2 when canDisrupt => 4,
                     _ => 0
                 };
             }
 
-            return Main.rand.Next(3) switch
+            return Main.rand.Next(4) switch
             {
                 0 => 0,
                 1 => 1,
-                _ when canDisrupt => 4,
+                2 or 3 when canDisrupt => 4,
                 _ => 1
             };
         }
@@ -405,7 +440,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i)) return;
             }
 
-            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 5);
+            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, GetLockedTargetPosition(player), 5);
             speed.Y += Main.rand.NextFloat(-2f, -6f);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
@@ -414,27 +449,107 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         private void FireSpit(Player player, bool wounded)
         {
             // "Bio Spit" / "Wounded Bio Spit" - aimed toxic glob.
-            if (!Collision.CanHitLine(NPC.Center, 0, 0, player.Center, 0, 0)) return;
+            Vector2 targetPosition = GetLockedTargetPosition(player);
+            if (!Collision.CanHitLine(NPC.Center, 0, 0, targetPosition, 0, 0)) return;
 
-            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 10);
+            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 10);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = wounded ? 0.5f : -0.5f }, NPC.Center);
         }
 
         private void FireFinalSpit(Player player)
         {
-            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 8);
+            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, GetLockedTargetPosition(player), 8);
             speed += Main.rand.NextVector2Circular(-6, -2);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitfinalDamage, 5f, Main.myPlayer);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = 0.2f }, NPC.Center);
         }
 
-        private void FireDisrupter(Player player)
+        private void FireDisrupter(Player player, int shotIndex)
         {
-            // "Hypnotic Disrupter" - arcing purple control shot.
-            Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 6f, 1.06f, true, true);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), disruptDamage, 5f, Main.myPlayer);
+            Vector2 targetPosition = GetDisrupterTargetPosition(player, shotIndex);
+            Vector2 projectileVelocity = GetDisrupterLaunchVelocity(shotIndex);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), disruptDamage, 5f, Main.myPlayer, targetPosition.X, -targetPosition.Y);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.8f, Pitch = -0.2f }, NPC.Center);
+        }
+
+        private void CreateDisrupterSpacing(Player player)
+        {
+            if (NPC.Distance(player.Center) >= DisrupterMinSpacing)
+            {
+                return;
+            }
+
+            int faceDirection = player.Center.X >= NPC.Center.X ? 1 : -1;
+            int retreatDirection = -faceDirection;
+            NPC.direction = faceDirection;
+            NPC.spriteDirection = faceDirection;
+            NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, retreatDirection * 3.2f, 0.2f);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.velocity.Y == 0f && (int)NPC.localAI[1] == AtkDecide + 2)
+            {
+                NPC.velocity.X = retreatDirection * 4.5f;
+                NPC.velocity.Y = -4.5f;
+                NPC.netUpdate = true;
+            }
+        }
+
+        private Vector2 GetDisrupterTargetPosition(Player player, int shotIndex)
+        {
+            Vector2 targetPosition = GetLockedTargetPosition(player);
+            float offset = (shotIndex - 1) * 60f;
+
+            return disrupterPattern switch
+            {
+                1 => disrupterVerticalTargets ? targetPosition + new Vector2(0f, offset) : targetPosition + new Vector2(offset, 0f),
+                2 => targetPosition + new Vector2(offset * lockedFacingDirection, -Math.Abs(offset)),
+                3 => targetPosition + new Vector2(offset * 1.5f, -80f),
+                _ => targetPosition
+            };
+        }
+
+        private Vector2 GetDisrupterLaunchVelocity(int shotIndex)
+        {
+            const float speed = 4f;
+            float angle = disrupterPattern switch
+            {
+                0 => (lockedFacingDirection >= 0 ? -MathHelper.PiOver4 : -3f * MathHelper.PiOver4) + (shotIndex - 1) * MathHelper.ToRadians(10f),
+                1 => lockedFacingDirection >= 0 ? MathHelper.ToRadians(60f) : MathHelper.ToRadians(120f),
+                2 => (lockedFacingDirection >= 0 ? 0f : MathHelper.Pi) + (shotIndex - 1) * MathHelper.ToRadians(20f),
+                3 => -MathHelper.PiOver2 + (shotIndex - 1) * MathHelper.ToRadians(18f),
+                _ => 0f
+            };
+            return angle.ToRotationVector2() * speed;
+        }
+
+        private int GetAttackEndTime()
+        {
+            if (lockedAttack == 0 || lockedAttack == 3)
+            {
+                return AtkSprayEnd;
+            }
+            if (lockedAttack == 4)
+            {
+                return AtkFire + DisrupterShotInterval * (DisrupterShotCount - 1) + 10;
+            }
+            return AtkFire + 10;
+        }
+
+        private void LockAttackAim(Player player)
+        {
+            lockedTargetPosition = player.Center;
+            lockedFacingDirection = player.Center.X >= NPC.Center.X ? 1 : -1;
+            NPC.direction = lockedFacingDirection;
+            NPC.spriteDirection = lockedFacingDirection;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                NPC.netUpdate = true;
+            }
+        }
+
+        private Vector2 GetLockedTargetPosition(Player player)
+        {
+            return lockedTargetPosition == Vector2.Zero ? player.Center : lockedTargetPosition;
         }
 
         private void BreathSideTeleport(Player player)

@@ -1721,7 +1721,7 @@
   "style": 1
 }
 {
-  "text": "Press Left Shift to dodge roll through enemies while avoiding harm. --NEWLINE  --NEWLINE Auto Select is now on Left Alt. --NEWLINE  --NEWLINE You can change both keybinds in Controls. Find what works for you. It will be essential to your journey.",
+  "text": "Press {DodgeRoll} to dodge roll through enemies while avoiding harm. --NEWLINE  --NEWLINE Estus Flask / Quick Heal = {QuickHeal} --NEWLINE Cerulean Tear / Quick Mana = {QuickMana} --NEWLINE Inventory = {Inventory} --NEWLINE  --NEWLINE You can change keybinds in Controls.",
   "tileX": 4855,
   "tileY": 866,
   "textWidth": 320,

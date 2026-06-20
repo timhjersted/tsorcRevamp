@@ -13,7 +13,14 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class FireLurker : ModNPC
     {
+        const int MaxFlameOrbs = 3;
+        const int FlameOrbSpawnRate = 3 * 60;
+        const int FlameTrapRate = 10 * 60;
+        const int ReleasedFlameOrbTime = 3 * 60;
+
         public int lostSoulDamage = 8;
+        int flameOrbTimer;
+        int flameTrapTimer;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
@@ -36,8 +43,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.FireLurkerBanner>();
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
-            UsefulFunctions.AddAttack(NPC, 160, ProjectileID.LostSoulHostile, lostSoulDamage, 6, SoundID.NPCDeath9, 0);
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.NavSearchRadius = 60; // Phase 2: SmartFighter4AI movement
+            globalNPC.KiteRangeMin = 10f;
+            globalNPC.KiteRangeMax = 25f;
+            globalNPC.KiteLooseness = 0.5f;
+            UsefulFunctions.AddAttack(NPC, 6 * 60, ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>(), lostSoulDamage, 2.1f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Orange, telegraphTime: 25);
 
             if (Main.hardMode)
             {
@@ -101,6 +112,117 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.07f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.36f, enrageTopSpeed: 3f, lavaJumping: true); //sound type was 26
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            SpawnFlameOrbs();
+            SpawnFlameTrap();
+        }
+
+        void SpawnFlameOrbs()
+        {
+            flameOrbTimer++;
+            if (flameOrbTimer < FlameOrbSpawnRate)
+            {
+                return;
+            }
+            flameOrbTimer = 0;
+
+            int slot = GetOpenFlameOrbSlot();
+            if (slot == -1)
+            {
+                return;
+            }
+
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top + new Vector2(0, -56), Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>(), lostSoulDamage, 0, Main.myPlayer, NPC.whoAmI, slot);
+        }
+
+        int GetOpenFlameOrbSlot()
+        {
+            bool[] occupiedSlots = new bool[MaxFlameOrbs];
+            int activeOrbs = 0;
+            int orbType = ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (!projectile.active || projectile.type != orbType || (int)projectile.ai[0] != NPC.whoAmI)
+                {
+                    continue;
+                }
+
+                activeOrbs++;
+                if (projectile.ai[1] >= 0)
+                {
+                    int slot = (int)projectile.ai[1];
+                    if (slot >= 0 && slot < MaxFlameOrbs)
+                    {
+                        occupiedSlots[slot] = true;
+                    }
+                }
+            }
+
+            if (activeOrbs >= MaxFlameOrbs)
+            {
+                return -1;
+            }
+
+            for (int i = 0; i < MaxFlameOrbs; i++)
+            {
+                if (!occupiedSlots[i])
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        void SpawnFlameTrap()
+        {
+            flameTrapTimer++;
+            if (flameTrapTimer < FlameTrapRate)
+            {
+                return;
+            }
+            flameTrapTimer = 0;
+
+            NPC.TargetClosest(true);
+            Player target = Main.player[NPC.target];
+            if (!target.active || target.dead)
+            {
+                return;
+            }
+
+            Vector2 flameTrapPosition = target.Center - new Vector2(target.direction * 62f, 0);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), flameTrapPosition, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.FireLurkerMeteor>(), NPC.damage / 2, 0, Main.myPlayer, lostSoulDamage);
+        }
+
+        void ReleaseFlameOrbs()
+        {
+            NPC.TargetClosest(true);
+            Player target = Main.player[NPC.target];
+            if (!target.active || target.dead)
+            {
+                return;
+            }
+
+            int orbType = ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (!projectile.active || projectile.type != orbType || (int)projectile.ai[0] != NPC.whoAmI || projectile.ai[1] < 0)
+                {
+                    continue;
+                }
+
+                projectile.ai[1] = -3 * 60;
+                projectile.velocity = UsefulFunctions.Aim(projectile.Center, target.Center, 1.4f);
+                projectile.timeLeft = 3 * 60;
+                projectile.netUpdate = true;
+            }
         }
 
         #region Find Frame
@@ -166,6 +288,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 life if counter hits 100
             }
         }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            ReleaseFlameOrbs();
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            ReleaseFlameOrbs();
+        }
         #endregion
 
         public override void OnKill()
@@ -180,6 +312,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 for (int i = 0; i < 10; i++)
                 {
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Blood Splat").Type, 1.1f);
+                }
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Player target = Main.player[Player.FindClosest(NPC.position, NPC.width, NPC.height)];
+                if (target.active && !target.dead)
+                {
+                    Vector2 lostSoulVelocity = UsefulFunctions.Aim(NPC.Center, target.Center, 6f);
+                    Projectile.NewProjectile(NPC.GetSource_Death(), NPC.Center, lostSoulVelocity, ProjectileID.LostSoulHostile, lostSoulDamage, 0, Main.myPlayer);
                 }
             }
         }

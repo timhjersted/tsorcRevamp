@@ -254,6 +254,26 @@ namespace tsorcRevamp.NPCs.Invaders
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AbyssalFabric>(), 1, 3, 3));
         }
 
+        public override void OnKill()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Terraria.ModLoader.Config.NPCDefinition definition = new(ModContent.NPCType<AbyssalNinjaInvader>());
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
+            {
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Items.StaminaDroplet>());
+                tsorcRevampWorld.NewSlain.Add(definition, 1);
+
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.WorldData);
+                }
+            }
+        }
+
         // ─────────────────────────────────────────────────────────────────────────
         // Attacks
         // ─────────────────────────────────────────────────────────────────────────

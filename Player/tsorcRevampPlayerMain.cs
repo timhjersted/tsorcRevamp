@@ -61,6 +61,11 @@ namespace tsorcRevamp
     {
         public static readonly int PermanentBuffCount = 59;
         public static List<int> startingItemsList;
+        public StartingClass startingClass = StartingClass.None;
+        private const int StartingClassStatsVersion = 9;
+        public bool appliedStartingClassStats = false;
+        public int appliedStartingClassStatsVersion = 0;
+        public bool normansRingAmmoSave = false;
         public List<int> bagsOpened;
         public static int LastHit = 1;
         public static int ShunpoCooldownPerHit = -40;
@@ -202,6 +207,9 @@ namespace tsorcRevamp
             tag.Add("powerfulCurseMoveSpd", powerfulCurseMovementSpeedBonus);
             tag.Add("SoulVessel", SoulVessel);
             tag.Add("DeathTextIndex", currentDeathTextIndex);
+            tag.Add("StartingClass", (int)startingClass);
+            tag.Add("AppliedStartingClassStats", appliedStartingClassStats);
+            tag.Add("AppliedStartingClassStatsVersion", appliedStartingClassStatsVersion);
             //tag.Add("SoulLocation", );
 
             if (bagsOpened == null)
@@ -274,6 +282,9 @@ namespace tsorcRevamp
             ReceivedGift = tag.GetBool("ReceivedGift");
             ReceivedHuntingTome = tag.GetBool("ReceivedHuntingTome");
             heraldChatState = tag.GetInt("heraldChatState");
+            startingClass = (StartingClass)tag.GetInt("StartingClass");
+            appliedStartingClassStats = tag.GetBool("AppliedStartingClassStats");
+            appliedStartingClassStatsVersion = tag.ContainsKey("AppliedStartingClassStatsVersion") ? tag.GetInt("AppliedStartingClassStatsVersion") : (appliedStartingClassStats ? 1 : 0);
             BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
             if (tag.ContainsKey("Unkindled"))
             {
@@ -938,6 +949,42 @@ namespace tsorcRevamp
             return false;
         }
 
+        private static Item CreateStartingItem(int itemType, int stack = 1, int prefix = 0)
+        {
+            Item item = new Item();
+            item.SetDefaults(itemType);
+            item.stack = stack;
+            if (prefix != 0)
+            {
+                item.prefix = prefix;
+            }
+            return item;
+        }
+
+        private static void AddClassStartingItems(List<Item> startingItems, StartingClass startingClass)
+        {
+            switch (startingClass)
+            {
+                case StartingClass.Ranged:
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>(), prefix: PrefixID.Awful));
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<Bolt>(), 50));
+                    startingItems.Add(CreateStartingItem(ItemID.IronShortsword, prefix: PrefixID.Dull));
+                    break;
+                case StartingClass.Magic:
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<ApprenticesWand>(), prefix: PrefixID.Ignorant));
+                    startingItems.Add(CreateStartingItem(ItemID.BorealWoodSword, prefix: PrefixID.Dull));
+                    break;
+                case StartingClass.Summoner:
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<RustedChain>(), prefix: PrefixID.Terrible));
+                    startingItems.Add(CreateStartingItem(ItemID.BabyBirdStaff, prefix: PrefixID.Terrible));
+                    break;
+                case StartingClass.Melee:
+                default:
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<ForgottenRuneAxe>(), prefix: PrefixID.Dull));
+                    startingItems.Add(CreateStartingItem(ItemID.WoodenBoomerang, prefix: PrefixID.Dull));
+                    break;
+            }
+        }
         public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
         {
             List<Item> startingItems = new List<Item>();
@@ -953,31 +1000,13 @@ namespace tsorcRevamp
             MastersScroll.SetDefaults(ModContent.ItemType<MastersScroll>());
             startingItems.Add(MastersScroll);
 
-            Item ForgottenRuneAxe = new Item();
-            ForgottenRuneAxe.SetDefaults(ModContent.ItemType<ForgottenRuneAxe>());
-            ForgottenRuneAxe.prefix = PrefixID.Dull;
-            startingItems.Add(ForgottenRuneAxe);
+            startingItems.Add(CreateStartingItem(ModContent.ItemType<NormansRing>()));
 
-            Item Crossbow = new Item();
-            Crossbow.SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>());
-            Crossbow.prefix = PrefixID.Awful;
-            startingItems.Add(Crossbow);
-
-            Item ApprenticesWand = new Item();
-            ApprenticesWand.SetDefaults(ModContent.ItemType<ApprenticesWand>());
-            ApprenticesWand.prefix = PrefixID.Ignorant;
-            startingItems.Add(ApprenticesWand);
-
-            Item RustyChain = new Item();
-            RustyChain.SetDefaults(ModContent.ItemType<RustedChain>());
-            RustyChain.prefix = PrefixID.Terrible;
-            startingItems.Add(RustyChain);
-
-            Item Bolt = new Item();
-            Bolt.SetDefaults(ModContent.ItemType<Bolt>());
-            Bolt.stack = 50;
-            startingItems.Add(Bolt);
-
+            if (startingClass == StartingClass.None)
+            {
+                startingClass = tsorcRevamp.PendingStartingClass == StartingClass.None ? StartingClass.Melee : tsorcRevamp.PendingStartingClass;
+            }
+            AddClassStartingItems(startingItems, startingClass);
             if (ModLoader.TryGetMod("MagicStorage", out Mod MagicStorage))
             {
                 Item StorageHeart = new();
@@ -1960,11 +1989,181 @@ namespace tsorcRevamp
         }
 
         //Reduces the mana restored from potions and such to zero
+        public override bool CanConsumeAmmo(Item weapon, Item ammo)
+        {
+            if (normansRingAmmoSave && Main.rand.NextBool(20))
+            {
+                return false;
+            }
+
+            return base.CanConsumeAmmo(weapon, ammo);
+        }
+
+
+        public override void ModifyMaxStats(out StatModifier health, out StatModifier mana)
+        {
+            base.ModifyMaxStats(out health, out mana);
+
+            StartingClass resolvedStartingClass = GetResolvedStartingClass();
+            switch (resolvedStartingClass)
+            {
+                case StartingClass.Melee:
+                    health.Base += 20;
+                    mana.Base -= 10;
+                    break;
+                case StartingClass.Ranged:
+                    health.Base -= 10;
+                    break;
+                case StartingClass.Magic:
+                    health.Base -= 20;
+                    mana.Base += 30;
+                    break;
+                case StartingClass.Summoner:
+                    mana.Base += 10;
+                    break;
+            }
+        }
         public override void GetHealMana(Item item, bool quickHeal, ref int healValue)
         {
             if (manaShield >= 1)
             {
                 healValue = 0;
+            }
+        }
+
+        internal void ApplyStartingClassStats(bool force = false, bool clearPending = true)
+        {
+            if (!force && appliedStartingClassStatsVersion >= StartingClassStatsVersion)
+            {
+                return;
+            }
+
+            GetResolvedStartingClass();
+
+            if (startingClass == StartingClass.None)
+            {
+                return;
+            }
+
+            int maxLife = GetStartingClassBaseLife();
+            int maxMana = GetStartingClassBaseMana();
+            float maxStamina = tsorcRevampStaminaPlayer.DefaultStaminaResourceMax;
+
+            switch (startingClass)
+            {
+                case StartingClass.Melee:
+                    maxStamina = 130;
+                    break;
+                case StartingClass.Magic:
+                    maxStamina = 115;
+                    break;
+                case StartingClass.Summoner:
+                    maxStamina = 120;
+                    break;
+            }
+
+            Player.statLifeMax2 = maxLife;
+            Player.statLife = maxLife;
+            Player.statManaMax2 = maxMana;
+            Player.statMana = maxMana;
+
+            tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            staminaPlayer.staminaResourceMax = maxStamina;
+            staminaPlayer.staminaResourceCurrent = maxStamina;
+
+            appliedStartingClassStats = true;
+            appliedStartingClassStatsVersion = StartingClassStatsVersion;
+            if (clearPending)
+            {
+                tsorcRevamp.PendingStartingClass = StartingClass.None;
+            }
+        }
+
+        private StartingClass GetResolvedStartingClass()
+        {
+            if (startingClass != StartingClass.None)
+            {
+                return startingClass;
+            }
+
+            startingClass = ResolveStartingClassForStats();
+            return startingClass;
+        }
+
+        private StartingClass ResolveStartingClassForStats()
+        {
+            if (tsorcRevamp.PendingStartingClass != StartingClass.None)
+            {
+                return tsorcRevamp.PendingStartingClass;
+            }
+
+            return InferStartingClassFromInventory();
+        }
+
+        private StartingClass InferStartingClassFromInventory()
+        {
+            for (int i = 0; i < Player.inventory.Length; i++)
+            {
+                int itemType = Player.inventory[i]?.type ?? ItemID.None;
+                if (itemType == ModContent.ItemType<ApprenticesWand>() || itemType == ItemID.BorealWoodSword)
+                {
+                    return StartingClass.Magic;
+                }
+                if (itemType == ModContent.ItemType<RustedChain>() || itemType == ItemID.BabyBirdStaff)
+                {
+                    return StartingClass.Summoner;
+                }
+                if (itemType == ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>() || itemType == ItemID.IronShortsword)
+                {
+                    return StartingClass.Ranged;
+                }
+                if (itemType == ModContent.ItemType<ForgottenRuneAxe>() || itemType == ItemID.WoodenBoomerang)
+                {
+                    return StartingClass.Melee;
+                }
+            }
+
+            return StartingClass.None;
+        }
+        private int GetStartingClassBaseLife()
+        {
+            return GetResolvedStartingClass() switch
+            {
+                StartingClass.Melee => 120,
+                StartingClass.Ranged => 90,
+                StartingClass.Magic => 80,
+                _ => 100
+            };
+        }
+
+        private int GetStartingClassBaseMana()
+        {
+            return GetResolvedStartingClass() switch
+            {
+                StartingClass.Melee => 10,
+                StartingClass.Ranged => 20,
+                StartingClass.Magic => 50,
+                StartingClass.Summoner => 30,
+                _ => 20
+            };
+        }
+
+        private void MoveStartingPickaxeToFirstSlot()
+        {
+            if (Player.inventory[0] == null || !Player.inventory[0].IsAir)
+            {
+                return;
+            }
+
+            for (int i = 1; i < 10; i++)
+            {
+                Item item = Player.inventory[i];
+                if (item != null && !item.IsAir && item.pick > 0)
+                {
+                    Player.inventory[0] = item.Clone();
+                    item.TurnToAir();
+                    return;
+                }
             }
         }
 
@@ -1977,8 +2176,7 @@ namespace tsorcRevamp
             }
 
             if (!gotDarksign)
-            { // Fresh character: grant the Darksign, start in Unkindled mode, strip junk starter items.
-                Player.QuickSpawnItem(Player.GetSource_Loot(), ModContent.ItemType<Darksign>());
+            { // Fresh character: start in Unkindled mode and strip junk starter items.
                 gotDarksign = true;
                 if (!BearerOfTheCurse) Unkindled = true;
 
@@ -1987,6 +2185,8 @@ namespace tsorcRevamp
                     if (Player.inventory[i].type == ItemID.CopperShortsword || Player.inventory[i].type == ItemID.CopperAxe)
                         Player.inventory[i].TurnToAir();
                 }
+
+                MoveStartingPickaxeToFirstSlot();
             }
         }
 

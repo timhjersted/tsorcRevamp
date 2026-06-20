@@ -1,4 +1,6 @@
+using Newtonsoft.Json;
 using System.ComponentModel;
+using System.IO;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -13,6 +15,21 @@ namespace tsorcRevamp
 
         public void Unload()
         {
+        }
+
+        internal const string GameplayConfigName = "01Gameplay";
+        internal const string VisualConfigName = "02Visuals";
+        internal const string SoundConfigName = "03Sound";
+        internal const string ControlsConfigName = "04Controls";
+
+        internal static void MigrateRenamedConfig(ModConfig config, string oldName)
+        {
+            string oldPath = Path.Combine(ConfigManager.ModConfigPath, config.Mod.Name + "_" + oldName + ".json");
+            string newPath = Path.Combine(ConfigManager.ModConfigPath, config.Mod.Name + "_" + config.Name + ".json");
+            if (!File.Exists(newPath) && File.Exists(oldPath))
+            {
+                JsonConvert.PopulateObject(File.ReadAllText(oldPath), config, ConfigManager.serializerSettings);
+            }
         }
 
         // Forwarding properties for backward compatibility
@@ -249,11 +266,25 @@ namespace tsorcRevamp
             get => ModContent.GetInstance<tsorcRevampSoundConfig>().BotCMechanicsVolume;
             set => ModContent.GetInstance<tsorcRevampSoundConfig>().BotCMechanicsVolume = value;
         }
+
+        public bool RecommendedControls
+        {
+            get => ModContent.GetInstance<tsorcRevampControlsConfig>().RecommendedControls;
+            set => ModContent.GetInstance<tsorcRevampControlsConfig>().RecommendedControls = value;
+        }
     }
 
     [Label("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.DisplayName")]
     public class tsorcRevampGameplayConfig : ModConfig
     {
+        public override bool Autoload(ref string name)
+        {
+            name = tsorcRevampConfig.GameplayConfigName;
+            return base.Autoload(ref name);
+        }
+
+        public override void OnLoaded() => tsorcRevampConfig.MigrateRenamedConfig(this, nameof(tsorcRevampGameplayConfig));
+
         public override ConfigScope Mode => ConfigScope.ServerSide;
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) => true;
 
@@ -303,6 +334,14 @@ namespace tsorcRevamp
     [Label("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.DisplayName")]
     public class tsorcRevampVisualConfig : ModConfig
     {
+        public override bool Autoload(ref string name)
+        {
+            name = tsorcRevampConfig.VisualConfigName;
+            return base.Autoload(ref name);
+        }
+
+        public override void OnLoaded() => tsorcRevampConfig.MigrateRenamedConfig(this, nameof(tsorcRevampVisualConfig));
+
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
         [Header("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.Headers.Soapstones")]
@@ -394,6 +433,14 @@ namespace tsorcRevamp
     [Label("$Mods.tsorcRevamp.Configs.tsorcRevampSoundConfig.DisplayName")]
     public class tsorcRevampSoundConfig : ModConfig
     {
+        public override bool Autoload(ref string name)
+        {
+            name = tsorcRevampConfig.SoundConfigName;
+            return base.Autoload(ref name);
+        }
+
+        public override void OnLoaded() => tsorcRevampConfig.MigrateRenamedConfig(this, nameof(tsorcRevampSoundConfig));
+
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
         [DefaultValue(false)]
@@ -407,5 +454,49 @@ namespace tsorcRevamp
 
         [DefaultValue(50)]
         public uint BotCMechanicsVolume { get; set; }
+    }
+
+    [Label("$Mods.tsorcRevamp.Configs.tsorcRevampControlsConfig.DisplayName")]
+    public class tsorcRevampControlsConfig : ModConfig
+    {
+        public override bool Autoload(ref string name)
+        {
+            name = tsorcRevampConfig.ControlsConfigName;
+            return base.Autoload(ref name);
+        }
+
+        public override void OnLoaded() => tsorcRevampConfig.MigrateRenamedConfig(this, nameof(tsorcRevampControlsConfig));
+
+        public override ConfigScope Mode => ConfigScope.ClientSide;
+
+        internal static bool Loaded;
+        internal static bool LastRecommendedControls;
+
+        [DefaultValue(true)]
+        public bool RecommendedControls { get; set; }
+
+        public override void OnChanged()
+        {
+            if (!Loaded)
+            {
+                Loaded = true;
+                LastRecommendedControls = RecommendedControls;
+                return;
+            }
+
+            bool controlsMatch = tsorcRevamp.RecommendedControlBindingsMatch();
+            if (RecommendedControls && !LastRecommendedControls)
+            {
+                tsorcRevamp.ApplyRecommendedControlBindings(onlyIfDefaultOrOldDefault: false);
+                controlsMatch = tsorcRevamp.RecommendedControlBindingsMatch();
+                RecommendedControls = controlsMatch;
+            }
+            else if (RecommendedControls && !controlsMatch)
+            {
+                RecommendedControls = false;
+            }
+
+            LastRecommendedControls = RecommendedControls;
+        }
     }
 }

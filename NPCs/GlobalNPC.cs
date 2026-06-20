@@ -431,6 +431,20 @@ namespace tsorcRevamp.NPCs
         // front-facing ModifyHitBy block. The enemy re-sets this each frame, so it self-clears when not guarding.
         public bool ShieldGuarding = false;
         public const float ShieldGuardPoiseMult = 0.5f; // front hits build half poise while guarding
+
+        // Reactive shield capability (shared by the shield enemies — HollowSoldier/Spearman + the Lothric knights —
+        // configured via ShieldProfile). Layers on TOP of each enemy's own autonomous shield-timer rhythm:
+        //  • PreemptiveBlockChance: per-tick roll, when a threat is detected (incoming projectile, or the player within
+        //    ShieldThreatRange), to raise the guard BEFORE the hit lands.
+        //  • OnHitBlockChance: roll when actually hit to snap the guard up and catch the rest of a combo.
+        //  • ShieldedWalkSpeed: > 0 → advance toward the player at this speed while guarding instead of planting.
+        // A successful reactive block sets ReactiveBlockTimer; while it is > 0 the enemy holds its guard regardless of
+        // its autonomous timer / level gate (decremented centrally in PostAI), so it works against ranged too.
+        public float PreemptiveBlockChance = 0f;
+        public float OnHitBlockChance = 0f;
+        public int ShieldThreatRange = 0;       // px; player within this range counts as a melee threat to guard against
+        public float ShieldedWalkSpeed = 0f;    // 0 = plant in place (legacy); > 0 = slow shielded advance
+        public int ReactiveBlockTimer = 0;      // > 0 = forced guard from a reactive block; ticks down in PostAI
         // Tunable durations (ticks). Defaults: ~2s stagger, then the cooldown OUTLASTS it (6s total from trigger → ~4s
         // reduced-flinch + no-re-stagger recovery after the stun), ~3s decay grace.
         public int StaggerDurationTicks = 120;
@@ -1118,6 +1132,8 @@ namespace tsorcRevamp.NPCs
         }
         public float ArcherAimDirection;
         public Vector2 LockedShotVector;
+        public Vector2 LockedShotTargetPosition;
+        public int LockedShotFacingDirection;
         public int TeleportCountdown;
         public List<tsorcRevampAIs.ProjectileData> AttackList = new List<tsorcRevampAIs.ProjectileData>();
         public int AttackIndex;
@@ -1455,6 +1471,11 @@ namespace tsorcRevamp.NPCs
             {
                 npc.active = true;
                 npc.timeLeft = int.MaxValue;
+            }
+
+            if (ReactiveBlockTimer > 0)
+            {
+                ReactiveBlockTimer--;
             }
 
             UpdatePoise(npc);

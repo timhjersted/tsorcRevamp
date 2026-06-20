@@ -599,6 +599,7 @@ namespace tsorcRevamp
 
             Sharpened = false;
             AmmoBox = false;
+            normansRingAmmoSave = false;
             AmmoReservationPotion = false;
             AmmoReservationDamageScaling = 1f;
             TitanPotion = false;
@@ -2736,14 +2737,58 @@ namespace tsorcRevamp
             }
         }
 
-        // Tracks last frame's statLifeMax so PostUpdate can detect when vanilla Life Crystal use
-        // bumps the value by exactly 20 and rewrite the green "+20" floating heal popup. Initialized
-        // to -1 so the first PostUpdate after spawn doesn't trigger a false detection.
+        // Applies the reduced effective max stats used by SoulsMode without rewriting the saved
+        // vanilla crystal totals, so toggling back to Classic can restore the normal values.
+        private int GetSoulsModeLifeCrystalGain(bool forceSolo = false)
+        {
+            if (forceSolo)
+            {
+                return 10;
+            }
+
+            int activePlayers = 0;
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active) activePlayers++;
+            }
+
+            if (activePlayers >= 4) return 20;
+            if (activePlayers >= 2) return 15;
+            return 10;
+        }
+
+        internal void ApplySoulsModeEffectiveMaxStats(bool forceSoloLifeCrystalGain = false)
+        {
+            if (!SoulsMode)
+            {
+                return;
+            }
+
+            int lifeCrystals = Math.Min(15, Math.Max(0, (Player.statLifeMax - GetStartingClassBaseLife()) / 20));
+            int lifeCrystalGain = GetSoulsModeLifeCrystalGain(forceSoloLifeCrystalGain);
+            int lifeReduction = lifeCrystals * (20 - lifeCrystalGain);
+            if (lifeReduction > 0)
+            {
+                Player.statLifeMax2 -= lifeReduction;
+                if (Player.statLife > Player.statLifeMax2) Player.statLife = Player.statLifeMax2;
+            }
+
+            int manaCrystals = Math.Max(0, (Player.statManaMax - GetStartingClassBaseMana()) / 20);
+            int manaReduction = manaCrystals * 10;
+            if (manaReduction > 0)
+            {
+                Player.statManaMax2 -= manaReduction;
+                if (Player.statMana > Player.statManaMax2) Player.statMana = Player.statManaMax2;
+            }
+        }
         private int previousStatLifeMax = -1;
+        private int previousStatManaMax = -1;
+        private int previousEffectiveStatLifeMax = -1;
+        private int previousEffectiveStatManaMax = -1;
 
         public override void PostUpdate()
         {
-            // Souls-tier Life Crystal nerf — continuous statLifeMax2 cap.
+            // Souls-tier crystal nerfs — continuous statLifeMax2/statManaMax2 cap.
             //
             // Earlier attempts at modifying the persistent statLifeMax (in UseItem, OnConsumeItem,
             // and a +20 spike detector) all failed silently — vanilla's Life Crystal effect path
@@ -2751,9 +2796,9 @@ namespace tsorcRevamp
             // Hollowed.cs works reliably: re-cap statLifeMax2 (the effective max, recomputed each
             // frame from statLifeMax + bonuses) on every frame to the reduced value we want.
             //
-            // We derive crystal/fruit counts from statLifeMax — vanilla's persistent base which IS
-            // saved across sessions:
-            //   statLifeMax = 100 + 20 * crystals + 5 * fruits   (crystals capped at 15)
+            // Crystal counts come from the selected class's starting max stats. New class
+            // characters save those class values before any crystals, so the class bonus itself
+            // must not be counted as a consumed Life/Mana Crystal.
             //
             // In SoulsMode, the *visible* per-crystal gain is reduced based on party size:
             //   solo (1)      → 10 HP/crystal (cap reduces by 150 once all 15 are used)
@@ -2764,26 +2809,8 @@ namespace tsorcRevamp
             // toggles to Classic via Darksign, their statLifeMax2 jumps to full vanilla value.
             if (SoulsMode)
             {
-                int crystals = Math.Min(15, Math.Max(0, (Player.statLifeMax - 100) / 20));
-                int fruits = Math.Max(0, (Player.statLifeMax - 100 - crystals * 20) / 5);
-
-                int activePlayers = 0;
-                for (int i = 0; i < Main.maxPlayers; i++)
-                {
-                    if (Main.player[i].active) activePlayers++;
-                }
-                int crystalGain;
-                if (activePlayers >= 4) crystalGain = 20;
-                else if (activePlayers >= 2) crystalGain = 15;
-                else crystalGain = 10;
-
-                int nerfedBase = 100 + crystals * crystalGain + fruits * 5;
-                int reduction = Player.statLifeMax - nerfedBase;
-                if (reduction > 0)
-                {
-                    Player.statLifeMax2 -= reduction;
-                    if (Player.statLife > Player.statLifeMax2) Player.statLife = Player.statLifeMax2;
-                }
+                int crystalGain = GetSoulsModeLifeCrystalGain();
+                ApplySoulsModeEffectiveMaxStats();
 
                 // Rewrite the "+20" green heal popup vanilla spawned via Player.HealEffect when a
                 // Life Crystal was just consumed. Detected by the +20 spike to statLifeMax. The
@@ -2793,6 +2820,12 @@ namespace tsorcRevamp
                 // statLifeMax doesn't spike — accept this limitation rather than netcoding around it.
                 if (previousStatLifeMax >= 0 && Player.statLifeMax == previousStatLifeMax + 20)
                 {
+                    if (previousEffectiveStatLifeMax >= 0)
+                    {
+                        Player.statLifeMax2 = Math.Min(Player.statLifeMax2, previousEffectiveStatLifeMax + crystalGain);
+                        if (Player.statLife > Player.statLifeMax2) Player.statLife = Player.statLifeMax2;
+                    }
+
                     for (int i = 0; i < Main.combatText.Length; i++)
                     {
                         CombatText ct = Main.combatText[i];
@@ -2804,7 +2837,29 @@ namespace tsorcRevamp
                     }
                 }
             }
+            if (SoulsMode && previousStatManaMax >= 0 && Player.statManaMax == previousStatManaMax + 20)
+            {
+                if (previousEffectiveStatManaMax >= 0)
+                {
+                    Player.statManaMax2 = Math.Min(Player.statManaMax2, previousEffectiveStatManaMax + 10);
+                    if (Player.statMana > Player.statManaMax2) Player.statMana = Player.statManaMax2;
+                }
+
+                for (int i = 0; i < Main.combatText.Length; i++)
+                {
+                    CombatText ct = Main.combatText[i];
+                    if (ct.active && ct.color == CombatText.HealMana && ct.text == "20")
+                    {
+                        ct.text = "10";
+                        break;
+                    }
+                }
+            }
+
             previousStatLifeMax = Player.statLifeMax;
+            previousStatManaMax = Player.statManaMax;
+            previousEffectiveStatLifeMax = Player.statLifeMax2;
+            previousEffectiveStatManaMax = Player.statManaMax2;
 
             if ((Player.HasBuff(ModContent.BuffType<MagicWeapon>()) || Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()) || Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>())) && Player.meleeEnchant > 0)
             {

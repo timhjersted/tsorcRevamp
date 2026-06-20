@@ -920,7 +920,8 @@ namespace tsorcRevamp
                 #endregion
                 //--------
                 #region tsorc
-                {   ModContent.ItemType<PinwheelBag>()              , BossExtras.EstusFlaskShard    },
+                {   ModContent.ItemType<PinwheelBag>()              , BossExtras.EstusFlaskShard
+                                                                    | BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<OolacileDemonBag>()         , BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<SlograBag>()                , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<GaibonBag>()                , BossExtras.StaminaVessel      },
@@ -2323,6 +2324,7 @@ namespace tsorcRevamp
             tsorcGlobalItem.populateSoulRecipes();
         }
         public static bool VanillaBossesRemadeEnabled = false;
+        public static StartingClass PendingStartingClass = StartingClass.None;
         public override void PostSetupContent()
         {
             ApplyFirstRunControlDefaults();
@@ -3080,10 +3082,45 @@ namespace tsorcRevamp
             }
 
             string dataDir = Path.Combine(Main.SavePath, "ModConfigs", "tsorcRevampData");
-            string markerPath = Path.Combine(dataDir, "control-defaults-v1.txt");
+            string markerPath = Path.Combine(dataDir, "control-defaults-v2.txt");
             if (File.Exists(markerPath))
             {
                 return;
+            }
+
+            bool changed = false;
+            tsorcRevampControlsConfig controlsConfig = ModContent.GetInstance<tsorcRevampControlsConfig>();
+            try
+            {
+                Directory.CreateDirectory(dataDir);
+                if (controlsConfig.RecommendedControls)
+                {
+                    changed = ApplyRecommendedControlBindings(onlyIfDefaultOrOldDefault: true);
+                }
+
+                bool controlsMatch = RecommendedControlBindingsMatch();
+                controlsConfig.RecommendedControls = controlsMatch;
+                tsorcRevampControlsConfig.LastRecommendedControls = controlsMatch;
+
+                if (changed && !PlayerInput.Save())
+                {
+                    ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Could not save first-run control defaults; will retry next load.");
+                    return;
+                }
+
+                File.WriteAllText(markerPath, "Applied tsorcRevamp control defaults v2.");
+            }
+            catch (Exception e)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Failed to apply first-run control defaults: " + e);
+            }
+        }
+
+        internal static bool ApplyRecommendedControlBindings(bool onlyIfDefaultOrOldDefault)
+        {
+            if (Main.dedServ || PlayerInput.Profiles == null)
+            {
+                return false;
             }
 
             bool changed = false;
@@ -3094,37 +3131,93 @@ namespace tsorcRevamp
                     continue;
                 }
 
-                changed |= MoveBindingIfExactly(keyboard, "SmartSelect", "LeftShift", "LeftAlt");
-                changed |= MoveBindingIfExactly(keyboard, "tsorcRevamp/Dodge Roll", "LeftAlt", "LeftShift");
+                changed |= SetRecommendedBinding(keyboard, "QuickHeal", "F", onlyIfDefaultOrOldDefault, "H", "F");
+                changed |= SetRecommendedBinding(keyboard, "QuickMana", "R", onlyIfDefaultOrOldDefault, "J", "R");
+                changed |= SetRecommendedBinding(keyboard, "Inventory", "Q", onlyIfDefaultOrOldDefault, "Escape", "Q");
+                changed |= SetRecommendedBinding(keyboard, "QuickMount", "G", onlyIfDefaultOrOldDefault, "R", "G");
+                changed |= SetRecommendedBinding(keyboard, "tsorcRevamp/Dodge Roll", "LeftShift", onlyIfDefaultOrOldDefault, "LeftAlt", "LeftShift");
+                changed |= SetRecommendedBinding(keyboard, "SmartSelect", "LeftAlt", onlyIfDefaultOrOldDefault, "LeftShift", "LeftAlt");
             }
 
-            try
+            if (changed && !onlyIfDefaultOrOldDefault)
             {
-                Directory.CreateDirectory(dataDir);
-                if (changed && !PlayerInput.Save())
-                {
-                    ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Could not save first-run control defaults; will retry next load.");
-                    return;
-                }
-                File.WriteAllText(markerPath, "Applied tsorcRevamp control defaults v1.");
+                PlayerInput.Save();
             }
-            catch (Exception e)
-            {
-                ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Failed to apply first-run control defaults: " + e);
-            }
+
+            return changed;
         }
 
-        private static bool MoveBindingIfExactly(KeyConfiguration keyboard, string trigger, string oldKey, string newKey)
+        internal static bool RecommendedControlBindingsMatch()
         {
-            if (!keyboard.KeyStatus.TryGetValue(trigger, out List<string> keys)
-                || keys.Count != 1
-                || keys[0] != oldKey)
+            if (Main.dedServ || PlayerInput.CurrentProfile == null)
             {
                 return false;
             }
 
-            keys[0] = newKey;
+            if (!PlayerInput.CurrentProfile.InputModes.TryGetValue(InputMode.Keyboard, out KeyConfiguration keyboard))
+            {
+                return false;
+            }
+
+            return BindingMatches(keyboard, "QuickHeal", "F")
+                && BindingMatches(keyboard, "QuickMana", "R")
+                && BindingMatches(keyboard, "Inventory", "Q")
+                && BindingMatches(keyboard, "QuickMount", "G")
+                && BindingMatches(keyboard, "tsorcRevamp/Dodge Roll", "LeftShift")
+                && BindingMatches(keyboard, "SmartSelect", "LeftAlt");
+        }
+
+        private static bool SetRecommendedBinding(KeyConfiguration keyboard, string trigger, string recommendedKey, bool onlyIfDefaultOrOldDefault, params string[] defaultOrRecommendedKeys)
+        {
+            if (!keyboard.KeyStatus.TryGetValue(trigger, out List<string> keys))
+            {
+                if (onlyIfDefaultOrOldDefault)
+                {
+                    return false;
+                }
+
+                keys = new List<string>();
+                keyboard.KeyStatus[trigger] = keys;
+            }
+
+            if (onlyIfDefaultOrOldDefault && !HasSingleAllowedBinding(keys, defaultOrRecommendedKeys))
+            {
+                return false;
+            }
+
+            if (keys.Count == 1 && keys[0] == recommendedKey)
+            {
+                return false;
+            }
+
+            keys.Clear();
+            keys.Add(recommendedKey);
             return true;
+        }
+
+        private static bool HasSingleAllowedBinding(List<string> keys, params string[] allowedKeys)
+        {
+            if (keys.Count != 1)
+            {
+                return false;
+            }
+
+            foreach (string allowedKey in allowedKeys)
+            {
+                if (keys[0] == allowedKey)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool BindingMatches(KeyConfiguration keyboard, string trigger, string expectedKey)
+        {
+            return keyboard.KeyStatus.TryGetValue(trigger, out List<string> keys)
+                && keys.Count == 1
+                && keys[0] == expectedKey;
         }
 
         internal async void UpdateCheck()

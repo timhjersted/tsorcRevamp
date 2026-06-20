@@ -218,9 +218,12 @@ namespace tsorcRevamp.NPCs
             }
             else if (s.ShaftEscapeDir != 0)
             {
-                int escCol = (int)(npc.Center.X / TileF);
                 int escFeetY = GetFeetTileY(npc);
-                int escSide = escCol + s.ShaftEscapeDir;
+                // Column just past the body's LEADING edge in the drift direction (full-width aware, so a wide body
+                // only drifts once its actual edge — not just the center+1 column — has cleared the lip).
+                int escSide = s.ShaftEscapeDir > 0
+                    ? (int)((npc.position.X + npc.width) / TileF)
+                    : (int)(npc.position.X / TileF) - 1;
                 bool sideClear = !IsNavigationSolid(escSide, escFeetY)
                               && !IsNavigationSolid(escSide, escFeetY - 1)
                               && !IsNavigationSolid(escSide, escFeetY - 2);
@@ -2101,6 +2104,19 @@ namespace tsorcRevamp.NPCs
             return n;
         }
 
+        // Clear vertical room straight up across the NPC's FULL body width (min over every column the body occupies).
+        // A wide body (e.g. the 38px Basilisk = ~2.4 tiles) can have a clear center column but an EDGE under an
+        // overhang lip — jumping then instantly clips the lip and never rises. The min-over-width is the real ceiling.
+        private static int BodyUpClear(NPC npc, int feetY)
+        {
+            int leftCol = (int)(npc.position.X / TileF);
+            int rightCol = (int)((npc.position.X + npc.width - 1f) / TileF);
+            int minClear = 8;
+            for (int c = leftCol; c <= rightCol; c++)
+                minClear = Math.Min(minClear, ColumnUpClear(c, feetY));
+            return minClear;
+        }
+
         private static bool TryShaftEscape(NavState s, NPC npc, Player player, float jumpCeil, float topSpeed, float acceleration, out string action, out string reason)
         {
             action = ""; reason = "";
@@ -2112,7 +2128,7 @@ namespace tsorcRevamp.NPCs
             // sides are open AND there's clear room straight up, it's not a shaft — let the normal jump handle it.
             bool leftWalled = IsNavigationSolid(col - 1, feetY) || IsNavigationSolid(col - 1, feetY - 1) || IsNavigationSolid(col - 1, feetY - 2);
             bool rightWalled = IsNavigationSolid(col + 1, feetY) || IsNavigationSolid(col + 1, feetY - 1) || IsNavigationSolid(col + 1, feetY - 2);
-            int curUp = ColumnUpClear(col, feetY);
+            int curUp = BodyUpClear(npc, feetY); // full body width — a wide body's EDGE under the lip blocks the rise
             if (!leftWalled && !rightWalled && curUp >= 4) return false;
 
             int driftDir = player.Center.X >= npc.Center.X ? 1 : -1;
@@ -2170,7 +2186,11 @@ namespace tsorcRevamp.NPCs
                 return true;
             }
             int drop = GetDropDepth(frontX, feetY, 6);
-            if (drop >= 2 && TryMeasureGap(frontX, feetY, direction, out int gap, out int landDrop, out int landX))
+            // allowCliffDrop = the no-plan chase set this because the player is BELOW with a real landing ahead. In
+            // that case DROP IN rather than jumping ACROSS — otherwise the NPC vaults over a pit the player is sitting
+            // in (e.g. a wide enemy skips the 3-wide pit). Only suppresses the gap-jump for the below-player case;
+            // horizontal pursuit (allowCliffDrop false) still jumps gaps normally.
+            if (drop >= 2 && !allowCliffDrop && TryMeasureGap(frontX, feetY, direction, out int gap, out int landDrop, out int landX))
             {
                 // Physics gates the gap now (not a hardcoded <=5 cap): jump only if makeable.
                 if (gap >= 2 && gap <= 7 && landDrop <= 2)

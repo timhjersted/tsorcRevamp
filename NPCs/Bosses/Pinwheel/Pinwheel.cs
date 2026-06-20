@@ -2622,7 +2622,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             }*/
 
             //npcLoot.Add(notExpertCondition);
-            //npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>())); if you want to give it an extra one time drop outside of expert mode
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
         }
 
         #region Modified Teleportation Functions

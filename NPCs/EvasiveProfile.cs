@@ -59,6 +59,21 @@ namespace tsorcRevamp.NPCs
         }
 
         /// <summary>
+        /// The Lothric knight family (Knight / Black Knight). Grounded, shield-and-blade heavies — NOT skittish
+        /// dodgers, so no hop-away / blink / quick-step. Instead they answer being poked in neutral with aggressive
+        /// gap-closers: a one-shot <see cref="EvasiveBehavior.LeapForward"/> to punish ranged kiting (they have no
+        /// teleport, so this plugs the anti-kite hole), a telegraphed hyper-armored <see cref="EvasiveBehavior.RunningDash"/>
+        /// charge, and an occasional low <see cref="EvasiveBehavior.RetreatDash"/> to reset spacing. All three are
+        /// driven through the normal pursuit mover, so the knight flows straight into a slash/poke on arrival.
+        /// </summary>
+        public static void LothricKnight(tsorcRevampGlobalNPC globalNPC)
+        {
+            globalNPC.EvasiveLeapForward = true;
+            globalNPC.EvasiveRunningDash = true;
+            globalNPC.EvasiveRetreatDash = true;
+        }
+
+        /// <summary>
         /// The three invisible Dworc casters (Abysswalker, Alchemist, VoodooShaman). When meleed they back off and
         /// resume casting; they also i-frame quick-step out of incoming fire. Pairs naturally with
         /// <see cref="InvisibilityStyle.Evasive"/>, set on the enemy itself.

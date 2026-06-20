@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;
@@ -66,6 +66,8 @@ namespace tsorcRevamp.NPCs.Enemies
             globalNPC.RemembersLastKnownPos = true; // pursuer: investigate last-seen spot before patrolling
             // Poise / stagger: opt in. A stagger cancels an attack via IStaggerable.OnStagger below.
             globalNPC.PoiseMax = 15f;
+            // Reactive greatshield: pre-emptive + on-hit block chance. See ShieldProfile.
+            ShieldProfile.Hollow(globalNPC);
         }
 
         public Player player
@@ -76,8 +78,15 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(BuffID.BrokenArmor, 3 * 60, false); //broken armor         
+            player.AddBuff(BuffID.BrokenArmor, 3 * 60, false); //broken armor
         }
+
+        // On-hit reactive block: a chance to raise the greatshield to catch the rest of a combo.
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+            => tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), true);
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+            => tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), projectile.DamageType == DamageClass.Melee);
         #endregion
 
         #region AI
@@ -139,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool playerMeleeLevel = los && Math.Abs(player.Center.Y - NPC.Center.Y) <= 5 * 16;
             // Block stance: shield is up during Shielding/Thrusting/Throwing → a FRONT hit takes reduced poise
             // (GlobalNPC.ShieldGuarding) + the doubled front damage reduction in ModifyHitBy. Backstabs unaffected.
-            globalNPC.ShieldGuarding = AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Throwing;
+            globalNPC.ShieldGuarding = AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Throwing || globalNPC.ReactiveBlockTimer > 0;
 
             // Restore the SetDefaults knockBackResist each tick; poise scales it to a light flinch and owns
             // hyper-armor (via AttackCommitted). Replaces the old scattered "knockback-immune while moving" hacks.
@@ -224,25 +233,21 @@ namespace tsorcRevamp.NPCs.Enemies
                 // SF4's jump-up pathing replaces them (no attack to preserve, unlike the melee Hollows).
                 tsorcRevampAIs.FighterAI(NPC, 2f, 0.08f, 0.1f, canPounce: false, canDodgeroll: false);
 
-                // Shield only builds/engages when the player is a same-level melee threat — otherwise SF4 pursues
-                // (or the spearman throws at range below), instead of standing and blocking across levels.
-                if (playerMeleeLevel && NPC.Distance(player.Center) < 250)
-                {
-                    AI_Timer_Shielding++;
-                }
-                else if (!playerMeleeLevel && AI_Timer_Shielding < 300)
-                {
-                    AI_Timer_Shielding = 0;
-                }
+                // Pre-emptive block: chance to raise the greatshield when a threat (incoming shot / close player) is detected.
+                tsorcRevampAIs.TryPreemptiveBlock(NPC, globalNPC);
 
-                if (playerMeleeLevel && NPC.Distance(player.Center) < 95 && grounded)
+                // Reactive block (pre-emptive / on-hit) → raise the greatshield. (Replaces the old far-range autonomous
+                // shield-timer metronome, which accumulated near the player and turtled on a fixed cycle.)
+                if (globalNPC.ReactiveBlockTimer > 0 && grounded)
                 {
-                    AI_Timer_Shielding = 300;
+                    AI_Timer_Shielding = 311;
                     AI_State = State_Shielding;
                 }
 
-                if (playerMeleeLevel && AI_Timer_Shielding >= 300 && grounded)
+                // Close in → raise the greatshield and thrust (the melee attack approach, NOT a defensive metronome).
+                if (playerMeleeLevel && NPC.Distance(player.Center) < 95 && grounded)
                 {
+                    AI_Timer_Shielding = 300;
                     AI_State = State_Shielding;
                 }
 
@@ -267,9 +272,17 @@ namespace tsorcRevamp.NPCs.Enemies
                         else { NPC.velocity.X += 0.15f; }
                     }
 
+                    // Plant behind the greatshield while guarding.
                     if (AI_Timer_Shielding > 310)
                     {
-                        NPC.velocity.X = 0;
+                        if (globalNPC.ShieldedWalkSpeed > 0f)
+                        {
+                            NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+                            NPC.spriteDirection = NPC.direction;
+                            NPC.velocity.X = globalNPC.ShieldedWalkSpeed * NPC.direction;
+                        }
+                        else
+                            NPC.velocity.X = 0;
                     }
 
                     if (AI_Timer_Shielding > 500)
@@ -396,10 +409,10 @@ namespace tsorcRevamp.NPCs.Enemies
                     AI_Timer_Shielding = 400;
                 }
 
-                if (AI_Timer == 35 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (AI_Timer == 35)
                 {
                     // White telegraph flash 25 ticks before the spear release (hyper-armored from here).
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.White));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.White));
                 }
 
                 if (AI_Timer == 60)
@@ -743,7 +756,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowWarrior_Shield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 10, 0, shieldFrame);
-            if ((AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Throwing) && NPC.velocity.X == 0)
+            if (AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Throwing) // greatshield shows while advancing too
             {
                 if (NPC.spriteDirection == 1)
                 {

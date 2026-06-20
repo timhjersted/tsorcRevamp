@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;
@@ -68,14 +68,23 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             // Movement: shared fighter mover + SF4 A* nav (Phase-3 migration off the bespoke jump-ladder).
             globalNPC.HealthScaledSpeedBase = 2f;
-            globalNPC.HealthScaledSpeedMultiplier = -0.75f; // full-health topSpeed 1.25 — was 0.75, sluggish under SF4 nav; speeds toward 2.0 when wounded (compensates SF4 overhead)
+            globalNPC.HealthScaledSpeedMultiplier = -0.75f; // full-health topSpeed 1.25 - was 0.75, sluggish under SF4 nav; speeds toward 2.0 when wounded (compensates SF4 overhead)
             globalNPC.NavSearchRadius = 80;
             globalNPC.CanUseRopes = true;
             globalNPC.MaxJumpPower = 9f;            // default reach; SF4's up-and-over arc needs this to climb out of ~6-tile pits (TibianAmazon escapes the same pit on 9)
             globalNPC.RemembersLastKnownPos = true; // melee pursuer: investigate last-seen spot before patrolling
             // Poise / stagger: opt in. A stagger cancels a windup attack via IStaggerable.OnStagger below.
             globalNPC.PoiseMax = 20f;               // sturdier than Hollow Warrior (more HP/armor)
+            // Reactive shield: pre-emptive + on-hit block chance. See ShieldProfile.
+            ShieldProfile.Hollow(globalNPC);
         }
+
+        // On-hit reactive block: a chance to snap the guard up to catch the rest of a combo.
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+            => tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), true);
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+            => tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), projectile.DamageType == DamageClass.Melee);
 
         public override void HitEffect(NPC.HitInfo hit)
         {
@@ -117,7 +126,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool los = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
             // The player is a same-level shield/melee threat only when roughly level with us AND visible. When
             // they're on another level (e.g. above on a ledge), shielding would just pin us in place and stop SF4
-            // from pathing toward them — so the shield + jump-slash telegraph below are gated on this.
+            // from pathing toward them - so the shield + jump-slash telegraph below are gated on this.
             bool playerMeleeLevel = los && Math.Abs(player.Center.Y - NPC.Center.Y) <= 4 * 16;
 
             // Movement is now the shared fighter mover (SF4 A* nav via the SetDefaults levers). This REPLACES the
@@ -140,12 +149,17 @@ namespace tsorcRevamp.NPCs.Enemies
             // Poise labels (RedKnight / BlackKnight pattern). WINDUP (poise CAN break it, evasive reaction
             // suppressed) = the swing's wind-in. COMMITTED = hyper-armor (uninterruptible except by a stagger) =
             // the active swing. Basic slash: ai[3] windup <26, active 26-35. Jump-slash: ai[1] windup <436, active
-            // lunge→hit 436-446. (Recovery after each is intentionally vulnerable — punishable, Souls-style.)
+            // lunge-hit 436-446. (Recovery after each is intentionally vulnerable - punishable, Souls-style.)
             globalNPC.AttackTelegraphing = (slashing && NPC.ai[3] < 26);
-            // Jump-slash is hyper-armored for its whole committed wind-up→hit (red flash fires on commit at
-            // ai[1]==420, slash connects at 442) — only a stagger can stop it. Recovery (>446) is vulnerable.
+            // Jump-slash is hyper-armored for its whole committed wind-up-hit (red flash fires on commit at
+            // ai[1]==420, slash connects at 442) - only a stagger can stop it. Recovery (>446) is vulnerable.
             globalNPC.AttackCommitted = (slashing && NPC.ai[3] >= 26 && NPC.ai[3] <= 35)
                                         || (jumpSlashing && NPC.ai[1] <= 455);
+
+            // Pre-emptive block: in neutral, a chance to raise the guard when a threat (incoming shot / close player)
+            // is detected - before the hit lands.
+            if (!slashing && !jumpSlashing && !shielding && grounded)
+                tsorcRevampAIs.TryPreemptiveBlock(NPC, globalNPC);
 
             #region overhead air-slash (hop straight up to a player directly above)
             // Kept as an ATTACK trigger: when the player is right above and in reach, hop up and slash.
@@ -310,7 +324,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     jumpSlashing = true;
                     shielding = false;
 
-                    // Red telegraph flash on commit (the wind-up→hit below is hyper-armored, so only a stagger stops it).
+                    // Red telegraph flash on commit (the wind-up-hit below is hyper-armored, so only a stagger stops it).
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
@@ -406,37 +420,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
             //Shielding
 
-            if (playerMeleeLevel && (shielding || NPC.Distance(player.Center) < 220 || NPC.ai[2] > 300))
+            // Shielding is REACTIVE only: the pre-emptive + on-hit block (ReactiveBlockTimer); the old autonomous
+            // ai[2] timer metronome is gone. While guarding, plant in place on the idle shield frame.
+            shielding = globalNPC.ReactiveBlockTimer > 0 && !jumpSlashing && !slashing && NPC.velocity.Y == 0;
+            if (shielding)
             {
-                NPC.ai[2]++;
-
-                if (!jumpSlashing && !slashing && NPC.velocity.Y == 0)
-                {
-                    if (NPC.ai[2] > 300 && NPC.ai[2] <= 310)
-                    {
-                        if (NPC.direction == 1) { NPC.velocity.X -= 0.15f; }
-                        else { NPC.velocity.X += 0.15f; }
-                    }
-
-                    if (NPC.ai[2] > 310)
-                    {
-                        NPC.velocity.X = 0;
-                        shielding = true;
-                    }
-
-                    if (NPC.ai[2] > 500)
-                    {
-                        shielding = false;
-                        NPC.ai[2] = 0;
-                    }
-                }
-            }
-            else if (!playerMeleeLevel)
-            {
-                // Player on another level → don't shield-pin; pursue via SF4 and bleed the timer so a stale value
-                // doesn't re-pin us the instant we reach their level.
-                shielding = false;
-                if (NPC.ai[2] > 0) NPC.ai[2] -= 2;
+                NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+                NPC.spriteDirection = NPC.direction;
+                NPC.velocity.X = 0;
             }
 
             // Block stance this frame: a FRONT hit takes reduced poise (see GlobalNPC.ShieldGuarding + the doubled
@@ -453,9 +444,9 @@ namespace tsorcRevamp.NPCs.Enemies
             slashing = false;
             jumpSlashing = false;
             shielding = false;
-            npc.ai[1] = 60f;   // jump-slash timer → neutral (well below the 420 trigger)
-            npc.ai[2] = -100f; // shield timer → delayed
-            npc.ai[3] = 0f;    // basic-slash timer → neutral
+            npc.ai[1] = 60f;   // jump-slash timer - neutral (well below the 420 trigger)
+            npc.ai[2] = -100f; // shield timer - delayed
+            npc.ai[3] = 0f;    // basic-slash timer - neutral
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
@@ -464,15 +455,35 @@ namespace tsorcRevamp.NPCs.Enemies
             Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowSoldier_Shield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 15, 0, shieldFrame);
-            if (shielding && NPC.velocity.X == 0 && !jumpSlashing && !slashing)
+            if (shielding && !jumpSlashing && !slashing)
             {
+                Vector2 shieldWalkOffset = Vector2.Zero;
+                int currentFrame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+                if (currentFrame >= 17 && currentFrame <= 24)
+                {
+                    int shieldWalkFrame = currentFrame - 17;
+                    int shieldBobX = shieldWalkFrame switch
+                    {
+                        0 => -2,
+                        1 => -1,
+                        2 => 0,
+                        3 => 1,
+                        4 => 2,
+                        5 => 1,
+                        6 => 0,
+                        _ => -1,
+                    };
+                    int shieldBobY = shieldWalkFrame == 2 || shieldWalkFrame == 6 ? 1 : 0;
+                    shieldWalkOffset = new Vector2(shieldBobX * -NPC.spriteDirection, shieldBobY);
+                }
+
                 if (NPC.spriteDirection == 1)
                 {
-                    spriteBatch.Draw(shieldTexture, NPC.Center - Main.screenPosition, myrectangle, lightColor, NPC.rotation, new Vector2(34, 27), NPC.scale, effects, 0f);
+                    spriteBatch.Draw(shieldTexture, NPC.Center + shieldWalkOffset - Main.screenPosition, myrectangle, lightColor, NPC.rotation, new Vector2(34, 27), NPC.scale, effects, 0f);
                 }
                 else
                 {
-                    spriteBatch.Draw(shieldTexture, NPC.Center - Main.screenPosition, myrectangle, lightColor, NPC.rotation, new Vector2(34, 27), NPC.scale, effects, 0f);
+                    spriteBatch.Draw(shieldTexture, NPC.Center + shieldWalkOffset - Main.screenPosition, myrectangle, lightColor, NPC.rotation, new Vector2(34, 27), NPC.scale, effects, 0f);
                 }
             }
         }
@@ -737,6 +748,23 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Drawing and Animation
 
 
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (shielding && !jumpSlashing && !slashing && NPC.velocity.X != 0)
+            {
+                Texture2D shieldWalkTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowSoldier_ShieldWalk");
+                int currentFrame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 2;
+                int shieldWalkFrame = Math.Clamp(currentFrame - 2, 0, 7);
+                Rectangle frame = shieldWalkTexture.Frame(1, 8, 0, shieldWalkFrame);
+                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+                spriteBatch.Draw(shieldWalkTexture, NPC.Center - Main.screenPosition, frame, drawColor, NPC.rotation, new Vector2(34, 27), NPC.scale, effects, 0f);
+                return false;
+            }
+
+            return true;
+        }
+
         public override void FindFrame(int frameHeight)
         {
             //Main.NewText(shieldAnimTimer);
@@ -747,6 +775,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 float framecountspeed = Math.Abs(NPC.velocity.X) * 2.2f;
                 NPC.frameCounter += framecountspeed;
                 NPC.spriteDirection = NPC.direction;
+
 
                 if (NPC.frameCounter < 12)
                 {

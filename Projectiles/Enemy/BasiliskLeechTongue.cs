@@ -30,6 +30,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         private int launchTimer;
         private int drainTimer;
         private int hurtSoundTimer;
+        private int ownerDamageTakenWhileAttached;
+        private int pendingOwnerHeal;
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/BasiliskSucker";
 
@@ -62,7 +64,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             Projectile.timeLeft = 420;
-            Projectile.rotation += 0.05f * Projectile.direction;
+            if ((int)Projectile.ai[1] != StateAttached)
+            {
+                Projectile.rotation += 0.05f * Projectile.direction;
+            }
+            else
+            {
+                Projectile.rotation = 0f;
+            }
             AnimateSucker();
 
             switch ((int)Projectile.ai[1])
@@ -124,7 +133,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             Player player = Main.player[targetWho];
-            if (!player.active || player.dead || owner.life <= 0 || attachLife - owner.life >= owner.lifeMax * 0.2f)
+            if (!player.active || player.dead || owner.life <= 0 || ownerDamageTakenWhileAttached >= owner.lifeMax * 0.2f)
             {
                 StartRetract();
                 return;
@@ -154,6 +163,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 dust.noGravity = true;
             }
         }
+
 
         private void RetractAI(NPC owner)
         {
@@ -202,12 +212,10 @@ namespace tsorcRevamp.Projectiles.Enemy
                 player.KillMe(deathReason, drain, player.Center.X < owner.Center.X ? -1 : 1, false);
             }
 
-            if (owner.active && owner.life > 0 && owner.life < owner.lifeMax)
+            if (owner.active && owner.life > 0)
             {
-                int heal = System.Math.Min(drain, owner.lifeMax - owner.life);
-                owner.life += heal;
-                owner.HealEffect(heal);
-                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, owner.whoAmI);
+                pendingOwnerHeal += drain;
+                Projectile.netUpdate = true;
             }
         }
 
@@ -245,7 +253,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), previousCenter, Projectile.Center, Projectile.width + GrabPadding * 2f, ref collisionPoint);
         }
 
-        private bool CanGrabPlayer => (int)Projectile.ai[1] == StateFlying || (int)Projectile.ai[1] == StateRetracting;
+        private bool CanGrabPlayer => (int)Projectile.ai[1] == StateFlying;
 
         private bool TryAttachToPlayer()
         {
@@ -273,6 +281,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 overPlayers.Add(index);
             }
+            else
+            {
+                behindNPCs.Add(index);
+            }
         }
 
         private void AttachToPlayer(Player target)
@@ -290,8 +302,38 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.Center = GetPlayerHeadAnchor(target);
             drainTimer = 0;
             hurtSoundTimer = HurtSoundInterval - 1;
+            ownerDamageTakenWhileAttached = 0;
+            pendingOwnerHeal = 0;
             Projectile.netUpdate = true;
             SoundEngine.PlaySound(SoundID.NPCHit13 with { Volume = 0.55f, Pitch = 0.25f }, Projectile.Center);
+        }
+
+        public static void NotifyOwnerHit(NPC owner, int damageDone)
+        {
+            int tongueType = ModContent.ProjectileType<BasiliskLeechTongue>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (!projectile.active || projectile.type != tongueType || (int)projectile.ai[0] != owner.whoAmI)
+                {
+                    continue;
+                }
+
+                if ((int)projectile.ai[1] != StateAttached)
+                {
+                    continue;
+                }
+
+                if (projectile.ModProjectile is BasiliskLeechTongue tongue)
+                {
+                    tongue.ownerDamageTakenWhileAttached += damageDone;
+                    if (tongue.ownerDamageTakenWhileAttached >= owner.lifeMax * 0.2f)
+                    {
+                        tongue.StartRetract();
+                    }
+                    projectile.netUpdate = true;
+                }
+            }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -308,11 +350,32 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
+            ApplyPendingOwnerHeal();
+
             Projectile.ai[1] = StateRetracting;
             Projectile.hostile = false;
             Projectile.tileCollide = false;
             Projectile.netUpdate = true;
             SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.35f, Pitch = -0.25f }, Projectile.Center);
+        }
+
+        private void ApplyPendingOwnerHeal()
+        {
+            if (pendingOwnerHeal <= 0 || Main.netMode == NetmodeID.MultiplayerClient || !TryGetOwner(out NPC owner) || !owner.active || owner.life <= 0)
+            {
+                return;
+            }
+
+            int heal = System.Math.Min(pendingOwnerHeal, owner.lifeMax - owner.life);
+            pendingOwnerHeal = 0;
+            if (heal <= 0)
+            {
+                return;
+            }
+
+            owner.life += heal;
+            owner.HealEffect(heal);
+            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, owner.whoAmI);
         }
 
         private bool TryGetOwner(out NPC owner)
@@ -334,7 +397,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public static Vector2 GetMouthPosition(NPC npc)
         {
             int direction = npc.spriteDirection == 0 ? npc.direction : npc.spriteDirection;
-            return npc.Center + new Vector2(direction * npc.width * 0.38f, -npc.height * 0.22f);
+            return npc.Center + new Vector2(direction * (npc.width * 0.38f - 5f), -npc.height * 0.22f);
         }
 
         private static Vector2 GetPlayerHeadAnchor(Player player)
@@ -420,6 +483,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             writer.Write(launchTimer);
             writer.Write(drainTimer);
             writer.Write(hurtSoundTimer);
+            writer.Write(ownerDamageTakenWhileAttached);
+            writer.Write(pendingOwnerHeal);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -429,6 +494,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             launchTimer = reader.ReadInt32();
             drainTimer = reader.ReadInt32();
             hurtSoundTimer = reader.ReadInt32();
+            ownerDamageTakenWhileAttached = reader.ReadInt32();
+            pendingOwnerHeal = reader.ReadInt32();
         }
     }
 }

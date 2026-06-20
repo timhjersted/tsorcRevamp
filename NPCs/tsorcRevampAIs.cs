@@ -461,6 +461,17 @@ namespace tsorcRevamp.NPCs
 
                 if (globalNPC.TeleportCooldownTimer > 0) globalNPC.TeleportCooldownTimer--;
 
+                // Lava escape: ANY teleporter caught in lava blinks to safe ground near the player — survival for
+                // non-lava-immune enemies, repositioning for immune ones (mirrors the old RingedKnight lava-escape).
+                // Bypasses the FSM give-up gate below so it fires even mid-pursuit, and uses its own short cooldown.
+                if (globalNPC.CanTeleport && npc.lavaWet && globalNPC.TeleportCountdown == 0
+                    && globalNPC.TeleportAppearanceTimer == 0 && globalNPC.TeleportChargesRemaining > 0
+                    && globalNPC.TeleportCooldownTimer == 0)
+                {
+                    if (!TryTeleportOutOfLava(npc, globalNPC))
+                        globalNPC.TeleportCooldownTimer = 30; // no safe spot this attempt — throttle the retry
+                }
+
                 // Disengage resolver (4b): blink to re-acquire when the give-up condition for this style is met.
                 // Charges + per-style cooldown gate it; out of charges / on cooldown / no valid spot → falls
                 // through to Patrol. After a blink the NPC has LOS → FSM → Pursue.
@@ -1233,6 +1244,21 @@ namespace tsorcRevamp.NPCs
                 //Spawn a telegraph flash once the telegraph time is reached
                 if (globalNPC.ProjectileTimer == 1 + globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime)
                 {
+                    if (globalNPC.CurrentAttack.overshoot == null)
+                    {
+                        globalNPC.CurrentAttack.overshoot = Vector2.Zero;
+                    }
+                    if (globalNPC.CurrentAttack.lockAimAtTelegraph)
+                    {
+                        globalNPC.LockedShotTargetPosition = Main.player[npc.target].Center + globalNPC.CurrentAttack.overshoot.Value;
+                        globalNPC.LockedShotFacingDirection = globalNPC.LockedShotTargetPosition.X >= npc.Center.X ? 1 : -1;
+                        npc.direction = globalNPC.LockedShotFacingDirection;
+                        npc.spriteDirection = globalNPC.LockedShotFacingDirection;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            npc.netUpdate = true;
+                        }
+                    }
                     Vector2 spawnPosition = npc.position;
                     if (npc.direction == 1)
                     {
@@ -1254,6 +1280,11 @@ namespace tsorcRevamp.NPCs
             bool inTell = globalNPC.ProjectileTimer > flashTick;
             globalNPC.AttackTelegraphing = inTell && globalNPC.ProjectileTimer <= commitTick;
             globalNPC.AttackCommitted = inTell && globalNPC.ProjectileTimer > commitTick;
+            if (globalNPC.CurrentAttack.lockAimAtTelegraph && globalNPC.AttackCommitted && globalNPC.LockedShotTargetPosition != Vector2.Zero)
+            {
+                npc.direction = globalNPC.LockedShotFacingDirection;
+                npc.spriteDirection = globalNPC.LockedShotFacingDirection;
+            }
 
             //If it's supposed to stop moving when firing, then do so
             if (globalNPC.CanStopToFire && globalNPC.CurrentAttack.stopBefore && !globalNPC.CanPassThroughWalls)
@@ -1291,8 +1322,12 @@ namespace tsorcRevamp.NPCs
                     {
                         globalNPC.CurrentAttack.overshoot = Vector2.Zero;
                     }
-                    Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center + globalNPC.CurrentAttack.overshoot.Value, globalNPC.CurrentAttack.velocity, globalNPC.CurrentAttack.gravity);
+                    Vector2 targetPosition = globalNPC.CurrentAttack.lockAimAtTelegraph && globalNPC.LockedShotTargetPosition != Vector2.Zero
+                        ? globalNPC.LockedShotTargetPosition
+                        : Main.player[npc.target].Center + globalNPC.CurrentAttack.overshoot.Value;
+                    Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, targetPosition, globalNPC.CurrentAttack.velocity, globalNPC.CurrentAttack.gravity);
                     Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, globalNPC.CurrentAttack.type, globalNPC.CurrentAttack.damage, 0f, Main.myPlayer, globalNPC.CurrentAttack.ai0, globalNPC.CurrentAttack.ai1);
+                    globalNPC.LockedShotTargetPosition = Vector2.Zero;
                 }
                 if (globalNPC.CurrentAttack.sound != null)
                 {
@@ -1387,13 +1422,14 @@ namespace tsorcRevamp.NPCs
             public Func<NPC, bool> condition;
             public float stopBeforeChance;
             public int telegraphTime;
+            public bool lockAimAtTelegraph;
             // Fraction of the telegraph window (flash→fire) that is still TELEGRAPHING (cancellable) before the attack
             // COMMITS to hyper-armor. 0 = committed the instant it flashes ("after the flash it's committed"); 0.5 =
             // first half of the tell is cancellable, second half committed (e.g. a shrinking magic ring); 1 = cancellable
             // right up to the shot. Drives AttackTelegraphing/AttackCommitted in SimpleProjectile → the poise system.
             public float commitFraction;
 
-            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f)
+            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f, bool lockAimAtTelegraph = false)
             {
                 type = projectileType;
                 this.timerCap = timerCap;
@@ -1412,6 +1448,7 @@ namespace tsorcRevamp.NPCs
                 this.stopBeforeChance = stopBeforeChance;
                 this.telegraphTime = telegraphTime ?? ProjectileTelegraphTime;
                 this.commitFraction = commitFraction;
+                this.lockAimAtTelegraph = lockAimAtTelegraph;
             }
         }
 
@@ -1593,6 +1630,38 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
+        /// <summary>
+        /// Lava-escape blink: a <see cref="tsorcRevampGlobalNPC.CanTeleport"/> enemy caught in lava warps to safe
+        /// ground near the player. Line of sight is NOT required (the goal is getting OUT of the lava, not
+        /// re-acquiring a clean line) — <see cref="GenerateTeleportPosition"/> still rejects lava-topped tiles for
+        /// non-lava-immune enemies, so they land somewhere dry. Uses a short fixed cooldown so an enemy that keeps
+        /// sliding back into lava isn't left to cook waiting on the (much longer) per-style cooldown. Returns true
+        /// if a blink was queued.
+        /// </summary>
+        public static bool TryTeleportOutOfLava(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            if (globalNPC.TeleportCountdown != 0)
+            {
+                return false; // already mid-blink
+            }
+
+            QueueTeleport(npc, 50, requireLineofSight: false, globalNPC.TeleportTelegraphTime, globalNPC.PrefersHighGround, minRange: 5);
+
+            // QueueTeleport only sets TeleportCountdown when it actually found a valid destination.
+            if (globalNPC.TeleportCountdown <= 0)
+            {
+                return false;
+            }
+
+            if (globalNPC.TeleportChargesRemaining != int.MaxValue && globalNPC.TeleportChargesRemaining > 0)
+            {
+                globalNPC.TeleportChargesRemaining--; // limited charges do not recharge
+            }
+
+            globalNPC.TeleportCooldownTimer = 90; // short (1.5s): responsive re-escape without spamming
+            return true;
+        }
+
         public static void QueueTeleport(NPC npc, int range, bool requireLineofSight = true, int TeleportTelegraphTime = 140, bool preferHighGround = false, int minRange = 11)
         {
             Vector2? potentialNewPos;
@@ -1673,6 +1742,7 @@ namespace tsorcRevamp.NPCs
         {
             int damage = Math.Max(1, (int)(npc.damage * FireTeleportFlameDamageMultiplier));
             float rotationOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+            int flameLifetime = npc.type == ModContent.NPCType<Enemies.Basilisk.BasiliskHunter>() && npc.life <= npc.lifeMax / 2 ? 45 : 30;
 
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.4f }, position);
 
@@ -1681,7 +1751,7 @@ namespace tsorcRevamp.NPCs
                 Vector2 velocity = (rotationOffset + MathHelper.TwoPi * i / FireTeleportFlameCount).ToRotationVector2() * FireTeleportFlameSpeed;
                 Projectile flame = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), position, velocity,
                     ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), damage, 5f, Main.myPlayer);
-                flame.timeLeft = 30;
+                flame.timeLeft = flameLifetime;
             }
         }
 
@@ -1852,6 +1922,73 @@ namespace tsorcRevamp.NPCs
             }
 
         }
+
+        #region Reactive Shield (shared by the shield enemies — see ShieldProfile)
+        /// <summary>
+        /// Pre-emptive block: call once per AI tick from a shield enemy that is in NEUTRAL (not already guarding or
+        /// mid-attack). When a threat is detected — a friendly projectile heading at it, or the player within
+        /// <see cref="tsorcRevampGlobalNPC.ShieldThreatRange"/> — it rolls <see cref="tsorcRevampGlobalNPC.PreemptiveBlockChance"/>
+        /// and, on success, sets <see cref="tsorcRevampGlobalNPC.ReactiveBlockTimer"/> so the enemy raises its guard
+        /// BEFORE the hit lands. Returns true if it triggered a block this tick.
+        /// </summary>
+        public static bool TryPreemptiveBlock(NPC npc, tsorcRevampGlobalNPC globalNPC, int holdTicks = 75)
+        {
+            if (globalNPC.PreemptiveBlockChance <= 0f || globalNPC.ReactiveBlockTimer > 0)
+            {
+                return false;
+            }
+            if (!ShieldThreatIncoming(npc, globalNPC.ShieldThreatRange))
+            {
+                return false;
+            }
+            if (Main.rand.NextFloat() >= globalNPC.PreemptiveBlockChance)
+            {
+                return false;
+            }
+            globalNPC.ReactiveBlockTimer = holdTicks;
+            return true;
+        }
+
+        /// <summary>
+        /// On-hit block: call from a shield enemy's OnHitBy* hooks. Rolls <see cref="tsorcRevampGlobalNPC.OnHitBlockChance"/>
+        /// to snap the guard up the instant it's hit, so it can catch the rest of a combo. Returns true if it blocked.
+        /// </summary>
+        public static bool TryOnHitBlock(NPC npc, tsorcRevampGlobalNPC globalNPC, bool melee, int holdTicks = 75)
+        {
+            if (globalNPC.OnHitBlockChance <= 0f || Main.rand.NextFloat() >= globalNPC.OnHitBlockChance)
+            {
+                return false;
+            }
+            globalNPC.ReactiveBlockTimer = holdTicks;
+            return true;
+        }
+
+        /// <summary>
+        /// True if a friendly projectile is heading roughly at this NPC, or the player is within <paramref name="meleeRange"/>
+        /// px. Mirrors GlobalNPC's private EvasiveThreatNearby predicate (the dodge/jump-to-evade scan).
+        /// </summary>
+        public static bool ShieldThreatIncoming(NPC npc, int meleeRange)
+        {
+            if (meleeRange > 0 && npc.HasValidTarget &&
+                npc.DistanceSQ(Main.player[npc.target].Center) < meleeRange * meleeRange)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile proj = Main.projectile[i];
+                if (proj.active && proj.friendly && proj.damage > 0 && proj.DistanceSQ(npc.Center) < 40000 &&
+                    UsefulFunctions.CompareAngles(proj.velocity, UsefulFunctions.Aim(proj.Center, npc.Center, 1)) < 0.3f)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        #endregion
+
         #region Evasive On-Hit Reaction
         // Reusable scratch buffer for building the weighted behavior pool (single-threaded AI, so a shared static is safe).
         private static readonly List<EvasiveBehavior> EvasionPool = new List<EvasiveBehavior>(4);

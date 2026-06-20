@@ -86,6 +86,10 @@ namespace tsorcRevamp
             Terraria.GameContent.On_ShopHelper.GetShoppingSettings += ShopHelper_GetShoppingSettings;
 
             Terraria.GameContent.UI.States.On_UIWorldSelect.NewWorldClick += UIWorldSelect_NewWorldClick;
+            Terraria.GameContent.UI.States.On_UICharacterSelect.NewCharacterClick += UICharacterSelect_NewCharacterClick;
+            Terraria.GameContent.UI.Elements.On_UICharacterListItem.ctor += UICharacterListItem_ctor;
+            Terraria.GameContent.UI.States.On_UICharacterCreation.SetupPlayerStatsAndInventoryBasedOnDifficulty += UICharacterCreation_SetupPlayerStatsAndInventoryBasedOnDifficulty;
+            Terraria.IO.On_PlayerFileData.CreateAndSave += PlayerFileData_CreateAndSave;
 
             Terraria.On_Player.HandleBeingInChestRange += Player_HandleBeingInChestRange;
 
@@ -1465,6 +1469,14 @@ namespace tsorcRevamp
 
         private static void On_Player_UpdateManaRegen(On_Player.orig_UpdateManaRegen orig, Player self)
         {
+            if (self.statManaMax2 <= 0)
+            {
+                self.statMana = 0;
+                self.manaRegen = 0;
+                self.manaRegenCount = 0;
+                return;
+            }
+
             if (self.nebulaLevelMana > 0)
             {
                 int num = 6;
@@ -2403,6 +2415,46 @@ namespace tsorcRevamp
             Main.MenuUI.SetState(new CustomMapUIState());
         }
 
+        private static void UICharacterSelect_NewCharacterClick(Terraria.GameContent.UI.States.On_UICharacterSelect.orig_NewCharacterClick orig, Terraria.GameContent.UI.States.UICharacterSelect self, UIMouseEvent evt, UIElement listeningElement)
+        {
+            SoundEngine.PlaySound(SoundID.MenuOpen);
+            tsorcRevamp.PendingStartingClass = StartingClass.None;
+            Main.MenuUI.SetState(new StartingClassUIState());
+        }
+
+        private static void UICharacterListItem_ctor(Terraria.GameContent.UI.Elements.On_UICharacterListItem.orig_ctor orig, Terraria.GameContent.UI.Elements.UICharacterListItem self, Terraria.IO.PlayerFileData data, int snapPointIndex)
+        {
+            data?.Player?.GetModPlayer<tsorcRevampPlayer>().ApplySoulsModeEffectiveMaxStats(forceSoloLifeCrystalGain: true);
+            orig(self, data, snapPointIndex);
+        }
+        private static FieldInfo characterCreationPlayerField;
+
+        private static void UICharacterCreation_SetupPlayerStatsAndInventoryBasedOnDifficulty(Terraria.GameContent.UI.States.On_UICharacterCreation.orig_SetupPlayerStatsAndInventoryBasedOnDifficulty orig, Terraria.GameContent.UI.States.UICharacterCreation self)
+        {
+            orig(self);
+
+            if (tsorcRevamp.PendingStartingClass == StartingClass.None)
+            {
+                return;
+            }
+
+            characterCreationPlayerField ??= typeof(Terraria.GameContent.UI.States.UICharacterCreation).GetField("_player", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (characterCreationPlayerField?.GetValue(self) is Player player)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().ApplyStartingClassStats(force: true, clearPending: false);
+            }
+        }
+
+        private static Terraria.IO.PlayerFileData PlayerFileData_CreateAndSave(Terraria.IO.On_PlayerFileData.orig_CreateAndSave orig, Player player)
+        {
+            if (tsorcRevamp.PendingStartingClass != StartingClass.None)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().startingClass = tsorcRevamp.PendingStartingClass;
+            }
+
+            player.GetModPlayer<tsorcRevampPlayer>().ApplyStartingClassStats(force: true);
+            return orig(player);
+        }
         static Type ShopHelper = null;
         static FieldInfo currentNPC = null;
         static FieldInfo currentPlayer = null;
@@ -3030,6 +3082,7 @@ namespace tsorcRevamp
             if (self.whoAmI == Main.myPlayer && context == PlayerSpawnContext.SpawningIntoWorld)
             {
                 self.SetPlayerDataToOutOfClassFields();
+                self.GetModPlayer<tsorcRevampPlayer>().ApplyStartingClassStats();
                 Main.ReleaseHostAndPlayProcess();
             }
             self.headPosition = Vector2.Zero;
@@ -3260,6 +3313,7 @@ namespace tsorcRevamp
                 Main.ReleaseHostAndPlayProcess();
                 self.RefreshItems(true);
                 self.SetPlayerDataToOutOfClassFields();
+                self.GetModPlayer<tsorcRevampPlayer>().ApplyStartingClassStats();
                 Main.LocalGolfState.SetScoreTime();
                 Main.ActivePlayerFileData.StartPlayTimer();
                 Player.Hooks.EnterWorld(self.whoAmI);

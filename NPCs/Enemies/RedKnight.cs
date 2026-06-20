@@ -688,6 +688,7 @@ namespace tsorcRevamp.NPCs.Enemies
             shmCondition.OnSuccess(drop2);
             npcLoot.Add(shmCondition);
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<FlameOfTheAbyss>()));
+            npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<Items.StaminaVessel>()));
         }
         #endregion
 
