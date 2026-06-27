@@ -69,6 +69,23 @@ namespace tsorcRevamp.NPCs.Enemies{
 			g.NavSearchRadius = 60; // larger window so A* can find valid flat ledges above/across to jump to
 			g.MaxJumpPower = 9f;
 			g.MaxJumpBoost = 5f;
+			// On-hit evasion: lumber back to reset spacing, or telegraph a hyper-armored charge back in.
+			EvasiveProfile.HeavyBeast(g);
+			// Phase 1 (beast positioner): never stand still — when it can't path to you it falls back to a large
+			// band and oscillates in/out (using its ranged throw); wanders off if it can't reach you AND you stop
+			// hitting it for ~10s. Tune the band to taste.
+			g.KiteRangeMin = 12f;
+			g.KiteRangeMax = 30f;
+			g.PatrolMode = NPCs.PatrolMode.Wander;
+		}
+
+		public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+		{
+			tsorcRevampAIs.EvasiveOnHit(NPC, true);
+		}
+		public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+		{
+			tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
 		}
         public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
 public float CanSpawnLegacy(NPCSpawnInfo s)
@@ -127,7 +144,7 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
 			int shotRate = enraged?100:70;
 			float accel=enraged? npcEnrAcSPD:npcAcSPD;  //  how fast it can speed up
 			float topSpeed=enraged? npcEnrSPD:npcSPD;  //  max walking speed, also affects jump length
-            tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: false, minSurfaceWidth: 2, canWalkBackwards: true);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: false, minSurfaceWidth: 3, canWalkBackwards: true); // ~3.25-tile footprint → require 3 flat tiles
             Vector2 angle = Main.player[NPC.target].Center - NPC.Center;
             angle.Y = angle.Y - (Math.Abs(angle.X) * .1f);
             angle.X += (float)Main.rand.Next(-20, 21);

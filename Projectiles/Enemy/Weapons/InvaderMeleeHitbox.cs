@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy
+namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
     /// Invisible 8-tick hostile hitbox spawned along an InvaderNPC's swing arc.

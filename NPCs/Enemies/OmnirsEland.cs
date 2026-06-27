@@ -42,7 +42,47 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.value = 75;
-            AnimationType = 21; // Skeleton/Zombie animation structure
+            // No AnimationType: the sheet's layout (0=idle, 1=jump, 2..=walk) doesn't match any
+            // vanilla NPC's, so framing is driven explicitly in FindFrame below.
+        }
+
+        // Spritesheet layout: frame 0 = idle, frame 1 = jump, frames 2..(count-1) = walk cycle.
+        public override void FindFrame(int frameHeight)
+        {
+            int frameCount = Main.npcFrameCount[NPC.type];
+            const int walkStart = 2;
+            int walkEnd = frameCount - 1;
+
+            // Airborne → jump frame.
+            if (NPC.velocity.Y != 0f)
+            {
+                NPC.frameCounter = 0;
+                NPC.frame.Y = frameHeight; // frame 1
+                return;
+            }
+
+            // Grounded and essentially still → idle frame.
+            if (Math.Abs(NPC.velocity.X) < 0.1f)
+            {
+                NPC.frameCounter = 0;
+                NPC.frame.Y = 0; // frame 0
+                return;
+            }
+
+            // Walking → advance the cycle within [walkStart, walkEnd]; pace tied to walk speed.
+            int currentFrame = NPC.frame.Y / frameHeight;
+            if (currentFrame < walkStart || currentFrame > walkEnd)
+                currentFrame = walkStart;
+
+            NPC.frameCounter += Math.Abs(NPC.velocity.X);
+            if (NPC.frameCounter >= 9.0)
+            {
+                NPC.frameCounter = 0;
+                currentFrame++;
+                if (currentFrame > walkEnd)
+                    currentFrame = walkStart;
+            }
+            NPC.frame.Y = currentFrame * frameHeight;
         }
 
         /*

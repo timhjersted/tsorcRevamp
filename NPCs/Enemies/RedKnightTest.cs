@@ -9,9 +9,10 @@ using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Magic;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.EnemySpriteRendering;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

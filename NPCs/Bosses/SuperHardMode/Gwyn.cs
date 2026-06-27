@@ -668,6 +668,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (customAi1 >= 280 && NPC.life >= NPC.lifeMax / 10)
                     {
                         NPC.TargetClosest(true);
+                        if (customAi1 == 280f)
+                            Terraria.Audio.SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center); // lit fuse
 
                         if (Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
                         {
@@ -680,7 +682,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 {
                                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
                                 }
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center); //Play swing-throw sound
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item7 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center); //throw sound
                                 customAi1 = 1f;
                             }
                         }

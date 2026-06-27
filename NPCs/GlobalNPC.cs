@@ -36,7 +36,7 @@ using tsorcRevamp.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Projectiles.Summon;
@@ -49,6 +49,7 @@ using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using tsorcRevamp;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs
 {
@@ -549,6 +550,7 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.SuperHardMode.Artorias>(0.15f, 120f);
             Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
+            Add<Bosses.HeroofLumelia>(0.15f, 90f);
             Add<Enemies.SuperHardMode.SlograII>(0.4f, 50f);
             // Heavy giants / demons
             Add<Bosses.AncientDemon>(0.15f, 80f);
@@ -675,6 +677,7 @@ namespace tsorcRevamp.NPCs
         {
             Poise = 0f;
             StaggerTimer = StaggerDurationTicks;
+            SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.6f, PitchVariance = 0.15f }, npc.Center); // stagger cue
             // Escalation: add a stack and refresh the (long) window. The rising EffectivePoiseMax is what makes re-staggers
             // progressively harder — the recovery cooldown stays a flat ~recovery window (not stack-scaled, or it'd balloon).
             PoiseEscalationStacks = Math.Min(PoiseEscalationStacks + 1, PoiseEscalationMaxStacks);
@@ -957,6 +960,29 @@ namespace tsorcRevamp.NPCs
         // Flat-ground navigation for large enemies (avoid slopes / narrow ledges where a big sprite hangs off).
         public int MinSurfaceWidth = 0;                        // 0 = off; >=2 = only stand/walk/jump on flat ground that wide
         public bool RequiresFlatGround => MinSurfaceWidth > 0; // read-only; single source of truth is MinSurfaceWidth
+        // How many tiles of unevenness the SUPPORT CORE (MinSurfaceWidth tiles) may straddle before a surface is
+        // refused — i.e. how steep a slope/step the core can stand on. 2 lets it walk normal hill slopes; 0 = strictly
+        // flat. The wider sprite EDGES clip/sink separately (BeastSinkMaxTiles). Only consulted when MinSurfaceWidth
+        // > 0, so non-beasts are unaffected.
+        public int MaxSurfaceStep = 2;
+        // === Large-beast positioning (SF4 beasts only — all gated on RequiresFlatGround) ===
+        // A giant should NEVER freeze: when it can't path to the player it falls back to a large preferred band
+        // (KiteRangeMin/Max above) and oscillates in/out instead of standing; it bobs out of melee after each touch;
+        // and it loses interest (wanders) if it can't reach the player AND hasn't been hit for a while.
+        public int FramesSinceHit = 100000;     // ticked in PostAI, reset to 0 on any hit (OnHitByItem/Projectile)
+        public bool BeastStale = false;          // gave up to wander (suppresses LOS re-aggro until hit re-engages)
+        public int BeastUnreachableFrames = 0;   // frames it has had no path to the player (maintained by SF4 positioner)
+        public int BeastContactBackoffTicks = 60;        // post-touch retreat window (anti sprite-center glitch)
+        public float BeastRetreatSpeedHit = 4f;          // backpedal speed when freshly hit (px/frame)
+        public float BeastRetreatSpeedCalm = 1.2f;       // backpedal/drift speed when not recently hit
+        public int BeastStaleWanderTicks = 600;          // ~10s unreachable + unhit → wander off
+        // How many tiles wide an obstruction may be for a beast to bull straight through it (Phase 2 phasing).
+        public int BeastPhaseMaxWidth = 4;
+        // Phase 3 ground-clip: MinSurfaceWidth is now the SUPPORT CORE (the center 2-4 tiles that must be on solid
+        // ground); the wider sprite EDGES are allowed to clip into terrain. This is how far (in tiles) the sprite may
+        // sink to follow the ground under its full width, so the overhang buries into a slope/hill instead of
+        // floating in air. Drawn on top (gfxOffY). ~1/3 of the sprite height is a good ceiling.
+        public int BeastSinkMaxTiles = 3;
         // Backwards Walking (Moonwalk) fields
         public bool CanWalkBackwards = false;
         // Frames spent voluntarily halted at a ledge; used to cap ledge-camping.
@@ -1478,6 +1504,10 @@ namespace tsorcRevamp.NPCs
                 ReactiveBlockTimer--;
             }
 
+            // Hit-recency clock (drives the large-beast retreat-speed scaling + stale-wander give-up). The hooks
+            // below reset it to 0 on a real hit; here it just ages. Capped so it never overflows on a long-lived NPC.
+            if (FramesSinceHit < 1000000) FramesSinceHit++;
+
             UpdatePoise(npc);
             UpdatePreAttackJump(npc);
 
@@ -1790,6 +1820,7 @@ namespace tsorcRevamp.NPCs
         {
             if (npc.type == NPCID.KingSlime)
             {
+                npcLoot.RemoveWhere(rule => rule is CommonDrop drop && (drop.itemId == ItemID.NinjaHood || drop.itemId == ItemID.NinjaShirt || drop.itemId == ItemID.NinjaPants));
                 npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
                 npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>()));
             }
@@ -2842,6 +2873,23 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        // Any hit refreshes the hit-recency clock and, for a large beast, breaks it out of a stale wander back into
+        // pursuit ("if it's hit it should re-engage"). Called from both OnHitBy hooks.
+        private void RegisterHitForBeast(NPC npc)
+        {
+            FramesSinceHit = 0;
+            if (RequiresFlatGround)
+            {
+                BeastStale = false;
+                BeastUnreachableFrames = 0;
+                if (PursuitState == PursuitState.Patrol)
+                {
+                    PursuitState = PursuitState.Pursue;
+                    DisengageTimer = 0;
+                }
+            }
+        }
+
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             float poiseKnockback = item.knockBack;
@@ -2861,6 +2909,7 @@ namespace tsorcRevamp.NPCs
             RestoreMagicGhostKnockback(npc);
 
             TriggerNoLosPursuitBoost(npc, player);
+            RegisterHitForBeast(npc);
 
             //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
             if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
@@ -2898,6 +2947,7 @@ namespace tsorcRevamp.NPCs
             {
                 TriggerNoLosPursuitBoost(npc, Main.player[projectile.owner]);
             }
+            RegisterHitForBeast(npc);
 
             if (projectile.friendly && projectile.DamageType != DamageClass.Melee)
             {

@@ -170,6 +170,7 @@ namespace tsorcRevamp.NPCs
             NavState s = GetState(npc);
             tsorcRevampGlobalNPC g = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             _minSurfaceWidth = g.MinSurfaceWidth; // beast flat-ground gate for IsStandableTile this frame (0 = off)
+            _maxSurfaceStep = g.MaxSurfaceStep;   // tolerated footprint unevenness (Deerclops-clip failsafe)
             // Headroom: beasts (MinSurfaceWidth > 0) require their full sprite height of clearance; others keep the
             // old fixed 3 tiles. Auto-derived from the sprite so a tall beast won't path into a too-short space.
             _clearanceHeight = g.MinSurfaceWidth > 0 ? Math.Max(3, (int)Math.Ceiling(npc.height / 16f)) : 3;
@@ -185,6 +186,34 @@ namespace tsorcRevamp.NPCs
             // wall" bug). Rope climb legitimately uses noTileCollide and is excluded here.
             if (npc.noTileCollide && !s.PlatformPassActive && !npc.noGravity) npc.noTileCollide = false;
             bool grounded = IsGrounded(npc);
+
+            // ── Reactive evasion (armed by EvasiveOnHit; inert without an EvasiveProfile) ──────
+            // Mirror FighterAI's evasion bookkeeping so SF4 enemies get the same reactive moves:
+            // tick the rate-limit cooldown + the sustained-window driver, hold during a RunningDash
+            // telegraph, yield to a RetreatAndShoot back-off, and apply the dash burst's speed
+            // multiplier.  Fully inert for enemies that never arm an evasion.
+            if (g.FighterEvasionCooldown > 0)
+                g.FighterEvasionCooldown--;
+            tsorcRevampAIs.UpdateEvasion(npc, g);
+            if (g.InSustainedEvasion)
+            {
+                if (g.CurrentEvasion == EvasiveBehavior.RunningDash && g.EvasiveTelegraphing)
+                {
+                    npc.velocity.X *= 0.6f; // hold position while the dash telegraph flashes
+                    return;
+                }
+                if (g.CurrentEvasion == EvasiveBehavior.RetreatAndShoot)
+                    return; // UpdateEvasion already drives the grounded back-off — don't fight it
+                if (g.CurrentEvasion == EvasiveBehavior.RunningDash)
+                    topSpeed *= g.EvasiveDashSpeedMult; // burst: keep pursuing, but fast
+            }
+            else if (!grounded && g.FighterEvasionCooldown > 30)
+            {
+                // A one-shot evasion hop (LeapForward / RetreatDash / RetreatJump / TeleportAway)
+                // just launched — let the ballistic arc carry it instead of re-steering toward the
+                // player mid-air.
+                return;
+            }
 
             // Landing from an SF4 jump can leave much more horizontal speed than normal walking
             // allows. Bleed that overspeed immediately while grounded so path jumps do not feel
@@ -277,10 +306,14 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
-                // Kiting override: a ranged kiter holds / backs off to keep its preferred distance from a same-level
-                // player, instead of pathing into melee. Takes priority over the pursuit plan + reactive chase below.
-                bool kiting = grounded && !s.IsCommitted
-                    && TryRangedKite(s, npc, player, g, topSpeed, acceleration, los, out actionLabel, out reasonLabel);
+                // Kiting / beast-contact override: a ranged kiter holds / backs off to keep its preferred distance
+                // from a same-level player; a large beast bobs back out of melee after a touch (anti sprite-center
+                // glitch). Either takes priority over the pursuit plan + reactive chase below. For a beast this only
+                // fires during the post-contact back-off window — otherwise A* still navigates it in to touch.
+                bool kiting = grounded && !s.IsCommitted &&
+                    (g.RequiresFlatGround
+                        ? TryBeastContactBackoff(s, npc, player, g, acceleration, out actionLabel, out reasonLabel)
+                        : TryRangedKite(s, npc, player, g, topSpeed, acceleration, los, out actionLabel, out reasonLabel));
                 if (kiting)
                 {
                     actionHandled = true;
@@ -311,9 +344,19 @@ namespace tsorcRevamp.NPCs
 
                 if (!kiting && s.Plan != null && s.PlanIndex < s.Plan.Count)
                 {
+                    if (g.RequiresFlatGround) g.BeastUnreachableFrames = 0; // reachable: A* is navigating us in to touch
                     actionHandled = ExecuteStep(s, npc, player, topSpeed, acceleration,
                         jumpCeil, boostCeil, grounded, doorBreakingDamage, g,
                         out actionLabel, out reasonLabel);
+                }
+                else if (!kiting && grounded && g.RequiresFlatGround)
+                {
+                    // Large beast with no path to the player: NEVER stand still. Oscillate in/out within the large
+                    // preferred band instead of the standoff / halt-attack / hold-aligned / chase branches below
+                    // (which would freeze or pace robotically under the player). BeastUnreachableFrames ticks here,
+                    // feeding the BasicAI stale-wander give-up.
+                    BeastOscillate(s, npc, player, g, topSpeed, acceleration, out actionLabel, out reasonLabel);
+                    actionHandled = true;
                 }
                 else if (!kiting && grounded)
                 {
@@ -508,11 +551,26 @@ namespace tsorcRevamp.NPCs
                 else { s.HardStuckCheckX = float.MaxValue; s.HardStuckFrames = 0; s.HardStuckStrikes = 0; }
             }
 
+            // Phase 2: a large beast bulls straight through a thin (<= BeastPhaseMaxWidth) body/head obstruction
+            // (single block, skinny pillar, low overhang) instead of being stopped or forced to jump by it. While
+            // phasing it runs with noTileCollide + the feet pinned to the entry floor; real walls (wider than the
+            // cap) are NOT phased — A* still routes around/over them. Takes the place of the auto-step this frame.
+            bool beastPhasing = g.RequiresFlatGround && TryBeastPhase(s, npc, g);
+
             // Vanilla-style smooth auto-step: glide over <=1-tile bumps/half-blocks via gfxOffY (no jump),
             // exactly how the player and vanilla walkers move. Runs after the action sets velocity, only
             // while walking on the ground — skipped during a rope ride (noGravity) or a platform-drop
             // (noTileCollide), where stepping up would cancel the intended descent. Replaces 1-tile hops.
-            if (!npc.noGravity && !npc.noTileCollide) AutoStepUp(npc);
+            if (!beastPhasing && !npc.noGravity && !npc.noTileCollide) AutoStepUp(npc);
+
+            // Phase 3: a beast sinks its sprite to follow the ground under it (drawn on top), so its overhang clips
+            // into a slope/hill instead of floating. Cosmetic gfxOffY offset; physics still rests on the core. Plus a
+            // light nudge so a near-stationary beast doesn't park its body floating off a cliff edge.
+            if (g.RequiresFlatGround && !beastPhasing)
+            {
+                ApplyBeastGroundSink(npc, g);
+                ApplyBeastAntiFloat(npc, g);
+            }
 
             // ArcherAI sets bow/aim frames before SF4 movement runs. If the movement step then faces toward
             // a launch column/rope/path target, the bow frame can flash facing away for one tick. While the
@@ -638,6 +696,9 @@ namespace tsorcRevamp.NPCs
         // jumps on surfaces a large enemy can actually stand FULLY on (no 1-tile-ledge hopping, no edge-perching).
         // Single-threaded main loop → static stash is safe.
         private static int _minSurfaceWidth = 0;
+        // Tolerated footprint unevenness for the beast gate (set per-frame from g.MaxSurfaceStep). 1 = a foot may dip
+        // one tile into a step (the Deerclops-clip failsafe); 0 = strictly flat. Only used when _minSurfaceWidth > 0.
+        private static int _maxSurfaceStep = 1;
         // Required vertical headroom in tiles for the body clearance check (HasBodyClearanceAtRow). Default 3 (the
         // old fixed value); for beasts it's auto-derived from sprite height in Run, so a tall beast won't path
         // into a space too short for it.
@@ -1158,6 +1219,249 @@ namespace tsorcRevamp.NPCs
                 npc.spriteDirection = faceP;
                 action = drift > 0 ? "kite-drift-forward" : "kite-drift-back";
                 reason = s.KiteLetClose ? $"d={distTiles:F0} let-close" : $"d={distTiles:F0} band";
+            }
+            return true;
+        }
+
+        // ── Large-beast positioner (Phase 1) ────────────────────────────────────────────────────────────────────
+        // Two pieces, both gated on g.RequiresFlatGround by the caller:
+        //   TryBeastContactBackoff — runs as the "kiting" pre-empt; bobs the beast back out of melee for a window
+        //                            after each touch so it doesn't grind centered on the player (sprite glitch /
+        //                            "trapped on top of you"). Returns false when there's no active back-off so A*
+        //                            keeps navigating the beast in.
+        //   BeastOscillate         — the no-plan fallback; the beast can't path to the player, so instead of the
+        //                            standoff/halt/chase branches it ALWAYS moves, oscillating in/out around its
+        //                            large preferred band (KiteRangeMin/Max). Increments BeastUnreachableFrames,
+        //                            which the BasicAI overlay uses to wander off if also un-hit for ~10s.
+        // Retreat/back-off speed scales with how recently it was hit (faster away while being beaten on). Firing is
+        // unchanged — it stays BasicAI's job; this only positions.
+        private const int BeastHitWindow = 180; // ~3s ramp for the hit-recency retreat-speed scaling
+
+        private static float BeastRetreatSpeed(tsorcRevampGlobalNPC g)
+        {
+            float hitRecency = MathHelper.Clamp(1f - g.FramesSinceHit / (float)BeastHitWindow, 0f, 1f);
+            return MathHelper.Lerp(g.BeastRetreatSpeedCalm, g.BeastRetreatSpeedHit, hitRecency);
+        }
+
+        // Won't step a beast off a cliff or grind it into a wall: prefer `desired`, else the opposite if it's open,
+        // else press toward the player (so a boxed beast still inches forward rather than freezing).
+        private static bool IsBeastStepBlocked(NPC npc, int dir)
+            => IsCliffAhead(npc, dir) || GetObstacleHeight(GetFrontTileX(npc, dir), GetFeetTileY(npc)) > 1;
+        private static int BeastStepDir(NPC npc, int desired, int faceP)
+        {
+            if (desired == 0) desired = faceP;
+            if (!IsBeastStepBlocked(npc, desired)) return desired;
+            if (!IsBeastStepBlocked(npc, -desired)) return -desired;
+            return faceP;
+        }
+
+        private static bool TryBeastContactBackoff(NavState s, NPC npc, Player player, tsorcRevampGlobalNPC g,
+            float acceleration, out string action, out string reason)
+        {
+            action = ""; reason = "";
+            int faceP = player.Center.X >= npc.Center.X ? 1 : -1;
+            bool touching = npc.Hitbox.Intersects(player.Hitbox)
+                || npc.Distance(player.Center) <= (npc.width + player.width) * 0.5f + 8f;
+            if (touching) s.BeastContactBackoff = g.BeastContactBackoffTicks;
+            if (s.BeastContactBackoff <= 0) return false;
+
+            s.BeastContactBackoff--;
+            g.BeastUnreachableFrames = 0; // we just reached them — not stale
+            int away = BeastStepDir(npc, -faceP, faceP);
+            ApplyChase(npc, away, BeastRetreatSpeed(g), acceleration);
+            npc.direction = faceP; npc.spriteDirection = faceP; // keep facing the player while bobbing out
+            action = "beast-backoff"; reason = $"t={s.BeastContactBackoff}";
+            return true;
+        }
+
+        private static void BeastOscillate(NavState s, NPC npc, Player player, tsorcRevampGlobalNPC g,
+            float topSpeed, float acceleration, out string action, out string reason)
+        {
+            g.BeastUnreachableFrames++;
+            int faceP = player.Center.X >= npc.Center.X ? 1 : -1;
+            npc.direction = faceP; npc.spriteDirection = faceP;
+            float distTiles = npc.Distance(player.Center) / TileF;
+
+            // Re-roll the band target occasionally so it can't reverse course every frame (hysteresis).
+            if (s.KiteRerollTimer <= 0)
+            {
+                float lo = g.KiteRangeMin > 0 ? g.KiteRangeMin : 6f;
+                float hi = g.KiteRangeMax > 0 ? g.KiteRangeMax : 20f;
+                s.KiteTargetDist = MathHelper.Lerp(lo, hi, Main.rand.NextFloat());
+                s.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1;
+                s.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s committed
+            }
+            else s.KiteRerollTimer--;
+
+            const float deadband = 2f;
+            bool approachBlocked = IsBeastStepBlocked(npc, faceP);
+            int desired; float speed;
+            if (!approachBlocked && distTiles > s.KiteTargetDist + deadband)
+            {
+                desired = faceP; speed = topSpeed;                              // too far → close as far as terrain allows
+            }
+            else if (distTiles < s.KiteTargetDist - deadband)
+            {
+                desired = -faceP; speed = BeastRetreatSpeed(g);                 // too close → back off (hit-scaled)
+            }
+            else
+            {
+                desired = s.KiteHoldDrift * faceP;                              // in band (or approach blocked) → slow drift in/out
+                speed = Math.Max(topSpeed * 0.45f, g.BeastRetreatSpeedCalm);
+            }
+
+            int moveDir = BeastStepDir(npc, desired, faceP);
+            ApplyChase(npc, moveDir, speed, acceleration);
+            npc.spriteDirection = faceP;
+            action = "beast-oscillate"; reason = $"d={distTiles:F0} t={s.KiteTargetDist:F0}";
+        }
+
+        // ── Phase 2: bull through thin (<= BeastPhaseMaxWidth) body/head obstructions ─────────────────────────────
+        // A giant shouldn't be stopped or forced to jump by a single block / skinny pillar / low overhang. While
+        // phasing it runs noTileCollide and pins its feet to the entry floor (so gravity doesn't drop it through the
+        // obstruction's base); it still needs valid floor on the far side. Real walls (wider than the cap) are NOT
+        // phased — A* routes around/over them. Returns true on any frame it is phasing (the caller skips auto-step).
+        private static bool TryBeastPhase(NavState s, NPC npc, tsorcRevampGlobalNPC g)
+        {
+            if (s.BeastPhasing)
+            {
+                int dir = s.BeastPhaseDir != 0 ? s.BeastPhaseDir : (npc.velocity.X >= 0f ? 1 : -1);
+                npc.position.Y = s.BeastPhaseFloorY - npc.height; // hold the entry floor level
+                npc.velocity.Y = 0f;
+                // Commit to the latched direction so a mid-phase plan/velocity flip can't strand it inside the wall.
+                if (Math.Abs(npc.velocity.X) < 1f || Math.Sign(npc.velocity.X) != dir) npc.velocity.X = dir * 1.5f;
+                npc.noTileCollide = true;
+
+                // Exit once the body is fully clear (out the far side) and nothing is blocking the next column —
+                // or the safety cap trips (so a bad detection can never strand it phasing).
+                bool clear = !BeastBodyInsideSolid(npc) && BeastClearColumnDistance(npc, dir, 1) <= 0;
+                if (clear || ++s.BeastPhaseFrames > 90)
+                {
+                    s.BeastPhasing = false;
+                    s.BeastPhaseFrames = 0;
+                    npc.noTileCollide = false;
+                    return false;
+                }
+                return true;
+            }
+
+            // Consider STARTING a phase: grounded and walking into something.
+            if (npc.velocity.Y != 0f) return false;
+            int d = npc.velocity.X > 0.1f ? 1 : (npc.velocity.X < -0.1f ? -1 : 0);
+            if (d == 0) return false;
+
+            int dist = BeastClearColumnDistance(npc, d, g.BeastPhaseMaxWidth + 1);
+            if (dist <= 0) return false;                 // body isn't actually blocked ahead
+            if (dist > g.BeastPhaseMaxWidth) return false; // a real wall → let A* handle it
+
+            // It still needs ground on the far side (it phases the obstruction, not into a pit).
+            int feetY = GetFeetTileY(npc);
+            int startX = d > 0 ? (int)((npc.Right.X + 1f) / TileF) : (int)((npc.Left.X - 1f) / TileF);
+            int farX = startX + d * dist;
+            if (!IsNavigationSolid(farX, feetY + 1) && !IsNavigationSolid(farX, feetY + 2)) return false;
+
+            s.BeastPhasing = true;
+            s.BeastPhaseFrames = 0;
+            s.BeastPhaseDir = d;
+            s.BeastPhaseFloorY = npc.Bottom.Y;
+            npc.noTileCollide = true;
+            npc.velocity.Y = 0f;
+            return true;
+        }
+
+        // Distance (in tiles) to the first column ahead in `dir` whose body rows are CLEAR of solids. 0 = the column
+        // just ahead is already clear (not blocked); N = the obstruction is N tiles wide; -1 = solid the whole way
+        // to `cap` (a real wall). Body rows only — the feet/floor are handled separately.
+        private static int BeastClearColumnDistance(NPC npc, int dir, int cap)
+        {
+            int startX = dir > 0 ? (int)((npc.Right.X + 1f) / TileF) : (int)((npc.Left.X - 1f) / TileF);
+            int topY = (int)(npc.Top.Y / TileF);
+            int feetY = GetFeetTileY(npc);
+            for (int i = 0; i < cap; i++)
+            {
+                int x = startX + dir * i;
+                bool blocked = false;
+                for (int y = topY; y < feetY; y++)
+                    if (IsNavigationSolid(x, y)) { blocked = true; break; }
+                if (!blocked) return i;
+            }
+            return -1;
+        }
+
+        // True if any solid tile currently overlaps the beast's body box (rows above the feet) — i.e. it is still
+        // inside the obstruction it is phasing through.
+        private static bool BeastBodyInsideSolid(NPC npc)
+        {
+            int leftX = (int)(npc.Left.X / TileF);
+            int rightX = (int)(npc.Right.X / TileF);
+            int topY = (int)(npc.Top.Y / TileF);
+            int feetY = GetFeetTileY(npc);
+            for (int x = leftX; x <= rightX; x++)
+                for (int y = topY; y < feetY; y++)
+                    if (IsNavigationSolid(x, y)) return true;
+            return false;
+        }
+
+        // ── Phase 3: ground-clip sink draw ───────────────────────────────────────────────────────────────────────
+        // Lower the sprite (gfxOffY, drawn on top) so it follows the ground under its FULL width, capped at
+        // BeastSinkMaxTiles. On a slope/hill the overhang then clips DOWN into the ground instead of floating in air;
+        // the physics body still rests on the support core (MinSurfaceWidth), so combat/footing are unchanged. Only
+        // raises gfxOffY (never lowers it) so the vanilla auto-step glide isn't fought on flat ground.
+        private static void ApplyBeastGroundSink(NPC npc, tsorcRevampGlobalNPC g)
+        {
+            if (npc.velocity.Y != 0f) return; // only while grounded
+            int restRow = GetFeetTileY(npc) + 1; // the floor row the support core actually stands on
+            int leftX = (int)(npc.Left.X / TileF);
+            int rightX = (int)(npc.Right.X / TileF);
+            int sinkCap = Math.Max(0, g.BeastSinkMaxTiles);
+            if (sinkCap == 0) return;
+
+            // Deepest ground under the full footprint, measured in tiles BELOW the resting floor (capped). On flat
+            // ground every column is solid at restRow → drop 0 → no sink. Where the ground steps down (a slope/hill),
+            // the sprite sinks toward the lowest foot so the higher body clips into the terrain instead of floating.
+            // Columns with NO ground within the cap (a true cliff edge / air) don't pull the sink down.
+            int deepest = 0;
+            for (int x = leftX; x <= rightX; x++)
+            {
+                for (int d = 0; d <= sinkCap; d++)
+                {
+                    if (IsNavigationSolid(x, restRow + d)) { if (d > deepest) deepest = d; break; }
+                }
+            }
+            if (deepest <= 0) return;
+
+            float sinkPixels = deepest * TileF;
+            if (sinkPixels > npc.gfxOffY) npc.gfxOffY = sinkPixels; // sink down to follow the ground; never reduce a step-up glide
+        }
+
+        // Light anti-float: if a (near-stationary) beast's body overhangs AIR on one side while the other side has
+        // ground close below, nudge it toward the grounded side so its body ends up over terrain (where the sink can
+        // clip it in) instead of floating off a cliff edge. Only acts when nearly stopped, so it never fights active
+        // pursuit/oscillation — and never steps off the opposite edge. The deeper "refuse to perch over air" nav fix
+        // is intentionally NOT done here (it risks breaking drop-pursuit); this is the cheap, safe mitigation.
+        private static void ApplyBeastAntiFloat(NPC npc, tsorcRevampGlobalNPC g)
+        {
+            if (npc.velocity.Y != 0f || Math.Abs(npc.velocity.X) > 0.6f) return;
+            int sinkCap = Math.Max(1, g.BeastSinkMaxTiles);
+            bool leftAir = BeastSideOverhangsAir(npc, -1, sinkCap);
+            bool rightAir = BeastSideOverhangsAir(npc, 1, sinkCap);
+            if (leftAir == rightAir) return; // both float (narrow perch) or both grounded → no clearly better side
+            int toGround = leftAir ? 1 : -1;
+            if (!IsBeastStepBlocked(npc, toGround))
+                ApplyChase(npc, toGround, Math.Max(0.6f, g.BeastRetreatSpeedCalm), 0.1f);
+        }
+
+        // True if the outer two columns on `side` of the sprite have no ground within ~sinkCap tiles below the feet
+        // — i.e. that edge of the body hangs over air (a cliff) rather than clipping into a slope.
+        private static bool BeastSideOverhangsAir(NPC npc, int side, int sinkCap)
+        {
+            int feetY = GetFeetTileY(npc);
+            int edgeX = side > 0 ? (int)(npc.Right.X / TileF) : (int)(npc.Left.X / TileF);
+            for (int i = 0; i < 2; i++)
+            {
+                int x = edgeX - side * i; // outermost column, then one inward
+                for (int d = 1; d <= sinkCap + 1; d++)
+                    if (IsNavigationSolid(x, feetY + d)) return false; // ground close below this column → not floating
             }
             return true;
         }
@@ -2358,9 +2662,10 @@ namespace tsorcRevamp.NPCs
             if (!(IsNavigationSolid(x, y) || IsPlatformTile(x, y))) return false;
             // Beast flat-ground gate: a large enemy (MinSurfaceWidth > 0) may only treat this as standable if its
             // full footprint sits CENTERED on a flat run that wide — so it stands fully on, never edge-perched, and
-            // refuses floors narrower than its footprint. (IsGrounded still detects a beast resting on a too-narrow
-            // perch via its npc.collideY physical fallback.)
-            if (_minSurfaceWidth > 0 && !UsefulFunctions.IsFootprintSupported(x, y, _minSurfaceWidth)) return false;
+            // refuses floors narrower than its footprint. _maxSurfaceStep tiles of unevenness are tolerated (the
+            // Deerclops-clip failsafe: a single foot may dip one tile rather than the whole surface being refused).
+            // (IsGrounded still detects a beast resting on a too-narrow perch via its npc.collideY physical fallback.)
+            if (_minSurfaceWidth > 0 && !UsefulFunctions.IsFootprintSupported(x, y, _minSurfaceWidth, _maxSurfaceStep)) return false;
             return true;
         }
 
@@ -2822,6 +3127,14 @@ namespace tsorcRevamp.NPCs
             public int KiteRerollTimer;
             public bool KiteLetClose;
             public int KiteHoldDrift;
+            // Large-beast positioner (TryBeastReposition): post-touch retreat countdown so it bobs out of melee
+            // instead of grinding centered on the player (the sprite-glitch / "trapped on top of you" case).
+            public int BeastContactBackoff;
+            // Phase 2: a beast is mid-phase through a thin (<= BeastPhaseMaxWidth) obstruction (noTileCollide + floor-snap).
+            public bool BeastPhasing;
+            public float BeastPhaseFloorY;
+            public int BeastPhaseDir;    // latched travel direction through the obstruction (so it can't flip mid-phase)
+            public int BeastPhaseFrames; // safety cap so a phase can't get stuck on forever
             // Rope-fallback retry memory: detects the on/off loop where TryGrabNearbyRope re-grabs the
             // same rope that can't actually reach the player. After 2 rapid retries the rope is bad-edged.
             public int RopeFallbackX = int.MinValue;

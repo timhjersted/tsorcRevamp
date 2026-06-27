@@ -1,0 +1,117 @@
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Invaders;
+
+namespace tsorcRevamp.Utilities
+{
+    /// <summary>
+    /// Live A/B + tuning switch for the experimental composite-arm invader swing.
+    /// Only invaders that opt in via <c>UseCompositeArmSwing</c> (currently just
+    /// StuddedLeatherWarrior) are affected — this command flips the global master enable
+    /// and tunes the shared rotation offset / arm stretch without a rebuild.
+    ///
+    /// Usage:
+    ///   /swingarm                       → toggle the composite-arm path on/off
+    ///   /swingarm on | off              → force it on/off
+    ///   /swingarm offset &lt;radians&gt;       → set the arm rotation offset (e.g. 0.15, -0.3)
+    ///   /swingarm stretch none|quarter|threequarters|full
+    ///   /swingarm status                → print current values
+    /// </summary>
+    public class SwingArmCommand : ModCommand
+    {
+        public override CommandType Type => CommandType.Chat;
+
+        public override string Command => "swingarm";
+
+        public override string Description => "Toggle/tune the experimental composite-arm invader swing";
+
+        public override void Action(CommandCaller caller, string input, string[] args)
+        {
+            if (args.Length == 0)
+            {
+                InvaderNPC.CompositeArmSwingMasterEnable = !InvaderNPC.CompositeArmSwingMasterEnable;
+                ReplyStatus(caller);
+                return;
+            }
+
+            switch (args[0].ToLowerInvariant())
+            {
+                case "on":
+                    InvaderNPC.CompositeArmSwingMasterEnable = true;
+                    ReplyStatus(caller);
+                    break;
+
+                case "off":
+                    InvaderNPC.CompositeArmSwingMasterEnable = false;
+                    ReplyStatus(caller);
+                    break;
+
+                case "offset":
+                    if (args.Length >= 2 && float.TryParse(args[1], out float off))
+                    {
+                        InvaderNPC.CompositeArmRotationOffset = off;
+                        ReplyStatus(caller);
+                    }
+                    else
+                    {
+                        caller.Reply("Usage: /swingarm offset <radians>  (e.g. 0.15)", Color.Orange);
+                    }
+                    break;
+
+                case "stretch":
+                    if (args.Length >= 2 && TryParseStretch(args[1], out Player.CompositeArmStretchAmount stretch))
+                    {
+                        InvaderNPC.CompositeArmStretch = stretch;
+                        ReplyStatus(caller);
+                    }
+                    else
+                    {
+                        caller.Reply("Usage: /swingarm stretch none|quarter|threequarters|full", Color.Orange);
+                    }
+                    break;
+
+                case "log":
+                    if (args.Length >= 2 && args[1].ToLowerInvariant() == "on")
+                        InvaderNPC.SwingDebugLog = true;
+                    else if (args.Length >= 2 && args[1].ToLowerInvariant() == "off")
+                        InvaderNPC.SwingDebugLog = false;
+                    else
+                        InvaderNPC.SwingDebugLog = !InvaderNPC.SwingDebugLog;
+                    caller.Reply(
+                        $"Swing debug log: {(InvaderNPC.SwingDebugLog ? "ON" : "OFF")} (Logs/tsorcRevamp-invader-swing.log)",
+                        InvaderNPC.SwingDebugLog ? Color.Lime : Color.Gray);
+                    break;
+
+                case "status":
+                    ReplyStatus(caller);
+                    break;
+
+                default:
+                    caller.Reply("Usage: /swingarm [on|off|offset <radians>|stretch <amount>|log [on|off]|status]", Color.Orange);
+                    break;
+            }
+        }
+
+        private static void ReplyStatus(CommandCaller caller)
+        {
+            Color c = InvaderNPC.CompositeArmSwingMasterEnable ? Color.Lime : Color.Gray;
+            caller.Reply(
+                $"Composite-arm swing: {(InvaderNPC.CompositeArmSwingMasterEnable ? "ON (new)" : "OFF (legacy 4-frame)")} | " +
+                $"offset={InvaderNPC.CompositeArmRotationOffset:0.###} rad | stretch={InvaderNPC.CompositeArmStretch}",
+                c);
+        }
+
+        private static bool TryParseStretch(string s, out Player.CompositeArmStretchAmount stretch)
+        {
+            switch (s.ToLowerInvariant())
+            {
+                case "none":          stretch = Player.CompositeArmStretchAmount.None;          return true;
+                case "quarter":       stretch = Player.CompositeArmStretchAmount.Quarter;       return true;
+                case "threequarters": stretch = Player.CompositeArmStretchAmount.ThreeQuarters; return true;
+                case "full":          stretch = Player.CompositeArmStretchAmount.Full;          return true;
+                default:              stretch = Player.CompositeArmStretchAmount.Full;          return false;
+            }
+        }
+    }
+}

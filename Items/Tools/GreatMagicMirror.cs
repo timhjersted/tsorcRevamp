@@ -12,9 +12,9 @@ namespace tsorcRevamp.Items.Tools
     public class GreatMagicMirror : ModItem
     {
         public static int ChannelTime = 180;
-        public const int MaxTeleportDistanceTiles = 100;
+        public const int MaxTeleportDistanceTiles = 210;
         public const float MaxTeleportDistance = MaxTeleportDistanceTiles * 16f;
-        public const int RangeIndicatorVisibilityTiles = 100;
+        public const int RangeIndicatorVisibilityTiles = 210;
         public const float RangeIndicatorVisibilityDistance = RangeIndicatorVisibilityTiles * 16f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ChannelTime / 60, MaxTeleportDistanceTiles);
         public static int playerXLocation(Player player)

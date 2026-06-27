@@ -1041,6 +1041,37 @@ namespace tsorcRevamp
             return GetVanillaFieldName(type) ?? type.ToString();
         }
 
+        private static Dictionary<int, string> _vanillaItemIdToName;
+        private static string GetVanillaItemFieldName(int type)
+        {
+            if (_vanillaItemIdToName == null)
+            {
+                _vanillaItemIdToName = new Dictionary<int, string>();
+                foreach (var f in typeof(ItemID).GetFields(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if (f.IsLiteral && (f.FieldType == typeof(short) || f.FieldType == typeof(int)))
+                    {
+                        int id = Convert.ToInt32(f.GetRawConstantValue());
+                        if (!_vanillaItemIdToName.ContainsKey(id))
+                            _vanillaItemIdToName[id] = f.Name;
+                    }
+                }
+            }
+            return _vanillaItemIdToName.TryGetValue(type, out var name) ? name : null;
+        }
+
+        /// <summary>
+        /// Returns a stable name string for <paramref name="type"/>.
+        /// Modded: full mod-relative name e.g. "tsorcRevamp/DodgerollMemo".
+        /// Vanilla: ItemID field name e.g. "GreaterHealingPotion" (resolvable by reflection on load).
+        /// </summary>
+        public static string GetItemStableName(int type)
+        {
+            var modItem = ItemLoader.GetItem(type);
+            if (modItem != null) return modItem.FullName;
+            return GetVanillaItemFieldName(type) ?? type.ToString();
+        }
+
         /// <summary>
         /// Resolves a stored NpcName back to its current runtime NPC type. Modded names go through
         /// ModContent.TryFind; vanilla names are NPCID field names resolved by reflection (with a raw-int fallback).
@@ -1064,6 +1095,31 @@ namespace tsorcRevamp
             if (field != null && (field.FieldType == typeof(short) || field.FieldType == typeof(int)))
                 return Convert.ToInt32(field.GetRawConstantValue());
             if (int.TryParse(npcName, out int raw)) return raw;
+            return 0;
+        }
+
+        /// <summary>
+        /// Resolves a stored item name back to its current runtime item type. Modded names go through
+        /// ModContent.TryFind; vanilla names are ItemID field names resolved by reflection (with a raw-int fallback).
+        /// Returns 0 if it can't be resolved.
+        /// </summary>
+        public static int ResolveItemType(string itemName)
+        {
+            if (string.IsNullOrEmpty(itemName)) return 0;
+            if (itemName.Contains('/'))
+            {
+                try
+                {
+                    if (ModContent.TryFind<ModItem>(itemName, out ModItem modItem)) return modItem.Type;
+                }
+                catch { /* mod not loaded / malformed name - fall through */ }
+                return 0;
+            }
+
+            var field = typeof(ItemID).GetField(itemName, BindingFlags.Public | BindingFlags.Static);
+            if (field != null && (field.FieldType == typeof(short) || field.FieldType == typeof(int)))
+                return Convert.ToInt32(field.GetRawConstantValue());
+            if (int.TryParse(itemName, out int raw)) return raw;
             return 0;
         }
 
@@ -1774,6 +1830,7 @@ namespace tsorcRevamp
             // NpcID is normally not serialized, so this must run for ALL events (including completed ones) or the
             // editor's sprite preview would draw nothing for them.
             foreach (var dEvent in DynamicEvents)
+            {
                 foreach (var npc in dEvent.Npcs)
                 {
                     if (!string.IsNullOrEmpty(npc.NpcName))
@@ -1782,6 +1839,24 @@ namespace tsorcRevamp
                         // Legacy entry: name missing but a stored ID survives. Backfill the name so it's stable from now on.
                         npc.NpcName = GetNpcStableName(npc.NpcID);
                 }
+
+                if (dEvent.ExtraLootItemNames != null && dEvent.ExtraLootItemNames.Count > 0)
+                {
+                    dEvent.ExtraLootItems = new List<int>();
+                    foreach (string itemName in dEvent.ExtraLootItemNames)
+                    {
+                        dEvent.ExtraLootItems.Add(ResolveItemType(itemName));
+                    }
+                }
+                else if (dEvent.ExtraLootItems != null)
+                {
+                    dEvent.ExtraLootItemNames = new List<string>();
+                    foreach (int itemType in dEvent.ExtraLootItems)
+                    {
+                        dEvent.ExtraLootItemNames.Add(GetItemStableName(itemType));
+                    }
+                }
+            }
 
             foreach (var dEvent in DynamicEvents)
             {
@@ -2003,6 +2078,7 @@ namespace tsorcRevamp
                 if (ev.FinalNPCCustomDrops != null && ev.FinalNPCDropAmounts != null)
                 {
                     dynamicEvent.ExtraLootItems = new List<int>(ev.FinalNPCCustomDrops);
+                    dynamicEvent.ExtraLootItemNames = ev.FinalNPCCustomDrops.Select(GetItemStableName).ToList();
                     dynamicEvent.ExtraLootAmounts = new List<int>(ev.FinalNPCDropAmounts);
                 }
 
@@ -3106,6 +3182,10 @@ namespace tsorcRevamp
 
         // Optional custom drops, mostly used for simple single-item drops.
         public List<int> ExtraLootItems { get; set; }
+        public bool ShouldSerializeExtraLootItems() => ExtraLootItems != null && (ExtraLootItemNames == null || ExtraLootItemNames.Count == 0);
+        public List<string> ExtraLootItemNames { get; set; }
+        public bool ShouldSerializeExtraLootItemNames() => ExtraLootItemNames != null && ExtraLootItemNames.Count > 0;
         public List<int> ExtraLootAmounts { get; set; }
+        public bool ShouldSerializeExtraLootAmounts() => ExtraLootAmounts != null;
     }
 }

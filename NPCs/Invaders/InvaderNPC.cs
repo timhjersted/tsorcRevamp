@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -52,8 +53,12 @@ namespace tsorcRevamp.NPCs.Invaders
         private Player _puppet;
         private Item _meleeItemCache;
         private Item _rangedItemCache;
+        private Item _secondaryRangedItemCache;
+        private Item _magicItemCache;
         private int  _cachedMeleeType  = -1;
         private int  _cachedRangedType = -1;
+        private int  _cachedSecondaryRangedType = -1;
+        private int  _cachedMagicType = -1;
 
         // ── Loadout ───────────────────────────────────────────────────────────────
         protected abstract int HeadArmorItemType  { get; }
@@ -90,9 +95,9 @@ namespace tsorcRevamp.NPCs.Invaders
         // wind-up arc (sword raises, holds at apex, then swings).  Heavier attacks override
         // upward; lighter attacks should not go below this floor.
         protected virtual int MeleeTelegraphTicks  => 35;
-        // MeleeAttackTicks matches WeaponAnimMax so the full swing arc completes
+        // MeleeAttackTicks is the fallback swing duration when item useAnimation is unavailable
         // within the attack phase rather than bleeding into recovery.
-        protected virtual int MeleeAttackTicks     => WeaponAnimMax; // 22 ticks = one full swing
+        protected virtual int MeleeAttackTicks     => DefaultWeaponAnimMax;
         protected virtual int MeleeRecoveryTicks   => 25;
 
         protected virtual int StabTelegraphTicks   => 38;
@@ -164,7 +169,11 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual Color[]  SecondaryRangedBurstFlashColors      => null;
         /// <summary>Relative selection weights for each burst pattern.  null = uniform random.</summary>
         protected virtual int[]    SecondaryRangedBurstChances          => null;
-
+        /// <summary>Optional primary ranged burst patterns. Same format as SecondaryRangedBurstPatterns.</summary>
+        protected virtual int[][]  PrimaryRangedBurstPatterns          => null;
+        protected virtual int[]    PrimaryRangedBurstTelegraphExtras    => null;
+        protected virtual Color[]  PrimaryRangedBurstFlashColors        => null;
+        protected virtual int[]    PrimaryRangedBurstChances            => null;
         // ── Spear / polearm ───────────────────────────────────────────────────────
         protected virtual float SpearRange          => 200f;   // max distance for spear poke
         protected virtual int   SpearTelegraphTicks => 35;
@@ -215,22 +224,68 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual bool  InvaderCanDoubleJump  => false;
         protected virtual float InvaderDoubleJumpPower => 6f;
 
+        // ── Gap-closer attack tuning (LeapSlam / ChargeChop combo motions) ──────────
+        /// <summary>Horizontal speed held during a LeapSlam's airborne arc (px/frame).</summary>
+        protected virtual float LeapAttackForwardSpeed => TopSpeed * 1.7f;
+        /// <summary>Upward launch speed at the start of a LeapSlam (px/frame).</summary>
+        protected virtual float LeapAttackUpSpeed      => 9.5f;
+        /// <summary>Run speed during a ChargeChop, as a multiplier of TopSpeed.</summary>
+        protected virtual float ChargeAttackSpeedMult  => 1.85f;
+
+        // ── Shield (optional, opt-in per subclass) ──────────────────────────────────
+        /// <summary>Item type whose sprite is drawn as this invader's off-hand shield.  -1 = no
+        /// shield.  Override in a subclass to give an invader a reactive guard (also call a
+        /// <c>ShieldProfile.*</c> in SetDefaults to set the block chances).</summary>
+        protected virtual int ShieldItemType => -1;
+        /// <summary>True when this invader carries a shield.</summary>
+        protected bool HasShield => ShieldItemType > 0;
+        /// <summary>Damage multiplier applied to FRONT hits while actively guarding (0.5 = take half).
+        /// Backstabs bypass the block entirely.</summary>
+        protected virtual float ShieldDamageReduction => 0.5f;
+        /// <summary>Path to the held-shield draw sprite — a 20-frame vertical strip sharing the
+        /// player body's frame layout (frame N overlays body frame N), like vanilla equip shields.
+        /// Defaults to the shield item's texture + "_Shield"; override to point elsewhere.</summary>
+        protected virtual string ShieldDrawTexturePath =>
+            HasShield ? TextureAssets.Item[ShieldItemType].Name + "_Shield" : null;
+        private Texture2D _shieldDrawTex;
+        private bool _shieldDrawTexLoaded;
+        /// <summary>Minimum guard hold (ticks) when a block is raised away from melee range — long
+        /// enough to catch a ranged shot, short enough to stay mobile.  90 ticks = 1.5 s.</summary>
+        protected virtual int ShieldGuardTicksRanged => 90;
+        /// <summary>Minimum guard hold (ticks) once the guard is committed in melee range.  The
+        /// invader plants + locks facing for this whole window, so the player can dodgeroll through
+        /// and backstab.  150 ticks = 2.5 s.</summary>
+        protected virtual int ShieldGuardTicksMelee => 150;
+        /// <summary>Slow advance speed (px/frame) toward the player while guarding OUT of melee
+        /// range.  In melee range the invader plants instead.</summary>
+        protected virtual float ShieldAdvanceSpeed => 0.9f;
+        /// <summary>True this frame while the guard is up (drives the raised-shield pose + the
+        /// front damage / poise reduction).  Driven by the reactive block timer.</summary>
+        private bool _shielding;
+        /// <summary>Facing captured when the guard goes up and held through a melee commit, so the
+        /// invader doesn't track a player dodgerolling through to its back.</summary>
+        private int  _shieldLockedDir;
+        /// <summary>Rising-edge tracker for the guard (false→true = just raised).</summary>
+        private bool _shieldWasGuarding;
+        /// <summary>True once the current guard has had its hold bumped to the melee minimum (so the
+        /// extension is applied once, not re-applied every tick the player stays adjacent).</summary>
+        private bool _shieldMeleeExtended;
+
         /// <summary>
-        /// Run the ground-movement AI for this invader.  Defaults to the project's classic
-        /// FighterAI (supports teleport / dodgeroll / pounce).  Subclasses can override to
-        /// swap in a different driver — e.g. <c>SmartFighter4AI.Run</c> — without touching
-        /// the base flow.  Called once per tick from <see cref="AI"/> while grounded.
+        /// Run the ground-movement AI for this invader.  All invaders navigate with
+        /// <c>SmartFighter4AI</c> (A* pathfinding + ropes + stuck/teleport recovery); subclasses
+        /// override to tune search radius / door-break / attack range.  Called once per tick from
+        /// <see cref="AI"/> while grounded.
         /// </summary>
         protected virtual void RunMovementAI(float speedMult)
         {
-            tsorcRevampAIs.FighterAI(NPC,
-                topSpeed:     TopSpeed * speedMult,
-                acceleration: Acceleration,
-                brakingPower: BrakingPower,
-                canTeleport:  true,
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.RemembersLastKnownPos = true;
+            SmartFighter4AI.Run(NPC,
+                topSpeed:           TopSpeed * speedMult,
+                acceleration:       Acceleration,
                 doorBreakingDamage: 4,
-                canDodgeroll: Phase != AttackPhase.FleeToHeal && Phase != AttackPhase.Healing,
-                canPounce:    Phase == AttackPhase.Idle);
+                attackRange:        RangedRange);
         }
 
         // ── State machine ─────────────────────────────────────────────────────────
@@ -346,8 +401,10 @@ namespace tsorcRevamp.NPCs.Invaders
         // ── Weapon visual ─────────────────────────────────────────────────────────
         private int   _heldItemType;
         private float _weaponRotation;    // direction-neutral draw angle
-        private int   _weaponAnim;        // counts down WeaponAnimMax→0 during swing
-        private const int   WeaponAnimMax  = 22;
+        private int   _weaponAnim;        // counts down current weapon use animation during swings
+        private float _prevWeaponRotation; // last tick's _weaponRotation, for swing-speed-gated VFX
+        private int   _weaponAnimMax = DefaultWeaponAnimMax;
+        private const int DefaultWeaponAnimMax = 22;
         /// <summary>
         /// Resting hold angle when not attacking (≈ −17° — arm slightly raised, weapon pointing
         /// diagonally forward). The weapon smoothly eases to this during walk / jump / idle.
@@ -371,52 +428,13 @@ namespace tsorcRevamp.NPCs.Invaders
 
         private bool IsWeaponPosePhase => IsWeaponVisiblePhase;
 
-        private static bool IsClimbableRopeTile(Tile tile)
-        {
-            return tile.HasTile &&
-                   (tile.TileType == TileID.Rope ||
-                    tile.TileType == TileID.Chain ||
-                    tile.TileType == TileID.VineRope ||
-                    tile.TileType == TileID.SilkRope ||
-                    tile.TileType == TileID.WebRope);
-        }
-
-        private bool IsTouchingClimbableRope()
-        {
-            int left = (int)(NPC.position.X / 16f);
-            int right = (int)((NPC.position.X + NPC.width - 1f) / 16f);
-            int top = (int)(NPC.position.Y / 16f);
-            int bottom = (int)((NPC.position.Y + NPC.height - 1f) / 16f);
-
-            for (int x = left; x <= right; x++)
-            {
-                for (int y = top; y <= bottom; y++)
-                {
-                    if (IsClimbableRopeTile(Framing.GetTileSafely(x, y)))
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
         // ── Direction hold (anti-bounce) ──────────────────────────────────────────
         /// <summary>
         /// Ticks remaining during which the current facing direction is locked.
         /// Prevents rapid flip-flopping when the player dodgerolls past the invader —
-        /// FighterAI would otherwise flip direction every single tick.
+        /// the navigator would otherwise flip direction every single tick.
         /// </summary>
         private int _directionHoldTicks;
-
-        // ── Wall-blocked navigation ───────────────────────────────────────────────
-        /// <summary>Ticks elapsed while stuck (no LOS, near-zero velocity, free phase).
-        /// Drives stand-still scan → teleport fallback when blocked by impassable terrain.</summary>
-        private int _wallBlockedTimer;
-        /// <summary>Set by OnHitByX when struck with no LOS during a wall-scan (> 60 ticks blocked);
-        /// triggers a short retreat followed by an emergency teleport.</summary>
-        private bool _hitThroughWallFlag;
-        /// <summary>When > 0 the invader retreats away from the player; teleport fires on expiry.</summary>
-        private int _retreatBeforeTeleportTimer;
 
         // ── Telegraph flash ───────────────────────────────────────────────────────
         /// <summary>True once the flash VFX for the current telegraph phase has been spawned.</summary>
@@ -440,6 +458,12 @@ namespace tsorcRevamp.NPCs.Invaders
         /// and end up safely behind the swing arc — FighterAI's direction flips are overridden
         /// across all four MeleeCombo* phases.</summary>
         private int _comboLockedDir;
+        /// <summary>True while a LeapSlam step is mid-air (set at launch, cleared when it lands or
+        /// the airtime cap expires).  Gates the landing check that fires the slam hit.</summary>
+        private bool _comboLeapLaunched;
+        /// <summary>Horizontal velocity locked in at LeapSlam launch (sized to land near the player),
+        /// re-asserted each airborne tick so SF4 doesn't steer the arc.</summary>
+        private float _comboLeapVx;
 
         // ── Ranged combo state ────────────────────────────────────────────────────
         /// <summary>The ranged combo currently executing.</summary>
@@ -621,10 +645,10 @@ namespace tsorcRevamp.NPCs.Invaders
             Player target = Main.player[NPC.target];
             float distToTarget = NPC.Distance(target.Center);
 
-            // ── Flight tick (before FighterAI) ────────────────────────────────────
+            // ── Flight tick (before ground movement) ──────────────────────────────
             // When airborne, the flight controller fully owns velocity / noGravity / direction.
-            // We skip FighterAI, rope climbing, and wall-blocked detection so they don't fight
-            // the flight controller's intent.
+            // We skip the ground navigator (SmartFighter4) entirely so it doesn't fight the
+            // flight controller's intent.
             if (HasWings)
             {
                 _flight ??= new EnemyFlightController(FlightConfig);
@@ -634,6 +658,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     // Run attack AI (for aerial combos) but skip ground movement entirely.
                     if (gnpc.DodgeTimer <= 0)
                         InvaderAttackAI();
+                    UpdateAttackCommitFlags();
                     TickWeaponAnim();
                     return;
                 }
@@ -671,84 +696,26 @@ namespace tsorcRevamp.NPCs.Invaders
                 _directionHoldTicks  = 5; // allow quick correction while fleeing
             }
 
+            // Rope climbing, X-centering, stuck detection, and teleport recovery are all owned by
+            // SmartFighter4 (RunMovementAI).  The old FighterAI-era rope-climb and wall-blocked
+            // overrides that used to live here fought the navigator and have been removed.
+
+            // Reactive shield: raise/plant the guard after movement so it overrides pursuit velocity.
+            UpdateShield();
+
+            // While the guard is up the invader commits to it — no attack starts until it drops
+            // (the minimum hold), so the player gets a real block/backstab window.
+
             // ── Dodge-roll movement guard ──────────────────────────────────────────
             // When the GlobalNPC dodge system fires it sets velocity.X = 5 * direction and
             // grants invulnerability for DodgeTimer ticks.  If we then run InvaderAttackAI
             // it would call SlowDown() or set a stab-lunge velocity, overriding the dash.
             // Instead we skip attack AI entirely for those ticks so the dodge movement lands.
-            bool onRope = IsTouchingClimbableRope();
-            NPC.noGravity = onRope;
-            if (onRope)
-            {
-                float ropeClimbSpeed = MathHelper.Clamp(TopSpeed * 0.75f, 1.0f, 2.2f);
-                float yDelta = target.Center.Y - NPC.Center.Y;
-                if (Math.Abs(yDelta) > 12f)
-                {
-                    float desiredVy = Math.Sign(yDelta) * ropeClimbSpeed;
-                    NPC.velocity.Y = MathHelper.Lerp(NPC.velocity.Y, desiredVy, 0.18f);
-                    NPC.velocity.Y = MathHelper.Clamp(NPC.velocity.Y, -ropeClimbSpeed, ropeClimbSpeed);
-                }
-                else
-                {
-                    NPC.velocity.Y *= 0.60f;
-                }
-            }
-
-            // ── Wall-blocked detection and resolution ──────────────────────────────
-            // Track ticks where the invader has no LOS and can't move — it is stuck against
-            // terrain.  Instead of jumping fruitlessly we:
-            //   (a) stand still so FighterAI's Tier-2 scanner can find a route (~1 s)
-            //   (b) teleport after 5 s if nothing is found
-            //   (c) retreat ~10 tiles then teleport immediately if struck through the wall
-            {
-                bool wallLOS   = Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
-                bool freePhase = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll;
-
-                // Accumulate when stuck (no LOS, on ground, not moving); drain when LOS restored.
-                if (freePhase && !wallLOS && NPC.velocity.Y == 0f && Math.Abs(NPC.velocity.X) < 0.5f)
-                    _wallBlockedTimer++;
-                else if (wallLOS)
-                    _wallBlockedTimer = Math.Max(0, _wallBlockedTimer - 3);
-
-                // > 1 s stuck: nearly stop (cuts jump-bounce noise) before the teleport fallback below.
-                if (_wallBlockedTimer > 60 && !wallLOS)
-                {
-                    NPC.velocity.X *= 0.15f;
-                }
-
-                // > 5 s with no progress: teleport.
-                if (_wallBlockedTimer > 300)
-                {
-                    _wallBlockedTimer = 0;
-                    if (gnpc.TeleportCountdown == 0 && gnpc.TeleportAppearanceTimer == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-                        tsorcRevampAIs.QueueTeleport(NPC, 50, true, 90);
-                    EnterPhase(AttackPhase.Idle, 0);
-                }
-
-                // Struck through wall while blocked → short retreat, then emergency teleport.
-                if (_hitThroughWallFlag)
-                {
-                    _hitThroughWallFlag         = false;
-                    _wallBlockedTimer           = 0;
-                    _retreatBeforeTeleportTimer = 40; // ~40 ticks at 2× speed ≈ 10 tiles
-                }
-                if (_retreatBeforeTeleportTimer > 0)
-                {
-                    _retreatBeforeTeleportTimer--;
-                    float awayX = Math.Sign(NPC.Center.X - target.Center.X);
-                    if (awayX == 0) awayX = -NPC.direction;
-                    NPC.velocity.X      = (float)awayX * TopSpeed * 2f;
-                    NPC.direction       = (int)awayX;
-                    _directionHoldTicks = 5;
-                    if (_retreatBeforeTeleportTimer == 0 && gnpc.TeleportCountdown == 0 && gnpc.TeleportAppearanceTimer == 0
-                        && Main.netMode != NetmodeID.MultiplayerClient)
-                        tsorcRevampAIs.QueueTeleport(NPC, 50, true, 60);
-                }
-            }
-
-            if (gnpc.DodgeTimer <= 0)
+            // Also skip while the shield guard is committed so it holds its minimum window.
+            if (gnpc.DodgeTimer <= 0 && !_shielding)
                 InvaderAttackAI();
 
+            UpdateAttackCommitFlags();
             TickWeaponAnim();
         }
 
@@ -850,7 +817,6 @@ namespace tsorcRevamp.NPCs.Invaders
                         {
                             // Grounded: roll for tactical takeoff.
                             bool playerAbove = target.Center.Y < NPC.Center.Y - FlightHeightTrigger;
-                            bool stuck       = _wallBlockedTimer > 60;
                             float hpFrac     = (float)NPC.life / NPC.lifeMax;
                             int   randChance = hpFrac <= FlightHpEscalationFrac
                                              ? RandomTakeoffChance * 3
@@ -859,7 +825,7 @@ namespace tsorcRevamp.NPCs.Invaders
                                              && Main.GameUpdateCount % 60 == 0
                                              && Main.rand.Next(100) < randChance;
 
-                            if (playerAbove || stuck || randomBurst)
+                            if (playerAbove || randomBurst)
                             {
                                 if (_flight.RequestTakeoff())
                                     break;
@@ -935,7 +901,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     {
                         SetDisplayWeapon(MeleeWeaponItemType, swing: true);
                         DoMeleeAttack();
-                        EnterPhase(AttackPhase.MeleeAttack, MeleeAttackTicks);
+                        EnterPhase(AttackPhase.MeleeAttack, GetMeleeSwingTicks(MeleeAttackTicks));
                     }
                     break;
 
@@ -1208,9 +1174,20 @@ namespace tsorcRevamp.NPCs.Invaders
                     CheckAndFireFlash(_activeMeleeCombo.InitialFlashColor);
                     if (--PhaseTimer <= 0)
                     {
+                        var step0 = _activeMeleeCombo.Steps[_meleeComboStepIndex];
                         SetDisplayWeapon(MeleeWeaponItemType, swing: true);
-                        DoComboMeleeHit(_activeMeleeCombo.Steps[_meleeComboStepIndex]);
-                        EnterPhase(AttackPhase.MeleeComboAttack, _activeMeleeCombo.Steps[_meleeComboStepIndex].AttackTicks);
+                        if (IsSwingingMotion(step0.Motion))
+                            PlayMeleeSwingSound();
+                        // Deferred / no-hit motions don't strike on entry: LeapSlam launches now and
+                        // connects on landing; ChargeChop runs (next step chops); Feint just holds
+                        // the bait pose (next step is the delayed chop).
+                        if (step0.Motion == ComboMotion.LeapSlam)
+                            BeginLeapAttack();
+                        else if (step0.Motion == ComboMotion.ChargeChop || step0.Motion == ComboMotion.Feint)
+                        { /* no hit this step — movement / bait only */ }
+                        else
+                            DoComboMeleeHit(step0);
+                        EnterPhase(AttackPhase.MeleeComboAttack, GetMeleeSwingTicks(step0.AttackTicks));
                     }
                     break;
 
@@ -1219,22 +1196,58 @@ namespace tsorcRevamp.NPCs.Invaders
                 {
                     LockComboDirection();
                     var step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
-                    if (step.ForwardPushMult > 0f)
-                        NPC.velocity.X = _comboLockedDir * (TopSpeed * step.ForwardPushMult);
+                    bool endStep;
+
+                    if (step.Motion == ComboMotion.LeapSlam)
+                    {
+                        // Hold the launch velocity (SF4 ran earlier this tick and would otherwise
+                        // steer X); gravity provides the downward arc.  The slam connects when we
+                        // land, or when the airtime cap (AttackTicks) expires.
+                        NPC.velocity.X = _comboLeapVx;
+                        // velocity.Y only returns to exactly 0 via a vertical collision (landing).
+                        // Require a few ticks of airtime first so a launch that can't clear a low
+                        // ceiling doesn't read as an instant landing.
+                        bool landed = _comboLeapLaunched && NPC.velocity.Y == 0f && PhaseTimer < 86;
+                        endStep = (--PhaseTimer <= 0) || landed;
+                        if (endStep)
+                        {
+                            DoComboMeleeHit(step);
+                            _comboLeapLaunched = false;
+                        }
+                    }
+                    else if (step.Motion == ComboMotion.ChargeChop)
+                    {
+                        // Run straight at the player, re-facing each tick.  No hit here — the
+                        // following OverheadArc step is the chop.  Ends on reach OR the timeout
+                        // (PhaseTimer = AttackTicks) so it always completes and resets to idle.
+                        int faceDir = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceDir; NPC.spriteDirection = faceDir; _comboLockedDir = faceDir;
+                        NPC.velocity.X = faceDir * (TopSpeed * ChargeAttackSpeedMult);
+                        bool inReach = NPC.Distance(target.Center) <= MeleeRange * 0.9f;
+                        endStep = (--PhaseTimer <= 0) || inReach;
+                    }
+                    else if (step.Motion == ComboMotion.Feint)
+                    {
+                        // Hold the raised bait pose without swinging; the real chop is the next step.
+                        NPC.velocity.X *= 0.6f;
+                        endStep = (--PhaseTimer <= 0);
+                    }
                     else
-                        NPC.velocity.X *= 0.65f;
-                    if (--PhaseTimer <= 0)
+                    {
+                        if (step.ForwardPushMult > 0f)
+                            NPC.velocity.X = _comboLockedDir * (TopSpeed * step.ForwardPushMult);
+                        else
+                            NPC.velocity.X *= 0.65f;
+                        endStep = (--PhaseTimer <= 0);
+                    }
+
+                    if (endStep)
                     {
                         int nextIdx = _meleeComboStepIndex + 1;
                         if (nextIdx < _activeMeleeCombo.Steps.Length)
-                        {
-                            int pause = Math.Max(1, step.PostStepPause);
-                            EnterPhase(AttackPhase.MeleeComboPause, pause);
-                        }
+                            EnterPhase(AttackPhase.MeleeComboPause, Math.Max(1, step.PostStepPause));
                         else
-                        {
                             EnterPhase(AttackPhase.MeleeComboRecovery, MeleeRecoveryTicks);
-                        }
                     }
                     break;
                 }
@@ -1258,9 +1271,11 @@ namespace tsorcRevamp.NPCs.Invaders
                         _comboLockedDir = NPC.direction;
                         var nextStep = _activeMeleeCombo.Steps[_meleeComboStepIndex];
                         SetDisplayWeapon(MeleeWeaponItemType, swing: true);
+                        if (IsSwingingMotion(nextStep.Motion))
+                            PlayMeleeSwingSound();
                         DoComboMeleeHit(nextStep);
-                        _weaponAnim = WeaponAnimMax;
-                        EnterPhase(AttackPhase.MeleeComboAttack, nextStep.AttackTicks);
+                        _weaponAnim = _weaponAnimMax;
+                        EnterPhase(AttackPhase.MeleeComboAttack, GetMeleeSwingTicks(nextStep.AttackTicks));
                     }
                     break;
 
@@ -1336,28 +1351,32 @@ namespace tsorcRevamp.NPCs.Invaders
                     : Math.Max(1, Main.rand.Next(1, burstMax + 1));
             }
 
-            // ── Crossbow burst-pattern selection (secondary ranged only) ──────────────
-            // When SecondaryRangedBurstPatterns is defined the classic _rangedShotsRemaining
+            // ── Ranged burst-pattern selection (primary or secondary) ────────────
+            // When a ranged burst pattern is defined the classic _rangedShotsRemaining
             // counter is replaced by a pause-array that drives the shot sequence.
             _interShotPauses     = null;
             _interShotPauseIndex = 0;
-            if (useSecondary
-                && shotsOverride < 0   // override skips patterns (aerial single-shot)
-                && SecondaryRangedBurstPatterns != null
-                && SecondaryRangedBurstPatterns.Length > 0)
+
+            int[][] patternPool = useSecondary ? SecondaryRangedBurstPatterns : PrimaryRangedBurstPatterns;
+            int[] patternChances = useSecondary ? SecondaryRangedBurstChances : PrimaryRangedBurstChances;
+            int[] telegraphExtras = useSecondary ? SecondaryRangedBurstTelegraphExtras : PrimaryRangedBurstTelegraphExtras;
+            Color[] flashColors = useSecondary ? SecondaryRangedBurstFlashColors : PrimaryRangedBurstFlashColors;
+
+            if (shotsOverride < 0   // override skips patterns (aerial single-shot)
+                && patternPool != null
+                && patternPool.Length > 0)
             {
-                int patIdx = PickPatternByChance(SecondaryRangedBurstChances,
-                                                 SecondaryRangedBurstPatterns.Length);
-                _interShotPauses = SecondaryRangedBurstPatterns[patIdx];
+                int patIdx = PickPatternByChance(patternChances, patternPool.Length);
+                _interShotPauses = patternPool[patIdx];
 
-                if (SecondaryRangedBurstTelegraphExtras != null
-                    && patIdx < SecondaryRangedBurstTelegraphExtras.Length)
-                    _activeRangedTelegraphTicks += SecondaryRangedBurstTelegraphExtras[patIdx];
+                if (telegraphExtras != null && patIdx < telegraphExtras.Length)
+                    _activeRangedTelegraphTicks += telegraphExtras[patIdx];
 
-                if (SecondaryRangedBurstFlashColors != null
-                    && patIdx < SecondaryRangedBurstFlashColors.Length)
-                    _activeRangedFlashColor = SecondaryRangedBurstFlashColors[patIdx];
+                if (flashColors != null && patIdx < flashColors.Length)
+                    _activeRangedFlashColor = flashColors[patIdx];
             }
+
+            OnRangedBurstStarted(useSecondary); // e.g. lit-fuse cue when the weapon appears in hand
         }
 
         /// <summary>
@@ -1452,6 +1471,188 @@ namespace tsorcRevamp.NPCs.Invaders
             SpawnMeleeHitbox(_comboLockedDir, reach, dmg, knockback: 3f);
         }
 
+        /// <summary>
+        /// Launches a LeapSlam: face the player, drop gravity back on, and fling up-and-forward.
+        /// The arc closes distance; the slam hit fires when the invader lands (handled in the
+        /// MeleeComboAttack phase).
+        /// </summary>
+        /// <summary>Below this horizontal gap, a LeapSlam jumps high and drops straight onto the
+        /// player instead of lunging forward (avoids overshooting at close range).</summary>
+        protected virtual float LeapMinLungeDistance => 80f;
+
+        private void BeginLeapAttack()
+        {
+            Player target = Main.player[NPC.target];
+            int dir = target.Center.X < NPC.Center.X ? -1 : 1;
+            _comboLockedDir = dir;
+            NPC.direction = dir;
+            NPC.spriteDirection = dir;
+            NPC.noGravity = false;
+
+            float dx = Math.Abs(target.Center.X - NPC.Center.X);
+            if (dx < LeapMinLungeDistance)
+            {
+                // Close: jump high and fall onto them — minimal horizontal travel so it lands ON
+                // the player instead of sailing past.
+                _comboLeapVx = dir * 1.5f;
+                NPC.velocity = new Vector2(_comboLeapVx, -(LeapAttackUpSpeed + 2f));
+            }
+            else
+            {
+                // Far: arc toward the player, horizontal speed sized to land near them (roughly
+                // dx / airtime) and capped so it never overshoots.
+                float airtime = 2f * LeapAttackUpSpeed / 0.3f; // ticks aloft ≈ 2·Vy/g
+                float vx = MathHelper.Clamp(dx / airtime, 1.5f, LeapAttackForwardSpeed);
+                _comboLeapVx = dir * vx;
+                NPC.velocity = new Vector2(_comboLeapVx, -LeapAttackUpSpeed);
+            }
+            _comboLeapLaunched = true;
+        }
+
+        /// <summary>Motions that actually swing the weapon (so they get a swing whoosh + arc VFX).
+        /// Feint (bait hold) and ChargeChop (run-in) don't swing, so they're excluded.</summary>
+        private static bool IsSwingingMotion(ComboMotion m)
+            => m != ComboMotion.Feint && m != ComboMotion.ChargeChop;
+
+        /// <summary>
+        /// Drives the reactive shield each AI tick (no-op without a shield): raise the guard from
+        /// the reactive-block timer, plant + face the player while guarding, and roll a pre-emptive
+        /// block in neutral.  The block timer itself ticks down in GlobalNPC.PostAI (mover-agnostic);
+        /// damage / poise reduction is applied in ModifyHitBy* + the poise system via ShieldGuarding.
+        /// Call AFTER the movement AI so the plant overrides pursuit velocity.
+        /// </summary>
+        private void UpdateShield()
+        {
+            if (!HasShield) return;
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            bool freePhase = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll;
+            bool grounded  = NPC.velocity.Y == 0f;
+
+            // Guard only in neutral — committed attacks can't also block (you trade blows or you swing).
+            _shielding = g.ReactiveBlockTimer > 0 && freePhase && grounded;
+            g.ShieldGuarding = _shielding;
+
+            if (!_shielding)
+            {
+                _shieldWasGuarding   = false;
+                _shieldMeleeExtended = false;
+                // Neutral: a chance to raise the guard before an incoming threat lands.
+                if (freePhase && grounded)
+                    tsorcRevampAIs.TryPreemptiveBlock(NPC, g, ShieldGuardTicksRanged);
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            int dirToPlayer = target.Center.X < NPC.Center.X ? -1 : 1;
+
+            // Rising edge: capture the facing the guard went up with.
+            if (!_shieldWasGuarding)
+            {
+                _shieldLockedDir   = dirToPlayer;
+                _shieldWasGuarding = true;
+            }
+
+            bool inMelee = NPC.Distance(target.Center) <= MeleeRange + 8f;
+            if (inMelee)
+            {
+                // Commit the guard in melee: bump the hold to the melee minimum ONCE, LOCK facing so a
+                // dodgeroll-through exposes the back for a backstab, and plant.
+                if (!_shieldMeleeExtended)
+                {
+                    g.ReactiveBlockTimer = Math.Max(g.ReactiveBlockTimer, ShieldGuardTicksMelee);
+                    _shieldMeleeExtended = true;
+                }
+                NPC.direction       = _shieldLockedDir;
+                NPC.spriteDirection = _shieldLockedDir;
+                _directionHoldTicks = Math.Max(_directionHoldTicks, 5);
+                NPC.velocity.X *= 0.5f; // plant
+            }
+            else
+            {
+                // Out of melee range: track the player and advance slowly behind the shield.
+                _shieldLockedDir    = dirToPlayer;
+                NPC.direction       = dirToPlayer;
+                NPC.spriteDirection = dirToPlayer;
+                NPC.velocity.X      = dirToPlayer * ShieldAdvanceSpeed;
+            }
+        }
+
+        /// <summary>Plays a throwing-release sound, rotating across Item7/18/19 so a rapid volley of
+        /// thrown things (stars, flasks, caltrops, bombs) doesn't repeat the exact same clip.</summary>
+        protected void PlayThrowSound()
+        {
+            if (Main.dedServ) return;
+            SoundStyle s = Main.rand.Next(3) switch
+            {
+                0 => SoundID.Item7,
+                1 => SoundID.Item18,
+                _ => SoundID.Item19,
+            };
+            SoundEngine.PlaySound(s with { Volume = 0.5f, PitchVariance = 0.2f }, NPC.Center);
+        }
+
+        /// <summary>Fired once when a ranged burst's telegraph begins (the weapon first appears in
+        /// hand).  <paramref name="secondary"/> = the secondary ranged weapon.  Override to play a
+        /// per-weapon "winding up" cue — e.g. a lit fuse on a smoke bomb.</summary>
+        protected virtual void OnRangedBurstStarted(bool secondary) { }
+
+        /// <summary>Plays the held weapon's own swing sound (the axe's UseSound) at a swing's start.</summary>
+        protected void PlayMeleeSwingSound()
+        {
+            if (Main.dedServ) return;
+            Item w = GetCachedWeaponItem(MeleeWeaponItemType);
+            SoundStyle snd = w?.UseSound ?? SoundID.Item1;
+            SoundEngine.PlaySound(snd with { Volume = 0.55f, PitchVariance = 0.3f }, NPC.Center);
+        }
+
+        /// <summary>
+        /// Subtle blade-trail VFX: a few faint smoke wisps near the weapon tip, emitted only while
+        /// the blade is actually sweeping (gated on per-tick rotation speed) so it reads as a swing
+        /// without cluttering the telegraph or idle hold.
+        /// </summary>
+        private void SpawnSwingVFX(float rotDelta)
+        {
+            if (Main.dedServ || !IsWeaponVisiblePhase) return;
+            if (Math.Abs(rotDelta) < 0.07f) return;   // only during a real sweep, not a slow lerp
+            if (!Main.rand.NextBool(2)) return;        // sparse → subtle
+            Vector2 outward = new Vector2(NPC.direction, 0f).RotatedBy(_weaponRotation);
+            Vector2 tip     = GetHandPosition() + outward * 20f;
+            Dust d = Dust.NewDustPerfect(tip, DustID.Smoke,
+                outward.RotatedBy(MathHelper.PiOver2 * Math.Sign(rotDelta)) * 0.5f,
+                200, Color.LightGray, 0.55f);
+            d.noGravity = true;
+        }
+
+        /// <summary>
+        /// Publishes this invader's attack state to the poise/hyper-armor system each AI tick.
+        /// AttackTelegraphing = windup (still interruptible); AttackCommitted = post-flash swing
+        /// (hyper-armor: zero knockback, no poise build).  HyperArmor combos additionally hold the
+        /// commit through inter-step pauses, so once they start swinging they can't be staggered
+        /// until recovery — only the opening windup leaves a punish window.
+        /// </summary>
+        private void UpdateAttackCommitFlags()
+        {
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            bool telegraph =
+                Phase == AttackPhase.MeleeTelegraph  || Phase == AttackPhase.StabTelegraph  ||
+                Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.SpearTelegraph ||
+                Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MeleeComboTelegraph;
+
+            bool committed =
+                Phase == AttackPhase.MeleeAttack  || Phase == AttackPhase.StabAttack  ||
+                Phase == AttackPhase.RangedAttack || Phase == AttackPhase.SpearAttack ||
+                Phase == AttackPhase.MagicAttack  || Phase == AttackPhase.MeleeComboAttack;
+
+            if (_activeMeleeComboIndex >= 0 && _activeMeleeCombo.HyperArmor
+                && Phase == AttackPhase.MeleeComboPause)
+                committed = true;
+
+            g.AttackCommitted    = committed;
+            g.AttackTelegraphing = telegraph && !committed;
+        }
+
         // ── Aerial actions (default implementations) ──────────────────────────────
         /// <summary>Fire a telegraph flash + dust burst when a dive begins.  Subclass override
         /// for thematic dive markers.  Also equips the melee weapon for the dive visual.</summary>
@@ -1474,7 +1675,7 @@ namespace tsorcRevamp.NPCs.Invaders
             Vector2 topLeft = NPC.Center - new Vector2(boxW / 2f, boxH / 2f);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.InvaderMeleeHitbox>(),
+                ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderMeleeHitbox>(),
                 (int)(MeleeDamage * 1.2f), 4f, Main.myPlayer, boxW, boxH);
         }
 
@@ -1573,20 +1774,33 @@ namespace tsorcRevamp.NPCs.Invaders
 
         private void SlowDown() => NPC.velocity.X *= 0.80f;
 
-        // ── Damage tracking for emergency heal ────────────────────────────────────
+        // ── Damage tracking for emergency heal + reactive shield ──────────────────
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             _recentDamage += (float)damageDone / NPC.lifeMax;
-            // Struck through a wall while stuck: flag for retreat + emergency teleport.
-            if (_wallBlockedTimer > 60 && !Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1))
-                _hitThroughWallFlag = true;
+            // Only a FRONT hit can snap the guard up — a backstab must not re-raise it.
+            if (HasShield && Math.Sign(player.Center.X - NPC.Center.X) == NPC.direction)
+                tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), true, ShieldGuardTicksRanged);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             _recentDamage += (float)damageDone / NPC.lifeMax;
-            if (_wallBlockedTimer > 60 && !Collision.CanHitLine(NPC.Center, 1, 1, projectile.Center, 1, 1))
-                _hitThroughWallFlag = true;
+            if (HasShield && Math.Sign(projectile.Center.X - NPC.Center.X) == NPC.direction)
+                tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), projectile.DamageType == DamageClass.Melee, ShieldGuardTicksRanged);
+        }
+
+        // ── Reactive shield: reduce FRONT damage while guarding (backstabs bypass) ──
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
+        {
+            if (_shielding && Math.Sign(player.Center.X - NPC.Center.X) == NPC.direction)
+                modifiers.FinalDamage *= ShieldDamageReduction;
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            if (_shielding && Math.Sign(projectile.Center.X - NPC.Center.X) == NPC.direction)
+                modifiers.FinalDamage *= ShieldDamageReduction;
         }
 
         // ── Melee hitbox helper ───────────────────────────────────────────────────
@@ -1619,7 +1833,7 @@ namespace tsorcRevamp.NPCs.Invaders
             Vector2 topLeft  = center - new Vector2(boxW / 2f, boxH / 2f);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.InvaderMeleeHitbox>(),
+                ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderMeleeHitbox>(),
                 damage, knockback, Main.myPlayer, boxW, boxH);
         }
 
@@ -1665,8 +1879,26 @@ namespace tsorcRevamp.NPCs.Invaders
         protected void SetDisplayWeapon(int itemType, bool swing)
         {
             _heldItemType = itemType;
+            _weaponAnimMax = GetWeaponUseAnimation(itemType);
             if (swing)
-                _weaponAnim = WeaponAnimMax;
+                _weaponAnim = _weaponAnimMax;
+        }
+
+        private int GetWeaponUseAnimation(int itemType)
+        {
+            if (itemType <= 0)
+            {
+                return DefaultWeaponAnimMax;
+            }
+
+            Item item = GetCachedWeaponItem(itemType);
+            int useAnimation = item?.useAnimation ?? 0;
+            return Math.Max(1, useAnimation > 0 ? useAnimation : DefaultWeaponAnimMax);
+        }
+
+        private int GetMeleeSwingTicks(int requestedTicks)
+        {
+            return Math.Max(requestedTicks, GetWeaponUseAnimation(MeleeWeaponItemType));
         }
 
         private void TickWeaponAnim()
@@ -1674,7 +1906,7 @@ namespace tsorcRevamp.NPCs.Invaders
             if (_weaponAnim > 0)
                 _weaponAnim--;
 
-            float t = WeaponAnimMax > 0 ? 1f - (float)_weaponAnim / WeaponAnimMax : 1f;
+            float t = _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f;
 
             if (Phase == AttackPhase.StabTelegraph)
             {
@@ -1769,7 +2001,7 @@ namespace tsorcRevamp.NPCs.Invaders
             else if (Phase == AttackPhase.MeleeAttack)
             {
                 // Downswing: full broadsword arc, raised behind head → slash down-forward
-                // t runs 0→1 over WeaponAnimMax ticks (reset when swing begins)
+                // t runs 0->1 over the held item useAnimation window (reset when swing begins)
                 _weaponRotation = MathHelper.Lerp(-1.3f, 1.0f, t);
             }
             else if (Phase == AttackPhase.MeleeComboTelegraph
@@ -1789,9 +2021,13 @@ namespace tsorcRevamp.NPCs.Invaders
                         else              _weaponRotation = MathHelper.Lerp(-1.3f, 1.0f, t);
                         break;
                     case ComboMotion.UnderhandArc:
+                        // Rising cut: dipped low-forward (+1.0) → up-FORWARD (-1.0).  Ending at
+                        // -1.3 would map to body row 1, whose hand offset sits BEHIND the head
+                        // (X=-8) — making the swing finish over the shoulder.  -1.0 keeps it in
+                        // row 2 (hand up-forward, X=+4) for a clean rising slash.
                         if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.0f, 0.30f);
                         else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.7f, 0.20f);
-                        else              _weaponRotation = MathHelper.Lerp(1.0f, -1.3f, t);
+                        else              _weaponRotation = MathHelper.Lerp(1.0f, -1.0f, t);
                         break;
                     case ComboMotion.HorizontalSweep:
                         // Flat side-to-side: arm extends, weapon held near horizontal
@@ -1815,7 +2051,7 @@ namespace tsorcRevamp.NPCs.Invaders
                         else              _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.45f);
                         break;
                     case ComboMotion.Spin:
-                        // Continuous rotation; 1 full revolution per WeaponAnimMax-ish ticks
+                        // Continuous rotation; 1 full revolution per held item useAnimation-ish window
                         _weaponRotation += 0.28f;
                         if (_weaponRotation > MathHelper.TwoPi) _weaponRotation -= MathHelper.TwoPi;
                         break;
@@ -1826,6 +2062,22 @@ namespace tsorcRevamp.NPCs.Invaders
                     case ComboMotion.GroundSlam:
                         if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.55f, 0.25f);
                         else              _weaponRotation = MathHelper.Lerp(-1.55f, 1.5f, t);
+                        break;
+                    case ComboMotion.LeapSlam:
+                        // Wind up overhead, then carry the axe up-and-FORWARD (toward the player,
+                        // ~1 o'clock facing right / ~11 facing left) through the airborne arc, and
+                        // slam down hard as it descends / lands.
+                        if (inTel)                    _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.45f, 0.30f);
+                        else if (NPC.velocity.Y < 0f) _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.9f, 0.20f);
+                        else                          _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.4f, 0.22f);
+                        break;
+                    case ComboMotion.ChargeChop:
+                        // Carry the axe cocked back/up while charging; the chop is the next step.
+                        _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.95f, 0.20f);
+                        break;
+                    case ComboMotion.Feint:
+                        // Hold the raised "about to chop" bait pose; the real chop is the next step.
+                        _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.3f, 0.30f);
                         break;
                 }
             }
@@ -1842,6 +2094,55 @@ namespace tsorcRevamp.NPCs.Invaders
                 // Ease the weapon back to the natural hold angle so it always looks carried.
                 _weaponRotation = MathHelper.Lerp(_weaponRotation, HoldRotation, 0.10f);
             }
+
+            SpawnSwingVFX(_weaponRotation - _prevWeaponRotation);
+            _prevWeaponRotation = _weaponRotation;
+
+            if (SwingDebugLog && IsWeaponVisiblePhase)
+                LogSwingFrame();
+        }
+
+        /// <summary>
+        /// Diagnostic: append one line per weapon-visible swing frame to
+        /// <c>tsorcRevamp-invader-swing.log</c>.  Captures the values that drive both the manual
+        /// (legacy 4-frame) and composite-arm swing so misaligned per-motion swings can be read
+        /// directly: phase + combo motion, the swing progress <c>t</c>, <c>_weaponRotation</c> and
+        /// the per-weapon draw offset, the resolved body row + hand offset (legacy path), and the
+        /// composite-arm rotation/hand when the experiment is active.
+        /// </summary>
+        private void LogSwingFrame()
+        {
+            try
+            {
+                string sep = System.IO.Path.DirectorySeparatorChar.ToString();
+                string dir = Main.SavePath + sep + "Logs";
+                System.IO.Directory.CreateDirectory(dir);
+                string path = dir + sep + "tsorcRevamp-invader-swing.log";
+
+                string motion = "-";
+                if (IsMeleeComboPhase && _activeMeleeComboIndex >= 0 && _activeMeleeCombo.Steps != null
+                    && _meleeComboStepIndex >= 0 && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length)
+                {
+                    var step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                    motion = $"{step.Motion}#{_meleeComboStepIndex}";
+                }
+
+                float t = _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f;
+                int bodyRow = _puppet != null ? _puppet.bodyFrame.Y / FrameHeight : -1;
+                Vector2 handOff = _puppet != null ? (GetHandPosition() - NPC.Center) : Vector2.Zero;
+                bool composite = CompositeArmActive;
+                float drawRot = _weaponRotation + (composite ? 0f : MeleeWeaponRotationOffset);
+
+                string line = $"[{System.DateTime.Now:HH:mm:ss.fff}] {NPC.TypeName}#{NPC.whoAmI}"
+                    + $" phase={Phase} motion={motion}"
+                    + $" dir={NPC.direction} t={t:F2} anim={_weaponAnim}/{_weaponAnimMax}"
+                    + $" weaponRot={_weaponRotation:F3} drawRot={drawRot:F3} offset={MeleeWeaponRotationOffset:F3}"
+                    + $" bodyRow={bodyRow} handOff=({handOff.X:F1},{handOff.Y:F1})"
+                    + $" composite={composite} compRot={(composite ? CompositeArmRotation : 0f):F3}";
+
+                System.IO.File.AppendAllText(path, line + System.Environment.NewLine);
+            }
+            catch { }
         }
 
         /// <summary>
@@ -1858,6 +2159,19 @@ namespace tsorcRevamp.NPCs.Invaders
         {
             if (_puppet == null)
                 return NPC.Center;
+
+            // ── Composite-arm experiment ───────────────────────────────────────────
+            // When the new path is active the front arm is a continuously-rotated composite
+            // arm, so the authoritative hand is whatever vanilla reports for that rotation —
+            // not the 4-row offset table.  (This is the call the old comment flagged as
+            // unreliable on a puppet; the experiment exists to find out whether the puppet is
+            // sufficiently initialised here.  If it returns garbage, fall back to the table.)
+            if (CompositeArmActive)
+            {
+                Vector2 composite = _puppet.GetFrontHandPosition(CompositeArmStretch, CompositeArmRotation);
+                if (composite != Vector2.Zero)
+                    return composite;
+            }
 
             // Row of the body frame in the player sprite sheet (Use1=1 … Use4=4, walk/idle=other).
             int bodyRow = _puppet.bodyFrame.Y / FrameHeight;
@@ -1903,6 +2217,28 @@ namespace tsorcRevamp.NPCs.Invaders
                     _cachedRangedType = itemType;
                 }
                 return _rangedItemCache;
+            }
+            if (itemType == SecondaryRangedWeaponItemType)
+            {
+                if (_cachedSecondaryRangedType != itemType)
+                {
+                    _secondaryRangedItemCache = new Item();
+                    _secondaryRangedItemCache.SetDefaults(itemType);
+                    _secondaryRangedItemCache.noUseGraphic = true;
+                    _cachedSecondaryRangedType = itemType;
+                }
+                return _secondaryRangedItemCache;
+            }
+            if (itemType == MagicWeaponItemType)
+            {
+                if (_cachedMagicType != itemType)
+                {
+                    _magicItemCache = new Item();
+                    _magicItemCache.SetDefaults(itemType);
+                    _magicItemCache.noUseGraphic = true;
+                    _cachedMagicType = itemType;
+                }
+                return _magicItemCache;
             }
             return new Item(); // air
         }
@@ -1969,7 +2305,7 @@ namespace tsorcRevamp.NPCs.Invaders
             // Only real combat poses keep the weapon in hand; recovery, idle, healing,
             // and casual movement fall back to the natural arm/leg draw.
             bool inAttackPhase = IsWeaponPosePhase;
-            _puppet.itemAnimationMax = WeaponAnimMax;
+            _puppet.itemAnimationMax = _weaponAnimMax;
             _puppet.selectedItem     = 0;
 
             if (inAttackPhase)
@@ -1992,6 +2328,16 @@ namespace tsorcRevamp.NPCs.Invaders
             }
 
             SyncFrames();
+
+            // ── Composite-arm swing experiment ──────────────────────────────────────
+            // Set AFTER SyncFrames so it overrides the front-arm portion of the chosen body
+            // frame.  We bypass Player.PlayerFrame() (which would normally drive this), so the
+            // value we set here persists straight into DrawPlayer.  Disabled → explicitly clear
+            // it so a stale composite pose never leaks into the legacy 4-frame path.
+            if (CompositeArmActive)
+                _puppet.SetCompositeArmFront(true, CompositeArmStretch, CompositeArmRotation);
+            else
+                _puppet.SetCompositeArmFront(false, Player.CompositeArmStretchAmount.Full, 0f);
         }
 
         private void SyncFrames()
@@ -2018,6 +2364,19 @@ namespace tsorcRevamp.NPCs.Invaders
             //   Use4 (row 4) = arm lowered  (weapon pointing down-forward, +1.0 rad)
             // Pitch formula: (1 - sin(weaponAngle)) / 2  →  1 = up, 0 = down.
 
+            int BodyRowFromWeaponRotation()
+            {
+                // Pose the arm to the SAME visual angle the weapon sprite is drawn at (including the
+                // per-weapon rotation offset), so the arm and weapon swing together as one unit
+                // instead of decoupling when an offset is set.
+                float visualAngle = _weaponRotation + MeleeWeaponRotationOffset * NPC.direction;
+                float pitch = (1f - (float)Math.Sin(visualAngle)) / 2f;
+                if (pitch > 0.95f) return 1;
+                if (pitch > 0.70f) return 2;
+                if (pitch > 0.30f) return 3;
+                return 4;
+            }
+
             int bodyRow;
             bool isMeleeSwing = Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack;
 
@@ -2028,11 +2387,7 @@ namespace tsorcRevamp.NPCs.Invaders
             }
             else if (isMeleeSwing)
             {
-                float pitch = (1f - (float)Math.Sin(_weaponRotation)) / 2f;
-                if      (pitch > 0.95f) bodyRow = 1; // Use1 — arm fully up
-                else if (pitch > 0.70f) bodyRow = 2; // Use2
-                else if (pitch > 0.30f) bodyRow = 3; // Use3
-                else                   bodyRow = 4; // Use4 — arm fully down
+                bodyRow = BodyRowFromWeaponRotation();
             }
             else if (Phase == AttackPhase.StabTelegraph)
             {
@@ -2097,22 +2452,12 @@ namespace tsorcRevamp.NPCs.Invaders
                     case ComboMotion.OverheadArc:
                     case ComboMotion.VerticalChop:
                     case ComboMotion.GroundSlam:
-                        // Pitch-based row matches existing slash arc body selection
-                        if (inTel) bodyRow = 1;
-                        else
-                        {
-                            float pitch = (1f - (float)Math.Sin(_weaponRotation)) / 2f;
-                            if      (pitch > 0.95f) bodyRow = 1;
-                            else if (pitch > 0.70f) bodyRow = 2;
-                            else if (pitch > 0.30f) bodyRow = 3;
-                            else                   bodyRow = 4;
-                        }
-                        break;
                     case ComboMotion.UnderhandArc:
-                        bodyRow = inTel ? 4 : (_weaponRotation < 0f ? 1 : 3);
-                        break;
                     case ComboMotion.HorizontalSweep:
-                        bodyRow = 3; // arm level/forward
+                    case ComboMotion.LeapSlam:
+                    case ComboMotion.ChargeChop:
+                    case ComboMotion.Feint:
+                        bodyRow = BodyRowFromWeaponRotation();
                         break;
                     case ComboMotion.Thrust:
                     case ComboMotion.JoustDash:
@@ -2194,6 +2539,47 @@ namespace tsorcRevamp.NPCs.Invaders
         /// Adds the weapon sprite to <paramref name="drawInfo"/>'s draw-data cache at the correct
         /// layer depth — after body/legs but before the front arm — so the hand appears to grip it.
         /// </summary>
+        /// <summary>
+        /// Draws the off-hand shield sprite on the puppet (no-op without a shield).  Held lowered at
+        /// the back hip in neutral, raised in front of the chest while guarding.  Called by
+        /// <see cref="InvaderWeaponDrawLayer"/> just before the weapon so the front arm/weapon layer
+        /// over it.  Override <see cref="ShieldItemType"/> to pick the shield sprite.
+        /// </summary>
+        internal void DrawShieldToLayer(ref PlayerDrawSet drawInfo)
+        {
+            if (!HasShield || _puppet == null
+                || Phase == AttackPhase.Healing || Phase == AttackPhase.FleeToHeal)
+                return;
+
+            if (!_shieldDrawTexLoaded)
+            {
+                _shieldDrawTexLoaded = true;
+                string path = ShieldDrawTexturePath;
+                if (!string.IsNullOrEmpty(path) && ModContent.HasAsset(path))
+                    _shieldDrawTex = ModContent.Request<Texture2D>(path,
+                        ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            if (_shieldDrawTex == null)
+                return;
+
+            // The strip shares the player body's 20-frame layout: index it by the current puppet
+            // body row so the shield pose tracks the animation, and draw it body-aligned so it
+            // overlays the body 1:1 (each frame already positions the shield for that pose).
+            const int shieldFrames = 20;
+            int row    = Math.Clamp(_puppet.bodyFrame.Y / FrameHeight, 0, shieldFrames - 1);
+            int frameH = _shieldDrawTex.Height / shieldFrames;
+            Rectangle src = new Rectangle(0, row * frameH, _shieldDrawTex.Width, frameH);
+
+            Vector2 origin  = new Vector2(_shieldDrawTex.Width / 2f, frameH / 2f);
+            Vector2 drawPos = new Vector2(
+                NPC.position.X + NPC.width / 2f - _shieldDrawTex.Width / 2f,
+                NPC.position.Y + NPC.height - frameH + 4f) - Main.screenPosition + origin;
+            SpriteEffects fx = NPC.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
+            drawInfo.DrawDataCache.Add(new DrawData(
+                _shieldDrawTex, drawPos, src, _layerDrawColor, 0f, origin, NPC.scale, fx, 0));
+        }
+
         internal void DrawWeaponToLayer(ref PlayerDrawSet drawInfo)
         {
             // Healing: draw the estus flask instead of the combat weapon.
@@ -2206,13 +2592,32 @@ namespace tsorcRevamp.NPCs.Invaders
             if (Phase == AttackPhase.FleeToHeal || !_weaponVisible || _heldItemType <= 0)
                 return;
 
+            // Flails (and similar) render their own projectile visual (ball + chain), so the held
+            // item icon shouldn't be drawn in the hand at all.
+            if (HideHeldMeleeSprite && _heldItemType == MeleeWeaponItemType)
+                return;
+
             var texAsset = TextureAssets.Item[_heldItemType];
             if (texAsset?.Value == null)
                 return;
 
-            Texture2D tex     = texAsset.Value;
-            float     scale   = _heldItemType == RangedWeaponItemType ? 0.42f : 0.62f;
-            Vector2   drawPos = GetHandPosition() - Main.screenPosition;
+            Texture2D tex = texAsset.Value;
+            bool heldRangedLike = _heldItemType == RangedWeaponItemType
+                               || _heldItemType == SecondaryRangedWeaponItemType
+                               || _heldItemType == MagicWeaponItemType;
+            bool heldCrossbowLike = _heldItemType == _activeRangedItemType
+                                 && _activeRangedStyle == RangedStyle.Crossbow;
+            float scale = heldCrossbowLike ? 0.8f : (heldRangedLike ? GetHeldRangedDrawScale(_heldItemType) : MeleeWeaponDrawScale);
+            Vector2 drawPos = GetHandPosition() - Main.screenPosition;
+            if (heldCrossbowLike)
+            {
+                Item heldItem = GetCachedWeaponItem(_heldItemType);
+                Vector2? holdoutOffset = heldItem.ModItem?.HoldoutOffset();
+                if (holdoutOffset.HasValue)
+                {
+                    drawPos += new Vector2(holdoutOffset.Value.X * NPC.direction, holdoutOffset.Value.Y) * NPC.scale;
+                }
+            }
 
             // ── Origin: anchor the HANDLE (not centre) at the animated hand position ──
             //
@@ -2227,9 +2632,14 @@ namespace tsorcRevamp.NPCs.Invaders
             //   Left  (flip)    → originX = width * (1 − handleNorm.X)  (lower-right, which
             //                     after the flip maps to the handle side)
             Vector2 origin;
-            if (_heldItemType == RangedWeaponItemType)
+            if (heldCrossbowLike)
             {
-                origin = tex.Bounds.Center.ToVector2(); // symmetric throwing items — keep centred
+                float hx = NPC.direction == 1 ? tex.Width * 0.22f : tex.Width * 0.78f;
+                origin = new Vector2(hx, tex.Height * 0.58f);
+            }
+            else if (heldRangedLike)
+            {
+                origin = tex.Bounds.Center.ToVector2(); // symmetric throwing items - keep centred
             }
             else
             {
@@ -2244,16 +2654,33 @@ namespace tsorcRevamp.NPCs.Invaders
                 ? SpriteEffects.FlipHorizontally
                 : SpriteEffects.None;
 
+            // Per-weapon angular correction for melee sprites whose blade/head diagonal doesn't
+            // match the broadsword convention (handle lower-left → blade upper-right).  Applied to
+            // the drawn sprite only — the arm pose and swing arc still run off raw _weaponRotation.
+            float drawRotation = _weaponRotation;
+            if (!heldRangedLike)
+                drawRotation += MeleeWeaponRotationOffset * NPC.direction; // mirror per facing
+
             drawInfo.DrawDataCache.Add(new DrawData(
                 tex,
                 drawPos,
                 null,
                 _layerDrawColor,
-                _weaponRotation,
+                drawRotation,
                 origin,
                 NPC.scale * scale,
                 fx,
                 0));
+
+            // Lit-fuse: red sparks off the top of an in-hand bomb-like ranged item.
+            if (heldRangedLike && HeldRangedFuseSparks(_heldItemType) && !Main.dedServ && Main.rand.NextBool(3))
+            {
+                Vector2 topWorld = GetHandPosition() - new Vector2(0f, tex.Height * NPC.scale * scale * 0.5f);
+                Dust spark = Dust.NewDustPerfect(topWorld, DustID.RedTorch,
+                    new Vector2(Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(-1.2f, -0.3f)),
+                    0, default, Main.rand.NextFloat(0.6f, 1.1f));
+                spark.noGravity = true;
+            }
         }
 
         /// <summary>
@@ -2302,5 +2729,71 @@ namespace tsorcRevamp.NPCs.Invaders
         /// Override in a subclass to fine-tune the grip point for a specific weapon.
         /// </summary>
         protected virtual Vector2 MeleeHandleNorm => new Vector2(0.10f, 0.85f);
+
+        // ── Per-weapon melee draw tuning ────────────────────────────────────────────
+        /// <summary>Draw scale for the melee weapon sprite.  Default 0.62 suits broadswords;
+        /// override for chunkier sprites (axes / hammers) that should read larger or smaller.</summary>
+        protected virtual float MeleeWeaponDrawScale => 0.62f;
+
+        /// <summary>When true, the held melee item icon is NOT drawn in the hand — for weapons whose
+        /// visual is a separate projectile (e.g. a flail's ball + chain).  Default false.</summary>
+        protected virtual bool HideHeldMeleeSprite => false;
+
+        /// <summary>Draw scale for a held ranged/thrown item (throwables, bombs).  Default 0.42 suits
+        /// small stars; override per item type (e.g. a chunkier smoke bomb).</summary>
+        protected virtual float GetHeldRangedDrawScale(int itemType) => 0.42f;
+
+        /// <summary>When true for the given held ranged item type, red "lit fuse" sparks are emitted
+        /// off the top of it while it's in hand (e.g. a smoke bomb).  Default false.</summary>
+        protected virtual bool HeldRangedFuseSparks(int itemType) => false;
+
+        /// <summary>Per-weapon angular correction (radians) added to the drawn melee sprite ONLY
+        /// (it does not change the arm pose or the swing arc).  Use it when a weapon texture's
+        /// diagonal doesn't follow the broadsword convention this system assumes
+        /// (handle lower-left → blade upper-right) — e.g. an axe whose head sits on the
+        /// opposite diagonal and would otherwise appear to swing backwards.</summary>
+        protected virtual float MeleeWeaponRotationOffset => 0f;
+
+        // ── Composite-arm swing experiment (opt-in, single-enemy safe A/B) ──────────
+        /// <summary>EXPERIMENTAL.  When true (and <see cref="CompositeArmSwingMasterEnable"/> is on),
+        /// this invader's melee swings drive the puppet's vanilla composite FRONT arm so the arm
+        /// rotates continuously with the blade — a genuine player-style swing — instead of the
+        /// 4-frame Use1–Use4 approximation.  Opt-in per subclass so it can be tested on one enemy
+        /// before any wider rollout.  See the notes in <c>EnemySpriteRenderer</c> for why the
+        /// project previously avoided composite arms (rotation-convention mismatch + unreliable
+        /// <c>GetFrontHandPosition</c> on a puppet) — both are what this experiment validates.</summary>
+        protected virtual bool UseCompositeArmSwing => false;
+
+        /// <summary>Runtime master kill-switch for the composite-arm experiment.  Lets you flip the
+        /// new arm path off globally (e.g. from a debug command) for instant A/B without a rebuild.</summary>
+        internal static bool CompositeArmSwingMasterEnable = true;
+
+        /// <summary>Tunable: radians added to <c>_weaponRotation</c> before it drives the composite arm.
+        /// Static so it can be nudged live while comparing against the legacy path.</summary>
+        internal static float CompositeArmRotationOffset = 0f;
+
+        /// <summary>Tunable: how far the composite front arm extends from the shoulder.</summary>
+        internal static Player.CompositeArmStretchAmount CompositeArmStretch = Player.CompositeArmStretchAmount.Full;
+
+        /// <summary>When true, every weapon-visible swing frame is written to
+        /// <c>tsorcRevamp-invader-swing.log</c> for diagnosing arm/weapon alignment.
+        /// Toggle in-game with <c>/swingarm log</c>.</summary>
+        internal static bool SwingDebugLog = false;
+
+        /// <summary>Phases whose <c>_weaponRotation</c> represents an actual swinging-arm motion
+        /// (as opposed to a held-aim pose).  Only these drive the composite arm experiment.</summary>
+        private bool IsMeleeSwingPosePhase =>
+            Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack ||
+            Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
+            Phase == AttackPhase.MeleeComboPause;
+
+        /// <summary>True when the composite-arm swing path should be active this frame.</summary>
+        private bool CompositeArmActive =>
+            UseCompositeArmSwing && CompositeArmSwingMasterEnable && IsMeleeSwingPosePhase;
+
+        /// <summary>Rotation handed to the composite arm / <c>GetFrontHandPosition</c>.  Mirrored by
+        /// facing so the arm swings symmetrically on both sides.</summary>
+        private float CompositeArmRotation =>
+            (_weaponRotation + CompositeArmRotationOffset) * NPC.direction;
     }
 }

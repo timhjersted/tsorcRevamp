@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
@@ -238,6 +239,25 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
 
 
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (globalNPC.AttackList.Count == 0 || globalNPC.ProjectileTimer < globalNPC.ProjectileTimerCap - 60f)
+            {
+                return;
+            }
+
+            int bioSpitType = ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>();
+            int disruptorType = ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>();
+            if (globalNPC.CurrentAttack.type == bioSpitType)
+            {
+                BasiliskHeldProjectileDraw.Draw(NPC, spriteBatch, drawColor, bioSpitType, Color.GreenYellow);
+            }
+            else if (globalNPC.CurrentAttack.type == disruptorType)
+            {
+                BasiliskHeldProjectileDraw.Draw(NPC, spriteBatch, drawColor, disruptorType, Color.Purple);
+            }
+        }
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {

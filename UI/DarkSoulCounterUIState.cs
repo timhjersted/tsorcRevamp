@@ -15,6 +15,12 @@ namespace tsorcRevamp.UI
         private UIText soulQuantityText;
         private UIElement area;
         private UIImage counterFrame;
+        private const int SoulCountAnimationDuration = 240;
+        private int displayedSoulQuantity;
+        private int animationStartSoulQuantity;
+        private int animationTargetSoulQuantity;
+        private int soulCountAnimationTimer;
+        private bool initializedSoulQuantity;
 
         public static bool Visible = true;
         int initialTextPosX = 133; //was 60
@@ -52,9 +58,44 @@ namespace tsorcRevamp.UI
         public override void Update(GameTime gameTime)
         {
             var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
+            int actualSoulQuantity = modPlayer.darkSoulQuantity;
+
+            if (!initializedSoulQuantity)
+            {
+                displayedSoulQuantity = actualSoulQuantity;
+                animationStartSoulQuantity = actualSoulQuantity;
+                animationTargetSoulQuantity = actualSoulQuantity;
+                initializedSoulQuantity = true;
+            }
+            else if (actualSoulQuantity > animationTargetSoulQuantity)
+            {
+                animationStartSoulQuantity = displayedSoulQuantity;
+                animationTargetSoulQuantity = actualSoulQuantity;
+                soulCountAnimationTimer = SoulCountAnimationDuration;
+            }
+            else if (actualSoulQuantity < animationTargetSoulQuantity)
+            {
+                displayedSoulQuantity = actualSoulQuantity;
+                animationStartSoulQuantity = actualSoulQuantity;
+                animationTargetSoulQuantity = actualSoulQuantity;
+                soulCountAnimationTimer = 0;
+            }
+
+            if (soulCountAnimationTimer > 0)
+            {
+                int elapsedTicks = SoulCountAnimationDuration - soulCountAnimationTimer;
+                float progress = MathHelper.Clamp(elapsedTicks / (float)SoulCountAnimationDuration, 0f, 1f);
+                displayedSoulQuantity = animationStartSoulQuantity + (int)Math.Floor((animationTargetSoulQuantity - animationStartSoulQuantity) * progress);
+                soulCountAnimationTimer--;
+
+                if (soulCountAnimationTimer == 0)
+                {
+                    displayedSoulQuantity = animationTargetSoulQuantity;
+                }
+            }
 
             // Setting the text per tick to update and show our DS values.
-            soulQuantityText.SetText($"[c/D3D3D3:{modPlayer.darkSoulQuantity}]");
+            soulQuantityText.SetText($"[c/D3D3D3:{displayedSoulQuantity}]");
 
             if ((-area.Left.Pixels) != ConfigInstance.SoulCounterPosX)
             {
@@ -66,7 +107,7 @@ namespace tsorcRevamp.UI
                 area.Top.Pixels = -ConfigInstance.SoulCounterPosY;
             }
 
-            soulQuantityText.Left.Set((float)(initialTextPosX - (10 * Math.Floor(Math.Log10(modPlayer.darkSoulQuantity == 0 ? 1 : modPlayer.darkSoulQuantity) + 1))), 0f);
+            soulQuantityText.Left.Set((float)(initialTextPosX - (10 * Math.Floor(Math.Log10(displayedSoulQuantity == 0 ? 1 : displayedSoulQuantity) + 1))), 0f);
             base.Update(gameTime);
         }
     }

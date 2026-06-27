@@ -258,6 +258,8 @@ namespace tsorcRevamp
         public int supersonicLevel = 0;
 
         public int darkSoulQuantity;
+        private int lastDarkSoulQuantityForGainText;
+        private bool initializedDarkSoulQuantityForGainText;
         public int magicDefense = 0;
 
         //An int because it'll probably be necessary to split it into multiple levels
@@ -671,7 +673,7 @@ namespace tsorcRevamp
             Player.buffImmune[BuffID.VortexDebuff] = true;
 
             //Hacky but necessary. Mount items seem to bypass the CanUseItem check for some stupid reason
-            if (!NPC.downedBoss2)
+            if (!NPC.downedQueenBee)
             {
                 Player.ClearBuff(BuffID.SlimeMount);
             }
@@ -699,6 +701,17 @@ namespace tsorcRevamp
 
             //the item in the soul slot will only ever be souls, so we dont need to check type
             if (SoulSlot.Item.stack > 0) { darkSoulQuantity += SoulSlot.Item.stack; }
+
+            if (!initializedDarkSoulQuantityForGainText)
+            {
+                lastDarkSoulQuantityForGainText = darkSoulQuantity;
+                initializedDarkSoulQuantityForGainText = true;
+            }
+            else if (Player.whoAmI == Main.myPlayer && darkSoulQuantity > lastDarkSoulQuantityForGainText)
+            {
+                CombatText.NewText(Player.getRect(), Color.MediumPurple, $"+{darkSoulQuantity - lastDarkSoulQuantityForGainText}");
+            }
+            lastDarkSoulQuantityForGainText = darkSoulQuantity;
 
             if (!Player.HasBuff(ModContent.BuffType<Bonfire>()))
             { //this ensures that BonfireUIState is only visible when within Bonfire range

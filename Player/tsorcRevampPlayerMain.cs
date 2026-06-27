@@ -40,6 +40,7 @@ using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;

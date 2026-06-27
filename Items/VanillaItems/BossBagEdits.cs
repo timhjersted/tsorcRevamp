@@ -19,9 +19,6 @@ namespace tsorcRevamp.Items.VanillaItems
                 itemLoot.RemoveWhere(_ => true);
                 itemLoot.Add(ItemDropRule.Common(ItemID.Solidifier));
                 itemLoot.Add(ItemDropRule.Common(ItemID.SlimySaddle));
-                itemLoot.Add(ItemDropRule.Common(ItemID.NinjaHood));
-                itemLoot.Add(ItemDropRule.Common(ItemID.NinjaShirt));
-                itemLoot.Add(ItemDropRule.Common(ItemID.NinjaPants));
                 itemLoot.Add(ItemDropRule.Common(ItemID.SlimeHook));
                 itemLoot.Add(ItemDropRule.Common(ItemID.SlimeGun));
                 itemLoot.Add(ItemDropRule.Common(ItemID.SlimeStaff));

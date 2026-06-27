@@ -522,6 +522,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Bomb Telegraph
                 if (NPC.ai[1] == 925f)
                 {
+                    Terraria.Audio.SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center); // lit fuse
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
                     {

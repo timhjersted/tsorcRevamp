@@ -578,6 +578,14 @@ Mods: {
 					{$CommonItemTooltip.StaminaRegen@2}
 					{$CommonItemTooltip.PercentIncreasedCritChance}
 					'''
+				// NinjaHood: "{$CommonItemTooltip.PercentIncreasedCritChance} to melee and ranged"
+				// NinjaShirt: "{$CommonItemTooltip.PercentIncreasedDamage} to melee and ranged"
+				/* NinjaPants:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
+					{$CommonItemTooltip.StaminaRegen@2}
+					''' */
 				RedClothRobe:
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
@@ -1912,7 +1920,7 @@ Mods: {
 					/* Melee:
 						'''
 						+{0}% melee damage
-						+{1} max stamina
+						+{1} defense
 						''' */
 					/* Ranged:
 						'''
@@ -2643,6 +2651,54 @@ Mods: {
 			DarkKnightHelmet: {
 				DisplayName: Шлем Тёмного рыцаря
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+			}
+
+			OwlFatherArmor: {
+				// DisplayName: Owl Father Armor
+				// Tooltip: Increases melee damage by {0}%
+			}
+
+			OwlFatherGreaves: {
+				// DisplayName: Owl Father Greaves
+				// Tooltip: Increases melee damage by {0}%
+			}
+
+			OwlFatherMask: {
+				// DisplayName: Owl Father Mask
+				// Tooltip: Increases movement speed by {0}%
+				// SetBonus: Increases melee damage by 15%
+			}
+
+			ByakheeMask: {
+				// DisplayName: Byakhee Mask
+				// Tooltip: Increases melee critical strike chance by {0}%
+				// SetBonus: Increases melee speed by 12% and jump speed
+			}
+
+			ByakheeRibplate: {
+				// DisplayName: Byakhee Ribplate
+				// Tooltip: Increases melee damage by {0}%
+			}
+
+			ByakheeTalons: {
+				// DisplayName: Byakhee Talons
+				// Tooltip: Increases movement speed by {0}%
+			}
+
+			CursedDragonHelmet: {
+				// DisplayName: Cursed Dragon Helmet
+				// SetBonus: Visual Cursed Dragon armor. Equip the Dragon Charm to transform while keeping your armor stats.
+				// Tooltip: ""
+			}
+
+			CursedDragonArmor: {
+				// DisplayName: Cursed Dragon Armor
+				// Tooltip: ""
+			}
+
+			CursedDragonGreaves: {
+				// DisplayName: Cursed Dragon Greaves
+				// Tooltip: ""
 			}
 
 			FighterBreastplate: {
@@ -6955,6 +7011,24 @@ Mods: {
 				Tooltip: Взрывается, нанося урон на небольшой площади
 			}
 
+			Caltrop: {
+				// DisplayName: Caltrops
+				/* Tooltip:
+					'''
+					Throws a spread of caltrops that stick to surfaces
+					Consumes mana and stamina
+					''' */
+			}
+
+			FireFlask: {
+				// DisplayName: Fire Flask
+				/* Tooltip:
+					'''
+					Shatters on impact and spreads fire along surfaces
+					Consumes mana and stamina
+					''' */
+			}
+
 			SporePowder: {
 				DisplayName: Порошок из спор
 				Tooltip: ""
@@ -8285,6 +8359,58 @@ Mods: {
 				// DisplayName: Abyssal Fabric
 				// Tooltip: A fine and rare cloth from the abyss capable of resonating with the darkness.
 			}
+
+			EnemyCaltrop: {
+				// DisplayName: Enemy Caltrop
+				// Tooltip: ""
+			}
+
+			EnemyDiamondCrusher: {
+				// DisplayName: Enemy Diamond Crusher
+				// Tooltip: ""
+			}
+
+			EnemyFireFlask: {
+				// DisplayName: Enemy Fire Flask
+				// Tooltip: ""
+			}
+
+			EnemyForgottenRuneAxe: {
+				// DisplayName: Enemy Forgotten Rune Axe
+				// Tooltip: ""
+			}
+
+			EnemyNinjaStar: {
+				// DisplayName: Enemy Ninja Star
+				// Tooltip: ""
+			}
+
+			EnemySmokeBomb: {
+				// DisplayName: Enemy Smoke Bomb
+				// Tooltip: ""
+			}
+
+			EnemyTaintedBow: {
+				// DisplayName: Enemy Tainted Bow
+				// Tooltip: ""
+			}
+
+			EnemyYellowTail: {
+				// DisplayName: Enemy Yellow Tail
+				// Tooltip: ""
+			}
+
+			DragonCharm: {
+				// DisplayName: Dragon Charm
+				/* Tooltip:
+					'''
+					Transforms you into a Cursed Dragon, visually overriding your armor
+					Grants Master Ninja Gear abilities, fire immunity, improved jumping, and Tattered Dragon Wings if no wings are equipped
+					Increases stamina regeneration by {0}%
+					Hold right click to breathe fire, draining {1} mana per flame burst
+					Fire breath deals {2} magic damage
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -9332,6 +9458,11 @@ Mods: {
 				// DisplayName: Plaguesmith Buff
 				// Description: Mods.tsorcRevamp.Buffs.PlaguesmithBuff.Description
 			}
+
+			DragonForm: {
+				// Description: Transformed into a Cursed Dragon
+				// DisplayName: Dragon Form
+			}
 		}
 
 		Projectiles: {
@@ -10073,6 +10204,16 @@ Mods: {
 			// BasiliskLeechTongue.DisplayName: Basilisk Leech Tongue
 			// FireLurkerMeteor.DisplayName: Fire Lurker Meteor
 			// FireLurkerFlameOrb.DisplayName: Fire Lurker Flame Orb
+			// EnemyCaltrop.DisplayName: Enemy Caltrop
+			// EnemyDiamondCrusherBall.DisplayName: Enemy Diamond Crusher Ball
+			// EnemyFireFlask.DisplayName: Enemy Fire Flask
+			// EnemyFireFlaskLingeringFlame.DisplayName: Enemy Fire Flask Lingering Flame
+			// EnemyTaintedArrow.DisplayName: Enemy Tainted Arrow
+			// InvaderSmokeBomb.DisplayName: Invader Smoke Bomb
+			// Caltrop.DisplayName: Caltrop
+			// FireFlask.DisplayName: Fire Flask
+			// FireFlaskLingeringFlame.DisplayName: Fire Flask Lingering Flame
+			// EnemyNinjaStarProj.DisplayName: Enemy Ninja Star Proj
 		}
 
 		NPCs: {
@@ -11726,6 +11867,9 @@ Mods: {
 			// TrueDeath.DisplayName: Absolute Death
 			// DarkCloudShadow.DisplayName: Dark Cloud Shadow
 			// AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
+			// StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
+			// ShadowNinja.DisplayName: Shadow Ninja
+			// BlackNinja.DisplayName: Black Ninja
 			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
 			// TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
 			// RedKnightTest.DisplayName: Red Knight Test

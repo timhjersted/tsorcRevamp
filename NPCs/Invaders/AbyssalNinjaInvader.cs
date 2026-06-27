@@ -246,6 +246,8 @@ namespace tsorcRevamp.NPCs.Invaders
             NPC.HitSound   = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.value    = 50000f;
+            NPC.boss     = true;
+            NPC.npcSlots = 8f;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -319,7 +321,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Vector2 vel  = toTarget.RotatedBy(spread) * 14f; // HeavyCrossbow shootSpeed (higher than friendly bolt to compensate for reduced gravity)
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), muzzle, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.InvaderCrossbowBolt>(),
+                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderCrossbowBolt>(),
                     SecondaryRangedDamage, 4f, Main.myPlayer);
             }
             else
@@ -335,7 +337,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     Vector2 vel  = toTarget.RotatedBy(spread) * 10f;
                     Projectile.NewProjectile(
                         NPC.GetSource_FromThis(), NPC.Center, vel,
-                        ModContent.ProjectileType<Projectiles.Enemy.InvaderThrowingStar>(),
+                        ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderThrowingStar>(),
                         RangedDamage, 2f, Main.myPlayer);
                 }
             }

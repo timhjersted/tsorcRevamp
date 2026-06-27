@@ -272,7 +272,16 @@ namespace tsorcRevamp
 
     public static class UsefulFunctions
     {
-        ///<summary> 
+        /// <summary>
+        /// Shared "lit fuse" sound played when a bomb appears in an enemy's hand / telegraph (smoke
+        /// bomb, the knights' firebombs, Gwyn's smoke bomb).  ONE place to swap the sound.
+        /// NOTE: vanilla's bomb fuse is NOT a SoundID enum member — it's a looped audio asset
+        /// referenced by path — so Item60 is the working stand-in here.  To use the real fuse later,
+        /// swap to: new SoundStyle("Terraria/Sounds/...") (or a custom sound).
+        /// </summary>
+        public static readonly SoundStyle BombFuse = SoundID.Item60;
+
+        ///<summary>
         ///Gets the coordinates of the first solid thing a line fired in a certain direction will hit
         ///Counts both tiles and NPCs as solid
         ///Returns null if no collision
@@ -1603,13 +1612,39 @@ namespace tsorcRevamp
         /// its floor (and refuses floors narrower than its footprint entirely).
         /// </summary>
         public static bool IsFootprintSupported(int centerX, int targetY, int width)
+            => IsFootprintSupported(centerX, targetY, width, 0);
+
+        /// <summary>
+        /// Like <see cref="IsFootprintSupported(int,int,int)"/>, but tolerates up to <paramref name="maxStepDown"/>
+        /// tiles of unevenness across the footprint (the "Deerclops clip" failsafe). A column counts as supported if
+        /// it has walkable ground at the feet row <paramref name="targetY"/> OR up to <paramref name="maxStepDown"/>
+        /// rows BELOW it, and at least one column must be flush at the feet row itself (the anchor the body physically
+        /// rests on). So a beast may straddle a 1-tile step — standing at the high level with the lower foot dipping
+        /// one tile into the air/tile — but never a 2+ tile drop. <paramref name="maxStepDown"/> == 0 reproduces the
+        /// strict flat-floor behavior exactly. Columns with a tile poking ABOVE the feet row (a step UP into the body)
+        /// are never supported here, so the gate naturally prefers standing at the higher level (lower foot clips),
+        /// which is exactly the bounded overlap we want.
+        /// </summary>
+        public static bool IsFootprintSupported(int centerX, int targetY, int width, int maxStepDown)
         {
             int left = centerX - width / 2;
+            bool anchored = false;
             for (int i = 0; i < width; i++)
             {
-                if (!IsValidWalkableTile(left + i, targetY)) return false;
+                int col = left + i;
+                bool columnSupported = false;
+                for (int d = 0; d <= maxStepDown; d++)
+                {
+                    if (IsValidWalkableTile(col, targetY + d))
+                    {
+                        columnSupported = true;
+                        if (d == 0) anchored = true;
+                        break;
+                    }
+                }
+                if (!columnSupported) return false;
             }
-            return true;
+            return anchored; // need at least one flush column so the physics body rests at the feet row
         }
 
         public static tsorcRevampPlayer ModPlayer(Player player) => player.GetModPlayer<tsorcRevampPlayer>();

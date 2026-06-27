@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -460,6 +461,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Bomb Telegraph
                 if (NPC.ai[1] == 900f)
                 {
+                    Terraria.Audio.SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center); // lit fuse
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
                     {

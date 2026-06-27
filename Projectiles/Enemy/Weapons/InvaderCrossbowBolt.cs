@@ -4,7 +4,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy
+namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
     /// Hostile crossbow bolt fired by invader NPCs.  Shares the BoltProjectile sprite but is

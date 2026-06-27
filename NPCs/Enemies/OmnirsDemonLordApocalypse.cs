@@ -42,9 +42,26 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.CursedInferno] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
 
-            // Phase 2: SmartFighter4AI movement. minSurfaceWidth (in AI) keeps this big demon off 1-tile ledges;
+            // Phase 2: SmartFighter4AI movement. minSurfaceWidth (in AI) keeps this big demon off narrow ledges;
             // NavSearchRadius enables A*. Already slow + teleports, so no speed/jump tuning.
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 16;
+            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.NavSearchRadius = 16;
+            // On-hit evasion: lumber back to reset spacing, or telegraph a hyper-armored charge back in.
+            EvasiveProfile.HeavyBeast(g);
+            // Phase 1 (beast positioner): never stand still — oscillate in a large band when it can't path; wander
+            // off if it can't reach you AND you stop hitting it for ~10s. Tune the band to taste.
+            g.KiteRangeMin = 12f;
+            g.KiteRangeMax = 30f;
+            g.PatrolMode = NPCs.PatrolMode.Wander;
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
@@ -57,7 +74,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (attackState == 0)
             {
                 // Walk slowly (60% slower of 1.2f is 0.48f), jump modestly, teleport closer if player is too far
-                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.48f, acceleration: 0.02f, canTeleport: true, lavaJumping: true, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
+                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.48f, acceleration: 0.02f, canTeleport: true, lavaJumping: true, canDodgeroll: false, canPounce: false, minSurfaceWidth: 3, canWalkBackwards: true); // support core (center 3 tiles); sprite edges clip/sink (Phase 3)
 
                 // Increment attack cooldown timer
                 NPC.localAI[1]++;

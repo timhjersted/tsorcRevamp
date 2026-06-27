@@ -466,6 +466,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 925f)
                 {
                     NPC.TargetClosest(true);
+                    Terraria.Audio.SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center); // lit fuse
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
                     {

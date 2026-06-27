@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
@@ -160,9 +161,10 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         private const int BreathWindupEnd = 635;
         private const int BreathCommitTime = 636;
         private const int PostAttackDowntime = 90;
-        private const int AtkDecide = 85;    // roll + lock the attack; dust telegraph (interruptible) starts
+        private const int AtkDecide = 85;    // dust telegraph (interruptible) starts
         private const int AtkFlash = 100;    // colored TelegraphFlash spawns = the commit instant (hyperarmor begins)
         private const int AtkFire = 115;     // projectile(s) launch
+        private const int HeldProjectileLeadTime = 60;
         private const int AtkSprayEnd = 155; // lob/final sprays AtkFire..AtkSprayEnd; single shots reset shortly after
         private const float DisrupterMinSpacing = 250f;
         private const int DisrupterShotInterval = 30;
@@ -320,7 +322,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             {
                 lockedAttack = -1;
             }
-            else if (lockedAttack == -1 && NPC.localAI[1] >= AtkDecide)
+            else if (lockedAttack == -1 && NPC.localAI[1] >= AtkFire - HeldProjectileLeadTime)
             {
                 lockedAttack = RollAttack(player, desperate, wounded);
                 NPC.netUpdate = true;
@@ -622,6 +624,35 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             }
         }
 
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (lockedAttack == -1 || NPC.localAI[1] < AtkFire - HeldProjectileLeadTime || NPC.localAI[1] > GetAttackEndTime())
+            {
+                return;
+            }
+
+            BasiliskHeldProjectileDraw.Draw(NPC, spriteBatch, drawColor, GetHeldProjectileType(), GetHeldProjectileGlowColor());
+        }
+
+        private int GetHeldProjectileType()
+        {
+            return lockedAttack switch
+            {
+                0 => ProjectileID.DD2DrakinShot,
+                4 => ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(),
+                _ => ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>()
+            };
+        }
+
+        private Color GetHeldProjectileGlowColor()
+        {
+            return lockedAttack switch
+            {
+                0 or 4 => Color.Purple,
+                3 => Color.OrangeRed,
+                _ => Color.GreenYellow
+            };
+        }
         #region FindFrame
         public override void FindFrame(int currentFrame)
         {

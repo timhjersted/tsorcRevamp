@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.GameContent;
@@ -719,7 +719,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		}
 		public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
 		{
-			if (item.type == ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>())
+			if (item.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() || item.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>())
 			{
 				defenseBroken = true;
 			}

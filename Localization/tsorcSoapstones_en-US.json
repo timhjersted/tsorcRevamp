@@ -791,7 +791,7 @@
   "locationName": "LEONHARD'S BRIDGE"
 }
 {
-  "text": "You drop a glow stick down the shaft and it disappears into the darkness. \u0022Maybe I\u0027ll use the Greater Magic Mirror here...\u0022 --NEWLINE  --NEWLINE Greater Magic Mirror: Lets you set a warp point at your location. Obtain it by right-clicking on the Green Glowing Skull nearby.",
+  "text": "The Great Magic Mirror offers a short-range teleport. Useful before a perilous drop, jump, or traversal challenge. Obtain it by right-clicking on the Green Glowing Skull nearby.",
   "tileX": 3487,
   "tileY": 413,
   "textWidth": 320,
@@ -799,7 +799,7 @@
   "category": "tutorial"
 }
 {
-  "text": "You found the key that unlocks the Golden Treasure Chest. This Key can only be used to open the Locked Treasure Chest found somewhere in this mountain. --NEWLINE  --NEWLINE \u0022The hyroglyphs look like they\u0027re pointing up.\u0022",
+  "text": "You found the key that unlocks a golden treasure chest, found somewhere in this mountain. --NEWLINE  --NEWLINE \u0022The hyroglyphs look like they\u0027re pointing up.\u0022",
   "tileX": 3494,
   "tileY": 614,
   "textWidth": 320,
@@ -1065,13 +1065,6 @@
   "style": 1
 }
 {
-  "text": "\u0022???\u0022",
-  "tileX": 4057,
-  "tileY": 986,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "Through the glass window you see the 4th lever...",
   "tileX": 4064,
   "tileY": 1614,
@@ -1224,7 +1217,7 @@
   "category": "story"
 }
 {
-  "text": "Many items can be transformed with Dark Souls.  --NEWLINE  --NEWLINE You can take items marked as a \u0022Dark Soul recipe material\u0022 to Aaron, the Guide, or inspect it with a Recipe Mod to learn more about its hidden potential.",
+  "text": "Many items can be crafted with Dark Souls.  --NEWLINE  --NEWLINE Place items marked as a \u0022Dark Soul recipe material\u0022 in the Guide Slot in your inventory menu to see what you can craft.",
   "tileX": 4218,
   "tileY": 970,
   "textWidth": 320,
@@ -1489,7 +1482,7 @@
   "category": "story"
 }
 {
-  "text": "-- The Earth Temple -- --NEWLINE  --NEWLINE You feel the air grow warm and moist. The walls around you feel like they\u0027re breathing. ",
+  "text": "You feel the air grow warm and moist. The walls around you feel like they\u0027re breathing. ",
   "tileX": 4456,
   "tileY": 854,
   "textWidth": 320,
@@ -1552,8 +1545,8 @@
 }
 {
   "text": "- You\u0027ve discovered the entrance to the Earth Temple - --NEWLINE  --NEWLINE It\u0027s locked by a Large Amber Gem Gate. --NEWLINE  --NEWLINE \u0022The wizard who lives in the snow-topped mountains to the North West of Ashenpeak village is said to be safeguarding the key.\u0022",
-  "tileX": 4521,
-  "tileY": 857,
+  "tileX": 4490,
+  "tileY": 859,
   "textWidth": 320,
   "style": 1,
   "category": "hint,location",

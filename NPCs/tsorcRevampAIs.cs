@@ -35,6 +35,7 @@ using tsorcRevamp.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Projectiles.Ranged;
@@ -437,11 +438,15 @@ namespace tsorcRevamp.NPCs
                 const float FighterAggroRange = 2000f; // generous: an LOS sighting re-aggros like the old BoredTimer reset
                 Player fsmPlayer = Main.player[npc.target];
 
-                // Being hit forces a re-acquire (mirrors the old BoredTimer = 0 on justHit).
+                // Being hit forces a re-acquire (mirrors the old BoredTimer = 0 on justHit). For a beast this also
+                // breaks it out of a stale wander (RegisterHitForBeast already cleared it from the hit hook; clearing
+                // here too keeps the re-engage local so the stale overlay below can't re-force Patrol this frame).
                 if (npc.justHit)
                 {
                     globalNPC.PursuitState = PursuitState.Pursue;
                     globalNPC.DisengageTimer = 0;
+                    globalNPC.BeastStale = false;
+                    globalNPC.BeastUnreachableFrames = 0;
                 }
 
                 // TRUE line of sight: Player.CanHit (== Collision.CanHit) is the permissive trajectory check that
@@ -457,7 +462,30 @@ namespace tsorcRevamp.NPCs
                 bool fsmProgress = globalNPC.LastPursuitDist <= 0f || fsmDist < globalNPC.LastPursuitDist - 0.5f;
                 globalNPC.LastPursuitDist = fsmDist;
 
-                PursuitState fsmState = NavBehavior.UpdateState(npc, globalNPC, fsmPlayer, fsmLos, fsmProgress, FighterAggroRange);
+                // Large-beast stale-wander overlay: a giant that can't reach the player (BeastUnreachableFrames,
+                // maintained by SF4's positioner) and hasn't been hit for ~BeastStaleWanderTicks loses interest and
+                // wanders — even WITH line of sight. While BeastStale it ignores LOS re-aggro (so it actually wanders
+                // off); a hit clears BeastStale + forces Pursue (RegisterHitForBeast). Only beasts; everyone else
+                // runs the normal FSM untouched.
+                PursuitState fsmState;
+                if (globalNPC.RequiresFlatGround && globalNPC.BeastStale)
+                {
+                    if (globalNPC.PursuitState != PursuitState.Patrol) NavBehavior.EnterPatrol(npc, globalNPC);
+                    globalNPC.PursuitState = PursuitState.Patrol;
+                    fsmState = PursuitState.Patrol;
+                }
+                else
+                {
+                    fsmState = NavBehavior.UpdateState(npc, globalNPC, fsmPlayer, fsmLos, fsmProgress, FighterAggroRange);
+                    if (globalNPC.RequiresFlatGround
+                        && globalNPC.BeastUnreachableFrames > 120
+                        && globalNPC.FramesSinceHit > globalNPC.BeastStaleWanderTicks)
+                    {
+                        globalNPC.BeastStale = true;
+                        NavBehavior.EnterPatrol(npc, globalNPC);
+                        fsmState = PursuitState.Patrol;
+                    }
+                }
 
                 if (globalNPC.TeleportCooldownTimer > 0) globalNPC.TeleportCooldownTimer--;
 
@@ -494,6 +522,10 @@ namespace tsorcRevamp.NPCs
                             fireTeleport = fsmState == PursuitState.Patrol || fsmState == PursuitState.Search;
                             break;
                     }
+                    // A stale beast deliberately lost interest (can't reach you + un-hit ~10s) — don't let the
+                    // reacquire-teleport yank it straight back; let it actually wander. A hit clears BeastStale and
+                    // re-enables this. (Lava-escape teleport above is separate and still fires.)
+                    if (globalNPC.RequiresFlatGround && globalNPC.BeastStale) fireTeleport = false;
                     if (fireTeleport && !TryTeleportReacquire(npc, globalNPC))
                     {
                         // No valid spot this attempt — throttle the (100×100) search so it doesn't run every
@@ -1675,7 +1707,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown = TeleportTelegraphTime;
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph = potentialNewPos.Value;
-                        SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.6f, PitchVariance = 0.1f }, npc.Center); // exit/departure cue
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -2187,7 +2219,10 @@ namespace tsorcRevamp.NPCs
         // pursuing). RetreatAndShoot: seizes the body and drives a grounded back-off away from the player. Whether it
         // preserves or resets shot progress is controlled by ShouldEvasionResetProjectileTimer. QuickStep has its own
         // exec block above and is not handled here.
-        private static void UpdateEvasion(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        // Internal (not private) so the SmartFighter4 mover can tick the same sustained-evasion
+        // windows FighterAI does — evasion is mover-agnostic state on the GlobalNPC, but until now
+        // only FighterAI advanced it.
+        internal static void UpdateEvasion(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
             if (!globalNPC.InSustainedEvasion)
             {

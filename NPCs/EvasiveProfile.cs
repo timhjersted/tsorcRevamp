@@ -143,6 +143,22 @@ namespace tsorcRevamp.NPCs
         }
 
         /// <summary>
+        /// The Omnir giant beasts (Massacre / Hydra) are huge, slow, grounded
+        /// quadrupeds or 2 legged, tall giants (Gigas / Ice Gigas / Demon Lord Apocalypse) — NOT skittish dodgers, so no hop-away / blink / weightless quick-step (those read wrong at this
+        /// scale). When struck in neutral they answer with weighty spacing plays: a low <see cref="EvasiveBehavior.RetreatDash"/>
+        /// to reset distance (the "lumber backwards when it can't reach you" beat), or a telegraphed hyper-armored
+        /// <see cref="EvasiveBehavior.RunningDash"/> charge straight back in. Both flow through the normal SF4 pursuit
+        /// mover. The dash multiplier is cranked because beast top speeds are tiny (~0.5), so the burst needs a big
+        /// multiplier to actually read as a charge.
+        /// </summary>
+        public static void HeavyBeast(tsorcRevampGlobalNPC globalNPC)
+        {
+            globalNPC.EvasiveRetreatDash = true;
+            globalNPC.EvasiveRunningDash = true;
+            globalNPC.EvasiveDashSpeedMult = 6f; // This may be too fast. Need to test
+        }
+
+        /// <summary>
         /// The AddAttack ghost fighters (Forgotten Warrior / Forgotten Knight / Darkmoon Knight): phase back or
         /// i-frame quick-step when hit. No teleport flag — they don't set CanTeleport (they have their own ghost
         /// wall-phase), so TeleportAway would just leap. QuickStep's i-frame dodge-through fits a phasing ghost.

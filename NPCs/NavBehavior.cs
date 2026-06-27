@@ -125,7 +125,7 @@ namespace tsorcRevamp.NPCs
             else EnterPatrol(npc, g);
         }
 
-        private static void EnterPatrol(NPC npc, tsorcRevampGlobalNPC g)
+        public static void EnterPatrol(NPC npc, tsorcRevampGlobalNPC g)
         {
             g.PursuitState = PursuitState.Patrol;
             g.DisengageTimer = 0;

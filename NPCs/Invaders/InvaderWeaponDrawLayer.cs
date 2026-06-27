@@ -35,6 +35,8 @@ namespace tsorcRevamp.NPCs.Invaders
             if (invader == null)
                 return;
 
+            // Shield first (off-hand, behind the weapon/front-arm), then the weapon.
+            invader.DrawShieldToLayer(ref drawInfo);
             invader.DrawWeaponToLayer(ref drawInfo);
         }
     }

@@ -12,6 +12,7 @@ using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
@@ -36,7 +37,6 @@ namespace tsorcRevamp.Items
         {
             ItemID.Sets.ShimmerTransformToItem[ItemID.LunarHook] = ItemID.LunarHook;
         }
-
         public override bool CanUseItem(Item item, Player player)
         {
             if (item.type == ItemID.MagicMirror || item.type == ItemID.RecallPotion)
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items
                 return false;
             }
 
-            if (item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
+            if (item.type == ItemID.SlimySaddle && !NPC.downedQueenBee)
             {
                 return false;
             }
@@ -149,6 +149,7 @@ namespace tsorcRevamp.Items
 
         public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
+
             // Cannot equip wings until the hunter has been defeated unless you're in debug mode.
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<DebugTome>()) && !ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
             {
@@ -277,9 +278,9 @@ namespace tsorcRevamp.Items
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Cursed")));
                 }
-                if (item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
+                if (item.type == ItemID.SlimySaddle && !NPC.downedQueenBee)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.CorruptionCursed")));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.QueenBeeCursed")));
                 }
                 if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
@@ -875,7 +876,7 @@ namespace tsorcRevamp.Items
             {
                 player.statMana += 20;
             }
-            // Life Crystal nerf moved to UseItem (below) — vanilla's Life Crystal handling in
+            // Life Crystal nerf moved to UseItem (below) ï¿½ vanilla's Life Crystal handling in
             // Player.ItemCheck bumps statLifeMax/statLife directly and consumes the stack manually,
             // bypassing ItemLoader.ConsumeItem entirely. That means this OnConsumeItem hook never
             // fired for Life Crystals, and the nerf was silently inert. UseItem runs immediately
@@ -927,7 +928,7 @@ namespace tsorcRevamp.Items
 
             // Life Crystal nerf moved to tsorcRevampPlayer.PostUpdate as a statLifeMax-spike detector.
             // Attempts to pre-subtract here in UseItem (so vanilla's +20 nets to +10) didn't reduce
-            // statLifeMax reliably — the user observed +20 max HP still landing despite the hook
+            // statLifeMax reliably ï¿½ the user observed +20 max HP still landing despite the hook
             // running. The PostUpdate monitor watches statLifeMax across frames and claws back the
             // nerf the frame after a Life Crystal raises it, which is timing-independent.
 

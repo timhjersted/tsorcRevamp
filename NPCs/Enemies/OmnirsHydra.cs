@@ -67,11 +67,28 @@ namespace tsorcRevamp.NPCs.Enemies{
 			NPC.buffImmune[BuffID.OnFire] = true;
 
 			// Phase 2: SmartFighter4AI movement + beast levers (migrated off MNPC). MaxJumpPower above the 8
-			// default so this huge beast clears ledges given minSurfaceWidth:4. Tuning values — adjust to taste.
+			// default so this huge beast clears ledges. minSurfaceWidth (in AI) is now the SUPPORT CORE (center
+			// tiles that need solid ground); the ~10.6-tile sprite's edges clip/sink into terrain (Phase 3). Tune.
 			tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 			g.NavSearchRadius = 24;
 			g.MaxJumpPower = 10f;
 			g.MaxJumpBoost = 6f;
+			// On-hit evasion: lumber back to reset spacing, or telegraph a hyper-armored charge back in.
+			EvasiveProfile.HeavyBeast(g);
+			// Phase 1 (beast positioner): never stand still — oscillate in a large band when it can't path; wander
+			// off if it can't reach you AND you stop hitting it for ~10s. Tune the band to taste.
+			g.KiteRangeMin = 12f;
+			g.KiteRangeMax = 30f;
+			g.PatrolMode = NPCs.PatrolMode.Wander;
+		}
+
+		public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+		{
+			tsorcRevampAIs.EvasiveOnHit(NPC, true);
+		}
+		public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+		{
+			tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
 		}
         public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
 public float CanSpawnLegacy(NPCSpawnInfo s)
@@ -131,7 +148,7 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
 			// SmartFighter4AI movement (NavSearchRadius set in SetDefaults). Mapping: teleporterAI -> canTeleport;
 			// knockPower 2 -> doorBreakingDamage; leapReq>0 -> canPounce; shotType 0 -> no projectile. minSurfaceWidth:4
 			// keeps this 10-tile-wide beast off narrow ledges.
-			tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: true, doorBreakingDamage: 2, minSurfaceWidth: 6, canWalkBackwards: true, canPounce: true);
+			tsorcRevampAIs.FighterAI(NPC, topSpeed: topSpeed, acceleration: accel, canTeleport: true, doorBreakingDamage: 2, minSurfaceWidth: 4, canWalkBackwards: true, canPounce: true); // support core (center 4 tiles); sprite edges clip/sink (Phase 3)
             Vector2 angle = Main.player[NPC.target].Center - NPC.Center;
             angle.Y = angle.Y - (Math.Abs(angle.X) * .1f);
             angle.X += (float)Main.rand.Next(-20, 21);

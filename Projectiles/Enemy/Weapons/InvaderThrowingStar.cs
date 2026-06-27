@@ -6,7 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy
+namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
     /// Hostile throwing-star fired by InvaderNPC subclasses.

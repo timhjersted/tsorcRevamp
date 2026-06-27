@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
@@ -17,6 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies
         const int FlameOrbSpawnRate = 3 * 60;
         const int FlameTrapRate = 10 * 60;
         const int ReleasedFlameOrbTime = 3 * 60;
+        const int HeldFlameOrbLeadTime = 60;
 
         public int lostSoulDamage = 8;
         int flameOrbTimer;
@@ -273,6 +275,54 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #endregion
 
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            int flameOrbType = ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>();
+            if (globalNPC.AttackList.Count == 0 || globalNPC.CurrentAttack.type != flameOrbType || globalNPC.ProjectileTimer < globalNPC.ProjectileTimerCap - HeldFlameOrbLeadTime)
+            {
+                return;
+            }
+
+            DrawHeldFlameOrb(spriteBatch, drawColor, flameOrbType);
+        }
+
+        void DrawHeldFlameOrb(SpriteBatch spriteBatch, Color drawColor, int flameOrbType)
+        {
+            Texture2D texture = TextureAssets.Projectile[flameOrbType].Value;
+            int frameCount = Main.projFrames[flameOrbType] > 0 ? Main.projFrames[flameOrbType] : 1;
+            int frameHeight = texture.Height / frameCount;
+            int frame = frameCount == 1 ? 0 : (int)((Main.GameUpdateCount / 4) % (ulong)frameCount);
+            Rectangle sourceRectangle = new Rectangle(0, frame * frameHeight, texture.Width, frameHeight);
+            Vector2 handWorld = CurrentHandWorld();
+
+            Lighting.AddLight(handWorld, Color.OrangeRed.ToVector3() * 0.45f);
+            if (Main.rand.NextBool(3))
+            {
+                Dust dust = Dust.NewDustPerfect(handWorld + Main.rand.NextVector2Circular(6f, 6f), DustID.Torch, Main.rand.NextVector2Circular(0.3f, 0.3f), 100, new Color(255, 135, 35), 1.2f);
+                dust.noGravity = true;
+            }
+
+            spriteBatch.Draw(texture, handWorld - Main.screenPosition, sourceRectangle, drawColor, 0f, sourceRectangle.Size() / 2f, NPC.scale, SpriteEffects.None, 0f);
+        }
+
+        Vector2 CurrentHandWorld()
+        {
+            const float frameW = 40f;
+            const float frameH = 56f;
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            Vector2 fp = frame switch
+            {
+                1 => new Vector2(30f, 29f),
+                >= 2 and <= 6 => new Vector2(31f, 33f),
+                >= 7 and <= 10 => new Vector2(29f, 34f),
+                _ => new Vector2(30f, 32f)
+            };
+
+            float x = NPC.Center.X + (fp.X - frameW / 2f) * NPC.scale * -NPC.spriteDirection;
+            float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - frameH) * NPC.scale;
+            return new Vector2(x, y);
+        }
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
