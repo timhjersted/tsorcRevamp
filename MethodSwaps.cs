@@ -180,7 +180,14 @@ namespace tsorcRevamp
 
         private static void Main_DrawSurfaceBG(Terraria.On_Main.orig_DrawSurfaceBG orig, Main self)
         {
-            if (Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true)
+            // Guard against calling GetModPlayer during the loading screen or main menu, where
+            // Main.player[Main.myPlayer] is an uninitialized dummy whose modPlayers array is empty.
+            // GetModPlayer would throw IndexOutOfRangeException every draw frame, preventing orig()
+            // from running and causing the entire DoDraw to abort — which blocks the update loop.
+            int mp = Main.myPlayer;
+            if (!Main.gameMenu && mp >= 0 && mp < Main.player.Length
+                && Main.player[mp] != null && Main.player[mp].active
+                && Main.player[mp].GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
             {
                 DrawAbyssSpaceBackground();
                 return;
@@ -3161,14 +3168,18 @@ namespace tsorcRevamp
                         //self.Spawn_SetPosition(spawnTileX, spawnTileY);
                         self.position.X = spawnTileX * 16 + 8 - self.width / 2;
                         self.position.Y = spawnTileY * 16 - self.height;
-                        return;
+                        // NOTE: no early return here — fall through so SetTalkNPC(-1) and
+                        // other post-spawn cleanup (lines below) still run.
                     }
-                    //self.Spawn_SetPosition(Main.spawnTileX, Main.spawnTileY);
-                    self.position.X = Main.spawnTileX * 16 + 8 - self.width / 2;
-                    self.position.Y = Main.spawnTileY * 16 - self.height;
-                    if (!IsAreaAValidWorldSpawn(Main.spawnTileX, Main.spawnTileY))
+                    else
                     {
-                        ForceClearArea(Main.spawnTileX, Main.spawnTileY);
+                        //self.Spawn_SetPosition(Main.spawnTileX, Main.spawnTileY);
+                        self.position.X = Main.spawnTileX * 16 + 8 - self.width / 2;
+                        self.position.Y = Main.spawnTileY * 16 - self.height;
+                        if (!IsAreaAValidWorldSpawn(Main.spawnTileX, Main.spawnTileY))
+                        {
+                            ForceClearArea(Main.spawnTileX, Main.spawnTileY);
+                        }
                     }
                 }
                 else

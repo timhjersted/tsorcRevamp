@@ -8411,6 +8411,26 @@ Mods: {
 					Fire breath deals {2} magic damage
 					''' */
 			}
+
+			EnemyVenomStaff: {
+				// Tooltip: ""
+				// DisplayName: Enemy Venom Staff
+			}
+
+			EnemyCursedKnife: {
+				// DisplayName: Enemy Cursed Knife
+				// Tooltip: ""
+			}
+
+			EnemyMeteorStorm: {
+				// DisplayName: Enemy Meteor Storm
+				// Tooltip: ""
+			}
+
+			EnemyPilgrimSpontoon: {
+				// DisplayName: Enemy Pilgrim Spontoon
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -10214,6 +10234,11 @@ Mods: {
 			// FireFlask.DisplayName: Fire Flask
 			// FireFlaskLingeringFlame.DisplayName: Fire Flask Lingering Flame
 			// EnemyNinjaStarProj.DisplayName: Enemy Ninja Star Proj
+			// CursedDragonInvaderBreath.DisplayName: Cursed Dragon Invader Breath
+			// EnemyMeteorStormMeteor.DisplayName: Enemy Meteor Storm Meteor
+			// CursedDragonKnife.DisplayName: Cursed Dragon Knife
+			// EnemyPilgrimArcaneBall.DisplayName: Enemy Pilgrim Arcane Ball
+			// EnemyVenomStaffProj.DisplayName: Enemy Venom Staff Proj
 		}
 
 		NPCs: {
@@ -11955,6 +11980,7 @@ Mods: {
 			// LothricSpearKnightOriginal.DisplayName: Old Lothric Spear Knight
 			// LothricBlackKnightOriginal.DisplayName: Old Lothric Black Knight
 			// RingedKnightOriginal.DisplayName: Old Ringed Knight
+			// CursedDragonInvader.DisplayName: Cursed Dragon Invader
 		}
 
 		Prefixes: {

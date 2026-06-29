@@ -387,6 +387,8 @@ namespace tsorcRevamp.NPCs
         public int QuickStepDir;            // horizontal direction of the active quick step
         public float QuickStepSpeed = 5f;   // horizontal speed of the quick step
         public int QuickStepTicks = 16;     // quick-step duration
+        public int QuickStepRecoveryTicks = 30;   // post-step recovery before attacks/pursuit resume (tunable)
+        public float QuickStepForwardRoom = 16f;  // extra px past the player when stepping THROUGH them
         // True while a behavior should draw the ghost afterimage trail (quick step, or the running-dash burst).
         public bool EvasiveAfterimagesActive => QuickStepTimer > 0 || (InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RunningDash && !EvasiveTelegraphing);
         /// <summary>True during any multi-tick evasive action — a parallel to <see cref="InAttack"/> for deference.</summary>

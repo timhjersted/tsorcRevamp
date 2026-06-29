@@ -40,6 +40,10 @@ namespace tsorcRevamp
         public static bool CustomMap;
         public static bool OnlyAdventureMap;
         public static bool RemixMap;
+        //Manual escape hatch. When true, this world is forced to be treated as a normal sandbox world:
+        //all custom/remix/adventure detection is short-circuited regardless of tile signatures, worldID, or
+        //previously-saved CustomMap/RemixMap flags. Toggle with the "/forcesandbox" chat command.
+        public static bool ForceSandbox;
         public static bool ExploreVillage;
         public static bool EnteredHell;
         public static bool TalkedToAraz;
@@ -217,6 +221,8 @@ namespace tsorcRevamp
                 world_state.Add("RemixMap");
             if (OnlyAdventureMap)
                 world_state.Add("OnlyAdventureMap");
+            if (ForceSandbox)
+                world_state.Add("ForceSandbox");
             if (EnteredHell)
                 world_state.Add("EnteredHell");
             if (TalkedToAraz)
@@ -272,9 +278,10 @@ namespace tsorcRevamp
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             TheEnd = worldStateList.Contains("TheEnd");
-            CustomMap = worldStateList.Contains("CustomMap");
-            RemixMap = worldStateList.Contains("RemixMap");
-            OnlyAdventureMap = worldStateList.Contains("OnlyAdventureMap");
+            ForceSandbox = worldStateList.Contains("ForceSandbox");
+            CustomMap = !ForceSandbox && worldStateList.Contains("CustomMap");
+            RemixMap = !ForceSandbox && worldStateList.Contains("RemixMap");
+            OnlyAdventureMap = !ForceSandbox && worldStateList.Contains("OnlyAdventureMap");
             EnteredHell = worldStateList.Contains("EnteredHell");
             TalkedToAraz = worldStateList.Contains("TalkedToAraz");
             EnteredRuinsOfElengad = worldStateList.Contains("EnteredRuinsOfElengad");
@@ -291,18 +298,19 @@ namespace tsorcRevamp
             }
 
             //Failsafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
-            if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197)
+            //ForceSandbox bypasses all of this so a normal world that happens to contain pasted custom-map tiles isn't misdetected.
+            if (!ForceSandbox && Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197)
             {
                 CustomMap = true;
             }
 
             //Checks some blocks near the Tim Hjersted that are unlikely to change.
-            if (Framing.GetTileSafely(7783, 1750).TileType == TileID.LivingFrostFire && Framing.GetTileSafely(7783, 1761).TileType == TileID.LivingIchor && Framing.GetTileSafely(7783, 1772).TileType == TileID.MeteoriteBrick && Framing.GetTileSafely(7783, 1783).TileType == TileID.LivingMahogany)
+            if (!ForceSandbox && Framing.GetTileSafely(7783, 1750).TileType == TileID.LivingFrostFire && Framing.GetTileSafely(7783, 1761).TileType == TileID.LivingIchor && Framing.GetTileSafely(7783, 1772).TileType == TileID.MeteoriteBrick && Framing.GetTileSafely(7783, 1783).TileType == TileID.LivingMahogany)
             {
                 OnlyAdventureMap = true;
             }
             //Checks some blocks near hallow surface Life Tree bonfire that are unlikely to change.
-            if (Framing.GetTileSafely(5960, 571).TileType == TileID.LivingMahogany && Framing.GetTileSafely(5960, 569).TileType == TileID.LivingLoom && Framing.GetTileSafely(5960, 574).TileType == TileID.LivingMahoganyLeaves)
+            if (!ForceSandbox && Framing.GetTileSafely(5960, 571).TileType == TileID.LivingMahogany && Framing.GetTileSafely(5960, 569).TileType == TileID.LivingLoom && Framing.GetTileSafely(5960, 574).TileType == TileID.LivingMahoganyLeaves)
             {
                 RemixMap = true;
             }
@@ -1350,6 +1358,8 @@ namespace tsorcRevamp
         bool initialized = false;
         public override void PreUpdatePlayers()
         {
+            Utilities.InputDebugCommand.LogTick();
+
             //Only do this on the first tick after loading
             if (!initialized)
             {
@@ -1801,6 +1811,12 @@ namespace tsorcRevamp
         //Runs a double check on whether or not the world is the custom map.
         public static bool CheckForCustomMap()
         {
+            //Manual override: this world has been flagged as a normal sandbox world, so it is never the custom map.
+            if (ForceSandbox)
+            {
+                return false;
+            }
+
             if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
             {
                 return true;
@@ -1821,6 +1837,11 @@ namespace tsorcRevamp
 
         public static bool CheckForOnlyAdventureMap()
         {
+            if (ForceSandbox)
+            {
+                return false;
+            }
+
             // Checks some blocks near the Tim Hjersted that are unlikely to change.
             if (Main.tile[7783, 1750] != null && Main.tile[7783, 1761] != null && Main.tile[7783, 1772] != null && Main.tile[7783, 1783] != null)
             {

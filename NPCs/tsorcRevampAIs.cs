@@ -723,25 +723,8 @@ namespace tsorcRevamp.NPCs
 
             // Quick step: a standing i-frame dash WITHOUT sprite rotation. The
             // i-frames + pass-through are handled by the CanBeHit*/CanHitPlayer hooks reading QuickStepTimer.
-            if (globalNPC.QuickStepTimer > 0)
-            {
-                npc.velocity.X = globalNPC.QuickStepSpeed * globalNPC.QuickStepDir;
-                globalNPC.QuickStepTimer--;
-                if (globalNPC.QuickStepTimer == 0)
-                {
-                    npc.velocity.X = 0;
-                    globalNPC.QuickStepRecoveryTimer = 30;
-                }
-            }
-            else if (globalNPC.QuickStepRecoveryTimer > 0)
-            {
-                npc.velocity.X *= 0.4f;
-                if (Math.Abs(npc.velocity.X) < 0.2f)
-                {
-                    npc.velocity.X = 0;
-                }
-                globalNPC.QuickStepRecoveryTimer--;
-            }
+            // Shared with InvaderNPC via TickQuickStep so the behavior is identical under either AI.
+            TickQuickStep(npc, globalNPC);
 
             // Advance the multi-tick evasion windows (RunningDash telegraph→burst, RetreatAndShoot back-off).
             UpdateEvasion(npc, globalNPC);
@@ -2120,6 +2103,65 @@ namespace tsorcRevamp.NPCs
         }
 
         // Executes one instantaneous evasive behavior. Assumes npc.direction already faces the player (TargetClosest).
+        /// <summary>
+        /// Advance an active quick-step (the i-frame dash velocity) or its post-step recovery.  Returns
+        /// true while either is seizing the body this frame.  Mover-agnostic: called by both the FighterAI
+        /// combat layer (RunFighterCombatExec) and InvaderNPC, so quick-step behaves identically under either
+        /// AI rather than being duplicated.  i-frames + player pass-through come from the CanBeHit*/CanHitPlayer
+        /// hooks reading QuickStepTimer.
+        /// </summary>
+        internal static bool TickQuickStep(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            if (globalNPC.QuickStepTimer > 0)
+            {
+                npc.velocity.X = globalNPC.QuickStepSpeed * globalNPC.QuickStepDir;
+                globalNPC.QuickStepTimer--;
+                if (globalNPC.QuickStepTimer == 0)
+                {
+                    npc.velocity.X = 0;
+                    globalNPC.QuickStepRecoveryTimer = globalNPC.QuickStepRecoveryTicks;
+                }
+                return true;
+            }
+            if (globalNPC.QuickStepRecoveryTimer > 0)
+            {
+                npc.velocity.X *= 0.4f;
+                if (Math.Abs(npc.velocity.X) < 0.2f)
+                {
+                    npc.velocity.X = 0;
+                }
+                globalNPC.QuickStepRecoveryTimer--;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Arm a quick-step dash.  <paramref name="allowForward"/> permits a forward step THROUGH the player
+        /// (i-frames + pass-through) when there's room to land past them (plus QuickStepForwardRoom px);
+        /// otherwise it steps backward.  Shared by the on-hit evasion path (ExecuteEvasion) and InvaderNPC's
+        /// preemptive quick-step.
+        /// </summary>
+        internal static void ArmQuickStep(NPC npc, tsorcRevampGlobalNPC globalNPC, bool allowForward)
+        {
+            int away = -npc.direction; // enemy faces the player, so -direction points away from them
+            Player target = Main.player[npc.target];
+            const int maxForwardQuickStepTicks = 30;
+            float crossDistance = Math.Abs(target.Center.X - npc.Center.X) + (target.width + npc.width) * 0.5f + globalNPC.QuickStepForwardRoom;
+            bool canCrossThrough = allowForward && crossDistance <= globalNPC.QuickStepSpeed * maxForwardQuickStepTicks;
+            bool stepForward = canCrossThrough && Main.rand.NextBool();
+            globalNPC.QuickStepDir = stepForward ? -away : away;
+            globalNPC.QuickStepRecoveryTimer = 0;
+            if (stepForward)
+            {
+                globalNPC.QuickStepTimer = Math.Clamp((int)Math.Ceiling(crossDistance / globalNPC.QuickStepSpeed), globalNPC.QuickStepTicks, maxForwardQuickStepTicks);
+            }
+            else
+            {
+                globalNPC.QuickStepTimer = globalNPC.QuickStepTicks;
+            }
+        }
+
         private static void ExecuteEvasion(NPC npc, tsorcRevampGlobalNPC globalNPC, EvasiveBehavior behavior, bool melee)
         {
             int away = -npc.direction;
@@ -2179,21 +2221,7 @@ namespace tsorcRevamp.NPCs
                     globalNPC.EvasiveTimer = globalNPC.EvasiveRetreatTicks;
                     break;
                 case EvasiveBehavior.QuickStep: // arm an i-frame standing dash step (no rotation)
-                    Player target = Main.player[npc.target];
-                    const int maxForwardQuickStepTicks = 30;
-                    float crossDistance = Math.Abs(target.Center.X - npc.Center.X) + (target.width + npc.width) * 0.5f + 16f;
-                    bool canCrossThrough = crossDistance <= globalNPC.QuickStepSpeed * maxForwardQuickStepTicks;
-                    bool stepForward = canCrossThrough && Main.rand.NextBool();
-                    globalNPC.QuickStepDir = stepForward ? -away : away;
-                    globalNPC.QuickStepRecoveryTimer = 0;
-                    if (stepForward)
-                    {
-                        globalNPC.QuickStepTimer = Math.Clamp((int)Math.Ceiling(crossDistance / globalNPC.QuickStepSpeed), globalNPC.QuickStepTicks, maxForwardQuickStepTicks);
-                    }
-                    else
-                    {
-                        globalNPC.QuickStepTimer = globalNPC.QuickStepTicks;
-                    }
+                    ArmQuickStep(npc, globalNPC, allowForward: true);
                     break;
                 case EvasiveBehavior.BasiliskWalkerCloseBackhop:
                     npc.velocity.Y = Main.rand.NextFloat(-6f, -3f);

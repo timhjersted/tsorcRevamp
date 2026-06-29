@@ -135,18 +135,32 @@ namespace tsorcRevamp
         internal static void Player_Update(ILContext il)
         {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
-
             ILCursor cursor = new ILCursor(il);
 
-            if (!cursor.TryGotoNext(MoveType.Before,
-                                    i => i.MatchLdfld("Terraria.Player", "statManaMax2"),
-                                    i => i.MatchLdcI4(400)))
+            // Pattern A (older tML): comparison side — ldfld statManaMax2 immediately followed by ldc.i4 400
+            // Matches: if (statManaMax2 > 400) — we replace 400 with int.MaxValue so the cap never triggers.
+            if (cursor.TryGotoNext(MoveType.Before,
+                i => i.MatchLdfld("Terraria.Player", "statManaMax2"),
+                i => i.MatchLdcI4(400)))
             {
-                mod.Logger.Fatal("Could not find instruction to patch (Player_Update)");
+                cursor.Next.Next.Operand = int.MaxValue;
                 return;
             }
 
-            cursor.Next.Next.Operand = int.MaxValue;
+            // Pattern B (newer tML): assignment side — ldc.i4 400 immediately before stfld statManaMax2
+            // Matches: statManaMax2 = 400 — we replace 400 with int.MaxValue so it assigns an unreachable cap.
+            cursor.Index = 0;
+            if (cursor.TryGotoNext(MoveType.Before,
+                i => i.MatchLdcI4(400),
+                i => i.MatchStfld("Terraria.Player", "statManaMax2")))
+            {
+                cursor.Next.Operand = int.MaxValue;
+                return;
+            }
+
+            // If neither pattern matches, tModLoader likely already removed this cap at the framework level.
+            // This is not a fatal error — mana above 400 still works via PostUpdateEquips.
+            mod.Logger.Warn("Player_Update mana-cap patch: instruction not found — tModLoader may have already removed this cap. Mana above 400 should still work.");
         }
 
         internal static void Chest_Patch(ILContext il)

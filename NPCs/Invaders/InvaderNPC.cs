@@ -155,6 +155,24 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual int         SecondaryStandingRangedChance  => 70;
         protected virtual Color       SecondaryRangedFlashColor      => Color.White;
 
+        /// <summary>Gate for using the secondary ranged weapon at all (both the normal band and the
+        /// panic backhop).  Override to unlock the secondary conditionally — e.g. only below half HP.
+        /// Default true.</summary>
+        protected virtual bool SecondaryRangedAvailable => true;
+
+        // ── Secondary-ranged "panic backhop" (optional) ───────────────────────────
+        // A proactive spacing tool: when the player closes to within SecondaryRangedBackhopRange and
+        // the secondary weapon is off cooldown, the invader hops AWAY (still facing the player) and
+        // fires a single secondary shot — independent of the normal SecondaryRangedMinRange band, so it
+        // works point-blank.  Default range 0 = disabled (no behavior change for other invaders).
+        protected virtual float SecondaryRangedBackhopRange   => 0f;
+        /// <summary>Chance (0–100) to backhop when the player is inside <see cref="SecondaryRangedBackhopRange"/>.</summary>
+        protected virtual int   SecondaryRangedBackhopChance  => 50;
+        /// <summary>Horizontal hop-away speed (px/frame).</summary>
+        protected virtual float SecondaryRangedBackhopSpeed   => 6f;
+        /// <summary>Upward hop speed (px/frame) for the little arc.</summary>
+        protected virtual float SecondaryRangedBackhopUpSpeed => 5f;
+
         // ── Secondary ranged burst patterns (optional) ────────────────────────────
         // When non-null, replaces the simple SecondaryMaxRangedBurst random-shot system.
         // Each entry is an array of inter-shot pause durations (ticks).
@@ -196,6 +214,80 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>Flash color for the spear-poke and magic-cast telegraphs.</summary>
         protected virtual Color SpearTelegraphFlashColor => Color.LightYellow;
         protected virtual Color MagicTelegraphFlashColor => Color.MediumPurple;
+
+        // ── Fire breath (optional, opt-in per subclass) ───────────────────────────
+        /// <summary>Master toggle: when true this invader can perform a sustained fire-breath attack
+        /// (BreathTelegraph → Breathing → BreathRecovery).  Override <see cref="DoBreathWindup"/> and
+        /// <see cref="DoBreathTick"/> to supply the telegraph VFX and the breath projectiles.</summary>
+        protected virtual bool  CanBreathe            => false;
+        /// <summary>Max distance at which breath can begin.</summary>
+        protected virtual float BreathRange           => 560f;
+        /// <summary>Won't breathe if the player is closer than this (point-blank).</summary>
+        protected virtual float MinBreathRange        => 0f;
+        /// <summary>Charge-up duration (the swelling-ember telegraph) before the stream releases.</summary>
+        protected virtual int   BreathTelegraphTicks  => 150;
+        /// <summary>Length of the active breath stream.</summary>
+        protected virtual int   BreathDurationTicks   => 70;
+        /// <summary>Recovery after the stream ends, before <see cref="BreathCooldownAfterUse"/> applies.</summary>
+        protected virtual int   BreathRecoveryTicks   => 40;
+        /// <summary>Ticks that must pass after a breath before another is allowed.</summary>
+        protected virtual int   BreathCooldownAfterUse => 330;
+        /// <summary>Chance (0–100) per eligible Idle tick to begin a breath when in range and off cooldown.</summary>
+        protected virtual int   BreathChance          => 3;
+        /// <summary>Flash color for the breath telegraph.</summary>
+        protected virtual Color BreathTelegraphFlashColor => Color.OrangeRed;
+        /// <summary>When true the invader may begin a breath while airborne (and will strafe across to
+        /// sweep the stream).  When false breath is grounded-only.</summary>
+        protected virtual bool  BreathAllowedAirborne => false;
+
+        /// <summary>True for the full duration of the entire telegraph+attack window (not just the
+        /// post-flash commit).  Set true to give this invader hyper-armor — zero knockback, no poise
+        /// build, can't be staggered — from the moment an attack telegraph starts until recovery.
+        /// Default false preserves the original behavior (interruptible during the wind-up).</summary>
+        protected virtual bool  HyperArmorDuringTelegraph => false;
+
+        // ── Proactive projectile evasion (optional) ───────────────────────────────
+        // SF4-mover invaders don't run the legacy BasicAI Agility dodge scan, so this is a self-
+        // contained version: each idle tick, scan for an incoming aimed friendly projectile and (rolling
+        // the GlobalNPC Agility stat) either jump over it or i-frame dodge in place.  Reuses the existing
+        // mover-agnostic DodgeTimer i-frames.  Default off; set Agility on the NPC to tune frequency.
+        protected virtual bool EvadesProjectiles => false;
+        /// <summary>Detection radius (px) for an incoming aimed projectile.</summary>
+        protected virtual float ProjectileEvadeRange => 200f;
+
+        // ── Quick-step dodge (shared with FighterAI via tsorcRevampAIs.TickQuickStep) ──────
+        // ON-HIT quick-step works automatically for any invader whose EvasiveProfile sets EvasiveQuickStep
+        // (InvaderNPC always ticks the shared executor, so the old "invader can't tick QuickStepTimer" bug
+        // is gone).  PREEMPTIVE quick-step is opt-in: when the player is mid-swing in melee range, roll
+        // PreemptiveQuickStepChance to dash THROUGH them (i-frames, can't hurt them) and land past them.
+        /// <summary>Chance (0–100) to preemptively quick-step when the player is mid-swing in melee range.
+        /// 0 = no proactive quick-step (on-hit still works via EvasiveProfile).</summary>
+        protected virtual int   PreemptiveQuickStepChance => 0;
+        /// <summary>Post-step recovery (ticks) before attacks/pursuit resume — the "can't instantly re-attack
+        /// after the dash" window.  Tune with <see cref="QuickStepForwardRoom"/> for the spacing feel.</summary>
+        protected virtual int   QuickStepRecoveryTicks => 30;
+        /// <summary>Extra px past the player when dashing THROUGH them, so the step lands with room.</summary>
+        protected virtual float QuickStepForwardRoom => 16f;
+
+        // ── Cursed Knives (optional sustained throw attack) ────────────────────────
+        // Hold a knife (telegraph) → throw 1–3 volleys of 3 knives that stick in tiles, swell with
+        // black/purple dust for ~1.5 s, then burst into a lingering plague cloud.  Volley count + gap
+        // scale with range.  Subclass supplies the projectile + held-knife sprite via the hooks below.
+        protected virtual bool  CanThrowCursedKnives        => false;
+        protected virtual int   CursedKnivesWeaponItemType  => -1;   // held-knife display sprite (-1 = none)
+        protected virtual float CursedKnivesRange           => 760f;
+        protected virtual float CursedKnivesMinRange        => 0f;
+        protected virtual float CursedKnivesCloseRange      => 220f;  // ≤ this: 1 volley, tight spread
+        protected virtual float CursedKnivesMidRange        => 470f;  // ≤ this: 2 volleys back-to-back
+        protected virtual int   CursedKnivesChance          => 4;     // % per eligible idle tick
+        protected virtual int   CursedKnivesTelegraphTicks  => 45;
+        protected virtual int   CursedKnivesThrowTicks      => 12;    // active frames per volley
+        protected virtual int   CursedKnivesBackToBackGap   => 10;    // pause between mid-range volleys
+        protected virtual int   CursedKnivesFarGap          => 30;    // pause between far-range volleys
+        protected virtual int   CursedKnivesRecoveryTicks   => 40;
+        protected virtual int   CursedKnivesCooldownAfterUse => 420;
+        protected virtual bool  CursedKnivesAllowedAirborne => true;
+        protected virtual Color CursedKnivesTelegraphFlashColor => new Color(150, 60, 210);
 
         // ── Estus healing ─────────────────────────────────────────────────────────
         /// <summary>How many estus drinks the invader starts with.</summary>
@@ -297,6 +389,22 @@ namespace tsorcRevamp.NPCs.Invaders
             RangedTelegraph, RangedAttack, RangedRecovery,
             SpearTelegraph,  SpearAttack,  SpearRecovery,
             MagicTelegraph,  MagicAttack,  MagicRecovery,
+            /// <summary>Charge-up before a sustained fire-breath stream: the invader plants (or, when
+            /// airborne, keeps flying) and emits a swelling mouth ember via <see cref="DoBreathWindup"/>.</summary>
+            BreathTelegraph,
+            /// <summary>Active fire-breath stream: <see cref="DoBreathTick"/> spawns the breath projectiles
+            /// each tick for <see cref="BreathDurationTicks"/>.  When airborne the dragon strafes to sweep.</summary>
+            Breathing,
+            /// <summary>Recovery after the breath stream ends; applies <see cref="BreathCooldownAfterUse"/>.</summary>
+            BreathRecovery,
+            /// <summary>Hold-the-knife charge before the first Cursed Knives volley.</summary>
+            KnivesTelegraph,
+            /// <summary>Active throw frame: <see cref="DoCursedKnivesThrow"/> spawns a 3-knife volley.</summary>
+            KnivesThrow,
+            /// <summary>Pause between Cursed Knives volleys (next volley fires when it expires — no re-telegraph).</summary>
+            KnivesThrowPause,
+            /// <summary>Recovery after the last Cursed Knives volley; applies <see cref="CursedKnivesCooldownAfterUse"/>.</summary>
+            KnivesRecovery,
             /// <summary>
             /// Inter-shot pause during a crossbow burst pattern.
             /// The invader holds horizontal aim and waits for the timer; the next shot fires
@@ -345,6 +453,31 @@ namespace tsorcRevamp.NPCs.Invaders
         private int _secondaryRangedCooldown;
         // Counts down; any heal is blocked while > 0
         private int _healCooldown;
+        // Counts down; fire breath is blocked while > 0
+        protected int _breathCooldown;
+        // Counts down; Cursed Knives is blocked while > 0
+        protected int _cursedKnivesCooldown;
+
+        // Cursed Knives volley state (set at telegraph start from range).
+        private int _cursedKnivesVolleysLeft;
+        private int _cursedKnivesGap;
+
+        // Per-cast override for the MagicAttack phase duration (-1 = use MagicAttackTicks).  A subclass
+        // sets this inside DoMagicAttack to channel a sustained cast (e.g. a multi-second meteor rain),
+        // during which DoMagicTick is called every MagicAttack tick.  Reset to -1 in MagicRecovery.
+        protected int _magicAttackTicksOverride = -1;
+
+        // Index of the active ranged burst pattern (into the pattern pool), or -1 when not using a
+        // pattern.  Exposed via ActiveBurstPatternIndex so a subclass can vary the projectile per shot
+        // (e.g. a cross-weapon "finisher" on the last shot of a specific pattern).
+        private int _activeBurstPatternIndex = -1;
+
+        // Secondary-ranged panic-backhop momentum.  Counts down; while > 0, AI() re-asserts an away-from-
+        // player X velocity each tick (overriding the SF4 mover's pursuit, same way FleeToHeal does) so the
+        // hop actually carries instead of being cancelled by pursuit on the next tick.
+        private int _backhopTicks;
+        private int _backhopDir;
+        private const int BackhopMomentumTicks = 16;
 
         // ── Active ranged burst context ───────────────────────────────────────────
         // Set at the start of each burst (primary OR secondary) so all phases in the
@@ -363,6 +496,16 @@ namespace tsorcRevamp.NPCs.Invaders
         /// Read this in <see cref="DoRangedAttack"/> to decide which projectile to fire.
         /// </summary>
         protected bool IsSecondaryRangedActive => _usingSecondaryRanged;
+
+        /// <summary>Index of the active ranged burst pattern (into the active weapon's pattern pool),
+        /// or -1 when this burst isn't using a pattern.  Read in <see cref="DoRangedAttack"/> to fire a
+        /// different projectile on a specific pattern.</summary>
+        protected int ActiveBurstPatternIndex => _activeBurstPatternIndex;
+
+        /// <summary>True when the shot currently being fired in <see cref="DoRangedAttack"/> is the LAST
+        /// shot of the active burst pattern — lets a subclass fire a cross-weapon "finisher" projectile
+        /// on the final shot of a pattern.</summary>
+        protected bool IsFinalBurstShot => _interShotPauses != null && _interShotPauseIndex >= _interShotPauses.Length;
 
         // ── Healing state ─────────────────────────────────────────────────────────
         // -1 = uninitialized (set to EstusChargesMax on first AI tick)
@@ -420,6 +563,8 @@ namespace tsorcRevamp.NPCs.Invaders
             Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MagicAttack  ||
             Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
             Phase == AttackPhase.MeleeComboPause ||
+            Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrow ||
+            Phase == AttackPhase.KnivesThrowPause ||
             (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0);
 
         private bool IsMeleeComboPhase =>
@@ -607,6 +752,8 @@ namespace tsorcRevamp.NPCs.Invaders
             if (_spearCooldown           > 0) _spearCooldown--;
             if (_magicCooldown           > 0) _magicCooldown--;
             if (_healCooldown            > 0) _healCooldown--;
+            if (_breathCooldown          > 0) _breathCooldown--;
+            if (_cursedKnivesCooldown    > 0) _cursedKnivesCooldown--;
             if (_meleeComboCooldowns != null)
                 for (int i = 0; i < _meleeComboCooldowns.Length; i++)
                     if (_meleeComboCooldowns[i] > 0) _meleeComboCooldowns[i]--;
@@ -642,6 +789,18 @@ namespace tsorcRevamp.NPCs.Invaders
             gnpc.TeleportDustScale     = TeleportDustScale;
             gnpc.TeleportDustCount     = TeleportDustCount;
 
+            // Quick-step tuning (used by both on-hit and preemptive quick-steps via the shared executor).
+            gnpc.QuickStepRecoveryTicks = QuickStepRecoveryTicks;
+            gnpc.QuickStepForwardRoom   = QuickStepForwardRoom;
+
+            // SF4 invaders don't run BasicAI, which is what normally winds these down — so when this
+            // invader uses a proactive dodge (jump/roll or preemptive quick-step) we tick the timers here.
+            if (EvadesProjectiles || PreemptiveQuickStepChance > 0)
+            {
+                if (gnpc.DodgeTimer    > 0) gnpc.DodgeTimer--;
+                if (gnpc.DodgeCooldown > 0) gnpc.DodgeCooldown--;
+            }
+
             Player target = Main.player[NPC.target];
             float distToTarget = NPC.Distance(target.Center);
 
@@ -655,8 +814,10 @@ namespace tsorcRevamp.NPCs.Invaders
                 _flight.Tick(NPC, target);
                 if (_flight.IsAirborne)
                 {
-                    // Run attack AI (for aerial combos) but skip ground movement entirely.
-                    if (gnpc.DodgeTimer <= 0)
+                    // Advance a quick-step (e.g. armed by an on-hit reaction) AFTER the flight tick so it
+                    // overrides flight velocity; skip attacks while stepping / mid-dodge.
+                    tsorcRevampAIs.TickQuickStep(NPC, gnpc);
+                    if (gnpc.DodgeTimer <= 0 && gnpc.QuickStepTimer <= 0 && gnpc.QuickStepRecoveryTimer <= 0)
                         InvaderAttackAI();
                     UpdateAttackCommitFlags();
                     TickWeaponAnim();
@@ -696,9 +857,36 @@ namespace tsorcRevamp.NPCs.Invaders
                 _directionHoldTicks  = 5; // allow quick correction while fleeing
             }
 
+            // ── Secondary-ranged backhop momentum ─────────────────────────────────
+            // Re-assert the hop-away velocity for a short window so the SF4 mover's pursuit (which ran
+            // just above) doesn't cancel it on the very next tick.  Decays linearly to 0.
+            if (_backhopTicks > 0)
+            {
+                NPC.velocity.X = _backhopDir * SecondaryRangedBackhopSpeed * (_backhopTicks / (float)BackhopMomentumTicks);
+                _backhopTicks--;
+            }
+
             // Rope climbing, X-centering, stuck detection, and teleport recovery are all owned by
             // SmartFighter4 (RunMovementAI).  The old FighterAI-era rope-climb and wall-blocked
             // overrides that used to live here fought the navigator and have been removed.
+
+            // Advance a quick-step (on-hit or preemptive) AFTER the mover so it overrides pursuit velocity.
+            tsorcRevampAIs.TickQuickStep(NPC, gnpc);
+
+            // ── Proactive evasion (neutral, off cooldown, not mid-backhop/quick-step) ─────────────
+            if (gnpc.DodgeTimer <= 0 && gnpc.DodgeCooldown <= 0 && _backhopTicks <= 0
+                && gnpc.QuickStepTimer <= 0 && gnpc.QuickStepRecoveryTimer <= 0
+                && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll))
+            {
+                // Preemptive quick-step THROUGH a player who's mid-swing in melee range.
+                if (PreemptiveQuickStepChance > 0)
+                    TryPreemptiveQuickStep(gnpc, target, distToTarget);
+
+                // Jump / i-frame roll at incoming RANGED shots (gated >160px so melee swing hitboxes —
+                // also "friendly projectiles" — don't trigger it; the legacy BasicAI scan uses the same gate).
+                if (EvadesProjectiles && gnpc.DodgeTimer <= 0 && gnpc.QuickStepTimer <= 0 && distToTarget > 160f)
+                    TryEvadeIncomingProjectile(gnpc, target);
+            }
 
             // Reactive shield: raise/plant the guard after movement so it overrides pursuit velocity.
             UpdateShield();
@@ -712,7 +900,7 @@ namespace tsorcRevamp.NPCs.Invaders
             // it would call SlowDown() or set a stab-lunge velocity, overriding the dash.
             // Instead we skip attack AI entirely for those ticks so the dodge movement lands.
             // Also skip while the shield guard is committed so it holds its minimum window.
-            if (gnpc.DodgeTimer <= 0 && !_shielding)
+            if (gnpc.DodgeTimer <= 0 && gnpc.QuickStepTimer <= 0 && gnpc.QuickStepRecoveryTimer <= 0 && !_shielding)
                 InvaderAttackAI();
 
             UpdateAttackCommitFlags();
@@ -796,6 +984,26 @@ namespace tsorcRevamp.NPCs.Invaders
                                 _aerialHitCooldown = 8; // brief inter-hit cooldown during dive
                             }
                             else if (_flight.Mode == FlightMode.Hover
+                                  && CanBreathe && BreathAllowedAirborne
+                                  && _breathCooldown <= 0
+                                  && Main.rand.Next(130) == 0
+                                  && NPC.Distance(target.Center) <= BreathRange
+                                  && hasLOS)
+                            {
+                                // Aerial breath: charge while hovering, then the BreathTelegraph→Breathing
+                                // transition requests a strafe so the stream sweeps across as it flies past.
+                                EnterPhase(AttackPhase.BreathTelegraph, BreathTelegraphTicks);
+                            }
+                            else if (_flight.Mode == FlightMode.Hover
+                                  && CanThrowCursedKnives && CursedKnivesAllowedAirborne
+                                  && _cursedKnivesCooldown <= 0
+                                  && Main.rand.Next(140) == 0
+                                  && NPC.Distance(target.Center) <= CursedKnivesRange
+                                  && hasLOS)
+                            {
+                                StartCursedKnives(NPC.Distance(target.Center), hasLOS);
+                            }
+                            else if (_flight.Mode == FlightMode.Hover
                                   && Main.rand.Next(150) == 0
                                   && RangedWeaponItemType >= 0
                                   && _rangedCooldown <= 0
@@ -833,6 +1041,49 @@ namespace tsorcRevamp.NPCs.Invaders
                         }
                     }
 
+                    // ── Fire breath intercept (grounded) ──────────────────────────
+                    // Reached only when grounded (the airborne block above breaks first).  Rolls
+                    // BreathChance to plant and charge a sustained breath stream.
+                    if (CanBreathe && _breathCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist <= BreathRange && dist >= MinBreathRange
+                        && Main.rand.Next(100) < BreathChance)
+                    {
+                        EnterPhase(AttackPhase.BreathTelegraph, BreathTelegraphTicks);
+                        break;
+                    }
+
+                    // ── Cursed Knives intercept (grounded) ────────────────────────
+                    if (CanThrowCursedKnives && _cursedKnivesCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist <= CursedKnivesRange && dist >= CursedKnivesMinRange
+                        && Main.rand.Next(100) < CursedKnivesChance)
+                    {
+                        StartCursedKnives(dist, hasLOS);
+                        break;
+                    }
+
+                    // ── Secondary-ranged panic backhop ────────────────────────────
+                    // Player got too close: hop away (still facing them) and fire a single secondary
+                    // shot to reset spacing.  Bypasses the normal secondary min-range band.
+                    if (SecondaryRangedWeaponItemType >= 0
+                        && SecondaryRangedAvailable
+                        && SecondaryRangedBackhopRange > 0f
+                        && _secondaryRangedCooldown <= 0
+                        && NPC.velocity.Y == 0f
+                        && dist <= SecondaryRangedBackhopRange
+                        && Main.rand.Next(100) < SecondaryRangedBackhopChance)
+                    {
+                        int away = NPC.Center.X < target.Center.X ? -1 : 1; // direction AWAY from player
+                        _backhopDir   = away;
+                        _backhopTicks = BackhopMomentumTicks; // AI() carries the away-velocity over this window
+                        NPC.velocity.Y = -SecondaryRangedBackhopUpSpeed; // one-time upward arc
+                        NPC.direction = NPC.spriteDirection = -away; // keep facing the player to aim
+                        _directionHoldTicks = Math.Max(_directionHoldTicks, BackhopMomentumTicks);
+                        SetupRangedBurst(useSecondary: true, shotsOverride: 1, forceStanding: false);
+                        _standingShot = false; // mobile shot so the telegraph doesn't hard-brake the hop
+                        EnterPhase(AttackPhase.RangedTelegraph, _activeRangedTelegraphTicks);
+                        break;
+                    }
+
                     // ── Melee combo intercept ─────────────────────────────────────
                     // Roll first: combo system competes with the legacy slash/stab path.
                     // Combos require grounded, height-accessible target, archetype set, AND
@@ -864,7 +1115,8 @@ namespace tsorcRevamp.NPCs.Invaders
                                       && _spearCooldown <= 0 && heightDiff < 48f && NPC.velocity.Y == 0f;
                     bool wantPrimary   = RangedWeaponItemType >= 0 && dist <= RangedRange
                                          && dist >= MinRangedRange && _rangedCooldown <= 0;
-                    bool wantSecondary = SecondaryRangedWeaponItemType >= 0 && dist <= SecondaryRangedRange
+                    bool wantSecondary = SecondaryRangedWeaponItemType >= 0 && SecondaryRangedAvailable
+                                         && dist <= SecondaryRangedRange
                                          && dist >= SecondaryRangedMinRange && _secondaryRangedCooldown <= 0;
                     // Magic: fires from any elevation (no velocity.Y check), blocked at very close range.
                     bool wantMagic     = MagicWeaponItemType >= 0 && dist <= MagicRange
@@ -1105,12 +1357,16 @@ namespace tsorcRevamp.NPCs.Invaders
                     {
                         SetDisplayWeapon(MagicWeaponItemType, swing: true);
                         DoMagicAttack();
-                        EnterPhase(AttackPhase.MagicAttack, MagicAttackTicks);
+                        // A subclass can set _magicAttackTicksOverride inside DoMagicAttack to channel a
+                        // sustained cast (DoMagicTick runs each tick below); -1 keeps the instant cast.
+                        EnterPhase(AttackPhase.MagicAttack,
+                                   _magicAttackTicksOverride > 0 ? _magicAttackTicksOverride : MagicAttackTicks);
                     }
                     break;
 
                 case AttackPhase.MagicAttack:
                     NPC.velocity.X *= 0.5f; // momentum bleeds off during cast follow-through
+                    DoMagicTick(PhaseTimer);
                     if (--PhaseTimer <= 0)
                         EnterPhase(AttackPhase.MagicRecovery, MagicRecoveryTicks);
                     break;
@@ -1119,6 +1375,119 @@ namespace tsorcRevamp.NPCs.Invaders
                     if (--PhaseTimer <= 0)
                     {
                         _magicCooldown = MagicCooldownAfterUse;
+                        _magicAttackTicksOverride = -1; // clear any sustained-cast override
+                        EnterCasualOrIdle();
+                    }
+                    break;
+
+                // ── Fire breath ───────────────────────────────────────────────
+                // Telegraph: charge the mouth ember (DoBreathWindup).  Grounded → plant; airborne →
+                // keep hovering (flight controller owns velocity).  Stream: DoBreathTick spawns the
+                // breath each tick; airborne it strafes to sweep the fire across the player.
+                case AttackPhase.BreathTelegraph:
+                {
+                    bool airborneBreath = _flight != null && _flight.IsAirborne;
+                    if (!airborneBreath)
+                        SlowDown();
+                    int faceB = target.Center.X < NPC.Center.X ? -1 : 1;
+                    NPC.direction = faceB; NPC.spriteDirection = faceB;
+                    DoBreathWindup(BreathTelegraphTicks - PhaseTimer);
+                    CheckAndFireFlash(BreathTelegraphFlashColor);
+                    if (--PhaseTimer <= 0)
+                    {
+                        OnBreathStart();
+                        if (airborneBreath && _flight != null)
+                        {
+                            // Sweep: strafe to the far side of the player so the stream rakes across.
+                            int sweepDir = NPC.Center.X < target.Center.X ? 1 : -1;
+                            _flight.RequestStrafe(target.Center + new Vector2(sweepDir * 420f, 0f));
+                        }
+                        EnterPhase(AttackPhase.Breathing, BreathDurationTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.Breathing:
+                {
+                    bool airborneBreath = _flight != null && _flight.IsAirborne;
+                    if (!airborneBreath)
+                    {
+                        NPC.velocity.X *= 0.85f;
+                        int faceB = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceB; NPC.spriteDirection = faceB;
+                    }
+                    DoBreathTick(PhaseTimer);
+                    if (--PhaseTimer <= 0)
+                        EnterPhase(AttackPhase.BreathRecovery, BreathRecoveryTicks);
+                    break;
+                }
+
+                case AttackPhase.BreathRecovery:
+                    if (_flight == null || !_flight.IsAirborne)
+                        SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _breathCooldown = BreathCooldownAfterUse;
+                        EnterCasualOrIdle();
+                    }
+                    break;
+
+                // ── Cursed Knives ─────────────────────────────────────────────
+                // Telegraph (hold knife) → 1–3 throw volleys with inter-volley pauses → recovery.
+                case AttackPhase.KnivesTelegraph:
+                {
+                    bool airK = _flight != null && _flight.IsAirborne;
+                    if (!airK) SlowDown();
+                    int faceK = target.Center.X < NPC.Center.X ? -1 : 1;
+                    NPC.direction = faceK; NPC.spriteDirection = faceK;
+                    SetDisplayWeapon(CursedKnivesWeaponItemType, swing: false);
+                    CheckAndFireFlash(CursedKnivesTelegraphFlashColor);
+                    if (--PhaseTimer <= 0)
+                    {
+                        SetDisplayWeapon(CursedKnivesWeaponItemType, swing: true);
+                        DoCursedKnivesThrow();
+                        _cursedKnivesVolleysLeft--;
+                        EnterPhase(AttackPhase.KnivesThrow, CursedKnivesThrowTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.KnivesThrow:
+                {
+                    bool airK = _flight != null && _flight.IsAirborne;
+                    if (!airK) NPC.velocity.X *= 0.8f;
+                    if (--PhaseTimer <= 0)
+                    {
+                        if (_cursedKnivesVolleysLeft > 0)
+                            EnterPhase(AttackPhase.KnivesThrowPause, Math.Max(1, _cursedKnivesGap));
+                        else
+                            EnterPhase(AttackPhase.KnivesRecovery, CursedKnivesRecoveryTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.KnivesThrowPause:
+                {
+                    bool airK = _flight != null && _flight.IsAirborne;
+                    if (!airK) SlowDown();
+                    int faceK = target.Center.X < NPC.Center.X ? -1 : 1;
+                    NPC.direction = faceK; NPC.spriteDirection = faceK;
+                    if (--PhaseTimer <= 0)
+                    {
+                        SetDisplayWeapon(CursedKnivesWeaponItemType, swing: true);
+                        DoCursedKnivesThrow();
+                        _cursedKnivesVolleysLeft--;
+                        EnterPhase(AttackPhase.KnivesThrow, CursedKnivesThrowTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.KnivesRecovery:
+                    if (_flight == null || !_flight.IsAirborne)
+                        SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _cursedKnivesCooldown = CursedKnivesCooldownAfterUse;
                         EnterCasualOrIdle();
                     }
                     break;
@@ -1356,6 +1725,7 @@ namespace tsorcRevamp.NPCs.Invaders
             // counter is replaced by a pause-array that drives the shot sequence.
             _interShotPauses     = null;
             _interShotPauseIndex = 0;
+            _activeBurstPatternIndex = -1;
 
             int[][] patternPool = useSecondary ? SecondaryRangedBurstPatterns : PrimaryRangedBurstPatterns;
             int[] patternChances = useSecondary ? SecondaryRangedBurstChances : PrimaryRangedBurstChances;
@@ -1368,6 +1738,7 @@ namespace tsorcRevamp.NPCs.Invaders
             {
                 int patIdx = PickPatternByChance(patternChances, patternPool.Length);
                 _interShotPauses = patternPool[patIdx];
+                _activeBurstPatternIndex = patIdx;
 
                 if (telegraphExtras != null && patIdx < telegraphExtras.Length)
                     _activeRangedTelegraphTicks += telegraphExtras[patIdx];
@@ -1638,15 +2009,23 @@ namespace tsorcRevamp.NPCs.Invaders
             bool telegraph =
                 Phase == AttackPhase.MeleeTelegraph  || Phase == AttackPhase.StabTelegraph  ||
                 Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.SpearTelegraph ||
-                Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MeleeComboTelegraph;
+                Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MeleeComboTelegraph ||
+                Phase == AttackPhase.BreathTelegraph || Phase == AttackPhase.KnivesTelegraph;
 
             bool committed =
                 Phase == AttackPhase.MeleeAttack  || Phase == AttackPhase.StabAttack  ||
                 Phase == AttackPhase.RangedAttack || Phase == AttackPhase.SpearAttack ||
-                Phase == AttackPhase.MagicAttack  || Phase == AttackPhase.MeleeComboAttack;
+                Phase == AttackPhase.MagicAttack  || Phase == AttackPhase.MeleeComboAttack ||
+                Phase == AttackPhase.Breathing ||
+                Phase == AttackPhase.KnivesThrow || Phase == AttackPhase.KnivesThrowPause;
 
             if (_activeMeleeComboIndex >= 0 && _activeMeleeCombo.HyperArmor
                 && Phase == AttackPhase.MeleeComboPause)
+                committed = true;
+
+            // Full-window hyper-armor: fold the telegraph into the committed (un-staggerable) window so
+            // the whole attack — wind-up included — has hyper-armor, instead of only the post-flash swing.
+            if (HyperArmorDuringTelegraph && telegraph)
                 committed = true;
 
             g.AttackCommitted    = committed;
@@ -1745,8 +2124,41 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>
         /// Fire the magic projectile.  Called at the moment MagicAttack begins.
         /// Use <see cref="MagicWeaponItemType"/> and <see cref="MagicDamage"/>.
+        /// For a sustained cast, set <see cref="_magicAttackTicksOverride"/> here and emit per-tick in
+        /// <see cref="DoMagicTick"/>.
         /// </summary>
         protected virtual  void DoMagicAttack() { }
+
+        /// <summary>Called every tick of the MagicAttack phase with the ticks remaining.  Default no-op;
+        /// override (together with <see cref="_magicAttackTicksOverride"/>) for channeled casts such as a
+        /// timed meteor rain.</summary>
+        protected virtual  void DoMagicTick(int ticksRemaining) { }
+
+        /// <summary>Called every tick of the BreathTelegraph phase, with elapsed ticks counting up from 0.
+        /// Emit the swelling mouth-ember / charge VFX here.</summary>
+        protected virtual  void DoBreathWindup(int elapsed) { }
+
+        /// <summary>Called every tick of the active Breathing phase, with the breath ticks remaining.
+        /// Spawn the breath projectile(s) here (typically gated on a tick interval).</summary>
+        protected virtual  void DoBreathTick(int ticksRemaining) { }
+
+        /// <summary>Fired once when the breath stream releases (telegraph → Breathing).  Override for a
+        /// flamethrower whoosh / roar cue.</summary>
+        protected virtual  void OnBreathStart() { }
+
+        /// <summary>Spawn one Cursed Knives volley (typically 3 knives).  Called at each throw frame.</summary>
+        protected virtual  void DoCursedKnivesThrow() { }
+
+        /// <summary>Pick the volley count + inter-volley gap for a Cursed Knives attack from the range to
+        /// the player, then enter the telegraph.  Close = 1 volley; mid = 2 back-to-back; far+LOS = 3.</summary>
+        private void StartCursedKnives(float dist, bool hasLOS)
+        {
+            if (dist <= CursedKnivesCloseRange)      { _cursedKnivesVolleysLeft = 1; _cursedKnivesGap = 0; }
+            else if (dist <= CursedKnivesMidRange)   { _cursedKnivesVolleysLeft = 2; _cursedKnivesGap = CursedKnivesBackToBackGap; }
+            else if (hasLOS)                         { _cursedKnivesVolleysLeft = 3; _cursedKnivesGap = CursedKnivesFarGap; }
+            else                                     { _cursedKnivesVolleysLeft = 1; _cursedKnivesGap = 0; }
+            EnterPhase(AttackPhase.KnivesTelegraph, CursedKnivesTelegraphTicks);
+        }
 
         /// <summary>
         /// Minimum tick count a telegraph phase is allowed to last. <see cref="CheckAndFireFlash"/>
@@ -1764,7 +2176,9 @@ namespace tsorcRevamp.NPCs.Invaders
                             || phase == AttackPhase.RangedTelegraph
                             || phase == AttackPhase.SpearTelegraph
                             || phase == AttackPhase.MagicTelegraph
-                            || phase == AttackPhase.MeleeComboTelegraph;
+                            || phase == AttackPhase.MeleeComboTelegraph
+                            || phase == AttackPhase.BreathTelegraph
+                            || phase == AttackPhase.KnivesTelegraph;
             Phase      = phase;
             // Guarantee at least 30 ticks of telegraph so the flash always leads the attack by 30.
             PhaseTimer = isTelegraph ? Math.Max(duration, MinTelegraphTicks) : duration;
@@ -1773,6 +2187,68 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         private void SlowDown() => NPC.velocity.X *= 0.80f;
+
+        /// <summary>
+        /// Preemptive quick-step: when the player is mid-swing within melee reach, roll
+        /// <see cref="PreemptiveQuickStepChance"/> to dash THROUGH them (i-frames + pass-through, can't
+        /// damage them) and land past them.  The shared <see cref="tsorcRevampAIs.ArmQuickStep"/> picks the
+        /// forward step when there's room.  Uses the proactive-evasion cooldown so it can't spam.
+        /// </summary>
+        private void TryPreemptiveQuickStep(tsorcRevampGlobalNPC gnpc, Player target, float dist)
+        {
+            if (NPC.velocity.Y != 0f) return;                 // grounded only
+            if (dist > MeleeRange + 56f) return;              // must be in melee threat range
+            if (target.itemAnimation <= 0) return;            // player must be actively swinging/using
+            if (Main.rand.Next(100) >= PreemptiveQuickStepChance) return;
+
+            NPC.TargetClosest(true);
+            tsorcRevampAIs.ArmQuickStep(NPC, gnpc, allowForward: true);
+            gnpc.DodgeCooldown = 120; // shared proactive-evasion cooldown (~2 s)
+            NPC.netUpdate = true;
+        }
+
+        /// <summary>
+        /// Proactive projectile dodge for SF4 invaders (the legacy BasicAI Agility scan doesn't run for
+        /// them).  Scans for an incoming friendly projectile roughly aimed at this invader; on a hit,
+        /// rolls the GlobalNPC <c>Agility</c> stat and either jumps over it (with headroom) or triggers
+        /// the mover-agnostic DodgeTimer i-frames.  Mirrors the RunFighterCombatTriggers dodge logic.
+        /// </summary>
+        private void TryEvadeIncomingProjectile(tsorcRevampGlobalNPC gnpc, Player target)
+        {
+            if (gnpc.Agility <= 0f) return; // Agility unset/zero → no dodging
+            float rangeSq = ProjectileEvadeRange * ProjectileEvadeRange;
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile p = Main.projectile[i];
+                if (!p.active || !p.friendly || p.damage <= 0) continue;
+                if (p.DistanceSQ(NPC.Center) >= rangeSq) continue;
+                // Roughly aimed at us?  Compare the projectile's heading to the bearing toward this NPC.
+                if (UsefulFunctions.CompareAngles(p.velocity, UsefulFunctions.Aim(p.Center, NPC.Center, 1f)) >= 0.35f) continue;
+
+                if (Main.rand.NextFloat() < gnpc.Agility)
+                {
+                    bool headroom = true;
+                    for (int j = 1; j <= 8; j++)
+                    {
+                        if (UsefulFunctions.IsTileReallySolid(NPC.Center + new Vector2(0f, -16f * j)))
+                        {
+                            headroom = false;
+                            break;
+                        }
+                    }
+                    // Grounded + headroom → preemptive jump; otherwise an in-place i-frame roll.
+                    if (headroom && NPC.velocity.Y == 0f && Main.rand.NextBool())
+                        NPC.velocity.Y -= 8f;
+                    else
+                        gnpc.DodgeTimer = 30;
+
+                    gnpc.DodgeCooldown = (int)(300 * (1f - gnpc.Agility));
+                    NPC.netUpdate = true;
+                }
+                break; // react to at most one projectile per tick
+            }
+        }
 
         // ── Damage tracking for emergency heal + reactive shield ──────────────────
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -1992,6 +2468,17 @@ namespace tsorcRevamp.NPCs.Invaders
                     : 1f;
                 // Thrust forward as the spell fires.
                 _weaponRotation = MathHelper.Lerp(-1.40f, 0.20f, magicT);
+            }
+            else if (Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrowPause)
+            {
+                // Hold the knife high, ready to throw (same read as the throwing-star telegraph).
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.75f, 0.20f);
+            }
+            else if (Phase == AttackPhase.KnivesThrow)
+            {
+                // Swing the arm forward as the knives leave the hand.
+                float kt = CursedKnivesThrowTicks > 0 ? 1f - (float)PhaseTimer / CursedKnivesThrowTicks : 1f;
+                _weaponRotation = MathHelper.Lerp(-0.75f, 0.45f, kt);
             }
             else if (Phase == AttackPhase.MeleeTelegraph)
             {
@@ -2438,6 +2925,14 @@ namespace tsorcRevamp.NPCs.Invaders
             else if (Phase == AttackPhase.MagicAttack)
             {
                 bodyRow = 3; // Use3 — arm thrusts forward as the spell fires
+            }
+            else if (Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrowPause)
+            {
+                bodyRow = 2; // Use2 — arm raised, knife held ready
+            }
+            else if (Phase == AttackPhase.KnivesThrow)
+            {
+                bodyRow = 3; // Use3 — arm forward at release
             }
             else if (Phase == AttackPhase.MeleeComboTelegraph
                   || Phase == AttackPhase.MeleeComboAttack

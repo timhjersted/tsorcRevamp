@@ -159,6 +159,26 @@ namespace tsorcRevamp.NPCs
         }
 
         /// <summary>
+        /// The Cursed Dragon invader: a winged spear-and-spellcaster bruiser. Not a skittish dodger, so no
+        /// hop-away / blink / weightless quick-step (those read wrong on a heavy armored dragon). When struck in
+        /// neutral it answers with aggressive spacing plays — a one-shot <see cref="EvasiveBehavior.LeapForward"/>
+        /// to punish ranged kiting (it has no teleport), a telegraphed hyper-armored <see cref="EvasiveBehavior.RunningDash"/>
+        /// charge straight back in, and an occasional low <see cref="EvasiveBehavior.RetreatDash"/> to reset to
+        /// meteor / arcane-ball range. All three flow through the SF4 pursuit mover, so it slides straight into a
+        /// spear poke or combo on arrival. (Same bundle as <see cref="LothricKnight"/>, named per-enemy by convention.)
+        /// </summary>
+        public static void CursedDragon(tsorcRevampGlobalNPC globalNPC)
+        {
+            globalNPC.EvasiveLeapForward = true;
+            globalNPC.EvasiveRunningDash = true;
+            globalNPC.EvasiveRetreatDash = true;
+            // On-hit i-frame quick-step.  SAFE on invaders now that InvaderNPC ticks the shared executor
+            // (tsorcRevampAIs.TickQuickStep) every frame — previously QuickStepTimer only advanced inside the
+            // FighterAI combat layer, so on an invader it would have stuck on → permanent i-frames.
+            globalNPC.EvasiveQuickStep = true;
+        }
+
+        /// <summary>
         /// The AddAttack ghost fighters (Forgotten Warrior / Forgotten Knight / Darkmoon Knight): phase back or
         /// i-frame quick-step when hit. No teleport flag — they don't set CanTeleport (they have their own ghost
         /// wall-phase), so TeleportAway would just leap. QuickStep's i-frame dodge-through fits a phasing ghost.
