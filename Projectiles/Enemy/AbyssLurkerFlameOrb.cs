@@ -2,10 +2,11 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
-    class FireLurkerFlameOrb : ModProjectile
+    class AbyssLurkerFlameOrb : ModProjectile
     {
         const int ReleasedTime = 3 * 60;
 
@@ -16,6 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
+            Projectile.scale = 1.1f;
             Projectile.width = 18;
             Projectile.height = 18;
             Projectile.hostile = true;
@@ -29,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3() * 0.7f);
+            Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3() * 0.75f);
             Animate();
 
             if (Projectile.ai[1] >= 0)
@@ -71,7 +73,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (Main.rand.NextBool(4))
             {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, 0, 0, 120, default, 1.2f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkTorch, 0, 0, 120, default, 1.2f);
                 Main.dust[dust].noGravity = true;
             }
         }
@@ -97,7 +99,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.alpha = 0;
             if (Main.rand.NextBool(2))
             {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1.5f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkTorch, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1.5f);
                 Main.dust[dust].noGravity = true;
             }
         }
@@ -113,13 +115,13 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(BuffID.OnFire, 4 * 60);
-            SpawnFlameDust(20, 4.5f, 1.7f);
+            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false);
+            SpawnFlameDust(25, 4.6f, 1.9f);
         }
 
         public override void OnKill(int timeLeft)
         {
-            SpawnFlameDust(12, 3f, 1.5f);
+            SpawnFlameDust(15, 3.2f, 1.7f);
         }
 
         void SpawnFlameDust(int count, float speed, float scale)
@@ -132,7 +134,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             for (int i = 0; i < count; i++)
             {
                 Vector2 velocity = Main.rand.NextVector2Circular(speed, speed);
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, velocity.X, velocity.Y, 80, new Color(255, 135, 35), scale);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkTorch, velocity.X, velocity.Y, 80, new Color(255, 135, 35), scale);
                 Main.dust[dust].noGravity = true;
             }
         }

@@ -74,6 +74,11 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             player.jumpSpeedBoost += 0.8f;
 
             bool restricted = false;
+            if (player.mount.Active || player.vortexStealthActive)
+            {
+                restricted = true;
+            }
+            
             for (int i = 3; i <= 8; i++)
             {
                 if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots

@@ -67,7 +67,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             recipe.AddIngredient(ItemID.FeralClaws);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000); // not 20000 dark souls for consistency for other runeterra weapons, and the weapon is already nerfed/harder to get now
 
             recipe.AddTile(TileID.DemonAltar);
 

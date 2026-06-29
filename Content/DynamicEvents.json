@@ -948,21 +948,21 @@
     "TriggerDust": 158,
     "VisibleRing": true,
     "SaveOnCompletion": true,
-    "TextToDisplay": "A Red Knight has invaded your world!",
+    "TextToDisplay": "A Black Knight has invaded your world!",
     "TextColorHex": "800080FF",
     "WorldCondition": null,
     "MapCondition": "DefaultCondition",
-    "CustomAction": "RedKnightPainCustomAction",
+    "CustomAction": "BlackKnightPainCustomAction",
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/RedKnight",
+        "NpcName": "tsorcRevamp/BlackKnight",
         "SpawnX": 3897.0,
         "SpawnY": 1219.0,
-        "CustomHealth": 2660,
-        "CustomDamage": 65,
-        "CustomDefense": 10,
-        "CustomSouls": 3350
+        "CustomHealth": 3560,
+        "CustomDamage": 70,
+        "CustomDefense": 15,
+        "CustomSouls": 3550
       }
     ],
     "ExtraLootItemNames": [

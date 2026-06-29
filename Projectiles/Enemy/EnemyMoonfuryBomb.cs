@@ -95,14 +95,14 @@ namespace tsorcRevamp.Projectiles.Enemy
                 // Smoke and fuse dust spawn.
                 if (Main.rand.NextBool(2))
                 {
-                    int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, Color.MediumPurple, 1f);
+                    int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.Shadowflame, 0f, 0f, 100, Color.MediumPurple, 1.1f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].noGravity = true;
 
                     for (int i = 0; i < 2; i++)
                     {
-                        int purple = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.PurpleTorch, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.3f);
+                        int purple = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.PurpleTorch, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.4f);
                         Main.dust[purple].noGravity = true;
                     }
                     // Main.dust[dustIndex].position = projectile.Center + new Vector2(0f, (float)(-(float)projectile.height / 2)).RotatedBy((double)projectile.rotation, default(Vector2)) * 1.1f;
@@ -146,7 +146,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Fire Dust spawn
             for (int i = 0; i < 200; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, DustID.CosmicEmber, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, Color.Purple, 2f);
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, DustID.ShadowbeamStaff, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, Color.Purple, 2.1f);
                 Main.dust[dustIndex].noGravity = true;
                 Main.dust[dustIndex].velocity *= 1f;
             }

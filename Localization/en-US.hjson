@@ -10298,6 +10298,14 @@ Mods: {
 			CursedDragonKnife.DisplayName: Cursed Dragon Knife
 			EnemyPilgrimArcaneBall.DisplayName: Enemy Pilgrim Arcane Ball
 			EnemyVenomStaffProj.DisplayName: Enemy Venom Staff Proj
+			NonAccelDarkSlime.DisplayName: Non Accel Dark Slime
+			AbyssLurkerFlameOrb.DisplayName: Abyss Lurker Flame Orb
+			AbyssLurkerMeteor.DisplayName: Abyss Lurker Meteor
+			OccultistDarkOrb.DisplayName: Occultist Dark Orb
+			OccultistStar.DisplayName: Occultist Star
+			OccultistStarBig.DisplayName: Occultist Star Big
+			AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
+			AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
 		}
 
 		NPCs: {
@@ -12028,7 +12036,7 @@ Mods: {
 			GreatBlackKnight.DisplayName: Great Black Knight
 			FaraamSpriteTestInvader.DisplayName: Faraam Sprite Test Invader
 			FirebombHollowOriginal.DisplayName: Old Firebomb Hollow
-			AbyssLurker.DisplayName: Old Abyssal Strider
+			AbyssLurker.DisplayName: Abyssal Strider
 			HollowWarriorOriginal.DisplayName: Old Hollow Warrior
 			HollowSoldierOriginal.DisplayName: Old Hollow Soldier
 			GhostOfAHollowWarriorOriginal.DisplayName: Old Ghost of a Hollow Warrior
@@ -12040,6 +12048,7 @@ Mods: {
 			LothricBlackKnightOriginal.DisplayName: Old Lothric Black Knight
 			RingedKnightOriginal.DisplayName: Old Ringed Knight
 			CursedDragonInvader.DisplayName: Cursed Dragon Invader
+			AbysmalOolacileSorcererTEST.DisplayName: Abysmal Oolacile Sorcerer T E S T
 		}
 
 		Prefixes: {

@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items.Accessories.Mobility.Wings
 {
@@ -100,6 +101,53 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             {
                 player.gravity += 0.15f;
                 player.maxFallSpeed += 15f;
+            }
+
+            bool restricted = false;
+            if (player.mount.Active || player.vortexStealthActive)
+            {
+                restricted = true;
+            }
+
+            if (!restricted)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.SupersonicWingsLevel;
+
+                // Fall faster if player holds down
+                if (player.TryingToHoverDown && !player.controlJump &&
+                    !ModContent.GetInstance<tsorcRevampConfig>().DisableModWingsFallControlDuringFlight)
+                {
+                    player.gravity += 0.15f;
+                    player.maxFallSpeed += 15f;
+                }
+
+
+                /** W1K's original code
+                if (player.controlLeft) {
+                    if (player.velocity.X > -3) player.velocity.X -= (float)(player.moveSpeed - 1f) / 10;
+                    if (player.velocity.X < -3 && player.velocity.X > -6 * player.moveSpeed) {
+                        if (player.velocity.Y != 0) player.velocity.X -= 0.1f;
+                        else player.velocity.X -= 0.2f;
+                        player.velocity.X -= 0.02f + ((player.moveSpeed - 1f) / 10);
+                    }
+                }
+                if (player.controlRight) {
+                    if (player.velocity.X < 3) player.velocity.X += (float)(player.moveSpeed - 1f) / 10;
+                    if (player.velocity.X > 3 && player.velocity.X < 6 * player.moveSpeed) {
+                        if (player.velocity.Y != 0) player.velocity.X += 0.1f;
+                        else player.velocity.X += 0.2f;
+                        player.velocity.X += 0.02f + ((player.moveSpeed - 1f) / 10);
+                    }
+                }**/
+
+                if (player.velocity.X > 6 || player.velocity.X < -6)
+                {
+                    player.waterWalk = true;
+                    int sonicDust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 16, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, default, 2f);
+                    Main.dust[sonicDust].noGravity = true;
+                    Main.dust[sonicDust].noLight = false;
+
+                }
             }
 
             if (SoulsModeMobility.Enabled(player))
