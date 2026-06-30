@@ -479,6 +479,19 @@ namespace tsorcRevamp
                     },
                     InterfaceScaleType.UI)
                 );
+
+                layers.Insert(potionBagIndex, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Storage UI",
+                    delegate
+                    {
+                        if (StorageUIState.Visible)
+                        {
+                            mod.StorageUserInterface.Draw(Main.spriteBatch, new GameTime());
+                        }
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
             }
         }
 
@@ -543,6 +556,10 @@ namespace tsorcRevamp
             if (PotionBagUIState.Visible)
             {
                 mod.PotionBagUserInterface?.Update(gameTime);
+            }
+            if (StorageUIState.Visible)
+            {
+                mod.StorageUserInterface?.Update(gameTime);
             }
             if (mod.EnemySelectionUI.Visible)
             {
@@ -670,7 +687,8 @@ namespace tsorcRevamp
         {
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.Draw(spriteBatch);
-            if (tsorcRevamp.NearbySoapstone != null)
+            // Suppress soapstone message bubbles while the Storage pop-up is open so they don't draw over it.
+            if (tsorcRevamp.NearbySoapstone != null && !UI.StorageUIState.Visible)
             {
                 SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
                 float scaleMod = (float)((ModContent.GetInstance<tsorcRevampConfig>().SoapstoneScale / 100f) + 1) / Main.GameViewMatrix.Zoom.X;

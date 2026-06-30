@@ -388,6 +388,9 @@ namespace tsorcRevamp
         //Active Shields Revamp: the SoulsMode-only "Right-Click" (2nd) slot. Holds a usable item or shield that activates on right click.
         public UIItemSlot RightClickSlot;
 
+        //Dark Souls Storage: a decorative button-slot below the 2nd slot that opens the Storage pop-up. Holds no item.
+        public UI.StorageOpenerSlot StorageOpenerSlot;
+
         public int PiercingGazeCharge;
 
         public bool PowerWithin;

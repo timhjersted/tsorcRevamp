@@ -94,7 +94,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         {
             if (!Main.dedServ)
             {
-                SoundEngine.PlaySound(SoundID.NPCDeath13 with { Volume = 0.5f, Pitch = 0.2f }, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.NPCHit35 with { Volume = 0.5f, Pitch = 0.2f }, Projectile.Center);
             }
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {

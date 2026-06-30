@@ -207,6 +207,12 @@ namespace tsorcRevamp
             set => ModContent.GetInstance<tsorcRevampVisualConfig>().DisableLocationBanner = value;
         }
 
+        public bool OnlyShowMapWhenInventoryIsOpen
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().OnlyShowMapWhenInventoryIsOpen;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().OnlyShowMapWhenInventoryIsOpen = value;
+        }
+
         public uint SoapstoneScale
         {
             get => ModContent.GetInstance<tsorcRevampVisualConfig>().SoapstoneScale;
@@ -387,6 +393,9 @@ namespace tsorcRevamp
 
         [DefaultValue(false)]
         public bool DisableLocationBanner { get; set; }
+
+        [DefaultValue(true)]
+        public bool OnlyShowMapWhenInventoryIsOpen { get; set; }
 
         [Range(0, 100)]
         [DefaultValue(true)]

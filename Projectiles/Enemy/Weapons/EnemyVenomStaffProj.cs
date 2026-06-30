@@ -6,13 +6,14 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
-    /// Hostile purple venom fang fired in a shotgun spread by an invader's enemy Venom Staff.  Straight
-    /// flight, applies the Venom debuff on hit.  Visuals borrow the vanilla VenomFang sprite + a
+    /// Hostile purple venom shard fired in a shotgun spread by an invader's enemy Venom Staff.  Straight
+    /// flight, applies the Venom debuff on hit.  Reuses the mod's clean single-frame VenomBlade sprite
+    /// (the vanilla VenomBullet texture is a multi-frame animation strip that rendered clipped) + a
     /// DustID.VenomStaff purple trail.
     /// </summary>
     public class EnemyVenomStaffProj : ModProjectile
     {
-        public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.VenomBullet;
+        public override string Texture => "tsorcRevamp/Projectiles/Throwing/VenomBlade";
 
         public override void SetDefaults()
         {

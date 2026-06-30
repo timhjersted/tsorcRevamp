@@ -123,11 +123,23 @@ namespace tsorcRevamp
             SoulSlot.Position = new Vector2(slotPosX, slotPosY);
             drawRightClick = SoulsMode;
 
+            // Each stacked slot now has its label ABOVE it, so the pitch = slot height + a gap for the label.
+            int slotH = (int)(52 * Main.inventoryScale);
+            int pitch = slotH + 16;
+            int storagePosY;
             if (drawRightClick)
             {
-                int rcPosY = slotPosY + (int)(56 * Main.inventoryScale);
+                int rcPosY = slotPosY + pitch;
                 RightClickSlot.Position = new Vector2(slotPosX, rcPosY);
+                storagePosY = rcPosY + pitch;
             }
+            else
+            {
+                // No 2nd slot in this mode — slide up directly under the souls slot.
+                storagePosY = slotPosY + pitch;
+            }
+
+            StorageOpenerSlot.Position = new Vector2(slotPosX, storagePosY);
         }
 
         public void UpdateCustomInventorySlots()
@@ -147,6 +159,7 @@ namespace tsorcRevamp
             {
                 RightClickSlot.Update();
             }
+            StorageOpenerSlot.Update();
 
             Main.inventoryScale = origScale;
         }
@@ -174,9 +187,14 @@ namespace tsorcRevamp
             {
                 int rcPosY = (int)RightClickSlot.Position.Y;
                 RightClickSlot.Draw(spriteBatch);
-                // "2nd" label sits below the slot.
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, LangUtils.GetTextValue("UI.SecondSlot"), new Vector2(slotPosX + 6f, rcPosY + (int)(52 * Main.inventoryScale) + 2), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0);
+                // "2nd" label sits above the slot (like the "Souls" / "Storage" labels).
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, LangUtils.GetTextValue("UI.SecondSlot"), new Vector2(slotPosX + 6f, rcPosY - 15), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0);
             }
+
+            // The Storage opener slot is always available; its "Storage" label sits above it (like "Souls").
+            int storagePosY = (int)StorageOpenerSlot.Position.Y;
+            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, LangUtils.GetTextValue("UI.Storage"), new Vector2(slotPosX + 6f, storagePosY - 15), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0);
+            StorageOpenerSlot.Draw(spriteBatch);
 
             Main.inventoryScale = origScale;
 

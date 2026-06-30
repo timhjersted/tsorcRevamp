@@ -119,6 +119,7 @@ namespace tsorcRevamp
         public static ModKeybind WingsOfSeath;
         public static ModKeybind Shunpo;
         public static ModKeybind PrintPosition;
+        public static ModKeybind StorageKey;
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         internal bool UICooldown = false;
@@ -134,6 +135,10 @@ namespace tsorcRevamp
         public static List<int> CrossModTiles;
         public static List<int> PlaceAllowedModTiles;
         public static List<int> BannedItems;
+        // Item types that must never auto-deposit into the Dark Souls Storage box. Grab-on-touch resource
+        // pickups (hearts, mana stars, nebula boosters, stamina droplets) belong here — they're consumed on
+        // contact and would otherwise be filed away and re-collected endlessly. Populated in PopulateArrays().
+        public static HashSet<int> StorageExcludedTypes;
         public static List<int> RestrictedHooks;
         public static List<int> DisabledRecipes = new List<int>();
         public static List<int> GiantWormSegments;
@@ -191,6 +196,8 @@ namespace tsorcRevamp
         internal UserInterface _ceruleanFlaskUIState; //idk what to say
         internal PotionBagUIState PotionUIState;
         internal UserInterface PotionBagUserInterface;
+        internal StorageUIState StorageUIState;
+        internal UserInterface StorageUserInterface;
         internal CustomMapUIState DownloadUIState;
         internal UserInterface DownloadUI;
         internal MapMarkersUIState MarkerState;
@@ -284,6 +291,7 @@ namespace tsorcRevamp
             Shunpo = KeybindLoader.RegisterKeybind(this, "Shunpo", Microsoft.Xna.Framework.Input.Keys.V);
             //SwordflipKey = KeybindLoader.RegisterKeybind(this, "Sword Flip", Microsoft.Xna.Framework.Input.Keys.P);
             PrintPosition = KeybindLoader.RegisterKeybind(this, "Print Position", Microsoft.Xna.Framework.Input.Keys.P);
+            StorageKey = KeybindLoader.RegisterKeybind(this, "Open Storage", Microsoft.Xna.Framework.Input.Keys.T);
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulCoin>(), 99999L));
 
@@ -303,6 +311,9 @@ namespace tsorcRevamp
 
             PotionUIState = new PotionBagUIState();
             PotionBagUserInterface = new UserInterface();
+
+            StorageUIState = new StorageUIState();
+            StorageUserInterface = new UserInterface();
 
 
             DownloadUIState = new CustomMapUIState();
@@ -333,6 +344,8 @@ namespace tsorcRevamp
             _ceruleanFlaskUIState.SetState(CeruleanFlaskUIState);
 
             PotionBagUserInterface.SetState(PotionUIState);
+            StorageUIState.Activate();
+            StorageUserInterface.SetState(StorageUIState);
             DownloadUI.SetState(DownloadUIState);
 
             _enemySelectionUI.SetState(EnemySelectionUI);
@@ -658,6 +671,27 @@ namespace tsorcRevamp
                 ItemID.MechanicalEye,
                 ItemID.MechanicalSkull,
                 ItemID.MechanicalWorm
+            };
+            #endregion
+            //--------
+            #region StorageExcludedTypes list
+            // Grab-on-touch resources that are consumed on contact — never store these.
+            StorageExcludedTypes = new HashSet<int>()
+            {
+                // Life pickups (Heart + Halloween/Christmas variants)
+                ItemID.Heart, ItemID.CandyApple, ItemID.CandyCane,
+                // Mana pickups (Star + Halloween/Christmas variants)
+                ItemID.Star, ItemID.SoulCake, ItemID.SugarPlum,
+                // Nebula armor boosters
+                ItemID.NebulaPickup1, ItemID.NebulaPickup2, ItemID.NebulaPickup3,
+                // Permanent stat-up consumables — keep handy, don't bury them
+                ItemID.LifeCrystal, ItemID.LifeFruit, ItemID.ManaCrystal,
+                // Goodie/present bags (boss "Treasure Bags" + fishing crates are caught dynamically in IsStorageDepositable)
+                ItemID.GoodieBag, ItemID.Present,
+                // Mod resource droplets / currency (consumed or spent at altars, not stored)
+                ModContent.ItemType<StaminaDroplet>(),
+                ModContent.ItemType<Items.Materials.DarkSoul>(),
+                ModContent.ItemType<SoulCoin>(),
             };
             #endregion
             //--------

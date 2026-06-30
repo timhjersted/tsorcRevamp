@@ -352,6 +352,8 @@ Mods: {
 			Souls: 黑暗之魂
 			// SecondSlot: 2nd
 			// SecondSlotHover: Right-Click Slot — its item or shield activates on right click
+			// Storage: Storage
+			// OpenStorage: Open Storage — Shift click to store inventory items while Storage is open
 			StaminaUse: "耐力消耗: "
 			StaminaUseOnHitOnly: "命中时耐力消耗: "
 			Tired: 疲惫
@@ -12019,7 +12021,7 @@ Mods: {
 			// LothricSpearKnightOriginal.DisplayName: Old Lothric Spear Knight
 			// LothricBlackKnightOriginal.DisplayName: Old Lothric Black Knight
 			// RingedKnightOriginal.DisplayName: Old Ringed Knight
-			// CursedDragonInvader.DisplayName: Cursed Dragon Invader
+			// CursedDragonInvader.DisplayName: Cursed Dragon
 		}
 
 		Prefixes: {
@@ -12077,6 +12079,7 @@ Mods: {
 			"Krakens Cast.DisplayName": 海妖旋风
 			"Witchking Scream.DisplayName": 巫师尖啸
 			"Print Position.DisplayName": 显示玩家位置
+			// "Open Storage.DisplayName": Open Storage
 		}
 
 		InfoDisplays: {
@@ -12296,6 +12299,15 @@ Mods: {
 				DisableLocationBanner: {
 					// Label: Disable Location Banner
 					// Tooltip: ""
+				}
+
+				OnlyShowMapWhenInventoryIsOpen: {
+					// Label: Only Show Map When Inventory Is Open
+					/* Tooltip:
+						'''
+						Hides the minimap and overlay map during normal gameplay, while keeping your
+						selected map mode visible when the inventory is open. Defaults to On.
+						''' */
 				}
 
 				ShowStaminaTooltip: {

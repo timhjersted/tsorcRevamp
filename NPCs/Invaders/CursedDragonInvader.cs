@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Invaders
             DiveTopSpeed = 12f,
             LandSpeed = 6.5f,
             MaxFlightTicks = 660,
-            CooldownTicks = 150,
+            CooldownTicks = 110,
             TakeOffTicks = 32,
             HoverDwellTicks = 90,
             StrafeTicks = 60,
@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Invaders
             LandTicks = 80,
             WingFlapSpeed = 0.085f,
         };
-        protected override int RandomTakeoffChance => 10;
+        protected override int RandomTakeoffChance => 17; // takes to the air more readily
         protected override float FlightHpEscalationFrac => 0.60f;
 
         // ── Loadout ───────────────────────────────────────────────────────────────
@@ -109,6 +109,25 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int StandingRangedChance => 45;
         protected override int RangedComboChance => 0; // no ranged combos from the spear archetype
 
+        // Arcane ball ground volleys.  Pattern 3's final "shot" is a 12-ball circle burst.
+        private const int ArcaneCirclePattern = 3;
+        protected override int[][] PrimaryRangedBurstPatterns => new int[][]
+        {
+            new int[] { 30 },                                       // 0: 2 shots, 30 apart
+            new int[] { 30, 30 },                                   // 1: 3 shots, 30 apart
+            new int[] { 60, 20, 20, 20, 20, 20, 20, 20 },           // 2: 9 shots (2@60, then 7@20)
+            new int[] { 10, 60 },                                   // 3: 2 shots (10 apart), 60, then a 12-ball circle
+        };
+        protected override int[] PrimaryRangedBurstChances => new int[] { 35, 30, 20, 15 };
+        protected override int[] PrimaryRangedBurstTelegraphExtras => new int[] { 0, 0, 10, 12 };
+        protected override Color[] PrimaryRangedBurstFlashColors => new Color[]
+        {
+            new Color(120, 180, 255),
+            new Color(120, 180, 255),
+            new Color(150, 160, 255),
+            new Color(180, 120, 255), // circle-burst finisher — brighter
+        };
+
         // ── Secondary ranged: enemy Venom Staff (shotgun blasts + pattern bursts) ───
         protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Crossbow;
         protected override float SecondaryRangedRange => 640f;
@@ -148,10 +167,11 @@ namespace tsorcRevamp.NPCs.Invaders
 
         // ── Magic: MeteorStorm (instant 3-storm, rare 7 s rain) ─────────────────────
         protected override float MagicRange => 860f;
-        protected override float MinMagicRange => 320f;
+        protected override float MinMagicRange => 240f;   // usable across more of the fight
         protected override int MagicTelegraphTicks => 60;
         protected override int MagicRecoveryTicks => 75;
-        protected override int MagicCooldownAfterUse => 360;
+        protected override int MagicCooldownAfterUse => 180; // fires more often
+        protected override int MagicPreferenceChance => 55;  // meteors compete with arcane ball, not just fill gaps
 
         // ── Fire breath: red Ancient-Demon flame, usable grounded or in a flying sweep ──
         protected override bool CanBreathe => true;
@@ -201,9 +221,22 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override Color SpearTelegraphFlashColor => new Color(140, 210, 255);
         protected override Color RangedTelegraphFlashColor => new Color(120, 180, 255);
         protected override Color MagicTelegraphFlashColor => new Color(255, 80, 60);
-        protected override float MeleeWeaponDrawScale => 0.78f;
         protected override Vector2 MeleeHandleNorm => new Vector2(0.18f, 0.78f);
         protected override float MeleeWeaponRotationOffset => MathHelper.ToRadians(-8f);
+
+        // ── Spear draw: grip slides along the shaft so the spear extends/retracts like the player's ──
+        protected override bool DrawWeaponAsSpear => true;
+        // Use the holdout-projectile sprite (full shaft + head) instead of the small item icon.
+        protected override string SpearDrawTexturePath => "tsorcRevamp/Projectiles/Melee/Spears/PilgrimSpontoonProj";
+        protected override Vector2 SpearHeadNorm => new Vector2(0.85f, 0.15f); // trident head, top-right of the sprite
+        protected override Vector2 SpearBaseNorm => new Vector2(0.10f, 0.90f); // butt of the shaft, bottom-left
+        // Combo hitboxes reach out to roughly the spear's length so swings/thrusts connect at their visual reach.
+        protected override float ComboReachBase => 230f;
+        protected override float MeleeEngageRange => 200f; // start spear combos from spear distance, not point-blank
+        // Keep pursuing through the wind-up so the player can't just step out of range.
+        protected override bool SlowDownBeforeMelee => false;
+        // Meteor staff is gripped low on the shaft during the cast (≈30% from the bottom).
+        protected override Vector2 MagicGripNorm => new Vector2(0.5f, 0.72f);
 
         private Vector2 MouthPosition => NPC.Center + new Vector2(NPC.spriteDirection * 16f, -16f);
 
@@ -216,7 +249,7 @@ namespace tsorcRevamp.NPCs.Invaders
         {
             NPC.width = 20;
             NPC.height = 42;
-            NPC.lifeMax = 9000;   // Plantera-tier mini-boss; tune to taste
+            NPC.lifeMax = 25000;
             NPC.defense = 40;
             NPC.damage = 0;       // all damage via weapon hitboxes / projectiles
             NPC.knockBackResist = 0.12f;
@@ -289,7 +322,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override void DoSpearAttack()
         {
             SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.75f, PitchVariance = 0.12f }, NPC.Center);
-            TryMeleeHit(reach: SpearRange * 0.62f);
+            TryMeleeHit(reach: SpearRange * 0.85f); // reach matches the trigger range so the poke connects
         }
 
         // ── Ranged: arcane ball (primary) + venom staff (secondary) ─────────────────
@@ -316,9 +349,33 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
 
-            // Primary: arcane ball.  This path is also what the base fires from the air (hover shot),
-            // so the dragon naturally lobs arcane balls while flying.
-            FireArcaneBall(target);
+            // Primary: arcane ball.  Pattern 3's final shot is a 12-ball circle burst.
+            // (The aerial hover shot uses shotsOverride:1 — no pattern — so it stays a single ball.)
+            if (ActiveBurstPatternIndex == ArcaneCirclePattern && IsFinalBurstShot)
+            {
+                FireArcaneCircle(target);
+            }
+            else
+            {
+                FireArcaneBall(target);
+            }
+        }
+
+        private void FireArcaneCircle(Player target)
+        {
+            SoundEngine.PlaySound(SoundID.Item25 with { Volume = 0.85f, Pitch = -0.2f }, NPC.Center);
+            Vector2 origin = NPC.Center + new Vector2(0f, -8f);
+            const int count = 12;
+            float baseAngle = (target.Center - origin).ToRotation(); // first ball aimed at the player
+            for (int i = 0; i < count; i++)
+            {
+                float ang = baseAngle + MathHelper.TwoPi * i / count;
+                Vector2 vel = ang.ToRotationVector2() * 8f;
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromThis(), origin, vel,
+                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyPilgrimArcaneBall>(),
+                    RangedDamage, 1f, Main.myPlayer);
+            }
         }
 
         private void FireArcaneBall(Player target)
@@ -362,7 +419,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 // 144° steps trace a 5-point star (pentagram); start at the top tip.
                 float ang = MathHelper.ToRadians(-90f + i * 144f);
                 Vector2 spawn = center + new Vector2((float)Math.Cos(ang), (float)Math.Sin(ang)) * radius;
-                Vector2 vel = (aimAt - spawn).SafeNormalize(Vector2.UnitY) * 13f;
+                Vector2 vel = (aimAt - spawn).SafeNormalize(Vector2.UnitY) * 3.9f; // ~70% slower than before
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), spawn, vel,
                     ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteorStormMeteor>(),
@@ -391,10 +448,12 @@ namespace tsorcRevamp.NPCs.Invaders
 
             _meteorRainActive = false;
             _magicAttackTicksOverride = -1;
-            for (int i = 0; i < 3; i++) // instant 3-meteor storm
-            {
-                SpawnSkyMeteor(target, spreadX: 260f, leadMult: 18f + i * 5f);
-            }
+            // Three meteors: left and right flanks land near the player's current position;
+            // the center meteor leads aggressively in the player's run direction so simply
+            // kiting in one direction doesn't guarantee a dodge.
+            SpawnSkyMeteor(target, xOffset: -300f, jitter: 30f, leadMult: 4f);   // left flank
+            SpawnSkyMeteor(target, xOffset:    0f, jitter: 20f, leadMult: 80f);  // predictive center
+            SpawnSkyMeteor(target, xOffset:  300f, jitter: 30f, leadMult: 4f);   // right flank
         }
 
         protected override void DoMagicTick(int ticksRemaining)
@@ -405,17 +464,18 @@ namespace tsorcRevamp.NPCs.Invaders
             }
             if (ticksRemaining % 14 == 0)
             {
-                SpawnSkyMeteor(Main.player[NPC.target], spreadX: 90f, leadMult: 10f);
+                // Rain spreads randomly across a wide band over the player.
+                SpawnSkyMeteor(Main.player[NPC.target], xOffset: Main.rand.NextFloat(-260f, 260f), jitter: 0f, leadMult: 10f);
             }
         }
 
-        private void SpawnSkyMeteor(Player target, float spreadX, float leadMult)
+        private void SpawnSkyMeteor(Player target, float xOffset, float jitter, float leadMult)
         {
             Vector2 targetPos = target.Center + target.velocity * leadMult;
             Vector2 spawn = new Vector2(
-                targetPos.X + Main.rand.NextFloat(-spreadX, spreadX),
+                targetPos.X + xOffset + Main.rand.NextFloat(-jitter, jitter),
                 NPC.Center.Y - Main.rand.NextFloat(520f, 680f));
-            Vector2 vel = (targetPos - spawn).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(11.5f, 14.5f);
+            Vector2 vel = (targetPos - spawn).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(3.5f, 4.4f); // ~70% slower than before
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), spawn, vel,
                 ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteorStormMeteor>(),

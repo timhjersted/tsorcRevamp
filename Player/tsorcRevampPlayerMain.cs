@@ -102,6 +102,8 @@ namespace tsorcRevamp
             RightClickSlot.Item = new Item();
             RightClickSlot.Item.SetDefaults(0, true);
 
+            StorageOpenerSlot = new UI.StorageOpenerSlot(52);
+
             chestBankOpen = false;
             chestBank = -1;
 
@@ -173,6 +175,10 @@ namespace tsorcRevamp
 
         public override void SaveData(TagCompound tag)
         {
+            // Save storage FIRST so an exception anywhere else in this method can never skip it (the whole method
+            // is the ModPlayer's save, and a throw partway would otherwise lose everything below the throw point).
+            SaveStorage(tag);
+
             tag.Add("greatMirrorWarp", greatMirrorWarpPoint);
             tag.Add("warpWorld", warpWorld);
             tag.Add("warpSet", warpSet);
@@ -262,6 +268,11 @@ namespace tsorcRevamp
 
         public override void LoadData(TagCompound tag)
         {
+            // Load storage FIRST so an exception anywhere else in this method can't leave storage unloaded.
+            // (A throw later in LoadData — e.g. a duplicate-key Dictionary.Add in the consumedPotions migration —
+            // is caught per-ModPlayer by tModLoader, which would otherwise silently skip storage entirely.)
+            LoadStorage(tag);
+
             int warpX = tag.GetInt("warpX");
             int warpY = tag.GetInt("warpY");
             greatMirrorWarpPoint = tag.Get<Vector2>("greatMirrorWarp");
@@ -412,7 +423,9 @@ namespace tsorcRevamp
                 List<int> potValue = tag.GetList<int>("consumedPotionsValues") as List<int>;
                 for (int i = 0; i < potKey.Count; i++)
                 {
-                    consumedPotions.Add(potKey[i].Type, potValue[i]);
+                    // Indexer (not Add) so a duplicate buff type — e.g. a save that carries both the old
+                    // "consumedPotionsKeys" and new "consumedPotionsBuffTypes" — can't throw and abort LoadData.
+                    consumedPotions[potKey[i].Type] = potValue[i];
                 }
             }
         }
@@ -947,6 +960,20 @@ namespace tsorcRevamp
 
                 }
             }
+
+            // Dark Souls Storage: while the Storage pop-up is open, shift-clicking an inventory item sends it
+            // to storage. Scoped to "storage open" so it never hijacks the normal shift-click-into-a-chest path.
+            if (UI.StorageUIState.Visible
+                && (context == ItemSlot.Context.InventoryItem)
+                && IsStorageDepositable(inventory[slot]))
+            {
+                if (DepositToStorage(inventory[slot]))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                    return true;
+                }
+            }
+
             return false;
         }
 
@@ -1562,6 +1589,12 @@ namespace tsorcRevamp
             if (tsorcRevamp.toggleDragoonBoots.JustPressed)
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
+            }
+
+            // Guard against the toggle firing while typing into the Storage search bar (default key is 'T').
+            if (tsorcRevamp.StorageKey.JustPressed && !Main.blockInput && !Main.drawingPlayerChat)
+            {
+                ToggleStorage();
             }
             for (int i = 0; i < Main.maxNPCs; i++)
             {

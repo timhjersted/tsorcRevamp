@@ -47,6 +47,7 @@ namespace tsorcRevamp.NPCs.Invaders
         IaidoDraw,        // held low + behind -> fast snap forward
         GroundSlam,       // overhead -> past vertical with shockwave
         LeapSlam,         // jump toward player with the axe raised, slam down + hit on landing
+        LeapThrust,       // jump toward player with spear leveled forward, thrust on landing
         ChargeChop,       // run at the player; ends on contact or a timeout, next step is the chop
         Feint,            // raise + flash as a bait, hold without swinging; the next step is the real (delayed) chop
         // Ranged motions reuse RangedStyle on InvaderNPC; ranged combos pick at burst level
@@ -684,9 +685,11 @@ namespace tsorcRevamp.NPCs.Invaders
         public static readonly MeleeCombo[] Halberd = new[]
         {
             new MeleeCombo {
-                Name = "Overhead Chop", BaseWeight = 80, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.White, CooldownAfterUse = 80,
-                Steps = new[] { S(ComboMotion.OverheadArc, 26, 22, 0, 1.2f, 1.2f) }
+                // Jump toward player with spear leveled; thrust lands on contact/touchdown.
+                // Preferred Far so it triggers at range, not point-blank.
+                Name = "Leaping Lunge", BaseWeight = 70, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 200, HeavyCommit = true, HyperArmor = true,
+                Steps = new[] { S(ComboMotion.LeapThrust, 32, 90, 0, 1.4f, 1.5f) }
             },
             new MeleeCombo {
                 Name = "Forward Thrust", BaseWeight = 90, Preferred = ComboRangeBand.Mid,
@@ -699,6 +702,15 @@ namespace tsorcRevamp.NPCs.Invaders
                 Steps = new[] {
                     S(ComboMotion.HorizontalSweep, 22, 18, 14, 0.9f, 1.3f),
                     S(ComboMotion.Thrust,           0, 14, 0,  1.1f, 1.4f),
+                }
+            },
+            new MeleeCombo {
+                // Two forward pokes in a row (each extends + retracts via the spear-grip animation).
+                Name = "Double Thrust", BaseWeight = 75, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.White, CooldownAfterUse = 110,
+                Steps = new[] {
+                    S(ComboMotion.Thrust, 18, 14, 12, 1.0f, 1.4f),
+                    S(ComboMotion.Thrust,  0, 14, 0,  1.1f, 1.4f),
                 }
             },
             new MeleeCombo {

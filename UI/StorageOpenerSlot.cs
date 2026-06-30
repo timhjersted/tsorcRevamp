@@ -1,0 +1,51 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.UI;
+using TerraUI.Objects;
+using tsorcRevamp.Utilities;
+
+namespace tsorcRevamp.UI
+{
+    // A decorative inventory slot that is really a button: it never holds an item, rejects all item placement,
+    // and toggles the Storage pop-up when left-clicked. It mirrors the souls slot's manual draw/update flow
+    // (see tsorcRevampPlayerUI) but carries no data — no save/load, no netcode, no leak guards needed because
+    // there is nothing in the slot to protect.
+    public class StorageOpenerSlot : UIItemSlot
+    {
+        public StorageOpenerSlot(int size = 52)
+            : base(Vector2.Zero, size, ItemSlot.Context.InventoryItem,
+                   LangUtils.GetTextValue("UI.OpenStorage"), null, null, null, null, null, false, true)
+        {
+            BackOpacity = 0.8f;
+            // Never allow anything to occupy or be pulled from the slot.
+            DisallowManualRemoval = true;
+        }
+
+        // Left click opens/closes Storage instead of doing any item swap.
+        public override void OnLeftClick()
+        {
+            tsorcRevampPlayer.ToggleStorage();
+        }
+
+        // No right-click item interaction.
+        public override void OnRightClick() { }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            UpdateRectangle();
+            OnDrawBackground(spriteBatch);
+
+            // Placeholder icon: a vanilla chest. Swap for a custom "Storage" sprite later.
+            // LoadItem first so the (lazily-loaded) chest texture is ready, otherwise the slot draws blank.
+            Main.instance.LoadItem(ItemID.Chest);
+            Texture2D tex = TextureAssets.Item[ItemID.Chest].Value;
+            Rectangle frame = tex.Frame(1, 1, 0, 0);
+            Vector2 origin = frame.Size() / 2f;
+            spriteBatch.Draw(tex, Rectangle.Center.ToVector2(), frame, Color.White, 0f, origin,
+                Scale(true), SpriteEffects.None, 0f);
+        }
+    }
+}

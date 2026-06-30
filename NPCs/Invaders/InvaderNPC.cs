@@ -211,6 +211,9 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual int   MagicAttackTicks    => 15;
         protected virtual int   MagicRecoveryTicks  => 70;
         protected virtual int   MagicCooldownAfterUse => 300;
+        /// <summary>Chance (0–100) to choose magic over a ranged attack when BOTH are in range.  0 (default)
+        /// keeps magic as a gap-filler (only when no ranged option is available).</summary>
+        protected virtual int   MagicPreferenceChance => 0;
         /// <summary>Flash color for the spear-poke and magic-cast telegraphs.</summary>
         protected virtual Color SpearTelegraphFlashColor => Color.LightYellow;
         protected virtual Color MagicTelegraphFlashColor => Color.MediumPurple;
@@ -405,6 +408,9 @@ namespace tsorcRevamp.NPCs.Invaders
             KnivesThrowPause,
             /// <summary>Recovery after the last Cursed Knives volley; applies <see cref="CursedKnivesCooldownAfterUse"/>.</summary>
             KnivesRecovery,
+            /// <summary>A melee attack was chosen but the player is out of hittable reach: sprint toward
+            /// them (no swing) until in range, then start the attack.  Prevents whiffing at distance.</summary>
+            ClosingDistance,
             /// <summary>
             /// Inter-shot pause during a crossbow burst pattern.
             /// The invader holds horizontal aim and waits for the timer; the next shot fires
@@ -546,6 +552,7 @@ namespace tsorcRevamp.NPCs.Invaders
         private float _weaponRotation;    // direction-neutral draw angle
         private int   _weaponAnim;        // counts down current weapon use animation during swings
         private float _prevWeaponRotation; // last tick's _weaponRotation, for swing-speed-gated VFX
+        private float _spearGrip = 0.5f;  // 0=grip at head, 1=grip at base; animated for spear extend/retract
         private int   _weaponAnimMax = DefaultWeaponAnimMax;
         private const int DefaultWeaponAnimMax = 22;
         /// <summary>
@@ -661,6 +668,25 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>Chance (0-100) of preferring a combo over the legacy slash/stab/spear path
         /// when both are available.  Set to 0 to disable melee combos entirely.</summary>
         protected virtual int MeleeComboChance => 65;
+
+        /// <summary>When true (default), the invader brakes during melee/spear/combo telegraphs so the
+        /// wind-up reads as a planted swing.  Set false to keep pursuing through the wind-up so the player
+        /// can't simply walk out of range during the telegraph.</summary>
+        protected virtual bool SlowDownBeforeMelee => true;
+
+        /// <summary>Base reach (px) for melee COMBO hitboxes before the step's ReachMult.  Default MeleeRange;
+        /// override larger for long weapons (spears) so combo swings connect at their visual reach.</summary>
+        protected virtual float ComboReachBase => MeleeRange;
+
+        // ── Closing distance (anti-whiff for melee combos) ────────────────────────
+        /// <summary>Distance (px) at which a chosen melee combo is close enough to actually connect.  If a
+        /// combo is rolled while farther than this (but within <see cref="ComboMaxStartRange"/>), the invader
+        /// first sprints in via <see cref="AttackPhase.ClosingDistance"/> and only swings once inside it.</summary>
+        protected virtual float MeleeEngageRange => MeleeRange + 24f;
+        /// <summary>Speed multiplier while closing distance to a melee target.</summary>
+        protected virtual float ClosingDistanceSpeedMult => 1.4f;
+        /// <summary>Max ticks spent closing before giving up and re-deciding (so it can switch to ranged).</summary>
+        protected virtual int ClosingDistanceMaxTicks => 80;
         /// <summary>Chance (0-100) of preferring a ranged combo over the legacy random-burst path.
         /// Set to 0 to disable ranged combos entirely.</summary>
         protected virtual int RangedComboChance => 50;
@@ -829,6 +855,8 @@ namespace tsorcRevamp.NPCs.Invaders
                 ? CasualStrollSpeedMult : 1f;
             if (Phase == AttackPhase.Idle && distToTarget > RunDistance)
                 speedMult *= RunSpeedMult;
+            if (Phase == AttackPhase.ClosingDistance)
+                speedMult *= ClosingDistanceSpeedMult;
 
             // Capture direction before the movement AI might change it.
             int dirBefore = NPC.direction;
@@ -1095,6 +1123,12 @@ namespace tsorcRevamp.NPCs.Invaders
                         && dist <= ComboMaxStartRange
                         && Main.rand.Next(100) < MeleeComboChance)
                     {
+                        // Out of hittable reach → close the gap first (no swing until in range).
+                        if (dist > MeleeEngageRange)
+                        {
+                            EnterPhase(AttackPhase.ClosingDistance, ClosingDistanceMaxTicks);
+                            break;
+                        }
                         if (TryStartMeleeCombo(dist))
                             break;
                     }
@@ -1131,22 +1165,31 @@ namespace tsorcRevamp.NPCs.Invaders
                         _spearLungeDir = NPC.direction;
                         EnterPhase(AttackPhase.SpearTelegraph, SpearTelegraphTicks);
                     }
-                    else if (wantPrimary || wantSecondary)
+                    else if (wantPrimary || wantSecondary || wantMagic)
                     {
-                        // Pick secondary when both are available (SecondaryRangedChance roll),
-                        // or always if only secondary is in range.
-                        bool useSecondary = wantSecondary &&
-                            (!wantPrimary || Main.rand.Next(100) < SecondaryRangedChance);
-                        SetupRangedBurst(useSecondary, shotsOverride: -1, forceStanding: false);
-                        EnterPhase(AttackPhase.RangedTelegraph, _activeRangedTelegraphTicks);
+                        // Magic competes with ranged: always when it's the only option in range, else on a
+                        // MagicPreferenceChance roll (default 0 = magic only fills gaps, original behavior).
+                        bool useMagic = wantMagic && (!(wantPrimary || wantSecondary)
+                                        || Main.rand.Next(100) < MagicPreferenceChance);
+                        if (useMagic)
+                        {
+                            EnterPhase(AttackPhase.MagicTelegraph, MagicTelegraphTicks);
+                        }
+                        else
+                        {
+                            // Pick secondary when both are available (SecondaryRangedChance roll),
+                            // or always if only secondary is in range.
+                            bool useSecondary = wantSecondary &&
+                                (!wantPrimary || Main.rand.Next(100) < SecondaryRangedChance);
+                            SetupRangedBurst(useSecondary, shotsOverride: -1, forceStanding: false);
+                            EnterPhase(AttackPhase.RangedTelegraph, _activeRangedTelegraphTicks);
+                        }
                     }
-                    else if (wantMagic)
-                        EnterPhase(AttackPhase.MagicTelegraph, MagicTelegraphTicks);
                     break;
 
                 // ── Melee slash ───────────────────────────────────────────────
                 case AttackPhase.MeleeTelegraph:
-                    SlowDown();
+                    if (SlowDownBeforeMelee) SlowDown();
                     SetDisplayWeapon(MeleeWeaponItemType, swing: false);
                     CheckAndFireFlash(MeleeTelegraphFlashColor);
                     if (--PhaseTimer <= 0)
@@ -1169,7 +1212,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
                 // ── Stab / lunge ──────────────────────────────────────────────
                 case AttackPhase.StabTelegraph:
-                    SlowDown();
+                    if (SlowDownBeforeMelee) SlowDown();
                     SetDisplayWeapon(MeleeWeaponItemType, swing: false);
                     SpawnTelegraphDust();
                     CheckAndFireFlash(MeleeTelegraphFlashColor);
@@ -1312,7 +1355,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 // SpearPushSpeedMult = 0 → pure stationary poke (no movement);
                 // > 0 → small forward hop scaled by TopSpeed (less than stab lunge).
                 case AttackPhase.SpearTelegraph:
-                    SlowDown();
+                    if (SlowDownBeforeMelee) SlowDown();
                     SetDisplayWeapon(SpearWeaponItemType, swing: false);
                     SpawnTelegraphDust();
                     CheckAndFireFlash(SpearTelegraphFlashColor);
@@ -1492,6 +1535,27 @@ namespace tsorcRevamp.NPCs.Invaders
                     }
                     break;
 
+                // ── Closing distance ──────────────────────────────────────────
+                // A melee combo was chosen out of reach: the mover sprints in (boosted speedMult in AI);
+                // start the combo once inside MeleeEngageRange, or give up on timeout / if the player flies
+                // out of combo range (re-decide → may go ranged).
+                case AttackPhase.ClosingDistance:
+                {
+                    int faceC = target.Center.X < NPC.Center.X ? -1 : 1;
+                    NPC.direction = faceC; NPC.spriteDirection = faceC;
+                    bool inReach = dist <= MeleeEngageRange && NPC.velocity.Y == 0f
+                                   && NPC.Center.Y - target.Center.Y < 48f;
+                    if (inReach)
+                    {
+                        if (!TryStartMeleeCombo(dist))
+                            EnterPhase(AttackPhase.Idle, 0);
+                        break;
+                    }
+                    if (dist > ComboMaxStartRange + 80f || --PhaseTimer <= 0)
+                        EnterPhase(AttackPhase.Idle, 0);
+                    break;
+                }
+
                 // ── Casual stroll ─────────────────────────────────────────────
                 // Slow walk toward player with no attacks — gives post-attack breathing room
                 // and variation before the next engagement.
@@ -1538,7 +1602,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 // ── Melee combo: telegraph (step 0) ───────────────────────────
                 case AttackPhase.MeleeComboTelegraph:
                     LockComboDirection();
-                    SlowDown();
+                    if (SlowDownBeforeMelee) SlowDown();
                     SetDisplayWeapon(MeleeWeaponItemType, swing: false);
                     CheckAndFireFlash(_activeMeleeCombo.InitialFlashColor);
                     if (--PhaseTimer <= 0)
@@ -1550,7 +1614,7 @@ namespace tsorcRevamp.NPCs.Invaders
                         // Deferred / no-hit motions don't strike on entry: LeapSlam launches now and
                         // connects on landing; ChargeChop runs (next step chops); Feint just holds
                         // the bait pose (next step is the delayed chop).
-                        if (step0.Motion == ComboMotion.LeapSlam)
+                        if (step0.Motion == ComboMotion.LeapSlam || step0.Motion == ComboMotion.LeapThrust)
                             BeginLeapAttack();
                         else if (step0.Motion == ComboMotion.ChargeChop || step0.Motion == ComboMotion.Feint)
                         { /* no hit this step — movement / bait only */ }
@@ -1567,10 +1631,10 @@ namespace tsorcRevamp.NPCs.Invaders
                     var step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
                     bool endStep;
 
-                    if (step.Motion == ComboMotion.LeapSlam)
+                    if (step.Motion == ComboMotion.LeapSlam || step.Motion == ComboMotion.LeapThrust)
                     {
                         // Hold the launch velocity (SF4 ran earlier this tick and would otherwise
-                        // steer X); gravity provides the downward arc.  The slam connects when we
+                        // steer X); gravity provides the downward arc.  The hit connects when we
                         // land, or when the airtime cap (AttackTicks) expires.
                         NPC.velocity.X = _comboLeapVx;
                         // velocity.Y only returns to exactly 0 via a vertical collision (landing).
@@ -1835,7 +1899,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual void DoComboMeleeHit(MeleeComboStep step)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
-            float reach = MeleeRange * 0.7f * step.ReachMult;
+            float reach = ComboReachBase * 0.7f * step.ReachMult;
             int   dmg   = (int)(MeleeDamage * step.DamageMult);
             // Route through the same swing-arc helper as TryMeleeHit so overlap / alignment
             // hits behave identically across step combos and one-shot swings.
@@ -2558,6 +2622,14 @@ namespace tsorcRevamp.NPCs.Invaders
                         else if (NPC.velocity.Y < 0f) _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.9f, 0.20f);
                         else                          _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.4f, 0.22f);
                         break;
+                    case ComboMotion.LeapThrust:
+                        // Telegraph: dip the spear low-forward ("cocked" for the upcoming poke).
+                        // Airborne rising: snap to horizontal — spear leveled at the player.
+                        // Falling/landing: hold horizontal for the thrust contact moment.
+                        if (inTel)                    _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2 * 0.8f, 0.22f);
+                        else if (NPC.velocity.Y < 0f) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.28f);
+                        else                          _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.50f);
+                        break;
                     case ComboMotion.ChargeChop:
                         // Carry the axe cocked back/up while charging; the chop is the next step.
                         _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.95f, 0.20f);
@@ -2582,11 +2654,72 @@ namespace tsorcRevamp.NPCs.Invaders
                 _weaponRotation = MathHelper.Lerp(_weaponRotation, HoldRotation, 0.10f);
             }
 
+            UpdateSpearGrip();
             SpawnSwingVFX(_weaponRotation - _prevWeaponRotation);
             _prevWeaponRotation = _weaponRotation;
 
             if (SwingDebugLog && IsWeaponVisiblePhase)
                 LogSwingFrame();
+        }
+
+        /// <summary>
+        /// Slides the spear grip along the shaft so the weapon extends/retracts like the player's spear.
+        /// _spearGrip 0 = gripped at the head (compact), 1 = gripped at the base (head thrust far forward).
+        /// A poke pulses to the base and back (extend → retract); spins/swings hold it out for more reach.
+        /// No-op unless <see cref="DrawWeaponAsSpear"/>.
+        /// </summary>
+        private void UpdateSpearGrip()
+        {
+            if (!DrawWeaponAsSpear) return;
+
+            float target = 0.5f; // idle: gripped in the middle
+            float ease = 0.25f;
+
+            switch (Phase)
+            {
+                case AttackPhase.SpearTelegraph:
+                    target = 0.4f; ease = 0.22f; // pull the head back a touch, ready to thrust
+                    break;
+                case AttackPhase.SpearAttack:
+                {
+                    float p = SpearAttackTicks > 0 ? 1f - (float)PhaseTimer / SpearAttackTicks : 1f;
+                    target = MathHelper.Lerp(0.45f, 0.97f, (float)Math.Sin(p * Math.PI)); // extend then retract
+                    ease = 0.55f;
+                    break;
+                }
+                case AttackPhase.MeleeComboTelegraph:
+                    target = 0.45f; ease = 0.22f;
+                    break;
+                case AttackPhase.MeleeComboPause:
+                    target = 0.5f; ease = 0.25f;
+                    break;
+                case AttackPhase.MeleeComboAttack:
+                {
+                    ComboMotion motion = _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion;
+                    float p = _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f;
+                    if (motion == ComboMotion.Thrust || motion == ComboMotion.JoustDash || motion == ComboMotion.LeapThrust)
+                    {
+                        target = MathHelper.Lerp(0.45f, 0.97f, (float)Math.Sin(p * Math.PI)); // poke extend/retract
+                        ease = 0.55f;
+                    }
+                    else if (motion == ComboMotion.Spin)
+                    {
+                        target = 0.9f; ease = 0.3f; // held out near the base so the spear sweeps wide
+                    }
+                    else
+                    {
+                        // Overhead / sweep / chop: extend through the swing, peaking at the apex.
+                        target = MathHelper.Lerp(0.6f, 0.85f, (float)Math.Sin(p * Math.PI));
+                        ease = 0.3f;
+                    }
+                    break;
+                }
+                default:
+                    target = 0.5f; // idle / walking / ranged / etc.
+                    break;
+            }
+
+            _spearGrip = MathHelper.Lerp(_spearGrip, target, ease);
         }
 
         /// <summary>
@@ -2956,6 +3089,7 @@ namespace tsorcRevamp.NPCs.Invaders
                         break;
                     case ComboMotion.Thrust:
                     case ComboMotion.JoustDash:
+                    case ComboMotion.LeapThrust:
                         bodyRow = inTel ? 4 : 3;
                         break;
                     case ComboMotion.Spin:
@@ -3092,12 +3226,23 @@ namespace tsorcRevamp.NPCs.Invaders
             if (HideHeldMeleeSprite && _heldItemType == MeleeWeaponItemType)
                 return;
 
-            var texAsset = TextureAssets.Item[_heldItemType];
-            if (texAsset?.Value == null)
-                return;
-
-            Texture2D tex = texAsset.Value;
-            bool heldRangedLike = _heldItemType == RangedWeaponItemType
+            // When drawing as a spear, prefer the holdout-projectile texture (the full shaft+head sprite)
+            // over the item icon (which is just a small inventory tile).
+            Texture2D tex;
+            if (DrawWeaponAsSpear && SpearDrawTexturePath != null && ModContent.HasAsset(SpearDrawTexturePath))
+            {
+                tex = ModContent.Request<Texture2D>(SpearDrawTexturePath,
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            else
+            {
+                var texAsset = TextureAssets.Item[_heldItemType];
+                if (texAsset?.Value == null) return;
+                tex = texAsset.Value;
+            }
+            // A weapon that doubles as the melee weapon (e.g. a spear that also casts the primary-ranged
+            // projectile) draws as MELEE — handle-anchored at full melee scale — not as a centred thrown item.
+            bool heldRangedLike = (_heldItemType == RangedWeaponItemType && RangedWeaponItemType != MeleeWeaponItemType)
                                || _heldItemType == SecondaryRangedWeaponItemType
                                || _heldItemType == MagicWeaponItemType;
             bool heldCrossbowLike = _heldItemType == _activeRangedItemType
@@ -3134,7 +3279,24 @@ namespace tsorcRevamp.NPCs.Invaders
             }
             else if (heldRangedLike)
             {
-                origin = tex.Bounds.Center.ToVector2(); // symmetric throwing items - keep centred
+                if (_heldItemType == MagicWeaponItemType)
+                {
+                    // Staves grip lower on the shaft (not centred) so the hand holds near the base.
+                    Vector2 mg = MagicGripNorm;
+                    float mgx = NPC.direction == 1 ? tex.Width * mg.X : tex.Width * (1f - mg.X);
+                    origin = new Vector2(mgx, tex.Height * mg.Y);
+                }
+                else
+                {
+                    origin = tex.Bounds.Center.ToVector2(); // symmetric throwing items - keep centred
+                }
+            }
+            else if (DrawWeaponAsSpear)
+            {
+                // Grip slides along the shaft (head→base) so the spear extends/retracts.
+                Vector2 gn = Vector2.Lerp(SpearHeadNorm, SpearBaseNorm, _spearGrip);
+                float gx = NPC.direction == 1 ? tex.Width * gn.X : tex.Width * (1f - gn.X);
+                origin = new Vector2(gx, tex.Height * gn.Y);
             }
             else
             {
@@ -3226,17 +3388,36 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual Vector2 MeleeHandleNorm => new Vector2(0.10f, 0.85f);
 
         // ── Per-weapon melee draw tuning ────────────────────────────────────────────
-        /// <summary>Draw scale for the melee weapon sprite.  Default 0.62 suits broadswords;
-        /// override for chunkier sprites (axes / hammers) that should read larger or smaller.</summary>
-        protected virtual float MeleeWeaponDrawScale => 0.62f;
+        /// <summary>Draw scale for the melee weapon sprite.  Default 1f (full size); override per
+        /// invader if a particular sprite should read larger or smaller.</summary>
+        protected virtual float MeleeWeaponDrawScale => 1f;
+
+        // ── Spear-style draw (grip slides along the shaft = extend/retract like the player's spear) ──
+        /// <summary>When true, the melee weapon is drawn as a SPEAR: the grip point slides along the shaft
+        /// (<see cref="_spearGrip"/>) so pokes thrust the head forward and retract, and swings/spins hold it
+        /// out for reach — instead of the static handle-anchored sword draw.</summary>
+        protected virtual bool DrawWeaponAsSpear => false;
+        /// <summary>Normalized texture coords of the spear's HEAD tip (the pointy end).  Tune to the sprite.</summary>
+        protected virtual Vector2 SpearHeadNorm => new Vector2(0.82f, 0.18f);
+        /// <summary>Normalized texture coords of the spear's BASE (butt of the shaft).  Tune to the sprite.</summary>
+        protected virtual Vector2 SpearBaseNorm => new Vector2(0.12f, 0.88f);
+        /// <summary>When <see cref="DrawWeaponAsSpear"/> is true, use this texture instead of the item icon.
+        /// The item sprite is a small inventory icon; the spear's holdout-projectile sprite is the full
+        /// shaft-and-head weapon the player sees.  Override to point at the projectile texture path.
+        /// Null (default) falls back to the item sprite.</summary>
+        protected virtual string SpearDrawTexturePath => null;
+
+        /// <summary>Normalized grip point for a held MAGIC staff (where the hand holds it).  Default centred;
+        /// override lower (larger Y) so a tall staff is gripped near its base.</summary>
+        protected virtual Vector2 MagicGripNorm => new Vector2(0.5f, 0.5f);
 
         /// <summary>When true, the held melee item icon is NOT drawn in the hand — for weapons whose
         /// visual is a separate projectile (e.g. a flail's ball + chain).  Default false.</summary>
         protected virtual bool HideHeldMeleeSprite => false;
 
-        /// <summary>Draw scale for a held ranged/thrown item (throwables, bombs).  Default 0.42 suits
-        /// small stars; override per item type (e.g. a chunkier smoke bomb).</summary>
-        protected virtual float GetHeldRangedDrawScale(int itemType) => 0.42f;
+        /// <summary>Draw scale for a held ranged/thrown/magic item.  Default 1f (full size); override
+        /// per item type for sprites that should read smaller (e.g. tiny throwing stars).</summary>
+        protected virtual float GetHeldRangedDrawScale(int itemType) => 1f;
 
         /// <summary>When true for the given held ranged item type, red "lit fuse" sparks are emitted
         /// off the top of it while it's in hand (e.g. a smoke bomb).  Default false.</summary>

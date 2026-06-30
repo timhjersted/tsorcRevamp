@@ -78,6 +78,17 @@ namespace tsorcRevamp
 
             Terraria.UI.On_ChestUI.LootAll += PotionBagLootAllPatch;
 
+            // Storage: while the Storage pop-up is open, show the vanilla "send to container" cursor icon
+            // (chest + red arrow) when shift-hovering a depositable inventory item. Hooked via reflection so we
+            // don't depend on the exact MonoMod overload-suffix name for ItemSlot.OverrideHover.
+            MethodInfo overrideHover = typeof(ItemSlot).GetMethod("OverrideHover",
+                BindingFlags.Public | BindingFlags.Static, null,
+                new Type[] { typeof(Item[]), typeof(int), typeof(int) }, null);
+            if (overrideHover != null)
+            {
+                MonoModHooks.Add(overrideHover, (Action<Action<Item[], int, int>, Item[], int, int>)ItemSlot_OverrideHover);
+            }
+
             Terraria.On_Player.HasUnityPotion += HasWormholePotion;
             Terraria.On_Player.TakeUnityPotion += ConsumeWormholePotion;
 
@@ -102,6 +113,12 @@ namespace tsorcRevamp
             Terraria.On_Main.CraftItem += Main_CraftItem;
 
             Terraria.On_Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
+            Terraria.On_Main.DrawInterface_16_MapOrMinimap += Main_DrawInterface_16_MapOrMinimap;
+            MethodInfo drawMap = typeof(Main).GetMethod("DrawMap", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(GameTime) }, null);
+            if (drawMap != null)
+            {
+                MonoModHooks.Add(drawMap, (Action<Action<Main, GameTime>, Main, GameTime>)DrawMap_WithInventoryVisibilityConfig);
+            }
 
             // Hide ONLY the vanilla life & mana bars when custom resource bars are enabled. The life/mana bars
             // are drawn by the active resource-display set's Draw(); there's one concrete set per HUD style, so
@@ -261,6 +278,29 @@ namespace tsorcRevamp
             hash = (hash ^ (hash >> 13)) * 1274126177;
             hash ^= hash >> 16;
             return (hash & 0x00FFFFFF) / 16777216f;
+        }
+
+        // While Storage is open, paint the "send to container" cursor icon for shift-hover over a depositable
+        // inventory item — matches the real chest UX. The actual deposit is performed by ShiftClickSlot.
+        private static void ItemSlot_OverrideHover(Action<Item[], int, int> orig, Item[] inv, int context, int slot)
+        {
+            orig(inv, context, slot);
+
+            if (!UI.StorageUIState.Visible) return;
+            if (context != ItemSlot.Context.InventoryItem) return;
+            if (Main.cursorOverride != -1) return; // don't stomp a legitimate icon (e.g. shop sell)
+
+            Player p = Main.LocalPlayer;
+            if (inv != p.inventory || slot < 0 || slot >= inv.Length) return;
+
+            bool shift = Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift)
+                      || Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift);
+            if (!shift) return;
+
+            if (p.GetModPlayer<tsorcRevampPlayer>().IsStorageDepositable(inv[slot]))
+            {
+                Main.cursorOverride = CursorOverrideID.InventoryToChest;
+            }
         }
 
         private static void HidePinwheelLifeOnMouseover(On_Main.orig_HoverOverNPCs orig, Main self, Rectangle mouseRectangle)
@@ -2155,6 +2195,32 @@ namespace tsorcRevamp
                 }
                 Main.spriteBatch.DrawString(FontAssets.DeathText.Value, textValue2, new Vector2((float)(Main.screenWidth / 2) - 40 - FontAssets.MouseText.Value.MeasureString(textValue2).X / 2f, (float)(Main.screenHeight / 2) + 220), textColor, 0f, default(Vector2), scale, SpriteEffects.None, 0f);
             }
+        }
+
+
+        private static void DrawMap_WithInventoryVisibilityConfig(Action<Main, GameTime> orig, Main self, GameTime gameTime)
+        {
+            if (ModContent.GetInstance<tsorcRevampVisualConfig>().OnlyShowMapWhenInventoryIsOpen && Main.mapStyle == 2)
+            {
+                if (!Main.playerInventory && !Main.mapFullscreen)
+                {
+                    return;
+                }
+
+                Main.mapOverlayAlpha = 0.2f;
+            }
+
+            orig(self, gameTime);
+        }
+
+        private static void Main_DrawInterface_16_MapOrMinimap(Terraria.On_Main.orig_DrawInterface_16_MapOrMinimap orig, Main self)
+        {
+            if (ModContent.GetInstance<tsorcRevampVisualConfig>().OnlyShowMapWhenInventoryIsOpen && !Main.playerInventory && !Main.mapFullscreen)
+            {
+                return;
+            }
+
+            orig(self);
         }
 
         // The active resource-display set's Draw() renders the vanilla life & mana bars. When custom resource
