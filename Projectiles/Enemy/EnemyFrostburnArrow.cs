@@ -22,6 +22,29 @@ namespace tsorcRevamp.Projectiles.Enemy
             AIType = ProjectileID.FrostburnArrow;
         }
 
+        public override void AI()
+        {
+            Projectile.velocity.Y = Projectile.velocity.Y;
+
+            if (Main.rand.NextBool(2)) 
+            {
+                Dust dust = Dust.NewDustDirect(
+                    Projectile.position,               
+                    Projectile.width,                 
+                    Projectile.height,                 
+                    135,                               
+                    Projectile.velocity.X * 0.2f,     
+                    Projectile.velocity.Y * 0.2f,      
+                    100,                               
+                    default,                           
+                    1.1f                              
+                );
+
+                dust.noGravity = false;                
+                dust.velocity *= 0.5f;                
+            }
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Frostburn, 180); // 3 seconds of Frostburn debuff

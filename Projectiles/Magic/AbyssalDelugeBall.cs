@@ -5,6 +5,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Magic
 {

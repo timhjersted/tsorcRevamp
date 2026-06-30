@@ -54,9 +54,13 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             player.rocketBoots = 2;
 
             bool restricted = false;
+            if (player.mount.Active || player.vortexStealthActive)
+            {
+                restricted = true;
+            }
             for (int i = 3; i <= 8; i++)
             {
-                if (player.mount.Active || player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
+                if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
                     || player.armor[i].type == ItemID.LightningBoots || player.armor[i].type == ItemID.FlurryBoots
                     || player.armor[i].type == ItemID.FrostsparkBoots || player.armor[i].type == ItemID.SailfishBoots)
                 {

@@ -100,7 +100,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                 aimWindupTimer = 0;
                 isTryingToMove = true;
 
-                bool navigating = SmartProjectileFighterAI.Run(Projectile, player, topSpeed: 2.4f, acceleration: 0.1f, navSearchRadius: ArcherNavSearchRadius, gravity: 0.4f);
+                bool navigating = SmartProjectileFighterAI.Run(Projectile, player, topSpeed: 4.1f, acceleration: 0.5f, navSearchRadius: ArcherNavSearchRadius, gravity: 0.4f);
                 if (!navigating)
                 {
                     // Move towards player horizontally (slower returning speed: 2.4f)
@@ -362,7 +362,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                                 if (aimWindupTimer >= AimWindupFrames)
                                 {
                                     aimWindupTimer = 0;
-                                    shootCooldown = 80; // reset cooldown
+                                    shootCooldown = 60; // reset cooldown
 
                                     if (Main.myPlayer == Projectile.owner)
                                     {
