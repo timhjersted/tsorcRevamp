@@ -46,6 +46,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false);
+            target.AddBuff(ModContent.BuffType<Abyss>(), 3 * 60 * 60, false);
         }
 
     }

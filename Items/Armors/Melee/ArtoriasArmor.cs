@@ -55,20 +55,11 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BeetleScaleMail);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-
-            Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.BeetleShell);
-            recipe2.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
-            recipe2.AddTile(TileID.DemonAltar);
-
-            recipe2.Register();
         }
     }
 }

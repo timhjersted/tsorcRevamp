@@ -35,6 +35,12 @@ namespace tsorcRevamp.NPCs.AI
         /// <summary>+1 / -1 / 0 horizontal scan direction when seeking ceiling clearance.</summary>
         private int _clearanceSeekDir;
 
+        /// <summary>Current Y offset from the ideal hover altitude.  Accumulates downward each tick;
+        /// springs negative (above target) when the threshold is hit, producing the natural bob.</summary>
+        private float _driftY;
+        /// <summary>Ticks remaining in the current upward wing-flap beat.</summary>
+        private int _flapBurstTicks;
+
         /// <summary>Current dive/hover/strafe target in world coordinates.</summary>
         public Vector2 TargetWaypoint { get; private set; }
 
@@ -212,10 +218,30 @@ namespace tsorcRevamp.NPCs.AI
                 if (seek == 0) seek = npc.direction; // fall back to current facing
                 _clearanceSeekDir = seek;
                 desired = new Vector2(npc.Center.X + seek * 96f, npc.Center.Y + 4f); // slide sideways slightly downward
+                // Suppress drift during ceiling routing so we don't fight the clearance logic.
+                _driftY = 0f;
+                _flapBurstTicks = 0;
             }
             else
             {
                 _clearanceSeekDir = 0;
+                // ── Natural gravity-like hover drift ──────────────────────────
+                // The invader slowly sinks below its target altitude (as if gravity tugs it
+                // down), then fires a short wing-flap burst to spring back up.  The cycle
+                // produces an organic bobbing cadence with visible wing beats.
+                if (Config.HoverDriftSpeed > 0f)
+                {
+                    _driftY += Config.HoverDriftSpeed;
+                    if (_driftY >= Config.HoverDriftMax)
+                    {
+                        // Spring above target and begin the flap beat.
+                        _driftY = -Config.HoverFlapRise;
+                        _flapBurstTicks = Config.HoverFlapBurstTicks;
+                    }
+                    if (_flapBurstTicks > 0) _flapBurstTicks--;
+                    // Offset the desired Y so the velocity spring chases the drifted target.
+                    desired.Y += _driftY;
+                }
             }
             TargetWaypoint = desired;
 
@@ -229,12 +255,13 @@ namespace tsorcRevamp.NPCs.AI
             }
             npc.velocity = Vector2.Lerp(npc.velocity, desiredVel, 0.10f);
 
-            // Glide unless we're climbing or turning sharply.  Ceiling-pinned: keep flapping
-            // (visually: wings still trying to lift).
+            // Flap during the upward beat, when climbing hard, turning sharply, or ceiling-pinned.
+            // During the downward drift the wings stay spread open (glide) — callers read
+            // IsGlidingThisTick to pick the spread-open wing frame instead of animating.
             bool climbing = npc.velocity.Y < -0.4f;
             bool turning  = Math.Abs(desiredVel.X - npc.velocity.X) > 0.6f;
             bool stuck    = HeadIsBlocked(npc) || StuckTicks > 30;
-            WingsActiveThisTick = climbing || turning || stuck;
+            WingsActiveThisTick = _flapBurstTicks > 0 || climbing || turning || stuck;
 
             // Face the player while hovering
             npc.direction = target.Center.X < npc.Center.X ? -1 : 1;
@@ -255,8 +282,16 @@ namespace tsorcRevamp.NPCs.AI
             float desiredVx = Math.Sign(dx) * Config.HoverTopSpeed * 1.3f;
             npc.velocity.X = MathHelper.Lerp(npc.velocity.X, desiredVx, 0.18f);
 
-            // Gentle vertical correction so we don't drift off altitude.
-            float yErr = (target.Center.Y - Config.HoverAltitude) - npc.Center.Y;
+            // Gentle vertical correction so we don't drift off altitude, plus a sine-wave arc
+            // (rises through the middle of the sweep, settles back at the ends) so a strafing
+            // pass — like the breath sweep — reads as a natural swoop instead of a flat line.
+            float targetY = target.Center.Y - Config.HoverAltitude;
+            if (Config.StrafeArcHeight > 0f && Config.StrafeTicks > 0)
+            {
+                float t = 1f - (float)ModeTimer / Config.StrafeTicks;
+                targetY -= (float)Math.Sin(t * Math.PI) * Config.StrafeArcHeight;
+            }
+            float yErr = targetY - npc.Center.Y;
             npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, MathHelper.Clamp(yErr * 0.06f, -2f, 2f), 0.15f);
 
             npc.direction = desiredVx < 0 ? -1 : 1;
@@ -339,6 +374,12 @@ namespace tsorcRevamp.NPCs.AI
             ModeTimer = duration;
             if (mode == FlightMode.TakeOff)
                 FlightTicksRemaining = Config.MaxFlightTicks;
+            // Reset drift state when leaving hover so it doesn't bleed into other modes.
+            if (mode != FlightMode.Hover)
+            {
+                _driftY = 0f;
+                _flapBurstTicks = 0;
+            }
         }
 
         private bool ReachedHoverAltitude(NPC npc)
@@ -454,24 +495,47 @@ namespace tsorcRevamp.NPCs.AI
         /// <summary>Wing flap cycle speed (phase units per tick while flapping).</summary>
         public float WingFlapSpeed;
 
+        // ── Hover drift (natural gravity bob) ────────────────────────────────
+        /// <summary>Pixels per tick the invader sinks during idle hover.  0 disables drift.</summary>
+        public float HoverDriftSpeed;
+        /// <summary>How far below target altitude (px) before the invader flaps back up.</summary>
+        public float HoverDriftMax;
+        /// <summary>How far above target altitude (px) the flap burst springs the invader.
+        /// Combined with HoverDriftMax this sets the full bob range.</summary>
+        public float HoverFlapRise;
+        /// <summary>Duration of active wing flapping per upward beat (ticks).
+        /// Between beats the wings stay in the spread-open glide position.</summary>
+        public int HoverFlapBurstTicks;
+
+        /// <summary>Peak vertical rise (px) of the sine-wave arc during a Strafe pass.
+        /// 0 disables the arc (flat strafe line).</summary>
+        public float StrafeArcHeight;
+
         /// <summary>Reasonable defaults for medium-size invaders.</summary>
         public static EnemyFlightConfig Default => new EnemyFlightConfig
         {
-            HoverAltitude     = 200f,
-            HoverSideOffset   = 80f,
-            HoverTopSpeed     = 4.5f,
-            TakeOffSpeed      = 8f,
-            DiveAcceleration  = 0.55f,
-            DiveTopSpeed      = 11f,
-            LandSpeed         = 6f,
-            MaxFlightTicks    = 720,   // 12 s
-            CooldownTicks     = 240,   // 4 s
-            TakeOffTicks      = 35,
-            HoverDwellTicks   = 90,
-            StrafeTicks       = 60,
-            DiveAttackTicks   = 50,
-            LandTicks         = 90,
-            WingFlapSpeed     = 0.08f, // ~12 ticks per flap
+            HoverAltitude      = 200f,
+            HoverSideOffset    = 80f,
+            HoverTopSpeed      = 4.5f,
+            TakeOffSpeed       = 8f,
+            DiveAcceleration   = 0.55f,
+            DiveTopSpeed       = 11f,
+            LandSpeed          = 6f,
+            MaxFlightTicks     = 720,   // 12 s
+            CooldownTicks      = 240,   // 4 s
+            TakeOffTicks       = 35,
+            HoverDwellTicks    = 90,
+            StrafeTicks        = 60,
+            DiveAttackTicks    = 50,
+            LandTicks          = 90,
+            WingFlapSpeed      = 0.08f, // ~12 ticks per flap
+            // Hover drift: sinks ~25 px over ~1.5 s, then flaps 18 px above target.
+            // Full bob range ≈ 43 px; one beat every ~2.5 s.
+            HoverDriftSpeed    = 0.28f,
+            HoverDriftMax      = 25f,
+            HoverFlapRise      = 18f,
+            HoverFlapBurstTicks = 18,
+            StrafeArcHeight    = 0f, // off by default; opt in per-invader
         };
     }
 }

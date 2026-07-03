@@ -34,12 +34,16 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss = true;
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.EnterTheAbyss = true;
+            modPlayer.CovenantOfArtoriasEquipped = true;
         }
 
         public override void UpdateVanity(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss = true;
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.EnterTheAbyss = true;
+            modPlayer.CovenantOfArtoriasEquipped = true;
         }
     }
 }

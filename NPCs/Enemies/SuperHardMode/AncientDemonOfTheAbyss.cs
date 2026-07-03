@@ -198,6 +198,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.myPlayer);
+                        // CultistBossFireBallClone is shared by several other bosses, so we can't scope Abyss to
+                        // just this attack via OnHitPlayer without also cursing those fights. Apply on cast instead.
+                        player.AddBuff(ModContent.BuffType<Abyss>(), 3 * 60 * 60);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17);
                     NPC.localAI[1] = 0;
@@ -207,6 +210,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBall, cultistFireDamage, 0.1f, Main.myPlayer);
+                        // Same reasoning as above - CultistBossFireBall is shared, so apply on cast rather than hit.
+                        player.AddBuff(ModContent.BuffType<Abyss>(), 3 * 60 * 60);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
                     NPC.localAI[1] = 0;

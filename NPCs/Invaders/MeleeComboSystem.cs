@@ -686,8 +686,7 @@ namespace tsorcRevamp.NPCs.Invaders
         {
             new MeleeCombo {
                 // Jump toward player with spear leveled; thrust lands on contact/touchdown.
-                // Preferred Far so it triggers at range, not point-blank.
-                Name = "Leaping Lunge", BaseWeight = 70, Preferred = ComboRangeBand.Far,
+                Name = "Leaping Lunge", BaseWeight = 90, Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.Yellow, CooldownAfterUse = 200, HeavyCommit = true, HyperArmor = true,
                 Steps = new[] { S(ComboMotion.LeapThrust, 32, 90, 0, 1.4f, 1.5f) }
             },
@@ -719,9 +718,12 @@ namespace tsorcRevamp.NPCs.Invaders
                 Steps = new[] { S(ComboMotion.Spin, 30, 32, 0, 1.4f, 1.3f) }
             },
             new MeleeCombo {
+                // OverheadArc (not GroundSlam): GroundSlam's swing ends near-vertical (a hammer/axe
+                // ground-pound read), which looked like the spear was stabbing straight down instead
+                // of at the player. OverheadArc ends much closer to horizontal/forward.
                 Name = "Charged Chop", BaseWeight = 30, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 260, HeavyCommit = true,
-                Steps = new[] { S(ComboMotion.GroundSlam, 55, 26, 0, 2.0f, 1.4f) }
+                Steps = new[] { S(ComboMotion.OverheadArc, 55, 26, 0, 2.0f, 1.4f) }
             },
         };
 

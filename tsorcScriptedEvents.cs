@@ -79,7 +79,7 @@ namespace tsorcRevamp
          * '[Event Name].SetCustomStats(Health, Defense, Damage);'
          * An example of this is below ArtoriasEvent, giving the spawned Artorias dramatically weakened stats
          * * Note: The damage stat here can not change the projectile damage for enemies, since the damage of each projectile is hardcoded independent of their true stats. 
-         * That value MUST be changed via scripting instead. ArtoriasCustomAction shows an example of this.
+         * That value MUST be changed via scripting instead. KnightOfGwynCustomAction shows an example of this.
          * 
          * Adding custom drops:
          * To add drops to a spawned NPC, add this line below your event line
@@ -1345,13 +1345,13 @@ namespace tsorcRevamp
         }
 
 
-        //This is an example artorias custom action. It spawns meteors and displays text every so often, and also changes the projectile damage for Artorias. Most enemies will require a very small change for their projectile damage changes to work (the word 'public' needs to be in front of the variable controlling that projectile's damage).
-        public static EventActionStatus ArtoriasCustomAction(ScriptedEvent thisEvent)
+        //This is an example custom action (using Knight of Gwyn, which carries Artorias's old FighterAI-era attack pattern). It spawns meteors and displays text every so often, and also changes the projectile damage for the NPC. Most enemies will require a very small change for their projectile damage changes to work (the word 'public' needs to be in front of the variable controlling that projectile's damage).
+        public static EventActionStatus KnightOfGwynCustomAction(ScriptedEvent thisEvent)
         {
             //Spawning meteors:
             if (Main.rand.NextBool(200))
             {
-                //UsefulFunctions.BroadcastText("Artorias rains fire from the Abyss...", Color.Gold);
+                //UsefulFunctions.BroadcastText("Knight of Gwyn rains fire from the Abyss...", Color.Gold);
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     for (int j = 0; j < 10; j++)
@@ -1363,17 +1363,17 @@ namespace tsorcRevamp
 
             //Changing projectile damage:
             //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
-            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())
+            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.KnightOfGwyn>())
             {
                 //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
-                NPCs.Bosses.SuperHardMode.Artorias ourArtorias = (NPCs.Bosses.SuperHardMode.Artorias)thisEvent.eventNPCs[0].npc.ModNPC;
+                NPCs.Enemies.SuperHardMode.KnightOfGwyn ourKnight = (NPCs.Enemies.SuperHardMode.KnightOfGwyn)thisEvent.eventNPCs[0].npc.ModNPC;
 
                 //Now we can change the damages!!
                 //Note: If you can't find the damages for a NPC, their damage stats might not be public.
                 //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case blackBreathDamage and phantomSeekerDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
-                ourArtorias.blackBreathDamage = 40;
-                ourArtorias.phantomSeekerDamage = 50;
+                ourKnight.blackBreathDamage = 40;
+                ourKnight.phantomSeekerDamage = 50;
             }
             return EventActionStatus.Continue;
         }

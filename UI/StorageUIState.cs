@@ -29,6 +29,10 @@ namespace tsorcRevamp.UI
         private const float HeaderHeight = 28f;
 
         public static bool Visible = false;
+        // When the inventory closes while storage was open, this stays true so storage reopens on next inventory open.
+        // Cleared when the player explicitly closes storage (X button, keybind, or toggle) so that intentional closes
+        // are not undone by simply reopening the inventory.
+        public static bool ReopenWithInventory = false;
         public static int ActiveTab = (int)Tab.New;
         public static int ScrollOffset = 0; // measured in rows
         public static string SearchText = "";
@@ -105,6 +109,7 @@ namespace tsorcRevamp.UI
             closeButton.OnLeftClick += (evt, el) =>
             {
                 Visible = false;
+                ReopenWithInventory = false; // explicit close — don't reopen with next inventory open
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuClose);
             };
             panel.Append(closeButton);
@@ -231,9 +236,12 @@ namespace tsorcRevamp.UI
         {
             base.Update(gameTime);
 
-            // Auto-close with the inventory, mirroring the Potion Bag.
+            // Auto-close with the inventory. Remember the open state so storage can reopen next time
+            // the inventory opens — but only if the inventory closing is what caused the close. Explicit
+            // closes (X button, keybind) clear ReopenWithInventory so they aren't undone.
             if (!Main.playerInventory)
             {
+                if (Visible) ReopenWithInventory = true;
                 Visible = false;
             }
             if (!Visible)

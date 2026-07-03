@@ -103,6 +103,20 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         private const int State_Shielding = 1;
         private const int State_Thrusting = 2;
         private const int State_Shooting = 3;
+        private const int State_Leaping = 4;
+
+        // How far above/below the ghost the flat spear-thrust can actually connect. The Spearhead
+        // projectile stays pinned to the ghost's own center height (see Spearhead.cs) and only moves
+        // horizontally, so a target more than ~1.5 tiles off the ghost's level is unreachable no matter
+        // how long it stands there thrusting at them.
+        private const float ThrustVerticalReach = 28f;
+        // Vertical gaps up to this are closed with a small hop instead of a doomed thrust attempt.
+        // Anything taller than this breaks stance back to Pursuing so the SF4 nav can properly path up.
+        private const float HopVerticalRange = 56f;
+        // Cooldown (ticks) between leap attacks, tracked in NPC.localAI[1].
+        private const float LeapCooldownTicks = 300f;
+        // Cooldown (ticks) between hops, tracked in NPC.localAI[0], to stop hop-spam on stairs.
+        private const float HopCooldownTicks = 40f;
 
 
 
@@ -143,6 +157,10 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 return;
             }
 
+            // Leap/hop cooldowns tick down regardless of state.
+            if (NPC.localAI[1] > 0f) NPC.localAI[1] -= 1f;
+            if (NPC.localAI[0] > 0f) NPC.localAI[0] -= 1f;
+
             bool grounded = NPC.velocity.Y == 0; // proxy for the old standing-on-solid-tile scan (gates attacks/transitions)
             bool los = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
             // Same-level melee/shield threat: roughly level + visible. Only stand and BLOCK when the player is a
@@ -168,7 +186,8 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             // Bubble barrage: blue flash fires at AI_Timer==65, 25 ticks before the first bubble at 90 —
             // hyper-armored from the flash through the barrage. Recovery (>150) is vulnerable.
             globalNPC.AttackCommitted = (AI_State == State_Thrusting && AI_Timer >= 34 && AI_Timer <= 94)
-                                        || (AI_State == State_Shooting && AI_Timer >= 65 && AI_Timer <= 150);
+                                        || (AI_State == State_Shooting && AI_Timer >= 65 && AI_Timer <= 150)
+                                        || AI_State == State_Leaping; // committed to the arc once airborne
 
             #region AI_State Independent
 
@@ -258,7 +277,17 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     AI_State = State_Shielding;
                 }
 
-                if (AI_Timer_Attacking >= 420 && NPC.Distance(player.Center) < 20f * 16 && grounded && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+                // Leap attack: a ranged gap-closer that also solves height the thrust combo can't — it can
+                // launch up (or down) onto a ledge the player is standing on, up to ~20 tiles out. Its own
+                // 300-tick cooldown (localAI[1]) is independent of the bubble barrage's AI_Timer_Attacking gate.
+                float leapDistance = NPC.Distance(player.Center);
+                if (AI_State == State_Pursuing && NPC.localAI[1] <= 0f && grounded && los
+                    && leapDistance > 130f && leapDistance <= 20f * 16f)
+                {
+                    StartLeap(player);
+                }
+
+                if (AI_State == State_Pursuing && AI_Timer_Attacking >= 420 && NPC.Distance(player.Center) < 20f * 16 && grounded && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
                 {
                     AI_State = State_Shooting;
                 }
@@ -291,9 +320,30 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     }
                 }
 
-                if (AI_Timer_Shielding > 310 && Math.Abs(NPC.Center.X - player.Center.X) <= 6.5f * 16 && Math.Abs(NPC.Center.Y - player.Center.Y) <= 6.5f * 16 && grounded && NPC.velocity.Y == 0 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+                float shieldVerticalGap = player.Center.Y - NPC.Center.Y; // negative = player above
+                bool shieldHorizontalClose = Math.Abs(NPC.Center.X - player.Center.X) <= 6.5f * 16;
+
+                if (AI_Timer_Shielding > 310 && shieldHorizontalClose && Math.Abs(shieldVerticalGap) <= ThrustVerticalReach && grounded && NPC.velocity.Y == 0 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
                 {
                     AI_State = State_Thrusting;
+                }
+                // Standing on a step just too high/low for the flat thrust to reach: hop to close it instead of
+                // uselessly poking at empty air (the "one tile higher and it keeps stabbing" bug). Too tall a
+                // gap for a hop breaks stance back to Pursuing so the SF4 nav can path up/around properly.
+                else if (AI_Timer_Shielding > 310 && shieldHorizontalClose && Math.Abs(shieldVerticalGap) <= HopVerticalRange && grounded && NPC.velocity.Y == 0)
+                {
+                    if (NPC.localAI[0] <= 0f)
+                    {
+                        NPC.velocity.Y = -6f;
+                        NPC.velocity.X = NPC.direction * 2f;
+                        NPC.localAI[0] = HopCooldownTicks;
+                        NPC.netUpdate = true;
+                    }
+                }
+                else if (AI_Timer_Shielding > 310 && shieldHorizontalClose && Math.Abs(shieldVerticalGap) > HopVerticalRange)
+                {
+                    AI_State = State_Pursuing;
+                    AI_Timer_Shielding = 0;
                 }
 
                 if (AI_Timer_Shielding > 310 && AI_Timer_Attacking >= 420 && NPC.Distance(player.Center) < 20f * 16 && grounded && NPC.velocity.Y == 0 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
@@ -441,10 +491,24 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     else shootPos = new Vector2(NPC.Center.X - 54, NPC.Center.Y - 10);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile bubble = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), shootPos, new Vector2(NPC.direction * Main.rand.NextFloat(6, 12), Main.rand.NextFloat(-2f, 2f)), ProjectileID.Bubble, spearStabDamage, 5, Main.myPlayer, NPC.whoAmI)];
-                        bubble.friendly = false;
-                        bubble.hostile = true;
-                        bubble.tileCollide = false;
+                        // Short spray up close (the old drifting bubble is fine at melee range); a long-range
+                        // bolt aimed at the player once they're far enough that the spray would just drift and
+                        // die. Each bolt rolls its own drift strength/side so the volley doesn't look laser-gridded.
+                        if (NPC.Distance(player.Center) > 160f)
+                        {
+                            Vector2 boltVelocity = (player.Center - shootPos).SafeNormalize(Vector2.UnitX * NPC.direction) * 5.5f;
+                            float boltDrift = Main.rand.NextFloat(-2.5f, 2.5f);
+                            Projectile bolt = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), shootPos, boltVelocity, ModContent.ProjectileType<Projectiles.Enemy.GhostBubbleBolt>(), spearStabDamage, 5, Main.myPlayer, boltDrift)];
+                            bolt.friendly = false;
+                            bolt.hostile = true;
+                        }
+                        else
+                        {
+                            Projectile bubble = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), shootPos, new Vector2(NPC.direction * Main.rand.NextFloat(6, 12), Main.rand.NextFloat(-2f, 2f)), ProjectileID.Bubble, spearStabDamage, 5, Main.myPlayer, NPC.whoAmI)];
+                            bubble.friendly = false;
+                            bubble.hostile = true;
+                            bubble.tileCollide = false;
+                        }
                     }
                 }
 
@@ -462,6 +526,80 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     }
                 }
             }
+
+            // LEAPING (spear-poke leap attack — closes distance and height together)
+            if (AI_State == State_Leaping)
+            {
+                AI_Timer++;
+                NPC.TargetClosest(true);
+
+                // Landed: either keep poking if the leap put it in real thrust range, or bail back to
+                // Pursuing if the player moved / the arc undershot/overshot.
+                if (AI_Timer > 3 && NPC.velocity.Y == 0f)
+                {
+                    NPC.velocity.X = 0;
+                    bool landedInThrustRange = Math.Abs(NPC.Center.X - player.Center.X) <= 6.5f * 16
+                        && Math.Abs(NPC.Center.Y - player.Center.Y) <= ThrustVerticalReach
+                        && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
+
+                    if (landedInThrustRange)
+                    {
+                        AI_State = State_Thrusting;
+                        AI_Timer = 0;
+                        AI_Timer_Shielding = 400; // return to Shielding, not Pursuing, once the combo ends
+                    }
+                    else
+                    {
+                        AI_State = State_Pursuing;
+                        AI_Timer = 0;
+                        AI_Timer_Shielding = 0;
+                    }
+                }
+                // Safety timeout in case it somehow never registers grounded (e.g. leaps into deep water).
+                else if (AI_Timer > 200)
+                {
+                    AI_State = State_Pursuing;
+                    AI_Timer = 0;
+                    AI_Timer_Shielding = 0;
+                }
+            }
+        }
+
+        // Launches a physics-timed leap toward the player's current position: solves for the airtime needed
+        // to close the vertical gap (boosting launch power if the player is well above), then picks the
+        // horizontal speed that covers the gap in that time. Caps out around the 20-tile trigger range.
+        private void StartLeap(Player targetPlayer)
+        {
+            AI_State = State_Leaping;
+            AI_Timer = 0f;
+            NPC.localAI[1] = LeapCooldownTicks;
+
+            float gravity = NPC.gravity > 0f ? NPC.gravity : 0.3f;
+            float dx = targetPlayer.Center.X - NPC.Center.X;
+            float dy = targetPlayer.Center.Y - NPC.Center.Y; // negative = player above
+
+            float vy0 = -MathHelper.Clamp(7f + Math.Max(0f, -dy) * 0.05f, 7f, 16f);
+            float disc = vy0 * vy0 + 2f * gravity * dy;
+            if (disc < 0f)
+            {
+                // Player is higher than this launch power can reach — boost just enough to get there.
+                vy0 = -MathHelper.Clamp((float)Math.Sqrt(-2f * gravity * dy) + 0.5f, 7f, 18f);
+                disc = Math.Max(0f, vy0 * vy0 + 2f * gravity * dy);
+            }
+
+            float airTime = MathHelper.Clamp((-vy0 + (float)Math.Sqrt(disc)) / gravity, 10f, 140f);
+            float vx = MathHelper.Clamp(dx / airTime, -13f, 13f);
+            if (Math.Abs(vx) < 2f)
+            {
+                vx = 2f * (dx >= 0 ? 1 : -1);
+            }
+
+            NPC.direction = vx >= 0 ? 1 : -1;
+            NPC.spriteDirection = NPC.direction;
+            NPC.velocity = new Vector2(vx, vy0);
+            NPC.netUpdate = true; // sync the launch to MP clients
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Pitch = 0.2f, PitchVariance = .2f }, NPC.Center);
         }
 
         // IStaggerable: a poise break cancels any in-progress attack and returns to neutral pursuit.
@@ -817,6 +955,13 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             if (AI_State == State_Pursuing && (NPC.velocity.Y != 0))
             {
                 NPC.frame.Y = 1 * frameHeight;
+            }
+
+            if (AI_State == State_Leaping)
+            {
+                // Spear held out at full extension for the whole arc — the "poke leading the jump" look.
+                NPC.spriteDirection = NPC.direction;
+                NPC.frame.Y = 14 * frameHeight;
             }
 
             if (AI_State == State_Shielding)

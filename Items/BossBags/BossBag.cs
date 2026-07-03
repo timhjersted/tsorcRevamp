@@ -509,7 +509,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<RingofArtorias>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WolfRing>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfArtorias>(), 1, 6, 12));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfArtorias>(), 1, 6, 6));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
     }

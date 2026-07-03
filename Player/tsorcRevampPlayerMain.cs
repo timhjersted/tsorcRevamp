@@ -1062,6 +1062,94 @@ namespace tsorcRevamp
 
             return startingItems;
         }
+        private const int ArtoriasAbysswalkerPoiseDuration = 3 * 60;
+        private const int ArtoriasAbysswalkerPoiseCooldown = 5 * 60;
+        private const int ArtoriasAbysswalkerMeleeCounter = 1;
+        private const int ArtoriasAbysswalkerMagicCounter = 2;
+
+        public void TryGrantArtoriasAbysswalkerPoise()
+        {
+            if (!ArtoriasAbysswalker || !isDodging || Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>()) || Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoiseCooldown>()))
+            {
+                return;
+            }
+
+            bool dodgedThreat = false;
+            Rectangle paddedHitbox = Player.Hitbox;
+            paddedHitbox.Inflate(8, 8);
+
+            for (int i = 0; i < Main.npc.Length && !dodgedThreat; i++)
+            {
+                NPC npc = Main.npc[i];
+                dodgedThreat = npc.active && !npc.friendly && npc.damage > 0 && !npc.dontTakeDamage && paddedHitbox.Intersects(npc.Hitbox);
+            }
+
+            for (int i = 0; i < Main.projectile.Length && !dodgedThreat; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                dodgedThreat = projectile.active && projectile.hostile && projectile.damage > 0 && paddedHitbox.Intersects(projectile.Hitbox);
+            }
+
+            if (!dodgedThreat)
+            {
+                return;
+            }
+
+            Player.AddBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>(), ArtoriasAbysswalkerPoiseDuration);
+            Player.AddBuff(ModContent.BuffType<ArtoriasAbysswalkerPoiseCooldown>(), ArtoriasAbysswalkerPoiseCooldown);
+            SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.6f, Pitch = -0.35f }, Player.Center);
+
+            for (int i = 0; i < 24; i++)
+            {
+                Dust dust = Dust.NewDustPerfect(Player.Center + Main.rand.NextVector2Circular(18f, 26f), DustID.ShadowbeamStaff, Main.rand.NextVector2Circular(2.5f, 2.5f), 110, Color.MediumPurple, Main.rand.NextFloat(0.9f, 1.6f));
+                dust.noGravity = true;
+            }
+        }
+
+        private bool CanSpendArtoriasAbysswalkerPoise(DamageClass damageType)
+        {
+            return ArtoriasAbysswalker && Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>()) && (damageType == DamageClass.Melee || damageType == DamageClass.MeleeNoSpeed || damageType == DamageClass.Magic);
+        }
+
+        private void SpendArtoriasAbysswalkerPoise(NPC target, NPC.HitInfo hit)
+        {
+            if (ArtoriasAbysswalkerCounterType == 0 || !Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>()))
+            {
+                return;
+            }
+
+            Player.ClearBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>());
+            Player.noKnockback = true;
+            Player.immune = true;
+            Player.SetImmuneTimeForAllTypes(18);
+
+            tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            float staminaRestored = staminaPlayer.staminaResourceMax2 * ArtoriasOfTheAbyssHelm.PoiseStaminaRestore / 100f;
+            staminaPlayer.staminaResourceCurrent = MathHelper.Clamp(staminaPlayer.staminaResourceCurrent + staminaRestored, 0, staminaPlayer.staminaResourceMax2);
+
+            if (Main.myPlayer == Player.whoAmI)
+            {
+                if (ArtoriasAbysswalkerCounterType == ArtoriasAbysswalkerMeleeCounter)
+                {
+                    Vector2 velocity = Player.DirectionTo(target.Center);
+                    if (velocity == Vector2.Zero)
+                    {
+                        velocity = new Vector2(Player.direction, 0);
+                    }
+                    velocity.Normalize();
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center - velocity * 24f, velocity * 14f, ModContent.ProjectileType<Projectiles.Melee.ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Melee).ApplyTo(hit.SourceDamage * 0.55f), 4f, Player.whoAmI, velocity.ToRotation());
+                }
+                else if (ArtoriasAbysswalkerCounterType == ArtoriasAbysswalkerMagicCounter)
+                {
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Magic.ArtoriasAbyssShockwave>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.45f), 5f, Player.whoAmI);
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, new Vector2(-9f, 0f), ModContent.ProjectileType<Projectiles.Melee.ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.25f), 3f, Player.whoAmI, MathHelper.Pi, 1f);
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, new Vector2(9f, 0f), ModContent.ProjectileType<Projectiles.Melee.ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.25f), 3f, Player.whoAmI, 0f, 1f);
+                }
+            }
+
+            ArtoriasAbysswalkerCounterType = 0;
+            SoundEngine.PlaySound(SoundID.Item117 with { Volume = 0.55f, Pitch = -0.25f }, target.Center);
+        }
         public static float AmmoReservationRangedCritDamage = 10f;
         public static float TitanMeleeSize = 15f;
         public static float SharpenedMeleeArmorPen = 50f;
@@ -1080,9 +1168,14 @@ namespace tsorcRevamp
             {
                 modifiers.CritDamage -= 0.25f;
             }
-            if (CanUseItemsWhileDodging && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
+            if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
             {
                 modifiers.FinalDamage += ArtoriasArmor.DmgMultWhileRolling;
+            }
+            if (CanSpendArtoriasAbysswalkerPoise(modifiers.DamageType))
+            {
+                modifiers.FinalDamage += ArtoriasOfTheAbyssHelm.PoiseDamage / 100f;
+                ArtoriasAbysswalkerCounterType = modifiers.DamageType == DamageClass.Magic ? ArtoriasAbysswalkerMagicCounter : ArtoriasAbysswalkerMeleeCounter;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
             {
@@ -1162,7 +1255,7 @@ namespace tsorcRevamp
                     modifiers.SetCrit();
                 }
             }
-            if (CanUseItemsWhileDodging && isDodging && (proj.type == ProjectileID.NebulaBlaze2) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.YianBlade>())
+            if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (proj.type == ProjectileID.NebulaBlaze2) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.YianBlade>())
             {
                 modifiers.FinalDamage -= ArtoriasArmor.DmgMultWhileRolling;
             }
@@ -1303,6 +1396,7 @@ namespace tsorcRevamp
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
             }
+            SpendArtoriasAbysswalkerPoise(target, hit);
             if (DemonPower && hit.DamageType == DamageClass.SummonMeleeSpeed && hit.Crit && Main.myPlayer == Player.whoAmI)
             {
                 Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
@@ -1900,6 +1994,12 @@ namespace tsorcRevamp
         //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
         public override void OnHurt(Player.HurtInfo info)
         {
+            if (Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>()))
+            {
+                Player.ClearBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>());
+                Player.AddBuff(ModContent.BuffType<ArtoriasAbysswalkerPoiseCooldown>(), ArtoriasAbysswalkerPoiseCooldown);
+                ArtoriasAbysswalkerCounterType = 0;
+            }
             if (manaShield == 1)
             {
                 if (Player.statMana >= Items.Accessories.Defensive.Shields.ManaShield.manaCost)

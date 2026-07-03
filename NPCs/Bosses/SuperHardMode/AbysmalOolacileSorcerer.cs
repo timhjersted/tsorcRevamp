@@ -2,12 +2,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Audio;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
@@ -59,6 +61,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.knockBackResist = 0f;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.DespawnHandler"), Color.DarkRed, DustID.Firework_Red);
         }
+
+        // Oolacile was the town consumed by the Abyss - fitting for its own abysmal sorcerer to curse everyone
+        // present the moment the fight begins, lasting the whole fight and then some (30 minutes).
+        public override void OnSpawn(IEntitySource source)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    Main.player[i].AddBuff(ModContent.BuffType<Abyss>(), 30 * 60 * 60);
+                }
+            }
+        }
+
         public float DarkBeadShotTimer
         {
             get => NPC.ai[0];

@@ -345,6 +345,7 @@ namespace tsorcRevamp.NPCs
                 if (!kiting && s.Plan != null && s.PlanIndex < s.Plan.Count)
                 {
                     if (g.RequiresFlatGround) g.BeastUnreachableFrames = 0; // reachable: A* is navigating us in to touch
+                    g.UnreachableFrames = 0; // generalized version of the line above — has a real plan, so reachable
                     actionHandled = ExecuteStep(s, npc, player, topSpeed, acceleration,
                         jumpCeil, boostCeil, grounded, doorBreakingDamage, g,
                         out actionLabel, out reasonLabel);
@@ -476,11 +477,23 @@ namespace tsorcRevamp.NPCs
                 // Anti-stuck give-up — keyed on the NPC's OWN immobility, not player distance. The old
                 // distance-based test reset constantly from player micro-movement + LOS flicker, so a
                 // wedged NPC never disengaged (the "frozen on the fireplace mantle" bug). Here: while
-                // pursuing with no plan, grounded, uncommitted, and unable to actually engage (no LOS or
-                // out of attack range), if our own X hasn't moved for ~2s we can't make progress ->
-                // disengage to patrol. The canEngage guard keeps legitimate standing-fire from disengaging.
+                // pursuing with no plan, uncommitted, and unable to actually engage (no LOS or out of
+                // attack range), if our own X hasn't moved for ~2s we can't make progress -> disengage to
+                // patrol. The canEngage guard keeps legitimate standing-fire from disengaging.
+                //
+                // NOTE: deliberately NOT gated on `grounded` (was, until this comment) — a target we have
+                // no plan for (e.g. straight up on an unreachable ledge) still provokes reflexive, uncommitted
+                // hop attempts that briefly leave the ground every cycle. Gating on grounded reset this timer
+                // every one of those hops, so it never actually reached its threshold — the "20+ seconds
+                // frozen/oscillating before finally giving up" bug. X-position drift alone is still the
+                // progress signal, so a real climb (which moves X) still resets it correctly.
                 bool canEngage = los && npc.Distance(player.Center) <= attackRange;
-                if (pstate == PursuitState.Pursue && grounded && !s.IsCommitted && s.Plan == null && !canEngage)
+                bool noPathToTarget = pstate == PursuitState.Pursue && !s.IsCommitted && s.Plan == null && !canEngage;
+                // Generalizes BeastUnreachableFrames to every SF4 enemy — how long this pursuit has had
+                // no path at all. Read by the shared FSM (tsorcRevampAIs.cs) to decide whether a hit landed
+                // by an unreachable attacker should trigger Flee instead of a normal re-aggro.
+                g.UnreachableFrames = noPathToTarget ? Math.Min(g.UnreachableFrames + 1, 100000) : 0;
+                if (noPathToTarget)
                 {
                     if (Math.Abs(npc.Center.X - s.StuckCheckX) > 2f)
                     {
@@ -752,6 +765,7 @@ namespace tsorcRevamp.NPCs
             if (start == null || goal == null)
             {
                 s.Plan = null; s.PlanIndex = 0;
+                s.NoAStarPath = true;
                 s.LastPlanResult = start == null ? "no-start-span" : "no-goal-span";
                 return;
             }
@@ -760,10 +774,12 @@ namespace tsorcRevamp.NPCs
             if (path == null)
             {
                 s.Plan = null; s.PlanIndex = 0;
+                s.NoAStarPath = true;
                 s.LastPlanResult = $"no-path spans={spans.Count}";
                 return;
             }
 
+            s.NoAStarPath = false;
             s.Plan = ConvertToSteps(path, playerCx, playerFeetY);
             s.PlanIndex = 0;
             s.StepTimer = StepTimeoutFrames;
@@ -2425,6 +2441,9 @@ namespace tsorcRevamp.NPCs
         {
             action = ""; reason = "";
             if (player.Center.Y >= npc.Center.Y - 2f * TileF) return false; // player not meaningfully above
+            // No A* path to the player means they're behind an impassable wall. Jumping straight up
+            // will only loop the NPC against the wall forever — skip and let the stuck clock disengage.
+            if (s.NoAStarPath) return false;
             int feetY = GetFeetTileY(npc);
             int col = (int)(npc.Center.X / TileF);
 
@@ -2476,7 +2495,9 @@ namespace tsorcRevamp.NPCs
                 // Cap raised 4 -> 6 to match this NPC's jump power (MaxJumpPower 9 ≈ 8 tiles of height).
                 // It was giving up ("too-tall") on walls it can actually clear; ComputeJumpArc still gates
                 // feasibility, so an unmakeable jump falls through to the blocked brake below.
-                if (oh <= 6 && HasHeadroomForJump(npc, direction, oh))
+                // Skip when NoAStarPath: a wall the span graph can't route through won't be cleared
+                // by a jump — just brake so the stuck clock can disengage to patrol.
+                if (!s.NoAStarPath && oh <= 6 && HasHeadroomForJump(npc, direction, oh))
                 {
                     if (ComputeJumpArc(2, oh, npc.gravity, jumpCeil, maxLaunchVx, out float op, out float ovx))
                     {
@@ -2486,7 +2507,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
                 npc.velocity.X *= 0.4f;
-                action = "blocked"; reason = oh > 6 ? "too-tall" : "no-headroom";
+                action = "blocked"; reason = oh > 6 ? "too-tall" : (s.NoAStarPath ? "no-astar-path" : "no-headroom");
                 return true;
             }
             int drop = GetDropDepth(frontX, feetY, 6);
@@ -3193,6 +3214,10 @@ namespace tsorcRevamp.NPCs
             // and re-snapping X to the rope center before the step-off velocity can carry it clear.
             public bool RopeDismounting;
             public string LastPlanResult = "";
+            // True when the last A* attempt found no path to the player (no-goal-span / no-path).
+            // Cleared when A* successfully builds a plan. Guards TryShaftEscape / TryLocalTerrain
+            // from firing jumps that loop forever against an impassable wall with no route through.
+            public bool NoAStarPath;
             // Recently-failed step targets, mapped to expiry frame. Used by the
             // planner to prefer alternative routes after a step times out.
             public Dictionary<(int x, int y), int> BadEdgeTargets = new Dictionary<(int, int), int>();

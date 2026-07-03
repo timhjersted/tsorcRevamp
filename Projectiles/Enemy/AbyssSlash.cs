@@ -1,0 +1,78 @@
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    // Straight-line crescent slash, fired toward wherever the player was at release (no homing).
+    // The source sprite is a plain white 4-frame crescent (170x170/frame) - tinted purple via
+    // GetAlpha, scaled down small ("tiny"), with a purple point light and dust trail.
+    class AbyssSlash : ModProjectile
+    {
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/AbyssSlash";
+
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Type] = 4;
+        }
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 24;
+            Projectile.height = 24;
+            Projectile.scale = 0.35f;
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.penetrate = 1;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.light = 0.6f;
+            Projectile.timeLeft = 180;
+        }
+
+        public override void AI()
+        {
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            Lighting.AddLight(Projectile.Center, new Vector3(0.55f, 0.15f, 0.85f));
+
+            Animate();
+
+            if (Main.rand.NextBool(2))
+            {
+                Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, -Projectile.velocity * 0.15f, 100, default, 0.9f);
+                d.noGravity = true;
+            }
+        }
+
+        void Animate()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 5)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Type];
+            }
+        }
+
+        public override Color? GetAlpha(Color lightColor)
+        {
+            return new Color(190, 90, 255, 220);
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                Vector2 vel = Main.rand.NextVector2Circular(3f, 3f);
+                Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, vel, 60, default, 1f);
+                d.noGravity = true;
+            }
+        }
+    }
+}

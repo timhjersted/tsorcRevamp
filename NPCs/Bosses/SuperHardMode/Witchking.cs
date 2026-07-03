@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -67,6 +68,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             UsefulFunctions.AddAttack(NPC, TIME_BEFORE_FIREBALL, ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 75, 8, SoundID.Item20);
             UsefulFunctions.AddAttack(NPC, TIME_BEFORE_STORMBALL, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 95, 0, SoundID.Item100, needsLineOfSight: false);
+        }
+
+        // Witchking drops the Covenant of Artorias, so it's fitting he's the one who curses you with the Abyss
+        // in the first place - applied to everyone present at the start of the fight, lasting the whole fight
+        // and then some (30 minutes) rather than tied to a specific attack.
+        public override void OnSpawn(IEntitySource source)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    Main.player[i].AddBuff(ModContent.BuffType<Abyss>(), 30 * 60 * 60);
+                }
+            }
         }
 
         int chargeTelegraphTimer = 0;

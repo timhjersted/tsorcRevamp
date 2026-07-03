@@ -60,7 +60,8 @@ namespace tsorcRevamp.NPCs
     {
         Pursue, // has LOS, or a valid target + making progress
         Search, // lost LOS: move to LastKnownPlayerPos and look around (gated by RemembersLastKnownPos)
-        Patrol  // gave up: calm patrol around an anchor, no pursuit jumps
+        Patrol, // gave up: calm patrol around an anchor, no pursuit jumps
+        Flee    // hit by a player it has no A* path to (and can't blink to): run to a safe distance, then Patrol
     }
 
     public enum PatrolMode
@@ -1018,6 +1019,18 @@ namespace tsorcRevamp.NPCs
         public int DisengageTimer = 0;
         // Last position the NPC had line of sight to the player; target for the Search state.
         public Vector2 LastKnownPlayerPos = Vector2.Zero;
+        // Generalizes BeastUnreachableFrames to ANY SF4 (NavSearchRadius > 0) enemy: consecutive frames spent
+        // Pursuing with no A* plan and unable to engage (maintained by SmartFighter4AI, alongside its own
+        // StuckGiveUpFrames give-up counter). Used as the "genuinely can't reach this player" signal for Flee.
+        public int UnreachableFrames = 0;
+        // === Flee-to-safety state ===
+        // Entered when hit while UnreachableFrames shows the attacker is genuinely unreachable (and this NPC
+        // can't just blink to them). Runs away from the attacker, gently speeding up, until FleeMaxTiles or a
+        // wall/cliff, then settles into a normal Patrol/Wander. Beasts (RequiresFlatGround) keep their own
+        // BeastStale stale-wander instead — Flee doesn't apply to them.
+        public float FleeOriginX = 0f;
+        public int FleeDirection = 0;
+        public int FleeElapsedFrames = 0;
 
         // -- Deterministic intelligence levers --
         // SF4 A* search-window radius in tiles. 0 = no global pathfinding (chase-on-sight + give up);
@@ -1787,6 +1800,9 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write((byte)PursuitState);
             binaryWriter.Write(DisengageTimer);
             binaryWriter.WriteVector2(LastKnownPlayerPos);
+            binaryWriter.Write(FleeOriginX);
+            binaryWriter.Write(FleeDirection);
+            binaryWriter.Write(FleeElapsedFrames);
             // Permanent resources — charge counts deplete and never refill, so they must stay in sync
             binaryWriter.Write(TeleportChargesRemaining);
             binaryWriter.Write(AttackIndex);
@@ -1814,6 +1830,9 @@ namespace tsorcRevamp.NPCs
             PursuitState = (PursuitState)binaryReader.ReadByte();
             DisengageTimer = binaryReader.ReadInt32();
             LastKnownPlayerPos = binaryReader.ReadVector2();
+            FleeOriginX = binaryReader.ReadSingle();
+            FleeDirection = binaryReader.ReadInt32();
+            FleeElapsedFrames = binaryReader.ReadInt32();
             TeleportChargesRemaining = binaryReader.ReadInt32();
             AttackIndex = binaryReader.ReadInt32();
         }
@@ -2026,6 +2045,11 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.SolarSpearman, 0.4f);
                 pool.Add(NPCID.SolarDrakomire, 0.4f);
                 pool.Add(NPCID.SolarSolenian, 0.6f); 
+            }
+            //dungeon (rare)
+            if (spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.KnightOfGwyn>(), 0.01f);
             }
             //catacombs
             if (spawnInfo.SpawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)

@@ -31,6 +31,12 @@ namespace tsorcRevamp.NPCs
         private const int WanderCommitFramesMax = 480; // ~8s
         private const int CliffLookDownTiles = 4;      // a drop deeper than this = turn around (don't walk off)
 
+        // -- Flee tunables --
+        private const float FleeMaxTiles = 40f;         // safety distance before settling into Patrol
+        private const float FleeRampFrames = 180f;      // ~3s to gently ramp up to full flee speed
+        private const float FleeSpeedMultStart = 1.0f;  // starts at normal topSpeed...
+        private const float FleeSpeedMultMax = 1.6f;    // ...gently opens up to 1.6x while running
+
         private const int TileF = 16;
         // Roughly how many frames it takes to cross one tile at patrol speed (topSpeed*PatrolSpeedMult ~
         // 0.9 px/frame -> ~18 frames/tile). Used to convert short idle-walk tile lengths into a frame timer.
@@ -62,7 +68,11 @@ namespace tsorcRevamp.NPCs
 
             // LOS (re)acquires the player: remember where, reset the clock, and pursue — but a sighting
             // from outside aggro range while patrolling shouldn't yank us back (avoids long-range pop-aggro).
-            if (hasLos)
+            // Excluded while Fleeing: the attacker that triggered the flee is BY DEFINITION still visible
+            // (that's usually why it looks like a jitter target rather than a threat worth re-engaging), so
+            // without this exclusion every fleeing NPC would snap straight back to Pursue the instant hasLos
+            // is true and undo the flee before it moves anywhere.
+            if (hasLos && g.PursuitState != PursuitState.Flee)
             {
                 g.LastKnownPlayerPos = player.Center;
                 if (g.PursuitState == PursuitState.Pursue || inAggro)
@@ -105,6 +115,11 @@ namespace tsorcRevamp.NPCs
                 case PursuitState.Patrol:
                     // Stay patrolling; re-aggro is handled by the hasLos branch above.
                     break;
+
+                case PursuitState.Flee:
+                    // Fully driven by RunFlee (movement + the Flee->Patrol handoff at max distance/an
+                    // obstacle); nothing to advance here.
+                    break;
             }
 
             return g.PursuitState;
@@ -141,6 +156,35 @@ namespace tsorcRevamp.NPCs
             g.PatrolLegRemaining = 0;
             g.PatrolIdleTimer = 0;
             g.PatrolElapsed = 0;
+        }
+
+        // =====================================================================================
+        //  Flee locomotion (run from the (unreachable) attacker, then hand off to Patrol)
+        // =====================================================================================
+
+        /// <summary>
+        /// Run one tick of Flee: walk away from wherever the flee started (g.FleeDirection, locked in when
+        /// Flee was entered — see tsorcRevampAIs.cs's justHit handling), gently ramping speed up over
+        /// FleeRampFrames. Settles into a normal Patrol/Wander once FleeMaxTiles is covered or the NPC runs
+        /// into a wall/cliff it can't cross (reuses the same cliff/wall awareness as StepAlong so it never
+        /// panics off a ledge). Cliff/wall found before the safety distance is the common case, not a bug.
+        /// </summary>
+        public static void RunFlee(NPC npc, tsorcRevampGlobalNPC g, float topSpeed, float acceleration)
+        {
+            g.FleeElapsedFrames++;
+            float rampT = Math.Min(g.FleeElapsedFrames / FleeRampFrames, 1f);
+            float fleeSpeed = topSpeed * (FleeSpeedMultStart + (FleeSpeedMultMax - FleeSpeedMultStart) * rampT);
+            float traveledTiles = Math.Abs(npc.Center.X - g.FleeOriginX) / TileF;
+
+            bool reachedSafety = traveledTiles >= FleeMaxTiles;
+            bool blocked = reachedSafety || !StepAlong(npc, g.FleeDirection, fleeSpeed, acceleration, speedMult: 1f);
+            if (blocked)
+            {
+                // Safe distance covered, or nowhere further to run — settle into a real wander from here
+                // rather than leaving one dead frame before Patrol picks up next tick.
+                EnterPatrol(npc, g);
+                RunPatrol(npc, g, topSpeed, acceleration);
+            }
         }
 
         // =====================================================================================
@@ -235,10 +279,12 @@ namespace tsorcRevamp.NPCs
         //  Locomotion + terrain helpers (self-contained; patrol never jumps)
         // =====================================================================================
 
-        /// <summary>Walk one tick in `dir` at patrol speed. Returns false if blocked by a wall or a cliff
-        /// (the caller turns). Position-based legs are managed by the callers; this no longer frame-counts
-        /// a leg (that bug burned a "20-40 tile" leg in 20-40 frames = ~1-2 real tiles -> the jitter).</summary>
-        private static bool StepAlong(NPC npc, int dir, float topSpeed, float acceleration)
+        /// <summary>Walk one tick in `dir` toward `topSpeed * speedMult`. Returns false if blocked by a wall
+        /// or a cliff (the caller turns). Position-based legs are managed by the callers; this no longer
+        /// frame-counts a leg (that bug burned a "20-40 tile" leg in 20-40 frames = ~1-2 real tiles -> the
+        /// jitter). `speedMult` defaults to the patrol amble (0.6x) — Flee passes 1f since its ramped speed
+        /// is already the exact target, not a fraction of topSpeed to further scale down.</summary>
+        private static bool StepAlong(NPC npc, int dir, float topSpeed, float acceleration, float speedMult = PatrolSpeedMult)
         {
             if (dir == 0) dir = 1;
             if (WallAhead(npc, dir) || !FloorAhead(npc, dir))
@@ -248,7 +294,7 @@ namespace tsorcRevamp.NPCs
             }
             npc.direction = dir;
             npc.spriteDirection = dir;
-            float target = dir * topSpeed * PatrolSpeedMult;
+            float target = dir * topSpeed * speedMult;
             if (npc.velocity.X < target) npc.velocity.X = Math.Min(npc.velocity.X + acceleration, target);
             else if (npc.velocity.X > target) npc.velocity.X = Math.Max(npc.velocity.X - acceleration, target);
             return true;

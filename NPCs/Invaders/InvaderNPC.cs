@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -292,6 +293,152 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual bool  CursedKnivesAllowedAirborne => true;
         protected virtual Color CursedKnivesTelegraphFlashColor => new Color(150, 60, 210);
 
+        // ── Piercing Dash (optional medium/long-range sword-lunge attack) ──────────
+        // Hold the weapon out toward the player (telegraph, sprite jitters in place) → dash straight
+        // through them (a fresh melee hitbox each tick so a fast target can still be caught) → brief
+        // recovery.  A stab variant may be rolled at telegraph start: on the first connecting hit it
+        // stops the dash, holds the target impaled while the weapon arm slowly raises, then flicks them
+        // away.  Subclass supplies all VFX/damage/heal specifics via the hooks below.
+        protected virtual bool  CanPierce                  => false;
+        protected virtual float PierceRange                => 700f;
+        protected virtual float MinPierceRange             => 250f;
+        protected virtual int   PierceChance                => 4;     // % per eligible idle tick
+        protected virtual int   PierceTelegraphTicks       => 60;
+        protected virtual int   PierceDashTicks            => 40;     // travel duration of the lunge
+        protected virtual float PierceDashSpeed            => 15f;
+        protected virtual int   PierceRecoveryTicks        => 90;
+        /// <summary>Chance (0–100), rolled once at telegraph start, that this pierce becomes the
+        /// grab-and-impale variant instead of a simple pass-through lunge.</summary>
+        protected virtual int   PierceStabChance           => 50;
+        /// <summary>Ticks spent holding the impaled target while the sword arm raises 0→90°.</summary>
+        protected virtual int   PierceStabRaiseTicks       => 180;
+        /// <summary>Ticks spent rotating back down and flicking the target away.</summary>
+        protected virtual int   PierceStabFlickTicks       => 20;
+        /// <summary>Cooldown after the whole sequence (dash or stab) ends before another can begin.</summary>
+        protected virtual int   PierceCooldownAfterUse     => 480;
+
+        /// <summary>Called every tick of the PierceTelegraph phase, with elapsed ticks counting up from 0.
+        /// Override to spawn the wind-up VFX (dust color etc. — vary by <see cref="IsPierceStab"/>).</summary>
+        protected virtual void DoPierceWindup(int elapsed) { }
+        /// <summary>Called every tick of the active dash, after the hitbox/impale logic has run for
+        /// that tick.  Override for trail dust / sound.</summary>
+        protected virtual void DoPierceDashTick() { }
+        /// <summary>Fired once the instant the dash connects (before contact damage is applied).
+        /// <paramref name="isStab"/> is <see cref="IsPierceStab"/> at the moment of the hit.</summary>
+        protected virtual void OnPierceContact(Player target, bool isStab) { }
+        /// <summary>Fired once per tick while the target is held impaled (PierceStabHold phase),
+        /// with the current raise progress 0–1.  Override to keep the impaling weapon's visual in sync.</summary>
+        protected virtual void DoPierceStabHoldTick(Player target, float raiseProgress01) { }
+        /// <summary>Fired once when the flick releases the target (start of PierceStabFlick).
+        /// Override for the heal / screenshake / launch — the base class does not apply these itself
+        /// since the exact numbers are boss-specific.</summary>
+        protected virtual void OnPierceFlick(Player target) { }
+
+        /// <summary>True from the moment a pierce telegraph rolls the stab variant until the whole
+        /// pierce sequence ends.  Read this from the VFX hooks above to branch color/behavior.</summary>
+        protected bool IsPierceStab => _pierceIsStab;
+        private bool  _pierceIsStab;
+        private bool  _pierceHitConnected;
+        private int   _pierceDir;
+        private Vector2 _pierceAnchorPos;
+        private Player _pierceTarget;
+        protected int  _pierceCooldown;
+
+        // ── Jumping Downward Slash (optional jump attack, any range within a min/max band) ──
+        // A genuine dodgeroll (backward movement + real i-frames via the shared DodgeTimer mechanism,
+        // not a cosmetic hop) leads into a jump toward the player holding the sword cocked up-and-back,
+        // then a half-circle downward swipe once close or on landing.
+        protected virtual bool  CanJumpSlash              => false;
+        protected virtual float JumpSlashMinRange         => 200f;
+        protected virtual float JumpSlashMaxRange         => 500f;
+        protected virtual int   JumpSlashChance           => 4;      // % per eligible idle tick
+        protected virtual int   JumpSlashCooldownAfterUse => 420;
+
+        /// <summary>Ticks of the backward dodgeroll (also the i-frame window).</summary>
+        protected virtual int   JumpSlashDodgebackTicks    => 24;
+        protected virtual float JumpSlashDodgebackSpeed    => 6f;
+        /// <summary>Max airborne ticks before the swipe fires regardless (normally cut short by
+        /// <see cref="JumpSlashTriggerRange"/> or landing).</summary>
+        protected virtual int   JumpSlashRiseTicks         => 60;
+        protected virtual float JumpSlashLaunchUpSpeed     => 9f;
+        protected virtual float JumpSlashLaunchForwardSpeed => 6f;
+        /// <summary>Distance at which the swipe triggers mid-air, before landing.</summary>
+        protected virtual float JumpSlashTriggerRange      => 90f;
+        protected virtual int   JumpSlashAttackTicks       => 18;
+        protected virtual int   JumpSlashRecoveryTicks     => 70;
+
+        /// <summary>Called every tick of the backward dodgeroll. Override for VFX/sound.</summary>
+        protected virtual void DoJumpSlashDodgebackTick() { }
+        /// <summary>Called every tick while airborne and rising/traveling toward the player.</summary>
+        protected virtual void DoJumpSlashRiseTick() { }
+        /// <summary>Fired once, the instant the half-circle swipe begins. Spawn the hit here
+        /// (e.g. <c>TryMeleeHit()</c>) - the base class doesn't apply damage itself.</summary>
+        protected virtual void DoJumpSlashAttack() { }
+
+        private int _jumpSlashDir;
+        protected int _jumpSlashCooldown;
+
+        // ── Forward Flip Slash (optional spin-through jump attack) ─────────────────
+        // A forward mid-air roll — genuinely i-framed via DodgeTimer, same as JumpSlashDodgeback —
+        // held out and spinning continuously with damage active, closing distance THROUGH the target.
+        // Lands into a held slam pose (screenshake + dirt) rather than an immediate recovery.
+        protected virtual bool  CanFlipSlash               => false;
+        protected virtual float FlipSlashMinRange          => 150f;
+        protected virtual float FlipSlashMaxRange          => 450f;
+        protected virtual int   FlipSlashChance            => 4;      // % per eligible idle tick
+        protected virtual int   FlipSlashCooldownAfterUse  => 420;
+
+        protected virtual float FlipSlashLaunchUpSpeed      => 8f;
+        protected virtual float FlipSlashLaunchForwardSpeed => 7f;
+        /// <summary>Safety cap on airborne ticks in case it never reads a clean landing.</summary>
+        protected virtual int   FlipSlashRiseMaxTicks       => 70;
+        /// <summary>Radians/tick the sword spins while airborne — tuned so a typical flight completes
+        /// roughly one full revolution before landing.</summary>
+        protected virtual float FlipSlashSpinSpeed          => 0.15f;
+        /// <summary>Ticks the sword is held in the landing slam pose before returning to normal behavior.</summary>
+        protected virtual int   FlipSlashLandHoldTicks      => 30;
+
+        /// <summary>Called every tick while airborne and spinning. Override for trail VFX/sound.</summary>
+        protected virtual void DoFlipSlashRiseTick() { }
+        /// <summary>Fired once, the instant the spinning sword connects with the target. Spawn the
+        /// hit here (e.g. <c>TryMeleeHit()</c>) - the base class doesn't apply damage itself.</summary>
+        protected virtual void DoFlipSlashHit() { }
+        /// <summary>Fired once on landing, before the slam pose hold begins. Override for the
+        /// screenshake / dirt dust — the base class does not apply these itself.</summary>
+        protected virtual void OnFlipSlashLand() { }
+
+        private int  _flipSlashDir;
+        private bool _flipHitConnected;
+        protected int _flipSlashCooldown;
+
+        // ── Abyss Slash (optional ranged sword-projectile chain) ───────────────────
+        // Underhand → 170° arc → held "post" pose (still walking) → a swipe that fires a projectile
+        // (via DoAbyssSlashFire) → NextAbyssSlashDelay decides whether another swipe follows and after
+        // how long, so a subclass can chain any number of swipes with per-gap timing (or none at all).
+        protected virtual bool  CanAbyssSlash              => false;
+        protected virtual float AbyssSlashMinRange         => 250f;
+        protected virtual float AbyssSlashMaxRange         => 900f;
+        protected virtual int   AbyssSlashChance           => 4;      // % per eligible idle tick
+        protected virtual int   AbyssSlashCooldownAfterUse => 300;
+
+        /// <summary>Duration of the 170° arc portion of the wind-up.</summary>
+        protected virtual int   AbyssSlashArcTicks         => 40;
+        /// <summary>Ticks the "post" pose is held (still walking) after the arc completes.</summary>
+        protected virtual int   AbyssSlashHoldTicks         => 20;
+        protected virtual int   AbyssSlashSwipeTicks        => 16;
+        protected virtual int   AbyssSlashRecoveryTicks     => 60;
+
+        /// <summary>Fired once, the instant a swipe begins (index 0 = the first swipe out of the
+        /// wind-up). Spawn the projectile / finisher here - the base class fires nothing itself.</summary>
+        protected virtual void DoAbyssSlashFire(int swipeIndex) { }
+        /// <summary>Called right after swipe <paramref name="completedSwipeIndex"/> finishes. Return
+        /// the tick gap before the next swipe, or a negative value to end the sequence (→ recovery).
+        /// Default -1 = always just one swipe.</summary>
+        protected virtual int   NextAbyssSlashDelay(int completedSwipeIndex) => -1;
+
+        private int   _abyssSlashIndex;
+        protected int _abyssSlashCooldown;
+
         // ── Estus healing ─────────────────────────────────────────────────────────
         /// <summary>How many estus drinks the invader starts with.</summary>
         protected virtual int   EstusChargesMax         => 10;
@@ -408,6 +555,45 @@ namespace tsorcRevamp.NPCs.Invaders
             KnivesThrowPause,
             /// <summary>Recovery after the last Cursed Knives volley; applies <see cref="CursedKnivesCooldownAfterUse"/>.</summary>
             KnivesRecovery,
+            /// <summary>Piercing Dash wind-up: weapon held out toward the player, sprite jitters in place.</summary>
+            PierceTelegraph,
+            /// <summary>Active lunge: a fresh melee hitbox is spawned every tick so the fast-moving dash
+            /// can still catch the target.  A stab-variant hit breaks out into <see cref="PierceStabHold"/>.</summary>
+            PierceDash,
+            /// <summary>Stab variant only: the target is held impaled while the sword arm raises 0→90°
+            /// over <see cref="PierceStabRaiseTicks"/>.</summary>
+            PierceStabHold,
+            /// <summary>Stab variant only: rotates back down and releases/launches the target.</summary>
+            PierceStabFlick,
+            /// <summary>Shared recovery after either pierce variant ends — can walk, can't attack yet.</summary>
+            PierceRecovery,
+            /// <summary>Jumping Downward Slash wind-up: a backward roll WITH i-frames (a genuine
+            /// dodgeroll, not a hop) before the jump. See <see cref="JumpSlashDodgebackTicks"/>.</summary>
+            JumpSlashDodgeback,
+            /// <summary>Airborne: launches toward the player holding the cocked "up and back" pose;
+            /// breaks into <see cref="JumpSlashAttack"/> once close or on landing.</summary>
+            JumpSlashRise,
+            /// <summary>The half-circle downward swipe itself (fires once on entry via <see cref="DoJumpSlashAttack"/>).</summary>
+            JumpSlashAttack,
+            /// <summary>Recovery after landing/swiping.</summary>
+            JumpSlashRecovery,
+            /// <summary>Forward flipping spin-through: airborne, i-framed (a real dodgeroll, not just
+            /// hyper-armor), sword held out and spinning continuously with damage active. Breaks into
+            /// <see cref="FlipSlashLand"/> on landing.</summary>
+            FlipSlashRise,
+            /// <summary>The sword snaps into the landing slam pose and is held there for
+            /// <see cref="FlipSlashLandHoldTicks"/> (screenshake + dirt dust fire once on entry).</summary>
+            FlipSlashLand,
+            /// <summary>Abyss Slash wind-up: underhand → 170° arc → held "sword post" pose for the
+            /// last <see cref="AbyssSlashHoldTicks"/>. Deliberately does NOT stop movement (SF4's
+            /// normal pursuit from earlier this tick is left untouched) so the invader keeps walking.</summary>
+            AbyssSlashTelegraph,
+            /// <summary>One quick swing that fires <see cref="DoAbyssSlashFire"/> once on entry.</summary>
+            AbyssSlashSwipe,
+            /// <summary>Inter-swipe gap; duration comes from <see cref="NextAbyssSlashDelay"/>.</summary>
+            AbyssSlashPause,
+            /// <summary>Recovery once <see cref="NextAbyssSlashDelay"/> returns a negative delay.</summary>
+            AbyssSlashRecovery,
             /// <summary>A melee attack was chosen but the player is out of hittable reach: sprint toward
             /// them (no swing) until in range, then start the attack.  Prevents whiffing at distance.</summary>
             ClosingDistance,
@@ -561,6 +747,39 @@ namespace tsorcRevamp.NPCs.Invaders
         /// </summary>
         private const float HoldRotation  = -0.30f;
 
+        // ── Debug instrumentation (DebugMode config only) ───────────────────────────
+        // Snapshot of the last DrawWeaponToLayer call's rotation/position math, so the
+        // DebugMode overlay (lower-left HUD text) and the weapon-debug log file can report
+        // exactly what angle/position decisions produced the on-screen sprite, instead of
+        // having to be reverse-engineered from a screenshot.
+        internal float   DebugWeaponRotationDeg;
+        internal float   DebugDrawRotationDeg;
+        internal bool    DebugHoldingSpearNow;
+        internal bool    DebugHeldRangedLike;
+        internal int     DebugHeldItemType;
+        internal float   DebugSpearGrip;
+        internal Vector2 DebugHandPos;
+        internal Vector2 DebugOrigin;
+        internal int     DebugDirection;
+        internal string  DebugPhaseName => Phase.ToString();
+        internal int     DebugPhaseTimer => PhaseTimer;
+        /// <summary>Named combo + motion currently playing, e.g. "Charged Chop/OverheadArc (step 0/1)" —
+        /// empty outside combo phases.  Every combo shares the same Phase enum value, so this is the
+        /// only way to tell which specific attack is on screen from the overlay/log.</summary>
+        internal string DebugComboTag
+        {
+            get
+            {
+                bool inCombo = Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack
+                            || Phase == AttackPhase.MeleeComboPause    || Phase == AttackPhase.MeleeComboRecovery;
+                if (!inCombo || _activeMeleeComboIndex < 0 || _activeMeleeCombo.Steps == null
+                    || _meleeComboStepIndex >= _activeMeleeCombo.Steps.Length)
+                    return "";
+                var step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                return $"{_activeMeleeCombo.Name}/{step.Motion} (step {_meleeComboStepIndex}/{_activeMeleeCombo.Steps.Length})";
+            }
+        }
+
         private bool IsWeaponVisiblePhase =>
             Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack ||
             Phase == AttackPhase.StabTelegraph  || Phase == AttackPhase.StabAttack  ||
@@ -572,6 +791,13 @@ namespace tsorcRevamp.NPCs.Invaders
             Phase == AttackPhase.MeleeComboPause ||
             Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrow ||
             Phase == AttackPhase.KnivesThrowPause ||
+            Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.PierceDash ||
+            Phase == AttackPhase.PierceStabHold  || Phase == AttackPhase.PierceStabFlick ||
+            Phase == AttackPhase.JumpSlashDodgeback || Phase == AttackPhase.JumpSlashRise ||
+            Phase == AttackPhase.JumpSlashAttack ||
+            Phase == AttackPhase.FlipSlashRise || Phase == AttackPhase.FlipSlashLand ||
+            Phase == AttackPhase.AbyssSlashTelegraph || Phase == AttackPhase.AbyssSlashSwipe ||
+            Phase == AttackPhase.AbyssSlashPause ||
             (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0);
 
         private bool IsMeleeComboPhase =>
@@ -751,6 +977,183 @@ namespace tsorcRevamp.NPCs.Invaders
         private float _frameCounter;
         private const int FrameHeight = 56;
 
+        // ── Dash afterimage trail (opt-in) ────────────────────────────────────────
+        // Sparse translucent echoes of the puppet at recent NPC.oldPos[] positions, drawn via
+        // vanilla's own fractal-afterimage fields (Player.isFirstFractalAfterImage /
+        // firstFractalAfterImageOpacity — the same mechanism vanilla dash accessories use).  Set
+        // AfterimageTicks > 0 (e.g. at the start of a dash) to show the trail for that many ticks;
+        // it counts itself down in AI() and is a no-op for any invader that never sets it.
+        protected int AfterimageTicks;
+        /// <summary>Draw an echo every Nth cached old-position sample (NPC.oldPos has 10 slots by default).</summary>
+        protected virtual int AfterimageSampleStep => 2;
+        protected virtual float AfterimageOpacity => 0.4f;
+
+        // ── Umbral Echo Step (optional dash follow-up) ─────────────────────────────
+        // Rides along on any dash-type attack (Piercing Dash, Forward Flip Slash): on a chance roll
+        // at the end of the dash, the last afterimage "solidifies" at a fixed point in space and
+        // swings once more 45-60 ticks later, aimed at wherever the target is BY THEN (not where they
+        // were during the original dash) - a genuine second dodge, not a cosmetic copy of the first.
+        // A short local tell (dark motes gathering at the echo point) precedes a real swing: the
+        // puppet's arm/body pose through the same Use1-Use4 rows and the held weapon sprite both
+        // animate through the swing, semi-transparent but mostly visible - not just a dust effect.
+        protected virtual bool  CanEchoStep        => false;
+        protected virtual int   EchoStepChance     => 40;    // % rolled once per eligible dash-end
+        protected virtual int   EchoStepDelayMin   => 45;
+        protected virtual int   EchoStepDelayMax   => 60;
+        protected virtual float EchoStepDamageMult => 0.65f; // fraction of MeleeDamage
+        protected virtual int   EchoStepTellTicks  => 26;    // dust starts gathering this far out
+        protected virtual int   EchoStepSwingTicks => 16;    // the visible swing itself, at the tail of the tell
+        protected virtual float EchoStepReach      => 90f;
+        protected virtual float EchoStepOpacity    => 0.75f; // mostly visible, not a faint afterimage
+
+        private Vector2 _echoStepPos;
+        private int     _echoStepDamage;
+        private int     _echoStepDelayTimer = -1; // -1 = inactive
+        private float   _echoStepRotation;
+        private int     _echoStepSwingDir = 1;
+
+        /// <summary>True while the echo's swing animation should be drawn this frame.</summary>
+        private bool IsEchoStepSwinging => _echoStepDelayTimer > 0 && _echoStepDelayTimer <= EchoStepSwingTicks;
+
+        /// <summary>Rolls <see cref="EchoStepChance"/>; on success, arms an echo swing at the
+        /// invader's CURRENT position, <see cref="EchoStepDelayMin"/>-<see cref="EchoStepDelayMax"/>
+        /// ticks from now. Call this from the end of a dash-type attack (hit or miss - the echo is a
+        /// residual trace of the motion, not tied to whether the real swing connected).</summary>
+        protected void TryArmEchoStep()
+        {
+            if (!CanEchoStep || Main.rand.Next(100) >= EchoStepChance)
+                return;
+
+            _echoStepPos = NPC.Center;
+            _echoStepDamage = (int)(MeleeDamage * EchoStepDamageMult);
+            _echoStepDelayTimer = Main.rand.Next(EchoStepDelayMin, EchoStepDelayMax + 1);
+        }
+
+        /// <summary>Called every AI tick regardless of Phase - the echo can resolve while the
+        /// invader is doing something else entirely by the time it goes off.</summary>
+        private void TickEchoStep()
+        {
+            if (_echoStepDelayTimer < 0)
+                return;
+
+            if (!NPC.active)
+            {
+                _echoStepDelayTimer = -1;
+                return;
+            }
+
+            if (_echoStepDelayTimer <= EchoStepTellTicks && !Main.dedServ && Main.rand.NextBool(2))
+            {
+                Dust d = Dust.NewDustPerfect(_echoStepPos + Main.rand.NextVector2Circular(16f, 16f),
+                    DustID.PurpleTorch, Vector2.Zero, 150, default, 0.7f);
+                d.noGravity = true;
+            }
+
+            if (_echoStepDelayTimer <= EchoStepSwingTicks)
+            {
+                // Lock the facing the instant the visible swing starts, so the rendered pose and
+                // the eventual hitbox always agree on which way it's swinging.
+                if (_echoStepDelayTimer == EchoStepSwingTicks && NPC.HasValidTarget)
+                {
+                    Player target = Main.player[NPC.target];
+                    _echoStepSwingDir = target.Center.X < _echoStepPos.X ? -1 : 1;
+                }
+
+                // Same swing arc as a basic MeleeAttack (-1.3 -> 1.0 rad) so it reads as the same
+                // arm animation, just delayed and displaced.
+                float swingT = 1f - _echoStepDelayTimer / (float)EchoStepSwingTicks;
+                _echoStepRotation = MathHelper.Lerp(-1.3f, 1.0f, swingT);
+            }
+
+            _echoStepDelayTimer--;
+            if (_echoStepDelayTimer == 0)
+            {
+                ResolveEchoStep();
+                _echoStepDelayTimer = -1;
+            }
+        }
+
+        private void ResolveEchoStep()
+        {
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.45f, Pitch = -0.35f, PitchVariance = 0.1f }, _echoStepPos);
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            int boxW = (int)Math.Max(100f, EchoStepReach * 1.4f);
+            int boxH = 60;
+            Vector2 center = _echoStepPos + new Vector2(_echoStepSwingDir * EchoStepReach * 0.5f, -8f);
+            Vector2 topLeft = center - new Vector2(boxW / 2f, boxH / 2f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderMeleeHitbox>(),
+                _echoStepDamage, 3f, Main.myPlayer, boxW, boxH);
+        }
+
+        /// <summary>
+        /// Draws the echo mid-swing: the puppet posed to the same Use1-Use4 row a real swing would
+        /// use (via <see cref="BodyRowFromWeaponRotation"/>), plus the held weapon drawn by hand using
+        /// the same offset table as <see cref="GetHandPosition"/>. Deliberately does NOT go through
+        /// <see cref="DrawingPuppetFor"/>/InvaderWeaponDrawLayer - that layer reads the invader's LIVE
+        /// position/rotation/Phase, which would put the weapon back at the real Artorias instead of at
+        /// the fixed echo point. Drawn at high opacity - a visible second swordsman, not a faint trail.
+        /// </summary>
+        private void DrawEchoStepPuppet(SpriteBatch spriteBatch)
+        {
+            if (_puppet == null || Main.dedServ)
+                return;
+
+            int bodyRow = BodyRowFromWeaponRotation(_echoStepRotation, _echoStepSwingDir);
+            _puppet.bodyFrame = new Rectangle(0, FrameHeight * bodyRow, 40, FrameHeight);
+            _puppet.legFrame  = new Rectangle(0, 0, 40, FrameHeight); // standing still, not walking
+            _puppet.direction = _echoStepSwingDir;
+
+            bool wasFractal = _puppet.isFirstFractalAfterImage;
+            float wasOpacity = _puppet.firstFractalAfterImageOpacity;
+            _puppet.isFirstFractalAfterImage = true;
+            _puppet.firstFractalAfterImageOpacity = EchoStepOpacity;
+
+            Vector2 echoTopLeft = _echoStepPos - new Vector2(NPC.width / 2f, NPC.height / 2f);
+            Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, echoTopLeft, 0f, Vector2.Zero);
+
+            _puppet.isFirstFractalAfterImage = wasFractal;
+            _puppet.firstFractalAfterImageOpacity = wasOpacity;
+
+            DrawEchoStepWeapon(spriteBatch, bodyRow);
+        }
+
+        private void DrawEchoStepWeapon(SpriteBatch spriteBatch, int bodyRow)
+        {
+            if (_heldItemType <= 0)
+                return;
+
+            var texAsset = TextureAssets.Item[_heldItemType];
+            if (texAsset?.Value == null)
+                return;
+            Texture2D tex = texAsset.Value;
+
+            // Same arm-tip offset table as GetHandPosition(), just anchored to the echo's fixed
+            // position/direction instead of the invader's live NPC.Center/direction.
+            Vector2 offset = bodyRow switch
+            {
+                1 => new Vector2(-8f, -9f),
+                2 => new Vector2(4f, -8f),
+                3 => new Vector2(4f, 2f),
+                4 => new Vector2(4f, 7f),
+                _ => new Vector2(4f, 2f),
+            };
+            Vector2 handWorldPos = _echoStepPos + new Vector2(offset.X * _echoStepSwingDir, offset.Y);
+            Vector2 drawPos = handWorldPos - Main.screenPosition;
+
+            float visualRotation = _echoStepSwingDir * (_echoStepRotation + MeleeWeaponRotationOffset * _echoStepSwingDir);
+            Vector2 hn = MeleeHandleNorm;
+            float originX = _echoStepSwingDir == 1 ? tex.Width * hn.X : tex.Width * (1f - hn.X);
+            Vector2 origin = new Vector2(originX, tex.Height * hn.Y);
+            SpriteEffects effects = _echoStepSwingDir == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Color color = Lighting.GetColor(handWorldPos.ToTileCoordinates()) * EchoStepOpacity;
+
+            spriteBatch.Draw(tex, drawPos, null, color, visualRotation, origin, MeleeWeaponDrawScale, effects, 0f);
+        }
+
         // ─────────────────────────────────────────────────────────────────────────
         // AI
         // ─────────────────────────────────────────────────────────────────────────
@@ -780,6 +1183,12 @@ namespace tsorcRevamp.NPCs.Invaders
             if (_healCooldown            > 0) _healCooldown--;
             if (_breathCooldown          > 0) _breathCooldown--;
             if (_cursedKnivesCooldown    > 0) _cursedKnivesCooldown--;
+            if (_pierceCooldown          > 0) _pierceCooldown--;
+            if (_jumpSlashCooldown       > 0) _jumpSlashCooldown--;
+            if (_flipSlashCooldown       > 0) _flipSlashCooldown--;
+            if (_abyssSlashCooldown      > 0) _abyssSlashCooldown--;
+            if (AfterimageTicks          > 0) AfterimageTicks--;
+            TickEchoStep(); // independent of Phase - can resolve while the invader is doing anything else
             if (_meleeComboCooldowns != null)
                 for (int i = 0; i < _meleeComboCooldowns.Length; i++)
                     if (_meleeComboCooldowns[i] > 0) _meleeComboCooldowns[i]--;
@@ -980,10 +1389,14 @@ namespace tsorcRevamp.NPCs.Invaders
                     if (_heldItemType <= 0)
                         SetDisplayWeapon(MeleeWeaponItemType >= 0 ? MeleeWeaponItemType : RangedWeaponItemType, swing: false);
 
-                    if (!hasLOS)
-                        break;
-
                     // ── Wings: airborne behavior + takeoff triggers ───────────────
+                    // Checked BEFORE the LOS gate below: a flying invader must still be able to
+                    // reposition (dive/strafe variety roll) and eventually land even when a single-ray
+                    // LOS check is briefly blocked by minor terrain (a corner, an overhang).  Without
+                    // this, losing LOS while airborne parks the invader in Hover — doing nothing but
+                    // the idle bob — until the flight time budget forces a landing, and it can read as
+                    // a total freeze.  The individual attack triggers inside this block (breath/knives/
+                    // ranged) already re-check hasLOS themselves before firing.
                     if (HasWings && _flight != null)
                     {
                         if (_flight.IsAirborne)
@@ -1069,6 +1482,9 @@ namespace tsorcRevamp.NPCs.Invaders
                         }
                     }
 
+                    if (!hasLOS)
+                        break;
+
                     // ── Fire breath intercept (grounded) ──────────────────────────
                     // Reached only when grounded (the airborne block above breaks first).  Rolls
                     // BreathChance to plant and charge a sustained breath stream.
@@ -1086,6 +1502,45 @@ namespace tsorcRevamp.NPCs.Invaders
                         && Main.rand.Next(100) < CursedKnivesChance)
                     {
                         StartCursedKnives(dist, hasLOS);
+                        break;
+                    }
+
+                    // ── Piercing Dash intercept (grounded) ────────────────────────
+                    if (CanPierce && _pierceCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist <= PierceRange && dist >= MinPierceRange
+                        && Main.rand.Next(100) < PierceChance)
+                    {
+                        _pierceIsStab = Main.rand.Next(100) < PierceStabChance;
+                        _pierceHitConnected = false;
+                        EnterPhase(AttackPhase.PierceTelegraph, PierceTelegraphTicks);
+                        break;
+                    }
+
+                    // ── Jumping Downward Slash intercept (grounded) ───────────────
+                    if (CanJumpSlash && _jumpSlashCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist >= JumpSlashMinRange && dist <= JumpSlashMaxRange
+                        && Main.rand.Next(100) < JumpSlashChance)
+                    {
+                        EnterPhase(AttackPhase.JumpSlashDodgeback, JumpSlashDodgebackTicks);
+                        break;
+                    }
+
+                    // ── Forward Flip Slash intercept (grounded) ───────────────────
+                    if (CanFlipSlash && _flipSlashCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist >= FlipSlashMinRange && dist <= FlipSlashMaxRange
+                        && Main.rand.Next(100) < FlipSlashChance)
+                    {
+                        _flipHitConnected = false;
+                        EnterPhase(AttackPhase.FlipSlashRise, FlipSlashRiseMaxTicks);
+                        break;
+                    }
+
+                    // ── Abyss Slash intercept (grounded) ──────────────────────────
+                    if (CanAbyssSlash && _abyssSlashCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist >= AbyssSlashMinRange && dist <= AbyssSlashMaxRange
+                        && Main.rand.Next(100) < AbyssSlashChance)
+                    {
+                        EnterPhase(AttackPhase.AbyssSlashTelegraph, AbyssSlashArcTicks + AbyssSlashHoldTicks);
                         break;
                     }
 
@@ -1531,6 +1986,272 @@ namespace tsorcRevamp.NPCs.Invaders
                     if (--PhaseTimer <= 0)
                     {
                         _cursedKnivesCooldown = CursedKnivesCooldownAfterUse;
+                        EnterCasualOrIdle();
+                    }
+                    break;
+
+                // ── Piercing Dash ──────────────────────────────────────────────
+                // Telegraph holds a fixed anchor position (weapon out toward the player) with a small
+                // random jitter each tick for the "sprite vibrates" tell, then launches into the dash.
+                case AttackPhase.PierceTelegraph:
+                {
+                    int faceP = target.Center.X < NPC.Center.X ? -1 : 1;
+                    NPC.direction = faceP; NPC.spriteDirection = faceP;
+                    _pierceDir = faceP;
+                    if (PhaseTimer == PierceTelegraphTicks)
+                    {
+                        _pierceAnchorPos = NPC.position;
+                        NPC.velocity.X = 0f;
+                    }
+                    NPC.position = _pierceAnchorPos + Main.rand.NextVector2Circular(1.5f, 1.5f);
+                    SetDisplayWeapon(MeleeWeaponItemType, swing: false);
+                    DoPierceWindup(PierceTelegraphTicks - PhaseTimer);
+                    if (--PhaseTimer <= 0)
+                    {
+                        NPC.position = _pierceAnchorPos;
+                        NPC.velocity.X = _pierceDir * PierceDashSpeed;
+                        SetDisplayWeapon(MeleeWeaponItemType, swing: true);
+                        EnterPhase(AttackPhase.PierceDash, PierceDashTicks);
+                    }
+                    break;
+                }
+
+                // Active lunge: fresh reach check every tick (rather than a spawned hitbox) so a stab-variant
+                // connect can immediately break out into PierceStabHold the instant it touches the target.
+                // A plain (non-stab) hit just marks _pierceHitConnected and keeps carrying through.
+                case AttackPhase.PierceDash:
+                {
+                    NPC.velocity.X = _pierceDir * PierceDashSpeed;
+                    DoPierceDashTick();
+
+                    if (!_pierceHitConnected)
+                    {
+                        Rectangle reach = NPC.Hitbox;
+                        reach.Inflate(24, 12);
+                        if (reach.Intersects(target.Hitbox))
+                        {
+                            _pierceHitConnected = true;
+                            _pierceTarget = target;
+                            OnPierceContact(target, _pierceIsStab);
+
+                            if (_pierceIsStab)
+                            {
+                                NPC.velocity.X = 0f;
+                                EnterPhase(AttackPhase.PierceStabHold, PierceStabRaiseTicks);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (--PhaseTimer <= 0)
+                    {
+                        NPC.velocity.X *= 0.4f;
+                        if (CanEchoStep) TryArmEchoStep();
+                        EnterPhase(AttackPhase.PierceRecovery, PierceRecoveryTicks);
+                    }
+                    break;
+                }
+
+                // Stab variant only: target is held impaled while the sword arm raises 0→90°.
+                case AttackPhase.PierceStabHold:
+                {
+                    NPC.velocity.X = 0f;
+                    float raiseProgress = 1f - PhaseTimer / (float)PierceStabRaiseTicks;
+                    if (_pierceTarget != null && _pierceTarget.active)
+                        DoPierceStabHoldTick(_pierceTarget, raiseProgress);
+                    if (--PhaseTimer <= 0)
+                        EnterPhase(AttackPhase.PierceStabFlick, PierceStabFlickTicks);
+                    break;
+                }
+
+                // Stab variant only: rotate back down and release/launch the target (OnPierceFlick fires
+                // exactly once, on the phase's first tick).
+                case AttackPhase.PierceStabFlick:
+                {
+                    if (PhaseTimer == PierceStabFlickTicks && _pierceTarget != null && _pierceTarget.active)
+                        OnPierceFlick(_pierceTarget);
+                    if (--PhaseTimer <= 0)
+                    {
+                        _pierceTarget = null;
+                        EnterPhase(AttackPhase.PierceRecovery, PierceRecoveryTicks);
+                    }
+                    break;
+                }
+
+                // Shared recovery after either pierce variant ends — can walk, can't attack yet.
+                case AttackPhase.PierceRecovery:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _pierceCooldown = PierceCooldownAfterUse;
+                        _pierceTarget = null;
+                        EnterCasualOrIdle();
+                    }
+                    break;
+
+                // ── Jumping Downward Slash ─────────────────────────────────────
+                // Backward roll WITH real i-frames (DodgeTimer) — a genuine dodgeroll, not a cosmetic hop.
+                case AttackPhase.JumpSlashDodgeback:
+                {
+                    if (PhaseTimer == JumpSlashDodgebackTicks)
+                    {
+                        int faceJ = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceJ; NPC.spriteDirection = faceJ;
+                        _jumpSlashDir = faceJ;
+                        NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = JumpSlashDodgebackTicks + 5;
+                    }
+                    NPC.velocity.X = -_jumpSlashDir * JumpSlashDodgebackSpeed; // away from the player
+                    DoJumpSlashDodgebackTick();
+                    if (--PhaseTimer <= 0)
+                    {
+                        EnterPhase(AttackPhase.JumpSlashRise, JumpSlashRiseTicks);
+                    }
+                    break;
+                }
+
+                // Launch toward the player holding the cocked pose; breaks into the swipe once close
+                // or on landing (same leap-physics shape as the ComboMotion.LeapSlam launch).
+                case AttackPhase.JumpSlashRise:
+                {
+                    if (PhaseTimer == JumpSlashRiseTicks)
+                    {
+                        int faceJ = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceJ; NPC.spriteDirection = faceJ; _jumpSlashDir = faceJ;
+                        float dx = Math.Abs(target.Center.X - NPC.Center.X);
+                        float airtime = 2f * JumpSlashLaunchUpSpeed / 0.3f;
+                        float vx = MathHelper.Clamp(dx / airtime, 2f, JumpSlashLaunchForwardSpeed);
+                        NPC.velocity = new Vector2(_jumpSlashDir * vx, -JumpSlashLaunchUpSpeed);
+                        NPC.netUpdate = true;
+                    }
+                    else
+                    {
+                        NPC.velocity.X = _jumpSlashDir * JumpSlashLaunchForwardSpeed;
+                    }
+
+                    DoJumpSlashRiseTick();
+
+                    bool nearPlayer = NPC.Distance(target.Center) <= JumpSlashTriggerRange;
+                    bool landed = PhaseTimer < JumpSlashRiseTicks && NPC.velocity.Y == 0f;
+                    if (nearPlayer || landed || --PhaseTimer <= 0)
+                    {
+                        DoJumpSlashAttack();
+                        EnterPhase(AttackPhase.JumpSlashAttack, JumpSlashAttackTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.JumpSlashAttack:
+                    if (--PhaseTimer <= 0)
+                    {
+                        EnterPhase(AttackPhase.JumpSlashRecovery, JumpSlashRecoveryTicks);
+                    }
+                    break;
+
+                case AttackPhase.JumpSlashRecovery:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _jumpSlashCooldown = JumpSlashCooldownAfterUse;
+                        EnterCasualOrIdle();
+                    }
+                    break;
+
+                // ── Forward Flip Slash ─────────────────────────────────────────
+                // Airborne, genuinely i-framed (DodgeTimer refreshed every tick - a real dodgeroll,
+                // not just hyper-armor), spinning continuously with a one-shot contact check.
+                case AttackPhase.FlipSlashRise:
+                {
+                    if (PhaseTimer == FlipSlashRiseMaxTicks)
+                    {
+                        int faceF = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceF; NPC.spriteDirection = faceF; _flipSlashDir = faceF;
+                        float dx = Math.Abs(target.Center.X - NPC.Center.X);
+                        float airtime = 2f * FlipSlashLaunchUpSpeed / 0.3f;
+                        float vx = MathHelper.Clamp(dx / airtime, 2f, FlipSlashLaunchForwardSpeed);
+                        NPC.velocity = new Vector2(_flipSlashDir * vx, -FlipSlashLaunchUpSpeed);
+                        NPC.netUpdate = true;
+                    }
+                    else
+                    {
+                        NPC.velocity.X = _flipSlashDir * FlipSlashLaunchForwardSpeed;
+                    }
+
+                    // Refreshed every tick so the i-frame window always covers the whole flip
+                    // regardless of exact air time.
+                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = 5;
+
+                    DoFlipSlashRiseTick();
+
+                    if (!_flipHitConnected)
+                    {
+                        Rectangle reach = NPC.Hitbox;
+                        reach.Inflate(20, 10);
+                        if (reach.Intersects(target.Hitbox))
+                        {
+                            _flipHitConnected = true;
+                            DoFlipSlashHit();
+                        }
+                    }
+
+                    bool landedFlip = PhaseTimer < FlipSlashRiseMaxTicks && NPC.velocity.Y == 0f;
+                    if (landedFlip || --PhaseTimer <= 0)
+                    {
+                        OnFlipSlashLand();
+                        if (CanEchoStep) TryArmEchoStep();
+                        EnterPhase(AttackPhase.FlipSlashLand, FlipSlashLandHoldTicks);
+                    }
+                    break;
+                }
+
+                // Sword snaps into the slam pose (handled in the rotation table below) and is held
+                // there for the full duration - no easing, a deliberate static pose.
+                case AttackPhase.FlipSlashLand:
+                    NPC.velocity.X *= 0.5f;
+                    if (--PhaseTimer <= 0)
+                    {
+                        _flipSlashCooldown = FlipSlashCooldownAfterUse;
+                        EnterCasualOrIdle();
+                    }
+                    break;
+
+                // ── Abyss Slash ─────────────────────────────────────────────────
+                // Deliberately does not touch NPC.velocity.X - RunMovementAI's normal pursuit
+                // (already applied earlier this tick, before InvaderAttackAI runs) carries through
+                // untouched, so the invader keeps walking during the whole wind-up.
+                case AttackPhase.AbyssSlashTelegraph:
+                    if (--PhaseTimer <= 0)
+                    {
+                        _abyssSlashIndex = 0;
+                        DoAbyssSlashFire(0);
+                        EnterPhase(AttackPhase.AbyssSlashSwipe, AbyssSlashSwipeTicks);
+                    }
+                    break;
+
+                case AttackPhase.AbyssSlashSwipe:
+                    if (--PhaseTimer <= 0)
+                    {
+                        int delay = NextAbyssSlashDelay(_abyssSlashIndex);
+                        if (delay < 0)
+                            EnterPhase(AttackPhase.AbyssSlashRecovery, AbyssSlashRecoveryTicks);
+                        else
+                            EnterPhase(AttackPhase.AbyssSlashPause, delay);
+                    }
+                    break;
+
+                case AttackPhase.AbyssSlashPause:
+                    if (--PhaseTimer <= 0)
+                    {
+                        _abyssSlashIndex++;
+                        DoAbyssSlashFire(_abyssSlashIndex);
+                        EnterPhase(AttackPhase.AbyssSlashSwipe, AbyssSlashSwipeTicks);
+                    }
+                    break;
+
+                case AttackPhase.AbyssSlashRecovery:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _abyssSlashCooldown = AbyssSlashCooldownAfterUse;
                         EnterCasualOrIdle();
                     }
                     break;
@@ -2074,14 +2795,28 @@ namespace tsorcRevamp.NPCs.Invaders
                 Phase == AttackPhase.MeleeTelegraph  || Phase == AttackPhase.StabTelegraph  ||
                 Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.SpearTelegraph ||
                 Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MeleeComboTelegraph ||
-                Phase == AttackPhase.BreathTelegraph || Phase == AttackPhase.KnivesTelegraph;
+                Phase == AttackPhase.BreathTelegraph || Phase == AttackPhase.KnivesTelegraph ||
+                Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.JumpSlashRise ||
+                Phase == AttackPhase.AbyssSlashTelegraph;
 
             bool committed =
                 Phase == AttackPhase.MeleeAttack  || Phase == AttackPhase.StabAttack  ||
                 Phase == AttackPhase.RangedAttack || Phase == AttackPhase.SpearAttack ||
                 Phase == AttackPhase.MagicAttack  || Phase == AttackPhase.MeleeComboAttack ||
                 Phase == AttackPhase.Breathing ||
-                Phase == AttackPhase.KnivesThrow || Phase == AttackPhase.KnivesThrowPause;
+                Phase == AttackPhase.KnivesThrow || Phase == AttackPhase.KnivesThrowPause ||
+                // The whole active dash + (for the stab variant) the impale hold/flick must be
+                // uninterruptible - staggering Artorias mid-impale would leave the target frozen
+                // with nothing driving the sequence.
+                Phase == AttackPhase.PierceDash || Phase == AttackPhase.PierceStabHold ||
+                Phase == AttackPhase.PierceStabFlick ||
+                Phase == AttackPhase.JumpSlashAttack ||
+                // FlipSlashRise already has real i-frames (DodgeTimer); FlipSlashLand is a deliberate
+                // static held pose that shouldn't stagger out mid-hold.
+                Phase == AttackPhase.FlipSlashRise || Phase == AttackPhase.FlipSlashLand ||
+                // Once the first swipe fires, the whole chain (including inter-swipe pauses) is
+                // committed - only the initial wind-up is punishable.
+                Phase == AttackPhase.AbyssSlashSwipe || Phase == AttackPhase.AbyssSlashPause;
 
             if (_activeMeleeComboIndex >= 0 && _activeMeleeCombo.HyperArmor
                 && Phase == AttackPhase.MeleeComboPause)
@@ -2533,6 +3268,83 @@ namespace tsorcRevamp.NPCs.Invaders
                 // Thrust forward as the spell fires.
                 _weaponRotation = MathHelper.Lerp(-1.40f, 0.20f, magicT);
             }
+            else if (Phase == AttackPhase.PierceTelegraph)
+            {
+                // Same "cocked, arm extended toward the player" pose as JoustDash's telegraph.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.22f);
+            }
+            else if (Phase == AttackPhase.PierceDash)
+            {
+                // Held straight forward, tip leading — same active-thrust angle as JoustDash.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.35f);
+            }
+            else if (Phase == AttackPhase.PierceStabHold)
+            {
+                // Raise 0→90°: from straight-forward (PiOver4, "3 o'clock") up to overhead-vertical
+                // (-PiOver4, "12 o'clock") as the impaled target is lifted.
+                float raiseT = PierceStabRaiseTicks > 0 ? 1f - (float)PhaseTimer / PierceStabRaiseTicks : 1f;
+                _weaponRotation = MathHelper.Lerp(MathHelper.PiOver4, -MathHelper.PiOver4, raiseT);
+            }
+            else if (Phase == AttackPhase.PierceStabFlick)
+            {
+                // Snap back down and past horizontal — the flick that launches the target away.
+                float flickT = PierceStabFlickTicks > 0 ? 1f - (float)PhaseTimer / PierceStabFlickTicks : 1f;
+                _weaponRotation = MathHelper.Lerp(-MathHelper.PiOver4, MathHelper.PiOver2, flickT);
+            }
+            else if (Phase == AttackPhase.JumpSlashDodgeback)
+            {
+                // No special pose during the backward roll — ease to the normal carried hold.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, HoldRotation, 0.15f);
+            }
+            else if (Phase == AttackPhase.JumpSlashRise)
+            {
+                // Cocked "up and back" — 15° past straight-up toward the rear (12 o'clock is -45°;
+                // 15° further back is -60°).
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.ToRadians(-60f), 0.30f);
+            }
+            else if (Phase == AttackPhase.JumpSlashAttack)
+            {
+                // The half-circle downward swipe: -60° (cocked) sweeping through vertical/forward to
+                // +55° (past horizontal, angled down-forward) — a ~115° arc.
+                float slashT = JumpSlashAttackTicks > 0 ? 1f - (float)PhaseTimer / JumpSlashAttackTicks : 1f;
+                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(-60f), MathHelper.ToRadians(55f), slashT);
+            }
+            else if (Phase == AttackPhase.FlipSlashRise)
+            {
+                // Continuous spin while airborne (same free-running style as ComboMotion.Spin) —
+                // no fixed start/end, just a steady rotation for as long as the flip lasts.
+                _weaponRotation += FlipSlashSpinSpeed;
+                if (_weaponRotation > MathHelper.TwoPi) _weaponRotation -= MathHelper.TwoPi;
+            }
+            else if (Phase == AttackPhase.FlipSlashLand)
+            {
+                // Snaps to the landing slam pose (195° clockwise from straight-up, i.e. past 6 o'clock
+                // toward 7) and holds there for the whole phase — a deliberate static pose, not eased.
+                _weaponRotation = MathHelper.ToRadians(195f - 45f);
+            }
+            else if (Phase == AttackPhase.AbyssSlashTelegraph)
+            {
+                // Underhand, facing down (180°) arcing 170° to the held "sword post" pose (10°, blade
+                // near-vertical, grip low) — held there once the arc portion of the timer runs out.
+                int totalAbyssTicks = AbyssSlashArcTicks + AbyssSlashHoldTicks;
+                int elapsedAbyss    = totalAbyssTicks - PhaseTimer;
+                if (elapsedAbyss < AbyssSlashArcTicks)
+                {
+                    float armT = AbyssSlashArcTicks > 0 ? elapsedAbyss / (float)AbyssSlashArcTicks : 1f;
+                    _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(180f - 45f), MathHelper.ToRadians(10f - 45f), armT);
+                }
+                else
+                {
+                    _weaponRotation = MathHelper.ToRadians(10f - 45f);
+                }
+            }
+            else if (Phase == AttackPhase.AbyssSlashSwipe)
+            {
+                // Quick release swing: from the held "post" pose back down through to a forward-down
+                // follow-through, matching where the projectile fires from.
+                float swipeT = AbyssSlashSwipeTicks > 0 ? 1f - (float)PhaseTimer / AbyssSlashSwipeTicks : 1f;
+                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f), swipeT);
+            }
             else if (Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrowPause)
             {
                 // Hold the knife high, ready to throw (same read as the throwing-star telegraph).
@@ -2693,6 +3505,18 @@ namespace tsorcRevamp.NPCs.Invaders
                 case AttackPhase.MeleeComboPause:
                     target = 0.5f; ease = 0.25f;
                     break;
+                case AttackPhase.RangedTelegraph:
+                case AttackPhase.RangedAttack:
+                case AttackPhase.CrossbowBurstPause:
+                    // Ranged/throw poses that still use the spear texture (primary ranged casting
+                    // off the same weapon) previously fell through to the neutral 0.5 grip, which
+                    // puts the draw origin at the shaft's midpoint — the plain butt then sticks out
+                    // exactly as far as the tip on the OPPOSITE side, through the body, reading as
+                    // "the spear is pointing the wrong way." Pull the grip toward the base (like
+                    // SpearAttack's extended pose) so the tip clearly leads toward the aim direction
+                    // and the butt tucks in near the hand instead.
+                    target = 0.85f; ease = 0.25f;
+                    break;
                 case AttackPhase.MeleeComboAttack:
                 {
                     ComboMotion motion = _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion;
@@ -2766,6 +3590,23 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         /// <summary>
+        /// Maps a weapon-draw angle to a Use1-Use4 body row via the same pitch formula
+        /// <c>(1 - sin(angle)) / 2</c> used throughout this file (and in BroadswordRework's
+        /// MeleeAnimation.cs, where it was calibrated).  Takes rotation/direction explicitly
+        /// (rather than reading <see cref="_weaponRotation"/>/NPC.direction directly) so it can
+        /// also pose a one-off echo/duplicate swinging independently of the invader's own state.
+        /// </summary>
+        private int BodyRowFromWeaponRotation(float weaponRotation, int direction)
+        {
+            float visualAngle = weaponRotation + MeleeWeaponRotationOffset * direction;
+            float pitch = (1f - (float)Math.Sin(visualAngle)) / 2f;
+            if (pitch > 0.95f) return 1;
+            if (pitch > 0.70f) return 2;
+            if (pitch > 0.30f) return 3;
+            return 4;
+        }
+
+        /// <summary>
         /// Returns the world-space position of the front hand by reading the current body-frame
         /// row and applying the known arm-tip offsets from the vanilla player sprite sheet.
         ///
@@ -2808,6 +3649,63 @@ namespace tsorcRevamp.NPCs.Invaders
             };
 
             return NPC.Center + new Vector2(offset.X * NPC.direction, offset.Y);
+        }
+
+        /// <summary>World-space position of the spear's TIP, derived from the current weapon-draw
+        /// rotation.  Decorative use only (telegraph VFX placement) — not pixel-exact, but tracks the
+        /// visible tip as the weapon swings/thrusts/aims.  Assumes <see cref="SpearDrawRotationOffset"/>
+        /// is calibrated so the sprite's natural angle matches the standard broadsword convention
+        /// (tip at -45° when _weaponRotation=0, dir=1) — true for any invader following the same
+        /// calibration pattern as CursedDragonInvader.</summary>
+        protected Vector2 GetSpearTipWorldPosition(float reachPx = 90f)
+        {
+            const float correctedNaturalDeg = -45f;
+            float weaponRotDeg = MathHelper.ToDegrees(_weaponRotation);
+            float angleDeg = NPC.direction == 1
+                ? correctedNaturalDeg + weaponRotDeg
+                : 180f - (correctedNaturalDeg + weaponRotDeg); // mirror across vertical axis (FlipHorizontally)
+            float rad = MathHelper.ToRadians(angleDeg);
+            Vector2 dir = new Vector2((float)Math.Cos(rad), (float)Math.Sin(rad));
+            return GetHandPosition() + dir * reachPx;
+        }
+
+        // ── Debug: weapon-rotation log (DebugMode config only) ──────────────────────
+        // Dumps everything relevant to diagnosing hand placement / spear rotation bugs:
+        // Phase, raw _weaponRotation, the final drawRotation actually passed to DrawData,
+        // holdingSpearNow/heldRangedLike routing, held item type, spear grip, and positions.
+        // Throttled per-NPC so a telegraph doesn't spam thousands of near-identical lines.
+        private int _lastWeaponDebugLogTick = -9999;
+        private void LogWeaponDebug()
+        {
+            int now = (int)Main.GameUpdateCount;
+            if (now - _lastWeaponDebugLogTick < 6) return; // ~10/sec — enough resolution, not spam
+            _lastWeaponDebugLogTick = now;
+            try
+            {
+                string sep = Path.DirectorySeparatorChar.ToString();
+                string dir = Main.SavePath + sep + "Logs";
+                Directory.CreateDirectory(dir);
+                string path = dir + sep + "tsorcRevamp-invader-weapon.log";
+                // For combo phases, "phase=MeleeComboAttack" alone doesn't say WHICH named combo/motion
+                // is playing (Charged Chop vs Forward Thrust vs Leaping Lunge, etc.) — every combo shares
+                // the same phase enum, so without this the log can't tell them apart.
+                string comboTag = "";
+                bool inCombo = Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack
+                            || Phase == AttackPhase.MeleeComboPause    || Phase == AttackPhase.MeleeComboRecovery;
+                if (inCombo && _activeMeleeComboIndex >= 0 && _activeMeleeCombo.Steps != null && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length)
+                    comboTag = $" combo=\"{_activeMeleeCombo.Name}\" motion={_activeMeleeCombo.Steps[_meleeComboStepIndex].Motion}"
+                             + $" step={_meleeComboStepIndex}/{_activeMeleeCombo.Steps.Length}";
+                string line = $"[{DateTime.Now:HH:mm:ss}] {NPC.TypeName}#{NPC.whoAmI}"
+                    + $" phase={Phase}{comboTag} phaseTimer={PhaseTimer}"
+                    + $" heldItem={_heldItemType} holdingSpear={DebugHoldingSpearNow} rangedLike={DebugHeldRangedLike}"
+                    + $" dir={DebugDirection} spearGrip={DebugSpearGrip:F2}"
+                    + $" weaponRotDeg={DebugWeaponRotationDeg:F1} drawRotDeg={DebugDrawRotationDeg:F1}"
+                    + $" hand=({DebugHandPos.X:F0},{DebugHandPos.Y:F0}) origin=({DebugOrigin.X:F0},{DebugOrigin.Y:F0})"
+                    + $" npcPos=({NPC.Center.X:F0},{NPC.Center.Y:F0}) airborne={_flight?.IsAirborne ?? false}"
+                    + $" flightMode={(_flight != null ? _flight.Mode.ToString() : "n/a")}";
+                File.AppendAllText(path, line + Environment.NewLine);
+            }
+            catch { /* best-effort debug log; never let logging break gameplay */ }
         }
 
         // ─────────────────────────────────────────────────────────────────────────
@@ -2912,8 +3810,12 @@ namespace tsorcRevamp.NPCs.Invaders
                 _puppet.wings = _wingsItemCache?.wingSlot ?? 0;
                 _puppet.wingTime = airborne ? _puppet.wingTimeMax : 0;
                 _puppet.controlJump = _flight.WingsActiveThisTick;
-                // Flag the puppet as in-air so the wing layer doesn't suppress the draw.
-                _puppet.wingFrame = (int)(_flight.WingAnimPhase * 4f) % 4;
+                // During idle hover drift the wings spread open (glide pose = frame 1) rather
+                // than folding shut.  Active flapping and non-hover flight use the normal
+                // animated phase so the wing-beat loop runs correctly.
+                bool gliding = airborne && !_flight.WingsActiveThisTick
+                    && (_flight.Mode == FlightMode.Hover || _flight.Mode == FlightMode.Strafe);
+                _puppet.wingFrame = gliding ? 1 : (int)(_flight.WingAnimPhase * 4f) % 4;
             }
             else
             {
@@ -2984,19 +3886,6 @@ namespace tsorcRevamp.NPCs.Invaders
             //   Use4 (row 4) = arm lowered  (weapon pointing down-forward, +1.0 rad)
             // Pitch formula: (1 - sin(weaponAngle)) / 2  →  1 = up, 0 = down.
 
-            int BodyRowFromWeaponRotation()
-            {
-                // Pose the arm to the SAME visual angle the weapon sprite is drawn at (including the
-                // per-weapon rotation offset), so the arm and weapon swing together as one unit
-                // instead of decoupling when an offset is set.
-                float visualAngle = _weaponRotation + MeleeWeaponRotationOffset * NPC.direction;
-                float pitch = (1f - (float)Math.Sin(visualAngle)) / 2f;
-                if (pitch > 0.95f) return 1;
-                if (pitch > 0.70f) return 2;
-                if (pitch > 0.30f) return 3;
-                return 4;
-            }
-
             int bodyRow;
             bool isMeleeSwing = Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack;
 
@@ -3007,7 +3896,7 @@ namespace tsorcRevamp.NPCs.Invaders
             }
             else if (isMeleeSwing)
             {
-                bodyRow = BodyRowFromWeaponRotation();
+                bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
             }
             else if (Phase == AttackPhase.StabTelegraph)
             {
@@ -3085,7 +3974,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     case ComboMotion.LeapSlam:
                     case ComboMotion.ChargeChop:
                     case ComboMotion.Feint:
-                        bodyRow = BodyRowFromWeaponRotation();
+                        bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
                         break;
                     case ComboMotion.Thrust:
                     case ComboMotion.JoustDash:
@@ -3157,8 +4046,30 @@ namespace tsorcRevamp.NPCs.Invaders
             // wakes up and calls DrawWeaponToLayer — inserting the weapon sprite after body/legs
             // but before the front arm, which gives the correct "hand gripping the sword" look.
             DrawingPuppetFor = this;
+
+            // Dash afterimages: sparse translucent echoes at cached NPC.oldPos[] positions, drawn
+            // BEFORE the real puppet so the solid sprite always renders on top.  Uses vanilla's own
+            // fractal-afterimage fields (see AfterimageTicks doc) — no bespoke alpha-blend plumbing.
+            if (AfterimageTicks > 0)
+            {
+                _puppet.isFirstFractalAfterImage = true;
+                for (int k = 0; k < NPC.oldPos.Length; k += AfterimageSampleStep)
+                {
+                    if (NPC.oldPos[k] == Vector2.Zero) continue;
+                    _puppet.firstFractalAfterImageOpacity = AfterimageOpacity * (1f - (float)k / NPC.oldPos.Length);
+                    Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.oldPos[k], 0f, Vector2.Zero);
+                }
+                _puppet.isFirstFractalAfterImage = false;
+            }
+
             Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.position, 0f, Vector2.Zero);
             DrawingPuppetFor = null;
+
+            // Umbral Echo Step: drawn AFTER the real puppet (and outside DrawingPuppetFor, since
+            // InvaderWeaponDrawLayer reads the invader's LIVE state, not this fixed echo point) so it
+            // never clobbers the real draw and its weapon renders in the right place.
+            if (IsEchoStepSwinging)
+                DrawEchoStepPuppet(spriteBatch);
 
             return false;
         }
@@ -3226,10 +4137,17 @@ namespace tsorcRevamp.NPCs.Invaders
             if (HideHeldMeleeSprite && _heldItemType == MeleeWeaponItemType)
                 return;
 
+            // Only draw as spear when actually holding the polearm — not the magic staff, secondary ranged,
+            // or cursed knives (those are separate weapons that use normal centred draw).
+            bool holdingSpearNow = DrawWeaponAsSpear
+                && _heldItemType != MagicWeaponItemType
+                && _heldItemType != SecondaryRangedWeaponItemType
+                && (CursedKnivesWeaponItemType < 0 || _heldItemType != CursedKnivesWeaponItemType);
+
             // When drawing as a spear, prefer the holdout-projectile texture (the full shaft+head sprite)
             // over the item icon (which is just a small inventory tile).
             Texture2D tex;
-            if (DrawWeaponAsSpear && SpearDrawTexturePath != null && ModContent.HasAsset(SpearDrawTexturePath))
+            if (holdingSpearNow && SpearDrawTexturePath != null && ModContent.HasAsset(SpearDrawTexturePath))
             {
                 tex = ModContent.Request<Texture2D>(SpearDrawTexturePath,
                     ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
@@ -3291,7 +4209,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     origin = tex.Bounds.Center.ToVector2(); // symmetric throwing items - keep centred
                 }
             }
-            else if (DrawWeaponAsSpear)
+            else if (holdingSpearNow)
             {
                 // Grip slides along the shaft (head→base) so the spear extends/retracts.
                 Vector2 gn = Vector2.Lerp(SpearHeadNorm, SpearBaseNorm, _spearGrip);
@@ -3315,8 +4233,13 @@ namespace tsorcRevamp.NPCs.Invaders
             // match the broadsword convention (handle lower-left → blade upper-right).  Applied to
             // the drawn sprite only — the arm pose and swing arc still run off raw _weaponRotation.
             float drawRotation = _weaponRotation;
-            if (!heldRangedLike)
+            // Spears use their own SpearDrawRotationOffset to correct for the sprite's natural
+            // orientation — MeleeWeaponRotationOffset is a sword-only fine-tune and would double
+            // up with (and fight) that correction, so it's excluded here.
+            if (!heldRangedLike && !holdingSpearNow)
                 drawRotation += MeleeWeaponRotationOffset * NPC.direction; // mirror per facing
+            if (holdingSpearNow)
+                drawRotation += SpearDrawRotationOffset; // draw-only correction, direction-neutral (FlipH handles facing)
 
             drawInfo.DrawDataCache.Add(new DrawData(
                 tex,
@@ -3328,6 +4251,19 @@ namespace tsorcRevamp.NPCs.Invaders
                 NPC.scale * scale,
                 fx,
                 0));
+
+            // ── Debug snapshot + log (DebugMode only) ───────────────────────────────
+            DebugWeaponRotationDeg = MathHelper.ToDegrees(_weaponRotation);
+            DebugDrawRotationDeg   = MathHelper.ToDegrees(drawRotation);
+            DebugHoldingSpearNow   = holdingSpearNow;
+            DebugHeldRangedLike    = heldRangedLike;
+            DebugHeldItemType      = _heldItemType;
+            DebugSpearGrip         = _spearGrip;
+            DebugHandPos           = drawPos + Main.screenPosition;
+            DebugOrigin            = origin;
+            DebugDirection         = NPC.direction;
+            if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                LogWeaponDebug();
 
             // Lit-fuse: red sparks off the top of an in-hand bomb-like ranged item.
             if (heldRangedLike && HeldRangedFuseSparks(_heldItemType) && !Main.dedServ && Main.rand.NextBool(3))
@@ -3406,6 +4342,11 @@ namespace tsorcRevamp.NPCs.Invaders
         /// shaft-and-head weapon the player sees.  Override to point at the projectile texture path.
         /// Null (default) falls back to the item sprite.</summary>
         protected virtual string SpearDrawTexturePath => null;
+        /// <summary>Extra draw-only rotation applied after <see cref="MeleeWeaponRotationOffset"/> when drawing the spear.
+        /// Use this to correct a sprite whose tip isn't in the standard orientation without affecting the arm-pose rows
+        /// (which read <see cref="MeleeWeaponRotationOffset"/> via <see cref="BodyRowFromWeaponRotation"/>).
+        /// Direction-neutral — SpriteBatch FlipHorizontally already handles left/right facing.</summary>
+        protected virtual float SpearDrawRotationOffset => 0f;
 
         /// <summary>Normalized grip point for a held MAGIC staff (where the hand holds it).  Default centred;
         /// override lower (larger Y) so a tall staff is gripped near its base.</summary>

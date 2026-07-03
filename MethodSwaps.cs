@@ -27,6 +27,7 @@ using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Bosses.Pinwheel;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
@@ -193,6 +194,15 @@ namespace tsorcRevamp
             On_NPC.AI_069_DukeFishron += DukeFishronAdjustment;
 
             On_Main.HoverOverNPCs += HidePinwheelLifeOnMouseover;
+
+            // Graveyard biome: don't let thunder get scheduled at all while standing there, rather than trying to
+            // intercept/stop the sound after vanilla already started it (an earlier StopAll(SoundID.Thunder)
+            // approach worked for thunder specifically, but calling into SoundPlayer's tracked-sound bookkeeping
+            // every tick had the side effect of silencing ambient sound in every other biome for the rest of the
+            // session - not worth the risk). NewLightning() is what sets Main's thunderDelay countdown that
+            // later triggers SoundEngine.PlaySound(43, ...); skipping it entirely means that countdown, and the
+            // sound, never happens in the first place - no interaction with the audio engine at all.
+            On_Main.NewLightning += SkipLightningInGraveyard;
         }
 
         private static void Main_DrawSurfaceBG(Terraria.On_Main.orig_DrawSurfaceBG orig, Main self)
@@ -231,6 +241,83 @@ namespace tsorcRevamp
             DrawAbyssStarLayer(pixel, 48f, 0.038f, 0.28f, 1.25f, new Color(200, 255, 230));
         }
 
+        // Drifting cloud fog for the Abyss, drawn in the foreground/NPC layer (see comment history below for why
+        // - background-layer placement got buried by vanilla's own later compositing on the surface).
+        //
+        // Scatters real cloud sprites (tsorcRevamp.AbyssClouds - 22 vanilla-style puffy cloud PNGs with actual
+        // alpha transparency, Textures/Clouds/Cloud_0..21) - this is entirely our own code, not vanilla's.
+        // Checked the actual decompiled Main.DrawSurfaceBG (DrawSurfaceBG_GetFogPower and the draw block right
+        // after it): vanilla's graveyard/overcast fog is much simpler than what we were building - it just tiles
+        // ONE texture horizontally across the screen at a fixed depth-based Y, with no per-tile detection at all.
+        // It only ever appears near the surface because the whole effect is gated off by depth
+        // (screenPosition.Y < worldSurface*16+16), not because it detects terrain - vanilla has no underground
+        // fog to copy, which is why we're on our own for that part.
+        //
+        // Two rounds of scanning the actual tilemap for "ground near the player" both introduced instability
+        // (the scan window shifted with camera movement in ways that changed which tile got found frame to
+        // frame, causing the sprite/position tied to that tile to visibly jump). Scrapped entirely in favor of
+        // the same technique the starfield/particle layers already use reliably: a deterministic hash-seeded
+        // grid in parallax-scaled space. It's pure math over integer cell coordinates - nothing about it depends
+        // on scanning the world each frame, so there's nothing for camera movement to destabilize. Using
+        // parallax = 1 (fully world-locked, same rate as tiles) so clouds feel anchored in the environment
+        // around the player rather than a distant sky layer, and the same world position always gets the same
+        // cloud back if you leave and return. Being purely procedural, it shows up identically underground and
+        // on the surface.
+        private const float AbyssFogIntensity = 0.3f;
+        private static readonly Color AbyssFogTint = new Color(150, 110, 210);
+
+        private static void DrawAbyssFog()
+        {
+            Texture2D[] clouds = tsorcRevamp.AbyssClouds;
+            if (clouds == null || clouds.Length == 0)
+            {
+                return;
+            }
+
+            const float cellSize = 260f;
+            const float density = 0.35f; // fraction of cells that spawn a cloud - keeps real gaps between them
+
+            Vector2 parallaxPosition = Main.screenPosition; // parallax = 1: fully world-locked
+            int startCellX = (int)Math.Floor((parallaxPosition.X - cellSize) / cellSize);
+            int startCellY = (int)Math.Floor((parallaxPosition.Y - cellSize) / cellSize);
+            int endCellX = (int)Math.Ceiling((parallaxPosition.X + Main.screenWidth + cellSize) / cellSize);
+            int endCellY = (int)Math.Ceiling((parallaxPosition.Y + Main.screenHeight + cellSize) / cellSize);
+
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+
+            for (int cellX = startCellX; cellX <= endCellX; cellX++)
+            {
+                for (int cellY = startCellY; cellY <= endCellY; cellY++)
+                {
+                    float seed = Hash01(cellX, cellY, 907);
+                    if (seed > density)
+                    {
+                        continue;
+                    }
+
+                    Texture2D cloud = clouds[(int)(Hash01(cellX, cellY, 41) * clouds.Length) % clouds.Length];
+                    if (cloud == null)
+                    {
+                        continue;
+                    }
+
+                    float offsetX = Hash01(cellX, cellY, 23) * cellSize;
+                    float offsetY = Hash01(cellX, cellY, 59) * cellSize;
+                    Vector2 position = new Vector2(cellX * cellSize + offsetX, cellY * cellSize + offsetY) - parallaxPosition;
+
+                    float scale = 0.4f + Hash01(cellX, cellY, 131) * 0.3f; // halved from the original 0.8-1.4 range
+                    float phaseOffset = Hash01(cellX, cellY, 211) * MathHelper.TwoPi;
+                    float pulse = 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 0.35f + phaseOffset); // 0..1
+                    float alpha = AbyssFogIntensity * pulse;
+                    Vector2 origin = new Vector2(cloud.Width / 2f, cloud.Height / 2f);
+
+                    Main.spriteBatch.Draw(cloud, position, null, AbyssFogTint * alpha, 0f, origin, scale, SpriteEffects.None, 0f);
+                }
+            }
+
+            Main.spriteBatch.End();
+        }
+
         private static void DrawAbyssStarLayer(Texture2D pixel, float cellSize, float parallax, float density, float brightness, Color accentColor)
         {
             Vector2 parallaxPosition = Main.screenPosition * parallax;
@@ -244,17 +331,36 @@ namespace tsorcRevamp
                 for (int cellY = startCellY; cellY <= endCellY; cellY++)
                 {
                     float seed = Hash01(cellX, cellY, (int)(cellSize * 10f));
-                    if (seed > density)
-                    {
-                        continue;
-                    }
 
                     float offsetX = Hash01(cellX, cellY, 17) * cellSize;
                     float offsetY = Hash01(cellX, cellY, 43) * cellSize;
                     Vector2 starPosition = new Vector2(cellX * cellSize + offsetX, cellY * cellSize + offsetY) - parallaxPosition;
+
+                    // Sample the real light map (same Lighting.GetColor API used all over this codebase for
+                    // chain/weapon draw colors) at the real world position this star sits over - starPosition is
+                    // already screen-relative, so + Main.screenPosition recovers the actual world coordinate
+                    // regardless of this layer's own parallax scaling. darkness is 0 in full light, 1 in full dark.
+                    Vector2 worldPos = starPosition + Main.screenPosition;
+                    Color lightColor = Lighting.GetColor((int)(worldPos.X / 16f), (int)(worldPos.Y / 16f));
+                    float lightLevel = Math.Max(lightColor.R, Math.Max(lightColor.G, lightColor.B)) / 255f;
+                    float darkness = MathHelper.Clamp(1f - lightLevel * 2.5f, 0f, 1f);
+
+                    // Density itself scales up to +50% as darkness approaches 1, so dark patches get noticeably
+                    // more stars, not just brighter ones.
+                    float effectiveDensity = density * (1f + 0.5f * darkness);
+                    if (seed > effectiveDensity)
+                    {
+                        continue;
+                    }
+
+                    // Stars stay visible even in full light (per-request - "harder to see" rather than gone), just
+                    // dimmed down to a low floor; they brighten back up to full as darkness increases.
+                    const float minVisibilityInLight = 0.15f;
+                    float visibility = minVisibilityInLight + (1f - minVisibilityInLight) * darkness;
+
                     float twinkle = 0.65f + 0.35f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * (1.2f + Hash01(cellX, cellY, 71) * 1.6f) + seed * MathHelper.TwoPi);
                     int size = Hash01(cellX, cellY, 101) > 0.88f ? 2 : 1;
-                    Color color = (Hash01(cellX, cellY, 131) > 0.82f ? accentColor : Color.White) * ((0.2f + 0.58f * twinkle) * brightness);
+                    Color color = (Hash01(cellX, cellY, 131) > 0.82f ? accentColor : Color.White) * ((0.2f + 0.58f * twinkle) * brightness * visibility);
 
                     Main.spriteBatch.Draw(pixel, new Rectangle((int)starPosition.X, (int)starPosition.Y, size, size), color);
                 }
@@ -301,6 +407,15 @@ namespace tsorcRevamp
             {
                 Main.cursorOverride = CursorOverrideID.InventoryToChest;
             }
+        }
+
+        private static void SkipLightningInGraveyard(On_Main.orig_NewLightning orig)
+        {
+            if (Main.LocalPlayer != null && Main.LocalPlayer.active && Main.LocalPlayer.ZoneGraveyard)
+            {
+                return;
+            }
+            orig();
         }
 
         private static void HidePinwheelLifeOnMouseover(On_Main.orig_HoverOverNPCs orig, Main self, Rectangle mouseRectangle)
@@ -1893,10 +2008,71 @@ namespace tsorcRevamp
                 Main.spriteBatch.End();
             }
 
+            DrawArtoriasRingDarkness();
+
             if (Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true)
             {
+                DrawAbyssFog();
                 DrawAbyssForegroundParticles();
             }
+        }
+
+        // Darkens everything outside Artorias's fixed abyss ring, drawn BEFORE the abyss sparkle
+        // foreground particles so those stars still read on top of the darkness. Approximated with a
+        // handful of concentric arc-bands (no shader/gradient asset needed) - opacity ramps from fully
+        // clear at the ring's edge to fully black RingDarknessFalloff px further out.
+        private const float RingDarknessFalloff = 800f;
+        private const int RingDarknessBands = 5;
+        private const int RingDarknessSegments = 40;
+
+        private static void DrawArtoriasRingDarkness()
+        {
+            if (!Main.IsGraphicsDeviceAvailable || Main.gameMenu || Main.mapFullscreen)
+            {
+                return;
+            }
+
+            Artorias artorias = null;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].ModNPC is Artorias a)
+                {
+                    artorias = a;
+                    break;
+                }
+            }
+            if (artorias == null)
+            {
+                return;
+            }
+
+            Vector2 center = artorias.RingCenter - Main.screenPosition;
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+
+            // World-space matrix (not UIScaleMatrix) so this lines up with the ring's actual world
+            // position regardless of the player's UI scale setting.
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            for (int band = 0; band < RingDarknessBands; band++)
+            {
+                float t = (band + 1) / (float)RingDarknessBands;
+                float radius = Artorias.RingRadius + RingDarknessFalloff * t;
+                float alpha = t * t * 0.9f; // ease-in, fully opaque by the outermost band
+                float bandThickness = RingDarknessFalloff / RingDarknessBands + 6f; // slight overlap seam
+                float segLength = MathHelper.TwoPi * radius / RingDarknessSegments + 8f;
+
+                for (int seg = 0; seg < RingDarknessSegments; seg++)
+                {
+                    float angle = MathHelper.TwoPi * seg / RingDarknessSegments;
+                    Vector2 dir = angle.ToRotationVector2();
+                    Vector2 pos = center + dir * radius;
+                    Main.spriteBatch.Draw(pixel, pos, null, Color.Black * alpha,
+                        angle + MathHelper.PiOver2, new Vector2(0.5f, 0.5f), new Vector2(segLength, bandThickness),
+                        SpriteEffects.None, 0f);
+                }
+            }
+
+            Main.spriteBatch.End();
         }
 
         private static void DrawAbyssForegroundParticles()
@@ -1911,7 +2087,7 @@ namespace tsorcRevamp
 
             float parallax = 0.08f;
             float cellSize = 96f;
-            float density = 0.35f;
+            float density = 0.7f; // doubled from 0.35f
 
             Vector2 parallaxPosition = Main.screenPosition * parallax;
             Vector2 windOffset = new Vector2(Main.GlobalTimeWrappedHourly * 15f, Main.GlobalTimeWrappedHourly * 6f);

@@ -31,6 +31,14 @@ namespace tsorcRevamp.NPCs.Invaders
 
         private bool _meteorRainActive;
 
+        // ── Multi-blast meteor triad state (non-rain magic casts) ──────────────────
+        private int   _meteorBurstsRemaining;  // blasts left to fire after the one just cast
+        private int   _meteorBurstGapTicks;    // ticks between blasts
+        private int   _meteorBurstNextInTicks; // countdown to the next blast
+        private float _meteorBurstSpread;      // flank x-offset
+        private float _meteorBurstFlankJitter;
+        private float _meteorBurstCenterJitter;
+
         protected override string InvaderTitle => "Cursed Dragon";
 
         // ── Wings / flight ──────────────────────────────────────────────────────────
@@ -53,6 +61,7 @@ namespace tsorcRevamp.NPCs.Invaders
             DiveAttackTicks = 46,
             LandTicks = 80,
             WingFlapSpeed = 0.085f,
+            StrafeArcHeight = 55f, // breath-sweep strafe rises through the middle for a natural swoop
         };
         protected override int RandomTakeoffChance => 17; // takes to the air more readily
         protected override float FlightHpEscalationFrac => 0.60f;
@@ -133,7 +142,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override float SecondaryRangedRange => 640f;
         protected override float SecondaryRangedMinRange => 150f;
         protected override int SecondaryRangedTelegraphTicks => 36;
-        protected override int SecondaryRangedCooldownAfterUse => 260;
+        protected override int SecondaryRangedCooldownAfterUse => 160;
         protected override int SecondaryRangedChance => 50;
         protected override int SecondaryStandingRangedChance => 70;
         protected override Color SecondaryRangedFlashColor => new Color(180, 90, 255);
@@ -185,11 +194,11 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int BreathChance => 4;
         protected override Color BreathTelegraphFlashColor => Color.OrangeRed;
 
-        // ── Half-HP gating ──────────────────────────────────────────────────────────
-        private bool BelowHalfHp => NPC.life * 2 <= NPC.lifeMax;
+        // ── HP gating for the venom staff / cursed knives unlock ────────────────────
+        private bool BelowEnrageHpThreshold => NPC.life <= NPC.lifeMax * 0.70f;
 
-        // Venom staff (secondary ranged) is locked until the dragon drops below half HP.
-        protected override bool SecondaryRangedAvailable => BelowHalfHp;
+        // Venom staff (secondary ranged) is locked until the dragon drops below 70% HP.
+        protected override bool SecondaryRangedAvailable => BelowEnrageHpThreshold;
 
         // ── Agility: proactive projectile evasion + preemptive quick-step ───────────
         protected override bool EvadesProjectiles => true;          // jump / roll vs incoming ranged
@@ -199,10 +208,10 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int QuickStepRecoveryTicks => 36;
         protected override float QuickStepForwardRoom => 56f;
 
-        // ── Cursed Knives (unlocks below half HP; usable grounded or flying) ─────────
-        protected override bool CanThrowCursedKnives => BelowHalfHp;
+        // ── Cursed Knives (unlocks below 70% HP; usable grounded or flying) ──────────
+        protected override bool CanThrowCursedKnives => BelowEnrageHpThreshold;
         protected override int CursedKnivesWeaponItemType => ModContent.ItemType<EnemyCursedKnife>();
-        protected override int CursedKnivesChance => 5;
+        protected override int CursedKnivesChance => 18;
         protected override float CursedKnivesRange => 780f;
         protected override float CursedKnivesMinRange => 0f;
         protected override float CursedKnivesCloseRange => 220f; // ≤ this: 1 volley, tight 45° spread
@@ -228,8 +237,17 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override bool DrawWeaponAsSpear => true;
         // Use the holdout-projectile sprite (full shaft + head) instead of the small item icon.
         protected override string SpearDrawTexturePath => "tsorcRevamp/Projectiles/Melee/Spears/PilgrimSpontoonProj";
-        protected override Vector2 SpearHeadNorm => new Vector2(0.85f, 0.15f); // trident head, top-right of the sprite
-        protected override Vector2 SpearBaseNorm => new Vector2(0.10f, 0.90f); // butt of the shaft, bottom-left
+        // Measured directly from the PilgrimSpontoonProj.png pixels (110x110): the ornate head/tip
+        // sits at the top-left corner and the shaft runs straight to the bottom-right corner — a
+        // NW-SE diagonal, not the NE-SW diagonal the broadsword convention assumes.
+        protected override Vector2 SpearHeadNorm => new Vector2(0.03f, 0.03f); // tip, top-left
+        protected override Vector2 SpearBaseNorm => new Vector2(0.95f, 0.95f); // butt, bottom-right
+        // TickWeaponAnim's rotation targets assume the standard broadsword natural angle (-45°,
+        // handle lower-left / blade upper-right).  This sprite's natural angle is -135° (90° off in
+        // the other direction), so a +90° draw-only correction realigns it — after which every
+        // existing rotation target (thrust, telegraph, overhead/underhand arcs, ranged throw, etc.)
+        // reads correctly without further per-phase tuning.
+        protected override float SpearDrawRotationOffset => MathHelper.PiOver2;
         // Combo hitboxes reach out to roughly the spear's length so swings/thrusts connect at their visual reach.
         protected override float ComboReachBase => 230f;
         protected override float MeleeEngageRange => 200f; // start spear combos from spear distance, not point-blank
@@ -427,7 +445,10 @@ namespace tsorcRevamp.NPCs.Invaders
             }
         }
 
-        // ── Magic: meteor storm + rare sustained rain ───────────────────────────────
+        // ── Magic: meteor triad burst (HP-scaled blast count/spacing/spread) + rare sustained rain ──
+        // >80% HP: 2 blasts, 60 ticks apart, baseline spread.
+        // 50-80% HP: 3 blasts, 45 ticks apart, wider spread.
+        // <50% HP: 4 blasts, 30 ticks apart, slightly wider spread still.
         protected override void DoMagicAttack()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -436,37 +457,87 @@ namespace tsorcRevamp.NPCs.Invaders
             }
 
             Player target = Main.player[NPC.target];
-            SoundEngine.PlaySound(SoundID.Item88 with { Volume = 0.75f, PitchVariance = 0.08f }, NPC.Center);
 
             if (Main.rand.Next(100) < MeteorRainChance)
             {
                 // Rare: channel a 7-second meteor rain (DoMagicTick spawns over the extended phase).
+                SoundEngine.PlaySound(SoundID.Item88 with { Volume = 0.35f, PitchVariance = 0.08f }, NPC.Center);
                 _meteorRainActive = true;
                 _magicAttackTicksOverride = MeteorRainTicks;
                 return;
             }
 
             _meteorRainActive = false;
-            _magicAttackTicksOverride = -1;
-            // Three meteors: left and right flanks land near the player's current position;
-            // the center meteor leads aggressively in the player's run direction so simply
-            // kiting in one direction doesn't guarantee a dodge.
-            SpawnSkyMeteor(target, xOffset: -300f, jitter: 30f, leadMult: 4f);   // left flank
-            SpawnSkyMeteor(target, xOffset:    0f, jitter: 20f, leadMult: 80f);  // predictive center
-            SpawnSkyMeteor(target, xOffset:  300f, jitter: 30f, leadMult: 4f);   // right flank
+
+            float hpFrac = (float)NPC.life / NPC.lifeMax;
+            int totalBursts;
+            if (hpFrac < 0.50f)
+            {
+                totalBursts = 4; _meteorBurstGapTicks = 30;
+                _meteorBurstSpread = 420f; _meteorBurstFlankJitter = 42f; _meteorBurstCenterJitter = 28f;
+            }
+            else if (hpFrac <= 0.80f)
+            {
+                totalBursts = 3; _meteorBurstGapTicks = 45;
+                _meteorBurstSpread = 380f; _meteorBurstFlankJitter = 38f; _meteorBurstCenterJitter = 25f;
+            }
+            else
+            {
+                totalBursts = 2; _meteorBurstGapTicks = 60;
+                _meteorBurstSpread = 300f; _meteorBurstFlankJitter = 30f; _meteorBurstCenterJitter = 20f;
+            }
+
+            // First blast fires immediately; DoMagicTick fires the rest at _meteorBurstGapTicks apart.
+            FireMeteorTriad(target);
+            _meteorBurstsRemaining = totalBursts - 1;
+            _meteorBurstNextInTicks = _meteorBurstGapTicks;
+
+            // Channel length: enough ticks for every remaining blast, plus a small buffer so the last
+            // blast's meteors spawn before MagicAttack ends and hands off to recovery.
+            _magicAttackTicksOverride = _meteorBurstsRemaining * _meteorBurstGapTicks + 14;
         }
 
         protected override void DoMagicTick(int ticksRemaining)
         {
-            if (!_meteorRainActive || Main.netMode == NetmodeID.MultiplayerClient)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
-            if (ticksRemaining % 14 == 0)
+
+            if (_meteorRainActive)
             {
-                // Rain spreads randomly across a wide band over the player.
-                SpawnSkyMeteor(Main.player[NPC.target], xOffset: Main.rand.NextFloat(-260f, 260f), jitter: 0f, leadMult: 10f);
+                if (ticksRemaining % 14 == 0)
+                {
+                    // Rain spreads randomly across a wide band over the player.  Unlike the triad burst
+                    // (one cast sound per blast), the sustained rain gets its own sound per meteor so
+                    // each of the ~20 shots reads as a distinct impact-incoming cue.
+                    SoundEngine.PlaySound(SoundID.Item88 with { Volume = 0.35f, PitchVariance = 0.08f }, NPC.Center);
+                    SpawnSkyMeteor(Main.player[NPC.target], xOffset: Main.rand.NextFloat(-260f, 260f), jitter: 0f, leadMult: 10f);
+                }
+                return;
             }
+
+            if (_meteorBurstsRemaining <= 0)
+            {
+                return;
+            }
+            if (--_meteorBurstNextInTicks <= 0)
+            {
+                FireMeteorTriad(Main.player[NPC.target]);
+                _meteorBurstsRemaining--;
+                _meteorBurstNextInTicks = _meteorBurstGapTicks;
+            }
+        }
+
+        // Three meteors: left and right flanks land near the player's current position; the center
+        // meteor leads aggressively in the player's run direction so simply kiting one way doesn't
+        // guarantee a dodge.  Spread/jitter come from the HP-scaled tier set in DoMagicAttack.
+        private void FireMeteorTriad(Player target)
+        {
+            SoundEngine.PlaySound(SoundID.Item88 with { Volume = 0.35f, PitchVariance = 0.08f }, NPC.Center);
+            SpawnSkyMeteor(target, xOffset: -_meteorBurstSpread, jitter: _meteorBurstFlankJitter, leadMult: 4f);
+            SpawnSkyMeteor(target, xOffset:  0f,                 jitter: _meteorBurstCenterJitter, leadMult: 80f);
+            SpawnSkyMeteor(target, xOffset:  _meteorBurstSpread, jitter: _meteorBurstFlankJitter, leadMult: 4f);
         }
 
         private void SpawnSkyMeteor(Player target, float xOffset, float jitter, float leadMult)
@@ -570,6 +641,47 @@ namespace tsorcRevamp.NPCs.Invaders
                 NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderMeleeHitbox>(),
                 (int)(SpearDamage * 1.25f), 4f, Main.myPlayer, boxW, boxH);
+        }
+
+        // ── Visual: white dust + light building at the spear tip through the whole ranged
+        // telegraph, with one strong pulse right before the shot fires ─────────────────
+        public override void PostAI()
+        {
+            base.PostAI();
+            if (Phase != AttackPhase.RangedTelegraph || IsSecondaryRangedActive || Main.dedServ)
+                return;
+
+            Vector2 spearTip = GetSpearTipWorldPosition(92f);
+            float t = RangedTelegraphTicks > 0
+                ? 1f - (float)PhaseTimer / RangedTelegraphTicks // 0 at telegraph start, 1 at the shot
+                : 1f;
+
+            // Steady sparkle for the full telegraph, growing denser as the shot nears.
+            int dustCount = 2 + (int)(t * 3f); // 2 -> 5 particles/tick
+            for (int i = 0; i < dustCount; i++)
+            {
+                Dust d = Dust.NewDustPerfect(
+                    spearTip + Main.rand.NextVector2Circular(7f, 7f),
+                    DustID.WhiteTorch,
+                    Main.rand.NextVector2Circular(1.5f, 1.5f),
+                    0, Color.White,
+                    Main.rand.NextFloat(1.2f, 2.0f));
+                d.noGravity = true;
+                d.fadeIn = 0.9f;
+            }
+
+            // Strong pulse burst in the final few ticks — the clearest "it's about to fire" cue.
+            if (PhaseTimer <= 6)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Dust d = Dust.NewDustPerfect(spearTip, DustID.WhiteTorch,
+                        Main.rand.NextVector2Circular(3.5f, 3.5f), 0, Color.White, 2.4f);
+                    d.noGravity = true;
+                }
+            }
+
+            Lighting.AddLight(spearTip, MathHelper.Lerp(0.5f, 1.4f, t), MathHelper.Lerp(0.5f, 1.4f, t), MathHelper.Lerp(0.6f, 1.5f, t));
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

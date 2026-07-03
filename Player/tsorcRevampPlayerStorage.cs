@@ -142,6 +142,7 @@ namespace tsorcRevamp
             else
             {
                 StorageUIState.Visible = false;
+                StorageUIState.ReopenWithInventory = false; // explicit close via keybind — don't reopen automatically
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuClose);
             }
         }

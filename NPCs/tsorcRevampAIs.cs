@@ -436,17 +436,43 @@ namespace tsorcRevamp.NPCs
             if (!fleeing)
             {
                 const float FighterAggroRange = 2000f; // generous: an LOS sighting re-aggros like the old BoredTimer reset
+                // ~1s of confirmed "no A* path + can't engage" (globalNPC.UnreachableFrames, see SmartFighter4AI's
+                // noPathToTarget tracking) before a hit is treated as coming from someone genuinely unreachable.
+                const int FleeUnreachableThreshold = 60;
                 Player fsmPlayer = Main.player[npc.target];
 
                 // Being hit forces a re-acquire (mirrors the old BoredTimer = 0 on justHit). For a beast this also
                 // breaks it out of a stale wander (RegisterHitForBeast already cleared it from the hit hook; clearing
                 // here too keeps the re-engage local so the stale overlay below can't re-force Patrol this frame).
+                //
+                // EXCEPTION: a hit landed by a player this NPC has had no A* path to for a while, and can't just
+                // blink to (CanTeleport), means standing there taking free hits forever — flee to safety instead
+                // of re-aggroing into the same dead end. Beasts keep their own BeastStale wander-off instead (it
+                // already solves the same problem for them, on its own timer). Landing MORE hits while already
+                // fleeing doesn't restart the distance countdown — that would let a player plinking it from above
+                // keep it fleeing forever; the in-progress flee just runs its course.
                 if (npc.justHit)
                 {
-                    globalNPC.PursuitState = PursuitState.Pursue;
-                    globalNPC.DisengageTimer = 0;
-                    globalNPC.BeastStale = false;
-                    globalNPC.BeastUnreachableFrames = 0;
+                    bool eligibleToFlee = !globalNPC.CanTeleport && !globalNPC.RequiresFlatGround
+                        && globalNPC.NavSearchRadius > 0 && globalNPC.UnreachableFrames >= FleeUnreachableThreshold;
+                    if (eligibleToFlee)
+                    {
+                        if (globalNPC.PursuitState != PursuitState.Flee)
+                        {
+                            globalNPC.PursuitState = PursuitState.Flee;
+                            globalNPC.FleeOriginX = npc.Center.X;
+                            int awayDir = Math.Sign(npc.Center.X - fsmPlayer.Center.X);
+                            globalNPC.FleeDirection = awayDir != 0 ? awayDir : (npc.direction != 0 ? npc.direction : 1);
+                            globalNPC.FleeElapsedFrames = 0;
+                        }
+                    }
+                    else if (globalNPC.PursuitState != PursuitState.Flee)
+                    {
+                        globalNPC.PursuitState = PursuitState.Pursue;
+                        globalNPC.DisengageTimer = 0;
+                        globalNPC.BeastStale = false;
+                        globalNPC.BeastUnreachableFrames = 0;
+                    }
                 }
 
                 // TRUE line of sight: Player.CanHit (== Collision.CanHit) is the permissive trajectory check that
@@ -534,12 +560,38 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
+                if (fsmState == PursuitState.Flee)
+                {
+                    // No teleport-mid-blink guard needed here — Flee is only ever entered when
+                    // !globalNPC.CanTeleport (see the justHit handling above).
+                    NavBehavior.RunFlee(npc, globalNPC, topSpeed, acceleration);
+                    if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
+                    // Same as Patrol below: don't advance an LOS-requiring attack while running away, and
+                    // aiming needs LOS anyway.
+                    if (globalNPC.AttackList.Count == 0 || globalNPC.CurrentAttack.needsLineOfSight)
+                    {
+                        globalNPC.ProjectileTimer = 0f;
+                    }
+                    globalNPC.ArcherAimDirection = 0f;
+                    LogFighterNavDebug(npc, globalNPC, fsmLos);
+                    return;
+                }
+
                 if (fsmState == PursuitState.Patrol)
                 {
                     // Mid-blink (a teleport was just queued, counting down, or appearance is pending) → hold; otherwise patrol.
                     if (globalNPC.TeleportCountdown == 0 && globalNPC.TeleportAppearanceTimer == 0)
                     {
-                        if (globalNPC.CanPassThroughWalls)
+                        // Already lined up under/over the player on a different level (e.g. player straight up on
+                        // a ledge with nothing but open air below them) — there's no wall to walk into here, so
+                        // chasing the exact X coordinate just overshoots back and forth across it forever (the
+                        // "rapid left-right directly below you" jitter; SmartFighter4AI's xAlignedDiffLevel guards
+                        // the same case for non-wall-phasing SF4 enemies). Fall back to real wander instead.
+                        bool xAlignedDiffLevel = globalNPC.CanPassThroughWalls
+                            && Math.Abs(npc.Center.X - fsmPlayer.Center.X) < 16f * 1.5f
+                            && Math.Abs(fsmPlayer.Center.Y - npc.Center.Y) > 24f;
+
+                        if (globalNPC.CanPassThroughWalls && !xAlignedDiffLevel)
                         {
                             // Ghost enemies always drift toward the player even in "patrol" — wandering away from
                             // a wall they can't pathfind through means TryGhostWallTeleport never fires.
@@ -2174,11 +2226,11 @@ namespace tsorcRevamp.NPCs
                     {
                         case 0: // small hop back
                             npc.velocity.Y = -6f;
-                            npc.velocity.X = 7f * away;
+                            npc.velocity.X = 4f * away;
                             break;
-                        case 1: // big leap back (toned down)
+                        case 1: // big leap back
                             npc.velocity.Y = -8f;
-                            npc.velocity.X = 7f * away;
+                            npc.velocity.X = 5f * away;
                             break;
                         case 2: // jump high, drifting back
                             npc.velocity.Y = -11f;

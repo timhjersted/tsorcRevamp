@@ -11,6 +11,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
 using Terraria.DataStructures;
+using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -279,7 +280,7 @@ namespace tsorcRevamp
         /// referenced by path — so Item60 is the working stand-in here.  To use the real fuse later,
         /// swap to: new SoundStyle("Terraria/Sounds/...") (or a custom sound).
         /// </summary>
-        public static readonly SoundStyle BombFuse = SoundID.Item60;
+        public static readonly SoundStyle BombFuse = new SoundStyle("tsorcRevamp/Sounds/Item/Fuse");
 
         ///<summary>
         ///Gets the coordinates of the first solid thing a line fired in a certain direction will hit
@@ -762,6 +763,14 @@ namespace tsorcRevamp
                 dust.noGravity = true;
                 dust.scale = scale;
             }
+        }
+
+        // One-shot screen shake (vanilla's PunchCameraModifier, e.g. Deerclops' stomp) centered on a world
+        // position. Shake direction is randomized each call so repeated shakes don't feel identical.
+        public static void ScreenShake(Vector2 center, float strength = 20f, int frames = 20, float vibrationCyclesPerSecond = 6f, float distanceFalloff = 1000f, string uniqueIdentity = null)
+        {
+            Vector2 direction = (Main.rand.NextFloat() * MathHelper.TwoPi).ToRotationVector2();
+            Main.instance.CameraModifiers.Add(new PunchCameraModifier(center, direction, strength, vibrationCyclesPerSecond, frames, distanceFalloff, uniqueIdentity));
         }
 
         ///<summary> 

@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -74,6 +75,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Dust.NewDustDirect(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f).noGravity = true;
             Dust.NewDustDirect(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f).noGravity = true;
+        }
+
+        // Exclusive to DworcAbysswalker - "Abysswalker" is literally an Artorias title in the source material.
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(ModContent.BuffType<Abyss>(), 3 * 60 * 60, false);
         }
     }
 }

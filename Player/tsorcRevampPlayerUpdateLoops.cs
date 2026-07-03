@@ -67,6 +67,13 @@ namespace tsorcRevamp
         public int PullStrength = 0;
         public int PullFrame = 0;
 
+        // Set (and continually refreshed) by whatever is impaling the player - e.g. Artorias's
+        // StabbingPiercingDash - to freeze movement/attacks and anchor the player to the impaling
+        // weapon's tip. Decremented in PreUpdateMovement, so it self-releases a few ticks after
+        // the attacker stops refreshing it (safety net if the attack ends abnormally).
+        public int ImpaleFreezeTimer = 0;
+        public Vector2 ImpaleWorldPosition;
+
 
         public bool Celestriad = false;
         public bool UndeadTalisman = false;
@@ -143,6 +150,9 @@ namespace tsorcRevamp
         public bool CelestialCloak;
 
         public bool CanUseItemsWhileDodging;
+        public bool ArtoriasAbysswalker;
+        public float ArtoriasAbysswalkerDodgeStaminaCostReduction;
+        public int ArtoriasAbysswalkerCounterType;
         public bool Witch;
 
         public bool Kraken;
@@ -361,7 +371,12 @@ namespace tsorcRevamp
         // Weapon stamina usage. Bearer of the Curse pays full stamina for attacks; Unkindled pays 75% (so stamina still matters but isn't punishing); Classic pays none. Gate weapon-stamina
         // drains on UsesWeaponStamina and scale the amount by WeaponStaminaMult.
         public bool UsesWeaponStamina => BearerOfTheCurse || Unkindled;
-        public float WeaponStaminaMult => BearerOfTheCurse ? 1f : (Unkindled ? 0.75f : 0f);
+        public float WeaponStaminaMult => (BearerOfTheCurse ? 1f : (Unkindled ? 0.75f : 0f)) * TiredStaminaMult;
+
+        // Tired debuff: +25% stamina cost on everything that spends it. Applied here so every existing
+        // WeaponStaminaMult read picks it up automatically; the dodge roll's flat stamina cost (which doesn't
+        // go through WeaponStaminaMult) multiplies by this directly instead - see DodgeRoll().
+        public float TiredStaminaMult => Tired ? 1.25f : 1f;
 
         // Tier-aware healing scalar applied to instant-heal items (food, potions, Tome of Health, etc.).
         // Classic: full heal. Unkindled: half heal. Bearer of the Curse: zero (caller should skip heal entirely).
@@ -458,6 +473,12 @@ namespace tsorcRevamp
         public bool HadBuffStrategist;
 
         public bool EnterTheAbyss;
+        // Not reset in ResetEffects - persists across ticks so AbyssTransitionEffects() (PostUpdateMiscEffects)
+        // can detect the enter/exit edge instead of re-triggering every tick EnterTheAbyss happens to be true.
+        public bool WasInAbyss;
+        public bool CovenantOfArtoriasEquipped;
+        public bool Suppressed;
+        public bool Tired;
         public int timeSinceLastAttacked = 0;
 
         // 3 seconds until sinking
@@ -475,6 +496,9 @@ namespace tsorcRevamp
             }
 
             EnterTheAbyss = false;
+            CovenantOfArtoriasEquipped = false;
+            Suppressed = false;
+            Tired = false;
             BeastMode1 = false;
             SilverSerpentRing = false;
             SoulSerpentRing = false;
@@ -536,6 +560,8 @@ namespace tsorcRevamp
             CelestialCloak = false;
 
             CanUseItemsWhileDodging = false;
+            ArtoriasAbysswalker = false;
+            ArtoriasAbysswalkerDodgeStaminaCostReduction = 0f;
 
             Witch = false;
 
@@ -2041,6 +2067,7 @@ namespace tsorcRevamp
                     }
                 }
             }
+
         }
 
         public override void PostUpdateRunSpeeds()
@@ -2100,6 +2127,33 @@ namespace tsorcRevamp
                 {
                     Player.maxFallSpeed = 50;
                     FastFallTimer--;
+                }
+
+                if (Suppressed)
+                {
+                    // Roughly early-hardmode boot territory (Spectre/Lightning Boots are 6f-6.75f) for the 3
+                    // named items; Wings of Seath is nerfed less harshly since it's a much later-game item and
+                    // should still clearly outclass the other three while suppressed.
+                    bool isSeath = supersonicLevel == SoulsModeMobility.WingsOfSeathLevel;
+                    float suppressedRunSpeed = isSeath ? 7f : 6f;
+                    float suppressedAcceleration = isSeath ? 0.14f : 0.1f;
+
+                    Player.accRunSpeed = Math.Min(Player.accRunSpeed, suppressedRunSpeed);
+                    Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, suppressedRunSpeed);
+                    Player.runAcceleration = Math.Min(Player.runAcceleration, suppressedAcceleration);
+
+                    bool hasSuppressedWings = supersonicLevel == SoulsModeMobility.SupersonicWingsLevel
+                        || supersonicLevel == SoulsModeMobility.SupersonicWings2Level
+                        || isSeath;
+                    if (hasSuppressedWings)
+                    {
+                        int suppressedWingTime = isSeath ? 180 : 90; // 1.5s, or 3s for Wings of Seath
+                        Player.wingTimeMax = Math.Min(Player.wingTimeMax, suppressedWingTime);
+                        if (Player.wingTime > Player.wingTimeMax)
+                        {
+                            Player.wingTime = Player.wingTimeMax;
+                        }
+                    }
                 }
             }
 
@@ -2492,6 +2546,13 @@ namespace tsorcRevamp
         }
         public override void PreUpdateMovement()
         {
+            if (ImpaleFreezeTimer > 0)
+            {
+                Player.velocity = Vector2.Zero;
+                Player.Center = ImpaleWorldPosition;
+                ImpaleFreezeTimer--;
+                return;
+            }
             if (ShunpoTimer == 3)
             {
                 Player.velocity = Vector2.Zero;
@@ -2575,6 +2636,9 @@ namespace tsorcRevamp
 
         public override void PostUpdateMiscEffects()
         {
+            AbyssTransitionEffects();
+            ReduceGraveyardDesaturation();
+
             if (GravityField)
             {
                 if (InSpace(Player))
@@ -2797,6 +2861,68 @@ namespace tsorcRevamp
                 if (Player.statMana > Player.statManaMax2) Player.statMana = Player.statManaMax2;
             }
         }
+        // Purple dust burst + a portal-ish whoosh on the exact tick EnterTheAbyss flips, so stepping into (or
+        // out of) the Abyss reads as a reality shift rather than just a debuff icon appearing. Entering uses a
+        // darker tint and a lower pitch (sinking into somewhere heavier); exiting is lighter/brighter-pitched
+        // (surfacing back to normal reality). Reuses vanilla's Etherian portal sound rather than new audio.
+        private void AbyssTransitionEffects()
+        {
+            if (EnterTheAbyss == WasInAbyss)
+            {
+                return;
+            }
+
+            bool entering = EnterTheAbyss;
+            WasInAbyss = EnterTheAbyss;
+
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            Color tint = entering ? new Color(70, 20, 110) : new Color(205, 165, 235);
+
+            for (int i = 0; i < 45; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(7f, 7f);
+                int dust = Dust.NewDust(Player.position, Player.width, Player.height, DustID.PurpleTorch, velocity.X, velocity.Y, 100, tint, Main.rand.NextFloat(1.5f, 2.3f));
+                Main.dust[dust].noGravity = true;
+            }
+            for (int i = 0; i < 15; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(3.5f, 3.5f);
+                int dust = Dust.NewDust(Player.position, Player.width, Player.height, DustID.Shadowflame, velocity.X, velocity.Y, 100, default, 1.6f);
+                Main.dust[dust].noGravity = true;
+            }
+
+            SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen with { Volume = 0.6f, Pitch = entering ? -0.25f : 0.25f }, Player.Center);
+
+            UsefulFunctions.ScreenShake(Player.Center, uniqueIdentity: "AbyssTransition");
+        }
+
+        // Vanilla's "Graveyard" scene filter (Player.UpdateBiomes, runs earlier in the tick) desaturates the
+        // screen while GraveyardVisualIntensity > 0, using UseProgress(0..0.75) and a flat UseIntensity(1.2).
+        // We can't tune vanilla's own call, so we just overwrite both with weaker values right after it runs.
+        // Set GraveyardDesaturationMultiplier to 0f for full removal instead of a reduction.
+        private const float GraveyardDesaturationMultiplier = 0.4f;
+
+        private void ReduceGraveyardDesaturation()
+        {
+            if (!Filters.Scene["Graveyard"].IsActive())
+            {
+                return;
+            }
+
+            if (GraveyardDesaturationMultiplier <= 0f)
+            {
+                Filters.Scene.Deactivate("Graveyard");
+                return;
+            }
+
+            float progress = MathHelper.Lerp(0f, 0.75f, Main.GraveyardVisualIntensity) * GraveyardDesaturationMultiplier;
+            Filters.Scene["Graveyard"].GetShader().UseProgress(progress).UseIntensity(1.2f * GraveyardDesaturationMultiplier);
+        }
+
         private int previousStatLifeMax = -1;
         private int previousStatManaMax = -1;
         private int previousEffectiveStatLifeMax = -1;
@@ -2958,6 +3084,10 @@ namespace tsorcRevamp
             //Main.NewText("" + Player.lifeRegen);
 
             if (Player.ZoneGraveyard) { Player.AddBuff(BuffID.WaterCandle, 2); }
+
+            // Dungeon during Super Hard Mode: keep Suppressed topped up at a short fixed duration (rather than
+            // silently re-adding every tick) so enemy attacks can also inflict it and have that duration matter.
+            if (Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode) { Player.AddBuff(ModContent.BuffType<Suppressed>(), 60); }
 
             if (gilled && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidAmount != 0 && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidType == LiquidID.Water)
             {

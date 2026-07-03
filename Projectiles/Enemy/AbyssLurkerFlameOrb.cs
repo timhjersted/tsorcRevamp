@@ -116,6 +116,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false);
+            target.AddBuff(ModContent.BuffType<Abyss>(), 3 * 60 * 60, false);
             SpawnFlameDust(25, 4.6f, 1.9f);
         }
 

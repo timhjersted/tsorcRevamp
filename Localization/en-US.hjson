@@ -2706,6 +2706,46 @@ Mods: {
 				SetBonus: Increases melee damage by 15%
 			}
 
+			ArtoriasOfTheAbyssArmor: {
+				DisplayName: Artorias Abysswalker Armor
+				Tooltip:
+					'''
+					Increases melee damage by {0}%
+					Increases magic damage by {1}%
+					{$CommonItemTooltip.DRStat@2}
+					{$CommonItemTooltip.MaxStamina@3}
+					'''
+			}
+
+			ArtoriasOfTheAbyssGreaves: {
+				DisplayName: Artorias Abysswalker Greaves
+				Tooltip:
+					'''
+					Increases movement speed by {0}%
+					Increases melee attack speed by {1}%
+					Increases magic attack speed by {2}%
+					Dodgerolls cost {3}% less stamina
+					'''
+			}
+
+			ArtoriasOfTheAbyssHelm: {
+				DisplayName: Artorias Abysswalker Helm
+				Tooltip:
+					'''
+					Increases melee damage by {0}%
+					Increases magic damage by {1}%
+					Increases stamina regeneration rate by {2}%
+					'''
+				SetBonus:
+					'''
+					Allows you to use items while dodgerolling
+					Increases melee and magic damage by 10% and movement speed by 12%
+					Dodging through danger grants Abyssal Poise for 3 seconds
+					The next melee or magic hit deals {3}% more damage, restores {4}% stamina, and releases an abyss counterattack
+					Getting hit before counterattacking removes Abyssal Poise
+					'''
+			}
+
 			ByakheeMask: {
 				DisplayName: Byakhee Mask
 				Tooltip: Increases melee critical strike chance by {0}%
@@ -2723,18 +2763,18 @@ Mods: {
 			}
 
 			CursedDragonHelmet: {
-				DisplayName: Cursed Dragon Helmet
-				SetBonus: Visual Cursed Dragon armor. Equip the Dragon Charm to transform while keeping your armor stats.
+				DisplayName: Cursed Dragon Head
+				SetBonus: Become a cursed dragon. Equip the Dragon Charm to transform while keeping your armor stats.
 				Tooltip: ""
 			}
 
 			CursedDragonArmor: {
-				DisplayName: Cursed Dragon Armor
+				DisplayName: Cursed Dragon Chest
 				Tooltip: ""
 			}
 
 			CursedDragonGreaves: {
-				DisplayName: Cursed Dragon Greaves
+				DisplayName: Cursed Dragon Legs
 				Tooltip: ""
 			}
 
@@ -8465,7 +8505,7 @@ Mods: {
 				DisplayName: Dragon Charm
 				Tooltip:
 					'''
-					Transforms you into a Cursed Dragon, visually overriding your armor
+					Transforms you into a Cursed Dragon
 					Grants Master Ninja Gear abilities, fire immunity, improved jumping, and Tattered Dragon Wings if no wings are equipped
 					Increases stamina regeneration by {0}%
 					Hold right click to breathe fire, draining {1} mana per flame burst
@@ -8490,6 +8530,16 @@ Mods: {
 
 			EnemyPilgrimSpontoon: {
 				DisplayName: Enemy Pilgrim Spontoon
+				Tooltip: ""
+			}
+
+			EnemyArtoriasGreatsword: {
+				DisplayName: Enemy Artorias Greatsword
+				Tooltip: ""
+			}
+
+			ArtoriasGreatsword: {
+				DisplayName: Artorias Greatsword
 				Tooltip: ""
 			}
 		}
@@ -8578,6 +8628,17 @@ Mods: {
 				Description: Your weapon is imbued with crystalline magic!
 			}
 
+			Abyss: {
+				DisplayName: The Abyss
+				Description:
+					'''
+					The Abyss has taken hold of you.
+					Weakened: reduced melee damage, speed, and defense
+					Defense reduced by 30%
+					Torn Wings: you cannot fly
+					'''
+			}
+
 			BrokenSpirit: {
 				DisplayName: Broken Spirit
 				Description: You feel like giving up! Removes knockback immunity
@@ -8657,9 +8718,24 @@ Mods: {
 				Description: Life regen is weaker
 			}
 
+			Suppressed: {
+				DisplayName: Suppressed
+				Description:
+					'''
+					Something is dampening your speed here.
+					Supersonic Boots, Supersonic Wings, and Supersonic Wings II are reduced to roughly early hardmode levels, and lose their knockback immunity, water-walking, and ice skating.
+					Wings of Seath is weakened as well, but less severely.
+					'''
+			}
+
 			TornWings: {
 				DisplayName: Torn Wings
 				Description: You cannot fly!
+			}
+
+			Tired: {
+				DisplayName: Tired
+				Description: Increases stamina use by 25%
 			}
 
 			WitchkingsGrasp: {
@@ -9296,6 +9372,16 @@ Mods: {
 			ShunpoBlinkCooldown: {
 				DisplayName: Shunpo Cooldown
 				Description: You cannot blink again until this runs out
+			}
+
+			ArtoriasAbysswalkerPoise: {
+				DisplayName: Abyssal Poise
+				Description: Your next melee or magic hit releases an abyss counterattack
+			}
+
+			ArtoriasAbysswalkerPoiseCooldown: {
+				DisplayName: Abyssal Poise Cooldown
+				Description: Dodge through danger again after this runs out
 			}
 
 			PhoenixRebirthCooldown: {
@@ -10295,7 +10381,7 @@ Mods: {
 			FireFlask.DisplayName: Fire Flask
 			FireFlaskLingeringFlame.DisplayName: Fire Flask Lingering Flame
 			EnemyNinjaStarProj.DisplayName: Enemy Ninja Star Proj
-			CursedDragonInvaderBreath.DisplayName: Cursed Dragon Invader Breath
+			CursedDragonInvaderBreath.DisplayName: Cursed Dragon Breath
 			EnemyMeteorStormMeteor.DisplayName: Enemy Meteor Storm Meteor
 			CursedDragonKnife.DisplayName: Cursed Dragon Knife
 			EnemyPilgrimArcaneBall.DisplayName: Enemy Pilgrim Arcane Ball
@@ -10308,6 +10394,19 @@ Mods: {
 			OccultistStarBig.DisplayName: Occultist Star Big
 			AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
 			AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
+			AbyssSlash.DisplayName: Abyss Slash
+			ArtoriasAbyssBlast.DisplayName: Artorias Abyss Blast
+			ArtoriasAbyssBlaze.DisplayName: Artorias Abyss Blaze
+			ArtoriasAbyssPillar.DisplayName: Artorias Abyss Pillar
+			ArtoriasFlameOrb.DisplayName: Artorias Flame Orb
+			ArtoriasImpalingSword.DisplayName: Artorias Impaling Sword
+			GhostBubbleBolt.DisplayName: Ghost Bubble Bolt
+			ArtoriasAbyssShockwave.DisplayName: Artorias Abyss Shockwave
+			ArtoriasAbyssSlash.DisplayName: Artorias Abyss Slash
+			GreatBlackKnightFlail.DisplayName: Great Black Knight Flail
+			GreatBlackKnightFlailEmber.DisplayName: Great Black Knight Flail Ember
+			GreatBlackKnightFlailEmberLingering.DisplayName: Great Black Knight Flail Ember Lingering
+			GreatBlackKnightFlailPulse.DisplayName: Great Black Knight Flail Pulse
 		}
 
 		NPCs: {
@@ -10870,6 +10969,8 @@ Mods: {
 			KnightOfGwyn: {
 				DisplayName: Knight of Gwyn
 				DespawnHandler: Knight of Gwyn stands victorious...
+				Protection: Knight of Gwyn is protected by a magical barrier. Only the Shaman Elder knows how to break it!
+				Open: Knight of Gwyn opens the abyss!
 			}
 
 			ManOfWar.DisplayName: Man of War
@@ -12049,7 +12150,7 @@ Mods: {
 			LothricSpearKnightOriginal.DisplayName: Old Lothric Spear Knight
 			LothricBlackKnightOriginal.DisplayName: Old Lothric Black Knight
 			RingedKnightOriginal.DisplayName: Old Ringed Knight
-			CursedDragonInvader.DisplayName: Cursed Dragon Invader
+			CursedDragonInvader.DisplayName: Cursed Dragon
 			AbysmalOolacileSorcererTEST.DisplayName: Abysmal Oolacile Sorcerer T E S T
 		}
 

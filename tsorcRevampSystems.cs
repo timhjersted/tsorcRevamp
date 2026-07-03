@@ -14,6 +14,7 @@ using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Textures;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.UI;
@@ -25,6 +26,9 @@ namespace tsorcRevamp
     {
         public static RecipeGroup UpgradedMirrors;
         public static RecipeGroup CobaltHelmets;
+
+        // Tracked to detect the inventory open/close transition for Storage reopen logic.
+        private bool prevInventoryOpen;
 
         // Set each PostDrawTiles frame; consumed by the EnemyDebugUI interface layer.
         internal static string EditorHoverTooltip;
@@ -561,6 +565,18 @@ namespace tsorcRevamp
             {
                 mod.StorageUserInterface?.Update(gameTime);
             }
+
+            // Reopen storage when the player reopens the inventory, but only if inventory-close was what hid it
+            // (not an explicit player close via X / keybind). ReopenWithInventory is set by StorageUIState.Update
+            // when inventory-close forces it shut, and cleared on any explicit close.
+            bool inventoryOpen = Main.playerInventory;
+            if (inventoryOpen && !prevInventoryOpen && StorageUIState.ReopenWithInventory)
+            {
+                StorageUIState.Visible = true;
+                StorageUIState.ReopenWithInventory = false;
+                StorageUIState.Instance?.ApplySavedPosition();
+            }
+            prevInventoryOpen = inventoryOpen;
             if (mod.EnemySelectionUI.Visible)
             {
                 mod._enemySelectionUI?.Update(gameTime);
@@ -801,6 +817,50 @@ namespace tsorcRevamp
             //{
             //    DrawSoapstoneDebug(spriteBatch);
             //}
+
+            if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            {
+                DrawInvaderAttackDebug(spriteBatch);
+            }
+        }
+
+        // Lower-left diagnostic readout of nearby InvaderNPC instances' current attack state —
+        // Phase/PhaseTimer plus the weapon-rotation math snapshot from InvaderNPC.DrawWeaponToLayer
+        // (raw _weaponRotation, final drawRotation, holdingSpearNow/heldRangedLike routing, held item,
+        // spear grip, hand/origin positions). Meant to make hand-placement / rotation bugs debuggable
+        // without needing a screenshot + manual trig — the same numbers are also written per-tick to
+        // Logs/tsorcRevamp-invader-weapon.log when DebugMode is on.
+        private static void DrawInvaderAttackDebug(SpriteBatch spriteBatch)
+        {
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
+
+            List<string> lines = new List<string>();
+            foreach (NPC npc in Main.ActiveNPCs)
+            {
+                if (npc.ModNPC is not InvaderNPC inv) continue;
+                if (Vector2.Distance(npc.Center, Main.LocalPlayer.Center) > 2400f) continue;
+
+                string comboTag = inv.DebugComboTag;
+                lines.Add($"[{npc.TypeName}#{npc.whoAmI}] phase={inv.DebugPhaseName}{(comboTag.Length > 0 ? " combo=" + comboTag : "")} t={inv.DebugPhaseTimer}");
+                lines.Add($"  item={inv.DebugHeldItemType} spear={inv.DebugHoldingSpearNow} rangedLike={inv.DebugHeldRangedLike}"
+                    + $" dir={inv.DebugDirection} grip={inv.DebugSpearGrip:F2}");
+                lines.Add($"  weaponRot={inv.DebugWeaponRotationDeg:F1}deg drawRot={inv.DebugDrawRotationDeg:F1}deg"
+                    + $" hand=({inv.DebugHandPos.X:F0},{inv.DebugHandPos.Y:F0}) origin=({inv.DebugOrigin.X:F0},{inv.DebugOrigin.Y:F0})");
+            }
+
+            if (lines.Count == 0)
+                return;
+
+            DynamicSpriteFont font = FontAssets.MouseText.Value;
+            float lineH = 16f;
+            float startY = Main.screenHeight - (lines.Count * lineH) - 10f;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                Utils.DrawBorderStringFourWay(spriteBatch, font, lines[i],
+                    10f, startY + i * lineH,
+                    Color.White, Color.Black, Vector2.Zero, 0.8f);
+            }
         }
 
         // Lower-left diagnostic readout for the nearest soapstone, gated behind DebugMode.

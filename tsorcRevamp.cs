@@ -264,6 +264,7 @@ namespace tsorcRevamp
         public static Texture2D NoiseSmooth;
         public static Texture2D NoiseSwirly;
         public static Texture2D NoisePerlin;
+        public static Texture2D[] AbyssClouds;
 
         public override void Load()
         {
@@ -381,6 +382,12 @@ namespace tsorcRevamp
             NoiseSmooth = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/SmoothNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             NoiseSwirly = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/SwirlyNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             NoisePerlin = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/PerlinNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+
+            AbyssClouds = new Texture2D[22];
+            for (int i = 0; i < AbyssClouds.Length; i++)
+            {
+                AbyssClouds[i] = (Texture2D)ModContent.Request<Texture2D>($"tsorcRevamp/Textures/Clouds/Cloud_{i}", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            }
 
             //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
             //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);

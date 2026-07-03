@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using System.Runtime.CompilerServices;
 using Terraria;
@@ -102,6 +102,10 @@ namespace tsorcRevamp
                 PlayerDrawLayers.HeldItem.Hide();
                 return;
             }
+
+            // Suppress the balloon sprite for all vanilla balloon accessories.
+            // Jump height is already baked in by UpdateEquips before draw runs.
+            PlayerDrawLayers.BalloonAcc.Hide();
         }
 
         int oldItemAnimation = 0;
@@ -109,6 +113,9 @@ namespace tsorcRevamp
         int blockVisuals; //Block the remaining itemAnimation visuals after a roll, to prevent visual jank
         public override bool PreItemCheck()
         {
+            if (Player.GetModPlayer<tsorcRevampPlayer>().ImpaleFreezeTimer > 0)
+                return false;
+
             UpdateDodging();
             //UpdateSwordflip();
 
@@ -329,7 +336,7 @@ namespace tsorcRevamp
 
             }
             //only subtract stamina on a successful roll
-            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
+            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30 * Player.GetModPlayer<tsorcRevampPlayer>().TiredStaminaMult * (1f - Player.GetModPlayer<tsorcRevampPlayer>().ArtoriasAbysswalkerDodgeStaminaCostReduction / 100f);
             Player.immune = true;
             DodgeImmuneTime = DefaultDodgeImmuneTime;
             Player.immuneTime = DodgeImmuneTime;
@@ -375,7 +382,7 @@ namespace tsorcRevamp
             bool onGround = OnGround(Player);
 
             // Define custom roll parameters when acessories conflict.
-            // Chloranthy Rings no longer modify deaccelerationRate — their speed boost during the roll
+            // Chloranthy Rings no longer modify deaccelerationRate � their speed boost during the roll
             // already extends travel distance; adding a per-frame deceleration bonus on top produced a
             // persistent "slippery ice" glide after the roll that made precise stopping impossible.
             if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
@@ -451,6 +458,8 @@ namespace tsorcRevamp
             {
                 return;
             }
+
+            TryGrantArtoriasAbysswalkerPoise();
             /*
             bool chloranthyRing = false;
             for (int i = 3; i <= (8 + Player.extraAccessorySlots); i++) {
@@ -479,7 +488,7 @@ namespace tsorcRevamp
                 if (beforeRollSpeed > dodgeSpeed)
                     dodgeSpeed = beforeRollSpeed;
 
-                // Chloranthy Ring dodge-speed boost — intended to grant only "a little bit more dodge length"
+                // Chloranthy Ring dodge-speed boost � intended to grant only "a little bit more dodge length"
                 // (a subtle distance increase, not a flat-out velocity multiplier). Values were previously
                 // +3 / +6 which combined with the ground multiplier and momentum carry produced an extreme
                 // total. Dialed back to +1 / +2 to restore the original tuning intent.
@@ -515,7 +524,7 @@ namespace tsorcRevamp
                 dodgeSpeed *= dodgeDirection;
 
                 // Bug fix: speedMultiplier was being applied twice (once into dodgeSpeed above, then
-                // again here when assigning velocity), producing ~1.96× the intended velocity on the
+                // again here when assigning velocity), producing ~1.96� the intended velocity on the
                 // ground and amplifying every other boost (Chloranthy rings, momentum carry, etc.).
                 Player.velocity.X = dodgeSpeed;
             }
