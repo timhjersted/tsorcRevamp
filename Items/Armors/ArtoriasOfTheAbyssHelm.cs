@@ -11,23 +11,27 @@ namespace tsorcRevamp.Items.Armors
     {
         public static float MeleeDmg = 12f;
         public static float MagicDmg = 12f;
+        public const float ManaCost = 16f;
+        public const int MaxMana = 180;
         public static float StaminaRegen = 10f;
         public static float PoiseDamage = 35f;
         public static float PoiseStaminaRestore = 8f;
         public const int SoulCost = 70000;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg, MagicDmg, StaminaRegen, PoiseDamage, PoiseStaminaRestore);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg, MagicDmg, MaxMana, ManaCost, StaminaRegen, PoiseDamage, PoiseStaminaRestore);
 
         public override void SetDefaults()
         {
             Item.width = 20;
             Item.height = 26;
             Item.value = 10000;
-            Item.rare = ItemRarityID.Yellow;
+            Item.rare = ModContent.RarityType<DarkBlue>();
             Item.defense = 9;
         }
 
         public override void UpdateEquip(Player player)
         {
+            player.statManaMax2 += MaxMana;
+            player.manaCost -= ManaCost / 100f;
             player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
             player.GetDamage(DamageClass.Magic) += MagicDmg / 100f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRegen / 100f;

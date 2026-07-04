@@ -2672,18 +2672,18 @@ Mods: {
 			}
 
 			ArtoriasOfTheAbyssArmor: {
-				// DisplayName: Artorias Abysswalker Armor
+				// DisplayName: Abysswalker Armor
 				/* Tooltip:
 					'''
-					Increases melee damage by {0}%
-					Increases magic damage by {1}%
+					Increases melee critical strike chance chance by {0}%
+					Increases magic critical strike chance by {1}%
 					{$CommonItemTooltip.DRStat@2}
 					{$CommonItemTooltip.MaxStamina@3}
 					''' */
 			}
 
 			ArtoriasOfTheAbyssGreaves: {
-				// DisplayName: Artorias Abysswalker Greaves
+				// DisplayName: Abysswalker Greaves
 				/* Tooltip:
 					'''
 					Increases movement speed by {0}%
@@ -2694,19 +2694,21 @@ Mods: {
 			}
 
 			ArtoriasOfTheAbyssHelm: {
-				// DisplayName: Artorias Abysswalker Helm
+				// DisplayName: Abysswalker Helm
 				/* Tooltip:
 					'''
 					Increases melee damage by {0}%
 					Increases magic damage by {1}%
-					Increases stamina regeneration rate by {2}%
+					{$CommonItemTooltip.IncreasesMaxManaBy@2}
+					{$CommonItemTooltip.PercentReducedManaCost@3}
+					Increases stamina regeneration rate by {4}%
 					''' */
 				/* SetBonus:
 					'''
 					Allows you to use items while dodgerolling
 					Increases melee and magic damage by 10% and movement speed by 12%
 					Dodging through danger grants Abyssal Poise for 3 seconds
-					The next melee or magic hit deals {3}% more damage, restores {4}% stamina, and releases an abyss counterattack
+					The next melee or magic hit deals {5}% more damage, restores {6}% stamina, and releases an abyss counterattack
 					Getting hit before counterattacking removes Abyssal Poise
 					''' */
 			}

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Armors
             Item.width = 20;
             Item.height = 20;
             Item.value = 100000;
-            Item.rare = ItemRarityID.Yellow;
+            Item.rare = ModContent.RarityType<DarkBlue>();
             Item.defense = 21;
         }
 
