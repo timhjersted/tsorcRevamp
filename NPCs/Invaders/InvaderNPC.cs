@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.AI;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Invaders
 {
@@ -91,6 +92,39 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual float StabRange      => 160f;   // distance at which stab is preferred
         protected virtual float RangedRange    => 520f;
         protected virtual float MinRangedRange => 200f;   // won't use ranged if closer than this
+
+        /// <summary>Thickness (px) of the tracked melee "blade" capsule used by <see cref="TickBladeHit"/>.
+        /// Chosen generously enough that the fastest continuous motion (Spin, +0.28 rad/tick) can't
+        /// tunnel a stationary target between ticks at typical combo reach — override per weapon
+        /// for a visibly thinner/wider blade once playtested.</summary>
+        protected virtual float MeleeBladeWidth => 48f;
+
+        // ── Swing-polish opt-ins (2026-07) ──────────────────────────────────────────
+        // All default OFF so every existing invader keeps its exact current swing behavior.
+        // An invader flips these on individually to pilot the new shared swing-arc math
+        // (ported from the BroadswordRework player-weapon system) without touching anyone else.
+
+        /// <summary>Ease combo-swing rotation through <see cref="SwingEase.DefaultCurve"/> (slow
+        /// wind-up, fast strike, slight settle) instead of a constant-speed linear lerp. Purely
+        /// reshapes the timing of the (already tracked) blade capsule — no reach/damage change.</summary>
+        protected virtual bool UseSwingEasing => false;
+
+        /// <summary>Flip which direction a combo's arc runs on alternating swings (same arc shape,
+        /// mirrored start/end) so the same combo doesn't read identically every single time.</summary>
+        protected virtual bool UseAlternateFlip => false;
+
+        /// <summary>Bias a combo's arc center toward the target's relative height, captured once
+        /// per swing at combo start — so the invader's swing actually reaches for an airborne or
+        /// crouched target instead of always arcing level with the ground.</summary>
+        protected virtual bool UseAimAdaptiveArc => false;
+
+        /// <summary>Draw an arc-shaped slash swoosh (see <see cref="DrawSlashToLayer"/>) tinted to
+        /// <see cref="SlashVFXColor"/>, tracking the same angle/reach TickBladeHit uses for real hit
+        /// detection — so the VFX is an honest preview of the actual hitbox, not just decoration.</summary>
+        protected virtual bool HasSlashVFX => false;
+
+        /// <summary>Tint for the slash swoosh when <see cref="HasSlashVFX"/> is true.</summary>
+        protected virtual Color SlashVFXColor => Color.White;
 
         // Telegraph minimum: 30 ticks = 0.5 s.  Long enough for the player to read the
         // wind-up arc (sword raises, holds at apex, then swings).  Heavier attacks override
@@ -439,6 +473,252 @@ namespace tsorcRevamp.NPCs.Invaders
         private int   _abyssSlashIndex;
         protected int _abyssSlashCooldown;
 
+        // ── Abyss Tendril Grab (optional grab-and-punish attack) ───────────────────
+        // Arm dissolves into shadow, a tendril projectile reaches out and (on contact) gently yanks
+        // the target closer; once the tendril's self-contained fly/yank/retract sequence finishes
+        // (timed via TendrilReachTicks - the projectile doesn't report back), the arm returns and
+        // throws the SAME 180°→10°→170° swing shape as Abyss Slash's wind-up/release, punishing
+        // whoever just got pulled in. All VFX/spawn specifics are subclass hooks; the base class only
+        // owns timing and the melee-swing rotation.
+        protected virtual bool  CanTendrilGrab              => false;
+        protected virtual float TendrilMinRange             => 150f;
+        protected virtual float TendrilMaxRange             => 500f;
+        protected virtual int   TendrilChance               => 4;
+        protected virtual int   TendrilCooldownAfterUse     => 480;
+
+        protected virtual int   TendrilTelegraphTicks       => 24;
+        /// <summary>Covers the tendril projectile's whole fly+yank+retract lifecycle. Not
+        /// synchronized with the projectile (which is self-contained) - just long enough to
+        /// comfortably outlast it.</summary>
+        protected virtual int   TendrilReachTicks           => 90;
+        protected virtual int   TendrilSwingArcTicks        => 40;   // 180° -> 10°
+        protected virtual int   TendrilSwingHoldTicks       => 12;   // held at 10° before releasing
+        protected virtual int   TendrilSwingTicks           => 16;   // 10° -> 170° release
+        protected virtual int   TendrilRecoveryTicks        => 60;
+
+        /// <summary>Called every tick of the arm-dissolve wind-up, elapsed counting up from 0.</summary>
+        protected virtual void DoTendrilTelegraphTick(int elapsed) { }
+        /// <summary>Fired once when the wind-up ends - spawn the tendril projectile here.</summary>
+        protected virtual void DoTendrilLaunch() { }
+        /// <summary>Called every tick while the tendril is out (whole TendrilReach phase).</summary>
+        protected virtual void DoTendrilReachTick() { }
+        /// <summary>Fired once, the instant the finishing swing releases. Apply the hit here
+        /// (e.g. <c>TryMeleeHit()</c>) - the base class doesn't apply damage itself.</summary>
+        protected virtual void DoTendrilSwing() { }
+
+        protected int _tendrilCooldown;
+
+        // ── Dodge-punish chain (generic) ────────────────────────────────────────────
+        // Tracks whether the CURRENT committed swing/volley actually connected. Reset to false
+        // whenever a chain-eligible attack begins (JumpSlashDodgeback / AbyssSlashTelegraph /
+        // TendrilTelegraph); set true by TickBladeHit's real per-tick overlap check for melee
+        // swings/combos, or by ranged projectiles reporting back via ReportAttackHit() on hit. A
+        // clean dodge (this stays false) can then be punished by chaining straight into a different
+        // attack instead of handing the player a free breather in Recovery.
+        private bool _lastAttackHitConnected;
+
+        /// <summary>% chance, on a fully whiffed JumpingDownwardSlash or Abyss Slash, to chain
+        /// straight into the other one (if in range and off cooldown) instead of returning to
+        /// neutral recovery.</summary>
+        protected virtual int DodgePunishChainChance => 50;
+
+        /// <summary>Called by a hostile projectile that hit its target, to credit this invader's
+        /// current attack as having connected (see <see cref="_lastAttackHitConnected"/>).</summary>
+        public void ReportAttackHit() => _lastAttackHitConnected = true;
+
+        /// <summary>
+        /// If the swing that just ended fully whiffed, rolls <see cref="DodgePunishChainChance"/> and
+        /// (on success) immediately re-enters whichever of {AbyssSlash, JumpingDownwardSlash} is off
+        /// cooldown and in range, skipping the normal recovery. Caller must set the cooldown of the
+        /// attack that just ended BEFORE calling this (so it can't immediately chain into itself).
+        /// </summary>
+        private bool TryDodgePunishChain(float dist)
+        {
+            if (_lastAttackHitConnected || Main.rand.Next(100) >= DodgePunishChainChance)
+                return false;
+
+            if (CanAbyssSlash && _abyssSlashCooldown <= 0
+                && dist >= AbyssSlashMinRange && dist <= AbyssSlashMaxRange)
+            {
+                _lastAttackHitConnected = false;
+                EnterPhase(AttackPhase.AbyssSlashTelegraph, AbyssSlashArcTicks + AbyssSlashHoldTicks);
+                return true;
+            }
+
+            if (CanJumpSlash && _jumpSlashCooldown <= 0
+                && dist >= JumpSlashMinRange && dist <= JumpSlashMaxRange)
+            {
+                _lastAttackHitConnected = false;
+                EnterPhase(AttackPhase.JumpSlashDodgeback, JumpSlashDodgebackTicks);
+                return true;
+            }
+
+            return false;
+        }
+
+        // ── Charge-up Nova (health-threshold interrupt) ─────────────────────────────
+        // Highest-priority interrupt, checked alongside Healing: the invader roots in place while
+        // dust gathers and thickens around it and an outer telegraph ring races out ahead over
+        // NovaChargeTicks, then the whole radius detonates in one huge blast. Trigger conditions
+        // (e.g. specific HP thresholds) and exact numbers are entirely subclass-owned - the base
+        // class just owns the three-phase timing skeleton.
+        protected virtual bool  CanNova            => false;
+        protected virtual int   NovaChargeTicks     => 4 * 60;
+        protected virtual int   NovaBlastHoldTicks  => 24;
+        protected virtual int   NovaRecoveryTicks   => 90;
+
+        /// <summary>Return true (once) when the invader should interrupt whatever it's doing to
+        /// charge up a nova. Treat this like <c>ShouldHeal</c> - track your own one-shot state.</summary>
+        protected virtual bool ShouldTriggerNova() => false;
+        /// <summary>Called every tick of the charge-up, elapsed/total counting the wind-up progress.</summary>
+        protected virtual void DoNovaChargeTick(int elapsed, int total) { }
+        /// <summary>Fired once when the charge completes - spawn the actual blast here.</summary>
+        protected virtual void DoNovaBlast() { }
+
+        // ── Abyss Shard (ground-spike combo attack, optional) ───────────────────────
+        // Same shape as Abyss Slash: a short wind-up, then a subclass-defined sequence of "fire
+        // events" spaced by NextAbyssShardDelay - each event calls DoAbyssShardFire once. Deliberately
+        // has NO recovery phase: the moment the sequence ends (negative delay), control returns
+        // straight to Idle/CasualStroll so a different attack can follow immediately.
+        protected virtual bool  CanAbyssShard             => false;
+        protected virtual float AbyssShardMinRange        => 80f;
+        protected virtual float AbyssShardMaxRange        => 900f;
+        protected virtual int   AbyssShardChance          => 10;
+        protected virtual int   AbyssShardCooldownAfterUse => 420;
+        protected virtual int   AbyssShardTelegraphTicks  => 30;
+        protected virtual int   AbyssShardFireTicks       => 6;
+
+        /// <summary>Returns the delay (ticks) before the next fire event, or a negative value to end
+        /// the sequence (with no recovery phase). completedFireIndex is the index that just fired.</summary>
+        protected virtual int  NextAbyssShardDelay(int completedFireIndex) => -1;
+        /// <summary>Fired once per event (index 0, 1, 2...) - spawn ground shard(s) here.</summary>
+        protected virtual void DoAbyssShardFire(int fireIndex) { }
+
+        protected int _abyssShardIndex;
+        protected int _abyssShardCooldown;
+
+        // ── Homing Volley (dodgeback + overhead swing + delayed-homing orb volley) ──
+        // Backs away with a real dodgeroll (i-frames), then raises the sword fully overhead and
+        // brings it down in one big chop; partway through that chop (HomingVolleyFireProgress) it
+        // fires a subclass-chosen pattern of delayed-homing orbs. No inter-attack chaining - a fixed
+        // recovery always follows.
+        protected virtual bool  CanHomingVolley                => false;
+        protected virtual float HomingVolleyMinRange            => 280f;
+        protected virtual float HomingVolleyMaxRange            => 650f;
+        protected virtual int   HomingVolleyChance              => 10;
+        protected virtual int   HomingVolleyCooldownAfterUse    => 300;
+        protected virtual int   HomingVolleyDodgebackTicks      => 24;
+        protected virtual float HomingVolleyDodgebackSpeed      => 6f;
+        protected virtual int   HomingVolleySwingTelegraphTicks => 20;
+        protected virtual int   HomingVolleySwingTicks          => 30;
+        /// <summary>Fraction (0-1) through the swing at which <see cref="DoHomingVolleyFire"/> fires.</summary>
+        protected virtual float HomingVolleyFireProgress        => 0.5f;
+        protected virtual int   HomingVolleyRecoveryTicks       => 120;
+
+        /// <summary>Called every tick of the overhead chop, elapsed/total counting swing progress -
+        /// override to spawn dust along the blade's current arc position.</summary>
+        protected virtual void DoHomingVolleySwingTick(int elapsed, int total) { }
+        /// <summary>Fired once, partway through the swing - spawn the orb volley here.</summary>
+        protected virtual void DoHomingVolleyFire() { }
+
+        private int  _homingVolleyDir = 1;
+        private bool _homingVolleyFired;
+        protected int _homingVolleyCooldown;
+
+        // ── Sword Launch Reposition (shared by Boomerang / Spiral Fan) ──────────────
+        // A mostly-horizontal backward hop, facing the player, used ONLY when they're closer than
+        // SwordLaunchRepositionTooCloseRange when one of those attacks is selected - creates room
+        // for the overhead chop + projectile(s) instead of letting them fire from point-blank.
+        // Unlike Homing Volley's dodgeback this is a plain hop (no i-frames): it's a spacing
+        // correction, not a defensive dodge.
+        protected virtual float SwordLaunchRepositionTooCloseRange => 150f;
+        protected virtual int   SwordLaunchRepositionTicks         => 20;
+        protected virtual float SwordLaunchRepositionBackSpeed     => 7.5f;
+        protected virtual float SwordLaunchRepositionUpSpeed       => 4.5f;
+
+        private AttackPhase _swordLaunchNextPhase;
+        private int         _swordLaunchNextTicks;
+        private int         _swordLaunchDir = 1;
+
+        // ── Boomerang Crescent (dodge-free overhead swing + curving/returning crescent(s)) ──
+        // Reuses the same overhead-chop shape as Homing Volley. Fires partway through the chop;
+        // the crescent(s) arc out in a wide curl, then home back toward the invader's OWN current
+        // position for a second, separately-timed pass.
+        protected virtual bool  CanBoomerang                => false;
+        protected virtual float BoomerangMinRange           => 60f;
+        protected virtual float BoomerangMaxRange           => 650f;
+        protected virtual int   BoomerangChance             => 9;
+        protected virtual int   BoomerangCooldownAfterUse   => 330;
+        protected virtual int   BoomerangSwingTelegraphTicks => 20;
+        protected virtual int   BoomerangSwingTicks         => 30;
+        protected virtual float BoomerangFireProgress       => 0.5f;
+        protected virtual int   BoomerangRecoveryTicks      => 110;
+
+        protected virtual void DoBoomerangSwingTick(int elapsed, int total) { }
+        protected virtual void DoBoomerangFire() { }
+
+        private bool _boomerangFired;
+        protected int _boomerangCooldown;
+
+        // ── Spiral Fan (dodge-free overhead swing + a rotating-angle burst of shots) ──────
+        // Same overhead-chop wind-up as the others, but the swing itself doesn't fire anything -
+        // once it completes, a dedicated burst sequence (SpiralFanBurst/Pause, mirroring Abyss
+        // Shard's fire-event loop) fires each shot with an incrementing launch angle over time,
+        // producing a rotating stream instead of a static simultaneous fan.
+        protected virtual bool  CanSpiralFan                => false;
+        protected virtual float SpiralFanMinRange           => 60f;
+        protected virtual float SpiralFanMaxRange           => 650f;
+        protected virtual int   SpiralFanChance             => 8;
+        protected virtual int   SpiralFanCooldownAfterUse   => 360;
+        protected virtual int   SpiralFanSwingTelegraphTicks => 20;
+        protected virtual int   SpiralFanSwingTicks         => 30;
+        protected virtual int   SpiralFanFireTicks          => 4;
+        protected virtual int   SpiralFanRecoveryTicks      => 90;
+
+        protected virtual void DoSpiralFanSwingTick(int elapsed, int total) { }
+        /// <summary>Returns the delay (ticks) before the next shot, or negative to end the burst.</summary>
+        protected virtual int  NextSpiralFanDelay(int completedShotIndex) => -1;
+        /// <summary>Fired once per shot (index 0, 1, 2...) - spawn that shot here.</summary>
+        protected virtual void DoSpiralFanFire(int shotIndex) { }
+        /// <summary>Fired once, right when a FRESH (non-chained) Spiral Fan sequence is chosen from
+        /// the attack-selection decision tree - override to reset any chain-tracking state (e.g.
+        /// <see cref="TryContinueSpiralFanChain"/>'s escalation counter) before the first volley.</summary>
+        protected virtual void OnSpiralFanSequenceStart() { }
+
+        protected int _spiralFanIndex;
+        protected int _spiralFanCooldown;
+
+        // ── Fire Volley Chain (reposition + arc-jump escalation after a Spiral Fan volley) ──
+        // Hooked into SpiralFanRecovery: instead of always returning to idle, an override of
+        // TryContinueSpiralFanChain can take over and re-enter SpiralFanSwingTelegraph (via one of
+        // the reposition phases below) for a second volley, then optionally escalate into a big
+        // arc-jump-over for a third. All no-ops/false by default - zero effect unless overridden.
+        protected virtual bool TryContinueSpiralFanChain() => false;
+
+        protected virtual int   FireVolleyBackLeapTicks       => 26;
+        protected virtual float FireVolleyBackLeapSpeed       => 5.5f; // ~8 tiles over the leap's airtime
+        protected virtual float FireVolleyBackLeapUpSpeed     => 6f;
+        protected virtual float FireVolleyDodgeThroughUpSpeed => 7f;
+        /// <summary>Safety-net cap on FireVolleyDodgeThrough — the real duration comes from
+        /// ArmQuickStep/TickQuickStep's own timers, this just guarantees the phase can't get stuck.</summary>
+        protected virtual int   FireVolleyDodgeThroughTimeoutTicks => 90;
+        protected virtual float FireVolleyArcJumpUpSpeed      => 13f;
+        protected virtual float FireVolleyArcJumpForwardSpeed => 6f;
+
+        /// <summary>Fired once, right when NPC.velocity.Y crosses from rising to falling (the jump's
+        /// apex) during <see cref="AttackPhase.FireVolleyArcJump"/> - spawn the mid-air volley here.</summary>
+        protected virtual void DoFireVolleyArcFire() { }
+        /// <summary>Fired when <see cref="AttackPhase.FireVolleyBackLeap"/> or
+        /// <see cref="AttackPhase.FireVolleyDodgeThrough"/> finishes (landed / quick-step fully
+        /// resolved) - override to re-enter SpiralFanSwingTelegraph for another volley.</summary>
+        protected virtual void OnFireVolleyRepositionLanded() { }
+        /// <summary>Fired when <see cref="AttackPhase.FireVolleyArcJump"/> lands.</summary>
+        protected virtual void OnFireVolleyArcJumpLanded() { }
+
+        private int   _fireVolleyDir = 1;
+        private bool  _fireVolleyArcFired;
+        private float _fireVolleyArcVx;
+
         // ── Estus healing ─────────────────────────────────────────────────────────
         /// <summary>How many estus drinks the invader starts with.</summary>
         protected virtual int   EstusChargesMax         => 10;
@@ -594,6 +874,18 @@ namespace tsorcRevamp.NPCs.Invaders
             AbyssSlashPause,
             /// <summary>Recovery once <see cref="NextAbyssSlashDelay"/> returns a negative delay.</summary>
             AbyssSlashRecovery,
+            /// <summary>Abyss Tendril Grab wind-up: the arm dissolves into shadow dust before reaching out.</summary>
+            TendrilTelegraph,
+            /// <summary>The tendril projectile is out (flying/yanking/retracting is entirely self-contained
+            /// on the projectile); the arm holds an outstretched, dust-covered pose for the duration.</summary>
+            TendrilReach,
+            /// <summary>The arm/sword winds back up for the finishing swing (same 180°→10° arc as
+            /// <see cref="AbyssSlashTelegraph"/>) once the tendril sequence is done.</summary>
+            TendrilSwingTelegraph,
+            /// <summary>The finishing underhand release (same 10°→170° arc as <see cref="AbyssSlashSwipe"/>).</summary>
+            TendrilSwing,
+            /// <summary>Recovery after the finishing swing.</summary>
+            TendrilRecovery,
             /// <summary>A melee attack was chosen but the player is out of hittable reach: sprint toward
             /// them (no swing) until in range, then start the attack.  Prevents whiffing at distance.</summary>
             ClosingDistance,
@@ -629,6 +921,64 @@ namespace tsorcRevamp.NPCs.Invaders
             MeleeComboPause,
             /// <summary>Recovery after the last step of a combo.  Applies per-combo cooldown.</summary>
             MeleeComboRecovery,
+            /// <summary>Charge-up Nova wind-up: rooted in place, engulfed in thickening dust with an
+            /// outer telegraph ring racing ahead of it. Fires <see cref="DoNovaBlast"/> once on exit.</summary>
+            NovaCharge,
+            /// <summary>Brief hold at the moment of detonation.</summary>
+            NovaBlast,
+            /// <summary>Recovery after the nova.</summary>
+            NovaRecovery,
+            /// <summary>Abyss Shard wind-up: a short ground-facing gesture before the first fire event.</summary>
+            AbyssShardTelegraph,
+            /// <summary>Brief active frame for a fire event - fires <see cref="DoAbyssShardFire"/> once on entry.</summary>
+            AbyssShardFire,
+            /// <summary>Inter-event gap; duration comes from <see cref="NextAbyssShardDelay"/>. When that
+            /// returns negative there is NO recovery phase - control returns straight to Idle/CasualStroll.</summary>
+            AbyssShardPause,
+            /// <summary>Homing Volley wind-up: a backward roll WITH i-frames (a genuine dodgeroll)
+            /// before the overhead chop.</summary>
+            HomingVolleyDodgeback,
+            /// <summary>Sword raises fully overhead, cocked back.</summary>
+            HomingVolleySwingTelegraph,
+            /// <summary>The overhead chop itself - fires <see cref="DoHomingVolleyFire"/> once,
+            /// partway through, via <see cref="HomingVolleyFireProgress"/>.</summary>
+            HomingVolleySwing,
+            /// <summary>Fixed recovery after the chop - no chaining into another attack.</summary>
+            HomingVolleyRecovery,
+            /// <summary>Shared wind-up for any "sword launch" attack: a mostly-horizontal backward
+            /// hop, facing the player, used ONLY when they're too close for the swing that follows.
+            /// Transitions to whichever telegraph phase was queued via <see cref="_swordLaunchNextPhase"/>.</summary>
+            SwordLaunchReposition,
+            /// <summary>Boomerang Crescent wind-up: sword raised fully overhead (same shape as
+            /// Homing Volley's).</summary>
+            BoomerangSwingTelegraph,
+            /// <summary>The overhead chop - fires <see cref="DoBoomerangFire"/> once, partway
+            /// through, via <see cref="BoomerangFireProgress"/>.</summary>
+            BoomerangSwing,
+            /// <summary>Fixed recovery after the chop.</summary>
+            BoomerangRecovery,
+            /// <summary>Spiral Fan wind-up: sword raised fully overhead (same shape as the others).</summary>
+            SpiralFanSwingTelegraph,
+            /// <summary>The overhead chop itself - purely a visual wind-up, no firing (the burst
+            /// that follows carries the actual sequence).</summary>
+            SpiralFanSwing,
+            /// <summary>Active frame for one burst event - fires <see cref="DoSpiralFanFire"/> once
+            /// on entry.</summary>
+            SpiralFanBurst,
+            /// <summary>Inter-shot gap; duration comes from <see cref="NextSpiralFanDelay"/>.</summary>
+            SpiralFanPause,
+            /// <summary>Fixed recovery after the whole spiral sequence ends.</summary>
+            SpiralFanRecovery,
+            /// <summary>Fire Volley chain: backward hop (facing the player) before re-entering
+            /// SpiralFanSwingTelegraph for another volley. See <see cref="TryContinueSpiralFanChain"/>.</summary>
+            FireVolleyBackLeap,
+            /// <summary>Fire Volley chain: leaping dodge-roll THROUGH the player (i-frames, no
+            /// contact damage - reuses ArmQuickStep/TickQuickStep) landing on their far side before
+            /// re-entering SpiralFanSwingTelegraph for another volley.</summary>
+            FireVolleyDodgeThrough,
+            /// <summary>Fire Volley chain: a big jump arc over the player; fires
+            /// <see cref="DoFireVolleyArcFire"/> once at the apex, mid-air.</summary>
+            FireVolleyArcJump,
         }
         protected AttackPhase Phase = AttackPhase.Idle;
         protected int PhaseTimer;
@@ -741,6 +1091,17 @@ namespace tsorcRevamp.NPCs.Invaders
         private float _spearGrip = 0.5f;  // 0=grip at head, 1=grip at base; animated for spear extend/retract
         private int   _weaponAnimMax = DefaultWeaponAnimMax;
         private const int DefaultWeaponAnimMax = 22;
+
+        // ── Tracked blade hit detection ───────────────────────────────────────────
+        // Set once per swing/step by ArmBladeHit (via TryMeleeHit / DoComboMeleeHit); consumed
+        // every tick by TickBladeHit while the swing is active.  _bladeArmed is explicitly reset
+        // to false right before each DoMeleeAttack/DoStabAttack/DoSpearAttack/DoComboMeleeHit call
+        // so an override that skips ArmBladeHit (e.g. BlackNinja's flail, which fires a real
+        // projectile instead of a blade sweep) correctly leaves TickBladeHit a no-op that tick.
+        private bool  _bladeArmed;
+        private float _activeBladeReach;
+        private float _activeBladeKnockback;
+        private int   _activeBladeDamage;
         /// <summary>
         /// Resting hold angle when not attacking (≈ −17° — arm slightly raised, weapon pointing
         /// diagonally forward). The weapon smoothly eases to this during walk / jump / idle.
@@ -798,6 +1159,16 @@ namespace tsorcRevamp.NPCs.Invaders
             Phase == AttackPhase.FlipSlashRise || Phase == AttackPhase.FlipSlashLand ||
             Phase == AttackPhase.AbyssSlashTelegraph || Phase == AttackPhase.AbyssSlashSwipe ||
             Phase == AttackPhase.AbyssSlashPause ||
+            Phase == AttackPhase.TendrilTelegraph || Phase == AttackPhase.TendrilReach ||
+            Phase == AttackPhase.TendrilSwingTelegraph || Phase == AttackPhase.TendrilSwing ||
+            Phase == AttackPhase.HomingVolleyDodgeback || Phase == AttackPhase.HomingVolleySwingTelegraph ||
+            Phase == AttackPhase.HomingVolleySwing ||
+            Phase == AttackPhase.SwordLaunchReposition ||
+            Phase == AttackPhase.BoomerangSwingTelegraph || Phase == AttackPhase.BoomerangSwing ||
+            Phase == AttackPhase.SpiralFanSwingTelegraph || Phase == AttackPhase.SpiralFanSwing ||
+            Phase == AttackPhase.SpiralFanBurst || Phase == AttackPhase.SpiralFanPause ||
+            Phase == AttackPhase.FireVolleyBackLeap || Phase == AttackPhase.FireVolleyDodgeThrough ||
+            Phase == AttackPhase.FireVolleyArcJump ||
             (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0);
 
         private bool IsMeleeComboPhase =>
@@ -836,6 +1207,25 @@ namespace tsorcRevamp.NPCs.Invaders
         /// and end up safely behind the swing arc — FighterAI's direction flips are overridden
         /// across all four MeleeCombo* phases.</summary>
         private int _comboLockedDir;
+        /// <summary>Toggled every combo start; when <see cref="UseAlternateFlip"/> is on, the arc
+        /// case in TickWeaponAnim swaps its start/end endpoints on alternating swings.</summary>
+        private bool _comboSwingFlipped;
+        /// <summary>Captured once at combo start from the target's relative height; when
+        /// <see cref="UseAimAdaptiveArc"/> is on, added to both arc endpoints so the swing biases
+        /// toward an airborne/crouched target instead of always arcing level with the ground.</summary>
+        private float _comboAimBias;
+
+        /// <summary>Toggles the alternate-flip parity and (re)computes the aim-adaptive bias for the
+        /// swing that's about to play. Called at the start of every swing/combo — both the combo
+        /// system (TryStartMeleeCombo) and the plain one-shot MeleeAttack path — so an invader that
+        /// opts into UseAlternateFlip/UseAimAdaptiveArc gets consistent behavior regardless of which
+        /// path picked the attack. heightDiff: NPC.Center.Y - target.Center.Y (positive = target
+        /// above).</summary>
+        private void ArmSwingVariation(float heightDiff)
+        {
+            _comboSwingFlipped = !_comboSwingFlipped;
+            _comboAimBias = MathHelper.Clamp(-heightDiff / 260f, -0.35f, 0.35f);
+        }
         /// <summary>True while a LeapSlam step is mid-air (set at launch, cleared when it lands or
         /// the airtime cap expires).  Gates the landing check that fires the slam hit.</summary>
         private bool _comboLeapLaunched;
@@ -1187,6 +1577,11 @@ namespace tsorcRevamp.NPCs.Invaders
             if (_jumpSlashCooldown       > 0) _jumpSlashCooldown--;
             if (_flipSlashCooldown       > 0) _flipSlashCooldown--;
             if (_abyssSlashCooldown      > 0) _abyssSlashCooldown--;
+            if (_tendrilCooldown         > 0) _tendrilCooldown--;
+            if (_abyssShardCooldown      > 0) _abyssShardCooldown--;
+            if (_homingVolleyCooldown    > 0) _homingVolleyCooldown--;
+            if (_boomerangCooldown       > 0) _boomerangCooldown--;
+            if (_spiralFanCooldown       > 0) _spiralFanCooldown--;
             if (AfterimageTicks          > 0) AfterimageTicks--;
             TickEchoStep(); // independent of Phase - can resolve while the invader is doing anything else
             if (_meleeComboCooldowns != null)
@@ -1380,6 +1775,15 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
 
+            // ── Charge-up Nova intercept (health-threshold set-piece) ─────────────
+            // Also checked before the main switch: a nova can interrupt any in-progress attack.
+            if (CanNova && Phase != AttackPhase.NovaCharge && Phase != AttackPhase.NovaBlast
+                && Phase != AttackPhase.NovaRecovery && ShouldTriggerNova())
+            {
+                EnterPhase(AttackPhase.NovaCharge, NovaChargeTicks);
+                return;
+            }
+
             // Weapon only exists visually during telegraphs and attack frames.
             _weaponVisible = IsWeaponVisiblePhase;
 
@@ -1521,6 +1925,7 @@ namespace tsorcRevamp.NPCs.Invaders
                         && dist >= JumpSlashMinRange && dist <= JumpSlashMaxRange
                         && Main.rand.Next(100) < JumpSlashChance)
                     {
+                        _lastAttackHitConnected = false;
                         EnterPhase(AttackPhase.JumpSlashDodgeback, JumpSlashDodgebackTicks);
                         break;
                     }
@@ -1540,7 +1945,75 @@ namespace tsorcRevamp.NPCs.Invaders
                         && dist >= AbyssSlashMinRange && dist <= AbyssSlashMaxRange
                         && Main.rand.Next(100) < AbyssSlashChance)
                     {
+                        _lastAttackHitConnected = false;
                         EnterPhase(AttackPhase.AbyssSlashTelegraph, AbyssSlashArcTicks + AbyssSlashHoldTicks);
+                        break;
+                    }
+
+                    // ── Abyss Tendril Grab intercept (grounded) ───────────────────
+                    if (CanTendrilGrab && _tendrilCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist >= TendrilMinRange && dist <= TendrilMaxRange
+                        && Main.rand.Next(100) < TendrilChance)
+                    {
+                        _lastAttackHitConnected = false;
+                        EnterPhase(AttackPhase.TendrilTelegraph, TendrilTelegraphTicks);
+                        break;
+                    }
+
+                    // ── Abyss Shard intercept (grounded) ──────────────────────────
+                    if (CanAbyssShard && _abyssShardCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist >= AbyssShardMinRange && dist <= AbyssShardMaxRange
+                        && Main.rand.Next(100) < AbyssShardChance)
+                    {
+                        EnterPhase(AttackPhase.AbyssShardTelegraph, AbyssShardTelegraphTicks);
+                        break;
+                    }
+
+                    // ── Homing Volley intercept (grounded, midrange) ──────────────
+                    if (CanHomingVolley && _homingVolleyCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist >= HomingVolleyMinRange && dist <= HomingVolleyMaxRange
+                        && Main.rand.Next(100) < HomingVolleyChance)
+                    {
+                        EnterPhase(AttackPhase.HomingVolleyDodgeback, HomingVolleyDodgebackTicks);
+                        break;
+                    }
+
+                    // ── Boomerang Crescent intercept (grounded) ───────────────────
+                    // Wide range band (down to point-blank) since SwordLaunchReposition handles
+                    // spacing itself - hops back first only if the player is too close.
+                    if (CanBoomerang && _boomerangCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist >= BoomerangMinRange && dist <= BoomerangMaxRange
+                        && Main.rand.Next(100) < BoomerangChance)
+                    {
+                        if (dist < SwordLaunchRepositionTooCloseRange)
+                        {
+                            _swordLaunchNextPhase = AttackPhase.BoomerangSwingTelegraph;
+                            _swordLaunchNextTicks = BoomerangSwingTelegraphTicks;
+                            EnterPhase(AttackPhase.SwordLaunchReposition, SwordLaunchRepositionTicks);
+                        }
+                        else
+                        {
+                            EnterPhase(AttackPhase.BoomerangSwingTelegraph, BoomerangSwingTelegraphTicks);
+                        }
+                        break;
+                    }
+
+                    // ── Spiral Fan intercept (grounded) ───────────────────────────
+                    if (CanSpiralFan && _spiralFanCooldown <= 0 && NPC.velocity.Y == 0f
+                        && dist >= SpiralFanMinRange && dist <= SpiralFanMaxRange
+                        && Main.rand.Next(100) < SpiralFanChance)
+                    {
+                        OnSpiralFanSequenceStart();
+                        if (dist < SwordLaunchRepositionTooCloseRange)
+                        {
+                            _swordLaunchNextPhase = AttackPhase.SpiralFanSwingTelegraph;
+                            _swordLaunchNextTicks = SpiralFanSwingTelegraphTicks;
+                            EnterPhase(AttackPhase.SwordLaunchReposition, SwordLaunchRepositionTicks);
+                        }
+                        else
+                        {
+                            EnterPhase(AttackPhase.SpiralFanSwingTelegraph, SpiralFanSwingTelegraphTicks);
+                        }
                         break;
                     }
 
@@ -1612,7 +2085,10 @@ namespace tsorcRevamp.NPCs.Invaders
                                          && dist >= MinMagicRange && _magicCooldown <= 0;
 
                     if (wantSlash)
+                    {
+                        ArmSwingVariation(heightDiff);
                         EnterPhase(AttackPhase.MeleeTelegraph, MeleeTelegraphTicks);
+                    }
                     else if (wantStab)
                         EnterPhase(AttackPhase.StabTelegraph, StabTelegraphTicks);
                     else if (wantSpear)
@@ -1650,12 +2126,14 @@ namespace tsorcRevamp.NPCs.Invaders
                     if (--PhaseTimer <= 0)
                     {
                         SetDisplayWeapon(MeleeWeaponItemType, swing: true);
+                        _bladeArmed = false;
                         DoMeleeAttack();
                         EnterPhase(AttackPhase.MeleeAttack, GetMeleeSwingTicks(MeleeAttackTicks));
                     }
                     break;
 
                 case AttackPhase.MeleeAttack:
+                    TickBladeHit();
                     if (--PhaseTimer <= 0)
                         EnterPhase(AttackPhase.MeleeRecovery, MeleeRecoveryTicks);
                     break;
@@ -1674,12 +2152,14 @@ namespace tsorcRevamp.NPCs.Invaders
                     if (--PhaseTimer <= 0)
                     {
                         _stabLungeDir = NPC.direction; // lock direction so lunge can't rubber-band
+                        _bladeArmed = false;
                         DoStabAttack();
                         EnterPhase(AttackPhase.StabAttack, StabAttackTicks);
                     }
                     break;
 
                 case AttackPhase.StabAttack:
+                    TickBladeHit();
                     // Use the direction locked at lunge start — not the live NPC.direction which
                     // FighterAI may flip if the player dodgerolls through to the other side.
                     // Lunge speed = TopSpeed × StabLungeSpeedMult.  Default 2.0 is firm but not
@@ -1817,12 +2297,14 @@ namespace tsorcRevamp.NPCs.Invaders
                     if (--PhaseTimer <= 0)
                     {
                         SetDisplayWeapon(SpearWeaponItemType, swing: true);
+                        _bladeArmed = false;
                         DoSpearAttack();
                         EnterPhase(AttackPhase.SpearAttack, SpearAttackTicks);
                     }
                     break;
 
                 case AttackPhase.SpearAttack:
+                    TickBladeHit();
                     // Lock to direction captured at telegraph start — prevents sprite snap if
                     // player moves to the other side while the arm is extending.
                     NPC.direction       = _spearLungeDir;
@@ -2143,7 +2625,11 @@ namespace tsorcRevamp.NPCs.Invaders
                 case AttackPhase.JumpSlashAttack:
                     if (--PhaseTimer <= 0)
                     {
-                        EnterPhase(AttackPhase.JumpSlashRecovery, JumpSlashRecoveryTicks);
+                        // Punish the dodge: a clean whiff chains straight into Abyss Slash instead
+                        // of a free recovery window, if that's off cooldown and in range.
+                        _jumpSlashCooldown = JumpSlashCooldownAfterUse;
+                        if (!TryDodgePunishChain(dist))
+                            EnterPhase(AttackPhase.JumpSlashRecovery, JumpSlashRecoveryTicks);
                     }
                     break;
 
@@ -2232,7 +2718,13 @@ namespace tsorcRevamp.NPCs.Invaders
                     {
                         int delay = NextAbyssSlashDelay(_abyssSlashIndex);
                         if (delay < 0)
-                            EnterPhase(AttackPhase.AbyssSlashRecovery, AbyssSlashRecoveryTicks);
+                        {
+                            // Punish the dodge: if the whole swipe combo whiffed, chain straight
+                            // into Jumping Downward Slash instead of a free recovery window.
+                            _abyssSlashCooldown = AbyssSlashCooldownAfterUse;
+                            if (!TryDodgePunishChain(dist))
+                                EnterPhase(AttackPhase.AbyssSlashRecovery, AbyssSlashRecoveryTicks);
+                        }
                         else
                             EnterPhase(AttackPhase.AbyssSlashPause, delay);
                     }
@@ -2255,6 +2747,345 @@ namespace tsorcRevamp.NPCs.Invaders
                         EnterCasualOrIdle();
                     }
                     break;
+
+                // ── Abyss Tendril Grab ──────────────────────────────────────────
+                case AttackPhase.TendrilTelegraph:
+                    SlowDown();
+                    DoTendrilTelegraphTick(TendrilTelegraphTicks - PhaseTimer);
+                    if (--PhaseTimer <= 0)
+                    {
+                        DoTendrilLaunch();
+                        EnterPhase(AttackPhase.TendrilReach, TendrilReachTicks);
+                    }
+                    break;
+
+                // The tendril projectile is fully self-contained (fly/yank/retract); this phase
+                // just holds the arm-out pose for as long as that sequence should take.
+                case AttackPhase.TendrilReach:
+                    SlowDown();
+                    DoTendrilReachTick();
+                    if (--PhaseTimer <= 0)
+                        EnterPhase(AttackPhase.TendrilSwingTelegraph, TendrilSwingArcTicks + TendrilSwingHoldTicks);
+                    break;
+
+                case AttackPhase.TendrilSwingTelegraph:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        DoTendrilSwing();
+                        EnterPhase(AttackPhase.TendrilSwing, TendrilSwingTicks);
+                    }
+                    break;
+
+                case AttackPhase.TendrilSwing:
+                    if (--PhaseTimer <= 0)
+                    {
+                        // If the finishing swing whiffed too, a delayed echo picks up the same
+                        // swing shape a beat later - a second, separately-timed threat instead of
+                        // a free breather after the grab sequence.
+                        if (!_lastAttackHitConnected && CanEchoStep)
+                            TryArmEchoStep();
+                        EnterPhase(AttackPhase.TendrilRecovery, TendrilRecoveryTicks);
+                    }
+                    break;
+
+                case AttackPhase.TendrilRecovery:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _tendrilCooldown = TendrilCooldownAfterUse;
+                        EnterCasualOrIdle();
+                    }
+                    break;
+
+                // ── Charge-up Nova ──────────────────────────────────────────────
+                case AttackPhase.NovaCharge:
+                {
+                    SlowDown();
+                    int elapsed = NovaChargeTicks - PhaseTimer;
+                    DoNovaChargeTick(elapsed, NovaChargeTicks);
+                    if (--PhaseTimer <= 0)
+                    {
+                        DoNovaBlast();
+                        EnterPhase(AttackPhase.NovaBlast, NovaBlastHoldTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.NovaBlast:
+                    if (--PhaseTimer <= 0)
+                        EnterPhase(AttackPhase.NovaRecovery, NovaRecoveryTicks);
+                    break;
+
+                case AttackPhase.NovaRecovery:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                        EnterCasualOrIdle();
+                    break;
+
+                // ── Abyss Shard ───────────────────────────────────────────────
+                case AttackPhase.AbyssShardTelegraph:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _abyssShardIndex = 0;
+                        DoAbyssShardFire(0);
+                        EnterPhase(AttackPhase.AbyssShardFire, AbyssShardFireTicks);
+                    }
+                    break;
+
+                case AttackPhase.AbyssShardFire:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        int delay = NextAbyssShardDelay(_abyssShardIndex);
+                        if (delay < 0)
+                        {
+                            // Deliberately no recovery phase - the sequence just ends and control
+                            // returns immediately, letting a different attack follow right away.
+                            _abyssShardCooldown = AbyssShardCooldownAfterUse;
+                            EnterCasualOrIdle();
+                        }
+                        else
+                        {
+                            EnterPhase(AttackPhase.AbyssShardPause, delay);
+                        }
+                    }
+                    break;
+
+                case AttackPhase.AbyssShardPause:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _abyssShardIndex++;
+                        DoAbyssShardFire(_abyssShardIndex);
+                        EnterPhase(AttackPhase.AbyssShardFire, AbyssShardFireTicks);
+                    }
+                    break;
+
+                // ── Homing Volley ─────────────────────────────────────────────
+                // Backward roll WITH real i-frames (DodgeTimer) - same technique as Jumping
+                // Downward Slash's wind-up, but leads into an overhead chop instead of a jump.
+                case AttackPhase.HomingVolleyDodgeback:
+                {
+                    if (PhaseTimer == HomingVolleyDodgebackTicks)
+                    {
+                        int faceHv = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceHv; NPC.spriteDirection = faceHv;
+                        _homingVolleyDir = faceHv;
+                        NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = HomingVolleyDodgebackTicks + 5;
+                    }
+                    NPC.velocity.X = -_homingVolleyDir * HomingVolleyDodgebackSpeed;
+                    if (--PhaseTimer <= 0)
+                    {
+                        _homingVolleyFired = false;
+                        EnterPhase(AttackPhase.HomingVolleySwingTelegraph, HomingVolleySwingTelegraphTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.HomingVolleySwingTelegraph:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        EnterPhase(AttackPhase.HomingVolleySwing, HomingVolleySwingTicks);
+                    }
+                    break;
+
+                case AttackPhase.HomingVolleySwing:
+                {
+                    SlowDown();
+                    int elapsedSwing = HomingVolleySwingTicks - PhaseTimer;
+                    DoHomingVolleySwingTick(elapsedSwing, HomingVolleySwingTicks);
+                    if (!_homingVolleyFired && elapsedSwing >= HomingVolleySwingTicks * HomingVolleyFireProgress)
+                    {
+                        _homingVolleyFired = true;
+                        DoHomingVolleyFire();
+                    }
+                    if (--PhaseTimer <= 0)
+                    {
+                        _homingVolleyCooldown = HomingVolleyCooldownAfterUse;
+                        EnterPhase(AttackPhase.HomingVolleyRecovery, HomingVolleyRecoveryTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.HomingVolleyRecovery:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                        EnterCasualOrIdle();
+                    break;
+
+                // ── Sword Launch Reposition (shared) ──────────────────────────
+                // Mostly-horizontal backward hop, facing the player - same leap-physics shape as
+                // Jumping Downward Slash's dodgeback, but no i-frames (a spacing hop, not a dodge).
+                case AttackPhase.SwordLaunchReposition:
+                {
+                    if (PhaseTimer == SwordLaunchRepositionTicks)
+                    {
+                        int faceSl = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceSl; NPC.spriteDirection = faceSl;
+                        _swordLaunchDir = faceSl;
+                        NPC.velocity = new Vector2(-faceSl * SwordLaunchRepositionBackSpeed, -SwordLaunchRepositionUpSpeed);
+                        NPC.netUpdate = true;
+                    }
+                    else
+                    {
+                        NPC.velocity.X = -_swordLaunchDir * SwordLaunchRepositionBackSpeed;
+                    }
+
+                    bool landedSl = PhaseTimer < SwordLaunchRepositionTicks && NPC.velocity.Y == 0f;
+                    if (landedSl || --PhaseTimer <= 0)
+                    {
+                        EnterPhase(_swordLaunchNextPhase, _swordLaunchNextTicks);
+                    }
+                    break;
+                }
+
+                // ── Boomerang Crescent ─────────────────────────────────────────
+                case AttackPhase.BoomerangSwingTelegraph:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _boomerangFired = false;
+                        EnterPhase(AttackPhase.BoomerangSwing, BoomerangSwingTicks);
+                    }
+                    break;
+
+                case AttackPhase.BoomerangSwing:
+                {
+                    SlowDown();
+                    int elapsedBoom = BoomerangSwingTicks - PhaseTimer;
+                    DoBoomerangSwingTick(elapsedBoom, BoomerangSwingTicks);
+                    if (!_boomerangFired && elapsedBoom >= BoomerangSwingTicks * BoomerangFireProgress)
+                    {
+                        _boomerangFired = true;
+                        DoBoomerangFire();
+                    }
+                    if (--PhaseTimer <= 0)
+                    {
+                        _boomerangCooldown = BoomerangCooldownAfterUse;
+                        EnterPhase(AttackPhase.BoomerangRecovery, BoomerangRecoveryTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.BoomerangRecovery:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                        EnterCasualOrIdle();
+                    break;
+
+                // ── Spiral Fan ─────────────────────────────────────────────────
+                case AttackPhase.SpiralFanSwingTelegraph:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        EnterPhase(AttackPhase.SpiralFanSwing, SpiralFanSwingTicks);
+                    }
+                    break;
+
+                case AttackPhase.SpiralFanSwing:
+                {
+                    SlowDown();
+                    DoSpiralFanSwingTick(SpiralFanSwingTicks - PhaseTimer, SpiralFanSwingTicks);
+                    if (--PhaseTimer <= 0)
+                    {
+                        _spiralFanIndex = 0;
+                        DoSpiralFanFire(0);
+                        EnterPhase(AttackPhase.SpiralFanBurst, SpiralFanFireTicks);
+                    }
+                    break;
+                }
+
+                case AttackPhase.SpiralFanBurst:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        int delaySf = NextSpiralFanDelay(_spiralFanIndex);
+                        if (delaySf < 0)
+                        {
+                            _spiralFanCooldown = SpiralFanCooldownAfterUse;
+                            EnterPhase(AttackPhase.SpiralFanRecovery, SpiralFanRecoveryTicks);
+                        }
+                        else
+                        {
+                            EnterPhase(AttackPhase.SpiralFanPause, delaySf);
+                        }
+                    }
+                    break;
+
+                case AttackPhase.SpiralFanPause:
+                    SlowDown();
+                    if (--PhaseTimer <= 0)
+                    {
+                        _spiralFanIndex++;
+                        DoSpiralFanFire(_spiralFanIndex);
+                        EnterPhase(AttackPhase.SpiralFanBurst, SpiralFanFireTicks);
+                    }
+                    break;
+
+                case AttackPhase.SpiralFanRecovery:
+                    SlowDown();
+                    if (--PhaseTimer <= 0 && !TryContinueSpiralFanChain())
+                        EnterCasualOrIdle();
+                    break;
+
+                // ── Fire Volley chain: backward hop, facing the player ────────
+                case AttackPhase.FireVolleyBackLeap:
+                {
+                    if (PhaseTimer == FireVolleyBackLeapTicks)
+                    {
+                        int faceFv = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceFv; NPC.spriteDirection = faceFv;
+                        _fireVolleyDir = faceFv;
+                        NPC.velocity = new Vector2(-faceFv * FireVolleyBackLeapSpeed, -FireVolleyBackLeapUpSpeed);
+                        NPC.netUpdate = true;
+                    }
+                    else
+                    {
+                        NPC.velocity.X = -_fireVolleyDir * FireVolleyBackLeapSpeed;
+                    }
+
+                    bool landedFv = PhaseTimer < FireVolleyBackLeapTicks && NPC.velocity.Y == 0f;
+                    if (landedFv || --PhaseTimer <= 0)
+                        OnFireVolleyRepositionLanded();
+                    break;
+                }
+
+                // ── Fire Volley chain: leaping dodge-roll through the player ──
+                case AttackPhase.FireVolleyDodgeThrough:
+                {
+                    var globalNpcFv = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                    if (PhaseTimer == FireVolleyDodgeThroughTimeoutTicks)
+                    {
+                        int faceFv = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceFv; NPC.spriteDirection = faceFv;
+                        NPC.velocity.Y = -FireVolleyDodgeThroughUpSpeed;
+                        tsorcRevampAIs.ArmQuickStep(NPC, globalNpcFv, allowForward: true);
+                        NPC.netUpdate = true;
+                    }
+                    tsorcRevampAIs.TickQuickStep(NPC, globalNpcFv);
+                    bool resolvedFv = globalNpcFv.QuickStepTimer <= 0 && globalNpcFv.QuickStepRecoveryTimer <= 0;
+                    if (resolvedFv || --PhaseTimer <= 0)
+                        OnFireVolleyRepositionLanded();
+                    break;
+                }
+
+                // ── Fire Volley chain: big arc jump over the player ───────────
+                case AttackPhase.FireVolleyArcJump:
+                {
+                    NPC.velocity.X = _fireVolleyArcVx;
+                    if (!_fireVolleyArcFired && NPC.velocity.Y >= 0f)
+                    {
+                        _fireVolleyArcFired = true;
+                        DoFireVolleyArcFire();
+                    }
+                    bool landedArc = _fireVolleyArcFired && NPC.velocity.Y == 0f && PhaseTimer < 100;
+                    if (landedArc || --PhaseTimer <= 0)
+                        OnFireVolleyArcJumpLanded();
+                    break;
+                }
 
                 // ── Closing distance ──────────────────────────────────────────
                 // A melee combo was chosen out of reach: the mover sprints in (boosted speedMult in AI);
@@ -2335,6 +3166,7 @@ namespace tsorcRevamp.NPCs.Invaders
                         // Deferred / no-hit motions don't strike on entry: LeapSlam launches now and
                         // connects on landing; ChargeChop runs (next step chops); Feint just holds
                         // the bait pose (next step is the delayed chop).
+                        _bladeArmed = false;
                         if (step0.Motion == ComboMotion.LeapSlam || step0.Motion == ComboMotion.LeapThrust)
                             BeginLeapAttack();
                         else if (step0.Motion == ComboMotion.ChargeChop || step0.Motion == ComboMotion.Feint)
@@ -2365,7 +3197,12 @@ namespace tsorcRevamp.NPCs.Invaders
                         endStep = (--PhaseTimer <= 0) || landed;
                         if (endStep)
                         {
+                            // Deferred single-hit: arm the blade check, then resolve it the same
+                            // tick against the weapon's actual landing pose — a slam/thrust still
+                            // only connects if the sprite is really overlapping the target here,
+                            // it just doesn't need to be checked every tick like a sweeping arc.
                             DoComboMeleeHit(step);
+                            TickBladeHit();
                             _comboLeapLaunched = false;
                         }
                     }
@@ -2388,6 +3225,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     }
                     else
                     {
+                        TickBladeHit();
                         if (step.ForwardPushMult > 0f)
                             NPC.velocity.X = _comboLockedDir * (TopSpeed * step.ForwardPushMult);
                         else
@@ -2427,6 +3265,7 @@ namespace tsorcRevamp.NPCs.Invaders
                         SetDisplayWeapon(MeleeWeaponItemType, swing: true);
                         if (IsSwingingMotion(nextStep.Motion))
                             PlayMeleeSwingSound();
+                        _bladeArmed = false;
                         DoComboMeleeHit(nextStep);
                         _weaponAnim = _weaponAnimMax;
                         EnterPhase(AttackPhase.MeleeComboAttack, GetMeleeSwingTicks(nextStep.AttackTicks));
@@ -2604,6 +3443,7 @@ namespace tsorcRevamp.NPCs.Invaders
             _activeMeleeCombo      = _meleeComboPool[chosen];
             _meleeComboStepIndex   = 0;
             _comboLockedDir        = NPC.direction;
+            ArmSwingVariation(NPC.HasValidTarget ? NPC.Center.Y - Main.player[NPC.target].Center.Y : 0f);
             // Minimum 30 ticks (0.5 s) so the wind-up arc has visible time to play.
             // Lighter combos that have raw values below 22 (×1.35 → ~30) get floored here.
             int telegraphTicks = Math.Max(MinComboTelegraphTicks,
@@ -2622,9 +3462,10 @@ namespace tsorcRevamp.NPCs.Invaders
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
             float reach = ComboReachBase * 0.7f * step.ReachMult;
             int   dmg   = (int)(MeleeDamage * step.DamageMult);
-            // Route through the same swing-arc helper as TryMeleeHit so overlap / alignment
-            // hits behave identically across step combos and one-shot swings.
-            SpawnMeleeHitbox(_comboLockedDir, reach, dmg, knockback: 3f);
+            // Arms the tracked blade check (see TickBladeHit) instead of hitting immediately —
+            // the step now only connects on the tick(s) its weapon sprite actually sweeps over
+            // the target, matching TryMeleeHit's one-shot swings.
+            ArmBladeHit(reach, dmg, knockback: 3f);
         }
 
         /// <summary>
@@ -2663,6 +3504,23 @@ namespace tsorcRevamp.NPCs.Invaders
                 NPC.velocity = new Vector2(_comboLeapVx, -LeapAttackUpSpeed);
             }
             _comboLeapLaunched = true;
+        }
+
+        /// <summary>Launches a big jump arc over the player, facing them. Call once, then
+        /// EnterPhase(AttackPhase.FireVolleyArcJump, someTicks); the phase's own case body fires
+        /// <see cref="DoFireVolleyArcFire"/> at the apex and <see cref="OnFireVolleyArcJumpLanded"/>
+        /// on landing.</summary>
+        protected void BeginFireVolleyArcJump()
+        {
+            Player target = Main.player[NPC.target];
+            int dir = target.Center.X < NPC.Center.X ? -1 : 1;
+            NPC.direction = dir;
+            NPC.spriteDirection = dir;
+            NPC.noGravity = false;
+            _fireVolleyArcVx = dir * FireVolleyArcJumpForwardSpeed;
+            NPC.velocity = new Vector2(_fireVolleyArcVx, -FireVolleyArcJumpUpSpeed);
+            _fireVolleyArcFired = false;
+            NPC.netUpdate = true;
         }
 
         /// <summary>Motions that actually swing the weapon (so they get a swing whoosh + arc VFX).
@@ -2797,7 +3655,13 @@ namespace tsorcRevamp.NPCs.Invaders
                 Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MeleeComboTelegraph ||
                 Phase == AttackPhase.BreathTelegraph || Phase == AttackPhase.KnivesTelegraph ||
                 Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.JumpSlashRise ||
-                Phase == AttackPhase.AbyssSlashTelegraph;
+                Phase == AttackPhase.AbyssSlashTelegraph ||
+                Phase == AttackPhase.TendrilTelegraph || Phase == AttackPhase.TendrilReach ||
+                Phase == AttackPhase.TendrilSwingTelegraph ||
+                Phase == AttackPhase.AbyssShardTelegraph ||
+                Phase == AttackPhase.HomingVolleySwingTelegraph ||
+                Phase == AttackPhase.BoomerangSwingTelegraph ||
+                Phase == AttackPhase.SpiralFanSwingTelegraph;
 
             bool committed =
                 Phase == AttackPhase.MeleeAttack  || Phase == AttackPhase.StabAttack  ||
@@ -2816,7 +3680,21 @@ namespace tsorcRevamp.NPCs.Invaders
                 Phase == AttackPhase.FlipSlashRise || Phase == AttackPhase.FlipSlashLand ||
                 // Once the first swipe fires, the whole chain (including inter-swipe pauses) is
                 // committed - only the initial wind-up is punishable.
-                Phase == AttackPhase.AbyssSlashSwipe || Phase == AttackPhase.AbyssSlashPause;
+                Phase == AttackPhase.AbyssSlashSwipe || Phase == AttackPhase.AbyssSlashPause ||
+                Phase == AttackPhase.TendrilSwing ||
+                // The whole nova (charge + blast) is a scripted health-threshold set-piece -
+                // shouldn't be stagger-cancelled out of mid-charge.
+                Phase == AttackPhase.NovaCharge || Phase == AttackPhase.NovaBlast ||
+                // Once the first shard event fires, the whole sequence (including inter-event
+                // pauses) is committed - only the initial wind-up is punishable.
+                Phase == AttackPhase.AbyssShardFire || Phase == AttackPhase.AbyssShardPause ||
+                // The overhead chop itself is committed - only the raised wind-up is punishable.
+                Phase == AttackPhase.HomingVolleySwing ||
+                Phase == AttackPhase.BoomerangSwing ||
+                // Once the swing completes and the burst starts, the whole sequence (including
+                // inter-shot pauses) is committed - only the raised wind-up is punishable.
+                Phase == AttackPhase.SpiralFanSwing ||
+                Phase == AttackPhase.SpiralFanBurst || Phase == AttackPhase.SpiralFanPause;
 
             if (_activeMeleeComboIndex >= 0 && _activeMeleeCombo.HyperArmor
                 && Phase == AttackPhase.MeleeComboPause)
@@ -2869,7 +3747,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// After any recovery phase, roll for a casual stroll.  If the roll fails
         /// (or the subclass sets CasualStrollChance to 0), go straight back to Idle.
         /// </summary>
-        private void EnterCasualOrIdle()
+        protected void EnterCasualOrIdle()
         {
             if (NPC.HasValidTarget && NPC.Distance(Main.player[NPC.target].Center) <= StabRange + 40f)
             {
@@ -3079,37 +3957,84 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         // ── Melee hitbox helper ───────────────────────────────────────────────────
-        // The hitbox CENTER is placed at the midpoint of the swing zone (NPC center → reach tip)
-        // and the hitbox is widened to span the full swing. This guarantees a player gets hit when:
-        //   • perfectly stacked on the invader  (inner edge of hitbox covers NPC center)
-        //   • at full swing reach                (outer edge extends past `reach`)
-        //   • slightly above / below the invader (taller 60 px hitbox covers vertical overlap)
-        // The previous tip-only placement (40×40 hitbox at NPC.Center + direction*reach)
-        // missed any player closer than ~half-reach to the NPC, including overlap.
+        // Arms the tracked blade check (see ArmBladeHit/TickBladeHit) with this swing's reach
+        // instead of hitting immediately — the hit only actually lands on the tick(s) the weapon
+        // sprite's real hand→tip line genuinely overlaps a player, matching the drawn swing arc.
         protected void TryMeleeHit(float reach = -1f)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
             float r = reach < 0 ? MeleeRange * 0.7f : reach;
-            SpawnMeleeHitbox(NPC.direction, r, MeleeDamage, knockback: 3f);
+            ArmBladeHit(r, MeleeDamage, knockback: 3f);
         }
 
         /// <summary>
-        /// Spawn a swing-arc hitbox covering NPC center → outward `reach`. Width scales with
-        /// reach so long-reach stab attacks still get full coverage from the NPC out to the tip.
+        /// Arms the tracked blade check for the swing/step that's about to play: TickBladeHit will
+        /// test every subsequent tick (until the phase ends) and only actually connect on the
+        /// tick(s) where the weapon sprite's real swept position overlaps a player. Called by
+        /// TryMeleeHit and the base DoComboMeleeHit; an override that skips this entirely (e.g.
+        /// BlackNinja's flail combo, which fires a real physical projectile instead of a blade
+        /// sweep) correctly leaves TickBladeHit a no-op for that swing.
         /// </summary>
-        private void SpawnMeleeHitbox(int swingDir, float reach, int damage, float knockback)
+        private void ArmBladeHit(float reach, int damage, float knockback)
         {
-            // Width = at least 100 (covers stacked overlap) or reach × 1.4 (covers long stabs).
-            // Height = 60 so a player jumping just above or crouching just below still registers.
-            int boxW = (int)System.MathF.Max(100f, reach * 1.4f);
-            int boxH = 60;
-            Vector2 center   = NPC.Center + new Vector2(swingDir * reach * 0.5f, -8f);
-            Vector2 topLeft  = center - new Vector2(boxW / 2f, boxH / 2f);
+            _bladeArmed           = true;
+            _activeBladeReach     = reach;
+            _activeBladeDamage    = damage;
+            _activeBladeKnockback = knockback;
+        }
+
+        /// <summary>
+        /// Per-tick "is the blade actually on the player" check. Call every tick while a melee
+        /// swing/step is live (MeleeAttack / StabAttack / SpearAttack / MeleeComboAttack). Traces a
+        /// capsule from the hand to the weapon tip along <see cref="GetWeaponWorldDirection"/> — the
+        /// exact angle actually rendered — so a hit can only land on the tick(s) the sprite is
+        /// genuinely overlapping the target, instead of for the swing's entire duration regardless
+        /// of where the blade is pointing (the old static-box behavior).
+        /// </summary>
+        private void TickBladeHit()
+        {
+            if (!_bladeArmed || _activeBladeReach <= 0f || Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            Vector2 origin = GetHandPosition();
+            Vector2 tip    = origin + GetWeaponWorldDirection() * _activeBladeReach;
+            float earlyOutRange = _activeBladeReach + MeleeBladeWidth + 40f;
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (!player.active || player.dead) continue;
+                if (Vector2.DistanceSquared(player.Center, NPC.Center) > earlyOutRange * earlyOutRange) continue;
+
+                if (!MeleeBladeCollision.SegmentIntersectsRect(origin, tip, MeleeBladeWidth, player.getRect()))
+                    continue;
+
+                Vector2 hitPoint = MeleeBladeCollision.ClosestPointOnSegment(origin, tip, player.Center);
+                SpawnMeleeHitbox(hitPoint, MeleeBladeWidth, _activeBladeDamage, _activeBladeKnockback);
+                _lastAttackHitConnected = true;
+                OnBladeHit(player);
+            }
+        }
+
+        /// <summary>Fires once per confirmed real blade-overlap hit (see <see cref="TickBladeHit"/>),
+        /// right after the damage/knockback hitbox is spawned. Override for per-invader on-hit
+        /// effects (debuffs, extra VFX, etc.) without touching the shared hit-detection code.</summary>
+        protected virtual void OnBladeHit(Player player) { }
+
+        /// <summary>
+        /// Spawn a small, momentary hostile hitbox at a confirmed blade-overlap point. Geometry is
+        /// already resolved by the caller (TickBladeHit) — this is just the trigger that hands
+        /// damage/knockback/immune-frame handling to vanilla's existing hostile-projectile pipeline.
+        /// </summary>
+        private void SpawnMeleeHitbox(Vector2 center, float size, int damage, float knockback)
+        {
+            int box = (int)size;
+            Vector2 topLeft = center - new Vector2(box / 2f, box / 2f);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderMeleeHitbox>(),
-                damage, knockback, Main.myPlayer, boxW, boxH);
+                damage, knockback, Main.myPlayer, box, box);
         }
 
         // ── Telegraph dust ────────────────────────────────────────────────────────
@@ -3345,6 +4270,83 @@ namespace tsorcRevamp.NPCs.Invaders
                 float swipeT = AbyssSlashSwipeTicks > 0 ? 1f - (float)PhaseTimer / AbyssSlashSwipeTicks : 1f;
                 _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f), swipeT);
             }
+            else if (Phase == AttackPhase.TendrilTelegraph || Phase == AttackPhase.TendrilReach)
+            {
+                // Arm reaches out toward the target - same "cocked, extended forward" pose as
+                // Piercing Dash's telegraph.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.20f);
+            }
+            else if (Phase == AttackPhase.TendrilSwingTelegraph)
+            {
+                // The arm returns and winds up the finishing swing: same 180°→10° arc as Abyss
+                // Slash's wind-up, held at 10° once the arc portion completes.
+                int totalTendrilTicks = TendrilSwingArcTicks + TendrilSwingHoldTicks;
+                int elapsedTendril    = totalTendrilTicks - PhaseTimer;
+                if (elapsedTendril < TendrilSwingArcTicks)
+                {
+                    float armT = TendrilSwingArcTicks > 0 ? elapsedTendril / (float)TendrilSwingArcTicks : 1f;
+                    _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(180f - 45f), MathHelper.ToRadians(10f - 45f), armT);
+                }
+                else
+                {
+                    _weaponRotation = MathHelper.ToRadians(10f - 45f);
+                }
+            }
+            else if (Phase == AttackPhase.TendrilSwing)
+            {
+                // Same 10°→170° release as Abyss Slash's swipe - the "standard" underhand swing shape.
+                float swingT = TendrilSwingTicks > 0 ? 1f - (float)PhaseTimer / TendrilSwingTicks : 1f;
+                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f), swingT);
+            }
+            else if (Phase == AttackPhase.HomingVolleySwingTelegraph)
+            {
+                // Raise the sword fully overhead, cocked back further than Jump Slash's cocked pose -
+                // a bigger, more deliberate wind-up for the volley's release chop.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.ToRadians(-100f), 0.25f);
+            }
+            else if (Phase == AttackPhase.HomingVolleySwing)
+            {
+                // Full overhead chop: cocked back down through vertical to a down-forward
+                // follow-through - the volley fires partway through this arc.
+                float swingT = HomingVolleySwingTicks > 0 ? 1f - (float)PhaseTimer / HomingVolleySwingTicks : 1f;
+                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            }
+            else if (Phase == AttackPhase.BoomerangSwingTelegraph || Phase == AttackPhase.SpiralFanSwingTelegraph)
+            {
+                // Same overhead cocked-back wind-up as Homing Volley - all three "sword launch"
+                // attacks share one visual identity for the raise.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.ToRadians(-100f), 0.25f);
+            }
+            else if (Phase == AttackPhase.BoomerangSwing)
+            {
+                // Same overhead chop shape as Homing Volley - the crescent(s) fire partway through.
+                float swingT = BoomerangSwingTicks > 0 ? 1f - (float)PhaseTimer / BoomerangSwingTicks : 1f;
+                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            }
+            else if (Phase == AttackPhase.SpiralFanSwing)
+            {
+                // Same overhead chop shape again, but purely a visual wind-up here - the burst that
+                // follows (SpiralFanBurst/Pause) carries the actual firing sequence.
+                float swingT = SpiralFanSwingTicks > 0 ? 1f - (float)PhaseTimer / SpiralFanSwingTicks : 1f;
+                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            }
+            else if (Phase == AttackPhase.SpiralFanBurst || Phase == AttackPhase.SpiralFanPause)
+            {
+                // Hold the follow-through pose for the whole burst rather than resetting to neutral
+                // between shots.
+                _weaponRotation = MathHelper.ToRadians(70f);
+            }
+            else if (Phase == AttackPhase.FireVolleyBackLeap || Phase == AttackPhase.FireVolleyDodgeThrough)
+            {
+                // Just carry the axe through the reposition move — no swing here.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, HoldRotation, 0.15f);
+            }
+            else if (Phase == AttackPhase.FireVolleyArcJump)
+            {
+                // Same shape as LeapSlam: raise overhead on the way up, chop down through the apex.
+                if (NPC.velocity.Y < 0f) _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.3f, 0.20f);
+                else                     _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.3f, 0.18f);
+            }
             else if (Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrowPause)
             {
                 // Hold the knife high, ready to throw (same read as the throwing-star telegraph).
@@ -3356,16 +4358,22 @@ namespace tsorcRevamp.NPCs.Invaders
                 float kt = CursedKnivesThrowTicks > 0 ? 1f - (float)PhaseTimer / CursedKnivesThrowTicks : 1f;
                 _weaponRotation = MathHelper.Lerp(-0.75f, 0.45f, kt);
             }
-            else if (Phase == AttackPhase.MeleeTelegraph)
+            else if (Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack)
             {
-                // Wind-up: weapon rises from hold angle to the top of the arc quickly
-                _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.3f, 0.30f);
-            }
-            else if (Phase == AttackPhase.MeleeAttack)
-            {
-                // Downswing: full broadsword arc, raised behind head → slash down-forward
-                // t runs 0->1 over the held item useAnimation window (reset when swing begins)
-                _weaponRotation = MathHelper.Lerp(-1.3f, 1.0f, t);
+                // Same OverheadArc shape as the combo system's OverheadArc case, so the plain
+                // one-shot swing (DoMeleeAttack/TryMeleeHit, used outside the combo system) gets
+                // the same easing/flip/aim-bias opt-ins instead of only combos getting them.
+                float a0 = -1.3f, a1 = 1.0f;
+                if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
+                if (UseAimAdaptiveArc) { a0 += _comboAimBias; a1 += _comboAimBias; }
+
+                if (Phase == AttackPhase.MeleeTelegraph)
+                    // Wind-up: weapon rises from hold angle to the top of the arc quickly
+                    _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                else
+                    // Downswing: full broadsword arc, raised behind head → slash down-forward
+                    // t runs 0->1 over the held item useAnimation window (reset when swing begins)
+                    _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
             }
             else if (Phase == AttackPhase.MeleeComboTelegraph
                   || Phase == AttackPhase.MeleeComboAttack
@@ -3376,34 +4384,57 @@ namespace tsorcRevamp.NPCs.Invaders
                 bool inTel = Phase == AttackPhase.MeleeComboTelegraph;
                 bool inPause = Phase == AttackPhase.MeleeComboPause;
 
+                // Applies the alternating-flip / aim-adaptive-bias opt-ins (both default off) to a
+                // motion's fixed (start, end) arc endpoints. Telegraph/pause poses below are all
+                // expressed as a Lerp fraction of these same endpoints (not separate hardcoded
+                // angles), so flip/bias stay consistent across wind-up -> strike with no snap.
+                (float, float) Endpoints(float a0, float a1)
+                {
+                    if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
+                    if (UseAimAdaptiveArc) { a0 += _comboAimBias; a1 += _comboAimBias; }
+                    return (a0, a1);
+                }
+
                 switch (step.Motion)
                 {
                     case ComboMotion.OverheadArc:
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.3f, 0.30f);
-                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.0f, 0.20f);
-                        else              _weaponRotation = MathHelper.Lerp(-1.3f, 1.0f, t);
+                    {
+                        var (a0, a1) = Endpoints(-1.3f, 1.0f);
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.130f), 0.20f);
+                        else              _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
                         break;
+                    }
                     case ComboMotion.UnderhandArc:
+                    {
                         // Rising cut: dipped low-forward (+1.0) → up-FORWARD (-1.0).  Ending at
                         // -1.3 would map to body row 1, whose hand offset sits BEHIND the head
                         // (X=-8) — making the swing finish over the shoulder.  -1.0 keeps it in
                         // row 2 (hand up-forward, X=+4) for a clean rising slash.
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.0f, 0.30f);
-                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.7f, 0.20f);
-                        else              _weaponRotation = MathHelper.Lerp(1.0f, -1.0f, t);
+                        var (a0, a1) = Endpoints(1.0f, -1.0f);
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.150f), 0.20f);
+                        else              _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
                         break;
+                    }
                     case ComboMotion.HorizontalSweep:
+                    {
                         // Flat side-to-side: arm extends, weapon held near horizontal
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.4f, 0.25f);
-                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.3f, 0.18f);
-                        else              _weaponRotation = MathHelper.Lerp(-0.4f, 0.6f, t);
+                        var (a0, a1) = Endpoints(-0.4f, 0.6f);
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
+                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.700f), 0.18f);
+                        else              _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
                         break;
+                    }
                     case ComboMotion.VerticalChop:
+                    {
                         // Straight overhead → straight down (hammer)
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.55f, 0.32f);
-                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.2f, 0.18f);
-                        else              _weaponRotation = MathHelper.Lerp(-1.55f, 1.4f, t);
+                        var (a0, a1) = Endpoints(-1.55f, 1.4f);
+                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.32f);
+                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.119f), 0.18f);
+                        else              _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
                         break;
+                    }
                     case ComboMotion.Thrust:
                         if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.20f);
                         else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2 * 0.8f, 0.18f);
@@ -3419,13 +4450,19 @@ namespace tsorcRevamp.NPCs.Invaders
                         if (_weaponRotation > MathHelper.TwoPi) _weaponRotation -= MathHelper.TwoPi;
                         break;
                     case ComboMotion.IaidoDraw:
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.2f, 0.15f); // weapon held low/behind
-                        else              _weaponRotation = MathHelper.Lerp(1.2f, -0.5f, t);                // fast snap forward
+                    {
+                        var (a0, a1) = Endpoints(1.2f, -0.5f);
+                        if (inTel) _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.15f); // weapon held low/behind
+                        else       _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);   // fast snap forward
                         break;
+                    }
                     case ComboMotion.GroundSlam:
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.55f, 0.25f);
-                        else              _weaponRotation = MathHelper.Lerp(-1.55f, 1.5f, t);
+                    {
+                        var (a0, a1) = Endpoints(-1.55f, 1.5f);
+                        if (inTel) _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
+                        else       _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
                         break;
+                    }
                     case ComboMotion.LeapSlam:
                         // Wind up overhead, then carry the axe up-and-FORWARD (toward the player,
                         // ~1 o'clock facing right / ~11 facing left) through the airborne arc, and
@@ -3651,23 +4688,38 @@ namespace tsorcRevamp.NPCs.Invaders
             return NPC.Center + new Vector2(offset.X * NPC.direction, offset.Y);
         }
 
+        /// <summary>
+        /// World-space unit direction the currently-drawn melee weapon sprite points, matching
+        /// <see cref="DrawWeaponToLayer"/>'s actual render rotation exactly — including the
+        /// per-weapon <see cref="MeleeWeaponRotationOffset"/> / <see cref="SpearDrawRotationOffset"/>
+        /// corrections — so it's the single source of truth for "where the sprite actually is,"
+        /// shared by decorative tip-position code (<see cref="GetSpearTipWorldPosition"/>) and real
+        /// hit detection (<see cref="TickBladeHit"/>) rather than two approximations that could
+        /// drift apart. Assumes the sprite is calibrated so the tip sits at -45° when
+        /// _weaponRotation=0, dir=1 (the standard broadsword convention used across all invaders).
+        /// </summary>
+        private Vector2 GetWeaponWorldDirection()
+        {
+            float drawRotation = _weaponRotation;
+            if (DrawWeaponAsSpear)
+                drawRotation += SpearDrawRotationOffset;
+            else
+                drawRotation += MeleeWeaponRotationOffset * NPC.direction;
+
+            const float correctedNaturalDeg = -45f;
+            float rotDeg = MathHelper.ToDegrees(drawRotation);
+            float angleDeg = NPC.direction == 1
+                ? correctedNaturalDeg + rotDeg
+                : 180f - (correctedNaturalDeg + rotDeg); // mirror across vertical axis (FlipHorizontally)
+            float rad = MathHelper.ToRadians(angleDeg);
+            return new Vector2((float)Math.Cos(rad), (float)Math.Sin(rad));
+        }
+
         /// <summary>World-space position of the spear's TIP, derived from the current weapon-draw
         /// rotation.  Decorative use only (telegraph VFX placement) — not pixel-exact, but tracks the
-        /// visible tip as the weapon swings/thrusts/aims.  Assumes <see cref="SpearDrawRotationOffset"/>
-        /// is calibrated so the sprite's natural angle matches the standard broadsword convention
-        /// (tip at -45° when _weaponRotation=0, dir=1) — true for any invader following the same
-        /// calibration pattern as CursedDragonInvader.</summary>
+        /// visible tip as the weapon swings/thrusts/aims.</summary>
         protected Vector2 GetSpearTipWorldPosition(float reachPx = 90f)
-        {
-            const float correctedNaturalDeg = -45f;
-            float weaponRotDeg = MathHelper.ToDegrees(_weaponRotation);
-            float angleDeg = NPC.direction == 1
-                ? correctedNaturalDeg + weaponRotDeg
-                : 180f - (correctedNaturalDeg + weaponRotDeg); // mirror across vertical axis (FlipHorizontally)
-            float rad = MathHelper.ToRadians(angleDeg);
-            Vector2 dir = new Vector2((float)Math.Cos(rad), (float)Math.Sin(rad));
-            return GetHandPosition() + dir * reachPx;
-        }
+            => GetHandPosition() + GetWeaponWorldDirection() * reachPx;
 
         // ── Debug: weapon-rotation log (DebugMode config only) ──────────────────────
         // Dumps everything relevant to diagnosing hand placement / spear rotation bugs:
@@ -4118,6 +5170,61 @@ namespace tsorcRevamp.NPCs.Invaders
 
             drawInfo.DrawDataCache.Add(new DrawData(
                 _shieldDrawTex, drawPos, src, _layerDrawColor, 0f, origin, NPC.scale, fx, 0));
+        }
+
+        private static Texture2D _slashVFXTex;
+        private static bool _slashVFXTexLoadAttempted;
+
+        /// <summary>
+        /// Draws an arc-shaped slash swoosh along the same angle/reach <see cref="TickBladeHit"/>
+        /// uses for real hit detection (<see cref="GetWeaponWorldDirection"/> + the active blade
+        /// reach) — an honest preview of the actual hitbox rather than disconnected decoration.
+        /// Reuses the generic Slash.png frame-strip asset from the player-weapon BroadswordRework
+        /// system (same visual language as the real player slash VFX). No-op unless
+        /// <see cref="HasSlashVFX"/> and a trackable swing is actually live.
+        /// </summary>
+        internal void DrawSlashToLayer(ref PlayerDrawSet drawInfo)
+        {
+            if (!HasSlashVFX || !_bladeArmed || _activeBladeReach <= 0f)
+                return;
+            if (Phase != AttackPhase.MeleeAttack && Phase != AttackPhase.StabAttack
+                && Phase != AttackPhase.SpearAttack && Phase != AttackPhase.MeleeComboAttack)
+                return;
+
+            if (!_slashVFXTexLoadAttempted)
+            {
+                _slashVFXTexLoadAttempted = true;
+                const string path = "tsorcRevamp/Items/Weapons/Melee/Broadswords/BroadswordRework/Common/Melee/Slash";
+                if (ModContent.HasAsset(path))
+                    _slashVFXTex = ModContent.Request<Texture2D>(path, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            if (_slashVFXTex == null)
+                return;
+
+            float t = _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f;
+
+            var frame = new SpriteFrame(1, 3) { CurrentRow = (byte)Math.Min(2, (int)(t * 3f)) };
+
+            Vector2 direction = GetWeaponWorldDirection();
+            float rotation = direction.ToRotation();
+            Vector2 position = GetHandPosition() + direction * 2f;
+            Rectangle sourceRectangle = frame.GetSourceRectangle(_slashVFXTex);
+            Vector2 origin = sourceRectangle.Size() * 0.5f;
+            float scale = _activeBladeReach / 30f;
+            bool flippedSwing = UseAlternateFlip && _comboSwingFlipped;
+            SpriteEffects fx = (NPC.direction > 0) ^ flippedSwing ? SpriteEffects.FlipVertically : SpriteEffects.None;
+
+            const float MaxAlpha = 0.4f;
+            var alphaGradient = new Gradient<float>(
+                (0.00f, 0f),
+                (0.25f, MaxAlpha),
+                (0.75f, MaxAlpha),
+                (1.00f, 0f)
+            );
+            Color color = Lighting.GetColor(position.ToTileCoordinates()).MultiplyRGB(SlashVFXColor) * alphaGradient.GetValue(t);
+
+            drawInfo.DrawDataCache.Add(new DrawData(
+                _slashVFXTex, position - Main.screenPosition, sourceRectangle, color, rotation, origin, scale, fx, 0));
         }
 
         internal void DrawWeaponToLayer(ref PlayerDrawSet drawInfo)

@@ -998,6 +998,9 @@ namespace tsorcRevamp.NPCs
         public bool CanPassThroughWalls = false;
         // Counts ticks the NPC has been grounded and blocked by a wall; triggers teleport at threshold.
         public int GhostWallTimer = 0;
+        // Wall-phasing ghosts that prove the target is unreachable spend a short stint drifting away instead
+        // of immediately re-fixating on the player's X column.
+        public int GhostUnreachableWanderTimer = 0;
         // Set true each frame the NPC runs the mod's custom BasicAI/Fighter/Archer AI. Lets PostAI apply
         // confusion (reversed movement) only to these NPCs — vanilla-AI NPCs already handle Confused themselves,
         // so we must not double-flip them. Consumed (reset) in PostAI.
@@ -1508,7 +1511,11 @@ namespace tsorcRevamp.NPCs
             // pin stops that. PostAI runs after the vanilla AI, so revive them here as long as they're still alive
             // (life > 0). A player kill drops life to 0, so we never resurrect something that was legitimately killed.
             // Without this, one self-despawning NPC fails the event's all-or-nothing alive check and tears it down.
-            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID) && !npc.active && npc.life > 0)
+            // EXCLUDED: SelfDeactivatingNPCs (Marilith/Prime intros, Gwyn vision, portals, etc.) deliberately set
+            // active=false mid-AI to transform into the real boss or vanish — reviving them here would fight that
+            // and break the whole encounter (this broke TheMachine/Marilith when the blanket revival first shipped).
+            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID) && !npc.active && npc.life > 0
+                && !tsorcRevamp.SelfDeactivatingNPCs.Contains(npc.type))
             {
                 npc.active = true;
                 npc.timeLeft = int.MaxValue;
@@ -2201,12 +2208,6 @@ namespace tsorcRevamp.NPCs
             {
                 trueSpawnRate /= 2;
                 trueMaxSpawns = trueMaxSpawns * 1.5f;
-            }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
-            {
-                trueSpawnRate /= 2;
-                trueMaxSpawns *= 2;
             }
 
             if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)

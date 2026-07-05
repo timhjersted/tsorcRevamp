@@ -50,8 +50,9 @@ namespace tsorcRevamp.NPCs.Enemies
             EvasiveProfile.HeavyBeast(g);
             // Phase 1 (beast positioner): never stand still — oscillate in a large band when it can't path; wander
             // off if it can't reach you AND you stop hitting it for ~10s. Tune the band to taste.
-            g.KiteRangeMin = 12f;
+            g.KiteRangeMin = 0f;
             g.KiteRangeMax = 30f;
+            g.KiteLooseness = 0.8f;
             g.PatrolMode = NPCs.PatrolMode.Wander;
         }
 

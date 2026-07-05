@@ -60,9 +60,10 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
             EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
-            // Smart positioning: the thrown axe is short-range, so hold a closer 5-15 band.
-            globalNPC.KiteRangeMin = 5f;
+            // Smart positioning: the thrown axe is short-range, so it may close to melee range within a 0-15 band.
+            globalNPC.KiteRangeMin = 0f;
             globalNPC.KiteRangeMax = 15f;
+            globalNPC.KiteLooseness = 0.8f;
             globalNPC.HasGhostAfterimages = true;
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;

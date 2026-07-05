@@ -84,6 +84,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Rides along on Piercing Dash and Forward Flip Slash (see TryArmEchoStep call sites).
         protected override bool CanEchoStep => true;
 
+        // ── Abyss Tendril Grab ───────────────────────────────────────────────────
+        protected override bool  CanTendrilGrab          => true;
+        protected override float TendrilMinRange         => 150f;
+        protected override float TendrilMaxRange          => 500f;
+        protected override int   TendrilChance            => 4;
+        protected override int   TendrilCooldownAfterUse  => 480;
+
+        const int TendrilGrabDamage = 30;
+
         const int PierceContactDamage   = 75;
         const int PierceStabBonusDamage = 125;
         const int PierceStabHealAmount  = 5000;
@@ -108,6 +117,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         Vector2 _ringCenter;
         public Vector2 RingCenter => _ringCenter;
         int _ringVfxTimer;
+
+        // Live effective radius - equal to RingRadius except during a Ring Collapse (below), which
+        // temporarily shrinks it. Everything that used to read the RingRadius const directly (the
+        // boundary check, the dust ring, the screen-darkening overlay in MethodSwaps) now reads this
+        // instead, so the darkness/lethal-boundary always track the contraction live.
+        float _currentRingRadius = RingRadius;
+        public float EffectiveRingRadius => _currentRingRadius;
+
+        // ── Ring Collapse: twice per fight (60% and 30% HP), the fixed ring briefly squeezes in,
+        // holds, then releases back to its normal radius. A preview dust ring appears at the NEW
+        // (contracted) radius for RingCollapseTelegraphTicks before the boundary actually starts
+        // moving there, so players get a clean warning before the arena shrinks under them.
+        enum RingCollapseState { Inactive, Telegraph, Contracting, Holding, Expanding }
+        RingCollapseState _ringCollapseState = RingCollapseState.Inactive;
+        int _ringCollapseTimer;
+        float _ringCollapseFrom;
+        float _ringCollapseTo;
+        bool _ringCollapseDone60;
+        bool _ringCollapseDone30;
+
+        const float RingCollapseContractFrac  = 0.30f;      // shrink to 70% of normal radius
+        const int   RingCollapseTelegraphTicks = 30;
+        const int   RingCollapseMoveTicks      = 120;       // 2s each way - "slowly"
+        const int   RingCollapseHoldTicks      = 10 * 60;   // 10s held at the contracted radius
 
         public override void SetStaticDefaults()
         {
@@ -142,7 +175,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             artoriasGlobalNPC.CanTeleport = true;
             artoriasGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
             artoriasGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Plague;
-            artoriasGlobalNPC.NavSearchRadius = 100;
+            artoriasGlobalNPC.NavSearchRadius = 80;
 
             // On-hit dodgeroll: hop/leap/dash away, or blink away (using the same plague-style
             // teleport set above) when able. Same bundle as the Red Knight family.
@@ -185,6 +218,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             TickAbyssRing();
+            TickRingCollapse();
+
+            if (!_abyssShardUnlocked && NPC.life <= NPC.lifeMax * 0.6f)
+            {
+                _abyssShardUnlocked = true;
+            }
         }
 
         // ── Fixed abyss ring: a permanent lethal boundary at the spot Artorias first spawned ──
@@ -197,7 +236,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             else
             {
                 _ringVfxTimer = 4;
-                UsefulFunctions.DustRingPrecise(_ringCenter, RingRadius, DustID.BlueTorch, 90, alpha: 40, scale: 1.6f);
+                UsefulFunctions.DustRingPrecise(_ringCenter, _currentRingRadius, DustID.BlueTorch, 90, alpha: 40, scale: 1.6f);
             }
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -214,13 +253,100 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 float dist = Vector2.Distance(player.Center, _ringCenter);
-                if (Math.Abs(dist - RingRadius) <= RingBandHalfWidth)
+                if (Math.Abs(dist - _currentRingRadius) <= RingBandHalfWidth)
                 {
                     int hitDir = player.Center.X < _ringCenter.X ? -1 : 1;
                     player.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), 9999, hitDir, dodgeable: false);
                 }
+
+                if (dist <= _currentRingRadius)
+                {
+                    player.AddBuff(ModContent.BuffType<TornWings>(), 120, false);
+                }
             }
         }
+
+        // ── Ring Collapse state machine ─────────────────────────────────────────────
+        void TickRingCollapse()
+        {
+            float hpFrac = (float)NPC.life / NPC.lifeMax;
+
+            if (_ringCollapseState == RingCollapseState.Inactive)
+            {
+                if (!_ringCollapseDone60 && hpFrac <= 0.60f)
+                {
+                    _ringCollapseDone60 = true;
+                    StartRingCollapse();
+                }
+                else if (!_ringCollapseDone30 && hpFrac <= 0.30f)
+                {
+                    _ringCollapseDone30 = true;
+                    StartRingCollapse();
+                }
+                return;
+            }
+
+            switch (_ringCollapseState)
+            {
+                case RingCollapseState.Telegraph:
+                    if (!Main.dedServ && Main.rand.NextBool(2))
+                    {
+                        UsefulFunctions.DustRingPrecise(_ringCenter, _ringCollapseTo, DustID.PurpleTorch, 60, alpha: 60, scale: 1.4f);
+                    }
+                    if (--_ringCollapseTimer <= 0)
+                    {
+                        _ringCollapseState = RingCollapseState.Contracting;
+                        _ringCollapseTimer = RingCollapseMoveTicks;
+                    }
+                    break;
+
+                case RingCollapseState.Contracting:
+                {
+                    float t = 1f - _ringCollapseTimer / (float)RingCollapseMoveTicks;
+                    _currentRingRadius = MathHelper.Lerp(_ringCollapseFrom, _ringCollapseTo, EaseInOut(t));
+                    if (--_ringCollapseTimer <= 0)
+                    {
+                        _currentRingRadius = _ringCollapseTo;
+                        _ringCollapseState = RingCollapseState.Holding;
+                        _ringCollapseTimer = RingCollapseHoldTicks;
+                    }
+                    break;
+                }
+
+                case RingCollapseState.Holding:
+                    _currentRingRadius = _ringCollapseTo;
+                    if (--_ringCollapseTimer <= 0)
+                    {
+                        _ringCollapseState = RingCollapseState.Expanding;
+                        _ringCollapseTimer = RingCollapseMoveTicks;
+                        _ringCollapseFrom = _ringCollapseTo;
+                        _ringCollapseTo = RingRadius;
+                    }
+                    break;
+
+                case RingCollapseState.Expanding:
+                {
+                    float t = 1f - _ringCollapseTimer / (float)RingCollapseMoveTicks;
+                    _currentRingRadius = MathHelper.Lerp(_ringCollapseFrom, _ringCollapseTo, EaseInOut(t));
+                    if (--_ringCollapseTimer <= 0)
+                    {
+                        _currentRingRadius = RingRadius;
+                        _ringCollapseState = RingCollapseState.Inactive;
+                    }
+                    break;
+                }
+            }
+        }
+
+        void StartRingCollapse()
+        {
+            _ringCollapseFrom = _currentRingRadius; // should already be RingRadius
+            _ringCollapseTo = RingRadius * (1f - RingCollapseContractFrac);
+            _ringCollapseState = RingCollapseState.Telegraph;
+            _ringCollapseTimer = RingCollapseTelegraphTicks;
+        }
+
+        static float EaseInOut(float t) => t * t * (3f - 2f * t);
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
@@ -590,7 +716,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player target = Main.player[NPC.target];
             Vector2 vel = UsefulFunctions.Aim(NPC.Center, target.Center, AbyssSlashSpeed);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(), AbyssSlashDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(), AbyssSlashDamage, 0f, Main.myPlayer, NPC.whoAmI + 1);
         }
 
         void FireAbyssOrbFinisher()
@@ -607,9 +733,555 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             foreach (float angle in angles)
             {
                 Vector2 vel = angle.ToRotationVector2() * 4f;
+                // ai[1] is offset by +1 (0 = "no owner") since ArtoriasAbyssBlast's own orb-fan
+                // spawns this same projectile without an owner - see ArtoriasFlameOrb.OnHitPlayer.
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasFlameOrb>(), AbyssOrbFinisherDamage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasFlameOrb>(), AbyssOrbFinisherDamage, 0f, Main.myPlayer, 0f, NPC.whoAmI + 1);
             }
+        }
+
+        // ── Abyss Tendril Grab hooks ─────────────────────────────────────────────
+        protected override void DoTendrilTelegraphTick(int elapsed)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            // The arm "dissolving into shadow" - heavy, gravity-less black/white dust building at
+            // the hand, growing denser as the wind-up progresses.
+            Vector2 handPos = NPC.Center + new Vector2(NPC.direction * 18f, -6f);
+            int count = 1 + elapsed / 6;
+            for (int i = 0; i < count; i++)
+            {
+                Color tint = Main.rand.NextBool() ? Color.Black : Color.White;
+                Dust d = Dust.NewDustPerfect(handPos + Main.rand.NextVector2Circular(10f, 10f), DustID.Smoke,
+                    Main.rand.NextVector2Circular(1.2f, 1.2f), 130, tint, Main.rand.NextFloat(0.8f, 1.2f));
+                d.noGravity = true;
+            }
+        }
+
+        protected override void DoTendrilLaunch()
+        {
+            SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.4f, Pitch = -0.4f }, NPC.Center);
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            Vector2 origin = NPC.Center + new Vector2(NPC.direction * (NPC.width * 0.5f + 10f), -NPC.height * 0.3f);
+            Vector2 vel = UsefulFunctions.Aim(origin, target.Center, 12f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssTendril>(), TendrilGrabDamage, 0f, Main.myPlayer, NPC.whoAmI);
+        }
+
+        protected override void DoTendrilReachTick()
+        {
+            if (Main.dedServ || !Main.rand.NextBool(3))
+            {
+                return;
+            }
+
+            Vector2 handPos = NPC.Center + new Vector2(NPC.direction * 18f, -6f);
+            Color tint = Main.rand.NextBool() ? Color.Black : Color.White;
+            Dust d = Dust.NewDustPerfect(handPos, DustID.Smoke, Vector2.Zero, 130, tint, 0.9f);
+            d.noGravity = true;
+        }
+
+        protected override void DoTendrilSwing()
+        {
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
+            TryMeleeHit(reach: 100f);
+        }
+
+        // ── Charge-up Nova: one-shot set-piece at 50% / 20% / 10% HP ────────────────
+        // Assumed reading of the brief: the three trigger thresholds are 50/20/10% HP, and blast
+        // sizes escalate 500/600/700px in that same order (the "final AOE" is the 10% one).
+        static readonly (float hpFrac, float radius, int damage)[] NovaStages =
+        {
+            (0.50f, 500f, 90),
+            (0.20f, 600f, 110),
+            (0.10f, 700f, 130),
+        };
+        readonly bool[] _novaStageDone = new bool[NovaStages.Length];
+        int _novaStageIndex = -1;
+
+        protected override bool CanNova => true;
+        protected override int NovaChargeTicks => 4 * 60;
+        protected override int NovaBlastHoldTicks => 24;
+        protected override int NovaRecoveryTicks => 90;
+
+        protected override bool ShouldTriggerNova()
+        {
+            float hp = (float)NPC.life / NPC.lifeMax;
+            for (int i = 0; i < NovaStages.Length; i++)
+            {
+                if (!_novaStageDone[i] && hp <= NovaStages[i].hpFrac)
+                {
+                    _novaStageDone[i] = true;
+                    _novaStageIndex = i;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        protected override void DoNovaChargeTick(int elapsed, int total)
+        {
+            if (Main.dedServ || _novaStageIndex < 0)
+            {
+                return;
+            }
+
+            float innerT = elapsed / (float)total;                     // 0 -> 1 over the full charge
+            float outerT = Math.Min(innerT * 1.6f, 1f);                 // outer ring races out ahead
+
+            float radius = NovaStages[_novaStageIndex].radius;
+
+            // Heavy engulfing dust thickening around Artorias, radius growing with innerT.
+            int count = 2 + elapsed / 8;
+            for (int i = 0; i < count; i++)
+            {
+                float r = MathHelper.Lerp(20f, radius * 0.35f, innerT);
+                Vector2 pos = NPC.Center + Main.rand.NextVector2Circular(r, r);
+                Color tint = Main.rand.NextBool(3) ? (Main.rand.NextBool() ? Color.Black : Color.White) : default;
+                Dust d = Dust.NewDustPerfect(pos, DustID.PurpleTorch, Vector2.Zero, 60, tint, Main.rand.NextFloat(1.3f, 2f));
+                d.noGravity = true;
+            }
+
+            // Thin outer telegraph ring, expanding faster than the inner dust cloud.
+            if (elapsed % 3 == 0)
+            {
+                UsefulFunctions.DustRingPrecise(NPC.Center, radius * outerT, DustID.PurpleTorch, 40, alpha: 70, scale: 1.3f);
+            }
+        }
+
+        protected override void DoNovaBlast()
+        {
+            if (_novaStageIndex < 0)
+            {
+                return;
+            }
+
+            var (_, radius, damage) = NovaStages[_novaStageIndex];
+
+            SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.3f }, NPC.Center);
+            UsefulFunctions.ScreenShake(NPC.Center, strength: 10f, frames: 20);
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasChargeNova>(), damage, 6f, Main.myPlayer, radius);
+        }
+
+        // ── Abyss Shard: ground-spike combos, unlocked permanently at 60% HP ────────
+        // Each individual shard (spawned via SpawnShardAt) carries its own 40-tick ground telegraph
+        // and pop - the boss side only decides WHERE and WHEN to spawn one. No recovery phase per the
+        // brief: the moment a sequence ends, control returns immediately so another attack can follow.
+        enum AbyssShardVariant { Burst3, Domino6, DominoPulse4x2, Escalating357 }
+        bool _abyssShardUnlocked;
+        AbyssShardVariant _abyssShardVariant;
+        int _abyssShardDominoDir;
+        Vector2 _abyssShardAnchor;
+
+        const int AbyssShardDamage = 35;
+        const int AbyssShardDominoGapTicks = 10;
+        const int AbyssShardWaveGapTicks = 60;
+        const float AbyssShardSpacing = 4 * 16f; // 4 tiles
+
+        protected override bool CanAbyssShard => _abyssShardUnlocked;
+        protected override float AbyssShardMinRange => 80f;
+        protected override float AbyssShardMaxRange => 900f;
+        protected override int AbyssShardChance => 12;
+        protected override int AbyssShardCooldownAfterUse => 420;
+        protected override int AbyssShardTelegraphTicks => 30;
+
+        protected override void DoAbyssShardFire(int fireIndex)
+        {
+            Player target = Main.player[NPC.target];
+
+            if (fireIndex == 0)
+            {
+                _abyssShardVariant = (AbyssShardVariant)Main.rand.Next(4);
+                _abyssShardDominoDir = Main.rand.NextBool() ? -1 : 1;
+                _abyssShardAnchor = target.Center;
+            }
+
+            switch (_abyssShardVariant)
+            {
+                // 3 shards centered on the player, 4 tiles apart, all at once.
+                case AbyssShardVariant.Burst3:
+                    if (fireIndex == 0)
+                        SpawnShardCluster(target.Center, 3, AbyssShardSpacing);
+                    break;
+
+                // 6 shards marching left-or-right from the player, adjacent tiles, one every 10 ticks.
+                case AbyssShardVariant.Domino6:
+                    SpawnShardAt(_abyssShardAnchor + new Vector2(_abyssShardDominoDir * 16f * fireIndex, 0f));
+                    break;
+
+                // 4 marching one way from a fixed point, then 4 more marching back the other way.
+                case AbyssShardVariant.DominoPulse4x2:
+                    if (fireIndex < 4)
+                        SpawnShardAt(_abyssShardAnchor + new Vector2(16f * fireIndex, 0f));
+                    else
+                        SpawnShardAt(_abyssShardAnchor - new Vector2(16f * (fireIndex - 4), 0f));
+                    break;
+
+                // Escalating spaced volleys: 3, then 5, then 7 - each re-centered on the player.
+                case AbyssShardVariant.Escalating357:
+                    int count = fireIndex switch { 0 => 3, 1 => 5, _ => 7 };
+                    SpawnShardCluster(target.Center, count, AbyssShardSpacing);
+                    break;
+            }
+        }
+
+        protected override int NextAbyssShardDelay(int completedFireIndex)
+        {
+            switch (_abyssShardVariant)
+            {
+                case AbyssShardVariant.Burst3:
+                    return -1; // single simultaneous burst
+
+                case AbyssShardVariant.Domino6:
+                    return completedFireIndex < 5 ? AbyssShardDominoGapTicks : -1;
+
+                case AbyssShardVariant.DominoPulse4x2:
+                    return completedFireIndex < 7 ? AbyssShardDominoGapTicks : -1;
+
+                case AbyssShardVariant.Escalating357:
+                    return completedFireIndex < 2 ? AbyssShardWaveGapTicks : -1;
+
+                default:
+                    return -1;
+            }
+        }
+
+        void SpawnShardCluster(Vector2 center, int count, float spacing)
+        {
+            float startOffset = -(count - 1) / 2f * spacing;
+            for (int i = 0; i < count; i++)
+            {
+                SpawnShardAt(center + new Vector2(startOffset + i * spacing, 0f));
+            }
+        }
+
+        void SpawnShardAt(Vector2 worldPos)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), worldPos, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.AbyssShard>(), AbyssShardDamage, 0f, Main.myPlayer);
+        }
+
+        // ── Homing Volley: dodgeback + overhead chop that fires one of 3 delayed-homing patterns ──
+        enum HomingVolleyVariant { StaggeredFan, PincerSplit, LatticeSnap }
+        HomingVolleyVariant _homingVolleyVariant;
+
+        const int HomingVolleyOrbDamage = 30;
+        const float HomingVolleyOrbSpeed = 8.5f;
+        const int HomingVolleyCurveTicks = 16;
+
+        protected override bool CanHomingVolley => true;
+        protected override float HomingVolleyMinRange => 280f;
+        protected override float HomingVolleyMaxRange => 650f;
+        protected override int HomingVolleyChance => 10;
+        protected override int HomingVolleyCooldownAfterUse => 300;
+
+        protected override void DoHomingVolleySwingTick(int elapsed, int total)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            // Same overhead-chop angle range the rotation sync uses, recomputed here purely for
+            // the dust position - the sword itself is driven independently in InvaderNPC.cs.
+            float swingT = total > 0 ? elapsed / (float)total : 1f;
+            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);
+            Vector2 bladePos = NPC.Center + dir * 46f;
+
+            if (Main.rand.NextBool(2))
+            {
+                Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);
+                Dust d = Dust.NewDustPerfect(bladePos + Main.rand.NextVector2Circular(6f, 6f), DustID.PurpleTorch,
+                    Vector2.Zero, 100, tint, Main.rand.NextFloat(1f, 1.6f));
+                d.noGravity = true;
+            }
+        }
+
+        protected override void DoHomingVolleyFire()
+        {
+            _homingVolleyVariant = (HomingVolleyVariant)Main.rand.Next(3);
+
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.65f, Pitch = -0.1f }, NPC.Center);
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 30f, -20f);
+
+            switch (_homingVolleyVariant)
+            {
+                case HomingVolleyVariant.StaggeredFan:
+                    FireStaggeredFan(origin, target);
+                    break;
+                case HomingVolleyVariant.PincerSplit:
+                    FirePincerSplit(origin, target);
+                    break;
+                case HomingVolleyVariant.LatticeSnap:
+                    FireLatticeSnap(origin, target);
+                    break;
+            }
+        }
+
+        // 5 orbs in a tight forward spread, each with its OWN curve-start delay (staggered 8 ticks
+        // apart) so they bend onto the player one after another instead of all at once.
+        void FireStaggeredFan(Vector2 origin, Player target)
+        {
+            float baseAngle = (target.Center - origin).ToRotation();
+            float[] spreadDeg = { -16f, -8f, 0f, 8f, 16f };
+            for (int i = 0; i < spreadDeg.Length; i++)
+            {
+                float angle = baseAngle + MathHelper.ToRadians(spreadDeg[i]);
+                Vector2 vel = angle.ToRotationVector2() * HomingVolleyOrbSpeed;
+                int straightTicks = 18 + i * 8;
+                SpawnHomingOrb(origin, vel, straightTicks);
+            }
+        }
+
+        // 2 orbs launched wide of the player on diverging paths - they look like a clean miss on
+        // both sides, then curve inward at the SAME moment, converging from opposite sides.
+        void FirePincerSplit(Vector2 origin, Player target)
+        {
+            float baseAngle = (target.Center - origin).ToRotation();
+            float[] spreadDeg = { -30f, 30f };
+            foreach (float deg in spreadDeg)
+            {
+                float angle = baseAngle + MathHelper.ToRadians(deg);
+                Vector2 vel = angle.ToRotationVector2() * HomingVolleyOrbSpeed;
+                SpawnHomingOrb(origin, vel, 32);
+            }
+        }
+
+        // 6 orbs launched in a parallel wall (same heading, offset perpendicular to it) so they
+        // travel straight in formation, then ALL curve at once toward wherever the player then is -
+        // the wall "snaps" onto the player's position rather than converging gradually.
+        void FireLatticeSnap(Vector2 origin, Player target)
+        {
+            float baseAngle = (target.Center - origin).ToRotation();
+            Vector2 aimDir = baseAngle.ToRotationVector2();
+            Vector2 perp = aimDir.RotatedBy(MathHelper.PiOver2);
+            Vector2 vel = aimDir * HomingVolleyOrbSpeed;
+
+            const int count = 6;
+            const float spacing = 40f;
+            float startOffset = -(count - 1) / 2f * spacing;
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 spawnPos = origin + perp * (startOffset + i * spacing);
+                SpawnHomingOrb(spawnPos, vel, 34);
+            }
+        }
+
+        void SpawnHomingOrb(Vector2 position, Vector2 velocity, int straightTicks)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), position, velocity,
+                ModContent.ProjectileType<Projectiles.Enemy.HomingAbyssOrb>(), HomingVolleyOrbDamage, 0f,
+                Main.myPlayer, straightTicks, HomingVolleyCurveTicks);
+        }
+
+        // ── Boomerang Crescent: 2 variants, both using the shared overhead-chop launch ──────────
+        const int BoomerangDamage = 38;
+        const float BoomerangSpeed = 7f;
+
+        protected override bool CanBoomerang => true;
+        protected override float BoomerangMinRange => 60f;
+        protected override float BoomerangMaxRange => 650f;
+        protected override int BoomerangChance => 9;
+        protected override int BoomerangCooldownAfterUse => 330;
+
+        protected override void DoBoomerangSwingTick(int elapsed, int total)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            float swingT = total > 0 ? elapsed / (float)total : 1f;
+            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);
+            Vector2 bladePos = NPC.Center + dir * 46f;
+
+            if (Main.rand.NextBool(2))
+            {
+                Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);
+                Dust d = Dust.NewDustPerfect(bladePos + Main.rand.NextVector2Circular(6f, 6f), DustID.PurpleTorch,
+                    Vector2.Zero, 100, tint, Main.rand.NextFloat(1f, 1.6f));
+                d.noGravity = true;
+            }
+        }
+
+        protected override void DoBoomerangFire()
+        {
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.65f, Pitch = -0.15f }, NPC.Center);
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 30f, -20f);
+            float baseAngle = (target.Center - origin).ToRotation();
+
+            if (Main.rand.NextBool())
+            {
+                // Mirrored Twin Loops: launched wide of the player on both sides, curling INWARD
+                // across each other, then both homing back to the caster - a converging double
+                // return that crosses near the player on the way back.
+                float leftAngle = baseAngle - MathHelper.ToRadians(35f);
+                float rightAngle = baseAngle + MathHelper.ToRadians(35f);
+                SpawnBoomerang(origin, leftAngle.ToRotationVector2() * BoomerangSpeed, 1f);
+                SpawnBoomerang(origin, rightAngle.ToRotationVector2() * BoomerangSpeed, -1f);
+            }
+            else
+            {
+                // Wide Solo Loop: one big crescent, curl direction random, sweeping a wide arc
+                // across and past the player before returning.
+                float sign = Main.rand.NextBool() ? 1f : -1f;
+                float launchAngle = baseAngle - sign * MathHelper.ToRadians(45f);
+                SpawnBoomerang(origin, launchAngle.ToRotationVector2() * BoomerangSpeed, sign);
+            }
+        }
+
+        void SpawnBoomerang(Vector2 position, Vector2 velocity, float curveDir)
+        {
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), position, velocity,
+                ModContent.ProjectileType<Projectiles.Enemy.BoomerangCrescent>(), BoomerangDamage, 0f,
+                Main.myPlayer, curveDir, NPC.whoAmI);
+        }
+
+        // ── Spiral Fan: 3 variants, a rotating-angle burst reusing the AbyssSlash crescent ───────
+        enum SpiralFanVariant { SingleStream, DoubleCounterSpiral, FullRotationSweep }
+        SpiralFanVariant _spiralFanVariant;
+        float _spiralFanBaseAngle;
+        float _spiralFanDir;
+
+        const int SpiralFanShotDamage = 18;
+        const float SpiralFanShotSpeed = 8.5f;
+
+        protected override bool CanSpiralFan => true;
+        protected override float SpiralFanMinRange => 60f;
+        protected override float SpiralFanMaxRange => 650f;
+        protected override int SpiralFanChance => 8;
+        protected override int SpiralFanCooldownAfterUse => 360;
+
+        protected override void DoSpiralFanSwingTick(int elapsed, int total)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            float swingT = total > 0 ? elapsed / (float)total : 1f;
+            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);
+            Vector2 bladePos = NPC.Center + dir * 46f;
+
+            if (Main.rand.NextBool(2))
+            {
+                Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);
+                Dust d = Dust.NewDustPerfect(bladePos + Main.rand.NextVector2Circular(6f, 6f), DustID.PurpleTorch,
+                    Vector2.Zero, 100, tint, Main.rand.NextFloat(1f, 1.6f));
+                d.noGravity = true;
+            }
+        }
+
+        protected override void DoSpiralFanFire(int shotIndex)
+        {
+            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 30f, -20f);
+
+            if (shotIndex == 0)
+            {
+                _spiralFanVariant = (SpiralFanVariant)Main.rand.Next(3);
+                _spiralFanDir = Main.rand.NextBool() ? 1f : -1f;
+                Player target = Main.player[NPC.target];
+                _spiralFanBaseAngle = (target.Center - origin).ToRotation();
+            }
+
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = 0.1f, PitchVariance = 0.1f }, NPC.Center);
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            switch (_spiralFanVariant)
+            {
+                case SpiralFanVariant.SingleStream:
+                {
+                    float angleStep = MathHelper.ToRadians(18f);
+                    float angle = _spiralFanBaseAngle + shotIndex * angleStep * _spiralFanDir;
+                    FireSpiralShot(origin, angle);
+                    break;
+                }
+                case SpiralFanVariant.DoubleCounterSpiral:
+                {
+                    float angleStep = MathHelper.ToRadians(16f);
+                    float angleA = _spiralFanBaseAngle + shotIndex * angleStep * _spiralFanDir;
+                    float angleB = _spiralFanBaseAngle - shotIndex * angleStep * _spiralFanDir;
+                    FireSpiralShot(origin, angleA);
+                    FireSpiralShot(origin, angleB);
+                    break;
+                }
+                case SpiralFanVariant.FullRotationSweep:
+                {
+                    // 18 steps of 20° = a full 360° rotation, so this variant also threatens
+                    // whoever's beside/behind the invader, not just the forward arc.
+                    float angleStep = MathHelper.ToRadians(20f);
+                    float angle = _spiralFanBaseAngle + shotIndex * angleStep * _spiralFanDir;
+                    FireSpiralShot(origin, angle);
+                    break;
+                }
+            }
+        }
+
+        protected override int NextSpiralFanDelay(int completedShotIndex)
+        {
+            switch (_spiralFanVariant)
+            {
+                case SpiralFanVariant.SingleStream:
+                    return completedShotIndex < 9 ? 5 : -1;
+                case SpiralFanVariant.DoubleCounterSpiral:
+                    return completedShotIndex < 7 ? 5 : -1;
+                case SpiralFanVariant.FullRotationSweep:
+                    return completedShotIndex < 17 ? 6 : -1;
+                default:
+                    return -1;
+            }
+        }
+
+        void FireSpiralShot(Vector2 origin, float angle)
+        {
+            Vector2 vel = angle.ToRotationVector2() * SpiralFanShotSpeed;
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
+                ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(), SpiralFanShotDamage, 0f, Main.myPlayer);
         }
 
         public override void SendExtraAI(BinaryWriter writer)

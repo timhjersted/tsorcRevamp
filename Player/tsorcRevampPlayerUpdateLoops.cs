@@ -2638,6 +2638,7 @@ namespace tsorcRevamp
         {
             AbyssTransitionEffects();
             ReduceGraveyardDesaturation();
+            SpawnAbyssMist();
 
             if (GravityField)
             {
@@ -2844,7 +2845,7 @@ namespace tsorcRevamp
                 return;
             }
 
-            int lifeCrystals = Math.Min(15, Math.Max(0, (Player.statLifeMax - GetStartingClassBaseLife()) / 20));
+            int lifeCrystals = Math.Min(GetLifeCrystalCap(), Math.Max(0, (Player.statLifeMax - GetStartingClassBaseLife()) / 20));
             int lifeCrystalGain = GetSoulsModeLifeCrystalGain(forceSoloLifeCrystalGain);
             int lifeReduction = lifeCrystals * (20 - lifeCrystalGain);
             if (lifeReduction > 0)
@@ -2860,6 +2861,47 @@ namespace tsorcRevamp
                 Player.statManaMax2 -= manaReduction;
                 if (Player.statMana > Player.statManaMax2) Player.statMana = Player.statManaMax2;
             }
+        }
+
+        // SoulsMode's per-crystal gain is reduced (see GetSoulsModeLifeCrystalGain), but vanilla hard-caps
+        // consumption at 15 Life Crystals / 9 Mana Crystals (Player.ConsumedLifeCrystals/ConsumedManaCrystals),
+        // which was sized for the un-reduced +20/use. Left alone, a solo Unkindled/Bearer player caps out at
+        // base+150 life (270 for Melee) and base+90 mana (100 for Melee) — well short of the full class max —
+        // because they physically can't consume enough crystals to make up for the reduced gain. ILEdits.cs
+        // patches the vanilla usage-gate and Player.ConsumedLifeCrystals/ConsumedManaCrystals clamp to allow
+        // consuming up to these raised caps for SoulsMode players, so the *same* full class max is reachable,
+        // just via more crystals. Life gain is party-scaled (10/15/20), so the cap needed to net +300 total
+        // scales inversely (30/20/15).
+        internal int GetLifeCrystalCap()
+        {
+            if (!SoulsMode)
+            {
+                return 15;
+            }
+
+            return GetSoulsModeLifeCrystalGain() switch
+            {
+                10 => 30,
+                15 => 20,
+                _ => 15
+            };
+        }
+
+        // SoulsMode's target ceiling for max mana — higher than the vanilla-equivalent (class base + 180)
+        // so magic-leaning SoulsMode builds have real headroom. Mana's reduction is a flat -10/crystal
+        // regardless of party size (net +10/crystal), so the crystal count needed to reach this ceiling
+        // depends on the class's starting base mana.
+        private const int SoulsModeManaTarget = 300;
+
+        internal int GetManaCrystalCap()
+        {
+            if (!SoulsMode)
+            {
+                return 9;
+            }
+
+            int netNeeded = SoulsModeManaTarget - GetStartingClassBaseMana();
+            return Math.Max(9, (int)Math.Ceiling(netNeeded / 10.0));
         }
         // Purple dust burst + a portal-ish whoosh on the exact tick EnterTheAbyss flips, so stepping into (or
         // out of) the Abyss reads as a reality shift rather than just a debuff icon appearing. Entering uses a
@@ -2921,6 +2963,79 @@ namespace tsorcRevamp
 
             float progress = MathHelper.Lerp(0f, 0.75f, Main.GraveyardVisualIntensity) * GraveyardDesaturationMultiplier;
             Filters.Scene["Graveyard"].GetShader().UseProgress(progress).UseIntensity(1.2f * GraveyardDesaturationMultiplier);
+        }
+
+        // Ambient ground mist for the Abyss, using real vanilla Dust instead of a custom-drawn sprite/cloud
+        // layer (three earlier attempts at that all hit stability or rendering bugs - see git history on
+        // MethodSwaps.cs). Dust is simplest here specifically because we don't have to draw, position, fade, or
+        // clean it up ourselves - Terraria's own dust system already handles all of that once spawned, the same
+        // way Rain (Terraria/Rain.cs) doesn't re-derive anything about the world each frame, it just spawns a
+        // particle with its own position/velocity and lets it live its own life.
+        //
+        // Style (dust type 77/Ebonwood, alpha 180, scale 1.25) matches ArtoriasArmor.cs's own UpdateArmorSet
+        // aura dust exactly - that one reads as subtle, ours (Cloud/alpha 80/bigger scale) was too heavy.
+        //
+        // Spawn positions come from an actual surface scan (first tile with open air above a solid tile) within
+        // a fixed 20-tile radius of the player - but unlike the earlier tile-scanning attempts, this list is
+        // only rebuilt periodically (every AbyssMistRefreshInterval ticks), not every frame, and it's anchored
+        // to the player's position rather than the viewport. That's what avoids the flicker: a per-frame scan
+        // tied to the camera changes its answer on every tiny movement, but a radius tied to the player's own
+        // position barely changes tick to tick, and only actually re-evaluates on a slow timer regardless.
+        private const int AbyssMistDustType = DustID.Ebonwood;
+        private static readonly Color AbyssMistTint = new Color(150, 110, 210);
+        private const int AbyssMistScanRadius = 20; // tiles
+        private const int AbyssMistRefreshInterval = 60; // ticks between rescans (1 second)
+
+        private List<Point> abyssMistSurfaceTiles = new List<Point>();
+        private int abyssMistRefreshTimer;
+
+        private void SpawnAbyssMist()
+        {
+            if (!EnterTheAbyss || Main.dedServ)
+            {
+                return;
+            }
+
+            if (abyssMistRefreshTimer <= 0)
+            {
+                abyssMistRefreshTimer = AbyssMistRefreshInterval;
+                RefreshAbyssMistSurfaceTiles();
+            }
+            else
+            {
+                abyssMistRefreshTimer--;
+            }
+
+            if (abyssMistSurfaceTiles.Count == 0 || !Main.rand.NextBool(3))
+            {
+                return;
+            }
+
+            Point tile = abyssMistSurfaceTiles[Main.rand.Next(abyssMistSurfaceTiles.Count)];
+            Vector2 spawnPos = new Vector2(tile.X * 16f - 5f, tile.Y * 16f);
+            int dustIndex = Dust.NewDust(spawnPos, 26, 16, AbyssMistDustType, 0f, -2f, 180, AbyssMistTint, 1.25f);
+            Main.dust[dustIndex].noGravity = true;
+        }
+
+        private void RefreshAbyssMistSurfaceTiles()
+        {
+            abyssMistSurfaceTiles.Clear();
+
+            int playerTileX = (int)(Player.Center.X / 16f);
+            int playerTileY = (int)(Player.Center.Y / 16f);
+
+            for (int x = Math.Max(1, playerTileX - AbyssMistScanRadius); x <= Math.Min(Main.maxTilesX - 2, playerTileX + AbyssMistScanRadius); x++)
+            {
+                for (int y = Math.Max(1, playerTileY - AbyssMistScanRadius); y <= Math.Min(Main.maxTilesY - 2, playerTileY + AbyssMistScanRadius); y++)
+                {
+                    Tile tile = Main.tile[x, y];
+                    Tile above = Main.tile[x, y - 1];
+                    if (tile.HasTile && Main.tileSolid[tile.TileType] && !above.HasTile)
+                    {
+                        abyssMistSurfaceTiles.Add(new Point(x, y - 1));
+                    }
+                }
+            }
         }
 
         private int previousStatLifeMax = -1;

@@ -58,11 +58,12 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
             EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
-            // Smart positioning: spear-thrower holds a medium 5-16 band.
-            globalNPC.KiteRangeMin = 5f;
+            // Smart positioning: spear-thrower may close to melee range but stays within a medium 0-16 band.
+            globalNPC.KiteRangeMin = 0f;
             globalNPC.KiteRangeMax = 16f;
+            globalNPC.KiteLooseness = 0.8f;
             globalNPC.HasGhostAfterimages = true;
-            globalNPC.MaxJumpPower = 10f;
+            globalNPC.MaxJumpPower = 13f; // experimental: can route up to roughly 15-tile ledges
             globalNPC.MaxJumpBoost = 6f;
             // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
@@ -86,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             {
                 return 0.1f; // was 0.17
             }
-            if (spawnInfo.Player.ZoneGraveyard)
+            if (NPC.downedBoss3 && spawnInfo.Player.ZoneGraveyard)
             {
                 return 0.2f; // was 0.17
             }

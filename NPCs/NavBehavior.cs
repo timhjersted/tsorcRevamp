@@ -72,7 +72,9 @@ namespace tsorcRevamp.NPCs
             // (that's usually why it looks like a jitter target rather than a threat worth re-engaging), so
             // without this exclusion every fleeing NPC would snap straight back to Pursue the instant hasLos
             // is true and undo the flee before it moves anywhere.
-            if (hasLos && g.PursuitState != PursuitState.Flee)
+            // GhostUnreachableWanderTimer is the same kind of intentional disengage: let wall-phasing ghosts
+            // finish their wander beat instead of snapping back to a known-bad player column.
+            if (hasLos && g.PursuitState != PursuitState.Flee && g.GhostUnreachableWanderTimer <= 0)
             {
                 g.LastKnownPlayerPos = player.Center;
                 if (g.PursuitState == PursuitState.Pursue || inAggro)

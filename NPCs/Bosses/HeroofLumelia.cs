@@ -81,7 +81,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.Agility = 0.35f;
-            globalNPC.NavSearchRadius = 100;
+            globalNPC.NavSearchRadius = 80;
             globalNPC.MaxJumpPower = 12f;
             globalNPC.MaxJumpBoost = 6f;
             globalNPC.NavGiveUpTicks = 180;

@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             globalNPC.EvasiveBasiliskShifterFarForwardHop = true;
             globalNPC.KiteRangeMin = 9f;
             globalNPC.KiteRangeMax = 18f;
-            globalNPC.KiteLooseness = 0.15f;
+            globalNPC.KiteLooseness = 0.4f;
         }
 
         float breathTimer = 60;

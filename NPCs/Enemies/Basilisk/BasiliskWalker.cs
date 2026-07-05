@@ -76,6 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             // Smart positioning: medium-range bio-spitter — hold a 7-18 band (backs off below 7, lets you close above 18).
             globalNPC.KiteRangeMin = 7f;
             globalNPC.KiteRangeMax = 18f;
+            globalNPC.KiteLooseness = 0.4f;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

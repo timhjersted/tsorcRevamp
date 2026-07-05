@@ -17,6 +17,18 @@ namespace tsorcRevamp
 
             Terraria.IL_Player.Update += Player_Update;
 
+            // SoulsMode Life/Mana Crystal cap raise — see GetLifeCrystalCap/GetManaCrystalCap in
+            // tsorcRevampPlayerUpdateLoops.cs for why this is needed. Both the usage-gate check and the
+            // ConsumedLifeCrystals/ConsumedManaCrystals property setters (which independently re-clamp to
+            // 15/9) need patching, or the setter would silently undo the gate change. Property accessors
+            // aren't exposed as IL_Player.set_X members (same reason DrawWires_Patch below uses reflection
+            // instead of a built-in hook), so these two go through MonoModHooks.Modify.
+            MonoModHooks.Modify(typeof(Player).GetProperty("ConsumedLifeCrystals").GetSetMethod(), new ILContext.Manipulator(ConsumedLifeCrystals_CapPatch));
+            MonoModHooks.Modify(typeof(Player).GetProperty("ConsumedManaCrystals").GetSetMethod(), new ILContext.Manipulator(ConsumedManaCrystals_CapPatch));
+            Terraria.IL_Player.ItemCheck_UseLifeCrystal += ItemCheckUseLifeCrystal_CapPatch;
+            Terraria.IL_Player.ItemCheck_UseManaCrystal += ItemCheckUseManaCrystal_CapPatch;
+            Terraria.IL_Player.ItemCheck_UseLifeFruit += ItemCheckUseLifeFruit_CapPatch;
+
             MethodInfo drawMapIconButtons = typeof(Main).GetMethod("DrawMapIconButtons", BindingFlags.NonPublic | BindingFlags.Instance);
             if (drawMapIconButtons != null)
             {
@@ -161,6 +173,98 @@ namespace tsorcRevamp
             // If neither pattern matches, tModLoader likely already removed this cap at the framework level.
             // This is not a fatal error — mana above 400 still works via PostUpdateEquips.
             mod.Logger.Warn("Player_Update mana-cap patch: instruction not found — tModLoader may have already removed this cap. Mana above 400 should still work.");
+        }
+
+        private static int GetLifeCrystalCapFor(Player player) => player.GetModPlayer<tsorcRevampPlayer>().GetLifeCrystalCap();
+        private static int GetManaCrystalCapFor(Player player) => player.GetModPlayer<tsorcRevampPlayer>().GetManaCrystalCap();
+
+        // Player.ConsumedLifeCrystals's setter does `consumedLifeCrystals = Utils.Clamp(value, 0, 15);` —
+        // replace the constant upper bound (15) with our per-player SoulsMode-aware cap.
+        internal static void ConsumedLifeCrystals_CapPatch(ILContext il)
+        {
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(15)))
+            {
+                mod.Logger.Warn("ConsumedLifeCrystals_CapPatch: instruction not found — Life Crystal cap raise for SoulsMode will not apply.");
+                return;
+            }
+
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Func<Player, int>>(GetLifeCrystalCapFor);
+        }
+
+        // Player.ConsumedManaCrystals's setter does `consumedManaCrystals = Utils.Clamp(value, 0, 9);` —
+        // replace the constant upper bound (9) with our per-player SoulsMode-aware cap.
+        internal static void ConsumedManaCrystals_CapPatch(ILContext il)
+        {
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(9)))
+            {
+                mod.Logger.Warn("ConsumedManaCrystals_CapPatch: instruction not found — Mana Crystal cap raise for SoulsMode will not apply.");
+                return;
+            }
+
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Func<Player, int>>(GetManaCrystalCapFor);
+        }
+
+        // ItemCheck_UseLifeCrystal gates on `ConsumedLifeCrystals < 15` — raise the 15 to our cap.
+        internal static void ItemCheckUseLifeCrystal_CapPatch(ILContext il)
+        {
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(15)))
+            {
+                mod.Logger.Warn("ItemCheckUseLifeCrystal_CapPatch: instruction not found — Life Crystal cap raise for SoulsMode will not apply.");
+                return;
+            }
+
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Func<Player, int>>(GetLifeCrystalCapFor);
+        }
+
+        // ItemCheck_UseManaCrystal gates on `ConsumedManaCrystals < 9` — raise the 9 to our cap.
+        internal static void ItemCheckUseManaCrystal_CapPatch(ILContext il)
+        {
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(9)))
+            {
+                mod.Logger.Warn("ItemCheckUseManaCrystal_CapPatch: instruction not found — Mana Crystal cap raise for SoulsMode will not apply.");
+                return;
+            }
+
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Func<Player, int>>(GetManaCrystalCapFor);
+        }
+
+        // ItemCheck_UseLifeFruit requires `ConsumedLifeCrystals == 15` (all Life Crystals used) before Life
+        // Fruit works. Since SoulsMode's "all crystals used" point is now a higher number, raise the 15 here
+        // too or Life Fruit would become permanently unusable for SoulsMode players.
+        internal static void ItemCheckUseLifeFruit_CapPatch(ILContext il)
+        {
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(15)))
+            {
+                mod.Logger.Warn("ItemCheckUseLifeFruit_CapPatch: instruction not found — Life Fruit unlock threshold for SoulsMode will not apply.");
+                return;
+            }
+
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Func<Player, int>>(GetLifeCrystalCapFor);
         }
 
         internal static void Chest_Patch(ILContext il)

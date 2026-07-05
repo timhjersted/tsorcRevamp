@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.rarity = 32;
             NPC.boss = true;
             AnimationType = NPCID.PossessedArmor;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 100; // Phase 2: SmartFighter4AI movement (boss)
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement (boss)
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Witchking.DespawnHandler"), Color.Purple, DustID.PurpleTorch);
 
             // Allows the witchking to properly spawn in the arena

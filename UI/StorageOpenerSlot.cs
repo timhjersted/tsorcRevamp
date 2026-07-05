@@ -15,6 +15,13 @@ namespace tsorcRevamp.UI
     // there is nothing in the slot to protect.
     public class StorageOpenerSlot : UIItemSlot
     {
+        // Self-tracked press edge, same fix as StorageUIState's header drag: the inherited UIItemSlot.Update()
+        // detects clicks via TerraUI's MouseUtils.JustPressed, which keys off PlayerInput.MouseInfoOld/MouseInfo
+        // (refreshed at a different point in the frame than our custom interface layer runs) — that made this
+        // button miss most clicks. Main.mouseLeft/!prevMouseLeft is the reliable primitive we already use
+        // elsewhere in this mod.
+        private bool prevMouseLeft;
+
         public StorageOpenerSlot(int size = 52)
             : base(Vector2.Zero, size, ItemSlot.Context.InventoryItem,
                    LangUtils.GetTextValue("UI.OpenStorage"), null, null, null, null, null, false, true)
@@ -22,6 +29,26 @@ namespace tsorcRevamp.UI
             BackOpacity = 0.8f;
             // Never allow anything to occupy or be pulled from the slot.
             DisallowManualRemoval = true;
+        }
+
+        public override void Update()
+        {
+            UpdateRectangle();
+
+            bool hovered = Rectangle.Contains(Main.mouseX, Main.mouseY);
+            if (hovered)
+            {
+                Main.LocalPlayer.mouseInterface = true;
+                Main.HoverItem = Item;
+                Main.hoverItemName = HoverText;
+
+                if (Main.mouseLeft && !prevMouseLeft)
+                {
+                    OnLeftClick();
+                }
+            }
+
+            prevMouseLeft = Main.mouseLeft;
         }
 
         // Left click opens/closes Storage instead of doing any item swap.

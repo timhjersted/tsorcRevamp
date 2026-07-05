@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override void RunMovementAI(float speedMult)
         {
             var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavSearchRadius = 90;
+            globalNPC.NavSearchRadius = 80;
             globalNPC.RemembersLastKnownPos = true;
 
             SmartFighter4AI.Run(NPC,

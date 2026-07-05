@@ -38,6 +38,7 @@ namespace tsorcRevamp.NPCs
         // still requires a clear shaft; deeper drops cost more and are penalized when the player is ABOVE, so
         // this only enables descending toward a lower target, not suicidal pit-diving.
         private const int MaxDropDepth = 24;
+        private const int MaxJumpRiseTiles = 30;
         private const int StepTimeoutFrames = 180;
         private const float TileF = 16f;
         private const float AlignTolerancePx = 12f;
@@ -336,7 +337,7 @@ namespace tsorcRevamp.NPCs
                         && (s.Plan[s.PlanIndex].Kind == StepKind.JumpUp || s.Plan[s.PlanIndex].Kind == StepKind.JumpGap);
                     if (!s.IsCommitted && !approachingJump && grounded && s.ReplanCooldown == 0 && ShouldReplan(s, npc, player))
                     {
-                        Replan(s, npc, player);
+                        Replan(s, npc, player, topSpeed);
                         s.ReplanCooldown = ReplanCooldown;
                     }
                 }
@@ -493,6 +494,12 @@ namespace tsorcRevamp.NPCs
                 // no path at all. Read by the shared FSM (tsorcRevampAIs.cs) to decide whether a hit landed
                 // by an unreachable attacker should trigger Flee instead of a normal re-aggro.
                 g.UnreachableFrames = noPathToTarget ? Math.Min(g.UnreachableFrames + 1, 100000) : 0;
+                if (noPathToTarget && g.CanPassThroughWalls && g.UnreachableFrames >= 60)
+                {
+                    int awayDir = Math.Sign(npc.Center.X - player.Center.X);
+                    g.PatrolDirection = awayDir != 0 ? awayDir : (npc.direction != 0 ? npc.direction : 1);
+                    g.GhostUnreachableWanderTimer = Math.Max(g.GhostUnreachableWanderTimer, 300);
+                }
                 if (noPathToTarget)
                 {
                     if (Math.Abs(npc.Center.X - s.StuckCheckX) > 2f)
@@ -704,6 +711,12 @@ namespace tsorcRevamp.NPCs
         private static float _planGravity = 0.3f;
         private static float _planJumpCeil = 9f;
         private static float _planMaxLaunchVx = 6.5f;
+        private static int MaxPlanRiseTiles()
+        {
+            float gravity = _planGravity > 0f ? _planGravity : 0.3f;
+            float apexTiles = (_planJumpCeil * _planJumpCeil) / (2f * gravity * TileF);
+            return Math.Min(Math.Max((int)Math.Floor(apexTiles - 1f), 1), MaxJumpRiseTiles);
+        }
         // Beast flat-ground constraint (set per-frame in Run from g.MinSurfaceWidth). When > 0, IsStandableTile
         // requires a flat run >= this many tiles wide, CENTERED under the enemy, so A* only builds spans / lands
         // jumps on surfaces a large enemy can actually stand FULLY on (no 1-tile-ledge hopping, no edge-perching).
@@ -726,14 +739,14 @@ namespace tsorcRevamp.NPCs
         // arcs up-and-over instead of re-committing to an unmakeable wall-hug jump forever (the pit-wedge loop).
         private static bool _canPassWalls = false;
 
-        private static void Replan(NavState s, NPC npc, Player player)
+        private static void Replan(NavState s, NPC npc, Player player, float topSpeed)
         {
             // Capture this NPC's jump physics so BuildEdges/TryFindJumpEdge only propose
             // edges this enemy can actually clear (gravity-aware, gap-width-aware).
             tsorcRevampGlobalNPC pg = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             _planGravity = npc.gravity > 0f ? npc.gravity : 0.3f;
             _planJumpCeil = Math.Max(pg.MaxJumpPower, 5f);
-            _planMaxLaunchVx = 1.55f + Math.Max(pg.MaxJumpBoost, 2f); // topSpeed + boost ceiling
+            _planMaxLaunchVx = Math.Max(topSpeed, 0f) + Math.Max(pg.MaxJumpBoost, 2f); // actual topSpeed + boost ceiling
 
             int npcFeetY = GetFeetTileY(npc);
             int npcCx = (int)(npc.Center.X / TileF);
@@ -741,8 +754,8 @@ namespace tsorcRevamp.NPCs
             int playerCx = (int)(player.Center.X / TileF);
 
             // Per-NPC search window = the NavSearchRadius lever (tiles). Caller only invokes Replan when
-            // NavSearchRadius > 0; clamp to the legacy ScanRadius as a sane upper bound so a huge value
-            // can't blow up the span build. Smaller radius = dumber AND cheaper.
+            // NavSearchRadius > 0; clamp to the hard ScanRadius caps so a huge accidental value can't
+            // blow up the span build. Smaller radius = dumber AND cheaper.
             int radius = Math.Clamp(pg.NavSearchRadius, 1, ScanRadiusX);
             int yRadius = Math.Min(radius, ScanRadiusY);
             int xMin = npcCx - radius, xMax = npcCx + radius;
@@ -874,7 +887,7 @@ namespace tsorcRevamp.NPCs
                 {
                     if (b == a) continue;
                     int dy = a.Y - b.Y; // positive = b is above
-                    if (Math.Abs(dy) > 8) continue; // outside any arc reach
+                    if (dy > MaxPlanRiseTiles() || dy < -8) continue; // outside this NPC's jump reach
                     if (TryFindJumpEdge(a, b, dy, out int launchX, out int landX, out int absDx))
                     {
                         EdgeKind kind = dy >= 1 ? EdgeKind.JumpUp : EdgeKind.JumpGap;
@@ -1584,8 +1597,9 @@ namespace tsorcRevamp.NPCs
             {
                 int dx = x < sp.LeftX ? sp.LeftX - x : x > sp.RightX ? x - sp.RightX : 0;
                 int dy = Math.Abs(sp.Y - feetY);
-                // Cap so we don't reach into far rooms.
-                if (dx > 16 || dy > 12) continue;
+                // Cap so we don't reach into far rooms. The vertical cap scales with this NPC's jump power,
+                // so high-jump experiments can still select a valid ledge span as their goal.
+                if (dx > 16 || dy > Math.Max(12, MaxPlanRiseTiles())) continue;
                 int d = dx + dy * 2;
                 if (d < bestDist) { bestDist = d; best = sp; }
             }
@@ -2210,7 +2224,8 @@ namespace tsorcRevamp.NPCs
                 reason = $"infeasible dx={absDx} rise={rise} g={npc.gravity:F2} maxVx={maxLaunchVx:F1}";
                 return true;
             }
-            FireJump(s, npc, launchDir, power, launchVx, /*airCommit*/ 35, /*planCommit*/ 45);
+            int airCommitFrames = EstimateJumpAirFrames(power, rise, npc.gravity);
+            FireJump(s, npc, launchDir, power, launchVx, airCommitFrames, airCommitFrames + 10);
             s.JumpFiredThisStep = true;
             if (isVertical)
             {
@@ -2289,6 +2304,16 @@ namespace tsorcRevamp.NPCs
             jumpPower = MathHelper.Clamp(chosenPower, 4f, maxJumpPower);
             launchVx = MathHelper.Clamp(chosenVx, 0.4f, maxLaunchVx);
             return true;
+        }
+
+        private static int EstimateJumpAirFrames(float jumpPower, int riseTiles, float gravity)
+        {
+            if (gravity <= 0f) gravity = 0.3f;
+            float landingDeltaY = -riseTiles * TileF;
+            float disc = jumpPower * jumpPower + 2f * gravity * landingDeltaY;
+            if (disc < 0f) return 35;
+            float frames = (jumpPower + (float)Math.Sqrt(disc)) / gravity;
+            return Math.Min(Math.Max((int)Math.Ceiling(frames) + 8, 35), 150);
         }
 
         private static (float power, float boost) NearestArc(int absDx, int dy, float jumpCeil, float boostCeil)

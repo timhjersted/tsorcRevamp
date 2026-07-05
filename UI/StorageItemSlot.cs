@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.GameInput;
 using Terraria.ModLoader;
+using Terraria.ID;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
@@ -59,22 +60,39 @@ namespace tsorcRevamp.UI
             {
                 Main.LocalPlayer.mouseInterface = true;
 
-                int beforeType = working.type;
-                int beforeStack = working.stack;
-
-                // Vanilla handles left/right/shift click, stack splitting, etc. for free.
-                ItemSlot.Handle(ref working, _context);
-
-                // Reconcile only when an interaction actually changed the slot (avoids per-hover rebuilds).
-                if (working.type != beforeType || working.stack != beforeStack)
+                // Shift-click a storage slot -> withdraw straight to inventory (mirrors shift-clicking an
+                // inventory item to deposit it). Handled entirely ourselves, BEFORE ItemSlot.Handle: the
+                // single-item overload it uses hands our own ShiftClickSlot hook a shared scratch array
+                // (ItemSlot.singleSlotArray) instead of the real inventory, so vanilla's shift-click plumbing
+                // can't tell this slot apart from a real one — see tsorcRevampPlayerMain.ShiftClickSlot.
+                if (hasItem && Main.mouseLeft && Main.mouseLeftRelease && ItemSlot.ShiftInUse)
                 {
-                    ui.WriteBack(source, working);
-
-                    // For a manual deposit into an empty slot, WriteBack cloned the item into storage — clear
-                    // the scratch item so it isn't counted again next frame.
-                    if (source < 0)
+                    tsorcRevampPlayer mp = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
+                    if (mp.WithdrawToInventory(working))
                     {
-                        working.TurnToAir();
+                        ui.WriteBack(source, working);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                    }
+                }
+                else
+                {
+                    int beforeType = working.type;
+                    int beforeStack = working.stack;
+
+                    // Vanilla handles left/right click, stack splitting, etc. for free.
+                    ItemSlot.Handle(ref working, _context);
+
+                    // Reconcile only when an interaction actually changed the slot (avoids per-hover rebuilds).
+                    if (working.type != beforeType || working.stack != beforeStack)
+                    {
+                        ui.WriteBack(source, working);
+
+                        // For a manual deposit into an empty slot, WriteBack cloned the item into storage — clear
+                        // the scratch item so it isn't counted again next frame.
+                        if (source < 0)
+                        {
+                            working.TurnToAir();
+                        }
                     }
                 }
             }

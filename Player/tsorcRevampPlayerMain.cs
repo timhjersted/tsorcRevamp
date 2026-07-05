@@ -963,8 +963,13 @@ namespace tsorcRevamp
 
             // Dark Souls Storage: while the Storage pop-up is open, shift-clicking an inventory item sends it
             // to storage. Scoped to "storage open" so it never hijacks the normal shift-click-into-a-chest path.
+            // Must also check `inventory == Player.inventory`: the Storage grid's own slots reuse this exact
+            // context via ItemSlot.Handle's single-item overload (which hands back ItemSlot.singleSlotArray, a
+            // shared scratch array, not the real inventory) — without this guard, shift-clicking an item that's
+            // already IN storage would re-deposit it into itself and corrupt the stack.
             if (UI.StorageUIState.Visible
                 && (context == ItemSlot.Context.InventoryItem)
+                && inventory == Player.inventory
                 && IsStorageDepositable(inventory[slot]))
             {
                 if (DepositToStorage(inventory[slot]))

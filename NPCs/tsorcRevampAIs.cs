@@ -472,6 +472,7 @@ namespace tsorcRevamp.NPCs
                         globalNPC.DisengageTimer = 0;
                         globalNPC.BeastStale = false;
                         globalNPC.BeastUnreachableFrames = 0;
+                        globalNPC.GhostUnreachableWanderTimer = 0;
                     }
                 }
 
@@ -591,7 +592,19 @@ namespace tsorcRevamp.NPCs
                             && Math.Abs(npc.Center.X - fsmPlayer.Center.X) < 16f * 1.5f
                             && Math.Abs(fsmPlayer.Center.Y - npc.Center.Y) > 24f;
 
-                        if (globalNPC.CanPassThroughWalls && !xAlignedDiffLevel)
+                        if (globalNPC.CanPassThroughWalls && globalNPC.GhostUnreachableWanderTimer > 0)
+                        {
+                            globalNPC.GhostUnreachableWanderTimer--;
+                            if (globalNPC.PatrolDirection == 0)
+                            {
+                                globalNPC.PatrolDirection = npc.direction != 0 ? npc.direction : 1;
+                            }
+                            npc.direction = globalNPC.PatrolDirection;
+                            npc.spriteDirection = npc.direction;
+                            npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.direction * topSpeed, acceleration / topSpeed);
+                            if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
+                        }
+                        else if (globalNPC.CanPassThroughWalls && !xAlignedDiffLevel)
                         {
                             // Ghost enemies always drift toward the player even in "patrol" — wandering away from
                             // a wall they can't pathfind through means TryGhostWallTeleport never fires.

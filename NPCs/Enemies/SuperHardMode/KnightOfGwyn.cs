@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             tsorcRevampGlobalNPC knightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             knightGlobalNPC.Agility = 0.1f;
             knightGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
-            knightGlobalNPC.NavSearchRadius = 100;
+            knightGlobalNPC.NavSearchRadius = 80;
         }
 
         public int attackPatternCounter = 0;

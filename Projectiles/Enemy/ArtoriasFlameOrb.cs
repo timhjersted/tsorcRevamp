@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -92,6 +93,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false);
             target.AddBuff(ModContent.BuffType<Abyss>(), 3 * 60 * 60, false);
             SpawnFlameDust(25, 4.6f, 1.9f);
+
+            // ai[1] is the firing NPC's whoAmI, offset by +1 (0 = "no owner" - ArtoriasAbyssBlast's
+            // own orb fan spawns this projectile anonymously) so the dodge-punish-chain system knows
+            // an Abyss Slash orb finisher actually connected.
+            int ownerIdx = (int)Projectile.ai[1] - 1;
+            if (ownerIdx >= 0 && ownerIdx < Main.maxNPCs && Main.npc[ownerIdx].active
+                && Main.npc[ownerIdx].ModNPC is InvaderNPC invader)
+            {
+                invader.ReportAttackHit();
+            }
         }
 
         public override void OnKill(int timeLeft)

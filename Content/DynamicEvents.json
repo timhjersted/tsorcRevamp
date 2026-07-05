@@ -371,7 +371,7 @@
     "TextToDisplay": "default",
     "TextColorHex": "FFFFFFFF",
     "WorldCondition": null,
-    "MapCondition": "<InitializeScriptedEvents>b__11_0",
+    "MapCondition": "OldManSpawnCondition",
     "CustomAction": null,
     "SingleNpcMarker": false,
     "Npcs": [
@@ -398,12 +398,12 @@
     "TextToDisplay": "Skeletron, Lord of Graves, has awoken!",
     "TextColorHex": "EE82EEFF",
     "WorldCondition": null,
-    "MapCondition": "DefaultCondition",
+    "MapCondition": "SkeletronHiddenSpawnCondition",
     "CustomAction": "SetNightCustomAction",
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "Skeletron",
+        "NpcName": "SkeletronHead",
         "SpawnX": 5563.0,
         "SpawnY": 1676.0,
         "CustomHealth": null,
@@ -804,7 +804,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "Wyvern",
+        "NpcName": "WyvernHead",
         "SpawnX": 7776.0,
         "SpawnY": 829.0,
         "CustomHealth": null,
@@ -1493,7 +1493,7 @@
     "TextToDisplay": "Chaos has entered this dimension!",
     "TextColorHex": "FF0000FF",
     "WorldCondition": null,
-    "MapCondition": "OnlyAdventureMapConditionSHM",
+    "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": null,
     "SingleNpcMarker": false,
     "Npcs": [
@@ -1520,7 +1520,7 @@
     "TextToDisplay": "Chaos has entered this dimension!",
     "TextColorHex": "FF0000FF",
     "WorldCondition": null,
-    "MapCondition": "RemixMapConditionSHM",
+    "MapCondition": "RemixMapCondition",
     "CustomAction": null,
     "SingleNpcMarker": false,
     "Npcs": [
@@ -2368,7 +2368,7 @@
     "TextToDisplay": "default",
     "TextColorHex": "AF4BFFFF",
     "WorldCondition": null,
-    "MapCondition": "<InitializeScriptedEvents>b__11_1",
+    "MapCondition": "PreSkeletronDungeonGuardianCondition",
     "CustomAction": null,
     "SingleNpcMarker": false,
     "Npcs": [
@@ -2913,7 +2913,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "Dreadnautilus",
+        "NpcName": "BloodNautilus",
         "SpawnX": 2893.0,
         "SpawnY": 610.0,
         "CustomHealth": null,
@@ -3353,7 +3353,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "Wyvern",
+        "NpcName": "WyvernHead",
         "SpawnX": 7022.0,
         "SpawnY": 288.0,
         "CustomHealth": null,

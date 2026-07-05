@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -59,6 +60,21 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override Color? GetAlpha(Color lightColor)
         {
             return new Color(190, 90, 255, 220);
+        }
+
+        // ai[0] holds the firing NPC's whoAmI + 1 (0 = "no owner") so the dodge-punish-chain system
+        // knows this swipe actually connected. The +1 offset exists because this projectile is ALSO
+        // reused anonymously (no owner) by Spiral Fan's straight-shot bursts, which have nothing to
+        // do with that system and must not accidentally report a hit against whatever NPC happens
+        // to occupy slot 0.
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            int ownerIdx = (int)Projectile.ai[0] - 1;
+            if (ownerIdx >= 0 && ownerIdx < Main.maxNPCs && Main.npc[ownerIdx].active
+                && Main.npc[ownerIdx].ModNPC is InvaderNPC invader)
+            {
+                invader.ReportAttackHit();
+            }
         }
 
         public override void OnKill(int timeLeft)

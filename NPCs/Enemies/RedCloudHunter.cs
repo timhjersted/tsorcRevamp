@@ -59,6 +59,9 @@ namespace tsorcRevamp.NPCs.Enemies
             hunterGlobalNPC.PrefersHighGround = true;
             hunterGlobalNPC.RemembersLastKnownPos = true;
             hunterGlobalNPC.NavSearchRadius = 80;
+            hunterGlobalNPC.KiteRangeMin = 10f;
+            hunterGlobalNPC.KiteRangeMax = 40f;
+            hunterGlobalNPC.KiteLooseness = 0.2f;
             hunterGlobalNPC.CanGoInvisible = true;
             hunterGlobalNPC.InvisibleAlpha = 200;
             EvasiveProfile.EvasiveCloak(hunterGlobalNPC, cloakChance: 0.20f, threatRange: 220);

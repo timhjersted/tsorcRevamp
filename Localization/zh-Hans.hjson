@@ -2748,7 +2748,7 @@ Mods: {
 					Allows you to use items while dodgerolling
 					Increases melee and magic damage by 10% and movement speed by 12%
 					Dodging through danger grants Abyssal Poise for 3 seconds
-					The next melee or magic hit deals {5}% more damage, restores {6}% stamina, and releases an abyss counterattack
+					The next melee or magic hit deals 35% more damage, restores 8% stamina, and releases an abyss counterattack
 					Getting hit before counterattacking removes Abyssal Poise
 					''' */
 			}
@@ -8523,6 +8523,11 @@ Mods: {
 				// DisplayName: Artorias Greatsword
 				// Tooltip: ""
 			}
+
+			EnemyGreatFireAxe: {
+				// Tooltip: ""
+				// DisplayName: Enemy Great Fire Axe
+			}
 		}
 
 		Buffs: {
@@ -10388,6 +10393,12 @@ Mods: {
 			// GreatBlackKnightFlailEmber.DisplayName: Great Black Knight Flail Ember
 			// GreatBlackKnightFlailEmberLingering.DisplayName: Great Black Knight Flail Ember Lingering
 			// GreatBlackKnightFlailPulse.DisplayName: Great Black Knight Flail Pulse
+			// ArtoriasAbyssTendril.DisplayName: Artorias Abyss Tendril
+			// HomingAbyssOrb.DisplayName: Homing Abyss Orb
+			// BoomerangCrescent.DisplayName: Boomerang Crescent
+			// ArtoriasChargeNova.DisplayName: Artorias Charge Nova
+			// AbyssShard.DisplayName: Abyss Shard
+			// EnemyGreatFireAxeFireball.DisplayName: Enemy Great Fire Axe Fireball
 		}
 
 		NPCs: {
@@ -12134,6 +12145,7 @@ Mods: {
 			// RingedKnightOriginal.DisplayName: Old Ringed Knight
 			// CursedDragonInvader.DisplayName: Cursed Dragon
 			// AbysmalOolacileSorcererTEST.DisplayName: Abysmal Oolacile Sorcerer T E S T
+			// OwlFatherInvader.DisplayName: Owl Father Invader
 		}
 
 		Prefixes: {

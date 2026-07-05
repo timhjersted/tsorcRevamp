@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower = 11f;
             globalNPC.MaxJumpBoost = 7f;
-            globalNPC.NavSearchRadius = 90; // Phase 2: SmartFighter4AI movement
+            globalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
             globalNPC.CanUseRopes = true;
             globalNPC.CanDoubleJump = true;
             globalNPC.DoubleJumpPower = 7f;
@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             EvasiveProfile.BasiliskHunterAttackJumps(globalNPC);
             globalNPC.KiteRangeMin = 9f;
             globalNPC.KiteRangeMax = 18f;
-            globalNPC.KiteLooseness = 0.15f;
+            globalNPC.KiteLooseness = 0.4f;
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {

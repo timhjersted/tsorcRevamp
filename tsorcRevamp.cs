@@ -162,6 +162,10 @@ namespace tsorcRevamp
         public static List<int> HellkiteDragonSegments;
         public static List<int> LichKingSerpentSegments;
         public static List<int> SeathSegments;
+        // NPCs that intentionally set active=false mid-AI to transform into a different NPC (boss intros) or
+        // vanish (portals/visions) — NOT a despawn bug. The dynamic-event anti-despawn revival in GlobalNPC.PostAI
+        // must skip these, or it revives them the instant they try to transform, breaking the intro sequence.
+        public static List<int> SelfDeactivatingNPCs;
         public static List<int> UntargetableNPCs;
         public static List<int> HumanNPCs;
         public static List<int> MageNPCs;
@@ -264,7 +268,6 @@ namespace tsorcRevamp
         public static Texture2D NoiseSmooth;
         public static Texture2D NoiseSwirly;
         public static Texture2D NoisePerlin;
-        public static Texture2D[] AbyssClouds;
 
         public override void Load()
         {
@@ -382,12 +385,6 @@ namespace tsorcRevamp
             NoiseSmooth = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/SmoothNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             NoiseSwirly = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/SwirlyNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             NoisePerlin = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/PerlinNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-
-            AbyssClouds = new Texture2D[22];
-            for (int i = 0; i < AbyssClouds.Length; i++)
-            {
-                AbyssClouds[i] = (Texture2D)ModContent.Request<Texture2D>($"tsorcRevamp/Textures/Clouds/Cloud_{i}", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
 
             //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
             //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
@@ -1525,9 +1522,25 @@ namespace tsorcRevamp
             UntargetableNPCs = new List<int>()
             {
             ModContent.NPCType<Bonfirefly>(),
-            ModContent.NPCType<AbyssPortal>(), 
+            ModContent.NPCType<AbyssPortal>(),
             ModContent.NPCType<AttraidiesApparition>(),
             ModContent.NPCType<GwynBossVision>()
+            };
+            #endregion
+
+            //-------
+            #region Self-deactivating (transform/vanish) NPC list
+            SelfDeactivatingNPCs = new List<int>()
+            {
+                ModContent.NPCType<MarilithIntro>(),
+                ModContent.NPCType<PrimeIntro>(),
+                ModContent.NPCType<GwynBossVision>(),
+                ModContent.NPCType<AbyssPortal>(),
+                ModContent.NPCType<AbyssFracture>(),
+                ModContent.NPCType<LeonhardPhase1>(),
+                ModContent.NPCType<NamelessKing>(),
+                ModContent.NPCType<Faraam>(),
+                ModContent.NPCType<AttraidiesFragment>()
             };
             #endregion
 

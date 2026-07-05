@@ -35,8 +35,10 @@ namespace tsorcRevamp.NPCs.Invaders
             if (invader == null)
                 return;
 
-            // Shield first (off-hand, behind the weapon/front-arm), then the weapon.
+            // Shield first (off-hand, behind everything), then the slash swoosh (behind the
+            // weapon sprite), then the weapon itself.
             invader.DrawShieldToLayer(ref drawInfo);
+            invader.DrawSlashToLayer(ref drawInfo);
             invader.DrawWeaponToLayer(ref drawInfo);
         }
     }

@@ -332,10 +332,14 @@ namespace tsorcRevamp
 
             ScriptedEvent AncestralSpiritRemixEvent = new ScriptedEvent(new Vector2(7344, 768), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Cyan, false, RemixMapCondition);
             //SkeletronHidden
-            ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, 181, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Violet, false, null, SetNightCustomAction);
+            // Guarded the same way as OldManEvent (which also leads to Skeletron): without this, killing Skeletron
+            // via the OTHER route (e.g. the Old Man arena) never "completes" THIS event from its own bookkeeping
+            // perspective, so it kept re-triggering and re-spawning a redundant Skeletron indefinitely even though
+            // the boss was already down for the world.
+            ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, 181, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Violet, false, SkeletronHiddenSpawnCondition, SetNightCustomAction);
 
             //SkeletronHidden
-            ScriptedEvent OldManEvent = new ScriptedEvent(new Vector2(4979, 1398), 64, NPCID.OldMan, DustID.WhiteTorch, true, true, true, "default", Color.White, false, () => { return !NPC.AnyNPCs(NPCID.OldMan) && !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3; });
+            ScriptedEvent OldManEvent = new ScriptedEvent(new Vector2(4979, 1398), 64, NPCID.OldMan, DustID.WhiteTorch, true, true, true, "default", Color.White, false, OldManSpawnCondition);
 
             //EoC
             ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.EoC"), Color.Blue, false, null, SetNightCustomAction);
@@ -464,9 +468,9 @@ namespace tsorcRevamp
             //BlightEvent.SetCustomStats(50000, 30, 50);
 
             //CHAOS
-            ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, OnlyAdventureMapConditionSHM);
+            ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, OnlyAdventureMapCondition);
 
-            ScriptedEvent ChaosEventRemix = new ScriptedEvent(new Vector2(7034, 968), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, RemixMapConditionSHM);
+            ScriptedEvent ChaosEventRemix = new ScriptedEvent(new Vector2(7034, 968), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, RemixMapCondition);
 
             //WYVERN MAGE SHADOW-SHM
             ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 25, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.CrimsonTorch, true, true, true, LangUtils.GetTextValue("Events.WyvernMageShadow"), Color.OrangeRed, false, SuperHardModeCustomCondition);
@@ -659,7 +663,7 @@ namespace tsorcRevamp
 
             ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
 
-            ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
+            ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, PreSkeletronDungeonGuardianCondition);
             
             ScriptedEvent KingSlime2Event = new ScriptedEvent(new Vector2(4749, 639), 25, NPCID.KingSlime, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.KingSlime"), Color.Cyan, false, RemixMapCondition);
 
@@ -1145,6 +1149,30 @@ namespace tsorcRevamp
             if (tsorcRevampWorld.OnlyAdventureMap && worldCond?.Contains("RemixMap") == true)
                 return false;
             return true;
+        }
+
+        // Named (not an inline lambda) so its Method.Name survives being dumped to JSON — an anonymous lambda's
+        // compiler-generated name (e.g. "<InitializeScriptedEvents>b__11_0") can't be found by reflection on load,
+        // which silently made this condition a no-op and let the Old Man event re-spawn its NPC endlessly,
+        // duplicating alongside the one that's already there or already turned into Skeletron.
+        public static bool OldManSpawnCondition()
+        {
+            return !NPC.AnyNPCs(NPCID.OldMan) && !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3;
+        }
+
+        // Stops the "secret" Skeletron ambush once Skeletron is down, however it was defeated (this event's own
+        // spawn, or the Old Man arena). See the comment at SkeletronHiddenEvent for why this guard is needed.
+        public static bool SkeletronHiddenSpawnCondition()
+        {
+            return !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3;
+        }
+
+        // Same anonymous-lambda-name problem as OldManSpawnCondition above: this ambush should stop once Skeletron
+        // is downed, but the compiler-generated name from the old inline lambda failed to resolve on load, so the
+        // condition silently became "always true" and the guardian kept ambushing post-Skeletron.
+        public static bool PreSkeletronDungeonGuardianCondition()
+        {
+            return !NPC.downedBoss3;
         }
 
         public static bool MarilithCustomCondition()
@@ -2026,9 +2054,11 @@ namespace tsorcRevamp
                         for (int i = 0; i < count; i++)
                         {
                             string existing = existingEvent.Npcs[i].NpcName;
-                            // Backfill if missing OR if it's a stale display-name (has spaces, e.g. "Eye of Cthulhu").
-                            // Display names were written by an older version; we now use NPCID field names instead.
-                            if (string.IsNullOrEmpty(existing) || existing.Contains(' '))
+                            // Backfill if missing OR unresolvable. A whitespace check ("Eye of Cthulhu") isn't
+                            // reliable — some old display names are a single word that just happens to differ from
+                            // the real NPCID field name (e.g. "Skeletron" the display name vs "SkeletronHead" the
+                            // field), so actually try to resolve it against ground truth instead of guessing.
+                            if (string.IsNullOrEmpty(existing) || ResolveNpcType(existing) == 0)
                                 existingEvent.Npcs[i].NpcName = GetNpcStableName(ev.eventNPCs[i].type);
                             // Fix NpcID=0 entries (mod wasn't loaded at first dump time, e.g. Thorium events).
                             if (existingEvent.Npcs[i].NpcID == 0 && ev.eventNPCs[i].type != 0)
@@ -2896,8 +2926,14 @@ namespace tsorcRevamp
                         else
                         {
                             //If they aren't marked as killed by a player, but also are dead or the wrong type, then they despawned. End the event as failed.
-                            Main.NewText($"[Event] Torn down: NPC #{i} (type {eventNPCs[i].type}) " +
-                                $"active={eventNPCs[i].npc.active}, type now {eventNPCs[i].npc.type}", Color.Orange);
+                            // Skip the diagnostic for SelfDeactivatingNPCs (Marilith/Prime intros, etc.) — their
+                            // active=false here is the intentional transform-into-boss trigger, not a real despawn,
+                            // so this branch firing for them is expected and not worth alarming the player about.
+                            if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode && !tsorcRevamp.SelfDeactivatingNPCs.Contains(eventNPCs[i].type))
+                            {
+                                Main.NewText($"[Event] Torn down: NPC #{i} (type {eventNPCs[i].type}) " +
+                                    $"active={eventNPCs[i].npc.active}, type now {eventNPCs[i].npc.type}", Color.Orange);
+                            }
                             EndEvent(false);
                             return;
                         }
@@ -2919,7 +2955,8 @@ namespace tsorcRevamp
                 // Diagnostic: a type of 0 means the NpcName failed to resolve; the "spawn" would be a no-op.
                 if (eventNPCs[i].type == 0)
                 {
-                    Main.NewText($"[Event] NPC #{i} failed to resolve (type 0) — check its NpcName in DynamicEvents.json", Color.OrangeRed);
+                    if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                        Main.NewText($"[Event] NPC #{i} failed to resolve (type 0) — check its NpcName in DynamicEvents.json", Color.OrangeRed);
                     continue;
                 }
 
@@ -2927,7 +2964,8 @@ namespace tsorcRevamp
 
                 if (eventNPCs[i].index >= Main.maxNPCs)
                 {
-                    Main.NewText($"[Event] NPC.NewNPC failed for type {eventNPCs[i].type} (no free slot)", Color.OrangeRed);
+                    if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                        Main.NewText($"[Event] NPC.NewNPC failed for type {eventNPCs[i].type} (no free slot)", Color.OrangeRed);
                     continue;
                 }
 

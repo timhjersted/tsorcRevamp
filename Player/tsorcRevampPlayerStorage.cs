@@ -111,6 +111,45 @@ namespace tsorcRevamp
             return false;
         }
 
+        // Moves as much of `item` (currently sitting in a Storage slot) into the player's main inventory as
+        // will fit — merges into existing matching stacks first, then the first empty slot (mirrors
+        // DepositToStorage's logic in reverse). Mutates `item` in place, turning it to air if fully moved.
+        // Returns true if anything moved (including a partial move), so the caller knows whether to play a
+        // sound / treat it as a change.
+        public bool WithdrawToInventory(Item item)
+        {
+            if (item == null || item.IsAir) return false;
+            bool changed = false;
+
+            for (int i = 0; i < 50 && item.stack > 0; i++)
+            {
+                Item inv = Player.inventory[i];
+                if (inv == null || inv.IsAir) continue;
+                if (inv.type != item.type || inv.prefix != item.prefix) continue;
+                if (inv.stack >= inv.maxStack) continue;
+
+                int moved = Math.Min(inv.maxStack - inv.stack, item.stack);
+                inv.stack += moved;
+                item.stack -= moved;
+                changed = true;
+            }
+
+            for (int i = 0; i < 50 && item.stack > 0; i++)
+            {
+                if (Player.inventory[i] == null || Player.inventory[i].IsAir)
+                {
+                    Item clone = item.Clone();
+                    clone.stack = item.stack;
+                    Player.inventory[i] = clone;
+                    item.stack = 0;
+                    changed = true;
+                }
+            }
+
+            if (item.stack <= 0) item.TurnToAir();
+            return changed;
+        }
+
         // Drop air holes (created by withdrawals) and keep StorageSeq aligned. Called before each view rebuild.
         public void CompactStorage()
         {

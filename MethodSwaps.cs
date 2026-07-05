@@ -241,83 +241,6 @@ namespace tsorcRevamp
             DrawAbyssStarLayer(pixel, 48f, 0.038f, 0.28f, 1.25f, new Color(200, 255, 230));
         }
 
-        // Drifting cloud fog for the Abyss, drawn in the foreground/NPC layer (see comment history below for why
-        // - background-layer placement got buried by vanilla's own later compositing on the surface).
-        //
-        // Scatters real cloud sprites (tsorcRevamp.AbyssClouds - 22 vanilla-style puffy cloud PNGs with actual
-        // alpha transparency, Textures/Clouds/Cloud_0..21) - this is entirely our own code, not vanilla's.
-        // Checked the actual decompiled Main.DrawSurfaceBG (DrawSurfaceBG_GetFogPower and the draw block right
-        // after it): vanilla's graveyard/overcast fog is much simpler than what we were building - it just tiles
-        // ONE texture horizontally across the screen at a fixed depth-based Y, with no per-tile detection at all.
-        // It only ever appears near the surface because the whole effect is gated off by depth
-        // (screenPosition.Y < worldSurface*16+16), not because it detects terrain - vanilla has no underground
-        // fog to copy, which is why we're on our own for that part.
-        //
-        // Two rounds of scanning the actual tilemap for "ground near the player" both introduced instability
-        // (the scan window shifted with camera movement in ways that changed which tile got found frame to
-        // frame, causing the sprite/position tied to that tile to visibly jump). Scrapped entirely in favor of
-        // the same technique the starfield/particle layers already use reliably: a deterministic hash-seeded
-        // grid in parallax-scaled space. It's pure math over integer cell coordinates - nothing about it depends
-        // on scanning the world each frame, so there's nothing for camera movement to destabilize. Using
-        // parallax = 1 (fully world-locked, same rate as tiles) so clouds feel anchored in the environment
-        // around the player rather than a distant sky layer, and the same world position always gets the same
-        // cloud back if you leave and return. Being purely procedural, it shows up identically underground and
-        // on the surface.
-        private const float AbyssFogIntensity = 0.3f;
-        private static readonly Color AbyssFogTint = new Color(150, 110, 210);
-
-        private static void DrawAbyssFog()
-        {
-            Texture2D[] clouds = tsorcRevamp.AbyssClouds;
-            if (clouds == null || clouds.Length == 0)
-            {
-                return;
-            }
-
-            const float cellSize = 260f;
-            const float density = 0.35f; // fraction of cells that spawn a cloud - keeps real gaps between them
-
-            Vector2 parallaxPosition = Main.screenPosition; // parallax = 1: fully world-locked
-            int startCellX = (int)Math.Floor((parallaxPosition.X - cellSize) / cellSize);
-            int startCellY = (int)Math.Floor((parallaxPosition.Y - cellSize) / cellSize);
-            int endCellX = (int)Math.Ceiling((parallaxPosition.X + Main.screenWidth + cellSize) / cellSize);
-            int endCellY = (int)Math.Ceiling((parallaxPosition.Y + Main.screenHeight + cellSize) / cellSize);
-
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
-
-            for (int cellX = startCellX; cellX <= endCellX; cellX++)
-            {
-                for (int cellY = startCellY; cellY <= endCellY; cellY++)
-                {
-                    float seed = Hash01(cellX, cellY, 907);
-                    if (seed > density)
-                    {
-                        continue;
-                    }
-
-                    Texture2D cloud = clouds[(int)(Hash01(cellX, cellY, 41) * clouds.Length) % clouds.Length];
-                    if (cloud == null)
-                    {
-                        continue;
-                    }
-
-                    float offsetX = Hash01(cellX, cellY, 23) * cellSize;
-                    float offsetY = Hash01(cellX, cellY, 59) * cellSize;
-                    Vector2 position = new Vector2(cellX * cellSize + offsetX, cellY * cellSize + offsetY) - parallaxPosition;
-
-                    float scale = 0.4f + Hash01(cellX, cellY, 131) * 0.3f; // halved from the original 0.8-1.4 range
-                    float phaseOffset = Hash01(cellX, cellY, 211) * MathHelper.TwoPi;
-                    float pulse = 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 0.35f + phaseOffset); // 0..1
-                    float alpha = AbyssFogIntensity * pulse;
-                    Vector2 origin = new Vector2(cloud.Width / 2f, cloud.Height / 2f);
-
-                    Main.spriteBatch.Draw(cloud, position, null, AbyssFogTint * alpha, 0f, origin, scale, SpriteEffects.None, 0f);
-                }
-            }
-
-            Main.spriteBatch.End();
-        }
-
         private static void DrawAbyssStarLayer(Texture2D pixel, float cellSize, float parallax, float density, float brightness, Color accentColor)
         {
             Vector2 parallaxPosition = Main.screenPosition * parallax;
@@ -2012,7 +1935,6 @@ namespace tsorcRevamp
 
             if (Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true)
             {
-                DrawAbyssFog();
                 DrawAbyssForegroundParticles();
             }
         }
@@ -2056,7 +1978,7 @@ namespace tsorcRevamp
             for (int band = 0; band < RingDarknessBands; band++)
             {
                 float t = (band + 1) / (float)RingDarknessBands;
-                float radius = Artorias.RingRadius + RingDarknessFalloff * t;
+                float radius = artorias.EffectiveRingRadius + RingDarknessFalloff * t;
                 float alpha = t * t * 0.9f; // ease-in, fully opaque by the outermost band
                 float bandThickness = RingDarknessFalloff / RingDarknessBands + 6f; // slight overlap seam
                 float segLength = MathHelper.TwoPi * radius / RingDarknessSegments + 8f;

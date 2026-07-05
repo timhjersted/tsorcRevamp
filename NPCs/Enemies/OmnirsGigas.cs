@@ -74,8 +74,9 @@ namespace tsorcRevamp.NPCs.Enemies{
 			// Phase 1 (beast positioner): never stand still — when it can't path to you it falls back to a large
 			// band and oscillates in/out (using its ranged throw); wanders off if it can't reach you AND you stop
 			// hitting it for ~10s. Tune the band to taste.
-			g.KiteRangeMin = 12f;
+			g.KiteRangeMin = 0f;
 			g.KiteRangeMax = 30f;
+			g.KiteLooseness = 0.8f;
 			g.PatrolMode = NPCs.PatrolMode.Wander;
 		}
 
