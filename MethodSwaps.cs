@@ -1387,6 +1387,18 @@ namespace tsorcRevamp
             }
         }
 
+        // Vanilla's Player.KillMe unconditionally drops every Large Gem (Amethyst/Topaz/Sapphire/Emerald/
+        // Ruby/Diamond/Amber) out of the main inventory on death - leftover behavior from the "Capture the
+        // Gem" PvP minigame, where the gem needs to hit the ground for someone else to grab. That's an
+        // unwanted item-loss risk for players just holding them as loot/trophies. We hide the gems from the
+        // inventory before orig runs (so vanilla's drop code and the hardcore/mediumcore DropItems() path
+        // both see nothing there to drop) and restore them afterward - no gem is ever actually spawned into
+        // the world, so there's no duplication risk.
+        private static bool IsLargeGem(int itemType)
+        {
+            return (itemType >= ItemID.LargeAmethyst && itemType <= ItemID.LargeDiamond) || itemType == ItemID.LargeAmber;
+        }
+
         private static void On_Player_KillMe(On_Player.orig_KillMe orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
         {
             bool useCustom = !ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds;
@@ -1409,12 +1421,28 @@ namespace tsorcRevamp
                 Main.soundVolume = 0f;
             }
 
+            List<(int slot, Item item)> savedGems = new List<(int, Item)>();
+            for (int i = 0; i < self.inventory.Length; i++)
+            {
+                Item invItem = self.inventory[i];
+                if (invItem != null && invItem.stack > 0 && IsLargeGem(invItem.type))
+                {
+                    savedGems.Add((i, invItem.Clone()));
+                    self.inventory[i] = new Item();
+                }
+            }
+
             try
             {
                 orig(self, damageSource, dmg, hitDirection, pvp);
             }
             finally
             {
+                foreach ((int slot, Item item) in savedGems)
+                {
+                    self.inventory[slot] = item;
+                }
+
                 if (useCustom && self.whoAmI == Main.myPlayer)
                 {
                     Main.soundVolume = oldVolume;

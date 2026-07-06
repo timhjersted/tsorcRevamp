@@ -15,7 +15,8 @@ using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
-	public class OmnirsMassacre : ModNPC
+	// Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
+	public class Massacre : ModNPC
 	{
         float npcAcSPD = 1.5f; //How fast they accelerate.
         float npcSPD = 2.65f; //Max speed (Phase2: 50% slower, was 5.3f)
@@ -345,13 +346,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 		public override void OnKill()
 		{
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore1").Type, 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore2").Type, 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore3").Type, 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore3").Type, 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore3").Type, 1f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore3").Type, 1f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsTibianJuggernautGore2").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TibianJuggernautGore1").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TibianJuggernautGore2").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TibianJuggernautGore3").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TibianJuggernautGore3").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TibianJuggernautGore3").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TibianJuggernautGore3").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TibianJuggernautGore2").Type, 1f);
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

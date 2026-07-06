@@ -7,7 +7,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies{
-    public class OmnirsSahagin : ModNPC //amazing help from Cheezemaniac
+    // Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
+    public class Sahagin : ModNPC //amazing help from Cheezemaniac
     {
         float customAi1;
         int OTimeLeft = 2000;
@@ -166,11 +167,11 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
                 int dust = Dust.NewDust(NPC.position, rectangle.Width, rectangle.Height, 6, 0, 0, 100, color, 1.5f);
                 Main.dust[dust].noGravity = false;
             }
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsSahaginGore1").Type, 1f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsSahaginGore2").Type, 1f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsSahaginGore3").Type, 1f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsSahaginGore2").Type, 1f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsSahaginGore3").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("SahaginGore1").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("SahaginGore2").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("SahaginGore3").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("SahaginGore2").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("SahaginGore3").Type, 1f);
             if (Main.rand.Next(28) == 0)
             {
                 // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsIce1Tome"));

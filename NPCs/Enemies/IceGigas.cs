@@ -7,7 +7,8 @@ using System;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    public class OmnirsIceGigas : ModNPC
+    // Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
+    public class IceGigas : ModNPC
     {
         float customAi1;
         int movedTowards = 0;
@@ -60,7 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.1f;
             AnimationType = 28; // Zombie frame structure
 
-            // Phase 2: SmartFighter4AI movement + beast levers (mirrors OmnirsGigas). minSurfaceWidth (in AI)
+            // Phase 2: SmartFighter4AI movement + beast levers (mirrors Gigas). minSurfaceWidth (in AI)
             // keeps it off 1-tile ledges; NavSearchRadius enables A*; MaxJumpPower modestly above the 8 default
             // for a strong jump (NPC.gravity is read-only, so no true heavy "weighty" fall). Tune to taste.
             tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -160,11 +161,11 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (!Main.dedServ)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsIceGigasGore1").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsIceGigasGore2").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsIceGigasGore3").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsIceGigasGore2").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsIceGigasGore3").Type, 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceGigasGore1").Type, 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceGigasGore2").Type, 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceGigasGore3").Type, 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceGigasGore2").Type, 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceGigasGore3").Type, 1.1f);
             }
             // Drops commented out
         }

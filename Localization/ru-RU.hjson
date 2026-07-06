@@ -10361,6 +10361,17 @@ Mods: {
 			// ArtoriasChargeNova.DisplayName: Artorias Charge Nova
 			// AbyssShard.DisplayName: Abyss Shard
 			// EnemyGreatFireAxeFireball.DisplayName: Enemy Great Fire Axe Fireball
+			// ConsecratedLightning.DisplayName: Consecrated Lightning
+			// EnemyConsecratedLight.DisplayName: Enemy Consecrated Light
+			// EvilEyeFlame.DisplayName: Evil Eye Flame
+			// EvilEyeGroundBlast.DisplayName: Evil Eye Ground Blast
+			// PoisonBurstCloud.DisplayName: Poison Burst Cloud
+			// PoisonSpitBall.DisplayName: Poison Spit Ball
+			// PoisonTrailCloud.DisplayName: Poison Trail Cloud
+			// StickySpitBall.DisplayName: Sticky Spit Ball
+			// StickySpitCloud.DisplayName: Sticky Spit Cloud
+			// ToxicGasNovaFog.DisplayName: Toxic Gas Nova Fog
+			// ToxicGasNovaGlow.DisplayName: Toxic Gas Nova Glow
 		}
 
 		NPCs: {
@@ -12025,20 +12036,20 @@ Mods: {
 			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 			// TibianValkyrieSmart4.DisplayName: Tibian Valkyrie Smart4
-			// OmnirsDemonLordApocalypse.DisplayName: Demon Lord Apocalypse
-			// OmnirsEland.DisplayName: Eland
-			// OmnirsEvilEye.DisplayName: Evil Eye
-			// OmnirsGigas.DisplayName: Gigas
-			// OmnirsHydra.DisplayName: Hydra
-			// OmnirsIceGigas.DisplayName: Ice Gigas
-			// OmnirsMassacre.DisplayName: Juggernaut
-			// OmnirsMinotaurMage.DisplayName: Minotaur Mage
-			// OmnirsPlaguesmith.DisplayName: Plaguesmith
-			// OmnirsQuaraMantassin.DisplayName: Quara Mantassin
-			// OmnirsQuaraPincher.DisplayName: Quara Pincher
-			// OmnirsSahagin.DisplayName: Sahagin
+			// DemonLordApocalypse.DisplayName: Demon Lord Apocalypse
+			// Eland.DisplayName: Eland
+			// EvilEye.DisplayName: Evil Eye
+			// Gigas.DisplayName: Gigas
+			// Hydra.DisplayName: Hydra
+			// IceGigas.DisplayName: Ice Gigas
+			// Massacre.DisplayName: Juggernaut
+			// MinotaurMage.DisplayName: Minotaur Mage
+			// Plaguesmith.DisplayName: Plaguesmith
+			// QuaraMantassin.DisplayName: Quara Mantassin
+			// QuaraPincher.DisplayName: Quara Pincher
+			// Sahagin.DisplayName: Sahagin
 
-			OmnirsBlackMage: {
+			BlackMage: {
 				// DisplayName: Black Mage
 
 				TownNPCMood: {
@@ -12055,7 +12066,7 @@ Mods: {
 				// Census.SpawnCondition: Conditions unknown
 			}
 
-			OmnirsCaravanMerchant: {
+			CaravanMerchant: {
 				// DisplayName: Caravan Merchant
 
 				TownNPCMood: {
@@ -12072,7 +12083,7 @@ Mods: {
 				// Census.SpawnCondition: Conditions unknown
 			}
 
-			OmnirsWhiteMage: {
+			WhiteMage: {
 				// DisplayName: White Mage
 
 				TownNPCMood: {

@@ -11,7 +11,8 @@ using System.Linq;
 using System.Text;
 
 namespace tsorcRevamp.NPCs.Enemies{
-	public class OmnirsQuaraPincher : ModNPC
+	// Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
+	public class QuaraMantassin : ModNPC
 	{
         float customAi1;
         int OTimeLeft = 2000;
@@ -22,14 +23,14 @@ namespace tsorcRevamp.NPCs.Enemies{
         int drownTimer = 2000;
         int drowningRisk = 1200;
 
-        float npcAcSPD = 0.8f; //How fast they accelerate.
-        float npcSPD = 1.5f; //Max speed
+        float npcAcSPD = 0.9f; //How fast they accelerate.
+        float npcSPD = 2.5f; //Max speed
 
         bool tooBig = true;
         bool lavaJumping = false;
 
-        float npcEnrAcSPD = 1.0f; //How fast they accelerate.
-        float npcEnrSPD = 2.0f; //Max speed
+        float npcEnrAcSPD = 1.3f; //How fast they accelerate.
+        float npcEnrSPD = 2.9f; //Max speed
 
         public override void SetDefaults()
 		{
@@ -37,12 +38,12 @@ namespace tsorcRevamp.NPCs.Enemies{
 			
 			NPC.width = 18;
 			NPC.height = 45;
-			NPC.damage = 56;
+			NPC.damage = 52;
 			NPC.defense = 12;
-			NPC.lifeMax = 1800;
+			NPC.lifeMax = 800;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 2600f;
+            NPC.value = 800f;
 			NPC.npcSlots = 100;
             NPC.scale = 1.2f;
 			NPC.knockBackResist = 0.8f;
@@ -72,12 +73,12 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
             {
                 if (oSurface || oUnderSurface || oUnderground)
                 {
-                    if (Main.rand.Next(600) == 1) return 1f;
-                    else if ((oUnderSurface || oUnderground) && Main.rand.Next(175) == 1) return 1f;
+                    if (Main.rand.Next(470) == 1) return 1f;
+                    else if ((oUnderSurface || oUnderground) && Main.rand.Next(135) == 1) return 1f;
                     if (Main.hardMode)
                     {
-                        if (Main.rand.Next(31) == 1) return 1f;
-                        else if ((oUnderSurface || oUnderground) && Main.rand.Next(19) == 1) return 1f;
+                        if (Main.rand.Next(21) == 1) return 1f;
+                        else if ((oUnderSurface || oUnderground) && Main.rand.Next(13) == 1) return 1f;
                         return 0f;
                     }
                     return 0f;
@@ -187,25 +188,25 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
                 int dust = Dust.NewDust(NPC.position, rectangle.Width, rectangle.Height, 6, 0, 0, 100, color, 1.5f);
                 Main.dust[dust].noGravity = false;
             }
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraPincherGore1").Type, 1.2f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraPincherGore2").Type, 1.2f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraPincherGore2").Type, 1.2f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraPincherGore3").Type, 1.2f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraPincherGore3").Type, 1.2f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("QuaraMantassinGore1").Type, 1.2f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("QuaraMantassinGore2").Type, 1.2f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("QuaraMantassinGore2").Type, 1.2f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("QuaraMantassinGore3").Type, 1.2f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("QuaraMantassinGore3").Type, 1.2f);
 
             //if (Main.rand.Next(3) == 0)
             //{
             //    // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsGreatFireballRune"), Main.rand.Next(1, 20));
             //}
-            if (Main.rand.Next(8) == 0)
+            if (Main.rand.Next(10) == 0)
             {
                 // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsWarriorHelmet"));
             }
-            if (Main.rand.Next(8) == 0)
+            if (Main.rand.Next(20) == 0)
             {
                 // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsKnightArmor"));
             }
-            if (Main.rand.Next(8) == 0)
+            if (Main.rand.Next(20) == 0)
             {
                 // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsKnightGreaves"));
             }

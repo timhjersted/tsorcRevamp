@@ -886,6 +886,24 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        ///<summary>
+        ///Spawns a colored TelegraphFlash (the shared starburst VFX) at a position, or centered on an npc if none is given.
+        ///Public/generic so bespoke (non-AddAttack) state machines - e.g. Hydra's attack chooser - can reuse the same
+        ///telegraph VFX as SimpleProjectile's automatic flash instead of rolling their own.
+        ///</summary>
+        ///<param name="npc">The npc to source the projectile from and default the position to</param>
+        ///<param name="color">What color the flash should be</param>
+        ///<param name="position">Where to spawn it. Defaults to npc.Center if not given</param>
+        public static void SpawnTelegraphFlash(NPC npc, Color color, Vector2? position = null)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Vector2 spawnPosition = position ?? npc.Center;
+            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
+        }
+
         private static void SpawnHighArcPounceTelegraph(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
             if (globalNPC.PounceTimer % 5 != 0 || Main.netMode == NetmodeID.MultiplayerClient)

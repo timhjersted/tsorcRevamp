@@ -11,7 +11,8 @@ using System.Linq;
 using System.Text;
 
 namespace tsorcRevamp.NPCs.Enemies{
-	public class OmnirsGigas : ModNPC
+	// Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
+	public class Gigas : ModNPC
 	{
         float customAi1;
         int movedTowards = 0;
@@ -184,11 +185,11 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
 		}
 		public override void OnKill()
 		{
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsGigasGore1").Type, 1.1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsGigasGore2").Type, 1.1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsGigasGore3").Type, 1.1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsGigasGore2").Type, 1.1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsGigasGore3").Type, 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GigasGore1").Type, 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GigasGore2").Type, 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GigasGore3").Type, 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GigasGore2").Type, 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GigasGore3").Type, 1.1f);
             if (Main.rand.Next(9) == 0)
             {
                 // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsGigantAxe"));

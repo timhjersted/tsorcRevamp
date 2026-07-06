@@ -11,41 +11,42 @@ using System.Linq;
 using System.Text;
 
 namespace tsorcRevamp.NPCs.Enemies{
-	public class OmnirsQuaraMantassin : ModNPC
+	// Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
+	public class MinotaurMage : ModNPC
 	{
         float customAi1;
         int OTimeLeft = 2000;
-        bool walkAndShoot = false;
+        bool walkAndShoot = true;
 
-        bool canDrown = false;
+        bool canDrown = true;
         int drownTimerMax = 2000;
         int drownTimer = 2000;
-        int drowningRisk = 1200;
+        int drowningRisk = 1800;
 
-        float npcAcSPD = 0.9f; //How fast they accelerate.
-        float npcSPD = 2.5f; //Max speed
+        float npcAcSPD = 0.7f; //How fast they accelerate.
+        float npcSPD = 1.3f; //Max speed
 
-        bool tooBig = true;
+        bool tooBig = false;
         bool lavaJumping = false;
 
-        float npcEnrAcSPD = 1.3f; //How fast they accelerate.
-        float npcEnrSPD = 2.9f; //Max speed
+        float npcEnrAcSPD = 1.2f; //How fast they accelerate.
+        float npcEnrSPD = 1.8f; //Max speed
 
         public override void SetDefaults()
 		{
 			
 			
-			NPC.width = 18;
-			NPC.height = 45;
-			NPC.damage = 52;
-			NPC.defense = 12;
-			NPC.lifeMax = 800;
+			NPC.width = 20;
+			NPC.height = 40;
+			NPC.damage = 9;
+			NPC.defense = 4;
+			NPC.lifeMax = 155;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 800f;
+            NPC.value = 5000f;
 			NPC.npcSlots = 100;
-            NPC.scale = 1.2f;
-			NPC.knockBackResist = 0.8f;
+            NPC.scale = 1.1f;
+			NPC.knockBackResist = 0.6f;
 			Main.npcFrameCount[NPC.type] = 15;
 			AnimationType = 21;
 		}
@@ -61,32 +62,23 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
             bool oCavern = (y >= (Main.maxTilesY * 0.4f) && y < (Main.maxTilesY * 0.6f));
             bool oMagmaCavern = (y >= (Main.maxTilesY * 0.6f) && y < (Main.maxTilesY * 0.8f));
             bool oUnderworld = (y >= (Main.maxTilesY * 0.8f));
-            bool oOcean = (x <= (Main.maxTilesX * .2f) && x < (Main.maxTilesX * 0.8f) && y < (Main.maxTilesY * 0.4f));
+            bool oBorders = (y < (Main.maxTilesY * 0.03f) || x < (Main.maxTilesX * 0.03f) || y > (Main.maxTilesY * 0.97f) || x > (Main.maxTilesX * 0.97f));
             int tile = (int)Main.tile[x, y].TileType;
             Player p = s.Player;
-            if (Main.pumpkinMoon || Main.snowMoon || p.townNPCs > 0f || p.ZoneDungeon)
+            if ((p.townNPCs > 2f && !Main.bloodMoon) || Main.pumpkinMoon || Main.snowMoon || p.ZoneDungeon || p.ZoneJungle || p.ZoneMeteor || oUnderworld || oBorders)
             {
                 return 0f;
             }
-            if (oOcean)
+            if (oSurface || oUnderSurface || oUnderground || oCavern)
             {
-                if (oSurface || oUnderSurface || oUnderground)
-                {
-                    if (Main.rand.Next(470) == 1) return 1f;
-                    else if ((oUnderSurface || oUnderground) && Main.rand.Next(135) == 1) return 1f;
-                    if (Main.hardMode)
-                    {
-                        if (Main.rand.Next(21) == 1) return 1f;
-                        else if ((oUnderSurface || oUnderground) && Main.rand.Next(13) == 1) return 1f;
-                        return 0f;
-                    }
-                    return 0f;
-                }
+                if (x < Main.maxTilesX * 0.25f && Main.rand.Next(500) == 1) return 1f;
+                else if (oCavern && x < Main.maxTilesX * 0.65f && Main.rand.Next(25) == 1) return 1f;
+                else if (oCavern && Main.rand.Next(100) == 1) return 1f;
                 return 0f;
             }
             return 0f;
         }
-        //Spawns in the Ocean down into the Underground. Does not spawn in the Dungeon, Meteor, or if there are Town NPCs.
+        //Spawns on the Surface down into the Cavern. Mostly spawns before 6.5/10th (Width). Does not spawn in the Dungeon, Hardmode, Jungle, Meteor, or if there are Town NPCs.
 
         public void teleport(bool pre)
 		{
@@ -187,27 +179,22 @@ public float CanSpawnLegacy(NPCSpawnInfo s)
                 int dust = Dust.NewDust(NPC.position, rectangle.Width, rectangle.Height, 6, 0, 0, 100, color, 1.5f);
                 Main.dust[dust].noGravity = false;
             }
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraMantassinGore1").Type, 1.2f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraMantassinGore2").Type, 1.2f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraMantassinGore2").Type, 1.2f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraMantassinGore3").Type, 1.2f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsQuaraMantassinGore3").Type, 1.2f);
-
-            //if (Main.rand.Next(3) == 0)
-            //{
-            //    // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsGreatFireballRune"), Main.rand.Next(1, 20));
-            //}
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("MinotaurGore1").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("MinotaurGore2").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("MinotaurGore2").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("MinotaurGore3").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("MinotaurGore3").Type, 1f);
+            if (Main.rand.Next(20) == 0)
+            {
+                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsWandofEnergy"));
+            }
+            if (Main.rand.Next(8) == 0)
+            {
+                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsFireStrikeScroll"));
+            }
             if (Main.rand.Next(10) == 0)
             {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsWarriorHelmet"));
-            }
-            if (Main.rand.Next(20) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsKnightArmor"));
-            }
-            if (Main.rand.Next(20) == 0)
-            {
-                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsKnightGreaves"));
+                // Item.NewItem((int)NPC.position.X, (int)NPC.position.Y, NPC.width, NPC.height, Mod.ItemType("OmnirsChainArmor"));
             }
         }
         #endregion

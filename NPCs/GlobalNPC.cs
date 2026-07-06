@@ -559,12 +559,12 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.AncientDemon>(0.15f, 80f);
             Add<Bosses.AncientOolacileDemon>(0.15f, 80f);
             Add<Enemies.SuperHardMode.AncientDemonOfTheAbyss>(0.15f, 80f);
-            Add<Enemies.OmnirsGigas>(0.15f, 80f);
-            Add<Enemies.OmnirsIceGigas>(0.15f, 80f);
-            Add<Enemies.OmnirsDemonLordApocalypse>(0.15f, 80f);
+            Add<Enemies.Gigas>(0.15f, 80f);
+            Add<Enemies.IceGigas>(0.15f, 80f);
+            Add<Enemies.DemonLordApocalypse>(0.15f, 80f);
             // Big bruisers
-            Add<Enemies.OmnirsHydra>(0.2f, 60f);
-            Add<Enemies.SuperHardMode.OmnirsMassacre>(0.2f, 60f);
+            Add<Enemies.Hydra>(0.2f, 60f);
+            Add<Enemies.SuperHardMode.Massacre>(0.2f, 60f);
             // Elite / heavy knight
             Add<Enemies.SuperHardMode.TaurusKnight>(0.2f, 55f);
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);

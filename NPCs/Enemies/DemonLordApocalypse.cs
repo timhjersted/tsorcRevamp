@@ -9,7 +9,8 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    public class OmnirsDemonLordApocalypse : ModNPC
+    // Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
+    public class DemonLordApocalypse : ModNPC
     {
         int attackState = 0; // 0: Idle/Chase, 1: Fire Breath, 2: Armageddon, 3: Great Fireball, 4: Lightning Storm, 5: Sudden Death, 6: Toxic Gas Nova
         int attackTimer = 0;
@@ -267,11 +268,11 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (!Main.dedServ)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsDemonLordGore1").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsDemonLordGore2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsDemonLordGore3").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsDemonLordGore2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsDemonLordGore3").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("DemonLordGore1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("DemonLordGore2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("DemonLordGore3").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("DemonLordGore2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("DemonLordGore3").Type, 1f);
             }
             // Drops commented out per user instruction
         }

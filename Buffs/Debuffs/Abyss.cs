@@ -43,6 +43,14 @@ namespace tsorcRevamp.Buffs.Debuffs
 
             // TornWings
             modPlayer.TornWings = true;
+
+            // No passive life regen while cursed by the Abyss. Buff Update() runs after Player's natural
+            // regen is folded into lifeRegen for the tick (same pattern vanilla's own Poisoned debuff uses),
+            // so clamping here zeroes out any positive regen without touching negative regen from other debuffs.
+            if (player.lifeRegen > 0)
+            {
+                player.lifeRegen = 0;
+            }
         }
     }
 }

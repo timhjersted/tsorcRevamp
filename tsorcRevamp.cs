@@ -4562,6 +4562,7 @@ namespace tsorcRevamp
             SeveringDuskGlowmask,
             Pinwheel,
             PinwheelFireglow,
+            ConsecratedLightTransparent,
         }
 
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -4612,6 +4613,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.BarbarousThornBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Shortswords/BarbarousThornBlade_Glow", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.RedLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/Ammo/RedLaserBeam", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.RedLaserTransparent, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser", AssetRequestMode.ImmediateLoad)}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
+                {TransparentTextureType.ConsecratedLightTransparent, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyConsecratedLight", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.LightrifleFire, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Magic/LightrifleFire", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.Lightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.RedLightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/WyvernMage/RedLightning", AssetRequestMode.ImmediateLoad)},

@@ -8,12 +8,13 @@ using Terraria.Utilities;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
+    // Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
     [AutoloadHead]
-    public class OmnirsWhiteMage : ModNPC
+    public class CaravanMerchant : ModNPC
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("White Mage");
+            // DisplayName.SetDefault("Caravan Merchant");
             Main.npcFrameCount[NPC.type] = 25;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 9;
             NPCID.Sets.AttackFrameCount[NPC.type] = 4;
@@ -30,8 +31,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.width = 18;
             NPC.height = 40;
             NPC.aiStyle = 7;
-            NPC.damage = 5;
-            NPC.defense = 10;
+            NPC.damage = 10;
+            NPC.defense = 3;
             NPC.lifeMax = 300;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.HitSound = SoundID.NPCHit1;
@@ -50,11 +51,11 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 if (!Main.dedServ)
                 {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsWhiteMageGore1").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsWhiteMageGore2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsWhiteMageGore2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsWhiteMageGore3").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("OmnirsWhiteMageGore3").Type, 1f);
+                    //Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("CaravanMerchantGore1").Type, 1f);
+                    //Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("CaravanMerchantGore2").Type, 1f);
+                    //Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("CaravanMerchantGore2").Type, 1f);
+                    //Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("CaravanMerchantGore3").Type, 1f);
+                    //Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("CaravanMerchantGore3").Type, 1f);
                 }
             }
         }
@@ -66,19 +67,17 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override List<string> SetNPCNameList()
         {
-            return new List<string> { "Elia", "Jenica", "KuKu", "Luca", "Mikoto", "Noah", "Ruby", "Sara", "Sarina", "Sherko", "Shiroma" };
+            return new List<string> { "Underhill" };
         }
 
         public override string GetChat()
         {
             WeightedRandom<string> chat = new WeightedRandom<string>();
-            chat.Add("Think we could find a rat's tail around here?");
-            chat.Add("It's strange; I find problems with swords, but not hammers.");
-            chat.Add("Are you here to learn some spells?... or to sell random junk?");
-            chat.Add("Welcome!");
-            chat.Add("Yes, I'm a healer. That does not mean I'll heal you through your stupid mistakes.");
-            chat.Add("Oh, Mysidia...");
-            chat.Add("Studying on the ancient spell 'Holy'. It's rather an impressive spell!");
+            chat.Add("Welcome! Interested in exotic wears?.");
+            chat.Add("What do you want to buy?");
+            chat.Add("What are ya buyin'!?");
+            chat.Add("What are ya sellin'!?");
+            chat.Add("It sure is hot, isn't it?");
             return chat;
         }
 
@@ -95,8 +94,8 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
-            damage = 100;
-            knockback = 4f;
+            damage = 80;
+            knockback = 7f;
         }
 
         public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown)
@@ -107,7 +106,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = ModContent.ProjectileType<Projectiles.Fireball2>();
+            projType = ModContent.ProjectileType<Projectiles.Throwing.ThrowingSpear>();
             attackDelay = 2;
         }
 

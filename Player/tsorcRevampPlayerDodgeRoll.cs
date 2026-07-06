@@ -106,6 +106,11 @@ namespace tsorcRevamp
             // Suppress the balloon sprite for all vanilla balloon accessories.
             // Jump height is already baked in by UpdateEquips before draw runs.
             PlayerDrawLayers.BalloonAcc.Hide();
+
+            // Suppress the orbiting gem icons vanilla draws above the player's head whenever a Large Gem
+            // is anywhere in the main inventory - leftover from the "Capture the Gem" PvP minigame, not
+            // meant to trigger just from carrying gems as loot/trophies.
+            PlayerDrawLayers.CaptureTheGem.Hide();
         }
 
         int oldItemAnimation = 0;
