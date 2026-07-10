@@ -35,6 +35,7 @@ namespace tsorcRevamp
     {
         public static bool DownedBetsy;
         public static bool isHellkiteDragonDead;
+        public static bool isOolacileSerpentDead;
         public static bool SuperHardMode;
         public static bool TheEnd;
         public static bool CustomMap;
@@ -171,6 +172,7 @@ namespace tsorcRevamp
         {
             DownedBetsy = false;
             isHellkiteDragonDead = false;
+            isOolacileSerpentDead = false;
             SuperHardMode = false;
             TheEnd = false;
             CustomMap = false;
@@ -248,6 +250,10 @@ namespace tsorcRevamp
             {
                 downed.Add("isHellkiteDragonDead");
             }
+            if (isOolacileSerpentDead)
+            {
+                downed.Add("isOolacileSerpentDead");
+            }
             tag.Add("downed", downed);
             tag.Add("world_state", world_state);
             SaveSlain(tag);
@@ -274,6 +280,7 @@ namespace tsorcRevamp
             IList<string> downedList = tag.GetList<string>("downed");
             DownedBetsy = downedList.Contains("DownedBetsy");
             isHellkiteDragonDead = downedList.Contains("isHellkiteDragonDead");
+            isOolacileSerpentDead = downedList.Contains("isOolacileSerpentDead");
 
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");
@@ -457,6 +464,7 @@ namespace tsorcRevamp
             if (Main.netMode == NetmodeID.Server)
             {
                 writer.Write(isHellkiteDragonDead);
+                writer.Write(isOolacileSerpentDead);
                 writer.Write(CustomMap);
                 writer.Write(RemixMap);
                 writer.Write(OnlyAdventureMap);
@@ -495,6 +503,7 @@ namespace tsorcRevamp
         public override void NetReceive(BinaryReader reader)
         {
             isHellkiteDragonDead = reader.ReadBoolean();
+            isOolacileSerpentDead = reader.ReadBoolean();
             CustomMap = reader.ReadBoolean();
             RemixMap = reader.ReadBoolean();
             OnlyAdventureMap = reader.ReadBoolean();
@@ -2151,6 +2160,7 @@ namespace tsorcRevamp
         {
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), new Vector2(4182, 626) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2483, 1796) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>(), new Vector2(1040, 1865) },
             { NPCID.MoonLordCore, new Vector2(5408, 584) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>(), new Vector2(1814, 1711) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(318, 1909) },

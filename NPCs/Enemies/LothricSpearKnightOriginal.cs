@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 750;
+            NPC.value = 3750;
             if (Main.hardMode)
             {
                 NPC.lifeMax = 1200;
@@ -64,7 +65,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 lothricSmallDamage = 28;
                 lothricBigDamage = 45;
             }
-            NPC.value = 3750;
             NPC.noGravity = false;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;

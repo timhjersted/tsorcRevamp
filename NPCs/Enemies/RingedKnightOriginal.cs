@@ -55,6 +55,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 400;
+            NPC.value = 2000; // was 150
             //stats not doubled with scale expert method yet (!)(oops)
             if (Main.hardMode)
             {
@@ -75,7 +76,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 ringedKnightDamage = 35;
                 fireDamage = 38;
             }
-            NPC.value = 2000; // was 150
             NPC.HitSound = SoundID.NPCHit48;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.lavaImmune = true;

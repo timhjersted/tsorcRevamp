@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 150;
+            NPC.value = 700;
             if (Main.hardMode)
             {
                 NPC.lifeMax = 450;
@@ -49,7 +50,6 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 NPC.value = 4000;
                 spearStabDamage = 35;
             }
-            NPC.value = 700;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
 

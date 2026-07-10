@@ -46,6 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 400;
+            NPC.value = 2000;
             if (Main.hardMode)
             {
                 NPC.lifeMax = 800;
@@ -65,7 +66,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 ringedKnightDamage = 35;
                 fireDamage = 38;
             }
-            NPC.value = 2000;
             NPC.HitSound = SoundID.NPCHit48;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.lavaImmune = true;

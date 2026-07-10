@@ -561,6 +561,19 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
     }
+    public class OolacileSerpentBag : BossBag
+    {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.BossBag[Type] = true;
+        }
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.AbyssalFang>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 4));
+        }
+    }
     public class DarkCloudBag : BossBag
     {
         public override void SetStaticDefaults()
@@ -593,6 +606,19 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EssenceOfTerraria>()));
             itemLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<DraxEX>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.RodOfHarmony));
+        }
+    }
+    public class SoulOfCinderBag : BossBag
+    {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.BossBag[Type] = true;
+        }
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfCinder>(), 1, 3, 3));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 4));
         }
     }
     #endregion

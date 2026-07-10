@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.lifeMax = 30000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 0;
+            NPC.value = 225000; // 9000 Dark Souls via GlobalNPC.OnKill expert-mode payout
             NPC.knockBackResist = 0f;
             NPC.scale = 1.15f;
             NPC.boss = true;

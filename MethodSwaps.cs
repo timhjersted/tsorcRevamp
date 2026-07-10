@@ -18,6 +18,7 @@ using Terraria.UI;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.MainMenu;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
@@ -47,6 +48,17 @@ namespace tsorcRevamp
 
         internal static void ApplyMethodSwaps()
         {
+            // Auto-select our own main menu theme on load instead of leaving whatever theme (vanilla/tML/
+            // another mod's) was last saved, so the mod's branding is what greets the player by default.
+            // MenuLoader is part of tModLoader's own API surface (Terraria.ModLoader), not the hooked game
+            // assembly, so there's no HookGen On_MenuLoader wrapper for it - hook it manually via reflection
+            // instead, same pattern as the ItemSlot.OverrideHover hook below.
+            MethodInfo gotoSavedModMenu = typeof(MenuLoader).GetMethod("GotoSavedModMenu", BindingFlags.NonPublic | BindingFlags.Static);
+            if (gotoSavedModMenu != null)
+            {
+                MonoModHooks.Add(gotoSavedModMenu, (Action<Action>)ForceRedCloudMenuDefault);
+            }
+
             Terraria.On_Player.Spawn += SpawnPatch;
 
             Terraria.On_WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
@@ -1384,6 +1396,42 @@ namespace tsorcRevamp
             if (self.defendedByPaladin && self.whoAmI == Main.myPlayer && Above25PercentLife)
             {
                 modifiers.FinalDamage *= 0.75f;
+            }
+        }
+
+        // MenuLoader.GotoSavedModMenu picks whatever theme was last saved (vanilla, tML, or another mod's)
+        // and runs exactly once, right after all mods finish loading. There's no public API to make a
+        // ModMenu the default, so once vanilla's own selection logic has run, we reach past it into the
+        // private switchToMenu field it just set, and override it with ours - picked up on the very next
+        // menu draw.
+        //
+        // Only meant to happen once ever, not on every launch - a marker file (outside the ModConfig JSON/UI
+        // system, so there's no visible toggle for it) records that we've already forced the theme once.
+        // After that, whatever the player has manually selected (including switching away from Red Cloud)
+        // is left alone.
+        private static readonly string RedCloudMenuDefaultedMarkerPath =
+            Path.Combine(Terraria.ModLoader.Config.ConfigManager.ModConfigPath, "tsorcRevamp_RedCloudMenuDefaulted.txt");
+
+        private static void ForceRedCloudMenuDefault(Action orig)
+        {
+            orig();
+
+            if (File.Exists(RedCloudMenuDefaultedMarkerPath))
+            {
+                return;
+            }
+
+            FieldInfo switchToMenuField = typeof(MenuLoader).GetField("switchToMenu", BindingFlags.NonPublic | BindingFlags.Static);
+            switchToMenuField?.SetValue(null, ModContent.GetInstance<RedCloudMenu>());
+
+            try
+            {
+                Directory.CreateDirectory(Terraria.ModLoader.Config.ConfigManager.ModConfigPath);
+                File.WriteAllText(RedCloudMenuDefaultedMarkerPath, "1");
+            }
+            catch
+            {
+                // Non-fatal - worst case we force the default theme again on the next launch too.
             }
         }
 

@@ -22,6 +22,18 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 360;
         }
 
+        //ai[1] == 1: the Hydromancer's upgraded barrage — collides with tiles and soaks the target (Wet).
+        //Default (0) keeps the legacy wall-piercing behavior for other users (Archdeacon).
+        bool Soaking => Projectile.ai[1] == 1f;
+
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            if (Soaking)
+            {
+                Projectile.tileCollide = true;
+            }
+        }
+
         Vector2 initialVelocity;
         public override void AI()
         {
@@ -32,9 +44,11 @@ namespace tsorcRevamp.Projectiles.Enemy
                 initialVelocity = Projectile.velocity;
             }
 
+            //Per-bubble phase offset so a volley bobs organically instead of in lockstep
             float rotation = Main.GameUpdateCount % (MathHelper.TwoPi * 10);
             rotation /= 10;
             rotation -= MathHelper.Pi;
+            rotation += Projectile.whoAmI * 0.7f;
 
             Vector2 distortion;
             distortion.X = 0;
@@ -42,8 +56,20 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.velocity = initialVelocity + distortion;
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            if (Soaking)
+            {
+                target.AddBuff(BuffID.Wet, 5 * 60); //soaked — ink sticks to a wet target
+            }
+        }
+
         public override bool PreKill(int timeLeft)
         {
+            if (Soaking)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.5f, Pitch = 0.6f }, Projectile.Center);
+            }
             Projectile.type = ProjectileID.Bubble;
             return true;
         }

@@ -20,6 +20,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 35; //normal mode stat
             NPC.lifeMax = 500; //normal mode stat
+            NPC.defense = 40;
+            NPC.value = 5000; // life / 1 bc rare : was 460
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 2000;
@@ -28,8 +30,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 20000; // life / 1 bc rare : was 690
             }
             NPC.scale = 1.0f;
-            NPC.defense = 40;
-            NPC.value = 5000; // life / 1 bc rare : was 460
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 48;

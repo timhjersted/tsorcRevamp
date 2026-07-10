@@ -41,11 +41,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 buffLengthMod = 2;
             }
+            //Ink sticks to a soaked target: the Hydromancer's Wet setup doubles the ink durations
+            int wetMod = target.HasBuff(BuffID.Wet) ? 2 : 1;
 
-            target.AddBuff(BuffID.BrokenArmor, 600 / buffLengthMod, false);
-            target.AddBuff(BuffID.Blackout, 600 / buffLengthMod, false);
-            target.AddBuff(BuffID.Venom, 240 / buffLengthMod, false);
-            target.AddBuff(BuffID.Obstructed, 120 / buffLengthMod, false);
+            target.AddBuff(BuffID.BrokenArmor, 600 * wetMod / buffLengthMod, false);
+            target.AddBuff(BuffID.Blackout, 600 * wetMod / buffLengthMod, false);
+            target.AddBuff(BuffID.Venom, 240 * wetMod / buffLengthMod, false);
+            target.AddBuff(BuffID.Obstructed, 120 * wetMod / buffLengthMod, false);
         }
 
         public override bool PreDraw(ref Color lightColor)

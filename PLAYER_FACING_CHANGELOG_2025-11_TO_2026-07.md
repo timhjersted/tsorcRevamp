@@ -1,6 +1,6 @@
 # Player-Facing Changelog
 
-Curated from pushed `origin/1.4.4-tracked` history, covering changes from November 2025 through July 4, 2026.
+Curated from pushed `origin/1.4.4-tracked` history plus the 0.17 release-candidate local changes, covering changes from November 2025 through July 9, 2026.
 
 This version removes repeated internal/polish entries, groups related work together, puts the biggest player-facing additions first, and keeps specific balance details where they affect items, weapons, bosses, enemies, or player progression.
 
@@ -18,6 +18,9 @@ This version removes repeated internal/polish entries, groups related work toget
 - Added new dynamic player hurt and death audio. Hurt sounds scale by damage and remaining health, a Dark Souls retrieval sound was added, new-location discovery got a sound, death now fades to black, and death text now says "YOU DIED". The original Terraria sounds can be restored in config. (Tim Hjersted)
 - Added a Dark Souls-inspired Storage tab in the inventory (up to 3000 items) with automatic deposit-on-pickup (potions, boss bags, life/mana crystals, and a few other item types still go to their usual slots), a search bar, and New/All/Weapons/Armor/Accessories/Materials/Misc sorting tabs. Shift-click sends inventory items into Storage and shift-click sends Storage items back to your inventory; the panel remembers whether it was open or closed and can be repositioned by dragging its header. (Tim Hjersted)
 - Added an "Only Show Map When Inventory Is Open" toggle (on by default) that hides the minimap and overlay map during normal play, showing it again only while the inventory is open. (Tim Hjersted)
+- Added the Oolacile Serpent, a new optional SuperHardMode serpent boss with a long segmented body, ground-following movement, burrow-and-resurface behavior, tail-pierce attacks, venom pressure, and a new treasure bag. (Tim Hjersted)
+- Rebuilt Holy Gigas and Ice Gigas into rare boss-style encounters instead of simple legacy enemies. They now have full telegraphed attack kits, poise/stagger interactions, first-kill spell tome rewards, repeat-kill reward chances, and SuperHardMode refights focused on Dark Soul payouts. (Tim Hjersted)
+- Added two multi-mode spell tomes, Heart of Winter and Wrath of Gold, based on Ice Gigas and Holy Gigas attacks. Each tome supports left/right click plus tap/hold inputs for four distinct spells. (Tim Hjersted)
 
 ## Enemy AI And Combat Feel
 
@@ -38,7 +41,7 @@ This version removes repeated internal/polish entries, groups related work toget
 - Ringed Knight received fire teleport style and a fire teleport attack. (Tim Hjersted)
 - SF4 enemies can now teleport out of lava. (Tim Hjersted)
 - Added a bomb fuse sound effect and throw sound to enemies' thrown bomb attacks. (Tim Hjersted)
-- Improved movement and behavior for the large Omnir-family enemies (Gigas, Ice Gigas, Apocalypse, Massacre, Hydra), including on-hit evasion, kiting, patrol mode, and tile interaction. (Tim Hjersted)
+- Improved movement and behavior for large giant/beast enemies such as Gigas, Ice Gigas, Apocalypse, Massacre, and Hydra, including on-hit evasion, kiting, patrol mode, and tile interaction. (Tim Hjersted)
 - Hero of Lumelia was converted to the newer SF4 movement AI. (Tim Hjersted)
 - Fixed Red Cloud Hunter moving without its walking animation in some cases. (Tim Hjersted)
 - SF4 enemies that can't reach a player above them now give up and enter patrol mode instead of jumping endlessly. (Tim Hjersted)
@@ -63,8 +66,15 @@ This version removes repeated internal/polish entries, groups related work toget
 - Added the Cursed Dragon invader, which throws knives that stick into the player before exploding on a direct hit. (Tim Hjersted)
 - Added Knight of Gwyn, a rare enemy that spawns in Bearer of the Curse dungeons. (Tim Hjersted)
 - Began early testing on an Owl Father invader and armor set; still early WIP, with stats and drop source undecided. (Tim Hjersted)
+- Added Spellbound Ghoul as a revived servant for the Necromancer encounter. These ghouls can pressure players independently and can be consumed by Necromancers for healing. (Tim Hjersted)
 
 ## Enemy And Boss Attack Changes
+
+- Holy Gigas now fights as a slow golden-magic caster with sunlight slams, Wrath of Gold nova casts, heavenly spears, sun pillars, halo volleys, golden lightning sweeps, solar boulders, grasping light hands, anti-camping leaps, and a low-health sunfall effect. Its long Wrath of Gold cast can be interrupted by a poise break during the early telegraph window. (Tim Hjersted)
+- Ice Gigas now fights as a frost terrain-controller with glacial slam waves, frost breath, hail volleys, icicle crowns, Rimefang spikes, ice prisons, black ice, undertow pulls, counter-stance behavior, frozen echo statues, and a one-time Heart of Winter fake-death/rebirth attack below 30% health. (Tim Hjersted)
+- Minotaur Mage was rebuilt into a clearer fire caster/brawler hybrid with ember bolts, ground-crawling flame waves, a low-health bullhorn charge, and an interruptible Ring of Cinders cast. (Tim Hjersted)
+- Necromancer was rebuilt around ritual combat: bone shard fans, grave hands, Death Strike, Soul Siphon, Spellbound Ghoul summons, ghoul sacrifice healing, and a close-range curse nova below half health. Its major rituals can be interrupted by poise breaks during their early cast windows. (Tim Hjersted)
+- Oolacile Serpent received a full segmented boss attack set: bite lunges that apply Bleeding, venom pounces, breath sweeps, venom spit patterns, burrowing repositioning, tail pierces from underground, and acid trails from body segments below half health. (Tim Hjersted)
 
 - Fire Lurker gained Flaming Soulmass and Flaming Meteor attacks, no longer uses the old Lost Soul projectile attack, now shoots a Flame Orb, and spawns one Lost Soul projectile on death. (Tim Hjersted)
 - Basilisk enemies received new and expanded attacks, including a new scary attack, improved Disrupter variants, cone-limited Shifter breath, saved-position projectile targeting, kiting ranges, and a polished Tongue Sucker attack. (Tim Hjersted)
@@ -80,7 +90,7 @@ This version removes repeated internal/polish entries, groups related work toget
 - Celestriad sprite work continued, and Triad desperation tuning now scales based on difficulty mode. (Tim Hjersted)
 - Basilisk enemies and Fire Lurker now visibly hold their projectiles before throwing them, giving a clearer attack tell. (Tim Hjersted)
 - Ghost of the Drowned's spear attack no longer whiffs against players standing one tile higher than the enemy, gained a small forward hop to handle elevation, and picked up a ranged leap spear attack and a ranged bubble attack. (Tim Hjersted)
-- Added 2 new attacks to Omnir's Massacre (still being polished). (Tim Hjersted)
+- Added 2 new attacks to Massacre (still being polished). (Tim Hjersted)
 - Great Black Knight received a full AI/state-machine overhaul with more attack variety and a new flail weapon (still WIP), and no longer randomly spawns in Pre-Hardmode. (Tim Hjersted)
 
 ## New Items, Equipment, And Content
@@ -108,6 +118,10 @@ This version removes repeated internal/polish entries, groups related work toget
 - Added the Cursed Dragon transformation accessory: grants stat boosts and a right-click fire breath attack (intended as a future Cursed Dragon invader drop). (Tim Hjersted)
 - Added a new alternate Abysswalker Armor set with a unique set bonus: lets you use items while dodgerolling, adds 10% melee/magic damage and 12% movement speed, and dodging through danger grants Abyssal Poise for 3 seconds so your next melee or magic hit deals 35% bonus damage, restores 8% stamina, and releases an abyss counterattack (losing Abyssal Poise if hit first); its body piece grants melee/magic crit chance rather than flat damage. The original Artorias armor's Beetle Armor crafting requirement was removed so both variants are now straight boss-soul upgrades. (Tim Hjersted, Xelvaa)
 - Added Poison Swamp Water, a new hazard tile in the dungeon and jungle biomes with surface poison bubbles that inflict the Poison debuff. (Tim Hjersted)
+- Added Wrath of Gold, a Holy Gigas spell tome. Tap left click calls heavenly spears, hold left click gathers hunting halo suns, tap right click calls a sun pillar, and hold right click releases a charged golden lightning sweep. (Tim Hjersted)
+- Added Heart of Winter, an Ice Gigas spell tome. Tap left click fires icicles, hold left click breathes frost, tap right click erupts ice spikes at the cursor, and hold right click releases an expanding freeze ring. (Tim Hjersted)
+- Added Abyssal Fang, a serpent-themed melee weapon from the Oolacile Serpent bag. It inflicts Venom and Abyssal Sinking and can occasionally steal a small amount of life on hit. (Tim Hjersted)
+- Added the Oolacile Serpent Stone as a sandbox-world summon item, plus the Oolacile Serpent treasure bag with Abyssal Fang, Humanity, Holy War Elixirs, and the associated boss-bag extra reward. (Tim Hjersted)
 - Reworked the Great Magic Shield's sprite. (Tim Hjersted)
 - Great Magic Mirror's teleport range was extended from 100 to 210 tiles so the mountain tutorial teleport can be completed. (Tim Hjersted)
 - Slimy Saddle is now cursed and unusable until Queen Bee is defeated, to preserve the intended pre-grappling-hook pacing; the King Slime event is also moving to the village mountain. (Tim Hjersted)
@@ -140,6 +154,8 @@ This version removes repeated internal/polish entries, groups related work toget
 - Main menu background no longer stays black and uses the default background again. (Tim Hjersted)
 - Added a music menu to the mod. (Xelvaa)
 - Added new sound to Dark Souls retrieval and new-location discovery. (Tim Hjersted)
+- Boss Hunting Tome support was expanded for optional mystery bosses, allowing optional late-game encounters such as Oolacile Serpent to reveal location-style hints without being treated as the next required critical-path boss. (Tim Hjersted)
+- The Red Cloud main menu theme is now selected automatically the first time after loading the mod, while still respecting any later menu theme choice the player makes manually. (Tim Hjersted)
 - Soapstone messages close more naturally through player movement or mouse movement, with reduced mouse distance needed to dismiss them. (Tim Hjersted)
 - Location banners were centered more accurately, trigger from corrected sign positions, and stay visible longer. (Tim Hjersted)
 - Map location text fades/disappears as the player zooms out to avoid text overlap. (Tim Hjersted)
@@ -217,6 +233,7 @@ This version removes repeated internal/polish entries, groups related work toget
 - Absolute Death became fightable. (Xelvaa)
 - Corrupted Elemental and Ice Skeleton sprites were tweaked. (Xelvaa)
 - Red Knight, Abyssal Ninja Invader, and Pinwheel now drop a Stamina Vessel. Max possible stamina increased from 185 to 200. (Tim Hjersted)
+- Oolacile Serpent now grants a Stamina Vessel through its treasure bag extras. (Tim Hjersted)
 - Abyssal Ninja Invader stats were adjusted for SHM, it gained Abyssal Star as a drop, and Abyssal Ninja armor now requires 3 Souls of Abyssal Invader with reduced soul cost. (Tim Hjersted)
 - More enemies now drop Flame of the Abyss. (Xelvaa)
 - All SHM bosses now drop 1 Holy War Elixir, with other related adjustments. (Xelvaa)

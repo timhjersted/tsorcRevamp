@@ -51,6 +51,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 44;
             NPC.width = 20;
             NPC.lifeMax = 1000;
+            NPC.value = 5000;
             if (Main.hardMode)
             {
                 NPC.knockBackResist = 0.05f;
@@ -68,7 +69,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 13000;  // was 1600
                 lothricDamage = 30;
             }
-            NPC.value = 5000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.lavaImmune = true;

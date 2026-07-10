@@ -456,6 +456,9 @@ Mods: {
 
 		DropRules: {
 			SHMOnly: "[c/ff9999:仅在击败阿卓迪斯之后掉落]"
+			// NonSHMOnly: "[c/99ccff:Does not drop in Super Hardmode]"
+			// NonSHMFirstKill: "[c/99ccff:Guaranteed on the first kill (not in Super Hardmode)]"
+			// NonSHMRepeatKill: "[c/99ccff:Repeat kills after the first (not in Super Hardmode)]"
 			AbyssOnly: "[c/ff9999: 仅在装备亚尔特留斯之约时掉落]"
 			FirstBagOnly: "[c/ff9999: 只能从第一个打开的特定袋子中掉落]"
 			BotCOnly: "[c/ff9999: 只有玩家是被诅咒者时掉落]"
@@ -510,6 +513,7 @@ Mods: {
 				经常在村庄上方的天空中游荡，寻找它的下一顿餐食...
 				重构版地图: 据说它盘踞于西部沙漠上空的巨型熔岩空岛...
 				'''
+			// OptionalMysteryDesc: Some mysteries can only be discovered through exploration.
 			WaterFiendKrakenDesc:
 				'''
 				双峰之间大裂谷底部的丛林蜥蜴砖大门隐藏着秘密...
@@ -555,6 +559,8 @@ Mods: {
 				古老的金字塔又一次被黑暗占据...
 				重构版地图: 使用黑镜
 				'''
+			// SoulOfCinderName: Soul of Cinder
+			// SoulOfCinderDesc: A fading champion waits beyond Dark Cloud's shadow. In sandbox worlds, use the Soul of Cinder spawner.
 			GwynName: 葛温—灰烬帝王
 			GwynDesc: 西海之下的珊瑚礁引导你找到他的坟墓
 		}
@@ -2279,6 +2285,49 @@ Mods: {
 					'''
 			}
 
+			FirelinkHelm: {
+				// DisplayName: Firelink Helm
+				/* Tooltip:
+					'''
+					{0}% increased damage
+					{1}% increased critical strike chance
+					Increases maximum mana by {2}
+					{3}% reduced mana cost
+					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					''' */
+				/* SetBonus:
+					'''
+					{0}% increased damage and {1}% increased critical strike chance
+					{2}% increased damage reduction
+					+{3} life regen and {4}% increased stamina recovery speed
+					Allows walking on fire blocks and grants immunity to fire
+					''' */
+			}
+
+			FirelinkArmor: {
+				// DisplayName: Firelink Armor
+				/* Tooltip:
+					'''
+					{0}% increased damage
+					{1}% increased damage reduction
+					Increases your max number of minions by {2}
+					{3}% increased max stamina
+					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					''' */
+			}
+
+			FirelinkLeggings: {
+				// DisplayName: Firelink Leggings
+				/* Tooltip:
+					'''
+					{0}% increased movement speed
+					{1}% increased damage
+					Increases your max number of minions by {2}
+					{3}% increased stamina recovery speed
+					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					''' */
+			}
+
 			DragoonHelmet: {
 				DisplayName: 龙骑士头盔
 				Tooltip:
@@ -3482,6 +3531,16 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
+			SoulOfCinderBag: {
+				// DisplayName: Treasure Bag (Soul of Cinder)
+				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OolacileSerpentBag: {
+				// DisplayName: Treasure Bag (Oolacile Serpent)
+				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
 			HellkiteBag: {
 				DisplayName: 宝藏袋（地狱鸢龙）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
@@ -3742,6 +3801,16 @@ Mods: {
 				DisplayName: 地狱风筝石
 				Tooltip: 召唤从天而降的地狱鸢龙...
 				WrongTime: 无事发生...晚上再试试吧
+			}
+
+			OolacileSerpentStone: {
+				// DisplayName: Oolacile Serpent Stone
+				// Tooltip: Summons the Oolacile Serpent...
+			}
+
+			SoulOfCinderSpawner: {
+				// DisplayName: Soul of Cinder Spawner
+				// Tooltip: Summons the Soul of Cinder in sandbox worlds.
 			}
 
 			JungleFeather: {
@@ -4014,6 +4083,8 @@ Mods: {
 				43: "{$BossChecklist.DarkCloudDesc}"
 				44: "{$BossChecklist.GwynDesc}"
 				45: 恭喜！你已经解锁了游戏的真实结局！
+				// 46: "{$BossChecklist.OptionalMysteryDesc}"
+				// 47: "{$BossChecklist.OptionalMysteryDesc}"
 			}
 
 			BraveWarriorSoul: {
@@ -5324,6 +5395,11 @@ Mods: {
 				Tooltip: 深渊行者—亚尔特留斯的精华
 			}
 
+			SoulOfCinder: {
+				// DisplayName: Soul of Cinder
+				// Tooltip: "'The essence of the Soul of Cinder'"
+			}
+
 			SoulOfAttraidies: {
 				DisplayName: 阿卓迪斯之魂
 				Tooltip:
@@ -5919,6 +5995,55 @@ Mods: {
 				Tooltip: 一把强大的魔杖，专为与法师战斗而生，可以穿墙
 			}
 
+			DualBladedAxe: {
+				// DisplayName: Dual Bladed Axe
+				// Tooltip: An axe favored by a wild and reckless sort.
+			}
+
+			LordGwynHelm: {
+				// DisplayName: Crown of the Lord of Cinder
+				// Tooltip: Worn by he who linked the First Flame
+			}
+
+			LordGwynArmor: {
+				// DisplayName: Cuirass of the Lord of Cinder
+				// Tooltip: Worn by he who linked the First Flame
+			}
+
+			LordGwynLeggings: {
+				// DisplayName: Greaves of the Lord of Cinder
+				// Tooltip: Worn by he who linked the First Flame
+			}
+
+			EnemySwordOfGwyn: {
+				// DisplayName: Great Lord Greatsword
+				// Tooltip: ""
+			}
+
+			HeartOfWinter: {
+				// DisplayName: Heart of Winter
+				/* Tooltip:
+					'''
+					The Ice Gigas's spell tome — four of its moves bound in one book
+					Tap left click to lance icicles at your foe
+					Hold left click to breathe a cone of frost
+					Tap right click to erupt ice spikes from the ground at your cursor
+					Hold right click to charge, then unleash an expanding freeze ring
+					''' */
+			}
+
+			WrathOfGold: {
+				// DisplayName: Wrath of Gold
+				/* Tooltip:
+					'''
+					The Holy Gigas's spell tome — four of its moves bound in one book
+					Tap left click to call heavenly spears down upon your cursor
+					Hold left click to gather a halo of hunting suns
+					Tap right click to bring a pillar of judgment light down at your cursor
+					Hold right click to charge, then release a blade of golden lightning
+					''' */
+			}
+
 			WandOfFrost2: {
 				DisplayName: 霜灾魔杖
 				Tooltip:
@@ -6193,6 +6318,16 @@ Mods: {
 			WitchkingsSword: {
 				DisplayName: 巫师王之剑
 				Tooltip: 攻击敌人对其施加 1-2 种随机的减益
+			}
+
+			AbyssalFang: {
+				// DisplayName: Abyssal Fang
+				/* Tooltip:
+					'''
+					A serpent blade steeped in Oolacile's dark venom
+					Inflicts Venom and Abyssal Sinking
+					Occasionally steals a sliver of life on hit
+					''' */
 			}
 
 			YianBlade: {
@@ -9792,6 +9927,7 @@ Mods: {
 			GreatFarronDart.DisplayName: 强力法兰短箭
 			GreatFarronDartSpawner.DisplayName: 强力法兰短箭生成器
 			SwordOfLordGwyn.DisplayName: 葛温之刃
+			// SwordOfCinder.DisplayName: Sword of Cinder
 			TackleProjectile.DisplayName: 葛温
 			Hellwing.DisplayName: 地狱之翼
 			HerosArrow.DisplayName: 英雄之箭
@@ -9851,6 +9987,70 @@ Mods: {
 			RedKnightsSpear.DisplayName: 红骑士之矛
 			ScrewAttack.DisplayName: 弩箭打击
 			ShadowShot.DisplayName: 影弹
+			// VenomSpit.DisplayName: Venom Spit
+			// AcidPool.DisplayName: Acid Pool
+			// GigasShockwave.DisplayName: Gigas Shockwave
+			// GigasNovaRing.DisplayName: Wrath of Gold
+			// GigasHeavenlySpear.DisplayName: Heavenly Spear
+			// GigasSunPillar.DisplayName: Sun Pillar
+			// GigasConsecratedGround.DisplayName: Consecrated Ground
+			// GigasHaloSun.DisplayName: Halo Sun
+			// GigasSweepBeam.DisplayName: Lightning of the First Sun
+			// GigasSolarBoulder.DisplayName: Solar Boulder
+			// GigasSolarEmber.DisplayName: Solar Ember
+			// GigasSunfallComet.DisplayName: Sunfall Comet
+			// GigasLightHand.DisplayName: Grasping Light
+			// GigasIceSpike.DisplayName: Rimefang Spike
+			// GigasFrostBreathPuff.DisplayName: Frost Breath
+			// GigasHailstone.DisplayName: Hailstone
+			// GigasIceShard.DisplayName: Ice Shard
+			// GigasCrownIcicle.DisplayName: Crown Icicle
+			// GigasFrostZone.DisplayName: Winter's Grasp
+			// GigasFreezeRing.DisplayName: Absolute Zero
+			// GigasPrisonPillar.DisplayName: Ice Prison Pillar
+			// GigasUndertowZone.DisplayName: Undertow of Winter
+			// GigasCanopyIcicle.DisplayName: Crystal Canopy
+			// GigasGlazeStrip.DisplayName: Black Ice
+			// HeartOfWinterController.DisplayName: Heart of Winter
+			// TomeIcicle.DisplayName: Crown Icicle
+			// TomeFrostPuff.DisplayName: Frost Breath
+			// TomeIceSpike.DisplayName: Rimefang
+			// TomeFreezeRing.DisplayName: Absolute Zero
+			// WrathOfGoldController.DisplayName: Wrath of Gold
+			// TomeHeavenlySpear.DisplayName: Heavenly Spear
+			// TomeHaloSun.DisplayName: Halo Sun
+			// TomeSunPillar.DisplayName: Sun Pillar
+			// TomeGoldSweep.DisplayName: Lightning of the First Sun
+			// MinotaurEmberBolt.DisplayName: Ember Bolt
+			// MinotaurFlameWave.DisplayName: Flame Wave
+			// MinotaurCinder.DisplayName: Cinder
+			// NecroBoneShard.DisplayName: Bone Shard
+			// GhoulDeathBlast.DisplayName: Spellbound Detonation
+			// GhoulDreamSpark.DisplayName: Dream Spark
+			// GwynFireArc.DisplayName: Cinder Arc
+			// GwynLightningSpear.DisplayName: Spear of the First Sun
+			// GwynLightningStrike.DisplayName: Judgment Bolt
+			// GwynFloorSpark.DisplayName: Coursing Lightning
+			// GwynCinderNova.DisplayName: Cinder Nova
+			// GwynSunlightSpear.DisplayName: Sunlight Spear
+			// GwynSolarSpearNode.DisplayName: Sunlight Spear
+			// GwynFireball.DisplayName: Cinder Rain
+			// GwynFirestorm.DisplayName: Firestorm
+			// GwynFlameGrasp.DisplayName: Lord's Grasp
+			// GwynDescentMeteor.DisplayName: Descent of the Sun
+			// NecroGraveHand.DisplayName: Grave Hand
+			// NecroSiphonPulse.DisplayName: Soul Siphon
+			// NecroCurseNova.DisplayName: Curse Nova
+			// GigasIceWaveSegment.DisplayName: Hoarfrost Creep
+			// NitoSwordSlash.DisplayName: Gravelord Sword
+			// NitoBoneShard.DisplayName: Gravelord Bone Shard
+			// NitoDeathNova.DisplayName: Death Nova
+			// NitoGraveSpike.DisplayName: Gravelord Spike
+			// NitoGraveHand.DisplayName: Grave Hand
+			// NitoMiasmaCloud.DisplayName: Miasma
+			// QuaraTidalCrest.DisplayName: Tidal Crest
+			// QuaraBurstBubble.DisplayName: Burst Bubble
+			// QuaraDroplet.DisplayName: Droplet
 			SmallFlameJet.DisplayName: 轻型火焰喷射
 			SmallWeaponSlash.DisplayName: 轻型武器斩击
 			Spearhead.DisplayName: 矛头
@@ -10722,6 +10922,7 @@ Mods: {
 			}
 
 			SwordOfLordGwyn.DisplayName: 葛温之刃
+			// SwordOfCinder.DisplayName: Sword of Cinder
 			HellkiteDragonBody.DisplayName: 炼狱鸢龙
 			HellkiteDragonBody2.DisplayName: 炼狱鸢龙
 			HellkiteDragonBody3.DisplayName: 炼狱鸢龙
@@ -10733,6 +10934,16 @@ Mods: {
 
 			HellkiteDragonLegs.DisplayName: 炼狱鸢龙
 			HellkiteDragonTail.DisplayName: 炼狱鸢龙
+			// OolacileSerpentBody.DisplayName: Oolacile Serpent
+			// OolacileSerpentBody2.DisplayName: Oolacile Serpent
+			// OolacileSerpentBody3.DisplayName: Oolacile Serpent
+			// OolacileSerpentTail.DisplayName: Oolacile Serpent
+
+			OolacileSerpentHead: {
+				// DisplayName: Oolacile Serpent
+				// DespawnHandler: The Oolacile Serpent slithers away into the dark...
+			}
+
 			PrimordialCrystal.DisplayName: 始源晶簇
 			SeathTheScalelessBody.DisplayName: 无鳞的冰龙—希斯
 			SeathTheScalelessBody2.DisplayName: 无鳞的冰龙—希斯
@@ -12078,9 +12289,12 @@ Mods: {
 			// DemonLordApocalypse.DisplayName: Demon Lord Apocalypse
 			// Eland.DisplayName: Eland
 			// EvilEye.DisplayName: Evil Eye
-			// Gigas.DisplayName: Gigas
+			// Gigas.DisplayName: Holy Gigas
+			// GravelordNito.DisplayName: Gravelord Nito
 			// Hydra.DisplayName: Hydra
 			// IceGigas.DisplayName: Ice Gigas
+			// FrozenGigasStatue.DisplayName: Frozen Echo
+			// SpellboundGhoul.DisplayName: Spellbound Ghoul
 			// Massacre.DisplayName: Juggernaut
 			// MinotaurMage.DisplayName: Minotaur Mage
 			// Plaguesmith.DisplayName: Plaguesmith

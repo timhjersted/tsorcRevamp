@@ -49,6 +49,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.NPCs.Enemies;
@@ -160,6 +161,7 @@ namespace tsorcRevamp
         public static List<int> SerrisSegments;
         public static List<int> GhostDragonSegments;
         public static List<int> HellkiteDragonSegments;
+        public static List<int> OolacileSerpentSegments;
         public static List<int> LichKingSerpentSegments;
         public static List<int> SeathSegments;
         // NPCs that intentionally set active=false mid-AI to transform into a different NPC (boss intros) or
@@ -996,7 +998,9 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<HellkiteBag>()              , BossExtras.GuardianSoul       },
                 {   ModContent.ItemType<SeathBag>()                 , BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<WitchkingBag>()             , BossExtras.GuardianSoul       },
+                {   ModContent.ItemType<OolacileSerpentBag>()        , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<DarkCloudBag>()             , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<SoulOfCinderBag>()          , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<GwynBag>()                  , BossExtras.DarkSoulsOnly      }
                 #endregion
             };
@@ -1068,7 +1072,9 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<HellkiteDragonHead>()                                          },
                 {   ModContent.ItemType<SeathBag>()                 , ModContent.NPCType<SeathTheScalelessHead>()                                       },
                 {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<Witchking>()                                                   },
+                {   ModContent.ItemType<OolacileSerpentBag>()        , ModContent.NPCType<OolacileSerpentHead>()                                        },
                 {   ModContent.ItemType<DarkCloudBag>()             , ModContent.NPCType<DarkCloud>()                                                   },
+                {   ModContent.ItemType<SoulOfCinderBag>()          , ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>()                      },
                 {   ModContent.ItemType<GwynBag>()                  , ModContent.NPCType<Gwyn>()                                                        }
                 #endregion
             };
@@ -1471,6 +1477,15 @@ namespace tsorcRevamp
             ModContent.NPCType<HellkiteDragonTail>()
         };
 
+            OolacileSerpentSegments = new List<int>()
+        {
+            ModContent.NPCType<OolacileSerpentHead>(),
+            ModContent.NPCType<OolacileSerpentBody>(),
+            ModContent.NPCType<OolacileSerpentBody2>(),
+            ModContent.NPCType<OolacileSerpentBody3>(),
+            ModContent.NPCType<OolacileSerpentTail>()
+        };
+
             LichKingSerpentSegments = new List<int>()
         {
             ModContent.NPCType<LichKingSerpentHead>(),
@@ -1774,6 +1789,7 @@ namespace tsorcRevamp
                 WormNPCs.AddRange(SerrisSegments);
                 WormNPCs.AddRange(GhostDragonSegments);
                 WormNPCs.AddRange(HellkiteDragonSegments);
+                WormNPCs.AddRange(OolacileSerpentSegments);
                 WormNPCs.AddRange(LichKingSerpentSegments);
                 WormNPCs.AddRange(SeathSegments);
             }
@@ -2871,6 +2887,22 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogBoss", // Name of the call
                     this,
+                    nameof(OolacileSerpentHead),
+                    20.11f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileSerpentHead>())),
+                    new List<int>() { ModContent.NPCType<OolacileSerpentHead>(), ModContent.NPCType<OolacileSerpentBody>(), ModContent.NPCType<OolacileSerpentBody2>(), ModContent.NPCType<OolacileSerpentBody3>(), ModContent.NPCType<OolacileSerpentTail>() },
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.OolacileSerpentHead.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.OolacileSerpentStone>()
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
                     nameof(Blight),
                     20.2f, // Tier (look above)
                     () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Blight>())), // Downed variable (the one keeping track the boss has been defeated once)
@@ -3041,6 +3073,22 @@ namespace tsorcRevamp
                         ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DarkCloudName"),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DarkCloudDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMirror>()
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(NPCs.Bosses.SuperHardMode.SoulOfCinder),
+                    21.5f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SoulOfCinderName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.SoulOfCinderSpawner>()
                     }
                     );
 

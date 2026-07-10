@@ -549,9 +549,10 @@ namespace tsorcRevamp.NPCs
             static void Add<T>(float kbResist, float poiseMax) where T : ModNPC => PoiseProfiles[ModContent.NPCType<T>()] = (kbResist, poiseMax);
 
             // Bosses
-            Add<Bosses.SuperHardMode.Gwyn>(0.15f, 120f);
+            Add<Bosses.SuperHardMode.Gwyn>(0.15f, 150f); // the final boss — sturdiest poise in the game
             Add<Bosses.SuperHardMode.Artorias>(0.15f, 120f);
             Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
+            Add<Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
             Add<Bosses.HeroofLumelia>(0.15f, 90f);
             Add<Enemies.SuperHardMode.SlograII>(0.4f, 50f);
@@ -559,8 +560,9 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.AncientDemon>(0.15f, 80f);
             Add<Bosses.AncientOolacileDemon>(0.15f, 80f);
             Add<Enemies.SuperHardMode.AncientDemonOfTheAbyss>(0.15f, 80f);
-            Add<Enemies.Gigas>(0.15f, 80f);
-            Add<Enemies.IceGigas>(0.15f, 80f);
+            Add<Enemies.Gigas>(0.15f, 120f); // caster-giant mini-boss: boss-tier poise; its long Wrath of Gold telegraph is the stagger window
+            Add<Enemies.IceGigas>(0.15f, 120f); // frost terrain-controller mini-boss: boss-tier poise; Absolute Zero's channel is the stagger window
+            Add<Bosses.GravelordNito.GravelordNito>(0.15f, 120f); // Skeletron-tier boss: harmless contact body, sword/projectile damage, Death Nova channel is the stagger window
             Add<Enemies.DemonLordApocalypse>(0.15f, 80f);
             // Big bruisers
             Add<Enemies.Hydra>(0.2f, 60f);
@@ -569,6 +571,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.SuperHardMode.TaurusKnight>(0.2f, 55f);
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
             // Standard fighters
+            Add<Enemies.MinotaurMage>(0.3f, 35f); // beefy caster; its Ring of Cinders cast is the stagger window
             Add<Enemies.SuperHardMode.DarkBloodKnight>(0.3f, 35f);
             Add<Enemies.SuperHardMode.OolacileKnight>(0.3f, 35f);
             Add<Enemies.Basilisk.BasiliskHunter>(0.3f, 35f);
@@ -2309,6 +2312,7 @@ namespace tsorcRevamp.NPCs
                         // check whether the SHM boss was killed
                         if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
+                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
@@ -2319,6 +2323,11 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>())
                         {
                             tsorcRevampWorld.isHellkiteDragonDead = true;
+                        }
+
+                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>())
+                        {
+                            tsorcRevampWorld.isOolacileSerpentDead = true;
                         }
 
                         if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)

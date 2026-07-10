@@ -31,6 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 105;
+            NPC.value = 500;
             if (Main.hardMode)
             {
                 NPC.lifeMax = 270;
@@ -47,7 +48,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 4000;
                 spearStabDamage = 32;
             }
-            NPC.value = 500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
 

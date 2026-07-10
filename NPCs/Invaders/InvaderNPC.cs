@@ -1124,6 +1124,10 @@ namespace tsorcRevamp.NPCs.Invaders
         internal int     DebugDirection;
         internal string  DebugPhaseName => Phase.ToString();
         internal int     DebugPhaseTimer => PhaseTimer;
+        /// <summary>Friendly name of the set-piece attack currently firing (for the DebugMode HUD),
+        /// or null. Subclasses set this when a bespoke attack triggers; the overlay shows it prominently
+        /// and alternates its color each time it changes so consecutive attacks are easy to tell apart.</summary>
+        internal string  DebugAttackLabel;
         /// <summary>Named combo + motion currently playing, e.g. "Charged Chop/OverheadArc (step 0/1)" —
         /// empty outside combo phases.  Every combo shares the same Phase enum value, so this is the
         /// only way to tell which specific attack is on screen from the overlay/log.</summary>
@@ -1284,6 +1288,17 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>Chance (0-100) of preferring a combo over the legacy slash/stab/spear path
         /// when both are available.  Set to 0 to disable melee combos entirely.</summary>
         protected virtual int MeleeComboChance => 65;
+
+        /// <summary>Optional bespoke combo pool that REPLACES the shared archetype table (for boss
+        /// movesets).  null = use the archetype table.  Length defines the cooldown array.</summary>
+        protected virtual MeleeCombo[] MeleeComboPoolOverride => null;
+
+        /// <summary>Reactive combo selection hook.  Called after the range/HP/cooldown weights are
+        /// built but before the weighted roll; return a ready combo index chosen from LIVE player
+        /// state (mid-dodgeroll direction, launched, flanking) to react to what the player is doing
+        /// right now, or -1 to fall through to the default weighted roll.  <paramref name="ready"/>
+        /// is the per-combo effective-weight array (0 = on cooldown / wrong band — don't pick those).</summary>
+        protected virtual int ReactiveComboIndex(float dist, ComboRangeBand band, int[] ready) => -1;
 
         /// <summary>When true (default), the invader brakes during melee/spear/combo telegraphs so the
         /// wind-up reads as a planted swing.  Set false to keep pursuing through the wind-up so the player
@@ -3380,7 +3395,7 @@ namespace tsorcRevamp.NPCs.Invaders
         private void EnsureMeleeComboPool()
         {
             if (_meleeComboPool != null) return;
-            _meleeComboPool = WeaponArchetypeTables.GetMeleeCombos(MeleeArchetype);
+            _meleeComboPool = MeleeComboPoolOverride ?? WeaponArchetypeTables.GetMeleeCombos(MeleeArchetype);
             if (_meleeComboPool != null)
                 _meleeComboCooldowns = new int[_meleeComboPool.Length];
         }
@@ -3429,13 +3444,19 @@ namespace tsorcRevamp.NPCs.Invaders
             }
             if (total <= 0) return false;
 
-            int roll = Main.rand.Next(total);
-            int cumulative = 0;
-            int chosen = -1;
-            for (int i = 0; i < _meleeComboPool.Length; i++)
+            // Reactive first: let a boss pick from the player's live state (dodgeroll direction,
+            // launched, flanking).  Only honoured if it names a ready combo; else weighted roll.
+            int chosen = ReactiveComboIndex(dist, band, effective);
+            if (chosen < 0 || chosen >= _meleeComboPool.Length || effective[chosen] <= 0)
             {
-                cumulative += effective[i];
-                if (effective[i] > 0 && roll < cumulative) { chosen = i; break; }
+                int roll = Main.rand.Next(total);
+                int cumulative = 0;
+                chosen = -1;
+                for (int i = 0; i < _meleeComboPool.Length; i++)
+                {
+                    cumulative += effective[i];
+                    if (effective[i] > 0 && roll < cumulative) { chosen = i; break; }
+                }
             }
             if (chosen < 0) return false;
 

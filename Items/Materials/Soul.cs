@@ -181,6 +181,19 @@ namespace tsorcRevamp.Items.Materials
         }
 
     }
+    public class SoulOfCinder : Soul
+    {
+        public override void SetStaticDefaults()
+        {
+            base.SetStaticDefaults();
+        }
+
+        public override void PostUpdate()
+        {
+            Lighting.AddLight(Item.Center, 0.95f, 0.45f, 0.12f);
+        }
+
+    }
     public class SoulOfBlight : Soul
     {
         public override void SetStaticDefaults()

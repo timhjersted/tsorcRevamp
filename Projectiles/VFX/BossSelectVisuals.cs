@@ -210,6 +210,11 @@ namespace tsorcRevamp.Projectiles.VFX
             // SHM
             34, 35, 36, 37, 39, 40, 41, 42, 44
         };
+        private static readonly HashSet<int> OptionalMysteryRarities = new()
+        {
+            46,
+            47
+        };
         int spawnCountdown = 0;
         int spawnID = 0;
         List<NPC> currentDownedList;
@@ -335,8 +340,9 @@ namespace tsorcRevamp.Projectiles.VFX
 
                     int bossRarity = (currentRarityList != null && i < currentRarityList.Count) ? currentRarityList[i] : 0;
                     bool isNextCriticalPath = bossRarity > 0 && bossRarity == nextUndefeatedCriticalPath;
-                    bool clueRevealed = bossRarity > 0 && bossRarity <= nextUndefeatedCriticalPath;
-                    bool isOptionalRevealed = clueRevealed && !isNextCriticalPath && !CriticalPathRarities.Contains(bossRarity);
+                    bool optionalMysteryRevealed = OptionalMysteryRarities.Contains(bossRarity);
+                    bool clueRevealed = optionalMysteryRevealed || (bossRarity > 0 && bossRarity <= nextUndefeatedCriticalPath);
+                    bool isOptionalRevealed = clueRevealed && !isNextCriticalPath && (!CriticalPathRarities.Contains(bossRarity) || optionalMysteryRevealed);
 
                     // Undefeated bosses just show a question mark — no boss silhouette behind it.
                     // Previous attempts (manual texture draw, DrawNPCDirect + npc.color tint) either
@@ -358,7 +364,7 @@ namespace tsorcRevamp.Projectiles.VFX
                         currentDownedList == PreHardmodeDownedBosses ||
                         (currentDownedList == HardmodeDownedBosses && Main.hardMode) ||
                         (currentDownedList == SHMDownedBosses && tsorcRevampWorld.SuperHardMode);
-                    bool criticalPathGateOpen = bossRarity > 0 && bossRarity <= nextUndefeatedCriticalPath;
+                    bool criticalPathGateOpen = optionalMysteryRevealed || (bossRarity > 0 && bossRarity <= nextUndefeatedCriticalPath);
 
                     if (eraUnlocked && criticalPathGateOpen && Projectile.owner == Main.myPlayer && qmHitbox.Contains(Main.MouseWorld.ToPoint()) && radius >= 1 && currentRarityList != null && i < currentRarityList.Count)
                     {
@@ -428,8 +434,15 @@ namespace tsorcRevamp.Projectiles.VFX
                         int baseRarity = (currentRarityList != null && i < currentRarityList.Count)
                             ? currentRarityList[i]
                             : currentDownedList[i].rarity;
-                        int nextBoss = baseRarity + 1;
-                        mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Next") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + nextBoss);
+                        if (OptionalMysteryRarities.Contains(baseRarity))
+                        {
+                            mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + baseRarity);
+                        }
+                        else
+                        {
+                            int nextBoss = baseRarity + 1;
+                            mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Next") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + nextBoss);
+                        }
                         mouseOverPos = currentDownedList[i].Center;
                         mouseOverHeight = currentDownedList[i].height;
                         if (currentDownedList[i].type == NPCID.BrainofCthulhu)

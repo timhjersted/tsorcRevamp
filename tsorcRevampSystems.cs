@@ -830,11 +830,16 @@ namespace tsorcRevamp
         // spear grip, hand/origin positions). Meant to make hand-placement / rotation bugs debuggable
         // without needing a screenshot + manual trig — the same numbers are also written per-tick to
         // Logs/tsorcRevamp-invader-weapon.log when DebugMode is on.
+        // Per-invader: the last shown attack name + the yellow/white toggle, so the color only flips
+        // when the attack actually changes (making consecutive attacks visually distinct).
+        private static readonly Dictionary<int, (string last, bool toggle)> _debugAttackColor = new();
+
         private static void DrawInvaderAttackDebug(SpriteBatch spriteBatch)
         {
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
 
+            List<(string text, Color color)> attackLines = new List<(string, Color)>();
             List<string> lines = new List<string>();
             foreach (NPC npc in Main.ActiveNPCs)
             {
@@ -842,6 +847,18 @@ namespace tsorcRevamp
                 if (Vector2.Distance(npc.Center, Main.LocalPlayer.Center) > 2400f) continue;
 
                 string comboTag = inv.DebugComboTag;
+
+                // Prominent current-attack readout: the friendly set-piece name if one is firing, else
+                // the melee combo, else the base phase. Alternates yellow/white per attack change.
+                string current = !string.IsNullOrEmpty(inv.DebugAttackLabel) ? inv.DebugAttackLabel
+                               : comboTag.Length > 0 ? comboTag
+                               : inv.DebugPhaseName;
+                bool toggle = _debugAttackColor.TryGetValue(npc.whoAmI, out var prev)
+                    ? (prev.last != current ? !prev.toggle : prev.toggle)
+                    : true;
+                _debugAttackColor[npc.whoAmI] = (current, toggle);
+                attackLines.Add(($">> {npc.TypeName}#{npc.whoAmI}: {current}", toggle ? Color.Yellow : Color.White));
+
                 lines.Add($"[{npc.TypeName}#{npc.whoAmI}] phase={inv.DebugPhaseName}{(comboTag.Length > 0 ? " combo=" + comboTag : "")} t={inv.DebugPhaseTimer}");
                 lines.Add($"  item={inv.DebugHeldItemType} spear={inv.DebugHoldingSpearNow} rangedLike={inv.DebugHeldRangedLike}"
                     + $" dir={inv.DebugDirection} grip={inv.DebugSpearGrip:F2}");
@@ -854,11 +871,20 @@ namespace tsorcRevamp
 
             DynamicSpriteFont font = FontAssets.MouseText.Value;
             float lineH = 16f;
-            float startY = Main.screenHeight - (lines.Count * lineH) - 10f;
+            float startY = Main.screenHeight - (lines.Count * lineH) - (attackLines.Count * 22f) - 14f;
+
+            // Big alternating-color attack names at the top of the block
+            for (int i = 0; i < attackLines.Count; i++)
+            {
+                Utils.DrawBorderStringFourWay(spriteBatch, font, attackLines[i].text,
+                    10f, startY + i * 22f,
+                    attackLines[i].color, Color.Black, Vector2.Zero, 1.1f);
+            }
+            float detailY = startY + attackLines.Count * 22f + 4f;
             for (int i = 0; i < lines.Count; i++)
             {
                 Utils.DrawBorderStringFourWay(spriteBatch, font, lines[i],
-                    10f, startY + i * lineH,
+                    10f, detailY + i * lineH,
                     Color.White, Color.Black, Vector2.Zero, 0.8f);
             }
         }

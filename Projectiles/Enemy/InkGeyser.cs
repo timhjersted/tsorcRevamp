@@ -44,7 +44,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
-            for (int j = 0; j < 10f * (timer / 120f); j++)
+            //Core swirl (shader kept here only — it reads as ink without needing a hundred edge dusts)
+            for (int j = 0; j < 6f * (timer / 120f); j++)
             {
                 Vector2 dir = Main.rand.NextVector2Circular(64, 64);
                 Vector2 dustPos = Projectile.Center + dir;
@@ -54,7 +55,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 thisDust.noGravity = true;
                 thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.BlackDye), Main.LocalPlayer);
             }
-            for (int j = 0; j < 100; j++)
+            //Edge ring: was 100/tick (a slideshow with two casters on screen) — 16 sells the same circle
+            for (int j = 0; j < 16; j++)
             {
                 Vector2 dir = Main.rand.NextVector2CircularEdge(65, 65);
                 Vector2 dustPos = Projectile.Center + dir;
@@ -76,9 +78,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 buffLengthMod = 2;
             }
+            //Ink sticks to a soaked target: Wet doubles the ink durations
+            int wetMod = target.HasBuff(BuffID.Wet) ? 2 : 1;
 
-            target.AddBuff(BuffID.BrokenArmor, 180 / buffLengthMod, false);
-            target.AddBuff(BuffID.Blackout, 600 / buffLengthMod, false);
+            target.AddBuff(BuffID.BrokenArmor, 180 * wetMod / buffLengthMod, false);
+            target.AddBuff(BuffID.Blackout, 600 * wetMod / buffLengthMod, false);
         }
     }
 }

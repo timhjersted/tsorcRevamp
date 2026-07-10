@@ -70,6 +70,36 @@ namespace tsorcRevamp
         public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.SHMOnly");
     }
 
+    ///<summary>Drops only BEFORE Super Hardmode — for unique rewards whose SHM re-encounters pay out
+    ///in Dark Souls instead (e.g. the Ice Gigas rare-event respawns).</summary>
+    public class NonSuperHardmodeRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        public bool CanDrop(DropAttemptInfo info) => !tsorcRevampWorld.SuperHardMode;
+        public bool CanShowItemDropInUI() => true;
+        public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.NonSHMOnly");
+    }
+
+    ///<summary>Guaranteed unique reward on the FIRST kill of this NPC type (tracked via NewSlain, which
+    ///the NPC's OnKill must register — loot rules resolve before OnKill, so the ordering works out).
+    ///Non-boss-flag version of FirstBossKillRule, gated out of Super Hardmode. Pair with
+    ///NonSHMRepeatKillRule for a reduced repeat-kill rate.</summary>
+    public class NonSHMFirstKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        public bool CanDrop(DropAttemptInfo info)
+            => !tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type));
+        public bool CanShowItemDropInUI() => true;
+        public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.NonSHMFirstKill");
+    }
+
+    ///<summary>The repeat-kill half of the pair above: only after the first kill, never in SHM.</summary>
+    public class NonSHMRepeatKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        public bool CanDrop(DropAttemptInfo info)
+            => !tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type));
+        public bool CanShowItemDropInUI() => true;
+        public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.NonSHMRepeatKill");
+    }
+
     public class WithinTheAbyssRule : IItemDropRuleCondition, IProvideItemConditionDescription
     {
         public bool CanDrop(DropAttemptInfo info) => info.player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss;
