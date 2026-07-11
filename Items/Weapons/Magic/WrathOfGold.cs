@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
 {
     ///<summary>
     ///The Holy Gigas's spell tome: four of its moves in one book.
-    ///  • Left click (tap):   Heavenly Spears — three golden spears form over the cursor and lance down
-    ///  • Left click (hold):  Halo Volley — suns gather in orbit around you and hunt nearby foes
-    ///  • Right click (tap):  Sun Pillar — a column of judgment light slams down at the cursor
-    ///  • Right click (hold): Lightning of the First Sun — charge, then release a long golden sweep
+    ///  • Cursor high tap:   Heavenly Spears — three golden spears form over the cursor and lance down
+    ///  • Cursor high hold:  Halo Volley — suns gather in orbit around you and hunt nearby foes
+    ///  • Cursor low tap:    Sun Pillar — a column of judgment light slams down at the cursor
+    ///  • Cursor low hold:   Lightning of the First Sun — charge, then release a long golden sweep
     ///Routed through WrathOfGoldController (tap = released within 18 ticks, otherwise hold).
     ///Placeholder art: vanilla Golden Shower tome — swap the Texture override for a bespoke sprite.
     ///</summary>
@@ -41,11 +41,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.shootSpeed = 1f;
         }
 
-        public override bool AltFunctionUse(Player player)
-        {
-            return true;
-        }
-
         public override bool CanUseItem(Player player)
         {
             return player.ownedProjectileCounts[ModContent.ProjectileType<WrathOfGoldController>()] == 0;
@@ -53,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            int mode = player.altFunctionUse == 2 ? 1 : 0;
+            int mode = Main.MouseWorld.Y > player.Bottom.Y ? 1 : 0;
             Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI, mode);
             return false;
         }

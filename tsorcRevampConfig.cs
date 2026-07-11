@@ -385,6 +385,9 @@ namespace tsorcRevamp
         [DefaultValue(false)]
         public bool EnemyHealthBars { get; set; }
 
+        [DefaultValue(true)]
+        public bool PlayerHurtVisuals { get; set; }
+
         [DefaultValue(false)]
         public bool HideCeruleanFlask { get; set; }
 
@@ -396,6 +399,9 @@ namespace tsorcRevamp
 
         [DefaultValue(true)]
         public bool OnlyShowMapWhenInventoryIsOpen { get; set; }
+
+        [DefaultValue(true)]
+        public bool TransparentInventoryBar { get; set; }
 
         [Range(0, 100)]
         [DefaultValue(true)]

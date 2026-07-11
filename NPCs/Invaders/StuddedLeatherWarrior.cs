@@ -138,7 +138,9 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int TeleportDustCount => 22;
         protected override Color TeleportDustTint => new Color(180, 180, 180);
         protected override int CasualStrollChance => 10;
-        protected override bool CanStab => true;
+        // Stab is a thrust pose — reads wrong for an axe (an axe has no poke), so it's disabled;
+        // the axe gets its reach from the combo swings + Charge/Leap gap-closers instead.
+        protected override bool CanStab => false;
 
         protected override float InvaderJumpPower => 10f;
         protected override float InvaderJumpBoost => 6f;

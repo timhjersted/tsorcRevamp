@@ -495,6 +495,7 @@ Mods: {
 			AncientOolacileDemonDesc: Legends mention the Oolacile Forest...
 			SlograAndGaibonName: Slogra and Gaibon
 			SlograAndGaibonDesc: Found in the depths of the Meteor Temple.
+			GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
 			JungleWyvernDesc: Found in the depths of the Forgotten City.
 			AncientDemonDesc: A secret lair in hell awaits you...
 			TheRageDesc: Found in the depths of the Hallowed Caverns.
@@ -3809,6 +3810,11 @@ Mods: {
 				Tooltip: Summons the Soul of Cinder in sandbox worlds.
 			}
 
+			GravelordNitoSpawner: {
+				DisplayName: Gravelord's Effigy
+				Tooltip: Summons Gravelord Nito in sandbox worlds.
+			}
+
 			JungleFeather: {
 				DisplayName: Jungle Feather
 				Tooltip:
@@ -6034,10 +6040,10 @@ Mods: {
 				Tooltip:
 					'''
 					The Ice Gigas's spell tome — four of its moves bound in one book
-					Tap left click to lance icicles at your foe
-					Hold left click to breathe a cone of frost
-					Tap right click to erupt ice spikes from the ground at your cursor
-					Hold right click to charge, then unleash an expanding freeze ring
+					Tap left click with the cursor at or above your feet to lance icicles at your foe
+					Hold left click with the cursor at or above your feet to breathe a cone of frost
+					Tap left click with the cursor below your feet to erupt ice spikes from the ground at your cursor
+					Hold left click with the cursor below your feet to charge, then unleash an expanding freeze ring
 					'''
 			}
 
@@ -6046,10 +6052,10 @@ Mods: {
 				Tooltip:
 					'''
 					The Holy Gigas's spell tome — four of its moves bound in one book
-					Tap left click to call heavenly spears down upon your cursor
-					Hold left click to gather a halo of hunting suns
-					Tap right click to bring a pillar of judgment light down at your cursor
-					Hold right click to charge, then release a blade of golden lightning
+					Tap left click with the cursor at or above your feet to call heavenly spears down upon your cursor
+					Hold left click with the cursor at or above your feet to gather a halo of hunting suns
+					Tap left click with the cursor below your feet to bring a pillar of judgment light down at your cursor
+					Hold left click with the cursor below your feet to charge, then release a blade of golden lightning
 					'''
 			}
 
@@ -8684,6 +8690,11 @@ Mods: {
 				Tooltip: ""
 				DisplayName: Enemy Great Fire Axe
 			}
+
+			SwordOfLordGwyn: {
+				Tooltip: ""
+				DisplayName: Sword Of Lord Gwyn
+			}
 		}
 
 		Buffs: {
@@ -10059,6 +10070,8 @@ Mods: {
 			GwynFirestorm.DisplayName: Firestorm
 			GwynFlameGrasp.DisplayName: Lord's Grasp
 			GwynDescentMeteor.DisplayName: Descent of the Sun
+			GwynGreatswordBoomerang.DisplayName: Great Lord Greatsword
+			GwynGravityWell.DisplayName: Gravity of the Sun
 			NecroGraveHand.DisplayName: Grave Hand
 			NecroSiphonPulse.DisplayName: Soul Siphon
 			NecroCurseNova.DisplayName: Curse Nova
@@ -10067,6 +10080,7 @@ Mods: {
 			NitoBoneShard.DisplayName: Gravelord Bone Shard
 			NitoDeathNova.DisplayName: Death Nova
 			NitoGraveSpike.DisplayName: Gravelord Spike
+			NitoCeilingSpike.DisplayName: Falling Gravelord Spike
 			NitoGraveHand.DisplayName: Grave Hand
 			NitoMiasmaCloud.DisplayName: Miasma
 			QuaraTidalCrest.DisplayName: Tidal Crest
@@ -10631,6 +10645,13 @@ Mods: {
 			StickySpitCloud.DisplayName: Sticky Spit Cloud
 			ToxicGasNovaFog.DisplayName: Toxic Gas Nova Fog
 			ToxicGasNovaGlow.DisplayName: Toxic Gas Nova Glow
+			SwordOfLordGwynSunlightSpear.DisplayName: Sword Of Lord Gwyn Sunlight Spear
+			SwordOfLordGwynSlash.DisplayName: Sword Of Lord Gwyn Slash
+			SwordOfLordGwynController.DisplayName: Sword Of Lord Gwyn Controller
+			SwordOfLordGwynCinderTrail.DisplayName: Sword Of Lord Gwyn Cinder Trail
+			SwordOfLordGwynCinderNova.DisplayName: Sword Of Lord Gwyn Cinder Nova
+			LordGwynSunlightStrike.DisplayName: Lord Gwyn Sunlight Strike
+			LordGwynShortFlame.DisplayName: Lord Gwyn Short Flame
 		}
 
 		NPCs: {
@@ -12646,6 +12667,16 @@ Mods: {
 					Tooltip: Show vanilla health bars below non-boss enemies. Defaults to Off.
 				}
 
+				PlayerHurtVisuals: {
+					Label: Player Hurt Visuals
+					Tooltip:
+						'''
+						Shows a subtle pulsing red vignette around the screen edges when you take damage.
+						Its brightness and intensity scale with how hard you were hit and how low your health is.
+						Defaults to On.
+						'''
+				}
+
 				HideCeruleanFlask: {
 					Label: Hide the Cerulean Flask
 					Tooltip:
@@ -12677,6 +12708,11 @@ Mods: {
 						Hides the minimap and overlay map during normal gameplay, while keeping your
 						selected map mode visible when the inventory is open. Defaults to On.
 						'''
+				}
+
+				TransparentInventoryBar: {
+					Label: Transparent Inventory Bar
+					Tooltip: Makes your top 10 item slots transparent when your inventory isn't open and hides the selected item name. Defaults to On.
 				}
 
 				ShowStaminaTooltip: {
@@ -12783,8 +12819,8 @@ Mods: {
 						Applies TSORC's recommended keyboard controls.
 						On first load, only bindings still on vanilla are changed.
 						Turning this on manually applies the full preset:
-						Quick Heal / Estus Flask: F
-						Quick Mana / Cerulean Tear: R
+						Quick Heal / Estus Flask: R
+						Quick Mana / Cerulean Tear: F
 						Inventory: Q
 						Dodge Roll: Left Shift
 						Auto Select: Left Alt

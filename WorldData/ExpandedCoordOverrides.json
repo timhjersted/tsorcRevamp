@@ -1,0 +1,16 @@
+{
+  "_comment": "Manual coordinate overrides for the 2400-tall Expanded Adventure world. MapCoord() checks this table FIRST (by legacy tile coord); if a legacy (x,y) is not listed, it falls back to the piecewise formula: newY = oldY + (oldY >= 1791 ? 400 : 200), X unchanged. Coords are in TILE space. 'type': \"fix\" = correction where the formula guesses wrong; \"move\" = intentional authored relocation on the expanded map only. Only legacy (2000-space) content is looked up here — content gated ExpandedAdventureCondition is authored natively in 2400-space and bypasses MapCoord entirely.",
+  "foldThreshold": 1791,
+  "aboveFoldOffset": 200,
+  "belowFoldOffset": 400,
+  "overrides": [
+    {
+      "legacyX": 1553,
+      "legacyY": 1778,
+      "newX": 1553,
+      "newY": 2178,
+      "type": "fix",
+      "note": "\"Three stone pillars... enchanted with magic and impervious...\" soapstone. Sits at old-Y 1778 (below the 1791 fold) but was dragged with the underworld, so it got +400 not +200. The single verified exception to the formula across all 482 signs."
+    }
+  ]
+}

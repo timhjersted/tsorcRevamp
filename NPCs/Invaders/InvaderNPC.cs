@@ -1148,6 +1148,7 @@ namespace tsorcRevamp.NPCs.Invaders
         private bool IsWeaponVisiblePhase =>
             Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack ||
             Phase == AttackPhase.StabTelegraph  || Phase == AttackPhase.StabAttack  ||
+            Phase == AttackPhase.StabRecovery   ||
             Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack ||
             Phase == AttackPhase.CrossbowBurstPause ||
             Phase == AttackPhase.SpearTelegraph  || Phase == AttackPhase.SpearAttack  ||
@@ -1228,7 +1229,23 @@ namespace tsorcRevamp.NPCs.Invaders
         private void ArmSwingVariation(float heightDiff)
         {
             _comboSwingFlipped = !_comboSwingFlipped;
-            _comboAimBias = MathHelper.Clamp(-heightDiff / 260f, -0.35f, 0.35f);
+
+            if (AimSwingActive && NPC.HasValidTarget)
+            {
+                // Full facing-relative aim pitch (BroadswordRework model): reorient the whole arc
+                // toward wherever the player actually is (up / level / down), not a clamped nudge.
+                // X is forced forward (|dx|) because facing already aims the swing at the player
+                // horizontally — only the vertical component varies. Clamped just shy of vertical
+                // so a player nearly overhead can't wrap the arc into a broken pose.
+                Player t = Main.player[NPC.target];
+                float dx = Math.Abs(t.Center.X - NPC.Center.X);
+                float dy = t.Center.Y - NPC.Center.Y; // + = player below
+                _comboAimBias = MathHelper.Clamp((float)Math.Atan2(dy, Math.Max(dx, 8f)), -MaxAimPitch, MaxAimPitch);
+            }
+            else
+            {
+                _comboAimBias = MathHelper.Clamp(-heightDiff / 260f, -0.35f, 0.35f);
+            }
         }
         /// <summary>True while a LeapSlam step is mid-air (set at launch, cleared when it lands or
         /// the airtime cap expires).  Gates the landing check that fires the slam hit.</summary>
@@ -1348,6 +1365,10 @@ namespace tsorcRevamp.NPCs.Invaders
         /// Default is AngelWings; subclasses override for thematic fit.</summary>
         protected virtual int WingsAccessoryItemType => ItemID.AngelWings;
 
+        /// <summary>When false, the folded wings are hidden while grounded and only appear once
+        /// airborne — for invaders whose grounded silhouette should stay clean (e.g. Gwyn's cape).</summary>
+        protected virtual bool ShowWingsWhenGrounded => true;
+
         /// <summary>Flight tuning.  Override to customize hover altitude / dive speed / cooldowns.</summary>
         protected virtual EnemyFlightConfig FlightConfig => EnemyFlightConfig.Default;
 
@@ -1364,6 +1385,10 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual float FlightHpEscalationFrac => 0.50f;
 
         private EnemyFlightController _flight;
+        /// <summary>Subclass access to the flight controller (created lazily on the first tick
+        /// HasWings is true) — lets a boss command a scripted takeoff/land for a set-piece
+        /// (e.g. Gwyn's Sunlight Spear Storm) without owning its own controller.</summary>
+        protected EnemyFlightController Flight => _flight;
         private Item _wingsItemCache;
         private int  _cachedWingsType = -1;
         /// <summary>Cooldown between consecutive aerial-dive hits.  Ticks down each AI frame.</summary>
@@ -3169,7 +3194,9 @@ namespace tsorcRevamp.NPCs.Invaders
                 // ── Melee combo: telegraph (step 0) ───────────────────────────
                 case AttackPhase.MeleeComboTelegraph:
                     LockComboDirection();
-                    if (SlowDownBeforeMelee) SlowDown();
+                    // Per-move brake for aim-swing pilots (0 = keep momentum); blanket SlowDown otherwise.
+                    if (AimSwingActive) NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake);
+                    else if (SlowDownBeforeMelee) SlowDown();
                     SetDisplayWeapon(MeleeWeaponItemType, swing: false);
                     CheckAndFireFlash(_activeMeleeCombo.InitialFlashColor);
                     if (--PhaseTimer <= 0)
@@ -3188,7 +3215,7 @@ namespace tsorcRevamp.NPCs.Invaders
                         { /* no hit this step — movement / bait only */ }
                         else
                             DoComboMeleeHit(step0);
-                        EnterPhase(AttackPhase.MeleeComboAttack, GetMeleeSwingTicks(step0.AttackTicks));
+                        EnterPhase(AttackPhase.MeleeComboAttack, BeginComboAttackTicks(step0));
                     }
                     break;
 
@@ -3243,6 +3270,8 @@ namespace tsorcRevamp.NPCs.Invaders
                         TickBladeHit();
                         if (step.ForwardPushMult > 0f)
                             NPC.velocity.X = _comboLockedDir * (TopSpeed * step.ForwardPushMult);
+                        else if (AimSwingActive)
+                            NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake); // per-move brake (0 = keep drifting)
                         else
                             NPC.velocity.X *= 0.65f;
                         endStep = (--PhaseTimer <= 0);
@@ -3264,7 +3293,8 @@ namespace tsorcRevamp.NPCs.Invaders
                 // the invader can re-face them so the next step swings the correct way.
                 // The next step's lock direction is captured just before its attack fires.
                 case AttackPhase.MeleeComboPause:
-                    SlowDown();
+                    if (AimSwingActive) NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake);
+                    else SlowDown();
                     // Re-face the player during the pause window.
                     {
                         int faceDir = target.Center.X < NPC.Center.X ? -1 : 1;
@@ -3282,8 +3312,7 @@ namespace tsorcRevamp.NPCs.Invaders
                             PlayMeleeSwingSound();
                         _bladeArmed = false;
                         DoComboMeleeHit(nextStep);
-                        _weaponAnim = _weaponAnimMax;
-                        EnterPhase(AttackPhase.MeleeComboAttack, GetMeleeSwingTicks(nextStep.AttackTicks));
+                        EnterPhase(AttackPhase.MeleeComboAttack, BeginComboAttackTicks(nextStep));
                     }
                     break;
 
@@ -4386,7 +4415,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 // the same easing/flip/aim-bias opt-ins instead of only combos getting them.
                 float a0 = -1.3f, a1 = 1.0f;
                 if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
-                if (UseAimAdaptiveArc) { a0 += _comboAimBias; a1 += _comboAimBias; }
+                if (UseAimAdaptiveArc || AimSwingActive) { a0 += _comboAimBias; a1 += _comboAimBias; }
 
                 if (Phase == AttackPhase.MeleeTelegraph)
                     // Wind-up: weapon rises from hold angle to the top of the arc quickly
@@ -4394,7 +4423,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 else
                     // Downswing: full broadsword arc, raised behind head → slash down-forward
                     // t runs 0->1 over the held item useAnimation window (reset when swing begins)
-                    _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                    _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing || AimSwingActive);
             }
             else if (Phase == AttackPhase.MeleeComboTelegraph
                   || Phase == AttackPhase.MeleeComboAttack
@@ -4412,10 +4441,23 @@ namespace tsorcRevamp.NPCs.Invaders
                 (float, float) Endpoints(float a0, float a1)
                 {
                     if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
-                    if (UseAimAdaptiveArc) { a0 += _comboAimBias; a1 += _comboAimBias; }
+                    if (UseAimAdaptiveArc || AimSwingActive) { a0 += _comboAimBias; a1 += _comboAimBias; }
                     return (a0, a1);
                 }
 
+                // Handoff smoothing (aim-swing pilots): during a pause, ease toward where the NEXT
+                // step's arc STARTS rather than re-raising to the outgoing motion's apex — so e.g.
+                // Down-Up's overhead flows straight into the rising cut instead of snapping ~2 rad.
+                bool handoffEased = false;
+                if (inPause && AimSwingActive
+                    && _meleeComboStepIndex + 1 < _activeMeleeCombo.Steps.Length)
+                {
+                    float target = ComboStepStartRotation(_activeMeleeCombo.Steps[_meleeComboStepIndex + 1]);
+                    _weaponRotation = MathHelper.Lerp(_weaponRotation, target, 0.22f);
+                    handoffEased = true;
+                }
+
+                if (!handoffEased)
                 switch (step.Motion)
                 {
                     case ComboMotion.OverheadArc:
@@ -4423,7 +4465,7 @@ namespace tsorcRevamp.NPCs.Invaders
                         var (a0, a1) = Endpoints(-1.3f, 1.0f);
                         if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
                         else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.130f), 0.20f);
-                        else              _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                        else              _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         break;
                     }
                     case ComboMotion.UnderhandArc:
@@ -4435,7 +4477,7 @@ namespace tsorcRevamp.NPCs.Invaders
                         var (a0, a1) = Endpoints(1.0f, -1.0f);
                         if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
                         else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.150f), 0.20f);
-                        else              _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                        else              _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         break;
                     }
                     case ComboMotion.HorizontalSweep:
@@ -4713,11 +4755,12 @@ namespace tsorcRevamp.NPCs.Invaders
         /// World-space unit direction the currently-drawn melee weapon sprite points, matching
         /// <see cref="DrawWeaponToLayer"/>'s actual render rotation exactly — including the
         /// per-weapon <see cref="MeleeWeaponRotationOffset"/> / <see cref="SpearDrawRotationOffset"/>
-        /// corrections — so it's the single source of truth for "where the sprite actually is,"
-        /// shared by decorative tip-position code (<see cref="GetSpearTipWorldPosition"/>) and real
-        /// hit detection (<see cref="TickBladeHit"/>) rather than two approximations that could
-        /// drift apart. Assumes the sprite is calibrated so the tip sits at -45° when
-        /// _weaponRotation=0, dir=1 (the standard broadsword convention used across all invaders).
+        /// corrections and the <see cref="BladeFlipActive"/> mirror — so it's the single source of
+        /// truth for "where the sprite actually is," shared by decorative tip-position code
+        /// (<see cref="GetSpearTipWorldPosition"/>) and real hit detection (<see cref="TickBladeHit"/>)
+        /// rather than two approximations that could drift apart. Assumes the sprite is calibrated so
+        /// the tip sits at -45° when _weaponRotation=0, dir=1, no flip (the standard broadsword
+        /// convention used across all invaders).
         /// </summary>
         private Vector2 GetWeaponWorldDirection()
         {
@@ -4727,7 +4770,9 @@ namespace tsorcRevamp.NPCs.Invaders
             else
                 drawRotation += MeleeWeaponRotationOffset * NPC.direction;
 
-            const float correctedNaturalDeg = -45f;
+            // FlipVertically mirrors the source rect across its local horizontal centerline before
+            // rotation is applied, so the pre-rotation tip angle reflects to the opposite side.
+            float correctedNaturalDeg = BladeFlipActive ? 45f : -45f;
             float rotDeg = MathHelper.ToDegrees(drawRotation);
             float angleDeg = NPC.direction == 1
                 ? correctedNaturalDeg + rotDeg
@@ -4879,8 +4924,18 @@ namespace tsorcRevamp.NPCs.Invaders
             // false + wingTime=0 makes it pick the glide/closed frame.
             if (HasWings && _flight != null)
             {
+                // Hot-swap support: (re)build the cached wing item whenever the subclass's
+                // WingsAccessoryItemType changes (e.g. Gwyn's Angel → Flame wings below 30% HP).
+                if (_cachedWingsType != WingsAccessoryItemType && WingsAccessoryItemType > 0)
+                {
+                    _wingsItemCache = new Item();
+                    _wingsItemCache.SetDefaults(WingsAccessoryItemType);
+                    _cachedWingsType = WingsAccessoryItemType;
+                    _puppet.wingTimeMax = 200;
+                }
+
                 bool airborne = _flight.IsAirborne;
-                _puppet.wings = _wingsItemCache?.wingSlot ?? 0;
+                _puppet.wings = (airborne || ShowWingsWhenGrounded) ? (_wingsItemCache?.wingSlot ?? 0) : 0;
                 _puppet.wingTime = airborne ? _puppet.wingTimeMax : 0;
                 _puppet.controlJump = _flight.WingsActiveThisTick;
                 // During idle hover drift the wings spread open (glide pose = frame 1) rather
@@ -4978,6 +5033,12 @@ namespace tsorcRevamp.NPCs.Invaders
             else if (Phase == AttackPhase.StabAttack)
             {
                 bodyRow = 3; // Use3 — arm level/forward for the horizontal thrust
+            }
+            else if (Phase == AttackPhase.StabRecovery)
+            {
+                // Keep the arm tracking _weaponRotation as it eases back to HoldRotation instead
+                // of snapping straight to Idle/Walk while the weapon is still mid-lerp.
+                bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
             }
             else if (Phase == AttackPhase.RangedTelegraph)
             {
@@ -5356,6 +5417,11 @@ namespace tsorcRevamp.NPCs.Invaders
             SpriteEffects fx = NPC.direction == -1
                 ? SpriteEffects.FlipHorizontally
                 : SpriteEffects.None;
+            // Mirror single-bladed melee weapons (axes) for motions that swing opposite the
+            // OverheadArc convention (e.g. UnderhandArc) so the blade edge leads instead of trails.
+            // See BladeFlipActive / GetWeaponWorldDirection for the matching hit-detection math.
+            if (!heldRangedLike && !holdingSpearNow && BladeFlipActive)
+                fx |= SpriteEffects.FlipVertically;
 
             // Per-weapon angular correction for melee sprites whose blade/head diagonal doesn't
             // match the broadsword convention (handle lower-left → blade upper-right).  Applied to
@@ -5498,6 +5564,119 @@ namespace tsorcRevamp.NPCs.Invaders
         /// (handle lower-left → blade upper-right) — e.g. an axe whose head sits on the
         /// opposite diagonal and would otherwise appear to swing backwards.</summary>
         protected virtual float MeleeWeaponRotationOffset => 0f;
+
+        // ── Blade-leads-the-swing flip ──────────────────────────────────────────────
+        /// <summary>True for weapons whose head reads asymmetrically (a single cutting edge, e.g.
+        /// an axe) so it matters which way the sprite faces mid-swing. The fixed rigid rotation this
+        /// system draws with is calibrated for downward/forward arcs (<see cref="ComboMotion.OverheadArc"/>);
+        /// motions that swing the other way (<see cref="ComboMotion.UnderhandArc"/>) put the blade
+        /// trailing instead of leading unless the sprite is mirrored for those frames (see
+        /// <see cref="BladeFlipActive"/>). Defaults to on for the whole Axe archetype — a
+        /// double-bladed/symmetric axe wouldn't be harmed by the mirror either, so there's no need
+        /// to special-case per weapon. Override false for a weapon where the mirror looks wrong.</summary>
+        protected virtual bool MeleeWeaponIsSingleBladed => MeleeArchetype == WeaponArchetype.Axe;
+
+        /// <summary>Runtime master kill-switch for the blade-flip mirror. Toggle in-game with
+        /// <c>/swingarm flip</c> for instant A/B without a rebuild.</summary>
+        internal static bool BladeFlipMasterEnable = true;
+
+        /// <summary>Which combo motions need the mirror to keep the blade leading the swing instead
+        /// of trailing. Only <see cref="ComboMotion.UnderhandArc"/> reverses direction relative to
+        /// the OverheadArc convention this system is calibrated for; extend here if other motions
+        /// turn out to need it too.</summary>
+        private static bool BladeFlipsForMotion(ComboMotion motion) => motion == ComboMotion.UnderhandArc;
+
+        /// <summary>True when the current combo step's motion should mirror the weapon sprite this
+        /// frame. Only meaningful during combo phases — the plain one-shot MeleeAttack/MeleeTelegraph
+        /// path (outside the combo system) always uses OverheadArc's shape, so it never flips.</summary>
+        private bool BladeFlipActive
+        {
+            get
+            {
+                if (!MeleeWeaponIsSingleBladed || !BladeFlipMasterEnable) return false;
+                if (!IsMeleeComboPhase || _activeMeleeComboIndex < 0 || _activeMeleeCombo.Steps == null
+                    || _meleeComboStepIndex < 0 || _meleeComboStepIndex >= _activeMeleeCombo.Steps.Length)
+                    return false;
+                return BladeFlipsForMotion(_activeMeleeCombo.Steps[_meleeComboStepIndex].Motion);
+            }
+        }
+
+        // ── Aim-centered swing (full 360° player-style aim) ─────────────────────────
+        /// <summary>When true (and <see cref="AimSwingMasterEnable"/> is on), this invader's swing
+        /// arc reorients toward the actual direction to the player — up, level, or down — exactly
+        /// like the BroadswordRework player swing centers its arc on the cursor. Turns on the aim
+        /// bias + easing for the swing motions without needing each motion's endpoints re-tuned by
+        /// hand. Defaults on for the whole Axe archetype (the first pilot); the arc endpoints are
+        /// still the same OverheadArc/UnderhandArc shapes, just rotated by the aim pitch.</summary>
+        protected virtual bool UseAimCenteredSwing => MeleeArchetype == WeaponArchetype.Axe;
+
+        /// <summary>Runtime master kill-switch for the aim-centered swing. Toggle in-game with
+        /// <c>/swingarm aim</c> for instant A/B — off reverts the axe to its fixed legacy arc.</summary>
+        internal static bool AimSwingMasterEnable = true;
+
+        /// <summary>Resolved per-frame: aim-centered swing is live for this invader right now.</summary>
+        private bool AimSwingActive => UseAimCenteredSwing && AimSwingMasterEnable;
+
+        /// <summary>Clamp on the aim pitch. The base overhead arc already starts near the raised
+        /// limit (-1.3 rad ≈ -74°), and the composite arm inverts past vertical, so a big upward aim
+        /// bias drove the arm to a broken -112° pose. Kept moderate (~34°) so the arc still visibly
+        /// reorients toward the player without over-rotating the arm. (The 4-frame arm path tolerates
+        /// far more, since it snaps extremes to Use1 — a fuller aim range is safe once composite is off.)</summary>
+        private const float MaxAimPitch = 0.6f;
+
+        /// <summary>Motions whose visual is a continuous a0→a1 sweep driven by <see cref="SwingEase"/>
+        /// over the swing window (so per-step swing-speed / easing applies). Hold/charge/leap motions
+        /// are excluded — their pose is a fixed lerp, not a timed sweep.</summary>
+        private static bool IsArcSwingMotion(ComboMotion m) =>
+            m == ComboMotion.OverheadArc || m == ComboMotion.UnderhandArc ||
+            m == ComboMotion.HorizontalSweep || m == ComboMotion.VerticalChop ||
+            m == ComboMotion.GroundSlam || m == ComboMotion.IaidoDraw;
+
+        /// <summary>Enters a combo step's attack: for aim-swing pilots, arc motions play over
+        /// <c>AttackTicks / SwingSpeedMult</c> (decoupled from the weapon's useAnimation, so swings
+        /// can be faster and vary per step) with the swing counter reset to fill exactly that window.
+        /// Returns the attack-phase length. Non-pilots / non-arc motions keep the old
+        /// <see cref="GetMeleeSwingTicks"/> behavior.</summary>
+        private int BeginComboAttackTicks(MeleeComboStep step)
+        {
+            int ticks = GetMeleeSwingTicks(step.AttackTicks);
+            if (AimSwingActive && IsArcSwingMotion(step.Motion))
+            {
+                float mult = step.SwingSpeedMult > 0f ? step.SwingSpeedMult : 1f;
+                ticks = Math.Max(6, (int)Math.Round(step.AttackTicks / mult));
+                _weaponAnimMax = ticks;
+            }
+            _weaponAnim = _weaponAnimMax; // restart the sweep so t runs 0→1 across this step
+            return ticks;
+        }
+
+        /// <summary>Eases the arc through the step's chosen <see cref="SwingEaseStyle"/> when the
+        /// aim-swing pilot is live, else the legacy on/off easing.</summary>
+        private float ApplySwingEase(float a0, float a1, float t, MeleeComboStep step)
+            => AimSwingActive ? SwingEase.Apply(a0, a1, t, step.Ease)
+                              : SwingEase.Apply(a0, a1, t, UseSwingEasing);
+
+        /// <summary>The start angle a step's arc begins from, with the same flip / aim-bias transforms
+        /// the live swing applies — so an inter-step pause can ease toward where the NEXT step actually
+        /// starts (a continuous handoff) instead of re-raising to the outgoing step's apex and snapping.</summary>
+        private float ComboStepStartRotation(MeleeComboStep step)
+        {
+            (float a0, float a1) = step.Motion switch
+            {
+                ComboMotion.OverheadArc     => (-1.3f, 1.0f),
+                ComboMotion.UnderhandArc    => (1.0f, -1.0f),
+                ComboMotion.HorizontalSweep => (-0.4f, 0.6f),
+                ComboMotion.VerticalChop    => (-1.55f, 1.4f),
+                ComboMotion.GroundSlam      => (-1.55f, 1.5f),
+                ComboMotion.IaidoDraw       => (1.2f, -0.5f),
+                ComboMotion.Feint           => (-1.3f, -1.3f),
+                ComboMotion.ChargeChop      => (-0.95f, -0.95f),
+                _                           => (HoldRotation, HoldRotation),
+            };
+            if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
+            if (UseAimAdaptiveArc || AimSwingActive) { a0 += _comboAimBias; a1 += _comboAimBias; }
+            return a0;
+        }
 
         // ── Composite-arm swing experiment (opt-in, single-enemy safe A/B) ──────────
         /// <summary>EXPERIMENTAL.  When true (and <see cref="CompositeArmSwingMasterEnable"/> is on),

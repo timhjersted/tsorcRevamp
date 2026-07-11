@@ -361,7 +361,7 @@
             LeonhardParticleEffect(-2);
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                npc.Center = new Vector2(5827.5f, 1698) * 16;
+                npc.Center = ExpandedWorldTransform.MapWorld(new Vector2(5827.5f, 1698) * 16);
             }
             else
             {

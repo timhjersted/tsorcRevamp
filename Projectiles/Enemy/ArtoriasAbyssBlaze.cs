@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.frame = (int)(growT * (Main.projFrames[Type] - 1));
 
-            Lighting.AddLight(Projectile.Center, new Vector3(0.6f, 0.15f, 0.85f) * (0.4f + 0.6f * growT));
+            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * (0.65f + 0.6f * growT));
 
             if (!Main.dedServ && Main.rand.NextBool(2))
             {

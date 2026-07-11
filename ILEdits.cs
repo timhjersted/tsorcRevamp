@@ -16,6 +16,7 @@ namespace tsorcRevamp
             Terraria.IL_Player.TileInteractionsUse += PowerCell_Patch;
 
             Terraria.IL_Player.Update += Player_Update;
+            Terraria.IL_Player.Update += WingFallDamage_Patch;
 
             // SoulsMode Life/Mana Crystal cap raise — see GetLifeCrystalCap/GetManaCrystalCap in
             // tsorcRevampPlayerUpdateLoops.cs for why this is needed. Both the usage-gate check and the
@@ -173,6 +174,38 @@ namespace tsorcRevamp
             // If neither pattern matches, tModLoader likely already removed this cap at the framework level.
             // This is not a fatal error — mana above 400 still works via PostUpdateEquips.
             mod.Logger.Warn("Player_Update mana-cap patch: instruction not found — tModLoader may have already removed this cap. Mana above 400 should still work.");
+        }
+
+        internal static void WingFallDamage_Patch(ILContext il)
+        {
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
+            ILCursor cursor = new ILCursor(il);
+
+            // Vanilla separately checks `equippedWings != null` when deciding whether landing should
+            // hurt. This bypasses noFallDmg entirely, so a ModPlayer hook cannot opt passive wings back
+            // into fall damage. Filter that one boolean while leaving all other immunity checks intact.
+            if (!cursor.TryGotoNext(MoveType.After,
+                i => i.MatchLdarg(0),
+                i => i.MatchLdfld<Player>("equippedWings"),
+                i => i.MatchLdnull(),
+                i => i.MatchCgtUn()))
+            {
+                mod.Logger.Warn("WingFallDamage_Patch: equipped-wings fall-damage guard not found. Passive wings will still prevent fall damage.");
+                return;
+            }
+
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Func<bool, Player, bool>>((vanillaWingImmunity, player) =>
+            {
+                if (!vanillaWingImmunity)
+                {
+                    return false;
+                }
+
+                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                return modPlayer.SlowfallWingActive
+                    || (player.controlJump && player.velocity.Y > 0f && player.wingsLogic > 0);
+            });
         }
 
         private static int GetLifeCrystalCapFor(Player player) => player.GetModPlayer<tsorcRevampPlayer>().GetLifeCrystalCap();

@@ -77,6 +77,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Pop();
             }
 
+            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.15f);
+
             int sincePop = elapsed - TelegraphTicks;
             if (sincePop < PopHoldTicks)
             {

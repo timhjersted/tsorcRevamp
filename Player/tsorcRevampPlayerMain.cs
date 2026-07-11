@@ -78,6 +78,8 @@ namespace tsorcRevamp
         public int DwarvenContractsGiven = 0;
         private int lastHealthBand = 1;
         private bool guaranteedHurtSoundForBand = false;
+        // Enforces a 2 second (120 tick) gap between custom player hurt voice sounds.
+        private uint lastHurtSoundTick = 0;
 
         public override void Initialize()
         {
@@ -619,15 +621,32 @@ namespace tsorcRevamp
                     }
                 }
 
-                float pitchOffset = Main.rand.Next(-1, 2) * 0.08f;
+                // Only play a hurt voice line if at least 2 seconds (120 ticks) have passed since the last one.
+                if (Main.GameUpdateCount - lastHurtSoundTick >= 120)
+                {
+                    float pitchOffset = Main.rand.Next(-1, 2) * 0.08f;
 
-                if (Player.Male)
-                {
-                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-hurt-{voiceIndex}") with { Volume = 0.5f, Pitch = pitchOffset });
+                    if (Player.Male)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-hurt-{voiceIndex}") with { Volume = 0.45f, Pitch = pitchOffset });
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-hurt-{voiceIndex}") with { Volume = 0.45f, Pitch = pitchOffset });
+                    }
+
+                    lastHurtSoundTick = Main.GameUpdateCount;
                 }
-                else
+            }
+
+            // Player Hurt Visuals: trigger the red vignette flash, scaled by the fraction of max HP lost.
+            if (Player.whoAmI == Main.myPlayer && info.Damage > 0 && ModContent.GetInstance<tsorcRevampVisualConfig>().PlayerHurtVisuals)
+            {
+                float dmgFrac = Player.statLifeMax2 > 0 ? (float)info.Damage / Player.statLifeMax2 : 0f;
+                float flash = MathHelper.Clamp(0.25f + dmgFrac * 1.4f, 0f, 1f);
+                if (flash > hurtVignetteFlash)
                 {
-                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-hurt-{voiceIndex}") with { Volume = 0.5f, Pitch = pitchOffset });
+                    hurtVignetteFlash = flash;
                 }
             }
 

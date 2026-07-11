@@ -283,11 +283,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
                 if (Main.dayTime && Main.player[Main.myPlayer].Distance(NPC.Center) > 2500f) // If day and the player is far away
                 {
-                    NPC.position = new Vector2(4510.5f * 16, 737 * 16); // Stand under structure
+                    //Legacy 2000-space; mapped on the expanded world (identity elsewhere). Without this she'd snap
+                    //back to the un-shifted legacy Y every time this fires — the cause of her floating 200 tiles high.
+                    NPC.position = ExpandedWorldTransform.MapWorld(new Vector2(4510.5f, 737) * 16); // Stand under structure
                 }
                 if (!Main.dayTime && Main.player[Main.myPlayer].Distance(NPC.Center) > 2500f) //If night and the player is far away
                 {
-                    NPC.position = new Vector2(4489.25f * 16, 732 * 16); // Stand by bonfire
+                    NPC.position = ExpandedWorldTransform.MapWorld(new Vector2(4489.25f, 732) * 16); // Stand by bonfire
                 }
 
                 if (NPC.position.X > 4505f * 16) // If standing under structure

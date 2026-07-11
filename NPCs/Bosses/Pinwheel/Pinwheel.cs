@@ -1143,7 +1143,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (phaseTransitionTimeRemaining == phaseTransitionDuration - 110) //Teleport "dead" Pinwheel to arena centre floor
                 {
-                    NPC.Center = new Vector2(4139f, 933f) * 16;
+                    NPC.Center = ExpandedWorldTransform.MapWorld(new Vector2(4139f, 933f) * 16);
                     justTeleported = true;
 
                     if (Main.netMode == NetmodeID.Server)

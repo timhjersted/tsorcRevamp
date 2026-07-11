@@ -338,6 +338,10 @@ namespace tsorcRevamp
             ApplyILs();
             PopulateArrays();
 
+            //Load the Expanded Adventure (2400-tall) coordinate override table + formula constants. Must run on the
+            //server too (coordinates matter server-side), so keep it above the dedServ early-return.
+            ExpandedWorldTransform.Load();
+
             if (Main.dedServ)
                 return;
 
@@ -1808,6 +1812,8 @@ namespace tsorcRevamp
 
         public override void Unload()
         {
+            ExpandedWorldTransform.Unload();
+
             // ContentSamples.Initialize() runs after Unload() and calls NPC.SetDefaults() for
             // every registered NPC type, including modded ones. By that point all mod textures are
             // disposed, so TextureAssets.Npc[modType] is null → NullReferenceException in Utils.Width.
@@ -2693,6 +2699,28 @@ namespace tsorcRevamp
                     );
 
 
+                // Gravelord Nito stands in Skeletron's progression slot (tier 4.9, just before
+                // vanilla Skeletron's own tier 5 entry — BossChecklist sorts by tier, so this alone
+                // places Nito immediately before Skeletron with no changes to vanilla's own tier).
+                // Skeletron remains fully fightable and lists right after, as an optional boss.
+                // TODO (art): no dedicated boss-head icon exists yet for Nito — flagged for a future
+                // "overrideHeadTextures" asset; omitted here rather than guessed.
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(NPCs.Bosses.GravelordNito.GravelordNito),
+                    4.9f, // Tier (look above) — immediately before vanilla Skeletron (5f)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.GravelordNito.GravelordNito>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<NPCs.Bosses.GravelordNito.GravelordNito>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.GravelordNito.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.GravelordNitoDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.GravelordNitoSpawner>(),
+                    }
+                    );
+
+
                 bossChecklist.Call(
                     "LogBoss", // Name of the call
                     this,
@@ -2728,6 +2756,36 @@ namespace tsorcRevamp
 
                 // HM
 
+
+                bossChecklist.Call(
+                    "LogBoss",
+                    this,
+                    nameof(NPCs.Enemies.IceGigas),
+                    8.05f,
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.IceGigas>())),
+                    ModContent.NPCType<NPCs.Enemies.IceGigas>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.IceGigas.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
+                        ["collectibles"] = ModContent.ItemType<Items.Weapons.Magic.HeartOfWinter>()
+                    }
+                    );
+
+                bossChecklist.Call(
+                    "LogBoss",
+                    this,
+                    nameof(NPCs.Enemies.Gigas),
+                    11.8f,
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.Gigas>())),
+                    ModContent.NPCType<NPCs.Enemies.Gigas>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Gigas.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
+                        ["collectibles"] = ModContent.ItemType<Items.Weapons.Magic.WrathOfGold>()
+                    }
+                    );
 
                 bossChecklist.Call(
                     "LogBoss", // Name of the call
@@ -3184,7 +3242,7 @@ namespace tsorcRevamp
             }
 
             string dataDir = Path.Combine(Main.SavePath, "ModConfigs", "tsorcRevampData");
-            string markerPath = Path.Combine(dataDir, "control-defaults-v2.txt");
+            string markerPath = Path.Combine(dataDir, "control-defaults-v3.txt");
             if (File.Exists(markerPath))
             {
                 return;
@@ -3210,7 +3268,7 @@ namespace tsorcRevamp
                     return;
                 }
 
-                File.WriteAllText(markerPath, "Applied tsorcRevamp control defaults v2.");
+                File.WriteAllText(markerPath, "Applied tsorcRevamp control defaults v3.");
             }
             catch (Exception e)
             {
@@ -3233,8 +3291,8 @@ namespace tsorcRevamp
                     continue;
                 }
 
-                changed |= SetRecommendedBinding(keyboard, "QuickHeal", "F", onlyIfDefaultOrOldDefault, "H", "F");
-                changed |= SetRecommendedBinding(keyboard, "QuickMana", "R", onlyIfDefaultOrOldDefault, "J", "R");
+                changed |= SetRecommendedBinding(keyboard, "QuickHeal", "R", onlyIfDefaultOrOldDefault, "H", "F", "R");
+                changed |= SetRecommendedBinding(keyboard, "QuickMana", "F", onlyIfDefaultOrOldDefault, "J", "R", "F");
                 changed |= SetRecommendedBinding(keyboard, "Inventory", "Q", onlyIfDefaultOrOldDefault, "Escape", "Q");
                 changed |= SetRecommendedBinding(keyboard, "QuickMount", "G", onlyIfDefaultOrOldDefault, "R", "G");
                 changed |= SetRecommendedBinding(keyboard, "tsorcRevamp/Dodge Roll", "LeftShift", onlyIfDefaultOrOldDefault, "LeftAlt", "LeftShift");
@@ -3261,8 +3319,8 @@ namespace tsorcRevamp
                 return false;
             }
 
-            return BindingMatches(keyboard, "QuickHeal", "F")
-                && BindingMatches(keyboard, "QuickMana", "R")
+            return BindingMatches(keyboard, "QuickHeal", "R")
+                && BindingMatches(keyboard, "QuickMana", "F")
                 && BindingMatches(keyboard, "Inventory", "Q")
                 && BindingMatches(keyboard, "QuickMount", "G")
                 && BindingMatches(keyboard, "tsorcRevamp/Dodge Roll", "LeftShift")

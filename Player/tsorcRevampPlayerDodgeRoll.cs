@@ -97,6 +97,10 @@ namespace tsorcRevamp
 
         public override void HideDrawLayers(PlayerDrawSet drawInfo)
         {
+            // This has to run before the dodge-roll early return below. Otherwise the roll hides
+            // the held item and exits before Capture the Gem's large-gem icon can be suppressed.
+            PlayerDrawLayers.CaptureTheGem.Hide();
+
             if ((isDodging || dodgeCooldown.Value != 0 || blockVisuals > 0) && !Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)
             {
                 PlayerDrawLayers.HeldItem.Hide();
@@ -107,10 +111,6 @@ namespace tsorcRevamp
             // Jump height is already baked in by UpdateEquips before draw runs.
             PlayerDrawLayers.BalloonAcc.Hide();
 
-            // Suppress the orbiting gem icons vanilla draws above the player's head whenever a Large Gem
-            // is anywhere in the main inventory - leftover from the "Capture the Gem" PvP minigame, not
-            // meant to trigger just from carrying gems as loot/trophies.
-            PlayerDrawLayers.CaptureTheGem.Hide();
         }
 
         int oldItemAnimation = 0;

@@ -40,6 +40,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.timeLeft = 600; // owner-driven lifetime; Artorias kills this explicitly on release
 
+            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.25f);
+
             Vector2 tip = artorias.GetSwordTipWorldPosition();
             Projectile.Center = tip;
             Projectile.rotation = (tip - Main.npc[OwnerWhoAmI].Center).ToRotation() + MathHelper.PiOver2;

@@ -29,6 +29,54 @@ namespace tsorcRevamp
         public int collapseDelay = 0;
         public static int baseRadius = 150;
 
+        // ── Player Hurt Visuals ──
+        // hurtVignetteFlash is the damage-driven spike set in PostHurt; it decays each frame.
+        // hurtVignetteStrength is the final 0-1 value the vignette is drawn at, recomputed each frame.
+        public float hurtVignetteFlash = 0f;
+        public float hurtVignetteStrength = 0f;
+
+        // Recomputes the red hurt vignette strength for the local player. Called from PostUpdate.
+        // Combines a decaying on-hit flash with a subtle pulsing low-health glow. Both scale the
+        // vignette's brightness and opacity, so harder hits and lower health read as more intense.
+        public void UpdateHurtVignette()
+        {
+            if (Player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            if (Player.dead || !ModContent.GetInstance<tsorcRevampVisualConfig>().PlayerHurtVisuals)
+            {
+                hurtVignetteFlash = 0f;
+                hurtVignetteStrength = 0f;
+                return;
+            }
+
+            // On-hit flash decays smoothly (~0.75s from a full-strength hit).
+            if (hurtVignetteFlash > 0f)
+            {
+                hurtVignetteFlash -= 0.022f;
+                if (hurtVignetteFlash < 0f)
+                {
+                    hurtVignetteFlash = 0f;
+                }
+            }
+
+            // Persistent low-health glow: begins below 50% health and grows toward death.
+            float healthPct = Player.statLifeMax2 > 0 ? (float)Player.statLife / Player.statLifeMax2 : 1f;
+            float lowHealth = 0f;
+            if (healthPct < 0.5f)
+            {
+                lowHealth = (0.5f - healthPct) / 0.5f; // 0 at 50% HP, 1 at 0% HP
+            }
+
+            // Subtle pulse applied to the low-health component so it breathes rather than sitting flat.
+            float pulse = 0.7f + 0.3f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 4f);
+            float lowHealthComponent = lowHealth * lowHealth * 0.55f * pulse; // squared for a gentler onset
+
+            hurtVignetteStrength = MathHelper.Clamp(hurtVignetteFlash + lowHealthComponent, 0f, 1f);
+        }
+
         public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
         {
 

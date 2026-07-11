@@ -59,8 +59,11 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>())))
             {
-                NPC.homeTileX = 75;
-                NPC.homeTileY = 520;
+                //Legacy 2000-space; mapped on the expanded world (identity elsewhere). Runs every tick once the
+                //condition is met, so an un-shifted value here would silently re-pin her home each frame.
+                Microsoft.Xna.Framework.Point home = ExpandedWorldTransform.MapTile(75, 520);
+                NPC.homeTileX = home.X;
+                NPC.homeTileY = home.Y;
                 NPC.homeless = false;
             }
 

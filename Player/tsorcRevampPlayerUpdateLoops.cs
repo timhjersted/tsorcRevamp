@@ -477,6 +477,7 @@ namespace tsorcRevamp
         // can detect the enter/exit edge instead of re-triggering every tick EnterTheAbyss happens to be true.
         public bool WasInAbyss;
         public bool CovenantOfArtoriasEquipped;
+        public bool SlowfallWingActive;
         public bool Suppressed;
         public bool Tired;
         public int timeSinceLastAttacked = 0;
@@ -497,6 +498,7 @@ namespace tsorcRevamp
 
             EnterTheAbyss = false;
             CovenantOfArtoriasEquipped = false;
+            SlowfallWingActive = false;
             Suppressed = false;
             Tired = false;
             BeastMode1 = false;
@@ -1130,8 +1132,9 @@ namespace tsorcRevamp
                 Main.NewText(LangUtils.GetTextValue("Quest.Teleport"));
             }
 
-            //{7909, 1081} is the underwater observatory's top left corner, and {320, 119} is its rectangular size
-            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(7909, 1081) * 16, new Vector2(320, 119) * 16))
+            //{7909, 1081} is the underwater observatory's top left corner (legacy 2000-space; mapped on the expanded
+            //world), and {320, 119} is its rectangular SIZE (not a coordinate — never transformed)
+            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), ExpandedWorldTransform.MapWorld(new Vector2(7909, 1081) * 16), new Vector2(320, 119) * 16))
             {
                 Main.NewText(LangUtils.GetTextValue("Quest.Finish"));
                 Player.QuickSpawnItem(Player.GetSource_GiftOrReward(), ItemID.RodofDiscord);
@@ -1173,7 +1176,8 @@ namespace tsorcRevamp
 
             if (!NPC.downedGolemBoss && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
             {
-                Vector2 arena = new Vector2(4468, 365);
+                //Legacy 2000-space TILE coord (compared against Player.Center / 16); mapped on the expanded world.
+                Vector2 arena = ExpandedWorldTransform.MapTile(new Vector2(4468, 365));
                 float distance = Vector2.DistanceSquared(Player.Center / 16, arena);
 
                 //If EoL isn't alive, do the big forcefield
@@ -1219,7 +1223,7 @@ namespace tsorcRevamp
                                 }
                             }
 
-                            Player.velocity += UsefulFunctions.Aim(new Vector2(4484, 355) * 16, Player.Center, 20);
+                            Player.velocity += UsefulFunctions.Aim(ExpandedWorldTransform.MapWorld(new Vector2(4484, 355) * 16), Player.Center, 20);
                             if (TextCooldown <= 0)
                             {
                                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("EoLForcefield.Expelled"), Color.Pink);
@@ -2546,6 +2550,14 @@ namespace tsorcRevamp
         }
         public override void PreUpdateMovement()
         {
+            // This is the last tModLoader player hook before vanilla resolves collision and fall damage.
+            // Wings normally set noFallDmg for their entire equipped duration; retain it only while the
+            // player is actively gliding downward (or has the Wings of Seath slow-fall toggle enabled).
+            bool activelyGliding = Player.controlJump
+                && Player.velocity.Y > 0f
+                && Player.wingsLogic > 0;
+            Player.noFallDmg = SlowfallWingActive || activelyGliding;
+
             if (ImpaleFreezeTimer > 0)
             {
                 Player.velocity = Vector2.Zero;
@@ -3006,7 +3018,7 @@ namespace tsorcRevamp
                 abyssMistRefreshTimer--;
             }
 
-            if (abyssMistSurfaceTiles.Count == 0 || !Main.rand.NextBool(3))
+            if (abyssMistSurfaceTiles.Count == 0 || !Main.rand.NextBool(2))
             {
                 return;
             }
@@ -3045,6 +3057,9 @@ namespace tsorcRevamp
 
         public override void PostUpdate()
         {
+            // Update the red hurt vignette (local player only, handled inside).
+            UpdateHurtVignette();
+
             // Souls-tier crystal nerfs — continuous statLifeMax2/statManaMax2 cap.
             //
             // Earlier attempts at modifying the persistent statLifeMax (in UseItem, OnConsumeItem,

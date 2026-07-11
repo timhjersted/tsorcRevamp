@@ -143,7 +143,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public static readonly float ARENA_WIDTH = 864;
         public static readonly float ARENA_HEIGHT = 656;
-        public static Vector2 ARENA_LOCATION_ADVENTURE = new Vector2(832.5f, 1226f) * 16f;
+        //ARENA_LOCATION_ADVENTURE removed: this boss is currently a copy of the old Gwyn boss and has no real
+        //arena location yet — a proper event location is pending. Re-add (routed through ExpandedWorldTransform,
+        //legacy 2000-space) once that's designed.
 
         const int NormalDefense = 550;
         const int SwordBrokenDefense = 130;

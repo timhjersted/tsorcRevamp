@@ -69,6 +69,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 240;
             AnimateSucker();
             SpawnShaftDust(owner);
+            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.1f);
 
             switch ((int)Projectile.ai[1])
             {

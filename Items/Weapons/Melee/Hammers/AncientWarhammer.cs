@@ -35,6 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkGray;
+            instancedGlobal.WeaponPoiseMultiplier = 1.5f; // heavy hammer — builds stagger faster than its knockback stat alone implies
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {

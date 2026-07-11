@@ -45,12 +45,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
 
 
-            if (!Main.tile[5000, 1106].IsActuated)
+            //Legacy 2000-space arena coords; MapTileY shifts them on the expanded world (identity elsewhere).
+            if (!Main.tile[5000, ExpandedWorldTransform.MapTileY(5000, 1106)].IsActuated)
             {
                 TheMachine.ActuateBottomHalf();
             }
 
-            if (Main.tile[5080, 1100].TileType == TileID.Glass)
+            if (Main.tile[5080, ExpandedWorldTransform.MapTileY(5080, 1100)].TileType == TileID.Glass)
             {
                 TheMachine.ActuatePrimeArena();
             }

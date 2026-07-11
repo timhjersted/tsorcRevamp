@@ -10,10 +10,12 @@ namespace tsorcRevamp.Projectiles.Enemy
     class FireLurkerMeteor : ModProjectile
     {
         const int Lifetime = 6 * 60;
+        const int TelegraphTicks = 60;
         const int OrbDelay = 2 * 60;
         const int PreExplosionDustTime = 2 * 60;
         const int ExplosionHitboxSize = 120;
         bool expandedForExplosion;
+        bool meteorRevealed;
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Meteor";
 
@@ -34,14 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.light = 0.9f;
             Projectile.timeLeft = Lifetime;
             Projectile.rotation = MathHelper.Pi;
-        }
-
-        public override void OnSpawn(IEntitySource source)
-        {
-            if (Main.netMode != NetmodeID.Server)
-            {
-                SpawnMeteorSpawnDust();
-            }
+            Projectile.alpha = 255;
         }
 
         public override bool ShouldUpdatePosition() => false;
@@ -50,6 +45,21 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
+            if (!meteorRevealed)
+            {
+                EmitTelegraphDust();
+                if (Projectile.timeLeft <= Lifetime - TelegraphTicks)
+                {
+                    meteorRevealed = true;
+                    Projectile.alpha = 0;
+                    if (!Main.dedServ)
+                    {
+                        SpawnMeteorSpawnDust();
+                    }
+                }
+                return;
+            }
+
             Animate();
             EmitIdleDust();
 
@@ -61,6 +71,23 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Projectile.timeLeft <= 3 && !expandedForExplosion)
             {
                 ExpandForExplosion();
+            }
+        }
+
+        void EmitTelegraphDust()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2Circular(18f, 8f);
+                Dust fire = Dust.NewDustPerfect(Projectile.Center + offset, DustID.Torch,
+                    new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(-2.4f, -1f)), 80,
+                    new Color(255, 120, 25), Main.rand.NextFloat(1.1f, 1.5f));
+                fire.noGravity = true;
             }
         }
 

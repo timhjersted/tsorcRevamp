@@ -785,10 +785,6 @@ namespace tsorcRevamp
                 n.velocity = away * pushSpeed * MathHelper.Clamp(n.knockBackResist, 0.6f, 1f);
                 n.netUpdate = true;
             }
-            SoundEngine.PlaySound(SoundID.Item28, Player.Center);
-            // Expanding ring of white dust so the pulse is visibly readable (and confirms the effect fired).
-            SpawnWardPulseDust(pulseRange);
-
             if (shieldType == ModContent.ItemType<Items.Accessories.Defensive.Celestriad>()
                 && holdFrames >= CelestriadChargeFrames && Player.statMana >= CelestriadBoltManaCost)
             {
@@ -845,19 +841,6 @@ namespace tsorcRevamp
                 Main.dust[d].velocity *= 0.2f;
             }
             SoundEngine.PlaySound(SoundID.Item25 with { Pitch = 0.5f }, Player.Center); // soft chime
-        }
-
-        /// <summary>Expanding ring of white dust marking a mana-ward release pulse.</summary>
-        private void SpawnWardPulseDust(float radius)
-        {
-            int points = 40;
-            for (int i = 0; i < points; i++)
-            {
-                Vector2 dir = (MathHelper.TwoPi * i / points).ToRotationVector2();
-                int d = Dust.NewDust(Player.Center + dir * 24f, 4, 4, DustID.Cloud, dir.X * 9f, dir.Y * 9f, 80, Color.White, 1.5f);
-                Main.dust[d].noGravity = true;
-                Main.dust[d].fadeIn = 1.2f;
-            }
         }
 
         /// <summary>Best-effort world position of whatever dealt this hit (NPC, projectile, or player).</summary>

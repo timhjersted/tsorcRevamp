@@ -150,8 +150,6 @@ namespace tsorcRevamp.NPCs.Enemies{
         {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.ByCondition(
                 new NonSHMFirstKillRule(), ModContent.ItemType<Items.Weapons.Magic.WrathOfGold>()));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.ByCondition(
-                new NonSHMRepeatKillRule(), ModContent.ItemType<Items.Weapons.Magic.WrathOfGold>(), 4));
         }
 
         public override void SendExtraAI(BinaryWriter writer)

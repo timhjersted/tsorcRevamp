@@ -152,9 +152,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //If we're about to despawn, and it's not first phase, then clean up by deactivating the pyramid and clearing any targeting lasers
             if (despawnHandler.TargetAndDespawn(NPC.whoAmI) && !firstPhase)
             {
-                if (Main.tile[5810, 1670] != null)
+                int gateY = ExpandedWorldTransform.MapTileY(5810, 1670);
+                if (Main.tile[5810, gateY] != null)
                 {
-                    if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
+                    if (Main.tile[5810, gateY].HasTile && Main.tile[5810, gateY].IsActuated)
                     {
                         ActuatePyramid();
                     }
@@ -1816,7 +1817,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             DarkCloudParticleEffect(-2);
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                NPC.Center = new Vector2(5827.5f, 1698) * 16;
+                //Adventure coord is legacy 2000-space -> MapWorld; the remix coord is remix-native, leave it.
+                NPC.Center = ExpandedWorldTransform.MapWorld(new Vector2(5827.5f, 1698) * 16);
                 if (tsorcRevampWorld.RemixMap)
                 {
                     NPC.Center = new Vector2(6500, 1795) * 16;
@@ -2067,7 +2069,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                Vector2 pyramidCenter = new Vector2(5828, 1750) * 16;
+                Vector2 pyramidCenter = ExpandedWorldTransform.MapWorld(new Vector2(5828, 1750) * 16);
                 if (tsorcRevampWorld.RemixMap)
                 {
                     pyramidCenter = new Vector2(6500, 1840) * 16;
@@ -2137,9 +2139,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Main.projectile[i].Kill();
                 }
             }
-            if (Main.tile[5810, 1670] != null)
+            int pyramidGateY = ExpandedWorldTransform.MapTileY(5810, 1670);
+            if (Main.tile[5810, pyramidGateY] != null)
             {
-                if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
+                if (Main.tile[5810, pyramidGateY].HasTile && Main.tile[5810, pyramidGateY].IsActuated)
                 {
                     ActuatePyramid();
                 }
@@ -2176,14 +2179,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
+                //Expanded-world Y offset. The whole pyramid (Y 1638–1777) is in the flat +200 band (verified against
+                //the sign lattice; the fold to +400 starts at 1791). The static coordinate arrays above stay in
+                //legacy space — dY is applied at read time so nothing is mutated (mutating statics would double-shift
+                //when a world reloads within one session). X is invariant. dY = 0 on legacy/remix.
+                int dY = ExpandedWorldTransform.MapTileY(5810, 1670) - 1670;
 
                 //Destroy Lanterns (doing it like this prevents tiles from doing annoying things like dropping an item or spawning a boss)
                 for (int i = 0; i < 9; i++)
                 {
-                    if (Main.tile[Lanterns[i, 0], Lanterns[i, 1]].TileType == TileID.HangingLanterns)
+                    if (Main.tile[Lanterns[i, 0], Lanterns[i, 1] + dY].TileType == TileID.HangingLanterns)
                     {
-                        Main.tile[Lanterns[i, 0], Lanterns[i, 1]].ClearTile();
-                        Main.tile[Lanterns[i, 0], Lanterns[i, 1] + 1].ClearTile();
+                        Main.tile[Lanterns[i, 0], Lanterns[i, 1] + dY].ClearTile();
+                        Main.tile[Lanterns[i, 0], Lanterns[i, 1] + dY + 1].ClearTile();
                         //WorldGen.KillTile(Lanterns[i, 0], Lanterns[i, 1], noItem: true);
                         //WorldGen.KillTile(Lanterns[i, 0], Lanterns[i, 1] + 1, noItem: true);
                     }
@@ -2192,12 +2200,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Bulbs
                 for (int i = 0; i < 6; i++)
                 {
-                    if (Main.tile[Bulbs[i, 0], Bulbs[i, 1]].TileType == TileID.PlanteraBulb)
+                    if (Main.tile[Bulbs[i, 0], Bulbs[i, 1] + dY].TileType == TileID.PlanteraBulb)
                     {
-                        Main.tile[Bulbs[i, 0], Bulbs[i, 1]].ClearTile();
-                        Main.tile[Bulbs[i, 0], Bulbs[i, 1] - 1].ClearTile();
-                        Main.tile[Bulbs[i, 0] + 1, Bulbs[i, 1]].ClearTile();
-                        Main.tile[Bulbs[i, 0] + 1, Bulbs[i, 1] - 1].ClearTile();
+                        Main.tile[Bulbs[i, 0], Bulbs[i, 1] + dY].ClearTile();
+                        Main.tile[Bulbs[i, 0], Bulbs[i, 1] + dY - 1].ClearTile();
+                        Main.tile[Bulbs[i, 0] + 1, Bulbs[i, 1] + dY].ClearTile();
+                        Main.tile[Bulbs[i, 0] + 1, Bulbs[i, 1] + dY - 1].ClearTile();
 
                         //WorldGen.PlaceTile(Bulbs[i, 0], Bulbs[i, 1], TileID.Meteorite);
                     }
@@ -2206,18 +2214,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Harpy statues
                 for (int i = 0; i < 2; i++)
                 {
-                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1]].ClearTile();
-                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 1].ClearTile();
-                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 2].ClearTile();
-                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1]].ClearTile();
-                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 1].ClearTile();
-                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 2].ClearTile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] + dY].ClearTile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] + dY - 1].ClearTile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] + dY - 2].ClearTile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] + dY].ClearTile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] + dY - 1].ClearTile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] + dY - 2].ClearTile();
                 }
 
                 //Base of the pyramid
                 for (int x = 5697; x < 5937; x++)
                 {
-                    for (int y = 1696; y < 1773; y++)
+                    for (int y = 1696 + dY; y < 1773 + dY; y++)
                     {
                         Wiring.ActuateForced(x, y);
                     }
@@ -2226,7 +2234,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Middle of the pyramid
                 for (int x = 5774; x < 5883; x++)
                 {
-                    for (int y = 1653; y < 1696; y++)
+                    for (int y = 1653 + dY; y < 1696 + dY; y++)
                     {
                         Wiring.ActuateForced(x, y);
                     }
@@ -2235,7 +2243,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Tip of the pyramid
                 for (int x = 5814; x < 5843; x++)
                 {
-                    for (int y = 1638; y < 1653; y++)
+                    for (int y = 1638 + dY; y < 1653 + dY; y++)
                     {
                         Wiring.ActuateForced(x, y);
                     }
@@ -2243,7 +2251,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 //Covering the gap on the left
                 int offset = 0;
-                for (int y = 1773; y < 1777; y++)
+                for (int y = 1773 + dY; y < 1777 + dY; y++)
                 {
                     for (int x = 5740; x < 5748; x++)
                     {

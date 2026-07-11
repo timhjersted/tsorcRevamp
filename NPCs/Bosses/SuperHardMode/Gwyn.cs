@@ -61,6 +61,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float Acceleration => _wrathActive ? 0.19f : 0.14f;
         protected override int MeleeComboChance => _wrathActive ? 95 : 85;
 
+        // ── Wings (storm-only flight; the wings themselves show all fight) ───────
+        // Angel wings for the god of sunlight — traded for flame wings once the Wrath ignites.
+        // Autonomous flight is fully disabled: the flight controller only lifts off when the
+        // Sunlight Spear Storm commands it (Flight.RequestTakeoff in TickSpearStorm).
+        protected override bool HasWings => true;
+        protected override int WingsAccessoryItemType => _wrathActive ? ItemID.FlameWings : ItemID.AngelWings;
+        protected override int RandomTakeoffChance => 0;
+        protected override float FlightHeightTrigger => 99999f;
+        protected override float FlightHpEscalationFrac => 0f;
+
         // ── Greatsword reach (bigger than a normal blade) + combat feel ──────────
         protected override float MeleeRange => 110f;
         protected override float StabRange => 180f;
@@ -152,6 +162,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (player == null || !player.active || player.dead)
             {
                 return -1;
+            }
+            //Judgment from Behind: the teleport just planted him at the player's back — the queued
+            //punish is a guaranteed heavy overhead (fallback: the juggle) the moment a combo can start.
+            if (_judgmentPending > 0)
+            {
+                if (Ready(ready, CB_GUILLOTINE)) { _judgmentPending = 0; return CB_GUILLOTINE; }
+                if (Ready(ready, CB_UNDEROVER)) { _judgmentPending = 0; return CB_UNDEROVER; }
+            }
+            //Gravity of the Sun just reeled them in — greet them with the pressure string
+            if (_pullComboNudge > 0)
+            {
+                if (Ready(ready, CB_THREEHIT)) { _pullComboNudge = 0; return CB_THREEHIT; }
+                if (Ready(ready, CB_CLEAVE)) { _pullComboNudge = 0; return CB_CLEAVE; }
             }
             bool rolling = player.GetModPlayer<tsorcRevampPlayer>().isDodging;
             bool launched = player.velocity.Y < -3f && player.Center.Y < NPC.Center.Y - 24f;
@@ -265,7 +288,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
-            NPC.damage = TooEarly ? TooEarlyDamage : 0;
+            //Contact only hurts during the Unbroken Advance march (all other damage is weapon hitboxes)
+            NPC.damage = TooEarly ? TooEarlyDamage : (_advanceTimer > 0 ? MeleeDamage : 0);
 
             base.AI();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
@@ -278,6 +302,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             TickFirestorm();
             TickDescent();
             TickFlashStep();
+            TickJudgment();
+            TickRiposte();
+            TickSpearStorm();
+            TickGravity();
+            TickAdvance();
+            TickWingedPlunge();
+            if (_judgmentPending > 0)
+            {
+                _judgmentPending--;
+            }
+            if (_pullComboNudge > 0)
+            {
+                _pullComboNudge--;
+            }
 
             //Debug HUD attack label (DebugMode overlay reads DebugAttackLabel)
             if (_attackLabelTimer > 0 && --_attackLabelTimer == 0)
@@ -389,6 +427,647 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Dust d = Dust.NewDustPerfect(pos, type, vel, 40, default, 1.6f);
                 d.noGravity = true;
             }
+        }
+
+        // ── Greatsword Boomerang (full-lane reach — the edge-camper punish) ──────
+        // Base Boomerang template: overhead wind-up + chop; the fire event hurls the blade spinning
+        // across the arena, and it arcs back to his hand. While it flies he's briefly weaponless —
+        // the punish window if you're close enough to use it.
+        protected override bool  CanBoomerang               => true;
+        protected override float BoomerangMinRange          => 200f;
+        protected override float BoomerangMaxRange          => 950f;
+        protected override int   BoomerangChance            => 7;
+        protected override int   BoomerangCooldownAfterUse  => 420;
+        protected override int   BoomerangSwingTelegraphTicks => 26;
+        protected override int   BoomerangSwingTicks        => 28;
+        protected override float BoomerangFireProgress      => 0.5f;
+        protected override int   BoomerangRecoveryTicks     => 60;
+
+        const int BoomerangDamage = 65;
+
+        protected override void DoBoomerangSwingTick(int elapsed, int total)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+            float swingT = total > 0 ? elapsed / (float)total : 1f;
+            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            Vector2 bladePos = NPC.Center + new Vector2(NPC.direction, 0f).RotatedBy(angle) * 48f;
+            int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+            Dust d = Dust.NewDustPerfect(bladePos + Main.rand.NextVector2Circular(6f, 6f), type, Vector2.Zero, 70, default, Main.rand.NextFloat(1.1f, 1.6f));
+            d.noGravity = true;
+        }
+
+        protected override void DoBoomerangFire()
+        {
+            SetAttackLabel("Greatsword Boomerang", 130);
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.5f }, NPC.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Player target = Main.player[NPC.target];
+            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 26f, -14f);
+            Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 15f;
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
+                ModContent.ProjectileType<Projectiles.Enemy.GwynGreatswordBoomerang>(), BoomerangDamage, 6f, Main.myPlayer, NPC.whoAmI, 50f);
+        }
+
+        // ── Judgment from Behind (the back-turn punish) ──────────────────────────
+        // Fires specifically when the player is at range with their back to him: a flash-step to
+        // their blind side, then a queued heavy overhead the instant the combo system can start
+        // (see the _judgmentPending branch in ReactiveComboIndex). The appear-flash is the warning.
+        int _judgmentCd = 600;
+        int _judgmentPending;
+
+        void TickJudgment()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_judgmentCd > 0)
+            {
+                _judgmentCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player player = Main.player[NPC.target];
+            float dist = NPC.Distance(player.Center);
+            bool facingAway = System.Math.Sign(NPC.Center.X - player.Center.X) != player.direction;
+            if (!player.dead && player.active && facingAway && dist > 380f && dist < 1100f && Main.rand.NextBool(100))
+            {
+                _judgmentCd = 700 + Main.rand.Next(300);
+                SetAttackLabel("Judgment from Behind", 110);
+                FlashBurst(NPC.Center);
+                float destX = player.Center.X - player.direction * 90f; //their blind side
+                NPC.Bottom = new Vector2(destX, player.Bottom.Y);
+                NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+                NPC.spriteDirection = NPC.direction;
+                FlashBurst(NPC.Center);
+                _judgmentPending = 90; //the reactive hook converts this into a guaranteed Guillotine
+                NPC.netUpdate = true;
+            }
+        }
+
+        // ── Riposte Stance (the greedy-trade punish; ranged players are immune) ──
+        // He drops into a shimmering guard for ~40 ticks. Melee-striking him during the window takes
+        // 50% damage and triggers the PARRY: a clang, a flash, and a devastating counter-swing.
+        // If nobody takes the bait, the stance simply ends.
+        int _riposteCd = 700;
+        int _riposteTimer;
+
+        void TickRiposte()
+        {
+            if (_riposteTimer > 0)
+            {
+                _riposteTimer--;
+                NPC.velocity.X *= 0.7f;
+                //The guard shimmer: a sheen of gold glints along the raised blade
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    Vector2 bladePos = NPC.Center + new Vector2(NPC.direction * 16f, -26f) + Main.rand.NextVector2Circular(6f, 22f);
+                    Dust d = Dust.NewDustPerfect(bladePos, DustID.GoldCoin, Vector2.Zero, 0, default, Main.rand.NextFloat(0.8f, 1.2f));
+                    d.noGravity = true;
+                    d.velocity *= 0.2f;
+                }
+                Lighting.AddLight(NPC.Center, 0.5f, 0.45f, 0.2f);
+                return;
+            }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_riposteCd > 0)
+            {
+                _riposteCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player player = Main.player[NPC.target];
+            if (!player.dead && player.active && NPC.Distance(player.Center) < 220f && Main.rand.NextBool(120))
+            {
+                _riposteCd = 800 + Main.rand.Next(400);
+                _riposteTimer = 40;
+                SetAttackLabel("Riposte Stance", 60);
+                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.5f, Pitch = 0.6f }, NPC.Center); //the sheen cue
+                EnterPhase(AttackPhase.NovaRecovery, 44); //park the combat machine for the stance
+                NPC.netUpdate = true;
+            }
+        }
+
+        void TriggerRiposte()
+        {
+            _riposteTimer = 0;
+            SetAttackLabel("RIPOSTE!", 70);
+            SoundEngine.PlaySound(SoundID.NPCHit4 with { Volume = 0.9f, Pitch = 0.5f }, NPC.Center); //the parry clang
+            if (Main.netMode != NetmodeID.Server)
+            {
+                for (int i = 0; i < 26; i++)
+                {
+                    Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
+                    int type = Main.rand.NextBool() ? DustID.GoldCoin : DustID.GoldFlame;
+                    Dust d = Dust.NewDustPerfect(NPC.Center, type, vel, 40, default, 1.5f);
+                    d.noGravity = true;
+                }
+            }
+            //The devastating counter: a full-reach swing + a heavy fire crescent
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.4f }, NPC.Center);
+            TryMeleeHit(reach: 130f);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * 0.9f), 4f, Main.myPlayer, NPC.direction, 0f);
+            }
+        }
+
+        ///<summary>The Riposte guard soaks half of what hits it — the parry read.</summary>
+        public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
+        {
+            if (_riposteTimer > 0)
+            {
+                modifiers.FinalDamage *= 0.5f;
+            }
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            base.OnHitByItem(player, item, hit, damageDone);
+            if (_riposteTimer > 0)
+            {
+                TriggerRiposte();
+            }
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            base.OnHitByProjectile(projectile, hit, damageDone);
+            //Only melee-class projectiles (spear thrusts, true-melee extensions) spring the trap
+            if (_riposteTimer > 0 && projectile.DamageType.CountsAsClass(DamageClass.Melee))
+            {
+                TriggerRiposte();
+            }
+        }
+
+        // ── Sunlight Spear Storm (the airborne bullet-hell escalation of the volley) ──
+        // He ascends on his wings (angel wings; flame wings once the Wrath ignites) and hangs aloft
+        // while a dozen spear-nodes ring the player in three sequenced waves — each node telegraphs,
+        // fires its spear, and dissipates. Landing exhausts him: the recovery is the reward.
+        int _stormCd = 600;
+        int _stormTimer;
+        const int StormNodeDamage = 40;
+
+        void TickSpearStorm()
+        {
+            if (_stormTimer > 0)
+            {
+                _stormTimer++;
+                Player player = Main.player[NPC.target];
+
+                //Sequenced waves of 4 nodes ringing the player, offset per wave
+                if (Main.netMode != NetmodeID.MultiplayerClient && !player.dead
+                    && (_stormTimer == 60 || _stormTimer == 105 || _stormTimer == 150))
+                {
+                    int wave = _stormTimer == 60 ? 0 : _stormTimer == 105 ? 1 : 2;
+                    SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.6f, Pitch = 0.3f }, player.Center);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float ang = MathHelper.ToRadians(wave * 30f) + MathHelper.PiOver2 * i;
+                        Vector2 pos = player.Center + ang.ToRotationVector2() * 340f;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.Enemy.GwynSolarSpearNode>(), StormNodeDamage, 2f, Main.myPlayer, 22f);
+                    }
+                }
+                //Radiance while he hangs aloft
+                if (Main.rand.NextBool(2) && Main.netMode != NetmodeID.Server)
+                {
+                    int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
+                    Dust d = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(30f, 30f), type, new Vector2(0f, -1f), 60, default, 1.2f);
+                    d.noGravity = true;
+                }
+                Lighting.AddLight(NPC.Center, 0.9f, 0.8f, 0.35f);
+
+                if (_stormTimer == 200)
+                {
+                    Flight?.RequestLand();
+                }
+                if (_stormTimer >= 240 || player.dead)
+                {
+                    Flight?.RequestLand();
+                    _stormTimer = 0;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        _stormCd = 1400 + Main.rand.Next(600);
+                        NPC.netUpdate = true;
+                    }
+                }
+                return;
+            }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_stormCd > 0)
+            {
+                _stormCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player target = Main.player[NPC.target];
+            float dist = NPC.Distance(target.Center);
+            if (!target.dead && target.active && dist > 250f && dist < 1000f && Main.rand.NextBool(150))
+            {
+                _stormTimer = 1;
+                SetAttackLabel("Sunlight Spear Storm", 240);
+                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.9f, Pitch = -0.3f }, NPC.Center);
+                EnterPhase(AttackPhase.NovaRecovery, 250); //park the ground machine for the whole storm
+                Flight?.RequestTakeoff();
+                NPC.netUpdate = true;
+            }
+        }
+
+        // ── Gravity of the Sun (#13 — the keystone anti-kite) ────────────────────
+        // He plants and a golden singularity forms at his chest: 40t of light spiralling inward (the
+        // read), then a GwynGravityWell drags every player radially toward him for ~2s. Resistible by
+        // holding away or rolling — but a stationary caster gets reeled straight into his melee, and
+        // the reactive hook greets whoever arrives with the pressure string (_pullComboNudge).
+        int _gravityCd = 500;
+        int _gravityTimer;
+        int _pullComboNudge;
+
+        void TickGravity()
+        {
+            if (_gravityTimer > 0)
+            {
+                _gravityTimer++;
+                NPC.velocity.X *= 0.75f; //planted
+
+                if (_gravityTimer <= 40)
+                {
+                    //The singularity forming: gold spiralling tightly inward to his chest
+                    float progress = _gravityTimer / 40f;
+                    int count = 1 + (int)(progress * 3f);
+                    for (int i = 0; i < count; i++)
+                    {
+                        float ang = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float radius = MathHelper.Lerp(120f, 15f, progress) + Main.rand.NextFloat(15f);
+                        Vector2 pos = NPC.Center + ang.ToRotationVector2() * radius;
+                        int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.GoldCoin;
+                        Dust d = Dust.NewDustPerfect(pos, type, (NPC.Center - pos) * 0.1f, 60, default, 1.2f);
+                        d.noGravity = true;
+                    }
+                    if (_gravityTimer == 40 && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.7f, Pitch = -0.6f }, NPC.Center);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.Enemy.GwynGravityWell>(), 0, 0f, Main.myPlayer, NPC.whoAmI, 120f);
+                    }
+                }
+                Lighting.AddLight(NPC.Center, 1f, 0.85f, 0.35f);
+
+                if (_gravityTimer >= 160)
+                {
+                    _gravityTimer = 0;
+                    _pullComboNudge = 90; //whoever got reeled in meets the 3-hit
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        _gravityCd = 800 + Main.rand.Next(300);
+                        NPC.netUpdate = true;
+                    }
+                }
+                return;
+            }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_gravityCd > 0)
+            {
+                _gravityCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player gPlayer = Main.player[NPC.target];
+            float gDist = NPC.Distance(gPlayer.Center);
+            if (!gPlayer.dead && gPlayer.active && gDist > 200f && gDist < 1100f && Main.rand.NextBool(130))
+            {
+                _gravityTimer = 1;
+                SetAttackLabel("Gravity of the Sun", 170);
+                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.7f, Pitch = -0.7f }, NPC.Center);
+                EnterPhase(AttackPhase.NovaRecovery, 165); //park the ground machine for the channel
+                NPC.netUpdate = true;
+            }
+        }
+
+        // ── Unbroken Advance (#15 — anti-knockback / anti-stunlock) ──────────────
+        // Not a dash: a slow, relentless, ARMORED march (999 defense — see TickDefenseRing) straight
+        // at the player for 3 seconds, fire boiling off him, contact damage live (see the NPC.damage
+        // line in AI). No winded recovery: the moment the march ends the combat machine is free, so
+        // it flows straight into whatever attack the player's position deserves.
+        int _advanceCd = 600;
+        int _advanceTimer;
+        int _advanceWallTicks;
+
+        void TickAdvance()
+        {
+            if (_advanceTimer > 0)
+            {
+                _advanceTimer--;
+                Player player = Main.player[NPC.target];
+                int dir = player.Center.X > NPC.Center.X ? 1 : -1;
+                NPC.direction = dir;
+                NPC.spriteDirection = dir;
+                NPC.velocity.X = dir * 2.2f;
+
+                //Fire boiling off him + the scorch line his blade drags
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    if (Main.rand.NextBool(2))
+                    {
+                        Vector2 pos = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height));
+                        int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                        Dust d = Dust.NewDustPerfect(pos, type, new Vector2(0f, -1.8f), 60, default, 1.4f);
+                        d.noGravity = true;
+                    }
+                    Vector2 scorch = NPC.Bottom + new Vector2(-dir * 20f, -4f);
+                    Dust s = Dust.NewDustPerfect(scorch, DustID.Torch, new Vector2(0f, -0.6f), 100, default, 1f);
+                    s.noGravity = true;
+                }
+                if (_advanceTimer % 20 == 0)
+                {
+                    SoundEngine.PlaySound(SoundID.DeerclopsStep with { Volume = 0.35f, Pitch = 0.3f }, NPC.Bottom);
+                }
+                Lighting.AddLight(NPC.Center, 0.9f, 0.5f, 0.15f);
+
+                //Walked into the arena wall long enough — the march ends early
+                if (NPC.collideX)
+                {
+                    if (++_advanceWallTicks > 30)
+                    {
+                        _advanceTimer = 0;
+                    }
+                }
+                else
+                {
+                    _advanceWallTicks = 0;
+                }
+
+                if (_advanceTimer == 0 || player.dead)
+                {
+                    _advanceTimer = 0;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        _advanceCd = 900 + Main.rand.Next(300);
+                        NPC.netUpdate = true;
+                    }
+                }
+                return;
+            }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_advanceCd > 0)
+            {
+                _advanceCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player aPlayer = Main.player[NPC.target];
+            float aDist = NPC.Distance(aPlayer.Center);
+            if (!aPlayer.dead && aPlayer.active && aDist > 250f && aDist < 900f && Main.rand.NextBool(140))
+            {
+                _advanceTimer = 180; //3 seconds of relentless
+                _advanceWallTicks = 0;
+                SetAttackLabel("Unbroken Advance", 190);
+                SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    for (int i = 0; i < 24; i++)
+                    {
+                        Vector2 vel = Main.rand.NextVector2Circular(4f, 4f);
+                        Dust d = Dust.NewDustPerfect(NPC.Center, DustID.Torch, vel, 40, default, 1.7f);
+                        d.noGravity = true;
+                    }
+                }
+                //The march + a beat: expiring lands him in Idle right as the march ends, so he can
+                //combo into ANY attack immediately — no winded window.
+                EnterPhase(AttackPhase.NovaRecovery, 182);
+                NPC.netUpdate = true;
+            }
+        }
+
+        // ── Winged Plunge (the wings' second act) ────────────────────────────────
+        // He spreads his wings and rises (dome-aware: the ascent caps itself below any ceiling it
+        // finds), hangs a beat to aim, then DIVES at the player's marked position trailing golden
+        // echoes — ending in a flaming greatsword slash where they stood. The wings only ever show
+        // while airborne (ShowWingsWhenGrounded is false — his cape keeps the grounded silhouette).
+        int _plungeCd = 700;
+        int _plungeTimer;
+        int _plungePhase;
+        Vector2 _plungeTarget;
+        float _plungeApexY;
+
+        const float PlungeRiseHeight = 380f;  //default ascent — clears the dome's center, not its edges
+        const float PlungeCeilingPad = 70f;   //stay this far under whatever ceiling the check finds
+
+        void TickWingedPlunge()
+        {
+            if (_plungeTimer > 0)
+            {
+                RunWingedPlunge();
+                return;
+            }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_plungeCd > 0)
+            {
+                _plungeCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player player = Main.player[NPC.target];
+            float dist = NPC.Distance(player.Center);
+            if (!player.dead && player.active && dist > 150f && dist < 900f && Main.rand.NextBool(120))
+            {
+                _plungeTimer = 1;
+                _plungePhase = 0;
+                //Dome-aware apex: rise the default height, but never within the pad of a ceiling
+                float ceiling = FindCeilingY(NPC.Center, 30);
+                _plungeApexY = NPC.Center.Y - PlungeRiseHeight;
+                if (ceiling > 0f)
+                {
+                    _plungeApexY = System.Math.Max(_plungeApexY, ceiling + PlungeCeilingPad);
+                }
+                SetAttackLabel("Winged Plunge", 200);
+                SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Center); //wingbeat whoosh
+                EnterPhase(AttackPhase.NovaRecovery, 210); //park the ground machine for the flight
+                Flight?.RequestTakeoff();
+                NPC.netUpdate = true;
+            }
+        }
+
+        void RunWingedPlunge()
+        {
+            _plungeTimer++;
+            Player player = Main.player[NPC.target];
+            if (player.dead || !player.active)
+            {
+                EndPlunge();
+                return;
+            }
+
+            switch (_plungePhase)
+            {
+                case 0: //Rise on the wings (overriding the flight controller's own intent)
+                    NPC.velocity = new Vector2(NPC.velocity.X * 0.8f, -6.5f);
+                    if (Main.rand.NextBool(2) && Main.netMode != NetmodeID.Server)
+                    {
+                        Dust d = Dust.NewDustPerfect(NPC.Bottom + Main.rand.NextVector2Circular(14f, 6f), DustID.GoldFlame, new Vector2(0f, 2f), 80, default, 1.2f);
+                        d.noGravity = true;
+                    }
+                    if (NPC.Center.Y <= _plungeApexY || _plungeTimer > 70)
+                    {
+                        _plungePhase = 1;
+                        _plungeTimer = 1;
+                    }
+                    break;
+
+                case 1: //Hang and aim — the read
+                    NPC.velocity *= 0.85f;
+                    NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+                    NPC.spriteDirection = NPC.direction;
+                    if (_plungeTimer >= 20)
+                    {
+                        _plungeTarget = player.Center; //locked — reposition NOW
+                        _plungePhase = 2;
+                        _plungeTimer = 1;
+                        SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.6f, Pitch = 0.4f }, NPC.Center);
+                    }
+                    break;
+
+                case 2: //The dive, trailing golden echoes
+                {
+                    Vector2 dir = (_plungeTarget - NPC.Center).SafeNormalize(Vector2.UnitY);
+                    NPC.velocity = dir * 17f;
+                    if (_plungeTimer % 2 == 0 && Main.netMode != NetmodeID.Server)
+                    {
+                        //Echo: a body-sized puff of gold left hanging along the dive path
+                        for (int i = 0; i < 5; i++)
+                        {
+                            Vector2 pos = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height));
+                            int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Torch;
+                            Dust d = Dust.NewDustPerfect(pos, type, Vector2.Zero, 80, default, 1.5f);
+                            d.noGravity = true;
+                            d.velocity = dir * -0.5f;
+                        }
+                    }
+                    Lighting.AddLight(NPC.Center, 1f, 0.8f, 0.3f);
+
+                    bool arrived = Vector2.Distance(NPC.Center, _plungeTarget) < 48f;
+                    if (arrived || NPC.collideX || NPC.collideY || _plungeTimer > 55)
+                    {
+                        //The flaming slash at the marked position
+                        SetAttackLabel("Winged Plunge — Slash", 60);
+                        SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.4f }, NPC.Center);
+                        SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.6f, Pitch = 0.1f }, NPC.Center);
+                        UsefulFunctions.ScreenShake(NPC.Center, 7f, 14);
+                        if (Main.netMode != NetmodeID.Server)
+                        {
+                            for (int i = 0; i < 22; i++)
+                            {
+                                Vector2 vel = Main.rand.NextVector2Circular(5f, 5f);
+                                int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                                Dust d = Dust.NewDustPerfect(NPC.Center, type, vel, 40, default, 1.6f);
+                                d.noGravity = true;
+                            }
+                        }
+                        TryMeleeHit(reach: 140f);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
+                                ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * 0.7f), 4f, Main.myPlayer, NPC.direction, 2f);
+                        }
+                        Flight?.RequestLand();
+                        _plungePhase = 3;
+                        _plungeTimer = 1;
+                    }
+                    break;
+                }
+
+                case 3: //Landing recovery
+                    NPC.velocity.X *= 0.8f;
+                    if (_plungeTimer >= 40)
+                    {
+                        EndPlunge();
+                    }
+                    break;
+            }
+        }
+
+        void EndPlunge()
+        {
+            Flight?.RequestLand();
+            _plungeTimer = 0;
+            _plungePhase = 0;
+            NPC.noGravity = false;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                _plungeCd = 800 + Main.rand.Next(400);
+                NPC.netUpdate = true;
+            }
+        }
+
+        ///<summary>World Y of the first solid tile BOTTOM above the point (scanning up), or -1 if none
+        ///in range — the dome-clearance check for the Winged Plunge's ascent.</summary>
+        static float FindCeilingY(Vector2 worldPos, int maxTilesUp)
+        {
+            int tx = (int)(worldPos.X / 16f);
+            int ty = (int)(worldPos.Y / 16f);
+            if (tx < 5 || tx > Main.maxTilesX - 5)
+            {
+                return -1f;
+            }
+            for (int d = 2; d <= maxTilesUp; d++)
+            {
+                int y = ty - d;
+                if (y <= 5)
+                {
+                    break;
+                }
+                Tile tile = Main.tile[tx, y];
+                if (tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType])
+                {
+                    return (y + 1) * 16f;
+                }
+            }
+            return -1f;
         }
 
         // ── Firestorm (summoned rain — the anti-heal / anti-camp pressure) ───────
@@ -725,7 +1404,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             else if (protectedHoldTimer <= 0) // preserve the 9999 penalty until the hold expires
             {
-                NPC.defense = FightableDefense;
+                //Unbroken Advance: the march itself is armored — 999 defense until the 3s ends
+                NPC.defense = _advanceTimer > 0 ? 999 : FightableDefense;
             }
         }
 

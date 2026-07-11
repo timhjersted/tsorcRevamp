@@ -9,8 +9,8 @@ namespace tsorcRevamp.Projectiles.Magic
 {
     ///<summary>
     ///Wrath of Gold's held brain: watches whether the button is TAPPED (released within 18 ticks)
-    ///or HELD, and routes to the right spell. ai[0] = 0 for left click (tap: heavenly spears at the
-    ///cursor / hold: halo sun channel), 1 for right click (tap: sun pillar at the cursor / hold:
+    ///or HELD, and routes to the right spell. ai[0] = 0 for cursor high (tap: heavenly spears at the
+    ///cursor / hold: halo sun channel), 1 for cursor low (tap: sun pillar at the cursor / hold:
     ///charged golden sweep). Deals no damage itself — children inherit its damage.
     ///</summary>
     class WrathOfGoldController : ModProjectile
@@ -18,13 +18,13 @@ namespace tsorcRevamp.Projectiles.Magic
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
 
         const int TapWindow = 18;
-        const int ChargeTicks = 50;    //right-hold: charge time after the window before the sweep
+        const int ChargeTicks = 50;    //cursor-low hold: charge time after the window before the sweep
         const int HaloSpawnInterval = 15;
-        const int HaloManaCost = 7;    //per sun spawned during the left-hold channel
+        const int HaloManaCost = 7;    //per sun spawned during the cursor-high hold channel
         const int SweepManaCost = 25;  //surcharge on releasing the sweep
         const int MaxHaloSuns = 8;
 
-        int Mode => (int)Projectile.ai[0]; //0 = left click, 1 = right click
+        int Mode => (int)Projectile.ai[0]; //0 = cursor high, 1 = cursor low
         float Timer => Projectile.localAI[0];
 
         public override void SetDefaults()

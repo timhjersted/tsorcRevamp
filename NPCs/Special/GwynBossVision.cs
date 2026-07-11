@@ -50,20 +50,23 @@ namespace tsorcRevamp.NPCs.Special
             //Make the npc last forever
             NPC.timeLeft++;
 
+            //Expanded-world Y offset: the whole vision chamber (Y 1115-1231) is in the flat +200 band. X invariant.
+            int dY = ExpandedWorldTransform.MapTileY(670, 1164) - 1164;
+
             //Make its centerpoint fixed
-            NPC.Center = new Vector2(670 * 16, 1164 * 16);
+            NPC.Center = new Vector2(670 * 16, (1164 + dY) * 16);
 
             //Initialize the data for the visions
             if (bossVisions == null)
             {
                 bossVisions = new BossVision[7];
-                bossVisions[0] = new BossVision(700, 1115, ModContent.NPCType<WaterFiendKraken>(), "tsorcRevamp/NPCs/Special/Visions/WaterFiendKraken", 1, Color.Blue);
-                bossVisions[1] = new BossVision(658, 1129, ModContent.NPCType<FireFiendMarilith>(), "tsorcRevamp/NPCs/Special/Visions/FireFiendMarilith", 1.2f, Color.OrangeRed);
-                bossVisions[2] = new BossVision(622, 1140, ModContent.NPCType<EarthFiendLich>(), "tsorcRevamp/NPCs/Special/Visions/EarthFiendLich", 1.5f, Color.Green);
-                bossVisions[3] = new BossVision(622, 1190, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), "tsorcRevamp/NPCs/Special/Visions/Artorias", 1.5f, Color.DarkBlue * 4);
-                bossVisions[4] = new BossVision(656, 1201, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), "tsorcRevamp/NPCs/Special/Visions/WyvernMageShadow", 1.5f, Color.Purple * 4);
-                bossVisions[5] = new BossVision(700, 1218, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), "tsorcRevamp/NPCs/Special/Visions/SeathTheScalelessHead", 1, Color.White);
-                bossVisions[6] = new BossVision(736, 1231, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), "tsorcRevamp/NPCs/Special/Visions/Artorias_Outline", 1, Color.Cyan);
+                bossVisions[0] = new BossVision(700, 1115 + dY, ModContent.NPCType<WaterFiendKraken>(), "tsorcRevamp/NPCs/Special/Visions/WaterFiendKraken", 1, Color.Blue);
+                bossVisions[1] = new BossVision(658, 1129 + dY, ModContent.NPCType<FireFiendMarilith>(), "tsorcRevamp/NPCs/Special/Visions/FireFiendMarilith", 1.2f, Color.OrangeRed);
+                bossVisions[2] = new BossVision(622, 1140 + dY, ModContent.NPCType<EarthFiendLich>(), "tsorcRevamp/NPCs/Special/Visions/EarthFiendLich", 1.5f, Color.Green);
+                bossVisions[3] = new BossVision(622, 1190 + dY, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), "tsorcRevamp/NPCs/Special/Visions/Artorias", 1.5f, Color.DarkBlue * 4);
+                bossVisions[4] = new BossVision(656, 1201 + dY, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), "tsorcRevamp/NPCs/Special/Visions/WyvernMageShadow", 1.5f, Color.Purple * 4);
+                bossVisions[5] = new BossVision(700, 1218 + dY, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), "tsorcRevamp/NPCs/Special/Visions/SeathTheScalelessHead", 1, Color.White);
+                bossVisions[6] = new BossVision(736, 1231 + dY, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), "tsorcRevamp/NPCs/Special/Visions/Artorias_Outline", 1, Color.Cyan);
             }
 
             //Lighting
@@ -82,7 +85,7 @@ namespace tsorcRevamp.NPCs.Special
             if (bossVisions[6].activationProgress == 0)
             {
                 float diff = (float)Math.Sin(Main.GameUpdateCount / 50f);
-                int dust = Dust.NewDust(new Vector2(740, 1231 + diff) * 16, 60, 110, 15, 0, 0, 250, default, 5f);
+                int dust = Dust.NewDust(new Vector2(740, 1231 + dY + diff) * 16, 60, 110, 15, 0, 0, 250, default, 5f);
                 Main.dust[dust].noGravity = true;
             }
 

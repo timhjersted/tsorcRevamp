@@ -69,48 +69,12 @@ namespace tsorcRevamp.Items.Debug
                     return false;
                 }
 
-                // If config menu is open, try to remove a placed NPC on right click
+                // NOTE: right-click no longer deletes anything (removed placed NPCs / quick-add events). Deletion is
+                // intentionally button-only now (the config panel's delete button) to prevent accidental loss. If the
+                // config menu is open, swallow the right-click so it can't accidentally spawn a new event mid-edit.
                 if (configUI.Visible && configUI.CurrentEvent != null)
                 {
-                    var ev = configUI.CurrentEvent;
-                    DynamicSpawnEntry npcToRemove = null;
-                    float closestNpcDist = float.MaxValue;
-                    foreach (var npc in ev.Npcs)
-                    {
-                        Vector2 npcCenter = tsorcRevampSystems.NpcSpawnCenter(npc.NpcID, npc.SpawnX, npc.SpawnY);
-                        float removeRadius = tsorcRevampSystems.NpcHitRadius(npc.NpcID);
-                        float dist = Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, npcCenter);
-                        if (dist < removeRadius && dist < closestNpcDist)
-                        {
-                            closestNpcDist = dist;
-                            npcToRemove = npc;
-                        }
-                    }
-
-                    if (npcToRemove != null)
-                    {
-                        ev.Npcs.Remove(npcToRemove);
-
-                        NPC temp = new NPC();
-                        temp.SetDefaults(npcToRemove.NpcID);
-
-                        // A quick-add event IS its single NPC. Removing it would leave an invisible, unclickable
-                        // orphan event, so delete the whole event instead and close the menu.
-                        if (ev.SingleNpcMarker)
-                        {
-                            tsorcScriptedEvents.DynamicEvents.Remove(ev);
-                            tsorcScriptedEvents.SaveDynamicEvents();
-                            configUI.Hide();
-                            Main.NewText($"Deleted quick-add event ({temp.TypeName}).");
-                        }
-                        else
-                        {
-                            configUI.RefreshList();
-                            tsorcScriptedEvents.SaveDynamicEvents();
-                            Main.NewText($"Removed placed {temp.TypeName} from event.");
-                        }
-                        return true;
-                    }
+                    return false;
                 }
 
                 // Otherwise, Right click creates a new event!

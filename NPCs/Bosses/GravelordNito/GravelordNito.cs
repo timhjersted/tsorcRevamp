@@ -44,6 +44,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const int FrameCount = 23;
         const int FrameHeight = 300;
         const int BodyWidth = 400;
+        // The character art is NOT centered in the 400px frame — its opaque body is centered at
+        // ~x=283 (measured). Mirroring around the frame's geometric center (200) on a facing flip
+        // shifted the body ±83px = a ~166px "teleport". Use the true body center as the horizontal
+        // origin so a flip mirrors the body IN PLACE.
+        const float BodyDrawCenterX = 283f;
         const int HeavyTelegraph = 48;
         const int LongChannelTicks = 120;
         const int LongChannelStaggerTicks = 80;
@@ -53,10 +58,34 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         int AttackTimer;
         int AttackCooldown = 150;
         int lockedDir = 1;
+        int lockedKind = 0; // vertical-read slash kind for the current single-hit attack; see ChooseVerticalKind
         int FootstepTimer;
         int ComboRecoveryTicks;
         bool PhaseTwo;
         bool HalfTelegraph;
+
+        // ── Loose-sword swing animation ─────────────────────────────────────────
+        // The body sheet is ALWAYS the no-sword art (GravelordNitoAttacking.png — despite the name,
+        // it has no blade painted in; GravelordNito.png is the one with the sword baked in and is no
+        // longer used for the body). A single loose sword layer (GravelordNitoSword.png) is drawn
+        // BEHIND the body every frame. It rests in a horizontal idle pose, winds up toward a slash's
+        // start pose, plays the full swing arc itself (the NitoSwordSlash projectile is an invisible
+        // hitbox that mirrors this same arc), then eases back to idle. All poses come from the shared
+        // SlashPhi/SlashReach helpers so the visible blade and the hitbox always agree.
+        int SlashWindupKind;
+        int SlashWindupStartTick;
+        int SlashWindupEndTick;
+        bool SlashWindupActive;
+        int SlashActiveKind = -1; // kind of the most recently released slash this state; -1 = none fired yet
+        int SlashActiveStartTick; // AttackTimer at that release
+        const int SlashActiveTicks = 18; // must match NitoSwordSlash.timeLeft so the visible arc matches the hitbox
+        const int SlashReturnTicks = 14;
+        // Sword rig around NPC.Center: the "shoulder" the blade pivots from, its idle reach, and how
+        // far the whole sprite is drawn sunk into the floor so his ragged base always touches ground.
+        const float SwordPivotX = 18f;
+        const float SwordPivotY = -96f;
+        const float SwordIdleReach = 78f;
+        const float GroundSinkPixels = 30f;
 
         int SlashDamage => 23;
         int HeavySlashDamage => 29;
@@ -95,8 +124,16 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
             tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             g.NavSearchRadius = 70;
-            g.MaxJumpPower = 9.5f;
-            g.MaxJumpBoost = 5f;
+            // A small jump only — 1-2 tile ledges are already handled smoothly by the shared
+            // AutoStepUp system (unconditional for grounded NPCs), so this lower ceiling only
+            // covers genuine gaps the pathfinder can't step around; he should read as a heavy,
+            // grounded fighter, not a leaping beast.
+            g.MaxJumpPower = 6f;
+            g.MaxJumpBoost = 3f;
+            // Support core: the center 4 tiles must be on solid ground (matches his ~7.4-tile width).
+            // The wider sprite edges — and up to half his ~11-tile height on a downslope — are allowed
+            // to sink into terrain instead of floating in the air over uneven ground.
+            g.BeastSinkMaxTiles = 5;
             g.KiteRangeMin = 0f;
             g.KiteRangeMax = 24f;
             g.KiteLooseness = 0.45f;
@@ -166,6 +203,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             State = AttackState.None;
             AttackTimer = 0;
             HalfTelegraph = false;
+            SlashWindupActive = false;
             ComboRecoveryTicks = 0;
             AttackCooldown = Math.Max(AttackCooldown, 120);
             NPC.damage = 0;
@@ -206,7 +244,12 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
             if (State == AttackState.None)
             {
-                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.62f, acceleration: 0.45f, canTeleport: false, lavaJumping: true, canDodgeroll: false, canPounce: false, minSurfaceWidth: 4, canWalkBackwards: true);
+                // canWalkBackwards:false — he now turns to FACE his walking direction instead of
+                // moon-walking toward the player. StayGroundedRelativeTo cancels nav hops that would
+                // carry him up onto platforms the player isn't standing on (LeapingCleave is his one
+                // deliberate vertical answer).
+                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.62f, acceleration: 0.45f, canTeleport: false, lavaJumping: true, canDodgeroll: false, canPounce: false, minSurfaceWidth: 4, canWalkBackwards: false);
+                StayGroundedRelativeTo(player);
                 FootstepEffects();
 
                 if (AttackCooldown > 0)
@@ -282,10 +325,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             AttackTimer++;
             switch (State)
             {
-                case AttackState.SideSweep: RunSwordAttack(g, player, 0, Telegraph(30), 44, 84, SlashDamage); break;
-                case AttackState.BackhandSweep: RunSwordAttack(g, player, 3, Telegraph(26), 38, 78, SlashDamage); break;
-                case AttackState.OverheadCleave: RunSwordAttack(g, player, 1, Telegraph(HeavyTelegraph), 64, 116, HeavySlashDamage); break;
-                case AttackState.ImpalingThrust: RunSwordAttack(g, player, 2, Telegraph(34), 44, 82, SlashDamage); break;
+                case AttackState.SideSweep: RunSwordAttack(g, player, lockedKind, Telegraph(30), 44, 84, SlashDamage); break;
+                case AttackState.BackhandSweep: RunSwordAttack(g, player, lockedKind, Telegraph(26), 38, 78, SlashDamage); break;
+                case AttackState.OverheadCleave: RunSwordAttack(g, player, lockedKind, Telegraph(HeavyTelegraph), 64, 116, HeavySlashDamage); break;
+                case AttackState.ImpalingThrust: RunSwordAttack(g, player, lockedKind, Telegraph(34), 44, 82, SlashDamage); break;
                 case AttackState.TripleReaperCombo: RunTripleCombo(g, player); break;
                 case AttackState.DraggingAdvance: RunDraggingAdvance(g); break;
                 case AttackState.LeapingCleave: RunLeapingCleave(g, player); break;
@@ -316,6 +359,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             if (AttackTimer == 1)
             {
                 TelegraphCue(Color.LightGray);
+                ArmSlashWindup(slashKind, 1, releaseTick);
             }
             if (AttackTimer <= telegraphTicks)
             {
@@ -334,14 +378,18 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         void RunTripleCombo(tsorcRevampGlobalNPC g, Player player)
         {
             g.AttackCommitted = AttackTimer <= 102;
-            if (AttackTimer == 1) TelegraphCue(new Color(180, 180, 210));
+            if (AttackTimer == 1)
+            {
+                TelegraphCue(new Color(180, 180, 210));
+                ArmSlashWindup(0, 1, 30);
+            }
             if (AttackTimer < 25)
             {
                 FacePlayer(player);
                 SwordTelegraphDust(0);
             }
-            if (AttackTimer == 30) SpawnSlash(0, SlashDamage);
-            if (AttackTimer == 56) SpawnSlash(3, SlashDamage);
+            if (AttackTimer == 30) { SpawnSlash(0, SlashDamage); ArmSlashWindup(3, 30, 56); }
+            if (AttackTimer == 56) { SpawnSlash(3, SlashDamage); ArmSlashWindup(1, 56, 84); }
             if (AttackTimer == 84) SpawnSlash(1, HeavySlashDamage);
             if (AttackTimer >= 128)
             {
@@ -354,7 +402,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         {
             int windup = Telegraph(38);
             g.AttackCommitted = AttackTimer <= 90;
-            if (AttackTimer == 1) TelegraphCue(new Color(170, 170, 190));
+            if (AttackTimer == 1)
+            {
+                TelegraphCue(new Color(170, 170, 190));
+                ArmSlashWindup(0, 1, windup);
+            }
             if (AttackTimer < windup)
             {
                 NPC.velocity.X *= 0.82f;
@@ -363,7 +415,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             else if (AttackTimer <= 86)
             {
                 NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, lockedDir * 4.2f, 0.12f);
-                if (AttackTimer % 16 == 0) SpawnSlash(0, SlashDamage);
+                if (AttackTimer % 16 == 0) { SpawnSlash(0, SlashDamage); ArmSlashWindup(0, AttackTimer, AttackTimer + 16); }
                 DragDust();
             }
             else
@@ -376,7 +428,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         void RunLeapingCleave(tsorcRevampGlobalNPC g, Player player)
         {
             g.AttackCommitted = AttackTimer <= 82;
-            if (AttackTimer == 1) TelegraphCue(Color.White);
+            if (AttackTimer == 1)
+            {
+                TelegraphCue(Color.White);
+                ArmSlashWindup(1, 1, 60);
+            }
             if (AttackTimer < 28)
             {
                 FacePlayer(player);
@@ -413,7 +469,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 Vector2 pos = player.Center + new Vector2(Main.rand.NextFloat(-220f, 220f), -330f);
                 Vector2 velocity = UsefulFunctions.Aim(pos, player.Center + new Vector2(Main.rand.NextFloat(-40f, 40f), 0f), 8.5f);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, velocity, ModContent.ProjectileType<NitoBoneShard>(), BoneDamage, 1f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, velocity, ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer);
             }
             if (AttackTimer >= cast + 90) EndAttack(190);
         }
@@ -529,9 +585,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         void RunQuietusCombo(tsorcRevampGlobalNPC g)
         {
             g.AttackCommitted = AttackTimer <= 98;
-            if (AttackTimer == 1) TelegraphCue(new Color(120, 95, 160));
+            if (AttackTimer == 1)
+            {
+                TelegraphCue(new Color(120, 95, 160));
+                ArmSlashWindup(2, 1, 28);
+            }
             if (AttackTimer <= 24) SwordTelegraphDust(2);
-            if (AttackTimer == 28) SpawnSlash(2, SlashDamage);
+            if (AttackTimer == 28) { SpawnSlash(2, SlashDamage); ArmSlashWindup(1, 28, 58); }
             if (AttackTimer == 58) SpawnSlash(1, HeavySlashDamage);
             if (AttackTimer == 94 && Main.netMode != NetmodeID.MultiplayerClient) Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<NitoDeathNova>(), DeathDamage, 5f, Main.myPlayer, 150f);
             if (AttackTimer >= 140) EndAttack(240);
@@ -588,7 +648,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer >= cast && AttackTimer <= cast + 54 && (AttackTimer - cast) % 9 == 0)
             {
                 Vector2 pos = player.Center + new Vector2(Main.rand.NextFloat(-280f, 280f), -360f);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, new Vector2(Main.rand.NextFloat(-0.8f, 0.8f), 9f), ModContent.ProjectileType<NitoBoneShard>(), BoneDamage, 1f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, new Vector2(Main.rand.NextFloat(-0.8f, 0.8f), 9f), ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer);
             }
             if (AttackTimer >= cast + 98) EndAttack(220);
         }
@@ -628,6 +688,19 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             lockedDir = player.Center.X >= NPC.Center.X ? 1 : -1;
             NPC.direction = lockedDir;
             NPC.spriteDirection = lockedDir;
+            // Vertical read, locked once at attack-start (mirrors lockedDir) so the windup pose,
+            // telegraph dust, and the eventual SpawnSlash all agree on the same kind.
+            lockedKind = state switch
+            {
+                AttackState.SideSweep => ChooseVerticalKind(0, player),
+                AttackState.BackhandSweep => ChooseVerticalKind(3, player),
+                AttackState.OverheadCleave => ChooseVerticalKind(1, player),
+                AttackState.ImpalingThrust => ChooseVerticalKind(2, player),
+                _ => 0,
+            };
+            // Fresh state: no windup armed, no slash released yet — the loose sword rests at idle.
+            SlashWindupActive = false;
+            SlashActiveKind = -1;
             NPC.netUpdate = true;
         }
 
@@ -637,9 +710,28 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             State = AttackState.None;
             AttackTimer = 0;
             HalfTelegraph = false;
+            SlashWindupActive = false;
             AttackCooldown = cooldown + Main.rand.Next(40);
             NPC.damage = 0;
             NPC.netUpdate = true;
+        }
+
+        ///<summary>Nito is a heavy, grounded fighter — he should never leap up onto ledges/platforms
+        ///that sit above the player. If FighterAI just started a nav hop (upward velocity) and the
+        ///player is NOT clearly above him, kill the upward impulse. AutoStepUp still carries him over
+        ///1–2 tile ledges without a jump, so this only suppresses genuine climbing.</summary>
+        void StayGroundedRelativeTo(Player player)
+        {
+            // Don't suppress a lava/liquid escape hop — only genuine climbing toward higher ground.
+            if (NPC.lavaWet || NPC.wet)
+            {
+                return;
+            }
+            bool playerAbove = player.Center.Y < NPC.Center.Y - 64f;
+            if (!playerAbove && NPC.velocity.Y < -1f)
+            {
+                NPC.velocity.Y = 0f;
+            }
         }
 
         void FacePlayer(Player player)
@@ -655,33 +747,111 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         void SpawnSlash(int kind, int damage)
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = kind == 1 ? -0.25f : 0.05f }, NPC.Center);
+            // The loose sword layer now plays the visible swing itself (see PreDraw's active-window);
+            // the projectile is just a matching invisible hitbox. Record the release so both agree.
+            SlashWindupActive = false;
+            SlashActiveKind = kind;
+            SlashActiveStartTick = AttackTimer;
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(lockedDir, 0f), ModContent.ProjectileType<NitoSwordSlash>(), damage, 5f, Main.myPlayer, NPC.whoAmI, kind);
+        }
+
+        ///<summary>Arms the loose sword's windup: it lerps from the idle pose toward this kind's
+        ///swing-start pose over [windupStartTick, releaseTick]. Call once per slash, at (or just
+        ///before) the tick the windup should visibly begin.</summary>
+        void ArmSlashWindup(int kind, int windupStartTick, int releaseTick)
+        {
+            SlashWindupKind = kind;
+            SlashWindupStartTick = windupStartTick;
+            SlashWindupEndTick = Math.Max(windupStartTick + 1, releaseTick);
+            SlashWindupActive = true;
+        }
+
+        // ── Shared swing geometry (used by BOTH the boss draw and the NitoSwordSlash hitbox) ─────
+        // A swing is described in FORWARD-RELATIVE angle phi: phi = 0 points the blade straight at the
+        // player, negative tilts it up/overhead, +/-pi points it straight back. Each kind is one arc
+        // (progress 0->1); overhead (1) and rising (4) are the same shape reversed, likewise side (0)
+        // and backhand (3). Arcs are deliberately wide (~150-180 deg) so the sweep reads big.
+        public static float SlashPhi(int kind, float progress) => kind switch
+        {
+            1 => MathHelper.Lerp(-2.0f, 0.7f, progress),   // overhead cleave: cocked up-back -> down-forward
+            2 => 0f,                                        // thrust: held forward, reach extends instead
+            3 => MathHelper.Lerp(0.6f, -2.4f, progress),    // backhand: forward -> up-back (reverse of side sweep)
+            4 => MathHelper.Lerp(0.7f, -2.0f, progress),    // rising cut: down-forward -> up-back (reverse of overhead)
+            _ => MathHelper.Lerp(-2.4f, 0.6f, progress),    // side sweep: up-back over the top -> down-forward
+        };
+
+        public static float SlashReach(int kind, float progress) => kind == 2 ? 60f + progress * 120f : 82f;
+
+        ///<summary>World-space angle the blade points at, for a given facing (dir) and swing progress.</summary>
+        public static float SlashWorldAngle(int kind, int dir, float progress)
+        {
+            float phi = SlashPhi(kind, progress);
+            return dir >= 0 ? phi : MathHelper.Pi - phi;
+        }
+
+        ///<summary>Offset of the blade's CENTER from the wielder's Center for a given facing/progress.</summary>
+        public static Vector2 SlashOffset(int kind, int dir, float progress)
+        {
+            float theta = SlashWorldAngle(kind, dir, progress);
+            return new Vector2(dir * SwordPivotX, SwordPivotY) + theta.ToRotationVector2() * SlashReach(kind, progress);
+        }
+
+        ///<summary>Reads the player's vertical offset at attack-start and swaps in a better-fitting
+        ///slash: a rising cut (kind 4) when the player is well above Nito, the downward/overhead
+        ///cleave (kind 1) when they're clearly below — otherwise keeps the attack's own signature
+        ///kind, since that already reads fine at roughly the same height ("in front").</summary>
+        int ChooseVerticalKind(int defaultKind, Player player)
+        {
+            float verticalOffset = player.Center.Y - NPC.Center.Y; // negative = player above Nito
+            if (verticalOffset < -140f)
+            {
+                return 4;
+            }
+            if (verticalOffset > 90f && defaultKind != 1)
+            {
+                return 1;
+            }
+            return defaultKind;
         }
 
         void SpawnGroundSpike(Vector2 roughBottom, int delay, float heightScale)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
-            Vector2 bottom = FindGround(roughBottom);
+            // Only erupt from a real floor surface (solid tile with open space above). If there is no
+            // such surface below the target — the player is airborne over a pit, in a tight spot, etc.
+            // — skip the spike entirely rather than spawning it buried inside solid rock where it would
+            // read as a stuck sliver. Platforms are passed through (they aren't treated as the floor).
+            if (!FindGroundSurface(roughBottom, out Vector2 bottom)) return;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), bottom - new Vector2(0f, 54f * heightScale), Vector2.Zero, ModContent.ProjectileType<NitoGraveSpike>(), DeathDamage, 3f, Main.myPlayer, delay, heightScale);
         }
 
-        Vector2 FindGround(Vector2 origin)
+        ///<summary>Scans downward from just above <paramref name="origin"/> for the first SOLID tile
+        ///that has open space (air or a platform) directly above it — a true floor the spike can burst
+        ///up through. Platforms themselves are skipped (passed through), so spikes track the real
+        ///ground beneath them. Returns false when no such surface is found in range.</summary>
+        static bool FindGroundSurface(Vector2 origin, out Vector2 surface)
         {
-            int tileX = (int)(origin.X / 16f);
-            int tileY = (int)(origin.Y / 16f);
-            tileX = Math.Clamp(tileX, 5, Main.maxTilesX - 5);
-            tileY = Math.Clamp(tileY, 5, Main.maxTilesY - 10);
-            for (int i = -5; i <= 22; i++)
+            int tileX = Math.Clamp((int)(origin.X / 16f), 5, Main.maxTilesX - 5);
+            int startY = Math.Clamp((int)(origin.Y / 16f) - 3, 5, Main.maxTilesY - 6);
+            for (int y = startY; y <= startY + 30 && y < Main.maxTilesY - 5; y++)
             {
-                int y = Math.Clamp(tileY + i, 5, Main.maxTilesY - 10);
                 Tile tile = Main.tile[tileX, y];
-                if (tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType])
+                bool solid = tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType];
+                if (!solid)
                 {
-                    return new Vector2(origin.X, y * 16f);
+                    continue;
+                }
+                Tile above = Main.tile[tileX, y - 1];
+                bool openAbove = !above.HasTile || above.IsActuated || !Main.tileSolid[above.TileType] || Main.tileSolidTop[above.TileType];
+                if (openAbove)
+                {
+                    surface = new Vector2(origin.X, y * 16f);
+                    return true;
                 }
             }
-            return origin;
+            surface = origin;
+            return false;
         }
 
         void TelegraphCue(Color color)
@@ -695,8 +865,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
         void SwordTelegraphDust(int kind)
         {
-            Vector2 origin = NPC.Center + new Vector2(lockedDir * 40f, -92f);
-            float arc = kind == 1 ? -MathHelper.PiOver2 : lockedDir > 0 ? -0.1f : MathHelper.Pi + 0.1f;
+            // Rising slash gathers low near the hip (where the cut starts) rather than at shoulder height.
+            Vector2 origin = NPC.Center + (kind == 4 ? new Vector2(lockedDir * 30f, -30f) : new Vector2(lockedDir * 40f, -92f));
+            float arc = kind == 1 ? -MathHelper.PiOver2 : kind == 4 ? lockedDir * 0.9f : lockedDir > 0 ? -0.1f : MathHelper.Pi + 0.1f;
             for (int i = 0; i < 2; i++)
             {
                 Vector2 pos = origin + (arc + Main.rand.NextFloat(-0.8f, 0.8f)).ToRotationVector2() * Main.rand.NextFloat(50f, 145f);
@@ -771,21 +942,95 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            // Body is ALWAYS the no-sword sheet (TextureAssets.Npc[Type] = GravelordNitoAttacking.png,
+            // which has no blade painted in). The single loose sword layer below is the ONLY sword —
+            // this is what removes the old "two swords" (a baked-in blade + the loose one).
             Texture2D body = TextureAssets.Npc[Type].Value;
             Texture2D sword = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordNitoSword").Value;
             Rectangle frame = NPC.frame.Height > 0 ? NPC.frame : new Rectangle(0, 0, BodyWidth, FrameHeight);
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Vector2 drawBottom = NPC.Bottom + new Vector2(0f, 7f + NPC.gfxOffY);
+            // Sink the whole rig ~2 tiles into the floor so his ragged base is always buried and the
+            // sprite reads as standing ON the ground, not floating above it.
+            Vector2 drawBottom = NPC.Bottom + new Vector2(0f, 7f + NPC.gfxOffY + GroundSinkPixels);
+            Vector2 swordAnchor = NPC.Center + new Vector2(0f, NPC.gfxOffY + GroundSinkPixels);
 
-            if (!IsMeleeState || AttackTimer < 12)
+            // Resolve the loose sword's forward-relative pose (phi) + reach for this frame.
+            int dir = NPC.spriteDirection;
+            const float idlePhi = -MathHelper.Pi; // held straight back = a horizontal resting pose
+            float phi = idlePhi;
+            float reach = SwordIdleReach;
+            if (State != AttackState.None)
             {
-                Vector2 swordOffset = new Vector2(NPC.spriteDirection * 26f, -132f);
-                SpriteEffects swordEffects = NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                spriteBatch.Draw(sword, drawBottom + swordOffset - screenPos, null, drawColor, NPC.spriteDirection * 0.11f, new Vector2(sword.Width / 2f, sword.Height / 2f), NPC.scale, swordEffects, 0f);
+                int activeEnd = SlashActiveStartTick + SlashActiveTicks;
+                if (SlashActiveKind >= 0 && AttackTimer >= SlashActiveStartTick && AttackTimer <= activeEnd)
+                {
+                    // The visible swing itself (mirrors the invisible NitoSwordSlash hitbox arc).
+                    float p = MathHelper.Clamp((AttackTimer - SlashActiveStartTick) / (float)SlashActiveTicks, 0f, 1f);
+                    phi = SlashPhi(SlashActiveKind, p);
+                    reach = SlashReach(SlashActiveKind, p);
+                }
+                else if (SlashActiveKind >= 0 && !SlashWindupActive && AttackTimer > activeEnd && AttackTimer <= activeEnd + SlashReturnTicks)
+                {
+                    // Ease back to idle after the swing (unless a combo's next windup already armed).
+                    float p = MathHelper.Clamp((AttackTimer - activeEnd) / (float)SlashReturnTicks, 0f, 1f);
+                    phi = MathHelper.Lerp(SlashPhi(SlashActiveKind, 1f), idlePhi, p);
+                    reach = MathHelper.Lerp(SlashReach(SlashActiveKind, 1f), SwordIdleReach, p);
+                }
+                else if (SlashWindupActive)
+                {
+                    // Wind up from idle toward the swing's start pose.
+                    float w = SlashWindupEndTick > SlashWindupStartTick
+                        ? MathHelper.Clamp((AttackTimer - SlashWindupStartTick) / (float)(SlashWindupEndTick - SlashWindupStartTick), 0f, 1f)
+                        : 1f;
+                    phi = MathHelper.Lerp(idlePhi, SlashPhi(SlashWindupKind, 0f), w);
+                    reach = MathHelper.Lerp(SwordIdleReach, SlashReach(SlashWindupKind, 0f), w);
+                }
+                // else: a non-sword cast (bones/nova/etc.) — the blade simply rests at idle.
             }
 
-            spriteBatch.Draw(body, drawBottom - screenPos, frame, drawColor, NPC.rotation, new Vector2(BodyWidth / 2f, FrameHeight), NPC.scale, effects, 0f);
+            // Convert (phi, reach) to a world offset + a rotation/flip that keeps the blade's edge
+            // consistent across the whole arc (flip is fixed by facing, so there is no mid-swing pop).
+            float theta = dir >= 0 ? phi : MathHelper.Pi - phi;
+            Vector2 swordOffset = new Vector2(dir * SwordPivotX, SwordPivotY) + theta.ToRotationVector2() * reach;
+            bool flip = dir >= 0;
+            float swordRotation = flip ? theta : theta - MathHelper.Pi;
+            SpriteEffects swordEffects = flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
+            // Sword drawn BEFORE the body so it sits BEHIND Nito's silhouette.
+            spriteBatch.Draw(sword, swordAnchor + swordOffset - screenPos, null, drawColor, swordRotation, new Vector2(sword.Width / 2f, sword.Height / 2f), NPC.scale, swordEffects, 0f);
+            spriteBatch.Draw(body, drawBottom - screenPos, frame, drawColor, NPC.rotation, new Vector2(BodyDrawCenterX, FrameHeight), NPC.scale, effects, 0f);
             return false;
+        }
+
+        ///<summary>Nito stands in Skeletron's progression slot (Skeletron itself remains fightable as
+        ///an optional boss). Defeating him must unlock everything the dungeon/post-Skeletron content
+        ///gates on: the vanilla dungeon-guardian flag, AND the mod's own NewSlain[SkeletronHead] gate
+        ///(read by Basilisk Walker/BarrowWight/spore trap/ink spit/Jungle Wyvern fire/Sublime Bone
+        ///Dust — see NewSlain.ContainsKey(NPCDefinition(NPCID.SkeletronHead)) call sites).</summary>
+        public override void OnKill()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            NPC.downedBoss3 = true;
+
+            RegisterFirstKill(NPC.type);
+            RegisterFirstKill(NPCID.SkeletronHead);
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.WorldData);
+            }
+        }
+
+        static void RegisterFirstKill(int npcType)
+        {
+            Terraria.ModLoader.Config.NPCDefinition definition = new(npcType);
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
+            {
+                tsorcRevampWorld.NewSlain.Add(definition, 1);
+            }
         }
 
         public override void HitEffect(NPC.HitInfo hit)

@@ -295,6 +295,16 @@ namespace tsorcRevamp
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
             layers.Insert(0, new LegacyGameInterfaceLayer(
+                "tsorcRevamp: Hurt Vignette",
+                delegate
+                {
+                    DrawHurtVignette();
+                    return true;
+                },
+                InterfaceScaleType.UI)
+            );
+
+            layers.Insert(0, new LegacyGameInterfaceLayer(
                 "tsorcRevamp: Death Fade Overlay",
                 delegate
                 {
@@ -647,6 +657,74 @@ namespace tsorcRevamp
 
         public static float deathFadeAlpha = 0f;
 
+        // Radial-gradient texture (transparent center, opaque edges) used for the hurt vignette.
+        // Built lazily on first draw and disposed in Unload.
+        private static Texture2D hurtVignetteTexture;
+
+        // Draws the pulsing red vignette around the screen edges based on the local player's
+        // hurtVignetteStrength. Both the red's brightness and the overlay's opacity scale with it.
+        private static void DrawHurtVignette()
+        {
+            if (Main.gameMenu || Main.LocalPlayer == null || !Main.LocalPlayer.active || Main.LocalPlayer.dead)
+            {
+                return;
+            }
+            if (!ModContent.GetInstance<tsorcRevampVisualConfig>().PlayerHurtVisuals)
+            {
+                return;
+            }
+
+            float strength = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().hurtVignetteStrength;
+            if (strength <= 0.001f)
+            {
+                return;
+            }
+
+            EnsureHurtVignetteTexture();
+            if (hurtVignetteTexture == null)
+            {
+                return;
+            }
+
+            // Brighter, pinker red as the hit gets harder / health gets lower; opacity capped so it
+            // never fully obscures the screen.
+            byte g = (byte)(30 + 55 * strength);
+            byte b = (byte)(20 + 35 * strength);
+            Color tint = new Color((byte)255, g, b) * (0.75f * strength);
+
+            Main.spriteBatch.Draw(hurtVignetteTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), tint);
+        }
+
+        // Builds the vignette gradient once. Stored as premultiplied white with the gradient baked into
+        // alpha, so a plain color tint recolors it cleanly. Stretching the square to the (wide) screen
+        // naturally turns the radial gradient into the expected elliptical vignette.
+        private static void EnsureHurtVignetteTexture()
+        {
+            if (hurtVignetteTexture != null)
+            {
+                return;
+            }
+
+            const int size = 256;
+            Color[] data = new Color[size * size];
+            Vector2 center = new Vector2(size / 2f, size / 2f);
+            float maxDist = center.Length(); // center-to-corner distance
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float dist = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), center) / maxDist; // 0 center .. 1 corner
+                    float a = MathHelper.Clamp((dist - 0.55f) / 0.45f, 0f, 1f); // only the outer ring is opaque
+                    a *= a; // ease-in for a soft transition
+                    byte v = (byte)(a * 255);
+                    data[y * size + x] = new Color(v, v, v, v); // premultiplied white
+                }
+            }
+
+            hurtVignetteTexture = new Texture2D(Main.graphics.GraphicsDevice, size, size);
+            hurtVignetteTexture.SetData(data);
+        }
+
         private static void SyncRecommendedControlsConfig()
         {
             if (Main.dedServ || !tsorcRevampControlsConfig.Loaded)
@@ -824,68 +902,96 @@ namespace tsorcRevamp
             }
         }
 
-        // Lower-left diagnostic readout of nearby InvaderNPC instances' current attack state —
-        // Phase/PhaseTimer plus the weapon-rotation math snapshot from InvaderNPC.DrawWeaponToLayer
-        // (raw _weaponRotation, final drawRotation, holdingSpearNow/heldRangedLike routing, held item,
-        // spear grip, hand/origin positions). Meant to make hand-placement / rotation bugs debuggable
-        // without needing a screenshot + manual trig — the same numbers are also written per-tick to
-        // Logs/tsorcRevamp-invader-weapon.log when DebugMode is on.
-        // Per-invader: the last shown attack name + the yellow/white toggle, so the color only flips
-        // when the attack actually changes (making consecutive attacks visually distinct).
-        private static readonly Dictionary<int, (string last, bool toggle)> _debugAttackColor = new();
+        // Per-invader attack-name tracking for both the above-head labels and the lower-left HUD:
+        // current move, the move before it (for the above-head "history of one"), and the
+        // yellow/white toggle that only flips when the attack actually changes.
+        private static readonly Dictionary<int, (string current, string previous, bool toggle)> _debugAttackColor = new();
+
+        // The lower-left detail block used to redraw every frame with live-changing numbers, making
+        // it unreadable. Cache the formatted lines and only refresh them a few times a second.
+        private static List<string> _debugDetailLinesCache = new();
+        private static int _debugDetailCacheTick = -9999;
+        private const int DebugDetailRefreshTicks = 10; // ~6x/sec at 60fps
 
         private static void DrawInvaderAttackDebug(SpriteBatch spriteBatch)
         {
+            // ── Above-head labels (world space) ─────────────────────────────────────
+            // Previous move (dim yellow) over current move (white) so a swing's move name is
+            // readable without hunting through a lower-left text dump.
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            List<(string text, Color color)> attackLines = new List<(string, Color)>();
-            List<string> lines = new List<string>();
+            DynamicSpriteFont headFont = FontAssets.MouseText.Value;
+            InvaderNPC nearestInv = null;
+            NPC nearestNpc = null;
+            float nearestDist = float.MaxValue;
+
             foreach (NPC npc in Main.ActiveNPCs)
             {
                 if (npc.ModNPC is not InvaderNPC inv) continue;
-                if (Vector2.Distance(npc.Center, Main.LocalPlayer.Center) > 2400f) continue;
+                float dist = Vector2.Distance(npc.Center, Main.LocalPlayer.Center);
+                if (dist > 2400f) continue;
 
                 string comboTag = inv.DebugComboTag;
-
-                // Prominent current-attack readout: the friendly set-piece name if one is firing, else
-                // the melee combo, else the base phase. Alternates yellow/white per attack change.
                 string current = !string.IsNullOrEmpty(inv.DebugAttackLabel) ? inv.DebugAttackLabel
                                : comboTag.Length > 0 ? comboTag
                                : inv.DebugPhaseName;
-                bool toggle = _debugAttackColor.TryGetValue(npc.whoAmI, out var prev)
-                    ? (prev.last != current ? !prev.toggle : prev.toggle)
-                    : true;
-                _debugAttackColor[npc.whoAmI] = (current, toggle);
-                attackLines.Add(($">> {npc.TypeName}#{npc.whoAmI}: {current}", toggle ? Color.Yellow : Color.White));
 
-                lines.Add($"[{npc.TypeName}#{npc.whoAmI}] phase={inv.DebugPhaseName}{(comboTag.Length > 0 ? " combo=" + comboTag : "")} t={inv.DebugPhaseTimer}");
-                lines.Add($"  item={inv.DebugHeldItemType} spear={inv.DebugHoldingSpearNow} rangedLike={inv.DebugHeldRangedLike}"
-                    + $" dir={inv.DebugDirection} grip={inv.DebugSpearGrip:F2}");
-                lines.Add($"  weaponRot={inv.DebugWeaponRotationDeg:F1}deg drawRot={inv.DebugDrawRotationDeg:F1}deg"
-                    + $" hand=({inv.DebugHandPos.X:F0},{inv.DebugHandPos.Y:F0}) origin=({inv.DebugOrigin.X:F0},{inv.DebugOrigin.Y:F0})");
-            }
+                bool changed = !_debugAttackColor.TryGetValue(npc.whoAmI, out var prev) || prev.current != current;
+                string previous = changed && _debugAttackColor.TryGetValue(npc.whoAmI, out var p2) ? p2.current : (prev.previous ?? "");
+                bool toggle = changed ? !prev.toggle : prev.toggle;
+                _debugAttackColor[npc.whoAmI] = (current, previous, toggle);
 
-            if (lines.Count == 0)
-                return;
-
-            DynamicSpriteFont font = FontAssets.MouseText.Value;
-            float lineH = 16f;
-            float startY = Main.screenHeight - (lines.Count * lineH) - (attackLines.Count * 22f) - 14f;
-
-            // Big alternating-color attack names at the top of the block
-            for (int i = 0; i < attackLines.Count; i++)
-            {
-                Utils.DrawBorderStringFourWay(spriteBatch, font, attackLines[i].text,
-                    10f, startY + i * 22f,
-                    attackLines[i].color, Color.Black, Vector2.Zero, 1.1f);
-            }
-            float detailY = startY + attackLines.Count * 22f + 4f;
-            for (int i = 0; i < lines.Count; i++)
-            {
-                Utils.DrawBorderStringFourWay(spriteBatch, font, lines[i],
-                    10f, detailY + i * lineH,
+                Vector2 headPos = new Vector2(npc.Top.X, npc.Top.Y) - Main.screenPosition - new Vector2(0f, 36f);
+                if (!string.IsNullOrEmpty(previous))
+                {
+                    Vector2 size = headFont.MeasureString(previous) * 0.7f;
+                    Utils.DrawBorderStringFourWay(spriteBatch, headFont, previous,
+                        headPos.X - size.X * 0.5f, headPos.Y - 16f,
+                        Color.Yellow * 0.55f, Color.Black, Vector2.Zero, 0.7f);
+                }
+                Vector2 curSize = headFont.MeasureString(current) * 0.8f;
+                Utils.DrawBorderStringFourWay(spriteBatch, headFont, current,
+                    headPos.X - curSize.X * 0.5f, headPos.Y,
                     Color.White, Color.Black, Vector2.Zero, 0.8f);
+
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearestInv = inv;
+                    nearestNpc = npc;
+                }
+            }
+
+            // ── Lower-left detail block (UI space, nearest invader only, throttled) ──
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
+
+            if (nearestInv != null)
+            {
+                if (Main.GameUpdateCount - _debugDetailCacheTick >= DebugDetailRefreshTicks)
+                {
+                    _debugDetailCacheTick = (int)Main.GameUpdateCount;
+                    string comboTag = nearestInv.DebugComboTag;
+                    _debugDetailLinesCache = new List<string>
+                    {
+                        $"[{nearestNpc.TypeName}#{nearestNpc.whoAmI}] phase={nearestInv.DebugPhaseName}{(comboTag.Length > 0 ? " combo=" + comboTag : "")} t={nearestInv.DebugPhaseTimer}",
+                        $"  item={nearestInv.DebugHeldItemType} spear={nearestInv.DebugHoldingSpearNow} rangedLike={nearestInv.DebugHeldRangedLike}"
+                            + $" dir={nearestInv.DebugDirection} grip={nearestInv.DebugSpearGrip:F2}",
+                        $"  weaponRot={nearestInv.DebugWeaponRotationDeg:F1}deg drawRot={nearestInv.DebugDrawRotationDeg:F1}deg"
+                            + $" hand=({nearestInv.DebugHandPos.X:F0},{nearestInv.DebugHandPos.Y:F0}) origin=({nearestInv.DebugOrigin.X:F0},{nearestInv.DebugOrigin.Y:F0})"
+                    };
+                }
+
+                DynamicSpriteFont font = FontAssets.MouseText.Value;
+                float lineH = 16f;
+                float startY = Main.screenHeight - (_debugDetailLinesCache.Count * lineH) - 14f;
+                for (int i = 0; i < _debugDetailLinesCache.Count; i++)
+                {
+                    Utils.DrawBorderStringFourWay(spriteBatch, font, _debugDetailLinesCache[i],
+                        10f, startY + i * lineH,
+                        Color.White, Color.Black, Vector2.Zero, 0.8f);
+                }
             }
         }
 
@@ -1385,6 +1491,15 @@ namespace tsorcRevamp
         {
             UpgradedMirrors = null;
             CobaltHelmets = null;
+            Texture2D textureToDispose = hurtVignetteTexture;
+            hurtVignetteTexture = null;
+
+            // Mod content unloads on a worker thread, but FNA GPU resources may only be disposed on
+            // the main thread. Keep the texture alive in the closure until that disposal can run.
+            if (textureToDispose != null && !textureToDispose.IsDisposed)
+            {
+                Main.QueueMainThreadAction(textureToDispose.Dispose);
+            }
         }
 
         public override void OnWorldLoad()

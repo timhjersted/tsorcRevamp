@@ -18,6 +18,12 @@ namespace tsorcRevamp.Items
         public float slashIntensity = 1;
         public tsorcSlashStyle slashStyle;
 
+        // Per-weapon poise-damage lever: multiplies the knockback-derived poise damage this weapon deals (see
+        // project_poise_stagger_system). Does NOT affect the weapon's actual knockback/flinch — only the stagger meter.
+        // Set in a weapon's SetDefaults, e.g. for a slow heavy-hitter that should build stagger faster than its
+        // knockback stat alone implies. Default 1f = no change.
+        public float WeaponPoiseMultiplier = 1f;
+
         public tsorcInstancedGlobalItem()
         {
             blessed = 0;

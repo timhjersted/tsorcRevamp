@@ -83,6 +83,13 @@ namespace tsorcRevamp.Projectiles
         public bool ChargedWhip = false;
         public bool ModdedFlail = false;
         public bool KrakenEmpowered = false;
+
+        // Per-projectile poise-damage lever, mirrors tsorcInstancedGlobalItem.WeaponPoiseMultiplier for melee weapons.
+        // Multiplies the knockback-derived poise damage THIS projectile deals (see project_poise_stagger_system). Does
+        // NOT affect the projectile's actual knockback/flinch — only the stagger meter. Set it from the ModProjectile's
+        // own OnSpawn/AI, e.g. `Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier = 1.5f;`.
+        // Default 1f = no change.
+        public float ProjectilePoiseMultiplier = 1f;
         public override void SetDefaults(Projectile entity)
         {
             if (entity.IsMinionOrSentryRelated || ProjectileID.Sets.LightPet[entity.type] || Main.projPet[entity.type])

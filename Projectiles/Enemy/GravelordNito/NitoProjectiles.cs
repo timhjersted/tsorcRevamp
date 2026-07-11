@@ -8,14 +8,18 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
+    // Invisible melee HITBOX for Nito's sword swings. The visible blade is drawn by the boss itself
+    // (a loose sword layer BEHIND its body), so this projectile draws nothing — it only mirrors the
+    // exact same arc via the shared GravelordNito.Slash* helpers so the hitbox tracks the visual.
     class NitoSwordSlash : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordNitoSword";
+        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
 
         int OwnerIndex => (int)Projectile.ai[0];
         int Kind => (int)Projectile.ai[1];
         int Dir => Projectile.velocity.X >= 0f ? 1 : -1;
         int Timer => (int)Projectile.localAI[0];
+        const int SwingTicks = 18;
 
         public override void SetDefaults()
         {
@@ -25,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 18;
+            Projectile.timeLeft = SwingTicks;
             Projectile.aiStyle = 0;
         }
 
@@ -39,33 +43,22 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            Vector2 offset = Kind switch
-            {
-                1 => new Vector2(Dir * 70f, -118f),
-                2 => new Vector2(Dir * (135f + Timer * 5f), -78f),
-                3 => new Vector2(Dir * 78f, -72f),
-                _ => new Vector2(Dir * 100f, -82f),
-            };
-            Projectile.Center = owner.Center + offset;
-            Projectile.rotation = RotationForKind();
+            float progress = MathHelper.Clamp(Timer / (float)SwingTicks, 0f, 1f);
+            // +30px matches the boss's GroundSinkPixels draw sink so the hitbox sits on the visual blade.
+            Projectile.Center = owner.Center + new Vector2(0f, 30f) + global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashOffset(Kind, Dir, progress);
+            Projectile.rotation = global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashWorldAngle(Kind, Dir, progress);
 
-            for (int i = 0; i < 3; i++)
+            // Dense confetti packed tightly ALONG the blade (hilt->tip) instead of scattered in a wide
+            // cloud, so the slash reads as a sharp sweeping edge rather than dispersed sparkles.
+            Vector2 blade = Projectile.rotation.ToRotationVector2();
+            Vector2 hilt = Projectile.Center - blade * 40f;
+            Vector2 tip = Projectile.Center + blade * 150f;
+            for (int i = 0; i < 6; i++)
             {
-                Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(90f, 45f), DustID.BoneTorch, Main.rand.NextVector2Circular(2f, 2f), 90, default, 0.95f);
+                Vector2 pos = Vector2.Lerp(hilt, tip, Main.rand.NextFloat()) + Main.rand.NextVector2Circular(7f, 7f);
+                Dust d = Dust.NewDustPerfect(pos, DustID.BoneTorch, blade * Main.rand.NextFloat(0.5f, 2f), 90, default, 1f);
                 d.noGravity = true;
             }
-        }
-
-        float RotationForKind()
-        {
-            float progress = Timer / 18f;
-            return Kind switch
-            {
-                1 => Dir * MathHelper.Lerp(-1.65f, 0.85f, progress),
-                2 => Dir > 0 ? 0.02f : MathHelper.Pi - 0.02f,
-                3 => Dir * MathHelper.Lerp(0.45f, -0.95f, progress),
-                _ => Dir * MathHelper.Lerp(-0.85f, 0.55f, progress),
-            };
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -76,13 +69,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             return Collision.CheckAABBvLineCollision(new Vector2(targetHitbox.X, targetHitbox.Y), new Vector2(targetHitbox.Width, targetHitbox.Height), hilt, tip, Kind == 2 ? 34f : 48f, ref collisionPoint);
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            Texture2D texture = TextureAssets.Projectile[Type].Value;
-            SpriteEffects effects = Dir < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, new Vector2(texture.Width / 2f, texture.Height / 2f), 1f, effects, 0);
-            return false;
-        }
+        public override bool PreDraw(ref Color lightColor) => false; // invisible — the boss draws the blade
     }
 
     class NitoBoneShard : ModProjectile
@@ -106,9 +93,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.rotation += Projectile.velocity.X * 0.04f;
             Projectile.velocity.Y += 0.08f;
             Lighting.AddLight(Projectile.Center, 0.16f, 0.16f, 0.22f);
-            if (Main.rand.NextBool(3))
+            // Dense, tight trail hugging the bone rather than a sparse scatter.
+            for (int i = 0; i < 2; i++)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, -Projectile.velocity.X * 0.1f, -Projectile.velocity.Y * 0.1f, 110, default, 0.75f);
+                Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(5f, 5f), DustID.BoneTorch, Projectile.velocity * -0.05f, 110, default, 0.85f);
+                d.noGravity = true;
             }
         }
     }
@@ -173,7 +162,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
     class NitoGraveSpike : ModProjectile
     {
-        public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.DeerclopsIceSpike;
+        public override string Texture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordNitoSwordDance";
 
         const int RiseTicks = 7;
         const int HoldTicks = 80;
@@ -246,12 +235,18 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 return false;
             }
-            Texture2D texture = TextureAssets.Projectile[ProjectileID.DeerclopsIceSpike].Value;
-            float drawHeight = Projectile.height * progress;
-            float texScaleY = drawHeight / texture.Height;
-            float texScaleX = Projectile.width / (float)texture.Width * 1.5f;
-            Vector2 bottom = new Vector2(Projectile.Center.X, Projectile.position.Y + Projectile.height + 2f) - Main.screenPosition;
-            Main.EntitySpriteDraw(texture, bottom, null, new Color(150, 150, 165, 230), 0f, new Vector2(texture.Width / 2f, texture.Height), new Vector2(texScaleX, texScaleY), SpriteEffects.None, 0);
+            // The sword-dance blade (GravelordNitoSwordDance.png) SLIDES up out of the ground and back
+            // down (translate) instead of growing in place (a Y-squash, which read like the blade
+            // flopping over in 3D). Drawn at full — now DOUBLE — size the whole time; the un-emerged
+            // fraction is simply pushed below the floor line. Undyed: the sprite's own crimson reads.
+            const float SizeScale = 2f; // twice as big as the old draw
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            float scaleX = Projectile.width / (float)texture.Width * 1.5f * SizeScale;
+            float scaleY = Projectile.height / (float)texture.Height * SizeScale;
+            float drawnHeight = texture.Height * scaleY; // == Projectile.height * SizeScale
+            float emerge = (1f - progress) * drawnHeight; // pushes the blade down into the floor when not fully risen
+            Vector2 bottom = new Vector2(Projectile.Center.X, Projectile.position.Y + Projectile.height + 2f + emerge) - Main.screenPosition;
+            Main.EntitySpriteDraw(texture, bottom, null, Color.White, 0f, new Vector2(texture.Width / 2f, texture.Height), new Vector2(scaleX, scaleY), SpriteEffects.None, 0);
             return false;
         }
     }
@@ -293,6 +288,52 @@ namespace tsorcRevamp.Projectiles.Enemy
                 {
                     Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-4f, -1f), 80, default, 1.1f);
                 }
+            }
+        }
+    }
+
+    ///<summary>
+    ///A grave-spike raining down from above (GravelordSpike.png) — the ceiling/sky counterpart to
+    ///NitoBoneShard's shot-and-thrown fans. Used by Sword Rain and Gravelord Judgment, both of which
+    ///are already conceptually "things falling from above the player."
+    ///</summary>
+    class NitoCeilingSpike : ModProjectile
+    {
+        public override string Texture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordSpike";
+
+        public override void SetDefaults()
+        {
+            Projectile.hostile = true;
+            Projectile.width = 14;
+            Projectile.height = 60;
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = 1;
+            Projectile.timeLeft = 210;
+            Projectile.aiStyle = 0;
+        }
+
+        public override void AI()
+        {
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // sprite points down at rest
+            Projectile.velocity.Y += 0.15f;
+            if (Projectile.velocity.Y > 13f)
+            {
+                Projectile.velocity.Y = 13f;
+            }
+            Lighting.AddLight(Projectile.Center, 0.18f, 0.1f, 0.12f);
+            if (Main.rand.NextBool(2))
+            {
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, -Projectile.velocity.X * 0.1f, -Projectile.velocity.Y * 0.1f, 100, default, 0.8f);
+            }
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.4f, Pitch = -0.3f }, Projectile.Center);
+            for (int i = 0; i < 6; i++)
+            {
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 0f), 100, default, 0.9f);
             }
         }
     }

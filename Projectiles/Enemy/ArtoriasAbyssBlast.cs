@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, new Vector3(0.55f, 0.15f, 0.85f));
+            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.25f);
 
             float t = 1f - Projectile.timeLeft / (float)Lifetime;
             if (Projectile.timeLeft % 2 == 0)

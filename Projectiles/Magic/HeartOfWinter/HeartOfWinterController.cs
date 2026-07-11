@@ -9,8 +9,8 @@ namespace tsorcRevamp.Projectiles.Magic
 {
     ///<summary>
     ///Heart of Winter's held brain: spawned on every use, watches whether the button is TAPPED
-    ///(released within 18 ticks) or HELD, and routes to the right spell. ai[0] = 0 for left click
-    ///(tap: icicle trio / hold: frost breath channel), 1 for right click (tap: cursor ground
+    ///(released within 18 ticks) or HELD, and routes to the right spell. ai[0] = 0 for cursor high
+    ///(tap: icicle trio / hold: frost breath channel), 1 for cursor low (tap: cursor ground
     ///spikes / hold: charged freeze ring). Deals no damage itself — children inherit its damage.
     ///</summary>
     class HeartOfWinterController : ModProjectile
@@ -18,11 +18,11 @@ namespace tsorcRevamp.Projectiles.Magic
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
 
         const int TapWindow = 18;   //released before this = the tap spell
-        const int ChargeTicks = 60; //right-hold: charge time after the window before the nova
-        const int BreathManaCost = 6;   //per 9 ticks of left-hold channel
+        const int ChargeTicks = 60; //cursor-low hold: charge time after the window before the nova
+        const int BreathManaCost = 6;   //per 9 ticks of cursor-high hold channel
         const int NovaManaCost = 20;    //surcharge on releasing the freeze ring
 
-        int Mode => (int)Projectile.ai[0]; //0 = left click, 1 = right click
+        int Mode => (int)Projectile.ai[0]; //0 = cursor high, 1 = cursor low
         float Timer => Projectile.localAI[0];
 
         public override void SetDefaults()

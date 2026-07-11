@@ -190,6 +190,20 @@ namespace tsorcRevamp.Tiles
                 SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
                 SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
             }
+
+            // Expanded Adventure (2400-tall) offset. These cache rects are legacy 2000-space TILE coords, but the
+            // physical skulls moved with the world (+200, or +400 for the three in the dragged underworld). Shift each
+            // rect so the Contains() test in GiveSoulSkellyLoot still matches the skull's real position. X / Width /
+            // Height are untouched (the transform never changes X), and no rect straddles the 1791 fold, so a per-rect
+            // map is exact. Identity on legacy/remix, so the remix rects above are unaffected.
+            if (ExpandedWorldTransform.Active)
+            {
+                foreach (SoulSkellyGeocache cache in SoulSkellyList)
+                {
+                    Point mapped = ExpandedWorldTransform.MapTile(cache.cacheLocationRect.X, cache.cacheLocationRect.Y);
+                    cache.cacheLocationRect = new Rectangle(mapped.X, mapped.Y, cache.cacheLocationRect.Width, cache.cacheLocationRect.Height);
+                }
+            }
         }
     }
 }

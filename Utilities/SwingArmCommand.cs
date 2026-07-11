@@ -16,6 +16,9 @@ namespace tsorcRevamp.Utilities
     ///   /swingarm on | off              → force it on/off
     ///   /swingarm offset &lt;radians&gt;       → set the arm rotation offset (e.g. 0.15, -0.3)
     ///   /swingarm stretch none|quarter|threequarters|full
+    ///   /swingarm flip [on|off]         → toggle the blade-leads-the-swing mirror (single-bladed weapons)
+    ///   /swingarm aim [on|off]          → toggle full-360 aim-centered swing (axe archetype)
+    ///   /swingarm log clear             → truncate tsorcRevamp-invader-swing.log
     ///   /swingarm status                → print current values
     /// </summary>
     public class SwingArmCommand : ModCommand
@@ -71,7 +74,36 @@ namespace tsorcRevamp.Utilities
                     }
                     break;
 
+                case "flip":
+                    if (args.Length >= 2 && args[1].ToLowerInvariant() == "on")
+                        InvaderNPC.BladeFlipMasterEnable = true;
+                    else if (args.Length >= 2 && args[1].ToLowerInvariant() == "off")
+                        InvaderNPC.BladeFlipMasterEnable = false;
+                    else
+                        InvaderNPC.BladeFlipMasterEnable = !InvaderNPC.BladeFlipMasterEnable;
+                    caller.Reply(
+                        $"Blade-flip mirror: {(InvaderNPC.BladeFlipMasterEnable ? "ON" : "OFF")}",
+                        InvaderNPC.BladeFlipMasterEnable ? Color.Lime : Color.Gray);
+                    break;
+
+                case "aim":
+                    if (args.Length >= 2 && args[1].ToLowerInvariant() == "on")
+                        InvaderNPC.AimSwingMasterEnable = true;
+                    else if (args.Length >= 2 && args[1].ToLowerInvariant() == "off")
+                        InvaderNPC.AimSwingMasterEnable = false;
+                    else
+                        InvaderNPC.AimSwingMasterEnable = !InvaderNPC.AimSwingMasterEnable;
+                    caller.Reply(
+                        $"Aim-centered swing: {(InvaderNPC.AimSwingMasterEnable ? "ON (full 360 aim)" : "OFF (legacy fixed arc)")}",
+                        InvaderNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
+                    break;
+
                 case "log":
+                    if (args.Length >= 2 && args[1].ToLowerInvariant() == "clear")
+                    {
+                        ClearLog(caller);
+                        break;
+                    }
                     if (args.Length >= 2 && args[1].ToLowerInvariant() == "on")
                         InvaderNPC.SwingDebugLog = true;
                     else if (args.Length >= 2 && args[1].ToLowerInvariant() == "off")
@@ -88,7 +120,7 @@ namespace tsorcRevamp.Utilities
                     break;
 
                 default:
-                    caller.Reply("Usage: /swingarm [on|off|offset <radians>|stretch <amount>|log [on|off]|status]", Color.Orange);
+                    caller.Reply("Usage: /swingarm [on|off|offset <radians>|stretch <amount>|flip [on|off]|aim [on|off]|log [on|off|clear]|status]", Color.Orange);
                     break;
             }
         }
@@ -100,6 +132,27 @@ namespace tsorcRevamp.Utilities
                 $"Composite-arm swing: {(InvaderNPC.CompositeArmSwingMasterEnable ? "ON (new)" : "OFF (legacy 4-frame)")} | " +
                 $"offset={InvaderNPC.CompositeArmRotationOffset:0.###} rad | stretch={InvaderNPC.CompositeArmStretch}",
                 c);
+            caller.Reply(
+                $"Blade-flip mirror: {(InvaderNPC.BladeFlipMasterEnable ? "ON" : "OFF")}",
+                InvaderNPC.BladeFlipMasterEnable ? Color.Lime : Color.Gray);
+            caller.Reply(
+                $"Aim-centered swing: {(InvaderNPC.AimSwingMasterEnable ? "ON (full 360 aim)" : "OFF (legacy fixed arc)")}",
+                InvaderNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
+        }
+
+        private static void ClearLog(CommandCaller caller)
+        {
+            try
+            {
+                string sep = System.IO.Path.DirectorySeparatorChar.ToString();
+                string path = Main.SavePath + sep + "Logs" + sep + "tsorcRevamp-invader-swing.log";
+                System.IO.File.WriteAllText(path, string.Empty);
+                caller.Reply("Swing debug log cleared.", Color.Lime);
+            }
+            catch (System.Exception e)
+            {
+                caller.Reply($"Failed to clear log: {e.Message}", Color.Red);
+            }
         }
 
         private static bool TryParseStretch(string s, out Player.CompositeArmStretchAmount stretch)

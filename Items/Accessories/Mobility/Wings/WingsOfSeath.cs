@@ -195,6 +195,11 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
                     player.slowFall = true;
                 }
             }
+
+            if (Slow)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().SlowfallWingActive = true;
+            }
         }
     }
 }

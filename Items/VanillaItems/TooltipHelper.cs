@@ -18,6 +18,17 @@ namespace tsorcRevamp.Items.VanillaItems
     class TooltipHelper : GlobalItem
     {
 
+        private static bool IsLargeGem(int itemType)
+        {
+            return itemType == ItemID.LargeAmber
+                || itemType == ItemID.LargeAmethyst
+                || itemType == ItemID.LargeDiamond
+                || itemType == ItemID.LargeEmerald
+                || itemType == ItemID.LargeRuby
+                || itemType == ItemID.LargeSapphire
+                || itemType == ItemID.LargeTopaz;
+        }
+
         //this method adds potentially multiple tooltip lines to the end of an item's tooltip stack 
         public static void SimpleModTooltip(Mod mod, Item item, List<TooltipLine> tooltips, int ItemID, string TipToAdd1, string TipToAdd2 = null)
         {
@@ -53,6 +64,13 @@ namespace tsorcRevamp.Items.VanillaItems
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (IsLargeGem(item.type))
+            {
+                // Large Gems only use their vanilla tooltip to describe the retired Capture the Gem
+                // minigame. Keep the mod's own gem descriptions, but remove that obsolete line.
+                tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
+            }
+
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a");
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a", "b");
             //SimpleModTooltip(mod, item, tooltips, ItemID.FlaskofFire, "Adds 10% melee damage");  don't do this. flask of fire's tooltip goes at a specific index, not the end

@@ -186,31 +186,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // (rolls Agility above), same mechanism CursedDragonInvader uses - evasion BEFORE getting hit.
         protected override bool EvadesProjectiles => true;
 
-        // Cursed by his own hand the moment he stepped into the Abyss - applied to everyone
-        // present at the start of the fight, same pattern as Witchking.OnSpawn.
+        // The abyss-space scene is reserved for the two health-threshold surges below. It used to
+        // be applied here for the whole fight, which made Artorias and his attacks unreadable.
         public override void OnSpawn(IEntitySource source)
         {
             _ringCenter = NPC.Center;
             NPC.netUpdate = true;
-
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
-                if (Main.player[i].active)
-                {
-                    Main.player[i].AddBuff(ModContent.BuffType<Abyss>(), 30 * 60 * 60);
-                }
-            }
         }
 
         public override void AI()
         {
             base.AI();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
+
+            // The puppet body and hand-drawn greatsword both sample the normal light map, so this
+            // shared white light keeps the whole silhouette readable when the abyss-space scene is up.
+            Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1.5f);
 
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
             {
@@ -219,11 +210,67 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             TickAbyssRing();
             TickRingCollapse();
+            TickAbyssSurges();
 
             if (!_abyssShardUnlocked && NPC.life <= NPC.lifeMax * 0.6f)
             {
                 _abyssShardUnlocked = true;
             }
+        }
+
+        // Twice per fight Artorias tears open the Abyss: a radial tendril burst marks the start,
+        // then the existing abyss-space renderer remains active for exactly twenty seconds.
+        const int AbyssSurgeDuration = 20 * 60;
+        const int AbyssSurgeTendrilCount = 10;
+        const float AbyssSurgeTendrilSpeed = 11f;
+        bool _abyssSurgeDone50;
+        bool _abyssSurgeDone15;
+        readonly bool[] _abyssSurgeAffectedPlayers = new bool[Main.maxPlayers];
+
+        void TickAbyssSurges()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            float healthFraction = (float)NPC.life / NPC.lifeMax;
+            if (!_abyssSurgeDone50 && healthFraction <= 0.50f)
+            {
+                _abyssSurgeDone50 = true;
+                StartAbyssSurge();
+            }
+            else if (!_abyssSurgeDone15 && healthFraction <= 0.15f)
+            {
+                _abyssSurgeDone15 = true;
+                StartAbyssSurge();
+            }
+        }
+
+        void StartAbyssSurge()
+        {
+            SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.8f, Pitch = -0.35f }, NPC.Center);
+            UsefulFunctions.ScreenShake(NPC.Center, strength: 6f, frames: 20);
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active && !Main.player[i].dead)
+                {
+                    Main.player[i].AddBuff(ModContent.BuffType<Abyss>(), AbyssSurgeDuration);
+                    _abyssSurgeAffectedPlayers[i] = true;
+                }
+            }
+
+            for (int i = 0; i < AbyssSurgeTendrilCount; i++)
+            {
+                float angle = MathHelper.TwoPi * i / AbyssSurgeTendrilCount;
+                Vector2 velocity = angle.ToRotationVector2() * AbyssSurgeTendrilSpeed;
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity,
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssTendril>(), TendrilGrabDamage, 0f,
+                    Main.myPlayer, NPC.whoAmI);
+            }
+
+            NPC.netUpdate = true;
         }
 
         // ── Fixed abyss ring: a permanent lethal boundary at the spot Artorias first spawned ──
@@ -237,6 +284,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 _ringVfxTimer = 4;
                 UsefulFunctions.DustRingPrecise(_ringCenter, _currentRingRadius, DustID.BlueTorch, 90, alpha: 40, scale: 1.6f);
+                SpawnAbyssRingFlames();
             }
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -263,6 +311,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     player.AddBuff(ModContent.BuffType<TornWings>(), 120, false);
                 }
+            }
+        }
+
+        void SpawnAbyssRingFlames()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            const int flameCount = 12;
+            for (int i = 0; i < flameCount; i++)
+            {
+                float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                Vector2 ringPosition = _ringCenter + angle.ToRotationVector2() * _currentRingRadius;
+                Vector2 velocity = new Vector2(Main.rand.NextFloat(-0.35f, 0.35f), Main.rand.NextFloat(-2.8f, -1.2f));
+                Dust flame = Dust.NewDustPerfect(ringPosition, DustID.BlueTorch, velocity, 40, new Color(125, 190, 255), Main.rand.NextFloat(1.35f, 1.8f));
+                flame.noGravity = true;
             }
         }
 
@@ -1375,6 +1441,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Gore
         public override void OnKill()
         {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (_abyssSurgeAffectedPlayers[i] && Main.player[i].active)
+                    {
+                        Main.player[i].ClearBuff(ModContent.BuffType<Abyss>());
+                    }
+                }
+            }
+
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Easterling Gore 1").Type, 1f);

@@ -72,6 +72,28 @@ namespace tsorcRevamp.Tiles
                 float distance = Vector2.Distance(Main.LocalPlayer.Center, worldPosition);
                 float mouseDistance = Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, worldPosition);
 
+                const float readSoapstoneRevealRange = 200f;
+                float targetOpacity = !entity.read || distance <= readSoapstoneRevealRange ? 1f : 0f;
+                if (!entity.visualOpacityInitialized)
+                {
+                    entity.visualOpacity = targetOpacity;
+                    entity.visualOpacityInitialized = true;
+                }
+                else
+                {
+                    float fadeSpeed = targetOpacity > entity.visualOpacity ? 0.12f : 0.08f;
+                    entity.visualOpacity = MathHelper.Lerp(entity.visualOpacity, targetOpacity, fadeSpeed);
+                    if (entity.visualOpacity < 0.01f)
+                    {
+                        entity.visualOpacity = 0f;
+                    }
+                }
+
+                if (entity.visualOpacity <= 0f)
+                {
+                    return;
+                }
+
                 bool selectedSoapstone = false;
                 // Distances are center-to-center. ~+28px covers player/tile half-sizes, so a 64px
                 // center range ≈ "standing adjacent" (an edge gap of ~32px). The old 40px check
@@ -231,7 +253,7 @@ namespace tsorcRevamp.Tiles
                     ShimmerColor.B /= 3;
                 }
 
-                spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), ShimmerColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), ShimmerColor * entity.visualOpacity, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
             }
         }
     }
@@ -244,6 +266,9 @@ namespace tsorcRevamp.Tiles
         public bool nearPlayer;
         public bool read = false;
         public bool hidden = false;
+        // Visual-only client state for the soft distance fade of read soapstones.
+        public float visualOpacity;
+        public bool visualOpacityInitialized;
         // Comma-separated category tags (story, lore, hint, tutorial, location). Null/empty => hint.
         public string category;
         // Display name for the location banner. Null/empty => no banner.

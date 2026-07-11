@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Invaders
 {
@@ -70,6 +71,13 @@ namespace tsorcRevamp.NPCs.Invaders
         public float DamageMult;
         public float ReachMult;
         public float ForwardPushMult;  // 0 = stationary; >0 = hop/dash scaled by TopSpeed
+        /// <summary>How fast the visual arc sweeps, for aim-swing pilot invaders only. >1 = faster
+        /// (shorter swing window), &lt;1 = slower. The swing then plays over AttackTicks / SwingSpeedMult
+        /// instead of being floored to the weapon's useAnimation. 1 = play over AttackTicks as-is.</summary>
+        public float SwingSpeedMult;
+        /// <summary>Easing shape of the arc, for aim-swing pilot invaders only. Lets different steps
+        /// feel different (snappy flick vs heavy settle vs delayed whip) at the same duration.</summary>
+        public SwingEaseStyle Ease;
     }
 
     public struct MeleeCombo
@@ -82,6 +90,10 @@ namespace tsorcRevamp.NPCs.Invaders
         public int            CooldownAfterUse;
         public bool           HeavyCommit;   // HP-escalation multiplier applies to these
         public bool           HyperArmor;    // commit (no stagger) holds through inter-step pauses, not just active frames
+        /// <summary>Per-tick horizontal velocity brake while this combo winds up / swings, for
+        /// aim-swing pilot invaders only. 0 = keep full momentum (no slowdown), 0.4 = plant the feet
+        /// for a heavy commit. Replaces the old blanket SlowDown() so light attacks stay mobile.</summary>
+        public float          MoveBrake;
     }
 
     public struct RangedComboShot
@@ -286,12 +298,13 @@ namespace tsorcRevamp.NPCs.Invaders
         // ─────────────────────────────────────────────────────────────────────
 
         private static MeleeComboStep S(ComboMotion m, int tel, int atk, int pause,
-                                        float dmg = 1f, float reach = 1f, float push = 0f)
+                                        float dmg = 1f, float reach = 1f, float push = 0f,
+                                        float swingMult = 1f, SwingEaseStyle ease = SwingEaseStyle.Smooth)
             => new MeleeComboStep
             {
                 Motion = m, TelegraphTicks = tel, AttackTicks = atk,
                 PostStepPause = pause, DamageMult = dmg, ReachMult = reach,
-                ForwardPushMult = push
+                ForwardPushMult = push, SwingSpeedMult = swingMult, Ease = ease
             };
 
         private static RangedComboShot R(int pause, float spread = 0f, float speed = 1f, int count = 1)
@@ -420,50 +433,55 @@ namespace tsorcRevamp.NPCs.Invaders
         // comes from damage, reach, step-in push, and commitment instead of exotic motions.
         public static readonly MeleeCombo[] Axe = new[]
         {
+            // Bread-and-butter overhead: fast, snappy, barely slows the feet.
             new MeleeCombo {
                 Name = "Chop", BaseWeight = 100, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.White, CooldownAfterUse = 70,
-                Steps = new[] { S(ComboMotion.OverheadArc, 30, 24, 0, 1.2f, 1.1f) }
+                InitialFlashColor = Color.White, CooldownAfterUse = 70, MoveBrake = 0.10f,
+                Steps = new[] { S(ComboMotion.OverheadArc, 30, 22, 0, 1.2f, 1.1f, swingMult: 1.4f, ease: SwingEaseStyle.Snap) }
             },
+            // Rising slash: a touch more deliberate than the chop so the up-swing reads clearly.
             new MeleeCombo {
                 Name = "Rising Cut", BaseWeight = 70, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 80,
-                Steps = new[] { S(ComboMotion.UnderhandArc, 32, 24, 0, 1.2f, 1.1f) }
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 80, MoveBrake = 0.10f,
+                Steps = new[] { S(ComboMotion.UnderhandArc, 32, 22, 0, 1.2f, 1.1f, swingMult: 1.2f) }
             },
+            // Lunging chop: keeps its forward momentum (no brake), quick committed strike.
             new MeleeCombo {
                 Name = "Step-In Chop", BaseWeight = 60, Preferred = ComboRangeBand.Mid,
-                InitialFlashColor = Color.Orange, CooldownAfterUse = 110,
-                Steps = new[] { S(ComboMotion.OverheadArc, 30, 22, 0, 1.3f, 1.1f, 1.2f) }
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 110, MoveBrake = 0f,
+                Steps = new[] { S(ComboMotion.OverheadArc, 30, 22, 0, 1.3f, 1.1f, 1.2f, swingMult: 1.35f, ease: SwingEaseStyle.Snap) }
             },
+            // Chop down, then rip straight back up. The handoff eases into the rising cut (no snap).
             new MeleeCombo {
                 Name = "Down-Up", BaseWeight = 55, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Cyan, CooldownAfterUse = 150,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 150, MoveBrake = 0.12f,
                 Steps = new[] {
-                    S(ComboMotion.OverheadArc,  28, 22, 14, 1.0f),
-                    S(ComboMotion.UnderhandArc,  0, 22, 0,  1.2f),
+                    S(ComboMotion.OverheadArc,  28, 22, 12, 1.0f, 1f, 0f, swingMult: 1.35f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.UnderhandArc,  0, 22, 0,  1.2f, 1f, 0f, swingMult: 1.2f),
                 }
             },
+            // Big menacing swing: holds the apex, then whips down slow and heavy; plants the feet.
             new MeleeCombo {
                 Name = "Heavy Cleave", BaseWeight = 30, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
-                Steps = new[] { S(ComboMotion.OverheadArc, 48, 26, 0, 2.0f, 1.25f) }
+                InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true, MoveBrake = 0.40f,
+                Steps = new[] { S(ComboMotion.OverheadArc, 48, 28, 0, 2.0f, 1.25f, 0f, swingMult: 0.85f, ease: SwingEaseStyle.Whip) }
             },
-            // Triple step-in chop: three advancing chops with hyper-armor, the re-raise to
-            // overhead between each chop serving as the (uninterruptible) wind-up for the next.
+            // Triple step-in chop: three fast advancing chops with hyper-armor, the eased re-raise
+            // between each chop serving as the (uninterruptible) wind-up for the next.
             new MeleeCombo {
                 Name = "Triple Chop Advance", BaseWeight = 45, Preferred = ComboRangeBand.Mid,
-                InitialFlashColor = Color.Orange, CooldownAfterUse = 220, HeavyCommit = true, HyperArmor = true,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 220, HeavyCommit = true, HyperArmor = true, MoveBrake = 0f,
                 Steps = new[] {
-                    S(ComboMotion.OverheadArc, 36, 22, 18, 1.1f, 1.1f, 1.0f),
-                    S(ComboMotion.OverheadArc,  0, 22, 18, 1.1f, 1.1f, 1.0f),
-                    S(ComboMotion.OverheadArc,  0, 24,  0, 1.3f, 1.1f, 1.0f),
+                    S(ComboMotion.OverheadArc, 36, 20, 14, 1.1f, 1.1f, 1.0f, swingMult: 1.5f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.OverheadArc,  0, 20, 14, 1.1f, 1.1f, 1.0f, swingMult: 1.5f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.OverheadArc,  0, 22,  0, 1.3f, 1.1f, 1.0f, swingMult: 1.4f, ease: SwingEaseStyle.Snap),
                 }
             },
             // Leaping slam: wind up, jump toward the player with the axe held high, slam down +
             // hit on landing (single deferred-hit step; AttackTicks is the airtime cap).
             new MeleeCombo {
                 Name = "Leaping Slam", BaseWeight = 40, Preferred = ComboRangeBand.Mid,
-                InitialFlashColor = Color.Yellow, CooldownAfterUse = 200, HeavyCommit = true, HyperArmor = true,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 200, HeavyCommit = true, HyperArmor = true, MoveBrake = 0f,
                 Steps = new[] { S(ComboMotion.LeapSlam, 34, 90, 0, 1.7f, 1.25f) }
             },
             // Charge chop: run at the player (step 0, no hit) until in reach OR a 3 s timeout,
@@ -471,20 +489,20 @@ namespace tsorcRevamp.NPCs.Invaders
             // idle even if the player keeps evading.
             new MeleeCombo {
                 Name = "Charge Chop", BaseWeight = 40, Preferred = ComboRangeBand.Mid,
-                InitialFlashColor = Color.Orange, CooldownAfterUse = 180, HyperArmor = true,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 180, HyperArmor = true, MoveBrake = 0f,
                 Steps = new[] {
                     S(ComboMotion.ChargeChop,  30, 180, 2),
-                    S(ComboMotion.OverheadArc,  0, 22, 0, 1.3f, 1.1f),
+                    S(ComboMotion.OverheadArc,  0, 22, 0, 1.3f, 1.1f, 0f, swingMult: 1.35f, ease: SwingEaseStyle.Snap),
                 }
             },
             // Feint chop: raise the axe + fire the warning flash (the bait), hold WITHOUT swinging
-            // so a panic-roll whiffs, then drop the real chop a beat later (the delayed swing).
+            // so a panic-roll whiffs, then drop the real chop fast a beat later (the delayed swing).
             new MeleeCombo {
                 Name = "Feint Chop", BaseWeight = 35, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 160,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 160, MoveBrake = 0.15f,
                 Steps = new[] {
                     S(ComboMotion.Feint,       30, 26, 6),
-                    S(ComboMotion.OverheadArc,  0, 22, 0, 1.2f, 1.1f),
+                    S(ComboMotion.OverheadArc,  0, 22, 0, 1.2f, 1.1f, 0f, swingMult: 1.45f, ease: SwingEaseStyle.Snap),
                 }
             },
         };

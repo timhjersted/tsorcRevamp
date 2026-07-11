@@ -225,8 +225,6 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.ByCondition(
                 new NonSHMFirstKillRule(), ModContent.ItemType<Items.Weapons.Magic.HeartOfWinter>()));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.ByCondition(
-                new NonSHMRepeatKillRule(), ModContent.ItemType<Items.Weapons.Magic.HeartOfWinter>(), 4));
         }
 
         public override void SendExtraAI(BinaryWriter writer)

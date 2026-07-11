@@ -27,6 +27,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 60 * 60;
         }
 
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            SpawnFlameDust(12, 3.5f, 1.5f);
+        }
+
         public override void AI()
         {
             Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3() * 0.7f);
@@ -119,7 +124,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
-            SpawnFlameDust(12, 3f, 1.5f);
+            SpawnFlameDust(24, 4.2f, 1.8f);
         }
 
         void SpawnFlameDust(int count, float speed, float scale)

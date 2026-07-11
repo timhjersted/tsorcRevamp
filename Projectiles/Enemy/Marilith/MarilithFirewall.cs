@@ -105,33 +105,35 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 }
                 else
                 {
+                    //Adventure arena coords are legacy 2000-space -> MapWorld (the remix branch above is remix-native).
+                    //The whole arena (Y 1682-1780) is in the flat +200 band. width/height are SIZES, not coords.
                     // Left
                     if (Projectile.ai[0] == 0)
                     {
                         Projectile.width = width;
                         Projectile.height = 16 * shortLength;
-                        Projectile.Center = new Vector2(3107, 1731) * 16;
+                        Projectile.Center = ExpandedWorldTransform.MapWorld(new Vector2(3107, 1731) * 16);
                     }
                     //Right
                     else if (Projectile.ai[0] == 1)
                     {
                         Projectile.width = width;
                         Projectile.height = 16 * shortLength;
-                        Projectile.Center = new Vector2(3350.2f, 1731) * 16;
+                        Projectile.Center = ExpandedWorldTransform.MapWorld(new Vector2(3350.2f, 1731) * 16);
                     }
                     //Top
                     else if (Projectile.ai[0] == 2)
                     {
                         Projectile.width = 16 * longLength;
                         Projectile.height = width;
-                        Projectile.Center = new Vector2(3228.5f, 1682.3f) * 16;
+                        Projectile.Center = ExpandedWorldTransform.MapWorld(new Vector2(3228.5f, 1682.3f) * 16);
                     }
                     //Bottom
                     else if (Projectile.ai[0] == 3)
                     {
                     Projectile.width = 16 * longLength;
                     Projectile.height = width;
-                    Projectile.Center = new Vector2(3228.5f, 1779.8f) * 16;
+                    Projectile.Center = ExpandedWorldTransform.MapWorld(new Vector2(3228.5f, 1779.8f) * 16);
                     }
                 }
             }

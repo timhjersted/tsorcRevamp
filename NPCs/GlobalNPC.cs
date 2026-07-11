@@ -38,6 +38,7 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
@@ -1980,7 +1981,8 @@ namespace tsorcRevamp.NPCs
             }
 
             //machine temple (in water)
-            if (spawnInfo.Water && playerY < 1430 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
+            //(depth gate is legacy 2000-space tile-Y; MapTileY shifts it on the expanded world, identity elsewhere)
+            if (spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
             {            
                 // 98 = WallID.GreenDungeonSlabUnsafe
                 
@@ -1996,7 +1998,7 @@ namespace tsorcRevamp.NPCs
 
             }
             //machine temple (not in water)
-            if (!spawnInfo.Water && playerY < 1430 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
+            if (!spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
             {
                 pool.Clear();
                 pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 3f);
@@ -2541,8 +2543,9 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            // Poise damage scales with the projectile's knockback stat (see project_poise_stagger_system).
-            float poiseKnockback = projectile.knockBack;
+            // Poise damage scales with the projectile's knockback stat × its per-projectile ProjectilePoiseMultiplier
+            // lever (see project_poise_stagger_system).
+            float poiseKnockback = projectile.knockBack * projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier;
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
             if (magicGhostHit)
             {
@@ -2853,8 +2856,9 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            // Poise damage scales with the weapon's knockback stat (see project_poise_stagger_system).
-            float poiseKnockback = item.knockBack;
+            // Poise damage scales with the weapon's knockback stat × its per-weapon WeaponPoiseMultiplier lever
+            // (see project_poise_stagger_system).
+            float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
             if (magicGhostHit)
             {
@@ -2928,7 +2932,8 @@ namespace tsorcRevamp.NPCs
 
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            float poiseKnockback = item.knockBack;
+            // Must match the poise damage computed in ModifyHitByItem above.
+            float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
             if (magicGhostHit)
             {
@@ -2963,7 +2968,8 @@ namespace tsorcRevamp.NPCs
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            float poiseKnockback = projectile.knockBack;
+            // Must match the poise damage computed in ModifyHitByProjectile above.
+            float poiseKnockback = projectile.knockBack * projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier;
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
             if (magicGhostHit)
             {

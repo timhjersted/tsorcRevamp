@@ -1013,6 +1013,18 @@ namespace tsorcRevamp
         {
             return RemixMapCondition() && tsorcRevampWorld.SuperHardMode;
         }
+        //True only on the 2400-tall Expanded Adventure world. NOTE: the expanded world also satisfies
+        //OnlyAdventureMapCondition (it IS the adventure map), so existing adventure events still run there. Gate NEW,
+        //expanded-only content with this. Content gated here is authored natively in 2400-space and must NOT be routed
+        //through ExpandedWorldTransform (it would be double-shifted).
+        public static bool ExpandedAdventureMapCondition()
+        {
+            return tsorcRevampWorld.ExpandedAdventure;
+        }
+        public static bool ExpandedAdventureMapConditionSHM()
+        {
+            return ExpandedAdventureMapCondition() && tsorcRevampWorld.SuperHardMode;
+        }
 
         private static Dictionary<int, string> _vanillaIdToName;
         private static string GetVanillaFieldName(int type)
@@ -1521,7 +1533,8 @@ namespace tsorcRevamp
 
         public static EventActionStatus UndeadMerchantAction(ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 1686 * 16, 963 * 16, ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
+            Vector2 pos = ExpandedWorldTransform.MapWorld(new Vector2(1686, 963) * 16);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)pos.X, (int)pos.Y, ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
             return EventActionStatus.CompletedEvent;
         }
 
@@ -1530,18 +1543,22 @@ namespace tsorcRevamp
         public static EventActionStatus TinkererAction(ScriptedEvent thisEvent)
         {
             NPC.savedGoblin = true;
-            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), 4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
-            goblinNPC.homeTileX = 4449;
-            goblinNPC.homeTileY = 1740;
+            Vector2 pos = ExpandedWorldTransform.MapWorld(new Vector2(4456, 1744) * 16);
+            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), (int)pos.X, (int)pos.Y, NPCID.GoblinTinkerer);
+            Microsoft.Xna.Framework.Point home = ExpandedWorldTransform.MapTile(4449, 1740);
+            goblinNPC.homeTileX = home.X;
+            goblinNPC.homeTileY = home.Y;
             return EventActionStatus.CompletedEvent;
         }
 
         public static EventActionStatus FairyAction(ScriptedEvent thisEvent)
         {
             NPC.savedGoblin = true;
-            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), 7707 * 16, 1161 * 16, ModContent.NPCType<NPCs.Friendly.LonelyFairy>());
-            goblinNPC.homeTileX = 7707;
-            goblinNPC.homeTileY = 1161;
+            Vector2 pos = ExpandedWorldTransform.MapWorld(new Vector2(7707, 1161) * 16);
+            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), (int)pos.X, (int)pos.Y, ModContent.NPCType<NPCs.Friendly.LonelyFairy>());
+            Microsoft.Xna.Framework.Point home = ExpandedWorldTransform.MapTile(7707, 1161);
+            goblinNPC.homeTileX = home.X;
+            goblinNPC.homeTileY = home.Y;
             return EventActionStatus.CompletedEvent;
         }
 
@@ -1666,14 +1683,16 @@ namespace tsorcRevamp
 
         public static EventActionStatus MechanicAction(ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 277 * 16, 1366 * 16, NPCID.Mechanic);
+            Vector2 mechPos = ExpandedWorldTransform.MapWorld(new Vector2(277, 1366) * 16);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)mechPos.X, (int)mechPos.Y, NPCID.Mechanic);
             NPC.savedMech = true;
             return EventActionStatus.CompletedEvent;
         }
 
         public static EventActionStatus WizardAction(ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 7322 * 16, 603 * 16, NPCID.Wizard);
+            Vector2 wizPos = ExpandedWorldTransform.MapWorld(new Vector2(7322, 603) * 16);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)wizPos.X, (int)wizPos.Y, NPCID.Wizard);
             NPC.savedWizard = true;
             return EventActionStatus.CompletedEvent;
         }
@@ -1820,6 +1839,19 @@ namespace tsorcRevamp
             DynamicEvents = JsonConvert.DeserializeObject<List<DynamicSpawnEvent>>(json);
             if (DynamicEvents == null) return;
 
+            // Coordinate-space normalization for the Expanded Adventure world.
+            // DynamicEvents.json is stored in LEGACY 2000-space (the 135 originals mirror the hardcoded events).
+            // Convert every event to the CURRENT world's runtime space right here, so ALL downstream consumers
+            // (the dedup below, the tome UI, hit-testing, and the ScriptedEvents we build) work in one consistent
+            // space. Identity on legacy/remix/sandbox. The inverse is applied on save (SerializeDynamicEventsToLegacyJson).
+            // This also fixes a duplicate-event bug: the hardcoded-vs-dynamic dedup (further down) compares
+            // dyn.CenterX against the (transformed) hardcoded centerpoint, which only matches when both are runtime-space.
+            if (ExpandedWorldTransform.Active)
+            {
+                foreach (DynamicSpawnEvent e in DynamicEvents)
+                    DynamicEventToRuntimeSpace(e);
+            }
+
             // Deduplicate dynamic events at the exact same or very close coordinates (within 2 tiles)
             List<DynamicSpawnEvent> uniqueEvents = new List<DynamicSpawnEvent>();
             bool changed = false;
@@ -1845,7 +1877,7 @@ namespace tsorcRevamp
                 DynamicEvents = uniqueEvents;
                 try
                 {
-                    string cleanJson = JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+                    string cleanJson = SerializeDynamicEventsToLegacyJson();
                     File.WriteAllText(fullPath, cleanJson);
                 }
                 catch (Exception)
@@ -1930,7 +1962,10 @@ namespace tsorcRevamp
                     npcCoords.Add(new Vector2(npc.SpawnX, npc.SpawnY));
                 }
 
-                // Construct ScriptedEvent
+                // Construct ScriptedEvent.
+                // applyWorldTransform: false — by this point dEvent's coords have ALREADY been normalized to the
+                // current world's runtime space (see the normalization block right after deserialize in this method),
+                // so the ScriptedEvent must NOT transform them again. Save inverts back to legacy for the file.
                 ScriptedEvent newEvent = new ScriptedEvent(
                     new Vector2(dEvent.CenterX, dEvent.CenterY),
                     (float)System.Math.Sqrt(dEvent.Radius) / 16f,
@@ -1944,7 +1979,8 @@ namespace tsorcRevamp
                     ParseColor(dEvent.TextColorHex),
                     dEvent.Square,
                     condition,
-                    action
+                    action,
+                    applyWorldTransform: false
                 );
 
                 for (int i = 0; i < dEvent.Npcs.Count; i++)
@@ -1983,6 +2019,53 @@ namespace tsorcRevamp
             });
         }
         
+        // ---- Expanded-world coordinate-space helpers for dynamic events ----------------------------------------
+        // In-memory dynamic events are kept in the CURRENT world's runtime space; the JSON file is always LEGACY
+        // 2000-space. These convert between the two. Identity on non-expanded worlds (MapTile/InverseMapTile no-op).
+
+        private static void DynamicEventToRuntimeSpace(DynamicSpawnEvent e)
+        {
+            Vector2 c = ExpandedWorldTransform.MapTile(new Vector2(e.CenterX, e.CenterY));
+            e.CenterX = c.X; e.CenterY = c.Y;
+            if (e.Npcs != null)
+                foreach (DynamicSpawnEntry n in e.Npcs)
+                {
+                    Vector2 s = ExpandedWorldTransform.MapTile(new Vector2(n.SpawnX, n.SpawnY));
+                    n.SpawnX = s.X; n.SpawnY = s.Y;
+                }
+        }
+
+        private static void DynamicEventToLegacySpace(DynamicSpawnEvent e)
+        {
+            Vector2 c = ExpandedWorldTransform.InverseMapTile(new Vector2(e.CenterX, e.CenterY));
+            e.CenterX = c.X; e.CenterY = c.Y;
+            if (e.Npcs != null)
+                foreach (DynamicSpawnEntry n in e.Npcs)
+                {
+                    Vector2 s = ExpandedWorldTransform.InverseMapTile(new Vector2(n.SpawnX, n.SpawnY));
+                    n.SpawnX = s.X; n.SpawnY = s.Y;
+                }
+        }
+
+        // Serialize the (runtime-space) in-memory DynamicEvents to LEGACY-space JSON for on-disk storage.
+        // Temporarily converts to legacy, serializes, then restores runtime (try/finally so a serialize error
+        // can't leave the in-memory list in legacy space). No-op conversion on non-expanded worlds.
+        private static string SerializeDynamicEventsToLegacyJson()
+        {
+            if (!ExpandedWorldTransform.Active)
+                return JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+
+            foreach (DynamicSpawnEvent e in DynamicEvents) DynamicEventToLegacySpace(e);
+            try
+            {
+                return JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+            }
+            finally
+            {
+                foreach (DynamicSpawnEvent e in DynamicEvents) DynamicEventToRuntimeSpace(e);
+            }
+        }
+
         public static void SaveDynamicEvents()
         {
             string relativePath = "Content/DynamicEvents.json";
@@ -1990,7 +2073,7 @@ namespace tsorcRevamp
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-                string json = JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+                string json = SerializeDynamicEventsToLegacyJson();
                 File.WriteAllText(fullPath, json);
                 LoadDynamicEvents();
 
@@ -2712,13 +2795,36 @@ namespace tsorcRevamp
             ConstructScriptedEvent(rangeCenterpoint, rangeRadius, npcList, npcCoords, DustType, saveEvent, visibleRange, bossEvent, flavorText, flavorTextColor, squareRange, customCondition, customAction);
         }
 
-        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs = null, List<Vector2> coords = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null)
+        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs = null, List<Vector2> coords = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null, bool applyWorldTransform = true)
         {
-            ConstructScriptedEvent(rangeCenterpoint, rangeRadius, npcs, coords, DustType, saveEvent, visibleRange, bossEvent, flavorText, flavorTextColor, squareRange, customCondition, customAction);
+            ConstructScriptedEvent(rangeCenterpoint, rangeRadius, npcs, coords, DustType, saveEvent, visibleRange, bossEvent, flavorText, flavorTextColor, squareRange, customCondition, customAction, applyWorldTransform);
         }
 
-        public void ConstructScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs = null, List<Vector2> coords = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null)
+        public void ConstructScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs = null, List<Vector2> coords = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null, bool applyWorldTransform = true)
         {
+            //Expanded Adventure (2400-tall) coordinate transform. Hardcoded events pass their coords in LEGACY
+            //(2000-space), so route them through ExpandedWorldTransform: identity on legacy/remix/sandbox (inactive),
+            //+200/+400 on the expanded world. World-gated, so shared events (no map condition) and remix events
+            //auto-resolve correctly — remix events only run on the 2000-tall remix world where the transform is identity.
+            //TWO exclusions:
+            //  (1) applyWorldTransform == false: DYNAMIC / tome-authored events. These are authored in-place on the
+            //      current world, so their stored coords are ALREADY in that world's space. Transforming them would
+            //      double-shift (e.g. a WitchKing dynamic event saved at 2195 would reload at 2595).
+            //  (2) expandedNative: hardcoded events gated ExpandedAdventureMapCondition are authored directly in
+            //      2400-space and likewise must not be shifted.
+            bool expandedNative = customCondition == tsorcScriptedEvents.ExpandedAdventureMapCondition || customCondition == tsorcScriptedEvents.ExpandedAdventureMapConditionSHM;
+            if (applyWorldTransform && !expandedNative)
+            {
+                rangeCenterpoint = ExpandedWorldTransform.MapTile(rangeCenterpoint);
+                if (coords != null)
+                {
+                    for (int i = 0; i < coords.Count; i++)
+                    {
+                        coords[i] = ExpandedWorldTransform.MapTile(coords[i]);
+                    }
+                }
+            }
+
             rangeDetectionMode = true;
             //Player position is stored as 16 times block distances
             centerpoint = rangeCenterpoint * 16;

@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3() * 0.75f);
+            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.1f);
             Animate();
 
             Projectile.ai[0]++;
@@ -91,7 +91,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false);
-            target.AddBuff(ModContent.BuffType<Abyss>(), 3 * 60 * 60, false);
             SpawnFlameDust(25, 4.6f, 1.9f);
 
             // ai[1] is the firing NPC's whoAmI, offset by +1 (0 = "no owner" - ArtoriasAbyssBlast's

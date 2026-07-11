@@ -127,6 +127,11 @@ namespace tsorcRevamp
 
             Terraria.On_Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
             Terraria.On_Main.DrawInterface_16_MapOrMinimap += Main_DrawInterface_16_MapOrMinimap;
+            MethodInfo drawHotbar = typeof(Main).GetMethod("GUIHotbarDrawInner", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (drawHotbar != null)
+            {
+                MonoModHooks.Add(drawHotbar, (Action<Action<Main>, Main>)DrawHotbar_WithTransparencyConfig);
+            }
             MethodInfo drawMap = typeof(Main).GetMethod("DrawMap", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(GameTime) }, null);
             if (drawMap != null)
             {
@@ -215,6 +220,94 @@ namespace tsorcRevamp
             // later triggers SoundEngine.PlaySound(43, ...); skipping it entirely means that countdown, and the
             // sound, never happens in the first place - no interaction with the audio engine at all.
             On_Main.NewLightning += SkipLightningInGraveyard;
+        }
+
+        private static void DrawHotbar_WithTransparencyConfig(Action<Main> orig, Main self)
+        {
+            if (!ModContent.GetInstance<tsorcRevampVisualConfig>().TransparentInventoryBar)
+            {
+                orig(self);
+                return;
+            }
+
+            // Reproduce vanilla's closed-inventory hotbar loop so alpha can be changed per slot without
+            // changing ItemSlot globally. The selected-item name normally drawn above the loop is omitted.
+            if (Main.playerInventory || Main.LocalPlayer.ghost)
+            {
+                return;
+            }
+
+            const float unselectedOpacity = 0f;
+            const float adjacentOpacity = 0.5f;
+            int slotX = 20;
+            for (int slot = 0; slot < 10; slot++)
+            {
+                bool selected = slot == Main.LocalPlayer.selectedItem;
+                bool adjacent = Math.Abs(slot - Main.LocalPlayer.selectedItem) == 1;
+                if (selected)
+                {
+                    if (Main.hotbarScale[slot] < 1f)
+                    {
+                        Main.hotbarScale[slot] += 0.05f;
+                    }
+                }
+                else if (Main.hotbarScale[slot] > 0.75f)
+                {
+                    Main.hotbarScale[slot] -= 0.05f;
+                }
+
+                float slotScale = Main.hotbarScale[slot];
+                int slotY = (int)(20f + 22f * (1f - slotScale));
+                int vanillaAlpha = (int)(75f + 150f * slotScale);
+                float opacity = selected ? 1f : adjacent ? adjacentOpacity : unselectedOpacity;
+                Color slotColor = new Color(255, 255, 255, vanillaAlpha) * opacity;
+
+                if (!Main.LocalPlayer.hbLocked && !Terraria.GameInput.PlayerInput.IgnoreMouseInterface
+                    && Main.mouseX >= slotX && Main.mouseX <= slotX + TextureAssets.InventoryBack.Width() * slotScale
+                    && Main.mouseY >= slotY && Main.mouseY <= slotY + TextureAssets.InventoryBack.Height() * slotScale
+                    && !Main.LocalPlayer.channel)
+                {
+                    Main.LocalPlayer.mouseInterface = true;
+                    Main.LocalPlayer.cursorItemIconEnabled = false;
+                    if (Main.mouseLeft && !Main.LocalPlayer.hbLocked && !Main.blockMouse)
+                    {
+                        Main.LocalPlayer.changeItem = slot;
+                    }
+
+                    Main.hoverItemName = Main.LocalPlayer.inventory[slot].AffixName();
+                    if (Main.LocalPlayer.inventory[slot].stack > 1)
+                    {
+                        Main.hoverItemName += " (" + Main.LocalPlayer.inventory[slot].stack + ")";
+                    }
+                    Main.rare = Main.LocalPlayer.inventory[slot].rare;
+                }
+
+                float oldInventoryScale = Main.inventoryScale;
+                Main.inventoryScale = slotScale;
+                Texture2D background = selected ? TextureAssets.InventoryBack14.Value : TextureAssets.InventoryBack.Value;
+                Color backgroundColor = (selected ? Color.White : new Color(200, 200, 200, 200)) * opacity;
+                Main.spriteBatch.Draw(background, new Vector2(slotX, slotY), null, backgroundColor, 0f,
+                    Vector2.Zero, slotScale, SpriteEffects.None, 0f);
+
+                // Context 14 suppresses ItemSlot's own background while retaining its standard item/stack draw.
+                // Skip it completely at zero opacity because some item glow layers ignore the supplied color.
+                if (opacity > 0f)
+                {
+                    ItemSlot.Draw(Main.spriteBatch, Main.LocalPlayer.inventory, 14, slot, new Vector2(slotX, slotY), slotColor);
+                }
+                Main.inventoryScale = oldInventoryScale;
+                slotX += (int)(TextureAssets.InventoryBack.Width() * slotScale) + 4;
+            }
+
+            int selectedItem = Main.LocalPlayer.selectedItem;
+            if (selectedItem >= 10 && (selectedItem != 58 || Main.mouseItem.type > 0))
+            {
+                float oldInventoryScale = Main.inventoryScale;
+                Main.inventoryScale = 1f;
+                ItemSlot.Draw(Main.spriteBatch, Main.LocalPlayer.inventory, 13, selectedItem,
+                    new Vector2(slotX, 20f), new Color(255, 255, 255, 225));
+                Main.inventoryScale = oldInventoryScale;
+            }
         }
 
         private static void Main_DrawSurfaceBG(Terraria.On_Main.orig_DrawSurfaceBG orig, Main self)

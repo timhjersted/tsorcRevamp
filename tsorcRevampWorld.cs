@@ -41,6 +41,11 @@ namespace tsorcRevamp
         public static bool CustomMap;
         public static bool OnlyAdventureMap;
         public static bool RemixMap;
+
+        //True only on the 2400-tall Expanded Adventure world. Drives ExpandedWorldTransform (the +200/+400
+        //coordinate offset) and ExpandedAdventureMapCondition. Derived from world identity each load (see the
+        //first-tick init below) and never persisted, so it recomputes identically on every client/server.
+        public static bool ExpandedAdventure;
         //Manual escape hatch. When true, this world is forced to be treated as a normal sandbox world:
         //all custom/remix/adventure detection is short-circuited regardless of tile signatures, worldID, or
         //previously-saved CustomMap/RemixMap flags. Toggle with the "/forcesandbox" chat command.
@@ -178,6 +183,7 @@ namespace tsorcRevamp
             CustomMap = false;
             OnlyAdventureMap = false;
             RemixMap = false;
+            ExpandedAdventure = false;
             EnteredHell = false;
             TalkedToAraz = false;
             EnteredRuinsOfElengad = false;
@@ -191,6 +197,13 @@ namespace tsorcRevamp
             initialized = false;
             NewSlain = new();
             CompletedDynamicEvents = new();
+            //Determine the expanded-world flag HERE, before events are built, so ExpandedWorldTransform is already
+            //Active when InitializeScriptedEvents() constructs each ScriptedEvent (their anchors are transformed at
+            //construction). The first-tick init below re-affirms this and also forces CustomMap/OnlyAdventureMap.
+            //TODO(MP): verify on a multiplayer CLIENT — Main.ActiveWorldFileData.UniqueId may be empty client-side
+            //(the client doesn't load the .wld), so ExpandedAdventure may need to be net-synced from the server and
+            //events rebuilt after the sync arrives. Fine for singleplayer, which is what's tested so far.
+            ExpandedAdventure = CheckForExpandedAdventure();
             tsorcScriptedEvents.InitializeScriptedEvents();
             tsorcScriptedEvents.LoadDynamicEvents();
             MapMarkers = new();
@@ -289,6 +302,17 @@ namespace tsorcRevamp
             CustomMap = !ForceSandbox && worldStateList.Contains("CustomMap");
             RemixMap = !ForceSandbox && worldStateList.Contains("RemixMap");
             OnlyAdventureMap = !ForceSandbox && worldStateList.Contains("OnlyAdventureMap");
+
+            //Set the Expanded Adventure flag as early as possible — LoadWorldData runs before the first tick, and
+            //coordinate fallbacks below (AbyssPortal) plus anything else that runs during load need the transform
+            //active already. Must come after ForceSandbox is read (the check consults it). The first-tick init in
+            //PostUpdateWorld sets this again, which is harmless (same stateless height+GUID check).
+            ExpandedAdventure = CheckForExpandedAdventure();
+            if (ExpandedAdventure)
+            {
+                CustomMap = true;
+                OnlyAdventureMap = true;
+            }
             EnteredHell = worldStateList.Contains("EnteredHell");
             TalkedToAraz = worldStateList.Contains("TalkedToAraz");
             EnteredRuinsOfElengad = worldStateList.Contains("EnteredRuinsOfElengad");
@@ -301,7 +325,8 @@ namespace tsorcRevamp
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)
             {
-                AbyssPortalLocation = new Vector2(1400.5f, 256.5f) * 16;
+                //Legacy 2000-space fallback; MapWorld shifts it on the expanded world (identity elsewhere).
+                AbyssPortalLocation = ExpandedWorldTransform.MapWorld(new Vector2(1400.5f, 256.5f) * 16);
             }
 
             //Failsafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
@@ -468,6 +493,9 @@ namespace tsorcRevamp
                 writer.Write(CustomMap);
                 writer.Write(RemixMap);
                 writer.Write(OnlyAdventureMap);
+                //Synced because MP clients may not have ActiveWorldFileData.UniqueId populated, so their local
+                //height+GUID check can't be trusted; the server's verdict is authoritative.
+                writer.Write(ExpandedAdventure);
                 writer.Write(SuperHardMode);
                 writer.WriteVector2(AbyssPortalLocation);
 
@@ -507,6 +535,7 @@ namespace tsorcRevamp
             CustomMap = reader.ReadBoolean();
             RemixMap = reader.ReadBoolean();
             OnlyAdventureMap = reader.ReadBoolean();
+            ExpandedAdventure = reader.ReadBoolean();
             SuperHardMode = reader.ReadBoolean();
             AbyssPortalLocation = reader.ReadVector2();
 
@@ -1076,8 +1105,11 @@ namespace tsorcRevamp
                 List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
                 foreach (SignJSONSerializable sign in texts)
                 {
-                    int locX = sign.tileX;
-                    int locY = sign.tileY;
+                    //Soapstone JSON coords are legacy (2000-space). On the expanded world, route them through the
+                    //transform (+200/+400) so they land at the shifted sign positions; identity on legacy/remix.
+                    Microsoft.Xna.Framework.Point mapped = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
+                    int locX = mapped.X;
+                    int locY = mapped.Y;
                     //Dust.QuickBox(new Vector2(locX, locY) * 16, new Vector2(locX + 1, locY + 1) * 16, 2, Color.YellowGreen, null);
 
 
@@ -1135,7 +1167,12 @@ namespace tsorcRevamp
                 int skippedOccupiedCount = 0;
                 foreach (SignJSONSerializable sign in texts)
                 {
-                    if (existing.TryGetValue((sign.tileX, sign.tileY), out SoapstoneTileEntity entity))
+                    //Legacy (2000-space) JSON coords -> current-world coords (+200/+400 on expanded, identity else).
+                    Microsoft.Xna.Framework.Point mapped = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
+                    int locX = mapped.X;
+                    int locY = mapped.Y;
+
+                    if (existing.TryGetValue((locX, locY), out SoapstoneTileEntity entity))
                     {
                         entity.text = sign.text;
                         entity.textWidth = sign.textWidth;
@@ -1147,11 +1184,11 @@ namespace tsorcRevamp
 
                     // No entity at these coords. Only place a new soapstone if the tile is empty
                     // (don't overwrite player-built blocks, chests, etc.).
-                    Tile tile = Framing.GetTileSafely(sign.tileX, sign.tileY);
+                    Tile tile = Framing.GetTileSafely(locX, locY);
                     if (tile.HasTile)
                     {
                         skippedOccupiedCount++;
-                        mod.Logger.Warn($"Soapstone JSON entry at ({sign.tileX},{sign.tileY}) skipped: tile occupied by type {tile.TileType}.");
+                        mod.Logger.Warn($"Soapstone JSON entry at ({sign.tileX},{sign.tileY}) [mapped ({locX},{locY})] skipped: tile occupied by type {tile.TileType}.");
                         continue;
                     }
 
@@ -1161,8 +1198,8 @@ namespace tsorcRevamp
                     tile.TileFrameY = 0;
                     tile.TileFrameNumber = 0;
 
-                    ModContent.GetInstance<SoapstoneTileEntity>().Place(sign.tileX, sign.tileY);
-                    if (TileUtils.TryGetTileEntityAs(sign.tileX, sign.tileY, out SoapstoneTileEntity newEntity))
+                    ModContent.GetInstance<SoapstoneTileEntity>().Place(locX, locY);
+                    if (TileUtils.TryGetTileEntityAs(locX, locY, out SoapstoneTileEntity newEntity))
                     {
                         newEntity.text = sign.text;
                         newEntity.textWidth = sign.textWidth;
@@ -1378,6 +1415,19 @@ namespace tsorcRevamp
                     //This is done like this so that it can never set CustomMap to false, since that isn't what that function returning false means.
                     CustomMap = true;
                 }
+                //Expanded (2400-tall) adventure world. Checked via world HEIGHT (not tile signatures, which sit at
+                //legacy coords and would silently miss on the shifted world). The expanded world IS the adventure map,
+                //so also force OnlyAdventureMap on: its tile-signature check (CheckForOnlyAdventureMap, reading 7783,1750)
+                //now points at shifted terrain and can't be relied on.
+                if (CheckForExpandedAdventure())
+                {
+                    ExpandedAdventure = true;
+                    //The expanded world IS the custom adventure map. Set these directly (rather than relying on the
+                    //tile-signature checks below, which read legacy coords that are now shifted +200/+400 and would
+                    //miss, or on persisted world_state) so a freshly-distributed expanded .wld always self-identifies.
+                    CustomMap = true;
+                    OnlyAdventureMap = true;
+                }
                 if (CheckForOnlyAdventureMap())
                 {
                     OnlyAdventureMap = true;
@@ -1424,52 +1474,53 @@ namespace tsorcRevamp
                             BuildSoapstones();
                         }
 
-                        //Spawn in NPCs
+                        //Spawn in NPCs. Coords are legacy 2000-space; MapTileY shifts them on the expanded world
+                        //(identity elsewhere). X is invariant under the transform so only Y is mapped.
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
                         {
-                            NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4510 * 16, 737 * 16, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
+                            NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4510 * 16, ExpandedWorldTransform.MapTileY(4510, 737) * 16, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.Dwarf>()))
                         {
-                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4301 * 16, 697 * 16, ModContent.NPCType<NPCs.Friendly.Dwarf>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4301 * 16, ExpandedWorldTransform.MapTileY(4301, 697) * 16, ModContent.NPCType<NPCs.Friendly.Dwarf>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4301;
-                            Main.npc[npc].homeTileY = 697;
+                            Main.npc[npc].homeTileY = ExpandedWorldTransform.MapTileY(4301, 697);
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.ShamanElder>()))
                         {
-                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4124 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.ShamanElder>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4124 * 16, ExpandedWorldTransform.MapTileY(4124, 690) * 16, ModContent.NPCType<NPCs.Friendly.ShamanElder>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4124;
-                            Main.npc[npc].homeTileY = 690;
+                            Main.npc[npc].homeTileY = ExpandedWorldTransform.MapTileY(4124, 690);
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianArcher>()))
                         {
-                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4145 * 16, 682 * 16, ModContent.NPCType<NPCs.Friendly.TibianArcher>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4145 * 16, ExpandedWorldTransform.MapTileY(4145, 682) * 16, ModContent.NPCType<NPCs.Friendly.TibianArcher>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4145;
-                            Main.npc[npc].homeTileY = 682;
+                            Main.npc[npc].homeTileY = ExpandedWorldTransform.MapTileY(4145, 682);
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>()))
                         {
-                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4370 * 16, 667 * 16, ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4370 * 16, ExpandedWorldTransform.MapTileY(4370, 667) * 16, ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4370;
-                            Main.npc[npc].homeTileY = 667;
+                            Main.npc[npc].homeTileY = ExpandedWorldTransform.MapTileY(4370, 667);
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianMage>()))
                         {
-                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, ExpandedWorldTransform.MapTileY(4176, 690) * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4176;
-                            Main.npc[npc].homeTileY = 690;
+                            Main.npc[npc].homeTileY = ExpandedWorldTransform.MapTileY(4176, 690);
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianMage>()))
                         {
-                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, ExpandedWorldTransform.MapTileY(4176, 690) * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4176;
-                            Main.npc[npc].homeTileY = 690;
+                            Main.npc[npc].homeTileY = ExpandedWorldTransform.MapTileY(4176, 690);
                         }
 
                         NPC.savedGolfer = true;
@@ -1477,17 +1528,17 @@ namespace tsorcRevamp
 
                         if (!NPC.AnyNPCs(NPCID.Golfer))
                         {
-                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, NPCID.Golfer);
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, ExpandedWorldTransform.MapTileY(4176, 690) * 16, NPCID.Golfer);
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 5881;
-                            Main.npc[npc].homeTileY = 866;
+                            Main.npc[npc].homeTileY = ExpandedWorldTransform.MapTileY(5881, 866);
                         }
                         if (!NPC.AnyNPCs(NPCID.Stylist))
                         {
-                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, NPCID.Stylist);
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, ExpandedWorldTransform.MapTileY(4176, 690) * 16, NPCID.Stylist);
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 5863;
-                            Main.npc[npc].homeTileY = 835;
+                            Main.npc[npc].homeTileY = ExpandedWorldTransform.MapTileY(5863, 835);
                         }
                     }
                 }
@@ -1842,6 +1893,23 @@ namespace tsorcRevamp
             }
 
             return false;
+        }
+
+        public static bool CheckForExpandedAdventure()
+        {
+            if (ForceSandbox)
+            {
+                return false;
+            }
+
+            //Discriminator: physical height (2400 vs 2000 for legacy/remix) + the stamped world GUID.
+            //NOTE: Main.worldID is NOT usable here. The expanded .wld was copied from the original (both carried
+            //worldID 44874972), so Terraria detects the collision on load, assigns the expanded world a fresh random
+            //worldID, and re-saves it — verified in-game (worldID became 7075495). The UniqueId GUID, by contrast, is
+            //stable across save/load and reads as ...123000000321 on the expanded world, all-zeros on legacy/remix.
+            return Main.maxTilesY == 2400
+                && Main.ActiveWorldFileData != null
+                && Main.ActiveWorldFileData.UniqueId == VariousConstants.EXPANDED_ADVENTURE_GUID;
         }
 
         public static bool CheckForOnlyAdventureMap()
@@ -2266,6 +2334,16 @@ namespace tsorcRevamp
                             BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
                         }
                     }
+                }
+
+                // Expanded Adventure (2400-tall) offset. These are legacy 2000-space TILE coords (consumers *16
+                // them). On the expanded world, RemixMap is false so only the adventure dicts were merged above;
+                // shift them all to the current world's space. Identity on legacy/remix (transform inactive), so
+                // remix teleport targets are untouched. Rebuilt per world load (Internal is nulled in OnWorldLoad).
+                if (ExpandedWorldTransform.Active)
+                {
+                    foreach (int key in new List<int>(BossIDsAndCoordinatesInternal.Keys))
+                        BossIDsAndCoordinatesInternal[key] = ExpandedWorldTransform.MapTile(BossIDsAndCoordinatesInternal[key]);
                 }
 
                 return BossIDsAndCoordinatesInternal;
