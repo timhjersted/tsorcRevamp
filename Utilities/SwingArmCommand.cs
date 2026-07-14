@@ -116,7 +116,7 @@ namespace tsorcRevamp.Utilities
                     break;
 
                 case "status":
-                    ReplyStatus(caller);
+                    ReplyFullStatus(caller);
                     break;
 
                 default:
@@ -125,6 +125,9 @@ namespace tsorcRevamp.Utilities
             }
         }
 
+        /// <summary>Single-line reply for on/off/offset/stretch so the state you just changed is the
+        /// ONLY line printed — a full status dump after "/swingarm off" buried the OFF line under
+        /// still-ON flip/aim lines and read as if the command hadn't worked.</summary>
         private static void ReplyStatus(CommandCaller caller)
         {
             Color c = InvaderNPC.CompositeArmSwingMasterEnable ? Color.Lime : Color.Gray;
@@ -132,6 +135,12 @@ namespace tsorcRevamp.Utilities
                 $"Composite-arm swing: {(InvaderNPC.CompositeArmSwingMasterEnable ? "ON (new)" : "OFF (legacy 4-frame)")} | " +
                 $"offset={InvaderNPC.CompositeArmRotationOffset:0.###} rad | stretch={InvaderNPC.CompositeArmStretch}",
                 c);
+        }
+
+        /// <summary>Full three-line dump, printed only for the explicit "/swingarm status".</summary>
+        private static void ReplyFullStatus(CommandCaller caller)
+        {
+            ReplyStatus(caller);
             caller.Reply(
                 $"Blade-flip mirror: {(InvaderNPC.BladeFlipMasterEnable ? "ON" : "OFF")}",
                 InvaderNPC.BladeFlipMasterEnable ? Color.Lime : Color.Gray);

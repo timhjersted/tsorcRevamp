@@ -179,6 +179,18 @@ namespace tsorcRevamp.NPCs
         }
 
         /// <summary>
+        /// Khaios and his spirit form are agile duelists: they can disengage with a jump or dash,
+        /// quick-step through pressure, and use their aggressive blink as an evasive answer.
+        /// </summary>
+        public static void Khaios(tsorcRevampGlobalNPC globalNPC)
+        {
+            globalNPC.EvasiveRetreatJump = true;
+            globalNPC.EvasiveRetreatDash = true;
+            globalNPC.EvasiveQuickStep = true;
+            globalNPC.EvasiveTeleportAway = true;
+        }
+
+        /// <summary>
         /// The AddAttack ghost fighters (Forgotten Warrior / Forgotten Knight / Darkmoon Knight): phase back or
         /// i-frame quick-step when hit. No teleport flag — they don't set CanTeleport (they have their own ghost
         /// wall-phase), so TeleportAway would just leap. QuickStep's i-frame dodge-through fits a phasing ghost.

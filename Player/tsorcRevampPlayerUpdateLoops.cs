@@ -473,6 +473,8 @@ namespace tsorcRevamp
         public bool HadBuffStrategist;
 
         public bool EnterTheAbyss;
+        // Set by the Vessel of Souls while it has swallowed you (hides the whole player). Reset each tick.
+        public bool SwallowHidden;
         // Not reset in ResetEffects - persists across ticks so AbyssTransitionEffects() (PostUpdateMiscEffects)
         // can detect the enter/exit edge instead of re-triggering every tick EnterTheAbyss happens to be true.
         public bool WasInAbyss;
@@ -497,6 +499,7 @@ namespace tsorcRevamp
             }
 
             EnterTheAbyss = false;
+            SwallowHidden = false;
             CovenantOfArtoriasEquipped = false;
             SlowfallWingActive = false;
             Suppressed = false;
@@ -2830,15 +2833,12 @@ namespace tsorcRevamp
             }
         }
 
-        // Applies the reduced effective max stats used by SoulsMode without rewriting the saved
-        // vanilla crystal totals, so toggling back to Classic can restore the normal values.
-        private int GetSoulsModeLifeCrystalGain(bool forceSolo = false)
+        // How much max HP one Life Crystal is worth in SoulsMode, scaled by party size. Read once at the moment
+        // the crystal is eaten (see GrantLifeCrystal) and banked permanently into soulsLifeGranted, so a
+        // crystal is worth what it was worth when you swallowed it — players joining or leaving later can't
+        // retroactively rewrite your max HP. Mana has no party scaling; it is a flat SoulsModeManaCrystalGain.
+        private int GetSoulsModeLifeCrystalGain()
         {
-            if (forceSolo)
-            {
-                return 10;
-            }
-
             int activePlayers = 0;
             for (int i = 0; i < Main.maxPlayers; i++)
             {
@@ -2850,71 +2850,6 @@ namespace tsorcRevamp
             return 10;
         }
 
-        internal void ApplySoulsModeEffectiveMaxStats(bool forceSoloLifeCrystalGain = false)
-        {
-            if (!SoulsMode)
-            {
-                return;
-            }
-
-            int lifeCrystals = Math.Min(GetLifeCrystalCap(), Math.Max(0, (Player.statLifeMax - GetStartingClassBaseLife()) / 20));
-            int lifeCrystalGain = GetSoulsModeLifeCrystalGain(forceSoloLifeCrystalGain);
-            int lifeReduction = lifeCrystals * (20 - lifeCrystalGain);
-            if (lifeReduction > 0)
-            {
-                Player.statLifeMax2 -= lifeReduction;
-                if (Player.statLife > Player.statLifeMax2) Player.statLife = Player.statLifeMax2;
-            }
-
-            int manaCrystals = Math.Max(0, (Player.statManaMax - GetStartingClassBaseMana()) / 20);
-            int manaReduction = manaCrystals * 10;
-            if (manaReduction > 0)
-            {
-                Player.statManaMax2 -= manaReduction;
-                if (Player.statMana > Player.statManaMax2) Player.statMana = Player.statManaMax2;
-            }
-        }
-
-        // SoulsMode's per-crystal gain is reduced (see GetSoulsModeLifeCrystalGain), but vanilla hard-caps
-        // consumption at 15 Life Crystals / 9 Mana Crystals (Player.ConsumedLifeCrystals/ConsumedManaCrystals),
-        // which was sized for the un-reduced +20/use. Left alone, a solo Unkindled/Bearer player caps out at
-        // base+150 life (270 for Melee) and base+90 mana (100 for Melee) — well short of the full class max —
-        // because they physically can't consume enough crystals to make up for the reduced gain. ILEdits.cs
-        // patches the vanilla usage-gate and Player.ConsumedLifeCrystals/ConsumedManaCrystals clamp to allow
-        // consuming up to these raised caps for SoulsMode players, so the *same* full class max is reachable,
-        // just via more crystals. Life gain is party-scaled (10/15/20), so the cap needed to net +300 total
-        // scales inversely (30/20/15).
-        internal int GetLifeCrystalCap()
-        {
-            if (!SoulsMode)
-            {
-                return 15;
-            }
-
-            return GetSoulsModeLifeCrystalGain() switch
-            {
-                10 => 30,
-                15 => 20,
-                _ => 15
-            };
-        }
-
-        // SoulsMode's target ceiling for max mana — higher than the vanilla-equivalent (class base + 180)
-        // so magic-leaning SoulsMode builds have real headroom. Mana's reduction is a flat -10/crystal
-        // regardless of party size (net +10/crystal), so the crystal count needed to reach this ceiling
-        // depends on the class's starting base mana.
-        private const int SoulsModeManaTarget = 300;
-
-        internal int GetManaCrystalCap()
-        {
-            if (!SoulsMode)
-            {
-                return 9;
-            }
-
-            int netNeeded = SoulsModeManaTarget - GetStartingClassBaseMana();
-            return Math.Max(9, (int)Math.Ceiling(netNeeded / 10.0));
-        }
         // Purple dust burst + a portal-ish whoosh on the exact tick EnterTheAbyss flips, so stepping into (or
         // out of) the Abyss reads as a reality shift rather than just a debuff icon appearing. Entering uses a
         // darker tint and a lower pitch (sinking into somewhere heavier); exiting is lighter/brighter-pitched
@@ -3003,7 +2938,7 @@ namespace tsorcRevamp
 
         private void SpawnAbyssMist()
         {
-            if (!EnterTheAbyss || Main.dedServ)
+            if ((!EnterTheAbyss && !MethodSwaps.IsAbyssVisualActive()) || Main.dedServ)
             {
                 return;
             }
@@ -3050,88 +2985,10 @@ namespace tsorcRevamp
             }
         }
 
-        private int previousStatLifeMax = -1;
-        private int previousStatManaMax = -1;
-        private int previousEffectiveStatLifeMax = -1;
-        private int previousEffectiveStatManaMax = -1;
-
         public override void PostUpdate()
         {
             // Update the red hurt vignette (local player only, handled inside).
             UpdateHurtVignette();
-
-            // Souls-tier crystal nerfs — continuous statLifeMax2/statManaMax2 cap.
-            //
-            // Earlier attempts at modifying the persistent statLifeMax (in UseItem, OnConsumeItem,
-            // and a +20 spike detector) all failed silently — vanilla's Life Crystal effect path
-            // and/or downstream stat recomputation kept restoring the full +20. Pattern used by
-            // Hollowed.cs works reliably: re-cap statLifeMax2 (the effective max, recomputed each
-            // frame from statLifeMax + bonuses) on every frame to the reduced value we want.
-            //
-            // Crystal counts come from the selected class's starting max stats. New class
-            // characters save those class values before any crystals, so the class bonus itself
-            // must not be counted as a consumed Life/Mana Crystal.
-            //
-            // In SoulsMode, the *visible* per-crystal gain is reduced based on party size:
-            //   solo (1)      → 10 HP/crystal (cap reduces by 150 once all 15 are used)
-            //   duo / trio    → 15 HP/crystal (cap reduces by 75 once all 15 are used)
-            //   4+ players    → 20 HP/crystal (no cap, vanilla matches)
-            //
-            // Life Fruits and Classic players are unaffected. Cap is purely runtime — if a player
-            // toggles to Classic via Darksign, their statLifeMax2 jumps to full vanilla value.
-            if (SoulsMode)
-            {
-                int crystalGain = GetSoulsModeLifeCrystalGain();
-                ApplySoulsModeEffectiveMaxStats();
-
-                // Rewrite the "+20" green heal popup vanilla spawned via Player.HealEffect when a
-                // Life Crystal was just consumed. Detected by the +20 spike to statLifeMax. The
-                // CombatText still exists in Main.combatText[] on this same frame, so we find and
-                // mutate it in place. MP caveat: only the player who used the crystal sees the
-                // rewritten number; other clients still see the broadcast "+20" since their own
-                // statLifeMax doesn't spike — accept this limitation rather than netcoding around it.
-                if (previousStatLifeMax >= 0 && Player.statLifeMax == previousStatLifeMax + 20)
-                {
-                    if (previousEffectiveStatLifeMax >= 0)
-                    {
-                        Player.statLifeMax2 = Math.Min(Player.statLifeMax2, previousEffectiveStatLifeMax + crystalGain);
-                        if (Player.statLife > Player.statLifeMax2) Player.statLife = Player.statLifeMax2;
-                    }
-
-                    for (int i = 0; i < Main.combatText.Length; i++)
-                    {
-                        CombatText ct = Main.combatText[i];
-                        if (ct.active && ct.color == CombatText.HealLife && ct.text == "20")
-                        {
-                            ct.text = crystalGain.ToString();
-                            break;
-                        }
-                    }
-                }
-            }
-            if (SoulsMode && previousStatManaMax >= 0 && Player.statManaMax == previousStatManaMax + 20)
-            {
-                if (previousEffectiveStatManaMax >= 0)
-                {
-                    Player.statManaMax2 = Math.Min(Player.statManaMax2, previousEffectiveStatManaMax + 10);
-                    if (Player.statMana > Player.statManaMax2) Player.statMana = Player.statManaMax2;
-                }
-
-                for (int i = 0; i < Main.combatText.Length; i++)
-                {
-                    CombatText ct = Main.combatText[i];
-                    if (ct.active && ct.color == CombatText.HealMana && ct.text == "20")
-                    {
-                        ct.text = "10";
-                        break;
-                    }
-                }
-            }
-
-            previousStatLifeMax = Player.statLifeMax;
-            previousStatManaMax = Player.statManaMax;
-            previousEffectiveStatLifeMax = Player.statLifeMax2;
-            previousEffectiveStatManaMax = Player.statManaMax2;
 
             if ((Player.HasBuff(ModContent.BuffType<MagicWeapon>()) || Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()) || Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>())) && Player.meleeEnchant > 0)
             {

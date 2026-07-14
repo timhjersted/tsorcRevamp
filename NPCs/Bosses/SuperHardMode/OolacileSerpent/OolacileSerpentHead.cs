@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             NPC.scale = 1.3f;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
-            NPC.damage = 60; //Only the head does contact damage (body/tail = 0); bite lunge contact = this
+            NPC.damage = 0; //Contact damage is enabled per-attack in SerpentAI (bite/pounce lunge + charge on the head, stab on the tail). Body pieces are always 0.
             NPC.defense = 100;
             NPC.HitSound = SoundID.NPCHit13;
             NPC.DeathSound = SoundID.Item119;
@@ -63,18 +63,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         //Rear pieces (the remaining body segments + tail) stay ground-snapped. See SerpentAI.
         public const int FrontFreeSegmentCount = 10;
 
-        //-- SerpentAI state (movement/behavior fields owned by the head, read/written via SerpentAI) --
-        public enum BurrowPhase { None, Descending, Ascending }
-        public BurrowPhase Burrow = BurrowPhase.None;
-        public int BurrowTimer;
-        public int BurrowCooldown;
-        public Vector2 BurrowTargetHeadPos;
-        public int FleeingTimer;
-        public float LastPlayerDistance = float.MaxValue;
-        public int NoLineOfSightTimer;
-        //Reserved hook: a future attack can call RequestBurrow() to force a burrow-and-resurface next tick.
-        public bool BurrowRequested;
-        public void RequestBurrow() => BurrowRequested = true;
+        //-- Head movement (kiting) --
+        //Facing is held with hysteresis (only flips once the player is clearly past a deadzone) so a player
+        //sitting near the head's X can't make it jitter left/right every frame.
+        public int Facing = 1;
+        //CrossOver: once it reaches the player it may advance THROUGH to the far side, then attack from there,
+        //instead of endlessly ramming. Never moves backwards otherwise.
+        public bool CrossingOver;
+        public int CrossOverCooldown;
+        public int CrossOverDir;
 
         public int ChargeTelegraphTimer;
         public int ChargeTimer;
@@ -118,17 +115,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public int AcidBodyTimer;      //>0 = actively trailing acid
         public int AcidBodyCooldown;
 
-        //-- GroundPierce: semi-independent tail attack from underground --
-        //The tail never detaches: it TRAVELS underground (hugging the terrain contour at depth) to beneath
-        //the player, dragging the rear body along via a taut-link rope pass, stabs, and travels back.
-        public enum PierceState { None, Sinking, Traveling, Aiming, Stabbing, Retracting, Returning }
-        public PierceState Pierce = PierceState.None;
-        public int PierceTimer;        //phase countdown; in Traveling = min-gap-between-stabs countdown
-        public int PierceTravelTimer;  //counts up while traveling; aborts the attack on timeout
-        public int PierceCooldown;
-        public int PierceCombo;        //stabs performed this cycle (max 4)
-        public Vector2 PierceTarget;   //locked player position when the warning dusts fire
-        public float PierceGroundY;    //ground surface world-Y below the target
+        //-- TailStab: overhead C-shape strike (fully above ground -- no burrowing) --
+        //The snake stays on the ground; the rear half rears up and curls into a C that arcs OVER the head, and
+        //the tail tip stabs down past the head at the player. The head holds still on the ground during it.
+        //Rear segments are posed along a Bezier by the head each tick (see SerpentAI.PoseTailStabArc).
+        public enum TailStabState { None, Coiling, Aiming, Stabbing, Recover, Retracting }
+        public TailStabState TailStab = TailStabState.None;
+        public int TailStabTimer;
+        public int TailStabCooldown;
+        public int TailStabCombo;       //stabs performed this cycle
+        public Vector2 TailStabTarget;  //locked player pos at aim time
+        public Vector2 TailStabTip;     //current driven tail-tip world pos (lerped toward the phase target)
+        public Vector2 TailStabAnchor;  //junction (last grounded segment) world center = the arc's base
+        public bool TailStabDamaging;   //true only during the downward stab -> tail contact damage on
 
         public override bool CheckActive()
         {
@@ -140,7 +139,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             int[] bodyTypes = SerpentAI.BuildBodyTypes();
-            SerpentAI.Run(NPC, ModContent.NPCType<OolacileSerpentHead>(), bodyTypes, ModContent.NPCType<OolacileSerpentTail>(), TotalSegmentCount, 18f);
+            //6f pursue speed -- deliberately slow (hardmode pacing); kiting caps it further near the player.
+            SerpentAI.Run(NPC, ModContent.NPCType<OolacileSerpentHead>(), bodyTypes, ModContent.NPCType<OolacileSerpentTail>(), TotalSegmentCount, 6f);
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)

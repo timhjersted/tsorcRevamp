@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Magic
         const int NovaManaCost = 20;    //surcharge on releasing the freeze ring
 
         int Mode => (int)Projectile.ai[0]; //0 = cursor high, 1 = cursor low
+        bool UsesRightClick => Projectile.ai[1] == 1f;
         float Timer => Projectile.localAI[0];
 
         public override void SetDefaults()
@@ -54,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.Center = player.Center;
             Projectile.timeLeft = 60;
             Projectile.localAI[0]++;
-            bool channeling = player.channel;
+            bool channeling = UsesRightClick ? player.controlUseTile : player.channel;
 
             if (channeling)
             {

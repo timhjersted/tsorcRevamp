@@ -44,6 +44,10 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.buffType = ModContent.BuffType<SpiritAshKnightBuff>();
             Item.shoot = ModContent.ProjectileType<SpiritAshKnightMinion>();
         }
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
+        {
+            BellSwingAnimation.Apply(Item, player, heldItemFrame);
+        }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             position = Main.MouseWorld;

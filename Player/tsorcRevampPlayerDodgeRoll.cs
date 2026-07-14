@@ -97,6 +97,14 @@ namespace tsorcRevamp
 
         public override void HideDrawLayers(PlayerDrawSet drawInfo)
         {
+            // Swallowed by the Vessel of Souls: hide the whole player.
+            if (SwallowHidden)
+            {
+                foreach (Terraria.ModLoader.PlayerDrawLayer layer in Terraria.ModLoader.PlayerDrawLayerLoader.Layers)
+                    layer.Hide();
+                return;
+            }
+
             // This has to run before the dodge-roll early return below. Otherwise the roll hides
             // the held item and exits before Capture the Gem's large-gem icon can be suppressed.
             PlayerDrawLayers.CaptureTheGem.Hide();

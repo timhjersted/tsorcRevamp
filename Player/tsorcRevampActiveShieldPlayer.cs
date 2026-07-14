@@ -54,6 +54,8 @@ namespace tsorcRevamp
 
         /// <summary>The item in this player's Right-Click (2nd) slot, or null.</summary>
         private Item RightClickItem => Player.GetModPlayer<tsorcRevampPlayer>().RightClickSlot?.Item;
+        private bool SecondSlotControlHeld => tsorcRevamp.SecondSlotKey?.Current ?? Player.controlUseTile;
+        private bool RightClickConflictActive => Player.controlUseTile;
 
         /// <summary>True when the Active Shields Revamp governs this player's shields (config on + SoulsMode).
         /// Shields read this to decide whether to apply their classic passive bonuses or defer to active blocking.</summary>
@@ -68,7 +70,7 @@ namespace tsorcRevamp
         }
 
         // ProcessTriggers is only called for the local player and runs once inputs are gathered,
-        // so Player.controlUseTile (right mouse) is valid here.
+        // so the dedicated 2nd Slot keybind is valid here.
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
             // Resolve the Right-Click (2nd) slot use first; it gates blocking below.
@@ -154,13 +156,13 @@ namespace tsorcRevamp
                 return false;
             }
 
-            // Right mouse held...
-            if (!Player.controlUseTile)
+            // 2nd Slot key held...
+            if (!SecondSlotControlHeld)
             {
                 return false;
             }
             // ...but only if the held weapon has no right-click (alt) function of its own (weapon alt-fire wins).
-            if (Player.HeldItem != null && !Player.HeldItem.IsAir && ItemLoader.AltFunctionUse(Player.HeldItem, Player))
+            if (RightClickConflictActive && Player.HeldItem != null && !Player.HeldItem.IsAir && ItemLoader.AltFunctionUse(Player.HeldItem, Player))
             {
                 return false;
             }
@@ -285,17 +287,17 @@ namespace tsorcRevamp
                 // Abort if the situation changes out from under us.
                 if (!RevampActive || !Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode
                     || Main.playerInventory || Player.dead || Player.selectedItem != swappedSlotIndex
-                    || IsVanillaContextRightClickAvailable())
+                    || (RightClickConflictActive && IsVanillaContextRightClickAvailable()))
                 {
                     EndSecondSlotUse();
                     return;
                 }
 
-                // RMB is the sole driver, so a stray left click can't also fire it ("no left + right at once").
-                Player.controlUseItem = Player.controlUseTile;
+                // The 2nd Slot key is the sole driver, so a stray left click can't also fire the item.
+                Player.controlUseItem = SecondSlotControlHeld;
 
                 // End once the button is released and any in-progress swing/throw finishes.
-                if (!Player.controlUseTile && Player.itemAnimation == 0)
+                if (!SecondSlotControlHeld && Player.itemAnimation == 0)
                 {
                     EndSecondSlotUse();
                 }
@@ -311,9 +313,9 @@ namespace tsorcRevamp
             {
                 return;
             }
-            if (!Player.controlUseTile)
+            if (!SecondSlotControlHeld)
             {
-                return; // RMB not held
+                return; // 2nd Slot control not held
             }
             if (Player.itemAnimation > 0)
             {
@@ -321,12 +323,12 @@ namespace tsorcRevamp
             }
             // Vanilla contextual right-clicks (talking to NPCs, opening nearby interactible projectiles like the
             // Void Bag, tile interactions, etc.) take priority over the 2nd slot.
-            if (IsVanillaContextRightClickAvailable())
+            if (RightClickConflictActive && IsVanillaContextRightClickAvailable())
             {
                 return;
             }
             // Held-weapon alt-fire takes priority over the slot.
-            if (Player.HeldItem != null && !Player.HeldItem.IsAir && ItemLoader.AltFunctionUse(Player.HeldItem, Player))
+            if (RightClickConflictActive && Player.HeldItem != null && !Player.HeldItem.IsAir && ItemLoader.AltFunctionUse(Player.HeldItem, Player))
             {
                 return;
             }
@@ -437,7 +439,7 @@ namespace tsorcRevamp
             // see it logically in the slot; EndSecondSlotUse reads it back afterwards.
             Player.inventory[swappedSlotIndex] = modPlayer.RightClickSlot.Item;
             usingSecondSlotItem = true;
-            Player.controlUseItem = Player.controlUseTile; // fire on this frame too
+            Player.controlUseItem = SecondSlotControlHeld; // fire on this frame too
         }
 
         public void EndSecondSlotUse()

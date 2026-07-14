@@ -1714,7 +1714,7 @@
   "style": 1
 }
 {
-  "text": "Press {DodgeRoll} to dodge roll through enemies while avoiding harm. --NEWLINE  --NEWLINE Estus Flask / Quick Heal = {QuickHeal} --NEWLINE Cerulean Tear / Quick Mana = {QuickMana} --NEWLINE Inventory = {Inventory} --NEWLINE  --NEWLINE You can change keybinds in Controls.",
+  "text": "Press {DodgeRoll} to dodge roll through enemies while avoiding harm. --NEWLINE  --NEWLINE Estus Flask / Quick Heal = {QuickHeal} --NEWLINE Cerulean Tear / Quick Mana = {QuickMana} --NEWLINE Inventory = {Inventory} --NEWLINE 2nd Slot: {SecondSlot} --NEWLINE  --NEWLINE You can change keybinds in Controls.",
   "tileX": 4855,
   "tileY": 866,
   "textWidth": 320,

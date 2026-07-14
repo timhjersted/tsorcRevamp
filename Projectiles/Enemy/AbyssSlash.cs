@@ -40,17 +40,25 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Animate();
 
-            if (Main.rand.NextBool(2))
+            if (!Main.dedServ)
             {
-                Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, -Projectile.velocity * 0.15f, 100, default, 0.9f);
-                d.noGravity = true;
+                for (int i = 0; i < 3; i++)
+                {
+                    bool white = Main.rand.NextBool(5);
+                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(18f, 12f) * Projectile.scale;
+                    Dust d = Dust.NewDustPerfect(position,
+                        white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
+                        -Projectile.velocity * Main.rand.NextFloat(0.05f, 0.16f) + Main.rand.NextVector2Circular(0.6f, 0.6f),
+                        90, white ? Color.White : Color.DarkViolet, Main.rand.NextFloat(0.85f, 1.25f));
+                    d.noGravity = true;
+                }
             }
         }
 
         void Animate()
         {
             Projectile.frameCounter++;
-            if (Projectile.frameCounter >= 5)
+            if (Projectile.frameCounter >= 4)
             {
                 Projectile.frameCounter = 0;
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Type];

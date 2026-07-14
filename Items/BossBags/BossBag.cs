@@ -111,6 +111,19 @@ namespace tsorcRevamp.Items.BossBags
 
         }
     }
+    public class VesselOfSoulsBag : BossBag
+    {
+         public override void SetStaticDefaults()
+        {
+            ItemID.Sets.BossBag[Type] = true;
+        }
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            // Two Souls of the Vessel → one crafts the Soul Reliquary, one the Gravemaw Tome.
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Materials.SoulOfTheVessel>(), 1, 2, 2));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Materials.DarkSoul>(), 1, 3000, 3000));
+        }
+    }
     public class OolacileDemonBag : BossBag
     {
         public override void SetStaticDefaults()

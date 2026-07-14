@@ -48,10 +48,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
             return player.ownedProjectileCounts[ModContent.ProjectileType<HeartOfWinterController>()] == 0;
         }
 
+        public override bool AltFunctionUse(Player player) => FourAttackWeaponControls.UsesAltFunction;
+
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            int mode = Main.MouseWorld.Y > player.Bottom.Y ? 1 : 0;
-            Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI, mode);
+            int mode = FourAttackWeaponControls.GetAttackMode(player);
+            Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback,
+                player.whoAmI, mode, player.altFunctionUse == 2 ? 1f : 0f);
             return false;
         }
     }

@@ -78,6 +78,10 @@ namespace TerraUI.Objects
         /// </summary>
         public int HitboxRightAndBottomPadding { get; set; }
         /// <summary>
+        /// Whether custom hover text should be shown beneath the item name when this slot is occupied.
+        /// </summary>
+        public bool AppendHoverTextToItemName { get; set; }
+        /// <summary>
         /// When true, the item can't be manually taken out of (or swapped out of) the slot once present —
         /// only deposited into an empty slot. Used by the souls slot so Dark Souls can't be moved to the
         /// inventory / piggy bank (they're auto-deposited on pickup and spent at altars).
@@ -242,7 +246,7 @@ namespace TerraUI.Objects
                 }
                 else if (Item.stack > 0)
                 {
-                    Main.hoverItemName = Item.Name;
+                    Main.hoverItemName = AppendHoverTextToItemName ? Item.Name + "\n" + HoverText : Item.Name;
                 }
                 else if (Item.stack > 1)
                 {

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Achievements;
 using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -45,6 +47,11 @@ namespace tsorcRevamp
     {
         private static Vector2 abyssLastScreenPosition;
         private static Vector2 abyssCameraVelocity;
+        private static Asset<Texture2D> vesselInteriorBackground;
+
+        // This is intentionally one isolated, optional layer. Set false to return to the existing
+        // black + star background unchanged.
+        private const bool UseVesselInteriorBackground = true;
 
         internal static void ApplyMethodSwaps()
         {
@@ -111,8 +118,10 @@ namespace tsorcRevamp
 
             Terraria.GameContent.UI.States.On_UIWorldSelect.NewWorldClick += UIWorldSelect_NewWorldClick;
             Terraria.GameContent.UI.States.On_UICharacterSelect.NewCharacterClick += UICharacterSelect_NewCharacterClick;
-            Terraria.GameContent.UI.Elements.On_UICharacterListItem.ctor += UICharacterListItem_ctor;
             Terraria.GameContent.UI.States.On_UICharacterCreation.SetupPlayerStatsAndInventoryBasedOnDifficulty += UICharacterCreation_SetupPlayerStatsAndInventoryBasedOnDifficulty;
+
+            Terraria.On_Player.ItemCheck_UseLifeCrystal += On_Player_ItemCheck_UseLifeCrystal;
+            Terraria.On_Player.ItemCheck_UseManaCrystal += On_Player_ItemCheck_UseManaCrystal;
             Terraria.IO.On_PlayerFileData.CreateAndSave += PlayerFileData_CreateAndSave;
 
             Terraria.On_Player.HandleBeingInChestRange += Player_HandleBeingInChestRange;
@@ -237,7 +246,7 @@ namespace tsorcRevamp
                 return;
             }
 
-            const float unselectedOpacity = 0f;
+            const float unselectedOpacity = 0.25f;
             const float adjacentOpacity = 0.5f;
             int slotX = 20;
             for (int slot = 0; slot < 10; slot++)
@@ -328,6 +337,35 @@ namespace tsorcRevamp
             orig(self);
         }
 
+        private static Artorias FindActiveArtorias()
+        {
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].ModNPC is Artorias artorias)
+                {
+                    return artorias;
+                }
+            }
+
+            return null;
+        }
+
+        internal static bool IsAbyssVisualActive()
+        {
+            return IsArtoriasAbyssSurgeActive()
+                || Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true;
+        }
+
+        internal static bool IsArtoriasAbyssSurgeActive()
+        {
+            return FindActiveArtorias()?.AbyssSurgeActive == true;
+        }
+
+        private static bool IsVesselVoidVisualActive()
+        {
+            return NPCs.Bosses.VesselOfSouls.VesselOfSoulsFadeSystem.WorldHidden;
+        }
+
         private static void DrawAbyssSpaceBackground()
         {
             Texture2D pixel = TextureAssets.MagicPixel.Value;
@@ -341,12 +379,49 @@ namespace tsorcRevamp
             abyssCameraVelocity = Main.screenPosition - abyssLastScreenPosition;
             abyssLastScreenPosition = Main.screenPosition;
 
-            DrawAbyssStarLayer(pixel, 112f, 0.012f, 0.42f, 0.7f, new Color(180, 220, 255));
-            DrawAbyssStarLayer(pixel, 76f, 0.022f, 0.62f, 1f, Color.White);
-            DrawAbyssStarLayer(pixel, 48f, 0.038f, 0.28f, 1.25f, new Color(200, 255, 230));
+            bool vesselVoid = IsVesselVoidVisualActive();
+            float animationScale = vesselVoid ? 0.5f : 1f;
+            DrawAbyssStarLayer(pixel, 112f, 0.012f, 0.42f, 0.7f,
+                vesselVoid ? new Color(170, 25, 20) : new Color(180, 220, 255),
+                vesselVoid ? new Color(255, 105, 85) : Color.White, animationScale);
+            DrawAbyssStarLayer(pixel, 76f, 0.022f, 0.62f, 1f,
+                vesselVoid ? new Color(255, 95, 70) : Color.White,
+                vesselVoid ? new Color(255, 145, 115) : Color.White, animationScale);
+            DrawAbyssStarLayer(pixel, 48f, 0.038f, 0.28f, 1.25f,
+                vesselVoid ? new Color(255, 155, 120) : new Color(200, 255, 230),
+                vesselVoid ? new Color(255, 85, 65) : Color.White, animationScale);
         }
 
-        private static void DrawAbyssStarLayer(Texture2D pixel, float cellSize, float parallax, float density, float brightness, Color accentColor)
+        internal static void DrawVesselInteriorBackground(float opacity = 1f)
+        {
+            if (!UseVesselInteriorBackground)
+                return;
+
+            vesselInteriorBackground ??= ModContent.Request<Texture2D>(
+                "tsorcRevamp/Textures/Backgrounds/VesselOfSoulsInterior", AssetRequestMode.ImmediateLoad);
+            Texture2D texture = vesselInteriorBackground.Value;
+
+            // Center-crop to cover the screen at any aspect ratio without stretching the artwork.
+            float screenAspect = Main.screenWidth / (float)Main.screenHeight;
+            float textureAspect = texture.Width / (float)texture.Height;
+            Rectangle source;
+            if (textureAspect > screenAspect)
+            {
+                int sourceWidth = (int)(texture.Height * screenAspect);
+                source = new Rectangle((texture.Width - sourceWidth) / 2, 0, sourceWidth, texture.Height);
+            }
+            else
+            {
+                int sourceHeight = (int)(texture.Width / screenAspect);
+                source = new Rectangle(0, (texture.Height - sourceHeight) / 2, texture.Width, sourceHeight);
+            }
+
+            // Slight translucency preserves the black foundation and lets the existing stars remain crisp.
+            Main.spriteBatch.Draw(texture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight),
+                source, Color.White * (0.9f * MathHelper.Clamp(opacity, 0f, 1f)));
+        }
+
+        private static void DrawAbyssStarLayer(Texture2D pixel, float cellSize, float parallax, float density, float brightness, Color accentColor, Color baseColor, float animationScale)
         {
             Vector2 parallaxPosition = Main.screenPosition * parallax;
             int startCellX = (int)Math.Floor((parallaxPosition.X - 96f) / cellSize);
@@ -386,9 +461,9 @@ namespace tsorcRevamp
                     const float minVisibilityInLight = 0.15f;
                     float visibility = minVisibilityInLight + (1f - minVisibilityInLight) * darkness;
 
-                    float twinkle = 0.65f + 0.35f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * (1.2f + Hash01(cellX, cellY, 71) * 1.6f) + seed * MathHelper.TwoPi);
+                    float twinkle = 0.65f + 0.35f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * animationScale * (1.2f + Hash01(cellX, cellY, 71) * 1.6f) + seed * MathHelper.TwoPi);
                     int size = Hash01(cellX, cellY, 101) > 0.88f ? 2 : 1;
-                    Color color = (Hash01(cellX, cellY, 131) > 0.82f ? accentColor : Color.White) * ((0.2f + 0.58f * twinkle) * brightness * visibility);
+                    Color color = (Hash01(cellX, cellY, 131) > 0.82f ? accentColor : baseColor) * ((0.2f + 0.58f * twinkle) * brightness * visibility);
 
                     Main.spriteBatch.Draw(pixel, new Rectangle((int)starPosition.X, (int)starPosition.Y, size, size), color);
                 }
@@ -2100,70 +2175,10 @@ namespace tsorcRevamp
                 Main.spriteBatch.End();
             }
 
-            DrawArtoriasRingDarkness();
-
-            if (Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true)
+            if (IsAbyssVisualActive())
             {
                 DrawAbyssForegroundParticles();
             }
-        }
-
-        // Darkens everything outside Artorias's fixed abyss ring, drawn BEFORE the abyss sparkle
-        // foreground particles so those stars still read on top of the darkness. Approximated with a
-        // handful of concentric arc-bands (no shader/gradient asset needed) - opacity ramps from fully
-        // clear at the ring's edge to fully black RingDarknessFalloff px further out.
-        private const float RingDarknessFalloff = 800f;
-        private const int RingDarknessBands = 5;
-        private const int RingDarknessSegments = 40;
-
-        private static void DrawArtoriasRingDarkness()
-        {
-            if (!Main.IsGraphicsDeviceAvailable || Main.gameMenu || Main.mapFullscreen)
-            {
-                return;
-            }
-
-            Artorias artorias = null;
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (Main.npc[i].active && Main.npc[i].ModNPC is Artorias a)
-                {
-                    artorias = a;
-                    break;
-                }
-            }
-            if (artorias == null)
-            {
-                return;
-            }
-
-            Vector2 center = artorias.RingCenter - Main.screenPosition;
-            Texture2D pixel = TextureAssets.MagicPixel.Value;
-
-            // World-space matrix (not UIScaleMatrix) so this lines up with the ring's actual world
-            // position regardless of the player's UI scale setting.
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            for (int band = 0; band < RingDarknessBands; band++)
-            {
-                float t = (band + 1) / (float)RingDarknessBands;
-                float radius = artorias.EffectiveRingRadius + RingDarknessFalloff * t;
-                float alpha = t * t * 0.9f; // ease-in, fully opaque by the outermost band
-                float bandThickness = RingDarknessFalloff / RingDarknessBands + 6f; // slight overlap seam
-                float segLength = MathHelper.TwoPi * radius / RingDarknessSegments + 8f;
-
-                for (int seg = 0; seg < RingDarknessSegments; seg++)
-                {
-                    float angle = MathHelper.TwoPi * seg / RingDarknessSegments;
-                    Vector2 dir = angle.ToRotationVector2();
-                    Vector2 pos = center + dir * radius;
-                    Main.spriteBatch.Draw(pixel, pos, null, Color.Black * alpha,
-                        angle + MathHelper.PiOver2, new Vector2(0.5f, 0.5f), new Vector2(segLength, bandThickness),
-                        SpriteEffects.None, 0f);
-                }
-            }
-
-            Main.spriteBatch.End();
         }
 
         private static void DrawAbyssForegroundParticles()
@@ -2181,7 +2196,10 @@ namespace tsorcRevamp
             float density = 0.7f; // doubled from 0.35f
 
             Vector2 parallaxPosition = Main.screenPosition * parallax;
-            Vector2 windOffset = new Vector2(Main.GlobalTimeWrappedHourly * 15f, Main.GlobalTimeWrappedHourly * 6f);
+            bool vesselVoid = IsVesselVoidVisualActive();
+            float movementScale = vesselVoid ? 0.5f : 1f;
+            float visualTime = Main.GlobalTimeWrappedHourly * movementScale;
+            Vector2 windOffset = new Vector2(visualTime * 15f, visualTime * 6f);
             Vector2 scrollPosition = parallaxPosition + windOffset;
 
             int startCellX = (int)Math.Floor((scrollPosition.X - cellSize) / cellSize);
@@ -2202,8 +2220,10 @@ namespace tsorcRevamp
                     float offsetX = Hash01(cellX, cellY, 29) * cellSize;
                     float offsetY = Hash01(cellX, cellY, 61) * cellSize;
                     Vector2 particlePosition = new Vector2(cellX * cellSize + offsetX, cellY * cellSize + offsetY) - scrollPosition;
-                    float pulse = 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * (1.5f + Hash01(cellX, cellY, 113) * 2.0f) + seed * MathHelper.TwoPi);
-                    Color color = (Hash01(cellX, cellY, 173) > 0.7f ? new Color(180, 220, 255) : Color.White) * (0.75f * pulse);
+                    float pulse = 0.5f + 0.5f * (float)Math.Sin(visualTime * (1.5f + Hash01(cellX, cellY, 113) * 2.0f) + seed * MathHelper.TwoPi);
+                    Color accent = vesselVoid ? new Color(255, 55, 45) : new Color(180, 220, 255);
+                    Color baseColor = vesselVoid ? new Color(255, 125, 105) : Color.White;
+                    Color color = (Hash01(cellX, cellY, 173) > 0.7f ? accent : baseColor) * (0.75f * pulse);
                     int size = Hash01(cellX, cellY, 233) > 0.85f ? 2 : 1;
 
                     Main.spriteBatch.Draw(pixel, new Rectangle((int)particlePosition.X, (int)particlePosition.Y, size, size), color);
@@ -2762,11 +2782,45 @@ namespace tsorcRevamp
             Main.MenuUI.SetState(new StartingClassUIState());
         }
 
-        private static void UICharacterListItem_ctor(Terraria.GameContent.UI.Elements.On_UICharacterListItem.orig_ctor orig, Terraria.GameContent.UI.Elements.UICharacterListItem self, Terraria.IO.PlayerFileData data, int snapPointIndex)
+        // The mod owns Life/Mana Crystal consumption outright, in Classic as well as SoulsMode — vanilla's
+        // ConsumedLifeCrystals counter saturates at 15 and so can't record how many crystals a SoulsMode player
+        // has actually eaten at the reduced rate. tsorcRevampPlayer keeps that count (plus the SoulsMode value
+        // banked per crystal) and feeds the vanilla counter only whole crystals' worth, which keeps the saved
+        // player file inside the range Player.Serialize can round-trip. Classic still has to route through here
+        // or its crystal count would go unrecorded, and switching modes would mis-value it.
+        //
+        // Same guards and same ordering as vanilla, with the cap swapped from `ConsumedLifeCrystals < 15` to our
+        // own per-class, per-mode one. Returning without calling ApplyItemTime is what leaves the crystal
+        // unconsumed — vanilla only decrements the stack once itemTime has been applied — so a maxed-out player
+        // wastes nothing. `orig` is intentionally never called.
+        private static void On_Player_ItemCheck_UseLifeCrystal(Terraria.On_Player.orig_ItemCheck_UseLifeCrystal orig, Player self, Item sItem)
         {
-            data?.Player?.GetModPlayer<tsorcRevampPlayer>().ApplySoulsModeEffectiveMaxStats(forceSoloLifeCrystalGain: true);
-            orig(self, data, snapPointIndex);
+            tsorcRevampPlayer modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
+
+            if (sItem.type != ItemID.LifeCrystal || self.itemAnimation <= 0 || modPlayer.LifeCrystalsMaxed || !self.ItemTimeIsZero)
+            {
+                return;
+            }
+
+            self.ApplyItemTime(sItem);
+            modPlayer.GrantLifeCrystal();
+            AchievementsHelper.HandleSpecialEvent(self, 0);
         }
+
+        private static void On_Player_ItemCheck_UseManaCrystal(Terraria.On_Player.orig_ItemCheck_UseManaCrystal orig, Player self, Item sItem)
+        {
+            tsorcRevampPlayer modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
+
+            if (sItem.type != ItemID.ManaCrystal || self.itemAnimation <= 0 || modPlayer.ManaCrystalsMaxed || !self.ItemTimeIsZero)
+            {
+                return;
+            }
+
+            self.ApplyItemTime(sItem);
+            modPlayer.GrantManaCrystal();
+            AchievementsHelper.HandleSpecialEvent(self, 1);
+        }
+
         private static FieldInfo characterCreationPlayerField;
 
         private static void UICharacterCreation_SetupPlayerStatsAndInventoryBasedOnDifficulty(Terraria.GameContent.UI.States.On_UICharacterCreation.orig_SetupPlayerStatsAndInventoryBasedOnDifficulty orig, Terraria.GameContent.UI.States.UICharacterCreation self)

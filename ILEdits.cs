@@ -18,17 +18,34 @@ namespace tsorcRevamp
             Terraria.IL_Player.Update += Player_Update;
             Terraria.IL_Player.Update += WingFallDamage_Patch;
 
-            // SoulsMode Life/Mana Crystal cap raise — see GetLifeCrystalCap/GetManaCrystalCap in
-            // tsorcRevampPlayerUpdateLoops.cs for why this is needed. Both the usage-gate check and the
-            // ConsumedLifeCrystals/ConsumedManaCrystals property setters (which independently re-clamp to
-            // 15/9) need patching, or the setter would silently undo the gate change. Property accessors
-            // aren't exposed as IL_Player.set_X members (same reason DrawWires_Patch below uses reflection
-            // instead of a built-in hook), so these two go through MonoModHooks.Modify.
-            MonoModHooks.Modify(typeof(Player).GetProperty("ConsumedLifeCrystals").GetSetMethod(), new ILContext.Manipulator(ConsumedLifeCrystals_CapPatch));
-            MonoModHooks.Modify(typeof(Player).GetProperty("ConsumedManaCrystals").GetSetMethod(), new ILContext.Manipulator(ConsumedManaCrystals_CapPatch));
-            Terraria.IL_Player.ItemCheck_UseLifeCrystal += ItemCheckUseLifeCrystal_CapPatch;
-            Terraria.IL_Player.ItemCheck_UseManaCrystal += ItemCheckUseManaCrystal_CapPatch;
-            Terraria.IL_Player.ItemCheck_UseLifeFruit += ItemCheckUseLifeFruit_CapPatch;
+            // NOTE: the SoulsMode crystal system deliberately does NOT raise vanilla's 15/9 consumed-crystal
+            // clamps. Those clamps are exactly what keeps the saved player file well-formed — see
+            // tsorcRevampPlayer.soulsLifeGranted. Raising them (which this file used to do) is what caused the
+            // phantom Life Fruit and the mana reset on reload.
+
+            // Color/White lighting normally composites tiles from cached render targets. Vessel phase 2
+            // needs the live GlobalTile/GlobalWall PreDraw decisions instead, or old biome tiles remain
+            // visible until Terraria happens to rebuild those targets.
+            Terraria.IL_Main.DoDraw += VesselVoid_ForceDirectWorldDrawing;
+
+            // DrawBlack, DrawWalls, and Terraria's cached tile passes bypass or outlive the per-tile
+            // PreDraw decisions and leave block-shaped biome fragments over the Vessel background.
+            // Suppress the complete vanilla tile pass during phase 2; the Vessel overlay redraws only
+            // platform tiles after its fog pass.
+            MethodInfo drawBlack = typeof(Main).GetMethod("DrawBlack", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo drawWalls = typeof(Main).GetMethod("DrawWalls", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo drawTiles = typeof(Main).GetMethod("DrawTiles", BindingFlags.NonPublic | BindingFlags.Instance,
+                null, new[] { typeof(bool), typeof(bool), typeof(bool), typeof(int) }, null);
+            MethodInfo drawTileEntities = typeof(Main).GetMethod("DrawTileEntities", BindingFlags.NonPublic | BindingFlags.Instance,
+                null, new[] { typeof(bool), typeof(bool), typeof(bool) }, null);
+            if (drawBlack != null)
+                MonoModHooks.Modify(drawBlack, new ILContext.Manipulator(VesselVoid_SkipHiddenWorldLayer));
+            if (drawWalls != null)
+                MonoModHooks.Modify(drawWalls, new ILContext.Manipulator(VesselVoid_SkipHiddenWorldLayer));
+            if (drawTiles != null)
+                MonoModHooks.Modify(drawTiles, new ILContext.Manipulator(VesselVoid_SkipHiddenWorldLayer));
+            if (drawTileEntities != null)
+                MonoModHooks.Modify(drawTileEntities, new ILContext.Manipulator(VesselVoid_SkipHiddenWorldLayer));
 
             MethodInfo drawMapIconButtons = typeof(Main).GetMethod("DrawMapIconButtons", BindingFlags.NonPublic | BindingFlags.Instance);
             if (drawMapIconButtons != null)
@@ -128,6 +145,31 @@ namespace tsorcRevamp
             //outcome: sets 'stack' to 'stack', instead of setting 'stack' to 'stack - 1'.
         }
 
+        internal static void VesselVoid_ForceDirectWorldDrawing(ILContext il)
+        {
+            var c = new ILCursor(il);
+
+            if (!c.TryGotoNext(MoveType.After, instruction => instruction.MatchCall<Lighting>("get_UpdateEveryFrame")))
+            {
+                throw new Exception("Could not find Lighting.UpdateEveryFrame in Main.DoDraw for Vessel void rendering");
+            }
+
+            c.EmitDelegate<Func<bool, bool>>(updateEveryFrame => updateEveryFrame
+                || NPCs.Bosses.VesselOfSouls.VesselOfSoulsFadeSystem.WorldHidden);
+        }
+
+        internal static void VesselVoid_SkipHiddenWorldLayer(ILContext il)
+        {
+            var c = new ILCursor(il);
+            ILLabel drawNormally = il.DefineLabel();
+
+            c.EmitDelegate<Func<bool>>(() =>
+                NPCs.Bosses.VesselOfSouls.VesselOfSoulsFadeSystem.WorldHidden);
+            c.Emit(OpCodes.Brfalse, drawNormally);
+            c.Emit(OpCodes.Ret);
+            c.MarkLabel(drawNormally);
+        }
+
         internal static void DrawWires_Patch(ILContext il)
         {
             var c = new ILCursor(il);
@@ -206,98 +248,6 @@ namespace tsorcRevamp
                 return modPlayer.SlowfallWingActive
                     || (player.controlJump && player.velocity.Y > 0f && player.wingsLogic > 0);
             });
-        }
-
-        private static int GetLifeCrystalCapFor(Player player) => player.GetModPlayer<tsorcRevampPlayer>().GetLifeCrystalCap();
-        private static int GetManaCrystalCapFor(Player player) => player.GetModPlayer<tsorcRevampPlayer>().GetManaCrystalCap();
-
-        // Player.ConsumedLifeCrystals's setter does `consumedLifeCrystals = Utils.Clamp(value, 0, 15);` —
-        // replace the constant upper bound (15) with our per-player SoulsMode-aware cap.
-        internal static void ConsumedLifeCrystals_CapPatch(ILContext il)
-        {
-            Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            ILCursor cursor = new ILCursor(il);
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(15)))
-            {
-                mod.Logger.Warn("ConsumedLifeCrystals_CapPatch: instruction not found — Life Crystal cap raise for SoulsMode will not apply.");
-                return;
-            }
-
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate<Func<Player, int>>(GetLifeCrystalCapFor);
-        }
-
-        // Player.ConsumedManaCrystals's setter does `consumedManaCrystals = Utils.Clamp(value, 0, 9);` —
-        // replace the constant upper bound (9) with our per-player SoulsMode-aware cap.
-        internal static void ConsumedManaCrystals_CapPatch(ILContext il)
-        {
-            Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            ILCursor cursor = new ILCursor(il);
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(9)))
-            {
-                mod.Logger.Warn("ConsumedManaCrystals_CapPatch: instruction not found — Mana Crystal cap raise for SoulsMode will not apply.");
-                return;
-            }
-
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate<Func<Player, int>>(GetManaCrystalCapFor);
-        }
-
-        // ItemCheck_UseLifeCrystal gates on `ConsumedLifeCrystals < 15` — raise the 15 to our cap.
-        internal static void ItemCheckUseLifeCrystal_CapPatch(ILContext il)
-        {
-            Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            ILCursor cursor = new ILCursor(il);
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(15)))
-            {
-                mod.Logger.Warn("ItemCheckUseLifeCrystal_CapPatch: instruction not found — Life Crystal cap raise for SoulsMode will not apply.");
-                return;
-            }
-
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate<Func<Player, int>>(GetLifeCrystalCapFor);
-        }
-
-        // ItemCheck_UseManaCrystal gates on `ConsumedManaCrystals < 9` — raise the 9 to our cap.
-        internal static void ItemCheckUseManaCrystal_CapPatch(ILContext il)
-        {
-            Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            ILCursor cursor = new ILCursor(il);
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(9)))
-            {
-                mod.Logger.Warn("ItemCheckUseManaCrystal_CapPatch: instruction not found — Mana Crystal cap raise for SoulsMode will not apply.");
-                return;
-            }
-
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate<Func<Player, int>>(GetManaCrystalCapFor);
-        }
-
-        // ItemCheck_UseLifeFruit requires `ConsumedLifeCrystals == 15` (all Life Crystals used) before Life
-        // Fruit works. Since SoulsMode's "all crystals used" point is now a higher number, raise the 15 here
-        // too or Life Fruit would become permanently unusable for SoulsMode players.
-        internal static void ItemCheckUseLifeFruit_CapPatch(ILContext il)
-        {
-            Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            ILCursor cursor = new ILCursor(il);
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(15)))
-            {
-                mod.Logger.Warn("ItemCheckUseLifeFruit_CapPatch: instruction not found — Life Fruit unlock threshold for SoulsMode will not apply.");
-                return;
-            }
-
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate<Func<Player, int>>(GetLifeCrystalCapFor);
         }
 
         internal static void Chest_Patch(ILContext il)

@@ -12,7 +12,7 @@ using tsorcRevamp.Items.Weapons.Melee.Flails;
 using System;
 namespace tsorcRevamp.NPCs.Invaders
 {
-    public class BlackNinja : InvaderNPC
+    public class BlackNinja : InvaderNPC, IFlailAnchor
     {
         protected override string InvaderTitle => "Black Ninja";
 
@@ -50,7 +50,9 @@ namespace tsorcRevamp.NPCs.Invaders
 
         // The smoke bomb (secondary) renders bigger than a throwing star, and sparks a lit fuse.
         protected override float GetHeldRangedDrawScale(int itemType)
-            => itemType == SecondaryRangedWeaponItemType ? 0.78f : base.GetHeldRangedDrawScale(itemType);
+            => itemType == SecondaryRangedWeaponItemType
+                ? 0.78f
+                : base.GetHeldRangedDrawScale(itemType) * 0.5f;
         protected override bool HeldRangedFuseSparks(int itemType)
             => itemType == SecondaryRangedWeaponItemType;
         protected override WeaponArchetype RangedArchetype => WeaponArchetype.Throwables;
@@ -105,6 +107,9 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int MagicRecoveryTicks => 50;
         protected override int MagicCooldownAfterUse => 360;
         protected override Color MagicTelegraphFlashColor => new Color(80, 80, 80);
+
+        public Vector2 GetFlailAnchor()
+            => NPC.Center + new Vector2(NPC.direction * 2f, -NPC.height * 0.2f + 10f);
 
         protected override float TopSpeed => 2.85f;
         protected override float Acceleration => 0.105f;

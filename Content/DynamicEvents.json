@@ -4090,5 +4090,32 @@
         "CustomSouls": null
       }
     ]
+  },
+  {
+    "EventID": "8fa2728d-34f1-4b1d-a001-afa1fe7ede75",
+    "CenterX": 4910.0,
+    "CenterY": 859.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 61,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "Owl",
+        "SpawnX": 4910.0,
+        "SpawnY": 859.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
   }
 ]

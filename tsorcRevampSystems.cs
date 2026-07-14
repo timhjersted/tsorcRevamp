@@ -523,7 +523,6 @@ namespace tsorcRevamp
 
         public override void UpdateUI(GameTime gameTime)
         {
-            SyncRecommendedControlsConfig();
 
             if (Items.Debug.EnemyDebugTome.JustClosedUI && !Main.mouseLeft && !Main.mouseRight)
             {
@@ -725,21 +724,6 @@ namespace tsorcRevamp
             hurtVignetteTexture.SetData(data);
         }
 
-        private static void SyncRecommendedControlsConfig()
-        {
-            if (Main.dedServ || !tsorcRevampControlsConfig.Loaded)
-            {
-                return;
-            }
-
-            tsorcRevampControlsConfig controlsConfig = ModContent.GetInstance<tsorcRevampControlsConfig>();
-            if (controlsConfig.RecommendedControls && !tsorcRevamp.RecommendedControlBindingsMatch())
-            {
-                controlsConfig.RecommendedControls = false;
-                tsorcRevampControlsConfig.LastRecommendedControls = false;
-            }
-        }
-
         private static string FormatSoapstoneText(string text)
         {
             if (string.IsNullOrEmpty(text) || !text.Contains("{"))
@@ -753,7 +737,13 @@ namespace tsorcRevamp
                 .Replace("{QuickMana}", GetKeyboardBindingText("QuickMana"))
                 .Replace("{Inventory}", GetKeyboardBindingText("Inventory"))
                 .Replace("{QuickMount}", GetKeyboardBindingText("QuickMount"))
-                .Replace("{AutoSelect}", GetKeyboardBindingText("SmartSelect"));
+                .Replace("{AutoSelect}", GetKeyboardBindingText("SmartSelect"))
+                .Replace("{SecondSlot}", GetSecondSlotBindingText());
+        }
+
+        internal static string GetSecondSlotBindingText()
+        {
+            return GetKeyboardBindingText("tsorcRevamp/2nd Slot");
         }
 
         private static string GetKeyboardBindingText(string trigger)
@@ -770,11 +760,24 @@ namespace tsorcRevamp
             {
                 if (!string.IsNullOrWhiteSpace(key))
                 {
-                    boundKeys.Add(key);
+                    boundKeys.Add(GetFriendlyBindingText(key));
                 }
             }
 
             return boundKeys.Count > 0 ? string.Join(" / ", boundKeys) : "Unbound";
+        }
+
+        private static string GetFriendlyBindingText(string key)
+        {
+            return key switch
+            {
+                "Mouse1" => LangUtils.GetTextValue("UI.LeftMouseClick"),
+                "Mouse2" => LangUtils.GetTextValue("UI.RightMouseClick"),
+                "Mouse3" => LangUtils.GetTextValue("UI.MiddleMouseClick"),
+                "Mouse4" => LangUtils.GetTextValue("UI.MouseButton", 4),
+                "Mouse5" => LangUtils.GetTextValue("UI.MouseButton", 5),
+                _ => key
+            };
         }
 
         public override void PostDrawInterface(SpriteBatch spriteBatch)
@@ -1547,40 +1550,29 @@ namespace tsorcRevamp
             int startY = 15;
 
             Texture2D pixel = TextureAssets.MagicPixel.Value;
-            Texture2D barEmpty = ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty").Value;            // Helper to get compressed bar width based on max capacity:
-            // - Under or equal to 400: 1.0x scale
-            // - 401 to 500: 20% compressed (0.8x scale for all chunks)
-            // - 501 or more: 30% compressed (0.7x scale for all chunks)
-            int GetBarWidth(float maxVal)
+            Texture2D barEmpty = ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty").Value;
+
+            // Pixels-per-point falls off as the bar grows, so a 500-max bar doesn't run away across the screen:
+            // the first 400 points are drawn 1:1, points 400-500 at 0.8x, and anything past 500 at 0.7x.
+            //
+            // The compression is applied to each band separately, NOT to the whole bar based on which band the
+            // max happens to land in. Scaling the whole bar makes the width jump *backwards* the moment you
+            // cross a threshold — the first Life Fruit took a 400-max bar from 400px (400 x 1.0) to 324px
+            // (405 x 0.8), so growing your max health visibly shrank the bar. Banding keeps it monotonic:
+            // 400 -> 400px, 405 -> 404px, 500 -> 480px.
+            float ScaleResource(float value)
             {
-                float scale = 1f;
-                if (maxVal > 400f && maxVal <= 500f)
-                {
-                    scale = 0.8f;
-                }
-                else if (maxVal > 500f)
-                {
-                    scale = 0.7f;
-                }
-                return (int)(maxVal * scale);
+                if (value <= 0f) return 0f;
+                if (value <= 400f) return value;
+                if (value <= 500f) return 400f + (value - 400f) * 0.8f;
+                return 480f + (value - 500f) * 0.7f;
             }
 
-            int GetFillWidth(float val, float maxVal)
-            {
-                float currentVal = Math.Min(val, maxVal);
-                if (currentVal <= 0f) return 0;
+            int GetBarWidth(float maxVal) => (int)ScaleResource(maxVal);
 
-                float scale = 1f;
-                if (maxVal > 400f && maxVal <= 500f)
-                {
-                    scale = 0.8f;
-                }
-                else if (maxVal > 500f)
-                {
-                    scale = 0.7f;
-                }
-                return (int)(currentVal * scale);
-            }
+            // Uses the same mapping as the casing, so one point of health is the same number of pixels wherever
+            // it sits on the bar and the fill still reaches the right edge exactly at full.
+            int GetFillWidth(float val, float maxVal) => (int)ScaleResource(Math.Min(val, maxVal));
 
             // Reusable bar drawing helper using 3-slice rendering of the overhead stamina bar sprite
             void DrawBar(int y, float current, float visualCurrent, float max, Color fillColor, Color highlightColor, Color shadowColor, Color bgColor)

@@ -306,6 +306,7 @@ namespace tsorcRevamp.NPCs.AI
         {
             npc.noGravity = true;
             Vector2 toTarget = TargetWaypoint - npc.Center;
+            float distanceToWaypoint = toTarget.Length();
             if (toTarget.LengthSquared() > 1f) toTarget.Normalize();
             npc.velocity += toTarget * Config.DiveAcceleration;
             float maxSpeed = Config.DiveTopSpeed;
@@ -325,8 +326,12 @@ namespace tsorcRevamp.NPCs.AI
             npc.direction = npc.velocity.X < 0 ? -1 : 1;
             npc.spriteDirection = npc.direction;
 
-            // End-of-dive: pull back up to Hover.
-            if (ModeTimer <= 0 || npc.Center.Y >= target.Center.Y - 16f)
+            // End in any direction once the waypoint is reached or passed. The old Y-only check
+            // immediately cancelled horizontal/upward dives whenever the NPC began below the player.
+            bool committedForSeveralTicks = t > 0.12f;
+            bool passedWaypoint = committedForSeveralTicks
+                && Vector2.Dot(TargetWaypoint - npc.Center, npc.velocity) <= 0f;
+            if (ModeTimer <= 0 || distanceToWaypoint <= 24f || passedWaypoint)
             {
                 EnterMode(FlightMode.Hover, Config.HoverDwellTicks);
             }

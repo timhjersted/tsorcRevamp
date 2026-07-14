@@ -104,6 +104,8 @@ namespace tsorcRevamp.NPCs
         float despawnRange;
         int OutOfBoundsTimer = 600;
 
+        public bool IsDespawning => despawnTime >= 0;
+
         ///<summary> 
         ///Handles all targeting and despawning.
         ///</summary>         

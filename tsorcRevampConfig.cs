@@ -278,6 +278,12 @@ namespace tsorcRevamp
             get => ModContent.GetInstance<tsorcRevampControlsConfig>().RecommendedControls;
             set => ModContent.GetInstance<tsorcRevampControlsConfig>().RecommendedControls = value;
         }
+
+        public bool AdvancedFourAttackWeaponControls
+        {
+            get => ModContent.GetInstance<tsorcRevampControlsConfig>().AdvancedFourAttackWeaponControls;
+            set => ModContent.GetInstance<tsorcRevampControlsConfig>().AdvancedFourAttackWeaponControls = value;
+        }
     }
 
     [Label("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.DisplayName")]
@@ -400,7 +406,7 @@ namespace tsorcRevamp
         [DefaultValue(true)]
         public bool OnlyShowMapWhenInventoryIsOpen { get; set; }
 
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         public bool TransparentInventoryBar { get; set; }
 
         [Range(0, 100)]
@@ -487,8 +493,11 @@ namespace tsorcRevamp
         internal static bool Loaded;
         internal static bool LastRecommendedControls;
 
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         public bool RecommendedControls { get; set; }
+
+        [DefaultValue(false)]
+        public bool AdvancedFourAttackWeaponControls { get; set; }
 
         public override void OnChanged()
         {
@@ -499,16 +508,11 @@ namespace tsorcRevamp
                 return;
             }
 
-            bool controlsMatch = tsorcRevamp.RecommendedControlBindingsMatch();
-            if (RecommendedControls && !LastRecommendedControls)
+            if (RecommendedControls != LastRecommendedControls
+                && !tsorcRevamp.TrySetRecommendedControls(RecommendedControls))
             {
-                tsorcRevamp.ApplyRecommendedControlBindings(onlyIfDefaultOrOldDefault: false);
-                controlsMatch = tsorcRevamp.RecommendedControlBindingsMatch();
-                RecommendedControls = controlsMatch;
-            }
-            else if (RecommendedControls && !controlsMatch)
-            {
-                RecommendedControls = false;
+                // Keep the prior state if either the backup or restore operation failed.
+                RecommendedControls = LastRecommendedControls;
             }
 
             LastRecommendedControls = RecommendedControls;

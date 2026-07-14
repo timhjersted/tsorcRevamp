@@ -26,14 +26,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void SetDefaults()
         {
-            Projectile.width = 22;
-            Projectile.height = 22;
+            Projectile.width = 11;
+            Projectile.height = 11;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.penetrate = -1;     // persists so it can stick + keep hurting on contact
             Projectile.timeLeft = 600;
             Projectile.tileCollide = true;
-            Projectile.scale = 0.85f;
+            Projectile.scale = 0.425f;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 18;
@@ -101,13 +101,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
             SoundEngine.PlaySound(SoundID.Item70 with { Volume = 0.5f, PitchVariance = 0.3f }, Projectile.Center);
 
-            for (int i = 0; i < 10; i++) // sparks
+            for (int i = 0; i < 30; i++) // sparks
             {
                 Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.Torch,
                     Main.rand.NextVector2Circular(2.6f, 2.6f), 0, default, Main.rand.NextFloat(0.8f, 1.4f));
                 d.noGravity = true;
             }
-            for (int i = 0; i < 9; i++) // smoke
+            for (int i = 0; i < 27; i++) // smoke
             {
                 Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.Smoke,
                     Main.rand.NextVector2Circular(1.7f, 1.7f), 120, Color.Gray, Main.rand.NextFloat(1.2f, 2.1f));

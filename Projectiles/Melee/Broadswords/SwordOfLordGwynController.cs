@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -14,10 +15,15 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
 
         const int TapWindow = 14;
         const int NovaChargeTicks = 54;
-        const int DashTicks = 18;
+        const int DashInvulnerabilityTicks = 18;
+        const int ThrowFollowThroughTicks = 12;
 
         int Mode => (int)Projectile.ai[0]; //0 = cursor high, 1 = cursor low
+        bool UsesRightClick => Projectile.ai[1] == 1f;
+        ref float ThrowTimer => ref Projectile.ai[2];
         float Timer => Projectile.localAI[0];
+
+        bool IsInputHeld(Player player) => UsesRightClick ? player.controlUseTile : player.channel;
 
         public override void SetDefaults()
         {
@@ -37,6 +43,8 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             return false;
         }
 
+        public override bool ShouldUpdatePosition() => false;
+
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -49,7 +57,14 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             Projectile.Center = player.Center;
             Projectile.timeLeft = 60;
             Projectile.localAI[0]++;
-            bool channeling = player.channel;
+
+            if (ThrowTimer > 0f)
+            {
+                RunThrowFollowThrough(player);
+                return;
+            }
+
+            bool channeling = IsInputHeld(player);
 
             if (channeling)
             {
@@ -77,16 +92,92 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
 
             if (Mode == 0)
             {
-                if (Main.myPlayer == Projectile.owner)
+                // Hold pose: keep the spear raised overhead in the hand while the button is held,
+                // and only throw it on RELEASE (the old behavior fired instantly past the tap window).
+                if (channeling)
                 {
-                    CastSunlightSpear(player);
+                    HoldSpearPose(player);
                 }
-                Projectile.Kill();
+                else
+                {
+                    bool threwSpear = true;
+                    if (Main.myPlayer == Projectile.owner)
+                    {
+                        threwSpear = CastSunlightSpear(player);
+                    }
+
+                    if (threwSpear)
+                    {
+                        ThrowTimer = 1f;
+                        Projectile.netUpdate = true;
+                    }
+                    else
+                    {
+                        Projectile.Kill();
+                    }
+                }
             }
             else
             {
                 RunCinderNovaCharge(player, channeling);
             }
+        }
+
+        Vector2 HeldAim(Player player) =>
+            Projectile.velocity.SafeNormalize(Vector2.UnitX * player.direction);
+
+        void HoldSpearPose(Player player)
+        {
+            if (Main.myPlayer == Projectile.owner)
+            {
+                Vector2 aim = (Main.MouseWorld - player.MountedCenter)
+                    .SafeNormalize(Vector2.UnitX * player.direction);
+                if (Vector2.DistanceSquared(Projectile.velocity, aim) > 0.0004f)
+                {
+                    Projectile.velocity = aim;
+                    Projectile.netUpdate = true;
+                }
+            }
+
+            // Use Terraria's raised first use frame so armor shoulders are oriented correctly;
+            // the spear itself still rotates independently through the full cursor aim range.
+            Projectile.hide = false;
+            Vector2 hand = SwordOfLordGwynPlayerAnimation.SetUseFrame(player, 0);
+
+            // Gentle charge shimmer around the raised hand so the hold reads as "powering up".
+            if (Main.rand.NextBool(3))
+            {
+                int dust = Dust.NewDust(hand - new Vector2(4f), 8, 8, DustID.GoldFlame, 0f, -1.2f, 120, default, 1.05f);
+                Main.dust[dust].noGravity = true;
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // Only the spear-hold state draws anything (the controller is otherwise invisible).
+            Player player = Main.player[Projectile.owner];
+            if (Mode != 0 || ThrowTimer > 0f || !IsInputHeld(player) || Timer <= TapWindow)
+            {
+                return false;
+            }
+
+            Vector2 hand = SwordOfLordGwynPlayerAnimation.GetHandPosition(player, 0);
+
+            Texture2D tex = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Gwyn/GwynLightningSpear").Value;
+            int frameHeight = tex.Height / GwynLightningSpearFrames.FrameCount;
+            int frameIndex = (int)(Timer / 5f) % GwynLightningSpearFrames.FrameCount;
+            Rectangle frame = new Rectangle(0, frameIndex * frameHeight, tex.Width, frameHeight);
+            Vector2 origin = GwynLightningSpearFrames.GetVisualOrigin(frameIndex);
+            Vector2 aim = HeldAim(player);
+            float rotation = aim.ToRotation();
+            SpriteEffects effects = aim.X < 0f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if (effects == SpriteEffects.FlipHorizontally)
+            {
+                origin.X = tex.Width - origin.X;
+            }
+            Main.EntitySpriteDraw(tex, hand - Main.screenPosition, frame, Color.White, rotation,
+                origin, 0.6f, effects, 0);
+            return false;
         }
 
         void CastTap(Player player)
@@ -103,19 +194,37 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             }
         }
 
-        void CastSunlightSpear(Player player)
+        bool CastSunlightSpear(Player player)
         {
             if (!player.CheckMana(SwordOfLordGwyn.SpearManaCost, true))
             {
-                return;
+                return false;
             }
 
             player.manaRegenDelay = 180;
-            Vector2 origin = player.Center + new Vector2(player.direction * 28f, -12f);
+            Vector2 origin = SwordOfLordGwynPlayerAnimation.GetHandPosition(player, 0);
             Vector2 aim = (Main.MouseWorld - origin).SafeNormalize(Vector2.UnitX * player.direction);
             SoundEngine.PlaySound(SoundID.Item92 with { Volume = 0.85f, Pitch = 0.1f }, origin);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin, aim * 16f,
                 ModContent.ProjectileType<SwordOfLordGwynSunlightSpear>(), (int)(Projectile.damage * 0.95f), Projectile.knockBack * 0.8f, Projectile.owner, player.GetModPlayer<LordGwynSetPlayer>().AboveHalfMana ? 1f : 0f);
+            return true;
+        }
+
+        void RunThrowFollowThrough(Player player)
+        {
+            Projectile.hide = true;
+            player.heldProj = Projectile.whoAmI;
+            player.itemTime = 2;
+            player.itemAnimation = 2;
+
+            float progress = MathHelper.Clamp((ThrowTimer - 1f) / ThrowFollowThroughTicks, 0f, 0.999f);
+            SwordOfLordGwynPlayerAnimation.SetUseFrame(player, (int)(progress * 4f));
+
+            ThrowTimer++;
+            if (ThrowTimer > ThrowFollowThroughTicks)
+            {
+                Projectile.Kill();
+            }
         }
 
         void CastRisingDash(Player player)
@@ -130,19 +239,12 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             player.direction = Main.MouseWorld.X > player.Center.X ? 1 : -1;
             player.velocity = new Vector2(player.direction * 17f, -8.25f);
             player.immune = true;
-            player.immuneTime = 18;
+            player.immuneTime = System.Math.Max(player.immuneTime, DashInvulnerabilityTicks);
             player.ResetMeleeHitCooldowns();
 
             SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.75f, Pitch = -0.35f }, player.Center);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
-                ModContent.ProjectileType<SwordOfLordGwynSlash>(), (int)(Projectile.damage * (empowered ? 1.55f : 1.35f)), Projectile.knockBack * (empowered ? 2.1f : 1.8f), Projectile.owner, 1f, player.direction);
-
-            for (int i = 0; i < (empowered ? DashTicks + 12 : DashTicks); i += 3)
-            {
-                Vector2 trailPos = player.Center - new Vector2(player.direction * i * 11f, 0f);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), trailPos, Vector2.Zero,
-                    ModContent.ProjectileType<SwordOfLordGwynCinderTrail>(), (int)(Projectile.damage * (empowered ? 0.4f : 0.28f)), Projectile.knockBack * 0.35f, Projectile.owner);
-            }
+                ModContent.ProjectileType<SwordOfLordGwynSlash>(), (int)(Projectile.damage * (empowered ? 1.55f : 1.35f)), Projectile.knockBack * (empowered ? 2.1f : 1.8f), Projectile.owner, 1f, player.direction, empowered ? 1f : 0f);
 
             if (Main.netMode != NetmodeID.SinglePlayer)
             {

@@ -351,7 +351,11 @@ Mods: {
 		UI: {
 			Souls: 黑暗之魂
 			// SecondSlot: 2nd
-			// SecondSlotHover: Right-Click Slot — its item or shield activates on right click
+			// SecondSlotHover: Press {0} to use items or shields in your 2nd Slot. Rebind in controls.
+			// LeftMouseClick: Left mouse click
+			// RightMouseClick: Right mouse click
+			// MiddleMouseClick: Middle mouse click
+			// MouseButton: Mouse button {0}
 			// Storage: Storage
 			// OpenStorage: Open Storage — Shift click to store inventory items while Storage is open
 			StaminaUse: "耐力消耗: "
@@ -3819,6 +3823,50 @@ Mods: {
 				// Tooltip: Summons Gravelord Nito in sandbox worlds.
 			}
 
+			VesselOfSoulsSpawner: {
+				// DisplayName: Hungering Eye
+				// Tooltip: Summons the Vessel of Souls in sandbox worlds.
+			}
+
+			SoulOfTheVessel: {
+				// DisplayName: Soul of the Vessel
+				// Tooltip: The stolen souls of the Vessel, bound into a single essence.
+			}
+
+			SoulReliquaryBell: {
+				// DisplayName: Soul Reliquary
+				/* Tooltip:
+					'''
+					Summons a Lesser Vessel to fight for you
+					A floating soul-eye that spits homing skulls
+					Lasts 2.5 minutes
+					Damage scales with the number of Dark Souls held
+					''' */
+			}
+
+			GravemawTome: {
+				// DisplayName: Gravemaw Tome
+				/* Tooltip:
+					'''
+					Four spells bound in one tome
+					Tap left click: fire a fan of homing soul-skulls
+					Hold left click: charge an expanding soul nova
+					Tap right click: lob an orb that opens a black hole
+					Hold right click: channel an inhaling maw that drains life
+					Advanced control option available in Controls config
+					''' */
+				/* AdvancedTooltip:
+					'''
+					Four spells bound in one tome
+					Aim at or above a point 3 tiles below your feet:
+					Tap left click: fire a fan of homing soul-skulls
+					Hold left click: charge an expanding soul nova
+					Aim more than 3 tiles below your feet:
+					Tap left click: lob an orb that opens a black hole
+					Hold left click: channel an inhaling maw that drains life
+					''' */
+			}
+
 			JungleFeather: {
 				DisplayName: 丛林之羽
 				Tooltip:
@@ -4790,6 +4838,26 @@ Mods: {
 					'''
 			}
 
+			RecommendedControls: {
+				// DisplayName: Recommended Controls
+				/* Tooltip:
+					'''
+					Use to switch the Recommended Controls config toggle on or off
+					Enabling it saves your current controls, then applies:
+					Quick Heal / Estus Flask: R
+					Quick Mana / Cerulean Tear: F
+					Inventory: Q
+					Dodge Roll: Left Shift
+					Auto Select: Left Alt
+					Quick Mount: G
+					2nd Slot: Right Click
+					Disabling it restores the controls you previously saved
+					''' */
+				// Enabled: Recommended Controls enabled. Your previous controls have been saved.
+				// Disabled: Recommended Controls disabled. Your previous controls have been restored.
+				// ToggleFailed: Recommended Controls could not be changed. Check the client log for details.
+			}
+
 			ArmorDrugPotion: {
 				DisplayName: 护甲药水
 				Tooltip:
@@ -5440,7 +5508,7 @@ Mods: {
 				Tooltip:
 					'''
 					永久增加 5 点耐力上限
-					消耗 15 次后耐力达到最大值
+					消耗 {0} 次后耐力达到最大值
 					'''
 				UsedCounter: "当前已使用次数: "
 			}
@@ -6031,10 +6099,21 @@ Mods: {
 				/* Tooltip:
 					'''
 					The Ice Gigas's spell tome — four of its moves bound in one book
-					Tap left click with the cursor at or above your feet to lance icicles at your foe
-					Hold left click with the cursor at or above your feet to breathe a cone of frost
-					Tap left click with the cursor below your feet to erupt ice spikes from the ground at your cursor
-					Hold left click with the cursor below your feet to charge, then unleash an expanding freeze ring
+					Tap left click: lance icicles at your foe
+					Hold left click: breathe a cone of frost
+					Tap right click: erupt ice spikes from the ground at your cursor
+					Hold right click: charge, then unleash an expanding freeze ring
+					Advanced control option available in Controls config
+					''' */
+				/* AdvancedTooltip:
+					'''
+					The Ice Gigas's spell tome — four of its moves bound in one book
+					Aim at or above a point 3 tiles below your feet:
+					Tap left click: lance icicles at your foe
+					Hold left click: breathe a cone of frost
+					Aim more than 3 tiles below your feet:
+					Tap left click: erupt ice spikes from the ground at your cursor
+					Hold left click: charge, then unleash an expanding freeze ring
 					''' */
 			}
 
@@ -6043,10 +6122,21 @@ Mods: {
 				/* Tooltip:
 					'''
 					The Holy Gigas's spell tome — four of its moves bound in one book
-					Tap left click with the cursor at or above your feet to call heavenly spears down upon your cursor
-					Hold left click with the cursor at or above your feet to gather a halo of hunting suns
-					Tap left click with the cursor below your feet to bring a pillar of judgment light down at your cursor
-					Hold left click with the cursor below your feet to charge, then release a blade of golden lightning
+					Tap left click: call heavenly spears down upon your cursor
+					Hold left click: gather a halo of hunting suns
+					Tap right click: bring a pillar of judgment light down at your cursor
+					Hold right click: charge, then release a blade of golden lightning
+					Advanced control option available in Controls config
+					''' */
+				/* AdvancedTooltip:
+					'''
+					The Holy Gigas's spell tome — four of its moves bound in one book
+					Aim at or above a point 3 tiles below your feet:
+					Tap left click: call heavenly spears down upon your cursor
+					Hold left click: gather a halo of hunting suns
+					Aim more than 3 tiles below your feet:
+					Tap left click: bring a pillar of judgment light down at your cursor
+					Hold left click: charge, then release a blade of golden lightning
 					''' */
 			}
 
@@ -8660,6 +8750,11 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			EnemyAncientFireSword: {
+				// DisplayName: Enemy Ancient Fire Sword
+				// Tooltip: ""
+			}
+
 			ArtoriasGreatsword: {
 				// DisplayName: Artorias Greatsword
 				// Tooltip: ""
@@ -8671,8 +8766,34 @@ Mods: {
 			}
 
 			SwordOfLordGwyn: {
-				// Tooltip: ""
 				// DisplayName: Sword Of Lord Gwyn
+				/* Tooltip:
+					'''
+					Tap left click: slash with the First Flame
+					Hold left click: spend {0} mana on a Sunlight Spear
+					Tap right click: spend {1} mana on a rising flame dash
+					Hold right click: spend {2} mana on Cinder Nova
+					Advanced control option available in Controls config
+					''' */
+				/* AdvancedTooltip:
+					'''
+					Aim at or above a point 3 tiles below your feet:
+					Tap left click: slash with the First Flame
+					Hold left click: spend {0} mana on a Sunlight Spear
+					Aim more than 3 tiles below your feet:
+					Tap left click: spend {1} mana on a rising flame dash
+					Hold left click: spend {2} mana on Cinder Nova
+					''' */
+			}
+
+			VesselOfSoulsBag: {
+				// DisplayName: Vessel Of Souls Bag
+				// Tooltip: ""
+			}
+
+			TenthDamageTomb: {
+				// DisplayName: Tenth Damage Tomb
+				// Tooltip: ""
 			}
 		}
 
@@ -8769,6 +8890,11 @@ Mods: {
 					Defense reduced by 30%
 					Torn Wings: you cannot fly
 					''' */
+			}
+
+			VesselVoid: {
+				// DisplayName: Inside the Vessel
+				// Description: You have been swallowed into the Vessel of Souls.
 			}
 
 			BrokenSpirit: {
@@ -9758,13 +9884,31 @@ Mods: {
 				// Description: Mods.tsorcRevamp.Buffs.PlaguesmithBuff.Description
 			}
 
+			SorrowfulCurseBuff: {
+				// DisplayName: Sorrowful Curse
+				// Description: The Cleric of Sorrow's dying curse — attacks inflict Cursed Inferno
+			}
+
+			Doused: {
+				// DisplayName: Doused
+				// Description: Coated in flammable ichor — slowed and bleeding. Catch fire and it detonates!
+			}
+
 			DragonForm: {
 				// Description: Transformed into a Cursed Dragon
 				// DisplayName: Dragon Form
 			}
+
+			LesserVesselBuff: {
+				// DisplayName: Lesser Vessel Buff
+				// Description: Mods.tsorcRevamp.Buffs.LesserVesselBuff.Description
+			}
 		}
 
 		Projectiles: {
+			// PurpleSkull.DisplayName: Purple Skull
+			// VesselGravityWell.DisplayName: Gravity Well
+			// VesselSoulNova.DisplayName: Soul Nova
 			BlizzardBlasterShot.DisplayName: 暴风雪冲击波
 			AntiMaterialRound.DisplayName: 反物质榴弹
 			APShot.DisplayName: 穿甲弹
@@ -9942,6 +10086,8 @@ Mods: {
 			TackleProjectile.DisplayName: 葛温
 			Hellwing.DisplayName: 地狱之翼
 			HerosArrow.DisplayName: 英雄之箭
+			// HeroPotionBomb.DisplayName: Potion Bomb
+			// HeroFireArc.DisplayName: Fire Crescent
 			HypnoticDisrupter.DisplayName: 虚空之梦
 			IceSpirit.DisplayName: 冰灵
 			InkGeyser.DisplayName: 黯墨喷涌
@@ -10020,6 +10166,7 @@ Mods: {
 			// GigasFreezeRing.DisplayName: Absolute Zero
 			// GigasPrisonPillar.DisplayName: Ice Prison Pillar
 			// GigasUndertowZone.DisplayName: Undertow of Winter
+			// ClericLastRitesRing.DisplayName: Last Rites
 			// GigasCanopyIcicle.DisplayName: Crystal Canopy
 			// GigasGlazeStrip.DisplayName: Black Ice
 			// HeartOfWinterController.DisplayName: Heart of Winter
@@ -10065,6 +10212,10 @@ Mods: {
 			// QuaraTidalCrest.DisplayName: Tidal Crest
 			// QuaraBurstBubble.DisplayName: Burst Bubble
 			// QuaraDroplet.DisplayName: Droplet
+			// QuaraIchorGlob.DisplayName: Ichor Glob
+			// QuaraIchorPatch.DisplayName: Ichor Patch
+			// QuaraEmber.DisplayName: Ember
+			// QuaraClawSwipe.DisplayName: Claw Swipe
 			SmallFlameJet.DisplayName: 轻型火焰喷射
 			SmallWeaponSlash.DisplayName: 轻型武器斩击
 			Spearhead.DisplayName: 矛头
@@ -10631,9 +10782,20 @@ Mods: {
 			// SwordOfLordGwynCinderNova.DisplayName: Sword Of Lord Gwyn Cinder Nova
 			// LordGwynSunlightStrike.DisplayName: Lord Gwyn Sunlight Strike
 			// LordGwynShortFlame.DisplayName: Lord Gwyn Short Flame
+			// GravemawController.DisplayName: Gravemaw Controller
+			// GravemawMaw.DisplayName: Gravemaw Maw
+			// GravemawNova.DisplayName: Gravemaw Nova
+			// GravemawOrb.DisplayName: Gravemaw Orb
+			// GravemawSoulBolt.DisplayName: Gravemaw Soul Bolt
+			// LesserVessel.DisplayName: Lesser Vessel
+			// LesserVesselSkull.DisplayName: Lesser Vessel Skull
+			// TeleportIllusionDissolve.DisplayName: Teleport Illusion Dissolve
+			// ArtoriasSurgeAura.DisplayName: Artorias Surge Aura
 		}
 
 		NPCs: {
+			// MushroomCreature.DisplayName: Mushroom Creature
+
 			Deerclops: {
 				TypeName: 先祖之灵
 				DespawnHandler: 先祖之灵将你破碎的身体拖回巢穴...
@@ -12312,6 +12474,8 @@ Mods: {
 			// EvilEye.DisplayName: Evil Eye
 			// Gigas.DisplayName: Holy Gigas
 			// GravelordNito.DisplayName: Gravelord Nito
+			// VesselOfSouls.DisplayName: Vessel of Souls
+			// VesselWatcher.DisplayName: Strange Eye
 			// Hydra.DisplayName: Hydra
 			// IceGigas.DisplayName: Ice Gigas
 			// FrozenGigasStatue.DisplayName: Frozen Echo
@@ -12321,6 +12485,7 @@ Mods: {
 			// Plaguesmith.DisplayName: Plaguesmith
 			// QuaraMantassin.DisplayName: Quara Mantassin
 			// QuaraPincher.DisplayName: Quara Pincher
+			// QuaraClutchCrab.DisplayName: Clutch Crab
 			// Sahagin.DisplayName: Sahagin
 
 			BlackMage: {
@@ -12392,6 +12557,9 @@ Mods: {
 			// CursedDragonInvader.DisplayName: Cursed Dragon
 			// AbysmalOolacileSorcererTEST.DisplayName: Abysmal Oolacile Sorcerer T E S T
 			// OwlFatherInvader.DisplayName: Owl Father Invader
+			// SpiritOfKhaios.DisplayName: Spirit Of Khaios
+			// KhaiosTransitionOrb.DisplayName: Khaios Transition Orb
+			// Khaios.DisplayName: Khaios
 		}
 
 		Prefixes: {
@@ -12450,6 +12618,7 @@ Mods: {
 			"Witchking Scream.DisplayName": 巫师尖啸
 			"Print Position.DisplayName": 显示玩家位置
 			// "Open Storage.DisplayName": Open Storage
+			// "2nd Slot.DisplayName": 2nd Slot
 		}
 
 		InfoDisplays: {
@@ -12692,7 +12861,11 @@ Mods: {
 
 				TransparentInventoryBar: {
 					// Label: Transparent Inventory Bar
-					// Tooltip: Makes your top 10 item slots transparent when your inventory isn't open and hides the selected item name. Defaults to On.
+					/* Tooltip:
+						'''
+						Keeps the selected hotbar slot visible, its neighbors at 50% opacity, and all remaining slots at 25%.
+						Also hides the selected item name while the inventory is closed. Defaults to Off.
+						''' */
 				}
 
 				ShowStaminaTooltip: {
@@ -12792,12 +12965,24 @@ Mods: {
 			tsorcRevampControlsConfig: {
 				// DisplayName: Controls
 
+				AdvancedFourAttackWeaponControls: {
+					// Label: Advanced 4-Attack Weapon Controls
+					/* Tooltip:
+						'''
+						Weapons with 4 attacks use left click/hold and right click/hold when Off.
+						Turn On to map all 4 attacks to left click/hold, with 2 attacks mapped above
+						and 2 attacks below a cursor threshold 3 tiles below your feet.
+						This allows equipping two 4-attack weapons at once. Defaults to Off.
+						''' */
+				}
+
 				RecommendedControls: {
 					// Label: Recommended Controls
 					/* Tooltip:
 						'''
-						Applies TSORC's recommended keyboard controls.
-						On first load, only bindings still on vanilla are changed.
+						Applies TSORC's recommended keyboard controls. Defaults to Off.
+						On first load, only Dodge Roll and Auto Select are updated, and only when
+						Dodge Roll is still using its current or old default key.
 						Turning this on manually applies the full preset:
 						Quick Heal / Estus Flask: R
 						Quick Mana / Cerulean Tear: F
@@ -12805,6 +12990,7 @@ Mods: {
 						Dodge Roll: Left Shift
 						Auto Select: Left Alt
 						Quick Mount: G
+						2nd Slot: Right Click
 						''' */
 				}
 			}

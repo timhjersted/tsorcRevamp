@@ -61,11 +61,18 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.rotation += 0.15f;
 
-            if (Main.rand.NextBool(2))
+            if (!Main.dedServ)
             {
-                Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);
-                Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, -Projectile.velocity * 0.15f, 100, tint, 1f);
-                d.noGravity = true;
+                for (int i = 0; i < 3; i++)
+                {
+                    bool white = Main.rand.NextBool(5);
+                    Color tint = white ? Color.White : (Main.rand.NextBool() ? new Color(190, 90, 255) : Color.DarkViolet);
+                    Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f),
+                        white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
+                        -Projectile.velocity * Main.rand.NextFloat(0.06f, 0.18f) + Main.rand.NextVector2Circular(0.5f, 0.5f),
+                        90, tint, Main.rand.NextFloat(0.9f, 1.3f));
+                    d.noGravity = true;
+                }
             }
         }
 

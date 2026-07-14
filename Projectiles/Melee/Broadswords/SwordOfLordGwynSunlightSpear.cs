@@ -7,13 +7,30 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Melee.Broadswords
 {
+    internal static class GwynLightningSpearFrames
+    {
+        public const int FrameCount = 4;
+
+        // The visible spear shifts left and down between source frames. These brightness-weighted
+        // centers keep the animation locked to its projectile or hand position.
+        private static readonly Vector2[] VisualOrigins =
+        {
+            new Vector2(82.37f, 76.23f),
+            new Vector2(76.94f, 81.77f),
+            new Vector2(72.21f, 86.92f),
+            new Vector2(69.36f, 92.30f)
+        };
+
+        public static Vector2 GetVisualOrigin(int frame) => VisualOrigins[frame % FrameCount];
+    }
+
     class SwordOfLordGwynSunlightSpear : ModProjectile
     {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/GwynLightningSpear";
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 4;
+            Main.projFrames[Projectile.type] = GwynLightningSpearFrames.FrameCount;
         }
 
         public override void SetDefaults()
@@ -88,8 +105,15 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             int frameHeight = texture.Height / Main.projFrames[Projectile.type];
             Rectangle frame = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
-            Vector2 origin = new Vector2(texture.Width / 2f, frameHeight / 2f);
-            SpriteEffects fx = Projectile.velocity.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Vector2 origin = GwynLightningSpearFrames.GetVisualOrigin(Projectile.frame);
+            // Sprite's tip is authored on the left, so a rightward throw needs the horizontal flip
+            // for the head to lead (was inverted before — the spear flew butt-first). If a LEFTWARD
+            // throw ever looks backwards instead, swap the comparison.
+            SpriteEffects fx = Projectile.velocity.X < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if (fx == SpriteEffects.FlipHorizontally)
+            {
+                origin.X = texture.Width - origin.X;
+            }
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, Color.White, Projectile.rotation, origin, 0.6f, fx, 0);
             return false;
         }

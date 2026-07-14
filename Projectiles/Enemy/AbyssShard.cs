@@ -1,7 +1,9 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
@@ -11,13 +13,13 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     // Purple/white recolor of Deerclops's ice spike (ProjectileID.DeerclopsIceSpike). Reuses the same
     // shape that made the original read well: spawned at an approximate ground X, it snaps itself down
-    // onto the actual solid surface, sits through a dust-only telegraph window with no hitbox, then
+    // onto the actual solid surface, sits through a one-second dust-only telegraph with no hitbox, then
     // "pops" (extra dust burst + tiny screenshake) into a brief active/damaging window before fading
     // out and dying - entirely self-contained, so the boss side only has to decide where and when to
     // spawn one of these.
     class AbyssShard : ModProjectile
     {
-        const int TelegraphTicks = 40;
+        const int TelegraphTicks = 60;
         const int PopHoldTicks   = 10;
         const int FadeTicks      = 10;
         const int TotalTicks     = TelegraphTicks + PopHoldTicks + FadeTicks;
@@ -132,10 +134,28 @@ namespace tsorcRevamp.Projectiles.Enemy
         void SpawnTelegraphDust()
         {
             Vector2 pos = Projectile.Bottom - new Vector2(0f, 4f);
-            Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : Color.White;
-            Dust d = Dust.NewDustPerfect(pos + Main.rand.NextVector2Circular(10f, 4f), DustID.PurpleTorch,
+            bool white = Main.rand.NextBool(3);
+            Color tint = white ? Color.White : Color.DarkViolet;
+            Dust d = Dust.NewDustPerfect(pos + Main.rand.NextVector2Circular(12f, 4f),
+                white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
                 new Vector2(0f, -0.6f), 100, tint, Main.rand.NextFloat(0.8f, 1.3f));
             d.noGravity = true;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Rectangle source = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
+            bool pointsRight = Projectile.frame % 2 == 0;
+            Vector2 origin = pointsRight
+                ? new Vector2(0f, source.Height * 0.5f)
+                : new Vector2(source.Width, source.Height * 0.5f);
+            float rotation = pointsRight ? -MathHelper.PiOver2 : MathHelper.PiOver2;
+            Color color = GetAlpha(lightColor) ?? lightColor;
+
+            Main.EntitySpriteDraw(texture, Projectile.Bottom - Main.screenPosition, source, color,
+                rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+            return false;
         }
 
         void Pop()

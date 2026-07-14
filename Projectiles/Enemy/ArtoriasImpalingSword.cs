@@ -67,5 +67,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Deliberately not added to overPlayers - renders behind the impaled player's sprite.
             behindNPCs.Add(index);
         }
+
+        // The held greatsword already follows this exact raise-and-flick pose. This helper only
+        // anchors the player; drawing its texture as well produced a duplicate sword.
+        public override bool PreDraw(ref Color lightColor) => false;
     }
 }

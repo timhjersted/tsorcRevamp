@@ -66,6 +66,35 @@ namespace tsorcRevamp
         private const int StartingClassStatsVersion = 9;
         public bool appliedStartingClassStats = false;
         public int appliedStartingClassStatsVersion = 0;
+
+        // Total permanent HP / mana granted by SoulsMode Life and Mana Crystals.
+        //
+        // These have to exist because vanilla never saves statLifeMax/statManaMax. Player.Serialize writes
+        // `100 + ConsumedLifeCrystals * 20 + ConsumedLifeFruit * 5` (and `20 + ConsumedManaCrystals * 20`),
+        // and Deserialize re-derives the counters back out of that single number. The consumed-crystal
+        // counts are therefore the only life/mana state that survives a save — and they cap at 15 and 9.
+        //
+        // That makes a reduced per-crystal gain unrepresentable in vanilla's own bookkeeping: "half a
+        // crystal" has no encoding, and pushing the counters past 15/9 drives the saved number over 400/200,
+        // where Deserialize re-reads the excess as Life Fruit (life) or clamps it away entirely (mana).
+        // So we keep our own authoritative totals here, hold the vanilla counters inside their legal range
+        // purely as a persistence vehicle, and reconcile the two in ModifyMaxStats.
+        // soulsLife/ManaGranted is the SoulsMode valuation (banked at the reduced, party-scaled rate on the
+        // frame each crystal was eaten). lifeCrystalsEaten / manaCrystalsEaten is the raw count, which Classic
+        // re-values at vanilla's flat +20 — see EffectiveLifeGrant. Both are needed: vanilla's own counter can't
+        // stand in for the count because it saturates at 15/9.
+        public int soulsLifeGranted = 0;
+        public int soulsManaGranted = 0;
+        public int lifeCrystalsEaten = 0;
+        public int manaCrystalsEaten = 0;
+
+        // Every class converges on the same ceiling; the starting class only changes how many crystals it
+        // takes to get there (Melee 28 Life Crystals, Summoner 30, Ranged 31, Magic 32 at +10 each solo).
+        // Life Fruit still takes everyone from 400 to 500 afterwards, exactly as in vanilla.
+        public const int SoulsModeMaxLife = 400;
+        public const int SoulsModeMaxMana = 200;
+        public const int SoulsModeManaCrystalGain = 10;
+
         public bool normansRingAmmoSave = false;
         public List<int> bagsOpened;
         public static int LastHit = 1;
@@ -101,6 +130,7 @@ namespace tsorcRevamp
             RightClickSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LangUtils.GetTextValue("UI.SecondSlotHover"), null, RightClickSlotCondition, DrawRightClickSlotBackground, null, null, false, true);
             RightClickSlot.BackOpacity = 0.8f;
             RightClickSlot.HitboxRightAndBottomPadding = 24;
+            RightClickSlot.AppendHoverTextToItemName = true;
             RightClickSlot.Item = new Item();
             RightClickSlot.Item.SetDefaults(0, true);
 
@@ -219,6 +249,10 @@ namespace tsorcRevamp
             tag.Add("StartingClass", (int)startingClass);
             tag.Add("AppliedStartingClassStats", appliedStartingClassStats);
             tag.Add("AppliedStartingClassStatsVersion", appliedStartingClassStatsVersion);
+            tag.Add("SoulsLifeGranted", soulsLifeGranted);
+            tag.Add("SoulsManaGranted", soulsManaGranted);
+            tag.Add("LifeCrystalsEaten", lifeCrystalsEaten);
+            tag.Add("ManaCrystalsEaten", manaCrystalsEaten);
             //tag.Add("SoulLocation", );
 
             if (bagsOpened == null)
@@ -310,6 +344,41 @@ namespace tsorcRevamp
                 // Promote them to Unkindled so they pick up the new base Souls mechanics.
                 Unkindled = true;
             }
+            // Must run after startingClass (the grant caps depend on it) and after Unkindled/BearerOfTheCurse
+            // (SoulsMode depends on them). Vanilla's own life/mana block is deserialized before any ModPlayer
+            // LoadData, so Player.ConsumedLifeCrystals/ConsumedManaCrystals are already populated here.
+            if (tag.ContainsKey("SoulsLifeGranted"))
+            {
+                soulsLifeGranted = tag.GetInt("SoulsLifeGranted");
+                soulsManaGranted = tag.GetInt("SoulsManaGranted");
+            }
+            else if (SoulsMode)
+            {
+                // Migration off the old crystal nerf, which let the vanilla counters run past 15/9 and so had
+                // its saved life/mana mangled on every reload — the life overflow came back as phantom Life
+                // Fruit, and every mana crystal past the 9th was clamped away. Nothing recorded how many
+                // crystals were actually eaten, so reconstruct from the surviving counter at the intended
+                // +10 each. Any Life Fruit on such a character is almost certainly the phantom kind (the old
+                // code raised Life Fruit's unlock threshold to 30 crystals, which was unreachable in practice),
+                // so scrub it. Approximate by design: a badly ratcheted character is better off re-rolled.
+                soulsLifeGranted = Math.Min(SoulsLifeGrantCap, Player.ConsumedLifeCrystals * 10);
+                soulsManaGranted = Math.Min(SoulsManaGrantCap, Player.ConsumedManaCrystals * SoulsModeManaCrystalGain);
+                Player.ConsumedLifeFruit = 0;
+            }
+
+            // Crystal counts were added after the granted totals, so characters saved by the previous build have
+            // the totals but no counts. Recover the count from the total at the solo rate — the only rate a
+            // single-player character can have banked. A Classic character has neither, and gets its counts
+            // repaired from the vanilla counters by ReconcileCrystalState on the first frame.
+            lifeCrystalsEaten = tag.ContainsKey("LifeCrystalsEaten")
+                ? tag.GetInt("LifeCrystalsEaten")
+                : soulsLifeGranted / 10;
+            manaCrystalsEaten = tag.ContainsKey("ManaCrystalsEaten")
+                ? tag.GetInt("ManaCrystalsEaten")
+                : soulsManaGranted / SoulsModeManaCrystalGain;
+
+            NormalizeCrystalCounters();
+
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
             if (tag.ContainsKey("rightClickSlot"))
@@ -1051,6 +1120,11 @@ namespace tsorcRevamp
             Item MastersScroll = new Item();
             MastersScroll.SetDefaults(ModContent.ItemType<MastersScroll>());
             startingItems.Add(MastersScroll);
+
+            if (!mediumCoreDeath)
+            {
+                startingItems.Add(CreateStartingItem(ModContent.ItemType<RecommendedControls>()));
+            }
 
             startingItems.Add(CreateStartingItem(ModContent.ItemType<NormansRing>()));
 
@@ -2180,7 +2254,139 @@ namespace tsorcRevamp
                     mana.Base += 10;
                     break;
             }
+
+            // Capture the counters BEFORE reconciling. PlayerLoader.ModifyMaxStats calls ResetMaxStatsToVanilla
+            // immediately before this hook, so statLifeMax was already rebuilt from *these* values — subtracting
+            // anything else below would leave the cancellation off by 20 per crystal for a frame, and since
+            // statLife is clamped down to the new maximum on that same frame, that would be real damage rather
+            // than a flicker.
+            int consumedLifeCrystals = Player.ConsumedLifeCrystals;
+            int consumedManaCrystals = Player.ConsumedManaCrystals;
+
+            ReconcileCrystalState(consumedLifeCrystals, consumedManaCrystals);
+            NormalizeCrystalCounters();
+
+            // The cancellation. ResetMaxStatsToVanilla rebuilds statLifeMax as
+            // `100 + 20 * ConsumedLifeCrystals + 5 * ConsumedLifeFruit` every frame; subtracting the counter's
+            // contribution and adding our own valuation cancels the 20-per-crystal term outright, leaving
+            //     statLifeMax = 100 + classOffset + EffectiveLifeGrant + 5 * ConsumedLifeFruit
+            // no matter what vanilla currently believes the crystal count to be. That last part is the point: a
+            // load can legitimately re-decompose the saved number into a different (crystals, fruit) split than
+            // the one we wrote, and this subtraction absorbs the difference instead of drifting.
+            health.Base += EffectiveLifeGrant - consumedLifeCrystals * 20;
+            mana.Base += EffectiveManaGrant - consumedManaCrystals * 20;
         }
+
+        internal int SoulsLifeGrantCap => SoulsModeMaxLife - GetStartingClassBaseLife();
+        internal int SoulsManaGrantCap => SoulsModeMaxMana - GetStartingClassBaseMana();
+
+        /// The same crystals, valued by the rules of whichever mode you are currently in: SoulsMode pays the
+        /// reduced per-crystal gain that was banked at the moment each one was eaten, Classic pays vanilla's
+        /// flat +20. Both are clamped to the same class ceiling (400 life / 200 mana), so Classic doesn't blow
+        /// past it — it just gets there on far fewer crystals.
+        ///
+        /// This is why lifeCrystalsEaten has to exist alongside soulsLifeGranted. Storing only the granted total
+        /// left Classic with nothing to re-value: it fell back to vanilla's ConsumedLifeCrystals counter, which
+        /// saturates at 15 and so under-reports anyone who ate more than that under SoulsMode's cheaper rate.
+        internal int EffectiveLifeGrant => SoulsMode
+            ? Math.Min(SoulsLifeGrantCap, soulsLifeGranted)
+            : Math.Min(SoulsLifeGrantCap, lifeCrystalsEaten * 20);
+
+        internal int EffectiveManaGrant => SoulsMode
+            ? Math.Min(SoulsManaGrantCap, soulsManaGranted)
+            : Math.Min(SoulsManaGrantCap, manaCrystalsEaten * 20);
+
+        internal bool LifeCrystalsMaxed => EffectiveLifeGrant >= SoulsLifeGrantCap;
+        internal bool ManaCrystalsMaxed => EffectiveManaGrant >= SoulsManaGrantCap;
+
+        /// Repairs our totals from vanilla's counters when those know about crystals we don't — a character that
+        /// predates this system, or one that ate crystals through the vanilla path. Guarded on "not already
+        /// maxed" because NormalizeCrystalCounters deliberately parks the life counter *above* the eaten count
+        /// once maxed (see below), which would otherwise look like untracked crystals and ratchet forever.
+        private void ReconcileCrystalState(int consumedLifeCrystals, int consumedManaCrystals)
+        {
+            if (!LifeCrystalsMaxed && consumedLifeCrystals > lifeCrystalsEaten)
+            {
+                // Valued at the SoulsMode rate, same as if they'd been eaten under this system — a crystal is
+                // worth what a crystal is worth, regardless of which mode it was swallowed in.
+                int missing = consumedLifeCrystals - lifeCrystalsEaten;
+                lifeCrystalsEaten = consumedLifeCrystals;
+                soulsLifeGranted = Math.Min(SoulsLifeGrantCap, soulsLifeGranted + missing * 10);
+            }
+
+            if (!ManaCrystalsMaxed && consumedManaCrystals > manaCrystalsEaten)
+            {
+                int missing = consumedManaCrystals - manaCrystalsEaten;
+                manaCrystalsEaten = consumedManaCrystals;
+                soulsManaGranted = Math.Min(SoulsManaGrantCap, soulsManaGranted + missing * SoulsModeManaCrystalGain);
+            }
+
+            // Deliberately NOT clamping the stored totals to the cap here. The cap depends on the starting class,
+            // and GetResolvedStartingClass falls back to inferring from inventory — if that ever came back None
+            // for a frame, a blanket clamp would permanently truncate a Magic character's 320 down to 300. The
+            // caps are applied non-destructively where the totals are read, in EffectiveLifeGrant.
+        }
+
+        /// Push as much of the current mode's valuation into the vanilla counters as those counters can legally
+        /// hold, so the progress survives Player.Serialize. Anything that doesn't fit is re-applied by the
+        /// cancellation in ModifyMaxStats.
+        ///
+        /// The forced 15 once Life Crystals are maxed is load-bearing, not cosmetic. A maxed Melee is granted
+        /// only 280 HP, which fills just 14 counters, so its saved number would be 100 + 280 = 380 — and
+        /// Deserialize can only recover a Life Fruit count from a saved number *above* 400
+        /// (`ConsumedLifeFruit = (statLifeMax - 400) / 5`). Every fruit a Melee ate would therefore evaporate
+        /// 5 HP at a time on each reload. Parking the counter at 15 puts the saved number at 400 + 5 * fruit,
+        /// where fruit round-trips exactly; the resulting negative remainder (280 - 300 = -20) keeps the total
+        /// at the intended 400. It also means vanilla's own `ConsumedLifeCrystals == 15` gate unlocks Life
+        /// Fruit at the right moment for every class, with no patch needed.
+        internal void NormalizeCrystalCounters()
+        {
+            Player.ConsumedLifeCrystals = LifeCrystalsMaxed
+                ? Terraria.Player.LifeCrystalMax
+                : Math.Min(Terraria.Player.LifeCrystalMax, EffectiveLifeGrant / 20);
+
+            Player.ConsumedManaCrystals = Math.Min(Terraria.Player.ManaCrystalMax, EffectiveManaGrant / 20);
+        }
+
+        /// Called from the ItemCheck_UseLifeCrystal detour in MethodSwaps, which has already checked
+        /// LifeCrystalsMaxed. Runs in both modes — the mod owns crystal consumption outright now, because
+        /// Classic has to keep lifeCrystalsEaten up to date too.
+        internal void GrantLifeCrystal()
+        {
+            int before = EffectiveLifeGrant;
+
+            lifeCrystalsEaten++;
+            soulsLifeGranted = Math.Min(SoulsLifeGrantCap, soulsLifeGranted + GetSoulsModeLifeCrystalGain());
+
+            // The visible gain is whatever the current mode's valuation actually moved by: +10 in SoulsMode
+            // (party size permitting), +20 in Classic, or just the remainder on the crystal that reaches the
+            // ceiling. UseHealthMaxIncreasingItem bumps statLife and fires the heal popup with that real number,
+            // so the "+10" the player sees is genuine rather than a "+20" rewritten after the fact (which only
+            // ever worked on the local client). Its statLifeMax write is transient — ModifyMaxStats rebuilds
+            // that from scratch next frame.
+            int gain = EffectiveLifeGrant - before;
+            NormalizeCrystalCounters();
+            if (gain > 0)
+            {
+                Player.UseHealthMaxIncreasingItem(gain);
+            }
+        }
+
+        internal void GrantManaCrystal()
+        {
+            int before = EffectiveManaGrant;
+
+            manaCrystalsEaten++;
+            soulsManaGranted = Math.Min(SoulsManaGrantCap, soulsManaGranted + SoulsModeManaCrystalGain);
+
+            int gain = EffectiveManaGrant - before;
+            NormalizeCrystalCounters();
+            if (gain > 0)
+            {
+                Player.UseManaMaxIncreasingItem(gain);
+            }
+        }
+
         public override void GetHealMana(Item item, bool quickHeal, ref int healValue)
         {
             if (manaShield >= 1)
@@ -2205,20 +2411,7 @@ namespace tsorcRevamp
 
             int maxLife = GetStartingClassBaseLife();
             int maxMana = GetStartingClassBaseMana();
-            float maxStamina = tsorcRevampStaminaPlayer.DefaultStaminaResourceMax;
-
-            switch (startingClass)
-            {
-                case StartingClass.Melee:
-                    maxStamina = 130;
-                    break;
-                case StartingClass.Magic:
-                    maxStamina = 115;
-                    break;
-                case StartingClass.Summoner:
-                    maxStamina = 120;
-                    break;
-            }
+            float maxStamina = GetStartingClassBaseStamina();
 
             Player.statLifeMax2 = maxLife;
             Player.statLife = maxLife;
@@ -2283,7 +2476,22 @@ namespace tsorcRevamp
 
             return StartingClass.None;
         }
-        private int GetStartingClassBaseLife()
+        // Class starting stamina. Stamina needs no crystal-style bookkeeping — staminaResourceMax is written
+        // straight to our own tag data and never passes through vanilla's save path — but it follows the same
+        // shape: every class converges on StaminaVessel.PermanentStaminaCap (200), and the starting value only
+        // decides how many vessels it takes to get there (Melee 14, Ranged 15, Summoner 16, Magic 17).
+        internal float GetStartingClassBaseStamina()
+        {
+            return GetResolvedStartingClass() switch
+            {
+                StartingClass.Melee => 130,
+                StartingClass.Magic => 115,
+                StartingClass.Summoner => 120,
+                _ => tsorcRevampStaminaPlayer.DefaultStaminaResourceMax
+            };
+        }
+
+        internal int GetStartingClassBaseLife()
         {
             return GetResolvedStartingClass() switch
             {
@@ -2294,7 +2502,7 @@ namespace tsorcRevamp
             };
         }
 
-        private int GetStartingClassBaseMana()
+        internal int GetStartingClassBaseMana()
         {
             return GetResolvedStartingClass() switch
             {

@@ -101,6 +101,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 return;
             }
 
+            bool collidedX = Projectile.velocity.X != oldVelocity.X;
+            bool collidedY = Projectile.velocity.Y != oldVelocity.Y;
+
             Projectile.ai[0] = 1f;
             Projectile.ai[1] = Projectile.rotation;
             Projectile.velocity = Vector2.Zero;
@@ -108,13 +111,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.timeLeft = StuckLifetime;
             Projectile.netUpdate = true;
 
-            if (Projectile.velocity.X != oldVelocity.X)
+            if (collidedX)
             {
-                Projectile.position.X += oldVelocity.X > 0f ? -2f : 2f;
+                Projectile.position.X += MathHelper.Clamp(oldVelocity.X, -1f, 1f) * 5f;
             }
-            if (Projectile.velocity.Y != oldVelocity.Y)
+            if (collidedY)
             {
-                Projectile.position.Y += oldVelocity.Y > 0f ? -2f : 2f;
+                Projectile.position.Y += MathHelper.Clamp(oldVelocity.Y, -1f, 1f) * 5f;
             }
 
             SoundEngine.PlaySound(SoundID.Dig with { Volume = 0.35f, PitchVariance = 0.35f }, Projectile.Center);

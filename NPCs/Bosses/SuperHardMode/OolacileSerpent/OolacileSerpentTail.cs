@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             NPC.knockBackResist = 0;
             NPC.scale = 1.3f;
             NPC.timeLeft = 22750;
-            NPC.damage = 0; //Only the head does contact damage (until the tail gets its own attacks)
+            NPC.damage = 0; //0 except during the overhead tail stab, where SerpentAI sets it (see TailStab)
             NPC.defense = 40;
             NPC.HitSound = SoundID.NPCHit13;
             NPC.DeathSound = SoundID.NPCDeath8;
@@ -44,6 +44,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {
+            //The tail stab injects venom (matches the pounce's toxin theme)
+            target.AddBuff(BuffID.Venom, 8 * 60, false);
         }
         public override void AI()
         {

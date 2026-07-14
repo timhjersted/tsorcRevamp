@@ -157,6 +157,7 @@ namespace tsorcRevamp
             SoulSlot.Update();
             if (drawRightClick)
             {
+                RightClickSlot.HoverText = LangUtils.GetTextValue("UI.SecondSlotHover", tsorcRevampSystems.GetSecondSlotBindingText());
                 RightClickSlot.Update();
             }
             StorageOpenerSlot.Update();

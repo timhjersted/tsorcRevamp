@@ -38,6 +38,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int RangedWeaponItemType => -1; // melee-only
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
+        protected override bool HasSlashVFX => true;
+        protected override Color SlashVFXColor => Color.DarkViolet;
+        protected override float SlashVFXOpacity => 0.22f;
+        protected override float SlashVFXScale => 0.72f;
 
         protected override int MeleeDamage => 55;
         protected override int RangedDamage => 0; // unused, no ranged weapon
@@ -61,10 +65,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         // ── Jumping Downward Slash ───────────────────────────────────────────────
         protected override bool  CanJumpSlash          => true;
-        protected override float JumpSlashMinRange      => 200f;
-        protected override float JumpSlashMaxRange      => 500f;
+        protected override float JumpSlashMinRange      => 0f;
+        protected override float JumpSlashMaxRange      => 50f * 16f;
+        protected override float JumpSlashMaxForwardSpeed => 8.5f;
+        protected override float JumpSlashMaxUpSpeed    => 18f;
         protected override int   JumpSlashChance        => 5;
         protected override int   JumpSlashCooldownAfterUse => 420;
+
+        protected override int EstusChargesMax => 4;
 
         // ── Forward Flip Slash ───────────────────────────────────────────────────
         protected override bool  CanFlipSlash              => true;
@@ -186,8 +194,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // (rolls Agility above), same mechanism CursedDragonInvader uses - evasion BEFORE getting hit.
         protected override bool EvadesProjectiles => true;
 
-        // The abyss-space scene is reserved for the two health-threshold surges below. It used to
-        // be applied here for the whole fight, which made Artorias and his attacks unreadable.
         public override void OnSpawn(IEntitySource source)
         {
             _ringCenter = NPC.Center;
@@ -196,8 +202,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
-            base.AI();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            if (!NPC.active)
+            {
+                return;
+            }
+
+            if (despawnHandler.IsDespawning)
+            {
+                NPC.dontTakeDamage = true;
+                NPC.velocity *= 0.85f;
+                _abyssSurgeTimer = 0;
+                _currentRingRadius = RingRadius;
+
+                if (_impaleSwordProjIndex >= 0 && _impaleSwordProjIndex < Main.maxProjectiles
+                    && Main.projectile[_impaleSwordProjIndex].active)
+                {
+                    Main.projectile[_impaleSwordProjIndex].Kill();
+                    _impaleSwordProjIndex = -1;
+                }
+
+                return;
+            }
+
+            base.AI();
+            TickProjectileSwordTelegraphs();
 
             // The puppet body and hand-drawn greatsword both sample the normal light map, so this
             // shared white light keeps the whole silhouette readable when the abyss-space scene is up.
@@ -218,17 +247,56 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        // Twice per fight Artorias tears open the Abyss: a radial tendril burst marks the start,
-        // then the existing abyss-space renderer remains active for exactly twenty seconds.
-        const int AbyssSurgeDuration = 20 * 60;
+        void TickProjectileSwordTelegraphs()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            bool chargingProjectile = Phase == AttackPhase.AbyssSlashTelegraph
+                || Phase == AttackPhase.AbyssSlashPause
+                || Phase == AttackPhase.HomingVolleySwingTelegraph
+                || Phase == AttackPhase.BoomerangSwingTelegraph
+                || Phase == AttackPhase.SpiralFanSwingTelegraph;
+
+            if (!chargingProjectile)
+            {
+                return;
+            }
+
+            Vector2 hand = PuppetHandPosition;
+            Vector2 tip = PuppetWeaponTipPosition(54f);
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 position = Vector2.Lerp(hand, tip, Main.rand.NextFloat(0.45f, 1f))
+                    + Main.rand.NextVector2Circular(5f, 5f);
+                bool white = Main.rand.NextBool(3);
+                Dust dust = Dust.NewDustPerfect(position,
+                    white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
+                    Main.rand.NextVector2Circular(0.7f, 0.7f), 90,
+                    white ? Color.White : Color.DarkViolet,
+                    Main.rand.NextFloat(0.9f, 1.35f));
+                dust.noGravity = true;
+            }
+        }
+
+        // At half health Artorias tears open the Abyss for the remainder of the fight.
+        const int PersistentAbyssSurge = -1;
         const int AbyssSurgeTendrilCount = 10;
         const float AbyssSurgeTendrilSpeed = 11f;
         bool _abyssSurgeDone50;
-        bool _abyssSurgeDone15;
-        readonly bool[] _abyssSurgeAffectedPlayers = new bool[Main.maxPlayers];
+        int _abyssSurgeTimer;
+        public bool AbyssSurgeActive => _abyssSurgeTimer == PersistentAbyssSurge;
 
         void TickAbyssSurges()
         {
+            if (AbyssSurgeActive)
+            {
+                MaintainAbyssDebuff();
+                return;
+            }
+
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
@@ -240,10 +308,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _abyssSurgeDone50 = true;
                 StartAbyssSurge();
             }
-            else if (!_abyssSurgeDone15 && healthFraction <= 0.15f)
+        }
+
+        void MaintainAbyssDebuff()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                _abyssSurgeDone15 = true;
-                StartAbyssSurge();
+                return;
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (player.active && !player.dead)
+                {
+                    player.AddBuff(ModContent.BuffType<Abyss>(), 2 * 60);
+                }
             }
         }
 
@@ -251,15 +331,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.8f, Pitch = -0.35f }, NPC.Center);
             UsefulFunctions.ScreenShake(NPC.Center, strength: 6f, frames: 20);
+            _abyssSurgeTimer = PersistentAbyssSurge;
+            MaintainAbyssDebuff();
 
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
-                if (Main.player[i].active && !Main.player[i].dead)
-                {
-                    Main.player[i].AddBuff(ModContent.BuffType<Abyss>(), AbyssSurgeDuration);
-                    _abyssSurgeAffectedPlayers[i] = true;
-                }
-            }
+            Projectile.NewProjectile(
+                NPC.GetSource_FromThis(),
+                NPC.Center,
+                Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasSurgeAura>(),
+                0,
+                0f,
+                Main.myPlayer,
+                NPC.whoAmI);
 
             for (int i = 0; i < AbyssSurgeTendrilCount; i++)
             {
@@ -1359,6 +1442,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write(defenseBroken);
             writer.Write(_ringCenter.X);
             writer.Write(_ringCenter.Y);
+            writer.Write(_abyssSurgeTimer);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -1370,6 +1454,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.defense = 0;
             }
             _ringCenter = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            _abyssSurgeTimer = reader.ReadInt32();
         }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
@@ -1441,17 +1526,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Gore
         public override void OnKill()
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                for (int i = 0; i < Main.maxPlayers; i++)
-                {
-                    if (_abyssSurgeAffectedPlayers[i] && Main.player[i].active)
-                    {
-                        Main.player[i].ClearBuff(ModContent.BuffType<Abyss>());
-                    }
-                }
-            }
-
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Easterling Gore 1").Type, 1f);

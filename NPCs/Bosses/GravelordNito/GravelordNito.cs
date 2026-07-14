@@ -15,6 +15,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
     public class GravelordNito : ModNPC, IStaggerable
     {
         public override string Texture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordNitoAttacking";
+        // Explicit head path — [AutoloadBossHead] can't be used because it would derive the head from the
+        // Texture above (GravelordNitoAttacking_Head_Boss), which doesn't exist.
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordNito_Head_Boss";
 
         enum AttackState : byte
         {

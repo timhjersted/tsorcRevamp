@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -11,6 +12,7 @@ namespace tsorcRevamp.Items
     class StaminaVessel : ModItem
     {
         public const float PermanentStaminaCap = 200f;
+        public const float StaminaPerVessel = 5f;
 
         public override void SetStaticDefaults()
         {
@@ -36,7 +38,24 @@ namespace tsorcRevamp.Items
         {
             Player player = Main.LocalPlayer;
 
-            tooltips.Insert(4, new TooltipLine(Mod, "UsedCounter", Language.GetTextValue("Mods.tsorcRevamp.Items.StaminaVessel.UsedCounter") + (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax - tsorcRevampStaminaPlayer.DefaultStaminaResourceMax) / 5));
+            // Everything here counts from the player's own class starting stamina rather than the generic
+            // default. Every class converges on the same PermanentStaminaCap, so the number of vessels it takes
+            // to get there differs: Melee starts at 130 and needs 14, Magic starts at 115 and needs 17. Measuring
+            // against DefaultStaminaResourceMax reported vessels the player hadn't eaten (and, for Magic, a
+            // negative count), and the "maxes out after" figure was a flat 15 baked into the localization.
+            float baseStamina = player.GetModPlayer<tsorcRevampPlayer>().GetStartingClassBaseStamina();
+            int vesselsToMax = (int)Math.Ceiling((PermanentStaminaCap - baseStamina) / StaminaPerVessel);
+            int used = (int)((player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax - baseStamina) / StaminaPerVessel);
+
+            // The localized line carries a {0} for the per-class total. A translation that hasn't been updated
+            // yet has no placeholder, and string.Format leaves it alone rather than throwing.
+            TooltipLine maxLine = tooltips.Find(line => line.Name == "Tooltip1");
+            if (maxLine != null)
+            {
+                maxLine.Text = string.Format(maxLine.Text, vesselsToMax);
+            }
+
+            tooltips.Insert(4, new TooltipLine(Mod, "UsedCounter", Language.GetTextValue("Mods.tsorcRevamp.Items.StaminaVessel.UsedCounter") + used));
 
         }
 
@@ -47,7 +66,8 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player)
         {
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax += 5;
+            tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            staminaPlayer.staminaResourceMax = Math.Min(PermanentStaminaCap, staminaPlayer.staminaResourceMax + StaminaPerVessel);
             return true;
         }
 

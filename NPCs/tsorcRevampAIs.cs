@@ -1853,6 +1853,45 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        private static void SpawnTeleportIllusion(NPC source)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient
+                || source.ModNPC is not Invaders.InvaderNPC)
+            {
+                return;
+            }
+
+            int illusionIndex = NPC.NewNPC(source.GetSource_FromAI(), (int)source.Center.X,
+                (int)source.Center.Y, source.type);
+            if (illusionIndex < 0 || illusionIndex >= Main.maxNPCs)
+            {
+                return;
+            }
+
+            NPC illusion = Main.npc[illusionIndex];
+            illusion.Center = source.Center;
+            illusion.velocity = source.velocity;
+            illusion.direction = source.direction;
+            illusion.spriteDirection = source.spriteDirection;
+            illusion.target = source.target;
+            illusion.boss = false;
+            illusion.value = 0f;
+            illusion.dontTakeDamage = true;
+
+            tsorcRevampGlobalNPC illusionGlobal = illusion.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            illusionGlobal.IsTeleportIllusion = true;
+            illusionGlobal.TeleportIllusionTimeLeft = 4 * 60;
+            illusionGlobal.SuppressGlobalOnKillDrops = true;
+            illusionGlobal.CanTeleport = false;
+            illusionGlobal.EvasiveTeleportAway = false;
+            illusion.netUpdate = true;
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, illusionIndex);
+            }
+        }
+
         public static void ExecuteQueuedTeleport(NPC npc)
         {
             if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph == Vector2.Zero)
@@ -1860,6 +1899,15 @@ namespace tsorcRevamp.NPCs
                 return;
             }
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            // TeleportImmediately also enters here directly after QueueTeleport; consume its queued
+            // countdown so the normal AI driver cannot execute the same teleport a second time later.
+            globalNPC.TeleportCountdown = 0;
+
+            if (globalNPC.TeleportVisualStyle == TeleportVisualStyle.MagicIllusion
+                && !globalNPC.IsTeleportIllusion)
+            {
+                SpawnTeleportIllusion(npc);
+            }
 
             SoundEngine.PlaySound(SoundID.Item8, npc.Center);
 
@@ -2134,8 +2182,10 @@ namespace tsorcRevamp.NPCs
             // Build the weighted pool from this enemy's enabled behaviors that match this hit type. Weights reproduce
             // the original 5-case spread: RetreatJump (3 cosmetic variants) 3/5, RetreatDash 1/5, TeleportAway 1/5.
             EvasionPool.Clear();
+            int retreatDirection = npc.Center.X < Main.player[npc.target].Center.X ? -1 : 1;
+            bool safeRetreatLanding = HasSafeRetreatLanding(npc, retreatDirection);
             AddEvasion(globalNPC.EvasiveRetreatJump, EvasiveHitSource.Both, 3, EvasiveBehavior.RetreatJump, melee);
-            AddEvasion(globalNPC.EvasiveRetreatDash, EvasiveHitSource.Both, 1, EvasiveBehavior.RetreatDash, melee);
+            AddEvasion(globalNPC.EvasiveRetreatDash && safeRetreatLanding, EvasiveHitSource.Both, 1, EvasiveBehavior.RetreatDash, melee);
             AddEvasion(globalNPC.EvasiveTeleportAway, EvasiveHitSource.Both, 1, EvasiveBehavior.TeleportAway, melee);
             AddEvasion(globalNPC.EvasiveLeapForward, EvasiveHitSource.Ranged, 1, EvasiveBehavior.LeapForward, melee);
             AddEvasion(globalNPC.EvasiveRunningDash, EvasiveHitSource.Both, 1, EvasiveBehavior.RunningDash, melee);
@@ -2183,6 +2233,27 @@ namespace tsorcRevamp.NPCs
             {
                 EvasionPool.Add(behavior);
             }
+        }
+
+        private static bool HasSafeRetreatLanding(NPC npc, int direction)
+        {
+            int landingX = (int)((npc.Center.X + direction * 80f) / 16f);
+            int feetY = (int)(npc.Bottom.Y / 16f);
+
+            for (int x = landingX - 1; x <= landingX + 1; x++)
+            {
+                for (int y = feetY; y <= feetY + 5; y++)
+                {
+                    Tile tile = Framing.GetTileSafely(x, y);
+                    if (WorldGen.SolidOrSlopedTile(tile)
+                        || (tile.HasTile && TileID.Sets.Platforms[tile.TileType]))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         // Executes one instantaneous evasive behavior. Assumes npc.direction already faces the player (TargetClosest).

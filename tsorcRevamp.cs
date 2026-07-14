@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
@@ -121,6 +122,7 @@ namespace tsorcRevamp
         public static ModKeybind Shunpo;
         public static ModKeybind PrintPosition;
         public static ModKeybind StorageKey;
+        public static ModKeybind SecondSlotKey;
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         internal bool UICooldown = false;
@@ -298,6 +300,7 @@ namespace tsorcRevamp
             //SwordflipKey = KeybindLoader.RegisterKeybind(this, "Sword Flip", Microsoft.Xna.Framework.Input.Keys.P);
             PrintPosition = KeybindLoader.RegisterKeybind(this, "Print Position", Microsoft.Xna.Framework.Input.Keys.P);
             StorageKey = KeybindLoader.RegisterKeybind(this, "Open Storage", Microsoft.Xna.Framework.Input.Keys.T);
+            SecondSlotKey = KeybindLoader.RegisterKeybind(this, "2nd Slot", "Mouse2");
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulCoin>(), 99999L));
 
@@ -1899,6 +1902,7 @@ namespace tsorcRevamp
             UnloadILs();
             CustomDungeonWalls = null;
             DodgerollKey = null;
+            SecondSlotKey = null;
             //SwordflipKey = null;
 
             /* IIRC this was to change the Destroyer's texture, which was never fully implemented?
@@ -2392,6 +2396,17 @@ namespace tsorcRevamp
 
         public override object Call(params object[] args)
         {
+            if (args.Length > 0 && args[0] is string message)
+            {
+                switch (message)
+                {
+                    case "IsRemixWorld":
+                        return tsorcRevampWorld.RemixMap;
+                    case "HasActiveMusicOverride":
+                        return TsorcMusicRegistry.HasActiveOverride();
+                }
+            }
+
             return base.Call(args);
         }
 
@@ -3242,7 +3257,7 @@ namespace tsorcRevamp
             }
 
             string dataDir = Path.Combine(Main.SavePath, "ModConfigs", "tsorcRevampData");
-            string markerPath = Path.Combine(dataDir, "control-defaults-v3.txt");
+            string markerPath = Path.Combine(dataDir, "control-defaults-v4.txt");
             if (File.Exists(markerPath))
             {
                 return;
@@ -3253,10 +3268,7 @@ namespace tsorcRevamp
             try
             {
                 Directory.CreateDirectory(dataDir);
-                if (controlsConfig.RecommendedControls)
-                {
-                    changed = ApplyRecommendedControlBindings(onlyIfDefaultOrOldDefault: true);
-                }
+                changed = ApplySafeFirstRunDodgeBindings();
 
                 bool controlsMatch = RecommendedControlBindingsMatch();
                 controlsConfig.RecommendedControls = controlsMatch;
@@ -3268,12 +3280,191 @@ namespace tsorcRevamp
                     return;
                 }
 
-                File.WriteAllText(markerPath, "Applied tsorcRevamp control defaults v3.");
+                File.WriteAllText(markerPath, "Checked tsorcRevamp Dodge Roll defaults v4.");
             }
             catch (Exception e)
             {
                 ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Failed to apply first-run control defaults: " + e);
             }
+        }
+
+        private static bool ApplySafeFirstRunDodgeBindings()
+        {
+            if (Main.dedServ || PlayerInput.Profiles == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            foreach (PlayerInputProfile profile in PlayerInput.Profiles.Values)
+            {
+                if (!profile.InputModes.TryGetValue(InputMode.Keyboard, out KeyConfiguration keyboard)
+                    || !keyboard.KeyStatus.TryGetValue("tsorcRevamp/Dodge Roll", out List<string> dodgeKeys)
+                    || !HasSingleAllowedBinding(dodgeKeys, "LeftAlt", "LeftShift"))
+                {
+                    // Missing, multiple, mouse-button, and other custom bindings are deliberately preserved.
+                    continue;
+                }
+
+                changed |= SetRecommendedBinding(keyboard, "tsorcRevamp/Dodge Roll", "LeftShift", onlyIfDefaultOrOldDefault: false);
+                changed |= SetRecommendedBinding(keyboard, "SmartSelect", "LeftAlt", onlyIfDefaultOrOldDefault: false);
+            }
+
+            return changed;
+        }
+
+        private static readonly string[] RecommendedControlTriggers =
+        {
+            "QuickHeal",
+            "QuickMana",
+            "Inventory",
+            "QuickMount",
+            "tsorcRevamp/Dodge Roll",
+            "SmartSelect",
+            "tsorcRevamp/2nd Slot"
+        };
+
+        private sealed class RecommendedControlsSnapshot
+        {
+            public Dictionary<string, Dictionary<string, List<string>>> Profiles { get; set; } = new();
+        }
+
+        private static string RecommendedControlsSnapshotPath => Path.Combine(
+            Main.SavePath, "ModConfigs", "tsorcRevampData", "recommended-controls-backup-v1.json");
+
+        private static bool CaptureRecommendedControlBindings()
+        {
+            if (Main.dedServ || PlayerInput.Profiles == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                RecommendedControlsSnapshot snapshot = new();
+                foreach ((string profileName, PlayerInputProfile profile) in PlayerInput.Profiles)
+                {
+                    if (!profile.InputModes.TryGetValue(InputMode.Keyboard, out KeyConfiguration keyboard))
+                    {
+                        continue;
+                    }
+
+                    Dictionary<string, List<string>> bindings = new();
+                    foreach (string trigger in RecommendedControlTriggers)
+                    {
+                        bindings[trigger] = keyboard.KeyStatus.TryGetValue(trigger, out List<string> keys)
+                            ? new List<string>(keys)
+                            : null;
+                    }
+                    snapshot.Profiles[profileName] = bindings;
+                }
+
+                Directory.CreateDirectory(Path.GetDirectoryName(RecommendedControlsSnapshotPath));
+                File.WriteAllText(RecommendedControlsSnapshotPath, JsonConvert.SerializeObject(snapshot, Formatting.Indented));
+                return true;
+            }
+            catch (Exception e)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Could not back up controls before applying the recommended preset: " + e);
+                return false;
+            }
+        }
+
+        private static bool RestoreRecommendedControlBindings()
+        {
+            if (Main.dedServ || PlayerInput.Profiles == null || !File.Exists(RecommendedControlsSnapshotPath))
+            {
+                return true;
+            }
+
+            try
+            {
+                RecommendedControlsSnapshot snapshot = JsonConvert.DeserializeObject<RecommendedControlsSnapshot>(
+                    File.ReadAllText(RecommendedControlsSnapshotPath));
+                if (snapshot?.Profiles == null)
+                {
+                    return false;
+                }
+
+                foreach ((string profileName, Dictionary<string, List<string>> bindings) in snapshot.Profiles)
+                {
+                    if (!PlayerInput.Profiles.TryGetValue(profileName, out PlayerInputProfile profile)
+                        || !profile.InputModes.TryGetValue(InputMode.Keyboard, out KeyConfiguration keyboard))
+                    {
+                        continue;
+                    }
+
+                    foreach ((string trigger, List<string> keys) in bindings)
+                    {
+                        if (keys == null)
+                        {
+                            keyboard.KeyStatus.Remove(trigger);
+                        }
+                        else
+                        {
+                            keyboard.KeyStatus[trigger] = new List<string>(keys);
+                        }
+                    }
+                }
+
+                if (!PlayerInput.Save())
+                {
+                    ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Could not save restored controls; the backup was retained for another attempt.");
+                    return false;
+                }
+
+                File.Delete(RecommendedControlsSnapshotPath);
+                return true;
+            }
+            catch (Exception e)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Could not restore controls from the recommended preset backup: " + e);
+                return false;
+            }
+        }
+
+        internal static bool TrySetRecommendedControls(bool enabled)
+        {
+            if (enabled)
+            {
+                if (!CaptureRecommendedControlBindings())
+                {
+                    return false;
+                }
+
+                ApplyRecommendedControlBindings(onlyIfDefaultOrOldDefault: false);
+                return RecommendedControlBindingsMatch();
+            }
+
+            return RestoreRecommendedControlBindings();
+        }
+
+        internal static bool TryToggleRecommendedControlsFromItem(out bool enabled)
+        {
+            tsorcRevampControlsConfig config = ModContent.GetInstance<tsorcRevampControlsConfig>();
+            bool requestedState = !config.RecommendedControls;
+            if (!TrySetRecommendedControls(requestedState))
+            {
+                enabled = config.RecommendedControls;
+                return false;
+            }
+
+            config.RecommendedControls = requestedState;
+            tsorcRevampControlsConfig.LastRecommendedControls = requestedState;
+            enabled = requestedState;
+
+            try
+            {
+                Directory.CreateDirectory(ConfigManager.ModConfigPath);
+                string configPath = Path.Combine(ConfigManager.ModConfigPath, config.Mod.Name + "_" + config.Name + ".json");
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(config, ConfigManager.serializerSettings));
+            }
+            catch (Exception e)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Recommended controls changed, but the config toggle could not be saved: " + e);
+            }
+
+            return true;
         }
 
         internal static bool ApplyRecommendedControlBindings(bool onlyIfDefaultOrOldDefault)
@@ -3297,6 +3488,7 @@ namespace tsorcRevamp
                 changed |= SetRecommendedBinding(keyboard, "QuickMount", "G", onlyIfDefaultOrOldDefault, "R", "G");
                 changed |= SetRecommendedBinding(keyboard, "tsorcRevamp/Dodge Roll", "LeftShift", onlyIfDefaultOrOldDefault, "LeftAlt", "LeftShift");
                 changed |= SetRecommendedBinding(keyboard, "SmartSelect", "LeftAlt", onlyIfDefaultOrOldDefault, "LeftShift", "LeftAlt");
+                changed |= SetRecommendedBinding(keyboard, "tsorcRevamp/2nd Slot", "Mouse2", onlyIfDefaultOrOldDefault, "Mouse2");
             }
 
             if (changed && !onlyIfDefaultOrOldDefault)
@@ -3324,7 +3516,8 @@ namespace tsorcRevamp
                 && BindingMatches(keyboard, "Inventory", "Q")
                 && BindingMatches(keyboard, "QuickMount", "G")
                 && BindingMatches(keyboard, "tsorcRevamp/Dodge Roll", "LeftShift")
-                && BindingMatches(keyboard, "SmartSelect", "LeftAlt");
+                && BindingMatches(keyboard, "SmartSelect", "LeftAlt")
+                && BindingMatches(keyboard, "tsorcRevamp/2nd Slot", "Mouse2");
         }
 
         private static bool SetRecommendedBinding(KeyConfiguration keyboard, string trigger, string recommendedKey, bool onlyIfDefaultOrOldDefault, params string[] defaultOrRecommendedKeys)

@@ -93,6 +93,7 @@ namespace tsorcRevamp.NPCs
         GreySmoke,  // heavy grey smoke cloud lingering ~1s at both exit and entry
         Fire,       // fire + dark smoke cloud lingering ~1s at both exit and entry
         Plague,     // black/purple lingering cloud; origin cloud applies controlled curse buildup
+        MagicIllusion, // leaves a translucent, invulnerable combat duplicate at the exit for four seconds
     }
 
     public enum InvisibilityStyle
@@ -140,6 +141,11 @@ namespace tsorcRevamp.NPCs
         float multiplier = 1f;
         float divisorMultiplier = 1f;
         int DarkSoulQuantity;
+        /// <summary>Opt-out for staged encounter actors whose intermediate death must produce no global drops.</summary>
+        public bool SuppressGlobalOnKillDrops;
+        /// <summary>True for a temporary combat duplicate left behind by a MagicIllusion teleport.</summary>
+        public bool IsTeleportIllusion;
+        public int TeleportIllusionTimeLeft;
         public Player lastHitPlayerSummoner = Main.LocalPlayer;
         public Player lastHitPlayerRanger = Main.LocalPlayer;
         public Player lastHitPlayerShadowSickle = Main.LocalPlayer;
@@ -226,6 +232,9 @@ namespace tsorcRevamp.NPCs
         public bool Soulstruck;
         public bool PhazonCorruption;
         public bool PlaguesmithBuff;
+        // Set true each tick by SorrowfulCurseBuff (the Cleric of Sorrow's Last Rites dying curse). While active,
+        // the afflicted enemy's attacks inflict Cursed Inferno on the player it hits. Mirrors PlaguesmithBuff.
+        public bool SorrowfulCurse;
 
         public int LionheartMarks = 0;
 
@@ -555,7 +564,7 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
             Add<Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
-            Add<Bosses.HeroofLumelia>(0.15f, 90f);
+            Add<Bosses.HeroofLumelia>(0.15f, 120f);
             Add<Enemies.SuperHardMode.SlograII>(0.4f, 50f);
             // Heavy giants / demons
             Add<Bosses.AncientDemon>(0.15f, 80f);
@@ -564,6 +573,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.Gigas>(0.15f, 120f); // caster-giant mini-boss: boss-tier poise; its long Wrath of Gold telegraph is the stagger window
             Add<Enemies.IceGigas>(0.15f, 120f); // frost terrain-controller mini-boss: boss-tier poise; Absolute Zero's channel is the stagger window
             Add<Bosses.GravelordNito.GravelordNito>(0.15f, 120f); // Skeletron-tier boss: harmless contact body, sword/projectile damage, Death Nova channel is the stagger window
+            Add<Bosses.VesselOfSouls.VesselOfSouls>(0.15f, 120f); // EoC-slot flying eye boss: boss-tier poise; its gravity-well channel (phase 2) will be the stagger window
             Add<Enemies.DemonLordApocalypse>(0.15f, 80f);
             // Big bruisers
             Add<Enemies.Hydra>(0.2f, 60f);
@@ -585,6 +595,8 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.FireLurker>(0.35f, 30f);
             Add<Enemies.Tonberry>(0.35f, 30f);
             Add<Enemies.QuaraHydromancer>(0.35f, 30f);
+            Add<Enemies.QuaraPincher>(0.3f, 60f); // brood-leader bruiser: Brood Call is the interruptible window
+            Add<Enemies.QuaraClutchCrab>(0.5f, 18f); // summoned support kiter: fragile, easily staggered
             // Human / skilled
             Add<Enemies.FallenNecromancer>(0.4f, 26f);
             Add<Enemies.Necromancer>(0.4f, 26f);
@@ -593,7 +605,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.FirebombHollow>(0.4f, 26f);
             Add<Enemies.Basilisk.BasiliskShifter>(0.4f, 26f);
             // Light / agile
-            Add<Enemies.ClericOfSorrow>(0.45f, 20f);
+            Add<Enemies.ClericOfSorrow>(0.4f, 26f); // amphibious frost ritual-caster: Necromancer tier; its Communion/Undertow channels are the stagger windows
             Add<Enemies.Assassin>(0.45f, 20f);
             Add<Enemies.TibianAmazon>(0.45f, 20f);
             Add<Enemies.TibianValkyrie>(0.45f, 20f);
@@ -1237,6 +1249,7 @@ namespace tsorcRevamp.NPCs
             Soulstruck = false;
             PhazonCorruption = false;
             PlaguesmithBuff = false;
+            SorrowfulCurse = false;
             Venomized = false;
             Electrified = false;
             Irradiated = false;
@@ -1817,6 +1830,8 @@ namespace tsorcRevamp.NPCs
             // Permanent resources — charge counts deplete and never refill, so they must stay in sync
             binaryWriter.Write(TeleportChargesRemaining);
             binaryWriter.Write(AttackIndex);
+            binaryWriter.Write(IsTeleportIllusion);
+            binaryWriter.Write(TeleportIllusionTimeLeft);
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
@@ -1846,6 +1861,8 @@ namespace tsorcRevamp.NPCs
             FleeElapsedFrames = binaryReader.ReadInt32();
             TeleportChargesRemaining = binaryReader.ReadInt32();
             AttackIndex = binaryReader.ReadInt32();
+            IsTeleportIllusion = binaryReader.ReadBoolean();
+            TeleportIllusionTimeLeft = binaryReader.ReadInt32();
         }
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
@@ -2261,7 +2278,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
-            if (Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+            if (!SuppressGlobalOnKillDrops && Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
             {
                 if (Main.rand.NextBool(2))
                 {
@@ -4234,6 +4251,10 @@ namespace tsorcRevamp.NPCs
             {
                 target.AddBuff(BuffID.Venom, 120);
             }
+            if (SorrowfulCurse)
+            {
+                target.AddBuff(BuffID.CursedInferno, 300);
+            }
         }
 
         public override void ModifyShop(NPCShop shop)
@@ -4605,6 +4626,20 @@ namespace tsorcRevamp.NPCs
             {
                 npc.knockBackResist = poiseProfile.knockBackResist;
                 PoiseMax = poiseProfile.poiseMax;
+            }
+            else if (npc.ModNPC is Invaders.InvaderNPC)
+            {
+                // Every puppet-style invader can channel Estus and must therefore have a poise
+                // meter so the player can interrupt that channel. Per-NPC tuning set in the
+                // content class remains authoritative; this only fills missing profiles.
+                if (PoiseMax <= 0f)
+                {
+                    PoiseMax = npc.boss ? 120f : 30f;
+                }
+                if (npc.knockBackResist <= 0f)
+                {
+                    npc.knockBackResist = npc.boss ? 0.15f : 0.35f;
+                }
             }
         }
 

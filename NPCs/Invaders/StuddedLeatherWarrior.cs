@@ -280,8 +280,10 @@ namespace tsorcRevamp.NPCs.Invaders
 
             PlayThrowSound();
             Vector2 flaskMuzzle = NPC.Center + new Vector2(NPC.direction * 12f, -NPC.height * 0.25f);
-            Vector2 flaskTarget = target.Center + target.velocity * 18f;
-            Vector2 flaskVelocity = UsefulFunctions.BallisticTrajectory(flaskMuzzle, flaskTarget, 7.5f, 0.18f, highAngle: false, fallback: true);
+            const float flaskSpeed = 10f;
+            float leadTicks = MathHelper.Clamp(Vector2.Distance(flaskMuzzle, target.Center) / flaskSpeed, 8f, 32f);
+            Vector2 flaskTarget = target.Center + target.velocity * leadTicks;
+            Vector2 flaskVelocity = UsefulFunctions.BallisticTrajectory(flaskMuzzle, flaskTarget, flaskSpeed, 0.18f, highAngle: false, fallback: true);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
                 flaskMuzzle,
