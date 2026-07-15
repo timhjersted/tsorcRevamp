@@ -8,7 +8,7 @@ using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Enemy;
 
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
     /// Pilot invader (2026-07) for the ported BroadswordRework swing-polish features: swing easing,
@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Invaders
     /// volley, and optionally escalates into a big arc-jump-over with a third volley fired mid-air.
     /// No recovery after the chain ends either way — a clean hit-and-run poke.
     /// </summary>
-    public class OwlFatherInvader : InvaderNPC
+    public class OwlFatherInvader : PuppetNPC
     {
         protected override string InvaderTitle => "Owl Father";
 

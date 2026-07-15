@@ -7,12 +7,12 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>Silent intermission between Khaios and his spirit form.</summary>
     public class KhaiosTransitionOrb : ModNPC
     {
-        public override string Texture => "tsorcRevamp/NPCs/Invaders/InvaderPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
         private const int PauseTicks = 180;
         private const float RiseDistance = 8f * 16f;

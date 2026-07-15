@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
     // (models HP/damage off EoC, sets the vanilla boss1 downed flag on death). Its signature verb is
     // INHALE: when the mouth-hole dilates (sprite frames 3–5) gravity turns on and something comes out.
     //
-    // Bespoke FLYING AI (not FighterAI, not the Invader system): eased acceleration-steered floating with
+    // Bespoke FLYING AI (not FighterAI, not the Puppet system): eased acceleration-steered floating with
     // a top-level state machine (Idle / Attack / PhaseTransition / Dying) and a MoveMood sub-machine
     // (Orbit / Drift / Menace / Retreat). PHASE 1 = the open-world fight (4 attacks). At 50% it SWALLOWS
     // the player into a hazy-purple void (reusing the per-player EnterTheAbyss render) and PHASE 2 adds

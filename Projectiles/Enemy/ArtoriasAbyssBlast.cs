@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float OrbSpeed = 4f;
         const int OrbDamage = 40;
 
-        public override string Texture => "tsorcRevamp/NPCs/Invaders/InvaderPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

@@ -8,7 +8,7 @@ using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
-    public class InvaderSmokeBomb : ModProjectile
+    public class PuppetSmokeBomb : ModProjectile
     {
         private const float Gravity = 0.18f;
         private const int CloudRadius = 150;

@@ -1,10 +1,10 @@
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
-    /// Geometry for invader melee hit detection: a "blade" is a line segment from the hand to the
-    /// weapon tip, thickened by <c>thickness</c>.  Used so an invader's swing only lands while the
+    /// Geometry for puppet melee hit detection: a "blade" is a line segment from the hand to the
+    /// weapon tip, thickened by <c>thickness</c>. Used so a puppet's swing only lands while the
     /// weapon sprite is actually overlapping the target, instead of a static box sitting in place
     /// for the whole swing window regardless of where the sprite is pointing.
     /// </summary>

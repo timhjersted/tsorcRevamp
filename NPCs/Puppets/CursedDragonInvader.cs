@@ -11,7 +11,7 @@ using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.NPCs.AI;
 
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
     /// Winged spear-and-spellcaster invader built on the Cursed Dragon armor set.  Fights on the
@@ -19,9 +19,9 @@ namespace tsorcRevamp.NPCs.Invaders
     /// primary, an enemy Venom Staff = secondary with burst patterns + a 5-meteor pentagram finisher,
     /// a MeteorStorm = magic with a rare 7-second meteor rain), and breathes red Ancient-Demon fire.
     /// Breath, hyper-armor, sustained magic, and the cross-weapon finisher all run through the shared
-    /// <see cref="InvaderNPC"/> state machine.
+    /// <see cref="PuppetNPC"/> state machine.
     /// </summary>
-    public class CursedDragonInvader : InvaderNPC
+    public class CursedDragonInvader : PuppetNPC
     {
         // Index into SecondaryRangedBurstPatterns that ends with the meteor pentagram finisher.
         private const int VenomFinisherPattern = 3;
@@ -103,10 +103,10 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override float TopSpeed => 3.0f;
         protected override float Acceleration => 0.10f;
         protected override int CasualStrollChance => 10;
-        protected override float InvaderJumpPower => 10f;
-        protected override float InvaderJumpBoost => 7f;
-        protected override bool InvaderCanDoubleJump => true;
-        protected override float InvaderDoubleJumpPower => 7f;
+        protected override float PuppetJumpPower => 10f;
+        protected override float PuppetJumpBoost => 7f;
+        protected override bool PuppetCanDoubleJump => true;
+        protected override float PuppetDoubleJumpPower => 7f;
 
         // ── Primary ranged: arcane ball (also the aerial hover shot) ────────────────
         protected override RangedStyle RangedAnimStyle => RangedStyle.Throw;
@@ -639,7 +639,7 @@ namespace tsorcRevamp.NPCs.Invaders
             Vector2 topLeft = center - new Vector2(boxW / 2f, boxH / 2f);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderMeleeHitbox>(),
+                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
                 (int)(SpearDamage * 1.25f), 4f, Main.myPlayer, boxW, boxH);
         }
 

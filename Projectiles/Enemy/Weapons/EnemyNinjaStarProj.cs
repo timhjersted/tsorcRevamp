@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     /// <summary>
     /// Hostile grey ninja star thrown by the Black Ninja invader.  Flies straight, then STICKS into
     /// whatever it hits and lingers ~3 s as a contact hazard before popping in a small spark/smoke
-    /// puff with a little AoE.  (The abyssal ninjas keep <see cref="InvaderThrowingStar"/>.)
+    /// puff with a little AoE. (The abyssal ninjas keep <see cref="PuppetThrowingStar"/>.)
     /// </summary>
     public class EnemyNinjaStarProj : ModProjectile
     {

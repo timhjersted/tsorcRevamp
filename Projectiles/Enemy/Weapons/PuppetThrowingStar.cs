@@ -9,12 +9,12 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
-    /// Hostile throwing-star fired by InvaderNPC subclasses.
+    /// Hostile throwing-star fired by PuppetNPC subclasses.
     /// Reuses the AbyssalStarProj sprite.
     /// hostile=true / friendly=false so it damages players, not NPCs.
     /// No homing — flies straight and bounces off tiles.
     /// </summary>
-    public class InvaderThrowingStar : ModProjectile
+    public class PuppetThrowingStar : ModProjectile
     {
         // Reuse the player-version sprite; no need to duplicate the asset.
         public override string Texture => "tsorcRevamp/Projectiles/Melee/AbyssalStarProj";

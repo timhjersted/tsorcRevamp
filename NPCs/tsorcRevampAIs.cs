@@ -788,7 +788,7 @@ namespace tsorcRevamp.NPCs
 
             // Quick step: a standing i-frame dash WITHOUT sprite rotation. The
             // i-frames + pass-through are handled by the CanBeHit*/CanHitPlayer hooks reading QuickStepTimer.
-            // Shared with InvaderNPC via TickQuickStep so the behavior is identical under either AI.
+            // Shared with PuppetNPC via TickQuickStep so the behavior is identical under either AI.
             TickQuickStep(npc, globalNPC);
 
             // Advance the multi-tick evasion windows (RunningDash telegraph→burst, RetreatAndShoot back-off).
@@ -1856,7 +1856,7 @@ namespace tsorcRevamp.NPCs
         private static void SpawnTeleportIllusion(NPC source)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient
-                || source.ModNPC is not Invaders.InvaderNPC)
+                || source.ModNPC is not Puppets.PuppetNPC)
             {
                 return;
             }
@@ -2260,7 +2260,7 @@ namespace tsorcRevamp.NPCs
         /// <summary>
         /// Advance an active quick-step (the i-frame dash velocity) or its post-step recovery.  Returns
         /// true while either is seizing the body this frame.  Mover-agnostic: called by both the FighterAI
-        /// combat layer (RunFighterCombatExec) and InvaderNPC, so quick-step behaves identically under either
+        /// combat layer (RunFighterCombatExec) and PuppetNPC, so quick-step behaves identically under either
         /// AI rather than being duplicated.  i-frames + player pass-through come from the CanBeHit*/CanHitPlayer
         /// hooks reading QuickStepTimer.
         /// </summary>
@@ -2293,7 +2293,7 @@ namespace tsorcRevamp.NPCs
         /// <summary>
         /// Arm a quick-step dash.  <paramref name="allowForward"/> permits a forward step THROUGH the player
         /// (i-frames + pass-through) when there's room to land past them (plus QuickStepForwardRoom px);
-        /// otherwise it steps backward.  Shared by the on-hit evasion path (ExecuteEvasion) and InvaderNPC's
+        /// otherwise it steps backward.  Shared by the on-hit evasion path (ExecuteEvasion) and PuppetNPC's
         /// preemptive quick-step.
         /// </summary>
         internal static void ArmQuickStep(NPC npc, tsorcRevampGlobalNPC globalNPC, bool allowForward)

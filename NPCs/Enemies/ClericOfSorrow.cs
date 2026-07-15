@@ -11,13 +11,13 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles.Enemy;               // GigasIceShard, GigasUndertowZone (reused)
 using tsorcRevamp.Projectiles.Enemy.ClericOfSorrow; // ClericLastRitesRing
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    // A REGULAR enemy (not an invader — no "INVADED BY" banner) rendered on the InvaderNPC puppet system.
+    // A REGULAR enemy (not an invader — no "INVADED BY" banner) rendered on the PuppetNPC puppet system.
     // A drowned priest of The Sorrow: a Capricorn-masked, black-robed cultist on Jim's Wings that FLIES
     // (out of water and in it — the wings double as the underwater hover) and casts frost through a
     // Sapphire Staff, every spell leaving the staff TIP.
@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
     //   • SET-PIECES (Ice Shell encase / Communion ally-heal / Last Rites death-curse) are NOT attacks that
     //     fit the magic template, so they run on the base's generic AttackPhase.Custom (StartCustomAttack),
     //     triggered from this AI() override on their own conditions.
-    public class ClericOfSorrow : InvaderNPC
+    public class ClericOfSorrow : PuppetNPC
     {
         // Not an invasion — regular spawn, no banner.
         protected override bool AnnounceInvasion => false;
@@ -59,6 +59,10 @@ namespace tsorcRevamp.NPCs.Enemies
         protected override int RandomTakeoffChance => 45;   // strongly prefers the air
         protected override float FlightHeightTrigger => 40f;
         protected override float FlightHpEscalationFrac => 1f; // always "escalated" — it's an aerial caster
+        // It hovers ABOVE the player and rains frost DOWN, so any player within a wide vertical band below
+        // it is a valid aerial target. The base default (96px) only permits casting at level-or-higher
+        // targets, so a grounded player below the hovering cleric would never be shot at.
+        protected override float AerialRangedVerticalBand => 2000f;
         #endregion
 
         #region Magic pacing / ranges
@@ -109,6 +113,13 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 1; // puppet body is drawn separately; NPC sprite is a placeholder
+
+            // The Lunar Cultist Robe (body slot 181) is a floor-length robe, but vanilla doesn't flag it
+            // to hide the lower-body skin — so bare feet poke out below the hem when it's worn without leg
+            // armor (as the puppet is). Flag it so the robe reads full-length. NOTE: this is a GLOBAL
+            // vanilla-set change — a real player wearing the Blue Lunatic Robe vanity with no leg armor will
+            // also get hidden feet (arguably the correct look for a floor-length robe).
+            ArmorIDs.Body.Sets.HidesBottomSkin[ArmorIDs.Body.LunarCultistRobe] = true;
         }
 
         public override void SetDefaults()
@@ -139,7 +150,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         int Scaled(int dmg) => tsorcRevampWorld.SuperHardMode ? (int)(dmg * 1.3f) : dmg;
 
-        // MP: the base InvaderNPC doesn't sync Phase/PhaseTimer (every peer simulates its own copy off
+        // MP: the base PuppetNPC doesn't sync Phase/PhaseTimer (every peer simulates its own copy off
         // synced position/life/target — see EnemyRedesignSkillGuide G0.7); a subclass syncs whatever of ITS
         // OWN state matters. Here: the active ranged cast + set-piece kind (so remote clients show the same
         // spell instead of independently re-rolling), the heal target, the cooldowns, and the one-time
@@ -191,6 +202,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
+            // Targeting normally rides on the base's default RunMovementAI (SmartFighter4 → TargetClosest).
+            // We replace RunMovementAI AND spend most of our time airborne (where RunMovementAI isn't called
+            // at all), so nothing would otherwise set NPC.target — it would stay 255 (the dummy player near
+            // the world origin), making the puppet fly to the top-left corner and never attack. Acquire the
+            // target here, before base.AI() reads NPC.target.
+            NPC.TargetClosest(true);
+
             base.AI(); // puppet render/flight/weapon/phase machine + ranged-magic selection
 
             if (_undertowCd > 0) _undertowCd--;
@@ -242,15 +260,18 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        // Ground movement (only runs when NOT airborne). Prefer the air immediately; drift otherwise.
+        // Ground movement (only runs when NOT airborne). Real A* pathfinding so it navigates around cover
+        // when line of sight is lost (jumps ledges, walks to the last-known position, patrols) instead of
+        // the old naive drift that just oscillated at a ledge. It also requests takeoff so it prefers
+        // flying over obstacles; this covers the grounded gaps between flights.
         protected override void RunMovementAI(float speedMult)
         {
+            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.RemembersLastKnownPos = true;
+            g.NavSearchRadius = 80; // A* window: finds ledges to jump to / routes around cover
             Flight?.RequestTakeoff();
-
-            Player target = Main.player[NPC.target];
-            float dx = target.Center.X - NPC.Center.X;
-            NPC.direction = NPC.spriteDirection = dx >= 0 ? 1 : -1;
-            NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(dx) * TopSpeed * 0.5f, Acceleration);
+            SmartFighter4AI.Run(NPC, topSpeed: TopSpeed * speedMult, acceleration: Acceleration,
+                doorBreakingDamage: 4, attackRange: 420f); // stops approaching at ~26 tiles (caster spacing)
         }
 
         #region Shared cast helpers
@@ -270,6 +291,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 int d = Dust.NewDust(pos, 2, 2, DustID.IceTorch, 0f, 0f, 100, default, 1.1f);
                 Main.dust[d].noGravity = true;
                 Main.dust[d].velocity *= 0.3f;
+            }
+        }
+
+        ///<summary>Ice burst at the staff tip the instant a shard is loosed — sprays frost along the shot.</summary>
+        void StaffFireBurst(Vector2 tip, Vector2 aim)
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                Vector2 v = aim.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(1.5f, 4.5f);
+                int d = Dust.NewDust(tip - new Vector2(4f), 8, 8, Main.rand.NextBool() ? DustID.IceTorch : DustID.Frost, v.X, v.Y, 60, default, 1.3f);
+                Main.dust[d].noGravity = true;
             }
         }
 
@@ -328,14 +360,17 @@ namespace tsorcRevamp.NPCs.Enemies
             switch (_magicCast)
             {
                 case MagicCast.Hail:
+                    DebugAttackLabel = "Hail Prayer";
                     _magicAttackTicksOverride = HailWindow;
                     SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
                     break;
                 case MagicCast.Veil:
+                    DebugAttackLabel = "Blizzard Veil";
                     _magicAttackTicksOverride = VeilWindow;
                     SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center);
                     break;
                 case MagicCast.Undertow:
+                    DebugAttackLabel = "Undertow";
                     _magicAttackTicksOverride = UndertowChannel;
                     SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f, Pitch = -0.7f }, NPC.Center);
                     if (authority)
@@ -360,13 +395,17 @@ namespace tsorcRevamp.NPCs.Enemies
                     Vector2 tip = StaffTip(target);
                     StaffTipDust(tip, 2);
                     int into = HailWindow - ticksRemaining;
-                    if (into % 6 == 0 && server)
+                    if (into % 6 == 0) // deterministic cadence → dust + sound on every peer, projectile on server
                     {
                         Vector2 aim = (target.Center - tip).SafeNormalize(new Vector2(NPC.direction, 0f));
-                        Vector2 vel = aim.RotatedBy(Main.rand.NextFloat(-0.18f, 0.18f)) * Main.rand.NextFloat(8.5f, 11f);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), tip, vel,
-                            ModContent.ProjectileType<GigasIceShard>(), Scaled(HailShardDamage), 2f, Main.myPlayer, 0f);
+                        StaffFireBurst(tip, aim);
                         SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.4f, Pitch = 0.4f }, NPC.Center);
+                        if (server)
+                        {
+                            Vector2 vel = aim.RotatedBy(Main.rand.NextFloat(-0.18f, 0.18f)) * Main.rand.NextFloat(8.5f, 11f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), tip, vel,
+                                ModContent.ProjectileType<GigasIceShard>(), Scaled(HailShardDamage), 2f, Main.myPlayer, 0f);
+                        }
                     }
                     break;
                 }
@@ -375,16 +414,18 @@ namespace tsorcRevamp.NPCs.Enemies
                     Vector2 tip = StaffTip(target);
                     StaffTipDust(tip, 3);
                     int into = VeilWindow - ticksRemaining;
-                    if (into % 4 == 0 && server)
+                    if (into % 4 == 0) // deterministic cadence → dust on every peer, projectiles on server
                     {
                         float baseAngle = (target.Center - tip).ToRotation();
-                        for (int k = -1; k <= 1; k++)
-                        {
-                            float a = baseAngle + k * 0.5f + Main.rand.NextFloat(-0.12f, 0.12f);
-                            Vector2 vel = a.ToRotationVector2() * Main.rand.NextFloat(5f, 7.5f);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), tip, vel,
-                                ModContent.ProjectileType<GigasIceShard>(), Scaled(VeilShardDamage), 1.5f, Main.myPlayer, 0.06f);
-                        }
+                        StaffFireBurst(tip, baseAngle.ToRotationVector2());
+                        if (server)
+                            for (int k = -1; k <= 1; k++)
+                            {
+                                float a = baseAngle + k * 0.5f + Main.rand.NextFloat(-0.12f, 0.12f);
+                                Vector2 vel = a.ToRotationVector2() * Main.rand.NextFloat(5f, 7.5f);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), tip, vel,
+                                    ModContent.ProjectileType<GigasIceShard>(), Scaled(VeilShardDamage), 1.5f, Main.myPlayer, 0.06f);
+                            }
                     }
                     break;
                 }

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Enemy
             Item.useAnimation = 60;
             Item.useTime = 60;
             Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderSmokeBomb>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetSmokeBomb>();
             Item.shootSpeed = 7.2f;
             Item.DamageType = DamageClass.Ranged;
             Item.value = 0;

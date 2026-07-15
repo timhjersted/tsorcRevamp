@@ -12,9 +12,9 @@ using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.AI;
 
 using tsorcRevamp.Items.Weapons.Melee.Axes;
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
-    public class StuddedLeatherWarrior : InvaderNPC
+    public class StuddedLeatherWarrior : PuppetNPC
     {
         protected override string InvaderTitle => "Studded Leather Warrior";
 
@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Invaders
         // ── Composite-arm swing experiment ──────────────────────────────────────────
         // Enabled ONLY on this enemy so the new continuous-arm swing can be A/B tested against
         // the legacy 4-frame path before touching any other invader.  Flip the global
-        // InvaderNPC.CompositeArmSwingMasterEnable off to fall back instantly.
+        // PuppetNPC.CompositeArmSwingMasterEnable off to fall back instantly.
         protected override bool UseCompositeArmSwing => true;
 
         protected override RangedStyle RangedAnimStyle => RangedStyle.Throw;
@@ -142,8 +142,8 @@ namespace tsorcRevamp.NPCs.Invaders
         // the axe gets its reach from the combo swings + Charge/Leap gap-closers instead.
         protected override bool CanStab => false;
 
-        protected override float InvaderJumpPower => 10f;
-        protected override float InvaderJumpBoost => 6f;
+        protected override float PuppetJumpPower => 10f;
+        protected override float PuppetJumpBoost => 6f;
 
         protected override Color MeleeTelegraphFlashColor => Color.White;
 
@@ -271,7 +271,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     NPC.GetSource_FromThis(),
                     muzzle,
                     velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderCrossbowBolt>(),
+                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetCrossbowBolt>(),
                     SecondaryRangedDamage,
                     4f,
                     Main.myPlayer);

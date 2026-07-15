@@ -14,7 +14,7 @@ using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.NPCs;
-using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Textures;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.UI;
@@ -901,7 +901,7 @@ namespace tsorcRevamp
 
             if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
             {
-                DrawInvaderAttackDebug(spriteBatch);
+                DrawPuppetAttackDebug(spriteBatch);
             }
         }
 
@@ -916,7 +916,7 @@ namespace tsorcRevamp
         private static int _debugDetailCacheTick = -9999;
         private const int DebugDetailRefreshTicks = 10; // ~6x/sec at 60fps
 
-        private static void DrawInvaderAttackDebug(SpriteBatch spriteBatch)
+        private static void DrawPuppetAttackDebug(SpriteBatch spriteBatch)
         {
             // ── Above-head labels (world space) ─────────────────────────────────────
             // Previous move (dim yellow) over current move (white) so a swing's move name is
@@ -925,13 +925,13 @@ namespace tsorcRevamp
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             DynamicSpriteFont headFont = FontAssets.MouseText.Value;
-            InvaderNPC nearestInv = null;
+            PuppetNPC nearestInv = null;
             NPC nearestNpc = null;
             float nearestDist = float.MaxValue;
 
             foreach (NPC npc in Main.ActiveNPCs)
             {
-                if (npc.ModNPC is not InvaderNPC inv) continue;
+                if (npc.ModNPC is not PuppetNPC inv) continue;
                 float dist = Vector2.Distance(npc.Center, Main.LocalPlayer.Center);
                 if (dist > 2400f) continue;
 

@@ -64,7 +64,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
     /// Standardized windup curve used by Carry → Throw/Magic Telegraph → Release:
     /// <c>0 (forward) → -π/2 (overhead) → +π/4 (release at 45°)</c>.
     /// Body row (Use1-Use4) is derived from this angle each tick so the puppet's arm sprite
-    /// matches the held weapon's rotation — matches the approach used in <see cref="Invaders.InvaderNPC"/>.
+    /// matches the held weapon's rotation — matches the approach used in <see cref="Puppets.PuppetNPC"/>.
     /// </summary>
     public class EnemySpriteRenderer
     {
@@ -465,7 +465,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             SyncFrames(npc);
             // NOTE: no SetCompositeArmFront. We rely on bodyRow Use1–Use4 (set in SyncFrames)
             // to depict the arm pose. The vanilla composite-arm system fights our rotation
-            // conventions for non-standard items, and InvaderNPC has shown that bodyRow
+            // conventions for non-standard items, and PuppetNPC has shown that bodyRow
             // alone is sufficient for clean arm poses.
         }
 
@@ -490,7 +490,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
             // Body row priority:
             //   Arm-animated poses (Carry / Telegraph / Release) → derive Use1-Use4 from
             //   the current weaponRotation so the puppet's arm sprite matches what we're
-            //   drawing the weapon as. This is the same pitch formula InvaderNPC uses and
+            //   drawing the weapon as. This is the same pitch formula PuppetNPC uses and
             //   is what keeps the arm and weapon from drifting apart visually.
             int bodyRow;
             if (IsArmAnimatedPose(resolvedPose))
@@ -530,7 +530,7 @@ namespace tsorcRevamp.NPCs.EnemySpriteRendering
 
         // Hand position is looked up FROM THE BODY ROW (Use1–Use4) — these offsets match
         // where the vanilla player arm sprite's tip actually ends up in each Use frame.
-        // (Same approach as InvaderNPC.GetHandPosition.) This guarantees the held weapon
+        // (Same approach as PuppetNPC.GetHandPosition.) This guarantees the held weapon
         // visually pins to the rendered arm regardless of pitch/rotation math, eliminating
         // the "weapon hovering an inch off the hand" drift that math-derived positions had.
         private Vector2 GetHandPosition(NPC npc)

@@ -1,13 +1,13 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Puppets;
 
 namespace tsorcRevamp.Utilities
 {
     /// <summary>
-    /// Live A/B + tuning switch for the experimental composite-arm invader swing.
-    /// Only invaders that opt in via <c>UseCompositeArmSwing</c> (currently just
+    /// Live A/B + tuning switch for the experimental composite-arm puppet swing.
+    /// Only puppets that opt in via <c>UseCompositeArmSwing</c> (currently just
     /// StuddedLeatherWarrior) are affected — this command flips the global master enable
     /// and tunes the shared rotation offset / arm stretch without a rebuild.
     ///
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Utilities
     ///   /swingarm stretch none|quarter|threequarters|full
     ///   /swingarm flip [on|off]         → toggle the blade-leads-the-swing mirror (single-bladed weapons)
     ///   /swingarm aim [on|off]          → toggle full-360 aim-centered swing (axe archetype)
-    ///   /swingarm log clear             → truncate tsorcRevamp-invader-swing.log
+    ///   /swingarm log clear             → truncate tsorcRevamp-puppet-swing.log
     ///   /swingarm status                → print current values
     /// </summary>
     public class SwingArmCommand : ModCommand
@@ -27,13 +27,13 @@ namespace tsorcRevamp.Utilities
 
         public override string Command => "swingarm";
 
-        public override string Description => "Toggle/tune the experimental composite-arm invader swing";
+        public override string Description => "Toggle/tune the experimental composite-arm puppet swing";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
             if (args.Length == 0)
             {
-                InvaderNPC.CompositeArmSwingMasterEnable = !InvaderNPC.CompositeArmSwingMasterEnable;
+                PuppetNPC.CompositeArmSwingMasterEnable = !PuppetNPC.CompositeArmSwingMasterEnable;
                 ReplyStatus(caller);
                 return;
             }
@@ -41,19 +41,19 @@ namespace tsorcRevamp.Utilities
             switch (args[0].ToLowerInvariant())
             {
                 case "on":
-                    InvaderNPC.CompositeArmSwingMasterEnable = true;
+                    PuppetNPC.CompositeArmSwingMasterEnable = true;
                     ReplyStatus(caller);
                     break;
 
                 case "off":
-                    InvaderNPC.CompositeArmSwingMasterEnable = false;
+                    PuppetNPC.CompositeArmSwingMasterEnable = false;
                     ReplyStatus(caller);
                     break;
 
                 case "offset":
                     if (args.Length >= 2 && float.TryParse(args[1], out float off))
                     {
-                        InvaderNPC.CompositeArmRotationOffset = off;
+                        PuppetNPC.CompositeArmRotationOffset = off;
                         ReplyStatus(caller);
                     }
                     else
@@ -65,7 +65,7 @@ namespace tsorcRevamp.Utilities
                 case "stretch":
                     if (args.Length >= 2 && TryParseStretch(args[1], out Player.CompositeArmStretchAmount stretch))
                     {
-                        InvaderNPC.CompositeArmStretch = stretch;
+                        PuppetNPC.CompositeArmStretch = stretch;
                         ReplyStatus(caller);
                     }
                     else
@@ -76,26 +76,26 @@ namespace tsorcRevamp.Utilities
 
                 case "flip":
                     if (args.Length >= 2 && args[1].ToLowerInvariant() == "on")
-                        InvaderNPC.BladeFlipMasterEnable = true;
+                        PuppetNPC.BladeFlipMasterEnable = true;
                     else if (args.Length >= 2 && args[1].ToLowerInvariant() == "off")
-                        InvaderNPC.BladeFlipMasterEnable = false;
+                        PuppetNPC.BladeFlipMasterEnable = false;
                     else
-                        InvaderNPC.BladeFlipMasterEnable = !InvaderNPC.BladeFlipMasterEnable;
+                        PuppetNPC.BladeFlipMasterEnable = !PuppetNPC.BladeFlipMasterEnable;
                     caller.Reply(
-                        $"Blade-flip mirror: {(InvaderNPC.BladeFlipMasterEnable ? "ON" : "OFF")}",
-                        InvaderNPC.BladeFlipMasterEnable ? Color.Lime : Color.Gray);
+                        $"Blade-flip mirror: {(PuppetNPC.BladeFlipMasterEnable ? "ON" : "OFF")}",
+                        PuppetNPC.BladeFlipMasterEnable ? Color.Lime : Color.Gray);
                     break;
 
                 case "aim":
                     if (args.Length >= 2 && args[1].ToLowerInvariant() == "on")
-                        InvaderNPC.AimSwingMasterEnable = true;
+                        PuppetNPC.AimSwingMasterEnable = true;
                     else if (args.Length >= 2 && args[1].ToLowerInvariant() == "off")
-                        InvaderNPC.AimSwingMasterEnable = false;
+                        PuppetNPC.AimSwingMasterEnable = false;
                     else
-                        InvaderNPC.AimSwingMasterEnable = !InvaderNPC.AimSwingMasterEnable;
+                        PuppetNPC.AimSwingMasterEnable = !PuppetNPC.AimSwingMasterEnable;
                     caller.Reply(
-                        $"Aim-centered swing: {(InvaderNPC.AimSwingMasterEnable ? "ON (full 360 aim)" : "OFF (legacy fixed arc)")}",
-                        InvaderNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
+                        $"Aim-centered swing: {(PuppetNPC.AimSwingMasterEnable ? "ON (full 360 aim)" : "OFF (legacy fixed arc)")}",
+                        PuppetNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
                     break;
 
                 case "log":
@@ -105,14 +105,14 @@ namespace tsorcRevamp.Utilities
                         break;
                     }
                     if (args.Length >= 2 && args[1].ToLowerInvariant() == "on")
-                        InvaderNPC.SwingDebugLog = true;
+                        PuppetNPC.SwingDebugLog = true;
                     else if (args.Length >= 2 && args[1].ToLowerInvariant() == "off")
-                        InvaderNPC.SwingDebugLog = false;
+                        PuppetNPC.SwingDebugLog = false;
                     else
-                        InvaderNPC.SwingDebugLog = !InvaderNPC.SwingDebugLog;
+                        PuppetNPC.SwingDebugLog = !PuppetNPC.SwingDebugLog;
                     caller.Reply(
-                        $"Swing debug log: {(InvaderNPC.SwingDebugLog ? "ON" : "OFF")} (Logs/tsorcRevamp-invader-swing.log)",
-                        InvaderNPC.SwingDebugLog ? Color.Lime : Color.Gray);
+                        $"Swing debug log: {(PuppetNPC.SwingDebugLog ? "ON" : "OFF")} (Logs/tsorcRevamp-puppet-swing.log)",
+                        PuppetNPC.SwingDebugLog ? Color.Lime : Color.Gray);
                     break;
 
                 case "status":
@@ -130,10 +130,10 @@ namespace tsorcRevamp.Utilities
         /// still-ON flip/aim lines and read as if the command hadn't worked.</summary>
         private static void ReplyStatus(CommandCaller caller)
         {
-            Color c = InvaderNPC.CompositeArmSwingMasterEnable ? Color.Lime : Color.Gray;
+            Color c = PuppetNPC.CompositeArmSwingMasterEnable ? Color.Lime : Color.Gray;
             caller.Reply(
-                $"Composite-arm swing: {(InvaderNPC.CompositeArmSwingMasterEnable ? "ON (new)" : "OFF (legacy 4-frame)")} | " +
-                $"offset={InvaderNPC.CompositeArmRotationOffset:0.###} rad | stretch={InvaderNPC.CompositeArmStretch}",
+                $"Composite-arm swing: {(PuppetNPC.CompositeArmSwingMasterEnable ? "ON (new)" : "OFF (legacy 4-frame)")} | " +
+                $"offset={PuppetNPC.CompositeArmRotationOffset:0.###} rad | stretch={PuppetNPC.CompositeArmStretch}",
                 c);
         }
 
@@ -142,11 +142,11 @@ namespace tsorcRevamp.Utilities
         {
             ReplyStatus(caller);
             caller.Reply(
-                $"Blade-flip mirror: {(InvaderNPC.BladeFlipMasterEnable ? "ON" : "OFF")}",
-                InvaderNPC.BladeFlipMasterEnable ? Color.Lime : Color.Gray);
+                $"Blade-flip mirror: {(PuppetNPC.BladeFlipMasterEnable ? "ON" : "OFF")}",
+                PuppetNPC.BladeFlipMasterEnable ? Color.Lime : Color.Gray);
             caller.Reply(
-                $"Aim-centered swing: {(InvaderNPC.AimSwingMasterEnable ? "ON (full 360 aim)" : "OFF (legacy fixed arc)")}",
-                InvaderNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
+                $"Aim-centered swing: {(PuppetNPC.AimSwingMasterEnable ? "ON (full 360 aim)" : "OFF (legacy fixed arc)")}",
+                PuppetNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
         }
 
         private static void ClearLog(CommandCaller caller)
@@ -154,7 +154,7 @@ namespace tsorcRevamp.Utilities
             try
             {
                 string sep = System.IO.Path.DirectorySeparatorChar.ToString();
-                string path = Main.SavePath + sep + "Logs" + sep + "tsorcRevamp-invader-swing.log";
+                string path = Main.SavePath + sep + "Logs" + sep + "tsorcRevamp-puppet-swing.log";
                 System.IO.File.WriteAllText(path, string.Empty);
                 caller.Reply("Swing debug log cleared.", Color.Lime);
             }

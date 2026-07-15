@@ -11,10 +11,10 @@ using Terraria.ModLoader;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
-    /// Abstract base for human-sized invader enemies rendered via the player draw pipeline.
+    /// Abstract base for human-sized puppet enemies rendered via the player draw pipeline.
     ///
     /// WEAPON NOTES
     /// ─────────────────────────────────────────────────────────────────
@@ -25,17 +25,17 @@ namespace tsorcRevamp.NPCs.Invaders
     ///
     /// PROJECTILE NOTES
     /// ─────────────────────────────────────────────────────────────────
-    /// • Any projectile fired BY an invader must be hostile=true, friendly=false.
-    ///   Player-friendly projectiles will damage the invader itself and not the player.
-    ///   Create a Projectiles/Enemy/ copy for every weapon the invader uses at range.
+    /// • Any projectile fired BY a puppet must be hostile=true, friendly=false.
+    ///   Player-friendly projectiles will damage the puppet itself and not the player.
+    ///   Create a Projectiles/Enemy/ copy for every weapon the puppet uses at range.
     /// </summary>
-    public abstract class InvaderNPC : ModNPC, IStaggerable
+    public abstract class PuppetNPC : ModNPC, IStaggerable
     {
-        public override string Texture => "tsorcRevamp/NPCs/Invaders/InvaderPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
         // ── Invasion banner ───────────────────────────────────────────────────────
         /// <summary>
-        /// The name shown in the "INVADED BY ____" banner when this invader spawns.
+        /// The name shown in the "INVADED BY ____" banner when this puppet spawns.
         /// Override in each concrete class.  Rendered in uppercase automatically.
         /// </summary>
         protected virtual string InvaderTitle => "UNKNOWN INVADER";
@@ -43,19 +43,19 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>
         /// When <c>false</c>, this puppet enemy is a REGULAR enemy, not an invasion: it never shows the
         /// "INVADED BY ___" banner. It still gets the full puppet rendering / combat kit — it just spawns
-        /// via its own <see cref="ModNPC.SpawnChance"/> like any normal NPC. Default <c>true</c> (invader).
+        /// via its own <see cref="ModNPC.SpawnChance"/> like any normal NPC. Default <c>true</c> (invasion encounter).
         /// </summary>
         protected virtual bool AnnounceInvasion => true;
 
         // ── Layer coordination ────────────────────────────────────────────────────
         /// <summary>
         /// Set to <c>this</c> for the exact duration of a <see cref="Main.PlayerRenderer.DrawPlayer"/>
-        /// call so that <see cref="InvaderWeaponDrawLayer"/> knows which invader to draw for.
+        /// call so that <see cref="PuppetWeaponDrawLayer"/> knows which puppet to draw for.
         /// Null at all other times — the layer is a no-op for normal players.
         /// </summary>
-        internal static InvaderNPC DrawingPuppetFor;
+        internal static PuppetNPC DrawingPuppetFor;
 
-        /// <summary>Draw color captured in PreDraw, read by <see cref="InvaderWeaponDrawLayer"/>.</summary>
+        /// <summary>Draw color captured in PreDraw, read by <see cref="PuppetWeaponDrawLayer"/>.</summary>
         internal Color _layerDrawColor;
 
         // ── Puppet ────────────────────────────────────────────────────────────────
@@ -119,8 +119,8 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual float MeleeBladeWidth => 48f;
 
         // ── Swing-polish opt-ins (2026-07) ──────────────────────────────────────────
-        // All default OFF so every existing invader keeps its exact current swing behavior.
-        // An invader flips these on individually to pilot the new shared swing-arc math
+        // All default OFF so every existing puppet keeps its exact current swing behavior.
+        // An puppet flips these on individually to pilot the new shared swing-arc math
         // (ported from the BroadswordRework player-weapon system) without touching anyone else.
 
         /// <summary>Ease combo-swing rotation through <see cref="SwingEase.DefaultCurve"/> (slow
@@ -133,7 +133,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual bool UseAlternateFlip => false;
 
         /// <summary>Bias a combo's arc center toward the target's relative height, captured once
-        /// per swing at combo start — so the invader's swing actually reaches for an airborne or
+        /// per swing at combo start — so the puppet's swing actually reaches for an airborne or
         /// crouched target instead of always arcing level with the ground.</summary>
         protected virtual bool UseAimAdaptiveArc => false;
 
@@ -167,7 +167,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual int RangedRecoveryTicks  => 55;
 
         /// How many ticks must pass after a ranged burst before ranged is allowed again.
-        /// Gives the invader time to close distance and fight in melee first.
+        /// Gives the puppet time to close distance and fight in melee first.
         protected virtual int RangedCooldownAfterUse => 300;
         /// How many ticks must pass after a stab before another stab is allowed.
         /// Prevents instant re-stab when the player dodgerolls through.
@@ -220,9 +220,9 @@ namespace tsorcRevamp.NPCs.Invaders
 
         // ── Secondary-ranged "panic backhop" (optional) ───────────────────────────
         // A proactive spacing tool: when the player closes to within SecondaryRangedBackhopRange and
-        // the secondary weapon is off cooldown, the invader hops AWAY (still facing the player) and
+        // the secondary weapon is off cooldown, the puppet hops AWAY (still facing the player) and
         // fires a single secondary shot — independent of the normal SecondaryRangedMinRange band, so it
-        // works point-blank.  Default range 0 = disabled (no behavior change for other invaders).
+        // works point-blank.  Default range 0 = disabled (no behavior change for other puppets).
         protected virtual float SecondaryRangedBackhopRange   => 0f;
         /// <summary>Chance (0–100) to backhop when the player is inside <see cref="SecondaryRangedBackhopRange"/>.</summary>
         protected virtual int   SecondaryRangedBackhopChance  => 50;
@@ -277,7 +277,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual Color MagicTelegraphFlashColor => Color.MediumPurple;
 
         // ── Fire breath (optional, opt-in per subclass) ───────────────────────────
-        /// <summary>Master toggle: when true this invader can perform a sustained fire-breath attack
+        /// <summary>Master toggle: when true this puppet can perform a sustained fire-breath attack
         /// (BreathTelegraph → Breathing → BreathRecovery).  Override <see cref="DoBreathWindup"/> and
         /// <see cref="DoBreathTick"/> to supply the telegraph VFX and the breath projectiles.</summary>
         protected virtual bool  CanBreathe            => false;
@@ -297,18 +297,18 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual int   BreathChance          => 3;
         /// <summary>Flash color for the breath telegraph.</summary>
         protected virtual Color BreathTelegraphFlashColor => Color.OrangeRed;
-        /// <summary>When true the invader may begin a breath while airborne (and will strafe across to
+        /// <summary>When true the puppet may begin a breath while airborne (and will strafe across to
         /// sweep the stream).  When false breath is grounded-only.</summary>
         protected virtual bool  BreathAllowedAirborne => false;
 
         /// <summary>True for the full duration of the entire telegraph+attack window (not just the
-        /// post-flash commit).  Set true to give this invader hyper-armor — zero knockback, no poise
+        /// post-flash commit).  Set true to give this puppet hyper-armor — zero knockback, no poise
         /// build, can't be staggered — from the moment an attack telegraph starts until recovery.
         /// Default false preserves the original behavior (interruptible during the wind-up).</summary>
         protected virtual bool  HyperArmorDuringTelegraph => false;
 
         // ── Proactive projectile evasion (optional) ───────────────────────────────
-        // SF4-mover invaders don't run the legacy BasicAI Agility dodge scan, so this is a self-
+        // SF4-mover puppets don't run the legacy BasicAI Agility dodge scan, so this is a self-
         // contained version: each idle tick, scan for an incoming aimed friendly projectile and (rolling
         // the GlobalNPC Agility stat) either jump over it or i-frame dodge in place.  Reuses the existing
         // mover-agnostic DodgeTimer i-frames.  Default off; set Agility on the NPC to tune frequency.
@@ -317,8 +317,8 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual float ProjectileEvadeRange => 200f;
 
         // ── Quick-step dodge (shared with FighterAI via tsorcRevampAIs.TickQuickStep) ──────
-        // ON-HIT quick-step works automatically for any invader whose EvasiveProfile sets EvasiveQuickStep
-        // (InvaderNPC always ticks the shared executor, so the old "invader can't tick QuickStepTimer" bug
+        // ON-HIT quick-step works automatically for any puppet whose EvasiveProfile sets EvasiveQuickStep
+        // (PuppetNPC always ticks the shared executor, so the old "puppet can't tick QuickStepTimer" bug
         // is gone).  PREEMPTIVE quick-step is opt-in: when the player is mid-swing in melee range, roll
         // PreemptiveQuickStepChance to dash THROUGH them (i-frames, can't hurt them) and land past them.
         /// <summary>Chance (0–100) to preemptively quick-step when the player is mid-swing in melee range.
@@ -550,7 +550,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// neutral recovery.</summary>
         protected virtual int DodgePunishChainChance => 50;
 
-        /// <summary>Called by a hostile projectile that hit its target, to credit this invader's
+        /// <summary>Called by a hostile projectile that hit its target, to credit this puppet's
         /// current attack as having connected (see <see cref="_lastAttackHitConnected"/>).</summary>
         public void ReportAttackHit() => _lastAttackHitConnected = true;
 
@@ -585,7 +585,7 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         // ── Charge-up Nova (health-threshold interrupt) ─────────────────────────────
-        // Highest-priority interrupt, checked alongside Healing: the invader roots in place while
+        // Highest-priority interrupt, checked alongside Healing: the puppet roots in place while
         // dust gathers and thickens around it and an outer telegraph ring races out ahead over
         // NovaChargeTicks, then the whole radius detonates in one huge blast. Trigger conditions
         // (e.g. specific HP thresholds) and exact numbers are entirely subclass-owned - the base
@@ -595,7 +595,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual int   NovaBlastHoldTicks  => 24;
         protected virtual int   NovaRecoveryTicks   => 90;
 
-        /// <summary>Return true (once) when the invader should interrupt whatever it's doing to
+        /// <summary>Return true (once) when the puppet should interrupt whatever it's doing to
         /// charge up a nova. Treat this like <c>ShouldHeal</c> - track your own one-shot state.</summary>
         protected virtual bool ShouldTriggerNova() => false;
         /// <summary>Called every tick of the charge-up, elapsed/total counting the wind-up progress.</summary>
@@ -670,7 +670,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         // ── Boomerang Crescent (dodge-free overhead swing + curving/returning crescent(s)) ──
         // Reuses the same overhead-chop shape as Homing Volley. Fires partway through the chop;
-        // the crescent(s) arc out in a wide curl, then home back toward the invader's OWN current
+        // the crescent(s) arc out in a wide curl, then home back toward the puppet's OWN current
         // position for a second, separately-timed pass.
         protected virtual bool  CanBoomerang                => false;
         protected virtual float BoomerangMinRange           => 60f;
@@ -748,7 +748,7 @@ namespace tsorcRevamp.NPCs.Invaders
         private float _fireVolleyArcVx;
 
         // ── Estus healing ─────────────────────────────────────────────────────────
-        /// <summary>How many estus drinks the invader starts with.</summary>
+        /// <summary>How many estus drinks the puppet starts with.</summary>
         protected virtual int   EstusChargesMax         => 10;
         /// <summary>Fraction of max HP restored per drink.</summary>
         protected virtual float EstusHealFraction       => 0.20f;
@@ -763,16 +763,16 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual float RecentDamageThreshold   => 0.18f;
         /// <summary>How fast recent-damage memory decays per tick (fraction of max HP).</summary>
         protected virtual float RecentDamageDecayRate   => 0.0025f;
-        /// <summary>Minimum pixel distance from the player before the invader stops fleeing and drinks.</summary>
+        /// <summary>Minimum pixel distance from the player before the puppet stops fleeing and drinks.</summary>
         protected virtual float FleeToHealDistance      => 40 * 16f;  // 40 tiles
         /// <summary>Max ticks spent fleeing before drinking anyway (in case player is chasing).</summary>
         protected virtual int   FleeToHealMaxTicks      => 150;
 
         // ── Navigation (SF4 A* pathfinding; jump tuning below) ───────────────────
-        protected virtual float InvaderJumpPower      => 10f;
-        protected virtual float InvaderJumpBoost      => 6f;
-        protected virtual bool  InvaderCanDoubleJump  => false;
-        protected virtual float InvaderDoubleJumpPower => 6f;
+        protected virtual float PuppetJumpPower      => 10f;
+        protected virtual float PuppetJumpBoost      => 6f;
+        protected virtual bool  PuppetCanDoubleJump  => false;
+        protected virtual float PuppetDoubleJumpPower => 6f;
 
         // ── Gap-closer attack tuning (LeapSlam / ChargeChop combo motions) ──────────
         /// <summary>Horizontal speed held during a LeapSlam's airborne arc (px/frame).</summary>
@@ -783,11 +783,11 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual float ChargeAttackSpeedMult  => 1.85f;
 
         // ── Shield (optional, opt-in per subclass) ──────────────────────────────────
-        /// <summary>Item type whose sprite is drawn as this invader's off-hand shield.  -1 = no
-        /// shield.  Override in a subclass to give an invader a reactive guard (also call a
+        /// <summary>Item type whose sprite is drawn as this puppet's off-hand shield.  -1 = no
+        /// shield.  Override in a subclass to give an puppet a reactive guard (also call a
         /// <c>ShieldProfile.*</c> in SetDefaults to set the block chances).</summary>
         protected virtual int ShieldItemType => -1;
-        /// <summary>True when this invader carries a shield.</summary>
+        /// <summary>True when this puppet carries a shield.</summary>
         protected bool HasShield => ShieldItemType > 0;
         /// <summary>Damage multiplier applied to FRONT hits while actively guarding (0.5 = take half).
         /// Backstabs bypass the block entirely.</summary>
@@ -803,17 +803,17 @@ namespace tsorcRevamp.NPCs.Invaders
         /// enough to catch a ranged shot, short enough to stay mobile.  90 ticks = 1.5 s.</summary>
         protected virtual int ShieldGuardTicksRanged => 90;
         /// <summary>Minimum guard hold (ticks) once the guard is committed in melee range.  The
-        /// invader plants + locks facing for this whole window, so the player can dodgeroll through
+        /// puppet plants + locks facing for this whole window, so the player can dodgeroll through
         /// and backstab.  150 ticks = 2.5 s.</summary>
         protected virtual int ShieldGuardTicksMelee => 150;
         /// <summary>Slow advance speed (px/frame) toward the player while guarding OUT of melee
-        /// range.  In melee range the invader plants instead.</summary>
+        /// range.  In melee range the puppet plants instead.</summary>
         protected virtual float ShieldAdvanceSpeed => 0.9f;
         /// <summary>True this frame while the guard is up (drives the raised-shield pose + the
         /// front damage / poise reduction).  Driven by the reactive block timer.</summary>
         private bool _shielding;
         /// <summary>Facing captured when the guard goes up and held through a melee commit, so the
-        /// invader doesn't track a player dodgerolling through to its back.</summary>
+        /// puppet doesn't track a player dodgerolling through to its back.</summary>
         private int  _shieldLockedDir;
         /// <summary>Rising-edge tracker for the guard (false→true = just raised).</summary>
         private bool _shieldWasGuarding;
@@ -822,7 +822,7 @@ namespace tsorcRevamp.NPCs.Invaders
         private bool _shieldMeleeExtended;
 
         /// <summary>
-        /// Run the ground-movement AI for this invader.  All invaders navigate with
+        /// Run the ground-movement AI for this puppet.  All puppets navigate with
         /// <c>SmartFighter4AI</c> (A* pathfinding + ropes + stuck/teleport recovery); subclasses
         /// override to tune search radius / door-break / attack range.  Called once per tick from
         /// <see cref="AI"/> while grounded.
@@ -847,7 +847,7 @@ namespace tsorcRevamp.NPCs.Invaders
             RangedTelegraph, RangedAttack, RangedRecovery,
             SpearTelegraph,  SpearAttack,  SpearRecovery,
             MagicTelegraph,  MagicAttack,  MagicRecovery,
-            /// <summary>Charge-up before a sustained fire-breath stream: the invader plants (or, when
+            /// <summary>Charge-up before a sustained fire-breath stream: the puppet plants (or, when
             /// airborne, keeps flying) and emits a swelling mouth ember via <see cref="DoBreathWindup"/>.</summary>
             BreathTelegraph,
             /// <summary>Active fire-breath stream: <see cref="DoBreathTick"/> spawns the breath projectiles
@@ -894,7 +894,7 @@ namespace tsorcRevamp.NPCs.Invaders
             FlipSlashLand,
             /// <summary>Abyss Slash wind-up: underhand → 170° arc → held "sword post" pose for the
             /// last <see cref="AbyssSlashHoldTicks"/>. Deliberately does NOT stop movement (SF4's
-            /// normal pursuit from earlier this tick is left untouched) so the invader keeps walking.</summary>
+            /// normal pursuit from earlier this tick is left untouched) so the puppet keeps walking.</summary>
             AbyssSlashTelegraph,
             /// <summary>One quick swing that fires <see cref="DoAbyssSlashFire"/> once on entry.</summary>
             AbyssSlashSwipe,
@@ -919,18 +919,18 @@ namespace tsorcRevamp.NPCs.Invaders
             ClosingDistance,
             /// <summary>
             /// Inter-shot pause during a crossbow burst pattern.
-            /// The invader holds horizontal aim and waits for the timer; the next shot fires
+            /// The puppet holds horizontal aim and waits for the timer; the next shot fires
             /// automatically when it expires (no new telegraph phase).
             /// </summary>
             CrossbowBurstPause,
             /// <summary>
             /// Slow walk toward player after a recovery phase; no attacks allowed.
-            /// Gives variety: the invader advances calmly before re-engaging.
+            /// Gives variety: the puppet advances calmly before re-engaging.
             /// </summary>
             CasualStroll,
             /// <summary>
             /// Sprint away from the player until far enough to drink safely, then enter Healing.
-            /// Interrupted if the invader can't reach safe distance within <see cref="FleeToHealMaxTicks"/>.
+            /// Interrupted if the puppet can't reach safe distance within <see cref="FleeToHealMaxTicks"/>.
             /// </summary>
             FleeToHeal,
             /// <summary>
@@ -1224,7 +1224,7 @@ namespace tsorcRevamp.NPCs.Invaders
         // ── Direction hold (anti-bounce) ──────────────────────────────────────────
         /// <summary>
         /// Ticks remaining during which the current facing direction is locked.
-        /// Prevents rapid flip-flopping when the player dodgerolls past the invader —
+        /// Prevents rapid flip-flopping when the player dodgerolls past the puppet —
         /// the navigator would otherwise flip direction every single tick.
         /// </summary>
         private int _directionHoldTicks;
@@ -1261,7 +1261,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         /// <summary>Toggles the alternate-flip parity and (re)computes the aim-adaptive bias for the
         /// swing that's about to play. Called at the start of every swing/combo — both the combo
-        /// system (TryStartMeleeCombo) and the plain one-shot MeleeAttack path — so an invader that
+        /// system (TryStartMeleeCombo) and the plain one-shot MeleeAttack path — so an puppet that
         /// opts into UseAlternateFlip/UseAimAdaptiveArc gets consistent behavior regardless of which
         /// path picked the attack. heightDiff: NPC.Center.Y - target.Center.Y (positive = target
         /// above).</summary>
@@ -1306,7 +1306,7 @@ namespace tsorcRevamp.NPCs.Invaders
         private WeaponArchetype? _autoRangedArchetype;
 
         /// <summary>
-        /// Weapon archetype that determines the melee combo pool for this invader.
+        /// Weapon archetype that determines the melee combo pool for this puppet.
         /// Auto-detected from the item's useStyle/damage class; override to force a specific archetype.
         /// </summary>
         protected virtual WeaponArchetype MeleeArchetype
@@ -1324,7 +1324,7 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         /// <summary>
-        /// Weapon archetype that determines the ranged combo pool for this invader.
+        /// Weapon archetype that determines the ranged combo pool for this puppet.
         /// Auto-detected from the primary ranged item; override to force a specific archetype.
         /// </summary>
         protected virtual WeaponArchetype RangedArchetype
@@ -1356,7 +1356,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// is the per-combo effective-weight array (0 = on cooldown / wrong band — don't pick those).</summary>
         protected virtual int ReactiveComboIndex(float dist, ComboRangeBand band, int[] ready) => -1;
 
-        /// <summary>When true (default), generic melee/spear/combo phases brake the invader so attacks
+        /// <summary>When true (default), generic melee/spear/combo phases brake the puppet so attacks
         /// read as planted swings. Set false to preserve normal movement velocity throughout melee use.
         /// Explicit attack movement such as lunges, leaps, charges, and forward pushes still applies.</summary>
         protected virtual bool SlowDownBeforeMelee => true;
@@ -1367,7 +1367,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         // ── Closing distance (anti-whiff for melee combos) ────────────────────────
         /// <summary>Distance (px) at which a chosen melee combo is close enough to actually connect.  If a
-        /// combo is rolled while farther than this (but within <see cref="ComboMaxStartRange"/>), the invader
+        /// combo is rolled while farther than this (but within <see cref="ComboMaxStartRange"/>), the puppet
         /// first sprints in via <see cref="AttackPhase.ClosingDistance"/> and only swings once inside it.</summary>
         protected virtual float MeleeEngageRange => MeleeRange + 24f;
         /// <summary>Speed multiplier while closing distance to a melee target.</summary>
@@ -1381,7 +1381,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>Multiplier applied to a melee combo's first-step TelegraphTicks at runtime.
         /// Default 1.35 = ~35% longer telegraph windows than the raw data table values, giving
         /// the player more time to read the incoming combo.  Lower for faster, more aggressive
-        /// invaders.</summary>
+        /// puppets.</summary>
         protected virtual float ComboTelegraphMultiplier => 1.35f;
 
         /// <summary>Hard floor on a combo's first-step telegraph duration (ticks).  Even after
@@ -1391,12 +1391,12 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual int MinComboTelegraphTicks => 30;
 
         /// <summary>Max distance (px) at which a melee combo can begin.  Beyond this, the
-        /// invader falls through to ranged/legacy attack paths.  Default = StabRange + 80
+        /// puppet falls through to ranged/legacy attack paths.  Default = StabRange + 80
         /// covers thrusts + most dash lunges.</summary>
         protected virtual float ComboMaxStartRange => StabRange + 80f;
 
         // ── Wings / flight ────────────────────────────────────────────────────────
-        /// <summary>Master toggle: when true, this invader can take off, hover, dive, and land.
+        /// <summary>Master toggle: when true, this puppet can take off, hover, dive, and land.
         /// Subclasses can wire this to a static config flag or a ModConfig field.</summary>
         protected virtual bool HasWings => false;
 
@@ -1405,7 +1405,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual int WingsAccessoryItemType => ItemID.AngelWings;
 
         /// <summary>When false, the folded wings are hidden while grounded and only appear once
-        /// airborne — for invaders whose grounded silhouette should stay clean (e.g. Gwyn's cape).</summary>
+        /// airborne — for puppets whose grounded silhouette should stay clean (e.g. Gwyn's cape).</summary>
         protected virtual bool ShowWingsWhenGrounded => true;
 
         /// <summary>Flight tuning.  Override to customize hover altitude / dive speed / cooldowns.</summary>
@@ -1415,15 +1415,15 @@ namespace tsorcRevamp.NPCs.Invaders
         /// Set to 0 to only fly when tactically necessary (player above, blocked, low HP).</summary>
         protected virtual int RandomTakeoffChance => 8;
 
-        /// <summary>Height differential (player above invader) above which the invader
+        /// <summary>Height differential (player above puppet) above which the puppet
         /// will preferentially take off rather than try to navigate up on foot.</summary>
         protected virtual float FlightHeightTrigger => 120f;
 
-        /// <summary>HP fraction at or below which the invader gains an aerial-phase preference
+        /// <summary>HP fraction at or below which the puppet gains an aerial-phase preference
         /// (random takeoff chance is amplified, dive attacks more likely).</summary>
         protected virtual float FlightHpEscalationFrac => 0.50f;
 
-        /// <summary>Flight-combat tuning shared by every winged invader. Dives can target above,
+        /// <summary>Flight-combat tuning shared by every winged puppet. Dives can target above,
         /// beside, or below the NPC; the waypoint leads moving players by this many ticks.</summary>
         protected virtual bool CanUseAerialMelee => true;
         protected virtual int AerialDiveCooldownTicks => 120;
@@ -1460,7 +1460,7 @@ namespace tsorcRevamp.NPCs.Invaders
         // vanilla's own fractal-afterimage fields (Player.isFirstFractalAfterImage /
         // firstFractalAfterImageOpacity — the same mechanism vanilla dash accessories use).  Set
         // AfterimageTicks > 0 (e.g. at the start of a dash) to show the trail for that many ticks;
-        // it counts itself down in AI() and is a no-op for any invader that never sets it.
+        // it counts itself down in AI() and is a no-op for any puppet that never sets it.
         protected int AfterimageTicks;
         /// <summary>Draw an echo every Nth cached old-position sample (NPC.oldPos has 10 slots by default).</summary>
         protected virtual int AfterimageSampleStep => 2;
@@ -1494,7 +1494,7 @@ namespace tsorcRevamp.NPCs.Invaders
         private bool IsEchoStepSwinging => _echoStepDelayTimer > 0 && _echoStepDelayTimer <= EchoStepSwingTicks;
 
         /// <summary>Rolls <see cref="EchoStepChance"/>; on success, arms an echo swing at the
-        /// invader's CURRENT position, <see cref="EchoStepDelayMin"/>-<see cref="EchoStepDelayMax"/>
+        /// puppet's CURRENT position, <see cref="EchoStepDelayMin"/>-<see cref="EchoStepDelayMax"/>
         /// ticks from now. Call this from the end of a dash-type attack (hit or miss - the echo is a
         /// residual trace of the motion, not tied to whether the real swing connected).</summary>
         protected void TryArmEchoStep()
@@ -1508,7 +1508,7 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         /// <summary>Called every AI tick regardless of Phase - the echo can resolve while the
-        /// invader is doing something else entirely by the time it goes off.</summary>
+        /// puppet is doing something else entirely by the time it goes off.</summary>
         private void TickEchoStep()
         {
             if (_echoStepDelayTimer < 0)
@@ -1563,7 +1563,7 @@ namespace tsorcRevamp.NPCs.Invaders
             Vector2 center = _echoStepPos + new Vector2(_echoStepSwingDir * EchoStepReach * 0.5f, -8f);
             Vector2 topLeft = center - new Vector2(boxW / 2f, boxH / 2f);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderMeleeHitbox>(),
+                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
                 _echoStepDamage, 3f, Main.myPlayer, boxW, boxH);
         }
 
@@ -1571,7 +1571,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// Draws the echo mid-swing: the puppet posed to the same Use1-Use4 row a real swing would
         /// use (via <see cref="BodyRowFromWeaponRotation"/>), plus the held weapon drawn by hand using
         /// the same offset table as <see cref="GetHandPosition"/>. Deliberately does NOT go through
-        /// <see cref="DrawingPuppetFor"/>/InvaderWeaponDrawLayer - that layer reads the invader's LIVE
+        /// <see cref="DrawingPuppetFor"/>/PuppetWeaponDrawLayer - that layer reads the puppet's LIVE
         /// position/rotation/Phase, which would put the weapon back at the real Artorias instead of at
         /// the fixed echo point. Drawn at high opacity - a visible second swordsman, not a faint trail.
         /// </summary>
@@ -1610,7 +1610,7 @@ namespace tsorcRevamp.NPCs.Invaders
             Texture2D tex = texAsset.Value;
 
             // Same arm-tip offset table as GetHandPosition(), just anchored to the echo's fixed
-            // position/direction instead of the invader's live NPC.Center/direction.
+            // position/direction instead of the puppet's live NPC.Center/direction.
             Vector2 offset = bodyRow switch
             {
                 1 => new Vector2(-8f, -9f),
@@ -1636,7 +1636,7 @@ namespace tsorcRevamp.NPCs.Invaders
         // AI
         // ─────────────────────────────────────────────────────────────────────────
 
-        private bool TickInvaderTeleport(tsorcRevampGlobalNPC globalNPC, Player target)
+        private bool TickPuppetTeleport(tsorcRevampGlobalNPC globalNPC, Player target)
         {
             if (!globalNPC.TeleportChargesInitialized)
             {
@@ -1777,7 +1777,7 @@ namespace tsorcRevamp.NPCs.Invaders
             if (_boomerangCooldown       > 0) _boomerangCooldown--;
             if (_spiralFanCooldown       > 0) _spiralFanCooldown--;
             if (AfterimageTicks          > 0) AfterimageTicks--;
-            TickEchoStep(); // independent of Phase - can resolve while the invader is doing anything else
+            TickEchoStep(); // independent of Phase - can resolve while the puppet is doing anything else
             if (_meleeComboCooldowns != null)
                 for (int i = 0; i < _meleeComboCooldowns.Length; i++)
                     if (_meleeComboCooldowns[i] > 0) _meleeComboCooldowns[i]--;
@@ -1791,7 +1791,7 @@ namespace tsorcRevamp.NPCs.Invaders
             // Decay recent-damage memory so old hits don't keep triggering heals forever.
             _recentDamage = Math.Max(0f, _recentDamage - RecentDamageDecayRate);
 
-            // Reset HP-threshold flags once the invader's HP rises back above each level
+            // Reset HP-threshold flags once the puppet's HP rises back above each level
             // (heal restored it, or it just started above those values).
             float hpFrac = (float)NPC.life / NPC.lifeMax;
             if (_halfHpHealed    && hpFrac > 0.55f) _halfHpHealed    = false;
@@ -1803,11 +1803,11 @@ namespace tsorcRevamp.NPCs.Invaders
             // Push navigation settings onto the GlobalNPC instance so FighterAI uses them.
             // Tier 2 enables waypoint routing: when stuck, it scans for a horizontal opening,
             // an elevated ledge to jump to, or a platform edge to drop off.
-            gnpc.CanUseRopes     = true; // Invaders default to rope-climbing (only takes effect on SF4-mover invaders)
-            gnpc.MaxJumpPower    = InvaderJumpPower;
-            gnpc.MaxJumpBoost    = InvaderJumpBoost;
-            gnpc.CanDoubleJump   = InvaderCanDoubleJump;
-            gnpc.DoubleJumpPower = InvaderDoubleJumpPower;
+            gnpc.CanUseRopes     = true; // Puppets default to rope-climbing (only takes effect on SF4-mover puppets)
+            gnpc.MaxJumpPower    = PuppetJumpPower;
+            gnpc.MaxJumpBoost    = PuppetJumpBoost;
+            gnpc.CanDoubleJump   = PuppetCanDoubleJump;
+            gnpc.DoubleJumpPower = PuppetDoubleJumpPower;
             gnpc.TeleportTelegraphTime = TeleportTelegraphTicks;
             gnpc.TeleportDustType      = TeleportDustTypeId;
             gnpc.TeleportDustColor     = TeleportDustTint;
@@ -1818,8 +1818,8 @@ namespace tsorcRevamp.NPCs.Invaders
             gnpc.QuickStepRecoveryTicks = QuickStepRecoveryTicks;
             gnpc.QuickStepForwardRoom   = QuickStepForwardRoom;
 
-            // SF4 invaders don't run BasicAI, which is what normally winds these down — so when this
-            // invader uses a proactive dodge (jump/roll or preemptive quick-step) we tick the timers here.
+            // SF4 puppets don't run BasicAI, which is what normally winds these down — so when this
+            // puppet uses a proactive dodge (jump/roll or preemptive quick-step) we tick the timers here.
             if (EvadesProjectiles || PreemptiveQuickStepChance > 0)
             {
                 if (gnpc.DodgeTimer    > 0) gnpc.DodgeTimer--;
@@ -1838,7 +1838,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
 
-            if (TickInvaderTeleport(gnpc, target))
+            if (TickPuppetTeleport(gnpc, target))
             {
                 UpdateAttackCommitFlags();
                 TickWeaponAnim();
@@ -1859,7 +1859,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     // overrides flight velocity; skip attacks while stepping / mid-dodge.
                     tsorcRevampAIs.TickQuickStep(NPC, gnpc);
                     if (gnpc.DodgeTimer <= 0 && gnpc.QuickStepTimer <= 0 && gnpc.QuickStepRecoveryTimer <= 0)
-                        InvaderAttackAI();
+                        PuppetAttackAI();
                     UpdateAttackCommitFlags();
                     TickWeaponAnim();
                     return;
@@ -1880,7 +1880,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
             // Anti-bounce: if FighterAI just reversed direction but the hold timer is still
             // running (e.g. the player dodgerolled past), revert to the previous direction so
-            // the invader doesn't flip back and forth every tick.
+            // the puppet doesn't flip back and forth every tick.
             if (NPC.direction != dirBefore && _directionHoldTicks > 0)
                 NPC.direction = dirBefore;
             else if (NPC.direction != dirBefore)
@@ -1888,7 +1888,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
             // ── Flee-to-heal movement override ────────────────────────────────────
             // FighterAI always moves TOWARD the player.  When fleeing we invert velocity.X
-            // so the invader sprints away instead.  Y velocity (jumping) from FighterAI is
+            // so the puppet sprints away instead.  Y velocity (jumping) from FighterAI is
             // preserved so it can still clear obstacles while fleeing.
             if (Phase == AttackPhase.FleeToHeal)
             {
@@ -1934,25 +1934,25 @@ namespace tsorcRevamp.NPCs.Invaders
             // Reactive shield: raise/plant the guard after movement so it overrides pursuit velocity.
             UpdateShield();
 
-            // While the guard is up the invader commits to it — no attack starts until it drops
+            // While the guard is up the puppet commits to it — no attack starts until it drops
             // (the minimum hold), so the player gets a real block/backstab window.
 
             // ── Dodge-roll movement guard ──────────────────────────────────────────
             // When the GlobalNPC dodge system fires it sets velocity.X = 5 * direction and
-            // grants invulnerability for DodgeTimer ticks.  If we then run InvaderAttackAI
+            // grants invulnerability for DodgeTimer ticks.  If we then run PuppetAttackAI
             // it would call SlowDown() or set a stab-lunge velocity, overriding the dash.
             // Instead we skip attack AI entirely for those ticks so the dodge movement lands.
             // Also skip while the shield guard is committed so it holds its minimum window.
             if (gnpc.DodgeTimer <= 0 && gnpc.QuickStepTimer <= 0 && gnpc.QuickStepRecoveryTimer <= 0 && !_shielding)
-                InvaderAttackAI();
+                PuppetAttackAI();
 
             UpdateAttackCommitFlags();
             TickWeaponAnim();
         }
 
         /// <summary>
-        /// Returns true when the invader should interrupt whatever it is doing to flee and heal.
-        /// Checked at the top of InvaderAttackAI every tick.
+        /// Returns true when the puppet should interrupt whatever it is doing to flee and heal.
+        /// Checked at the top of PuppetAttackAI every tick.
         /// </summary>
         private bool ShouldHeal()
         {
@@ -2003,7 +2003,7 @@ namespace tsorcRevamp.NPCs.Invaders
             if (cancelledHeal)
             {
                 // The charge is not consumed because completion is the transaction point, but a
-                // cooldown prevents the invader from restarting the same drink during the stun.
+                // cooldown prevents the puppet from restarting the same drink during the stun.
                 _healCooldown = Math.Max(_healCooldown, HealCooldownTicks);
             }
 
@@ -2018,7 +2018,7 @@ namespace tsorcRevamp.NPCs.Invaders
             npc.netUpdate = true;
         }
 
-        private void InvaderAttackAI()
+        private void PuppetAttackAI()
         {
             Player target = Main.player[NPC.target];
             float  dist   = NPC.Distance(target.Center);
@@ -2051,10 +2051,10 @@ namespace tsorcRevamp.NPCs.Invaders
                         SetDisplayWeapon(MeleeWeaponItemType >= 0 ? MeleeWeaponItemType : RangedWeaponItemType, swing: false);
 
                     // ── Wings: airborne behavior + takeoff triggers ───────────────
-                    // Checked BEFORE the LOS gate below: a flying invader must still be able to
+                    // Checked BEFORE the LOS gate below: a flying puppet must still be able to
                     // reposition (dive/strafe variety roll) and eventually land even when a single-ray
                     // LOS check is briefly blocked by minor terrain (a corner, an overhang).  Without
-                    // this, losing LOS while airborne parks the invader in Hover — doing nothing but
+                    // this, losing LOS while airborne parks the puppet in Hover — doing nothing but
                     // the idle bob — until the flight time budget forces a landing, and it can read as
                     // a total freeze.  The individual attack triggers inside this block (breath/knives/
                     // ranged) already re-check hasLOS themselves before firing.
@@ -2343,9 +2343,9 @@ namespace tsorcRevamp.NPCs.Invaders
                     }
 
                     // Gate melee/stab on vertical accessibility: if the player is standing on a
-                    // ledge above the invader, skip attack phases and let FighterAI navigate up
-                    // first.  Without this the invader telegraphs but can never connect.
-                    // Also gate on grounded (velocity.Y == 0) — mid-air attacks cause the invader
+                    // ledge above the puppet, skip attack phases and let FighterAI navigate up
+                    // first.  Without this the puppet telegraphs but can never connect.
+                    // Also gate on grounded (velocity.Y == 0) — mid-air attacks cause the puppet
                     // to mid-air flip direction after overshooting and attack in the wrong direction.
                     float heightDiff = NPC.Center.Y - target.Center.Y; // positive = player above
 
@@ -2462,7 +2462,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     break;
 
                 // ── Ranged ────────────────────────────────────────────────────
-                // Telegraph: raise arm and aim.  Always decelerate so the invader
+                // Telegraph: raise arm and aim.  Always decelerate so the puppet
                 // clearly "prepares to throw".  Standing shots brake harder to a full
                 // stop; moving shots just slow — this still reads as deliberate aiming.
                 case AttackPhase.RangedTelegraph:
@@ -2608,7 +2608,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     break;
 
                 // ── Magic / spellcast ─────────────────────────────────────────
-                // Charge-up then fire a spell projectile.  The invader brakes to a
+                // Charge-up then fire a spell projectile.  The puppet brakes to a
                 // halt during the telegraph so it reads as a deliberate cast.
                 case AttackPhase.MagicTelegraph:
                     SlowDown();
@@ -3010,8 +3010,8 @@ namespace tsorcRevamp.NPCs.Invaders
 
                 // ── Abyss Slash ─────────────────────────────────────────────────
                 // Deliberately does not touch NPC.velocity.X - RunMovementAI's normal pursuit
-                // (already applied earlier this tick, before InvaderAttackAI runs) carries through
-                // untouched, so the invader keeps walking during the whole wind-up.
+                // (already applied earlier this tick, before PuppetAttackAI runs) carries through
+                // untouched, so the puppet keeps walking during the whole wind-up.
                 case AttackPhase.AbyssSlashTelegraph:
                     if (--PhaseTimer <= 0)
                     {
@@ -3548,7 +3548,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
                 // ── Melee combo: inter-step pause ─────────────────────────────
                 // Direction UNLOCKED during the pause: if the player dodgerolled through,
-                // the invader can re-face them so the next step swings the correct way.
+                // the puppet can re-face them so the next step swings the correct way.
                 // The next step's lock direction is captured just before its attack fires.
                 case AttackPhase.MeleeComboPause:
                     if (SlowDownBeforeMelee)
@@ -3578,7 +3578,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     break;
 
                 // ── Melee combo: final recovery ───────────────────────────────
-                // Direction unlocked during recovery — invader can re-orient toward player.
+                // Direction unlocked during recovery — puppet can re-orient toward player.
                 case AttackPhase.MeleeComboRecovery:
                     if (--PhaseTimer <= 0)
                     {
@@ -3765,7 +3765,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         /// <summary>
         /// Spawn the damage hitbox for the current combo step.  Default applies the step's
-        /// DamageMult and ReachMult on top of the invader's MeleeRange × 0.7 base reach.
+        /// DamageMult and ReachMult on top of the puppet's MeleeRange × 0.7 base reach.
         /// Subclasses can override for per-step VFX/sounds without losing the scaling.
         /// </summary>
         protected virtual void DoComboMeleeHit(MeleeComboStep step)
@@ -3781,7 +3781,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         /// <summary>
         /// Launches a LeapSlam: face the player, drop gravity back on, and fling up-and-forward.
-        /// The arc closes distance; the slam hit fires when the invader lands (handled in the
+        /// The arc closes distance; the slam hit fires when the puppet lands (handled in the
         /// MeleeComboAttack phase).
         /// </summary>
         /// <summary>Below this horizontal gap, a LeapSlam jumps high and drops straight onto the
@@ -3950,7 +3950,7 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         /// <summary>
-        /// Publishes this invader's attack state to the poise/hyper-armor system each AI tick.
+        /// Publishes this puppet's attack state to the poise/hyper-armor system each AI tick.
         /// AttackTelegraphing = windup (still interruptible); AttackCommitted = post-flash swing
         /// (hyper-armor: zero knockback, no poise build).  HyperArmor combos additionally hold the
         /// commit through inter-step pauses, so once they start swinging they can't be staggered
@@ -4045,7 +4045,7 @@ namespace tsorcRevamp.NPCs.Invaders
             Vector2 topLeft = hitCenter - new Vector2(boxW / 2f, boxH / 2f);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderMeleeHitbox>(),
+                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
                 (int)(MeleeDamage * 1.2f), 4f, Main.myPlayer, boxW, boxH);
         }
 
@@ -4232,8 +4232,8 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         /// <summary>
-        /// Proactive projectile dodge for SF4 invaders (the legacy BasicAI Agility scan doesn't run for
-        /// them).  Scans for an incoming friendly projectile roughly aimed at this invader; on a hit,
+        /// Proactive projectile dodge for SF4 puppets (the legacy BasicAI Agility scan doesn't run for
+        /// them).  Scans for an incoming friendly projectile roughly aimed at this puppet; on a hit,
         /// rolls the GlobalNPC <c>Agility</c> stat and either jumps over it (with headroom) or triggers
         /// the mover-agnostic DodgeTimer i-frames.  Mirrors the RunFighterCombatTriggers dodge logic.
         /// </summary>
@@ -4365,7 +4365,7 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         /// <summary>Fires once per confirmed real blade-overlap hit (see <see cref="TickBladeHit"/>),
-        /// right after the damage/knockback hitbox is spawned. Override for per-invader on-hit
+        /// right after the damage/knockback hitbox is spawned. Override for per-puppet on-hit
         /// effects (debuffs, extra VFX, etc.) without touching the shared hit-detection code.</summary>
         protected virtual void OnBladeHit(Player player) { }
 
@@ -4380,7 +4380,7 @@ namespace tsorcRevamp.NPCs.Invaders
             Vector2 topLeft = center - new Vector2(box / 2f, box / 2f);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderMeleeHitbox>(),
+                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
                 damage, knockback, Main.myPlayer, box, box);
         }
 
@@ -4960,7 +4960,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         /// <summary>
         /// Diagnostic: append one line per weapon-visible swing frame to
-        /// <c>tsorcRevamp-invader-swing.log</c>.  Captures the values that drive both the manual
+        /// <c>tsorcRevamp-puppet-swing.log</c>. Captures the values that drive both the manual
         /// (legacy 4-frame) and composite-arm swing so misaligned per-motion swings can be read
         /// directly: phase + combo motion, the swing progress <c>t</c>, <c>_weaponRotation</c> and
         /// the per-weapon draw offset, the resolved body row + hand offset (legacy path), and the
@@ -4973,7 +4973,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 string sep = System.IO.Path.DirectorySeparatorChar.ToString();
                 string dir = Main.SavePath + sep + "Logs";
                 System.IO.Directory.CreateDirectory(dir);
-                string path = dir + sep + "tsorcRevamp-invader-swing.log";
+                string path = dir + sep + "tsorcRevamp-puppet-swing.log";
 
                 string motion = "-";
                 if (IsMeleeComboPhase && _activeMeleeComboIndex >= 0 && _activeMeleeCombo.Steps != null
@@ -5006,7 +5006,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <c>(1 - sin(angle)) / 2</c> used throughout this file (and in BroadswordRework's
         /// MeleeAnimation.cs, where it was calibrated).  Takes rotation/direction explicitly
         /// (rather than reading <see cref="_weaponRotation"/>/NPC.direction directly) so it can
-        /// also pose a one-off echo/duplicate swinging independently of the invader's own state.
+        /// also pose a one-off echo/duplicate swinging independently of the puppet's own state.
         /// </summary>
         private int BodyRowFromWeaponRotation(float weaponRotation, int direction)
         {
@@ -5079,7 +5079,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// (<see cref="GetSpearTipWorldPosition"/>) and real hit detection (<see cref="TickBladeHit"/>)
         /// rather than two approximations that could drift apart. Assumes the sprite is calibrated so
         /// the tip sits at -45° when _weaponRotation=0, dir=1, no flip (the standard broadsword
-        /// convention used across all invaders).
+        /// convention used across all puppets).
         /// </summary>
         private Vector2 GetWeaponWorldDirection()
         {
@@ -5122,7 +5122,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 string sep = Path.DirectorySeparatorChar.ToString();
                 string dir = Main.SavePath + sep + "Logs";
                 Directory.CreateDirectory(dir);
-                string path = dir + sep + "tsorcRevamp-invader-weapon.log";
+                string path = dir + sep + "tsorcRevamp-puppet-weapon.log";
                 // For combo phases, "phase=MeleeComboAttack" alone doesn't say WHICH named combo/motion
                 // is playing (Charged Chop vs Forward Thrust vs Leaping Lunge, etc.) — every combo shares
                 // the same phase enum, so without this the log can't tell them apart.
@@ -5313,7 +5313,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 bool gliding = airborne && !_flight.WingsActiveThisTick
                     && (_flight.Mode == FlightMode.Hover || _flight.Mode == FlightMode.Strafe);
                 // Reset to frame zero after landing. Otherwise the last open flight frame remains
-                // cached while walking, making grounded invaders look as though they are still gliding.
+                // cached while walking, making grounded puppets look as though they are still gliding.
                 _puppet.wingFrame = !airborne ? 0
                     : gliding ? 1
                     : (int)(_flight.WingAnimPhase * 4f) % 4;
@@ -5335,7 +5335,7 @@ namespace tsorcRevamp.NPCs.Invaders
             {
                 // Put weapon in hand so the arm extends to the correct Use1–Use4 pose.
                 // noUseGraphic=true prevents DrawPlayer from rendering the sprite itself —
-                // InvaderWeaponDrawLayer handles that at the correct layer depth.
+                // PuppetWeaponDrawLayer handles that at the correct layer depth.
                 _puppet.inventory[0]  = _heldItemType > 0 ? GetCachedWeaponItem(_heldItemType) : new Item();
                 // Keep itemAnimation >= 1 so the arm stays in extended-hold pose between swings.
                 _puppet.itemAnimation = Math.Max(_weaponAnim, 1);
@@ -5369,7 +5369,7 @@ namespace tsorcRevamp.NPCs.Invaders
             bool moving   = Math.Abs(NPC.velocity.X) > 0.15f;
 
             // Always advance walk counter when moving on ground — legs animate
-            // even during attacks so the invader doesn't glide with frozen feet.
+            // even during attacks so the puppet doesn't glide with frozen feet.
             // Guard against Main.gamePaused so the animation freezes with every other NPC.
             if (onGround && moving && !Main.gamePaused)
             {
@@ -5551,11 +5551,11 @@ namespace tsorcRevamp.NPCs.Invaders
 
             SyncPuppet();
 
-            // Store draw color so InvaderWeaponDrawLayer can read it during the pipeline below.
+            // Store draw color so PuppetWeaponDrawLayer can read it during the pipeline below.
             bool teleportIllusion = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().IsTeleportIllusion;
             _layerDrawColor = teleportIllusion ? drawColor * 0.2f : drawColor;
 
-            // InvaderWeaponDrawLayer is registered at AfterParent(HeldItem) in tModLoader's pipeline.
+            // PuppetWeaponDrawLayer is registered at AfterParent(HeldItem) in tModLoader's pipeline.
             // By setting DrawingPuppetFor = this for exactly the duration of DrawPlayer, that layer
             // wakes up and calls DrawWeaponToLayer — inserting the weapon sprite after body/legs
             // but before the front arm, which gives the correct "hand gripping the sword" look.
@@ -5590,7 +5590,7 @@ namespace tsorcRevamp.NPCs.Invaders
             DrawingPuppetFor = null;
 
             // Umbral Echo Step: drawn AFTER the real puppet (and outside DrawingPuppetFor, since
-            // InvaderWeaponDrawLayer reads the invader's LIVE state, not this fixed echo point) so it
+            // PuppetWeaponDrawLayer reads the puppet's LIVE state, not this fixed echo point) so it
             // never clobbers the real draw and its weapon renders in the right place.
             if (IsEchoStepSwinging)
                 DrawEchoStepPuppet(spriteBatch);
@@ -5599,14 +5599,14 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         /// <summary>
-        /// Called by <see cref="InvaderWeaponDrawLayer"/> during the <c>DrawPlayer</c> pipeline.
+        /// Called by <see cref="PuppetWeaponDrawLayer"/> during the <c>DrawPlayer</c> pipeline.
         /// Adds the weapon sprite to <paramref name="drawInfo"/>'s draw-data cache at the correct
         /// layer depth — after body/legs but before the front arm — so the hand appears to grip it.
         /// </summary>
         /// <summary>
         /// Draws the off-hand shield sprite on the puppet (no-op without a shield).  Held lowered at
         /// the back hip in neutral, raised in front of the chest while guarding.  Called by
-        /// <see cref="InvaderWeaponDrawLayer"/> just before the weapon so the front arm/weapon layer
+        /// <see cref="PuppetWeaponDrawLayer"/> just before the weapon so the front arm/weapon layer
         /// over it.  Override <see cref="ShieldItemType"/> to pick the shield sprite.
         /// </summary>
         internal void DrawShieldToLayer(ref PlayerDrawSet drawInfo)
@@ -5917,7 +5917,7 @@ namespace tsorcRevamp.NPCs.Invaders
             Vector2 origin    = new Vector2(src.Width / 2f, src.Height / 2f);
 
             // Rotate the flask so it looks like it's tipped toward the mouth.
-            // -π/2 (= −90°) points the sprite's "top" to the right for a right-facing invader.
+            // -π/2 (= −90°) points the sprite's "top" to the right for a right-facing puppet.
             float rotation = MathHelper.PiOver2 * -NPC.direction;
 
             SpriteEffects fx = NPC.direction == -1
@@ -5938,7 +5938,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         // ── Per-weapon melee draw tuning ────────────────────────────────────────────
         /// <summary>Draw scale for the melee weapon sprite.  Default 1f (full size); override per
-        /// invader if a particular sprite should read larger or smaller.</summary>
+        /// puppet if a particular sprite should read larger or smaller.</summary>
         protected virtual float MeleeWeaponDrawScale => 1f;
 
         // ── Spear-style draw (grip slides along the shaft = extend/retract like the player's spear) ──
@@ -6021,7 +6021,7 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         // ── Aim-centered swing (full 360° player-style aim) ─────────────────────────
-        /// <summary>When true (and <see cref="AimSwingMasterEnable"/> is on), this invader's swing
+        /// <summary>When true (and <see cref="AimSwingMasterEnable"/> is on), this puppet's swing
         /// arc reorients toward the actual direction to the player — up, level, or down — exactly
         /// like the BroadswordRework player swing centers its arc on the cursor. Turns on the aim
         /// bias + easing for the swing motions without needing each motion's endpoints re-tuned by
@@ -6033,7 +6033,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <c>/swingarm aim</c> for instant A/B — off reverts the axe to its fixed legacy arc.</summary>
         internal static bool AimSwingMasterEnable = true;
 
-        /// <summary>Resolved per-frame: aim-centered swing is live for this invader right now.</summary>
+        /// <summary>Resolved per-frame: aim-centered swing is live for this puppet right now.</summary>
         private bool AimSwingActive => UseAimCenteredSwing && AimSwingMasterEnable;
 
         /// <summary>Clamp on the aim pitch. The base overhead arc already starts near the raised
@@ -6099,7 +6099,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         // ── Composite-arm swing experiment (opt-in, single-enemy safe A/B) ──────────
         /// <summary>EXPERIMENTAL.  When true (and <see cref="CompositeArmSwingMasterEnable"/> is on),
-        /// this invader's melee swings drive the puppet's vanilla composite FRONT arm so the arm
+        /// this puppet's melee swings drive the puppet's vanilla composite FRONT arm so the arm
         /// rotates continuously with the blade — a genuine player-style swing — instead of the
         /// 4-frame Use1–Use4 approximation.  Opt-in per subclass so it can be tested on one enemy
         /// before any wider rollout.  See the notes in <c>EnemySpriteRenderer</c> for why the
@@ -6119,7 +6119,7 @@ namespace tsorcRevamp.NPCs.Invaders
         internal static Player.CompositeArmStretchAmount CompositeArmStretch = Player.CompositeArmStretchAmount.Full;
 
         /// <summary>When true, every weapon-visible swing frame is written to
-        /// <c>tsorcRevamp-invader-swing.log</c> for diagnosing arm/weapon alignment.
+        /// <c>tsorcRevamp-puppet-swing.log</c> for diagnosing arm/weapon alignment.
         /// Toggle in-game with <c>/swingarm log</c>.</summary>
         internal static bool SwingDebugLog = false;
 

@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Enemy
     /// <summary>
     /// Enemy copy of the vanilla Venom Staff — purely the held-weapon sprite + use-animation timing for
     /// an invader.  The actual shotgun-blast projectiles are spawned by the invader's DoRangedAttack
-    /// (see <see cref="NPCs.Invaders.CursedDragonInvader"/>), not by this item.
+    /// (see <see cref="NPCs.Puppets.CursedDragonInvader"/>), not by this item.
     /// </summary>
     public class EnemyVenomStaff : ModItem
     {

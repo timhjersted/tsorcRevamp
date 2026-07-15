@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Enemy
 {
     // Enemy-copy display weapon for the Hero of Lumelia invader puppet.  The real hitbox/damage
-    // come from the InvaderNPC melee system; this item only supplies the held sprite + slash color.
+    // come from the PuppetNPC melee system; this item only supplies the held sprite + slash color.
     public class EnemyAncientFireSword : ModItem
     {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Broadswords/AncientFireSword";

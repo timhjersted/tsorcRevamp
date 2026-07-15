@@ -13,18 +13,18 @@ using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles.Melee.Shortswords;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
     [AutoloadBossHead]
-    class Artorias : InvaderNPC
+    class Artorias : PuppetNPC
     {
-        // InvaderNPC overrides Texture to a shared puppet placeholder, so the default
+        // PuppetNPC overrides Texture to a shared puppet placeholder, so the default
         // Texture + "_Head_Boss" convention [AutoloadBossHead] relies on would look for
-        // "InvaderPlaceholder_Head_Boss" instead of this boss's actual head icon.
+        // "PuppetPlaceholder_Head_Boss" instead of this boss's actual head icon.
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/Artorias_Head_Boss";
 
         protected override string InvaderTitle => "Artorias";
@@ -1152,7 +1152,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             // Same overhead-chop angle range the rotation sync uses, recomputed here purely for
-            // the dust position - the sword itself is driven independently in InvaderNPC.cs.
+            // the dust position - the sword itself is driven independently in PuppetNPC.cs.
             float swingT = total > 0 ? elapsed / (float)total : 1f;
             float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
             Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);

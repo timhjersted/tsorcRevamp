@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Puppets;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -98,7 +98,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             // an Abyss Slash orb finisher actually connected.
             int ownerIdx = (int)Projectile.ai[1] - 1;
             if (ownerIdx >= 0 && ownerIdx < Main.maxNPCs && Main.npc[ownerIdx].active
-                && Main.npc[ownerIdx].ModNPC is InvaderNPC invader)
+                && Main.npc[ownerIdx].ModNPC is PuppetNPC invader)
             {
                 invader.ReportAttackHit();
             }

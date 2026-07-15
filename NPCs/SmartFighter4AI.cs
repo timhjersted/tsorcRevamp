@@ -150,7 +150,7 @@ namespace tsorcRevamp.NPCs
         // driver. When true, BasicAI already advanced the shared FSM and fired combat this frame, so SF4 must NOT
         // re-run UpdateState (side effects → double give-up clock) or fire its own attacks (double shot) — it
         // reads g.PursuitState and only moves. holdForAttack = combat wants to stop-and-fire → hold this frame.
-        // Defaults false → standalone behavior (Invaders, TibianValkyrieSmart4 testbed) still owns its own
+        // Defaults false → standalone behavior (Puppets, TibianValkyrieSmart4 testbed) still owns its own
         // combat, but shares the grounded overspeed brake below.
         public static void Run(NPC npc, float topSpeed = 1.55f, float acceleration = 0.10f,
             int doorBreakingDamage = 4, float attackRange = 700f, bool movementOnly = false, bool holdForAttack = false,

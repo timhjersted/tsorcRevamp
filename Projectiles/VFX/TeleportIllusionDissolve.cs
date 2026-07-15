@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.VFX
     /// <summary>Networked one-shot visual used when a teleport illusion expires.</summary>
     public class TeleportIllusionDissolve : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/NPCs/Invaders/InvaderPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

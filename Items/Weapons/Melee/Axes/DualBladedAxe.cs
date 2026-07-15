@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes // Code modified from Zero-Exodus
 	{
 		public override void SetDefaults()
 		{
-			Item.width = 46;
-			Item.height = 44;
+			Item.width = 66;
+			Item.height = 64;
 			Item.damage = 35;
 			Item.knockBack = 11;
 			Item.scale = 1f;

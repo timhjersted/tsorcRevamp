@@ -7,7 +7,7 @@ namespace tsorcRevamp.NPCs.AI
     /// <summary>
     /// Movement-only flight helper for any NPC that wants to take off, hover, strafe, and dive.
     /// Pure AI — has no opinion on how the NPC is drawn.
-    ///   • Player-puppet NPCs (InvaderNPC, EnemySpriteRenderer users) read
+    ///   • Player-puppet NPCs (PuppetNPC, EnemySpriteRenderer users) read
     ///     <see cref="WingsActiveThisTick"/> to drive vanilla wing flap animation.
     ///   • Custom-sprite NPCs (TibianValkyrie, etc.) read <see cref="WingAnimPhase"/>
     ///     to advance their own wing-frame strip via EnemyWingsDrawLayer.

@@ -10,9 +10,9 @@ using tsorcRevamp.NPCs.AI;
 
 using tsorcRevamp.Items.Weapons.Melee.Flails;
 using System;
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
-    public class BlackNinja : InvaderNPC, IFlailAnchor
+    public class BlackNinja : PuppetNPC, IFlailAnchor
     {
         protected override string InvaderTitle => "Black Ninja";
 
@@ -123,10 +123,10 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override Color MeleeTelegraphFlashColor => Color.LightYellow;
         protected override int CasualStrollChance => 6;
 
-        protected override float InvaderJumpPower => 10.2f;
-        protected override float InvaderJumpBoost => 6.4f;
-        protected override bool InvaderCanDoubleJump => true;
-        protected override float InvaderDoubleJumpPower => 6.2f;
+        protected override float PuppetJumpPower => 10.2f;
+        protected override float PuppetJumpBoost => 6.4f;
+        protected override bool PuppetCanDoubleJump => true;
+        protected override float PuppetDoubleJumpPower => 6.2f;
 
         protected override int TeleportTelegraphTicks => 120;
         protected override int TeleportDustCount => 24;
@@ -160,7 +160,7 @@ namespace tsorcRevamp.NPCs.Invaders
             globalNPC.NavGiveUpTicks = 160;
             globalNPC.CanUseRopes = true;
             globalNPC.CanDoubleJump = true;
-            globalNPC.DoubleJumpPower = InvaderDoubleJumpPower;
+            globalNPC.DoubleJumpPower = PuppetDoubleJumpPower;
             globalNPC.CanTeleport = true;
             globalNPC.TeleportStyle = TeleportStyle.Aggressive;
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
@@ -202,11 +202,11 @@ namespace tsorcRevamp.NPCs.Invaders
             // stash its slot so the bomb cuts it the instant it detonates.
             if (secondary && !Main.dedServ)
             {
-                if (SoundEngine.TryGetActiveSound(Projectiles.Enemy.Weapons.InvaderSmokeBomb.ActiveFuseSlot, out var prev))
+                if (SoundEngine.TryGetActiveSound(Projectiles.Enemy.Weapons.PuppetSmokeBomb.ActiveFuseSlot, out var prev))
                     prev.Stop();
                 // Item172 is the longer 3 s fuse — saved for a future bigger bomb:
                 // ...ActiveFuseSlot = SoundEngine.PlaySound(SoundID.Item172 with { Volume = 0.5f }, NPC.Center);
-                Projectiles.Enemy.Weapons.InvaderSmokeBomb.ActiveFuseSlot =
+                Projectiles.Enemy.Weapons.PuppetSmokeBomb.ActiveFuseSlot =
                     SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.5f }, NPC.Center);
             }
         }
@@ -270,7 +270,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     NPC.GetSource_FromThis(),
                     origin,
                     smokeVelocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderSmokeBomb>(),
+                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetSmokeBomb>(),
                     SecondaryRangedDamage,
                     0f,
                     Main.myPlayer);

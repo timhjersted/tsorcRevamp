@@ -14,14 +14,14 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
-    // ── Hero of Lumelia — Invader-puppet rework ─────────────────────────────────────────
+    // ── Hero of Lumelia — Puppet combat rework ─────────────────────────────────────────
     // The avenging human hero / rogue-ranger duelist, a mirror of the player.  Rebuilt on the
-    // InvaderNPC puppet system so he wears the Archer of Lumelia armor set and swings the
+    // PuppetNPC puppet system so he wears the Archer of Lumelia armor set and swings the
     // AncientFireSword through the shared melee-combo framework.
     //
     // Class name / namespace deliberately unchanged so every external reference keeps working:
@@ -38,7 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses
     //   A5       — Rally (TickRally): at 50% / 25% HP, a warband event — widen his spacing, call in
     //              ManHunters one after another, lob potion bombs, then return to normal aggression.
     //   Bomb     — TickBomb: a lobbed HeroPotionBomb that inflicts Potion Sickness (denies healing).
-    class HeroofLumelia : InvaderNPC
+    class HeroofLumelia : PuppetNPC
     {
         protected override string InvaderTitle => "The Hero of Lumelia";
 
@@ -71,8 +71,8 @@ namespace tsorcRevamp.NPCs.Bosses
         protected override float ComboMaxStartRange => 200f;
         protected override int MeleeComboChance => 80;
         protected override int MeleeTelegraphTicks => 34;
-        protected override float InvaderJumpPower => 12f;
-        protected override float InvaderJumpBoost => 6f;
+        protected override float PuppetJumpPower => 12f;
+        protected override float PuppetJumpBoost => 6f;
         protected override Color MeleeTelegraphFlashColor => Color.OrangeRed;
 
         // Grey-smoke blink identity (kept from the legacy TeleportVisualStyle.GreySmoke).

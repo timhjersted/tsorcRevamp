@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
-    /// Invisible 8-tick hostile hitbox spawned along an InvaderNPC's swing arc.
+    /// Invisible 8-tick hostile hitbox spawned along a PuppetNPC's swing arc.
     /// hostile=true means it damages players; friendly=false means it won't hit NPCs.
     /// penetrate=1 so it hits once and dies, respecting player i-frames correctly.
     ///
@@ -15,9 +15,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     /// so the hitbox covers the requested zone. ai==0 falls back to the default 100×60
     /// box (covers a player perfectly stacked on the NPC AND a player at typical melee reach).
     /// </summary>
-    public class InvaderMeleeHitbox : ModProjectile
+    public class PuppetMeleeHitbox : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/NPCs/Invaders/InvaderPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

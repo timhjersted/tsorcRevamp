@@ -10706,9 +10706,9 @@ Mods: {
 			// YianBlaze2.DisplayName: Yian Blaze2
 			// YianBlaze.DisplayName: Yian Blaze
 			// DiamondCrusherShockwave.DisplayName: Diamond Crusher Shockwave
-			// InvaderMeleeHitbox.DisplayName: Invader Melee Hitbox
-			// InvaderThrowingStar.DisplayName: Invader Throwing Star
-			// InvaderCrossbowBolt.DisplayName: Invader Crossbow Bolt
+			// PuppetMeleeHitbox.DisplayName: Puppet Melee Hitbox
+			// PuppetThrowingStar.DisplayName: Puppet Throwing Star
+			// PuppetCrossbowBolt.DisplayName: Puppet Crossbow Bolt
 			// GreatMagicMirrorRangeRing.DisplayName: Great Magic Mirror Range Ring
 			// HealSpriteVFX.DisplayName: Heal Sprite V F X
 			// TeleportMistLinger.DisplayName: Teleport Mist Linger
@@ -10727,7 +10727,7 @@ Mods: {
 			// EnemyFireFlask.DisplayName: Enemy Fire Flask
 			// EnemyFireFlaskLingeringFlame.DisplayName: Enemy Fire Flask Lingering Flame
 			// EnemyTaintedArrow.DisplayName: Enemy Tainted Arrow
-			// InvaderSmokeBomb.DisplayName: Invader Smoke Bomb
+			// PuppetSmokeBomb.DisplayName: Puppet Smoke Bomb
 			// Caltrop.DisplayName: Caltrop
 			// FireFlask.DisplayName: Fire Flask
 			// FireFlaskLingeringFlame.DisplayName: Fire Flask Lingering Flame

@@ -12,9 +12,9 @@ using tsorcRevamp.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.AI;
 
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
-    public class AbyssalNinjaInvader : InvaderNPC
+    public class AbyssalNinjaInvader : PuppetNPC
     {
         // ── Config ────────────────────────────────────────────────────────────────
         /// <summary>Master config toggle: when true, every spawned Abyssal Ninja has wings
@@ -172,10 +172,10 @@ namespace tsorcRevamp.NPCs.Invaders
         // ── Navigation ────────────────────────────────────────────────────────────
         // Ninjas are agile: high jump, long gap-boost, and double-jump.
         // JumpPower 10 clears ~4-tile gaps; 12 was overshooting most platforms.
-        protected override float InvaderJumpPower      => 10f;
-        protected override float InvaderJumpBoost      => 7f;
-        protected override bool  InvaderCanDoubleJump  => true;
-        protected override float InvaderDoubleJumpPower => 7f;
+        protected override float PuppetJumpPower      => 10f;
+        protected override float PuppetJumpBoost      => 7f;
+        protected override bool  PuppetCanDoubleJump  => true;
+        protected override float PuppetDoubleJumpPower => 7f;
 
         // ── Attack tuning reference ───────────────────────────────────────────────
         // MELEE SLASH  — dist ≤ 90px, on-ground, heightDiff < 36px
@@ -194,7 +194,7 @@ namespace tsorcRevamp.NPCs.Invaders
         // PRIMARY RANGED: THROWING STARS — 280px ≤ dist ≤ 480px, _rangedCooldown == 0
         //   Style:     RangedStyle.Throw — arm lifts up then swings forward
         //   Telegraph: 45 ticks (15% standing, 85% drifting; pink flash at 30 ticks remaining)
-        //   Attack:    10 ticks (1–3 InvaderThrowingStars, speed 10, spread ±8°)
+        //   Attack:    10 ticks (1–3 PuppetThrowingStars, speed 10, spread ±8°)
         //   Burst:     rolls 1–3; 25% chance of single shot
         //   Recovery:  55 ticks
         //   Cooldown:  180 ticks (forces melee/stab first)
@@ -321,7 +321,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Vector2 vel  = toTarget.RotatedBy(spread) * 14f; // HeavyCrossbow shootSpeed (higher than friendly bolt to compensate for reduced gravity)
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), muzzle, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderCrossbowBolt>(),
+                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetCrossbowBolt>(),
                     SecondaryRangedDamage, 4f, Main.myPlayer);
             }
             else
@@ -337,7 +337,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     Vector2 vel  = toTarget.RotatedBy(spread) * 10f;
                     Projectile.NewProjectile(
                         NPC.GetSource_FromThis(), NPC.Center, vel,
-                        ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderThrowingStar>(),
+                        ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetThrowingStar>(),
                         RangedDamage, 2f, Main.myPlayer);
                 }
             }

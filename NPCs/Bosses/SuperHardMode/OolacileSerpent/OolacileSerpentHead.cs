@@ -73,6 +73,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public int CrossOverCooldown;
         public int CrossOverDir;
 
+        //Anti-stuck failsafe. If the head can't make progress (wedged on a ledge, marooned in a room above the
+        //player, boxed in), Unstick lets it phase straight toward the player through terrain for a while. Without
+        //this it can end up permanently marooned, since it otherwise only ever rides the surface it's standing on.
+        public Vector2 StuckCheckPos = Vector2.Zero;
+        public int StuckTimer;
+        public int UnstickTimer;
+        //Climb budget: how many more tiles of vertical rise this climb is allowed, so it can't ascend forever
+        //(that's how it ended up inside a ceiling).
+        public int ClimbBudget;
+
+        //Diagnostics (Logs/tsorcRevamp-serpent.log)
+        public string LastAction = "init";
+
         public int ChargeTelegraphTimer;
         public int ChargeTimer;
         public int ChargeCooldown;
@@ -139,8 +152,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             int[] bodyTypes = SerpentAI.BuildBodyTypes();
-            //6f pursue speed -- deliberately slow (hardmode pacing); kiting caps it further near the player.
-            SerpentAI.Run(NPC, ModContent.NPCType<OolacileSerpentHead>(), bodyTypes, ModContent.NPCType<OolacileSerpentTail>(), TotalSegmentCount, 6f);
+            //4f pursue speed -- deliberately slow (hardmode pacing); kiting caps it further near the player.
+            SerpentAI.Run(NPC, ModContent.NPCType<OolacileSerpentHead>(), bodyTypes, ModContent.NPCType<OolacileSerpentTail>(), TotalSegmentCount, 4f);
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)

@@ -6,7 +6,7 @@ namespace tsorcRevamp.Utilities
     /// <summary>
     /// Piecewise-lerp keyframe curve. Ported from the BroadswordRework player-weapon system
     /// (Items/Weapons/Melee/Broadswords/BroadswordRework/Utilities/_DataStructures/Gradient.cs)
-    /// so invader swing code can use the same non-linear easing without depending on that
+    /// so puppet swing code can use the same non-linear easing without depending on that
     /// experimental item-component folder.
     /// </summary>
     public abstract class Gradient

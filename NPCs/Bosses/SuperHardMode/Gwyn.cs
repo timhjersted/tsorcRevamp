@@ -10,7 +10,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
 
 // NOTE: the folder is Gwyn/, but the namespace stays flat (…SuperHardMode) — a namespace segment
@@ -18,7 +18,7 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
     ///<summary>
-    ///Gwyn, Lord of Cinder — the final boss, rebuilt from near-scratch on the Invader system (the
+    ///Gwyn, Lord of Cinder — the final boss, rebuilt from near-scratch on the Puppet system (the
     ///Artorias-revamp pattern: a puppet Player wearing the LordGwyn armor set, swinging the Great
     ///Lord Greatsword through the melee combo system).
     ///
@@ -34,9 +34,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     ///state machine lands in Phase 2.
     ///</summary>
     [AutoloadBossHead]
-    class Gwyn : InvaderNPC
+    class Gwyn : PuppetNPC
     {
-        // InvaderNPC overrides Texture to the shared puppet placeholder, so point the boss-head
+        // PuppetNPC overrides Texture to the shared puppet placeholder, so point the boss-head
         // icon at the existing Gwyn head texture explicitly (same workaround as Artorias).
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/Gwyn_Head_Boss";
 

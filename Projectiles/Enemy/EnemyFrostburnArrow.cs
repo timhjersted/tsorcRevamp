@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             // A modded projectile type does NOT inherit vanilla's hardcoded type-specific wall-hit puff, so
             // without this the arrow vanishes silently on hitting a tile (reads as "no kill animation" / looks
             // like it phased through). Emit a small frost burst matching the Frostburn theme — same idea as
-            // InvaderCrossbowBolt.OnKill.
+            // PuppetCrossbowBolt.OnKill.
             for (int i = 0; i < 6; i++)
             {
                 Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height,

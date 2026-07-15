@@ -7,11 +7,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
-    /// Hostile crossbow bolt fired by invader NPCs.  Shares the BoltProjectile sprite but is
+    /// Hostile crossbow bolt fired by PuppetNPC subclasses. Shares the BoltProjectile sprite but is
     /// hostile=true so it damages the player rather than enemies.
     /// Behaviour mirrors the friendly BoltProjectile: straight flight, tileCollide, dig sound on hit.
     /// </summary>
-    public class InvaderCrossbowBolt : ModProjectile
+    public class PuppetCrossbowBolt : ModProjectile
     {
         // Reuse the existing bolt sprite — no separate .png file needed.
         public override string Texture => "tsorcRevamp/Projectiles/Ranged/Ammo/BoltProjectile";

@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         float Radius => Projectile.ai[0];
 
-        public override string Texture => "tsorcRevamp/NPCs/Invaders/InvaderPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

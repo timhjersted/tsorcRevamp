@@ -172,7 +172,7 @@ namespace tsorcRevamp.NPCs
             globalNPC.EvasiveLeapForward = true;
             globalNPC.EvasiveRunningDash = true;
             globalNPC.EvasiveRetreatDash = true;
-            // On-hit i-frame quick-step.  SAFE on invaders now that InvaderNPC ticks the shared executor
+            // On-hit i-frame quick-step.  SAFE on invaders now that PuppetNPC ticks the shared executor
             // (tsorcRevampAIs.TickQuickStep) every frame — previously QuickStepTimer only advanced inside the
             // FighterAI combat layer, so on an invader it would have stuck on → permanent i-frames.
             globalNPC.EvasiveQuickStep = true;

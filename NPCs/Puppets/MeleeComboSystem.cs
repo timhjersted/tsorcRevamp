@@ -4,11 +4,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
     /// Weapon archetypes that map an item's playstyle to a set of attack combos.
-    /// Detected automatically from item useStyle/damage class, or overridden per invader.
+    /// Detected automatically from item useStyle/damage class, or overridden per puppet.
     /// </summary>
     public enum WeaponArchetype
     {
@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
     /// <summary>
     /// How the weapon moves through a single combo step.  Drives both the weapon-rotation
-    /// lerp and the puppet body-row selection in InvaderNPC.
+    /// lerp and the puppet body-row selection in PuppetNPC.
     /// </summary>
     public enum ComboMotion
     {
@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Invaders
         LeapThrust,       // jump toward player with spear leveled forward, thrust on landing
         ChargeChop,       // run at the player; ends on contact or a timeout, next step is the chop
         Feint,            // raise + flash as a bait, hold without swinging; the next step is the real (delayed) chop
-        // Ranged motions reuse RangedStyle on InvaderNPC; ranged combos pick at burst level
+        // Ranged motions reuse RangedStyle on PuppetNPC; ranged combos pick at burst level
     }
 
     public enum ComboRangeBand
@@ -71,11 +71,11 @@ namespace tsorcRevamp.NPCs.Invaders
         public float DamageMult;
         public float ReachMult;
         public float ForwardPushMult;  // 0 = stationary; >0 = hop/dash scaled by TopSpeed
-        /// <summary>How fast the visual arc sweeps, for aim-swing pilot invaders only. >1 = faster
+        /// <summary>How fast the visual arc sweeps, for aim-swing pilot puppets only. >1 = faster
         /// (shorter swing window), &lt;1 = slower. The swing then plays over AttackTicks / SwingSpeedMult
         /// instead of being floored to the weapon's useAnimation. 1 = play over AttackTicks as-is.</summary>
         public float SwingSpeedMult;
-        /// <summary>Easing shape of the arc, for aim-swing pilot invaders only. Lets different steps
+        /// <summary>Easing shape of the arc, for aim-swing pilot puppets only. Lets different steps
         /// feel different (snappy flick vs heavy settle vs delayed whip) at the same duration.</summary>
         public SwingEaseStyle Ease;
     }
@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Invaders
         public bool           HeavyCommit;   // HP-escalation multiplier applies to these
         public bool           HyperArmor;    // commit (no stagger) holds through inter-step pauses, not just active frames
         /// <summary>Per-tick horizontal velocity brake while this combo winds up / swings, for
-        /// aim-swing pilot invaders only. 0 = keep full momentum (no slowdown), 0.4 = plant the feet
+        /// aim-swing pilot puppets only. 0 = keep full momentum (no slowdown), 0.4 = plant the feet
         /// for a heavy commit. Replaces the old blanket SlowDown() so light attacks stay mobile.</summary>
         public float          MoveBrake;
     }

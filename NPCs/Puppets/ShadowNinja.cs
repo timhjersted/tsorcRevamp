@@ -11,9 +11,9 @@ using tsorcRevamp.NPCs.AI;
 
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Ranged.Bows;
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
-    public class ShadowNinja : InvaderNPC
+    public class ShadowNinja : PuppetNPC
     {
         protected override string InvaderTitle => "Shadow Ninja";
 
@@ -134,10 +134,10 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override bool CanStab => true;
         protected override int CasualStrollChance => 0;
 
-        protected override float InvaderJumpPower => 10.5f;
-        protected override float InvaderJumpBoost => 7f;
-        protected override bool InvaderCanDoubleJump => true;
-        protected override float InvaderDoubleJumpPower => 7f;
+        protected override float PuppetJumpPower => 10.5f;
+        protected override float PuppetJumpBoost => 7f;
+        protected override bool PuppetCanDoubleJump => true;
+        protected override float PuppetDoubleJumpPower => 7f;
 
         protected override int TeleportTelegraphTicks => 105;
         protected override int TeleportDustCount => 34;
@@ -175,7 +175,7 @@ namespace tsorcRevamp.NPCs.Invaders
             globalNPC.NavGiveUpTicks = 160;
             globalNPC.CanUseRopes = true;
             globalNPC.CanDoubleJump = true;
-            globalNPC.DoubleJumpPower = InvaderDoubleJumpPower;
+            globalNPC.DoubleJumpPower = PuppetDoubleJumpPower;
             globalNPC.CanTeleport = true;
             globalNPC.TeleportStyle = TeleportStyle.Aggressive;
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
@@ -266,7 +266,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 NPC.GetSource_FromThis(),
                 muzzle,
                 starVelocity,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.InvaderThrowingStar>(),
+                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetThrowingStar>(),
                 RangedDamage,
                 2f,
                 Main.myPlayer);

@@ -7,10 +7,10 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.NPCs.AI;
 
-namespace tsorcRevamp.NPCs.Invaders
+namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>Final encounter phase. Weapon kit and unique drop are placeholders until designed.</summary>
-    public class SpiritOfKhaios : InvaderNPC
+    public class SpiritOfKhaios : PuppetNPC
     {
         protected override string InvaderTitle => "Spirit of Khaios";
         protected override Color PuppetSkinColor => new Color(0xF4, 0x86, 0x67);
@@ -63,10 +63,10 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int MagicRecoveryTicks => 55;
         protected override int MagicCooldownAfterUse => 240;
         protected override Color MagicTelegraphFlashColor => new Color(125, 235, 255);
-        protected override float InvaderJumpPower => 10f;
-        protected override float InvaderJumpBoost => 6f;
-        protected override bool InvaderCanDoubleJump => true;
-        protected override float InvaderDoubleJumpPower => 6f;
+        protected override float PuppetJumpPower => 10f;
+        protected override float PuppetJumpBoost => 6f;
+        protected override bool PuppetCanDoubleJump => true;
+        protected override float PuppetDoubleJumpPower => 6f;
         protected override bool EvadesProjectiles => true;
         protected override int PreemptiveQuickStepChance => 50;
         protected override int QuickStepRecoveryTicks => 16;
@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Invaders
             globalNPC.NavGiveUpTicks = 180;
             globalNPC.CanUseRopes = true;
             globalNPC.CanDoubleJump = true;
-            globalNPC.DoubleJumpPower = InvaderDoubleJumpPower;
+            globalNPC.DoubleJumpPower = PuppetDoubleJumpPower;
             globalNPC.Agility = 0.78f;
             globalNPC.CanDodgeroll = true;
             globalNPC.CanJumpToEvade = true;

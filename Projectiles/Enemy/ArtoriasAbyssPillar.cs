@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         const int Lifetime = 16;
 
-        public override string Texture => "tsorcRevamp/NPCs/Invaders/InvaderPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

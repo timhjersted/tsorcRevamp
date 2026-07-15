@@ -35,10 +35,25 @@ namespace tsorcRevamp.NPCs
 
         const float GroundFollowLerp = 0.25f;
         const float ClimbRiseSpeed = 1.2f;
+        //Max consecutive ticks of climbing before it must travel flat again. At 1.2px/tick this caps a single
+        //climb at ~11 tiles -- roughly the intended MaxClimbHeight -- so a mis-read wall can't lift it forever.
+        const int ClimbBudgetTicks = 150;
 
         //Follower spacing: <1 pulls each segment closer to the one ahead than its own width, so the (scale 1.3)
         //sprites overlap more and the body reads as a continuous smooth tube instead of separated beads.
         const float SegmentSpacingFactor = 0.82f;
+
+        //Facing only flips once the neighbour is clearly to one side -- kills per-frame flicker on near-vertical
+        //stretches of body (steep slopes, the overhead C). See the spriteDirection block in Run().
+        const float SpriteFlipDeadzone = 6f;
+        //Segment rotation is eased rather than snapped, so a single-frame position spike can't whip the sprite.
+        const float SegmentRotationLerp = 0.35f;
+
+        //-- Anti-stuck failsafe --
+        const int StuckSampleTicks = 90;       //no meaningful movement for this long (while unable to engage) -> stuck
+        const float StuckMoveThreshold = 32f;  //px of travel that counts as "made progress"
+        const int UnstickDurationTicks = 240;  //how long it phases straight at the player to free itself
+        const float UnstickSpeed = 3.5f;
 
         //-- Kiting: don't endlessly ram the player. Approach at slow speed, stop at kite range, attack from
         //there, never reverse. When it reaches the player it may cross THROUGH to the far side.
@@ -100,13 +115,14 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
-                if (npc.position.X > Main.npc[(int)npc.ai[1]].position.X || Math.Abs(npc.position.X - Main.npc[(int)npc.ai[1]].position.X) < 0.1f)
+                //Flip only when the piece ahead is CLEARLY to one side. The old version flipped whenever the two
+                //X's differed by any amount (and forced +1 when equal), so any near-vertical stretch of body --
+                //a steep slope, and every frame of the overhead C -- made the segment flicker its facing every
+                //tick. That flicker is what read as the body "shaking violently".
+                float aheadDx = Main.npc[(int)npc.ai[1]].position.X - npc.position.X;
+                if (Math.Abs(aheadDx) > SpriteFlipDeadzone)
                 {
-                    npc.spriteDirection = 1;
-                }
-                if (npc.position.X < Main.npc[(int)npc.ai[1]].position.X)
-                {
-                    npc.spriteDirection = -1;
+                    npc.spriteDirection = aheadDx < 0f ? 1 : -1;
                 }
             }
 
@@ -245,12 +261,13 @@ namespace tsorcRevamp.NPCs
                 float offsetX = Main.npc[(int)npc.ai[1]].Center.X - npcCenter.X;
                 float offsetY = Main.npc[(int)npc.ai[1]].Center.Y - npcCenter.Y;
 
-                npc.rotation = (float)Math.Atan2((double)offsetY, (double)offsetX) + 1.57f;
                 float dist = (float)Math.Sqrt((double)(offsetX * offsetX + offsetY * offsetY));
                 if (dist < 0.01f)
                 {
                     return;
                 }
+                //Ease the rotation instead of snapping it, so one jittery frame can't whip the whole sprite.
+                npc.rotation = LerpAngle(npc.rotation, (float)Math.Atan2(offsetY, offsetX) + 1.57f, SegmentRotationLerp);
                 dist = (dist - npc.width * SegmentSpacingFactor) / dist;
                 offsetX *= dist;
                 offsetY *= dist;
@@ -317,34 +334,121 @@ namespace tsorcRevamp.NPCs
             if (data.TailStabCooldown > 0) { data.TailStabCooldown--; }
             if (data.CrossOverCooldown > 0) { data.CrossOverCooldown--; }
 
+            UpdateStuckDetector(npc, data, player);
+
             //Overhead tail stab is its own head-state: the head holds on the ground (body settles) while the
             //rear half rears up and arcs over to strike. Runs to completion before the head does anything else.
             if (data.TailStab != OolacileSerpentHead.TailStabState.None)
             {
                 UpdateTailStab(npc, data, player);
                 HoldGround(npc, player);
+                data.LastAction = "tailstab-" + data.TailStab;
+                SerpentLog(npc, data, player);
+                return;
+            }
+
+            //Failsafe: wedged / marooned -> phase straight toward the player through terrain until free.
+            if (data.UnstickTimer > 0)
+            {
+                RunUnstick(npc, data, player);
+                SerpentLog(npc, data, player);
                 return;
             }
 
             if (data.Attack != OolacileSerpentHead.AttackState.None)
             {
                 RunAttack(npc, data, poise);
+                data.LastAction = "attack-" + data.Attack;
+                SerpentLog(npc, data, player);
                 return;
             }
 
             if (data.ChargeTelegraphTimer > 0 || data.ChargeTimer > 0)
             {
                 RunCharge(npc, data, maxSpeed);
+                data.LastAction = data.ChargeTelegraphTimer > 0 ? "charge-telegraph" : "charge";
+                SerpentLog(npc, data, player);
                 return;
             }
 
             if (IsInWater(npc))
             {
                 RunSwim(npc, data, player, maxSpeed);
+                data.LastAction = "swim";
+                SerpentLog(npc, data, player);
                 return;
             }
 
             RunGroundMovement(npc, data, player, maxSpeed);
+            SerpentLog(npc, data, player);
+        }
+
+        ///<summary>
+        ///Watches the head's own position. If it hasn't meaningfully moved for StuckSampleTicks while it still
+        ///wants to be doing something (i.e. it isn't legitimately kiting-with-LOS), arm the Unstick failsafe.
+        ///Without this the serpent can be permanently marooned: it only ever rides the surface beneath it, so
+        ///once it climbs into a room above the player there is no move that gets it back down.
+        ///</summary>
+        static void UpdateStuckDetector(NPC npc, OolacileSerpentHead data, Player player)
+        {
+            if (data.UnstickTimer > 0)
+            {
+                data.UnstickTimer--;
+                return;
+            }
+
+            //Legitimately holding station: in kite range with a clear line to the player = not stuck, just waiting.
+            bool engaged = Math.Abs(player.Center.X - npc.Center.X) <= KiteRangeTiles * TileSize
+                && Math.Abs(player.Center.Y - npc.Center.Y) <= KiteRangeTiles * TileSize
+                && Collision.CanHit(npc.position, npc.width, npc.height, player.position, player.width, player.height);
+
+            if (engaged || Vector2.Distance(npc.Center, data.StuckCheckPos) > StuckMoveThreshold)
+            {
+                data.StuckCheckPos = npc.Center;
+                data.StuckTimer = 0;
+                return;
+            }
+
+            data.StuckTimer++;
+            if (data.StuckTimer >= StuckSampleTicks)
+            {
+                data.StuckTimer = 0;
+                data.StuckCheckPos = npc.Center;
+                data.UnstickTimer = UnstickDurationTicks;
+                data.ClimbBudget = ClimbBudgetTicks;
+                npc.netUpdate = true;
+            }
+        }
+
+        ///<summary>Unstick: swim straight at the player through terrain (it already phases through tiles and draws
+        ///behind them). Ends early the moment it has a clear line to the player again.</summary>
+        static void RunUnstick(NPC npc, OolacileSerpentHead data, Player player)
+        {
+            data.LastAction = "unstick";
+
+            Vector2 toPlayer = player.Center - npc.Center;
+            if (toPlayer.LengthSquared() > 1f)
+            {
+                toPlayer.Normalize();
+            }
+            npc.velocity = Vector2.Lerp(npc.velocity, toPlayer * UnstickSpeed, 0.08f);
+
+            if (Math.Abs(npc.velocity.X) > 0.5f)
+            {
+                data.Facing = npc.velocity.X >= 0f ? 1 : -1;
+            }
+            npc.direction = data.Facing;
+            npc.rotation = LerpAngle(npc.rotation, npc.velocity.ToRotation() + 1.57f, 0.15f);
+
+            //Free once we can see the player again and we're roughly level with them.
+            bool clear = Collision.CanHit(npc.position, npc.width, npc.height, player.position, player.width, player.height)
+                && Math.Abs(player.Center.Y - npc.Center.Y) < KiteRangeTiles * TileSize;
+            if (clear)
+            {
+                data.UnstickTimer = 0;
+                data.StuckCheckPos = npc.Center;
+                npc.netUpdate = true;
+            }
         }
 
         ///<summary>Head holds its ground position (used while the tail stab plays out): face the player, brake to
@@ -425,22 +529,34 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (obstacleHeight > MaxClimbHeightTiles)
+            //Headroom above the head: if solid sits right above us we must NOT keep rising, or we bore straight
+            //up into a ceiling and end up marooned in the room above (exactly the reported bug).
+            int headTileY = (int)(npc.position.Y / TileSize);
+            bool hasHeadroom = !IsSolidTile(centerTileX, headTileY - 1) && !IsSolidTile(centerTileX, headTileY - 2);
+
+            if (obstacleHeight > SmallStepTiles && obstacleHeight <= MaxClimbHeightTiles && hasHeadroom && data.ClimbBudget > 0)
             {
-                //Too tall to climb: hold (don't pathfind sideways, that reads as backing up). Just stop + attack.
-                desiredX = 0f;
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, 0f, 0.1f);
-                SnapHeadToGround(npc, GroundFollowLerp);
+                //Climbing: rise while advancing. Budget-limited so a mis-read wall can't send it into orbit.
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, desiredX * 0.6f, 0.06f);
+                npc.position.Y -= ClimbRiseSpeed;
+                data.ClimbBudget--;
+                data.LastAction = "climb";
             }
             else if (obstacleHeight > SmallStepTiles)
             {
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, desiredX * 0.6f, 0.06f);
-                npc.position.Y -= ClimbRiseSpeed;
+                //Can't (or shouldn't) climb this: hold and fight from here. Never reverses.
+                desiredX = 0f;
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, 0f, 0.1f);
+                SnapHeadToGround(npc, GroundFollowLerp);
+                data.LastAction = hasHeadroom ? "blocked-tall" : "blocked-ceiling";
             }
             else
             {
                 npc.velocity.X = MathHelper.Lerp(npc.velocity.X, desiredX, 0.06f);
                 SnapHeadToGround(npc, GroundFollowLerp);
+                //Recharge the climb allowance whenever we're travelling normally on the flat.
+                data.ClimbBudget = ClimbBudgetTicks;
+                data.LastAction = desiredX == 0f ? (data.CrossingOver ? "cross" : "kite") : "pursue";
             }
 
             //Stable heading: use velocity while actually moving, else point flat along the current facing.
@@ -577,17 +693,17 @@ namespace tsorcRevamp.NPCs
         //a quadratic Bezier that bows UP and over the head. The tail tip is driven Coil -> Aim -> Stab ->
         //(Recover -> Aim)* -> Retract. Entirely above ground -- no burrowing.
 
-        const int TailStabCoilTicks = 40;
-        const int TailStabAimTicks = 32;       //warning window; target locks at aim start
-        const int TailStabStabTicks = 14;
-        const int TailStabRecoverTicks = 16;   //rise back to the overhead perch between combo stabs
-        const int TailStabRetractTicks = 22;
+        const int TailStabCoilTicks = 55;      //rear up into the C (slow, deliberate)
+        const int TailStabAimTicks = 42;       //warning window; target locks at aim start
+        const int TailStabStabTicks = 20;      //the downward strike
+        const int TailStabRecoverTicks = 26;   //rise back to the overhead perch between combo stabs
+        const int TailStabRetractTicks = 30;   //lower back to the ground for a gentle hand-off
         const int TailStabMaxCombo = 3;
-        const int TailStabCooldownTicks = 480;
+        const int TailStabCooldownTicks = 540;
         const int TailStabTriggerRoll = 150;
         const int TailStabDamage = 45;
         const float TailStabOverheadHeight = 150f; //perch height above the head
-        const float TailStabTipLerp = 0.25f;       //how fast the tip chases its phase target
+        const float TailStabTipLerp = 0.16f;       //how fast the tip chases its phase target (lower = smoother/slower)
 
         static void StartTailStab(NPC npc, OolacileSerpentHead data)
         {
@@ -762,11 +878,16 @@ namespace tsorcRevamp.NPCs
                 NPC seg = rear[i];
                 seg.Center = pos;
                 seg.velocity = Vector2.Zero;
-                Vector2 segDir = pos - prev;
+
+                //Aim the tangent at the NEXT point (or the tip for the last segment) so rotation is the arc's
+                //true local direction, and EASE it -- a snapped rotation off a jittery single-frame tip move was
+                //part of the "violent shake". spriteDirection is intentionally left to Run()'s deadzoned block
+                //(setting it here from segDir.X flickered every frame on the near-vertical part of the C).
+                Vector2 nextPos = (i + 1 < count) ? QuadBezier(anchor, control, tip, (i + 2) / (float)count) : tip;
+                Vector2 segDir = nextPos - pos;
                 if (segDir.LengthSquared() > 0.01f)
                 {
-                    seg.rotation = segDir.ToRotation() + 1.57f;
-                    seg.spriteDirection = segDir.X >= 0 ? 1 : -1;
+                    seg.rotation = LerpAngle(seg.rotation, segDir.ToRotation() + 1.57f, SegmentRotationLerp);
                 }
                 prev = pos;
 
@@ -1374,8 +1495,75 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        //-- Diagnostics --
+
+        ///<summary>Flip to false to silence the log once the boss is dialled in.</summary>
+        public static bool DebugLogging = true;
+        const int LogIntervalTicks = 12;
+        static int _lastLogTick;
+
+        ///<summary>
+        ///Writes head state to Logs/tsorcRevamp-serpent.log (same convention as the SF4 nav log).
+        ///Key tells: `act` = what the head decided this tick; `gY` = the ground row it sensed (-1 = none found,
+        ///i.e. it thinks it's over a void); `obs` = obstacle height ahead; `room` = headroom above (false while
+        ///it's under a ceiling); `climb` = remaining climb budget; `stuck`/`unstick` = the failsafe.
+        ///</summary>
+        static void SerpentLog(NPC npc, OolacileSerpentHead data, Player player)
+        {
+            if (!DebugLogging || Main.dedServ)
+            {
+                return;
+            }
+            int now = (int)Main.GameUpdateCount;
+            if (now - _lastLogTick < LogIntervalTicks)
+            {
+                return;
+            }
+            _lastLogTick = now;
+
+            try
+            {
+                int centerTileX = (int)(npc.Center.X / TileSize);
+                int feetTileY = (int)((npc.position.Y + npc.height) / TileSize);
+                int headTileY = (int)(npc.position.Y / TileSize);
+                int groundY = FindGroundSurfaceTileYSmoothed(centerTileX, feetTileY - GroundSnapToleranceTiles, GroundSnapToleranceTiles * 2);
+                int obs = GetObstacleHeightAhead(centerTileX + data.Facing * SmallStepTiles, feetTileY, MaxClimbHeightTiles + 2);
+                bool room = !IsSolidTile(centerTileX, headTileY - 1) && !IsSolidTile(centerTileX, headTileY - 2);
+                bool los = Collision.CanHit(npc.position, npc.width, npc.height, player.position, player.width, player.height);
+
+                string sep = System.IO.Path.DirectorySeparatorChar.ToString();
+                string dir = Main.SavePath + sep + "Logs";
+                System.IO.Directory.CreateDirectory(dir);
+                string path = dir + sep + "tsorcRevamp-serpent.log";
+
+                string line = $"[{DateTime.Now:HH:mm:ss}] head#{npc.whoAmI}"
+                    + $" pos=({npc.Center.X / TileSize:F1},{npc.Center.Y / TileSize:F1})"
+                    + $" player=({player.Center.X / TileSize:F1},{player.Center.Y / TileSize:F1})"
+                    + $" vel=({npc.velocity.X:F2},{npc.velocity.Y:F2})"
+                    + $" face={data.Facing} rot={npc.rotation:F2} los={los}"
+                    + $" act={data.LastAction}"
+                    + $" gY={groundY} feetY={feetTileY} obs={obs} room={room} climb={data.ClimbBudget}"
+                    + $" stuck={data.StuckTimer} unstick={data.UnstickTimer}"
+                    + $" cross={data.CrossingOver}/{data.CrossOverCooldown}"
+                    + $" atk={data.Attack}/{data.AttackTimer} atkCD={data.AttackCooldown}"
+                    + $" stab={data.TailStab}/{data.TailStabTimer} stabCD={data.TailStabCooldown} combo={data.TailStabCombo}"
+                    + $" acid={data.AcidBodyTimer}";
+                System.IO.File.AppendAllText(path, line + Environment.NewLine);
+            }
+            catch { }
+        }
+
         //-- Tile sensing --
 
+        ///<summary>
+        ///What the serpent treats as terrain: REAL solid blocks only. Platforms (and other jump-through /
+        ///solid-top tiles) are deliberately excluded.
+        ///<para/>
+        ///This is the fix for the boss snagging on platforms and its body zig-zagging: Main.tileSolid is true for
+        ///platforms, so every segment was independently snapping to whatever platform layer happened to be nearest
+        ///it, and the head read platform columns as climbable walls. A 22-segment serpent that already phases
+        ///through tiles (noTileCollide + behindTiles) should just ignore them and ride the real floor.
+        ///</summary>
         static bool IsSolidTile(int tileX, int tileY)
         {
             if (tileX < 0 || tileY < 0 || tileX >= Main.maxTilesX || tileY >= Main.maxTilesY)
@@ -1383,7 +1571,15 @@ namespace tsorcRevamp.NPCs
                 return true; //treat out-of-world as blocking rather than as an open gap
             }
             Tile tile = Main.tile[tileX, tileY];
-            return tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType];
+            if (!tile.HasTile || tile.IsActuated || !Main.tileSolid[tile.TileType])
+            {
+                return false;
+            }
+            if (TileID.Sets.Platforms[tile.TileType] || Main.tileSolidTop[tile.TileType])
+            {
+                return false; //platforms are not terrain to this boss
+            }
+            return true;
         }
 
         ///<summary>Height (in tiles) of the contiguous solid column at tileX, scanning up from feetTileY.</summary>
