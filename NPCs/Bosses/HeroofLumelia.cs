@@ -38,8 +38,11 @@ namespace tsorcRevamp.NPCs.Bosses
     //   A5       — Rally (TickRally): at 50% / 25% HP, a warband event — widen his spacing, call in
     //              ManHunters one after another, lob potion bombs, then return to normal aggression.
     //   Bomb     — TickBomb: a lobbed HeroPotionBomb that inflicts Potion Sickness (denies healing).
+    [AutoloadBossHead]
     class HeroofLumelia : PuppetNPC
     {
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/HeroofLumelia_Head_Boss";
+
         protected override string InvaderTitle => "The Hero of Lumelia";
 
         // Damage values (kept from the legacy kit — hostile-projectile balance already tuned around them).

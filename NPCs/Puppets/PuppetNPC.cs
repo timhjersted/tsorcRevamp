@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -46,6 +47,17 @@ namespace tsorcRevamp.NPCs.Puppets
         /// via its own <see cref="ModNPC.SpawnChance"/> like any normal NPC. Default <c>true</c> (invasion encounter).
         /// </summary>
         protected virtual bool AnnounceInvasion => true;
+
+        /// <summary>Override for phase-transition puppets which are not the end of an invasion.</summary>
+        protected virtual bool AnnounceInvaderDefeat => AnnounceInvasion;
+
+        /// <summary>Only specifically designated invaders use the great-invader banner.</summary>
+        protected virtual bool IsGreatInvader => false;
+
+        internal bool ShouldAnnounceInvaderDefeat => AnnounceInvaderDefeat;
+        internal EncounterBannerStyle InvaderDefeatBanner => IsGreatInvader
+            ? EncounterBannerStyle.GreatInvaderVanquished
+            : EncounterBannerStyle.InvaderVanquished;
 
         // ── Layer coordination ────────────────────────────────────────────────────
         /// <summary>
@@ -316,13 +328,18 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Detection radius (px) for an incoming aimed projectile.</summary>
         protected virtual float ProjectileEvadeRange => 200f;
 
+        /// <summary>Ordinary hits must not seize a puppet's neutral state or delay its next attack.
+        /// Poise break is the shared interruption contract. Override only for a deliberately authored
+        /// puppet whose reactive guard/evasion is bounded and cannot be repeatedly rearmed.</summary>
+        protected virtual bool AllowReactiveDefense => false;
+        internal bool AllowsReactiveDefense => AllowReactiveDefense;
+
         // ── Quick-step dodge (shared with FighterAI via tsorcRevampAIs.TickQuickStep) ──────
-        // ON-HIT quick-step works automatically for any puppet whose EvasiveProfile sets EvasiveQuickStep
-        // (PuppetNPC always ticks the shared executor, so the old "puppet can't tick QuickStepTimer" bug
-        // is gone).  PREEMPTIVE quick-step is opt-in: when the player is mid-swing in melee range, roll
-        // PreemptiveQuickStepChance to dash THROUGH them (i-frames, can't hurt them) and land past them.
+        // ON-HIT quick-step additionally requires AllowReactiveDefense: ordinary hits otherwise keep
+        // the puppet's attack sequencer running. PREEMPTIVE quick-step is separately opt-in: when the
+        // player is mid-swing in melee range, roll PreemptiveQuickStepChance to dash THROUGH them.
         /// <summary>Chance (0–100) to preemptively quick-step when the player is mid-swing in melee range.
-        /// 0 = no proactive quick-step (on-hit still works via EvasiveProfile).</summary>
+        /// 0 = no proactive quick-step.</summary>
         protected virtual int   PreemptiveQuickStepChance => 0;
         /// <summary>Post-step recovery (ticks) before attacks/pursuit resume — the "can't instantly re-attack
         /// after the dash" window.  Tune with <see cref="QuickStepForwardRoom"/> for the spacing feel.</summary>
@@ -544,6 +561,7 @@ namespace tsorcRevamp.NPCs.Puppets
         // clean dodge (this stays false) can then be punished by chaining straight into a different
         // attack instead of handing the player a free breather in Recovery.
         private bool _lastAttackHitConnected;
+        private bool _currentComboStepHitConnected;
 
         /// <summary>% chance, on a fully whiffed JumpingDownwardSlash or Abyss Slash, to chain
         /// straight into the other one (if in range and off cooldown) instead of returning to
@@ -552,7 +570,12 @@ namespace tsorcRevamp.NPCs.Puppets
 
         /// <summary>Called by a hostile projectile that hit its target, to credit this puppet's
         /// current attack as having connected (see <see cref="_lastAttackHitConnected"/>).</summary>
-        public void ReportAttackHit() => _lastAttackHitConnected = true;
+        public void ReportAttackHit()
+        {
+            _lastAttackHitConnected = true;
+            if (IsMeleeComboPhase)
+                _currentComboStepHitConnected = true;
+        }
 
         /// <summary>
         /// If the swing that just ended fully whiffed, rolls <see cref="DodgePunishChainChance"/> and
@@ -752,6 +775,12 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int   EstusChargesMax         => 10;
         /// <summary>Fraction of max HP restored per drink.</summary>
         protected virtual float EstusHealFraction       => 0.20f;
+        /// <summary>Primary and secondary health thresholds that can request an Estus attempt.</summary>
+        protected virtual float FirstHealThreshold      => 0.50f;
+        protected virtual float SecondHealThreshold     => 0.25f;
+        /// <summary>Maximum post-heal life fraction. Defaults uncapped; bosses may keep a phase
+        /// active by capping healing below that phase's upper boundary.</summary>
+        protected virtual float HealLifeCapFraction     => 1f;
         /// <summary>Ticks of cooldown between any two heals (prevents spam).</summary>
         protected virtual int   HealCooldownTicks       => 300;
         /// <summary>Ticks the interruptible drinking channel lasts before HP is restored.</summary>
@@ -784,8 +813,8 @@ namespace tsorcRevamp.NPCs.Puppets
 
         // ── Shield (optional, opt-in per subclass) ──────────────────────────────────
         /// <summary>Item type whose sprite is drawn as this puppet's off-hand shield.  -1 = no
-        /// shield.  Override in a subclass to give an puppet a reactive guard (also call a
-        /// <c>ShieldProfile.*</c> in SetDefaults to set the block chances).</summary>
+        /// shield. Override in a subclass to draw a carried shield. A reactive guard also requires
+        /// <see cref="AllowReactiveDefense"/> and a <c>ShieldProfile.*</c> call in SetDefaults.</summary>
         protected virtual int ShieldItemType => -1;
         /// <summary>True when this puppet carries a shield.</summary>
         protected bool HasShield => ShieldItemType > 0;
@@ -806,6 +835,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// puppet plants + locks facing for this whole window, so the player can dodgeroll through
         /// and backstab.  150 ticks = 2.5 s.</summary>
         protected virtual int ShieldGuardTicksMelee => 150;
+        /// <summary>Minimum delay after a completed or stagger-cancelled guard before another
+        /// reactive guard can start. This keeps repeated hits from holding the puppet in neutral.</summary>
+        protected virtual int ShieldGuardCooldownTicks => 180;
         /// <summary>Slow advance speed (px/frame) toward the player while guarding OUT of melee
         /// range.  In melee range the puppet plants instead.</summary>
         protected virtual float ShieldAdvanceSpeed => 0.9f;
@@ -820,6 +852,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>True once the current guard has had its hold bumped to the melee minimum (so the
         /// extension is applied once, not re-applied every tick the player stays adjacent).</summary>
         private bool _shieldMeleeExtended;
+        /// <summary>Rearm lockout for the authored shield action. Unlike ReactiveBlockTimer, hits
+        /// cannot refresh this while the guard is active.</summary>
+        private int _shieldGuardCooldown;
 
         /// <summary>
         /// Run the ground-movement AI for this puppet.  All puppets navigate with
@@ -842,6 +877,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected enum AttackPhase
         {
             Idle,
+            /// <summary>A short, committed defensive action. It is neither an attack telegraph nor
+            /// a poise stagger, and exits directly back into normal action selection.</summary>
+            ShieldGuard,
             MeleeTelegraph, MeleeAttack, MeleeRecovery,
             StabTelegraph,  StabAttack,  StabRecovery,
             RangedTelegraph, RangedAttack, RangedRecovery,
@@ -1070,12 +1108,29 @@ namespace tsorcRevamp.NPCs.Puppets
         private int         _activeRangedTelegraphTicks;
         private int         _activeRangedAttackTicks;
         private int         _activeRangedRecoveryTicks;
+        // -1 = none, 0 = primary, 1 = secondary. Projectile callbacks can queue a deliberate
+        // response without reaching into the phase machine or bypassing the normal telegraph.
+        private int         _queuedRangedFollowupSlot = -1;
+        private int         _queuedRangedFollowupTicks;
+        private int         _queuedRangedFollowupTarget = -1;
 
         /// <summary>
         /// True while the current ranged burst is using the secondary weapon.
         /// Read this in <see cref="DoRangedAttack"/> to decide which projectile to fire.
         /// </summary>
         protected bool IsSecondaryRangedActive => _usingSecondaryRanged;
+
+        /// <summary>Queue a single, fully telegraphed ranged response. The request is consumed as
+        /// soon as the puppet is neutral or finishes its current ranged recovery, and expires if it
+        /// cannot be used promptly. This intentionally bypasses the ordinary weapon cooldown because
+        /// it represents an authored follow-up rather than a new neutral selection.</summary>
+        protected void QueueRangedFollowUp(bool useSecondary, int targetPlayer = -1, int lifetimeTicks = 150)
+        {
+            _queuedRangedFollowupSlot = useSecondary ? 1 : 0;
+            _queuedRangedFollowupTarget = targetPlayer;
+            _queuedRangedFollowupTicks = Math.Max(1, lifetimeTicks);
+            NPC.netUpdate = true;
+        }
 
         /// <summary>Index of the active ranged burst pattern (into the active weapon's pattern pool),
         /// or -1 when this burst isn't using a pattern.  Read in <see cref="DoRangedAttack"/> to fire a
@@ -1128,6 +1183,7 @@ namespace tsorcRevamp.NPCs.Puppets
         private float _prevWeaponRotation; // last tick's _weaponRotation, for swing-speed-gated VFX
         private float _spearGrip = 0.5f;  // 0=grip at head, 1=grip at base; animated for spear extend/retract
         private int   _weaponAnimMax = DefaultWeaponAnimMax;
+        private bool  _forceExportHeldWeapon;
         private const int DefaultWeaponAnimMax = 22;
 
         // ── Tracked blade hit detection ───────────────────────────────────────────
@@ -1140,6 +1196,10 @@ namespace tsorcRevamp.NPCs.Puppets
         private float _activeBladeReach;
         private float _activeBladeKnockback;
         private int   _activeBladeDamage;
+        private Vector2 _previousBladeOrigin;
+        private Vector2 _previousBladeTip;
+        private bool _hasPreviousBladeSample;
+        private readonly HashSet<int> _bladeHitPlayers = new HashSet<int>();
         /// <summary>
         /// Resting hold angle when not attacking (≈ −17° — arm slightly raised, weapon pointing
         /// diagonally forward). The weapon smoothly eases to this during walk / jump / idle.
@@ -1173,6 +1233,14 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             get
             {
+                if (_attackRuntimeV2.Active)
+                {
+                    return $"{_activeMeleeCombo.Name}/V2:{_attackRuntimeV2.Clip.Pose} "
+                         + $"({_attackRuntimeV2.Stage} {_attackRuntimeV2.StageTick}/{_attackRuntimeV2.StageDuration}, "
+                         + $"aim={MathHelper.ToDegrees(_attackRuntimeV2.AimCorrection):F0} deg"
+                         + (_attackRuntimeV2.AimLocked ? " locked)" : " tracking)");
+                }
+
                 bool inCombo = Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack
                             || Phase == AttackPhase.MeleeComboPause    || Phase == AttackPhase.MeleeComboRecovery;
                 if (!inCombo || _activeMeleeComboIndex < 0 || _activeMeleeCombo.Steps == null
@@ -1219,6 +1287,11 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
             Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery;
 
+        private bool IsTelemetryAttackPhase =>
+            Phase != AttackPhase.Idle && Phase != AttackPhase.ClosingDistance
+            && Phase != AttackPhase.CasualStroll && Phase != AttackPhase.FleeToHeal
+            && Phase != AttackPhase.Healing && Phase != AttackPhase.ShieldGuard;
+
         private bool IsWeaponPosePhase => IsWeaponVisiblePhase;
 
         // ── Direction hold (anti-bounce) ──────────────────────────────────────────
@@ -1247,6 +1320,11 @@ namespace tsorcRevamp.NPCs.Puppets
         private int _activeMeleeComboIndex = -1;
         /// <summary>Which step (0-indexed) of the active combo we're currently executing.</summary>
         private int _meleeComboStepIndex;
+        /// <summary>Single-clock executor used only by combos that explicitly opt into a V2 clip.</summary>
+        private readonly PuppetAttackRuntime _attackRuntimeV2 = new PuppetAttackRuntime();
+        private Vector2 _runtimePreviousBladeOrigin;
+        private Vector2 _runtimePreviousBladeTip;
+        private bool _runtimeHasPreviousBladeSample;
         /// <summary>Direction locked for the entire active combo.  Player can dodgeroll through
         /// and end up safely behind the swing arc — FighterAI's direction flips are overridden
         /// across all four MeleeCombo* phases.</summary>
@@ -1258,6 +1336,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <see cref="UseAimAdaptiveArc"/> is on, added to both arc endpoints so the swing biases
         /// toward an airborne/crouched target instead of always arcing level with the ground.</summary>
         private float _comboAimBias;
+        private int _thrownComboWeaponIndex = -1;
+        private int _thrownWeaponStage;
+        private int _thrownWeaponReadTimer;
+        private float _thrownWeaponLeapVelocityX;
+        private bool _thrownWeaponWasSeen;
 
         /// <summary>Toggles the alternate-flip parity and (re)computes the aim-adaptive bias for the
         /// swing that's about to play. Called at the start of every swing/combo — both the combo
@@ -1292,6 +1375,12 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Horizontal velocity locked in at LeapSlam launch (sized to land near the player),
         /// re-asserted each airborne tick so SF4 doesn't steer the arc.</summary>
         private float _comboLeapVx;
+        private int _activeComboStepTotalTicks;
+        private int _apexDiveFallTicks;
+        private bool _apexDiveStrikeStarted;
+        /// <summary>Counts only the descending portion of a RisingUppercutLeap. The weapon remains
+        /// held overhead until this reaches 30 ticks, independent of how long the ascent took.</summary>
+        private int _risingUppercutFallHoldTimer;
 
         // ── Ranged combo state ────────────────────────────────────────────────────
         /// <summary>The ranged combo currently executing.</summary>
@@ -1344,10 +1433,70 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Chance (0-100) of preferring a combo over the legacy slash/stab/spear path
         /// when both are available.  Set to 0 to disable melee combos entirely.</summary>
         protected virtual int MeleeComboChance => 65;
+        /// <summary>Separate chance for physical melee-combo openers selected outside normal melee
+        /// reach. Keeping this below 100 lets ordinary bows, crossbows, and throws still compete.</summary>
+        protected virtual int RangedStartMeleeComboChance => MeleeComboChance;
 
         /// <summary>Optional bespoke combo pool that REPLACES the shared archetype table (for boss
         /// movesets).  null = use the archetype table.  Length defines the cooldown array.</summary>
         protected virtual MeleeCombo[] MeleeComboPoolOverride => null;
+
+        /// <summary>When true, overhead/underhand combo telegraphs first move to the opposite end
+        /// of the arc, then visibly wind back to the attack's starting pose. This makes the wind-up
+        /// communicate the direction of the upcoming swing instead of merely holding at its apex.</summary>
+        protected virtual bool UseLogicalMeleeTelegraphs => false;
+
+        /// <summary>Projectile type used by <see cref="ComboMotion.ThrownWeaponRetrieve"/>. The
+        /// projectile must expose its embedded state as <c>ai[0] == 1</c> and record this puppet's
+        /// <see cref="NPC.whoAmI"/> in <c>ai[1]</c>. A negative type disables the motion.</summary>
+        protected virtual int ThrownComboWeaponProjectileType => -1;
+        /// <summary>Spawn the physical thrown weapon and return its projectile slot. Called on the
+        /// server when a ThrownWeaponRetrieve step begins.</summary>
+        protected virtual int SpawnThrownComboWeapon() => -1;
+        /// <summary>Ticks the embedded weapon remains still before the puppet leaps to retrieve it.</summary>
+        protected virtual int ThrownWeaponReadTicks => 12;
+        protected virtual float ThrownWeaponRetrieveLeapUpSpeed => 8f;
+        protected virtual float ThrownWeaponRetrieveLeapMaxSpeed => 9f;
+        /// <summary>Final eligibility gate after range/cooldown classification. Useful for health
+        /// phase unlocks and attacks that require live projectiles or another encounter resource.</summary>
+        protected virtual bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction) => true;
+        /// <summary>Per-tick events driven by the same combo clocks as animation and collision.</summary>
+        protected virtual void OnMeleeComboTelegraphTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total) { }
+        protected virtual void OnMeleeComboAttackTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total) { }
+        /// <summary>Called once as a combo step completes, before its pause/recovery begins.</summary>
+        protected virtual void OnComboStepCompleted(MeleeComboStep step) { }
+        /// <summary>True only when the currently completing legacy combo step made a confirmed blade
+        /// or reported projectile contact. Useful for effects and conditional branches.</summary>
+        protected bool CurrentComboStepHitConnected => _currentComboStepHitConnected;
+        protected string ActiveMeleeComboName => _activeMeleeCombo.Name;
+        protected ComboMotion ActiveMeleeComboMotion =>
+            _activeMeleeCombo.Steps != null
+            && _meleeComboStepIndex >= 0
+            && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length
+                ? _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion
+                : ComboMotion.OverheadArc;
+        /// <summary>Called after a step completes but before its next step is scheduled. Returning
+        /// false ends the combo in normal recovery, enabling honest hit-confirmed branches.</summary>
+        protected virtual bool ShouldContinueMeleeCombo(
+            string comboName, int nextStepIndex, Player target, bool previousStepHit) => true;
+        /// <summary>Called on an isolated copy of a newly selected combo. Subclasses may append
+        /// health-phase follow-ups without mutating the shared static combo table.</summary>
+        protected virtual void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction) { }
+        /// <summary>Called immediately before a later combo step begins. Subclasses may replace the
+        /// copied step using current spacing, enabling conditional retrieval or pursuit follow-ups.</summary>
+        protected virtual void ModifyNextMeleeComboStep(
+            string comboName, int nextStepIndex, Player target, ref MeleeComboStep nextStep) { }
+
+        /// <summary>Allows a subclass to give a particular ranged payload a distinct readable
+        /// telegraph while retaining the shared ranged phase executor.</summary>
+        protected virtual void ModifyRangedBurst(
+            bool secondary,
+            ref int itemType,
+            ref RangedStyle style,
+            ref Color flashColor,
+            ref int telegraphTicks,
+            ref int attackTicks,
+            ref int recoveryTicks) { }
 
         /// <summary>Reactive combo selection hook.  Called after the range/HP/cooldown weights are
         /// built but before the weighted roll; return a ready combo index chosen from LIVE player
@@ -1364,6 +1513,12 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Base reach (px) for melee COMBO hitboxes before the step's ReachMult.  Default MeleeRange;
         /// override larger for long weapons (spears) so combo swings connect at their visual reach.</summary>
         protected virtual float ComboReachBase => MeleeRange;
+
+        /// <summary>Optional forward pressure during the initial combo telegraph. The puppet only
+        /// advances while the target remains on the originally committed side, so crossing through
+        /// the wind-up still cleanly dodges the attack. Zero preserves the planted legacy behavior.</summary>
+        protected virtual float ComboTelegraphAdvanceSpeedMult => 0f;
+        protected virtual float ComboTelegraphAdvanceStopDistance => MeleeRange * 0.75f;
 
         // ── Closing distance (anti-whiff for melee combos) ────────────────────────
         /// <summary>Distance (px) at which a chosen melee combo is close enough to actually connect.  If a
@@ -1561,8 +1716,7 @@ namespace tsorcRevamp.NPCs.Puppets
             int boxW = (int)Math.Max(100f, EchoStepReach * 1.4f);
             int boxH = 60;
             Vector2 center = _echoStepPos + new Vector2(_echoStepSwingDir * EchoStepReach * 0.5f, -8f);
-            Vector2 topLeft = center - new Vector2(boxW / 2f, boxH / 2f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), center, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
                 _echoStepDamage, 3f, Main.myPlayer, boxW, boxH);
         }
@@ -1751,8 +1905,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 && Main.netMode != NetmodeID.Server && NPC.localAI[0] == 0f)
             {
                 NPC.localAI[0] = 1f;
-                tsorcRevamp.LocationBannerText  = "INVADED BY " + InvaderTitle.ToUpperInvariant();
-                tsorcRevamp.LocationBannerTimer = tsorcRevamp.LOCATION_BANNER_TOTAL;
+                tsorcRevamp.ShowAnnouncementBanner(
+                    Terraria.Localization.Language.GetTextValue("Mods.tsorcRevamp.EncounterPresentation.Banners.InvadedBy", InvaderTitle),
+                    Color.White);
             }
 
             // ── Lazy estus init ────────────────────────────────────────────────────
@@ -1761,6 +1916,16 @@ namespace tsorcRevamp.NPCs.Puppets
 
             if (_rangedCooldown          > 0) _rangedCooldown--;
             if (_secondaryRangedCooldown > 0) _secondaryRangedCooldown--;
+            if (_shieldGuardCooldown     > 0) _shieldGuardCooldown--;
+            if (_queuedRangedFollowupTicks > 0)
+            {
+                _queuedRangedFollowupTicks--;
+                if (_queuedRangedFollowupTicks <= 0)
+                {
+                    _queuedRangedFollowupSlot = -1;
+                    _queuedRangedFollowupTarget = -1;
+                }
+            }
             if (_stabCooldown            > 0) _stabCooldown--;
             if (_spearCooldown           > 0) _spearCooldown--;
             if (_magicCooldown           > 0) _magicCooldown--;
@@ -1950,6 +2115,144 @@ namespace tsorcRevamp.NPCs.Puppets
             TickWeaponAnim();
         }
 
+        public override void PostAI()
+        {
+            if (Main.dedServ)
+                return;
+
+            if (!SwingDebugLog)
+                return;
+
+            if (!IsTelemetryAttackPhase)
+            {
+                PuppetAttackTelemetry.End(NPC.whoAmI, $"phase:{Phase}");
+                return;
+            }
+
+            RecordAttackTelemetryAI();
+        }
+
+        private void RecordAttackTelemetryAI()
+        {
+            Player target = NPC.HasValidTarget ? Main.player[NPC.target] : null;
+            Vector2 targetCenter = target?.Center ?? NPC.Center;
+            Vector2 targetVelocity = target?.velocity ?? Vector2.Zero;
+            bool hasLineOfSight = target != null && Collision.CanHit(
+                NPC.position, NPC.width, NPC.height, target.position, target.width, target.height);
+
+            string navAction = "", navReason = "", navPlan = "";
+            SmartFighter4AI.TryGetTelemetryState(NPC, out navAction, out navReason, out navPlan);
+
+            Projectile thrown = null;
+            if (_thrownComboWeaponIndex >= 0 || _thrownWeaponWasSeen
+                || TelemetryMotionName == ComboMotion.ThrownWeaponRetrieve.ToString())
+            {
+                thrown = FindThrownComboWeapon();
+            }
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool hitWindowOpen = (_attackRuntimeV2.Active && _attackRuntimeV2.HitWindowOpen) || _bladeArmed;
+            bool bladeOverlapsTarget = false;
+            if (target != null && hitWindowOpen && _activeBladeReach > 0f)
+            {
+                Vector2 bladeOrigin = GetHandPosition();
+                Vector2 bladeTip = bladeOrigin + GetWeaponWorldDirection() * _activeBladeReach;
+                bladeOverlapsTarget = MeleeBladeCollision.SegmentIntersectsRect(
+                    bladeOrigin, bladeTip, MeleeBladeWidth, target.getRect());
+            }
+
+            var sample = new PuppetAttackAiSample
+            {
+                NpcId = NPC.whoAmI,
+                NpcType = NPC.type,
+                NpcName = NPC.TypeName,
+                AttackName = TelemetryAttackName,
+                Phase = Phase.ToString(),
+                PhaseTimer = PhaseTimer,
+                Motion = TelemetryMotionName,
+                ComboStep = TelemetryComboStep,
+                ComboStepCount = TelemetryComboStepCount,
+                Direction = NPC.direction,
+                SpriteDirection = NPC.spriteDirection,
+                LockedDirection = _comboLockedDir,
+                TargetPlayerId = target != null ? NPC.target : -1,
+                TargetSide = target != null ? Math.Sign(target.Center.X - NPC.Center.X) : 0,
+                NpcCenter = NPC.Center,
+                NpcVelocity = NPC.velocity,
+                TargetCenter = targetCenter,
+                TargetVelocity = targetVelocity,
+                HasLineOfSight = hasLineOfSight,
+                RawWeaponRotationDeg = MathHelper.ToDegrees(_weaponRotation),
+                DrawWeaponRotationDeg = MathHelper.ToDegrees(GetMeleeDrawRotation()),
+                CompositeArmRotationDeg = CompositeArmActive
+                    ? MathHelper.ToDegrees(CompositeArmRotation)
+                    : float.NaN,
+                AimCorrectionDeg = MathHelper.ToDegrees(_attackRuntimeV2.Active
+                    ? _attackRuntimeV2.AimCorrection
+                    : _comboAimBias),
+                AimLocked = _attackRuntimeV2.Active && _attackRuntimeV2.AimLocked,
+                CompositeStretch = CompositeArmStretch.ToString(),
+                CompositeArmActive = CompositeArmActive,
+                WeaponVisible = _weaponVisible && _heldItemType > 0,
+                HeldItemType = _heldItemType,
+                BladeArmed = _bladeArmed,
+                BladeReach = _activeBladeReach,
+                HitWindowOpen = hitWindowOpen,
+                BladeOverlapsTarget = bladeOverlapsTarget,
+                HitConnected = _lastAttackHitConnected,
+                AttackCommitted = globalNPC.AttackCommitted,
+                AttackTelegraphing = globalNPC.AttackTelegraphing,
+                NavAction = navAction,
+                NavReason = navReason,
+                NavPlan = navPlan,
+                ThrownWeaponPresent = thrown != null,
+                ThrownWeaponEmbedded = thrown?.ai[0] == 1f,
+                ThrownWeaponStage = _thrownWeaponStage,
+                ThrownWeaponCenter = thrown?.Center ?? Vector2.Zero,
+                ThrownWeaponVelocity = thrown?.velocity ?? Vector2.Zero,
+                TargetDistance = target != null ? NPC.Distance(target.Center) : 0f,
+                SwingArmEnabled = CompositeArmSwingMasterEnable,
+                BladeFlipEnabled = BladeFlipMasterEnable,
+                AimSwingEnabled = AimSwingMasterEnable,
+                ArmRotationOffset = CompositeArmRotationOffset,
+            };
+            PuppetAttackTelemetry.RecordAI(sample);
+        }
+
+        private string TelemetryAttackName
+        {
+            get
+            {
+                if (_activeMeleeComboIndex >= 0 && !string.IsNullOrEmpty(_activeMeleeCombo.Name))
+                    return _activeMeleeCombo.Name;
+                if (!string.IsNullOrEmpty(DebugAttackLabel))
+                    return DebugAttackLabel;
+                if (_usingSecondaryRanged)
+                    return $"Secondary Ranged ({_activeRangedStyle})";
+                if (_activeRangedItemType > 0
+                    && (Phase == AttackPhase.RangedTelegraph
+                        || Phase == AttackPhase.RangedAttack
+                        || Phase == AttackPhase.RangedRecovery))
+                {
+                    return $"Primary Ranged ({_activeRangedStyle})";
+                }
+                return Phase.ToString();
+            }
+        }
+
+        private string TelemetryMotionName =>
+            IsMeleeComboPhase && _activeMeleeComboIndex >= 0
+            && _activeMeleeCombo.Steps != null
+            && _meleeComboStepIndex >= 0 && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length
+                ? _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion.ToString()
+                : "";
+
+        private int TelemetryComboStep => IsMeleeComboPhase && _activeMeleeComboIndex >= 0
+            ? _meleeComboStepIndex : -1;
+
+        private int TelemetryComboStepCount => IsMeleeComboPhase && _activeMeleeComboIndex >= 0
+            ? _activeMeleeCombo.Steps?.Length ?? 0 : 0;
+
         /// <summary>
         /// Returns true when the puppet should interrupt whatever it is doing to flee and heal.
         /// Checked at the top of PuppetAttackAI every tick.
@@ -1962,10 +2265,8 @@ namespace tsorcRevamp.NPCs.Puppets
 
             float hp = (float)NPC.life / NPC.lifeMax;
 
-            // Threshold 1: first time HP falls at or below 50 %.
-            if (!_halfHpHealed && hp <= 0.50f) return true;
-            // Threshold 2: first time HP falls at or below 25 %.
-            if (!_quarterHpHealed && hp <= 0.25f) return true;
+            if (!_halfHpHealed && hp <= FirstHealThreshold) return true;
+            if (!_quarterHpHealed && hp <= SecondHealThreshold) return true;
             // Threshold 3: burst damage — took a lot of damage in a short window.
             if (_recentDamage >= RecentDamageThreshold) return true;
 
@@ -1983,8 +2284,12 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 int healAmount = (int)(NPC.lifeMax * EstusHealFraction);
                 int lifeBefore = NPC.life;
-                NPC.life = Math.Min(NPC.lifeMax, NPC.life + healAmount);
-                NPC.HealEffect(NPC.life - lifeBefore);
+                int configuredCeiling = (int)(NPC.lifeMax * MathHelper.Clamp(HealLifeCapFraction, 0f, 1f));
+                int healCeiling = Math.Max(lifeBefore, configuredCeiling);
+                NPC.life = Math.Min(healCeiling, NPC.life + healAmount);
+                int restored = NPC.life - lifeBefore;
+                if (restored > 0)
+                    NPC.HealEffect(restored);
             }
 
             _estusCharges--;
@@ -1992,8 +2297,8 @@ namespace tsorcRevamp.NPCs.Puppets
             _recentDamage = 0f;
 
             float hp = (float)NPC.life / NPC.lifeMax;
-            if (hp > 0.50f) _halfHpHealed = true;
-            if (hp > 0.25f) _quarterHpHealed = true;
+            if (hp > FirstHealThreshold) _halfHpHealed = true;
+            if (hp > SecondHealThreshold) _quarterHpHealed = true;
             NPC.netUpdate = true;
         }
 
@@ -2007,15 +2312,128 @@ namespace tsorcRevamp.NPCs.Puppets
                 _healCooldown = Math.Max(_healCooldown, HealCooldownTicks);
             }
 
+            if (_thrownComboWeaponIndex >= 0 || _thrownWeaponWasSeen)
+                FinishThrownWeaponRetrieve();
+            CancelAttackRuntimeV2(clearCombo: true);
             _bladeArmed = false;
             _jumpSlashLaunched = false;
+            _comboLeapLaunched = false;
+            _risingUppercutFallHoldTimer = 0;
             _weaponVisible = false;
             EnterPhase(AttackPhase.Idle, 0);
 
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            _shielding = false;
+            _shieldWasGuarding = false;
+            _shieldMeleeExtended = false;
+            _shieldGuardCooldown = Math.Max(_shieldGuardCooldown, ShieldGuardCooldownTicks);
+            globalNPC.ReactiveBlockTimer = 0;
+            globalNPC.ShieldGuarding = false;
             globalNPC.AttackCommitted = false;
             globalNPC.AttackTelegraphing = false;
             npc.netUpdate = true;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            writer.Write((short)Math.Clamp(_shieldGuardCooldown, 0, short.MaxValue));
+            writer.Write((short)Math.Clamp(globalNPC.ReactiveBlockTimer, 0, short.MaxValue));
+            writer.Write(_shielding);
+            writer.Write(_attackRuntimeV2.Active);
+            if (!_attackRuntimeV2.Active)
+                return;
+
+            writer.Write(_activeMeleeComboIndex);
+            writer.Write((byte)_attackRuntimeV2.Stage);
+            writer.Write((short)_attackRuntimeV2.StageTick);
+            writer.Write(_attackRuntimeV2.AimCorrection);
+            writer.Write(_attackRuntimeV2.AimLocked);
+            writer.Write((sbyte)_attackRuntimeV2.LockedFacing);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            _shieldGuardCooldown = reader.ReadInt16();
+            int shieldTimer = reader.ReadInt16();
+            bool shieldActive = reader.ReadBoolean();
+            bool runtimeActive = reader.ReadBoolean();
+            bool hadRuntime = _attackRuntimeV2.Active;
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (!runtimeActive)
+            {
+                if (hadRuntime)
+                {
+                    CancelAttackRuntimeV2(clearCombo: true);
+                    _weaponVisible = false;
+                }
+
+                globalNPC.ReactiveBlockTimer = shieldTimer;
+                globalNPC.ShieldGuarding = shieldActive;
+                _shielding = shieldActive;
+                _shieldWasGuarding = shieldActive;
+                if (shieldActive)
+                {
+                    _shieldLockedDir = NPC.direction;
+                    Phase = AttackPhase.ShieldGuard;
+                    PhaseTimer = shieldTimer;
+                }
+                else if (Phase == AttackPhase.ShieldGuard || hadRuntime)
+                {
+                    EnterPhase(AttackPhase.Idle, 0);
+                }
+                return;
+            }
+
+            _shielding = false;
+            globalNPC.ReactiveBlockTimer = 0;
+            globalNPC.ShieldGuarding = false;
+
+            int comboIndex = reader.ReadInt32();
+            PuppetAttackStage stage = (PuppetAttackStage)reader.ReadByte();
+            int stageTick = reader.ReadInt16();
+            float aimCorrection = reader.ReadSingle();
+            bool aimLocked = reader.ReadBoolean();
+            int lockedFacing = reader.ReadSByte();
+
+            EnsureMeleeComboPool();
+            if (_meleeComboPool == null || comboIndex < 0 || comboIndex >= _meleeComboPool.Length
+                || _meleeComboPool[comboIndex].RuntimeV2Clip == null)
+            {
+                CancelAttackRuntimeV2(clearCombo: true);
+                return;
+            }
+
+            bool wasActive = _attackRuntimeV2.Active;
+            _activeMeleeComboIndex = comboIndex;
+            _activeMeleeCombo = _meleeComboPool[comboIndex];
+            _meleeComboStepIndex = 0;
+            _comboLockedDir = lockedFacing < 0 ? -1 : 1;
+            _attackRuntimeV2.LoadNetworkState(
+                _activeMeleeCombo.RuntimeV2Clip,
+                stage,
+                stageTick,
+                aimCorrection,
+                aimLocked,
+                _comboLockedDir);
+
+            SetDisplayWeapon(MeleeWeaponItemType, swing: stage == PuppetAttackStage.Active);
+            _weaponAnimMax = _activeMeleeCombo.RuntimeV2Clip.ActiveTicks;
+            _weaponAnim = stage == PuppetAttackStage.Active ? _attackRuntimeV2.TicksRemaining : _weaponAnimMax;
+            _weaponRotation = _attackRuntimeV2.SampleRotation();
+            _runtimeHasPreviousBladeSample = false;
+            _weaponVisible = true;
+            Phase = stage switch
+            {
+                PuppetAttackStage.Windup => AttackPhase.MeleeComboTelegraph,
+                PuppetAttackStage.Active => AttackPhase.MeleeComboAttack,
+                _ => AttackPhase.MeleeComboRecovery,
+            };
+            PhaseTimer = _attackRuntimeV2.TicksRemaining;
+            if (!wasActive && stage == PuppetAttackStage.Windup)
+                _flashFired = false;
+            if (!wasActive && stage == PuppetAttackStage.Active)
+                PlayMeleeSwingSound();
         }
 
         private void PuppetAttackAI()
@@ -2028,6 +2446,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // Check before the main switch so any phase can be interrupted to flee and heal.
             if (ShouldHeal())
             {
+                CancelAttackRuntimeV2(clearCombo: true);
                 EnterPhase(AttackPhase.FleeToHeal, FleeToHealMaxTicks);
                 return;
             }
@@ -2037,7 +2456,16 @@ namespace tsorcRevamp.NPCs.Puppets
             if (CanNova && Phase != AttackPhase.NovaCharge && Phase != AttackPhase.NovaBlast
                 && Phase != AttackPhase.NovaRecovery && ShouldTriggerNova())
             {
+                CancelAttackRuntimeV2(clearCombo: true);
                 EnterPhase(AttackPhase.NovaCharge, NovaChargeTicks);
+                return;
+            }
+
+            // V2 owns the whole strike. The mirrored legacy phase is for rendering and shared
+            // attack-commit flags only; its switch case must not advance another timer.
+            if (_attackRuntimeV2.Active)
+            {
+                TickAttackRuntimeV2(target);
                 return;
             }
 
@@ -2049,6 +2477,11 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.Idle:
                     if (_heldItemType <= 0)
                         SetDisplayWeapon(MeleeWeaponItemType >= 0 ? MeleeWeaponItemType : RangedWeaponItemType, swing: false);
+
+                    // Authored reactions such as "snare connected -> throw flask" take priority over
+                    // neutral selection, but still require footing, line of sight, and a full wind-up.
+                    if (TryStartQueuedRangedFollowUp())
+                        break;
 
                     // ── Wings: airborne behavior + takeoff triggers ───────────────
                     // Checked BEFORE the LOS gate below: a flying puppet must still be able to
@@ -2325,16 +2758,23 @@ namespace tsorcRevamp.NPCs.Puppets
                     // Roll first: combo system competes with the legacy slash/stab path.
                     // Combos require grounded, height-accessible target, archetype set, AND
                     // player within effective combo reach so the swings actually connect.
+                    int comboStartChance = dist > MeleeEngageRange
+                        ? RangedStartMeleeComboChance
+                        : MeleeComboChance;
                     if (MeleeArchetype != WeaponArchetype.None
                         && MeleeWeaponItemType >= 0
                         && NPC.velocity.Y == 0f
                         && NPC.Center.Y - target.Center.Y < 48f
                         && dist <= ComboMaxStartRange
-                        && Main.rand.Next(100) < MeleeComboChance)
+                        && Main.rand.Next(100) < comboStartChance)
                     {
                         // Out of hittable reach → close the gap first (no swing until in range).
                         if (dist > MeleeEngageRange)
                         {
+                            // A committed ranged-start combo (throw or bespoke running attack) may
+                            // deliberately open from here. Otherwise preserve normal gap closing.
+                            if (TryStartMeleeCombo(dist, rangedStartOnly: true))
+                                break;
                             EnterPhase(AttackPhase.ClosingDistance, ClosingDistanceMaxTicks);
                             break;
                         }
@@ -2540,7 +2980,8 @@ namespace tsorcRevamp.NPCs.Puppets
                             _secondaryRangedCooldown = SecondaryRangedCooldownAfterUse;
                         else
                             _rangedCooldown = RangedCooldownAfterUse;
-                        EnterCasualOrIdle();
+                        if (!TryStartQueuedRangedFollowUp())
+                            EnterCasualOrIdle();
                     }
                     break;
 
@@ -3448,6 +3889,14 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 // ── Melee combo: telegraph (step 0) ───────────────────────────
                 case AttackPhase.MeleeComboTelegraph:
+                    {
+                    MeleeComboStep telegraphStep = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                    int telegraphTotal = GetComboTelegraphTicks(telegraphStep);
+                    OnMeleeComboTelegraphTick(
+                        _activeMeleeCombo,
+                        telegraphStep,
+                        Math.Max(0, telegraphTotal - PhaseTimer),
+                        telegraphTotal);
                     LockComboDirection();
                     // Per-move brake for aim-swing pilots (0 = keep momentum); blanket SlowDown otherwise.
                     if (SlowDownBeforeMelee)
@@ -3455,33 +3904,27 @@ namespace tsorcRevamp.NPCs.Puppets
                         if (AimSwingActive) NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake);
                         else SlowDown();
                     }
+                    ApplyComboTelegraphPressure(target);
                     SetDisplayWeapon(MeleeWeaponItemType, swing: false);
                     CheckAndFireFlash(_activeMeleeCombo.InitialFlashColor);
                     if (--PhaseTimer <= 0)
                     {
                         var step0 = _activeMeleeCombo.Steps[_meleeComboStepIndex];
-                        SetDisplayWeapon(MeleeWeaponItemType, swing: true);
-                        if (IsSwingingMotion(step0.Motion))
-                            PlayMeleeSwingSound();
-                        // Deferred / no-hit motions don't strike on entry: LeapSlam launches now and
-                        // connects on landing; ChargeChop runs (next step chops); Feint just holds
-                        // the bait pose (next step is the delayed chop).
-                        _bladeArmed = false;
-                        if (step0.Motion == ComboMotion.LeapSlam || step0.Motion == ComboMotion.LeapThrust)
-                            BeginLeapAttack();
-                        else if (step0.Motion == ComboMotion.ChargeChop || step0.Motion == ComboMotion.Feint)
-                        { /* no hit this step — movement / bait only */ }
-                        else
-                            DoComboMeleeHit(step0);
-                        EnterPhase(AttackPhase.MeleeComboAttack, BeginComboAttackTicks(step0));
+                        BeginComboStepAttack(step0);
                     }
                     break;
+                    }
 
                 // ── Melee combo: active hitbox frame ──────────────────────────
                 case AttackPhase.MeleeComboAttack:
                 {
                     LockComboDirection();
                     var step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                    OnMeleeComboAttackTick(
+                        _activeMeleeCombo,
+                        step,
+                        Math.Max(0, _activeComboStepTotalTicks - PhaseTimer),
+                        Math.Max(1, _activeComboStepTotalTicks));
                     bool endStep;
 
                     if (step.Motion == ComboMotion.LeapSlam || step.Motion == ComboMotion.LeapThrust)
@@ -3506,6 +3949,87 @@ namespace tsorcRevamp.NPCs.Puppets
                             _comboLeapLaunched = false;
                         }
                     }
+                    else if (step.Motion == ComboMotion.BackstepRaise)
+                    {
+                        NPC.velocity.X = _comboLeapVx;
+                        bool enoughAirTime = PhaseTimer <= _activeComboStepTotalTicks - 6;
+                        bool landed = enoughAirTime && _comboLeapLaunched && NPC.velocity.Y == 0f;
+                        endStep = (--PhaseTimer <= 0) || landed;
+                        if (endStep)
+                            _comboLeapLaunched = false;
+                    }
+                    else if (step.Motion == ComboMotion.ApexDiveCleave)
+                    {
+                        if (!_apexDiveStrikeStarted && NPC.velocity.Y < 0f)
+                        {
+                            // Limited ascent tracking. Facing and horizontal velocity lock at apex,
+                            // leaving the final descent readable and dodgeable.
+                            int trackingDirection = target.Center.X < NPC.Center.X ? -1 : 1;
+                            _comboLockedDir = trackingDirection;
+                            NPC.direction = trackingDirection;
+                            NPC.spriteDirection = trackingDirection;
+                            float desired = trackingDirection * Math.Min(
+                                LeapAttackForwardSpeed,
+                                Math.Max(1.8f, Math.Abs(target.Center.X - NPC.Center.X) / 24f));
+                            _comboLeapVx = MathHelper.Lerp(_comboLeapVx, desired, 0.08f);
+                            NPC.velocity.X = _comboLeapVx;
+                        }
+                        else
+                        {
+                            if (!_apexDiveStrikeStarted)
+                            {
+                                _apexDiveStrikeStarted = true;
+                                _apexDiveFallTicks = 0;
+                                _comboLeapVx = NPC.velocity.X;
+                                DoComboMeleeHit(step);
+                                PlayMeleeSwingSound();
+                                NPC.netUpdate = true;
+                            }
+
+                            _apexDiveFallTicks++;
+                            NPC.velocity.X = _comboLeapVx;
+                            TickBladeHit();
+                        }
+
+                        bool landed = _apexDiveStrikeStarted && NPC.velocity.Y == 0f && _apexDiveFallTicks > 2;
+                        endStep = (--PhaseTimer <= 0) || landed;
+                        if (endStep)
+                        {
+                            _bladeArmed = false;
+                            _comboLeapLaunched = false;
+                            _apexDiveStrikeStarted = false;
+                        }
+                    }
+                    else if (step.Motion == ComboMotion.RisingUppercutLeap)
+                    {
+                        // The uppercut itself is dangerous only while the axe is visibly sweeping.
+                        // Afterward the pose remains extended overhead, but is no longer an active hit.
+                        NPC.velocity.X = _comboLeapVx;
+                        int elapsed = Math.Max(0, step.AttackTicks - PhaseTimer);
+                        if (elapsed <= GetWeaponUseAnimation(MeleeWeaponItemType))
+                            TickBladeHit();
+                        else
+                        {
+                            _bladeArmed = false;
+                            _hasPreviousBladeSample = false;
+                        }
+
+                        if (_comboLeapLaunched && NPC.velocity.Y >= 0f)
+                            _risingUppercutFallHoldTimer++;
+
+                        endStep = (--PhaseTimer <= 0) || _risingUppercutFallHoldTimer >= 30;
+                        if (endStep)
+                        {
+                            _bladeArmed = false;
+                            _comboLeapLaunched = false;
+                            _risingUppercutFallHoldTimer = 0;
+                        }
+                    }
+                    else if (step.Motion == ComboMotion.ThrownWeaponRetrieve)
+                    {
+                        bool retrieved = TickThrownWeaponRetrieve();
+                        endStep = (--PhaseTimer <= 0) || retrieved;
+                    }
                     else if (step.Motion == ComboMotion.ChargeChop)
                     {
                         // Run straight at the player, re-facing each tick.  No hit here — the
@@ -3516,6 +4040,18 @@ namespace tsorcRevamp.NPCs.Puppets
                         NPC.velocity.X = faceDir * (TopSpeed * ChargeAttackSpeedMult);
                         bool inReach = NPC.Distance(target.Center) <= MeleeRange * 0.9f;
                         endStep = (--PhaseTimer <= 0) || inReach;
+                    }
+                    else if (step.Motion == ComboMotion.LowAxeRun)
+                    {
+                        // The low trailing carry is a readable moving telegraph, not a hit. Sprint
+                        // until the player is close enough for the rising uppercut to begin.
+                        int faceDir = target.Center.X < NPC.Center.X ? -1 : 1;
+                        NPC.direction = faceDir;
+                        NPC.spriteDirection = faceDir;
+                        _comboLockedDir = faceDir;
+                        NPC.velocity.X = faceDir * (TopSpeed * ChargeAttackSpeedMult);
+                        bool inUppercutRange = NPC.Distance(target.Center) <= MeleeRange * 1.05f;
+                        endStep = (--PhaseTimer <= 0) || inUppercutRange;
                     }
                     else if (step.Motion == ComboMotion.Feint)
                     {
@@ -3537,8 +4073,22 @@ namespace tsorcRevamp.NPCs.Puppets
 
                     if (endStep)
                     {
+                        if (step.Motion == ComboMotion.DoubleSpinSlam)
+                            _weaponRotation = 1.4f;
+                        if (step.Motion == ComboMotion.ThrownWeaponRetrieve)
+                            FinishThrownWeaponRetrieve();
+                        OnComboStepCompleted(step);
+
                         int nextIdx = _meleeComboStepIndex + 1;
-                        if (nextIdx < _activeMeleeCombo.Steps.Length)
+                        _bladeArmed = false;
+                        _hasPreviousBladeSample = false;
+                        bool hasNextStep = nextIdx < _activeMeleeCombo.Steps.Length;
+                        bool continueCombo = hasNextStep && ShouldContinueMeleeCombo(
+                            _activeMeleeCombo.Name,
+                            nextIdx,
+                            target,
+                            _currentComboStepHitConnected);
+                        if (continueCombo)
                             EnterPhase(AttackPhase.MeleeComboPause, Math.Max(1, step.PostStepPause));
                         else
                             EnterPhase(AttackPhase.MeleeComboRecovery, MeleeRecoveryTicks);
@@ -3567,13 +4117,15 @@ namespace tsorcRevamp.NPCs.Puppets
                         _meleeComboStepIndex++;
                         // Recapture the lock direction for the upcoming step.
                         _comboLockedDir = NPC.direction;
-                        var nextStep = _activeMeleeCombo.Steps[_meleeComboStepIndex];
-                        SetDisplayWeapon(MeleeWeaponItemType, swing: true);
-                        if (IsSwingingMotion(nextStep.Motion))
-                            PlayMeleeSwingSound();
-                        _bladeArmed = false;
-                        DoComboMeleeHit(nextStep);
-                        EnterPhase(AttackPhase.MeleeComboAttack, BeginComboAttackTicks(nextStep));
+                        MeleeComboStep nextStep = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                        ModifyNextMeleeComboStep(
+                            _activeMeleeCombo.Name,
+                            _meleeComboStepIndex,
+                            target,
+                            ref nextStep);
+                        _activeMeleeCombo.Steps[_meleeComboStepIndex] = nextStep;
+                        _currentComboStepHitConnected = false;
+                        BeginComboStepAttack(nextStep);
                     }
                     break;
 
@@ -3607,6 +4159,25 @@ namespace tsorcRevamp.NPCs.Puppets
             _directionHoldTicks = Math.Max(_directionHoldTicks, 5);
         }
 
+        private void ApplyComboTelegraphPressure(Player target)
+        {
+            if (ComboTelegraphAdvanceSpeedMult <= 0f || _activeMeleeCombo.RangedStartOnly)
+                return;
+
+            float signedDistance = target.Center.X - NPC.Center.X;
+            int targetSide = Math.Sign(signedDistance);
+            // Do not rotate or chase through the player after commitment. That crossing remains
+            // the intended answer to a telegraphed swing; pressure only punishes backing away.
+            if (targetSide == 0 || targetSide != _comboLockedDir
+                || Math.Abs(signedDistance) <= ComboTelegraphAdvanceStopDistance)
+            {
+                return;
+            }
+
+            float desiredVelocity = _comboLockedDir * TopSpeed * ComboTelegraphAdvanceSpeedMult;
+            NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, desiredVelocity, 0.22f);
+        }
+
         /// <summary>
         /// Configure all ranged-burst state for the current weapon trigger.  Used by both the
         /// ground Idle path and the airborne hover-shot path so they share one canonical setup.
@@ -3624,6 +4195,15 @@ namespace tsorcRevamp.NPCs.Puppets
             _activeRangedTelegraphTicks = useSecondary ? SecondaryRangedTelegraphTicks : RangedTelegraphTicks;
             _activeRangedAttackTicks    = useSecondary ? SecondaryRangedAttackTicks    : RangedAttackTicks;
             _activeRangedRecoveryTicks  = useSecondary ? SecondaryRangedRecoveryTicks  : RangedRecoveryTicks;
+
+            ModifyRangedBurst(
+                useSecondary,
+                ref _activeRangedItemType,
+                ref _activeRangedStyle,
+                ref _activeRangedFlashColor,
+                ref _activeRangedTelegraphTicks,
+                ref _activeRangedAttackTicks,
+                ref _activeRangedRecoveryTicks);
 
             if (forceStanding)
             {
@@ -3679,6 +4259,50 @@ namespace tsorcRevamp.NPCs.Puppets
             OnRangedBurstStarted(useSecondary); // e.g. lit-fuse cue when the weapon appears in hand
         }
 
+        private bool TryStartQueuedRangedFollowUp()
+        {
+            if (_queuedRangedFollowupSlot < 0 || _queuedRangedFollowupTicks <= 0
+                || NPC.velocity.Y != 0f)
+            {
+                return false;
+            }
+
+            int targetIndex = _queuedRangedFollowupTarget >= 0
+                ? _queuedRangedFollowupTarget
+                : NPC.target;
+            if (targetIndex < 0 || targetIndex >= Main.maxPlayers)
+                return false;
+
+            Player target = Main.player[targetIndex];
+            if (!target.active || target.dead
+                || !Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1))
+            {
+                return false;
+            }
+
+            bool useSecondary = _queuedRangedFollowupSlot == 1;
+            int itemType = useSecondary ? SecondaryRangedWeaponItemType : RangedWeaponItemType;
+            if (itemType < 0 || (useSecondary && !SecondaryRangedAvailable))
+            {
+                _queuedRangedFollowupSlot = -1;
+                _queuedRangedFollowupTicks = 0;
+                _queuedRangedFollowupTarget = -1;
+                return false;
+            }
+
+            float maxRange = useSecondary ? SecondaryRangedRange : RangedRange;
+            if (NPC.Distance(target.Center) > maxRange + 80f)
+                return false;
+
+            NPC.target = targetIndex;
+            _queuedRangedFollowupSlot = -1;
+            _queuedRangedFollowupTicks = 0;
+            _queuedRangedFollowupTarget = -1;
+            SetupRangedBurst(useSecondary, shotsOverride: 1, forceStanding: true);
+            EnterPhase(AttackPhase.RangedTelegraph, _activeRangedTelegraphTicks);
+            return true;
+        }
+
         /// <summary>
         /// Lazy-init the melee combo pool and per-combo cooldown array for the active archetype.
         /// </summary>
@@ -3703,7 +4327,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// range-aware (close/mid/far bands) and HP-aware (heavy combos weighted up as HP drops).
         /// Returns true if a combo started; false if no eligible combo (cooldowns/weights).
         /// </summary>
-        private bool TryStartMeleeCombo(float dist)
+        private bool TryStartMeleeCombo(float dist, bool rangedStartOnly = false)
         {
             EnsureMeleeComboPool();
             if (_meleeComboPool == null || _meleeComboPool.Length == 0) return false;
@@ -3725,6 +4349,16 @@ namespace tsorcRevamp.NPCs.Puppets
             for (int i = 0; i < _meleeComboPool.Length; i++)
             {
                 if (_meleeComboCooldowns[i] > 0) { effective[i] = 0; continue; }
+                if (!CanSelectMeleeCombo(_meleeComboPool[i], dist, hpFrac))
+                {
+                    effective[i] = 0;
+                    continue;
+                }
+                if (_meleeComboPool[i].RangedStartOnly != rangedStartOnly)
+                {
+                    effective[i] = 0;
+                    continue;
+                }
                 float w = _meleeComboPool[i].BaseWeight;
                 w *= (_meleeComboPool[i].Preferred == band
                       || _meleeComboPool[i].Preferred == ComboRangeBand.Any) ? 2.0f : 0.4f;
@@ -3752,16 +4386,216 @@ namespace tsorcRevamp.NPCs.Puppets
 
             _activeMeleeComboIndex = chosen;
             _activeMeleeCombo      = _meleeComboPool[chosen];
+            if (_activeMeleeCombo.Steps != null)
+                _activeMeleeCombo.Steps = (MeleeComboStep[])_activeMeleeCombo.Steps.Clone();
+            CustomizeMeleeCombo(ref _activeMeleeCombo, hpFrac);
             _meleeComboStepIndex   = 0;
-            _comboLockedDir        = NPC.direction;
+            _lastAttackHitConnected = false;
+            _currentComboStepHitConnected = false;
+
+            if (_activeMeleeCombo.RuntimeV2Clip != null)
+            {
+                // V2 selection is server-authoritative in multiplayer. The client starts the
+                // matching visual when the runtime snapshot arrives through ReceiveExtraAI.
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    _activeMeleeComboIndex = -1;
+                    return true;
+                }
+
+                StartAttackRuntimeV2(_activeMeleeCombo.RuntimeV2Clip);
+                return true;
+            }
+
+            Player target = Main.player[NPC.target];
+            _comboLockedDir = target.Center.X < NPC.Center.X ? -1 : 1;
+            NPC.direction = _comboLockedDir;
+            NPC.spriteDirection = _comboLockedDir;
             ArmSwingVariation(NPC.HasValidTarget ? NPC.Center.Y - Main.player[NPC.target].Center.Y : 0f);
             // Minimum 30 ticks (0.5 s) so the wind-up arc has visible time to play.
             // Lighter combos that have raw values below 22 (×1.35 → ~30) get floored here.
-            int telegraphTicks = Math.Max(MinComboTelegraphTicks,
-                                          (int)(_activeMeleeCombo.Steps[0].TelegraphTicks * ComboTelegraphMultiplier));
+            int telegraphTicks = GetComboTelegraphTicks(_activeMeleeCombo.Steps[0]);
             EnterPhase(AttackPhase.MeleeComboTelegraph, telegraphTicks);
             return true;
         }
+
+        private void StartAttackRuntimeV2(PuppetAttackClip clip)
+        {
+            Player target = Main.player[NPC.target];
+            _comboLockedDir = target.Center.X < NPC.Center.X ? -1 : 1;
+            NPC.direction = _comboLockedDir;
+            NPC.spriteDirection = _comboLockedDir;
+
+            _attackRuntimeV2.Start(clip, _comboLockedDir);
+            _runtimeHasPreviousBladeSample = false;
+            _bladeArmed = false;
+            SetDisplayWeapon(MeleeWeaponItemType, swing: false);
+            _weaponAnimMax = clip.ActiveTicks;
+            _weaponAnim = clip.ActiveTicks;
+            EnterPhase(AttackPhase.MeleeComboTelegraph, clip.WindupTicks);
+            _weaponVisible = true;
+
+            if (Main.netMode == NetmodeID.Server)
+                NPC.netUpdate = true;
+        }
+
+        private void TickAttackRuntimeV2(Player target)
+        {
+            PuppetAttackStage stageBeforeAdvance = _attackRuntimeV2.Stage;
+            LockComboDirection();
+            _weaponVisible = true;
+
+            if (SlowDownBeforeMelee && _attackRuntimeV2.Stage != PuppetAttackStage.Recovery)
+                NPC.velocity.X *= 1f - _activeMeleeCombo.MoveBrake;
+
+            if (AimSwingActive)
+                _attackRuntimeV2.UpdateAim(NPC.Center, target.Center);
+            _weaponRotation = _attackRuntimeV2.SampleRotation();
+            PhaseTimer = _attackRuntimeV2.TicksRemaining;
+
+            switch (_attackRuntimeV2.Stage)
+            {
+                case PuppetAttackStage.Windup:
+                    Phase = AttackPhase.MeleeComboTelegraph;
+                    OnMeleeComboTelegraphTick(
+                        _activeMeleeCombo,
+                        _activeMeleeCombo.Steps[0],
+                        _attackRuntimeV2.StageTick,
+                        _attackRuntimeV2.Clip.WindupTicks);
+                    ApplyComboTelegraphPressure(target);
+                    CheckAndFireFlash(_activeMeleeCombo.InitialFlashColor);
+                    _weaponAnim = _weaponAnimMax;
+                    _runtimeHasPreviousBladeSample = false;
+                    break;
+                case PuppetAttackStage.Active:
+                    Phase = AttackPhase.MeleeComboAttack;
+                    _weaponAnimMax = _attackRuntimeV2.Clip.ActiveTicks;
+                    _weaponAnim = _attackRuntimeV2.TicksRemaining;
+                    MeleeComboStep activeStep = _activeMeleeCombo.Steps[0];
+                    OnMeleeComboAttackTick(
+                        _activeMeleeCombo,
+                        activeStep,
+                        _attackRuntimeV2.StageTick,
+                        _attackRuntimeV2.Clip.ActiveTicks);
+                    if (activeStep.ForwardPushMult > 0f)
+                        NPC.velocity.X = _comboLockedDir * TopSpeed * activeStep.ForwardPushMult;
+                    TickRuntimeV2BladeHit();
+                    break;
+                case PuppetAttackStage.Recovery:
+                    Phase = AttackPhase.MeleeComboRecovery;
+                    _weaponAnim = 0;
+                    _runtimeHasPreviousBladeSample = false;
+                    break;
+            }
+
+            bool crossedBoundary = _attackRuntimeV2.Advance(out bool completed);
+            if (!crossedBoundary)
+                return;
+
+            if (completed)
+            {
+                if (_meleeComboCooldowns != null
+                    && _activeMeleeComboIndex >= 0
+                    && _activeMeleeComboIndex < _meleeComboCooldowns.Length)
+                {
+                    _meleeComboCooldowns[_activeMeleeComboIndex] = _activeMeleeCombo.CooldownAfterUse;
+                }
+
+                CancelAttackRuntimeV2(clearCombo: true);
+                EnterCasualOrIdle();
+            }
+            else if (stageBeforeAdvance == PuppetAttackStage.Windup)
+            {
+                EnterPhase(AttackPhase.MeleeComboAttack, _attackRuntimeV2.Clip.ActiveTicks);
+                SetDisplayWeapon(MeleeWeaponItemType, swing: true);
+                _weaponAnimMax = _attackRuntimeV2.Clip.ActiveTicks;
+                _weaponAnim = _weaponAnimMax;
+                PlayMeleeSwingSound();
+                _runtimeHasPreviousBladeSample = false;
+            }
+            else
+            {
+                EnterPhase(AttackPhase.MeleeComboRecovery, _attackRuntimeV2.Clip.RecoveryTicks);
+                _bladeArmed = false;
+                _runtimeHasPreviousBladeSample = false;
+            }
+
+            if (Main.netMode == NetmodeID.Server)
+                NPC.netUpdate = true;
+        }
+
+        private void TickRuntimeV2BladeHit()
+        {
+            MeleeComboStep step = _activeMeleeCombo.Steps[0];
+            float reach = ComboReachBase * 0.7f * step.ReachMult;
+            Vector2 currentOrigin = GetHandPosition();
+            Vector2 currentTip = currentOrigin + GetWeaponWorldDirection() * reach;
+
+            if (!_runtimeHasPreviousBladeSample)
+            {
+                _runtimePreviousBladeOrigin = currentOrigin;
+                _runtimePreviousBladeTip = currentTip;
+                _runtimeHasPreviousBladeSample = true;
+            }
+
+            if (_attackRuntimeV2.HitWindowOpen && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float earlyOutRange = reach + MeleeBladeWidth + 40f;
+
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player player = Main.player[i];
+                    if (!player.active || player.dead || _attackRuntimeV2.HasHitPlayer(i))
+                        continue;
+                    if (Vector2.DistanceSquared(player.Center, NPC.Center) > earlyOutRange * earlyOutRange)
+                        continue;
+
+                    bool intersects = MeleeBladeCollision.SweptSegmentIntersectsRect(
+                        _runtimePreviousBladeOrigin,
+                        _runtimePreviousBladeTip,
+                        currentOrigin,
+                        currentTip,
+                        MeleeBladeWidth,
+                        player.getRect(),
+                        out Vector2 hitOrigin,
+                        out Vector2 hitTip);
+
+                    if (!intersects || !_attackRuntimeV2.TryRecordHit(i))
+                        continue;
+
+                    Vector2 hitPoint = MeleeBladeCollision.ClosestPointOnSegment(hitOrigin, hitTip, player.Center);
+                    SpawnMeleeHitbox(
+                        hitPoint,
+                        MeleeBladeWidth,
+                        (int)(MeleeDamage * step.DamageMult),
+                        3f);
+                    _lastAttackHitConnected = true;
+                    _currentComboStepHitConnected = true;
+                    OnBladeHit(player);
+                }
+            }
+
+            _runtimePreviousBladeOrigin = currentOrigin;
+            _runtimePreviousBladeTip = currentTip;
+        }
+
+        private void CancelAttackRuntimeV2(bool clearCombo)
+        {
+            if (!_attackRuntimeV2.Active && _attackRuntimeV2.Clip == null)
+                return;
+
+            _attackRuntimeV2.Cancel();
+            _runtimeHasPreviousBladeSample = false;
+            _bladeArmed = false;
+            _weaponVisible = false;
+            if (clearCombo)
+                _activeMeleeComboIndex = -1;
+            if (Main.netMode == NetmodeID.Server)
+                NPC.netUpdate = true;
+        }
+
+        private int GetComboTelegraphTicks(MeleeComboStep step)
+            => Math.Max(MinComboTelegraphTicks, (int)(step.TelegraphTicks * ComboTelegraphMultiplier));
 
         /// <summary>
         /// Spawn the damage hitbox for the current combo step.  Default applies the step's
@@ -3773,6 +4607,8 @@ namespace tsorcRevamp.NPCs.Puppets
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
             float reach = ComboReachBase * 0.7f * step.ReachMult;
             int   dmg   = (int)(MeleeDamage * step.DamageMult);
+            if (dmg <= 0)
+                return;
             // Arms the tracked blade check (see TickBladeHit) instead of hitting immediately —
             // the step now only connects on the tick(s) its weapon sprite actually sweeps over
             // the target, matching TryMeleeHit's one-shot swings.
@@ -3788,7 +4624,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// player instead of lunging forward (avoids overshooting at close range).</summary>
         protected virtual float LeapMinLungeDistance => 80f;
 
-        private void BeginLeapAttack()
+        private void BeginLeapAttack(MeleeComboStep step)
         {
             Player target = Main.player[NPC.target];
             int dir = target.Center.X < NPC.Center.X ? -1 : 1;
@@ -3797,24 +4633,243 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.spriteDirection = dir;
             NPC.noGravity = false;
 
+            float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
+            float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
             float dx = Math.Abs(target.Center.X - NPC.Center.X);
             if (dx < LeapMinLungeDistance)
             {
                 // Close: jump high and fall onto them — minimal horizontal travel so it lands ON
                 // the player instead of sailing past.
                 _comboLeapVx = dir * 1.5f;
-                NPC.velocity = new Vector2(_comboLeapVx, -(LeapAttackUpSpeed + 2f));
+                NPC.velocity = new Vector2(_comboLeapVx, -(LeapAttackUpSpeed + 2f) * heightMult);
             }
             else
             {
                 // Far: arc toward the player, horizontal speed sized to land near them (roughly
                 // dx / airtime) and capped so it never overshoots.
-                float airtime = 2f * LeapAttackUpSpeed / 0.3f; // ticks aloft ≈ 2·Vy/g
-                float vx = MathHelper.Clamp(dx / airtime, 1.5f, LeapAttackForwardSpeed);
+                float launchSpeed = LeapAttackUpSpeed * heightMult;
+                float airtime = 2f * launchSpeed / 0.3f; // ticks aloft ≈ 2·Vy/g
+                float vx = MathHelper.Clamp(dx / airtime, 1.5f, LeapAttackForwardSpeed * forwardMult);
                 _comboLeapVx = dir * vx;
-                NPC.velocity = new Vector2(_comboLeapVx, -LeapAttackUpSpeed);
+                NPC.velocity = new Vector2(_comboLeapVx, -launchSpeed);
             }
             _comboLeapLaunched = true;
+        }
+
+        private void BeginBackstepRaise()
+        {
+            Player target = Main.player[NPC.target];
+            int towardTarget = target.Center.X < NPC.Center.X ? -1 : 1;
+            _comboLockedDir = towardTarget;
+            NPC.direction = towardTarget;
+            NPC.spriteDirection = towardTarget;
+            NPC.noGravity = false;
+            _comboLeapVx = -towardTarget * Math.Max(2.8f, TopSpeed * 1.05f);
+            NPC.velocity = new Vector2(_comboLeapVx, -4.8f);
+            _comboLeapLaunched = true;
+            NPC.netUpdate = true;
+        }
+
+        private void BeginApexDiveCleave(MeleeComboStep step)
+        {
+            Player target = Main.player[NPC.target];
+            int towardTarget = target.Center.X < NPC.Center.X ? -1 : 1;
+            _comboLockedDir = towardTarget;
+            NPC.direction = towardTarget;
+            NPC.spriteDirection = towardTarget;
+            NPC.noGravity = false;
+
+            float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
+            float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
+            float maxForward = LeapAttackForwardSpeed * forwardMult;
+            float dx = Math.Abs(target.Center.X - NPC.Center.X);
+            float ascentTicks = LeapAttackUpSpeed * heightMult / 0.3f;
+            float forwardSpeed = MathHelper.Clamp(dx / Math.Max(1f, ascentTicks), 1.8f, maxForward);
+            _comboLeapVx = towardTarget * forwardSpeed;
+            NPC.velocity = new Vector2(_comboLeapVx, -(LeapAttackUpSpeed + 1.8f) * heightMult);
+            _comboLeapLaunched = true;
+            _apexDiveFallTicks = 0;
+            _apexDiveStrikeStarted = false;
+            NPC.netUpdate = true;
+        }
+
+        private void BeginComboStepAttack(MeleeComboStep step)
+        {
+            SetDisplayWeapon(MeleeWeaponItemType, swing: true);
+            if (IsSwingingMotion(step.Motion))
+                PlayMeleeSwingSound();
+
+            _bladeArmed = false;
+            if (step.Motion == ComboMotion.LeapSlam || step.Motion == ComboMotion.LeapThrust)
+            {
+                BeginLeapAttack(step);
+            }
+            else if (step.Motion == ComboMotion.BackstepRaise)
+            {
+                BeginBackstepRaise();
+            }
+            else if (step.Motion == ComboMotion.ApexDiveCleave)
+            {
+                BeginApexDiveCleave(step);
+            }
+            else if (step.Motion == ComboMotion.RisingUppercutLeap)
+            {
+                BeginRisingUppercutLeap();
+                DoComboMeleeHit(step);
+            }
+            else if (step.Motion == ComboMotion.ThrownWeaponRetrieve)
+            {
+                BeginThrownWeaponRetrieve();
+            }
+            else if (step.Motion != ComboMotion.ChargeChop && step.Motion != ComboMotion.Feint
+                && step.Motion != ComboMotion.LowAxeRun && step.Motion != ComboMotion.BackstepRaise
+                && step.Motion != ComboMotion.ApexDiveCleave)
+            {
+                DoComboMeleeHit(step);
+            }
+
+            _activeComboStepTotalTicks = BeginComboAttackTicks(step);
+            EnterPhase(AttackPhase.MeleeComboAttack, _activeComboStepTotalTicks);
+        }
+
+        private void BeginRisingUppercutLeap()
+        {
+            Player target = Main.player[NPC.target];
+            int direction = target.Center.X < NPC.Center.X ? -1 : 1;
+            _comboLockedDir = direction;
+            NPC.direction = direction;
+            NPC.spriteDirection = direction;
+            NPC.noGravity = false;
+            float dx = Math.Abs(target.Center.X - NPC.Center.X);
+            float airtime = 2f * LeapAttackUpSpeed / 0.3f;
+            float forwardSpeed = MathHelper.Clamp(
+                dx / airtime,
+                TopSpeed * 1.1f,
+                LeapAttackForwardSpeed);
+            _comboLeapVx = direction * forwardSpeed;
+            NPC.velocity = new Vector2(_comboLeapVx, -LeapAttackUpSpeed);
+            _comboLeapLaunched = true;
+            _risingUppercutFallHoldTimer = 0;
+            NPC.netUpdate = true;
+        }
+
+        private void BeginThrownWeaponRetrieve()
+        {
+            _thrownComboWeaponIndex = Main.netMode == NetmodeID.MultiplayerClient
+                ? -1
+                : SpawnThrownComboWeapon();
+            _thrownWeaponStage = 0;
+            _thrownWeaponReadTimer = 0;
+            _thrownWeaponLeapVelocityX = 0f;
+            _thrownWeaponWasSeen = _thrownComboWeaponIndex >= 0;
+            SetDisplayWeapon(-1, swing: false);
+            NPC.netUpdate = true;
+        }
+
+        private Projectile FindThrownComboWeapon()
+        {
+            if (_thrownComboWeaponIndex >= 0 && _thrownComboWeaponIndex < Main.maxProjectiles)
+            {
+                Projectile known = Main.projectile[_thrownComboWeaponIndex];
+                if (known.active && known.type == ThrownComboWeaponProjectileType)
+                    return known;
+            }
+
+            if (ThrownComboWeaponProjectileType <= 0)
+                return null;
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile candidate = Main.projectile[i];
+                if (candidate.active && candidate.type == ThrownComboWeaponProjectileType
+                    && (int)candidate.ai[1] == NPC.whoAmI)
+                {
+                    _thrownComboWeaponIndex = i;
+                    return candidate;
+                }
+            }
+            return null;
+        }
+
+        private bool TickThrownWeaponRetrieve()
+        {
+            SetDisplayWeapon(-1, swing: false);
+            Projectile weapon = FindThrownComboWeapon();
+            if (weapon == null)
+            {
+                NPC.velocity.X *= 0.8f;
+                // Clients may need a few ticks to receive the server-spawned projectile. Once it
+                // has been observed, disappearance means it was destroyed and the combo should recover.
+                return _thrownWeaponWasSeen || PhaseTimer <= 30;
+            }
+
+            _thrownWeaponWasSeen = true;
+            bool embedded = weapon.ai[0] == 1f;
+            if (!embedded)
+            {
+                NPC.velocity.X *= 0.8f;
+                return false;
+            }
+
+            if (_thrownWeaponStage == 0)
+            {
+                NPC.velocity.X *= 0.65f;
+                if (++_thrownWeaponReadTimer < ThrownWeaponReadTicks)
+                    return false;
+
+                int launchDirection = weapon.Center.X < NPC.Center.X ? -1 : 1;
+                float dx = Math.Abs(weapon.Center.X - NPC.Center.X);
+                // Size the launch for the full jump arc, not just its rising half. The old /26
+                // estimate arrived at the axe near the apex, then the unconditional X lock below
+                // carried the puppet hundreds of pixels past it before landing.
+                float leapVelocity = MathHelper.Clamp(dx / 52f, 2f, ThrownWeaponRetrieveLeapMaxSpeed);
+                _thrownWeaponLeapVelocityX = launchDirection * leapVelocity;
+                _comboLockedDir = launchDirection;
+                NPC.direction = launchDirection;
+                NPC.spriteDirection = launchDirection;
+                NPC.noGravity = false;
+                NPC.velocity = new Vector2(_thrownWeaponLeapVelocityX, -ThrownWeaponRetrieveLeapUpSpeed);
+                _thrownWeaponStage = 1;
+                NPC.netUpdate = true;
+                return false;
+            }
+
+            float signedDx = weapon.Center.X - NPC.Center.X;
+            float absDx = Math.Abs(signedDx);
+            bool closeEnough = NPC.Distance(weapon.Center) <= 44f;
+            bool landedNear = NPC.velocity.Y == 0f && absDx <= 64f;
+            if (closeEnough || landedNear)
+                return true;
+
+            // Home toward the embedded axe and start braking before crossing it. Reasserting the
+            // original launch speed every tick made even a small miss turn into a long run away.
+            int retrieveDirection = signedDx < 0f ? -1 : 1;
+            float desiredSpeed = MathHelper.Clamp(absDx / 28f, 1.25f, ThrownWeaponRetrieveLeapMaxSpeed);
+            float desiredVelocityX = retrieveDirection * desiredSpeed;
+            NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, desiredVelocityX, absDx < 96f ? 0.38f : 0.22f);
+            _thrownWeaponLeapVelocityX = NPC.velocity.X;
+            _comboLockedDir = retrieveDirection;
+            NPC.direction = retrieveDirection;
+            NPC.spriteDirection = retrieveDirection;
+            if (absDx < 56f)
+                NPC.velocity.X *= 0.65f;
+
+            return false;
+        }
+
+        private void FinishThrownWeaponRetrieve()
+        {
+            Projectile weapon = FindThrownComboWeapon();
+            if (weapon != null && Main.netMode != NetmodeID.MultiplayerClient)
+                weapon.Kill();
+
+            _thrownComboWeaponIndex = -1;
+            _thrownWeaponStage = 0;
+            _thrownWeaponReadTimer = 0;
+            _thrownWeaponLeapVelocityX = 0f;
+            _thrownWeaponWasSeen = false;
+            SetDisplayWeapon(MeleeWeaponItemType, swing: false);
+            NPC.netUpdate = true;
         }
 
         /// <summary>Launches a big jump arc over the player, facing them. Call once, then
@@ -3835,14 +4890,17 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         /// <summary>Motions that actually swing the weapon (so they get a swing whoosh + arc VFX).
-        /// Feint (bait hold) and ChargeChop (run-in) don't swing, so they're excluded.</summary>
+        /// Feint (bait hold), ChargeChop/LowAxeRun (run-ins), and ThrownWeaponRetrieve
+        /// (release/retrieval) don't begin a melee swing, so they're excluded.</summary>
         private static bool IsSwingingMotion(ComboMotion m)
-            => m != ComboMotion.Feint && m != ComboMotion.ChargeChop;
+            => m != ComboMotion.Feint && m != ComboMotion.ChargeChop
+            && m != ComboMotion.LowAxeRun && m != ComboMotion.ThrownWeaponRetrieve
+            && m != ComboMotion.BackstepRaise && m != ComboMotion.ApexDiveCleave;
 
         /// <summary>
-        /// Drives the reactive shield each AI tick (no-op without a shield): raise the guard from
-        /// the reactive-block timer, plant + face the player while guarding, and roll a pre-emptive
-        /// block in neutral.  The block timer itself ticks down in GlobalNPC.PostAI (mover-agnostic);
+        /// Drives the bounded reactive shield action each AI tick (no-op without a shield): raise the
+        /// guard from the reactive-block timer, plant + face the player, then apply a rearm cooldown.
+        /// The block timer itself ticks down in GlobalNPC.PostAI (mover-agnostic);
         /// damage / poise reduction is applied in ModifyHitBy* + the poise system via ShieldGuarding.
         /// Call AFTER the movement AI so the plant overrides pursuit velocity.
         /// </summary>
@@ -3851,25 +4909,60 @@ namespace tsorcRevamp.NPCs.Puppets
             if (!HasShield) return;
             var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            bool freePhase = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll;
-            bool grounded  = NPC.velocity.Y == 0f;
-
-            // Guard only in neutral — committed attacks can't also block (you trade blows or you swing).
-            _shielding = g.ReactiveBlockTimer > 0 && freePhase && grounded;
-            g.ShieldGuarding = _shielding;
-
-            if (!_shielding)
+            // A carried shield remains visible, but reactive guards are opt-in. Their neutral hold
+            // can otherwise be refreshed into an effective stun lock without ever breaking poise.
+            if (!AllowReactiveDefense)
             {
-                _shieldWasGuarding   = false;
-                _shieldMeleeExtended = false;
-                // Neutral: a chance to raise the guard before an incoming threat lands.
-                if (freePhase && grounded)
-                    tsorcRevampAIs.TryPreemptiveBlock(NPC, g, ShieldGuardTicksRanged);
+                _shielding = false;
+                g.ShieldGuarding = false;
                 return;
             }
 
             Player target = Main.player[NPC.target];
             int dirToPlayer = target.Center.X < NPC.Center.X ? -1 : 1;
+            bool neutralPhase = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll;
+            bool guardPhase = Phase == AttackPhase.ShieldGuard;
+            bool grounded = NPC.velocity.Y == 0f;
+
+            if (!guardPhase)
+            {
+                _shielding = false;
+                g.ShieldGuarding = false;
+                _shieldWasGuarding = false;
+                _shieldMeleeExtended = false;
+
+                // A reaction is only legal from true neutral. A hit during an authored attack must
+                // never interrupt it or leave behind a delayed guard that fires after recovery.
+                if (!neutralPhase || !grounded || _shieldGuardCooldown > 0)
+                {
+                    g.ReactiveBlockTimer = 0;
+                    return;
+                }
+
+                // Guard selection is server-authoritative; clients receive the guard snapshot in
+                // ReceiveExtraAI instead of making a second random roll.
+                if (g.ReactiveBlockTimer <= 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                    tsorcRevampAIs.TryPreemptiveBlock(NPC, g, ShieldGuardTicksRanged);
+                if (g.ReactiveBlockTimer <= 0)
+                    return;
+
+                _shieldLockedDir = dirToPlayer;
+                _shieldWasGuarding = true;
+                EnterPhase(AttackPhase.ShieldGuard, g.ReactiveBlockTimer);
+                NPC.netUpdate = true;
+            }
+
+            // A jump/ledge fall or timer expiry cleanly ends the action. UpdateShield runs before
+            // PuppetAttackAI, so the puppet can immediately choose its next attack on this tick.
+            if (!grounded || g.ReactiveBlockTimer <= 0)
+            {
+                FinishShieldGuard(g);
+                return;
+            }
+
+            _shielding = true;
+            g.ShieldGuarding = true;
+            PhaseTimer = g.ReactiveBlockTimer;
 
             // Rising edge: capture the facing the guard went up with.
             if (!_shieldWasGuarding)
@@ -3901,6 +4994,21 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.spriteDirection = dirToPlayer;
                 NPC.velocity.X      = dirToPlayer * ShieldAdvanceSpeed;
             }
+        }
+
+        private void FinishShieldGuard(tsorcRevampGlobalNPC globalNPC)
+        {
+            bool wasGuarding = Phase == AttackPhase.ShieldGuard || _shielding;
+            globalNPC.ReactiveBlockTimer = 0;
+            globalNPC.ShieldGuarding = false;
+            _shielding = false;
+            _shieldWasGuarding = false;
+            _shieldMeleeExtended = false;
+            _shieldGuardCooldown = Math.Max(_shieldGuardCooldown, ShieldGuardCooldownTicks);
+            if (Phase == AttackPhase.ShieldGuard)
+                EnterPhase(AttackPhase.Idle, 0);
+            if (wasGuarding)
+                NPC.netUpdate = true;
         }
 
         /// <summary>Plays a throwing-release sound, rotating across Item7/18/19 so a rapid volley of
@@ -3941,7 +5049,9 @@ namespace tsorcRevamp.NPCs.Puppets
             if (Main.dedServ || !IsWeaponVisiblePhase) return;
             if (Math.Abs(rotDelta) < 0.07f) return;   // only during a real sweep, not a slow lerp
             if (!Main.rand.NextBool(2)) return;        // sparse → subtle
-            Vector2 outward = new Vector2(NPC.direction, 0f).RotatedBy(_weaponRotation);
+            Vector2 outward = _attackRuntimeV2.Active
+                ? GetWeaponWorldDirection()
+                : new Vector2(NPC.direction, 0f).RotatedBy(_weaponRotation);
             Vector2 tip     = GetHandPosition() + outward * 20f;
             Dust d = Dust.NewDustPerfect(tip, DustID.Smoke,
                 outward.RotatedBy(MathHelper.PiOver2 * Math.Sign(rotDelta)) * 0.5f,
@@ -4042,9 +5152,8 @@ namespace tsorcRevamp.NPCs.Puppets
             int boxW = 72;
             int boxH = 56;
             Vector2 hitCenter = NPC.Center + attackDirection * 38f;
-            Vector2 topLeft = hitCenter - new Vector2(boxW / 2f, boxH / 2f);
             Projectile.NewProjectile(
-                NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
+                NPC.GetSource_FromThis(), hitCenter, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
                 (int)(MeleeDamage * 1.2f), 4f, Main.myPlayer, boxW, boxH);
         }
@@ -4195,6 +5304,9 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected void EnterPhase(AttackPhase phase, int duration)
         {
+            bool wasNeutral = Phase == AttackPhase.Idle
+                || Phase == AttackPhase.ClosingDistance
+                || Phase == AttackPhase.CasualStroll;
             bool isTelegraph = phase == AttackPhase.MeleeTelegraph
                             || phase == AttackPhase.StabTelegraph
                             || phase == AttackPhase.RangedTelegraph
@@ -4203,6 +5315,21 @@ namespace tsorcRevamp.NPCs.Puppets
                             || phase == AttackPhase.MeleeComboTelegraph
                             || phase == AttackPhase.BreathTelegraph
                             || phase == AttackPhase.KnivesTelegraph;
+            if (wasNeutral && isTelegraph)
+                _lastAttackHitConnected = false;
+
+            bool endsTrackedBlade = phase == AttackPhase.MeleeRecovery
+                || phase == AttackPhase.StabRecovery
+                || phase == AttackPhase.SpearRecovery
+                || phase == AttackPhase.MeleeComboPause
+                || phase == AttackPhase.MeleeComboRecovery
+                || phase == AttackPhase.Idle;
+            if (endsTrackedBlade)
+            {
+                _bladeArmed = false;
+                _hasPreviousBladeSample = false;
+            }
+
             Phase      = phase;
             // Guarantee at least 30 ticks of telegraph so the flash always leads the attack by 30.
             PhaseTimer = isTelegraph ? Math.Max(duration, MinTelegraphTicks) : duration;
@@ -4279,15 +5406,25 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             _recentDamage += (float)damageDone / NPC.lifeMax;
             // Only a FRONT hit can snap the guard up — a backstab must not re-raise it.
-            if (HasShield && Math.Sign(player.Center.X - NPC.Center.X) == NPC.direction)
-                tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), true, ShieldGuardTicksRanged);
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (Main.netMode != NetmodeID.MultiplayerClient && AllowReactiveDefense && HasShield
+                && _shieldGuardCooldown <= 0 && globalNPC.ReactiveBlockTimer <= 0
+                && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll)
+                && NPC.velocity.Y == 0f
+                && Math.Sign(player.Center.X - NPC.Center.X) == NPC.direction)
+                tsorcRevampAIs.TryOnHitBlock(NPC, globalNPC, true, ShieldGuardTicksRanged);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             _recentDamage += (float)damageDone / NPC.lifeMax;
-            if (HasShield && Math.Sign(projectile.Center.X - NPC.Center.X) == NPC.direction)
-                tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), projectile.DamageType == DamageClass.Melee, ShieldGuardTicksRanged);
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (Main.netMode != NetmodeID.MultiplayerClient && AllowReactiveDefense && HasShield
+                && _shieldGuardCooldown <= 0 && globalNPC.ReactiveBlockTimer <= 0
+                && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll)
+                && NPC.velocity.Y == 0f
+                && Math.Sign(projectile.Center.X - NPC.Center.X) == NPC.direction)
+                tsorcRevampAIs.TryOnHitBlock(NPC, globalNPC, projectile.DamageType == DamageClass.Melee, ShieldGuardTicksRanged);
         }
 
         // ── Reactive shield: reduce FRONT damage while guarding (backstabs bypass) ──
@@ -4329,6 +5466,8 @@ namespace tsorcRevamp.NPCs.Puppets
             _activeBladeReach     = reach;
             _activeBladeDamage    = damage;
             _activeBladeKnockback = knockback;
+            _hasPreviousBladeSample = false;
+            _bladeHitPlayers.Clear();
         }
 
         /// <summary>
@@ -4351,17 +5490,38 @@ namespace tsorcRevamp.NPCs.Puppets
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player player = Main.player[i];
-                if (!player.active || player.dead) continue;
+                if (!player.active || player.dead || _bladeHitPlayers.Contains(i)) continue;
                 if (Vector2.DistanceSquared(player.Center, NPC.Center) > earlyOutRange * earlyOutRange) continue;
 
-                if (!MeleeBladeCollision.SegmentIntersectsRect(origin, tip, MeleeBladeWidth, player.getRect()))
+                Vector2 hitOrigin = origin;
+                Vector2 hitTip = tip;
+                bool intersects = _hasPreviousBladeSample
+                    ? MeleeBladeCollision.SweptSegmentIntersectsRect(
+                        _previousBladeOrigin,
+                        _previousBladeTip,
+                        origin,
+                        tip,
+                        MeleeBladeWidth,
+                        player.getRect(),
+                        out hitOrigin,
+                        out hitTip)
+                    : MeleeBladeCollision.SegmentIntersectsRect(
+                        origin, tip, MeleeBladeWidth, player.getRect());
+                if (!intersects)
                     continue;
 
-                Vector2 hitPoint = MeleeBladeCollision.ClosestPointOnSegment(origin, tip, player.Center);
+                Vector2 hitPoint = MeleeBladeCollision.ClosestPointOnSegment(hitOrigin, hitTip, player.Center);
                 SpawnMeleeHitbox(hitPoint, MeleeBladeWidth, _activeBladeDamage, _activeBladeKnockback);
+                _bladeHitPlayers.Add(i);
                 _lastAttackHitConnected = true;
+                if (IsMeleeComboPhase)
+                    _currentComboStepHitConnected = true;
                 OnBladeHit(player);
             }
+
+            _previousBladeOrigin = origin;
+            _previousBladeTip = tip;
+            _hasPreviousBladeSample = true;
         }
 
         /// <summary>Fires once per confirmed real blade-overlap hit (see <see cref="TickBladeHit"/>),
@@ -4377,9 +5537,8 @@ namespace tsorcRevamp.NPCs.Puppets
         private void SpawnMeleeHitbox(Vector2 center, float size, int damage, float knockback)
         {
             int box = (int)size;
-            Vector2 topLeft = center - new Vector2(box / 2f, box / 2f);
             Projectile.NewProjectile(
-                NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
+                NPC.GetSource_FromThis(), center, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
                 damage, knockback, Main.myPlayer, box, box);
         }
@@ -4448,8 +5607,32 @@ namespace tsorcRevamp.NPCs.Puppets
             return Math.Max(requestedTicks, GetWeaponUseAnimation(MeleeWeaponItemType));
         }
 
+        private float LogicalSwingWindup(float oppositeEnd, float attackStart, float progress)
+        {
+            progress = MathHelper.Clamp(progress, 0f, 1f);
+            const float settleFraction = 0.25f;
+            if (progress < settleFraction)
+            {
+                float settle = MathHelper.SmoothStep(0f, 1f, progress / settleFraction);
+                return MathHelper.Lerp(HoldRotation, oppositeEnd, settle);
+            }
+
+            float raise = MathHelper.SmoothStep(0f, 1f,
+                (progress - settleFraction) / (1f - settleFraction));
+            return MathHelper.Lerp(oppositeEnd, attackStart, raise);
+        }
+
         private void TickWeaponAnim()
         {
+            if (_attackRuntimeV2.Active)
+            {
+                // Runtime V2 already sampled the authoritative pose in PuppetAttackAI. Keep only
+                // renderer-side bookkeeping here; the legacy animation clock must not overwrite it.
+                SpawnSwingVFX(_weaponRotation - _prevWeaponRotation);
+                _prevWeaponRotation = _weaponRotation;
+                return;
+            }
+
             if (_weaponAnim > 0)
                 _weaponAnim--;
 
@@ -4723,8 +5906,18 @@ namespace tsorcRevamp.NPCs.Puppets
                 if (UseAimAdaptiveArc || AimSwingActive) { a0 += _comboAimBias; a1 += _comboAimBias; }
 
                 if (Phase == AttackPhase.MeleeTelegraph)
-                    // Wind-up: weapon rises from hold angle to the top of the arc quickly
-                    _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                {
+                    if (UseLogicalMeleeTelegraphs)
+                    {
+                        float telegraphT = 1f - PhaseTimer / (float)Math.Max(1, MeleeTelegraphTicks);
+                        _weaponRotation = LogicalSwingWindup(a1, a0, telegraphT);
+                    }
+                    else
+                    {
+                        // Wind-up: weapon rises from hold angle to the top of the arc quickly.
+                        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                    }
+                }
                 else
                     // Downswing: full broadsword arc, raised behind head → slash down-forward
                     // t runs 0->1 over the held item useAnimation window (reset when swing begins)
@@ -4738,6 +5931,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 var step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
                 bool inTel = Phase == AttackPhase.MeleeComboTelegraph;
                 bool inPause = Phase == AttackPhase.MeleeComboPause;
+                float comboTelegraphT = inTel
+                    ? 1f - PhaseTimer / (float)Math.Max(1, GetComboTelegraphTicks(step))
+                    : 1f;
 
                 // Applies the alternating-flip / aim-adaptive-bias opt-ins (both default off) to a
                 // motion's fixed (start, end) arc endpoints. Telegraph/pause poses below are all
@@ -4768,7 +5964,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.OverheadArc:
                     {
                         var (a0, a1) = Endpoints(-1.3f, 1.0f);
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                        if (inTel)        _weaponRotation = UseLogicalMeleeTelegraphs
+                            ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                            : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
                         else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.130f), 0.20f);
                         else              _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         break;
@@ -4780,7 +5978,9 @@ namespace tsorcRevamp.NPCs.Puppets
                         // (X=-8) — making the swing finish over the shoulder.  -1.0 keeps it in
                         // row 2 (hand up-forward, X=+4) for a clean rising slash.
                         var (a0, a1) = Endpoints(1.0f, -1.0f);
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                        if (inTel)        _weaponRotation = UseLogicalMeleeTelegraphs
+                            ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                            : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
                         else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.150f), 0.20f);
                         else              _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         break;
@@ -4852,9 +6052,112 @@ namespace tsorcRevamp.NPCs.Puppets
                         _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.95f, 0.20f);
                         break;
                     case ComboMotion.Feint:
-                        // Hold the raised "about to chop" bait pose; the real chop is the next step.
-                        _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.3f, 0.30f);
+                    {
+                        // Raise exactly like a real overhead attack, then hold the apex as bait.
+                        var (a0, a1) = Endpoints(-1.3f, 1.0f);
+                        _weaponRotation = inTel && UseLogicalMeleeTelegraphs
+                            ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                            : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
                         break;
+                    }
+                    case ComboMotion.DoubleSpinSlam:
+                    {
+                        var (a0, a1) = Endpoints(-1.3f, 1.4f);
+                        if (inTel)
+                        {
+                            _weaponRotation = UseLogicalMeleeTelegraphs
+                                ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                                : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                        }
+                        else if (inPause)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, a1, 0.30f);
+                        }
+                        else
+                        {
+                            const float circlePortion = 0.78f;
+                            float twoCircleEnd = a0 + MathHelper.TwoPi * 2f;
+                            float groundEnd = a1 + MathHelper.TwoPi * 2f;
+                            if (t < circlePortion)
+                                _weaponRotation = MathHelper.Lerp(a0, twoCircleEnd, t / circlePortion);
+                            else
+                                _weaponRotation = MathHelper.Lerp(twoCircleEnd, groundEnd,
+                                    MathHelper.SmoothStep(0f, 1f, (t - circlePortion) / (1f - circlePortion)));
+                        }
+                        break;
+                    }
+                    case ComboMotion.ThrownWeaponRetrieve:
+                        if (inTel)
+                        {
+                            // One harmless 360-degree wind-up makes the throw unmistakable.
+                            float circle = MathHelper.SmoothStep(0f, 1f, comboTelegraphT);
+                            _weaponRotation = HoldRotation + MathHelper.TwoPi * circle;
+                        }
+                        else
+                        {
+                            // Bare throwing/retrieval arm follows through toward the embedded axe.
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.45f, 0.20f);
+                        }
+                        break;
+                    case ComboMotion.LowAxeRun:
+                    {
+                        // Arm down and slightly back; the corrected axe blade points behind and
+                        // down at an angle while the legs keep their normal running animation.
+                        const float carry = 1.9f;
+                        _weaponRotation = inTel
+                            ? MathHelper.SmoothStep(HoldRotation, carry, comboTelegraphT)
+                            : MathHelper.Lerp(_weaponRotation, carry, 0.35f);
+                        break;
+                    }
+                    case ComboMotion.RisingUppercutLeap:
+                    {
+                        // Sweep from the exact running carry into a high, extended finish during
+                        // the first weapon-animation window, then freeze there through the ascent
+                        // and the explicitly timed 30-frame falling hold.
+                        const float carry = 1.9f;
+                        const float highFinish = -1.0f;
+                        int elapsed = Math.Max(0, step.AttackTicks - PhaseTimer);
+                        float rise = MathHelper.Clamp(
+                            elapsed / (float)Math.Max(1, GetWeaponUseAnimation(MeleeWeaponItemType)), 0f, 1f);
+                        _weaponRotation = MathHelper.Lerp(carry, highFinish,
+                            MathHelper.SmoothStep(0f, 1f, rise));
+                        break;
+                    }
+                    case ComboMotion.BackstepRaise:
+                    {
+                        // Show the entire defensive read: axe starts low, then rises overhead during
+                        // the retreat and remains there for the following re-entry chop.
+                        if (inTel)
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.0f, 0.24f);
+                        else
+                        {
+                            float elapsed = Math.Max(0, _activeComboStepTotalTicks - PhaseTimer);
+                            float raise = MathHelper.Clamp(elapsed / 22f, 0f, 1f);
+                            _weaponRotation = MathHelper.SmoothStep(1.0f, -1.3f, raise);
+                        }
+                        break;
+                    }
+                    case ComboMotion.ApexDiveCleave:
+                    {
+                        if (inTel)
+                        {
+                            _weaponRotation = LogicalSwingWindup(1.0f, -1.3f, comboTelegraphT);
+                        }
+                        else if (!_apexDiveStrikeStarted)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.05f, 0.24f);
+                        }
+                        else
+                        {
+                            float diveSwing = MathHelper.Clamp(_apexDiveFallTicks / 20f, 0f, 1f);
+                            _weaponRotation = SwingEase.Apply(
+                                -1.05f,
+                                1.25f,
+                                diveSwing,
+                                SwingEaseStyle.Whip);
+                        }
+                        break;
+                    }
                 }
             }
             else if (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0)
@@ -4882,8 +6185,6 @@ namespace tsorcRevamp.NPCs.Puppets
             SpawnSwingVFX(_weaponRotation - _prevWeaponRotation);
             _prevWeaponRotation = _weaponRotation;
 
-            if (SwingDebugLog && IsWeaponVisiblePhase)
-                LogSwingFrame();
         }
 
         /// <summary>
@@ -4983,11 +6284,13 @@ namespace tsorcRevamp.NPCs.Puppets
                     motion = $"{step.Motion}#{_meleeComboStepIndex}";
                 }
 
-                float t = _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f;
+                float t = _attackRuntimeV2.Active
+                    ? _attackRuntimeV2.StageProgress
+                    : _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f;
                 int bodyRow = _puppet != null ? _puppet.bodyFrame.Y / FrameHeight : -1;
                 Vector2 handOff = _puppet != null ? (GetHandPosition() - NPC.Center) : Vector2.Zero;
                 bool composite = CompositeArmActive;
-                float drawRot = _weaponRotation + (composite ? 0f : MeleeWeaponRotationOffset);
+                float drawRot = GetMeleeDrawRotation();
 
                 string line = $"[{System.DateTime.Now:HH:mm:ss.fff}] {NPC.TypeName}#{NPC.whoAmI}"
                     + $" phase={Phase} motion={motion}"
@@ -5086,6 +6389,15 @@ namespace tsorcRevamp.NPCs.Puppets
             float drawRotation = _weaponRotation;
             if (DrawWeaponAsSpear)
                 drawRotation += SpearDrawRotationOffset;
+            else if (MirrorMeleeSwingRotationByFacing)
+            {
+                drawRotation = GetMeleeDrawRotation();
+                float naturalDeg = NPC.direction == 1
+                    ? (BladeFlipActive ? 45f : -45f)
+                    : (BladeFlipActive ? 135f : -135f);
+                float actualAngle = MathHelper.ToRadians(naturalDeg + MathHelper.ToDegrees(drawRotation));
+                return new Vector2((float)Math.Cos(actualAngle), (float)Math.Sin(actualAngle));
+            }
             else
                 drawRotation += MeleeWeaponRotationOffset * NPC.direction;
 
@@ -5123,6 +6435,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 string dir = Main.SavePath + sep + "Logs";
                 Directory.CreateDirectory(dir);
                 string path = dir + sep + "tsorcRevamp-puppet-weapon.log";
+                tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
                 // For combo phases, "phase=MeleeComboAttack" alone doesn't say WHICH named combo/motion
                 // is playing (Charged Chop vs Forward Thrust vs Leaping Lunge, etc.) — every combo shares
                 // the same phase enum, so without this the log can't tell them apart.
@@ -5139,7 +6452,11 @@ namespace tsorcRevamp.NPCs.Puppets
                     + $" weaponRotDeg={DebugWeaponRotationDeg:F1} drawRotDeg={DebugDrawRotationDeg:F1}"
                     + $" hand=({DebugHandPos.X:F0},{DebugHandPos.Y:F0}) origin=({DebugOrigin.X:F0},{DebugOrigin.Y:F0})"
                     + $" npcPos=({NPC.Center.X:F0},{NPC.Center.Y:F0}) airborne={_flight?.IsAirborne ?? false}"
-                    + $" flightMode={(_flight != null ? _flight.Mode.ToString() : "n/a")}";
+                    + $" flightMode={(_flight != null ? _flight.Mode.ToString() : "n/a")}"
+                    + $" reactiveDefense={AllowReactiveDefense} shield={_shielding} guardTimer={globalNPC.ReactiveBlockTimer} guardCooldown={_shieldGuardCooldown}"
+                    + $" evasion={globalNPC.InEvasion}/{globalNPC.CurrentEvasion} dodge={globalNPC.DodgeTimer}"
+                    + $" stagger={globalNPC.StaggerTimer} poise={globalNPC.Poise:F1}/{globalNPC.EffectivePoiseMax:F1}"
+                    + $" attackFlags={globalNPC.AttackTelegraphing}/{globalNPC.AttackCommitted}";
                 File.AppendAllText(path, line + Environment.NewLine);
             }
             catch { /* best-effort debug log; never let logging break gameplay */ }
@@ -5481,6 +6798,12 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.LeapSlam:
                     case ComboMotion.ChargeChop:
                     case ComboMotion.Feint:
+                    case ComboMotion.DoubleSpinSlam:
+                    case ComboMotion.ThrownWeaponRetrieve:
+                    case ComboMotion.LowAxeRun:
+                    case ComboMotion.RisingUppercutLeap:
+                    case ComboMotion.BackstepRaise:
+                    case ComboMotion.ApexDiveCleave:
                         bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
                         break;
                     case ComboMotion.Thrust:
@@ -5543,6 +6866,109 @@ namespace tsorcRevamp.NPCs.Puppets
         // ─────────────────────────────────────────────────────────────────────────
         // Draw
         // ─────────────────────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Draws a deterministic, fully equipped portrait pose for
+        /// <see cref="PuppetSpriteExporterSystem"/>. This deliberately uses the same
+        /// synthetic <see cref="Player"/>, dye shaders, accessories, wings, shield layer, and custom
+        /// held-weapon layer as normal puppet rendering instead of rebuilding those layers offline.
+        /// </summary>
+        /// <returns><see langword="false"/> only when a weapon pose was requested but this puppet
+        /// has no configured melee, primary ranged, secondary ranged, or magic weapon.</returns>
+        internal bool DrawExportPose(Vector2 worldPosition, bool withPrimaryWeapon)
+        {
+            if (_puppet == null)
+                InitPuppet();
+
+            NPC.active = true;
+            NPC.position = worldPosition;
+            NPC.velocity = Vector2.Zero;
+            NPC.direction = 1;
+            NPC.spriteDirection = 1;
+
+            if (HasWings)
+                _flight ??= new EnemyFlightController(FlightConfig);
+
+            int primaryWeapon = MeleeWeaponItemType > 0 ? MeleeWeaponItemType
+                : RangedWeaponItemType > 0 ? RangedWeaponItemType
+                : SecondaryRangedWeaponItemType > 0 ? SecondaryRangedWeaponItemType
+                : MagicWeaponItemType;
+
+            if (withPrimaryWeapon && primaryWeapon <= 0)
+                return false;
+
+            if (withPrimaryWeapon)
+            {
+                bool usingMelee = MeleeWeaponItemType > 0;
+                if (usingMelee)
+                {
+                    Phase = AttackPhase.MeleeTelegraph;
+                    PhaseTimer = Math.Max(1, MeleeTelegraphTicks);
+                    _weaponRotation = HoldRotation;
+                }
+                else if (primaryWeapon == MagicWeaponItemType)
+                {
+                    Phase = AttackPhase.MagicTelegraph;
+                    PhaseTimer = Math.Max(1, MagicTelegraphTicks);
+                    _weaponRotation = 0f;
+                }
+                else
+                {
+                    bool usingSecondary = primaryWeapon == SecondaryRangedWeaponItemType;
+                    _activeRangedItemType = primaryWeapon;
+                    _activeRangedStyle = usingSecondary ? SecondaryRangedAnimStyle : RangedAnimStyle;
+                    _activeRangedTelegraphTicks = Math.Max(1,
+                        usingSecondary ? SecondaryRangedTelegraphTicks : RangedTelegraphTicks);
+                    Phase = AttackPhase.RangedTelegraph;
+                    PhaseTimer = _activeRangedTelegraphTicks;
+                    _weaponRotation = 0f;
+                }
+
+                SetDisplayWeapon(primaryWeapon, swing: false);
+                _weaponVisible = true;
+                _forceExportHeldWeapon = true;
+            }
+            else
+            {
+                Phase = AttackPhase.Idle;
+                PhaseTimer = 0;
+                _heldItemType = -1;
+                _weaponAnim = 0;
+                _weaponRotation = 0f;
+                _weaponVisible = false;
+                _forceExportHeldWeapon = false;
+            }
+
+            SyncPuppet();
+
+            // Export every configured wing set even when that puppet normally folds/hides it while
+            // grounded. Frame zero is the stable closed/idle frame used by the normal wing layer.
+            if (HasWings && _wingsItemCache != null)
+            {
+                _puppet.wings = _wingsItemCache.wingSlot;
+                _puppet.wingFrame = 0;
+                _puppet.wingTime = 0;
+                _puppet.controlJump = false;
+            }
+
+            // Display-doll rendering removes world-light tint while preserving armor/accessory dyes.
+            _puppet.isDisplayDollOrInanimate = true;
+            _puppet.socialIgnoreLight = true;
+            _layerDrawColor = Color.White;
+
+            DrawingPuppetFor = this;
+            try
+            {
+                Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.position, 0f, Vector2.Zero);
+            }
+            finally
+            {
+                DrawingPuppetFor = null;
+                _forceExportHeldWeapon = false;
+            }
+
+            return true;
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
@@ -5638,6 +7064,10 @@ namespace tsorcRevamp.NPCs.Puppets
             Vector2 drawPos = new Vector2(
                 NPC.position.X + NPC.width / 2f - _shieldDrawTex.Width / 2f,
                 NPC.position.Y + NPC.height - frameH + 4f) - Main.screenPosition + origin;
+            // The equip strip supplies the carried position. During the authored guard, lift it
+            // toward the chest and push it toward the attacker so the defensive state reads clearly.
+            if (_shielding)
+                drawPos += new Vector2(NPC.direction * 5f, -5f);
             SpriteEffects fx = NPC.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             drawInfo.DrawDataCache.Add(new DrawData(
@@ -5668,7 +7098,19 @@ namespace tsorcRevamp.NPCs.Puppets
                 || Phase == AttackPhase.SpiralFanSwing;
             if (!standardSwing && !specialSwing)
                 return;
-            if (standardSwing && (!_bladeArmed || _activeBladeReach <= 0f))
+
+            bool visualComboSlash = Phase == AttackPhase.MeleeComboAttack
+                && _activeMeleeCombo.Steps != null
+                && _meleeComboStepIndex >= 0
+                && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length
+                && (IsArcSwingMotion(_activeMeleeCombo.Steps[_meleeComboStepIndex].Motion)
+                    || _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion == ComboMotion.LeapSlam
+                    || _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion == ComboMotion.RisingUppercutLeap);
+            bool runtimeV2Slash = _attackRuntimeV2.Active
+                && _attackRuntimeV2.Stage == PuppetAttackStage.Active;
+            bool needsComboVisualFallback = visualComboSlash && (!_bladeArmed || _activeBladeReach <= 0f);
+            if (standardSwing && (!_bladeArmed || _activeBladeReach <= 0f)
+                && !needsComboVisualFallback && !runtimeV2Slash)
                 return;
 
             if (!_slashVFXTexLoadAttempted)
@@ -5683,7 +7125,31 @@ namespace tsorcRevamp.NPCs.Puppets
 
             float t;
             float reach = _activeBladeReach;
-            if (specialSwing)
+            if (runtimeV2Slash)
+            {
+                MeleeComboStep step = _activeMeleeCombo.Steps[0];
+                reach = ComboReachBase * 0.7f * step.ReachMult;
+                t = _attackRuntimeV2.StageProgress;
+            }
+            else if (needsComboVisualFallback)
+            {
+                MeleeComboStep step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                reach = ComboReachBase * 0.7f * step.ReachMult;
+                if (step.Motion == ComboMotion.RisingUppercutLeap)
+                {
+                    int elapsed = Math.Max(0, step.AttackTicks - PhaseTimer);
+                    t = elapsed / (float)Math.Max(1, GetWeaponUseAnimation(MeleeWeaponItemType));
+                }
+                else
+                {
+                    float speedMult = step.SwingSpeedMult > 0f ? step.SwingSpeedMult : 1f;
+                    int swingTicks = AimSwingActive && IsArcSwingMotion(step.Motion)
+                        ? Math.Max(6, (int)Math.Round(step.AttackTicks / speedMult))
+                        : Math.Max(1, GetMeleeSwingTicks(step.AttackTicks));
+                    t = 1f - PhaseTimer / (float)swingTicks;
+                }
+            }
+            else if (specialSwing)
             {
                 reach = MeleeRange * 0.7f;
                 t = Phase switch
@@ -5742,7 +7208,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
             // Flails (and similar) render their own projectile visual (ball + chain), so the held
             // item icon shouldn't be drawn in the hand at all.
-            if (HideHeldMeleeSprite && _heldItemType == MeleeWeaponItemType)
+            if (HideHeldMeleeSprite && _heldItemType == MeleeWeaponItemType && !_forceExportHeldWeapon)
                 return;
 
             // Only draw as spear when actually holding the polearm — not the magic staff, secondary ranged,
@@ -5850,7 +7316,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // orientation — MeleeWeaponRotationOffset is a sword-only fine-tune and would double
             // up with (and fight) that correction, so it's excluded here.
             if (!heldRangedLike && !holdingSpearNow)
-                drawRotation += MeleeWeaponRotationOffset * NPC.direction; // mirror per facing
+                drawRotation = GetMeleeDrawRotation();
             if (holdingSpearNow)
                 drawRotation += SpearDrawRotationOffset; // draw-only correction, direction-neutral (FlipH handles facing)
 
@@ -5875,6 +7341,73 @@ namespace tsorcRevamp.NPCs.Puppets
             DebugHandPos           = drawPos + Main.screenPosition;
             DebugOrigin            = origin;
             DebugDirection         = NPC.direction;
+
+            if (SwingDebugLog && PuppetAttackTelemetry.IsActive(NPC.whoAmI))
+            {
+                Vector2 handWorld = drawPos + Main.screenPosition;
+                Vector2 weaponDirection = GetWeaponWorldDirection();
+                float drawScale = NPC.scale * scale;
+                float visualReach = MaxCornerDistance(origin, tex.Width, tex.Height) * drawScale;
+                Vector2 visualTip = handWorld + weaponDirection * visualReach;
+                float collisionReach = _bladeArmed ? _activeBladeReach : 0f;
+                Vector2 collisionTip = handWorld + weaponDirection * collisionReach;
+                float armWorldDeg = float.NaN;
+                float armWeaponErrorDeg = 0f;
+                if (CompositeArmActive)
+                {
+                    float armPoseRotation = _weaponRotation + CompositeArmRotationOffset;
+                    float armWorldRad = NPC.direction == 1
+                        ? armPoseRotation
+                        : MathHelper.Pi - armPoseRotation;
+                    armWorldDeg = MathHelper.ToDegrees(armWorldRad);
+                    float weaponWorldRad = (float)Math.Atan2(weaponDirection.Y, weaponDirection.X);
+                    float armWeaponSeparationDeg = MathHelper.ToDegrees(Math.Abs(
+                        MathHelper.WrapAngle(weaponWorldRad - armWorldRad)));
+                    // The expected grip separation includes both Terraria's diagonal item texture
+                    // convention and this weapon's calibrated draw/arm offsets. Compare against
+                    // that pose-specific baseline so a correct non-zero wrist angle is not flagged.
+                    float naturalItemAngle = BladeFlipActive ? MathHelper.PiOver4 : -MathHelper.PiOver4;
+                    float expectedSeparationDeg = MathHelper.ToDegrees(Math.Abs(MathHelper.WrapAngle(
+                        naturalItemAngle + MeleeWeaponRotationOffset - CompositeArmRotationOffset)));
+                    armWeaponErrorDeg = Math.Abs(armWeaponSeparationDeg - expectedSeparationDeg);
+                }
+
+                PuppetAttackTelemetry.RecordRender(new PuppetAttackRenderSample
+                {
+                    NpcId = NPC.whoAmI,
+                    Tick = (long)Main.GameUpdateCount,
+                    Phase = Phase.ToString(),
+                    PhaseTimer = PhaseTimer,
+                    Motion = TelemetryMotionName,
+                    Direction = NPC.direction,
+                    SpriteDirection = NPC.spriteDirection,
+                    LockedDirection = _comboLockedDir,
+                    NpcCenter = NPC.Center,
+                    HandWorld = handWorld,
+                    VisualTipWorld = visualTip,
+                    CollisionTipWorld = collisionTip,
+                    WeaponDirection = weaponDirection,
+                    DrawOrigin = origin,
+                    TextureWidth = tex.Width,
+                    TextureHeight = tex.Height,
+                    DrawScale = drawScale,
+                    VisualReach = visualReach,
+                    CollisionReach = collisionReach,
+                    RawWeaponRotationDeg = MathHelper.ToDegrees(_weaponRotation),
+                    DrawWeaponRotationDeg = MathHelper.ToDegrees(drawRotation),
+                    CompositeArmRotationDeg = CompositeArmActive
+                        ? MathHelper.ToDegrees(CompositeArmRotation)
+                        : float.NaN,
+                    ArmWorldRotationDeg = armWorldDeg,
+                    ArmWeaponErrorDeg = armWeaponErrorDeg,
+                    CompositeArmActive = CompositeArmActive,
+                    CompositeStretch = CompositeArmStretch.ToString(),
+                    BladeArmed = _bladeArmed,
+                    SpriteEffects = fx.ToString(),
+                    BladeFlipActive = BladeFlipActive,
+                });
+            }
+
             if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                 LogWeaponDebug();
 
@@ -5887,6 +7420,15 @@ namespace tsorcRevamp.NPCs.Puppets
                     0, default, Main.rand.NextFloat(0.6f, 1.1f));
                 spark.noGravity = true;
             }
+        }
+
+        private static float MaxCornerDistance(Vector2 origin, int width, int height)
+        {
+            float d0 = Vector2.Distance(origin, Vector2.Zero);
+            float d1 = Vector2.Distance(origin, new Vector2(width, 0f));
+            float d2 = Vector2.Distance(origin, new Vector2(0f, height));
+            float d3 = Vector2.Distance(origin, new Vector2(width, height));
+            return Math.Max(Math.Max(d0, d1), Math.Max(d2, d3));
         }
 
         /// <summary>
@@ -5984,6 +7526,16 @@ namespace tsorcRevamp.NPCs.Puppets
         /// opposite diagonal and would otherwise appear to swing backwards.</summary>
         protected virtual float MeleeWeaponRotationOffset => 0f;
 
+        /// <summary>Opt-in for continuously driven melee weapons whose raw swing arc must mirror with
+        /// facing, just like the composite arm does. Kept off by default while legacy puppets retain
+        /// their established draw tuning.</summary>
+        protected virtual bool MirrorMeleeSwingRotationByFacing => false;
+
+        private float GetMeleeDrawRotation()
+            => MirrorMeleeSwingRotationByFacing
+                ? (_weaponRotation + MeleeWeaponRotationOffset) * NPC.direction
+                : _weaponRotation + MeleeWeaponRotationOffset * NPC.direction;
+
         // ── Blade-leads-the-swing flip ──────────────────────────────────────────────
         /// <summary>True for weapons whose head reads asymmetrically (a single cutting edge, e.g.
         /// an axe) so it matters which way the sprite faces mid-swing. The fixed rigid rotation this
@@ -6049,7 +7601,8 @@ namespace tsorcRevamp.NPCs.Puppets
         private static bool IsArcSwingMotion(ComboMotion m) =>
             m == ComboMotion.OverheadArc || m == ComboMotion.UnderhandArc ||
             m == ComboMotion.HorizontalSweep || m == ComboMotion.VerticalChop ||
-            m == ComboMotion.GroundSlam || m == ComboMotion.IaidoDraw;
+            m == ComboMotion.GroundSlam || m == ComboMotion.IaidoDraw ||
+            m == ComboMotion.DoubleSpinSlam;
 
         /// <summary>Enters a combo step's attack: for aim-swing pilots, arc motions play over
         /// <c>AttackTicks / SwingSpeedMult</c> (decoupled from the weapon's useAnimation, so swings
@@ -6090,10 +7643,22 @@ namespace tsorcRevamp.NPCs.Puppets
                 ComboMotion.IaidoDraw       => (1.2f, -0.5f),
                 ComboMotion.Feint           => (-1.3f, -1.3f),
                 ComboMotion.ChargeChop      => (-0.95f, -0.95f),
+                ComboMotion.DoubleSpinSlam  => (-1.3f, 1.4f),
+                ComboMotion.ThrownWeaponRetrieve => (HoldRotation, HoldRotation),
+                ComboMotion.LowAxeRun       => (1.9f, 1.9f),
+                ComboMotion.RisingUppercutLeap => (1.9f, -1.0f),
+                ComboMotion.BackstepRaise   => (1.0f, -1.3f),
+                ComboMotion.ApexDiveCleave  => (-1.3f, 1.25f),
                 _                           => (HoldRotation, HoldRotation),
             };
             if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
-            if (UseAimAdaptiveArc || AimSwingActive) { a0 += _comboAimBias; a1 += _comboAimBias; }
+            bool fixedCarryMotion = step.Motion == ComboMotion.LowAxeRun
+                || step.Motion == ComboMotion.RisingUppercutLeap;
+            if (!fixedCarryMotion && (UseAimAdaptiveArc || AimSwingActive))
+            {
+                a0 += _comboAimBias;
+                a1 += _comboAimBias;
+            }
             return a0;
         }
 

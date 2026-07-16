@@ -487,6 +487,27 @@ Mods: {
 			Expelled: Мощное силовое поле изгоняет вас из руин!
 		}
 
+		EncounterPresentation: {
+			// ClassifiedName: "{0} ({1})"
+
+			Classifications: {
+				// RequiredMajor: Required Major Boss
+				// OptionalMajor: Optional Major Boss
+				// OptionalGreat: Optional Great Boss
+				// OptionalField: Optional Field Boss
+				// EliteEnemy: Elite Enemy
+			}
+
+			Banners: {
+				// LegendDefeated: Legend Defeated
+				// GreatEnemyDefeated: Great Enemy Defeated
+				// EnemyDefeated: Enemy Defeated
+				// GreatInvaderVanquished: Great Invader Vanquished
+				// InvaderVanquished: Invader Vanquished
+				// InvadedBy: Invaded by {0}
+			}
+		}
+
 		LunaticForcefield: {
 			Grapple: Ваш хват напрягается против этой силы, но...
 			Snap: Ваш хват ломается...
@@ -495,6 +516,7 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: Исследуйте подвесной мост между заснеженными вершинами гор.
+			// VesselOfSoulsDesc: The Vessel of Souls occupies the Eye of Cthulhu's arena.
 			PinwheelDesc: Найдите Катакомбы Утопленников под входом в деревню.
 			AncientOolacileDemonDesc: В легендах упоминается лес Оолациле...
 			SlograAndGaibonName: Слогра и Гайбон
@@ -3501,7 +3523,7 @@ Mods: {
 			}
 
 			OolacileSerpentBag: {
-				// DisplayName: Treasure Bag (Oolacile Serpent)
+				// DisplayName: Treasure Bag (Great Serpent)
 				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3767,9 +3789,9 @@ Mods: {
 				WrongTime: Ничего не происходит... Повторите попытку ночью.
 			}
 
-			OolacileSerpentStone: {
-				// DisplayName: Oolacile Serpent Stone
-				// Tooltip: Summons the Oolacile Serpent...
+			GreatSerpentStone: {
+				// DisplayName: Great Serpent Stone
+				// Tooltip: Summons the Great Serpent...
 			}
 
 			SoulOfCinderSpawner: {
@@ -4015,7 +4037,7 @@ Mods: {
 				//   26  [HM]  Golem                  (VanillaChanges.cs, GolemHeadFree)   — vanilla
 				//   27  [HM]  Empress of Light       (VanillaChanges.cs, HallowBoss)      — vanilla
 				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
-				//   29  [HM]  Dark Shogun Mask       (Bosses/Okiku/FirstForm/DarkShogunMask) — modded
+				//   29  [HM]  Attraidies hidden phases (not shown as their own Tome entry)
 				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
 				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
 				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
@@ -4032,6 +4054,7 @@ Mods: {
 				//   43  [SHM] Dark Cloud             (Bosses/SuperHardMode/DarkCloud)     — modded
 				//   44  [SHM] Gwyn                   (Bosses/SuperHardMode/Gwyn)          — modded
 				//   45        "True ending" message — shown as the "Next Boss" hint when hovering Gwyn
+				//   48  [PHM] Vessel of Souls        (presentation-only clue index; progression order 5)
 				//
 				//  To rebind a clue to a different boss, edit that boss's `NPC.rarity = N` (or the
 				//  `npc.rarity = N` line in VanillaChanges.cs for vanilla bosses). To rewrite a clue's
@@ -4086,6 +4109,7 @@ Mods: {
 				45: Поздравляем! Вы открыли истинную концовку игры!
 				// 46: "{$BossChecklist.OptionalMysteryDesc}"
 				// 47: "{$BossChecklist.OptionalMysteryDesc}"
+				// 48: "{$BossChecklist.VesselOfSoulsDesc}"
 			}
 
 			BraveWarriorSoul: {
@@ -8914,6 +8938,11 @@ Mods: {
 				Description: ""
 			}
 
+			PuppetSnared: {
+				// DisplayName: Snared
+				// Description: Cut through the cobweb strands with a melee swing to break free
+			}
+
 			PowerfulCurseBuildup: {
 				DisplayName: Накопление мощного проклятия
 				Description: "{$Buffs.Curse.Buildup}"
@@ -10671,6 +10700,7 @@ Mods: {
 			// PuppetMeleeHitbox.DisplayName: Puppet Melee Hitbox
 			// PuppetThrowingStar.DisplayName: Puppet Throwing Star
 			// PuppetCrossbowBolt.DisplayName: Puppet Crossbow Bolt
+			// PuppetThrownDualBladedAxe.DisplayName: Thrown Dual-Bladed Axe
 			// GreatMagicMirrorRangeRing.DisplayName: Great Magic Mirror Range Ring
 			// HealSpriteVFX.DisplayName: Heal Sprite V F X
 			// TeleportMistLinger.DisplayName: Teleport Mist Linger
@@ -10753,6 +10783,11 @@ Mods: {
 			// LesserVesselSkull.DisplayName: Lesser Vessel Skull
 			// TeleportIllusionDissolve.DisplayName: Teleport Illusion Dissolve
 			// ArtoriasSurgeAura.DisplayName: Artorias Surge Aura
+			// PuppetGroundDustWave.DisplayName: Puppet Ground Dust Wave
+			// PuppetSnareBolt.DisplayName: Puppet Snare Bolt
+			// PuppetSnareNet.DisplayName: Puppet Snare Net
+			// PuppetGreatfireCrescent.DisplayName: Puppet Greatfire Crescent
+			// PuppetFirefallPillar.DisplayName: Puppet Firefall Pillar
 		}
 
 		NPCs: {
@@ -11079,14 +11114,14 @@ Mods: {
 
 			HellkiteDragonLegs.DisplayName: Адский дракон
 			HellkiteDragonTail.DisplayName: Адский дракон
-			// OolacileSerpentBody.DisplayName: Oolacile Serpent
-			// OolacileSerpentBody2.DisplayName: Oolacile Serpent
-			// OolacileSerpentBody3.DisplayName: Oolacile Serpent
-			// OolacileSerpentTail.DisplayName: Oolacile Serpent
+			// GreatSerpentBody.DisplayName: Great Serpent
+			// GreatSerpentBody2.DisplayName: Great Serpent
+			// GreatSerpentBody3.DisplayName: Great Serpent
+			// GreatSerpentTail.DisplayName: Great Serpent
 
-			OolacileSerpentHead: {
-				// DisplayName: Oolacile Serpent
-				// DespawnHandler: The Oolacile Serpent slithers away into the dark...
+			GreatSerpentHead: {
+				// DisplayName: Great Serpent
+				// DespawnHandler: The Great Serpent slithers away into the dark...
 			}
 
 			PrimordialCrystal.DisplayName: Изначальный кристалл

@@ -11,7 +11,7 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
 {
     [AutoloadBossHead]
-    class OolacileSerpentHead : ModNPC, IStaggerable
+    class GreatSerpentHead : ModNPC, IStaggerable
     {
         public override void SetStaticDefaults()
         {
@@ -27,11 +27,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         {
             NPC.netAlways = true;
             NPC.npcSlots = 6;
-            NPC.width = 60;
-            NPC.height = 60;
-            DrawOffsetY = 42;
+            //Head sprite sheet = 76 x (3 frames). Frame height auto-adapts to the PNG (76x303 -> 101/frame now;
+            //a 76x468 sheet -> 156/frame, both slice cleanly). Hitbox is a fair sub-rect of the visible head;
+            //DrawOffsetY 0 (tight crop). Tune width/height/DrawOffsetY in-game once you see the head move --
+            //bump the hitbox up if the head sprite ends up taller.
+            NPC.width = 50;
+            NPC.height = 64;
+            DrawOffsetY = 0;
             NPC.aiStyle = 6;
-            NPC.scale = 1.3f;
+            NPC.scale = 1f;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
             NPC.damage = 0; //Contact damage is enabled per-attack in SerpentAI (bite/pounce lunge + charge on the head, stab on the tail). Body pieces are always 0.
@@ -48,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             NPC.lavaImmune = true;
             NPC.rarity = 46;
             Color textColor = new Color(175, 75, 255);
-            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.OolacileSerpentHead.DespawnHandler"), textColor, 174);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.GreatSerpentHead.DespawnHandler"), textColor, 174);
 
             //3s flop instead of the default 2s -- a boss this size reads as sturdier when it goes down.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerDurationTicks = 180;
@@ -56,12 +60,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
 
         NPCDespawnHandler despawnHandler;
 
-        //Total chain length: this head + BodySegmentCount body pieces + tail.
-        public const int BodySegmentCount = 20;
+        //Total chain length: this head + BodySegmentCount body pieces + tail. More, smaller segments = denser
+        //packing = smoother curves, more length for the tail attack to move, and more body left on the ground.
+        public const int BodySegmentCount = 48;
         public const int TotalSegmentCount = BodySegmentCount + 2;
-        //Front pieces (head + these many body segments, counted from the head) may lift off the ground.
-        //Rear pieces (the remaining body segments + tail) stay ground-snapped. See SerpentAI.
-        public const int FrontFreeSegmentCount = 10;
+        //Front pieces (head + these many body segments, counted from the head) may lift off the ground while
+        //climbing. Rear pieces stay ground-snapped. See SerpentAI.
+        public const int FrontFreeSegmentCount = 14;
+        //Only the last TailAttackSegmentCount body pieces (+ tail) rear up for the tail attack; everything ahead
+        //of them stays on the ground. Keeps most of the snake grounded while the tail-end strikes.
+        public const int TailAttackSegmentCount = 16;
 
         //-- Head movement (kiting) --
         //Facing is held with hysteresis (only flips once the player is clearly past a deadzone) so a player
@@ -82,6 +90,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         //Climb budget: how many more tiles of vertical rise this climb is allowed, so it can't ascend forever
         //(that's how it ended up inside a ceiling).
         public int ClimbBudget;
+
+        //How long it's been unable to reach the player (no LOS / out of range). Drives wander, then despawn.
+        public int UnreachableTimer;
+        public int WanderDir = 1;
 
         //Diagnostics (Logs/tsorcRevamp-serpent.log)
         public string LastAction = "init";
@@ -128,12 +140,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public int AcidBodyTimer;      //>0 = actively trailing acid
         public int AcidBodyCooldown;
 
-        //-- TailStab: overhead C-shape strike (fully above ground -- no burrowing) --
-        //The snake stays on the ground; the rear half rears up and curls into a C that arcs OVER the head, and
-        //the tail tip stabs down past the head at the player. The head holds still on the ground during it.
-        //Rear segments are posed along a Bezier by the head each tick (see SerpentAI.PoseTailStabArc).
+        //-- TailStab: above-ground tail strike (no burrowing). Two modes chosen by geometry at trigger time:
+        //  OverheadC   -- head faces the player (whole snake to one side): the tail-end curls into a C that arcs
+        //                 OVER the head and stabs down past it at the player.
+        //  HorizontalS -- head faces away / is far (it slithered past the player, tail still near them): the
+        //                 tail-end whips a shallow horizontal S sideways at the player.
+        //The head holds still on the ground during either; posed pieces come from SerpentAI.PoseTailStabArc.
         public enum TailStabState { None, Coiling, Aiming, Stabbing, Recover, Retracting }
+        public enum TailStabKind { OverheadC, HorizontalS }
         public TailStabState TailStab = TailStabState.None;
+        public TailStabKind TailStabMode = TailStabKind.OverheadC;
         public int TailStabTimer;
         public int TailStabCooldown;
         public int TailStabCombo;       //stabs performed this cycle
@@ -153,7 +169,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
 
             int[] bodyTypes = SerpentAI.BuildBodyTypes();
             //4f pursue speed -- deliberately slow (hardmode pacing); kiting caps it further near the player.
-            SerpentAI.Run(NPC, ModContent.NPCType<OolacileSerpentHead>(), bodyTypes, ModContent.NPCType<OolacileSerpentTail>(), TotalSegmentCount, 4f);
+            SerpentAI.Run(NPC, ModContent.NPCType<GreatSerpentHead>(), bodyTypes, ModContent.NPCType<GreatSerpentTail>(), TotalSegmentCount, 4f);
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)

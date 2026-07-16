@@ -18,6 +18,13 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void Update(Player player, ref int buffIndex)
         {
+            if (player.HasBuff(ModContent.BuffType<global::tsorcRevamp.Buffs.Bonfire>()))
+            {
+                player.DelBuff(buffIndex);
+                buffIndex--;
+                return;
+            }
+
             player.GetModPlayer<tsorcRevampPlayer>().Suppressed = true;
         }
     }

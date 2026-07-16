@@ -7,12 +7,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
     /// Rise -> pause-at-apex -> accelerate-home fireball. Shared by any Owl Father fire-volley
-    /// attack that wants the "goes up above the target, waits, then commits" read (at least 3 of
-    /// the planned 6 ranged attacks use this trait). Initial velocity (rise direction/speed) is set
-    /// by whoever spawns it — this projectile only manages the phase transitions from there.
+    /// attack that wants the "goes up above the target, waits, then commits" read. Initial velocity
+    /// (rise direction/speed) is set by whoever spawns it; this projectile manages the transitions.
     ///
-    /// Phase + phase-elapsed-ticks live in Projectile.ai[0]/ai[1] (both vanilla-networked) so no
-    /// extra sync plumbing is needed. The homing direction is captured directly into
+    /// Phase + phase-elapsed-ticks live in Projectile.ai[0]/ai[1], while ai[2] stores the spawning
+    /// NPC index + 1. The homing direction is captured directly into
     /// Projectile.velocity at the pause->home transition and re-normalized each tick while only its
     /// magnitude ramps up — so no additional stored state is needed for that either.
     /// </summary>
@@ -26,6 +25,33 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         public float HomingStartSpeed = 2f;
         public float HomingAcceleration = 0.15f;
         public float HomingMaxSpeed = 9f;
+
+        public int OwnerNpcIndex => (int)Projectile.ai[2] - 1;
+
+        public bool CanBeCommandedBy(int npcIndex)
+            => OwnerNpcIndex == npcIndex && Projectile.ai[0] == 1f;
+
+        public void ReserveForCommand(int extraHoldTicks)
+        {
+            if (Projectile.ai[0] != 1f)
+                return;
+
+            Projectile.ai[1] = System.Math.Min(Projectile.ai[1], -System.Math.Max(0, extraHoldTicks));
+            Projectile.netUpdate = true;
+        }
+
+        public void CommandDive(int delayTicks)
+        {
+            if (Projectile.ai[0] != 1f)
+                return;
+
+            // Negative elapsed time becomes a networked countdown. Phase 3 holds at the apex,
+            // then commits toward the owner's current target as each stagger reaches zero.
+            Projectile.ai[0] = 3f;
+            Projectile.ai[1] = -System.Math.Max(0, delayTicks);
+            Projectile.velocity = Vector2.Zero;
+            Projectile.netUpdate = true;
+        }
 
         public override void SetStaticDefaults()
         {
@@ -52,16 +78,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             int phase = (int)Projectile.ai[0];
             Projectile.ai[1] += 1f;
 
-            Player closest = FindClosestPlayer();
+            Player target = FindOwnerTarget() ?? FindClosestPlayer();
 
             switch (phase)
             {
                 case 0: // Rising — coasts on whatever velocity it was spawned with.
-                    if (closest != null && Projectile.Center.Y <= closest.Center.Y - RiseHeightAboveTarget)
+                    if (target != null && Projectile.Center.Y <= target.Center.Y - RiseHeightAboveTarget)
                     {
                         Projectile.velocity = Vector2.Zero;
                         Projectile.ai[0] = 1f;
                         Projectile.ai[1] = 0f;
+                        Projectile.netUpdate = true;
                     }
                     break;
 
@@ -69,11 +96,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                     Projectile.velocity = Vector2.Zero;
                     if (Projectile.ai[1] >= ApexPauseTicks)
                     {
-                        Vector2 dir = closest != null ? closest.Center - Projectile.Center : new Vector2(0f, 1f);
-                        if (dir == Vector2.Zero) dir = new Vector2(0f, 1f);
-                        Projectile.velocity = Vector2.Normalize(dir) * HomingStartSpeed;
-                        Projectile.ai[0] = 2f;
-                        Projectile.ai[1] = 0f;
+                        CommitToward(target, HomingStartSpeed);
                     }
                     break;
 
@@ -83,6 +106,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                         float speed = System.Math.Min(Projectile.velocity.Length() + HomingAcceleration, HomingMaxSpeed);
                         Projectile.velocity = Vector2.Normalize(Projectile.velocity) * speed;
                     }
+                    break;
+
+                case 3: // Volley Command: staggered hold, then a slightly faster committed dive.
+                    Projectile.velocity = Vector2.Zero;
+                    if (Projectile.ai[1] >= 0f)
+                        CommitToward(target, HomingStartSpeed + 1.25f);
                     break;
             }
 
@@ -122,6 +151,33 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 Vector2 velocity = Main.rand.NextVector2Circular(3f, 3f);
                 Dust.NewDustPerfect(Projectile.Center, DustID.Torch, velocity, 100, default, Main.rand.NextFloat(1.2f, 2f)).noGravity = true;
             }
+        }
+
+        private void CommitToward(Player target, float speed)
+        {
+            Vector2 direction = target != null
+                ? target.Center - Projectile.Center
+                : new Vector2(0f, 1f);
+            if (direction == Vector2.Zero)
+                direction = new Vector2(0f, 1f);
+            Projectile.velocity = Vector2.Normalize(direction) * speed;
+            Projectile.ai[0] = 2f;
+            Projectile.ai[1] = 0f;
+            Projectile.netUpdate = true;
+        }
+
+        private Player FindOwnerTarget()
+        {
+            int npcIndex = OwnerNpcIndex;
+            if (npcIndex < 0 || npcIndex >= Main.maxNPCs)
+                return null;
+
+            NPC ownerNpc = Main.npc[npcIndex];
+            if (!ownerNpc.active || ownerNpc.target < 0 || ownerNpc.target >= Main.maxPlayers)
+                return null;
+
+            Player target = Main.player[ownerNpc.target];
+            return target.active && !target.dead ? target : null;
         }
 
         private Player FindClosestPlayer()

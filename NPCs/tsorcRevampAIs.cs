@@ -2151,6 +2151,14 @@ namespace tsorcRevamp.NPCs
         {
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
+            // PuppetNPC owns a continuous authored attack sequencer. Its default contract is that
+            // ordinary hits add light poise flinch but cannot replace neutral selection with an
+            // evasive action; only a completed poise break calls PuppetNPC.OnStagger and cancels it.
+            if (npc.ModNPC is Puppets.PuppetNPC puppet && !puppet.AllowsReactiveDefense)
+            {
+                return;
+            }
+
             // Never react while attacking (windup or committed), staggered, or already mid-evasion (don't let a hit
             // restart/override an in-progress dash/retreat/quick-step) — interruption is the poise stagger's job.
             if (globalNPC.InAttack || globalNPC.StaggerTimer > 0 || globalNPC.InEvasion)

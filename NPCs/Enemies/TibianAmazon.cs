@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class TibianAmazon : ModNPC
     {
-        public int throwingKnifeDamage = 8;
+        public int throwingKnifeDamage = 8; // 44, 38 in game
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Skeleton];

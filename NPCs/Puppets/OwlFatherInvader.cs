@@ -7,69 +7,384 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Enemy;
+using tsorcRevamp.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
-    /// Pilot invader (2026-07) for the ported BroadswordRework swing-polish features: swing easing,
-    /// alternating flip, aim-adaptive arc bias, and the slash VFX layer — all opted into HERE ONLY,
-    /// so every other invader (StuddedLeatherWarrior included, the other Axe-archetype user) keeps
-    /// its exact current behavior. Wields EnemyGreatFireAxe (own enemy-only sprite/dimensions, not
-    /// the player AncientFireAxe item directly). Loot still drops the real player AncientFireAxe —
-    /// there's no player-facing GreatFireAxe item, just the enemy-only sprite.
+    /// Great-fire-axe boss built on the puppet V2 swing foundation. Its melee pool is deliberately
+    /// local: Owl Father uses heavy full swings, measured reversals, and high descending attacks,
+    /// while Studded Leather Warrior keeps the agile dual-axe throws, running uppercuts, and spins.
+    /// Wields EnemyGreatFireAxe (own enemy-only sprite/dimensions, not the player AncientFireAxe
+    /// item directly). Loot still drops the real player AncientFireAxe.
     ///
-    /// Ranged attack #1 of a planned 6 ("Fire Volley"): reuses the shared Spiral Fan
+    /// Signature ranged attack "Fire Volley": reuses the shared Spiral Fan
     /// swing+staggered-burst system (axe swing -> 3 fireballs, 30 ticks apart) for the base volley,
     /// then chains via TryContinueSpiralFanChain into an optional reposition (backward leap if
     /// there's room, or a leaping dodge-roll THROUGH the player if they're close) for a second
     /// volley, and optionally escalates into a big arc-jump-over with a third volley fired mid-air.
     /// No recovery after the chain ends either way — a clean hit-and-run poke.
     /// </summary>
+    [AutoloadBossHead]
     public class OwlFatherInvader : PuppetNPC
     {
+        private const string HighLeapFollowUpName = "High Leaping Slam - Rising Follow-Up";
+        private const string GreatfireBreakerName = "Greatfire Breaker";
+        private const string GreatfireCrescentName = "Greatfire Crescent";
+        private const string BackstepReentryName = "Backstep Re-entry Chop";
+        private const string VolleyCommandName = "Volley Command";
+        private const string FirefallArrayName = "Firefall Array";
+        private const string ApexDiveName = "Apex Dive Cleave";
+
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/OwlFatherInvader_Head_Boss";
+
         protected override string InvaderTitle => "Owl Father";
+
+        protected override void RunMovementAI(float speedMult)
+        {
+            var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.NavSearchRadius = 70;
+            globalNPC.RemembersLastKnownPos = true;
+
+            SmartFighter4AI.Run(NPC,
+                topSpeed: TopSpeed * speedMult,
+                acceleration: Acceleration,
+                doorBreakingDamage: 4,
+                // This is SF4's re-aggro radius, not Owl Father's preferred attack distance.
+                // Match it to Fire Volley's outer limit so the melee boss keeps hunting at range.
+                attackRange: 700f);
+        }
 
         protected override int HeadArmorItemType => ModContent.ItemType<OwlFatherMask>();
         protected override int BodyArmorItemType => ModContent.ItemType<OwlFatherArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<OwlFatherGreaves>();
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyGreatFireAxe>();
-        protected override int RangedWeaponItemType => -1; // no ranged yet — melee-only pilot
+        // Fire Volley is a bespoke special attack rather than a conventional held ranged weapon.
+        protected override int RangedWeaponItemType => -1;
         protected override int RangedDamage => 0;
 
         protected override int MeleeDamage => 30;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Axe;
 
+        private static MeleeComboStep AxeSwing(
+            ComboMotion motion,
+            int telegraphTicks,
+            int attackTicks,
+            int pauseAfter = 0,
+            float damageMult = 1f,
+            float forwardPushMult = 0f,
+            float reachMult = 1.15f,
+            float leapHeightMult = 1f,
+            float leapForwardSpeedMult = 1f,
+            SwingEaseStyle ease = SwingEaseStyle.Smooth)
+            => new MeleeComboStep
+            {
+                Motion = motion,
+                TelegraphTicks = telegraphTicks,
+                AttackTicks = attackTicks,
+                PostStepPause = pauseAfter,
+                DamageMult = damageMult,
+                ReachMult = reachMult,
+                ForwardPushMult = forwardPushMult,
+                SwingSpeedMult = 1f,
+                Ease = ease,
+                LeapHeightMult = leapHeightMult,
+                LeapForwardSpeedMult = leapForwardSpeedMult,
+            };
+
+        // The two V2 fundamentals are copied as definitions rather than shared by reference with
+        // Studded. Their timings can now diverge as Owl's heavier axe is tuned.
+        private static readonly PuppetAttackClip GreatfireDownwardSwingV2 = new PuppetAttackClip(
+            name: "Greatfire Downward Swing",
+            pose: PuppetPosePreset.TwoHandedSwing,
+            windupTicks: 40,
+            activeTicks: 26,
+            recoveryTicks: 22,
+            oppositeWindupRotation: 1.0f,
+            attackStartRotation: -1.3f,
+            attackEndRotation: 1.0f,
+            swingEase: SwingEaseStyle.Whip);
+
+        private static readonly PuppetAttackClip GreatfireUpwardSwingV2 = new PuppetAttackClip(
+            name: "Greatfire Upward Swing",
+            pose: PuppetPosePreset.TwoHandedSwing,
+            windupTicks: 38,
+            activeTicks: 25,
+            recoveryTicks: 22,
+            oppositeWindupRotation: -1.0f,
+            attackStartRotation: 1.0f,
+            attackEndRotation: -1.0f,
+            swingEase: SwingEaseStyle.Smooth);
+
+        private static readonly MeleeCombo[] OwlFatherAxeCombos = new[]
+        {
+            new MeleeCombo
+            {
+                Name = "Greatfire Downward Swing",
+                BaseWeight = 70,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 75,
+                MoveBrake = 0.22f,
+                RuntimeV2Clip = GreatfireDownwardSwingV2,
+                Steps = new[] { AxeSwing(ComboMotion.OverheadArc, 40, 26,
+                    damageMult: 1.15f, forwardPushMult: 0.42f, reachMult: 1.18f,
+                    ease: SwingEaseStyle.Whip) },
+            },
+            new MeleeCombo
+            {
+                Name = "Greatfire Upward Swing",
+                BaseWeight = 65,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Orange,
+                CooldownAfterUse = 80,
+                MoveBrake = 0.20f,
+                RuntimeV2Clip = GreatfireUpwardSwingV2,
+                Steps = new[] { AxeSwing(ComboMotion.UnderhandArc, 38, 25,
+                    damageMult: 1.12f, forwardPushMult: 0.45f, reachMult: 1.18f) },
+            },
+            new MeleeCombo
+            {
+                Name = "Down-Up Reversal",
+                BaseWeight = 90,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 145,
+                MoveBrake = 0.16f,
+                Steps = new[]
+                {
+                    AxeSwing(ComboMotion.OverheadArc, 34, 25, pauseAfter: 9,
+                        damageMult: 0.88f, forwardPushMult: 0.48f),
+                    AxeSwing(ComboMotion.UnderhandArc, 0, 27,
+                        damageMult: 1.18f, forwardPushMult: 0.58f, reachMult: 1.18f),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = "Up-Down Reversal",
+                BaseWeight = 80,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold,
+                CooldownAfterUse = 150,
+                MoveBrake = 0.16f,
+                Steps = new[]
+                {
+                    AxeSwing(ComboMotion.UnderhandArc, 34, 25, pauseAfter: 9,
+                        damageMult: 0.88f, forwardPushMult: 0.48f),
+                    AxeSwing(ComboMotion.OverheadArc, 0, 28,
+                        damageMult: 1.22f, forwardPushMult: 0.58f, reachMult: 1.20f,
+                        ease: SwingEaseStyle.Whip),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = "Advancing Down-Up",
+                BaseWeight = 65,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.DarkOrange,
+                CooldownAfterUse = 185,
+                MoveBrake = 0.06f,
+                Steps = new[]
+                {
+                    AxeSwing(ComboMotion.OverheadArc, 38, 27, pauseAfter: 8,
+                        damageMult: 0.95f, forwardPushMult: 0.78f, reachMult: 1.18f),
+                    AxeSwing(ComboMotion.UnderhandArc, 0, 29,
+                        damageMult: 1.28f, forwardPushMult: 0.88f, reachMult: 1.22f),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = "Delayed Heavy Chop",
+                BaseWeight = 45,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red,
+                CooldownAfterUse = 230,
+                HeavyCommit = true,
+                HyperArmor = true,
+                MoveBrake = 0.48f,
+                Steps = new[] { AxeSwing(ComboMotion.OverheadArc, 54, 32,
+                    damageMult: 1.80f, forwardPushMult: 0.22f, reachMult: 1.28f,
+                    ease: SwingEaseStyle.Whip) },
+            },
+            new MeleeCombo
+            {
+                Name = "High Leaping Slam",
+                BaseWeight = 65,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 220,
+                HeavyCommit = true,
+                HyperArmor = true,
+                RangedStartOnly = true,
+                MoveBrake = 0.15f,
+                Steps = new[] { AxeSwing(ComboMotion.LeapSlam, 44, 115,
+                    damageMult: 1.55f, reachMult: 1.28f,
+                    leapHeightMult: 1.18f, leapForwardSpeedMult: 1.05f) },
+            },
+            new MeleeCombo
+            {
+                Name = HighLeapFollowUpName,
+                BaseWeight = 42,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Gold,
+                CooldownAfterUse = 280,
+                HeavyCommit = true,
+                HyperArmor = true,
+                RangedStartOnly = true,
+                MoveBrake = 0.15f,
+                Steps = new[]
+                {
+                    AxeSwing(ComboMotion.LeapSlam, 48, 118, pauseAfter: 10,
+                        damageMult: 1.30f, reachMult: 1.26f,
+                        leapHeightMult: 1.22f, leapForwardSpeedMult: 1.05f),
+                    AxeSwing(ComboMotion.UnderhandArc, 0, 28,
+                        damageMult: 1.25f, forwardPushMult: 0.38f, reachMult: 1.20f),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = GreatfireBreakerName,
+                BaseWeight = 52,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 250,
+                HeavyCommit = true,
+                HyperArmor = true,
+                MoveBrake = 0.52f,
+                Steps = new[] { AxeSwing(ComboMotion.OverheadArc, 56, 34,
+                    damageMult: 1.65f, forwardPushMult: 0.18f, reachMult: 1.28f,
+                    ease: SwingEaseStyle.Whip) },
+            },
+            new MeleeCombo
+            {
+                Name = GreatfireCrescentName,
+                BaseWeight = 75,
+                Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Gold,
+                CooldownAfterUse = 170,
+                RangedStartOnly = true,
+                MoveBrake = 0.36f,
+                Steps = new[] { AxeSwing(ComboMotion.OverheadArc, 42, 30,
+                    damageMult: 0.80f, reachMult: 1.16f,
+                    ease: SwingEaseStyle.Whip) },
+            },
+            new MeleeCombo
+            {
+                Name = BackstepReentryName,
+                BaseWeight = 55,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Orange,
+                CooldownAfterUse = 230,
+                HeavyCommit = true,
+                HyperArmor = true,
+                MoveBrake = 0f,
+                Steps = new[]
+                {
+                    AxeSwing(ComboMotion.BackstepRaise, 30, 70, pauseAfter: 7, damageMult: 0f),
+                    AxeSwing(ComboMotion.OverheadArc, 0, 29,
+                        damageMult: 1.42f, forwardPushMult: 1.05f, reachMult: 1.24f,
+                        ease: SwingEaseStyle.Whip),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = VolleyCommandName,
+                BaseWeight = 80,
+                Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 210,
+                RangedStartOnly = true,
+                MoveBrake = 0.42f,
+                Steps = new[] { AxeSwing(ComboMotion.UnderhandArc, 46, 30,
+                    damageMult: 0.55f, reachMult: 1.15f) },
+            },
+            new MeleeCombo
+            {
+                Name = FirefallArrayName,
+                BaseWeight = 62,
+                Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Red,
+                CooldownAfterUse = 300,
+                HeavyCommit = true,
+                HyperArmor = true,
+                RangedStartOnly = true,
+                MoveBrake = 0.55f,
+                Steps = new[] { AxeSwing(ComboMotion.OverheadArc, 52, 32,
+                    damageMult: 0f, ease: SwingEaseStyle.Whip) },
+            },
+            new MeleeCombo
+            {
+                Name = ApexDiveName,
+                BaseWeight = 58,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Gold,
+                CooldownAfterUse = 310,
+                HeavyCommit = true,
+                HyperArmor = true,
+                RangedStartOnly = true,
+                MoveBrake = 0f,
+                Steps = new[] { AxeSwing(ComboMotion.ApexDiveCleave, 50, 150,
+                    damageMult: 1.50f, reachMult: 1.30f,
+                    leapHeightMult: 1.20f, leapForwardSpeedMult: 1.05f,
+                    ease: SwingEaseStyle.Whip) },
+            },
+        };
+
+        protected override MeleeCombo[] MeleeComboPoolOverride => OwlFatherAxeCombos;
+
         // ── Swing-polish opt-ins — THE reason this invader exists ──────────────────
         protected override bool UseSwingEasing => true;
-        protected override bool UseAlternateFlip => true;
+        // Attack direction is authored explicitly. Randomly reversing an arc makes the cutting edge
+        // and its telegraph harder to read on this single-bladed axe.
+        protected override bool UseAlternateFlip => false;
         protected override bool UseAimAdaptiveArc => true;
+        protected override bool UseLogicalMeleeTelegraphs => true;
+        protected override bool UseCompositeArmSwing => true;
+        protected override bool MirrorMeleeSwingRotationByFacing => true;
         protected override bool HasSlashVFX => true;
         protected override Color SlashVFXColor => Color.OrangeRed; // matches AncientFireAxe's own slashColor
+        protected override float SlashVFXOpacity => 0.48f;
+        protected override float SlashVFXScale => 0.55f;
 
         // ── Axe draw tuning ─────────────────────────────────────────────────────────
-        // GreatFireAxe (72x64) has an extended handle vs the old sprite, with the grip sitting
-        // right at the bottom-left corner. Rotation offset/scale are still starting guesses from
-        // the old shorter-handled sprite — both likely need a fresh in-game tuning pass now that
-        // the handle is longer (a longer handle shifts where the swing visually "leads" from).
-        protected override Vector2 MeleeHandleNorm => new Vector2(0.08f, 0.92f);
+        // Grip above the butt so every pose leaves a short, visible section below the hand.
+        protected override Vector2 MeleeHandleNorm => new Vector2(0.12f, 0.86f);
         protected override float MeleeWeaponDrawScale => 0.85f;
+        protected override float ComboReachBase => 90f;
         protected override float MeleeWeaponRotationOffset => 1.0f;
 
         protected override float TopSpeed => 2.65f;
         protected override float Acceleration => 0.095f;
         protected override float MeleeRange => 82f;
         protected override float StabRange => 150f;
-        protected override float ComboMaxStartRange => 210f;
-        protected override int MeleeComboChance => 85;
-        protected override float ComboTelegraphMultiplier => 1.45f;
+        protected override float ComboMaxStartRange => 360f;
+        protected override int ClosingDistanceMaxTicks => 130;
+        protected override int MeleeComboChance => 100;
+        protected override int RangedStartMeleeComboChance => 70;
+        protected override float ComboTelegraphMultiplier => 1.20f;
+        protected override float ComboTelegraphAdvanceSpeedMult => 0.55f;
+        protected override float ComboTelegraphAdvanceStopDistance => 70f;
+        protected override int MeleeRecoveryTicks => 22;
+        protected override int CasualStrollChance => 0;
+
+        // One interruptible final-phase drink. It can restore a meaningful amount from critical
+        // life, but the cap keeps Owl below one third so final-phase attacks remain unlocked.
+        protected override int EstusChargesMax => 1;
+        protected override float EstusHealFraction => 0.15f;
+        protected override float FirstHealThreshold => 0.24f;
+        protected override float SecondHealThreshold => -1f;
+        protected override float HealLifeCapFraction => 0.329f;
+        protected override int HealCooldownTicks => 900;
+        protected override int HealAnimationTicks => 110;
+        protected override float RecentDamageThreshold => 1f;
+        protected override float FleeToHealDistance => 20f * 16f;
+        protected override int FleeToHealMaxTicks => 120;
 
         protected override int MeleeTelegraphTicks => 36;
-        protected override int StabTelegraphTicks => 40;
-        protected override int StabAttackTicks => 8;
-        protected override int StabRecoveryTicks => 34;
-        protected override bool CanStab => true;
+        protected override bool CanStab => false;
 
         protected override Color MeleeTelegraphFlashColor => new Color(255, 120, 40);
 
@@ -116,12 +431,6 @@ namespace tsorcRevamp.NPCs.Puppets
             TryMeleeHit();
         }
 
-        protected override void DoStabAttack()
-        {
-            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
-            TryMeleeHit(reach: StabRange * 0.55f);
-        }
-
         protected override void DoRangedAttack()
         {
             // No ranged weapon yet (RangedWeaponItemType = -1 keeps this from ever being called) —
@@ -133,6 +442,214 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override void OnBladeHit(Player player)
         {
             player.AddBuff(BuffID.OnFire, 6 * 60);
+        }
+
+        protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
+        {
+            if (combo.Name == GreatfireBreakerName || combo.Name == BackstepReentryName)
+                return healthFraction <= 0.66f;
+
+            if (combo.Name == VolleyCommandName)
+                return healthFraction <= 1f / 3f && CountCommandableFireballs() > 0;
+
+            if (combo.Name == FirefallArrayName || combo.Name == ApexDiveName)
+                return healthFraction <= 1f / 3f;
+
+            return true;
+        }
+
+        protected override void OnMeleeComboTelegraphTick(
+            MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            if (combo.Name == FirefallArrayName && elapsed == 10)
+                SpawnFirefallArray();
+            else if (combo.Name == VolleyCommandName && elapsed == 0)
+                ReserveSuspendedFireballs();
+        }
+
+        protected override void OnMeleeComboAttackTick(
+            MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            if (elapsed != total / 2)
+                return;
+
+            if (combo.Name == GreatfireCrescentName)
+                SpawnGreatfireCrescent();
+            else if (combo.Name == VolleyCommandName)
+                CommandSuspendedFireballs();
+        }
+
+        private void SpawnGreatfireCrescent()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            int direction = NPC.direction < 0 ? -1 : 1;
+            Vector2 origin = PuppetHandPosition + new Vector2(direction * 22f, 2f);
+            Projectile.NewProjectile(
+                NPC.GetSource_FromThis(),
+                origin,
+                new Vector2(direction * 9.5f, 0f),
+                ModContent.ProjectileType<PuppetGreatfireCrescent>(),
+                22,
+                3f,
+                Main.myPlayer,
+                PuppetGreatfireCrescent.DirectMode);
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.62f, Pitch = 0.10f }, origin);
+        }
+
+        private void SpawnGreatfireBreakerWaves()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            int projectileType = ModContent.ProjectileType<PuppetGreatfireCrescent>();
+            for (int direction = -1; direction <= 1; direction += 2)
+            {
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromThis(),
+                    NPC.Bottom + new Vector2(direction * 14f, -24f),
+                    new Vector2(direction * 7f, 0f),
+                    projectileType,
+                    24,
+                    4f,
+                    Main.myPlayer,
+                    PuppetGreatfireCrescent.GroundMode);
+            }
+        }
+
+        private void SpawnFirefallArray()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || !NPC.HasValidTarget)
+                return;
+
+            Player target = Main.player[NPC.target];
+            float predictedX = target.Center.X + target.velocity.X * 18f;
+            float[] offsets = { 0f, 72f, -72f };
+            int[] delays = { 58, 72, 86 };
+            int projectileType = ModContent.ProjectileType<PuppetFirefallPillar>();
+
+            for (int i = 0; i < offsets.Length; i++)
+            {
+                float x = predictedX + offsets[i];
+                float groundY = PuppetGroundDustWave.FindGroundY(x, target.Bottom.Y);
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromThis(),
+                    new Vector2(x, groundY - 2f),
+                    Vector2.Zero,
+                    projectileType,
+                    26,
+                    3f,
+                    Main.myPlayer,
+                    delays[i]);
+            }
+
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.52f, Pitch = -0.22f }, target.Center);
+        }
+
+        private int CountCommandableFireballs()
+        {
+            int count = 0;
+            int projectileType = ModContent.ProjectileType<EnemyGreatFireAxeFireball>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (!projectile.active || projectile.type != projectileType)
+                    continue;
+                if (projectile.ModProjectile is EnemyGreatFireAxeFireball fireball
+                    && fireball.CanBeCommandedBy(NPC.whoAmI))
+                    count++;
+            }
+            return count;
+        }
+
+        private void CommandSuspendedFireballs()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            int commandIndex = 0;
+            int projectileType = ModContent.ProjectileType<EnemyGreatFireAxeFireball>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (!projectile.active || projectile.type != projectileType)
+                    continue;
+                if (projectile.ModProjectile is not EnemyGreatFireAxeFireball fireball
+                    || !fireball.CanBeCommandedBy(NPC.whoAmI))
+                    continue;
+
+                fireball.CommandDive(commandIndex * 10);
+                commandIndex++;
+            }
+
+            if (commandIndex > 0)
+                SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.62f, Pitch = -0.10f }, NPC.Center);
+        }
+
+        private void ReserveSuspendedFireballs()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            int projectileType = ModContent.ProjectileType<EnemyGreatFireAxeFireball>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (!projectile.active || projectile.type != projectileType)
+                    continue;
+                if (projectile.ModProjectile is EnemyGreatFireAxeFireball fireball
+                    && fireball.CanBeCommandedBy(NPC.whoAmI))
+                    fireball.ReserveForCommand(90);
+            }
+        }
+
+        protected override bool ShouldContinueMeleeCombo(
+            string comboName, int nextStepIndex, Player target, bool previousStepHit)
+        {
+            if (comboName == HighLeapFollowUpName && nextStepIndex == 1)
+            {
+                // The rising cut is a landing conversion, not a disconnected swing at empty space.
+                return previousStepHit || NPC.Distance(target.Center) <= 140f;
+            }
+
+            return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
+        }
+
+        protected override void OnComboStepCompleted(MeleeComboStep step)
+        {
+            bool breakerImpact = ActiveMeleeComboName == GreatfireBreakerName
+                && step.Motion == ComboMotion.OverheadArc;
+            bool landingImpact = (step.Motion == ComboMotion.LeapSlam
+                || step.Motion == ComboMotion.ApexDiveCleave)
+                && NPC.velocity.Y == 0f;
+            if (!breakerImpact && !landingImpact)
+                return;
+
+            if (breakerImpact)
+                SpawnGreatfireBreakerWaves();
+
+            UsefulFunctions.ScreenShake(
+                NPC.Bottom,
+                breakerImpact ? 3.75f : 3.25f,
+                breakerImpact ? 11 : 9,
+                distanceFalloff: 560f);
+            SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.42f, Pitch = 0.18f }, NPC.Bottom);
+
+            for (int i = 0; i < 18; i++)
+            {
+                Vector2 velocity = new Vector2(
+                    Main.rand.NextFloat(-4.2f, 4.2f),
+                    Main.rand.NextFloat(-4.8f, -0.7f));
+                Dust ember = Dust.NewDustPerfect(
+                    NPC.Bottom + new Vector2(Main.rand.NextFloat(-18f, 18f), -2f),
+                    DustID.Torch,
+                    velocity,
+                    80,
+                    default,
+                    Main.rand.NextFloat(1.0f, 1.55f));
+                ember.noGravity = true;
+            }
         }
 
         // ── Fire Volley (ranged attack #1 of 6) ─────────────────────────────────────
@@ -175,8 +692,9 @@ namespace tsorcRevamp.NPCs.Puppets
 
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.6f, PitchVariance = 0.2f }, NPC.Center);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyGreatFireAxeFireball>(),
-                20, 2f, Main.myPlayer);
+                ModContent.ProjectileType<EnemyGreatFireAxeFireball>(),
+                20, 2f, Main.myPlayer,
+                ai0: 0f, ai1: 0f, ai2: NPC.whoAmI + 1f);
         }
 
         // ── Chain: reposition (backward leap / dodge-through) -> volley 2 -> optional arc-jump -> volley 3

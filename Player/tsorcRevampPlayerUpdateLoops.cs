@@ -3074,7 +3074,12 @@ namespace tsorcRevamp
 
             // Dungeon during Super Hard Mode: keep Suppressed topped up at a short fixed duration (rather than
             // silently re-adding every tick) so enemy attacks can also inflict it and have that duration matter.
-            if (Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode) { Player.AddBuff(ModContent.BuffType<Suppressed>(), 60); }
+            // A lit bonfire is a safe rest point and must not immediately reapply the debuff after buff updates.
+            if (Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode
+                && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
+            {
+                Player.AddBuff(ModContent.BuffType<Suppressed>(), 60);
+            }
 
             if (gilled && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidAmount != 0 && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidType == LiquidID.Water)
             {

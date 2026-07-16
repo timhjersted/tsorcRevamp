@@ -38,6 +38,7 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Projectiles.Summon;
@@ -126,6 +127,7 @@ namespace tsorcRevamp.NPCs
     public partial class tsorcRevampGlobalNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
+        private static readonly SoundStyle DefeatBannerSound = new SoundStyle("tsorcRevamp/Sounds/DarkSouls/boss-defeated") with { Volume = 1f };
         private const int GhostWallTeleportSmokeTicks = 30;
         private const int GhostWallTeleportSnapTicks = 15;
         private const int GhostWallMaxThicknessTiles = 4;
@@ -562,7 +564,7 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.SuperHardMode.Gwyn>(0.15f, 150f); // the final boss — sturdiest poise in the game
             Add<Bosses.SuperHardMode.Artorias>(0.15f, 120f);
             Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
-            Add<Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
+            Add<Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
             Add<Bosses.HeroofLumelia>(0.15f, 120f);
             Add<Enemies.SuperHardMode.SlograII>(0.4f, 50f);
@@ -2247,6 +2249,29 @@ namespace tsorcRevamp.NPCs
         {
             Player LocalPlayer = Main.LocalPlayer;
 
+            if (Main.netMode != NetmodeID.Server && !IsTeleportIllusion)
+            {
+                if (EncounterPresentationRegistry.TryGetCompletedEncounter(npc, out BossEncounterPresentation encounter))
+                {
+                    if (encounter.ShowsDefeatBanner)
+                    {
+                        tsorcRevamp.ShowAnnouncementBanner(
+                            EncounterPresentationRegistry.GetBannerText(encounter.DefeatBanner),
+                            encounter.TomeColor);
+                        SoundEngine.PlaySound(DefeatBannerSound);
+                    }
+                }
+                else if (npc.ModNPC is PuppetNPC puppet && puppet.ShouldAnnounceInvaderDefeat)
+                {
+                    EncounterBannerStyle style = puppet.InvaderDefeatBanner;
+                    Color bannerColor = style == EncounterBannerStyle.GreatInvaderVanquished
+                        ? new Color(182, 92, 224)
+                        : new Color(238, 143, 55);
+                    tsorcRevamp.ShowAnnouncementBanner(EncounterPresentationRegistry.GetBannerText(style), bannerColor);
+                    SoundEngine.PlaySound(DefeatBannerSound);
+                }
+            }
+
             if (npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.EmpressOfLight.Forcefield"), Color.Cyan);
@@ -2331,7 +2356,7 @@ namespace tsorcRevamp.NPCs
                         // check whether the SHM boss was killed
                         if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>()
+                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
@@ -2344,7 +2369,7 @@ namespace tsorcRevamp.NPCs
                             tsorcRevampWorld.isHellkiteDragonDead = true;
                         }
 
-                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>())
+                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>())
                         {
                             tsorcRevampWorld.isOolacileSerpentDead = true;
                         }

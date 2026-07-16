@@ -108,7 +108,7 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.PlanteraBossBag)
             {
                 itemLoot.RemoveWhere(_ => true);
-                itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfLife>()));
+                // CrestOfLife removed — Plantera is optional now, see MindCube.cs
                 itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 15, 20));
                 itemLoot.Add(ItemDropRule.Common(ItemID.TempleKey));
                 itemLoot.Add(ItemDropRule.Common(ItemID.GrenadeLauncher));

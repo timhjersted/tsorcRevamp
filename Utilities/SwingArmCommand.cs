@@ -18,7 +18,7 @@ namespace tsorcRevamp.Utilities
     ///   /swingarm stretch none|quarter|threequarters|full
     ///   /swingarm flip [on|off]         → toggle the blade-leads-the-swing mirror (single-bladed weapons)
     ///   /swingarm aim [on|off]          → toggle full-360 aim-centered swing (axe archetype)
-    ///   /swingarm log clear             → truncate tsorcRevamp-puppet-swing.log
+    ///   /swingarm log clear             → clear the structured attack and older puppet debug logs
     ///   /swingarm status                → print current values
     /// </summary>
     public class SwingArmCommand : ModCommand
@@ -104,14 +104,18 @@ namespace tsorcRevamp.Utilities
                         ClearLog(caller);
                         break;
                     }
+                    bool wasLogging = PuppetNPC.SwingDebugLog;
                     if (args.Length >= 2 && args[1].ToLowerInvariant() == "on")
                         PuppetNPC.SwingDebugLog = true;
                     else if (args.Length >= 2 && args[1].ToLowerInvariant() == "off")
                         PuppetNPC.SwingDebugLog = false;
                     else
                         PuppetNPC.SwingDebugLog = !PuppetNPC.SwingDebugLog;
+                    if (wasLogging && !PuppetNPC.SwingDebugLog)
+                        PuppetAttackTelemetry.StopAll("logging-disabled");
                     caller.Reply(
-                        $"Swing debug log: {(PuppetNPC.SwingDebugLog ? "ON" : "OFF")} (Logs/tsorcRevamp-puppet-swing.log)",
+                        $"Puppet attack telemetry: {(PuppetNPC.SwingDebugLog ? "ON" : "OFF")} " +
+                        $"(Logs/{PuppetAttackTelemetry.FileName})",
                         PuppetNPC.SwingDebugLog ? Color.Lime : Color.Gray);
                     break;
 
@@ -147,16 +151,21 @@ namespace tsorcRevamp.Utilities
             caller.Reply(
                 $"Aim-centered swing: {(PuppetNPC.AimSwingMasterEnable ? "ON (full 360 aim)" : "OFF (legacy fixed arc)")}",
                 PuppetNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
+            caller.Reply(
+                $"Puppet attack telemetry: {(PuppetNPC.SwingDebugLog ? "ON" : "OFF")} (Logs/{PuppetAttackTelemetry.FileName})",
+                PuppetNPC.SwingDebugLog ? Color.Lime : Color.Gray);
         }
 
         private static void ClearLog(CommandCaller caller)
         {
             try
             {
-                string sep = System.IO.Path.DirectorySeparatorChar.ToString();
-                string path = Main.SavePath + sep + "Logs" + sep + "tsorcRevamp-puppet-swing.log";
-                System.IO.File.WriteAllText(path, string.Empty);
-                caller.Reply("Swing debug log cleared.", Color.Lime);
+                string logDir = System.IO.Path.Combine(Main.SavePath, "Logs");
+                System.IO.Directory.CreateDirectory(logDir);
+                PuppetAttackTelemetry.Clear();
+                System.IO.File.WriteAllText(System.IO.Path.Combine(logDir, "tsorcRevamp-puppet-swing.log"), string.Empty);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(logDir, "tsorcRevamp-puppet-weapon.log"), string.Empty);
+                caller.Reply($"Puppet telemetry cleared ({PuppetAttackTelemetry.FileName}).", Color.Lime);
             }
             catch (System.Exception e)
             {

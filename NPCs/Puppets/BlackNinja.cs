@@ -12,8 +12,11 @@ using tsorcRevamp.Items.Weapons.Melee.Flails;
 using System;
 namespace tsorcRevamp.NPCs.Puppets
 {
+    [AutoloadBossHead]
     public class BlackNinja : PuppetNPC, IFlailAnchor
     {
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/BlackNinja_Head_Boss";
+
         protected override string InvaderTitle => "Black Ninja";
 
         protected override void RunMovementAI(float speedMult)

@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class RedCloudHunter : ModNPC
     {
-        public int archerBoltDamage = 30; //was 85, whoa, how did no one complain about this?
+        public int archerBoltDamage = 30; //was 85, whoa, how did no one complain about this? current stats do 96/78/84 random in game
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 20;
@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.height = 48;
             NPC.knockBackResist = 0.6f;
-            NPC.scale = 1.05f;
+            NPC.scale = 1.0f;
             NPC.rarity = 3;
             Banner = NPC.type;
             NPC.buffImmune[BuffID.Confused] = true;

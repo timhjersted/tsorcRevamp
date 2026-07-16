@@ -12,9 +12,14 @@ namespace tsorcRevamp.NPCs.Puppets
     /// Mythril-tier visual prototype for Khaios. His magic loadout is intentionally left open;
     /// Wyrmkiller is currently his close-range fallback and only implemented attack.
     /// </summary>
+    [AutoloadBossHead]
     public class Khaios : PuppetNPC
     {
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/Khaios_Head_Boss";
+
         protected override string InvaderTitle => "Khaios";
+        protected override bool AnnounceInvaderDefeat => false;
+        protected override bool IsGreatInvader => true;
 
         protected override int HeadArmorItemType => ItemID.SpookyHelmet;
         protected override int BodyArmorItemType => ItemID.VortexBreastplate;

@@ -49,6 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemySwordOfGwyn>();
         protected override int RangedWeaponItemType => -1; // melee + bespoke fire/lightning magic
+        protected override float MeleeWeaponDrawScale => 0.5f;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
 
@@ -61,12 +62,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float Acceleration => _wrathActive ? 0.19f : 0.14f;
         protected override int MeleeComboChance => _wrathActive ? 95 : 85;
 
-        // ── Wings (storm-only flight; the wings themselves show all fight) ───────
+        // ── Wings (storm-only flight; hidden whenever Gwyn is grounded) ─────────
         // Angel wings for the god of sunlight — traded for flame wings once the Wrath ignites.
         // Autonomous flight is fully disabled: the flight controller only lifts off when the
         // Sunlight Spear Storm commands it (Flight.RequestTakeoff in TickSpearStorm).
         protected override bool HasWings => true;
         protected override int WingsAccessoryItemType => _wrathActive ? ItemID.FlameWings : ItemID.AngelWings;
+        protected override bool ShowWingsWhenGrounded => false;
         protected override int RandomTakeoffChance => 0;
         protected override float FlightHeightTrigger => 99999f;
         protected override float FlightHpEscalationFrac => 0f;
@@ -226,7 +228,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<EarthFiendLich>())) ||
             !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<FireFiendMarilith>())) ||
             !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())) ||
-            !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Blight>())) ||
             !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<GhostWyvernMage.WyvernMageShadow>()));
 
         int protectedHoldTimer;   // keeps the 9999 penalty (and the broadcast) from re-triggering every tick
@@ -860,7 +861,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _advanceTimer = 180; //3 seconds of relentless
                 _advanceWallTicks = 0;
                 SetAttackLabel("Unbroken Advance", 190);
-                SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
                 if (Main.netMode != NetmodeID.Server)
                 {
                     for (int i = 0; i < 24; i++)

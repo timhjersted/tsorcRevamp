@@ -322,6 +322,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IonicFury>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.TempleKey));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedMechanicalScrap>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalBatteryPiece));
             itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 20, 35));

@@ -956,6 +956,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedMechanicalScrap>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Lore.CrestOfSteel>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.TempleKey));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.HallowedBar, 1, 25, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFright, 1, 20, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheMachineMask>(), 7));

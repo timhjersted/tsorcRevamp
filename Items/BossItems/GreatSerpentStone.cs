@@ -6,7 +6,7 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
-    class OolacileSerpentStone : ModItem
+    class GreatSerpentStone : ModItem
     {
         //Placeholder icon reusing HellkiteStone's art until this boss gets its own.
         public override string Texture => "tsorcRevamp/Items/BossItems/HellkiteStone";
@@ -28,13 +28,13 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>());
             return true;
         }
 
         public override bool CanUseItem(Player player)
         {
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>()))
             {
                 return false;
             }

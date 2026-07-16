@@ -1,29 +1,34 @@
 ADVENTURE MAP
-Tim Hjersted aka Vibrent / The ENTIRE map!
-MarfMasterofDesaster / Select loot adjustments
+-------------------------------
+Tim Hjersted aka Vibrent / the entire map, built from 2012-2014, 2018-2024, 2026
 
+ADVENTURE REMIX MAP
+-------------------------------
+Xelvaa / a massive expansion on top of the original
 
-MOD REVAMP (tModloader Edition)
+MOD REVAMP (2018-2026)
+-------------------------------
 Zeodexic / programmer
-Chroma Equinox / programmer + spriter
 RecursiveCollapse / programmer
-Vibrent / programmer + sprite editor
+Chroma Equinox / programmer + spriter
+Vibrent / mod founder, programmer + spriter
 MarfMasterofDesaster / programmer + beta testing
 Xelvaa / programmer + remix map builder
 NephilimDeath / spriter + translator
 JOI3 / spriter
+Logar / spriter
 Fezzy Draws / spriter
+Omnir / major npc & item sprite contributions
 W1k / coding help and extensive content contributions
 RustySlave / programmer + translator
-chessbergers1234 / spriter
+Chessbergers1234 / spriter
 RAWTHORN / spriter
-stinky_lizard / programmer
-Logar / spriter
+Stinky_lizard / programmer
 Raisin / spriter
 Thornstromb / programmer
 HakureiYoru / translator
-urgivhnsd / translator
-kirill / translator
+Urgivhnsd / translator
+Kirill / translator
 JayTeff / programmer
 Linklight2 / programmer
 Blasfah / spriting
@@ -31,7 +36,7 @@ Frous / spriting + beta testing
 Mddznyan / spriting
 Articulo / sprites from Dark Souls Vanity
 Maxisi / programmer
-qsab101 / Seath sprite
+Qsab101 / Seath sprite
 Hugekraken / Detonation Signal sprite
 ヨーグルト / Interstellar Vessel sprite
 Julian/Jbug / Challenger's Glove sprite
@@ -40,48 +45,48 @@ Zane Little / Theremin sound effects
 Anilmky -Juno- / Sunset Quasar sprite
 BlazeDayzYT / Healing Dusk Crown Ring sprite
 Sapharan / two enemies
-mratitherat / Radiant Strand and Sundered Moon sprites
+Mratitherat / Radiant Strand and Sundered Moon sprites
 LuckyLuke / Enchanted Moon Charm, Upgraded Mirror, and Oil Pot sprites
 
+ORIGINAL 2012 MOD 
+-------------------------------
+Tim Hjersted aka Vibrent / mod director + new content + mod remixing & compiling
+Yoraiz0r / numerous dark souls features and programming help
+Omnir / major contributions from omnir's mod
+W1k / w1k's mod + help
+Draykon / dark souls system + curtain of bullets, endgame
+Surfpup / no mining or placing tiles code
+Obsidian54 / contributions from obsidian's mod
+blahblahbal et al / contributions from avalon mod
+VortexJ / contributions from unobtanium mod
+Zoodletec / contributions from necro pack
+Kujulo / contributions from kujulo's mod dlc
+Dogsonofawolf / npc sprite contributions
+Reborn Team / contributions from reborn mod
+Phlebas / debuffs code
+FatObeseBird / contributions from league of legends mod
+NerdyBoy, Reactorcore / contributions from alchemistry mod
+PolarBMD / contributions from terraria_
+Delra / contributions from monster hunter mod
+KaneStaff / contributions from zelda mod
+FrosTr / contributions from frostr's misc pack
+Scooterboot9697 / contributions from metroid mod
+Pwnager / contributions from empowered endgame
+SuperWeegee1 / contributions from dream mod (Also credit Dream Team)
+Mitchellex / WululuAcheld / contributions from phoenix down & bookmarks mods
+Wooren / sprites
+Sapharan / contributions from legend of sapharan mod
+Flashkirby99 / contributions from flashkirby's weapons mod
+Zero-Exodus/Omnir / dark, blood, crystal knight enemies, dark cloud sprites
+Heartstone25 / covenant of artorias blood moon code
+Ace the Best / contributions from ace the best's final fantasy modification
+Solenix / contributions from vertigo elemental mod
+MiraiMai / duel wielding mod aka mainslot-0
+Eikester / made game launcher and improved tConfig installation
 
-ORIGINAL MOD (tConfig Edition)
-Tim Hjersted aka Vibrent / Mod Director + New content + Mod Remixing & Compiling
-Yoraiz0r / Dark Souls + Dual Wielding + More Dark Souls features
-Omnir / Omnir's Mod
-W1k / W1k's Mod + help
-Draykon / Dark Souls + Curtain of Bullets, Endgame
-Surfpup / No mining or placing tiles code
-Obsidian54 / Obsidian's Mod
-blahblahbal et al / Avalon Mod
-VortexJ / Unobtanium
-Zoodletec / Necro Pack
-Kujulo / Kujulo's Mod DLC
-Dogsonofawolf / NPCs
-Reborn Team / Reborn Mod
-Phlebas / Debuffs code
-FatObeseBird / League of Legends
-NerdyBoy, Reactorcore / Alchemistry
-PolarBMD / Terraria_
-Delra / Monster Hunter Mod
-KaneStaff / Zelda Mod
-FrosTr / FrosTr's Misc Pack
-Scooterboot9697 / Metroid Mod
-Pwnager / Empowered Endgame
-SuperWeegee1 / Dream (Also credit Dream Team)
-Mitchellex / WululuAcheld / Phoenix Down & Bookmarks
-Wooren / Sprites
-Sapharan / Legend of Sapharan
-Flashkirby99 / Flashkirby's Weapons Mod
-Zero-Exodus/Omnir / Dark,Blood,Crystal Knights, Dark Cloud Sprites
-Heartstone25 / Covenant of Artorias blood moon code
-Ace the Best / Ace The Best's Final Fantasy Modification
-Solenix / Vertigo Elemental
-MiraiMai / Duel Wielding mod aka Mainslot-0
-Eikester / Made Game Launcher and improved tConfig installation
-
-
-1.1 MOD UPDATE CONTRIBUTORS
-Tim Hjersted / Update director + new content and polish
+1.1 MOD UPDATE CONTRIBUTORS (2013)
+-------------------------------
+Tim Hjersted / update director + new content and polish
 Grox The Great / coding help
 Zoodletech / content + sprites
 Avalon mod team / coding help
@@ -91,14 +96,13 @@ Yorai / coding help
 Blahblahbal / coding help
 Flashkirby99 / mod content
 Zero-Exodus / sprites
-Scooterboot and W1k / Serris boss
+Scooterboot and w1k / serris boss
 Whale Cancer / sprites
 Ace the Best / sprites
-Sapharan / select Legend of Sapharan content
+Sapharan / select legend of sapharan content
 Heartstone25 / coding help
 Phlebas / debuff code
 Solenix / select Vertigo Elemental content
-
 
 TCONFIG EDITION SPECIAL THANKS
 *Yoraizor: responsible for virtually all of the unique features related to the Dark Souls aspects of the mod and has always been super helpful

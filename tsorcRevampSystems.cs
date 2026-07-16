@@ -890,6 +890,9 @@ namespace tsorcRevamp
                 }
             }
 
+            // Boss Tome center text is queued during projectile drawing, then rendered here so it
+            // appears above players and all other world-space character art.
+            Projectiles.VFX.BossSelectVisuals.DrawCenterTextOverlay();
             DrawLocationBanner(spriteBatch);
 
             // Soapstone / location-banner diagnostic overlay (lower-left, DebugMode only).
@@ -905,10 +908,10 @@ namespace tsorcRevamp
             }
         }
 
-        // Per-invader attack-name tracking for both the above-head labels and the lower-left HUD:
-        // current move, the move before it (for the above-head "history of one"), and the
+        // Per-puppet attack-name tracking for both the above-head labels and the lower-left HUD:
+        // current move, the two moves before it (for the above-head "history of two"), and the
         // yellow/white toggle that only flips when the attack actually changes.
-        private static readonly Dictionary<int, (string current, string previous, bool toggle)> _debugAttackColor = new();
+        private static readonly Dictionary<int, (string current, string previous, string older, bool toggle)> _debugAttackColor = new();
 
         // The lower-left detail block used to redraw every frame with live-changing numbers, making
         // it unreadable. Cache the formatted lines and only refresh them a few times a second.
@@ -940,16 +943,29 @@ namespace tsorcRevamp
                                : comboTag.Length > 0 ? comboTag
                                : inv.DebugPhaseName;
 
-                bool changed = !_debugAttackColor.TryGetValue(npc.whoAmI, out var prev) || prev.current != current;
-                string previous = changed && _debugAttackColor.TryGetValue(npc.whoAmI, out var p2) ? p2.current : (prev.previous ?? "");
-                bool toggle = changed ? !prev.toggle : prev.toggle;
-                _debugAttackColor[npc.whoAmI] = (current, previous, toggle);
+                bool hadHistory = _debugAttackColor.TryGetValue(npc.whoAmI, out var history);
+                if (!hadHistory || history.current != current)
+                {
+                    history = (
+                        current,
+                        hadHistory ? history.current : "",
+                        hadHistory ? history.previous : "",
+                        !history.toggle);
+                    _debugAttackColor[npc.whoAmI] = history;
+                }
 
                 Vector2 headPos = new Vector2(npc.Top.X, npc.Top.Y) - Main.screenPosition - new Vector2(0f, 36f);
-                if (!string.IsNullOrEmpty(previous))
+                if (!string.IsNullOrEmpty(history.older))
                 {
-                    Vector2 size = headFont.MeasureString(previous) * 0.7f;
-                    Utils.DrawBorderStringFourWay(spriteBatch, headFont, previous,
+                    Vector2 size = headFont.MeasureString(history.older) * 0.65f;
+                    Utils.DrawBorderStringFourWay(spriteBatch, headFont, history.older,
+                        headPos.X - size.X * 0.5f, headPos.Y - 31f,
+                        Color.Yellow * 0.32f, Color.Black, Vector2.Zero, 0.65f);
+                }
+                if (!string.IsNullOrEmpty(history.previous))
+                {
+                    Vector2 size = headFont.MeasureString(history.previous) * 0.7f;
+                    Utils.DrawBorderStringFourWay(spriteBatch, headFont, history.previous,
                         headPos.X - size.X * 0.5f, headPos.Y - 16f,
                         Color.Yellow * 0.55f, Color.Black, Vector2.Zero, 0.7f);
                 }
@@ -1091,11 +1107,14 @@ namespace tsorcRevamp
             Vector2 center = new(Main.screenWidth / 2f, Main.screenHeight / 5f);
 
             DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, font, text, center + new Vector2(2, 2), Color.Black * alpha, 0f, origin, scale, SpriteEffects.None, 0f);
-            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, font, text, center, Color.White * alpha, 0f, origin, scale, SpriteEffects.None, 0f);
+            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, font, text, center, tsorcRevamp.LocationBannerColor * alpha, 0f, origin, scale, SpriteEffects.None, 0f);
 
             tsorcRevamp.LocationBannerTimer--;
             if (tsorcRevamp.LocationBannerTimer <= 0)
+            {
                 tsorcRevamp.LocationBannerText = null;
+                tsorcRevamp.LocationBannerColor = Color.White;
+            }
         }
 
         private static void UpdatePortableGuideCrafting()

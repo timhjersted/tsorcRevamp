@@ -6,7 +6,7 @@ using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
 {
-    class OolacileSerpentBody2 : ModNPC
+    class GreatSerpentBody3 : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -24,12 +24,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         {
             NPC.netAlways = true;
             NPC.npcSlots = 2;
-            NPC.width = 44;
-            NPC.height = 34;
-            DrawOffsetY = 54;
+            //Tight-cropped sprite (GreatSerpentBody3.png = 18x44). Height is the along-chain link length.
+            NPC.width = 18;
+            NPC.height = 44;
+            DrawOffsetY = 0;
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
-            NPC.scale = 1.3f;
+            NPC.scale = 1f;
             NPC.timeLeft = 22750;
             NPC.damage = 0; //Only the head does contact damage
             NPC.defense = 50;
@@ -48,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public override void AI()
         {
             int[] bodyTypes = SerpentAI.BuildBodyTypes();
-            SerpentAI.Run(NPC, ModContent.NPCType<OolacileSerpentHead>(), bodyTypes, ModContent.NPCType<OolacileSerpentTail>(), OolacileSerpentHead.TotalSegmentCount, 18f);
+            SerpentAI.Run(NPC, ModContent.NPCType<GreatSerpentHead>(), bodyTypes, ModContent.NPCType<GreatSerpentTail>(), GreatSerpentHead.TotalSegmentCount, 18f);
 
             if (!Main.npc[(int)NPC.ai[1]].active)
             {

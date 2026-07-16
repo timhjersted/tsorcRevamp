@@ -37,9 +37,10 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Puppet loadout
         protected override int HeadArmorItemType => ItemID.CapricornMask;   // "Capricorn Helmet"
         protected override int BodyArmorItemType => ItemID.BlueLunaticRobe;  // real vanilla item; bodySlot 181 = Lunar Cultist Robe
-        protected override int LegsArmorItemType => 0;                       // no legs/feet slot
+        protected override int LegsArmorItemType => ItemID.CenxsDressPants;  // floor-length robe bottom while retaining the Cultist body
         protected override int HeadArmorDyeItemType => ItemID.BlackDye;
         protected override int BodyArmorDyeItemType => ItemID.BlackDye;
+        protected override int LegsArmorDyeItemType => ItemID.BlackDye;
         protected override Color PuppetSkinColor => new Color(0x5A, 0x71, 0xFF); // #5A71FF
         protected override Color PuppetEyeColor => new Color(0x26, 0x26, 0x26);  // #262626
 
@@ -113,13 +114,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 1; // puppet body is drawn separately; NPC sprite is a placeholder
-
-            // The Lunar Cultist Robe (body slot 181) is a floor-length robe, but vanilla doesn't flag it
-            // to hide the lower-body skin — so bare feet poke out below the hem when it's worn without leg
-            // armor (as the puppet is). Flag it so the robe reads full-length. NOTE: this is a GLOBAL
-            // vanilla-set change — a real player wearing the Blue Lunatic Robe vanity with no leg armor will
-            // also get hidden feet (arguably the correct look for a floor-length robe).
-            ArmorIDs.Body.Sets.HidesBottomSkin[ArmorIDs.Body.LunarCultistRobe] = true;
         }
 
         public override void SetDefaults()

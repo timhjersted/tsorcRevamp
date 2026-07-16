@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     [AutoloadBossHead]
     class SoulOfCinder : PuppetNPC
     {
-        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/FirelinkHelm_Head";
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/SoulOfCinder_Head_Boss";
 
         protected override string InvaderTitle => "Soul of Cinder";
 

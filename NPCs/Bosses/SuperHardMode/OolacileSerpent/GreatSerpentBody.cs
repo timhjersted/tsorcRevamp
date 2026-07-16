@@ -6,7 +6,7 @@ using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
 {
-    class OolacileSerpentBody3 : ModNPC
+    class GreatSerpentBody : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -24,15 +24,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         {
             NPC.netAlways = true;
             NPC.npcSlots = 2;
-            NPC.width = 44;
-            NPC.height = 24;
-            DrawOffsetY = 58;
+            //Tight-cropped sprite (GreatSerpentBody.png = 26x28). Height is the along-chain link length.
+            NPC.width = 26;
+            NPC.height = 28;
+            DrawOffsetY = 0;
+            NPC.scale = 1f;
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
-            NPC.scale = 1.3f;
             NPC.timeLeft = 22750;
             NPC.damage = 0; //Only the head does contact damage
-            NPC.defense = 50;
+            NPC.defense = 40;
             NPC.HitSound = SoundID.NPCHit13;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 20000;
@@ -41,6 +42,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             NPC.behindTiles = true;
             NPC.value = 0;
         }
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
+        }
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;
@@ -48,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public override void AI()
         {
             int[] bodyTypes = SerpentAI.BuildBodyTypes();
-            SerpentAI.Run(NPC, ModContent.NPCType<OolacileSerpentHead>(), bodyTypes, ModContent.NPCType<OolacileSerpentTail>(), OolacileSerpentHead.TotalSegmentCount, 18f);
+            SerpentAI.Run(NPC, ModContent.NPCType<GreatSerpentHead>(), bodyTypes, ModContent.NPCType<GreatSerpentTail>(), GreatSerpentHead.TotalSegmentCount, 18f);
 
             if (!Main.npc[(int)NPC.ai[1]].active)
             {

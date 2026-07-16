@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using VFXApi = global::tsorcRevamp.VFX.VFX;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -107,8 +108,14 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
             _impacted = true;
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.5f }, Projectile.Center);
-            UsefulFunctions.ScreenShake(Projectile.Center, 18f, 30);
+            Vector2 impactPosition = new Vector2(Projectile.Center.X, GroundY > 0f ? GroundY : Projectile.Bottom.Y);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.5f }, impactPosition);
+            UsefulFunctions.ScreenShake(impactPosition, 18f, 30);
+            VFXApi.GroundEruption(impactPosition, new Color(85, 55, 35), new Color(255, 190, 45), 190f, 44);
+            VFXApi.FlamePillar(impactPosition, 380f, 170f, new Color(255, 115, 25), Color.White, 48);
+            VFXApi.Ring(impactPosition, 35f, 280f, 18f, new Color(255, 220, 90), 36,
+                global::tsorcRevamp.VFX.VFXMaterial.Turbulent);
+            VFXApi.Burst(impactPosition, new Color(255, 235, 150), 36, 13f);
             for (int i = 0; i < 60; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(9f, 9f);
@@ -123,7 +130,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 {
                     float ang = MathHelper.Lerp(-2.5f, -0.65f, i / (float)(CraterFireballs - 1)); // fan upward-outward
                     Vector2 vel = ang.ToRotationVector2() * Main.rand.NextFloat(7f, 11f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Bottom, vel,
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), impactPosition, vel,
                         ModContent.ProjectileType<GwynFireball>(), (int)Projectile.ai[0], 3f, Projectile.owner, 0.3f);
                 }
             }
@@ -141,7 +148,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             int frameHeight = texture.Height / Main.projFrames[Projectile.type];
             Rectangle frame = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
             float pulse = !Falling ? (1f + 0.15f * (float)Math.Sin(Timer * 0.3f)) : 1f;
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, Color.White, 0f,
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, Color.White, MathHelper.Pi,
                 new Vector2(texture.Width / 2f, frameHeight / 2f), SpriteScale * pulse, SpriteEffects.None, 0);
             return false;
         }

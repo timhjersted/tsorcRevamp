@@ -44,9 +44,8 @@ namespace tsorcRevamp.Projectiles.VFX
                 PreHardmodeRarities = new List<int>();
                 HardmodeRarities = new List<int>();
                 SHMRarities = new List<int>();
-                // Parallel lists of the boss NPC IDs to *display* (with the same Golem/MoonLord
-                // substitutions used in the defeated branches below). Lets the silhouette layer
-                // draw the actual boss texture even when the slot is currently a bunny placeholder.
+                // Parallel lists of the encounter's primary NPC IDs. These remain the real IDs even
+                // where the defeated drawing substitutes Golem's head or Moon Lord's eye.
                 PreHardmodeIds = new List<int>();
                 HardmodeIds = new List<int>();
                 SHMIds = new List<int>();
@@ -70,11 +69,10 @@ namespace tsorcRevamp.Projectiles.VFX
                 {
                     tempNPC.SetDefaults(id);
                     HardmodeRarities.Add(tempNPC.rarity);
-                    // Display Golem as the head sprite, matching the defeated branch.
-                    HardmodeIds.Add(id == NPCID.Golem ? NPCID.GolemHeadFree : id);
+                    HardmodeIds.Add(id);
                     HardmodeDownedBosses.Add(new NPC());
 
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>() && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
                         //Draw golems head instead of its body
                         int newID = id;
@@ -94,8 +92,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 {
                     tempNPC.SetDefaults(id);
                     SHMRarities.Add(tempNPC.rarity);
-                    // Display Moon Lord as the floating eye sprite, matching the defeated branch.
-                    SHMIds.Add(id == NPCID.MoonLordCore ? NPCID.MoonLordFreeEye : id);
+                    SHMIds.Add(id);
                     SHMDownedBosses.Add(new NPC());
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
@@ -113,11 +110,11 @@ namespace tsorcRevamp.Projectiles.VFX
                 }
 
                 // Compute the next undefeated critical path boss across all three eras. The smallest
-                // rarity in CriticalPathRarities whose slot is still a bunny.
+                // required-boss rarity whose slot is still a bunny.
                 nextUndefeatedCriticalPath = int.MaxValue;
-                FindNextCriticalPath(PreHardmodeDownedBosses, PreHardmodeRarities);
-                FindNextCriticalPath(HardmodeDownedBosses, HardmodeRarities);
-                FindNextCriticalPath(SHMDownedBosses, SHMRarities);
+                FindNextCriticalPath(PreHardmodeDownedBosses, PreHardmodeRarities, PreHardmodeIds);
+                FindNextCriticalPath(HardmodeDownedBosses, HardmodeRarities, HardmodeIds);
+                FindNextCriticalPath(SHMDownedBosses, SHMRarities, SHMIds);
 
                 if (currentDownedList == null)
                 {
@@ -151,10 +148,16 @@ namespace tsorcRevamp.Projectiles.VFX
             }
             else
             {
-                //Blight
-                if (currentDownedList == SHMDownedBosses && SHMDownedBosses[6].type != NPCID.Bunny)
+                // Blight's own texture is an empty outline, so its dust supplies the visible body.
+                // Locate its actual Tome slot instead of relying on the old hard-coded index, which
+                // placed the effect over Fire/Earth Fiend as the roster changed.
+                int blightIndex = SHMIds?.IndexOf(ModContent.NPCType<Blight>()) ?? -1;
+                if (currentDownedList == SHMDownedBosses && blightIndex >= 0 && SHMDownedBosses[blightIndex].type != NPCID.Bunny)
                 {
-                    int dust = Dust.NewDust(Projectile.Center + new Vector2(450 * UsefulFunctions.EasingCurve(Math.Min(radius, 1)), 0).RotatedBy(-6 * MathHelper.TwoPi / currentDownedList.Count), 60, 110, 185, 0, 0, 250, default, 5f);
+                    Vector2 blightDrawPos = new Vector2(350 * UsefulFunctions.EasingCurve(Math.Min(radius, 1)), 0)
+                        .RotatedBy(-blightIndex * MathHelper.TwoPi / currentDownedList.Count);
+                    blightDrawPos.X *= 1.2f;
+                    int dust = Dust.NewDust(Projectile.Center + blightDrawPos - new Vector2(30f, 55f), 60, 110, 185, 0, 0, 250, default, 5f);
                     Main.dust[dust].noGravity = true;
                 }
             }
@@ -186,35 +189,16 @@ namespace tsorcRevamp.Projectiles.VFX
         List<int> PreHardmodeRarities;
         List<int> HardmodeRarities;
         List<int> SHMRarities;
-        // Display NPC IDs per slot — the *actual* boss NPC type even when the slot is showing as a
-        // bunny placeholder. Used to draw a black silhouette of the undefeated boss behind its
-        // question mark, with the substitutions vanilla uses for the defeated-state icons
-        // (Golem → GolemHeadFree, Moon Lord → MoonLordFreeEye).
+        // Primary encounter NPC IDs per slot, retained even when the displayed NPC is a bunny,
+        // Golem's detached head, or Moon Lord's eye.
         List<int> PreHardmodeIds;
         List<int> HardmodeIds;
         List<int> SHMIds;
-        // Smallest rarity in CriticalPathRarities that is still undefeated across all three eras.
-        // Drives two things: which boss slot glows yellow (highlight = "go here next") and the
+        // Smallest required-boss presentation order that is still undefeated across all three eras.
+        // Drives two things: which boss slot gets a gold pulse (highlight = "go here next") and the
         // upper bound for which undefeated bosses surface their "Where to find:" hint on hover.
         // Computed once during init in AI() — bosses can't be killed while the menu is open.
         int nextUndefeatedCriticalPath = int.MaxValue;
-        // The rarity values that progress the main storyline. Defeating one of these unlocks the
-        // optional bosses + next critical path entry for hover hints. Sets follow the mod's
-        // designed critical path; edit here if progression changes.
-        private static readonly HashSet<int> CriticalPathRarities = new()
-        {
-            // PHM
-            4,  6,  11, 13, 15,
-            // HM
-            17, 18, 19, 22, 23, 24, 25, 26, 28, 29, 30,
-            // SHM
-            34, 35, 36, 37, 39, 40, 41, 42, 44
-        };
-        private static readonly HashSet<int> OptionalMysteryRarities = new()
-        {
-            46,
-            47
-        };
         int spawnCountdown = 0;
         int spawnID = 0;
         List<NPC> currentDownedList;
@@ -222,6 +206,14 @@ namespace tsorcRevamp.Projectiles.VFX
         List<int> currentIdList;
         public static Texture2D buttonTexture;
         public static Texture2D questionmarkTexture;
+
+        private static uint centerTextUpdate;
+        private static string centerNameText = "";
+        private static string centerClueText = "";
+        private static string centerDeathCountText = "";
+        private static Color centerNameColor = Color.White;
+        private static float centerDeathCountY;
+
         public override bool PreDraw(ref Color lightColor)
         {
             if (currentDownedList == null)
@@ -245,6 +237,9 @@ namespace tsorcRevamp.Projectiles.VFX
 
             UsefulFunctions.EnsureLoaded(ref buttonTexture, "tsorcRevamp/UI/Button_Forward");
             UsefulFunctions.EnsureLoaded(ref questionmarkTexture, "tsorcRevamp/UI/QuestionMark");
+
+            // Keep the world legible behind the Tome without dimming its sprites or text.
+            Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * 0.48f);
 
             //Draw left and right buttons
             if (Projectile.owner == Main.myPlayer)
@@ -310,13 +305,15 @@ namespace tsorcRevamp.Projectiles.VFX
 
             string mouseOverGuideText = "";
             string mouseOver = "";
+            BossEncounterPresentation mouseOverEntry = null;
+            bool mouseOverDefeated = false;
             string DeathCountText = "";
-            Vector2 mouseOverPos = Vector2.Zero;
-            float mouseOverHeight = 0;
+            float bottomSlotScreenY = float.MinValue;
             for (int i = 0; i < currentDownedList.Count; i++)
             {
                 Vector2 drawPos = new Vector2(350 * UsefulFunctions.EasingCurve(Math.Min(radius, 1)), 0).RotatedBy(-i * MathHelper.TwoPi / currentDownedList.Count);
                 drawPos.X *= 1.2f;
+                bottomSlotScreenY = Math.Max(bottomSlotScreenY, Projectile.Center.Y + drawPos.Y - Main.screenPosition.Y);
                 DeathCountText = LangUtils.GetTextValue("Items.BossRematchTome.DeathCountText", Main.player[Projectile.owner].numberOfDeathsPVE);
 
                 //Bunnies are used in place of non-defeated bosses. They draw as a 
@@ -339,10 +336,12 @@ namespace tsorcRevamp.Projectiles.VFX
                         (int)(qmHalfSize.Y * 2));
 
                     int bossRarity = (currentRarityList != null && i < currentRarityList.Count) ? currentRarityList[i] : 0;
-                    bool isNextCriticalPath = bossRarity > 0 && bossRarity == nextUndefeatedCriticalPath;
-                    bool optionalMysteryRevealed = OptionalMysteryRarities.Contains(bossRarity);
-                    bool clueRevealed = optionalMysteryRevealed || (bossRarity > 0 && bossRarity <= nextUndefeatedCriticalPath);
-                    bool isOptionalRevealed = clueRevealed && !isNextCriticalPath && (!CriticalPathRarities.Contains(bossRarity) || optionalMysteryRevealed);
+                    int mysteryNpcType = currentIdList != null && i < currentIdList.Count ? currentIdList[i] : 0;
+                    EncounterPresentationRegistry.TryGet(mysteryNpcType, out BossEncounterPresentation encounterEntry);
+                    int progressionOrder = encounterEntry?.ProgressionOrder ?? bossRarity;
+                    bool isNextCriticalPath = encounterEntry != null && encounterEntry.IsRequired && progressionOrder == nextUndefeatedCriticalPath;
+                    bool optionalMysteryRevealed = encounterEntry?.AlwaysRevealClue == true;
+                    bool clueRevealed = optionalMysteryRevealed || (progressionOrder > 0 && progressionOrder <= nextUndefeatedCriticalPath);
 
                     // Undefeated bosses just show a question mark — no boss silhouette behind it.
                     // Previous attempts (manual texture draw, DrawNPCDirect + npc.color tint) either
@@ -351,46 +350,46 @@ namespace tsorcRevamp.Projectiles.VFX
                     // reliable progression indicator. Once a boss is defeated, the existing defeated
                     // branch below draws the real sprite as before.
                     //
-                    // Question mark color signals state:
-                    //   Hidden / not revealed → white (vanilla — no hint, no progression target yet)
-                    //   Revealed optional     → purple (clue available, optional path)
-                    //   Next critical path    → yellow (go here next — main progression target)
-                    Color qmColor = Color.White;
-                    if (isNextCriticalPath) qmColor = new Color(255, 220, 80);          // warm yellow
-                    else if (isOptionalRevealed) qmColor = new Color(180, 100, 230);    // purple
+                    // Revealed entries use their classification color. The next required boss keeps
+                    // its red classification color and receives a separate gold pulse behind it.
+                    Color qmColor = clueRevealed && encounterEntry != null ? encounterEntry.TomeColor : Color.White;
+                    if (isNextCriticalPath)
+                    {
+                        float pulse = 1.12f + 0.05f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 4f);
+                        float pulseAlpha = 0.35f + 0.2f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 4f);
+                        Main.spriteBatch.Draw(questionmarkTexture, qmCenter - Main.screenPosition, questionmarkTexture.Bounds,
+                            new Color(255, 190, 45) * pulseAlpha, 0, questionmarkTexture.Bounds.Size() / 2,
+                            qmScale * pulse, SpriteEffects.None, 0);
+                    }
                     Main.spriteBatch.Draw(questionmarkTexture, qmCenter - Main.screenPosition, questionmarkTexture.Bounds, qmColor, 0, questionmarkTexture.Bounds.Size() / 2, qmScale, SpriteEffects.None, 0);
 
                     bool eraUnlocked =
                         currentDownedList == PreHardmodeDownedBosses ||
                         (currentDownedList == HardmodeDownedBosses && Main.hardMode) ||
                         (currentDownedList == SHMDownedBosses && tsorcRevampWorld.SuperHardMode);
-                    bool criticalPathGateOpen = optionalMysteryRevealed || (bossRarity > 0 && bossRarity <= nextUndefeatedCriticalPath);
+                    bool criticalPathGateOpen = optionalMysteryRevealed || (progressionOrder > 0 && progressionOrder <= nextUndefeatedCriticalPath);
 
                     if (eraUnlocked && criticalPathGateOpen && Projectile.owner == Main.myPlayer && qmHitbox.Contains(Main.MouseWorld.ToPoint()) && radius >= 1 && currentRarityList != null && i < currentRarityList.Count)
                     {
                         Main.LocalPlayer.mouseInterface = true;
                         mouseOver = "???";
+                        mouseOverEntry = encounterEntry;
+                        mouseOverDefeated = false;
                         // Undefeated boss within the current critical-path window: show its "Where to
                         // find:" clue so the player can hunt it. Bosses beyond the next critical path
                         // stay fully hidden (no clue) until that critical path is defeated.
-                        int clueIndex = currentRarityList[i];
+                        int clueIndex = encounterEntry?.ClueIndex ?? currentRarityList[i];
                         mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + clueIndex);
-                        mouseOverPos = qmCenter;
-                        mouseOverHeight = qmHalfSize.Y * 2f;
                     }
                     continue;
                 }
 
                 currentDownedList[i].Center = Projectile.Center + drawPos;
                 Lighting.AddLight(currentDownedList[i].Center, TorchID.White);
-                currentDownedList[i].scale = 0.9f;
+                int primaryNpcType = currentIdList != null && i < currentIdList.Count ? currentIdList[i] : currentDownedList[i].type;
+                float previewScale = GetPreviewScale(currentDownedList[i].type, primaryNpcType);
+                currentDownedList[i].scale = previewScale;
                 currentDownedList[i].alpha = 0;
-
-                //King and queen slime don't scale down right
-                if (currentDownedList[i].type == NPCID.KingSlime || currentDownedList[i].type == NPCID.QueenSlimeBoss)
-                {
-                    currentDownedList[i].scale = 1f;
-                }
 
                 if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
                 {
@@ -424,8 +423,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
                     if (inHitbox && radius >= 1)
                     {
-                        Main.hoverItemName = currentDownedList[i].GivenOrTypeName;
-                        currentDownedList[i].scale = 1.1f;
+                        currentDownedList[i].scale = previewScale * 1.15f;
                         Main.LocalPlayer.mouseInterface = true;
                         mouseOver = currentDownedList[i].TypeName;
                         // Defeated boss hover: show the NEXT boss's clue (rarity + 1). Falls back to the
@@ -434,38 +432,24 @@ namespace tsorcRevamp.Projectiles.VFX
                         int baseRarity = (currentRarityList != null && i < currentRarityList.Count)
                             ? currentRarityList[i]
                             : currentDownedList[i].rarity;
-                        if (OptionalMysteryRarities.Contains(baseRarity))
+                        EncounterPresentationRegistry.TryGet(primaryNpcType, out mouseOverEntry);
+                        mouseOverDefeated = true;
+                        if (mouseOverEntry?.AlwaysRevealClue == true)
                         {
-                            mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + baseRarity);
+                            mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + mouseOverEntry.ClueIndex);
                         }
                         else
                         {
-                            int nextBoss = baseRarity + 1;
+                            int nextBoss = mouseOverEntry?.FollowingClueIndex ?? baseRarity + 1;
                             mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Next") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + nextBoss);
-                        }
-                        mouseOverPos = currentDownedList[i].Center;
-                        mouseOverHeight = currentDownedList[i].height;
-                        if (currentDownedList[i].type == NPCID.BrainofCthulhu)
-                        {
-                            mouseOverHeight *= 1.3f;
-                        }
-                        if (currentDownedList[i].type == NPCID.Deerclops)
-                        {
-                            mouseOverHeight *= 0.8f;
                         }
                         if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
                         {
-                            mouseOverHeight *= 0.6f;
                             currentDownedList[i].ai[0] = 1;
-                        }
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Death>())
-                        {
-                            mouseOverHeight *= 0.6f;
                         }
                         if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
                         {
                             currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
-                            currentDownedList[i].scale = 0.8f;
                         }
                         if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
                         {
@@ -482,15 +466,6 @@ namespace tsorcRevamp.Projectiles.VFX
                         if (currentDownedList[i].type == NPCID.MoonLordFreeEye)
                         {
                             mouseOver = Language.GetTextValue("NPCName.MoonLordHead");
-                            mouseOverHeight *= 1.5f;
-                        }
-
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>())
-                        {
-                            Rectangle drawRect = ((Texture2D)Terraria.GameContent.TextureAssets.Npc[ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DamnedSoul>()]).Bounds;
-                            drawRect.Height = drawRect.Height / 4;
-                            Main.spriteBatch.Draw((Texture2D)Terraria.GameContent.TextureAssets.Npc[ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DamnedSoul>()], Projectile.Center + drawPos - Main.screenPosition, drawRect, Color.White * 0.6f, 0, drawRect.Size() / 2, currentDownedList[i].scale * 1.3f, SpriteEffects.None, 0);
-
                         }
 
                         if (Main.mouseLeft && Main.mouseLeftRelease)
@@ -503,37 +478,155 @@ namespace tsorcRevamp.Projectiles.VFX
                     }
                 }
 
-                //Golem's head doesn't scale up *or* down right
-                if (currentDownedList[i].type == NPCID.GolemHeadFree)
+                // Puppet bosses are assembled by PlayerRenderer rather than an ordinary NPC texture.
+                // That pipeline is unreliable inside preview UIs (and external NPC browsers), often
+                // leaving only their emissive weapon/effects. Use their existing legacy full-body art
+                // for a stable Tome portrait while leaving the live encounter renderer untouched.
+                if (!DrawPuppetTomePreview(primaryNpcType, currentDownedList[i].Center, currentDownedList[i].scale))
                 {
-                    currentDownedList[i].scale = 1f;
+                    Main.instance.DrawNPCDirect(Main.spriteBatch, currentDownedList[i], false, Main.screenPosition);
                 }
-
-                //EoL is just way too big
-                if (currentDownedList[i].type == NPCID.HallowBoss)
-                {
-                    currentDownedList[i].scale *= 0.8f;
-                }
-
-                Main.instance.DrawNPCDirect(Main.spriteBatch, currentDownedList[i], false, Main.screenPosition);
             }
 
 
+            Color mouseOverColor = Color.White;
             if (mouseOver != "")
             {
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, mouseOver, mouseOverPos - Main.screenPosition + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(mouseOver).X / 2f, mouseOverHeight * 0.75f), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
-            }
-            if (mouseOverGuideText != "")
-            {
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, mouseOverGuideText, new Vector2(Main.screenWidth/2, Main.screenHeight * 2 / 5) + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(mouseOverGuideText).X / 2f, 0), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
+                if (mouseOverEntry != null)
+                {
+                    mouseOver = mouseOverEntry.FormatTitle(mouseOver);
+                    mouseOverColor = mouseOverDefeated ? new Color(90, 220, 105) : mouseOverEntry.TomeColor;
+                }
             }
 
-            if (DeathCountText != "")
-            {
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, DeathCountText, new Vector2(Main.screenWidth/2, Main.screenHeight * 3 / 5) + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(DeathCountText).X / 2f, 0), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
-            }
-            
+            centerTextUpdate = Main.GameUpdateCount;
+            centerNameText = mouseOver;
+            centerClueText = mouseOverGuideText;
+            centerDeathCountText = DeathCountText;
+            centerNameColor = mouseOverColor;
+            centerDeathCountY = Math.Min(Main.screenHeight - 105f, bottomSlotScreenY - 120f);
+
             return false;
+        }
+
+        internal static void DrawCenterTextOverlay()
+        {
+            if (centerTextUpdate != Main.GameUpdateCount)
+            {
+                return;
+            }
+
+            if (centerNameText != "")
+            {
+                DrawCenteredWrappedText(FontAssets.ItemStack.Value, centerNameText, Main.screenWidth / 2f,
+                    Main.screenHeight * 0.34f, centerNameColor, 1.2f, Math.Min(1200f, Main.screenWidth * 0.72f));
+            }
+            if (centerClueText != "")
+            {
+                DrawCenteredWrappedText(FontAssets.ItemStack.Value, centerClueText, Main.screenWidth / 2f,
+                    Main.screenHeight * 0.43f, Color.White, 1.1f, Math.Min(1200f, Main.screenWidth * 0.72f));
+            }
+            if (centerDeathCountText != "")
+            {
+                DrawCenteredWrappedText(FontAssets.MouseText.Value, centerDeathCountText, Main.screenWidth / 2f,
+                    centerDeathCountY, Color.White, 1.2f, Main.screenWidth * 0.5f);
+            }
+        }
+
+        private static float GetPreviewScale(int npcType, int primaryNpcType)
+        {
+            if (npcType == NPCID.GolemHeadFree) return 1f;
+            if (npcType == NPCID.HallowBoss) return 0.72f;
+            if (npcType == NPCID.KingSlime) return 0.82f;
+            if (npcType == NPCID.QueenSlimeBoss) return 1f;
+            if (npcType == NPCID.Deerclops) return 0.75f;
+            if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>()) return 0.72f;
+            if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>()) return 0.65f;
+            if (primaryNpcType == ModContent.NPCType<Chaos>()) return 0.65f;
+            if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.TheRage>()) return 0.7f;
+            return 0.9f;
+        }
+
+        private static bool DrawPuppetTomePreview(int primaryNpcType, Vector2 worldCenter, float previewScale)
+        {
+            string texturePath;
+            int frameHeight;
+            float portraitScale;
+
+            if (primaryNpcType == ModContent.NPCType<Artorias>())
+            {
+                texturePath = "tsorcRevamp/NPCs/Bosses/SuperHardMode/Artorias";
+                frameHeight = 42;
+                portraitScale = 1.5f;
+            }
+            else if (primaryNpcType == ModContent.NPCType<Gwyn>())
+            {
+                texturePath = "tsorcRevamp/NPCs/UnusedSprites/OldGwyn";
+                frameHeight = 56;
+                portraitScale = 1.2f;
+            }
+            else
+            {
+                return false;
+            }
+
+            Texture2D texture = ModContent.Request<Texture2D>(texturePath,
+                ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Rectangle source = new Rectangle(0, 0, texture.Width, frameHeight);
+            Main.spriteBatch.Draw(texture, worldCenter - Main.screenPosition, source, Color.White, 0f,
+                source.Size() / 2f, previewScale * portraitScale, SpriteEffects.None, 0f);
+            return true;
+        }
+
+        private static void DrawCenteredWrappedText(DynamicSpriteFont font, string text, float centerX,
+            float topY, Color color, float scale, float maxWidth)
+        {
+            List<string> lines = WrapText(font, text, scale, maxWidth);
+            float y = topY;
+            foreach (string line in lines)
+            {
+                Vector2 size = font.MeasureString(line) * scale;
+                Vector2 position = new Vector2(centerX - size.X / 2f, y);
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, font, line, position + new Vector2(2f),
+                    Color.Black * 0.85f, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, font, line, position,
+                    color, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                y += font.LineSpacing * scale;
+            }
+        }
+
+        private static List<string> WrapText(DynamicSpriteFont font, string text, float scale, float maxWidth)
+        {
+            List<string> lines = new();
+            foreach (string paragraph in text.Replace("\r", "").Split('\n'))
+            {
+                if (paragraph.Length == 0)
+                {
+                    lines.Add(string.Empty);
+                    continue;
+                }
+
+                string currentLine = string.Empty;
+                foreach (string word in paragraph.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    string candidate = currentLine.Length == 0 ? word : currentLine + " " + word;
+                    if (currentLine.Length > 0 && font.MeasureString(candidate).X * scale > maxWidth)
+                    {
+                        lines.Add(currentLine);
+                        currentLine = word;
+                    }
+                    else
+                    {
+                        currentLine = candidate;
+                    }
+                }
+
+                if (currentLine.Length > 0)
+                {
+                    lines.Add(currentLine);
+                }
+            }
+            return lines;
         }
 
         public void TeleportAllPlayersToArena(int id)
@@ -664,16 +757,18 @@ namespace tsorcRevamp.Projectiles.VFX
         }
 
         // Scans an era's slots and lowers nextUndefeatedCriticalPath if it finds a still-bunny
-        // critical-path slot with a smaller rarity. Called once per era from AI() init.
-        private void FindNextCriticalPath(List<NPC> list, List<int> rarities)
+        // required-boss slot with a smaller presentation order. Called once per era from AI() init.
+        private void FindNextCriticalPath(List<NPC> list, List<int> rarities, List<int> primaryNpcTypes)
         {
-            if (list == null || rarities == null) return;
-            for (int k = 0; k < list.Count && k < rarities.Count; k++)
+            if (list == null || rarities == null || primaryNpcTypes == null) return;
+            for (int k = 0; k < list.Count && k < rarities.Count && k < primaryNpcTypes.Count; k++)
             {
-                int rarity = rarities[k];
-                if (list[k].type == NPCID.Bunny && CriticalPathRarities.Contains(rarity) && rarity < nextUndefeatedCriticalPath)
+                if (list[k].type == NPCID.Bunny
+                    && EncounterPresentationRegistry.TryGet(primaryNpcTypes[k], out BossEncounterPresentation entry)
+                    && entry.IsRequired
+                    && entry.ProgressionOrder < nextUndefeatedCriticalPath)
                 {
-                    nextUndefeatedCriticalPath = rarity;
+                    nextUndefeatedCriticalPath = entry.ProgressionOrder;
                 }
             }
         }

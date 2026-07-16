@@ -51,6 +51,12 @@ namespace tsorcRevamp.NPCs.Puppets
         LeapThrust,       // jump toward player with spear leveled forward, thrust on landing
         ChargeChop,       // run at the player; ends on contact or a timeout, next step is the chop
         Feint,            // raise + flash as a bait, hold without swinging; the next step is the real (delayed) chop
+        DoubleSpinSlam,   // two complete overhead circles, then a final downward ground strike
+        ThrownWeaponRetrieve, // circular throw telegraph, wait for embed, leap to retrieve the weapon
+        LowAxeRun,        // sprint with the arm and axe carried low and behind
+        RisingUppercutLeap, // rising axe cut that launches the puppet, then holds overhead while falling
+        BackstepRaise,    // hop away while visibly raising the weapon; next step is the re-entry strike
+        ApexDiveCleave,   // high jump, limited tracking on ascent, then an active descending blade sweep
         // Ranged motions reuse RangedStyle on PuppetNPC; ranged combos pick at burst level
     }
 
@@ -78,18 +84,28 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Easing shape of the arc, for aim-swing pilot puppets only. Lets different steps
         /// feel different (snappy flick vs heavy settle vs delayed whip) at the same duration.</summary>
         public SwingEaseStyle Ease;
+        /// <summary>Per-step launch shaping for leap motions. Values at or below zero are treated as
+        /// 1 so existing combo tables retain their current movement without migration.</summary>
+        public float LeapHeightMult;
+        public float LeapForwardSpeedMult;
     }
 
     public struct MeleeCombo
     {
         public string         Name;
         public MeleeComboStep[] Steps;
+        /// <summary>Optional single-clock V2 clip. When present, PuppetNPC bypasses the legacy
+        /// combo phase choreography for this attack while preserving the shared picker and renderer.</summary>
+        public PuppetAttackClip RuntimeV2Clip;
         public int            BaseWeight;
         public ComboRangeBand Preferred;
         public Color          InitialFlashColor;
         public int            CooldownAfterUse;
         public bool           HeavyCommit;   // HP-escalation multiplier applies to these
         public bool           HyperArmor;    // commit (no stagger) holds through inter-step pauses, not just active frames
+        /// <summary>Only eligible outside normal melee engagement range. Used for committed
+        /// gap-closing or physical thrown-weapon openers that begin at range.</summary>
+        public bool           RangedStartOnly;
         /// <summary>Per-tick horizontal velocity brake while this combo winds up / swings, for
         /// aim-swing pilot puppets only. 0 = keep full momentum (no slowdown), 0.4 = plant the feet
         /// for a heavy commit. Replaces the old blanket SlowDown() so light attacks stay mobile.</summary>

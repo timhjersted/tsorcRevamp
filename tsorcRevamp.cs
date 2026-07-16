@@ -163,7 +163,7 @@ namespace tsorcRevamp
         public static List<int> SerrisSegments;
         public static List<int> GhostDragonSegments;
         public static List<int> HellkiteDragonSegments;
-        public static List<int> OolacileSerpentSegments;
+        public static List<int> GreatSerpentSegments;
         public static List<int> LichKingSerpentSegments;
         public static List<int> SeathSegments;
         // NPCs that intentionally set active=false mid-AI to transform into a different NPC (boss intros) or
@@ -257,11 +257,19 @@ namespace tsorcRevamp
         // area doesn't re-trigger until a different location is seen (or the session resets).
         public static int LastShownLocationId = -1;
         public static string LocationBannerText;
+        public static Color LocationBannerColor = Color.White;
         public static int LocationBannerTimer; // counts down in frames; 0 = inactive
         public const int LOCATION_BANNER_FADE_IN = 30;
         public const int LOCATION_BANNER_HOLD = 360;   // 6s hold (was 4s; +2s to give players more time to read)
         public const int LOCATION_BANNER_FADE_OUT = 60;
         public const int LOCATION_BANNER_TOTAL = LOCATION_BANNER_FADE_IN + LOCATION_BANNER_HOLD + LOCATION_BANNER_FADE_OUT;
+
+        public static void ShowAnnouncementBanner(string text, Color? color = null)
+        {
+            LocationBannerText = text.ToUpperInvariant();
+            LocationBannerColor = color ?? Color.White;
+            LocationBannerTimer = LOCATION_BANNER_TOTAL;
+        }
 
         public static Texture2D NoiseTurbulent;
         public static Texture2D NoiseSplotchy;
@@ -347,6 +355,10 @@ namespace tsorcRevamp
 
             if (Main.dedServ)
                 return;
+
+            // MainMenu/Menu.ogg is intentionally kept beside the menu assets instead of under a
+            // folder named Music, so tModLoader will not autoload it as a music track.
+            MusicLoader.AddMusic(this, "MainMenu/Menu");
 
             BonfireUIState.Activate();
             _bonfireUIState.SetState(BonfireUIState);
@@ -1079,7 +1091,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<HellkiteDragonHead>()                                          },
                 {   ModContent.ItemType<SeathBag>()                 , ModContent.NPCType<SeathTheScalelessHead>()                                       },
                 {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<Witchking>()                                                   },
-                {   ModContent.ItemType<OolacileSerpentBag>()        , ModContent.NPCType<OolacileSerpentHead>()                                        },
+                {   ModContent.ItemType<OolacileSerpentBag>()        , ModContent.NPCType<GreatSerpentHead>()                                        },
                 {   ModContent.ItemType<DarkCloudBag>()             , ModContent.NPCType<DarkCloud>()                                                   },
                 {   ModContent.ItemType<SoulOfCinderBag>()          , ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>()                      },
                 {   ModContent.ItemType<GwynBag>()                  , ModContent.NPCType<Gwyn>()                                                        }
@@ -1165,7 +1177,7 @@ namespace tsorcRevamp
                                                         }                                                                                },
                 {   ItemID.PlanteraBossBag          ,   new List<IItemDropRule>()
                                                         {
-                                                            ItemDropRule.Common(ModContent.ItemType<CrestOfLife>()),
+                                                            // CrestOfLife removed — Plantera is optional now, see MindCube.cs
                                                             ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 30, 30)
                                                         }                                                                                },
                 {   ItemID.GolemBossBag             ,   new List<IItemDropRule>()
@@ -1484,13 +1496,13 @@ namespace tsorcRevamp
             ModContent.NPCType<HellkiteDragonTail>()
         };
 
-            OolacileSerpentSegments = new List<int>()
+            GreatSerpentSegments = new List<int>()
         {
-            ModContent.NPCType<OolacileSerpentHead>(),
-            ModContent.NPCType<OolacileSerpentBody>(),
-            ModContent.NPCType<OolacileSerpentBody2>(),
-            ModContent.NPCType<OolacileSerpentBody3>(),
-            ModContent.NPCType<OolacileSerpentTail>()
+            ModContent.NPCType<GreatSerpentHead>(),
+            ModContent.NPCType<GreatSerpentBody>(),
+            ModContent.NPCType<GreatSerpentBody2>(),
+            ModContent.NPCType<GreatSerpentBody3>(),
+            ModContent.NPCType<GreatSerpentTail>()
         };
 
             LichKingSerpentSegments = new List<int>()
@@ -1796,7 +1808,7 @@ namespace tsorcRevamp
                 WormNPCs.AddRange(SerrisSegments);
                 WormNPCs.AddRange(GhostDragonSegments);
                 WormNPCs.AddRange(HellkiteDragonSegments);
-                WormNPCs.AddRange(OolacileSerpentSegments);
+                WormNPCs.AddRange(GreatSerpentSegments);
                 WormNPCs.AddRange(LichKingSerpentSegments);
                 WormNPCs.AddRange(SeathSegments);
             }
@@ -1816,6 +1828,7 @@ namespace tsorcRevamp
         public override void Unload()
         {
             ExpandedWorldTransform.Unload();
+            EncounterPresentationRegistry.Unload();
 
             // ContentSamples.Initialize() runs after Unload() and calls NPC.SetDefaults() for
             // every registered NPC type, including modded ones. By that point all mod textures are
@@ -2419,6 +2432,7 @@ namespace tsorcRevamp
         public override void PostSetupContent()
         {
             ApplyFirstRunControlDefaults();
+            EncounterPresentationRegistry.Initialize();
 
             #region Summoners Association Compatibility
 
@@ -2657,10 +2671,39 @@ namespace tsorcRevamp
                     ModContent.NPCType<LeonhardPhase1>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.LeonhardPhase1.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<LeonhardPhase1>(), Language.GetText("Mods.tsorcRevamp.NPCs.LeonhardPhase1.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.LeonhardDesc"),
                         ["collectibles"] = ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/LeonhardPhase1_Head_Boss"
+                    }
+                    );
+
+                bossChecklist.Call(
+                    "LogMiniBoss",
+                    this,
+                    nameof(NPCs.Enemies.RedKnight),
+                    2.02f,
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.RedKnight>())),
+                    ModContent.NPCType<NPCs.Enemies.RedKnight>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.RedKnight>(), Language.GetText("Mods.tsorcRevamp.NPCs.RedKnight.DisplayName")),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.Items.BossRematchTome.2")
+                    }
+                    );
+
+                bossChecklist.Call(
+                    "LogBoss",
+                    this,
+                    nameof(NPCs.Bosses.VesselOfSouls.VesselOfSouls),
+                    2.1f,
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>())),
+                    ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>(), Language.GetText("Mods.tsorcRevamp.NPCs.VesselOfSouls.DisplayName")),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.VesselOfSoulsDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.VesselOfSoulsSpawner>()
                     }
                     );
 
@@ -2674,7 +2717,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<Pinwheel>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Pinwheel.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Pinwheel>(), Language.GetText("Mods.tsorcRevamp.NPCs.Pinwheel.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.PinwheelDesc"),
                     }
                     );
@@ -2689,7 +2732,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<AncientOolacileDemon>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.AncientOolacileDemon.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<AncientOolacileDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.AncientOolacileDemon.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AncientOolacileDemonDesc"),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/AncientOolacileDemon_Head_Boss"
                     }
@@ -2705,7 +2748,7 @@ namespace tsorcRevamp
                     new List<int>() { ModContent.NPCType<Slogra>(), ModContent.NPCType<Gaibon>() },
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SlograAndGaibonName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Slogra>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.SlograAndGaibonName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SlograAndGaibonDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>(),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/SlograAndGaibon_Head_Boss",
@@ -2729,7 +2772,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<NPCs.Bosses.GravelordNito.GravelordNito>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.GravelordNito.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.GravelordNito.GravelordNito>(), Language.GetText("Mods.tsorcRevamp.NPCs.GravelordNito.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.GravelordNitoDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.GravelordNitoSpawner>(),
                     }
@@ -2745,7 +2788,7 @@ namespace tsorcRevamp
                     new List<int>() { ModContent.NPCType<JungleWyvernHead>(), ModContent.NPCType<JungleWyvernBody>(), ModContent.NPCType<JungleWyvernBody2>(), ModContent.NPCType<JungleWyvernBody3>(), ModContent.NPCType<JungleWyvernLegs>(), ModContent.NPCType<JungleWyvernTail>() },
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.JungleWyvernHead.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<JungleWyvernHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.JungleWyvernHead.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.JungleWyvernDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.JungleFeather>(),
                         ["customPortrait"] = JungleWyvernPortrait
@@ -2762,7 +2805,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<AncientDemon>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.AncientDemon.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<AncientDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.AncientDemon.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AncientDemonDesc"),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/AncientDemon_Head_Boss"
                     }
@@ -2773,7 +2816,7 @@ namespace tsorcRevamp
 
 
                 bossChecklist.Call(
-                    "LogBoss",
+                    "LogMiniBoss",
                     this,
                     nameof(NPCs.Enemies.IceGigas),
                     8.05f,
@@ -2781,14 +2824,14 @@ namespace tsorcRevamp
                     ModContent.NPCType<NPCs.Enemies.IceGigas>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.IceGigas.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.IceGigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.IceGigas.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["collectibles"] = ModContent.ItemType<Items.Weapons.Magic.HeartOfWinter>()
                     }
                     );
 
                 bossChecklist.Call(
-                    "LogBoss",
+                    "LogMiniBoss",
                     this,
                     nameof(NPCs.Enemies.Gigas),
                     11.8f,
@@ -2796,7 +2839,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<NPCs.Enemies.Gigas>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Gigas.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.Gigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.Gigas.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["collectibles"] = ModContent.ItemType<Items.Weapons.Magic.WrathOfGold>()
                     }
@@ -2811,7 +2854,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<TheRage>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.TheRage.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<TheRage>(), Language.GetText("Mods.tsorcRevamp.NPCs.TheRage.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.TheRageDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.FieryEgg>()
                     }
@@ -2827,7 +2870,7 @@ namespace tsorcRevamp
                     new List<int>() { ModContent.NPCType<WyvernMage>(), ModContent.NPCType<MechaDragonHead>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonTail>() },
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.WyvernMage.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<WyvernMage>(), Language.GetText("Mods.tsorcRevamp.NPCs.WyvernMage.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WyvernMageDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.WingOfTheFallen>(),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/WyvernMageAndMechaDragon_Head_Boss",
@@ -2845,7 +2888,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<TheSorrow>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.TheSorrow.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<TheSorrow>(), Language.GetText("Mods.tsorcRevamp.NPCs.TheSorrow.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.TheSorrowDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.WateryEgg>()
                     }
@@ -2861,7 +2904,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<TheHunter>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.TheHunter.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<TheHunter>(), Language.GetText("Mods.tsorcRevamp.NPCs.TheHunter.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.TheHunterDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.GrassyEgg>()
                     }
@@ -2877,7 +2920,7 @@ namespace tsorcRevamp
                     new List<int>() { ModContent.NPCType<SerrisX>(), ModContent.NPCType<SerrisHead>(), ModContent.NPCType<SerrisBody>(), ModContent.NPCType<SerrisTail>() },
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SerrisName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<SerrisX>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.SerrisName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SerrisDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.SerrisBait>(),
                         ["customPortrait"] = SerrisPortrait
@@ -2894,7 +2937,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<Death>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Death.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Death>(), Language.GetText("Mods.tsorcRevamp.NPCs.Death.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DeathDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DeathBringer>()
                     }
@@ -2910,7 +2953,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<BrokenOkiku>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AttraidiesName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<BrokenOkiku>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.AttraidiesName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AttraidiesDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.MindCube>()
                     }
@@ -2926,7 +2969,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<Attraidies>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.RealAttraidiesName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Attraidies>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.RealAttraidiesName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.RealAttraidiesDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>(),
                         ["availability"] = (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<BrokenOkiku>())))
@@ -2941,7 +2984,7 @@ namespace tsorcRevamp
 
 
                 bossChecklist.Call(
-                    "LogBoss", // Name of the call
+                    "LogMiniBoss", // Field Boss
                     this,
                     nameof(HellkiteDragonHead),
                     20.1f, // Tier (look above)
@@ -2949,7 +2992,7 @@ namespace tsorcRevamp
                     new List<int>() { ModContent.NPCType<HellkiteDragonHead>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonTail>() },
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.HellkiteDragonHead.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<HellkiteDragonHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.HellkiteDragonHead.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.HellkiteDragonDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.HellkiteStone>(),
                         ["customPortrait"] = HellkiteDragonPortrait
@@ -2958,17 +3001,17 @@ namespace tsorcRevamp
 
 
                 bossChecklist.Call(
-                    "LogBoss", // Name of the call
+                    "LogMiniBoss", // Field Boss
                     this,
-                    nameof(OolacileSerpentHead),
+                    nameof(GreatSerpentHead),
                     20.11f, // Tier (look above)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileSerpentHead>())),
-                    new List<int>() { ModContent.NPCType<OolacileSerpentHead>(), ModContent.NPCType<OolacileSerpentBody>(), ModContent.NPCType<OolacileSerpentBody2>(), ModContent.NPCType<OolacileSerpentBody3>(), ModContent.NPCType<OolacileSerpentTail>() },
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<GreatSerpentHead>())),
+                    new List<int>() { ModContent.NPCType<GreatSerpentHead>(), ModContent.NPCType<GreatSerpentBody>(), ModContent.NPCType<GreatSerpentBody2>(), ModContent.NPCType<GreatSerpentBody3>(), ModContent.NPCType<GreatSerpentTail>() },
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.OolacileSerpentHead.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<GreatSerpentHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.GreatSerpentHead.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.OolacileSerpentStone>()
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.GreatSerpentStone>()
                     }
                     );
 
@@ -2982,7 +3025,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<Blight>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.BlightName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Blight>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.BlightName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.BlightDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.BlightStone>()
                     }
@@ -2998,7 +3041,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<EarthFiendLich>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.EarthFiendLich.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<EarthFiendLich>(), Language.GetText("Mods.tsorcRevamp.NPCs.EarthFiendLich.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.EarthFiendLichDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingEarthCrystal>()
                     }
@@ -3014,7 +3057,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<Witchking>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Witchking.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Witchking>(), Language.GetText("Mods.tsorcRevamp.NPCs.Witchking.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WitchkingDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMagicRing>()
                     }
@@ -3030,7 +3073,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<Artorias>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Artorias.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Artorias>(), Language.GetText("Mods.tsorcRevamp.NPCs.Artorias.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.ArtoriasDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMagicRing>()
                     }
@@ -3046,7 +3089,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<WaterFiendKraken>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.WaterFiendKraken.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<WaterFiendKraken>(), Language.GetText("Mods.tsorcRevamp.NPCs.WaterFiendKraken.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WaterFiendKrakenDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingWaterCrystal>()
                     }
@@ -3062,7 +3105,7 @@ namespace tsorcRevamp
                     new List<int>() { ModContent.NPCType<SeathTheScalelessHead>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessTail>(), ModContent.NPCType<PrimordialCrystal>() },
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.SeathTheScalelessHead.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<SeathTheScalelessHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.SeathTheScalelessHead.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SeathTheScalelessDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.StoneOfSeath>(),
                         ["customPortrait"] = SeathPortrait
@@ -3071,7 +3114,7 @@ namespace tsorcRevamp
 
 
                 bossChecklist.Call(
-                    "LogBoss", // Name of the call
+                    "LogMiniBoss", // Field Boss
                     this,
                     nameof(AbysmalOolacileSorcerer),
                     20.8f, // Tier (look above)
@@ -3079,7 +3122,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<AbysmalOolacileSorcerer>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.AbysmalOolacileSorcerer.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<AbysmalOolacileSorcerer>(), Language.GetText("Mods.tsorcRevamp.NPCs.AbysmalOolacileSorcerer.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AbysmalOolacileSorcererDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.AbysmalStone>()
                     }
@@ -3095,7 +3138,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<FireFiendMarilith>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.FireFiendMarilith.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<FireFiendMarilith>(), Language.GetText("Mods.tsorcRevamp.NPCs.FireFiendMarilith.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.FireFiendMarilithDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingFireCrystal>()
                     }
@@ -3111,7 +3154,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<WyvernMageShadow>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.WyvernMageShadow.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<WyvernMageShadow>(), Language.GetText("Mods.tsorcRevamp.NPCs.WyvernMageShadow.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WyvernMageShadowDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.WingOfTheGhostWyvern>()
                     }
@@ -3127,7 +3170,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<Chaos>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Chaos.DisplayName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Chaos>(), Language.GetText("Mods.tsorcRevamp.NPCs.Chaos.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.ChaosDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingDarkCrystal>()
                     }
@@ -3143,7 +3186,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<DarkCloud>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DarkCloudName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<DarkCloud>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.DarkCloudName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DarkCloudDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMirror>()
                     }
@@ -3159,7 +3202,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SoulOfCinderName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.SoulOfCinderName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.SoulOfCinderSpawner>()
                     }
@@ -3175,7 +3218,7 @@ namespace tsorcRevamp
                     ModContent.NPCType<Gwyn>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.GwynName"),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Gwyn>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.GwynName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.GwynDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.LostScrollOfGwyn>()
                     }

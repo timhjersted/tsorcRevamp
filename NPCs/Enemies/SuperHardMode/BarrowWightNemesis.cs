@@ -88,6 +88,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #region AI
         public override void AI()
         {
+            NPC.TargetClosest(false);
+            if (NPC.target < 0 || NPC.target >= Main.maxPlayers
+                || !Main.player[NPC.target].active || Main.player[NPC.target].dead)
+            {
+                NPC.velocity *= 0.95f;
+                NPC.EncourageDespawn(10);
+                return;
+            }
+
             NPC.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
             if (NPC.ai[1] >= 10f)
             {

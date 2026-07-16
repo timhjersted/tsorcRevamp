@@ -21,8 +21,11 @@ namespace tsorcRevamp.NPCs.Puppets
     /// Breath, hyper-armor, sustained magic, and the cross-weapon finisher all run through the shared
     /// <see cref="PuppetNPC"/> state machine.
     /// </summary>
+    [AutoloadBossHead]
     public class CursedDragonInvader : PuppetNPC
     {
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/CursedDragonInvader_Head_Boss";
+
         // Index into SecondaryRangedBurstPatterns that ends with the meteor pentagram finisher.
         private const int VenomFinisherPattern = 3;
         private const int BreathDamage = 30;
@@ -40,6 +43,7 @@ namespace tsorcRevamp.NPCs.Puppets
         private float _meteorBurstCenterJitter;
 
         protected override string InvaderTitle => "Cursed Dragon";
+        protected override bool IsGreatInvader => true;
 
         // ── Wings / flight ──────────────────────────────────────────────────────────
         protected override bool HasWings => true;
@@ -636,9 +640,8 @@ namespace tsorcRevamp.NPCs.Puppets
             // Forward spear-thrust hitbox in the dive direction.
             int boxW = 150, boxH = 70;
             Vector2 center = NPC.Center + new Vector2(NPC.direction * 30f, 0f);
-            Vector2 topLeft = center - new Vector2(boxW / 2f, boxH / 2f);
             Projectile.NewProjectile(
-                NPC.GetSource_FromThis(), topLeft, Vector2.Zero,
+                NPC.GetSource_FromThis(), center, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
                 (int)(SpearDamage * 1.25f), 4f, Main.myPlayer, boxW, boxH);
         }

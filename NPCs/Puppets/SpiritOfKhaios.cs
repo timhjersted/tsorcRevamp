@@ -10,9 +10,15 @@ using tsorcRevamp.NPCs.AI;
 namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>Final encounter phase. Weapon kit and unique drop are placeholders until designed.</summary>
+    [AutoloadBossHead]
     public class SpiritOfKhaios : PuppetNPC
     {
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/SpiritOfKhaios_Head_Boss";
+
         protected override string InvaderTitle => "Spirit of Khaios";
+        protected override bool AnnounceInvasion => false;
+        protected override bool AnnounceInvaderDefeat => true;
+        protected override bool IsGreatInvader => true;
         protected override Color PuppetSkinColor => new Color(0xF4, 0x86, 0x67);
 
         protected override int HeadArmorItemType => ItemID.SpookyHelmet;
@@ -169,12 +175,14 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            base.SendExtraAI(writer);
             writer.Write(skyFractureCastCount);
             writer.Write(activeSkyFractureDuration);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            base.ReceiveExtraAI(reader);
             skyFractureCastCount = reader.ReadInt32();
             activeSkyFractureDuration = reader.ReadInt32();
             if (activeSkyFractureDuration > 0)

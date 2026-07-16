@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
@@ -40,6 +41,45 @@ namespace tsorcRevamp.NPCs.Puppets
 
             float halfThickness = thickness * 0.5f;
             return Vector2.DistanceSquared(onSegment, onRect) <= halfThickness * halfThickness;
+        }
+
+        /// <summary>
+        /// Tests the full space swept by a blade between two animation samples. Both endpoints are
+        /// interpolated, so fast rotation and simultaneous hand movement cannot tunnel between
+        /// ticks. The intersecting interpolated segment is returned for accurate impact placement.
+        /// </summary>
+        public static bool SweptSegmentIntersectsRect(
+            Vector2 previousA,
+            Vector2 previousB,
+            Vector2 currentA,
+            Vector2 currentB,
+            float thickness,
+            Rectangle rect,
+            out Vector2 hitA,
+            out Vector2 hitB,
+            float maxSampleSpacing = 8f,
+            int maxSamples = 12)
+        {
+            float endpointTravel = Math.Max(
+                Vector2.Distance(previousA, currentA),
+                Vector2.Distance(previousB, currentB));
+            int samples = Math.Clamp(
+                (int)Math.Ceiling(endpointTravel / Math.Max(1f, maxSampleSpacing)),
+                1,
+                Math.Max(1, maxSamples));
+
+            hitA = currentA;
+            hitB = currentB;
+            for (int sample = 1; sample <= samples; sample++)
+            {
+                float progress = sample / (float)samples;
+                hitA = Vector2.Lerp(previousA, currentA, progress);
+                hitB = Vector2.Lerp(previousB, currentB, progress);
+                if (SegmentIntersectsRect(hitA, hitB, thickness, rect))
+                    return true;
+            }
+
+            return false;
         }
     }
 }

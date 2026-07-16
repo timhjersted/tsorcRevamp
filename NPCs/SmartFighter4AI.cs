@@ -146,6 +146,21 @@ namespace tsorcRevamp.NPCs
                 || (s.Plan != null && s.PlanIndex < s.Plan.Count);
         }
 
+        /// <summary>Returns the latest movement decision in a compact form for puppet attack telemetry.</summary>
+        internal static bool TryGetTelemetryState(NPC npc, out string action, out string reason, out string plan)
+        {
+            if (!States.TryGetValue(npc.whoAmI, out NavState s))
+            {
+                action = reason = plan = "";
+                return false;
+            }
+
+            action = s.LastAction ?? "";
+            reason = s.LastReason ?? "";
+            plan = s.LastTelemetryPlan ?? "none";
+            return true;
+        }
+
         // movementOnly (Phase 2 Step 4): act as BasicAI's pluggable MOVEMENT substrate instead of a standalone
         // driver. When true, BasicAI already advanced the shared FSM and fired combat this frame, so SF4 must NOT
         // re-run UpdateState (side effects → double give-up clock) or fire its own attacks (double shot) — it
@@ -561,7 +576,15 @@ namespace tsorcRevamp.NPCs
                         if (s.HardStuckStrikes >= 2) // ~4s with no net progress
                         {
                             s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0;
-                            if (g.CanTeleport) tsorcRevampAIs.QueueTeleport(npc, 20, false);
+                            if (g.CanTeleport)
+                            {
+                                // Use the same robust reacquire search as the navigation FSM: a wider
+                                // radius, a legal sightline near the target, and normal charge/cooldown
+                                // accounting. The old blind 20-tile queue often found no destination,
+                                // reset this detector, and repeated the exact blocked/drop loop forever.
+                                if (!tsorcRevampAIs.TryTeleportReacquire(npc, g))
+                                    NavBehavior.ForceDisengage(npc, g);
+                            }
                             else NavBehavior.ForceDisengage(npc, g);
                             s.HardStuckStrikes = 0;
                             s.HardStuckCheckX = float.MaxValue;
@@ -616,6 +639,9 @@ namespace tsorcRevamp.NPCs
                 g.CanStopToFire = oldStop;
             }
 
+            s.LastAction = actionLabel;
+            s.LastReason = reasonLabel;
+            s.LastTelemetryPlan = DescribePlan(s);
             LogFrame(npc, player, s, grounded, los, canAttack, actionLabel, reasonLabel);
         }
 
@@ -3146,12 +3172,28 @@ namespace tsorcRevamp.NPCs
             catch { }
         }
 
+        private static string DescribePlan(NavState s)
+        {
+            if (s.Plan == null)
+                return "none";
+            string value = $"{s.PlanIndex}/{s.Plan.Count}";
+            if (s.PlanIndex < s.Plan.Count)
+            {
+                PlanStep step = s.Plan[s.PlanIndex];
+                value += $" {step.Kind}->{step.TargetX},{step.TargetY}@launch{step.LaunchX}";
+            }
+            return value;
+        }
+
         // ================================================================================
         //  Types
         // ================================================================================
 
         private class NavState
         {
+            public string LastAction = "";
+            public string LastReason = "";
+            public string LastTelemetryPlan = "none";
             public List<PlanStep> Plan;
             public int PlanIndex;
             public int StepTimer;
@@ -3311,4 +3353,3 @@ namespace tsorcRevamp.NPCs
         }
     }
 }
-

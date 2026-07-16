@@ -120,8 +120,7 @@ namespace tsorcRevamp.Tiles
                     && tsorcRevamp.LastShownLocationId != entity.ID)
                 {
                     tsorcRevamp.LastShownLocationId = entity.ID;
-                    tsorcRevamp.LocationBannerText = entity.locationName.ToUpperInvariant();
-                    tsorcRevamp.LocationBannerTimer = tsorcRevamp.LOCATION_BANNER_TOTAL;
+                    tsorcRevamp.ShowAnnouncementBanner(entity.locationName, Color.White);
                     Vector2 tilePos = new Vector2(entity.Position.X, entity.Position.Y);
                     tsorcRevampWorld.DiscoveredLocations[tilePos] = entity.locationName.ToUpperInvariant();
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/new-area") with { Volume = 0.5f });

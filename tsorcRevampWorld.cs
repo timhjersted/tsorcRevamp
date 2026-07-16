@@ -112,7 +112,6 @@ namespace tsorcRevamp
                 return SuperHardMode && !EarlySHM && !(
                     BossDefeated(ModContent.NPCType<WyvernMageShadow>()) &&
                     BossDefeated(ModContent.NPCType<Artorias>()) &&
-                    BossDefeated(ModContent.NPCType<Blight>()) &&
                     BossDefeated(ModContent.NPCType<SeathTheScalelessHead>())
                     );
             }
@@ -1834,6 +1833,7 @@ namespace tsorcRevamp
             tsorcRevamp.NearbySoapstone = null;
             tsorcRevamp.LastShownLocationId = -1;
             tsorcRevamp.LocationBannerText = null;
+            tsorcRevamp.LocationBannerColor = Color.White;
             tsorcRevamp.LocationBannerTimer = 0;
 
             // Clear all scripted events on world unload to prevent old events
@@ -2192,6 +2192,7 @@ namespace tsorcRevamp
             { ModContent.NPCType<NPCs.Enemies.RedKnight>(), new Vector2(3304, 500) },
             { ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), new Vector2(4139f, 933) },
             { NPCID.EyeofCthulhu, new Vector2(3900, 1140) },
+            { ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>(), new Vector2(3900, 1140) },
             { NPCID.BrainofCthulhu, new Vector2(3044, 904) },
             { NPCID.EaterofWorldsHead, new Vector2(3633, 1010) },
             { ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), new Vector2(5634, 990) },
@@ -2220,7 +2221,6 @@ namespace tsorcRevamp
             { NPCID.Golem, new Vector2(6792, 1628) },
             { NPCID.HallowBoss, new Vector2(4468, 351) },
             { ModContent.NPCType<NPCs.Bosses.Cataluminance>(), new Vector2(2884, 240) },
-            { ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>(), new Vector2(1401, 307) },
             { ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>(), new Vector2(1401, 307) },
         };
 
@@ -2228,7 +2228,7 @@ namespace tsorcRevamp
         {
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), new Vector2(4182, 626) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2483, 1796) },
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.OolacileSerpentHead>(), new Vector2(1040, 1865) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>(), new Vector2(1040, 1865) },
             { NPCID.MoonLordCore, new Vector2(5408, 584) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>(), new Vector2(1814, 1711) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(318, 1909) },

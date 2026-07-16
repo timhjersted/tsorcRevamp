@@ -79,7 +79,6 @@ namespace tsorcRevamp
 
         public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
         {
-
             //This is going here, because unlike most hooks this one keeps running even when the game is paused via AutoPause
             if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>())
             {

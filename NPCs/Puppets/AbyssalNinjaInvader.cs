@@ -14,8 +14,11 @@ using tsorcRevamp.NPCs.AI;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
+    [AutoloadBossHead]
     public class AbyssalNinjaInvader : PuppetNPC
     {
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/AbyssalNinjaInvader_Head_Boss";
+
         // ── Config ────────────────────────────────────────────────────────────────
         /// <summary>Master config toggle: when true, every spawned Abyssal Ninja has wings
         /// and can take off, hover, strafe, and dive.  Flip to false to ship a ground-only

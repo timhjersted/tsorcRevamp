@@ -14,6 +14,7 @@ namespace tsorcRevamp.MainMenu
         private const int AnimationAtlasColumns = 4;
         private const int AnimationFramesPerAtlas = 20;
         private const float AnimationSecondsPerFrame = 0.11f;
+        private const string BundledMenuTrack = "MainMenu/Menu";
 
         private Asset<Texture2D> logo;
         private Asset<Texture2D>[] backgroundAtlases;
@@ -21,6 +22,8 @@ namespace tsorcRevamp.MainMenu
         public override string DisplayName => "The Story of Red Cloud";
 
         public override Asset<Texture2D> Logo => logo ??= ModContent.Request<Texture2D>("tsorcRevamp/MainMenu/tsorc_logo", AssetRequestMode.ImmediateLoad);
+
+        public override int Music => MusicLoader.GetMusicSlot(Mod, BundledMenuTrack);
 
         public override void Load()
         {

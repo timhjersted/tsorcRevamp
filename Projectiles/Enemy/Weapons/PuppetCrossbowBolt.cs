@@ -45,6 +45,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            // Optional reusable slow payload supplied through ai[0]. Ordinary puppet bolts leave
+            // this at zero; bespoke callers can opt in without creating another bolt class.
+            int slowTicks = (int)Projectile.ai[0];
+            if (slowTicks > 0)
+                target.AddBuff(BuffID.Slow, slowTicks);
+        }
+
         public override void OnKill(int timeLeft)
         {
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity,

@@ -13,8 +13,11 @@ using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Ranged.Bows;
 namespace tsorcRevamp.NPCs.Puppets
 {
+    [AutoloadBossHead]
     public class ShadowNinja : PuppetNPC
     {
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/ShadowNinja_Head_Boss";
+
         protected override string InvaderTitle => "Shadow Ninja";
 
         protected override void RunMovementAI(float speedMult)

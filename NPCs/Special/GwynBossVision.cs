@@ -59,14 +59,13 @@ namespace tsorcRevamp.NPCs.Special
             //Initialize the data for the visions
             if (bossVisions == null)
             {
-                bossVisions = new BossVision[7];
+                bossVisions = new BossVision[6];
                 bossVisions[0] = new BossVision(700, 1115 + dY, ModContent.NPCType<WaterFiendKraken>(), "tsorcRevamp/NPCs/Special/Visions/WaterFiendKraken", 1, Color.Blue);
                 bossVisions[1] = new BossVision(658, 1129 + dY, ModContent.NPCType<FireFiendMarilith>(), "tsorcRevamp/NPCs/Special/Visions/FireFiendMarilith", 1.2f, Color.OrangeRed);
                 bossVisions[2] = new BossVision(622, 1140 + dY, ModContent.NPCType<EarthFiendLich>(), "tsorcRevamp/NPCs/Special/Visions/EarthFiendLich", 1.5f, Color.Green);
                 bossVisions[3] = new BossVision(622, 1190 + dY, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), "tsorcRevamp/NPCs/Special/Visions/Artorias", 1.5f, Color.DarkBlue * 4);
                 bossVisions[4] = new BossVision(656, 1201 + dY, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), "tsorcRevamp/NPCs/Special/Visions/WyvernMageShadow", 1.5f, Color.Purple * 4);
                 bossVisions[5] = new BossVision(700, 1218 + dY, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), "tsorcRevamp/NPCs/Special/Visions/SeathTheScalelessHead", 1, Color.White);
-                bossVisions[6] = new BossVision(736, 1231 + dY, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), "tsorcRevamp/NPCs/Special/Visions/Artorias_Outline", 1, Color.Cyan);
             }
 
             //Lighting
@@ -82,19 +81,12 @@ namespace tsorcRevamp.NPCs.Special
                 }
             }
 
-            if (bossVisions[6].activationProgress == 0)
-            {
-                float diff = (float)Math.Sin(Main.GameUpdateCount / 50f);
-                int dust = Dust.NewDust(new Vector2(740, 1231 + dY + diff) * 16, 60, 110, 15, 0, 0, 250, default, 5f);
-                Main.dust[dust].noGravity = true;
-            }
-
             //Check if a player is close enough to activate any of the visions
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
-                    for (int j = 0; j < 7; j++)
+                    for (int j = 0; j < 6; j++)
                     {
                         if (Math.Abs(Main.player[i].Center.X - bossVisions[j].Center.X) < 50 && Math.Abs(Main.player[i].Center.Y - bossVisions[j].Center.Y) < 400)
                         {
@@ -137,14 +129,14 @@ namespace tsorcRevamp.NPCs.Special
             //Initialize texture arrays
             if (textures == null)
             {
-                textures = new Texture2D[7];
+                textures = new Texture2D[6];
             }
             if (outlines == null)
             {
-                outlines = new Texture2D[7];
+                outlines = new Texture2D[6];
             }
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 6; i++)
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
