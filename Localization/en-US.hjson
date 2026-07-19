@@ -2050,10 +2050,10 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesMaxMinionsBy}
 					For each minion slot you have,
-					increase whip damage by {2}% and tag strength by {1}% but also decrease whip range by {1}%
+					increase whip damage by {2}% and tag strength by {1}% but also decrease whip range by {3}%
 					"A magical substance found only in the Crystalline Dimension"
 					'''
-				Tooltip0: Current Modifier: {0}% summon tag strength and negative whip range, {1}% whip damage
+				Tooltip0: Current Modifier: {0}% summon tag strength and -{2}% whip range, {1}% whip damage
 			}
 
 			ShamanEmblem: {
