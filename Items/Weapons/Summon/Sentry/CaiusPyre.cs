@@ -18,19 +18,19 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
         }
         public override void SetDefaults()
         {
-            Item.damage = 80;
+            Item.damage = 300;
             Item.knockBack = 0;
             Item.width = 34;
             Item.height = 30;
-            Item.useTime = 12;
-            Item.useAnimation = 12;
+            Item.useTime = 20;
+            Item.useAnimation = Item.useTime;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.buyPrice(1, 0, 0, 0);
             Item.rare = ItemRarityID.Purple;
             Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
             Item.sentry = true;
             Item.noMelee = true;
-            Item.DamageType = DamageClass.Summon;
+            Item.DamageType = DamageClass.MagicSummonHybrid; //this is part of the reference, this also allows mages in shm to go for some sentry slots on the side if they like or just use this weapon for a bit of extra dps similar to nimbus rod, magnet sphere etc.
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Sentry.CaiusPyreRift>();
         }
 

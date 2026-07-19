@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void SetDefaults()
         {
-            Projectile.sentry = true;
+            //Projectile.sentry = true;
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.timeLeft = 120;
@@ -49,18 +49,9 @@ namespace tsorcRevamp.Projectiles
         public override void AI()
         {
             base.AI();
-
-            if (Projectile.owner == Main.myPlayer)
-            {
-                UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 1f, 20, null, true, 0.1f);
-            }
             if (Projectile.wet)
             {
                 Projectile.Kill();
-            }
-            if (Main.GameUpdateCount % 5 == 0)
-            {
-                Projectile.netUpdate = true;
             }
         }
         public override float CollisionWidthFunction(float progress)

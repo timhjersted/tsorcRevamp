@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
     public class BeetleIdol : ModItem
     {
         public const float SlotsRequired = 4f;
-        public const int BaseCritChance = 100;
+        public const int BaseCritChance = 96; //default crit is 4 so this is 100 total
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
         public override void SetStaticDefaults()
         {
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults()
         {
-            Item.damage = 140;
+            Item.damage = 120;
             Item.crit = BaseCritChance;
             Item.knockBack = 3f;
             Item.width = 32;
