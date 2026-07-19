@@ -14,23 +14,9 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public override int ProjectileHeight => 84;
         public override DamageClass ProjectileDamageType => DamageClass.MagicSummonHybrid;
         public override bool ContactDamage => false;
-        public override bool CanShoot
-        {
-            //Only fire if at least one enemy is within line of sight!
-            get
-            {
-                for (int i = 0; i < Main.npc.Length; i++)
-                {
-                    if (Main.npc[i].active && Collision.CanHitLine(Projectile.Center, 1, 1, Main.npc[i].Center, 1, 1))
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }
+        public override bool CanShoot => true;
         public override int ShotProjectileType => ModContent.ProjectileType<CaiusPyreFireball>();
-        public override float ProjectileInitialVelocity => 0;
+        public override float ProjectileInitialVelocity => 5;
         public override bool PlaysSoundOnShot => true;
         public override SoundStyle ShootSoundStyle => SoundID.Item20;
         public override float ShootSoundVolume => 1f;
