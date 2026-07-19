@@ -134,6 +134,7 @@ namespace tsorcRevamp
         public static List<int> BannedItems;
         public static List<int> RestrictedHooks;
         public static List<int> DisabledRecipes = new List<int>();
+        public static List<int> EnemiesOOA;
         public static List<int> GiantWormSegments;
         public static List<int> DevourerSegments;
         public static List<int> TombCrawlerSegments;
@@ -1361,6 +1362,42 @@ namespace tsorcRevamp
             ModContent.NPCType<SeathTheScalelessTail>()
         };
             #endregion
+            
+            //--------
+
+            #region OOA enemies
+            EnemiesOOA = new List<int>()
+            {
+                NPCID.DD2GoblinT1,
+                NPCID.DD2GoblinT2,
+                NPCID.DD2GoblinT3,
+                NPCID.DD2GoblinBomberT1,
+                NPCID.DD2GoblinBomberT2,
+                NPCID.DD2GoblinBomberT3,
+                NPCID.DD2JavelinstT1,
+                NPCID.DD2JavelinstT2,
+                NPCID.DD2JavelinstT3,
+                NPCID.DD2WyvernT1,
+                NPCID.DD2WyvernT2,
+                NPCID.DD2WyvernT3,
+                NPCID.DD2DarkMageT1,
+                NPCID.DD2DarkMageT3,
+                NPCID.DD2SkeletonT1,
+                NPCID.DD2SkeletonT3,
+                NPCID.DD2KoboldWalkerT2,
+                NPCID.DD2KoboldWalkerT3,
+                NPCID.DD2DrakinT2,
+                NPCID.DD2DrakinT3,
+                NPCID.DD2KoboldFlyerT2,
+                NPCID.DD2KoboldFlyerT3,
+                NPCID.DD2WitherBeastT2,
+                NPCID.DD2WitherBeastT3,
+                NPCID.DD2OgreT2,
+                NPCID.DD2OgreT3,
+                NPCID.DD2LightningBugT3,
+                NPCID.DD2Betsy
+            };
+                #endregion
 
             //--------
             #region WhipTipBaseSize dictionary and WhipRange dictionary
