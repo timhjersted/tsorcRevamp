@@ -17,10 +17,11 @@ namespace tsorcRevamp.NPCs
     {
         public override void SetStaticDefaults()
         {
-            foreach (int npcType in tsorcRevamp.EaterOfWorldsSegments)
+            /*foreach (int npcType in tsorcRevamp.EaterOfWorldsSegments)
             {
                 NPCID.Sets.ImmuneToRegularBuffs[npcType] = true;
-            }
+            }*/
+            NPCID.Sets.ImmuneToRegularBuffs[NPCID.EaterofWorldsBody] = true; //this only applies to the first head and tail segments, after killing them the new head/tail are still immune to debuffs, probably not worth fixing
         }
 
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
