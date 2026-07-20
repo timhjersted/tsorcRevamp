@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -256,7 +257,7 @@ namespace tsorcRevamp.Items
                     }
                 case 4:
                     {
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", (int)(modPlayer.BotCSummonBaseDamageMult * 100f), (int)(modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks * modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks), (int)((1f - modPlayer.BotCFullConquerorBonusTagDuration) * 100f))));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", (int)(modPlayer.BotCSummonBaseDamageMult * 100f), (int)(modPlayer.BotCConquerorBonus * 100f), Math.Round((modPlayer.BotCConquerorMaxStacks * modPlayer.BotCConquerorBonus * 100f)), (int)(modPlayer.BotCConquerorMaxStacks), (int)((modPlayer.BotCFullConquerorBonusTagDuration) * 100f))));
                         break;
                     }
             }

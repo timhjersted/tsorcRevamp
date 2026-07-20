@@ -128,11 +128,11 @@ namespace tsorcRevamp
         public float BotCMagicDamageAmp = 15f;
         public float BotCMagicAttackSpeedAmp = 15f;
 
-        public float BotCSummonBaseDamageMult = 0.2f;
+        public float BotCSummonBaseDamageMult = 0.4f;
         public int BotCConquerorDuration = 4;
         public float BotCConquerorStacks = 0;
         public int BotCConquerorMaxStacks = 10;
-        public float BotCConquerorBonus = 0.08f;
+        public float BotCConquerorBonus = 0.06f;
         public float BotCFullConquerorBonusTagDuration = 0.1f;
 
         public bool SteraksGage = false;
