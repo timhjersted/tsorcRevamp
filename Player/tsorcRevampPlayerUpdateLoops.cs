@@ -55,6 +55,8 @@ namespace tsorcRevamp
         public int townWarpWorld;
         public bool townWarpSet;
 
+        public int RuneMageChatTimer = 0;
+
         public bool BeastMode1 = false;
         public bool SilverSerpentRing = false;
         public bool SoulSerpentRing = false;

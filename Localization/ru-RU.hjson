@@ -12558,6 +12558,7 @@ Mods: {
 			// SpiritOfKhaios.DisplayName: Spirit Of Khaios
 			// KhaiosTransitionOrb.DisplayName: Khaios Transition Orb
 			// Khaios.DisplayName: Khaios
+			// Runeterra.RuneMage.DisplayName: Rune Mage
 		}
 
 		Prefixes: {
