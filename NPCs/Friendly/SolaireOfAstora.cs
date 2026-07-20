@@ -22,10 +22,10 @@ namespace tsorcRevamp.NPCs.Friendly
             Main.npcFrameCount[NPC.type] = 25;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 9;
             NPCID.Sets.AttackFrameCount[NPC.type] = 4;
-            NPCID.Sets.DangerDetectRange[NPC.type] = 40;
+            NPCID.Sets.DangerDetectRange[NPC.type] = 90;
             NPCID.Sets.AttackType[NPC.type] = 3;
             NPCID.Sets.AttackTime[NPC.type] = 18;
-            NPCID.Sets.AttackAverageChance[NPC.type] = 10;
+            NPCID.Sets.AttackAverageChance[NPC.type] = 6;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
         public override List<string> SetNPCNameList()
@@ -41,8 +41,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.height = 40;
             NPC.aiStyle = 7;
             NPC.damage = 90;
-            NPC.defense = 15;
-            NPC.lifeMax = 1000;
+            NPC.defense = 80;
+            NPC.lifeMax = 7500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.5f;
@@ -217,20 +217,30 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
-            damage = 30;
+            damage = 45;
             knockback = 4f;
+            if (Main.hardMode)
+            {
+                damage = 90;
+                knockback = 6f;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                damage = 180;
+                knockback = 12f;
+            }
         }
 
         public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown)
         {
-            cooldown = 30;
-            randExtraCooldown = 30;
+            cooldown = 20;
+            randExtraCooldown = 10;
         }
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref Rectangle itemFrame, ref int itemSize, ref float scale, ref Vector2 offset)
         {
             item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Broadswords.SunBlade>()];
-            scale = .8f;
+            scale = 1f;
             itemSize = 36;
         }
 

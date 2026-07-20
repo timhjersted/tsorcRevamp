@@ -37,8 +37,12 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
 
         public override void UpdateEquip(Player player)
         {
-            player.thorns += Thorns / 100f;
-            player.endurance += DR / 100f;
+            // Under Active Shields Revamp the passive thorns + % DR become an on-block reflect instead.
+            if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))
+            {
+                player.thorns += Thorns / 100f;
+                player.endurance += DR / 100f;
+            }
         }
         public override void AddRecipes()
         {

@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.knockBack = 22;
             Projectile.DamageType = DamageClass.Throwing;
             Projectile.light = 1;
-            Projectile.scale = 1.2f;
+            Projectile.scale = 1f;
 
             // These 2 help the projectile hitbox be centered on the projectile sprite.
             DrawOffsetX = -5;

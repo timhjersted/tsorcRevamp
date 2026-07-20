@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.width = 100;
             NPC.timeLeft = 22500;
             Music = 12;
-            NPC.lifeMax = (int)(400000 * (Main.masterMode ? 1.5f : 1));
+            NPC.lifeMax = 400000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.noGravity = true;
@@ -137,7 +137,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Quote"), 175, 75, 255);
                 InitializeMoves();
-                if (!Main.tile[1365, 280].IsActuated)
+                if (!Main.tile[1365, ExpandedWorldTransform.MapTileY(1365, 280)].IsActuated)
                 {
                     ActuateAttraidiesArena();
                 }
@@ -1401,9 +1401,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !tsorcRevampWorld.RemixMap)
             {
+                //Expanded-world Y offset: the arena (Y 59–306) is in the flat +200 band; X is invariant. 0 on legacy.
+                int dY = ExpandedWorldTransform.MapTileY(1365, 280) - 280;
                 for (int x = 1158; x < 1633; x++)
                 {
-                    for (int y = 59; y < 306; y++)
+                    for (int y = 59 + dY; y < 306 + dY; y++)
                     {
                         Wiring.ActuateForced(x, y);
                     }

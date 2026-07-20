@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (Projectile.ai[1] > 3)
             {
-                int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.CursedTorch, Projectile.velocity.X * 2f, Projectile.velocity.Y * 2f, 70, default(Color), Main.rand.NextFloat(2.5f, 4f));
+                int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.JungleTorch, Projectile.velocity.X * 2f, Projectile.velocity.Y * 2f, 70, default(Color), Main.rand.NextFloat(2.5f, 4f));
                 Main.dust[dust].noGravity = true;
             }
 

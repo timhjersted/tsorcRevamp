@@ -22,6 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.damage = 20;
             NPC.defDamage = 2;
+            NPC.defense = 2;
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 45;
@@ -31,12 +32,18 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.PossessedArmor;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();
+
+            // Step 6: humanoid soldier — paces around its post when it gives up.
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PatrolMode = NPCs.PatrolMode.Pace;
+            // Phase 2 Step 4: mid-tier SmartFighter4AI movement test (radius 10 — routes local dead-ends/cliffs
+            // but can't solve a maze; smaller = dumber + cheaper). Pure melee, so it exercises movement only.
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 10;
             
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 400; 
                 NPC.defense = 40;
-                NPC.value = 640; 
+                NPC.value = 1600;
                 NPC.damage = 70;
             }
         }

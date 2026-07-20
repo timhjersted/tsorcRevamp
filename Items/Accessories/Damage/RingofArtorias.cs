@@ -31,10 +31,6 @@ namespace tsorcRevamp.Items.Accessories.Damage
             player.GetArmorPenetration(DamageClass.Generic) += ArmorPen;
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.CursePositiveStatsMultiplier += PositiveCurseStatBoost / 100f;
-            player.buffImmune[BuffID.Frozen] = true;
-            player.buffImmune[BuffID.Blackout] = true;
-            player.buffImmune[BuffID.Obstructed] = true;
-            player.buffImmune[BuffID.Venom] = true;
         }
 
     }

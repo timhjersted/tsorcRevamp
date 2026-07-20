@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.SlimeStaff)
             {
-                item.damage = 8;
+                item.damage = 7;
             }
             if (item.type == ItemID.FlinxStaff)
             {
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.SanguineStaff)
             {
-                item.damage = 29;
+                item.damage = 30;
             }
             if (item.type == ItemID.PirateStaff)
             {
@@ -64,11 +64,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.OpticStaff)
             {
-                item.damage = 21;
+                item.damage = 22;
             }
             if (item.type == ItemID.PygmyStaff)
             {
-                item.damage = 31;
+                item.damage = 40;
             }
             if (item.type == ItemID.StormTigerStaff)
             {
@@ -80,7 +80,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.RavenStaff)
             {
-                item.damage = 70;
+                item.damage = 70; //SHM
             }
             if (item.type == ItemID.XenoStaff)
             {
@@ -137,13 +137,21 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 43;
             }
-            if (item.type == ItemID.HoundiusShootius)
+            if (item.type == ItemID.HoundiusShootius) 	
             {
                 item.damage = 30;
             }
-            if (item.type == ItemID.StaffoftheFrostHydra) //buff, using static immunity frame in tml1.4.4, vanilla damage is 100
-            {//now uses local iframes in globalprojectile
+            if (item.type == ItemID.StaffoftheFrostHydra) 
+            {
                 item.damage = 85;
+            }
+            if (item.type == ItemID.MoonlordTurretStaff) 
+            {
+                item.damage = 45;
+            }
+            if (item.type == ItemID.RainbowCrystalStaff) //now uses local immunity frames
+            {
+                item.damage = 58;
             }
             #endregion
         }

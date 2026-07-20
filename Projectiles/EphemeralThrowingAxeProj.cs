@@ -13,8 +13,8 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.aiStyle = 2;
             Projectile.friendly = true;
-            Projectile.width = 26;
-            Projectile.height = 60;
+            Projectile.width = 52;
+            Projectile.height = 52;
             Projectile.penetrate = 4;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
@@ -28,6 +28,14 @@ namespace tsorcRevamp.Projectiles
             Color color = new Color();
             int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 57, 0f, 0f, 80, color, 1f);
             Main.dust[dust].noGravity = true;
+        }
+
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (tsorcRevamp.MageNPCs.Contains(target.type))
+            {
+                modifiers.FinalDamage *= 1.2f;
+            }
         }
 
         public override void OnKill(int timeLeft)

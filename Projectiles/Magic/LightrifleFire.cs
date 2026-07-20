@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Magic
 {
@@ -21,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.tileCollide = true;
-
+            Projectile.DamageType = DamageClass.Magic;
             FollowHost = false;
             TelegraphTime = 0;
             LaserColor = Color.Cyan;
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Magic
             DustAmount = 20;
             MaxCharge = 0;
             FiringDuration = 60;
-            Projectile.penetrate = 999;
+            Projectile.penetrate = 60;
 
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 6;

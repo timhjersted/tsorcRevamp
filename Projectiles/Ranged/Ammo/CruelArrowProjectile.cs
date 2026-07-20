@@ -22,22 +22,10 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (target.type == ModContent.NPCType<NPCs.Enemies.GhostoftheForgottenKnight>() ||
-                target.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheForgottenWarrior>() ||
-                target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>() ||
-                target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>() ||
-                target.type == ModContent.NPCType<NPCs.Enemies.BarrowWight>() ||
-                target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>() ||
-                target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>() ||
-                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>() ||
-                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>() ||
-                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody>() ||
-                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody2>() ||
-                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody3>() ||
-                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonLegs>() ||
-                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonTail>() ||
-                target.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheDarkmoonKnight>())
+            if (tsorcRevamp.GhostNPCs.Contains(target.type))
+            {
                 modifiers.SourceDamage *= CruelArrow.DmgMult;
+            }
         }
 
         public override void OnKill(int timeLeft)

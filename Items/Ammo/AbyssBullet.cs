@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Ammo
 
         public override void SetDefaults()
         {
-			Item.damage = 22; 
+			Item.damage = 23; 
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 10;
 			Item.height = 26;
@@ -33,7 +33,8 @@ namespace tsorcRevamp.Items.Ammo
             Recipe recipe = CreateRecipe(400);
             recipe.AddIngredient(ItemID.EmptyBullet, 400);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 1);  
-            recipe.AddTile(TileID.LunarCraftingStation);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }
     }

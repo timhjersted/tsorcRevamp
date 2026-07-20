@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.FallenStar, 30);
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 8);
+            recipe.AddIngredient(ItemID.FragmentStardust, 8);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
             recipe.AddTile(TileID.DemonAltar);

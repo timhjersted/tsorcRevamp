@@ -38,6 +38,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TaurusKnightBanner>();
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
             UsefulFunctions.AddAttack(NPC, 136, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 14, SoundID.Item17);
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */

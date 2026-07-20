@@ -12,6 +12,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
@@ -24,6 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<MorgulPoisoning>()] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<AbyssInferno>()] = true;
         }
         public override void SetDefaults()
         {
@@ -442,7 +444,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             //spawn
 
 
-            if ((customspawn1 < 50) && Main.rand.NextBool(1800))
+            if ((customspawn1 < 50) && Main.rand.NextBool(2300))
             {
                 int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0);
                 Main.npc[Spawned].velocity.Y = -8;

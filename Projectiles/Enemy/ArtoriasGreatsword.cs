@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.25f);
         }
 
         public override bool PreKill(int timeLeft)

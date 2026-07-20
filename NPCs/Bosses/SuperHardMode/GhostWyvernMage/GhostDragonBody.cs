@@ -25,6 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<MorgulPoisoning>()] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<AbyssInferno>()] = true;
         }
         public override void SetDefaults()
         {
@@ -61,7 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void AI()
         {
 
-            NPC.noTileCollide = true;
+            NPC.noTileCollide = true; 
             NPC.noGravity = true;
             NPC.behindTiles = true;
             int[] bodyTypes = new int[] { ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonLegs>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonLegs>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonLegs>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonLegs>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody2>(), ModContent.NPCType<GhostDragonBody3>() };
@@ -80,7 +81,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             //	npc.spriteDirection = -1;
             //}
 
-            if (Timer >= 420)
+            if (Timer >= 360)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {

@@ -29,20 +29,24 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.damage = 12;
             Item.crit = BaseCritChance;
             Item.knockBack = 3f;
-            Item.mana = 10;
             Item.width = 50;
             Item.height = 50;
-            Item.useTime = 30;
-            Item.useAnimation = 30;
+            Item.useTime = 18;
+            Item.useAnimation = 18;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.rare = ItemRarityID.Blue;
             Item.value = PriceByRarity.fromItem(Item);
             Item.UseSound = SoundID.Item35;
+            Item.mana = 50;
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<SpiritAshKnightBuff>();
             Item.shoot = ModContent.ProjectileType<SpiritAshKnightMinion>();
+        }
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
+        {
+            BellSwingAnimation.Apply(Item, player, heldItemFrame);
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {

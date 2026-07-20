@@ -19,13 +19,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
         {
             //item.CloneDefaults(ItemID.LastPrism);
             Item.mana = 0;
-            Item.damage = 680;
+            Item.damage = 640;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.height = 28;
             Item.width = 12;
             Item.knockBack = 4;
             Item.shoot = ModContent.ProjectileType<Projectiles.GlaiveBeamHoldout>();
+            Item.useAmmo = ModContent.ItemType<TeslaBolt>();
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = null;
             Item.channel = true;

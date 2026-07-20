@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.BossItems
             recipe.AddIngredient(ModContent.ItemType<CrestOfSky>(), 3);
             recipe.AddIngredient(ModContent.ItemType<CrestOfCorruption>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CrestOfSteel>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<CrestOfLife>(), 1);
+            // CrestOfLife removed — Plantera is optional now, Temple Key moved to TheMachine (Crest of Steel dropper).
             recipe.AddIngredient(ModContent.ItemType<CrestOfStone>(), 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
@@ -88,7 +88,7 @@ namespace tsorcRevamp.Items.BossItems
             recipe2.AddIngredient(ModContent.ItemType<CrestOfSky>(), 3);
             recipe2.AddIngredient(ModContent.ItemType<CrestOfCorruption>(), 1);
             recipe2.AddIngredient(ModContent.ItemType<CrestOfSteel>(), 1);
-            recipe2.AddIngredient(ModContent.ItemType<CrestOfLife>(), 1);
+            // CrestOfLife removed — Plantera is optional now, Temple Key moved to TheMachine (Crest of Steel dropper).
             recipe2.AddIngredient(ModContent.ItemType<CrestOfStone>(), 1);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.AddCondition(tsorcRevampWorld.AdventureModeEnabled);

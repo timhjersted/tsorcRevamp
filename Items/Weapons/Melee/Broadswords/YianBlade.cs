@@ -7,45 +7,48 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     public class YianBlade : ModItem
     {
-        public int ManaRestoration = 50;
+        public int ManaRestoration = 20;
         public int BaseManaCost = 200;
-        public int ProjectileDmgMult = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaRestoration, BaseManaCost);
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
+        }
         public override void SetDefaults()
         {
             Item.width = 84;
             Item.height = 90;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 40;
-            Item.useTime = 40;
-            Item.damage = 444;
+            Item.useAnimation = 33;
+            Item.useTime = 33;
+            Item.damage = 300;
             Item.knockBack = 5f;
-            Item.scale = 1.05f;
+            Item.scale = 1f;
             Item.useTurn = false;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
-            Item.shootSpeed = 5f;
-            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
-            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Gray;
+            Item.shootSpeed = 8.5f;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.Keybrand);
+            recipe.AddIngredient(ItemID.LightShard);
+            recipe.AddIngredient(ItemID.DarkShard);
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
 
             recipe.AddTile(TileID.DemonAltar);
 
@@ -63,20 +66,45 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 player.statMana += ManaRestoration;
             }
         }
+        private void ShootBlaze2(Player player, Vector2 velocity, int damage, float knockback)
+        {
+            Projectile Blaze2 = Projectile.NewProjectileDirect(
+                Item.GetSource_FromThis(),
+                player.Center,
+                velocity,
+                ModContent.ProjectileType<YianBlaze2>(),
+                damage,
+                knockback,
+                player.whoAmI
+            );
+
+            Blaze2.DamageType = DamageClass.Melee;
+            Blaze2.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit + 100;
+            Blaze2.damage = (int)(Blaze2.damage * (1f + player.GetTotalCritChance(DamageClass.Melee) / 100f));
+            Blaze2.netUpdate = true;
+        }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse == 2)
             {
-                Projectile Blaze2 = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, velocity, ProjectileID.NebulaBlaze2, damage * ProjectileDmgMult, knockback * ProjectileDmgMult, Main.myPlayer);
-                Blaze2.DamageType = DamageClass.Melee;
-                Blaze2.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit + 100;
-                Blaze2.damage = (int)(Blaze2.damage * (1f + player.GetTotalCritChance(DamageClass.Melee) / 100f));
-                Blaze2.damage /= 2;
-                Blaze2.netUpdate = true;
+                Vector2 center = velocity;
+                Vector2 up = velocity.RotatedBy(MathHelper.ToRadians(10));
+                Vector2 down = velocity.RotatedBy(MathHelper.ToRadians(-10));
+
+                ShootBlaze2(player, center, damage, knockback * 2);
+                ShootBlaze2(player, up, damage, knockback * 2);
+                ShootBlaze2(player, down, damage, knockback * 2);
 
                 player.statMana -= player.statMana;
                 player.manaRegenDelay = MeleeEdits.ManaDelay;
-                player.altFunctionUse = 1;
+            }
+            else
+            {
+                Projectile Blaze1 = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<YianBlaze>(), damage / 3, knockback, Main.myPlayer);
+                Blaze1.DamageType = DamageClass.Melee;
+                Blaze1.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit + 100;
+                Blaze1.netUpdate = true;
+                Item.shootSpeed = 5f;
             }
             return base.Shoot(player, source, position, velocity, type, damage, knockback);
         }
@@ -85,7 +113,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
             if (ttindex != -1)
             {
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Dynamic", Language.GetTextValue(Tooltip.Key + "2", BaseManaCost * Main.LocalPlayer.manaCost, ProjectileDmgMult)));
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Dynamic", Language.GetTextValue(Tooltip.Key + "2", BaseManaCost * Main.LocalPlayer.manaCost)));
             }
         }
         public override bool AltFunctionUse(Player player)
@@ -98,6 +126,22 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             {
                 return false;
             }
+        }
+        public override bool CanUseItem(Player player)
+        {
+            if (player.altFunctionUse == 2)
+            {
+                tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+                instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkGray; 
+            }
+            else
+            {
+                Item.UseSound = SoundID.Item20;
+                tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+                instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.White; 
+                
+            }
+            return base.CanUseItem(player);
         }
         public override void HoldItem(Player player)
         {

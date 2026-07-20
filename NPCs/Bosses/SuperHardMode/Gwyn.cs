@@ -1,1998 +1,1525 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.IO;
 using Terraria;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.BossItems;
-using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Projectiles.Enemy.Gwyn;
 
+// NOTE: the folder is Gwyn/, but the namespace stays flat (…SuperHardMode) — a namespace segment
+// named "Gwyn" would collide with the old Gwyn class still living in this same parent namespace.
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
+    ///<summary>
+    ///Gwyn, Lord of Cinder — the final boss, rebuilt from near-scratch on the Puppet system (the
+    ///Artorias-revamp pattern: a puppet Player wearing the LordGwyn armor set, swinging the Great
+    ///Lord Greatsword through the melee combo system).
+    ///
+    ///PHASE 1 (this file): the foundation. Core stats carried over from the old Gwyn, plus the three
+    ///kept systems at their original distances —
+    ///  • DEFENSE RING (1000px): beyond it his defense locks to 9999 ("protected by the First Flame");
+    ///    inside it he is fightable. The old SwordOfLordGwyn guardian-NPC mechanic is GONE — base
+    ///    defense sits at the old post-sword value permanently.
+    ///  • COWARD'S RING (2000px): the flame-wall dust boundary; flight is torn down inside it, and
+    ///    fleeing beyond it applies Coward's Affliction after a 90-tick grace.
+    ///  • RAIN OF DEATH (&gt;600px): running keeps you under a random rain of death orbs.
+    ///The old kit lives on in Soul of Cinder; everything else here is built new. The full 12-attack
+    ///state machine lands in Phase 2.
+    ///</summary>
     [AutoloadBossHead]
-    class Gwyn : ModNPC
+    class Gwyn : PuppetNPC
     {
+        // PuppetNPC overrides Texture to the shared puppet placeholder, so point the boss-head
+        // icon at the existing Gwyn head texture explicitly (same workaround as Artorias).
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/Gwyn_Head_Boss";
+
+        protected override string InvaderTitle => "Gwyn, Lord of Cinder";
+
+        // ── Loadout: the Lord of Cinder's own regalia ────────────────────────────
+        protected override int HeadArmorItemType => ModContent.ItemType<LordGwynHelm>();
+        protected override int BodyArmorItemType => ModContent.ItemType<LordGwynArmor>();
+        protected override int LegsArmorItemType => ModContent.ItemType<LordGwynLeggings>();
+
+        protected override int MeleeWeaponItemType => ModContent.ItemType<EnemySwordOfGwyn>();
+        protected override int RangedWeaponItemType => -1; // melee + bespoke fire/lightning magic
+        protected override float MeleeWeaponDrawScale => 0.5f;
+
+        protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
+
+        protected override int MeleeDamage => TooEarly ? TooEarlyDamage : 95; // the old contact damage, now via weapon hitboxes
+        protected override int RangedDamage => 0;
+
+        // DS1 Gwyn is shockingly fast for his size — relentless pressure, heavier than Artorias' grace.
+        // Wrath of Gwyn (below 30% HP) turns the dial up: faster, more aggressive.
+        protected override float TopSpeed => _wrathActive ? 3.2f : 2.6f;
+        protected override float Acceleration => _wrathActive ? 0.19f : 0.14f;
+        protected override int MeleeComboChance => _wrathActive ? 95 : 85;
+
+        // ── Wings (storm-only flight; hidden whenever Gwyn is grounded) ─────────
+        // Angel wings for the god of sunlight — traded for flame wings once the Wrath ignites.
+        // Autonomous flight is fully disabled: the flight controller only lifts off when the
+        // Sunlight Spear Storm commands it (Flight.RequestTakeoff in TickSpearStorm).
+        protected override bool HasWings => true;
+        protected override int WingsAccessoryItemType => _wrathActive ? ItemID.FlameWings : ItemID.AngelWings;
+        protected override bool ShowWingsWhenGrounded => false;
+        protected override int RandomTakeoffChance => 0;
+        protected override float FlightHeightTrigger => 99999f;
+        protected override float FlightHpEscalationFrac => 0f;
+
+        // ── Greatsword reach (bigger than a normal blade) + combat feel ──────────
+        protected override float MeleeRange => 110f;
+        protected override float StabRange => 180f;
+        protected override float ComboMaxStartRange => 340f;
+        protected override bool SlowDownBeforeMelee => false; // pursue through the windup — no walking out of the telegraph
+
+        // ── The greatsword moveset (bespoke, reactive) ───────────────────────────
+        // Fully reactive: ReactiveComboIndex reads the player's live dodge/launch/flank state each
+        // time a combo starts and picks the counter, falling back to the weighted roll otherwise.
+        // Flash colors are the Lord of Cinder's fire — orange bread & butter, red heavy commits.
+        const int CB_CLEAVE = 0, CB_UNDEROVER = 1, CB_LEAP = 2, CB_SLIDE = 3, CB_SPIN = 4,
+                  CB_CINDERFALL = 5, CB_GUILLOTINE = 6, CB_BACKHAND = 7, CB_THREEHIT = 8,
+                  CB_ROLLCATCH = 9, CB_FLURRY = 10;
+
+        static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause, float dmg = 1f, float reach = 1f, float push = 0f)
+            => new MeleeComboStep { Motion = m, TelegraphTicks = tel, AttackTicks = atk, PostStepPause = pause, DamageMult = dmg, ReachMult = reach, ForwardPushMult = push };
+
+        static readonly MeleeCombo[] GwynCombos = new[]
+        {
+            // 0 — Cleave: the bread-and-butter wide swing
+            new MeleeCombo { Name = "Cleave", BaseWeight = 100, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 40,
+                Steps = new[] { GS(ComboMotion.HorizontalSweep, 15, 18, 0, 1.0f, 1.1f) } },
+            // 1 — Under-Over juggle: rising launch into an overhead chop
+            new MeleeCombo { Name = "Under-Over", BaseWeight = 70, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 130,
+                Steps = new[] {
+                    GS(ComboMotion.UnderhandArc, 15, 20, 12, 1.0f, 1.1f, 0.4f),
+                    GS(ComboMotion.OverheadArc,   0, 22,  0, 1.3f, 1.15f),
+                } },
+            // 2 — Cindering Leap Overhead: tracking leap that reaches, then the 170° chop (roll it on landing)
+            new MeleeCombo { Name = "Cindering Leap", BaseWeight = 55, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 150, HeavyCommit = true,
+                Steps = new[] { GS(ComboMotion.LeapSlam, 25, 24, 0, 1.5f, 1.2f) } },
+            // 3 — Sliding Thrust: low dash pierce, gap-closer
+            new MeleeCombo { Name = "Sliding Thrust", BaseWeight = 55, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 130,
+                Steps = new[] { GS(ComboMotion.JoustDash, 20, 16, 0, 1.2f, 1.4f, 1.8f) } },
+            // 4 — Sunspin: 360° sweep, anti-flank
+            new MeleeCombo { Name = "Sunspin", BaseWeight = 45, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 170, HeavyCommit = true,
+                Steps = new[] { GS(ComboMotion.Spin, 20, 26, 0, 1.1f, 1.15f, 0.6f) } },
+            // 5 — Flipping Cinderfall: forward flip → ground slam + fire AoE
+            new MeleeCombo { Name = "Cinderfall", BaseWeight = 40, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true,
+                Steps = new[] { GS(ComboMotion.GroundSlam, 25, 24, 0, 1.6f, 1.3f) } },
+            // 6 — Guillotine Drop: heavy standing overhead, the "respect me" punish
+            new MeleeCombo { Name = "Guillotine", BaseWeight = 45, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true,
+                Steps = new[] { GS(ComboMotion.OverheadArc, 30, 22, 0, 1.8f, 1.15f) } },
+            // 7 — Backhand + Step: quick re-engaging sweep, denies a roll-back
+            new MeleeCombo { Name = "Backhand Step", BaseWeight = 60, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 70,
+                Steps = new[] { GS(ComboMotion.HorizontalSweep, 12, 16, 0, 0.9f, 1.1f, 0.8f) } },
+            // 8 — 3-Hit Standard: the staple pressure string
+            new MeleeCombo { Name = "3-Hit", BaseWeight = 55, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 180,
+                Steps = new[] {
+                    GS(ComboMotion.HorizontalSweep, 14, 18, 12, 0.9f),
+                    GS(ComboMotion.HorizontalSweep,  0, 18, 12, 0.9f, 1.05f),
+                    GS(ComboMotion.OverheadArc,      0, 22,  0, 1.3f, 1.1f),
+                } },
+            // 9 — Roll-Catch: leap in, then the flip slam lands where a panicked roll ends
+            new MeleeCombo { Name = "Roll-Catch", BaseWeight = 30, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
+                Steps = new[] {
+                    GS(ComboMotion.LeapSlam,   25, 22, 14, 1.3f, 1.2f),
+                    GS(ComboMotion.GroundSlam,  0, 24,  0, 1.5f, 1.3f),
+                } },
+            // 10 — Wrath Flurry: the enrage full-commit chain (weighted up only at low HP)
+            new MeleeCombo { Name = "Wrath Flurry", BaseWeight = 25, Preferred = ComboRangeBand.Any,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 300, HeavyCommit = true, HyperArmor = true,
+                Steps = new[] {
+                    GS(ComboMotion.JoustDash,    22, 14, 8,  1.0f, 1.2f, 1.5f),
+                    GS(ComboMotion.UnderhandArc,  0, 16, 8,  0.9f, 1.1f),
+                    GS(ComboMotion.OverheadArc,   0, 16, 8,  1.1f, 1.15f),
+                    GS(ComboMotion.Spin,          0, 24, 0,  1.2f, 1.15f, 0.6f),
+                } },
+        };
+
+        protected override MeleeCombo[] MeleeComboPoolOverride => GwynCombos;
+
+        ///<summary>Fully reactive combo pick: read the player's live state and answer it. Falls
+        ///through to the weighted roll (returns -1) when no specific read applies, or when the
+        ///counter it wants is on cooldown.</summary>
+        protected override int ReactiveComboIndex(float dist, ComboRangeBand band, int[] ready)
+        {
+            Player player = Main.player[NPC.target];
+            if (player == null || !player.active || player.dead)
+            {
+                return -1;
+            }
+            //Judgment from Behind: the teleport just planted him at the player's back — the queued
+            //punish is a guaranteed heavy overhead (fallback: the juggle) the moment a combo can start.
+            if (_judgmentPending > 0)
+            {
+                if (Ready(ready, CB_GUILLOTINE)) { _judgmentPending = 0; return CB_GUILLOTINE; }
+                if (Ready(ready, CB_UNDEROVER)) { _judgmentPending = 0; return CB_UNDEROVER; }
+            }
+            //Gravity of the Sun just reeled them in — greet them with the pressure string
+            if (_pullComboNudge > 0)
+            {
+                if (Ready(ready, CB_THREEHIT)) { _pullComboNudge = 0; return CB_THREEHIT; }
+                if (Ready(ready, CB_CLEAVE)) { _pullComboNudge = 0; return CB_CLEAVE; }
+            }
+            bool rolling = player.GetModPlayer<tsorcRevampPlayer>().isDodging;
+            bool launched = player.velocity.Y < -3f && player.Center.Y < NPC.Center.Y - 24f;
+            float awaySign = Math.Sign(player.Center.X - NPC.Center.X);      // side the player is on
+            bool rollingAway = rolling && Math.Sign(player.velocity.X) == awaySign && Math.Abs(player.velocity.X) > 2f;
+            bool rollingThrough = rolling && dist < MeleeRange + 20f;         // dodging through him at point-blank
+
+            // Player popped into the air → leap up and catch them with the overhead
+            if (launched && Ready(ready, CB_LEAP))
+            {
+                return CB_LEAP;
+            }
+            // Player rolled through/behind at close range → spin covers every side
+            if (rollingThrough && Ready(ready, CB_SPIN))
+            {
+                return CB_SPIN;
+            }
+            // Player rolling away → chase: a slide up close, the roll-catch leap from farther out
+            if (rollingAway)
+            {
+                if (dist > StabRange && Ready(ready, CB_ROLLCATCH))
+                {
+                    return CB_ROLLCATCH;
+                }
+                if (Ready(ready, CB_SLIDE))
+                {
+                    return CB_SLIDE;
+                }
+            }
+            return -1; // no live read — let the weighted roll pick a standard swing
+        }
+
+        static bool Ready(int[] ready, int idx) => idx >= 0 && idx < ready.Length && ready[idx] > 0;
+
+        // ── Kept systems (original distances) ────────────────────────────────────
+        const float DefenseRingRadius = 1000f; // beyond this: defense 9999
+        const int FightableDefense = 130;      // the old post-sword value; the sword mechanic is removed
+        const float CowardRingRadius = 2000f;  // beyond this: Coward's Affliction (after grace)
+        const float RainOfDeathRange = 600f;   // the old whyAreYouRunning
+        const int BaseRainOfDeathDamage = 77;  // the old herosArrowDamage
+        const int TooEarlyDamage = 10000;
+        const float ProximityDebuffRange = 700f;
+
+        int RainOfDeathDamage => TooEarly ? TooEarlyDamage : BaseRainOfDeathDamage;
+
+        bool TooEarly =>
+            !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) ||
+            !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Seath.SeathTheScalelessHead>())) ||
+            !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<EarthFiendLich>())) ||
+            !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<FireFiendMarilith>())) ||
+            !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())) ||
+            !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<GhostWyvernMage.WyvernMageShadow>()));
+
+        int protectedHoldTimer;   // keeps the 9999 penalty (and the broadcast) from re-triggering every tick
+        float cowardGraceTimer = 90;
+        bool announcedCoward;
+
+        NPCDespawnHandler despawnHandler;
+
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 16;
+            Main.npcFrameCount[NPC.type] = 1;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
         }
+
         public override void SetDefaults()
         {
-            NPC.npcSlots = 10;
-            AnimationType = 28;
-            NPC.aiStyle = 3;
+            NPC.aiStyle = -1;
+            NPC.knockBackResist = 0;
+            NPC.damage = 0; // all damage via weapon hitboxes
+            NPC.defense = FightableDefense;
             NPC.height = 40;
-            NPC.width = 20;
-            NPC.scale = 1.5f;
-            Music = 12;
-            NPC.damage = 95;
-            NPC.defense = 550;
+            NPC.width = 30;
             NPC.lifeMax = 750000;
-            NPC.knockBackResist = 0.0f;
-            NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 2000000;
             NPC.rarity = 44;
-            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Gwyn.DespawnHandler"), Color.OrangeRed, 6);
+            NPC.boss = true;
+            NPC.lavaImmune = true;
+            Music = 12;
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Gwyn.DespawnHandler"), Color.OrangeRed, DustID.Torch);
+
+            tsorcRevampGlobalNPC gwynGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            gwynGlobalNPC.Agility = 0.35f; // proactive dodges (see EvadesProjectiles)
+            gwynGlobalNPC.NavSearchRadius = 80;
+
+            // On-hit dodgeroll bundle, same family as Artorias — the Lord does not stand in combos
+            EvasiveProfile.RedKnight(gwynGlobalNPC);
         }
 
-        // If they player is more than whyAreYouRunning units away, HeroSoulAttacks gain a rage multiplier.
-        public float whyAreYouRunning = 600f;
-        float rageMultiplier = 1f;
+        protected override bool EvadesProjectiles => true;
 
-        //old attacks, not all used
-        int deathBallDamage = 39; //200
-        int phantomSeekerDamage = 55; //225
-        int armageddonBallDamage = 41; //300
-        int holdBallDamage = 13;
-        int fireballBallDamage = 54;
-        int blazeBallDamage = 21;
-        int blackBreathDamage = 34;
-        int purpleCrushDamage = 58;
-        int iceStormDamage = 40;
-        int gravityBallDamage = 66;//300
-
-        //basilisk attacks
-        int cursedBreathDamage = 68; //100
-        int cursedFlamesDamage = 64; //100
-        int disruptDamage = 68;//203
-        int bioSpitDamage = 68;//185
-        int bioSpitfinalDamage = 76;//230
-
-        //ultimate attack not used yet
-        public int redMagicDamage = 39;
-
-        //lumelia attacks
-        public int throwingKnifeDamage = 34;//180
-        public int smokebombDamage = 58;//295
-
-        //death skull attack when player gets too far away - this is to encourage the player to stay in range of more of Gwyn's attacks so ranged builds don't make the fight too easy
-        public int herosArrowDamage = 77; //400
-
-        //slogra attacks
-        public int tridentDamage = 43; //150
-        //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
-        public int OrangeProjDamage = 45;//360
-
-        //gwyn 
-        float customAi1;
-        float customAi3;
-        float customspawn2;
-        bool OptionSpawned = false;
-
-        //basilisk
-        bool breath;
-        int breathCD = 120;
-        float breathTimer = 60;
-        float distanceTimer = 90;
-        float shotTimer;
-
-        //slogra
-        bool swordDead = false;
-        int moveTimer = 0;
-        bool dashAttack = false;
-        Vector2 pickedTrajectory = Vector2.Zero;
-        int baseCooldown = 360; //240
-        int lineOfSightTimer = 0;
-
-        //serris x
-        int plasmaOrbDamage = 70;
-
-        //oolicile sorcerer
-        public float DarkBeadShotTimer;
-        public float DarkBeadShotCounter;
-        int darkBeadDamage = 36;
-
-        //ancient demon
-        int cultistFireDamage = 41;//192
-        int cultistMagicDamage = 62;//259
-        int fireBreathDamage = 50;//131
-        int lostSoulDamage = 38;//223
-        int greatFireballDamage = 36;//216
-        int blackFireDamage = 55;//147
-        int greatAttackDamage = 38;//162
-
-        int demonBreathTimer = 0;
-
-        //chaos
-        int holdTimer = 0;
-        int lifeTimer = 0;
-        int swordTimer = 0;
-        int deathTimer = 0;
-
-        bool announcedDebuffs = false;
-
-        #region debuffs
+        ///<summary>The old Gwyn's on-hit debuff stack — a hit from the Lord of Cinder RUINS you.</summary>
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.OnFire, 10 * 60, false);
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 40 * 60, false); //lose defense on hit
-            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60, false); //slowed life regen
-            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60, false); //you lose knockback resistance
+            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60, false);
+            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60, false);    //lose knockback resistance
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.Weak, 10 * 60, false);
                 target.AddBuff(BuffID.BrokenArmor, 3 * 60, false);
             }
         }
-        #endregion
 
-        public int CalculateRageDamage(int originalDamage)
-        {
-            return NPC.Distance(Main.player[NPC.target].Center) < whyAreYouRunning ? originalDamage : (int)(originalDamage * rageMultiplier);
-        }
-
-
-        #region AI
-        NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-            InflictDebuffs();
+            //Contact only hurts during the Unbroken Advance march (all other damage is weapon hitboxes)
+            NPC.damage = TooEarly ? TooEarlyDamage : (_advanceTimer > 0 ? MeleeDamage : 0);
 
-            int num58;
+            base.AI();
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
-            if (swordDead && swordTimer < 1)
+            TickDefenseRing();
+            TickCowardRing();
+            TickRainOfDeath();
+            TickProximityDebuffs();
+            TickWrath();
+            TickFirestorm();
+            TickDescent();
+            TickFlashStep();
+            TickJudgment();
+            TickRiposte();
+            TickSpearStorm();
+            TickGravity();
+            TickAdvance();
+            TickWingedPlunge();
+            if (_judgmentPending > 0)
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.SwordShattered"), 150, 75, 255);
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.RainOfDeath"), 150, 70, 255);
-                swordTimer++;
+                _judgmentPending--;
             }
-            //fury increases! - notify player when new attacks are incoming
-            if (NPC.life <= NPC.lifeMax / 5 * 4 && lifeTimer < 1 || NPC.life <= NPC.lifeMax / 5 * 3 && lifeTimer < 2 || NPC.life <= NPC.lifeMax / 5 * 2 && lifeTimer < 3 || NPC.life <= NPC.lifeMax / 5 && lifeTimer < 3)
+            if (_pullComboNudge > 0)
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Fury"), 175, 75, 255);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                _pullComboNudge--;
+            }
+
+            //Debug HUD attack label (DebugMode overlay reads DebugAttackLabel)
+            if (_attackLabelTimer > 0 && --_attackLabelTimer == 0)
+            {
+                DebugAttackLabel = null;
+            }
+        }
+
+        int _attackLabelTimer;
+        ///<summary>Announce the named attack to the DebugMode HUD for the given duration.</summary>
+        void SetAttackLabel(string name, int ticks = 90)
+        {
+            DebugAttackLabel = name;
+            _attackLabelTimer = ticks;
+        }
+
+        // ── Wrath of Gwyn (the <30% HP enrage phase change) ──────────────────────
+        // One-time ignition: he wreathes himself in white-hot flame for the rest of the fight, moving
+        // faster and attacking more (TopSpeed/Acceleration/MeleeComboChance above key off _wrathActive;
+        // the summon cooldowns shrink), and the base combo core already weights the Wrath Flurry chain
+        // up as HP drops. The First Flame, given fully.
+        bool _wrathActive;
+
+        void TickWrath()
+        {
+            if (!_wrathActive && NPC.life < NPC.lifeMax * 0.30f)
+            {
+                _wrathActive = true;
+                SetAttackLabel("Wrath of Gwyn", 120);
+                _firestormCd = System.Math.Min(_firestormCd, 120);
+                _descentCd = System.Math.Min(_descentCd, 240);
+                if (Main.netMode != NetmodeID.Server)
                 {
-                    num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
-                    num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
-                    num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
-                    Main.projectile[num58].timeLeft = 560;
-                    Main.projectile[num58].rotation = Main.rand.Next(700) / 100f;
-                    Main.projectile[num58].ai[0] = this.NPC.target;
+                    SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.9f, Pitch = 0.3f }, NPC.Center);
+                    UsefulFunctions.ScreenShake(NPC.Center, 10f, 24);
+                    for (int i = 0; i < 60; i++)
+                    {
+                        Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
+                        int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                        Dust d = Dust.NewDustPerfect(NPC.Center, type, vel, 40, default, 2f);
+                        d.noGravity = true;
+                    }
                 }
-
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                lifeTimer++;
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Fury"), 255, 120, 40);
+                NPC.netUpdate = true;
             }
 
-
-            //chaos defense move
-            if (holdTimer > 0)
+            //Permanent white-hot aura once ignited
+            if (_wrathActive)
             {
-                holdTimer--;
-            }
-
-            UsefulFunctions.DustRing(NPC.Center, 1000, DustID.BlueTorch, 20, 1f);
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1000)
-            {
-                NPC.defense = 9999;
-                if (holdTimer <= 0)
+                if (Main.rand.NextBool(2))
                 {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Protected"), 175, 75, 255);
-                    holdTimer = 200;
+                    Vector2 pos = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height));
+                    int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                    Dust d = Dust.NewDustPerfect(pos, type, new Vector2(0f, -1.5f), 60, default, 1.4f);
+                    d.noGravity = true;
+                }
+                Lighting.AddLight(NPC.Center, 1f, 0.7f, 0.25f);
+            }
+        }
+
+        // ── Flash Step (sunlight teleport — connective pressure) ─────────────────
+        // Only from a free (non-attacking) phase: a burst of sunlight, and he reappears just behind
+        // the player so back-turning is punished. Flows straight into the base combo AI from there.
+        int _flashStepCd = 420;
+
+        void TickFlashStep()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_flashStepCd > 0)
+            {
+                _flashStepCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return; // never mid-attack
+            }
+            Player player = Main.player[NPC.target];
+            float dist = NPC.Distance(player.Center);
+            if (!player.dead && player.active && dist > 300f && dist < 1000f && Main.rand.NextBool(90))
+            {
+                _flashStepCd = 420 + Main.rand.Next(240);
+                SetAttackLabel("Flash Step", 40);
+                FlashBurst(NPC.Center);
+                float destX = player.Center.X - player.direction * 70f; // reappear just behind the player
+                NPC.Bottom = new Vector2(destX, player.Bottom.Y);
+                NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+                NPC.spriteDirection = NPC.direction;
+                FlashBurst(NPC.Center);
+                NPC.netUpdate = true;
+            }
+        }
+
+        void FlashBurst(Vector2 pos)
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
+            SoundEngine.PlaySound(SoundID.Item8 with { Pitch = 0.3f }, pos);
+            for (int i = 0; i < 24; i++)
+            {
+                Vector2 vel = Main.rand.NextVector2Circular(7f, 7f);
+                int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
+                Dust d = Dust.NewDustPerfect(pos, type, vel, 40, default, 1.6f);
+                d.noGravity = true;
+            }
+        }
+
+        // ── Greatsword Boomerang (full-lane reach — the edge-camper punish) ──────
+        // Base Boomerang template: overhead wind-up + chop; the fire event hurls the blade spinning
+        // across the arena, and it arcs back to his hand. While it flies he's briefly weaponless —
+        // the punish window if you're close enough to use it.
+        protected override bool  CanBoomerang               => true;
+        protected override float BoomerangMinRange          => 200f;
+        protected override float BoomerangMaxRange          => 950f;
+        protected override int   BoomerangChance            => 7;
+        protected override int   BoomerangCooldownAfterUse  => 420;
+        protected override int   BoomerangSwingTelegraphTicks => 26;
+        protected override int   BoomerangSwingTicks        => 28;
+        protected override float BoomerangFireProgress      => 0.5f;
+        protected override int   BoomerangRecoveryTicks     => 60;
+
+        const int BoomerangDamage = 65;
+
+        protected override void DoBoomerangSwingTick(int elapsed, int total)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+            float swingT = total > 0 ? elapsed / (float)total : 1f;
+            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            Vector2 bladePos = NPC.Center + new Vector2(NPC.direction, 0f).RotatedBy(angle) * 48f;
+            int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+            Dust d = Dust.NewDustPerfect(bladePos + Main.rand.NextVector2Circular(6f, 6f), type, Vector2.Zero, 70, default, Main.rand.NextFloat(1.1f, 1.6f));
+            d.noGravity = true;
+        }
+
+        protected override void DoBoomerangFire()
+        {
+            SetAttackLabel("Greatsword Boomerang", 130);
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.5f }, NPC.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Player target = Main.player[NPC.target];
+            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 26f, -14f);
+            Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 15f;
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
+                ModContent.ProjectileType<Projectiles.Enemy.GwynGreatswordBoomerang>(), BoomerangDamage, 6f, Main.myPlayer, NPC.whoAmI, 50f);
+        }
+
+        // ── Judgment from Behind (the back-turn punish) ──────────────────────────
+        // Fires specifically when the player is at range with their back to him: a flash-step to
+        // their blind side, then a queued heavy overhead the instant the combo system can start
+        // (see the _judgmentPending branch in ReactiveComboIndex). The appear-flash is the warning.
+        int _judgmentCd = 600;
+        int _judgmentPending;
+
+        void TickJudgment()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_judgmentCd > 0)
+            {
+                _judgmentCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player player = Main.player[NPC.target];
+            float dist = NPC.Distance(player.Center);
+            bool facingAway = System.Math.Sign(NPC.Center.X - player.Center.X) != player.direction;
+            if (!player.dead && player.active && facingAway && dist > 380f && dist < 1100f && Main.rand.NextBool(100))
+            {
+                _judgmentCd = 700 + Main.rand.Next(300);
+                SetAttackLabel("Judgment from Behind", 110);
+                FlashBurst(NPC.Center);
+                float destX = player.Center.X - player.direction * 90f; //their blind side
+                NPC.Bottom = new Vector2(destX, player.Bottom.Y);
+                NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+                NPC.spriteDirection = NPC.direction;
+                FlashBurst(NPC.Center);
+                _judgmentPending = 90; //the reactive hook converts this into a guaranteed Guillotine
+                NPC.netUpdate = true;
+            }
+        }
+
+        // ── Riposte Stance (the greedy-trade punish; ranged players are immune) ──
+        // He drops into a shimmering guard for ~40 ticks. Melee-striking him during the window takes
+        // 50% damage and triggers the PARRY: a clang, a flash, and a devastating counter-swing.
+        // If nobody takes the bait, the stance simply ends.
+        int _riposteCd = 700;
+        int _riposteTimer;
+
+        void TickRiposte()
+        {
+            if (_riposteTimer > 0)
+            {
+                _riposteTimer--;
+                NPC.velocity.X *= 0.7f;
+                //The guard shimmer: a sheen of gold glints along the raised blade
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    Vector2 bladePos = NPC.Center + new Vector2(NPC.direction * 16f, -26f) + Main.rand.NextVector2Circular(6f, 22f);
+                    Dust d = Dust.NewDustPerfect(bladePos, DustID.GoldCoin, Vector2.Zero, 0, default, Main.rand.NextFloat(0.8f, 1.2f));
+                    d.noGravity = true;
+                    d.velocity *= 0.2f;
+                }
+                Lighting.AddLight(NPC.Center, 0.5f, 0.45f, 0.2f);
+                return;
+            }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_riposteCd > 0)
+            {
+                _riposteCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player player = Main.player[NPC.target];
+            if (!player.dead && player.active && NPC.Distance(player.Center) < 220f && Main.rand.NextBool(120))
+            {
+                _riposteCd = 800 + Main.rand.Next(400);
+                _riposteTimer = 40;
+                SetAttackLabel("Riposte Stance", 60);
+                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.5f, Pitch = 0.6f }, NPC.Center); //the sheen cue
+                EnterPhase(AttackPhase.NovaRecovery, 44); //park the combat machine for the stance
+                NPC.netUpdate = true;
+            }
+        }
+
+        void TriggerRiposte()
+        {
+            _riposteTimer = 0;
+            SetAttackLabel("RIPOSTE!", 70);
+            SoundEngine.PlaySound(SoundID.NPCHit4 with { Volume = 0.9f, Pitch = 0.5f }, NPC.Center); //the parry clang
+            if (Main.netMode != NetmodeID.Server)
+            {
+                for (int i = 0; i < 26; i++)
+                {
+                    Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
+                    int type = Main.rand.NextBool() ? DustID.GoldCoin : DustID.GoldFlame;
+                    Dust d = Dust.NewDustPerfect(NPC.Center, type, vel, 40, default, 1.5f);
+                    d.noGravity = true;
                 }
             }
-            else if (holdTimer <= 0) // preserve 9999 NPC.defense penalty until hold timer expires
+            //The devastating counter: a full-reach swing + a heavy fire crescent
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.4f }, NPC.Center);
+            TryMeleeHit(reach: 130f);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (swordDead)
+                Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * 0.9f), 4f, Main.myPlayer, NPC.direction, 0f);
+            }
+        }
+
+        ///<summary>The Riposte guard soaks half of what hits it — the parry read.</summary>
+        public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
+        {
+            if (_riposteTimer > 0)
+            {
+                modifiers.FinalDamage *= 0.5f;
+            }
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            base.OnHitByItem(player, item, hit, damageDone);
+            if (_riposteTimer > 0)
+            {
+                TriggerRiposte();
+            }
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            base.OnHitByProjectile(projectile, hit, damageDone);
+            //Only melee-class projectiles (spear thrusts, true-melee extensions) spring the trap
+            if (_riposteTimer > 0 && projectile.DamageType.CountsAsClass(DamageClass.Melee))
+            {
+                TriggerRiposte();
+            }
+        }
+
+        // ── Sunlight Spear Storm (the airborne bullet-hell escalation of the volley) ──
+        // He ascends on his wings (angel wings; flame wings once the Wrath ignites) and hangs aloft
+        // while a dozen spear-nodes ring the player in three sequenced waves — each node telegraphs,
+        // fires its spear, and dissipates. Landing exhausts him: the recovery is the reward.
+        int _stormCd = 600;
+        int _stormTimer;
+        const int StormNodeDamage = 40;
+
+        void TickSpearStorm()
+        {
+            if (_stormTimer > 0)
+            {
+                _stormTimer++;
+                Player player = Main.player[NPC.target];
+
+                //Sequenced waves of 4 nodes ringing the player, offset per wave
+                if (Main.netMode != NetmodeID.MultiplayerClient && !player.dead
+                    && (_stormTimer == 60 || _stormTimer == 105 || _stormTimer == 150))
                 {
-                    NPC.defense = 130; //Speed things up a bit
+                    int wave = _stormTimer == 60 ? 0 : _stormTimer == 105 ? 1 : 2;
+                    SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.6f, Pitch = 0.3f }, player.Center);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float ang = MathHelper.ToRadians(wave * 30f) + MathHelper.PiOver2 * i;
+                        Vector2 pos = player.Center + ang.ToRotationVector2() * 340f;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.Enemy.GwynSolarSpearNode>(), StormNodeDamage, 2f, Main.myPlayer, 22f);
+                    }
+                }
+                //Radiance while he hangs aloft
+                if (Main.rand.NextBool(2) && Main.netMode != NetmodeID.Server)
+                {
+                    int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
+                    Dust d = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(30f, 30f), type, new Vector2(0f, -1f), 60, default, 1.2f);
+                    d.noGravity = true;
+                }
+                Lighting.AddLight(NPC.Center, 0.9f, 0.8f, 0.35f);
+
+                if (_stormTimer == 200)
+                {
+                    Flight?.RequestLand();
+                }
+                if (_stormTimer >= 240 || player.dead)
+                {
+                    Flight?.RequestLand();
+                    _stormTimer = 0;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        _stormCd = 1400 + Main.rand.Next(600);
+                        NPC.netUpdate = true;
+                    }
+                }
+                return;
+            }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_stormCd > 0)
+            {
+                _stormCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player target = Main.player[NPC.target];
+            float dist = NPC.Distance(target.Center);
+            if (!target.dead && target.active && dist > 250f && dist < 1000f && Main.rand.NextBool(150))
+            {
+                _stormTimer = 1;
+                SetAttackLabel("Sunlight Spear Storm", 240);
+                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.9f, Pitch = -0.3f }, NPC.Center);
+                EnterPhase(AttackPhase.NovaRecovery, 250); //park the ground machine for the whole storm
+                Flight?.RequestTakeoff();
+                NPC.netUpdate = true;
+            }
+        }
+
+        // ── Gravity of the Sun (#13 — the keystone anti-kite) ────────────────────
+        // He plants and a golden singularity forms at his chest: 40t of light spiralling inward (the
+        // read), then a GwynGravityWell drags every player radially toward him for ~2s. Resistible by
+        // holding away or rolling — but a stationary caster gets reeled straight into his melee, and
+        // the reactive hook greets whoever arrives with the pressure string (_pullComboNudge).
+        int _gravityCd = 500;
+        int _gravityTimer;
+        int _pullComboNudge;
+
+        void TickGravity()
+        {
+            if (_gravityTimer > 0)
+            {
+                _gravityTimer++;
+                NPC.velocity.X *= 0.75f; //planted
+
+                if (_gravityTimer <= 40)
+                {
+                    //The singularity forming: gold spiralling tightly inward to his chest
+                    float progress = _gravityTimer / 40f;
+                    int count = 1 + (int)(progress * 3f);
+                    for (int i = 0; i < count; i++)
+                    {
+                        float ang = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float radius = MathHelper.Lerp(120f, 15f, progress) + Main.rand.NextFloat(15f);
+                        Vector2 pos = NPC.Center + ang.ToRotationVector2() * radius;
+                        int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.GoldCoin;
+                        Dust d = Dust.NewDustPerfect(pos, type, (NPC.Center - pos) * 0.1f, 60, default, 1.2f);
+                        d.noGravity = true;
+                    }
+                    if (_gravityTimer == 40 && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.7f, Pitch = -0.6f }, NPC.Center);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.Enemy.GwynGravityWell>(), 0, 0f, Main.myPlayer, NPC.whoAmI, 120f);
+                    }
+                }
+                Lighting.AddLight(NPC.Center, 1f, 0.85f, 0.35f);
+
+                if (_gravityTimer >= 160)
+                {
+                    _gravityTimer = 0;
+                    _pullComboNudge = 90; //whoever got reeled in meets the 3-hit
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        _gravityCd = 800 + Main.rand.Next(300);
+                        NPC.netUpdate = true;
+                    }
+                }
+                return;
+            }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_gravityCd > 0)
+            {
+                _gravityCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player gPlayer = Main.player[NPC.target];
+            float gDist = NPC.Distance(gPlayer.Center);
+            if (!gPlayer.dead && gPlayer.active && gDist > 200f && gDist < 1100f && Main.rand.NextBool(130))
+            {
+                _gravityTimer = 1;
+                SetAttackLabel("Gravity of the Sun", 170);
+                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.7f, Pitch = -0.7f }, NPC.Center);
+                EnterPhase(AttackPhase.NovaRecovery, 165); //park the ground machine for the channel
+                NPC.netUpdate = true;
+            }
+        }
+
+        // ── Unbroken Advance (#15 — anti-knockback / anti-stunlock) ──────────────
+        // Not a dash: a slow, relentless, ARMORED march (999 defense — see TickDefenseRing) straight
+        // at the player for 3 seconds, fire boiling off him, contact damage live (see the NPC.damage
+        // line in AI). No winded recovery: the moment the march ends the combat machine is free, so
+        // it flows straight into whatever attack the player's position deserves.
+        int _advanceCd = 600;
+        int _advanceTimer;
+        int _advanceWallTicks;
+
+        void TickAdvance()
+        {
+            if (_advanceTimer > 0)
+            {
+                _advanceTimer--;
+                Player player = Main.player[NPC.target];
+                int dir = player.Center.X > NPC.Center.X ? 1 : -1;
+                NPC.direction = dir;
+                NPC.spriteDirection = dir;
+                NPC.velocity.X = dir * 2.2f;
+
+                //Fire boiling off him + the scorch line his blade drags
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    if (Main.rand.NextBool(2))
+                    {
+                        Vector2 pos = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height));
+                        int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                        Dust d = Dust.NewDustPerfect(pos, type, new Vector2(0f, -1.8f), 60, default, 1.4f);
+                        d.noGravity = true;
+                    }
+                    Vector2 scorch = NPC.Bottom + new Vector2(-dir * 20f, -4f);
+                    Dust s = Dust.NewDustPerfect(scorch, DustID.Torch, new Vector2(0f, -0.6f), 100, default, 1f);
+                    s.noGravity = true;
+                }
+                if (_advanceTimer % 20 == 0)
+                {
+                    SoundEngine.PlaySound(SoundID.DeerclopsStep with { Volume = 0.35f, Pitch = 0.3f }, NPC.Bottom);
+                }
+                Lighting.AddLight(NPC.Center, 0.9f, 0.5f, 0.15f);
+
+                //Walked into the arena wall long enough — the march ends early
+                if (NPC.collideX)
+                {
+                    if (++_advanceWallTicks > 30)
+                    {
+                        _advanceTimer = 0;
+                    }
                 }
                 else
                 {
-                    NPC.defense = 550;
+                    _advanceWallTicks = 0;
                 }
-            }
 
-            //spawn sword
-            if (OptionSpawned == false)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (_advanceTimer == 0 || player.dead)
                 {
-                    int swordID = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Bosses.SuperHardMode.SwordOfLordGwyn>(), NPC.whoAmI);
-                    Main.npc[swordID].velocity.Y = -10;
-                    Main.npc[swordID].netUpdate = true;
+                    _advanceTimer = 0;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        _advanceCd = 900 + Main.rand.Next(300);
+                        NPC.netUpdate = true;
+                    }
                 }
-                OptionSpawned = true;
+                return;
             }
 
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_advanceCd > 0)
+            {
+                _advanceCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player aPlayer = Main.player[NPC.target];
+            float aDist = NPC.Distance(aPlayer.Center);
+            if (!aPlayer.dead && aPlayer.active && aDist > 250f && aDist < 900f && Main.rand.NextBool(140))
+            {
+                _advanceTimer = 180; //3 seconds of relentless
+                _advanceWallTicks = 0;
+                SetAttackLabel("Unbroken Advance", 190);
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    for (int i = 0; i < 24; i++)
+                    {
+                        Vector2 vel = Main.rand.NextVector2Circular(4f, 4f);
+                        Dust d = Dust.NewDustPerfect(NPC.Center, DustID.Torch, vel, 40, default, 1.7f);
+                        d.noGravity = true;
+                    }
+                }
+                //The march + a beat: expiring lands him in Idle right as the march ends, so he can
+                //combo into ANY attack immediately — no winded window.
+                EnterPhase(AttackPhase.NovaRecovery, 182);
+                NPC.netUpdate = true;
+            }
+        }
 
-            NPC.TargetClosest(true);
-            //removed flame dust for visibility, but will maybe add it back
-            //int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 0.2f);
-            //Main.dust[dust].noGravity = true;
+        // ── Winged Plunge (the wings' second act) ────────────────────────────────
+        // He spreads his wings and rises (dome-aware: the ascent caps itself below any ceiling it
+        // finds), hangs a beat to aim, then DIVES at the player's marked position trailing golden
+        // echoes — ending in a flaming greatsword slash where they stood. The wings only ever show
+        // while airborne (ShowWingsWhenGrounded is false — his cape keeps the grounded silhouette).
+        int _plungeCd = 700;
+        int _plungeTimer;
+        int _plungePhase;
+        Vector2 _plungeTarget;
+        float _plungeApexY;
 
+        const float PlungeRiseHeight = 380f;  //default ascent — clears the dome's center, not its edges
+        const float PlungeCeilingPad = 70f;   //stay this far under whatever ceiling the check finds
+
+        void TickWingedPlunge()
+        {
+            if (_plungeTimer > 0)
+            {
+                RunWingedPlunge();
+                return;
+            }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_plungeCd > 0)
+            {
+                _plungeCd--;
+                return;
+            }
+            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+            {
+                return;
+            }
+            Player player = Main.player[NPC.target];
+            float dist = NPC.Distance(player.Center);
+            if (!player.dead && player.active && dist > 150f && dist < 900f && Main.rand.NextBool(120))
+            {
+                _plungeTimer = 1;
+                _plungePhase = 0;
+                //Dome-aware apex: rise the default height, but never within the pad of a ceiling
+                float ceiling = FindCeilingY(NPC.Center, 30);
+                _plungeApexY = NPC.Center.Y - PlungeRiseHeight;
+                if (ceiling > 0f)
+                {
+                    _plungeApexY = System.Math.Max(_plungeApexY, ceiling + PlungeCeilingPad);
+                }
+                SetAttackLabel("Winged Plunge", 200);
+                SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Center); //wingbeat whoosh
+                EnterPhase(AttackPhase.NovaRecovery, 210); //park the ground machine for the flight
+                Flight?.RequestTakeoff();
+                NPC.netUpdate = true;
+            }
+        }
+
+        void RunWingedPlunge()
+        {
+            _plungeTimer++;
+            Player player = Main.player[NPC.target];
+            if (player.dead || !player.active)
+            {
+                EndPlunge();
+                return;
+            }
+
+            switch (_plungePhase)
+            {
+                case 0: //Rise on the wings (overriding the flight controller's own intent)
+                    NPC.velocity = new Vector2(NPC.velocity.X * 0.8f, -6.5f);
+                    if (Main.rand.NextBool(2) && Main.netMode != NetmodeID.Server)
+                    {
+                        Dust d = Dust.NewDustPerfect(NPC.Bottom + Main.rand.NextVector2Circular(14f, 6f), DustID.GoldFlame, new Vector2(0f, 2f), 80, default, 1.2f);
+                        d.noGravity = true;
+                    }
+                    if (NPC.Center.Y <= _plungeApexY || _plungeTimer > 70)
+                    {
+                        _plungePhase = 1;
+                        _plungeTimer = 1;
+                    }
+                    break;
+
+                case 1: //Hang and aim — the read
+                    NPC.velocity *= 0.85f;
+                    NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+                    NPC.spriteDirection = NPC.direction;
+                    if (_plungeTimer >= 20)
+                    {
+                        _plungeTarget = player.Center; //locked — reposition NOW
+                        _plungePhase = 2;
+                        _plungeTimer = 1;
+                        SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.6f, Pitch = 0.4f }, NPC.Center);
+                    }
+                    break;
+
+                case 2: //The dive, trailing golden echoes
+                {
+                    Vector2 dir = (_plungeTarget - NPC.Center).SafeNormalize(Vector2.UnitY);
+                    NPC.velocity = dir * 17f;
+                    if (_plungeTimer % 2 == 0 && Main.netMode != NetmodeID.Server)
+                    {
+                        //Echo: a body-sized puff of gold left hanging along the dive path
+                        for (int i = 0; i < 5; i++)
+                        {
+                            Vector2 pos = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height));
+                            int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Torch;
+                            Dust d = Dust.NewDustPerfect(pos, type, Vector2.Zero, 80, default, 1.5f);
+                            d.noGravity = true;
+                            d.velocity = dir * -0.5f;
+                        }
+                    }
+                    Lighting.AddLight(NPC.Center, 1f, 0.8f, 0.3f);
+
+                    bool arrived = Vector2.Distance(NPC.Center, _plungeTarget) < 48f;
+                    if (arrived || NPC.collideX || NPC.collideY || _plungeTimer > 55)
+                    {
+                        //The flaming slash at the marked position
+                        SetAttackLabel("Winged Plunge — Slash", 60);
+                        SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.4f }, NPC.Center);
+                        SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.6f, Pitch = 0.1f }, NPC.Center);
+                        UsefulFunctions.ScreenShake(NPC.Center, 7f, 14);
+                        if (Main.netMode != NetmodeID.Server)
+                        {
+                            for (int i = 0; i < 22; i++)
+                            {
+                                Vector2 vel = Main.rand.NextVector2Circular(5f, 5f);
+                                int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                                Dust d = Dust.NewDustPerfect(NPC.Center, type, vel, 40, default, 1.6f);
+                                d.noGravity = true;
+                            }
+                        }
+                        TryMeleeHit(reach: 140f);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
+                                ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * 0.7f), 4f, Main.myPlayer, NPC.direction, 2f);
+                        }
+                        Flight?.RequestLand();
+                        _plungePhase = 3;
+                        _plungeTimer = 1;
+                    }
+                    break;
+                }
+
+                case 3: //Landing recovery
+                    NPC.velocity.X *= 0.8f;
+                    if (_plungeTimer >= 40)
+                    {
+                        EndPlunge();
+                    }
+                    break;
+            }
+        }
+
+        void EndPlunge()
+        {
+            Flight?.RequestLand();
+            _plungeTimer = 0;
+            _plungePhase = 0;
+            NPC.noGravity = false;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                _plungeCd = 800 + Main.rand.Next(400);
+                NPC.netUpdate = true;
+            }
+        }
+
+        ///<summary>World Y of the first solid tile BOTTOM above the point (scanning up), or -1 if none
+        ///in range — the dome-clearance check for the Winged Plunge's ascent.</summary>
+        static float FindCeilingY(Vector2 worldPos, int maxTilesUp)
+        {
+            int tx = (int)(worldPos.X / 16f);
+            int ty = (int)(worldPos.Y / 16f);
+            if (tx < 5 || tx > Main.maxTilesX - 5)
+            {
+                return -1f;
+            }
+            for (int d = 2; d <= maxTilesUp; d++)
+            {
+                int y = ty - d;
+                if (y <= 5)
+                {
+                    break;
+                }
+                Tile tile = Main.tile[tx, y];
+                if (tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType])
+                {
+                    return (y + 1) * 16f;
+                }
+            }
+            return -1f;
+        }
+
+        // ── Firestorm (summoned rain — the anti-heal / anti-camp pressure) ───────
+        // Not a swing: it's channeled magic that rains fireballs over the player's area for a couple
+        // seconds while Gwyn keeps pursuing, so standing still to heal is answered. Own cooldown.
+        int _firestormCd = 480;
+        const int FirestormDamage = 45;
+
+        void TickFirestorm()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_firestormCd > 0)
+            {
+                _firestormCd--;
+                return;
+            }
+            Player player = Main.player[NPC.target];
+            if (!player.dead && player.active && NPC.Distance(player.Center) > 400f && Main.rand.NextBool(160))
+            {
+                _firestormCd = 900 + Main.rand.Next(300);
+                SetAttackLabel("Firestorm", 190);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.RainsDeath"), 235, 130, 40);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.GwynFirestorm>(), 0, 0f, Main.myPlayer, FirestormDamage, 150f);
+            }
+        }
+
+        // ── Descent of the Sun (the epic set-piece) ──────────────────────────────
+        // Summoned magic: a meteor of sunlight hangs high over the player, marks its impact, then
+        // crashes with a huge explosion + crater fireballs. Long cooldown — it's the "oh no" moment.
+        int _descentCd = 900;
+        const int DescentDamage = 80;
+
+        void TickDescent()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (_descentCd > 0)
+            {
+                _descentCd--;
+                return;
+            }
+            Player player = Main.player[NPC.target];
+            if (!player.dead && player.active && Main.rand.NextBool(220))
+            {
+                _descentCd = 1500 + Main.rand.Next(600);
+                SetAttackLabel("Descent of the Sun", 130);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Fury"), 255, 200, 60);
+                Vector2 spawn = new Vector2(player.Center.X, player.Center.Y - 640f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.GwynDescentMeteor>(), DescentDamage, 0f, Main.myPlayer, DescentDamage, player.Center.X);
+            }
+        }
+
+        // ── Weapon-swing hooks. Phase 2 drives the bespoke reactive greatsword moveset above; the
+        //    magic set-pieces (lightning spear etc.) layer on in Phase 3. ──────────────────────────
+        protected override void DoMeleeAttack()
+        {
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.2f }, NPC.Center);
+            TryMeleeHit();
+        }
+
+        ///<summary>Each swing trails cinder-fire; the heavier ones (reach ≥ 1.15) fling a fire
+        ///crescent forward so melee reaches a tile or two past the blade.</summary>
+        protected override void DoComboMeleeHit(MeleeComboStep step)
+        {
+            base.DoComboMeleeHit(step);
+
+            //Fire dust along the blade arc — every swing reads as flame
+            Vector2 bladeTip = NPC.Center + new Vector2(NPC.direction * 34f, -10f);
+            for (int i = 0; i < 5; i++)
+            {
+                int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                int dust = Dust.NewDust(bladeTip - new Vector2(8f, 20f), 16, 40, type, NPC.direction * 1.5f, 0f, 60, default, 1.4f);
+                Main.dust[dust].noGravity = true;
+            }
+
+            //Heavy swings throw a reach crescent (vertical bias tilts it for overhead/rising arcs)
+            if (step.ReachMult >= 1.15f && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float vBias = step.Motion switch
+                {
+                    ComboMotion.OverheadArc => 3f,
+                    ComboMotion.GroundSlam => 3f,
+                    ComboMotion.UnderhandArc => -3f,
+                    _ => 0f,
+                };
+                Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * step.DamageMult * 0.6f), 2f, Main.myPlayer, NPC.direction, vBias);
+            }
+        }
+
+        protected override void DoRangedAttack()
+        {
+            // No ranged weapon; the fire/lightning magic will be its own state-machine attacks.
+        }
+
+        // ── Spear of the First Sun (the marquee lightning attack) ────────────────
+        // Mapped onto the base HomingVolley template — "raise the weapon overhead, then fire a
+        // projectile partway through the downswing" is exactly the throw motion. The two-stage
+        // payload (contact explosion → delayed ground bolt → floor electricity) lives entirely in
+        // the GwynLightningSpear → GwynLightningStrike → GwynFloorSpark projectile chain.
+        protected override bool  CanHomingVolley             => true;
+        protected override float HomingVolleyMinRange         => 200f;
+        protected override float HomingVolleyMaxRange         => 1400f;   // works at nearly any range — it's a signature
+        protected override int   HomingVolleyChance           => 8;
+        protected override int   HomingVolleyCooldownAfterUse => 420;
+        protected override int   HomingVolleyDodgebackTicks   => 8;       // barely a step — the raise is planted, imposing
+        protected override float HomingVolleyDodgebackSpeed   => 1.5f;
+        protected override int   HomingVolleySwingTelegraphTicks => 40;   // the long overhead raise — everyone sees it coming
+        protected override int   HomingVolleySwingTicks       => 28;
+        protected override float HomingVolleyFireProgress     => 0.55f;   // hurl it partway through the downswing
+        protected override int   HomingVolleyRecoveryTicks    => 45;
+
+        const int LightningSpearDamage = 50;
+
+        ///<summary>Lightning gathers on the raised blade through the windup — the telegraph read.</summary>
+        protected override void DoHomingVolleySwingTick(int elapsed, int total)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+            float swingT = total > 0 ? elapsed / (float)total : 1f;
+            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);
+            Vector2 bladePos = NPC.Center + dir * 48f;
+            for (int i = 0; i < 2; i++)
+            {
+                int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
+                Dust d = Dust.NewDustPerfect(bladePos + Main.rand.NextVector2Circular(8f, 8f), type, Vector2.Zero, 60, default, Main.rand.NextFloat(1.2f, 1.8f));
+                d.noGravity = true;
+            }
+            Lighting.AddLight(bladePos, 0.7f, 0.6f, 0.25f);
+        }
+
+        ///<summary>Hurl the lightning spear at the player's locked position.</summary>
+        protected override void DoHomingVolleyFire()
+        {
+            SetAttackLabel("Spear of the First Sun", 120);
+            SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.8f, Pitch = 0.1f }, NPC.Center); // lightning cast
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Player target = Main.player[NPC.target];
+            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 20f, -30f);
+            Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 15f;
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
+                ModContent.ProjectileType<Projectiles.Enemy.GwynLightningSpear>(), LightningSpearDamage, 4f, Main.myPlayer);
+        }
+
+        // ── Cinder Nova (point-blank space-maker + greed punish) ─────────────────
+        // Base Nova template: root, gather fire inward over the charge, then detonate the expanding
+        // ring. Triggers at three HP thresholds (one-shot each) and, otherwise, occasionally when the
+        // player is point-blank so hugging him during a slow moment is answered.
+        protected override bool CanNova           => true;
+        protected override int  NovaChargeTicks    => 60;   // shorter than Artorias' — a snappier boss beat
+        protected override int  NovaBlastHoldTicks => 20;
+        protected override int  NovaRecoveryTicks  => 45;
+
+        bool _nova75, _nova45, _nova20;
+        int _novaPointBlankCd;
+
+        protected override bool ShouldTriggerNova()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return false;
+            }
+            float frac = (float)NPC.life / NPC.lifeMax;
+            if (frac <= 0.75f && !_nova75) { _nova75 = true; return true; }
+            if (frac <= 0.45f && !_nova45) { _nova45 = true; return true; }
+            if (frac <= 0.20f && !_nova20) { _nova20 = true; return true; }
+            //Point-blank greed punish, on its own cooldown
+            if (_novaPointBlankCd > 0) { _novaPointBlankCd--; return false; }
+            if (NPC.Distance(Main.player[NPC.target].Center) < 140f && Main.rand.NextBool(240))
+            {
+                _novaPointBlankCd = 600;
+                return true;
+            }
+            return false;
+        }
+
+        protected override void DoNovaChargeTick(int elapsed, int total)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+            //Fire spiralling INWARD to his blade — the classic "get away" read
+            float progress = total > 0 ? elapsed / (float)total : 1f;
+            int count = 2 + (int)(progress * 4f);
+            for (int i = 0; i < count; i++)
+            {
+                float ang = Main.rand.NextFloat(MathHelper.TwoPi);
+                float radius = MathHelper.Lerp(170f, 20f, progress) + Main.rand.NextFloat(20f);
+                Vector2 pos = NPC.Center + ang.ToRotationVector2() * radius;
+                int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                Dust d = Dust.NewDustPerfect(pos, type, Vector2.Zero, 60, default, 1.3f);
+                d.noGravity = true;
+                d.velocity = (NPC.Center - pos) * 0.07f;
+            }
+            Lighting.AddLight(NPC.Center, progress * 1.2f, progress * 0.6f, progress * 0.2f);
+        }
+
+        protected override void DoNovaBlast()
+        {
+            SetAttackLabel("Cinder Nova", 90);
+            SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.3f }, NPC.Center);
+            UsefulFunctions.ScreenShake(NPC.Center, 12f, 22);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.GwynCinderNova>(), NovaDamage, 10f, Main.myPlayer, 420f);
+        }
+
+        const int NovaDamage = 60;
+
+        // ── Sunlight Spears Volley (mid-range answer) ────────────────────────────
+        // Base AbyssShard template: a short raise, then a sequence of "fire events". Each event drops
+        // a couple of GwynSolarSpearNode orbs in an arc above the player — each orb telegraphs, then
+        // fires a spear at the player. The staggered events + per-orb telegraph make a readable,
+        // rolling rhythm of spears rather than a wall.
+        protected override bool  CanAbyssShard              => true;
+        protected override float AbyssShardMinRange         => 220f;
+        protected override float AbyssShardMaxRange         => 1200f;
+        protected override int   AbyssShardChance           => 8;
+        protected override int   AbyssShardCooldownAfterUse => 360;
+        protected override int   AbyssShardTelegraphTicks   => 25;
+
+        const int SunlightSpearDamage = 40;
+        const int SpearVolleyEvents = 3;
+
+        protected override int NextAbyssShardDelay(int completedFireIndex)
+            => completedFireIndex < SpearVolleyEvents - 1 ? 14 : -1;
+
+        protected override void DoAbyssShardFire(int fireIndex)
+        {
+            SetAttackLabel("Sunlight Spears Volley", 80);
+            SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.5f, Pitch = 0.2f }, NPC.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Player target = Main.player[NPC.target];
+            //Two orbs per event, arced above the player and spread horizontally by event index
+            for (int i = 0; i < 2; i++)
+            {
+                float spreadX = (fireIndex - 1) * 90f + (i == 0 ? -55f : 55f);
+                Vector2 pos = target.Center + new Vector2(spreadX, -220f - Main.rand.NextFloat(40f));
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.GwynSolarSpearNode>(), SunlightSpearDamage, 2f, Main.myPlayer, 20f);
+            }
+        }
+
+        // ── Lord's Grasp (grab — the shield-turtle / spacing punish) ─────────────
+        // Base Tendril template: gather fire at the hand, then launch a reaching flaming claw that
+        // seizes and immolates on contact. Bypasses block comfort — it hunts turtling players.
+        protected override bool  CanTendrilGrab          => true;
+        protected override float TendrilMinRange         => 150f;
+        protected override float TendrilMaxRange         => 560f;
+        protected override int   TendrilChance            => 5;
+        protected override int   TendrilCooldownAfterUse  => 480;
+        protected override int   TendrilTelegraphTicks    => 30;
+        protected override int   TendrilReachTicks        => 60;
+
+        const int GraspDamage = 70;
+
+        protected override void DoTendrilTelegraphTick(int elapsed)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+            Vector2 handPos = NPC.Center + new Vector2(NPC.direction * 20f, -6f);
+            int count = 1 + elapsed / 6;
+            for (int i = 0; i < count; i++)
+            {
+                int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                Dust d = Dust.NewDustPerfect(handPos + Main.rand.NextVector2Circular(12f, 12f), type, Main.rand.NextVector2Circular(1f, 1f), 60, default, Main.rand.NextFloat(1f, 1.5f));
+                d.noGravity = true;
+            }
+            Lighting.AddLight(handPos, 0.8f, 0.4f, 0.1f);
+        }
+
+        protected override void DoTendrilLaunch()
+        {
+            SetAttackLabel("Lord's Grasp", 100);
+            SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.3f }, NPC.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Player target = Main.player[NPC.target];
+            Vector2 origin = NPC.Center + new Vector2(NPC.direction * (NPC.width * 0.5f + 10f), -NPC.height * 0.3f);
+            Vector2 vel = UsefulFunctions.Aim(origin, target.Center, 13f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
+                ModContent.ProjectileType<Projectiles.Enemy.GwynFlameGrasp>(), GraspDamage, 8f, Main.myPlayer, NPC.whoAmI);
+        }
+
+        protected override void DoTendrilSwing()
+        {
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
+            TryMeleeHit(reach: 110f);
+        }
+
+        ///<summary>KEPT (1000px): the First Flame shields him from cowards — full defense lock beyond
+        ///the blue ring, the old fightable value inside it.</summary>
+        void TickDefenseRing()
+        {
+            UsefulFunctions.DustRing(NPC.Center, (int)DefenseRingRadius, DustID.BlueTorch, 20, 1f);
+
+            if (protectedHoldTimer > 0)
+            {
+                protectedHoldTimer--;
+            }
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > DefenseRingRadius)
+            {
+                NPC.defense = 9999;
+                if (protectedHoldTimer <= 0)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Protected"), 175, 75, 255);
+                    protectedHoldTimer = 200;
+                }
+            }
+            else if (protectedHoldTimer <= 0) // preserve the 9999 penalty until the hold expires
+            {
+                //Unbroken Advance: the march itself is armored — 999 defense until the 3s ends
+                NPC.defense = _advanceTimer > 0 ? 999 : FightableDefense;
+            }
+        }
+
+        ///<summary>KEPT (2000px): the outer flame wall. Flight is torn down anywhere inside it;
+        ///fleeing beyond it brings the Coward's Affliction after a 90-tick grace.</summary>
+        void TickCowardRing()
+        {
             Player player = Main.player[NPC.target];
 
-            //PROXIMITY-BASED DEBUFFS
-            if (NPC.Distance(player.Center) < 2000)
+            if (NPC.Distance(player.Center) < CowardRingRadius)
             {
                 player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
             }
 
-            UsefulFunctions.DustRing(NPC.Center, 2000, DustID.RedsWingsRun, 1, 1f);
-            UsefulFunctions.DustRing(NPC.Center, 2000, DustID.Torch, 10, 1f);
-            UsefulFunctions.DustRing(NPC.Center, 2000, DustID.RedTorch, 5, 2f);
-            UsefulFunctions.DustRing(NPC.Center, 2000, DustID.Firefly, 100, -3f);
-            //near instant death when player runs too far away
-            if (NPC.Distance(player.Center) > 2000) //was 4600
+            UsefulFunctions.DustRing(NPC.Center, (int)CowardRingRadius, DustID.RedsWingsRun, 1, 1f);
+            UsefulFunctions.DustRing(NPC.Center, (int)CowardRingRadius, DustID.Torch, 10, 1f);
+            UsefulFunctions.DustRing(NPC.Center, (int)CowardRingRadius, DustID.RedTorch, 5, 2f);
+            UsefulFunctions.DustRing(NPC.Center, (int)CowardRingRadius, DustID.Firefly, 100, -3f);
+
+            if (NPC.Distance(player.Center) > CowardRingRadius)
             {
-                distanceTimer--;
-                if (distanceTimer <= 0) //add a cooldown of 90 frames before getting destroyed by the debuff (to prevent some unfair cases where you are in this zone because of a random dash or anything)
+                cowardGraceTimer--;
+                if (cowardGraceTimer <= 0)
                 {
                     player.AddBuff(ModContent.BuffType<CowardsAffliction>(), 1 * 30, false);
-
-                    if (!announcedDebuffs)
+                    if (!announcedCoward)
                     {
                         UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Coward"), 235, 199, 23); //deep yellow
-                        announcedDebuffs = true;
+                        announcedCoward = true;
                     }
                 }
             }
             else
             {
-                distanceTimer = 90;
-                announcedDebuffs = false;
+                cowardGraceTimer = 90;
+                announcedCoward = false;
+            }
+        }
+
+        ///<summary>KEPT (&gt;600px): running keeps you under a random rain of death orbs falling from
+        ///above your own position — ranged builds don't get a free fight.</summary>
+        void TickRainOfDeath()
+        {
+            Player player = Main.player[NPC.target];
+            if (player.dead || !player.active)
+            {
+                return;
             }
 
-
-            void InflictDebuffs()
+            if (NPC.Distance(player.Center) > RainOfDeathRange && Main.rand.NextBool(400))
             {
-
-
-                // Check every player in the game to see if they are in range
-                for (int i = 0; i < Main.maxPlayers; i++)
-                {
-                    Player player = Main.player[i];
-
-                    // Storing the distance means we don't have to re-calculate it multiple times
-                    float distance = NPC.Distance(player.Center);
-
-                    // Proximity Debuffs
-                    if (NPC.Distance(player.Center) < 700)
-                    {
-                        player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
-                        player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1 * 60, false);
-                    }
-
-
-                }
+                SpawnDeathRain(player, 3, -100f, 200, -600f, 2f);
             }
 
-
-            bool tooEarly = !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Seath.SeathTheScalelessHead>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<EarthFiendLich>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<FireFiendMarilith>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Blight>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<GhostWyvernMage.WyvernMageShadow>()));
-            if (tooEarly)
+            if (NPC.life >= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 650f && Main.rand.NextBool(180))
             {
-
-                deathBallDamage = 10000;
-                phantomSeekerDamage = 10000;
-                armageddonBallDamage = 10000;
-                holdBallDamage = 10000;
-                fireballBallDamage = 10000;
-                blazeBallDamage = 10000;
-                blackBreathDamage = 10000;
-                purpleCrushDamage = 10000;
-                fireBreathDamage = 10000;
-                iceStormDamage = 10000;
-                gravityBallDamage = 10000;
-                NPC.damage = 10000;
-                tridentDamage = 10000;
-                herosArrowDamage = 10000;
-                throwingKnifeDamage = 10000;
-                smokebombDamage = 10000;
-                cultistFireDamage = 10000;
-                cultistMagicDamage = 10000;
-                fireBreathDamage = 10000;
-                lostSoulDamage = 10000;
-                greatFireballDamage = 10000;
-                blackFireDamage = 10000;
-                greatAttackDamage = 10000;
-
-            }
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
-
-
-            //JUSTHIT CODE
-            if (NPC.justHit && NPC.Distance(player.Center) < 150)
-            {
-                customAi1 = 1f;
-                customAi3 = 1f;
-                NPC.localAI[3] = 1f;
-                NPC.localAI[2] = 1f;
-                NPC.localAI[1] = 1f;
-
-            }
-            if (NPC.justHit && NPC.Distance(player.Center) > 151 && NPC.Distance(player.Center) < 349 && Main.rand.NextBool(4))
-            {
-                customAi1 = 1f;
-
-                NPC.localAI[1] = 1f;
-
-            }
-            //customAi1 = 1f;
-            if (NPC.justHit && NPC.Distance(player.Center) < 350)
-            {
-
-                if (Main.rand.NextBool(8))
+                if (Main.rand.NextBool(20))
                 {
-                    NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
-                    float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, -4f);
-                    NPC.velocity.X = v;
-                    customAi1 = 70f;
-                    NPC.localAI[3] = 1f;
-                    NPC.localAI[2] = 1f;
-                    NPC.localAI[1] = 1f;
-                    DarkBeadShotCounter = 0;
-                }
-                else
-                {
-                    customAi1 = 240f;
-                    NPC.localAI[3] = 1f;
-                    NPC.localAI[2] = 1f;
-                    NPC.localAI[1] = 1f;
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.RainsDeath"), 175, 75, 255);
                 }
 
-                NPC.netUpdate = true;
-            }
-            if (NPC.justHit && NPC.Distance(player.Center) > 451 && Main.rand.NextBool(12))
-            {
-                if (Main.rand.NextBool(3))
-                {
-                    NPC.velocity.Y = Main.rand.NextFloat(-6f, -3f);
-                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(9f, 3f);
-                }
-                DarkBeadShotCounter = 0;
-                NPC.localAI[2] = 1f;
-                NPC.netUpdate = true;
+                SpawnDeathRain(player, 6, -600f, 600, -650f, 1f);
             }
 
-            //end just hit code
-
-
-            /*
-            //far enough away code for MP - commented out for now as I don't understand how to apply it to the multiple different projectiles, 
-            //each with different distance code
-
-            bool farEnoughAway = false
-
-            //Loop through the whole Main.player array
-            for (int i = 0; i < Main.maxPlayers; i++)
+            if (NPC.life <= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 580f && NPC.Distance(player.Center) < 1199f && Main.rand.NextBool(120))
             {
-                //For each entry in the array, check if it holds an active player, and that they are not dead
-                if (Main.player[i].active && !Main.player[i].dead)
+                if (Main.rand.NextBool(16))
                 {
-                    //If that is true, check if they are far enough away. If so, set farEnoughAway to true and end the loop with break;
-                    if (NPC.Distance(Main.player[i]) > whyAreYouRunning)
-                    {
-                        farEnoughAway = true;
-                        break;
-                    }
-
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.TidalWave"), 175, 75, 255);
                 }
+
+                SpawnDeathRain(player, 8, -800f, 800, -650f, 1f);
             }
+        }
 
-            //If the loop found one player far enough away, and the random roll is true, then fire
-            if (farEnoughAway && Main.rand.NextBool(350))
+        void SpawnDeathRain(Player player, int count, float horizontalOffset, int horizontalRange, float verticalOffset, float knockback)
+        {
+            for (int i = 0; i < count; i++)
             {
-                //Fire projectile
-            }
-            */
-
-            #region Projectiles
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-
-                DarkBeadShotTimer++;
-
-                //DARKBEAD ATTACK
-                if (NPC.Distance(player.Center) > 350)
-                {
-                    //Counts up each tick. Used to space out shots
-                    if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 2)
-                    {
-                        Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //acid flame
-                        DarkBeadShotTimer = 0;
-                        DarkBeadShotCounter++;
-                    }
-
-                }
-
-                customAi1++; ;
-                customAi3++; ;
-
-
-                NPC.TargetClosest(true);
-
-                //ORANGE PHANTOM SEEKER
-                int num59;
-                if (customAi3 >= 230 && NPC.Distance(player.Center) > 300 && Main.rand.NextBool(1500))
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        num59 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
-                        Main.projectile[num59].timeLeft = 460;
-                        Main.projectile[num59].rotation = Main.rand.Next(700) / 100f;
-                        Main.projectile[num59].ai[0] = this.NPC.target;
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    customAi3 = 160f;
-
-                }
-                //ANTIMAT ROUNDS
-                if (NPC.life >= NPC.lifeMax / 10 * 3 && NPC.life <= NPC.lifeMax / 20 * 7 && customAi3 >= 270 && NPC.Distance(player.Center) > 520 && Main.rand.NextBool(12))
-                {
-                    float num48 = 3f;//was 4
-                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2) - (160 + Main.rand.Next(80)));//added - 200
-                    float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                    float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkAntiMatRound>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, bioSpitDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 170;
-                            Main.projectile[num54].aiStyle = -1;
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item96 with { Volume = 0.3f }, NPC.Center);
-
-                        if (customAi3 >= 310)
-                        {
-                            customAi3 = 1f;
-                        }
-
-                    }
-
-                }
-                //ANTIMAT ROUNDS FINAL
-                if (NPC.life >= NPC.lifeMax / 20 * 3 && NPC.life <= NPC.lifeMax / 10 * 3 && customAi3 >= 270 && NPC.Distance(player.Center) > 550f && Main.rand.NextBool(8))
-                {
-                    float num48 = 3f;//was 4
-                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2) - (160 + Main.rand.Next(80)));//added - 200
-                    float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                    float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkAntiMatRound>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, bioSpitDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 170;
-                            Main.projectile[num54].aiStyle = -1;
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item96 with { Volume = 0.3f }, NPC.Center);
-
-                        if (customAi3 >= 320)
-                        {
-                            customAi3 = 1f;
-                        }
-
-                    }
-
-                }
-
-                //3 DEATH SKULLS WHEN PLAYER RUNS AWAY 
-                if (NPC.Distance(player.Center) > whyAreYouRunning && Main.rand.NextBool(400))
-                {
-                    Player nT = Main.player[NPC.target];
-                    for (int pcy = 0; pcy < 3; pcy++) //2.1 was 7.1f
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / 10, 0.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), CalculateRageDamage(herosArrowDamage), 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-                        }
-                        Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.8f);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //dungeon spirit sound
-
-                    }
-                }
-                //RAIN OF DEATH
-                if (NPC.life >= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 650 && Main.rand.NextBool(180))
-                {
-                    Player nT = Main.player[NPC.target];
-
-                    if (Main.rand.NextBool(20))
-                    {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.RainsDeath"), 175, 75, 255);
-                    }
-
-                    for (int pcy = 0; pcy < 6; pcy++)
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(600), (float)nT.position.Y - 650f, (float)(-50 + Main.rand.Next(100)) / 10, 0.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), CalculateRageDamage(herosArrowDamage), 1f, Main.myPlayer); //EnemySpellSuddenDeathBall
-                        }
-                        Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //demon spirit
-
-
-                    }
-                }
-                //RAIN OF DEATH FINAL
-                if (NPC.life <= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 580 && NPC.Distance(player.Center) < 1199 && Main.rand.NextBool(120))
-                {
-                    Player nT = Main.player[NPC.target];
-
-                    if (Main.rand.NextBool(16))
-                    {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.TidalWave"), 175, 75, 255);
-                    }
-
-                    for (int pcy = 0; pcy < 8; pcy++)
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 800 + Main.rand.Next(800), (float)nT.position.Y - 650f, (float)(-50 + Main.rand.Next(100)) / 10, 0.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), CalculateRageDamage(herosArrowDamage), 1f, Main.myPlayer); //EnemySpellSuddenDeathBall
-                        }
-                        Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //demon spirit
-
-
-                    }
-                }
-
-                //CURSED FLAMES RAIN WHEN FAR AWAY
-                if (NPC.life <= NPC.lifeMax / 10 * 7 && NPC.life >= 120001 && NPC.Distance(player.Center) > 1200 && Main.rand.NextBool(320))
-                {
-                    Player nT = Main.player[NPC.target];
-
-                    if (Main.rand.NextBool(32))
-                    {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Challenge"), 125, 85, 255);
-                    }
-                    for (int pcy = 0; pcy < 12; pcy++)
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 400 + Main.rand.Next(400), (float)nT.position.Y - 700f, (float)(-50 + Main.rand.Next(100)) / 10, 3f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), CalculateRageDamage(herosArrowDamage), 2f, Main.myPlayer); //EnemySpellSuddenDeathBall
-                        }
-                        Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //acid flame
-
-                    }
-                }
-
-                //CURSED FLAMES FAR AWAY FINAL RAIN
-                if (NPC.life <= NPC.lifeMax / 100 * 12 && NPC.Distance(player.Center) > 1000 && Main.rand.NextBool(120))
-                {
-                    Player nT = Main.player[NPC.target];
-                    if (Main.rand.NextBool(12))
-                    {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.GiveUp"), 125, 85, 255);
-                    }
-                    for (int pcy = 0; pcy < 12; pcy++)
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 400 + Main.rand.Next(400), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / 10, 3f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), CalculateRageDamage(herosArrowDamage), 2f, Main.myPlayer); //EnemySpellSuddenDeathBall
-                        }
-                        Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //acid flame
-                    }
-                }
-
-
-
-                //DESPERATE FINAL ATTACK
-                if (customAi1 >= 130f && customAi1 <= 148f && NPC.life <= NPC.lifeMax / 2 && NPC.life >= NPC.lifeMax / 5 * 2)
-                {
-
-                    NPC.velocity.Y = Main.rand.NextFloat(-11f, -8f);
-
-
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8); //0.4f, true, true																								
-                    speed += Main.rand.NextVector2Circular(-4, -2);
-                    if (Main.rand.NextBool(4) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), throwingKnifeDamage, 0f, Main.myPlayer);
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    }
-
-                    NPC.netUpdate = true;
-                }
-
-                //SMOKE BOMB DUST TELEGRAPH
-                if (customAi1 >= 220 && customAi1 >= 280 && NPC.life >= NPC.lifeMax / 10)
-                {
-                    Lighting.AddLight(NPC.Center, Color.Green.ToVector3() * 2f);
-                    if (Main.rand.NextBool(2) && NPC.Distance(player.Center) > 1)
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BoneTorch, NPC.velocity.X, NPC.velocity.Y);
-
-                    }
-
-                    //JUMP BEFORE BOMB ATTACK SOMETIMES
-                    if (customAi1 == 260f && NPC.velocity.Y == 0f && NPC.life >= NPC.lifeMax / 10 && Main.rand.NextBool(2))
-                    {
-                        NPC.velocity.Y = Main.rand.NextFloat(-8f, -4f);
-                        NPC.netUpdate = true;
-                    }
-
-                    //SMOKE BOMB ATTACK
-                    if (customAi1 >= 280 && NPC.life >= NPC.lifeMax / 10)
-                    {
-                        NPC.TargetClosest(true);
-
-                        if (Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
-                        {
-                            Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10); //, 0.2f, false, false
-                            speed2 += Main.rand.NextVector2Circular(-4, 0);
-                            //speed2 += Main.player[npc.target].velocity / 2;
-                            if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
-                                {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
-                                }
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center); //Play swing-throw sound
-                                customAi1 = 1f;
-                            }
-                        }
-                    }
-                }
-
-
-
-                //400,000-500,000
-                //BASILISK SHIFTER PHASE
-
-                shotTimer++;
-                int shifterChoice = Main.rand.Next(4);
-                if (shotTimer >= 85 && NPC.life >= NPC.lifeMax / 5 * 4)
-                {
-                    Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 1f);
-                    //if (Main.rand.NextBool(3))
-                    //{
-                    //Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
-                    //Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
-                    //}
-
-
-                    if (shotTimer >= 100f && NPC.life >= NPC.lifeMax / 5 * 4)
-                    {
-                        NPC.TargetClosest(true);
-                        //PLASMA ORB
-                        if (Main.rand.NextBool(100) && NPC.Distance(player.Center) > 350 && NPC.life >= NPC.lifeMax / 5 * 4)
-                        {
-                            Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5f, 1.06f, true, true);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), plasmaOrbDamage, 5f, Main.myPlayer);
-                            }
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item96 with { Volume = 0.3f, Pitch = -0.5f }, player.Center); //pasheww
-
-                            shotTimer = 1f;
-
-                            NPC.netUpdate = true;
-                        }
-
-                        //CHANCE TO JUMP BEFORE ATTACK
-                        //FOR MAIN
-                        if (shotTimer == 105 && Main.rand.NextBool(3) && NPC.life >= 860001)
-                        {
-                            //npc.velocity.Y = -6f;
-                            NPC.velocity.Y = Main.rand.NextFloat(-10f, -4f);
-                        }
-                        //FOR FINAL
-                        if (shotTimer >= 185 && Main.rand.NextBool(3) && NPC.life >= NPC.lifeMax / 5 * 4 && NPC.life <= NPC.lifeMax / 100 * 86)
-                        {
-                            NPC.velocity.Y = Main.rand.NextFloat(-10f, 3f);
-                        }
-
-
-                    }
-
-                }
-
-
-                // NEW BREATH ATTACK    
-                breathTimer++;
-
-                if (breathTimer > 360)
-                {
-                    shotTimer = -60f;
-                    UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.CursedTorch, 48, 4);
-                    Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 5);
-                }
-
-                if (breathTimer > 480 && shotTimer <= 99f && NPC.life >= NPC.lifeMax / 5 * 4)//12 was 2
-                {
-                    breathTimer = -40;
-                    shotTimer = -120f; //was -90
-                }
-
-                if (breathTimer > 360 && shotTimer <= 99f && NPC.life <= NPC.lifeMax / 5 * 4)
-                {
-                    breathTimer = 0;
-                    shotTimer = 0f;
-                }
-
-                if (breathTimer < 0)
-                {
-                    NPC.velocity.X = 0f;
-                    NPC.netUpdate = true;
-                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
-                    breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = 0.2f }, NPC.Center);
-                    NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
-                }
-
-                if (breathTimer == 0)
-                {
-                    shotTimer = 1f;
-                }
-
-
-                //PURPLE MAGIC LOB ATTACK; 
-                if (shotTimer >= 110f && NPC.life >= NPC.lifeMax / 5 * 4 && shifterChoice <= 1)
-                {
-                    bool clearSpace = true;
-                    for (int i = 0; i < 15; i++)
-                    {
-                        if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i))
-                        {
-                            clearSpace = false;
-                        }
-                    }
-
-                    if (clearSpace && Main.rand.NextBool(3))
-                    {
-                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
-
-                        speed.Y += Main.rand.NextFloat(-2f, -6f);
-
-                        if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                        {
-                            //int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
-
-                            //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f }, NPC.Center);//was item20
-
-                        }
-
-                        if (shotTimer >= 154f)
-                        {
-                            shotTimer = 1f;
-                        }
-                    }
-                }
-
-                //NORMAL SPIT ATTACK
-                if (shotTimer >= 115f && NPC.life >= NPC.lifeMax / 100 * 86 && shifterChoice >= 2)
-                {
-                    if (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                    {
-                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 9);
-
-                        if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                        {
-                            /*int num555 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), tridentDamage, 0f, Main.myPlayer);
-                            Main.projectile[num555].timeLeft = 300; //40
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
-                            */
-                            shotTimer = 1f;
-                        }
-                    }
-                }
-
-                //FINAL DESPERATE ATTACK
-                if (shotTimer >= 175f && Main.rand.NextBool(2) && NPC.life >= NPC.lifeMax / 5 * 4 && NPC.life <= NPC.lifeMax / 100 * 86)
-                {
-                    int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 0.5f);
-                    Main.dust[dust2].noGravity = true;
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10);
-
-                    if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.1f }, NPC.Center);
-                    }
-                    if (shotTimer >= 206f)
-                    {
-                        shotTimer = 1f;
-                    }
-                }
-
-
-                //MAKE SOUND WHEN JUMPING/HOVERING
-                if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f && NPC.life >= NPC.lifeMax / 5 * 4)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
-                }
-
-                //TELEGRAPH DUSTS
-                if (shotTimer >= 100 && NPC.life >= NPC.lifeMax / 5 * 4)
-                {
-                    Lighting.AddLight(NPC.Center, Color.Purple.ToVector3() * 0.5f);
-                    if (Main.rand.NextBool(3))
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
-                    }
-                }
-
-                //reset attack timer when hit in melee range
-                if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(4))
-                {
-                    shotTimer = 1f;
-                }
-                if (NPC.justHit && NPC.Distance(player.Center) > 151 && NPC.Distance(player.Center) < 300 && Main.rand.NextBool(4))
-                {
-                    shotTimer = 1f;
-                }
-                //jump back when hit at close range
-                if (NPC.justHit && NPC.Distance(player.Center) < 250 && Main.rand.NextBool(16))
-                {
-
-                    NPC.velocity.Y = Main.rand.NextFloat(-6f, -4f);
-                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-7f, -4f);
-                    shotTimer = 50f;
-                    NPC.netUpdate = true;
-                }
-
-                //jump forward when hit at range; 
-                if (NPC.justHit && NPC.Distance(player.Center) > 500 && NPC.life >= NPC.lifeMax / 5 * 4 && Main.rand.NextBool(16))
-                {
-                    NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
-                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(7f, 3f);
-                    NPC.netUpdate = true;
-
-                }
-                //END SHIFTER
-
-
-
-
-                //100k-250k
-                //BASILISK HUNTER PHASE
-                if (NPC.life >= NPC.lifeMax / 2 && NPC.life <= NPC.lifeMax / 5 * 4)
-                {
-
-                    NPC.localAI[1]++;
-                    NPC.localAI[2]++;
-                    //MAKE SOUND WHEN JUMPING/HOVERING
-                    if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f)
-                    {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //hovering
-                    }
-                    //BREATH ATTACK
-                    if (NPC.localAI[2] >= 900)
-                    {
-
-                        if (NPC.localAI[2] >= 901 && NPC.localAI[2] <= 995)
-                        {
-
-                            if (NPC.localAI[2] == 901)
-                            {
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item6 with { Volume = 0.01f, Pitch = -0.5f }, NPC.Center); //magic mirror
-                            }
-
-                            Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
-
-                            if (Main.rand.NextBool(2))
-                            {
-                                Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1.0f); //purple magic outward fire
-                                Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1.0f);
-
-                            }
-
-                        }
-                        if (NPC.localAI[2] == 996)
-                        {
-                            breath = true;
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit30 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center); //3, 21 demon; NPCHit30 nimbus
-                        }
-
-                        if (breath)
-                        {
-                            moveTimer--;
-
-                            NPC.velocity.X = 0f;
-                            NPC.velocity.Y = 0f;
-                            Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 3f);
-
-
-                            //play breath sound
-                            if (Main.rand.NextBool(3))
-                            {
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //flame thrower
-                            }
-
-                            float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (15 * NPC.direction), NPC.Center.Y /*+ (5f * npc.direction)*/, NPC.velocity.X * 3f + (float)Main.rand.Next(-4, 4), NPC.velocity.Y * 3f + (float)Main.rand.Next(-4, 4), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedFlamesDamage, 0f, Main.myPlayer); //JungleWyvernFire   5 and 5 was 3f, 18 was 2 -2 ---15 direction was 5
-                            }
-
-
-                            if (Main.rand.NextBool(35))
-                            {
-                                //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-100, 100), NPC.Center.Y + Main.rand.Next(-100, 100), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
-                            }
-                            breathCD--;
-
-                            if (breathCD == 120)
-                            {
-                                tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
-                            }
-                            if (breathCD == 60)
-                            {
-                                tsorcRevampAIs.TeleportImmediately(NPC, 25, true); //was 15
-                            }
-
-                        }
-
-                        if (breathCD <= 0)
-                        {
-                            tsorcRevampAIs.FighterAI(NPC, 2f, canTeleport: true, enragePercent: 0.2f, enrageTopSpeed: 3);
-                            breath = false;
-                            breathCD = 160;
-                            customAi1 = 1f;
-                            customAi3 = 1f;
-                            NPC.localAI[3] = 1f;
-                            NPC.localAI[2] = 1f;
-                            NPC.localAI[1] = 1f;
-                            DarkBeadShotCounter = 0;
-                        }
-
-                    }
-
-
-                    if (NPC.localAI[1] >= 95f)
-                    {
-                        int choice = Main.rand.Next(4);
-
-                        //TELEGRAPH DUSTS got changed up to only show for choice 2 or final
-                        if (NPC.life >= NPC.lifeMax / 10 * 3 && NPC.life <= NPC.lifeMax / 5 * 4 && (NPC.localAI[1] >= 95 && choice >= 2 || NPC.localAI[1] >= 135))
-                        {
-                            Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                            if (Main.rand.NextBool(3))
-                            {
-                                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
-                            }
-
-                        }
-                        //PURPLE MAGIC LOB ATTACK;  
-                        if (NPC.localAI[1] >= 110f && choice == 0)
-                        {
-                            bool clearSpace = true;
-                            for (int i = 0; i < 15; i++)
-                            {
-                                if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i))
-                                {
-                                    clearSpace = false;
-                                }
-                            }
-
-                            //ICE SPELL 3 ATTACK
-                            if (clearSpace)
-                            {
-                                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 14, 0.015f, true);
-
-                                speed.Y += Main.rand.NextFloat(-2f, -6f);
-                                //speed += Main.rand.NextVector2Circular(-10, -8);
-                                if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                                {
-                                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                                    {
-                                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceStormDamage, 0f, Main.myPlayer);
-                                    }
-                                    Lighting.AddLight(NPC.Center, Color.LightBlue.ToVector3() * 0.5f);
-
-                                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.3f }, NPC.Center);//magic ice
-
-                                }
-                                if (NPC.localAI[1] >= 120f)
-                                { NPC.localAI[1] = 1f; }
-                            }
-
-                        }
-
-                        NPC.TargetClosest(true);
-
-                        //PHASED MATTER BLAST ATTACK
-                        if (Main.rand.NextBool(150) && NPC.life >= NPC.lifeMax / 10 * 3 && NPC.life <= NPC.lifeMax / 5 * 3 && NPC.Distance(player.Center) > 330 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6f, 1.06f, true, true);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), disruptDamage, 5f, Main.myPlayer);
-                            }
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.2f, Pitch = 0.4f }, NPC.Center); //new sound
-                            NPC.localAI[1] = 1f;
-
-                        }
-
-                        //JUMP DASH 
-                        if (NPC.localAI[1] >= 110 && NPC.Distance(player.Center) > 450 && NPC.velocity.Y == 0f && Main.rand.NextBool(30) && NPC.life >= NPC.lifeMax / 100 * 15 && NPC.life <= NPC.lifeMax / 10 * 3)
-                        {
-                            NPC.velocity.Y = Main.rand.NextFloat(-8f, -2f);
-                            NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(5f, 2f);
-                            NPC.netUpdate = true;
-                        }
-
-
-                        //MULTI-SPIT 1 ATTACK 
-                        if (NPC.localAI[1] >= 105f && choice == 1 && Main.rand.NextBool(8) && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                        {
-
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10);
-
-                            if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
-                            }
-
-                            if (NPC.localAI[1] >= 114f)
-                            {
-                                NPC.localAI[1] = 1f;
-                            }
-
-
-                        }
-
-                        //MULTI-SPIT 2 ATTACK 
-                        if (NPC.localAI[1] >= 113f && choice >= 2 && Main.rand.NextBool(4))
-                        {
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10);
-
-                            if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
-                                {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                                }
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center); //fire
-                            }
-
-                            if (NPC.localAI[1] >= 145f) //was 126
-                            {
-                                NPC.localAI[1] = 1f;
-                            }
-
-                        }
-
-                        //JUMP DASH 
-                        if (NPC.localAI[1] >= 150 && NPC.velocity.Y == 0f && NPC.life >= NPC.lifeMax / 5 && NPC.life <= NPC.lifeMax / 10 * 3 && Main.rand.NextBool(20))
-                        {
-                            //int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 1f);
-                            //Main.dust[dust2].noGravity = true;
-
-                            NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
-                            NPC.netUpdate = true;
-                        }
-
-                        //FINAL DESPERATE ATTACK
-                        if (NPC.localAI[1] >= 155f && NPC.life <= NPC.lifeMax / 2 && NPC.life >= NPC.lifeMax / 5 * 2)
-                        {
-                            Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                            if (Main.rand.NextBool(2))
-                            {
-                                int dust3 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.OrangeRed, 1f);
-                                Main.dust[dust3].noGravity = true;
-                            }
-                            NPC.velocity.Y = Main.rand.NextFloat(-7f, -3f);
-
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8);
-                            speed += Main.rand.NextVector2Circular(-6, -2);
-                            if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
-                                {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitfinalDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                                }
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = 0.2f }, NPC.Center);
-                            }
-
-                            if (NPC.localAI[1] >= 195f) //was 206
-                            {
-                                NPC.localAI[1] = 1f;
-                            }
-
-
-                            NPC.netUpdate = true;
-                        }
-                    } //END BASILISK HUNTER PHASE
-                }
-
-
-                //250,000 and less
-                //ANCIENT DEMON PHASE
-                if (NPC.life <= NPC.lifeMax / 2)
-                {
-                    int demonChoice = Main.rand.Next(6);
-                    NPC.localAI[1]++;
-                    NPC.localAI[3]++;
-
-                    //play creature sounds
-                    if (Main.rand.NextBool(6700))
-                    {
-                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ominous-creature2") with { Volume = 0.7f }, NPC.Center);
-                        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
-                    }
-
-                    bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-                    if (NPC.localAI[1] >= 179)
-                    {
-                        if (Main.rand.NextBool(180))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.myPlayer);
-                            }
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17);
-                            NPC.localAI[1] = 0;
-                        }
-                        if (Main.rand.NextBool(40))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBall, cultistFireDamage, 0.1f, Main.myPlayer);
-                            }
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
-                            NPC.localAI[1] = 0;
-                        }
-                    }
-
-                    //CHANCE TO JUMP BEFORE ATTACK  
-                    if (NPC.localAI[3] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(30) && NPC.life >= NPC.lifeMax / 100 * 15 && NPC.life <= NPC.lifeMax / 2)
-                    {
-                        NPC.velocity.Y = Main.rand.NextFloat(-9f, -6f);
-                        NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
-                        NPC.netUpdate = true;
-                    }
-
-                    if (NPC.localAI[3] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= NPC.lifeMax / 100 * 15)
-                    {
-                        NPC.velocity.Y = Main.rand.NextFloat(-7f, -4f);
-                        NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
-                        NPC.netUpdate = true;
-
-                    }
-
-                    //EARLY TELEGRAPH
-                    if (NPC.localAI[3] >= 60)
-                    {
-                        Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                        if (Main.rand.NextBool(8))
-                        {
-                            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y);
-                        }
-                    }
-                    //LAST SECOND TELEGRAPH
-                    if (NPC.localAI[3] >= 110)
-                    {
-                        Lighting.AddLight(NPC.Center, Color.DeepPink.ToVector3() * 5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                        if (Main.rand.NextBool(3))
-                        {
-                            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
-                        }
-                    }
-
-                    // NEW BREATH ATTACK 
-                    if (demonBreathTimer == 350 && Main.rand.NextBool(3))
-                    {
-                        demonBreathTimer = 1;
-                    }
-
-                    demonBreathTimer++;
-
-                    if (demonBreathTimer > 480)
-                    {
-                        NPC.localAI[3] = -70;
-                        if (NPC.life >= NPC.lifeMax / 100 * 15)
-                        { demonBreathTimer = -60; }
-                        if (NPC.life <= NPC.lifeMax / 100 * 15)
-                        { demonBreathTimer = -140; }
-
-                    }
-
-                    if (demonBreathTimer == 470)
-                    {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.6f }, NPC.Center); //shadowflame hex (little beasty)
-                    }
-
-                    if (demonBreathTimer < 0)
-                    {
-                        //npc.velocity.Y = -1.1f;
-                        NPC.velocity.Y = Main.rand.NextFloat(-4f, -1.1f);
-                        NPC.velocity.X = 0f;
-
-                        //play breath sound
-                        if (Main.rand.NextBool(3))
-                        {
-
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
-                        }
-
-                        Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
-                        breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + (5 * npc.direction), npc.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y - 40f, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
-                            //NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack //this was active but unsure if it's used
-                        }
-                        NPC.localAI[3] = -50;
-                    }
-
-                    if (demonBreathTimer == 361)
-                    {
-                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.5f }, NPC.Center);
-                    }
-                    if (demonBreathTimer > 360)
-                    {
-                        NPC.localAI[3] = -50;
-                        UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - demonBreathTimer) / 120)), DustID.Torch, 48, 4);
-                        Lighting.AddLight(NPC.Center * 2, Color.Red.ToVector3() * 5);
-                    }
-
-                    if (demonBreathTimer == 0)
-                    {
-                        NPC.localAI[3] = -150;
-                        //npc.TargetClosest(true);
-                        //NPC.velocity.X = 0f; //removing this might break it
-
-                    }
-                    //}
-
-                    //PLAYER RUNNING AWAY? SPAWN DesertDjinnCurse, 
-                    Player player3 = Main.player[NPC.target];
-                    if (Main.rand.NextBool(90) && NPC.Distance(player3.Center) > 600 && NPC.Distance(player3.Center) < 900)
-                    {
-                        Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
-                        }
-                        //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = 0.5f }, NPC.Center); //wobble
-                        NPC.localAI[3] = 1f;
-
-
-                    }
-                    //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], ProjectileID.LostSoulHostile, lostSoulDamage, 3, lineOfSight, true, 4, 9);
-
-
-
-                    //CHOICES
-                    if (NPC.localAI[3] >= 160f && (demonChoice == 0 || demonChoice == 4))
-                    {
-                        bool clearSpace = true;
-                        for (int i = 0; i < 15; i++)
-                        {
-                            if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i))
-                            {
-                                clearSpace = false;
-                            }
-                        }
-                        //LOB ATTACK PURPLE 
-                        if (clearSpace)
-                        {
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
-
-                            speed.Y += Main.rand.NextFloat(-2f, -6f);
-                            //speed += Main.rand.NextVector2Circular(-10, -8);
-                            if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
-                                {
-                                    int lob2 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, fireBreathDamage, 0f, Main.myPlayer);
-                                }
-
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -.5f }, NPC.Center);
-
-                            }
-                            if (NPC.localAI[3] >= 195f)
-                            { NPC.localAI[3] = 1f; }
-                        }
-                        //LOB ATTACK >> BOUNCING FIRE
-                        if (clearSpace)
-                        {
-
-
-
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
-                            speed.Y += Main.rand.NextFloat(2f, -2f);
-                            //speed += Main.rand.NextVector2Circular(-10, -8);
-                            if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                /*
-                                float num48 = 0.5f;
-                                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                                int type = ModContent.ProjectileType<ShadowOrb>();
-                                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, fireBreathDamage, 0f, Main.myPlayer);
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                                //ShadowShotCount++;
-                                */
-
-                                //int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, fireBreathDamage, 0f, Main.myPlayer);
-                                //        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center);
-                                //        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center);
-
-                                if (NPC.localAI[3] >= 186f)
-                                { NPC.localAI[3] = 1f; }
-                            }
-
-                        }
-
-                    }
-
-                    //MULTI-FIRE 1 ATTACK 
-                    if (NPC.localAI[3] >= 160f && demonChoice == 1)
-                    {
-                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
-                        //speed.Y += Main.rand.NextFloat(2f, -2f); //just added
-                        if (Main.rand.NextBool(3) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                            }
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center);
-
-                        }
-                        if (NPC.localAI[3] >= 175f)
-                        {
-                            NPC.localAI[3] = 1f;
-                        }
-
-                    }
-                    //NEBULA HOMING
-                    if (NPC.localAI[3] >= 160f && (demonChoice == 1 || demonChoice == 2))
-                    {
-                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 3);
-                        speed.Y += Main.rand.NextFloat(2f, -2f);
-                        if (Main.rand.NextBool(2) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.NebulaSphere, cultistFireDamage, 3f, Main.myPlayer); //5f was 0f in the example that works
-                            }
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.3f, Pitch = 0.5f }, NPC.Center); //fire
-
-                        }
-
-                        NPC.localAI[3] = 1f;
-
-                    }
-
-                    //FINAL JUNGLE FLAMES DESPERATE ATTACK
-                    if (NPC.localAI[3] >= 160f && NPC.life <= NPC.lifeMax / 100 * 15 && (demonChoice == 0 || demonChoice == 3))
-                    {
-                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f);
-                        if (Main.rand.NextBool(2))
-                        {
-                            int dust3 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.OrangeRed, 1f);
-                            Main.dust[dust3].noGravity = true;
-                        }
-
-
-                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5); //last # is speed
-                        speed += Main.rand.NextVector2Circular(-3, 3);
-                        speed.Y += Main.rand.NextFloat(3f, -3f); //just added
-                        if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), fireBreathDamage, 0f, Main.myPlayer); //5f was 0f in the example that works
-                            }
-
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = 0.2f }, NPC.Center);
-                        }
-
-                        if (NPC.localAI[3] >= 185f) //was 206
-                        {
-                            NPC.localAI[3] = -90f;
-                        }
-
-                    }
-                }
-                //END DEMON PHASE
-
-
-                //BEGIN SLOGRA ABILITIES
-                moveTimer++;
-
-                if (swordDead)
-                {
-
-                    baseCooldown = 180; //was 90
-
-                    /*
-                    if ((customspawn2 < 1) && Main.rand.NextBool(1000))
-                    {
-                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), 0);
-                        Main.npc[Spawned].velocity.Y = -8;
-                        Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                        NPC.ai[0] = 20 - Main.rand.Next(80);
-                        customspawn2 += 1f;
-                        if (Main.netMode == 2)
-                        {
-                            NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                        }
-                    }
-                    */
-                }
-
-                //Perform attacks
-                if (moveTimer >= baseCooldown)
-                {
-                    if (dashAttack)
-                    {
-                        DashAttack();
-                    }
-                    else
-                    {
-                        JumpAttack();
-                    }
-                }
-
-                //Do basic movement
-                if (moveTimer < baseCooldown)
-                {
-                    //NPC.ai[3] = 0; //Never get bored
-                    tsorcRevampAIs.FighterAI(NPC, 2f, canTeleport: false, enragePercent: 0.3f, enrageTopSpeed: 3);
-                    //tsorcRevampAIs.LeapAtPlayer(NPC, 7, 4, 1.5f, 128);
-                }
-
-                //Throw tridents
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float projectileDelay = 160; //120
-                    if (swordDead)
-                    {
-                        projectileDelay = 120; //90
-                    }
-                    if (moveTimer % projectileDelay == 30 && moveTimer < baseCooldown)
-                    {
-                        if (swordDead && Main.rand.NextBool(8))
-                        {
-                            for (int i = 0; i < 5; i++)
-                            {
-                                Vector2 targetPoint = Main.player[NPC.target].Center + new Vector2(-480 + 120 * i, 0);
-                                Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPoint, 12, .1f, true, true);
-                                if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y && Main.netMode != NetmodeID.MultiplayerClient) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
-                                {
-                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
-                                }
-                            }
-
-                        }
-                        else
-                        {
-                            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6, .1f, true, true);
-                            if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y && Main.netMode != NetmodeID.MultiplayerClient) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.player[NPC.target].velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), gravityBallDamage, 0.5f, Main.myPlayer);
-
-                            }
-                        }
-
-                    }
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(),
+                        player.position.X + horizontalOffset + Main.rand.Next(horizontalRange), player.position.Y + verticalOffset,
+                        (-50 + Main.rand.Next(100)) / 10f, 0.5f,
+                        ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), RainOfDeathDamage, knockback, Main.myPlayer);
                 }
-
-                //Spawn dust telegraphing moves
-                if (moveTimer < baseCooldown + 70)//90 was 70
-                {
-                    float radius = baseCooldown - moveTimer;
-                    if (radius < 0)
-                    {
-                        radius = 0;
-                    }
-
-                    for (int j = 0; j < 10 * ((float)moveTimer / (float)baseCooldown); j++)
-                    {
-                        Vector2 dir = Main.rand.NextVector2CircularEdge(40 + radius, 40 + radius);
-                        Vector2 dustPos = NPC.Center + dir;
-                        Vector2 dustVel = dir.RotatedBy(MathHelper.Pi);
-
-                        if (moveTimer > baseCooldown)
-                        {
-                            dustVel = pickedTrajectory;
-                        }
-
-                        dustVel.Normalize();
-                        dustVel *= 6;
-                        Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 0.75f).noGravity = true;
-                    }
-                }
-
-                //Check if SwordOfLordGwyn is dead. If so we don't need to keep calling AnyNPCs. 
-                if (OptionSpawned == true && !swordDead)
-                {
-                    if (!NPC.AnyNPCs(ModContent.NPCType<SwordOfLordGwyn>()))
-                    {
-                        swordDead = true;
-                        NPC.netUpdate = true;
-                    }
-                }
-
-                //Check if it has line of sight, and if not increase the timer
-                if (Collision.CanHitLine(Main.player[NPC.target].Center, 1, 1, NPC.Center, 1, 1))
-                {
-                    lineOfSightTimer = 0;
-                }
-                else
-                {
-                    lineOfSightTimer++;
-                }
-
-                //Jump occasionally if no line of sight
-                if (moveTimer < baseCooldown && NPC.velocity.Y == 0 && lineOfSightTimer % 140 == 139)
-                {
-                    NPC.velocity.Y -= 8f;
-                }
-
-                //If super far away from the player or no line of sight for too long, warp to them
-                if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 5000 || lineOfSightTimer > 300)
-                {
-                    Vector2 warpPoint = Main.rand.NextVector2CircularEdge(500, 500);
-                    for (int i = 0; i < 100; i++)
-                    {
-                        warpPoint = Main.rand.NextVector2CircularEdge(500, 500);
-                        if (Collision.CanHitLine(Main.player[NPC.target].Center, 1, 1, Main.player[NPC.target].Center + warpPoint, 1, 1))
-                        {
-                            break;
-                        }
-                    }
-
-                    NPC.Center = Main.player[NPC.target].Center + warpPoint;
-                    moveTimer = 0;
-                    customAi1 = 1f;
-                    customAi3 = 1f;
-                    NPC.localAI[3] = 1f;
-                    NPC.localAI[2] = 1f;
-                    NPC.localAI[1] = 1f;
-                    NPC.netUpdate = true;
-                }
-
-                void DashAttack()
-                {
-                    if (Main.player[NPC.target].CanHit(NPC) || moveTimer >= baseCooldown + 45)
-                    {
-                        if (moveTimer == baseCooldown)
-                        {
-                            NPC.velocity.Y = -22;
-                        }
-
-                        if (moveTimer <= baseCooldown + 45)
-                        {
-                            pickedTrajectory = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 18);
-
-                            //Don't fall
-                            if (NPC.velocity.Y > 0)
-                            {
-                                NPC.velocity.Y = 0;
-                            }
-                            NPC.velocity *= 0.9f;
-                        }
-
-                        if (moveTimer == baseCooldown + 45)
-                        {
-                            for (int i = 0; i < 40; i++)
-                            {
-                                Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(30, 30);
-                                Vector2 dustVel = pickedTrajectory.RotatedBy(MathHelper.Pi);
-                                dustVel.Normalize();
-                                dustVel *= 10;
-                                Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 2f).noGravity = true;
-                            }
-                        }
-
-                        if (moveTimer > baseCooldown + 45)
-                        {
-                            //Don't keep dashing if too close to a wall
-                            if (Collision.CanHitLine(NPC.Center, 2, 2, NPC.Center + pickedTrajectory * 4, 2, 2))
-                            {
-                                for (int i = 0; i < 10; i++)
-                                {
-                                    Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(30, 30);
-                                    Vector2 dustVel = pickedTrajectory.RotatedBy(MathHelper.Pi);
-                                    dustVel.Normalize();
-                                    dustVel *= 10;
-                                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1.4f).noGravity = true;
-                                }
-                                NPC.velocity = pickedTrajectory;
-                            }
-                            else
-                            {
-                                pickedTrajectory = Vector2.Zero;
-                            }
-                        }
-
-
-                        if (moveTimer < baseCooldown + 160 && moveTimer >= baseCooldown + 45)
-                        {
-                            if (moveTimer % 10 == 0)
-                            {
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
-                                {
-                                    if (swordDead)
-                                    {
-                                        Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
-                                        velocity += Main.player[NPC.target].velocity;
-                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedRainProj>(), OrangeProjDamage, 0.5f, Main.myPlayer);
-                                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
-                                        if (Main.netMode == NetmodeID.Server)
-                                        {
-                                            NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, Main.projectile.Length - 1);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (moveTimer > baseCooldown + 71 && pickedTrajectory == Vector2.Zero)
-                        {
-                            moveTimer = 0;
-                            dashAttack = !dashAttack;
-                        }
-                    }
-                    else
-                    {
-                        if (moveTimer == baseCooldown)
-                        {
-                            tsorcRevampAIs.FighterAI(NPC, 2, 0.2f, 0.2f, true);
-                            moveTimer--; //If it is are doing the dash attack and don't have line of sight, delay the attack until it does
-                        }
-                    }
-                }
-
-                void JumpAttack()
-                {
-
-                    if (moveTimer <= baseCooldown + 70)
-                    {
-                        pickedTrajectory = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12, 0.035f, false, false);
-                        pickedTrajectory.Y -= 12;
-                    }
-                    if (moveTimer == baseCooldown + 65)
-                    {
-                        NPC.velocity.Y = -5;
-                    }
-                    if (moveTimer > baseCooldown + 70 && moveTimer < baseCooldown + 115)
-                    {
-                        for (int i = 0; i < 7; i++)
-                        {
-                            Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(30, 30);
-                            Vector2 dustVel = NPC.velocity.RotatedBy(MathHelper.Pi);
-                            dustVel.Normalize();
-                            dustVel *= 10;
-                            Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1.4f).noGravity = true;
-                        }
-                    }
-
-
-                    if (moveTimer < baseCooldown + 70)
-                    {
-                        NPC.velocity *= 0.9f;
-                    }
-                    else if (moveTimer == baseCooldown + 70)
-                    {
-                        for (int i = 0; i < 40; i++)
-                        {
-                            Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(30, 30);
-                            Vector2 dustVel = pickedTrajectory.RotatedBy(MathHelper.Pi);
-                            dustVel.Normalize();
-                            dustVel *= 10;
-                            Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 2f).noGravity = true;
-                        }
-                        NPC.velocity = pickedTrajectory;
-
-                        if (NPC.velocity == Vector2.Zero) //Then there wasn't a valid ballistic trajectory. Just fling itself in the vague direction of the player instead.
-                        {
-                            NPC.velocity.X = 12 * NPC.direction;
-                            NPC.velocity.Y = 12;
-                        }
-                    }
-                    else if (moveTimer < baseCooldown + 160)
-                    {
-                        //jumping gravity ball attack
-                        if (moveTimer % 15 == 0 && !swordDead)
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity4Ball>(), tridentDamage, 0.5f, Main.myPlayer); //2 was 7
-                            }
-                            Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 0.5f);
-                        }
-                        //jumping gaibon fire ball attack
-                        if (moveTimer % 15 == 7)
-                        {
-                            if (swordDead)
-                            {
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
-                                {
-                                    Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
-                                    velocity += Main.player[NPC.target].velocity;
-                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedRainProj>(), OrangeProjDamage, 0.5f, Main.myPlayer);
-                                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
-                                    if (Main.netMode == NetmodeID.Server)
-                                    {
-                                        NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, Main.projectile.Length - 1);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        moveTimer = 0;
-                        dashAttack = !dashAttack;
-                    }
-
-                }
-
-
-                //SERRIS X ATTACK
-                float speed9 = 6f;
-                Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                float distanceFactor = Vector2.Distance(vector9, Main.player[NPC.target].position) / speed9;
-                float speedX2 = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) / distanceFactor;
-                float speedY2 = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) / distanceFactor;
-                if (Main.rand.NextBool(1950) && NPC.Distance(player.Center) > 380)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX2, speedY2, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speed9, speed9, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, -speed9, speed9, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speed9, -speed9, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, -speed9, -speed9, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.3f, }, NPC.Center); //79 fuzzy carrot PitchVariance = -0.6f
-                    customAi1 = 1f;
-                }
-
-            }
-            #endregion
-        }
-
-        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
-        {
-            if (swordDead)
-            {
-                modifiers.FinalDamage *= 1.1f;
-
-                // His rage increases as you attack from range
-                if (NPC.Distance(player.Center) > whyAreYouRunning)
-                {
-                    rageMultiplier *= 1.1f;
-                }
-            }
-            else
-            {
-                modifiers.FinalDamage *= 0.7f;
+                Lighting.AddLight(NPC.Center, Color.White.ToVector3());
+                SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center);
             }
         }
 
-        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        ///<summary>KEPT (700px): standing in the Lord's presence — no wings, no grapple.</summary>
+        void TickProximityDebuffs()
         {
-            if (swordDead)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
-                modifiers.FinalDamage *= 1.1f;
-
-                // His rage increases as you attack from range
-                if (NPC.Distance(Main.player[projectile.owner].Center) > whyAreYouRunning)
+                Player player = Main.player[i];
+                if (!player.active || player.dead)
                 {
-                    rageMultiplier *= 1.1f;
+                    continue;
                 }
-            }
-
-            if (projectile.minion)
-            {
-                modifiers.Knockback *= 0;
-            }
-            else
-            {
-                modifiers.FinalDamage *= 0.7f;
-            }
-        }
-
-        public static Texture2D texture;
-        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-            if (swordDead)
-            {
-                if (texture == null || texture.IsDisposed)
+                if (NPC.Distance(player.Center) < ProximityDebuffRange)
                 {
-                    texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
-                    Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 3f);
-                }
-
-
-                spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
-                data.Apply(null);
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                Rectangle sourceRectangle = NPC.frame;
-                Vector2 origin = sourceRectangle.Size() / 2f;
-                Vector2 offset = new Vector2(0, -8);
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + offset, sourceRectangle, Color.White, NPC.rotation, origin, 1.3f, effects, 0f);
-                spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-            }
-            float projectileDelay = 160; //was 120
-            if (swordDead && OptionSpawned == true)
-            {
-                projectileDelay = 120; //was 90
-            }
-            if (moveTimer % projectileDelay <= 30 && moveTimer < baseCooldown)
-            {
-                //Removed this because (I think) it was causing the trident sprite to appear randomly (not before a trident attack)
-                //Main.spriteBatch.End();
-                //Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-
-                if (OptionSpawned == true && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.SwordOfLordGwyn>()))
-                {
-                    ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
-                    data.Apply(null);
-                }
-
-                //Removed this because it was causing the trident sprite to appear randomly (not before a trident attack)
-                /*
-                if (Projectiles.Enemy.EarthTrident.texture != null && !Projectiles.Enemy.EarthTrident.texture.IsDisposed)
-                {
-                    float rotation = 0;
-                    if (NPC.direction == 1)
-                    {
-                        rotation += 0.15f;
-                    }
-                    else
-                    {
-                        rotation -= 0.15f;
-                    }
-                    Rectangle sourceRectangle = new Rectangle(0, 0, Projectiles.Enemy.EarthTrident.texture.Width, Projectiles.Enemy.EarthTrident.texture.Height);
-                    Vector2 origin = sourceRectangle.Size() / 2f;
-                    Main.EntitySpriteDraw(Projectiles.Enemy.EarthTrident.texture,
-                        NPC.Center - Main.screenPosition,
-                        sourceRectangle, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
-                    Main.spriteBatch.End();
-                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-                }
-                */
-            }
-            return base.PreDraw(spriteBatch, screenPos, drawColor);
-
-        }
-        public override void SendExtraAI(BinaryWriter writer)
-        {
-            writer.Write(swordDead);
-        }
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-            swordDead = reader.ReadBoolean();
-        }
-        public override bool CheckActive()
-        {
-            return false;
-        }    
-
-        public override void ModifyNPCLoot(NPCLoot npcLoot)
-        {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.GwynBag>()));
-            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Epilogue>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<EssenceOfTerraria>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.RodOfHarmony));
-
-            npcLoot.Add(notExpertCondition);
-        }
-        public override void BossLoot(ref string name, ref int potionType)
-        {
-            potionType = ItemID.SuperHealingPotion;
-        }
-
-
-        //bomb sprite telegraph code
-        static Texture2D bombTexture;
-        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-
-            Player player = Main.player[NPC.target];
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-
-            if (bombTexture == null)
-            {
-                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemySmokebomb");
-            }
-
-            //bomb
-            if (customAi1 >= 220)
-            {
-                if (customAi1 == 220)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_LightningAuraZap with { Volume = 0.4f, }, NPC.Center); //Play blow dart sound PitchVariance = -0.3f
-                }
-
-                Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
-
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(14, 4), NPC.scale, effects, 0); //facing left, 
-                }
-                else
-                {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(14, 4), NPC.scale, effects, 0); // facing right
+                    player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
+                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1 * 60, false);
                 }
             }
         }
 
-        #endregion
+        //Phase 2: the 12-attack state machine, boss bag + SwordOfGwyn drop, BossChecklist entry,
+        //and the spawn gating land once the attack proposal is approved.
 
-        #region Gore
+#region Gore
         public override void OnKill()
         {
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));

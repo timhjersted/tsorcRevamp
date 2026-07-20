@@ -9,6 +9,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Materials;
@@ -70,7 +71,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax = (int)(npc.lifeMax * 5f); 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 3);
-                                npc.knockBackResist *= 1.75f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -89,7 +90,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax = (int)(npc.lifeMax * 5f); 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 3);
-                                npc.knockBackResist *= 1.75f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -123,7 +124,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax = (int)(npc.lifeMax * 5f); 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 3);
-                                npc.knockBackResist *= 1.75f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -142,7 +143,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax = (int)(npc.lifeMax * 5f); 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 3);
-                                npc.knockBackResist *= 1.75f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -487,7 +488,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax = (int)(npc.lifeMax * 5f); 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 3);
-                                npc.knockBackResist *= 1.75f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -971,7 +972,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax = (int)(npc.lifeMax * 2.5f); 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 2);
-                                npc.knockBackResist *= 1.25f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -1293,7 +1294,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax *= 2; 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.5);
-                                npc.knockBackResist *= 1.25f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -1314,7 +1315,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax *= 2; 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.5);
-                                npc.knockBackResist *= 1.25f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -1335,7 +1336,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax *= 2; 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.5);
-                                npc.knockBackResist *= 1.25f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -1372,7 +1373,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax *= 2; 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.5);
-                                npc.knockBackResist *= 1.25f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -1392,7 +1393,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax *= 2; 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.5);
-                                npc.knockBackResist *= 1.25f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -1412,7 +1413,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax *= 2; 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.5);
-                                npc.knockBackResist *= 1.25f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -1581,7 +1582,7 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
 
-                case (NPCID.Unicorn): //blocked anyways
+                case (NPCID.Unicorn): 
                     {
                         npc.knockBackResist = 0.2f;
                         npc.damage = 85;
@@ -1630,8 +1631,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.FloatyGross):
                     {
-                        npc.lifeMax = 500;
-                        npc.knockBackResist = 0f;
+                        npc.lifeMax = 300;
                         npc.damage = 60;
                         npc.value = 1590;
                         break;
@@ -1725,7 +1725,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax *= 2; 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.5);
-                                npc.knockBackResist *= 1.25f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -1747,7 +1747,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax *= 2; 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.5);
-                                npc.knockBackResist *= 1.25f;
+                                npc.knockBackResist *= 0.75f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -1765,6 +1765,16 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.defense = 100;
                         npc.value = 10000;
+                        break;
+                    }
+                case (NPCID.ShimmerSlime):
+                    {
+                        npc.value = 1400;
+                        npc.defense = 40;
+                        npc.knockBackResist = 0f;
+                        npc.damage = 80;
+                        npc.lifeMax = 1250;
+                        npc.scale = 1.25f;
                         break;
                     }
 
@@ -2281,11 +2291,11 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Destroyer.DespawnHandler"), Color.Orange, DustID.Torch);
 
-                        npc.lifeMax = 90000;
+                        npc.lifeMax = 135000;
                         npc.value = 203430;
                         npc.scale = 1.25f;
                         npc.damage = Main.expertMode ? 40 /* x4 in expert */: 60; //legacy: 200, vanilla: 70
-                        npc.defense = 20; //legacy: 50, vanilla: 0
+                        npc.defense = 25; //legacy: 50, vanilla: 0
                         npc.rarity = 23;
                         destroyerAttackIndex = 0; //These variables are static and global, since we don't have any way to attach extra data to the destroyers NPC instance itself
                         destroyerChargeTimer = 0;
@@ -2298,7 +2308,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.scale = 1.25f;
                         npc.damage = 60; //legacy: 60, vanilla: 55
-                        npc.defense = 40; //legacy: 55, vanilla: 30
+                        npc.defense = 45; //legacy: 55, vanilla: 30
                         break;
                     }
 
@@ -2306,13 +2316,13 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.scale = 1.25f;
                         npc.damage = 80; //legacy: 80, vanilla: 40
-                        npc.defense = 0;
+                        npc.defense = 5;
                         break;
                     }
 
                 case (NPCID.Probe):
                     {
-                        npc.defense = 30;
+                        npc.defense = 32;
                         npc.damage = 55;
                         npc.value = 0;
                         break;
@@ -2374,7 +2384,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Plantera.DespawnHandler"), Color.Green, DustID.GreenTorch);
 
-                        npc.lifeMax = 42000; //base 30k
+                        npc.lifeMax = 48000; //base 30k
                         npc.damage = 93; //base 70
                         npc.value = 295930;
                         npc.rarity = 25;
@@ -2484,6 +2494,7 @@ namespace tsorcRevamp.NPCs
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Betsy.DespawnHandler"), Color.Red, DustID.RedTorch);
                         npc.boss = true;
                         npc.value = 257890;
+                        npc.lifeMax = 60000;
                         break;
                     }
 
@@ -2555,12 +2566,16 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.AncientLight):
                     {
                         npc.value = 2370;
+                        npc.lifeMax = 1000;
+                        npc.defense = 30;
                         break;
                     }
 
                 case (NPCID.AncientDoom):
                     {
                         npc.value = 3410;
+                        npc.lifeMax = 1500;
+                        npc.defense = 40;
                         break;
                     }
 
@@ -3036,7 +3051,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax = (int)(npc.lifeMax * 1.50f);
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.3);
-                                npc.knockBackResist *= 1.2f;
+                                npc.knockBackResist *= 0.8f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -3099,7 +3114,7 @@ namespace tsorcRevamp.NPCs
                                 npc.lifeMax = (int)(npc.lifeMax * 1.50f);
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.3);
-                                npc.knockBackResist *= 1.2f;
+                                npc.knockBackResist *= 0.8f;
                                 globalNPC.lifeBoosted = true; 
                                 npc.lavaImmune = true;
                             }
@@ -3258,7 +3273,7 @@ namespace tsorcRevamp.NPCs
                                     npc.lifeMax = (int)(npc.lifeMax * 1.50f); 
                                     npc.life = npc.lifeMax; 
                                     npc.defense = (int)(npc.defense * 1.3);
-                                    npc.knockBackResist *= 1.2f;
+                                    npc.knockBackResist *= 0.8f;
                                     globalNPC.lifeBoosted = true; 
                                     npc.lavaImmune = true;
                                 }
@@ -3511,6 +3526,7 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.IceTortoise
                     || npc.type == NPCID.Wolf
                     || npc.type == NPCID.IceElemental
+                    || npc.type == NPCID.Unicorn
                     || npc.type == NPCID.IcyMerman
                     || npc.type == NPCID.GiantTortoise
                     || npc.type == NPCID.AngryTrapper
@@ -3526,7 +3542,6 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.FungiBulb
                     || npc.type == NPCID.Shark
                     || npc.type == NPCID.ArmoredSkeleton
-                    || npc.type == NPCID.HeavySkeleton
                     || npc.type == NPCID.GiantCursedSkull
                     || npc.type == NPCID.IceMimic)
                 {
@@ -3537,7 +3552,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = (int)(npc.lifeMax * 2.5f); //Buff some HM enemies in SHM
                         npc.life = npc.lifeMax; 
                         npc.defense = (int)(npc.defense * 2);
-                        npc.knockBackResist *= 1.35f;
+                        npc.knockBackResist *= 0.65f;
                         globalNPC.lifeBoosted = true; 
                         npc.lavaImmune = true;
                     }
@@ -3568,7 +3583,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = (int)(npc.lifeMax * 5f); //Buff some PHM enemies in SHM
                         npc.life = npc.lifeMax; 
                         npc.defense = (int)(npc.defense * 2.5);
-                        npc.knockBackResist *= 1.45f;
+                        npc.knockBackResist *= 0.55f;
                         globalNPC.lifeBoosted = true; 
                         npc.lavaImmune = true;
                     }
@@ -3647,7 +3662,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = (int)(npc.lifeMax * 1.50f);
                         npc.life = npc.lifeMax; 
                         npc.defense = (int)(npc.defense * 1.3);
-                        npc.knockBackResist *= 1.2f;
+                        npc.knockBackResist *= 0.8f;
                         globalNPC.lifeBoosted = true; 
                         npc.lavaImmune = true;
                     }
@@ -3706,17 +3721,13 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.BlueSlime
                     || npc.type == NPCID.GreenSlime
                     || npc.type == NPCID.TheGroom
-                    || npc.type == NPCID.SantaClaus
-                    || npc.type == NPCID.Unicorn
+                    //|| npc.type == NPCID.Unicorn The Hallow Surface is pretty empty without them in the remix map, so I'm reactivating them. However, I think a resprite like deerclops have could be cool to avoid breaking the general atmosphere of the mod
                     || npc.type == NPCID.ZombieEskimo
                     || npc.type == NPCID.PigronCorruption
                     || npc.type == NPCID.PigronHallow
                     || npc.type == NPCID.PigronCrimson
-                    || npc.type == NPCID.FaceMonster
                     || npc.type == NPCID.SlimedZombie
                     || npc.type == NPCID.HeadacheSkeleton
-                    || npc.type == NPCID.AngryNimbus
-                    || npc.type == NPCID.FloatyGross
                     || npc.type == NPCID.SkeletonSniper
                     || npc.type == NPCID.TacticalSkeleton
                     || npc.type == NPCID.HoppinJack
@@ -3734,11 +3745,10 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.ArmedZombieSlimed
                     || npc.type == NPCID.BoneThrowingSkeleton2
                     || npc.type == NPCID.BoneThrowingSkeleton3
-                    || npc.type == NPCID.Butcher
                     || npc.type == NPCID.TheBride
                     || npc.type == NPCID.WindyBalloon
                     || npc.type == NPCID.ToxicSludge
-                    || npc.type == NPCID.BloodCrawlerWall
+                    || npc.type == NPCID.EmpressButterfly
                     || npc.type == NPCID.BoundGoblin
                     || npc.type == NPCID.BoundMechanic
                     || npc.type == NPCID.BoundWizard)
@@ -3783,6 +3793,7 @@ namespace tsorcRevamp.NPCs
                             || npc.type == NPCID.SpikedJungleSlime
                             || npc.type == NPCID.SpikedIceSlime
                             || npc.type == NPCID.BloodCrawler
+                            || npc.type == NPCID.BloodCrawlerWall 
                             || npc.type == NPCID.WalkingAntlion
                             || npc.type == NPCID.FlyingAntlion
                             || npc.type == NPCID.TorchZombie
@@ -3812,13 +3823,24 @@ namespace tsorcRevamp.NPCs
                         }
                     }
 
-            if ((npc.friendly) && (npc.townNPC == true))
-            { //town NPCs are immortal (why was i using a hp check?)
-                npc.dontTakeDamage = true;
-                npc.dontTakeDamageFromHostiles = true;
-                npc.life = npc.lifeMax;
+            if (npc.townNPC && npc.friendly)
+                {
+                    bool gwynAlive = NPC.AnyNPCs(ModContent.NPCType<Gwyn>());
+
+                    if (!gwynAlive)  
+                    {
+                        npc.dontTakeDamage = true;
+                        npc.dontTakeDamageFromHostiles = true;
+                        npc.life = npc.lifeMax;          
+                    }
+                    else
+                    {
+                        npc.dontTakeDamage = false;
+                        npc.dontTakeDamageFromHostiles = false;
+                        npc.lifeRegen = 6;
+                    }
+                }
             }
-        }
         }
         public override bool PreAI(NPC npc)
         {
@@ -6406,13 +6428,13 @@ namespace tsorcRevamp.NPCs
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<MiakodaFull>());
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<MiakodaFull>());
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)) && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
 
             }
             if (npc.type == NPCID.SkeletronPrime && !Main.expertMode)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronPrime)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronPrime)) && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
             }
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode)
             {
@@ -6430,7 +6452,7 @@ namespace tsorcRevamp.NPCs
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 2);
             }
 
-            if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow))
+            if (npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow)
             {
                 if (Main.rand.NextBool(8))
                 {
@@ -6444,13 +6466,13 @@ namespace tsorcRevamp.NPCs
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.HerosShirt);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.HerosPants);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.HermesBoots, 1, false, -1);
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EyeofCthulhu)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EyeofCthulhu)) && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
 
             }
 
             if (npc.type == NPCID.WallofFlesh && !Main.expertMode)
             {
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.WallofFlesh)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<EstusFlaskShard>());
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.WallofFlesh)) && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<EstusFlaskShard>());
             }
 
             if (npc.type == NPCID.PossessedArmor && Main.rand.NextBool(50) && !Main.expertMode)
@@ -6494,7 +6516,14 @@ namespace tsorcRevamp.NPCs
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.Heart);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.Heart);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.Heart);
+            }
 
+            if (npc.type == NPCID.IceElemental || npc.type == NPCID.IcyMerman || npc.type == NPCID.IceTortoise)
+            {
+                if (Main.rand.NextBool(100))
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.FrostCore, 1, false, -1);
+                }
             }
 
 
@@ -6591,8 +6620,7 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.Plantera && !Main.expertMode)
                 {
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
+                    // CrestOfLife removed — Plantera is optional now, see MindCube.cs
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SoulOfLife>(), 30);
                 }
 
@@ -6616,7 +6644,7 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.WallCreeper || npc.type == NPCID.WallCreeperWall || npc.type == NPCID.BlackRecluse || npc.type == NPCID.BlackRecluseWall || npc.type == NPCID.JungleCreeper || npc.type == NPCID.JungleCreeperWall || npc.type == NPCID.DesertScorpionWalk || npc.type == NPCID.DesertScorpionWall)
             {
                 if (Main.rand.NextBool(5)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
-                if (Main.rand.NextBool(5) && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
+                if (Main.rand.NextBool(5) && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
             }
 
 

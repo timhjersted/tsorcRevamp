@@ -7,8 +7,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
 {
     public class GemBox : ModItem
     {
-        public static float AtkSpeed = 100f;
-        public static float BadDmgMult = 30f;
+        public static float AtkSpeed = 50f;
+        public static float BadDmgMult = 20f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, BadDmgMult);
         public override void SetStaticDefaults()
         {
@@ -19,8 +19,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
             Item.width = 24;
             Item.height = 24;
             Item.accessory = true;
-            Item.value = PriceByRarity.LightRed_4;
-            Item.rare = ItemRarityID.LightRed;
+            Item.value = PriceByRarity.Pink_5;
+            Item.rare = ItemRarityID.Pink;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)

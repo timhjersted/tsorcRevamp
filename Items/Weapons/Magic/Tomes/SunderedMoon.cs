@@ -23,14 +23,14 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.useTurn = true;
             Item.useAnimation = 30;
             Item.useTime = 30;
-            Item.damage = 130;
+            Item.damage = 175;
             Item.autoReuse = true;
             Item.knockBack = 4;
             Item.UseSound = SoundID.Item29 with { Volume = 0.4f };
             Item.rare = ModContent.RarityType<OrangeRed>();
             Item.shootSpeed = 16;
-            Item.crit = 15;
-            Item.mana = 35;
+            Item.crit = 16;
+            Item.mana = 37;
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
@@ -73,6 +73,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             }
             return false; 
         }
+        
+        public override void HoldItem(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.SunderedMoon);
+        }
+
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {

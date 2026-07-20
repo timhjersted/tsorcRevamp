@@ -5,12 +5,13 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class CorruptedHornet : ModNPC
     {
-        int cursedFlameDamage = 50;
+        int abyssFlameDamage = 50;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
@@ -24,12 +25,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             AIType = 42;
             NPC.width = 34;
             NPC.height = 35;
-            NPC.knockBackResist = 0.15f;
+            NPC.knockBackResist = 0.1f;
             NPC.value = 4000; // life / 2.5 : was 113
             NPC.aiStyle = 5;
             NPC.timeLeft = 750;
             NPC.damage = 48;
-            NPC.defense = 40;
+            NPC.defense = 45;
             NPC.lavaImmune = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -40,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            cursedFlameDamage = (int)(cursedFlameDamage * tsorcRevampWorld.SHMScale);
+            abyssFlameDamage = (int)(abyssFlameDamage * tsorcRevampWorld.SHMScale);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -60,11 +61,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(BuffID.Poisoned, 25 * 60, false);
+            target.AddBuff(BuffID.Venom, 6 * 60, false);
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.Confused, 3 * 60, false);
+                target.AddBuff(BuffID.Confused, 4 * 60, false);
 
             }
         }
@@ -73,7 +74,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void AI()
         {
             NPC.ai[3]++;
-            if (NPC.ai[3] >= 200) //200 was 240
+            if (NPC.ai[3] >= 100) //200 was 240
             {
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {
@@ -89,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         num89 *= num90;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int num93 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector12.X, vector12.Y, num88, num89, ProjectileID.CursedFlameHostile, cursedFlameDamage, 0f, Main.myPlayer);
+                            int num93 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector12.X, vector12.Y, num88, num89, ModContent.ProjectileType<AbyssFlames>(), abyssFlameDamage, 0f, Main.myPlayer);
                             Main.projectile[num93].timeLeft = 300;
                         }
                         NPC.ai[3] = 101f;

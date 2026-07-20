@@ -41,15 +41,21 @@ namespace tsorcRevamp.Items.Potions
                 buffIndex++;
             }
 
-            if (!player.HasBuff(BuffID.PotionSickness) && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            // Tier-aware heal: Classic full, Unkindled half, BotC zero.
+            // (Bleed/poison cure above always runs regardless of tier.)
+            if (!player.HasBuff(BuffID.PotionSickness))
             {
-                player.statLife += Healing;
-                if (player.statLife > player.statLifeMax2)
+                int heal = player.GetModPlayer<tsorcRevampPlayer>().ApplyHealing(Healing);
+                if (heal > 0)
                 {
-                    player.statLife = player.statLifeMax2;
+                    player.statLife += heal;
+                    if (player.statLife > player.statLifeMax2)
+                    {
+                        player.statLife = player.statLifeMax2;
+                    }
+                    player.HealEffect(heal, true);
+                    player.AddBuff(BuffID.PotionSickness, player.pStone ? Sickness * 60 / 4 * 3 : Sickness * 60);
                 }
-                player.HealEffect(Healing, true);
-                player.AddBuff(BuffID.PotionSickness, player.pStone ? Sickness * 60 / 4 * 3 : Sickness * 60);
             }
             return true;
         }

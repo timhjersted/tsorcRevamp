@@ -32,6 +32,12 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.FallenNecromancerBanner>();
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, SoundID.Item17);
+
+            // Step 6 caster levers: remember last-known position; pace when it does patrol.
+            tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            casterGlobalNPC.RemembersLastKnownPos = true;
+            casterGlobalNPC.PatrolMode = NPCs.PatrolMode.Pace;
+            casterGlobalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
         }
         //Spawns in the Underground and Cavern before 4.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
 

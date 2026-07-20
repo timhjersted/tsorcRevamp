@@ -25,7 +25,6 @@ namespace tsorcRevamp.Projectiles.Ranged
         }
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Anti-Material Round");
         }
 
         bool reposition = true;
@@ -159,7 +158,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
-            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.AntiMaterialRound];
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.HighCaliberRound];
             int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);

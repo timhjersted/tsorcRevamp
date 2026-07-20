@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.rotation += 1f;
 
-            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.Chartreuse, 3.0f);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 298, 0, 0, 50, default, 3.0f);
             Main.dust[dust].noGravity = true;
 
             if (Projectile.velocity.X <= 4 && Projectile.velocity.Y <= 4 && Projectile.velocity.X >= -4 && Projectile.velocity.Y >= -4)
@@ -45,8 +45,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(BuffID.Poisoned, 2400);
-            target.AddBuff(BuffID.Bleeding, 2400);
+            target.AddBuff(BuffID.Poisoned, 1800);
+            target.AddBuff(BuffID.Bleeding, 1800);
         }
     }
 }

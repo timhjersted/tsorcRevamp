@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.hide = true;
 
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 30;
+            Projectile.localNPCHitCooldown = 25;
 
             trailWidth = 45;
             trailPointLimit = 2000;

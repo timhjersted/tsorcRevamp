@@ -12,5 +12,10 @@ namespace tsorcRevamp.Buffs
             Main.buffNoTimeDisplay[Type] = true;
             BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
+
+        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
+        {
+            tip = CurseTooltipText.AppendRolledStats(tip, Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>(), powerful: true);
+        }
     }
 }

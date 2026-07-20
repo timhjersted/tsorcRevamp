@@ -25,11 +25,11 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 100;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 8;
             Projectile.hostile = false;
             Projectile.hide = true;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 20;
+            Projectile.localNPCHitCooldown = 30;
 
             trailWidth = 45;
             trailPointLimit = 2000;

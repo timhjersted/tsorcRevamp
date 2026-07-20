@@ -1,5 +1,6 @@
+using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -7,19 +8,81 @@ using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
-    public class GaeBolg : ModdedSpearItem
+    class GaeBolg : ModItem
     {
-        public override int ProjectileID => ModContent.ProjectileType<GaeBolgProj>();
-        public override int Width => 54;
-        public override int Height => 54;
-        public override int BaseDmg => 79;
-        public override int BaseCritChance => 0;
-        public override float BaseKnockback => 5.5f;
-        public override int UseAnimationTime => 19;
-        public override int UseTime => 19;
-        public override int Rarity => ItemRarityID.LightPurple;
-        public override int Value => PriceByRarity.fromItem(Item);
-        public override SoundStyle UseSoundID => SoundID.Item71;
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
+        }
+
+        public override void SetDefaults()
+        {
+            Item.DamageType = DamageClass.Melee;
+            Item.shoot = ModContent.ProjectileType<GaeBolgHeld>();
+            Item.channel = true;
+            Item.damage = 260;
+            Item.width = 24;
+            Item.height = 48;
+            Item.useTime = 22;
+            Item.useAnimation = 22;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
+            Item.knockBack = 4f;
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.UseSound = SoundID.Item7;
+            Item.shootSpeed = 26f;
+            Item.channel = true;
+        }
+
+        public override bool CanUseItem(Player player)
+        {
+            //Block using the item unless they have one more than the required stamina
+            //Prevents a bug where, if the player uses this weapon with *exactly* the stamina required, it instantly throws it without letting them charge up
+            //This happens constantly if they hold left mouse, as it gets used the instant stamina refills to that level
+            int staminaUse = (int)(Item.useAnimation / player.GetAttackSpeed(Item.DamageType));
+            staminaUse = (int)(tsorcRevampPlayer.ReduceStamina(staminaUse) * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult);
+            if (player.altFunctionUse != 2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < staminaUse * 2)
+            {
+                return false;
+            }
+            return base.CanUseItem(player);
+        }
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            if (player.altFunctionUse == 2)
+            {
+                Item.useStyle = ItemUseStyleID.Thrust;
+            }
+            else
+            {
+                Item.useStyle = ItemUseStyleID.HoldUp;
+            }
+
+
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<GaeBolgHeld>(), damage, knockback, player.whoAmI, type);
+            }
+            return false;
+        }
+
+
+        public override bool AltFunctionUse(Player player)
+        {
+            if (!Main.mouseLeft && player.ItemTimeIsZero)
+            {
+                return true;
+            }
+            else
+            {
+                player.altFunctionUse = 1;
+                return false;
+            }
+        }
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

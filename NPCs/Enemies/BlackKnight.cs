@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -64,7 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
 
-            NPC.knockBackResist = 0f;
+            NPC.knockBackResist = 0.25f; // poise flinch dial: × PoiseFlinchFactor(0.4) ≈ 0.14 of full knockback per ordinary hit
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BlackKnightBanner>();
             //UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 9, SoundID.Item17);
@@ -73,6 +74,23 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.Agility = 0.5f;
             blackKnightGlobalNPC.Aggression = 1f;
             blackKnightGlobalNPC.Patience = 2f;
+            blackKnightGlobalNPC.PounceStyle = NPCs.PounceStyle.DirectPounce;
+            blackKnightGlobalNPC.CanTeleport = true;
+            blackKnightGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
+            blackKnightGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Plague;
+            EvasiveProfile.RedKnight(blackKnightGlobalNPC); // shared knight-family evasion: hop/leap/dash/blink away
+
+            // Poise: sturdier than the Red Knight (40) — takes more to stagger. Tunable lever.
+            blackKnightGlobalNPC.PoiseMax = 60f;
+            blackKnightGlobalNPC.PoiseStaggerResetsAI = true; // a stagger cancels a windup attack → neutral
+
+            // Navigation tuning: high jumps, double jump, and ledge routing
+            blackKnightGlobalNPC.MaxJumpPower = 11f;
+            blackKnightGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
+            blackKnightGlobalNPC.CanUseRopes = true;
+            blackKnightGlobalNPC.MaxJumpBoost = 7f;
+            blackKnightGlobalNPC.CanDoubleJump = true;
+            blackKnightGlobalNPC.DoubleJumpPower = 7f;
         }
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -92,11 +110,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Hit logic is stored in GlobalNPC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player
@@ -119,18 +137,48 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.BoredTimer < 0 || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+
+            // Hyper-armor window: FLASH telegraph → fire only. Windup excluded so a stagger can interrupt it.
+            // Spear 155→180, poison 300→375, bomb 900→925.
+            globalNPC.AttackCommitted = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
+                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                        (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f);
+
+            // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
+            globalNPC.AttackTelegraphing = (NPC.ai[1] >= 125f && NPC.ai[1] < 155f) ||
+                                           (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
+                                           (NPC.ai[1] >= 870f && NPC.ai[1] < 900f);
+
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0)
             {
-                //NPC.ai[1] = 60f;
-                //NPC.ai[2] = -100f;
-                //this might be messing with the frequent big attack
+                bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
+                                          (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                          (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f) ||
+                                          (NPC.ai[2] >= 165f && NPC.ai[2] <= 235f);
+                if (!inProtectedAttack)
+                {
+                    NPC.ai[1] = 60f;
+                    NPC.ai[2] = -100f;
+                }
             }
 
             if (Main.netMode != 1 && !Main.player[NPC.target].dead)
             {
-                NPC.ai[1]++;
-                NPC.ai[2]++;
-                NPC.knockBackResist = 0.15f;
+                // Freeze the attack timer while staggered so the ~1s stun holds (and a reset windup stays neutral).
+                if (globalNPC.StaggerTimer <= 0)
+                {
+                    NPC.ai[1]++;
+                    NPC.ai[2]++;
+                }
+                NPC.knockBackResist = globalNPC.BaseKnockBackResist; // restore the SetDefaults value; poise scales it to a light flinch
+
+                bool inActiveAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
+                                       (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                       (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f) ||
+                                       (NPC.ai[2] >= 165f && NPC.ai[2] <= 235f);
+
+                // Gate all projectile firing on LOS — prevents shooting through floors/ceilings
+                bool hasPlayerLOS = Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1);
 
                 #region Sounds & Jumps
                 // Play creature sounds
@@ -172,6 +220,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 #endregion
 
+                // Skip spear if player is at melee range — it's a ranged weapon
+                if (NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f)
+                {
+                    NPC.ai[1] = 200f;
+                    NPC.netUpdate = true;
+                }
+
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
 
@@ -200,23 +255,23 @@ namespace tsorcRevamp.NPCs.Enemies
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
                     }
 
-                    // Store the player's position 
+                    // Store the player's center
                     if (framesSinceStoredPosition >= 25)
                     {
                         framesSinceStoredPosition = 0;
                         int targetPlayer = NPC.target;
                         if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                         {
-                            storedPlayerPosition = Main.player[targetPlayer].position;
+                            storedPlayerPosition = Main.player[targetPlayer].Center;
                         }
                     }
                 }
 
                 // Spear Attack Far
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400)
+                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400 && hasPlayerLOS)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(14, 16f);
+                    float spearProjectileSpeed = Main.rand.NextFloat(16, 18f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
@@ -242,10 +297,10 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
                 // Spear Attack Close
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400)
+                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(9, 10f);
+                    float spearProjectileSpeed = Main.rand.NextFloat(12, 14f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
@@ -299,7 +354,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Homing Attack 1
-                if (NPC.ai[1] == 325)
+                if (NPC.ai[1] == 325 && hasPlayerLOS)
                 {
                     float projectileSpeed = 15f;
                     float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
@@ -319,13 +374,16 @@ namespace tsorcRevamp.NPCs.Enemies
                         speed2 += Main.player[NPC.target].velocity; //was 4
                         speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
 
-                        if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speed2.X < 0f) && (NPC.direction < 0)) || ((speed2.X > 0f) && (NPC.direction > 0)))
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                            }
                         }
                     }
 
-                    // Reset the targetPosition 
+                    // Reset the targetPosition
                     targetPosition = Vector2.Zero;
 
                 }
@@ -345,7 +403,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Homing Attack 2
-                if (NPC.ai[1] == 375)
+                if (NPC.ai[1] == 375 && hasPlayerLOS)
                 {
                     float projectileSpeed = 18f;
                     float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
@@ -365,9 +423,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         //speed2 += Main.player[NPC.target].velocity / 2; //was 4
                         speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
 
-                        if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speed2.X < 0f) && (NPC.direction < 0)) || ((speed2.X > 0f) && (NPC.direction > 0)))
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                            }
                         }
                     }
 
@@ -400,6 +461,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Bomb Telegraph
                 if (NPC.ai[1] == 900f)
                 {
+                    Terraria.Audio.SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center); // lit fuse
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
                     {
@@ -411,20 +473,20 @@ namespace tsorcRevamp.NPCs.Enemies
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
                     }
 
-                    // Store the player's position 
+                    // Store the player's center
                     if (framesSinceStoredPosition >= 25)
                     {
                         framesSinceStoredPosition = 0;
                         int targetPlayer = NPC.target;
                         if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                         {
-                            storedPlayerPosition = Main.player[targetPlayer].position;
+                            storedPlayerPosition = Main.player[targetPlayer].Center;
                         }
                     }
 
                 }
                 // Bomb Attack Far
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400)
+                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400 && hasPlayerLOS)
                 {
                     float bombProjectileSpeed = 8f;
 
@@ -435,7 +497,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
 
@@ -453,7 +515,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
                 // Bomb Attack Close
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400)
+                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
                 {
                     float bombProjectileSpeed = 5f;
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
@@ -462,7 +524,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
 
@@ -481,32 +543,39 @@ namespace tsorcRevamp.NPCs.Enemies
                 #endregion
 
                 #region AI 2 Attacks
+                // Air attack targeting indicator — shadow dust appears above drop zone 3 frames before each wave
+                if ((NPC.ai[2] == 72 || NPC.ai[2] == 97 || NPC.ai[2] == 522 || NPC.ai[2] == 547 || NPC.ai[2] == 572 || NPC.ai[2] == 597) && !inActiveAttack && NPC.Distance(player.Center) > 250 && hasPlayerLOS)
+                {
+                    for (int i = 0; i < 6; i++)
+                        Dust.NewDust(new Vector2(player.position.X - 10 + Main.rand.Next(player.width + 20), player.position.Y - 290f), 4, 4, DustID.ShadowbeamStaff, 0f, 3f, 100, default, 1.2f);
+                }
+
                 // Death Attack from Air
-                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && NPC.Distance(player.Center) > 250)
+                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && !inActiveAttack && NPC.Distance(player.Center) > 250 && hasPlayerLOS)
                 {
                     for (int pcy = 0; pcy < 4; pcy++)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 300f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 3f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 300f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 3f, Main.myPlayer);
                         }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-                        NPC.netUpdate = true;
                     }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
+                    NPC.netUpdate = true;
                 }
 
                 // Slightly Delayed Death Attack From Air
-                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && NPC.Distance(player.Center) > 270)
+                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && !inActiveAttack && NPC.Distance(player.Center) > 270 && hasPlayerLOS)
                 {
                     for (int pcy = 0; pcy < 6; pcy++)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(1000), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 3.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 4f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(1000), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 3.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 4f, Main.myPlayer);
                         }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-                        NPC.netUpdate = true;
                     }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
+                    NPC.netUpdate = true;
                 }
 
                 // Breather before reset
@@ -537,14 +606,14 @@ namespace tsorcRevamp.NPCs.Enemies
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
 
                     }
-                    // Store the player's position 
+                    // Store the player's center
                     if (framesSinceStoredPosition >= 25)
                     {
                         framesSinceStoredPosition = 0;
                         int targetPlayer = NPC.target;
                         if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                         {
-                            storedPlayerPosition = Main.player[targetPlayer].position;
+                            storedPlayerPosition = Main.player[targetPlayer].Center;
                         }
                     }
 
@@ -588,10 +657,30 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 #endregion
 
-                // No Attack yet at 1/3 life
-                if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 500 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                // Shadow Crystal Storm — Phase 3 at 1/3 health
+                // Telegraph: shadow dust spirals inward for 20 frames before the burst
+                if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 420 >= 400 && Main.rand.NextBool(2))
                 {
-
+                    Vector2 dustOffset = Main.rand.NextVector2Circular(64, 64);
+                    int dustIdx = Dust.NewDust(NPC.Center + dustOffset - new Vector2(4), 8, 8, DustID.ShadowbeamStaff,
+                        -dustOffset.X * 0.1f, -dustOffset.Y * 0.1f, 150, default, 1.2f);
+                    Main.dust[dustIdx].noGravity = true;
+                }
+                // Attack: 5 homing crystals in a 60° spread
+                if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 420 == 0 && Main.netMode != NetmodeID.MultiplayerClient && hasPlayerLOS)
+                {
+                    int numCrystals = 5;
+                    float totalSpread = MathHelper.Pi / 3f; // 60 degrees total
+                    for (int i = 0; i < numCrystals; i++)
+                    {
+                        float angle = (i - (numCrystals - 1) / 2f) * (totalSpread / (numCrystals - 1));
+                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 10f, fallback: true);
+                        speed += player.velocity / 2f;
+                        speed = speed.RotatedBy(angle);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 1f, Pitch = -0.3f, PitchVariance = 0.2f }, NPC.Center);
+                    NPC.netUpdate = true;
                 }
 
             }
@@ -617,16 +706,79 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 600, false);
-            player.AddBuff(36, 600, false); //broken armor         
-            player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
-            player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);
+            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 600, false);
+            target.AddBuff(36, 600, false); //broken armor
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);
         }
         #endregion
 
         #region Draw Attack Sprites
         static Texture2D spearTexture;
         static Texture2D bombTexture;
+        static Texture2D handTexture;
+        const float FrameW = 70f;
+        const float FrameH = 56f;
+        static readonly Vector2[] HandPixel = new Vector2[16]
+        {
+            new Vector2(47, 30), // 0 idle
+            new Vector2(47, 25), // 1 jump
+            new Vector2(48, 33), // 2
+            new Vector2(50, 31), // 3
+            new Vector2(50, 31), // 4
+            new Vector2(50, 31), // 5
+            new Vector2(50, 33), // 6
+            new Vector2(48, 33), // 7
+            new Vector2(48, 33), // 8
+            new Vector2(48, 33), // 9
+            new Vector2(46, 31), // 10
+            new Vector2(44, 31), // 11
+            new Vector2(44, 31), // 12
+            new Vector2(45, 32), // 13
+            new Vector2(48, 33), // 14
+            new Vector2(48, 33), // 15
+        };
+        static readonly Vector2 SpearGripOrigin = new Vector2(8f, 38f);
+        static readonly Vector2 BombGripOrigin = new Vector2(14f, 4f);
+
+        Vector2 CurrentHandWorld()
+        {
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame < 0 || frame >= HandPixel.Length)
+            {
+                frame = 0;
+            }
+
+            Vector2 fp = HandPixel[frame];
+            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
+            float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
+            return new Vector2(x, y);
+        }
+
+        Vector2 CurrentSpearWorld()
+        {
+            Vector2 handWorld = CurrentHandWorld();
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame == 0)
+            {
+                handWorld.Y -= 21f;
+            }
+            return handWorld;
+        }
+
+        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
+        {
+            if (handTexture == null)
+            {
+                return;
+            }
+
+            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
+            Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
+            spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (spearTexture == null || spearTexture.IsDisposed)
@@ -638,36 +790,30 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyMoonfuryBomb");
             }
+
+            if (handTexture == null || handTexture.IsDisposed)
+            {
+                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/BlackKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
             // Spear
             if (NPC.ai[1] >= 120 && NPC.ai[1] <= 180f)
             {
-                float spriteScale = 0.8f; // Set the desired scale value (0.7 means 70% of the original size)
-                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-
-
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, SpriteEffects.None, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, SpriteEffects.None, 0); // facing right, first value is height, higher number is higher
-                }
-
+                float spriteScale = 0.8f;
+                Vector2 spearAim = NPC.ai[1] >= 155f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
+                float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
+                Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
+                spriteBatch.Draw(spearTexture, handWorld, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, SpearGripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0);
+                DrawHandOverlay(spriteBatch, drawColor);
             }
             // Bomb
             if (NPC.ai[1] >= 865)
             {
-                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale, SpriteEffects.None, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale, SpriteEffects.None, 0); // facing right, first value is height, higher number is higher
-                }
+                Vector2 bombAim = NPC.ai[1] >= 900f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
+                float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
+                Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
+                DrawHandOverlay(spriteBatch, drawColor);
             }
 
         }

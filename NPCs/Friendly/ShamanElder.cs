@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.DangerDetectRange[NPC.type] = 600;
             NPCID.Sets.AttackType[NPC.type] = 2; //magic
             NPCID.Sets.AttackTime[NPC.type] = 22;
-            NPCID.Sets.AttackAverageChance[NPC.type] = 30;
+            NPCID.Sets.AttackAverageChance[NPC.type] = 12;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
 
@@ -46,8 +46,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.height = 40;
             NPC.aiStyle = 7;
             NPC.damage = 90;
-            NPC.defense = 15;
-            NPC.lifeMax = 1000;
+            NPC.defense = 40;
+            NPC.lifeMax = 7500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.5f;
@@ -59,8 +59,11 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>())))
             {
-                NPC.homeTileX = 75;
-                NPC.homeTileY = 520;
+                //Legacy 2000-space; mapped on the expanded world (identity elsewhere). Runs every tick once the
+                //condition is met, so an un-shifted value here would silently re-pin her home each frame.
+                Microsoft.Xna.Framework.Point home = ExpandedWorldTransform.MapTile(75, 520);
+                NPC.homeTileX = home.X;
+                NPC.homeTileY = home.Y;
                 NPC.homeless = false;
             }
 
@@ -158,12 +161,26 @@ namespace tsorcRevamp.NPCs.Friendly
                     }
                     if (chatState == 3)
                     {
-                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote4");
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote4"); 
                         chatState = 4;
                         return;
                     }
 
-                    if (chatState == 4)
+                    if (chatState == 4 && !tsorcRevampWorld.RemixMap)
+                    {
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote5");
+
+                        chatState = 0;
+                    }
+
+                    if (chatState == 4 && tsorcRevampWorld.RemixMap)
+                    {
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.RemixAdvModeSHMQuoteCHAOS");
+
+                        chatState = 5;
+                    }
+
+                    if (chatState == 5 && tsorcRevampWorld.RemixMap)
                     {
                         Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote5");
 
@@ -261,7 +278,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Scrolls.EnergyStrikeScroll>())
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Summon.Sentry.EnergyStrikeScroll>())
             {
                 shopCustomPrice = 4000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -322,24 +339,24 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
 
-            damage = 50;
+            damage = 60;
             knockback = 2f;
             if (Main.hardMode)
             {
                 damage = 120;
-                knockback = 5f;
+                knockback = 4f;
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
-                damage = 250;
-                knockback = 12f;
+                damage = 240;
+                knockback = 8f;
             }
         }
 
         public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown)
         {
-            cooldown = 180;
-            randExtraCooldown = 60;
+            cooldown = 40;
+            randExtraCooldown = 20;
         }
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
@@ -350,7 +367,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProjSpeed(ref float multiplier, ref float gravityCorrection, ref float randomOffset)
         {
-            multiplier = 2f;
+            multiplier = 3f;
         }
 
         public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */

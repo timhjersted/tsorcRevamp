@@ -356,10 +356,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         float[] angles;
         private void HoldBallStorm()
         {
-            Vector2 targetPosition = new Vector2(3228, 1731) * 16; 
+            Vector2 targetPosition = ExpandedWorldTransform.MapWorld(new Vector2(3228, 1731) * 16);
             if (tsorcRevampWorld.RemixMap)
             {
-                targetPosition = new Vector2(297, 1873) * 16; // for remix map
+                targetPosition = new Vector2(297, 1873) * 16; // for remix map (remix-native coord, no transform)
             }
 
             if (NPC.Distance(targetPosition) > 90 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -534,13 +534,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 //3111, 1781 Bottom left
 
                 //Left firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(3111, 1731) * 16, Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 0, 100);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), ExpandedWorldTransform.MapWorld(new Vector2(3111, 1731) * 16), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 0, 100);
                 //Right firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(3346, 1731) * 16, Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 1, 100);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), ExpandedWorldTransform.MapWorld(new Vector2(3346, 1731) * 16), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 1, 100);
                 //Top firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(3228, 1682) * 16, Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 2, 237);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), ExpandedWorldTransform.MapWorld(new Vector2(3228, 1682) * 16), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 2, 237);
                 //Bottom firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(3228, 1784) * 16, Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 3, 237);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), ExpandedWorldTransform.MapWorld(new Vector2(3228, 1784) * 16), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 3, 237);
             }
             else
             {

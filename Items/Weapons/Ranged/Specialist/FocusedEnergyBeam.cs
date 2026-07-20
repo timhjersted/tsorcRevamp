@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 {
@@ -17,9 +18,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
         public override void SetDefaults()
         {
             Item.DamageType = DamageClass.Ranged;
-            Item.shoot = ProjectileID.PurificationPowder;
-
-            Item.damage = 750;
+            Item.shoot = ModContent.ProjectileType<RedLaserBeam>();
+            Item.damage = 710;
             Item.width = 52;
             Item.height = 22;
             Item.knockBack = 9.0f;

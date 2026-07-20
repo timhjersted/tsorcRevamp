@@ -45,6 +45,22 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>(), energyBallDamage, 8, SoundID.Item28 with { Volume = 0.2f, Pitch = -0.8f });
             UsefulFunctions.AddAttack(NPC, 250, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBeamBall>(), greatEnergyBeamDamage, 8, weight: 0.3f);
             UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 1, 0, SoundID.Item17, needsLineOfSight: false, weight: 0.2f);
+
+            // Step 6 caster levers: remember last-known position, and blink aggressively to re-acquire LOS.
+            tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            casterGlobalNPC.RemembersLastKnownPos = true;
+            casterGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
+            casterGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
+            casterGlobalNPC.CanUseRopes = true;
+            casterGlobalNPC.CanGoInvisible = true;
+            casterGlobalNPC.InvisibleAlpha = 230;
+            EvasiveProfile.EvasiveCloak(casterGlobalNPC, cloakChance: 0.15f, threatRange: 220);
+            // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
+            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
+            casterGlobalNPC.CanHealAllies = true;
+            casterGlobalNPC.HealAlliesChance = 300;
+            casterGlobalNPC.HealAlliesRange = 60;
+            casterGlobalNPC.HealAlliesPercent = 15;
         }
 
         //Never despawn except by timing out
@@ -156,23 +172,6 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.justHit && Main.rand.NextBool(8))
             {
                 tsorcRevampAIs.QueueTeleport(NPC, 20, true, 60);
-            }
-
-            //Transparency. Higher alpha = more invisible
-            if (NPC.justHit)
-            {
-                NPC.alpha = 0;
-                NPC.netUpdate = true;
-            }
-            if (Main.rand.NextBool(230))
-            {
-                NPC.alpha = 0;
-                NPC.netUpdate = true;
-            }
-            if (Main.rand.NextBool(150))
-            {
-                NPC.alpha = 230;
-                NPC.netUpdate = true;
             }
 
             Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0.4f, 0.4f);

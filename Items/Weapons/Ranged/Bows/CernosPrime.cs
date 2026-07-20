@@ -19,12 +19,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.CernosPrimeHeld>();
             Item.channel = true;
-            Item.damage = 800;
+            Item.damage = 820;
             Item.crit = 16;
             Item.width = 58;
             Item.height = 76;
-            Item.useTime = 48;
-            Item.useAnimation = 48;
+            Item.useTime = 46;
+            Item.useAnimation = 46;
             //Item.reuseDelay = 4;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             recipe.AddIngredient(ModContent.ItemType<SagittariusBow>(), 1);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 10);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfOccultist>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
 

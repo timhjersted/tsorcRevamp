@@ -14,13 +14,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Blue;
-            Item.damage = 32;
+            Item.damage = 33;
             Item.width = 50;
             Item.height = 52;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 23;
-            Item.useTime = 23;
+            Item.useAnimation = 22;
+            Item.useTime = 22;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Blue_1;
@@ -31,25 +31,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //todo add mod NPCs to this list
-            if (target.type == NPCID.Shark
-                || target.type == NPCID.Goldfish
-                || target.type == NPCID.CorruptGoldfish
-                || target.type == NPCID.BlueJellyfish
-                || target.type == NPCID.GreenJellyfish
-                || target.type == NPCID.PinkJellyfish
-                || target.type == NPCID.Piranha
-                || target.type == NPCID.AnglerFish
-                || target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.ManOfWar>()
-                //|| target.type == ModContent.NPCType<SahaginChief>()
-                //|| target.type == ModContent.NPCType<SahaginPrince>()
-                //|| target.type == ModContent.NPCType<QuaraCosntrictor>()
-                //|| target.type == ModContent.NPCType<QuaraHydromancer>()
-                //|| target.type == ModContent.NPCType<QuaraMantassin>()
-                //|| target.type == ModContent.NPCType<QuaraPincher>()
-                //|| target.type == ModContent.NPCType<QuaraPredator>()
-                )
+            if (tsorcRevamp.WaterNPCs.Contains(target.type))
             {
-                modifiers.FinalDamage *= 4;
+                modifiers.FinalDamage *= 3;
             }
         }
         public override void AddRecipes()

@@ -7,7 +7,6 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
     class DarkFlow : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark";
         public override void SetDefaults()
         {
             Projectile.aiStyle = 0;
@@ -44,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             {
                 Vector2 offset = Main.rand.NextVector2CircularEdge(8, 8);
                 Vector2 velocity = new Vector2(-2, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                Dust.NewDustPerfect(Projectile.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 3.5f).noGravity = true;
+                Dust.NewDustPerfect(Projectile.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 3f).noGravity = true;
             }
 
             if (distance < 120)

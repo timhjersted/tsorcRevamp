@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -8,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class RedCloudHunter : ModNPC
     {
-        public int archerBoltDamage = 30; //was 85, whoa, how did no one complain about this?
+        public int archerBoltDamage = 30; //was 85, whoa, how did no one complain about this? current stats do 96/78/84 random in game
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 20;
@@ -16,18 +17,17 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
-            AIType = NPCID.SkeletonArcher;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 18;
             NPC.lifeMax = 600;
-            NPC.scale = 0.9f;
             NPC.defense = 18;
             NPC.value = 5210; // life / 1.15 bc rare : was 650
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 48;
             NPC.knockBackResist = 0.6f;
+            NPC.scale = 1.0f;
             NPC.rarity = 3;
             Banner = NPC.type;
             NPC.buffImmune[BuffID.Confused] = true;
@@ -35,8 +35,8 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.SkeletonArcher;
             if (Main.hardMode)
             {
-                NPC.lifeMax = 800;
-                NPC.defense = 27;
+                NPC.lifeMax = 700;
+                NPC.defense = 40;
                 NPC.value = 4000; // was 350
                 NPC.damage = 24;
                 archerBoltDamage = 45;
@@ -44,12 +44,29 @@ namespace tsorcRevamp.NPCs.Enemies
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 2000;
-                NPC.defense = 42;
+                NPC.defense = 58;
                 NPC.value = 8000; // life / 2.5 : was 390
                 NPC.damage = 55;
                 archerBoltDamage = 75;
             }
 
+            // Navigation tuning: above-average jumps and ledge routing for a mobile archer
+            tsorcRevampGlobalNPC hunterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            hunterGlobalNPC.MaxJumpPower = 12f;
+            hunterGlobalNPC.MaxJumpBoost = 5f;
+            // CanDoubleJump remains false for RedCloudHunter
+            // Step 6 archer levers: blink to elevated firing spots, and reposition toward last-known before patrolling.
+            hunterGlobalNPC.PrefersHighGround = true;
+            hunterGlobalNPC.RemembersLastKnownPos = true;
+            hunterGlobalNPC.NavSearchRadius = 80;
+            hunterGlobalNPC.KiteRangeMin = 10f;
+            hunterGlobalNPC.KiteRangeMax = 40f;
+            hunterGlobalNPC.KiteLooseness = 0.2f;
+            hunterGlobalNPC.CanGoInvisible = true;
+            hunterGlobalNPC.InvisibleAlpha = 200;
+            EvasiveProfile.EvasiveCloak(hunterGlobalNPC, cloakChance: 0.20f, threatRange: 220);
+            // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
+            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -59,6 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 1, 30, 60));
             npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 3, 1, 1));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 6, 8));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Summon.ArcherSpiritBell>(), 1));
         }
 
         #region Spawn
@@ -86,7 +104,43 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FlamingArrow, 22, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyFrostburnArrow>(), archerBoltDamage, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
+        }
+
+        // SkeletonArcher's VanillaFindFrame gates walk frames on strict velocity.Y == 0f, so any
+        // tiny residual Y from SmartFighter4AI causes the NPC to show frame 0 (idle) while moving.
+        // This override replicates case 110 exactly but accepts collideY as an additional grounded indicator.
+        public override void FindFrame(int frameHeight)
+        {
+            NPC.spriteDirection = NPC.direction;
+            bool grounded = NPC.velocity.Y == 0f || NPC.collideY;
+
+            if (grounded)
+            {
+                // Shooting animation: ai[2] is the frame index set by ArcherAI while aiming/firing.
+                if (NPC.ai[2] > 0f)
+                {
+                    NPC.frame.Y = frameHeight * (int)NPC.ai[2];
+                    NPC.frameCounter = 0.0;
+                    return;
+                }
+                // Walk frames begin at frame 6; counter advances with horizontal speed.
+                if (NPC.frame.Y < frameHeight * 6)
+                    NPC.frame.Y = frameHeight * 6;
+                NPC.frameCounter += Math.Abs(NPC.velocity.X) * 2.0 + NPC.velocity.X;
+                if (NPC.frameCounter > 6.0)
+                {
+                    NPC.frame.Y += frameHeight;
+                    NPC.frameCounter = 0.0;
+                }
+                if (NPC.frame.Y / frameHeight >= Main.npcFrameCount[NPC.type])
+                    NPC.frame.Y = frameHeight * 6;
+            }
+            else
+            {
+                NPC.frameCounter = 0.0;
+                NPC.frame.Y = 0;
+            }
         }
 
         #region Gore

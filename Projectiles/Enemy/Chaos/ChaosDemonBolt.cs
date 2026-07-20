@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Chaos
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
-
+            Projectile.extraUpdates = 1;
             trailWidth = 25;
             trailPointLimit = 150;
             trailYOffset = 30;
@@ -47,15 +47,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Chaos
                 realVelocity = Projectile.velocity;
                 playedSound = true;
             }
-
-            if (Projectile.timeLeft < 560)
-            {
-                if (realVelocity.Length() < 10)
-                {
-                    realVelocity += realVelocity * 0.1f;
-                }
-            }
-            Projectile.velocity = realVelocity.RotatedBy(Math.Sin(Main.GameUpdateCount * 0.15f));
         }
 
         public override float CollisionWidthFunction(float progress)

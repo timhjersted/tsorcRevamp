@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.Projectiles.Throwing
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Throwing
             Projectile.timeLeft = 240;
             Projectile.penetrate = -1;
             Projectile.knockBack = 9;
-            Projectile.DamageType = DamageClass.Throwing;
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.ContinuouslyUpdateDamageStats = true;
 
             // These 2 help the projectile hitbox be centered on the projectile sprite.

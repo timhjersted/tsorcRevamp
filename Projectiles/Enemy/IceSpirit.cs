@@ -28,6 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Ice Spirit");
+            Main.projFrames[Type] = 6;
         }
 
         public override bool PreKill(int timeLeft)
@@ -40,6 +41,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
+            Animate();
 
             Color color = new Color();
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Frost, 0, 0, 160, color, 1.0f);
@@ -115,6 +117,16 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.velocity.Y = (move.Y / distance) * speed;
             }
             #endregion
+        }
+
+        void Animate()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 6)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+            }
         }
 
         private int GetClosestPlayer()

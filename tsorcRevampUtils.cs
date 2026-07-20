@@ -11,6 +11,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
 using Terraria.DataStructures;
+using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -139,6 +140,12 @@ namespace tsorcRevamp
     public static class VariousConstants
     {
         public const int CUSTOM_MAP_WORLD_ID = 44874972;
+
+        //Stamped GUID of the 2400-tall Expanded Adventure world. Unlike Main.worldID (which Terraria reassigns to a
+        //fresh random value when it detects the copied .wld collides with the original's worldID), this UniqueId is
+        //stable across save/load. It is the reliable discriminator for the expanded world. All-zeros on legacy/remix.
+        public static readonly System.Guid EXPANDED_ADVENTURE_GUID = new System.Guid("00000000-0000-0000-0000-123000000321");
+
         public const string MUSIC_MOD_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/tsorcMusic.tmod";
         public const string MAP_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/the-story-of-red-cloud.wld";
         public const string MAP_REMIX_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/the-story-of-red-cloud-xelvaa-remix.wld";
@@ -272,7 +279,16 @@ namespace tsorcRevamp
 
     public static class UsefulFunctions
     {
-        ///<summary> 
+        /// <summary>
+        /// Shared "lit fuse" sound played when a bomb appears in an enemy's hand / telegraph (smoke
+        /// bomb, the knights' firebombs, Gwyn's smoke bomb).  ONE place to swap the sound.
+        /// NOTE: vanilla's bomb fuse is NOT a SoundID enum member — it's a looped audio asset
+        /// referenced by path — so Item60 is the working stand-in here.  To use the real fuse later,
+        /// swap to: new SoundStyle("Terraria/Sounds/...") (or a custom sound).
+        /// </summary>
+        public static readonly SoundStyle BombFuse = new SoundStyle("tsorcRevamp/Sounds/Item/Fuse");
+
+        ///<summary>
         ///Gets the coordinates of the first solid thing a line fired in a certain direction will hit
         ///Counts both tiles and NPCs as solid
         ///Returns null if no collision
@@ -479,7 +495,7 @@ namespace tsorcRevamp
         /// <param name="npc">The NPC this is operating on</param>
         ///<param name="timerCap">How high does the timer have to be for it to shoot</param>
         ///<param name="projectileType">The ID of the projectile you want to shoot</param>
-        ///<param name="projectileDamage">Damage of the projectile. Multiplied by 2 by default, and then 2 again in expert mode</param>
+        ///<param name="projectileDamage">Damage of the projectile, passed straight through to Projectile.NewProjectile with no multiplier — NOT auto-scaled by difficulty (verified: neither ProjectileData nor SimpleProjectile touch it, and vanilla's own difficulty scaling only auto-multiplies NPC.damage, never Projectile.damage). If you want expert/master to hit harder, scale the value you pass in yourself.</param>
         ///<param name="projectileVelocity">Speed of the projectile</param>
         ///<param name="shootSound">The sound to play when shooting</param>
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Leave blank for default gravity, set to 0 for projectiles with no gravity, set it custom if your projectile has custom gravity</param>
@@ -487,13 +503,18 @@ namespace tsorcRevamp
         ///<param name="ai1">Lets you pass a value to the projectile's ai1</param>
         ///<param name="overshoot">Lets you make it aim somewhere offset from the player. Useful for making it lob projectiles above their head.</param>
         ///<param name="telegraphColor">The color of its telegraph flash. Defaults to white.</param>
-        ///<param name="stopBeforeFiring">Should this NPC stop moving before firing?</param>
-        ///<param name="needsLineOfSight">Does this NPC need line of sight to the player to shoot?</param>
+        ///<param name="stopBeforeFiring">Should this NPC be allowed to stop moving before firing?</param>
+        ///<param name="stopBeforeChance">How likely it is to stop before firing when that behavior is allowed. Default is 10%.</param>
+        ///<param name="needsLineOfSight">Does this attack need line of sight to the player to shoot? Defaults true. Set false only for attacks that can intentionally pass through walls.</param>
         ///<param name="weight">The weight of this attack. Lower = less likely to occur and vice versa, default is 1</param>
         ///<param name="condition">The attack will only execute if this condition is true. Takes a lambda experession.</param>
-        public static void AddAttack(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null)
+        ///<param name="useStopBeforeChance">If true, this attack uses stopBeforeChance. If false, stopBeforeChance is ignored and treated as 0.</param>
+        ///<param name="telegraphTime">How many ticks before firing to spawn the telegraph flash. Defaults to the shared projectile telegraph time.</param>
+        // needsLineOfSight defaults to FALSE — attacks fire even without LOS; opt in per-attack with needsLineOfSight: true.
+        public static void AddAttack(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, bool useStopBeforeChance = false, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f, bool lockAimAtTelegraph = false)
         {
-            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList.Add(new tsorcRevampAIs.ProjectileData(projectileType, timerCap, projectileDamage, projectileVelocity, shootSound, projectileGravity, ai0, ai1, overshoot, telegraphColor, stopBeforeFiring, needsLineOfSight, weight, condition));
+            float appliedStopBeforeChance = useStopBeforeChance ? stopBeforeChance : 0f;
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList.Add(new tsorcRevampAIs.ProjectileData(projectileType, timerCap, projectileDamage, projectileVelocity, shootSound, projectileGravity, ai0, ai1, overshoot, telegraphColor, stopBeforeFiring, needsLineOfSight, weight, condition, appliedStopBeforeChance, telegraphTime, commitFraction, lockAimAtTelegraph));
         }
 
         ///<summary> 
@@ -729,6 +750,33 @@ namespace tsorcRevamp
                 Vector2 dustVel = new Vector2(dustSpeed, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
                 Dust.NewDustPerfect(dustPos, dustID, dustVel, 200).noGravity = true;
             }
+        }
+
+        public static void DustRingPrecise(Vector2 center, float radius, int dustID, int dustCount = 32, float dustSpeed = 0f, int alpha = 80, float scale = 1f)
+        {
+            radius = Math.Max(0f, radius);
+            dustCount = Math.Max(1, dustCount);
+
+            for (int j = 0; j < dustCount; j++)
+            {
+                float rotation = MathHelper.TwoPi * j / dustCount;
+                Vector2 dir = rotation.ToRotationVector2();
+                Vector2 dustPos = center + dir * radius;
+                Vector2 dustVel = dustSpeed == 0f
+                    ? Vector2.Zero
+                    : new Vector2(dustSpeed, 0f).RotatedBy(rotation + MathHelper.PiOver2);
+                Dust dust = Dust.NewDustPerfect(dustPos, dustID, dustVel, alpha);
+                dust.noGravity = true;
+                dust.scale = scale;
+            }
+        }
+
+        // One-shot screen shake (vanilla's PunchCameraModifier, e.g. Deerclops' stomp) centered on a world
+        // position. Shake direction is randomized each call so repeated shakes don't feel identical.
+        public static void ScreenShake(Vector2 center, float strength = 20f, int frames = 20, float vibrationCyclesPerSecond = 6f, float distanceFalloff = 1000f, string uniqueIdentity = null)
+        {
+            Vector2 direction = (Main.rand.NextFloat() * MathHelper.TwoPi).ToRotationVector2();
+            Main.instance.CameraModifiers.Add(new PunchCameraModifier(center, direction, strength, vibrationCyclesPerSecond, frames, distanceFalloff, uniqueIdentity));
         }
 
         ///<summary> 
@@ -1531,6 +1579,87 @@ namespace tsorcRevamp
                 return true;
             }
             return false;
+        }
+
+        public static bool IsValidWalkableTile(int X, int Y)
+        {
+            if (Main.tile.Width > X && Main.tile.Height > Y && X >= 0 && Y >= 0)
+            {
+                Tile thisTile = Main.tile[X, Y];
+                if (thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
+                {
+                    if (thisTile.Slope == 0 && !thisTile.IsHalfBlock && !TileID.Sets.Platforms[thisTile.TileType])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool IsPartOfValidSurface(int targetX, int targetY, int minWidth)
+        {
+            for (int offset = 0; offset < minWidth; offset++)
+            {
+                bool windowValid = true;
+                for (int i = 0; i < minWidth; i++)
+                {
+                    int x = targetX - offset + i;
+                    if (!IsValidWalkableTile(x, targetY))
+                    {
+                        windowValid = false;
+                        break;
+                    }
+                }
+                if (windowValid)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// True if a `width`-tile flat walkable floor sits CENTERED under `centerX` at row `targetY`.
+        /// Stricter than IsPartOfValidSurface: that one accepts `centerX` anywhere inside a wide-enough run, so a
+        /// large enemy can stand at the run's EDGE with its body hanging off the lip. This requires the enemy's
+        /// whole footprint [centerX - width/2 .. +width] to be solid, so a MinSurfaceWidth beast stands FULLY on
+        /// its floor (and refuses floors narrower than its footprint entirely).
+        /// </summary>
+        public static bool IsFootprintSupported(int centerX, int targetY, int width)
+            => IsFootprintSupported(centerX, targetY, width, 0);
+
+        /// <summary>
+        /// Like <see cref="IsFootprintSupported(int,int,int)"/>, but tolerates up to <paramref name="maxStepDown"/>
+        /// tiles of unevenness across the footprint (the "Deerclops clip" failsafe). A column counts as supported if
+        /// it has walkable ground at the feet row <paramref name="targetY"/> OR up to <paramref name="maxStepDown"/>
+        /// rows BELOW it, and at least one column must be flush at the feet row itself (the anchor the body physically
+        /// rests on). So a beast may straddle a 1-tile step — standing at the high level with the lower foot dipping
+        /// one tile into the air/tile — but never a 2+ tile drop. <paramref name="maxStepDown"/> == 0 reproduces the
+        /// strict flat-floor behavior exactly. Columns with a tile poking ABOVE the feet row (a step UP into the body)
+        /// are never supported here, so the gate naturally prefers standing at the higher level (lower foot clips),
+        /// which is exactly the bounded overlap we want.
+        /// </summary>
+        public static bool IsFootprintSupported(int centerX, int targetY, int width, int maxStepDown)
+        {
+            int left = centerX - width / 2;
+            bool anchored = false;
+            for (int i = 0; i < width; i++)
+            {
+                int col = left + i;
+                bool columnSupported = false;
+                for (int d = 0; d <= maxStepDown; d++)
+                {
+                    if (IsValidWalkableTile(col, targetY + d))
+                    {
+                        columnSupported = true;
+                        if (d == 0) anchored = true;
+                        break;
+                    }
+                }
+                if (!columnSupported) return false;
+            }
+            return anchored; // need at least one flush column so the physics body rests at the feet row
         }
 
         public static tsorcRevampPlayer ModPlayer(Player player) => player.GetModPlayer<tsorcRevampPlayer>();

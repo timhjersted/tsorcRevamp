@@ -20,8 +20,8 @@ namespace tsorcRevamp.Projectiles.Throwing
             Projectile.friendly = true;
             Projectile.height = 14;
             Projectile.penetrate = 2;
-            Projectile.DamageType = DamageClass.Throwing;
-            Projectile.scale = 0.9f;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.scale = 1f;
             Projectile.tileCollide = false;
             Projectile.width = 14;
             DrawOffsetX = -10;

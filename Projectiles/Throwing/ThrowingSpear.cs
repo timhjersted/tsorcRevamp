@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Throwing
             Projectile.width = 14;
             Projectile.scale = 0.8f;
             Projectile.penetrate = 1;
-            Projectile.DamageType = DamageClass.Throwing;
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.timeLeft = 720;
         }

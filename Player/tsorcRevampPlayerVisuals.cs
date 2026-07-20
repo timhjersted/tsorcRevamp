@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -29,9 +29,56 @@ namespace tsorcRevamp
         public int collapseDelay = 0;
         public static int baseRadius = 150;
 
+        // ── Player Hurt Visuals ──
+        // hurtVignetteFlash is the damage-driven spike set in PostHurt; it decays each frame.
+        // hurtVignetteStrength is the final 0-1 value the vignette is drawn at, recomputed each frame.
+        public float hurtVignetteFlash = 0f;
+        public float hurtVignetteStrength = 0f;
+
+        // Recomputes the red hurt vignette strength for the local player. Called from PostUpdate.
+        // Combines a decaying on-hit flash with a subtle pulsing low-health glow. Both scale the
+        // vignette's brightness and opacity, so harder hits and lower health read as more intense.
+        public void UpdateHurtVignette()
+        {
+            if (Player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            if (Player.dead || !ModContent.GetInstance<tsorcRevampVisualConfig>().PlayerHurtVisuals)
+            {
+                hurtVignetteFlash = 0f;
+                hurtVignetteStrength = 0f;
+                return;
+            }
+
+            // On-hit flash decays smoothly (~0.75s from a full-strength hit).
+            if (hurtVignetteFlash > 0f)
+            {
+                hurtVignetteFlash -= 0.022f;
+                if (hurtVignetteFlash < 0f)
+                {
+                    hurtVignetteFlash = 0f;
+                }
+            }
+
+            // Persistent low-health glow: begins below 50% health and grows toward death.
+            float healthPct = Player.statLifeMax2 > 0 ? (float)Player.statLife / Player.statLifeMax2 : 1f;
+            float lowHealth = 0f;
+            if (healthPct < 0.5f)
+            {
+                lowHealth = (0.5f - healthPct) / 0.5f; // 0 at 50% HP, 1 at 0% HP
+            }
+
+            // Subtle pulse applied to the low-health component so it breathes rather than sitting flat.
+            float pulse = 0.7f + 0.3f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 4f);
+            float lowHealthComponent = lowHealth * lowHealth * 0.55f * pulse; // squared for a gentler onset
+
+            hurtVignetteStrength = MathHelper.Clamp(hurtVignetteFlash + lowHealthComponent, 0f, 1f);
+        }
+
         public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
         {
-
             //This is going here, because unlike most hooks this one keeps running even when the game is paused via AutoPause
             if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>())
             {
@@ -387,11 +434,10 @@ namespace tsorcRevamp
 
                 Vector2 origin = sourceRectangle.Size() / 2f;
 
-                if (estusPlayer.estusDrinkTimer >= estusPlayer.estusDrinkTimerMax * 0.4f)
+                // Threshold matches the body-frame threshold in tsorcRevampPlayerEstus.cs so the flask
+                // sprite and the player's arm-up pose appear together at the start of the drink channel.
+                if (estusPlayer.estusDrinkTimer >= estusPlayer.estusDrinkTimerMax * 0.05f)
                 {
-                    //DrawData data = new DrawData(texture, new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), sourceRectangle, newColor, rotation, origin, estusScale, effects, 0);
-                    //Main.playerDrawData.Add(data);
-
                     drawInfo.DrawDataCache.Add(new DrawData(
                             texture, // The texture to render.
                             new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), // Position to render at.
@@ -440,11 +486,10 @@ namespace tsorcRevamp
 
                 Vector2 origin = sourceRectangle.Size() / 2f;
 
-                if (ceruleanPlayer.ceruleanDrinkTimer >= ceruleanPlayer.ceruleanDrinkTimerMax * 0.4f)
+                // Threshold matches the body-frame threshold in tsorcRevampPlayerCerulean.cs so the
+                // flask sprite and the player's arm-up pose appear together at the start of the channel.
+                if (ceruleanPlayer.ceruleanDrinkTimer >= ceruleanPlayer.ceruleanDrinkTimerMax * 0.05f)
                 {
-                    //DrawData data = new DrawData(texture, new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), sourceRectangle, newColor, rotation, origin, estusScale, effects, 0);
-                    //Main.playerDrawData.Add(data);
-
                     drawInfo.DrawDataCache.Add(new DrawData(
                             texture, // The texture to render.
                             new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), // Position to render at.
@@ -552,36 +597,129 @@ namespace tsorcRevamp
             }
             #endregion
 
-            #region stamina bar
-            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
+            #region active mana ward
+            // Active Shields Revamp: draw the mana bubble while a magic ward (Mana Shield / Celestriad) is raised.
+            // The passive bubble above is disabled in active mode, so this provides the held-ward visual.
+            tsorcRevampActiveShieldPlayer wardPlayer = drawPlayer.GetModPlayer<tsorcRevampActiveShieldPlayer>();
+            if (tsorcRevampActiveShieldPlayer.RevampActive && wardPlayer.isBlocking && !drawPlayer.dead
+                && tsorcRevamp.ActiveShieldRegistry != null
+                && tsorcRevamp.ActiveShieldRegistry.TryGetValue(wardPlayer.activeShieldType, out ActiveShieldData wardData)
+                && wardData.Resource == ShieldResource.Mana)
             {
-                float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
-                float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
-                float staminaPercentage = (float)staminaCurrent / staminaMax;
-                if (staminaPercentage < 1f && !drawPlayer.dead)
+                Lighting.AddLight(drawPlayer.Center, 0f, 0.2f, 0.3f);
+
+                int shieldFrameCount = 8;
+                float shieldScale = 2.5f;
+                Texture2D wardTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ManaShield];
+                int wardDrawX = (int)(drawInfo.Position.X + drawInfo.drawPlayer.width / 2f - Main.screenPosition.X);
+                int wardDrawY = (int)(drawInfo.Position.Y + drawInfo.drawPlayer.height / 2f - Main.screenPosition.Y);
+                int wardFrameHeight = wardTexture.Height / shieldFrameCount;
+                // Animate off a global tick since the passive shieldFrame counter doesn't advance in active mode.
+                int wardStartY = wardFrameHeight * ((int)(Main.GameUpdateCount % 24) / 3);
+                Rectangle wardSource = new Rectangle(0, wardStartY, wardTexture.Width, wardFrameHeight);
+                Vector2 wardOrigin = wardSource.Size() / 2f;
+
+                drawInfo.DrawDataCache.Add(new DrawData(
+                    wardTexture,
+                    new Vector2(wardDrawX, wardDrawY),
+                    wardSource,
+                    Color.White,
+                    0f,
+                    wardOrigin,
+                    shieldScale,
+                    SpriteEffects.None,
+                    0));
+            }
+            #endregion
+
+            #region EoC dash shield (2nd slot)
+            // Vanilla only draws the Shield of Cthulhu dash sprite when the shield is in a real accessory slot, so a
+            // Shield of Cthulhu sitting in the Right-Click (2nd) slot dashes with no shield shown. Render it here:
+            // the shield held out in front of the player for the whole dash. (Accessory-slot EoC is left to vanilla.)
+            if (tsorcRevampActiveShieldPlayer.RevampActive && !drawPlayer.dead && wardPlayer.DashShieldActive)
+            {
+                Item rcItem = drawPlayer.GetModPlayer<tsorcRevampPlayer>().RightClickSlot?.Item;
+                if (rcItem != null && !rcItem.IsAir && rcItem.type == ItemID.EoCShield)
                 {
-                    float abovePlayer = 45f; //how far above the player should the bar be?
-                    Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
-                    Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
+                    Texture2D eocTex = Terraria.GameContent.TextureAssets.Item[ItemID.EoCShield].Value;
+                    if (eocTex != null)
+                    {
+                        Vector2 dashDir = drawPlayer.velocity.SafeNormalize(new Vector2(drawPlayer.direction, 0f));
+                        Vector2 drawPos = drawPlayer.Center + dashDir * 16f - Main.screenPosition;
+                        SpriteEffects fx = drawPlayer.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                        Color shieldColor = Lighting.GetColor((int)(drawPlayer.Center.X / 16f), (int)(drawPlayer.Center.Y / 16f));
+                        drawInfo.DrawDataCache.Add(new DrawData(
+                            eocTex,
+                            drawPos,
+                            null,
+                            shieldColor,
+                            0f,
+                            eocTex.Size() / 2f,
+                            1.1f,
+                            fx,
+                            0));
+                    }
+                }
+            }
+            #endregion
 
-                    //this is the position on the screen. it should remain relatively constant unless the window is resized
-                    Point barOrigin = (drawPlayer.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
-                    //Main.NewText("" + barOrigin.X + ", " + barOrigin.Y);
+            #region stamina bar
+            if (drawPlayer == Main.LocalPlayer && !Main.gameMenu)
+            {
+                var config = ModContent.GetInstance<tsorcRevampConfig>();
+                if (!config.HideOverheadStaminaBar)
+                {
+                    float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+                    float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+                    float staminaPercentage = staminaCurrent / staminaMax;
+                    float visualStamina = tsorcRevampSystems.visualStamina;
+                    if (visualStamina < 0f || visualStamina < staminaCurrent)
+                    {
+                        visualStamina = staminaCurrent;
+                    }
 
-                    Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
+                    if ((staminaPercentage < 1f || visualStamina > staminaCurrent) && !drawPlayer.dead)
+                    {
+                        float abovePlayer = 45f; //how far above the player should the bar be?
+                        Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
+                        Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
 
-                    //empty bar has detailing, so offset the filled bar's destination
-                    int padding = 5;
-                    //scale the width by the stam percentage
-                    Rectangle fillDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, (int)(staminaPercentage * barFill.Width), barFill.Height);
+                        //this is the position on the screen. it should remain relatively constant unless the window is resized
+                        Point barOrigin = (drawPlayer.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
 
-                    //draw a line at the amount of stamina needed to roll
-                    float stamPercentToRoll = 30 / staminaMax;
-                    Rectangle minRollStamDestination = new Rectangle(barOrigin.X + padding + (int)(stamPercentToRoll * barFill.Width), barOrigin.Y, 2, barFill.Height); //displays 2px of the bar
+                        Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
 
-                    Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
-                    Main.spriteBatch.Draw(barFill, fillDestination, Color.DodgerBlue);
-                    Main.spriteBatch.Draw(barFill, minRollStamDestination, Color.White);
+                        //empty bar has detailing, so offset the filled bar's destination
+                        int padding = 5;
+                        
+                        int currentFillWidth = (int)(staminaPercentage * barFill.Width);
+                        Rectangle fillDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, currentFillWidth, barFill.Height);
+
+                        Rectangle yellowDestination = new Rectangle(0, 0, 0, 0);
+                        bool showYellow = false;
+                        if (visualStamina > staminaCurrent)
+                        {
+                            float visualPercentage = visualStamina / staminaMax;
+                            int visualFillWidth = (int)(visualPercentage * barFill.Width);
+                            if (visualFillWidth > currentFillWidth)
+                            {
+                                yellowDestination = new Rectangle(barOrigin.X + padding + currentFillWidth, barOrigin.Y, visualFillWidth - currentFillWidth, barFill.Height);
+                                showYellow = true;
+                            }
+                        }
+
+                        //draw a line at the amount of stamina needed to roll
+                        float stamPercentToRoll = 30 / staminaMax;
+                        Rectangle minRollStamDestination = new Rectangle(barOrigin.X + padding + (int)(stamPercentToRoll * barFill.Width), barOrigin.Y, 2, barFill.Height); //displays 2px of the bar
+
+                        Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
+                        if (showYellow)
+                        {
+                            Main.spriteBatch.Draw(barFill, yellowDestination, new Color(240, 190, 50));
+                        }
+                        Main.spriteBatch.Draw(barFill, fillDestination, new Color(40, 190, 80));
+                        Main.spriteBatch.Draw(barFill, minRollStamDestination, Color.White);
+                    }
                 }
             }
             #endregion
@@ -861,6 +999,7 @@ namespace tsorcRevamp
         Nebula,
         TripleThreat,
         Cataluminance,
+        SunderedMoon,
         Spazmatism,
         Darkness,
         Light,
@@ -940,6 +1079,11 @@ namespace tsorcRevamp
                 case tsorcAuraState.Cataluminance:
                     {
                         DrawCatAura(drawPlayer);
+                        break;
+                    }
+                case tsorcAuraState.SunderedMoon:
+                    {
+                        DrawSundMoonAura(drawPlayer);
                         break;
                     }
                 case tsorcAuraState.Poison:
@@ -1032,6 +1176,62 @@ namespace tsorcRevamp
             Lighting.AddLight((int)drawPlayer.Center.X / 16, (int)drawPlayer.Center.Y / 16, 0f, 0.4f, 0.8f);
             Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
             Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
+
+            //Apply the shader, caching it as well
+            if (catEffect == null)
+            {
+                catEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)(modPlayer.effectRadius / 0.7f), (int)(modPlayer.effectRadius / 0.7f));
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+
+
+            //Pass relevant data to the shader via these parameters
+            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
+            catEffect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            catEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            catEffect.Parameters["fadePercent"].SetValue(0);
+            float timeFactor = 1;
+
+            catEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            catEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            Rectangle baseRectangle = new Rectangle(0, 0, 200, 200);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+
+
+            //Pass relevant data to the shader via these parameters
+            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
+            catEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+            catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            catEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            catEffect.Parameters["fadePercent"].SetValue(0);
+            catEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            catEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, 1, SpriteEffects.None, 0);
+        }
+
+        static void DrawSundMoonAura(Player drawPlayer)
+        {
+            tsorcRevampPlayer modPlayer = drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+
+
+            Lighting.AddLight((int)drawPlayer.Center.X / 16, (int)drawPlayer.Center.Y / 16, 0f, 0.4f, 0.9f);
+            Color shaderColor = Color.Lerp(new Color(0.60f, 0.70f, 1f), new Color(0.1f, 0.4f, 1f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
+            Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.04f);
 
             //Apply the shader, caching it as well
             if (catEffect == null)

@@ -39,7 +39,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Recipe recipe = CreateRecipe(); ;
             recipe.AddIngredient(ModContent.ItemType<WoodenWand>(), 1);
             recipe.AddIngredient(ItemID.AquaScepter, 1);
-            //recipe.AddIngredient(ItemID.CrystalShard, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
             recipe.AddTile(TileID.DemonAltar);
 

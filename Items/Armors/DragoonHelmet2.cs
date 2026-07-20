@@ -96,7 +96,7 @@ namespace tsorcRevamp.Items.Armors
             recipe4.AddIngredient(ModContent.ItemType<DragoonHelmet>());
             recipe4.AddIngredient(ItemID.CharmofMyths);
             recipe4.AddIngredient(ModContent.ItemType<BewitchedTitanite>(), 1);
-            recipe4.AddIngredient(ModContent.ItemType<OolacileDarkMatter>(), 1);
+            recipe4.AddIngredient(ModContent.ItemType<SoulOfOccultist>(), 1);
             recipe4.AddIngredient(ModContent.ItemType<DarkSoul>(), 54000);
             recipe4.AddTile(TileID.DemonAltar);
             recipe4.Register();

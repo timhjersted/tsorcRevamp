@@ -83,6 +83,13 @@ namespace tsorcRevamp.Projectiles
         public bool ChargedWhip = false;
         public bool ModdedFlail = false;
         public bool KrakenEmpowered = false;
+
+        // Per-projectile poise-damage lever, mirrors tsorcInstancedGlobalItem.WeaponPoiseMultiplier for melee weapons.
+        // Multiplies the knockback-derived poise damage THIS projectile deals (see project_poise_stagger_system). Does
+        // NOT affect the projectile's actual knockback/flinch — only the stagger meter. Set it from the ModProjectile's
+        // own OnSpawn/AI, e.g. `Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier = 1.5f;`.
+        // Default 1f = no change.
+        public float ProjectilePoiseMultiplier = 1f;
         public override void SetDefaults(Projectile entity)
         {
             if (entity.IsMinionOrSentryRelated || ProjectileID.Sets.LightPet[entity.type] || Main.projPet[entity.type])
@@ -149,6 +156,12 @@ namespace tsorcRevamp.Projectiles
                 player.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer = 0;
                 projectile.ai[0] = 0;
             }
+            if (projectile.type == ProjectileID.RainbowRodBullet && projectile.ai[0] == 1)
+            {
+                projectile.DamageType = DamageClass.SummonMeleeSpeed;
+                player.GetModPlayer<tsorcRevampPlayer>().SupremeDragoonLashFireBreathTimer = 0;
+                projectile.ai[0] = 0;
+            }
             if (projectile.type == ProjectileID.ScytheWhipProj && projectile.ai[0] == 1)
             {
                 projectile.localNPCImmunity[(int)projectile.ai[1]] = -1;
@@ -174,12 +187,57 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-                if (projectile.type == ProjectileID.MoonlordTurretLaser)
+                if (projectile.type == ProjectileID.PurificationPowder)
                 {
-                    projectile.usesLocalNPCImmunity = false;
-                    projectile.localNPCHitCooldown = -2;
                     projectile.usesIDStaticNPCImmunity = true;
-                    projectile.idStaticNPCHitCooldown = 10;
+                    projectile.idStaticNPCHitCooldown = 8;
+                }
+                if (projectile.type == ProjectileID.RainbowCrystalExplosion)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 60;
+                }
+
+                if (projectile.type == ProjectileID.UnholyArrow || projectile.type == ProjectileID.JestersArrow)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 60;
+                }
+
+                if (projectile.type == ProjectileID.BabySlime)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 12;
+                }
+
+                if (projectile.type == ProjectileID.DangerousSpider)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 18;
+                }
+
+                if (projectile.type == ProjectileID.JumperSpider)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 18;
+                }
+
+                if (projectile.type == ProjectileID.VenomSpider)
+                {
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 18;
+                }
+
+                if (projectile.type == ProjectileID.Bee)
+                {
+                    projectile.usesIDStaticNPCImmunity = true;
+                    projectile.idStaticNPCHitCooldown = 15;
+                }
+
+                if (projectile.type == ProjectileID.GiantBee)
+                {
+                    projectile.usesIDStaticNPCImmunity = true;
+                    projectile.idStaticNPCHitCooldown = 15;
                 }
 
                 if (modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
@@ -193,7 +251,8 @@ namespace tsorcRevamp.Projectiles
                 else if (!modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
                     projectile.penetrate = 1;
-                    projectile.usesLocalNPCImmunity = false;
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 20;
                 }
 
                 if (projectile.type == ProjectileID.BloodArrow)
@@ -204,12 +263,6 @@ namespace tsorcRevamp.Projectiles
                     {
                         projectile.Kill();
                     }
-                }
-
-                if (projectile.type == ProjectileID.RubyBolt)
-                {
-                    projectile.localNPCHitCooldown = 100;
-                    projectile.usesLocalNPCImmunity = true;
                 }
 
                 if (projectile.type == ProjectileID.Skull)
@@ -448,14 +501,14 @@ namespace tsorcRevamp.Projectiles
 
             if ((projectile.type == ProjectileID.LaserMachinegunLaser || projectile.type == ProjectileID.ElectrosphereMissile || projectile.type == ProjectileID.ChargedBlasterOrb || projectile.type == ProjectileID.ChargedBlasterLaser || projectile.type == ProjectileID.UFOLaser) && NPC.downedMartians)
             {
-                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 4 * 60);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 4 * 60);
             }
 
             if (projectile.friendly && projectile.owner >= 0)
             {
                 if ((player.HeldItem.type == ItemID.ElectrosphereLauncher || player.HeldItem.type == ItemID.Xenopopper || player.HeldItem.type == ItemID.InfluxWaver) && NPC.downedMartians)
                 {
-                    target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 4 * 60);
+                    target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 4 * 60);
                 }
             }
 
@@ -547,7 +600,7 @@ namespace tsorcRevamp.Projectiles
                 }
                 AppliedConqueror = true;
             }
-            else if (projectile.DamageType != DamageClass.Summon && projectile.DamageType != DamageClass.SummonMeleeSpeed && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.ZoneOldOneArmy)
+            else if (projectile.DamageType != DamageClass.Summon && projectile.DamageType != DamageClass.SummonMeleeSpeed && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && tsorcRevamp.EnemiesOOA.Contains(target.type))
             {
                 if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1)
                 {

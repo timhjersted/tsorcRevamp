@@ -755,10 +755,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_2326";
         public override int PermanentID => 31;
         public override int BuffType => BuffID.Titan;
+        public override bool CanScale => true;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
             player.kbBuff = true;
+            player.GetModPlayer<tsorcRevampPlayer>().TitanPotion = true;
+            player.GetModPlayer<tsorcRevampPlayer>().TitanSizeScaling = ApplyScaling(1f);
         }
     }
 

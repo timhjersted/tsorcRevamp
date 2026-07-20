@@ -48,8 +48,8 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
         public override void SetDefaults()
         {
             Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-            Projectile.width = 34; // The width of your projectile
-            Projectile.height = 34; // The height of your projectile
+            Projectile.width = 26; // The width of your projectile
+            Projectile.height = 26; // The height of your projectile
             Projectile.friendly = true; // Deals damage to enemies
             Projectile.penetrate = -1; // Infinite pierce
             Projectile.DamageType = DamageClass.Melee; // Deals melee damage
@@ -342,6 +342,11 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
+            if (CurrentAIState != AIState.Dropping)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DiamondCrusherShockwave>(), Projectile.damage / 2, 0f, Projectile.owner);
+            }
+
             int defaultLocalNPCHitCooldown = 10;
             int impactIntensity = 0;
             Vector2 velocity = Projectile.velocity;
@@ -534,6 +539,57 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                 }
             }
             return true;
+        }
+    }
+
+    public class DiamondCrusherShockwave : ModProjectile
+    {
+        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 100;   
+            Projectile.height = 100;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 4;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 10;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.hide = true;
+            Projectile.ArmorPenetration = 5;
+        }
+
+        public override void AI()
+        {
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(8.5f, 8.5f);
+                Dust dust = Dust.NewDustPerfect(
+                    Projectile.Center + Main.rand.NextVector2Circular(21f, 21f),
+                    DustID.Stone,
+                    velocity,
+                    0,
+                    default,
+                    Main.rand.NextFloat(1.0f, 1.4f)
+                );
+                dust.noGravity = true;
+            }
+
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(8.5f, 8.5f);
+                Dust dust2 = Dust.NewDustPerfect(
+                    Projectile.Center + Main.rand.NextVector2Circular(21f, 21f),
+                    DustID.Silver,
+                    velocity,
+                    0,
+                    default,
+                    Main.rand.NextFloat(1.0f, 1.4f)
+                );
+                dust2.noGravity = true;
+            }
         }
     }
 }

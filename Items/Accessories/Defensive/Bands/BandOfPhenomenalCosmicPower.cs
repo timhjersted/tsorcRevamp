@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Bands
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BandOfGreatCosmicPower>());
-            recipe.AddIngredient(ItemID.SoulofLight, 3);
+            recipe.AddIngredient(ItemID.SoulofLight, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
             recipe.AddTile(TileID.DemonAltar);
 

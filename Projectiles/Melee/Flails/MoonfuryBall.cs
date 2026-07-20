@@ -49,8 +49,8 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
         public override void SetDefaults()
         {
             Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-            Projectile.width = 34; // The width of your projectile
-            Projectile.height = 34; // The height of your projectile
+            Projectile.width = 29; // The width of your projectile
+            Projectile.height = 29; // The height of your projectile
             Projectile.friendly = true; // Deals damage to enemies
             Projectile.penetrate = -1; // Infinite pierce
             Projectile.DamageType = DamageClass.Melee; // Deals melee damage
@@ -337,13 +337,8 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             }
             player.itemRotation = MathHelper.WrapAngle(player.itemRotation);
 
-            // Spawning dust. We spawn dust more often when in the LaunchingForward state
-            int dustRate = 15;
-            if (doFastThrowDust)
-                dustRate = 1;
-
-            if (Main.rand.NextBool(dustRate))
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PurpleTorch, 0f, 0f, 150, default(Color), 1.3f);
+            int dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Shadowflame, 0f, 0f, 150, default(Color), 2.3f);
+            Main.dust[dustIndex].noGravity = true;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

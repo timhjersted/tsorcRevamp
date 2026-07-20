@@ -9,6 +9,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Projectiles.Enemy.WyvernMage;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
@@ -18,6 +19,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void SetStaticDefaults()
         {
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<MorgulPoisoning>()] = true;
@@ -36,7 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.defense = 120;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.Zombie97;
-            NPC.lifeMax = 550000;
+            NPC.lifeMax = 600000;
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -44,8 +48,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.alpha = 100;
             NPC.value = 660000;
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
-            UsefulFunctions.AddAttack(NPC, 1000, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, SoundID.Item17, stopBeforeFiring: false, needsLineOfSight: false, condition: (NPC npc) => { return npc.Distance(Main.player[npc.target].Center) > 700 && Main.rand.NextBool(200); });
+            UsefulFunctions.AddAttack(NPC, 120, ProjectileID.CultistBossFireBallClone, 45, 11, SoundID.Item20, stopBeforeFiring: false, needsLineOfSight: true, condition: (NPC npc) => { return npc.Distance(Main.player[npc.target].Center) > 700 && Main.rand.NextBool(200); });
         }
+        int breathCD = 120;
+        bool breath = false;
         int lightningDamage = 50;
 
         public static int drawOffset = 52;
@@ -69,6 +75,54 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             if (NPC.velocity.X < 0f) { NPC.spriteDirection = 1; }
             else
             if (NPC.velocity.X > 0f) { NPC.spriteDirection = -1; }
+
+            Player nT = Main.player[NPC.target];
+            if ((Main.rand.NextBool(300) && NPC.life < NPC.lifeMax / 2) || Main.rand.NextBool(900))
+            {
+                if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 10)))
+                {
+                    breath = true;
+                }
+
+            }
+            if (breath)
+            {
+
+                if (breathCD == 120)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.7f }, NPC.Center);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && breathCD <= 70)
+                {
+
+
+                    Vector2 spawnOffset = NPC.velocity; //Create a vector pointing in whatever direction the NPC is moving. We can transform this into an offset we can use.
+                    spawnOffset.Normalize(); //Shorten the vector to make it have a length of 1
+                    spawnOffset *= 80; //Multiply it so it has a length of 16. The length determines how far offset the projectile will be, 16 units = 1 tile
+
+                    //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)(NPC.Center.X + spawnOffset.X), (int)(NPC.Center.Y + spawnOffset.Y), NPC.velocity.X * 2f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 2f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<ShadowDragonsBreath>(), lightningDamage, 1.3f, Main.myPlayer);
+
+
+
+
+                }
+                //play breath sound
+                if (Main.rand.NextBool(3))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.8f, Pitch = -0.9f }, NPC.Center); //flame thrower
+                }
+
+                breathCD--;
+
+            }
+            if (breathCD <= 0)
+            {
+                breath = false;
+                breathCD = 150;
+
+            }
         }
 
         public override bool CheckActive()

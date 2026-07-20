@@ -30,13 +30,21 @@ namespace tsorcRevamp.Items.Tools
         }
         public override bool CanUseItem(Player player)
         {
+            // BotC-only restriction (mirrors GreatMagicMirror): the Curse blocks free-form teleport home.
+            // Unkindled and Classic both use this normally.
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.BotCDisabled"), Color.OrangeRed);
+                }
+                return false;
+            }
             if (tsorcRevampWorld.BossAlive)
             {
                 Main.NewText(LangUtils.GetTextValue("CommonItemTooltip.UnusableDuringBoss"), Color.Yellow);
                 return false;
             }
-            /*if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {*/
             if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet)
             {
                 Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.NoLocation"), 255, 240, 20);
@@ -47,12 +55,13 @@ namespace tsorcRevamp.Items.Tools
                 Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.WrongWorld"), 255, 240, 20);
                 return false;
             }
-            //}
             return base.CanUseItem(player);
         }
         public override void UseStyle(Player player, Rectangle rectangle)
         {
-            if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY) || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            // BotC bypass dropped — they can't reach this branch anymore (CanUseItem blocks them above).
+            // Only the warp-location sanity check matters here.
+            if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY))
             {
                 if (player.itemTime > (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
                 {
@@ -108,6 +117,16 @@ namespace tsorcRevamp.Items.Tools
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
+            // BotC tier: warn the player the mirror won't function for them (same message as GreatMagicMirror).
+            Player player = Main.LocalPlayer;
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "BotCNoVillageMM", LangUtils.GetTextValue("Items.GreatMagicMirror.BotCDisabled")));
+                }
+            }
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)

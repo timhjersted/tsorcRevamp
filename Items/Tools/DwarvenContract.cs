@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Tools
             Item.height = 18;
             Item.consumable = false;
             Item.value = 10000;
-            Item.rare = ItemRarityID.Yellow;
+            Item.rare = ItemRarityID.Quest;
             Item.maxStack = Item.CommonMaxStack;
         }
     }

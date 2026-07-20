@@ -27,7 +27,6 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         }
         public override void UpdateEquip(Player player)
         {
-            player.noFallDmg = true;
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DragoonBoots = true;
             player.moveSpeed *= 1f + MoveSpeedMult / 100f;
             player.runAcceleration *= 1.6f;

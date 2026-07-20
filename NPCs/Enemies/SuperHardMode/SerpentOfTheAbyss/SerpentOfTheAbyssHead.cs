@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Enemy;
@@ -17,9 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         bool breath = false;
         public override void SetStaticDefaults()
         {
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
+            NPCID.Sets.ImmuneToRegularBuffs[Type] = true;
         }
         public override void SetDefaults()
         {
@@ -28,12 +27,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             NPC.width = 42;
             NPC.height = 81;
             NPC.aiStyle = 6;
-            NPC.defense = 30;
+            NPC.defense = 40;
             NPC.timeLeft = 22500;
             NPC.damage = 85;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.lifeMax = 20000; // was 8k
+            NPC.lifeMax = 24000; // was 8k
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             NPC.scale = 1;
@@ -53,13 +52,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         }
 
         int cursedBreathDamage = 35;
-        int poisonFlamesDamage = 39;
+        int AbyssFlamesDamage = 39;
         int dragonMeteorDamage = 41;
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SHMScale);
-            poisonFlamesDamage = (int)(poisonFlamesDamage * tsorcRevampWorld.SHMScale);
+            AbyssFlamesDamage = (int)(AbyssFlamesDamage * tsorcRevampWorld.SHMScale);
             dragonMeteorDamage = (int)(dragonMeteorDamage * tsorcRevampWorld.SHMScale);
         }
         int[] bodyTypes;
@@ -122,7 +121,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
                 float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y + (3f * NPC.direction), NPC.velocity.X * 2f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 2f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<CursedDragonsBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //cursed dragons breath
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y + (3f * NPC.direction), NPC.velocity.X * 2f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 2f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<AbyssBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //cursed dragons breath
                     Main.projectile[num54].timeLeft = 50;
                 }
 
@@ -135,24 +134,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
                 breathCD = 120;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
             }
-            if (Main.rand.NextBool(940))
+            if (Main.rand.NextBool(800))
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 400f, (float)(-80 + Main.rand.Next(160)) / 10, 10.9f, ModContent.ProjectileType<PoisonFlames>(), poisonFlamesDamage, 2f, Main.myPlayer); //9.9f was 14.9f
-                    }
-                }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
-            }
-            if (Main.rand.NextBool(2760))
-            {
-                for (int pcy = 0; pcy < 10; pcy++)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(1600), (float)nT.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 9.5f, ModContent.ProjectileType<DragonMeteor>(), dragonMeteorDamage, 2f, Main.myPlayer); //dragon meteor
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 400f, (float)(-80 + Main.rand.Next(160)) / 10, 10.9f, ModContent.ProjectileType<AbyssFlames>(), AbyssFlamesDamage, 2f, Main.myPlayer); //9.9f was 14.9f
                     }
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
@@ -168,6 +156,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<FlameOfTheAbyss>()));
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -185,7 +174,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.ShadowFlame, 10 * 60);
+                target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false);
                 target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 20 * 60);
             }
         }

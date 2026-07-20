@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -9,8 +9,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CovenantOfArtorias : ModItem
     {
-        public static float Resistance = 21f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Resistance);
         public override void SetStaticDefaults()
         {
         }
@@ -21,14 +19,14 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Item.height = 26;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ItemRarityID.Quest;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 17000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -36,19 +34,16 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.endurance += Resistance / 100f;
-            player.lavaImmune = true;
-            player.noKnockback = true;
-            player.fireWalk = true;
-            player.enemySpawns = true;
-            player.buffImmune[BuffID.Poisoned] = true;
-            player.buffImmune[BuffID.OnFire] = true;
-            player.buffImmune[BuffID.Oiled] = true;
-            player.buffImmune[ModContent.BuffType<Crippled>()] = true;
-            player.buffImmune[ModContent.BuffType<DarkInferno>()] = true;
-            player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss = true;
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.EnterTheAbyss = true;
+            modPlayer.CovenantOfArtoriasEquipped = true;
         }
 
-
+        public override void UpdateVanity(Player player)
+        {
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.EnterTheAbyss = true;
+            modPlayer.CovenantOfArtoriasEquipped = true;
+        }
     }
 }

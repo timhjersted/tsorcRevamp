@@ -192,6 +192,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.GravityDistortion>(), distortionDamage, 0f, Main.myPlayer, 0, speed);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item91 with { Volume = 0.7f, Pitch = -0.8f }, NPC.Center);
                 }
             }
 

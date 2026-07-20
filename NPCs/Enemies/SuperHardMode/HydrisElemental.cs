@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -9,6 +10,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class HydrisElemental : ModNPC
     {
+        private const float FighterTopSpeed = 3f;
+        private const float LeapSpeedX = 3f;
+        private const float LeapSpeedY = 3.4f;
+        private const float LeapMinimumSpeed = 2.5f;
+        private const float LandingTraction = 0.58f;
+        private const int LeapCooldownFrames = 75;
+        private const int LandingTractionFrames = 16;
+
+        private bool leapInAir;
+        private int leapCooldown;
+        private int landingTractionTimer;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
@@ -71,8 +84,41 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 4.8f, 0.08f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 5.6f);
-            tsorcRevampAIs.LeapAtPlayer(NPC, 6, 5, 2, 128);
+            if (leapCooldown > 0)
+            {
+                leapCooldown--;
+            }
+
+            if (leapInAir && NPC.velocity.Y == 0f)
+            {
+                leapInAir = false;
+                landingTractionTimer = LandingTractionFrames;
+            }
+
+            tsorcRevampAIs.FighterAI(NPC, FighterTopSpeed, 0.08f, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 5f);
+
+            if (landingTractionTimer > 0 && NPC.velocity.Y == 0f)
+            {
+                NPC.velocity.X *= LandingTraction;
+                if (Math.Abs(NPC.velocity.X) < 0.1f)
+                {
+                    NPC.velocity.X = 0f;
+                }
+                landingTractionTimer--;
+            }
+
+            if (leapCooldown <= 0)
+            {
+                float velocityYBeforeLeap = NPC.velocity.Y;
+                tsorcRevampAIs.LeapAtPlayer(NPC, LeapSpeedX, LeapSpeedY, LeapMinimumSpeed, 128);
+
+                if (velocityYBeforeLeap == 0f && NPC.velocity.Y < 0f)
+                {
+                    leapInAir = true;
+                    leapCooldown = LeapCooldownFrames;
+                    landingTractionTimer = 0;
+                }
+            }
         }
 
         public override void OnKill()

@@ -1143,7 +1143,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (phaseTransitionTimeRemaining == phaseTransitionDuration - 110) //Teleport "dead" Pinwheel to arena centre floor
                 {
-                    NPC.Center = new Vector2(4139f, 933f) * 16;
+                    NPC.Center = ExpandedWorldTransform.MapWorld(new Vector2(4139f, 933f) * 16);
                     justTeleported = true;
 
                     if (Main.netMode == NetmodeID.Server)
@@ -2607,7 +2607,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
         public override void BossLoot(ref string name, ref int potionType)
         {
-            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
                 potionType = ModContent.ItemType<Lifegem>();
             }
@@ -2622,7 +2622,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             }*/
 
             //npcLoot.Add(notExpertCondition);
-            //npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>())); if you want to give it an extra one time drop outside of expert mode
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
         }
 
         #region Modified Teleportation Functions

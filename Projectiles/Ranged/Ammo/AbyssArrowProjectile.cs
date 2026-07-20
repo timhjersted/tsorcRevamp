@@ -14,23 +14,22 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
         {
             Projectile.aiStyle = 1;
             Projectile.friendly = true;
-            Projectile.height = 18;
-            Projectile.damage = 25;
+            Projectile.height = 14;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
-            Projectile.width = 16;
+            Projectile.width = 14;
             Projectile.extraUpdates = 1;
             Projectile.timeLeft = 1200;
             Projectile.light = 0.5f;
-            Projectile.penetrate = 2;
+            Projectile.penetrate = 3;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 60;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 3 * 60);
+            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 5 * 60);
         }
 
         public override void AI()

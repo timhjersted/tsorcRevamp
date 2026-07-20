@@ -34,6 +34,9 @@ namespace tsorcRevamp.Items.Potions
             Item.useAnimation = Item.useTime;
             Item.useTurn = true;
             Item.rare = ItemRarityID.Orange;
+            // Drawn slightly smaller than the base 24x30 texture — was reading as oversized next to the
+            // player when held up. The hitbox stays 24x30 so inventory/world pickup feel unchanged.
+            Item.scale = 0.85f;
 
         }
 

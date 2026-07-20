@@ -96,7 +96,7 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
         // Color calculation
         Main.instance.LoadItem(item.type);
 
-        const float MaxAlpha = 0.33f;
+        const float MaxAlpha = 0.2475f;
 
         var alphaGradient = new Gradient<float>(
             (0.00f, 0f),

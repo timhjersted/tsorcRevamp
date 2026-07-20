@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;
@@ -12,7 +12,7 @@ using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class HollowSpearman : ModNPC
+    class HollowSpearman : ModNPC, IStaggerable
     {
         public override void SetStaticDefaults()
         {
@@ -31,6 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 105;
+            NPC.value = 500;
             if (Main.hardMode)
             {
                 NPC.lifeMax = 270;
@@ -47,7 +48,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 4000;
                 spearStabDamage = 32;
             }
-            NPC.value = 500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
 
@@ -55,6 +55,19 @@ namespace tsorcRevamp.NPCs.Enemies
             //BannerItem = ModContent.ItemType<Banners.LothricSpearKnightBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            // Movement: shared fighter mover + SF4 A* nav (Phase-3 migration off the bespoke jump-ladder).
+            globalNPC.HealthScaledSpeedBase = 2f;
+            globalNPC.HealthScaledSpeedMultiplier = -0.75f; // full-health topSpeed 1.25 — was 0.75, sluggish under SF4 nav; speeds toward 2.0 when wounded (compensates SF4 overhead)
+            globalNPC.NavSearchRadius = 80;
+            globalNPC.CanUseRopes = true;
+            globalNPC.MaxJumpPower = 10f;           // preserves the old -9.5f overhead-jump reach
+            globalNPC.RemembersLastKnownPos = true; // pursuer: investigate last-seen spot before patrolling
+            // Poise / stagger: opt in. A stagger cancels an attack via IStaggerable.OnStagger below.
+            globalNPC.PoiseMax = 15f;
+            // Reactive greatshield: pre-emptive + on-hit block chance. See ShieldProfile.
+            ShieldProfile.Hollow(globalNPC);
         }
 
         public Player player
@@ -65,8 +78,15 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(BuffID.BrokenArmor, 3 * 60, false); //broken armor         
+            player.AddBuff(BuffID.BrokenArmor, 3 * 60, false); //broken armor
         }
+
+        // On-hit reactive block: a chance to raise the greatshield to catch the rest of a combo.
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+            => tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), true);
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+            => tsorcRevampAIs.TryOnHitBlock(NPC, NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), projectile.DamageType == DamageClass.Melee);
         #endregion
 
         #region AI
@@ -109,52 +129,45 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             Player player = Main.player[NPC.target];
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
+            // Staggered (poise broken): frozen. GlobalNPC.ApplyStaggerMovement drives the knockback slide in
+            // PostAI; OnStagger already reset the state machine to Pursuing. Freeze here so timers don't advance.
+            if (globalNPC.StaggerTimer > 0)
+            {
+                globalNPC.AttackTelegraphing = false;
+                globalNPC.AttackCommitted = false;
+                return;
+            }
 
-            int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
-            float acceleration = 0.02f;
-            float top_speed = (lifePercentage * -0.015f) + 2f; //Increase speed the lower the enemy HP%
-            float braking_power = 0.11f; //Breaking power to slow down after moving above top_speed
+            bool grounded = NPC.velocity.Y == 0; // proxy for the old standing-on-solid-tile scan (gates attacks/transitions)
+            bool los = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
+            // Same-level melee/shield threat: roughly level + visible. The spearman should only stand and BLOCK
+            // when the player is a same-level threat; when they're on another level it pursues via SF4 (or throws
+            // at range — the throw transition below is intentionally NOT gated on this).
+            bool playerMeleeLevel = los && Math.Abs(player.Center.Y - NPC.Center.Y) <= 5 * 16;
+            // Block stance: shield is up during Shielding/Thrusting/Throwing → a FRONT hit takes reduced poise
+            // (GlobalNPC.ShieldGuarding) + the doubled front damage reduction in ModifyHitBy. Backstabs unaffected.
+            globalNPC.ShieldGuarding = AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Throwing || globalNPC.ReactiveBlockTimer > 0;
 
+            // Restore the SetDefaults knockBackResist each tick; poise scales it to a light flinch and owns
+            // hyper-armor (via AttackCommitted). Replaces the old scattered "knockback-immune while moving" hacks.
+            if (globalNPC.BaseKnockBackResist >= 0f)
+            {
+                NPC.knockBackResist = globalNPC.BaseKnockBackResist;
+            }
 
-            //Debug utilities
-
-            //Main.NewText(NPC.Distance(player.Center));
-            //Main.NewText("AI_State is " + AI_State);
-            //Main.NewText("AI_Timer_Shielding is " + AI_Timer_Shielding);
-            //Main.NewText("AI_Timer_Attacking is " + AI_Timer_Attacking);
-            //Main.NewText("AI_Timer is " + AI_Timer);
-            //Main.NewText("npc.frameCounter is " + npc.frameCounter);
-            //Main.NewText("Distance is " + npc.Distance(player.Center));
-            //Main.NewText("knockbackresist is " + npc.knockBackResist);
+            // Poise labels (RedKnight / BlackKnight pattern). Thrust combo: WINDUP (poise can break) AI_Timer<34,
+            // COMMITTED (hyper-armor) 34-94. Spear throw: WINDUP <60, COMMITTED (release) 60-90. Shielding is a
+            // block (not labelled) so it can still be poise-broken; OnStagger cancels whatever's in progress.
+            globalNPC.AttackTelegraphing = (AI_State == State_Thrusting && AI_Timer < 34)
+                                           || (AI_State == State_Throwing && AI_Timer < 35);
+            // Spear throw: white flash fires at AI_Timer==35, 25 ticks before the release at 60 — hyper-armored
+            // from the flash through the throw so only a stagger stops it. Recovery (>90) is vulnerable.
+            globalNPC.AttackCommitted = (AI_State == State_Thrusting && AI_Timer >= 34 && AI_Timer <= 94)
+                                        || (AI_State == State_Throwing && AI_Timer >= 35 && AI_Timer <= 90);
 
             #region AI_State Independent
-
-
-            #region Check if standing on a solid tile
-
-            bool standing_on_solid_tile = false;
-            int x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f); // 15 pix in front of center of mass
-            int y_above_feet = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f); // 15 pix above feet
-            int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
-            if (NPC.velocity.Y == 0f) // no jump/fall
-            {
-                int x_left_edge = (int)NPC.position.X / 16;
-                int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (Main.tile[l, y_below_feet] == null) // null tile means ??
-                        return;
-
-                    if (Main.tile[l, y_below_feet].HasTile && Main.tileSolid[(int)Main.tile[l, y_below_feet].TileType]) // tile exists and is solid
-                    {
-                        standing_on_solid_tile = true;
-                        break; // one is enough so stop checking
-                    }
-                } // END traverse blocks under feet
-            } // END no jump/fall
-
-            #endregion
 
 
             if (AI_Timer_Attacking < 420)
@@ -213,200 +226,32 @@ namespace tsorcRevamp.NPCs.Enemies
             if (AI_State == State_Pursuing)
             {
 
-                #region Target player, turn if can't reach player
+                // Movement is now the shared fighter mover (SF4 A* nav via the SetDefaults levers). This REPLACES
+                // the deleted target/turn + accel/brake + -5..-9.5 jump-ladder + overhead-jump + platform-drop
+                // blocks (Phase-3 migration). Only runs in Pursuing; the Shielding/Thrusting/Throwing states stand
+                // still (zero velocity) and handle their own facing. The overhead jumps were pure navigation, so
+                // SF4's jump-up pathing replaces them (no attack to preserve, unlike the melee Hollows).
+                tsorcRevampAIs.FighterAI(NPC, 2f, 0.08f, 0.1f, canPounce: false, canDodgeroll: false);
 
+                // Pre-emptive block: chance to raise the greatshield when a threat (incoming shot / close player) is detected.
+                tsorcRevampAIs.TryPreemptiveBlock(NPC, globalNPC);
 
-                if (AI_Timer == 0)
+                // Reactive block (pre-emptive / on-hit) → raise the greatshield. (Replaces the old far-range autonomous
+                // shield-timer metronome, which accumulated near the player and turtled on a fixed cycle.)
+                if (globalNPC.ReactiveBlockTimer > 0 && grounded)
                 {
-                    NPC.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
+                    AI_Timer_Shielding = 311;
+                    AI_State = State_Shielding;
                 }
 
-                if (NPC.velocity.X == 0)
-                {
-                    AI_Timer++;
-                    if (AI_Timer > 120 && NPC.velocity.Y == 0)
-                    {
-                        NPC.direction *= -1;
-                        NPC.spriteDirection = NPC.direction;
-                        AI_Timer = 50;
-                    }
-                }
-
-                if (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                {
-                    AI_Timer = 0;
-                }
-
-                #endregion
-
-                #region Melee Movement & Drop through platforms - but also sometimes the world :(
-
-                if (Math.Abs(NPC.velocity.X) > top_speed && NPC.velocity.Y == 0)
-                {
-                    NPC.velocity *= (1f - braking_power); //breaking
-                }
-
-                else
-                {
-                    NPC.velocity.X += NPC.direction * acceleration; //accelerating
-                }
-
-
-                if (NPC.direction == 1) //breaking power after turning, to turn fast or to "slip"
-                {
-                    if (NPC.velocity.X > -top_speed)
-                    {
-                        NPC.velocity.X += 0.085f;
-                    }
-                }
-
-                else
-                {
-                    if (NPC.velocity.X < top_speed)
-                    {
-                        NPC.velocity.X += -0.085f;
-                    }
-                }
-
-                //Speed limits
-                if (NPC.velocity.X > 4f) //hard limit of 10f
-                {
-                    NPC.velocity.X = 4f;
-                }
-
-                if (NPC.velocity.X < -4f)
-                {
-                    NPC.velocity.X = -4f;
-                }
-
-
-                if (Math.Abs(NPC.velocity.X) > 4f || Math.Abs(NPC.velocity.Y) > 0.1f) //If moving at high speed.X or vertically, become knockback immune
-                {
-                    NPC.knockBackResist = 0;
-                }
-                else
-                {
-                    NPC.knockBackResist = 0.1f; //aparently it doesn't default back? 
-                }
-
-
-                if (Main.tile[(int)NPC.position.X / 16, y_below_feet].TileType == TileID.Platforms && Main.tile[(int)(NPC.position.X + (float)NPC.width) / 16, y_below_feet].TileType == TileID.Platforms && NPC.position.Y < (player.position.Y - 4 * 16))
-                {
-                    NPC.noTileCollide = true;
-                }
-                else { NPC.noTileCollide = false; }
-
-                #endregion
-
-                #region New Tile()s, jumping
-                if (standing_on_solid_tile)  //  if standing on solid tile
-                {
-                    if (NPC.position.Y > player.position.Y + 3 * 16 && NPC.position.Y < player.position.Y + 8 * 16 && Math.Abs(NPC.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                    {
-                        NPC.velocity.Y = -8f; // jump with power 8 if directly under player
-                        NPC.netUpdate = true;
-                    }
-
-                    if (NPC.position.Y >= player.position.Y + 8 * 16 && Math.Abs(NPC.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                    {
-                        NPC.velocity.Y = -9.5f; // jump with power 9.5 if directly under player
-                        NPC.netUpdate = true;
-                    }
-
-
-                    if (Main.tile[x_in_front, y_above_feet] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet - 1] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet - 1].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet - 2] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet - 2].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet - 3] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet - 3].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet + 1] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet + 1].ClearTile();
-                    }
-                    //  create? 2 other tiles farther in front
-                    if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
-                    {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
-                    {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
-                    }
-
-                    else // standing on solid tile but not in front of a passable door
-                    {
-                        if ((NPC.velocity.X < 0f && NPC.spriteDirection == -1) || (NPC.velocity.X > 0f && NPC.spriteDirection == 1))
-                        {  //  moving forward
-                            if (Main.tile[x_in_front, y_above_feet - 2].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].TileType])
-                            { // 3 blocks above ground level(head height) blocked
-                                if (Main.tile[x_in_front, y_above_feet - 3].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].TileType])
-                                { // 4 blocks above ground level(over head) blocked
-                                    NPC.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
-                                    NPC.netUpdate = true;
-                                }
-                                else
-                                {
-                                    NPC.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
-                                    NPC.netUpdate = true;
-                                }
-                            } // for everything else, head height clear:
-                            else if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].TileType])
-                            { // 2 blocks above ground level(mid body height) blocked
-                                NPC.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
-                                NPC.netUpdate = true;
-                            }
-                            else if (Main.tile[x_in_front, y_above_feet].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].TileType])
-                            { // 1 block above ground level(foot height) blocked
-                                NPC.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
-                                NPC.netUpdate = true;
-                            }
-                            else if (NPC.directionY < 0 && (!Main.tile[x_in_front, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].TileType]) && (!Main.tile[x_in_front + NPC.direction, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front + NPC.direction, y_above_feet + 1].TileType]))
-                            { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
-                                NPC.velocity.Y = -8f; // jump with power 8
-                                NPC.velocity.X = NPC.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
-                                NPC.netUpdate = true;
-                            }
-
-                        } // END moving forward, still: standing on solid tile but not in front of a passable door
-                    }
-                }
-
-                #endregion
-
-
-                if (NPC.Distance(player.Center) < 250 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                {
-                    AI_Timer_Shielding++;
-                }
-
-                if (NPC.Distance(player.Center) < 95 && standing_on_solid_tile && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+                // Close in → raise the greatshield and thrust (the melee attack approach, NOT a defensive metronome).
+                if (playerMeleeLevel && NPC.Distance(player.Center) < 95 && grounded)
                 {
                     AI_Timer_Shielding = 300;
                     AI_State = State_Shielding;
                 }
 
-                if (AI_Timer_Shielding >= 300 && standing_on_solid_tile)
-                {
-                    AI_State = State_Shielding;
-                }
-
-                if (AI_Timer_Attacking >= 420 && NPC.Distance(player.Center) > 7f * 16 && NPC.Distance(player.Center) < 20f * 16 && standing_on_solid_tile && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+                if (AI_Timer_Attacking >= 420 && NPC.Distance(player.Center) > 7f * 16 && NPC.Distance(player.Center) < 20f * 16 && grounded && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
                 {
                     AI_State = State_Throwing;
                 }
@@ -427,9 +272,17 @@ namespace tsorcRevamp.NPCs.Enemies
                         else { NPC.velocity.X += 0.15f; }
                     }
 
+                    // Plant behind the greatshield while guarding.
                     if (AI_Timer_Shielding > 310)
                     {
-                        NPC.velocity.X = 0;
+                        if (globalNPC.ShieldedWalkSpeed > 0f)
+                        {
+                            NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+                            NPC.spriteDirection = NPC.direction;
+                            NPC.velocity.X = globalNPC.ShieldedWalkSpeed * NPC.direction;
+                        }
+                        else
+                            NPC.velocity.X = 0;
                     }
 
                     if (AI_Timer_Shielding > 500)
@@ -439,12 +292,12 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                if (AI_Timer_Shielding > 310 && Math.Abs(NPC.Center.X - player.Center.X) <= 6.5f * 16 && Math.Abs(NPC.Center.Y - player.Center.Y) <= 6.5f * 16 && standing_on_solid_tile && NPC.velocity.Y == 0 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+                if (AI_Timer_Shielding > 310 && Math.Abs(NPC.Center.X - player.Center.X) <= 6.5f * 16 && Math.Abs(NPC.Center.Y - player.Center.Y) <= 6.5f * 16 && grounded && NPC.velocity.Y == 0 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
                 {
                     AI_State = State_Thrusting;
                 }
 
-                if (AI_Timer_Shielding > 310 && AI_Timer_Attacking >= 420 && Math.Abs(NPC.Center.X - player.Center.X) > 6.5f * 16 && Math.Abs(NPC.Center.Y - player.Center.Y) > 6.5f * 16 && standing_on_solid_tile && NPC.velocity.Y == 0 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+                if (AI_Timer_Shielding > 310 && AI_Timer_Attacking >= 420 && Math.Abs(NPC.Center.X - player.Center.X) > 6.5f * 16 && Math.Abs(NPC.Center.Y - player.Center.Y) > 6.5f * 16 && grounded && NPC.velocity.Y == 0 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
                 {
                     AI_State = State_Throwing;
                 }
@@ -556,6 +409,12 @@ namespace tsorcRevamp.NPCs.Enemies
                     AI_Timer_Shielding = 400;
                 }
 
+                if (AI_Timer == 35)
+                {
+                    // White telegraph flash 25 ticks before the spear release (hyper-armored from here).
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.White));
+                }
+
                 if (AI_Timer == 60)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
@@ -583,6 +442,15 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
+        // IStaggerable: a poise break cancels any in-progress attack and returns to neutral pursuit.
+        public void OnStagger(NPC npc)
+        {
+            AI_State = State_Pursuing;
+            AI_Timer = 0f;
+            AI_Timer_Shielding = 0f;
+            AI_Timer_Attacking = 60f; // delay the next throw windup
+        }
+
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Throwing)
@@ -597,7 +465,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (player.position.X > NPC.position.X)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position); //Play dig
-                        modifiers.SourceDamage.Flat -= 15;
+                        modifiers.SourceDamage.Flat -= 30;
                         if (NPC.ai[2] > 350)
                         {
                             NPC.ai[2] -= 20;
@@ -609,7 +477,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (player.position.X < NPC.position.X)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position); //Play dig
-                        modifiers.SourceDamage.Flat -= 15;
+                        modifiers.SourceDamage.Flat -= 30;
                         if (NPC.ai[2] > 350)
                         {
                             NPC.ai[2] -= 20;
@@ -666,7 +534,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
 
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 15;
+                            modifiers.SourceDamage.Flat -= 30;
                             modifiers.Knockback *= 0.2f;
 
                             if (NPC.ai[1] < 370)
@@ -683,7 +551,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         else if (direction == -1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 15;
+                            modifiers.SourceDamage.Flat -= 30;
                             modifiers.Knockback *= 0.1f;
 
                             if (NPC.ai[1] < 380)
@@ -703,7 +571,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 15;
+                            modifiers.SourceDamage.Flat -= 30;
                             modifiers.Knockback *= 0.2f;
 
                             if (NPC.ai[1] < 370)
@@ -719,7 +587,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         else if (direction == 1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
-                            modifiers.SourceDamage.Flat -= 15;
+                            modifiers.SourceDamage.Flat -= 30;
 
                             modifiers.Knockback *= 0.1f;
                             if (NPC.ai[1] < 370)
@@ -888,7 +756,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowWarrior_Shield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 10, 0, shieldFrame);
-            if ((AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Throwing) && NPC.velocity.X == 0)
+            if (AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Throwing) // greatshield shows while advancing too
             {
                 if (NPC.spriteDirection == 1)
                 {

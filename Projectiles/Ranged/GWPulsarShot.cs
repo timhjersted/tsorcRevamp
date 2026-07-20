@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles
             if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 95)
             {
 
-                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 420);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 420);
                 Projectile.timeLeft = 2;
 
             }
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 120, 30);
                 }*/
-                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 300);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 300);
 
                 Projectile.timeLeft = 0;
             }

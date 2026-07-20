@@ -31,9 +31,17 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.rotation += 3f;
+            float scale = MathHelper.Lerp(1f, 1.2f, 1f - Projectile.timeLeft / 60f);
+            Projectile.scale = scale;
+            Projectile.Resize((int)(16 * scale), (int)(16 * scale));
 
-            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.Chartreuse, 3.0f);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.Chartreuse, 3.0f * scale);
             Main.dust[dust].noGravity = true;
+        }
+
+        public override bool PreKill(int timeLeft)
+        {
+            return false;
         }
 
         /*

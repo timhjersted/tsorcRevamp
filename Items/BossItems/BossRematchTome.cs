@@ -20,7 +20,9 @@ namespace tsorcRevamp.Items.BossItems
             Item.height = 30;
             Item.useTime = 1;
             Item.useAnimation = 1;
-            Item.UseSound = SoundID.Item11;
+            // Was SoundID.Item11 (gunshot) — wildly out of theme for an interface-opening tome.
+            // SoundID.MenuOpen is the vanilla "interface opens" chime, the closest match to a book opening.
+            Item.UseSound = SoundID.MenuOpen;
             Item.useTurn = true;
             Item.noMelee = true;
             Item.value = 10000;
@@ -47,7 +49,11 @@ namespace tsorcRevamp.Items.BossItems
             {
                 return false;
             }
-            if (tsorcRevampWorld.NewSlain == null || (tsorcRevampWorld.NewSlain.Keys.Count == 0 && !(ModContent.GetInstance<tsorcRevampConfig>().DebugMode || player.HasItem(ModContent.ItemType<DebugTome>()))))
+            // The menu opens regardless of whether the player has defeated any bosses — fresh
+            // characters can still browse the boss list to read Pre-hardmode "Where to find:" hints
+            // (undefeated bosses render as question marks). NewSlain null-guard remains because the
+            // menu reads from that dictionary while rendering each tier.
+            if (tsorcRevampWorld.NewSlain == null)
             {
                 UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.None"));
                 return false;

@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == NPCID.LittleEater
                 || tsorcRevamp.EaterOfWorldsSegments.Contains(target.type)
                 || tsorcRevamp.DevourerSegments.Contains(target.type)
-                || target.type == ModContent.NPCType<NPCs.Enemies.BasiliskShifter>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.Basilisk.BasiliskShifter>()
                 )
             {
                 modifiers.SourceDamage *= 3;
@@ -73,11 +73,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 modifiers.FlatBonusDamage += 500000000f;
                 modifiers.SetCrit(); //let it crit!
             }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.BasiliskWalker>())
+            if (target.type == ModContent.NPCType<NPCs.Enemies.Basilisk.BasiliskWalker>())
             {
                 modifiers.SourceDamage *= 2;
             }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BasiliskHunter>())
+            if (target.type == ModContent.NPCType<NPCs.Enemies.Basilisk.BasiliskHunter>())
             {
                 modifiers.SourceDamage *= 11;
             }

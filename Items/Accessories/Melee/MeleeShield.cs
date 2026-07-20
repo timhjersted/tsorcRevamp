@@ -33,15 +33,21 @@ namespace tsorcRevamp.Items.Accessories.Melee
         }
         public override void UpdateEquip(Player player)
         {
+            // Utility immunities stay passive in both modes (and in either slot).
             player.buffImmune[BuffID.Burning] = true;
-            player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
             player.noKnockback = true;
             player.fireWalk = true;
-            player.endurance += DamageReduction / 100f;
-            player.GetDamage(DamageClass.Magic) -= NonMeleeBadDmgMult / 100;
-            player.GetDamage(DamageClass.Ranged) -= NonMeleeBadDmgMult / 100;
-            player.GetDamage(DamageClass.Summon) -= NonMeleeBadDmgMult / 100;
-            player.GetDamage(DamageClass.Throwing) -= NonMeleeBadDmgMult / 100;
+            // Under Active Shields Revamp the % DR, the move-speed penalty, AND the melee-only damage penalties
+            // are all dropped (active blocking replaces them, and dropping the penalty lets other classes use it).
+            if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))
+            {
+                player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
+                player.endurance += DamageReduction / 100f;
+                player.GetDamage(DamageClass.Magic) -= NonMeleeBadDmgMult / 100;
+                player.GetDamage(DamageClass.Ranged) -= NonMeleeBadDmgMult / 100;
+                player.GetDamage(DamageClass.Summon) -= NonMeleeBadDmgMult / 100;
+                player.GetDamage(DamageClass.Throwing) -= NonMeleeBadDmgMult / 100;
+            }
         }
         public override bool CanEquipAccessory(Player player, int slot, bool modded)
         {
@@ -57,6 +63,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         }
     }
 
+    [AutoloadEquip(EquipType.Shield)]
     public class GazingShield : MeleeShield
     {
         public override float DamageReduction => 6f;
@@ -77,12 +84,15 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
+            // "Watchful" — the gazing eye reveals nearby enemies (Hunter effect). Passive whenever equipped,
+            // in either mode and either slot — not tied to raising the shield.
+            player.detectCreature = true;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MythrilBar, 3);
+            recipe.AddIngredient(ItemID.CobaltBar, 10);
             //recipe.AddIngredient(ItemID.SoulofLight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
@@ -93,6 +103,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
     }
 
+    [AutoloadEquip(EquipType.Shield)]
     public class BeholderShield : MeleeShield
     {
         public override float DamageReduction => 8f;
@@ -127,6 +138,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         }
     }
 
+    [AutoloadEquip(EquipType.Shield)]
     public class BeholderShield2 : MeleeShield
     {
         public override float DamageReduction => 10f;
@@ -141,7 +153,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             base.SetDefaults();
             Item.defense = Defense;
             Item.value = PriceByRarity.Cyan_9;
-            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.rare = ItemRarityID.Purple;
         }
 
         public override void UpdateEquip(Player player)
@@ -164,6 +176,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         }
     }
 
+    [AutoloadEquip(EquipType.Shield)]
     public class EnchantedBeholderShield2 : MeleeShield
     {
         public override float DamageReduction => 12f;

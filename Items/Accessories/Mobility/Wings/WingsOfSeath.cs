@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items.Accessories.Mobility.Wings
 {
@@ -58,6 +59,17 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
                 speed = 9f;
                 acceleration = 1f;
             }
+            if (SoulsModeMobility.Enabled(player))
+            {
+                speed = SoulsModeMobility.WingsOfSeathFlightSpeed;
+                acceleration = SoulsModeMobility.WingsOfSeathFlightAcceleration;
+                if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
+                {
+                    speed = SoulsModeMobility.WingsOfSeathHoverFlightSpeed;
+                    acceleration = SoulsModeMobility.WingsOfSeathHoverFlightAcceleration;
+                }
+            }
+            SoulsModeMobility.ApplyFlightCap(player, ref speed, ref acceleration);
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
@@ -69,11 +81,15 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
                 tooltips.RemoveAt(ttindex);
                 tooltips.Insert(ttindex, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.WingsOfSeath.Keybind1") + WingsSpeedToggleString + Language.GetTextValue("Mods.tsorcRevamp.Items.WingsOfSeath.Keybind2")));
             }
+            if (SoulsModeMobility.Enabled(Main.LocalPlayer))
+            {
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitWingsOfSeath", SoulsModeMobility.WingsOfSeathRunSpeed, SoulsModeMobility.WingsOfSeathFlightSpeed, SoulsModeMobility.WingsOfSeathHoverFlightSpeed, SoulsModeMobility.WingsOfSeathFlightTime / 60)));
+            }
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 3;
+            player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.WingsOfSeathLevel;
             if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
             {
                 player.velocity.Y = 1f;
@@ -87,7 +103,70 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
                 player.maxFallSpeed += 15f;
             }
 
-            player.wingTime = 999999999;
+            bool restricted = false;
+            if (player.mount.Active || player.vortexStealthActive)
+            {
+                restricted = true;
+            }
+
+            if (!restricted)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.SupersonicWingsLevel;
+
+                // Fall faster if player holds down
+                if (player.TryingToHoverDown && !player.controlJump &&
+                    !ModContent.GetInstance<tsorcRevampConfig>().DisableModWingsFallControlDuringFlight)
+                {
+                    player.gravity += 0.15f;
+                    player.maxFallSpeed += 15f;
+                }
+
+
+                /** W1K's original code
+                if (player.controlLeft) {
+                    if (player.velocity.X > -3) player.velocity.X -= (float)(player.moveSpeed - 1f) / 10;
+                    if (player.velocity.X < -3 && player.velocity.X > -6 * player.moveSpeed) {
+                        if (player.velocity.Y != 0) player.velocity.X -= 0.1f;
+                        else player.velocity.X -= 0.2f;
+                        player.velocity.X -= 0.02f + ((player.moveSpeed - 1f) / 10);
+                    }
+                }
+                if (player.controlRight) {
+                    if (player.velocity.X < 3) player.velocity.X += (float)(player.moveSpeed - 1f) / 10;
+                    if (player.velocity.X > 3 && player.velocity.X < 6 * player.moveSpeed) {
+                        if (player.velocity.Y != 0) player.velocity.X += 0.1f;
+                        else player.velocity.X += 0.2f;
+                        player.velocity.X += 0.02f + ((player.moveSpeed - 1f) / 10);
+                    }
+                }**/
+
+                if (player.velocity.X > 6 || player.velocity.X < -6)
+                {
+                    player.waterWalk = true;
+                    int sonicDust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 16, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, default, 2f);
+                    Main.dust[sonicDust].noGravity = true;
+                    Main.dust[sonicDust].noLight = false;
+
+                }
+            }
+
+            if (SoulsModeMobility.Enabled(player))
+            {
+                player.wingTimeMax = SoulsModeMobility.WingsOfSeathFlightTime;
+                if (player.wingTime > SoulsModeMobility.WingsOfSeathFlightTime)
+                {
+                    player.wingTime = SoulsModeMobility.WingsOfSeathFlightTime;
+                }
+                player.rocketTimeMax = SoulsModeMobility.WingsOfSeathFlightTime;
+                if (player.rocketTime > SoulsModeMobility.WingsOfSeathFlightTime)
+                {
+                    player.rocketTime = SoulsModeMobility.WingsOfSeathFlightTime;
+                }
+            }
+            else
+            {
+                player.wingTime = 999999999;
+            }
             //player.GetWingStats(22);
             player.jumpBoost = true;
             player.jumpSpeedBoost = 1.4f;
@@ -96,6 +175,11 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             player.noKnockback = true;
             player.buffImmune[BuffID.Darkness] = true;
             player.buffImmune[BuffID.OnFire] = true;
+            player.buffImmune[BuffID.CursedInferno] = true;
+            player.buffImmune[BuffID.Frostburn] = true;
+            player.buffImmune[BuffID.Burning] = true;
+            player.buffImmune[BuffID.Ichor] = true;
+            player.buffImmune[BuffID.ShadowFlame] = true;
             player.nightVision = true;
             player.AddBuff(BuffID.Hunter, 1);
 
@@ -110,6 +194,11 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
                     player.velocity.X *= 0.95f;
                     player.slowFall = true;
                 }
+            }
+
+            if (Slow)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().SlowfallWingActive = true;
             }
         }
     }

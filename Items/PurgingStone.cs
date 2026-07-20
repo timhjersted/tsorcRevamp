@@ -34,8 +34,7 @@ namespace tsorcRevamp.Items
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.StoneBlock, 1);
-            recipe.AddIngredient(ModContent.ItemType<Humanity>(), 2);
-            recipe.AddIngredient(ModContent.ItemType<GreenBlossom>(), 2);
+            recipe.AddIngredient(ModContent.ItemType<Humanity>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);
             recipe.AddTile(TileID.DemonAltar);
 

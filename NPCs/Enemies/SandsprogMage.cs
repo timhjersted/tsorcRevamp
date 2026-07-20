@@ -36,6 +36,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
             tsorcRevampGlobalNPC sprogletGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             sprogletGlobalNPC.Cowardice = 0.1f; //low cowardice
+            sprogletGlobalNPC.PatrolMode = NPCs.PatrolMode.Wander; // Step 6: roam when it gives up
+            sprogletGlobalNPC.NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
+            sprogletGlobalNPC.CanUseRopes = true;
 
 
             if (Main.hardMode)

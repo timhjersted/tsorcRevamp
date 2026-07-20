@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -59,6 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.rarity = 32;
             NPC.boss = true;
             AnimationType = NPCID.PossessedArmor;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement (boss)
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Witchking.DespawnHandler"), Color.Purple, DustID.PurpleTorch);
 
             // Allows the witchking to properly spawn in the arena
@@ -66,6 +68,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             UsefulFunctions.AddAttack(NPC, TIME_BEFORE_FIREBALL, ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 75, 8, SoundID.Item20);
             UsefulFunctions.AddAttack(NPC, TIME_BEFORE_STORMBALL, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 95, 0, SoundID.Item100, needsLineOfSight: false);
+        }
+
+        // Witchking drops the Covenant of Artorias, so it's fitting he's the one who curses you with the Abyss
+        // in the first place - applied to everyone present at the start of the fight, lasting the whole fight
+        // and then some (30 minutes) rather than tied to a specific attack.
+        public override void OnSpawn(IEntitySource source)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    Main.player[i].AddBuff(ModContent.BuffType<Abyss>(), 30 * 60 * 60);
+                }
+            }
         }
 
         int chargeTelegraphTimer = 0;
@@ -270,7 +291,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if ((customspawn1 < 36) && Main.rand.NextBool(20 + (int)lifeThreshold / 2))
                 { //was 2 and 900
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                     NPC.ai[0] = 20 - Main.rand.Next(180); //was 80

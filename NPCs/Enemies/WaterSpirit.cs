@@ -36,6 +36,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 2000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.WaterSpiritBanner>();
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.HasGhostAfterimages = true;
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

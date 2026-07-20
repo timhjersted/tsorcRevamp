@@ -41,6 +41,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 0;
             }
             UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
+
+            // Step 6: inexorable stalker — investigate last-known position to keep creeping after the player.
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 60; // Phase 2: SmartFighter4AI movement
         }
         // (O_O;) //I haven't played that game so wtf is this
         int throwingKnifeDamage = 9999;

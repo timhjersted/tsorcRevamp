@@ -15,6 +15,18 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
         public override float HitboxSize => 1;
         public override float Scale => 1;
         public override int dustID => DustID.Blood;
+        bool hasHealed = false;
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[Projectile.owner];
+            if (Main.rand.NextBool(6) && !hasHealed)
+            {
+                player.statLife += HiRyuuSpear.HealOnHit;
+                player.HealEffect(HiRyuuSpear.HealOnHit, true);
+                hasHealed = true;
+            }
+        }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             //if(target.noGravity || !Collision.SolidCollision(target.position, target.width, target.height))

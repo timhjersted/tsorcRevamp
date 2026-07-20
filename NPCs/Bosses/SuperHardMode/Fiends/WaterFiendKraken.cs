@@ -249,7 +249,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             {
 
                 //Don't start a new flood if it's below the normal water line, to avoid fucking with it as much as possible
-                if (radius != 0 || ((NPC.Center.Y / 16) < 1713 && !UsefulFunctions.IsTileReallySolid(NPC.Center / 16)))
+                //(water-line Y is legacy 2000-space; MapTileY shifts it on the expanded world)
+                if (radius != 0 || ((NPC.Center.Y / 16) < ExpandedWorldTransform.MapTileY(1820, 1713) && !UsefulFunctions.IsTileReallySolid(NPC.Center / 16)))
                 {
                     radius++;
                     FloodArena();
@@ -439,7 +440,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.velocity = Vector2.Clamp(NPC.velocity, -krakenMaxSpeed, krakenMaxSpeed);
         }
 
-        Vector2 ArenaCenter = new Vector2(1820 * 16, 1702 * 16);
+        //Legacy 2000-space pixel coord; property so the expanded-world transform applies on every read.
+        Vector2 ArenaCenter => ExpandedWorldTransform.MapWorld(new Vector2(1820 * 16, 1702 * 16));
 
         float cursedRadius = 1400;
         private void CursedBarrage()
@@ -508,7 +510,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         {
 
             //Don't flood anything if outside of adventure mode or far from the arena center
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || NPC.Center.Y < 1660 * 16 || NPC.Center.Y > 1744 * 16 || NPC.Center.X < 1560 * 16 || NPC.Center.X > 2011 * 16)
+            //(Y bounds are legacy 2000-space and get mapped on the expanded world; X bounds are invariant)
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || NPC.Center.Y < ExpandedWorldTransform.MapTileY(1820, 1660) * 16 || NPC.Center.Y > ExpandedWorldTransform.MapTileY(1820, 1744) * 16 || NPC.Center.X < 1560 * 16 || NPC.Center.X > 2011 * 16)
             {
                 return;
             }

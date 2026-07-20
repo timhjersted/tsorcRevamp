@@ -50,6 +50,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.boss = true;
             NPC.rarity =14;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.AncientDemon.DespawnHandler"), Color.Gold, DustID.GoldFlame);
+            // Step 6 boss lever: blink aggressively the moment it loses LOS (keeps arena pressure).
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportStyle = NPCs.TeleportStyle.Aggressive;
         }
 
         NPCDespawnHandler despawnHandler;

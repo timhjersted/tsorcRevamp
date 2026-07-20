@@ -34,6 +34,13 @@
 "style": 1
 }
 {
+  "text": "- 诺拉海 - --NEWLINE  --NEWLINE 西方的浩瀚海域被称作风暴、怒涛与海盗横行之海。 --NEWLINE  --NEWLINE 它以凶险著称，唯有少数愚者为探寻新大陆而冒险前往。 --NEWLINE  --NEWLINE 望着地平线上那片苍茫，你想起所有掩藏在彼方的国度与文明， --NEWLINE  --NEWLINE 不禁思索：那片大陆是否也如这片土地一般，早已沦为废墟？",
+  "tileX": 185,
+  "tileY": 854,
+  "textWidth": 440,
+  "style": 1
+}
+{
   "text": "一个深渊中的声音对你耳语： --NEWLINE   --NEWLINE \u0022巫王和亚尔特留斯被特殊的魔法护盾包裹，唯有巴罗之刃…\u0022",
   "tileX": 216,
   "tileY": 1924,
@@ -48,7 +55,7 @@
   "style": 1
 }
 {
-  "text": "- 你找到了 ??? - --NEWLINE   --NEWLINE Miakoda：\u0022抱歉瑞德，我不认识这地方，这的科技和环境似乎不属于我们的世界\u0022",
+  "text": "- 你找到了天界废墟的月亮密室 - --NEWLINE   --NEWLINE Miakoda：\u0022抱歉瑞德，我不认识这地方，这的科技和环境似乎不属于我们的世界\u0022",
   "tileX": 229,
   "tileY": 152,
   "textWidth": 600,
@@ -153,13 +160,6 @@
   "style": 1
 }
 {
-  "text": "ABSOLUTE CINEMA",
-  "tileX": 444,
-  "tileY": 1178,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "你感觉到一股强大的力量从这扇门后面涌出 --NEWLINE   --NEWLINE \u0022我需要神圣钻头……\u0022 --NEWLINE   --NEWLINE 直觉告诉你打开这扇门迫在眉睫",
   "tileX": 459,
   "tileY": 1453,
@@ -216,7 +216,14 @@
   "style": 1
 }
 {
-  "text": "你来到一个神秘的圣所，感受到内心深处的平静。这也许是在你父母去世、失去妻子后第一次有这种感觉。 --NEWLINE   --NEWLINE 一种伟大的爱的感觉压倒了你，当你沉思时，思维裹挟着巨大的悲怆。 --NEWLINE   --NEWLINE 你决定在这里多呆一会儿，反思你的旅程……并鼓起勇气走上前方的道路。",
+  "text": "这些遗迹的古代住民被称为诺拉尼亚人， --NEWLINE   --NEWLINE 一个栖息于热带、崇拜海神诺拉的族群，关于他们你早已听过诸多传说。 --NEWLINE   --NEWLINE 无人真正知晓这个文明如何湮灭，但它如今已成为一片蕴藏无尽财宝之地， --NEWLINE   --NEWLINE 四海而来的海盗们纷至沓登陆，洗劫着这片残垣断壁…",
+  "tileX": 601,
+  "tileY": 860,
+  "textWidth": 530,
+  "style": 1
+}
+{
+  "text": "你偶然来到一处神秘圣所，这里似乎是为纪念沙漠的古代伟大之王埃伦加德而立。 --NEWLINE   --NEWLINE 你感受到内心深处的平静。这也许是在你父母去世、失去妻子后第一次有这种感觉。 --NEWLINE   --NEWLINE 一种伟大的爱的感觉压倒了你，当你沉思时，思维裹挟着巨大的悲怆。 --NEWLINE   --NEWLINE 你决定在这里多呆一会儿，反思你的旅程……并鼓起勇气走上前方的道路。",
   "tileX": 611,
   "tileY": 1559,
   "textWidth": 740,
@@ -293,7 +300,7 @@
   "style": 1
 }
 {
-  "text": " - 你发现了魔古尔遗迹 - --NEWLINE   --NEWLINE 这个世界腐败和黑暗魔法的源头",
+  "text": " - 你发现了魔古尔遗迹 - --NEWLINE   --NEWLINE 这个世界腐败和黑暗魔法的中心",
   "tileX": 1488,
   "tileY": 1914,
   "textWidth": 320,
@@ -406,7 +413,7 @@
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022瑞德，我听说过很多关于暗影神庙的传言。 --NEWLINE   --NEWLINE 它以其迷宫般的设计而闻名，一路延伸到神庙的范围之外， --NEWLINE   --NEWLINE 连接了岩浆猩红洞穴、巨大的地下湖和神圣地形的尖刺裂缝…\u0022",
+  "text": "Miakoda：\u0022瑞德，我听说过很多关于暗影神庙的传言。 --NEWLINE   --NEWLINE 它以其迷宫般的设计而闻名，一路延伸到神庙的范围之外， --NEWLINE   --NEWLINE 连接了岩浆猩红洞穴、地下河道和腐化地形的尖刺裂缝…\u0022",
   "tileX": 1900,
   "tileY": 1121,
   "textWidth": 450,
@@ -488,6 +495,13 @@
   "tileX": 2265,
   "tileY": 1183,
   "textWidth": 410,
+  "style": 1
+}
+{
+  "text": "瑞德：\u0022Miakoda，这些浮空岛...这些天界柱...它们从何而来？又为何悬浮于世界之上？\u0022 --NEWLINE   --NEWLINE Miakoda: \u0022很久以前，阿卓迪斯试图控制它们的力量。 --NEWLINE   --NEWLINE 为了不让其他人染指这些力量，他将这些土地从大地上撕裂，将它们升至天空。 --NEWLINE   --NEWLINE 他将每根柱子封印起来，而封印由他自己的生命所锁定。 --NEWLINE   --NEWLINE 只要阿卓迪斯还活着，这些柱子就将永远被封印...\u0022",
+  "tileX": 2364,
+  "tileY": 384,
+  "textWidth": 580,
   "style": 1
 }
 {
@@ -619,7 +633,7 @@
 {
   "text": "手里拿着一个暗影鳞片，你感觉到暗影盔甲的升级形态具有强大的能力，在前方的丛林中会很有用。 --NEWLINE   --NEWLINE \u0022啊，这房子里有我制作暗影盔甲的工具。\u0022",
   "tileX": 3188,
-  "tileY": 1096,
+  "tileY": 1095,
   "textWidth": 720,
   "style": 1
 }
@@ -876,6 +890,13 @@
   "style": 1
 }
 {
+  "text": "望着洞窟中这三簇跳动的火光，你不禁思索它们究竟意味着什么",
+  "tileX": 3768,
+  "tileY": 1306,
+  "textWidth": 460,
+  "style": 1
+}
+{
   "text": "梦幻洞穴由四大界域组成，每个界域都有独特的色彩与建筑风格。 --NEWLINE   --NEWLINE 发光蘑菇会与色彩产生奇妙反应，而洞穴中的微光是一种能够反射出所有颜色的特殊液体， --NEWLINE   --NEWLINE 它们共同造就了这些色彩斑斓、光怪陆离的蘑菇洞穴，令人目眩神迷……",
   "tileX": 3801,
   "tileY": 1545,
@@ -1045,7 +1066,7 @@
 }
 {
   "text": "瑞德：\u0022那是夺心魔王阿卓迪斯。他终于复仇了…他认为我已经死了…\u0022 --NEWLINE   --NEWLINE 你停顿了一下…当你意识到你刚刚做出的选择时，你沉默了。 --NEWLINE   --NEWLINE \u0022我已经收集了我的盔甲、武器和食物，很快就要离开了。\u0022 --NEWLINE   --NEWLINE 亚伦：\u0022好吧……我明白了。我祝你好运。这似乎不可能，但……\u0022 --NEWLINE   --NEWLINE 亚伦指着床上的绿色发光头骨。 --NEWLINE   --NEWLINE \u0022拿着这个！这是一块曾庇护我的火山石。 --NEWLINE   --NEWLINE 它有着强大的魔力，当你遇到困难时，希望它会给你带来好运。\u0022",
-  "tileX": 4089,
+  "tileX": 4080,
   "tileY": 713,
   "textWidth": 560,
   "style": 1
@@ -1136,8 +1157,8 @@
 }
 {
   "text": "\u0022是时候出发了…\u0022",
-  "tileX": 4189,
-  "tileY": 679,
+  "tileX": 4185,
+  "tileY": 655,
   "textWidth": 150,
   "style": 1
 }
@@ -1171,8 +1192,8 @@
 }
 {
   "text": "\u0022看起来我可以安全地踩在灰烬上而不被烧伤。\u0022 --NEWLINE   --NEWLINE Miakoda：\u0022众所周知这些废墟曾经的居民用黑曜石的力量来保护自己。 --NEWLINE   --NEWLINE 如果我们仔细寻找一番，或许能找到一块护符。\u0022",
-  "tileX": 4219,
-  "tileY": 1868,
+  "tileX": 4399,
+  "tileY": 1880,
   "textWidth": 530,
   "style": 1
 }
@@ -1184,10 +1205,10 @@
   "style": 1
 }
 {
-  "text": "尝试半空中使用翻滚， --NEWLINE   --NEWLINE 以到达更远的距离，或在跳跃后躲避攻击。",
-  "tileX": 4227,
-  "tileY": 1178,
-  "textWidth": 320,
+  "text": "Miakoda: \u0022这条通往火焰神庙的道路被堵住了，寻找一条新的到达城市另一边的道路。\u0022",
+  "tileX": 4226,
+  "tileY": 1844,
+  "textWidth": 660,
   "style": 1
 }
 {
@@ -1199,9 +1220,16 @@
 }
 {
   "text": "博迪：\u0022如果你需要食物或物品，请随便取用。 --NEWLINE   --NEWLINE 顺便一提，村庄西边的山洞同样值得探索。\u0022 --NEWLINE   --NEWLINE 瑞德：\u0022谢谢你，兄弟。我会想念你的。\u0022",
-  "tileX": 4234,
-  "tileY": 695,
+  "tileX": 4225,
+  "tileY": 699,
   "textWidth": 330,
+  "style": 1
+}
+{
+  "text": "尝试半空中使用翻滚， --NEWLINE   --NEWLINE 以到达更远的距离，或在跳跃后躲避攻击。",
+  "tileX": 4233,
+  "tileY": 1889,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -1227,8 +1255,8 @@
 }
 {
   "text": "当博迪看到你穿过敞开的门时，他愣住了。 --NEWLINE   --NEWLINE 然后高兴地喊道：\u0022我超，你还活着！我以为你死了！\u0022 --NEWLINE   --NEWLINE 你震惊地问：\u0022但以利亚和我们的父母…还有亚莎呢？他们还活着吗？\u0022 --NEWLINE   --NEWLINE \u0022噢，天哪，瑞德，不。太可怕了。他们杀了我们的父母。 --NEWLINE   --NEWLINE 我不得不把你和他们一起埋葬，你当时已经停止呼吸…\u0022",
-  "tileX": 4249,
-  "tileY": 709,
+  "tileX": 4248,
+  "tileY": 713,
   "textWidth": 520,
   "style": 1
 }
@@ -1338,10 +1366,10 @@
   "style": 1,
 }
 {
-  "text": "太阳战士索拉尔的瞭望塔 --NEWLINE   --NEWLINE 索拉尔在向你用赞美太阳的方式打招呼后， --NEWLINE   --NEWLINE 他问你是否和Jade说话了，Jade是村外瞭望塔的女人。 --NEWLINE   --NEWLINE \u0022去和她谈谈吧，我的朋友！ --NEWLINE   --NEWLINE 她有很多重要的事情要告诉你。也许在一些事情还能帮助你。\u0022 --NEWLINE   --NEWLINE \u0022接下来……\u0022他喃喃自语，然后咆哮道：\u0022为了我们的友谊干杯！\u0022",
-  "tileX": 4363,
-  "tileY": 666,
-  "textWidth": 500,
+  "text": "索拉尔嚷道：\u0022村庄下面的大地神庙里到处都是危险的陷阱和不死生物。 --NEWLINE   --NEWLINE 我得承认我差点就把小命交代在那了！ --NEWLINE   --NEWLINE 我相信你比我更勇！如果不是，你可以考虑去村子西边的山洞探险。 --NEWLINE   --NEWLINE 那里更安全，你可以找到一些东西来帮助你的旅行！\u0022",
+  "tileX": 4370,
+  "tileY": 660,
+  "textWidth": 520,
   "style": 1
 }
 {
@@ -1352,10 +1380,10 @@
   "style": 1
 }
 {
-  "text": "索拉尔嚷道：\u0022村庄下面的大地神庙里到处都是危险的陷阱和不死生物。 --NEWLINE   --NEWLINE 我得承认我差点就把小命交代在那了！ --NEWLINE   --NEWLINE 我相信你比我更勇！如果不是，你可以考虑去村子西边的山洞探险。 --NEWLINE   --NEWLINE 那里更安全，你可以找到一些东西来帮助你的旅行！\u0022",
-  "tileX": 4374,
-  "tileY": 666,
-  "textWidth": 520,
+  "text": "太阳战士索拉尔的瞭望塔 --NEWLINE   --NEWLINE 索拉尔在向你用赞美太阳的方式打招呼后， --NEWLINE   --NEWLINE 他问你是否和Jade说话了，Jade是村外瞭望塔的女人。 --NEWLINE   --NEWLINE \u0022去和她谈谈吧，我的朋友！ --NEWLINE   --NEWLINE 她有很多重要的事情要告诉你。也许在一些事情还能帮助你。\u0022 --NEWLINE   --NEWLINE \u0022接下来……\u0022他喃喃自语，然后咆哮道：\u0022为了我们的友谊干杯！\u0022",
+  "tileX": 4379,
+  "tileY": 669,
+  "textWidth": 500,
   "style": 1
 }
 {
@@ -1576,7 +1604,7 @@
   "style": 1
 }
 {
-  "text": "- 你发现了失落之城 -",
+  "text": "- 你发现了失落之城伊扎里斯 -",
   "tileX": 4821,
   "tileY": 1470,
   "textWidth": 200,
@@ -1597,10 +1625,10 @@
   "style": 1
 }
 {
-  "text": "这座桥是用燃烧的地狱石建造的 --NEWLINE   --NEWLINE \u0022我差点忘了这里以前有多烫脚了……\u0022",
+  "text": "- 你已抵达地狱 - --NEWLINE   --NEWLINE 这个世界的最底层，此处唯有火焰、灰烬与不谐充斥万物。 --NEWLINE   --NEWLINE 这座桥是用燃烧的地狱石建造的 --NEWLINE   --NEWLINE \u0022我差点忘了这里以前有多烫脚了……\u0022",
   "tileX": 4846,
   "tileY": 1884,
-  "textWidth": 320,
+  "textWidth": 430,
   "style": 1
 }
 {
@@ -1611,7 +1639,14 @@
   "style": 1
 }
 {
-  "text": "击败骷髅王并在附近的德鲁伊家休息后，你回到这里，凝视下面的黑暗。 --NEWLINE   --NEWLINE \u0022这一定是前进的道路\u0022你想，但你看不到壁架之外的任何东西。 --NEWLINE   --NEWLINE 深吸一口气，你跳进未知世界。",
+  "text": "备注：红云物语原始的音乐模组并不和重构版地图兼容 --NEWLINE   --NEWLINE 建议使用重构版的音乐包游玩 --NEWLINE   --NEWLINE 可从创意工坊订阅\u0027The Story of Red Cloud Music - Remix Map Version\u0027",
+  "tileX": 4855,
+  "tileY": 857,
+  "textWidth": 320, 
+  "style": 1
+}
+{
+  "text": "击败骷髅王并在附近的房间休息后，你回到这里，凝视下面的黑暗。 --NEWLINE   --NEWLINE \u0022这一定是前进的道路\u0022你想，但你看不到壁架之外的任何东西。 --NEWLINE   --NEWLINE 深吸一口气，你跳进未知世界。",
   "tileX": 4888,
   "tileY": 1407,
   "textWidth": 600,
@@ -1723,10 +1758,10 @@
   "style": 1
 }
 {
-  "text": "- 你找到了大铸造厂的入口 - --NEWLINE   --NEWLINE 这座铸造厂已经被废弃很长时间了，但仍有部分保持运作，这相当奇怪。",
+  "text": "- 你找到了大铸造厂的入口 - --NEWLINE   --NEWLINE 据说大铸造厂中有一条通往亚尔特留斯废墟的道路。",
   "tileX": 5149,
   "tileY": 1004,
-  "textWidth": 520,
+  "textWidth": 390,
   "style": 1
 }
 {
@@ -1758,10 +1793,10 @@
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022很久以前，这座被遗忘的城市由一位名叫亚尔特留斯的骑士守卫， --NEWLINE   --NEWLINE 他是深渊行者。这个房间仍然充满着深渊的能量…\u0022",
+  "text": "Miakoda：\u0022很久以前，这座遗忘之城伊扎里斯由一位名叫亚尔特留斯的骑士守卫， --NEWLINE   --NEWLINE 他是深渊行者。这个房间仍然充满着深渊的能量…\u0022",
   "tileX": 5308,
   "tileY": 1694,
-  "textWidth": 560,
+  "textWidth": 600,
   "style": 1
 }
 {
@@ -1772,10 +1807,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了丛林深处的花间湖 -",
+  "text": "- 你发现了丛林深处的花间湖 - --NEWLINE   --NEWLINE 这片巨大的地下湖泊曾被遗迹的原住民奉为圣地， --NEWLINE   --NEWLINE 许多来自丛林的朝圣者会前来此地，用湖中净水涤荡身心。 --NEWLINE   --NEWLINE 凝望着深不见底的湖面，你不由猜想：在那最深处究竟隐藏着何物。",
   "tileX": 5317,
   "tileY": 1371,
-  "textWidth": 260,
+  "textWidth": 480,
   "style": 1
 }
 {
@@ -1795,7 +1830,7 @@
 {
   "text": "\u0022这条路很奇怪，是另一条通往遗忘之城的道路吗？\u0022",
   "tileX": 5369,
-  "tileY": 1629,
+  "tileY": 1620,
   "textWidth": 390,
   "style": 1
 }
@@ -1814,10 +1849,10 @@
   "style": 1
 }
 {
-  "text": "- 你找到了失落的乌拉席露森林 - --NEWLINE   --NEWLINE 一种恐惧感包裹了你：你不应该出现在这里。",
+  "text": "黑暗与死亡的恶臭愈发浓重。 --NEWLINE   --NEWLINE 前方的道路显得格外深重晦暗，你能察觉到不详的气息已在附近盘踞。",
   "tileX": 5422,
   "tileY": 925,
-  "textWidth": 320,
+  "textWidth": 510,
   "style": 1
 }
 {
@@ -1828,14 +1863,14 @@
   "style": 1
 }
 {
-  "text": "当你打开大门时 --NEWLINE   --NEWLINE 你感觉到一股新鲜空气涌入。",
+  "text": "当你打开大门时 --NEWLINE   --NEWLINE 身后也传来了声响，似乎来自早前被堵塞的通道方向。",
   "tileX": 5507,
   "tileY": 982,
-  "textWidth": 220,
+  "textWidth": 400,
   "style": 1
 }
 {
-  "text": "瑞德：\u0022大熔炉与亚尔特留斯之间是否存在联系？\u0022 --NEWLINE   --NEWLINE Miakoda：\u0022确有渊源。昔日熔炉全盛之时，与遗忘之城往来密切， --NEWLINE   --NEWLINE 阿尔特留斯那套以极致耐久闻名的铠甲，便是在此灌注魔法锻造而成。 --NEWLINE   --NEWLINE 并且一条隧道被建造用来通往大铸造厂的and a long tunnel was created to connect the foundry to the city.\u0022",
+  "text": "瑞德：\u0022大铸造厂与亚尔特留斯之间是否存在联系？\u0022 --NEWLINE   --NEWLINE Miakoda：\u0022确有渊源。昔日全盛之时，与遗忘之城伊扎里斯往来密切， --NEWLINE   --NEWLINE 阿尔特留斯那套以极致耐久闻名的铠甲，便是在此灌注魔法锻造而成。 --NEWLINE   --NEWLINE 并且有一条隧道用来连接大铸造厂和遗忘之城。\u0022",
   "tileX": 5544,
   "tileY": 1329,
   "textWidth": 650,
@@ -1863,6 +1898,20 @@
   "style": 1
 }
 {
+  "text": "\u0022什么样的远古先民能建造这样的奇观？\u0022",
+  "tileX": 5596,
+  "tileY": 736,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "你在桌上发现一张字条，字迹难以辨认，但仍勉强读出了这些内容： --NEWLINE 都城...陷落...恶魔...岩浆...",
+  "tileX": 5643,
+  "tileY": 1200,
+  "textWidth": 480,
+  "style": 1
+}
+{
   "text": "- 你找到了失落的乌拉席露森林 - --NEWLINE   --NEWLINE 一种恐惧感包裹了你：你不应该出现在这里。",
   "tileX": 5666,
   "tileY": 1072,
@@ -1870,7 +1919,7 @@
   "style": 1
 }
 {
-  "text": "- 你发现了丛林城镇 - --NEWLINE   --NEWLINE \u0022真有意思，我认识这里的一些居民……\u0022",
+  "text": "- 你发现了奥里德部落的树屋村落 - --NEWLINE   --NEWLINE \u0022真有意思，我认识这里的一些居民……\u0022",
   "tileX": 5680,
   "tileY": 822,
   "textWidth": 290,
@@ -1881,13 +1930,6 @@
   "tileX": 5680,
   "tileY": 1158,
   "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "- 你发现了大金字塔 - --NEWLINE   --NEWLINE Miakoda: \u0022既是力量的圣地，也是世纪之花的诞生之所。\u0022",
-  "tileX": 5774,
-  "tileY": 1781,
-  "textWidth": 400,
   "style": 1
 }
 {
@@ -1902,6 +1944,13 @@
   "tileX": 5795,
   "tileY": 821,
   "textWidth": 850,
+  "style": 1
+}
+{
+  "text": "- 你发现了大金字塔 - --NEWLINE   --NEWLINE Miakoda: \u0022这里被视作丛林的地核之心，也是世纪之花花苞的诞生之所。\u0022",
+  "tileX": 5828,
+  "tileY": 1761,
+  "textWidth": 560,
   "style": 1
 }
 {
@@ -2038,10 +2087,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了丛林遗迹 - --NEWLINE   --NEWLINE \u0022什么样的古代文明建造了这些？……\u0022",
+  "text": "- 你发现了丛林遗迹 - --NEWLINE   --NEWLINE \u0022奥瑞德部落，虽被诸族视为蛮夷， --NEWLINE   --NEWLINE 却以其卓越的建筑技艺与灿烂的文明而闻名。 --NEWLINE   --NEWLINE 他们曾将金色的建筑结构与丛林深处狂野茂密的动植物群落完美相融。 --NEWLINE   --NEWLINE 然而如今，仅剩断壁残垣。\u0022",
   "tileX": 6200,
   "tileY": 879,
-  "textWidth": 270,
+  "textWidth": 500,
   "style": 1
 }
 {
@@ -2091,6 +2140,13 @@
   "tileX": 6425,
   "tileY": 1686,
   "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "- 你发现了黑曜石火山 - --NEWLINE   --NEWLINE 下方曾坐落着丛林间金碧辉煌的黄金城，那里的奢华与财富无穷无尽；--NEWLINE   --NEWLINE 而如今，却仅由岩浆、灰烬与陨石构成。",
+  "tileX": 6430,
+  "tileY": 828,
+  "textWidth": 500,
   "style": 1
 }
 {
@@ -2154,6 +2210,13 @@
   "tileX": 6626,
   "tileY": 1876,
   "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "- 埃伦达利斯山脉 -",
+  "tileX": 6704,
+  "tileY": 530,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -2340,10 +2403,24 @@
   "style": 1
 }
 {
+  "text": "- 冻洋 - --NEWLINE   --NEWLINE 离开埃伦达利斯山脉后，你听到从冰层下传来的微弱、忧郁的声音。 --NEWLINE   --NEWLINE Miakoda：\u0022悲伤在冻洋深处等待着你。你将要面对的冰川之路不会轻松，瑞德。\u0022",
+  "tileX": 7505,
+  "tileY": 774,
+  "textWidth": 560,
+  "style": 1
+}
+{
   "text": "\u0022这条长廊似乎永无尽头……\u0022",
   "tileX": 7572,
   "tileY": 1664,
   "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "一座古老的冰封王国建在这条漫长的冰川之上，其内部覆盖着一层厚厚的秘银坚冰。 --NEWLINE   --NEWLINE 你从未在自己的一生中见过如此景象。",
+  "tileX": 7597,
+  "tileY": 853,
+  "textWidth": 600,
   "style": 1
 }
 {
@@ -2403,7 +2480,7 @@
   "style": 1
 }
 {
-  "text": "你发现了隐匿在冻洋的火星前哨站。 --NEWLINE   --NEWLINE 这里看似空无一人，但仍然保持着全面运转。 --NEWLINE   --NEWLINE 探索时你不禁思考：\u0022外星文明究竟为何要在世界各处布设这样的结构？\u0022",
+  "text": "- 你发现了隐匿在冻洋的火星实验室 - --NEWLINE   --NEWLINE 这里看似空无一人，但仍然保持着全面运转。 --NEWLINE   --NEWLINE 探索时你不禁思考：\u0022外星文明究竟为何要在世界各处布设这样的结构？\u0022",
   "tileX": 8086,
   "tileY": 1119,
   "textWidth": 530,
@@ -2421,6 +2498,13 @@
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "你在地上发现一张磨损的字条： --NEWLINE   --NEWLINE \u0022密银，一种形成于亘古寒冰中的冰冷矿石，蕴含着强大的魔法特性。 --NEWLINE   --NEWLINE 然而地表那广袤的密银冰层似乎并非自然形成； --NEWLINE   --NEWLINE 或许它是为了阻挡在海洋中蔓延的腐化而创造出的屏障？\u0022",
+  "tileX": 8160,
+  "tileY": 1172,
+  "textWidth": 480,
   "style": 1
 }
 {

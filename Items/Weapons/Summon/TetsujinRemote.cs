@@ -7,6 +7,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Projectiles.Summon.Tetsujin;
 
 namespace tsorcRevamp.Items.Weapons.Summon
@@ -27,16 +28,15 @@ namespace tsorcRevamp.Items.Weapons.Summon
         {
             Item.damage = 40;
             Item.knockBack = 3f;
-            Item.mana = 10;
             Item.width = 42;
             Item.height = 28;
-            Item.useTime = 30;
-            Item.useAnimation = 30;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.buyPrice(1, 50, 0, 0);
             Item.rare = ModContent.RarityType<DarkBlue>();
             Item.UseSound = SoundID.Item44;
-
+            Item.mana = 10;
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
@@ -69,7 +69,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 2);
-            //recipe.AddIngredient(ModContent.ItemType<Ammo.TeslaBolt>(), 100);
+            recipe.AddIngredient(ModContent.ItemType<TeslaBolt>(), 100);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
             recipe.AddTile(TileID.DemonAltar);

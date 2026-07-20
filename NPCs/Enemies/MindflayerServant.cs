@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        /*public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneMeteor && spawnInfo.Player.position.Y < ((Main.rockLayer * 25.0)) && spawnInfo.Player.position.Y > ((Main.worldSurface * 0.44999998807907104)))
             {
@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (spawnInfo.Player.position.Y > ((Main.rockLayer * 15.0)) && spawnInfo.Player.position.X > ((Main.rockLayer * 145.0)) && Main.rand.NextBool(30)) return 1;
             }
             return 0;
-        }
+        }*/
         #endregion
 
         #region Gore

@@ -9,6 +9,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class ShadowShot : ModProjectile
     {
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Type] = 6;
+        }
 
         public override void SetDefaults()
         {
@@ -28,6 +32,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
+            Animate();
+
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 52, 0, 0, 100, default, 2.0f);
             Main.dust[dust].noGravity = true;
 
@@ -41,6 +47,16 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.velocity.Y *= 1.01f;
             }
 
+        }
+
+        void Animate()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 6)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+            }
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

@@ -111,6 +111,19 @@ namespace tsorcRevamp.Items.BossBags
 
         }
     }
+    public class VesselOfSoulsBag : BossBag
+    {
+         public override void SetStaticDefaults()
+        {
+            ItemID.Sets.BossBag[Type] = true;
+        }
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            // Two Souls of the Vessel → one crafts the Soul Reliquary, one the Gravemaw Tome.
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Materials.SoulOfTheVessel>(), 1, 2, 2));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Materials.DarkSoul>(), 1, 3000, 3000));
+        }
+    }
     public class OolacileDemonBag : BossBag
     {
         public override void SetStaticDefaults()
@@ -271,7 +284,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MythrilBulwark>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EyeOfTheHunt>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.Drax));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheHunterMask>(), 7));
@@ -309,6 +322,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IonicFury>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.TempleKey));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedMechanicalScrap>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalBatteryPiece));
             itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 20, 35));
@@ -330,7 +344,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ItemID.DemonWings));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GemBox>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LampTome>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 2, 2));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 3));
         }
     }
     public class SerrisBag : BossBag
@@ -360,7 +374,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Laevateinn>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 4, 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 3, 4));
         }
     }
     public class MindflayerIllusionBag : BossBag
@@ -406,6 +420,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragoonHorn>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BarrowBlade>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<KrakenFlesh>(), 1, 4, 8));
         }
     }
@@ -449,6 +464,7 @@ namespace tsorcRevamp.Items.BossBags
             //no expert-exclusive item yet
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DivineSpark>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfBlight>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 3));
         }
     }
     public class ChaosBag : BossBag
@@ -464,6 +480,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfChaos>(), 1, 3, 6));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 3));
         }
     }
     public class WyvernMageShadowBag : BossBag
@@ -475,7 +492,7 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<RingOfPower>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 4, 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GhostWyvernSoul>(), 1, 8, 8));
         }
     }
@@ -492,7 +509,8 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 2, 4));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 8, 12));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<OolacileDarkMatter>(), 1, 4, 8));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfOccultist>(), 1, 4, 8));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
     }
     public class ArtoriasBag : BossBag
@@ -505,7 +523,8 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<RingofArtorias>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WolfRing>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfArtorias>(), 1, 6, 12));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfArtorias>(), 1, 6, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
     }
     public class HellkiteBag : BossBag
@@ -519,9 +538,9 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpear>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FlareTome>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 16, 20));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 800, 900));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
     }
     public class SeathBag : BossBag
@@ -537,6 +556,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 5, 10));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BequeathedSoul>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
     }
     public class WitchkingBag : BossBag
@@ -552,6 +572,20 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WitchkingMace>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BewitchedTitanite>(), 1, 20, 30));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtorias>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
+        }
+    }
+    public class OolacileSerpentBag : BossBag
+    {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.BossBag[Type] = true;
+        }
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.AbyssalFang>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 4));
         }
     }
     public class DarkCloudBag : BossBag
@@ -570,6 +604,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 2000, 2500));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>(), 1, 5, 10));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 3, 4));
         }
     }
     public class GwynBag : BossBag
@@ -585,6 +620,19 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EssenceOfTerraria>()));
             itemLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<DraxEX>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.RodOfHarmony));
+        }
+    }
+    public class SoulOfCinderBag : BossBag
+    {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.BossBag[Type] = true;
+        }
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfCinder>(), 1, 3, 3));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 4));
         }
     }
     #endregion

@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         int sproutDamage = 26;
         int cursedBreathDamage = 30;
-        public const int BaseHP = 28000;
+        public const int BaseHP = 35000;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = -1;
             NPC.lifeMax = BaseHP;
             NPC.damage = 70;
-            NPC.defense = 36;
+            NPC.defense = 38;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
             NPC.value = 220000;
@@ -104,25 +104,30 @@ namespace tsorcRevamp.NPCs.Bosses
             //Activate enrage if damage counter has stacked up more than 10% of its health
             if (EnrageDamageCounter > (NPC.lifeMax / 10))
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheHunter.Enrage"), Color.Orange);
+                bool isAnotherBirdAlive = NPC.AnyNPCs(ModContent.NPCType<TheSorrow>()) || NPC.AnyNPCs(ModContent.NPCType<TheRage>());
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (!isAnotherBirdAlive)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
-                }
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheHunter.Enrage"), Color.Orange);
 
-                for (int i = 0; i < 50; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
-                }
-                for (int i = 0; i < 20; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, default, 3f);
-                }
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                    }
 
-                EnrageTimer = -300;
-                SprouterShotTimer = 0;
-                EnrageDamageCounter = 0;
+                    for (int i = 0; i < 50; i++)
+                    {
+                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
+                    }
+                    for (int i = 0; i < 20; i++)
+                    {
+                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, default, 3f);
+                    }
+
+                    EnrageTimer = -300;
+                    SprouterShotTimer = 0;
+                    EnrageDamageCounter = 0;
+                }
             }
 
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
@@ -275,7 +280,22 @@ namespace tsorcRevamp.NPCs.Bosses
                             {
                                 Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
                                 breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
+                                Vector2 Position = new Vector2(NPC.Center.X + (5 * NPC.direction), NPC.Center.Y);
+
+                                Projectile newProj = Projectile.NewProjectileDirect(
+                                    NPC.GetSource_FromThis(),
+                                    Position,
+                                    breathVel,
+                                    ProjectileID.Flames,
+                                    cursedBreathDamage,
+                                    0f,
+                                    Main.myPlayer
+                                );
+                                newProj.hostile = true;
+                                newProj.friendly = false;
+                                newProj.netUpdate = true;
+
+
                             }
 
                             //play breath sound

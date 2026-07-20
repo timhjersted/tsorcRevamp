@@ -120,10 +120,10 @@ namespace tsorcRevamp.Projectiles
                         Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision, Vector2.Zero, ModContent.ProjectileType<Projectiles.FireballInferno2>(), Projectile.damage, 0, Projectile.owner);
                     }
 
-                    //Drain BotC players stamina
-                    if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                    //Drain Souls-mode players' stamina (Unkindled pays 75%)
+                    if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
                     {
-                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
+                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30 * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
                     }
                 }
             }
@@ -156,10 +156,10 @@ namespace tsorcRevamp.Projectiles
                     Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, Projectile.owner).rotation = velocity.ToRotation() + MathHelper.PiOver2;
                 }
 
-                //Drain BotC players stamina
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                //Drain Souls-mode players' stamina (Unkindled pays 75%)
+                if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
                 {
-                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 6;
+                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 6 * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
                 }
             }
 

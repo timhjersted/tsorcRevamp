@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
     class MageShadow : ModNPC
     {
-        int frozenSawDamage = 55;
+        int RedProjDamage = 55;
         int lightningDamage = 62;
         public override void SetStaticDefaults()
         {
@@ -92,9 +92,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 {
                     float num48 = 3f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedRainProj>();
+                    int type = ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.RedMagicProj>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, frozenSawDamage, 0f, Main.myPlayer);
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, RedProjDamage, 0f, Main.myPlayer);
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 NPC.ai[0] = 0;
@@ -178,7 +178,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, 80, 0f, Main.myPlayer);
+                                int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.GreekFire3, 80, 0f, Main.myPlayer);
                                 //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);

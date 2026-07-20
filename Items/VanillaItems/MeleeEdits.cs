@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 using tsorcRevamp.Items.Armors.Melee;
+using tsorcRevamp.NPCs;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Buffs;
 
@@ -77,9 +78,9 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.width = 40;
                 item.height = 40;
             }
-            if (item.type == ItemID.WoodenBoomerang)
+            if (item.type == ItemID.BeeKeeper)
             {
-                //item.mana = 0;
+                item.damage = 25;
             }
             if (item.type == ItemID.EnchantedBoomerang)
             {
@@ -173,9 +174,13 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 //item.mana = 11;
             }
-            if (item.type == ItemID.BouncingShield)
+            if (item.type == ItemID.BouncingShield) 	
             {
                 //item.mana = 15;
+            }
+            if (item.type == ItemID.MonkStaffT1) 
+            {
+                item.damage = 100;
             }
             if (item.type == ItemID.ChlorophyteSaber)
             {
@@ -678,7 +683,7 @@ namespace tsorcRevamp.Items.VanillaItems
                     //Main.NewText("Effect: " + effect);
                     tsorcRevampPlayer.SameHit = false;
                 }
-                if (tsorcRevampPlayer.DiffHit && Main.rand.NextBool(8))
+                if (tsorcRevampPlayer.DiffHit && target.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0 && Main.rand.NextBool(10))
                 {
                     //CombatText.NewText(targetRect, Color.White, "DiffHit");
                     target.AddBuff(BuffID.Confused, 60 * 5);

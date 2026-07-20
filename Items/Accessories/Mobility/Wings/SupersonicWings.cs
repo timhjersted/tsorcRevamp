@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -55,6 +57,12 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
         {
             speed = 6f;
             acceleration = 0.15f;
+            if (SoulsModeMobility.Enabled(player))
+            {
+                speed = SoulsModeMobility.SupersonicWingsFlightSpeed;
+                acceleration = SoulsModeMobility.SupersonicWingsFlightAcceleration;
+            }
+            SoulsModeMobility.ApplyFlightCap(player, ref speed, ref acceleration);
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
@@ -66,6 +74,11 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             player.jumpSpeedBoost += 0.8f;
 
             bool restricted = false;
+            if (player.mount.Active || player.vortexStealthActive)
+            {
+                restricted = true;
+            }
+            
             for (int i = 3; i <= 8; i++)
             {
                 if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
@@ -77,7 +90,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             }
             if (!restricted)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 2;
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.SupersonicWingsLevel;
 
                 // Fall faster if player holds down
                 if (player.TryingToHoverDown && !player.controlJump &&
@@ -116,6 +129,14 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
                 }
             }
 
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (SoulsModeMobility.Enabled(Main.LocalPlayer))
+            {
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitWing", SoulsModeMobility.SupersonicWingsRunSpeed, SoulsModeMobility.SupersonicWingsFlightSpeed)));
+            }
         }
 
     }

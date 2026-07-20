@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 			Projectile.light = 0.5f; 
 			Projectile.ignoreWater = true; 
 			Projectile.tileCollide = true; 
-            Projectile.penetrate = 2;
+            Projectile.penetrate = 3;
 			Projectile.extraUpdates = 2;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 60; 
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 3 * 60);
+            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 5 * 60);
         }
 
 		public override void AI()

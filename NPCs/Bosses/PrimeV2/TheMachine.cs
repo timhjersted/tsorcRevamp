@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.defense = 999999;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 15000;
+            NPC.lifeMax = 20000;
             NPC.timeLeft = 22500;
             NPC.value = 600000;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.TheMachine.DespawnHandler"), Color.DarkGray, DustID.Torch);
@@ -87,8 +87,25 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             };
         }
 
-        public static Vector2 PrimeCeilingPoint = new Vector2(81048, 16224);
-        public static Vector2 PrimeCenterPoint = new Vector2(81048, 17664);
+        //Arena anchors, legacy 2000-space PIXEL coords (81048,16224 = tile 5065.5,1014; 17664 = tile 1104).
+        //Exposed as properties so the expanded-world transform is applied on every read — recomputing from the
+        //constants is idempotent, whereas shifting a static in place would double-shift when a world is reloaded
+        //within one session. Sandbox mode (Adventure config off) teleports the arena to the player via the setters;
+        //that override is ignored while Adventure Mode is on, so a stale sandbox value can't leak into an adventure fight.
+        private static Vector2? primeCeilingOverride;
+        private static Vector2? primeCenterOverride;
+        public static Vector2 PrimeCeilingPoint
+        {
+            get => (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || primeCeilingOverride == null)
+                ? ExpandedWorldTransform.MapWorld(new Vector2(81048, 16224)) : primeCeilingOverride.Value;
+            set => primeCeilingOverride = value;
+        }
+        public static Vector2 PrimeCenterPoint
+        {
+            get => (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || primeCenterOverride == null)
+                ? ExpandedWorldTransform.MapWorld(new Vector2(81048, 17664)) : primeCenterOverride.Value;
+            set => primeCenterOverride = value;
+        }
 
         int fireChargeTimer = 0;
         bool activated;
@@ -107,7 +124,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (despawning)
             {
-                if (Main.tile[5152, 1106].TileType != TileID.Glass)
+                if (Main.tile[5152, ExpandedWorldTransform.MapTileY(5152, 1106)].TileType != TileID.Glass)
                 {
                     ActuateBottomHalf();
                 }
@@ -174,9 +191,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public static void LightPrimeArena()
         {
+            //Expanded-world Y offset. The whole Prime arena (Y 988–1180) sits in the flat +200 band, verified
+            //against the TEdit sign lattice, so one constant is exact for every Y in this file's arena methods.
+            //X is invariant under the transform. dY = 0 on legacy/remix.
+            int dY = ExpandedWorldTransform.MapTileY(5065, 1100) - 1100;
             for (int x = 5010; x < 5133; x += 32)
             {
-                for (int y = 988; y < 1140; y += 32)
+                for (int y = 988 + dY; y < 1140 + dY; y += 32)
                 {
                     if (!UsefulFunctions.IsTileReallySolid(x, y))
                     {
@@ -411,10 +432,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public static void ActuatePrimeArena()
         {
             SoundEngine.PlaySound(SoundID.Shatter);
+            //Expanded-world Y offset (see LightPrimeArena). All Y literals below are world tile-Y and shift together;
+            //X literals are invariant. TileFrameX/TileFrameY are SPRITE-SHEET frames, not world coords — never shifted.
+            int dY = ExpandedWorldTransform.MapTileY(5065, 1100) - 1100;
             //Remove droppable items (lanterns and crystal shards) from the center of the arena
             for (int x = 5047; x < 5080; x++)
             {
-                for (int y = 1086; y < 1116; y++)
+                for (int y = 1086 + dY; y < 1116 + dY; y++)
                 {
                     if (Main.tile[x, y].TileType == TileID.HangingLanterns || Main.tile[x, y].TileType == TileID.Crystals)
                     {
@@ -426,28 +450,28 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             //Turn the top row of glass into platforms
             for (int x = 4991; x < 5153; x++)
             {
-                if (Main.tile[x, 1100].TileType == TileID.Glass || Main.tile[x, 1100].TileType == 0)
+                if (Main.tile[x, 1100 + dY].TileType == TileID.Glass || Main.tile[x, 1100 + dY].TileType == 0)
                 {
                     if (x < 5050 || x > 5078)
                     {
-                        Main.tile[x, 1100].ResetToType(TileID.Platforms);
-                        Main.tile[x, 1100].TileFrameX = 0;
-                        Main.tile[x, 1100].TileFrameY = 522;
+                        Main.tile[x, 1100 + dY].ResetToType(TileID.Platforms);
+                        Main.tile[x, 1100 + dY].TileFrameX = 0;
+                        Main.tile[x, 1100 + dY].TileFrameY = 522;
                     }
                 }
-                else if (Main.tile[x, 1100].TileType == TileID.Platforms)
+                else if (Main.tile[x, 1100 + dY].TileType == TileID.Platforms)
                 {
                     if (x < 5050 || x > 5078)
                     {
-                        Main.tile[x, 1100].ResetToType(TileID.Glass);
+                        Main.tile[x, 1100 + dY].ResetToType(TileID.Glass);
                     }
                 }
 
-                if (Main.tile[x, 1106].TileType == TileID.Glass)
+                if (Main.tile[x, 1106 + dY].TileType == TileID.Glass)
                 {
-                    if (Main.tile[x, 1106].IsActuated)
+                    if (Main.tile[x, 1106 + dY].IsActuated)
                     {
-                        Wiring.ActuateForced(x, 1106);
+                        Wiring.ActuateForced(x, 1106 + dY);
                     }
                 }
             }
@@ -456,11 +480,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             //Actuate the center
             for (int x = 5050; x < 5079; x++)
             {
-                for (int y = 1085; y < 1145; y++)
+                for (int y = 1085 + dY; y < 1145 + dY; y++)
                 {
                     if (Main.tile[x, y].TileType != TileID.Platforms)
                     {
-                        if (y != 1106)
+                        if (y != 1106 + dY)
                         {
                             Wiring.ActuateForced(x, y);
                         }
@@ -471,7 +495,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             //Clear the water out of the little room to the left (it draws on top of the fire, which looks super jank and bad)
             for (int x = 4935; x < 5025; x++)
             {
-                for (int y = 1094; y < 1112; y++)
+                for (int y = 1094 + dY; y < 1112 + dY; y++)
                 {
                     Main.tile[x, y].LiquidAmount = 0;
                 }
@@ -480,7 +504,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             //Turn the random obstructive tin bricks into platforms and delete the chains
             for (int x = 4983; x < 5159; x++)
             {
-                for (int y = 1000; y < 1156; y++)
+                for (int y = 1000 + dY; y < 1156 + dY; y++)
                 {
                     if (Main.tile[x, y].TileType == TileID.Torches)
                     {
@@ -525,14 +549,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public static void ActuateBottomHalf()
         {
+            //Expanded-world Y offset (see LightPrimeArena).
+            int dY = ExpandedWorldTransform.MapTileY(5065, 1100) - 1100;
             for (int x = 4991; x < 5153; x++)
             {
-                if (Main.tile[x, 1105].TileType != TileID.DemonAltar)
+                if (Main.tile[x, 1105 + dY].TileType != TileID.DemonAltar)
                 {
-                    Wiring.ActuateForced(x, 1106);
+                    Wiring.ActuateForced(x, 1106 + dY);
                 }
 
-                for (int y = 1106; y < 1180; y++)
+                for (int y = 1106 + dY; y < 1180 + dY; y++)
                 {
                     Main.tile[x, y].LiquidAmount = 0;
                 }
@@ -715,7 +741,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (phaseTransitionTimeRemaining == 1)
             {
-                if (!Main.tile[5152, 1106].IsActuated)
+                if (!Main.tile[5152, ExpandedWorldTransform.MapTileY(5152, 1106)].IsActuated)
                 {
                     ActuateBottomHalf();
                 }
@@ -930,6 +956,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedMechanicalScrap>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Lore.CrestOfSteel>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.TempleKey));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.HallowedBar, 1, 25, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFright, 1, 20, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheMachineMask>(), 7));

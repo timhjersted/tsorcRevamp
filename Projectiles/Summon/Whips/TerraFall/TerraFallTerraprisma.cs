@@ -22,9 +22,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         }
         public override void SetDefaults()
         {
+            Main.projFrames[Projectile.type] = 3;
             Projectile.netImportant = true;
-            Projectile.width = 10;
-            Projectile.height = 10;
+            Projectile.width = 20;
+            Projectile.height = 20;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft *= 5;
@@ -325,12 +326,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             idleSpot = idleRotation.ToRotationVector2() * 10f + player.MountedCenter + new Vector2(player.direction * (num3 * -6 - 16), player.gravDir * -15f);
             idleSpot += vector;
             idleRotation += (float)Math.PI / 2f;
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-        {
-            lightColor = Color.ForestGreen;
-            return base.PreDraw(ref lightColor);
         }
     }
 }

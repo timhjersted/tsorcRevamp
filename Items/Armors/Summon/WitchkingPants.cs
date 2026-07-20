@@ -40,6 +40,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpookyLeggings);
             recipe.AddIngredient(ModContent.ItemType<BewitchedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 

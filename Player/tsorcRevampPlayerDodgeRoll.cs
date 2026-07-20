@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using System.Runtime.CompilerServices;
 using Terraria;
@@ -97,11 +97,28 @@ namespace tsorcRevamp
 
         public override void HideDrawLayers(PlayerDrawSet drawInfo)
         {
+            // Swallowed by the Vessel of Souls: hide the whole player.
+            if (SwallowHidden)
+            {
+                foreach (Terraria.ModLoader.PlayerDrawLayer layer in Terraria.ModLoader.PlayerDrawLayerLoader.Layers)
+                    layer.Hide();
+                return;
+            }
+
+            // This has to run before the dodge-roll early return below. Otherwise the roll hides
+            // the held item and exits before Capture the Gem's large-gem icon can be suppressed.
+            PlayerDrawLayers.CaptureTheGem.Hide();
+
             if ((isDodging || dodgeCooldown.Value != 0 || blockVisuals > 0) && !Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)
             {
                 PlayerDrawLayers.HeldItem.Hide();
                 return;
             }
+
+            // Suppress the balloon sprite for all vanilla balloon accessories.
+            // Jump height is already baked in by UpdateEquips before draw runs.
+            PlayerDrawLayers.BalloonAcc.Hide();
+
         }
 
         int oldItemAnimation = 0;
@@ -109,6 +126,9 @@ namespace tsorcRevamp
         int blockVisuals; //Block the remaining itemAnimation visuals after a roll, to prevent visual jank
         public override bool PreItemCheck()
         {
+            if (Player.GetModPlayer<tsorcRevampPlayer>().ImpaleFreezeTimer > 0)
+                return false;
+
             UpdateDodging();
             //UpdateSwordflip();
 
@@ -135,12 +155,14 @@ namespace tsorcRevamp
 
 
 
-            #region BotC Stamina Usage
+            #region Souls Mode Stamina Usage
 
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            // Bearer of the Curse pays full weapon stamina; Unkindled pays 75% (mult = 0.75).
+            if (Player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
             {
 
                 tsorcRevampStaminaPlayer modPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
                 int scaledUseAnimation = (int)(item.useAnimation / Player.GetAttackSpeed(item.DamageType));
 
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
@@ -161,7 +183,7 @@ namespace tsorcRevamp
 
                 if (item.type == ItemID.CoinGun) //coin gun has a damage stat of zero but can still do damage!
                 {
-                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
+                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult;
                 }
 
                 else if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
@@ -171,30 +193,30 @@ namespace tsorcRevamp
 
                 if (item.useAnimation * 0.8f > modPlayer.staminaResourceMax2)
                 {
-                    modPlayer.staminaResourceCurrent -= modPlayer.staminaResourceMax2;
+                    modPlayer.staminaResourceCurrent -= modPlayer.staminaResourceMax2 * mult;
                 }
 
                 //Note: This is where EVERY other weapon aside from these exceptions applies its stamina usage
                 else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>() && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()
                     && !(item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
                 {
-                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
+                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult;
                 }
 
                 //i have no clue how they made this item behave the way it does, but it is deeply cursed
                 else if (item.type == ItemID.Harpoon && Player.itemAnimation == 4)
                 {
-                    modPlayer.staminaResourceCurrent -= 14;
+                    modPlayer.staminaResourceCurrent -= 14 * mult;
                 }
 
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()))
                 {
-                    modPlayer.staminaResourceCurrent -= 0.7f;
+                    modPlayer.staminaResourceCurrent -= 0.7f * mult;
                 }
 
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
                 {
-                    modPlayer.staminaResourceCurrent -= 1.2f;
+                    modPlayer.staminaResourceCurrent -= 1.2f * mult;
                 }
             }
 
@@ -327,7 +349,7 @@ namespace tsorcRevamp
 
             }
             //only subtract stamina on a successful roll
-            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
+            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30 * Player.GetModPlayer<tsorcRevampPlayer>().TiredStaminaMult * (1f - Player.GetModPlayer<tsorcRevampPlayer>().ArtoriasAbysswalkerDodgeStaminaCostReduction / 100f);
             Player.immune = true;
             DodgeImmuneTime = DefaultDodgeImmuneTime;
             Player.immuneTime = DodgeImmuneTime;
@@ -373,9 +395,11 @@ namespace tsorcRevamp
             bool onGround = OnGround(Player);
 
             // Define custom roll parameters when acessories conflict.
+            // Chloranthy Rings no longer modify deaccelerationRate � their speed boost during the roll
+            // already extends travel distance; adding a per-frame deceleration bonus on top produced a
+            // persistent "slippery ice" glide after the roll that made precise stopping impossible.
             if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
             {
-                deaccelerationRate += 0.03f;
                 DodgeImmuneTime += 2;
                 dodgeCooldown = 10;
             }
@@ -385,13 +409,11 @@ namespace tsorcRevamp
                 // To make sure player does not benefit from stacking ring 1 and 2
                 if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2)
                 {
-                    deaccelerationRate += 0.06f;
                     DodgeImmuneTime += 6;
                     dodgeCooldown = 0;
                 }
                 else if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1)
                 {
-                    deaccelerationRate += 0.05f;
                     DodgeImmuneTime += 3;
                     dodgeCooldown = 10;
                 }
@@ -449,6 +471,8 @@ namespace tsorcRevamp
             {
                 return;
             }
+
+            TryGrantArtoriasAbysswalkerPoise();
             /*
             bool chloranthyRing = false;
             for (int i = 3; i <= (8 + Player.extraAccessorySlots); i++) {
@@ -477,9 +501,13 @@ namespace tsorcRevamp
                 if (beforeRollSpeed > dodgeSpeed)
                     dodgeSpeed = beforeRollSpeed;
 
+                // Chloranthy Ring dodge-speed boost � intended to grant only "a little bit more dodge length"
+                // (a subtle distance increase, not a flat-out velocity multiplier). Values were previously
+                // +3 / +6 which combined with the ground multiplier and momentum carry produced an extreme
+                // total. Dialed back to +1 / +2 to restore the original tuning intent.
                 if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
                 {
-                    dodgeSpeed += 3f;
+                    dodgeSpeed += 1f;
                 }
                 else if (!(Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis))
                 {
@@ -488,12 +516,11 @@ namespace tsorcRevamp
 
                     if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2)
                     {
-                        dodgeSpeed += 6f;
-
+                        dodgeSpeed += 2f;
                     }
                     else if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1)
                     {
-                        dodgeSpeed += 3f;
+                        dodgeSpeed += 1f;
                     }
                 }
 
@@ -509,7 +536,10 @@ namespace tsorcRevamp
                 dodgeSpeed *= speedMultiplier;
                 dodgeSpeed *= dodgeDirection;
 
-                Player.velocity.X = dodgeSpeed * speedMultiplier;
+                // Bug fix: speedMultiplier was being applied twice (once into dodgeSpeed above, then
+                // again here when assigning velocity), producing ~1.96� the intended velocity on the
+                // ground and amplifying every other boost (Chloranthy rings, momentum carry, etc.).
+                Player.velocity.X = dodgeSpeed;
             }
 
             Player.pulley = false;
@@ -567,7 +597,13 @@ namespace tsorcRevamp
                     }
                 }
 
-                Player.velocity.X *= onGround ? deaccelerationRate : airDeaccelerationRate;
+                // If the player is actively running in the roll direction, use a softer decel so
+                // a roll that flows into movement doesn't feel like it hits a wall. When standing
+                // still (or pressing opposite), use the full deceleration for a snappy stop.
+                float groundDecel = KeyDirection(Player) == dodgeDirection
+                    ? MathHelper.Lerp(deaccelerationRate, 1f, 0.35f)
+                    : deaccelerationRate;
+                Player.velocity.X *= onGround ? groundDecel : airDeaccelerationRate;
             }
 
             if (dodgeTime >= DodgeTimeMax)

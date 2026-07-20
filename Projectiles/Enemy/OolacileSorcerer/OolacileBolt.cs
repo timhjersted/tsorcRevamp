@@ -30,6 +30,8 @@ namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
             collisionFrequency = 2;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
+        public bool accel = true;
+        float teleAlpha = 0.5f;
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
@@ -55,7 +57,12 @@ namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
                     realVelocity += realVelocity * 0.1f;
                 }
             }
-            Projectile.velocity = realVelocity.RotatedBy(Math.Sin(Main.GameUpdateCount * 0.15f));
+            
+            if (accel)
+            {
+                Projectile.velocity *= 1.02f;
+            }
+            teleAlpha -= 0.0025f;
         }
 
         public override float CollisionWidthFunction(float progress)

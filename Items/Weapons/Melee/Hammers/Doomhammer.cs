@@ -16,6 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
     {
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
         }
 
         public override void SetDefaults()

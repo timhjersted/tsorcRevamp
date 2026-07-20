@@ -1,954 +1,720 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Projectiles.Enemy.Gwyn;
+using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Items.Weapons.Enemy;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
-using static tsorcRevamp.UsefulFunctions;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
     [AutoloadBossHead]
-    //[Autoload(false)]
-    class SoulOfCinder : ModNPC
+    class SoulOfCinder : PuppetNPC
     {
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/SoulOfCinder_Head_Boss";
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
+        protected override string InvaderTitle => "Soul of Cinder";
+
+        protected override int HeadArmorItemType => ModContent.ItemType<FirelinkHelm>();
+        protected override int BodyArmorItemType => ModContent.ItemType<FirelinkArmor>();
+        protected override int LegsArmorItemType => ModContent.ItemType<FirelinkLeggings>();
+
+        protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyArtoriasGreatsword>();
+        protected override int RangedWeaponItemType => ModContent.ItemType<EnemySmokeBomb>();
+        protected override int SecondaryRangedWeaponItemType => ModContent.ItemType<EnemyVenomStaff>();
+        protected override int MagicWeaponItemType => ModContent.ItemType<EnemyMeteorStorm>();
+
+        protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
+        protected override RangedStyle RangedAnimStyle => RangedStyle.Throw;
+        protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Crossbow;
+
+        protected override int MeleeDamage => 95;
+        protected override int RangedDamage => 58;
+        protected override int SecondaryRangedDamage => 68;
+        protected override int MagicDamage => 70;
+
+        protected override float TopSpeed => _swordDead ? 3.05f : 2.65f;
+        protected override float Acceleration => 0.12f;
+        protected override float RunDistance => 360f;
+        protected override float MeleeRange => 112f;
+        protected override float StabRange => 190f;
+        protected override float ComboReachBase => 138f;
+        protected override float MeleeEngageRange => 132f;
+        protected override float ComboMaxStartRange => 290f;
+        protected override int MeleeComboChance => 85;
+        protected override float ComboTelegraphMultiplier => 1.15f;
+        protected override int MeleeRecoveryTicks => 32;
+        protected override bool CanStab => true;
+        protected override bool UseSwingEasing => true;
+        protected override bool UseAlternateFlip => true;
+        protected override bool UseAimAdaptiveArc => true;
+        protected override bool HasSlashVFX => true;
+        protected override Color SlashVFXColor => new Color(255, 120, 40);
+        protected override Color MeleeTelegraphFlashColor => new Color(255, 140, 60);
+
+        protected override float RangedRange => 780f;
+        protected override float MinRangedRange => 160f;
+        protected override int RangedTelegraphTicks => 42;
+        protected override int RangedAttackTicks => 10;
+        protected override int RangedRecoveryTicks => 54;
+        protected override int RangedCooldownAfterUse => 170;
+        protected override int MaxRangedBurst => 2;
+        protected override int SingleRangedBurstChance => 35;
+        protected override Color RangedTelegraphFlashColor => new Color(255, 95, 45);
+
+        protected override float SecondaryRangedRange => 920f;
+        protected override float SecondaryRangedMinRange => 300f;
+        protected override int SecondaryRangedTelegraphTicks => 50;
+        protected override int SecondaryRangedAttackTicks => 10;
+        protected override int SecondaryRangedRecoveryTicks => 70;
+        protected override int SecondaryRangedCooldownAfterUse => 210;
+        protected override int SecondaryRangedChance => 45;
+        protected override Color SecondaryRangedFlashColor => new Color(130, 255, 120);
+
+        protected override float MagicRange => 1000f;
+        protected override float MinMagicRange => 260f;
+        protected override int MagicTelegraphTicks => 62;
+        protected override int MagicAttackTicks => 16;
+        protected override int MagicRecoveryTicks => 82;
+        protected override int MagicCooldownAfterUse => 210;
+        protected override int MagicPreferenceChance => 55;
+        protected override Color MagicTelegraphFlashColor => new Color(180, 90, 255);
+
+        protected override bool CanBreathe => true;
+        protected override float BreathRange => 680f;
+        protected override float MinBreathRange => 120f;
+        protected override int BreathTelegraphTicks => 76;
+        protected override int BreathDurationTicks => _swordDead ? 135 : 105;
+        protected override int BreathRecoveryTicks => 70;
+        protected override int BreathCooldownAfterUse => 360;
+        protected override int BreathChance => 5;
+
+        protected override bool CanPierce => true;
+        protected override float PierceRange => 760f;
+        protected override float MinPierceRange => 230f;
+        protected override int PierceChance => 5;
+        protected override int PierceTelegraphTicks => 56;
+        protected override int PierceDashTicks => 34;
+        protected override float PierceDashSpeed => _swordDead ? 18f : 15.5f;
+        protected override int PierceRecoveryTicks => 82;
+        protected override int PierceCooldownAfterUse => 300;
+        protected override int PierceStabChance => 0;
+
+        protected override bool CanJumpSlash => true;
+        protected override float JumpSlashMinRange => 160f;
+        protected override float JumpSlashMaxRange => 520f;
+        protected override int JumpSlashChance => 4;
+        protected override int JumpSlashRecoveryTicks => 72;
+        protected override int JumpSlashCooldownAfterUse => 300;
+
+        protected override bool CanFlipSlash => true;
+        protected override float FlipSlashMinRange => 130f;
+        protected override float FlipSlashMaxRange => 470f;
+        protected override int FlipSlashChance => 4;
+        protected override int FlipSlashCooldownAfterUse => 360;
+
+        protected override bool CanHomingVolley => true;
+        protected override float HomingVolleyMinRange => 280f;
+        protected override float HomingVolleyMaxRange => 760f;
+        protected override int HomingVolleyChance => 7;
+        protected override int HomingVolleyRecoveryTicks => 88;
+        protected override int HomingVolleyCooldownAfterUse => 280;
+
+        protected override bool CanBoomerang => true;
+        protected override float BoomerangMinRange => 120f;
+        protected override float BoomerangMaxRange => 760f;
+        protected override int BoomerangChance => 7;
+        protected override int BoomerangRecoveryTicks => 92;
+        protected override int BoomerangCooldownAfterUse => 320;
+
+        protected override bool CanSpiralFan => true;
+        protected override float SpiralFanMinRange => 220f;
+        protected override float SpiralFanMaxRange => 850f;
+        protected override int SpiralFanChance => 7;
+        protected override int SpiralFanRecoveryTicks => 95;
+        protected override int SpiralFanCooldownAfterUse => 360;
+
+        public static readonly float ARENA_WIDTH = 864;
+        public static readonly float ARENA_HEIGHT = 656;
+        //ARENA_LOCATION_ADVENTURE removed: this boss is currently a copy of the old Gwyn boss and has no real
+        //arena location yet — a proper event location is pending. Re-add (routed through ExpandedWorldTransform,
+        //legacy 2000-space) once that's designed.
+
+        const int NormalDefense = 550;
+        const int SwordBrokenDefense = 130;
+        const float ProtectionRadius = 1000f;
+        const float KillRingRadius = 2000f;
+        const int CowardGraceTicks = 90;
+
+        const int DarkBeadDamage = 36;
+        const int PhantomSeekerDamage = 55;
+        const int SmokeBombDamage = 58;
+        const int BioSpitDamage = 68;
+        const int BioSpitFinalDamage = 76;
+        const int PlasmaOrbDamage = 70;
+        const int CursedBreathDamage = 68;
+        const int FireBreathDamage = 50;
+        const int IceStormDamage = 40;
+        const int DisruptDamage = 68;
+        const int LostSoulDamage = 38;
+        const int CultistFireDamage = 41;
+        const int CultistMagicDamage = 62;
+        const int GravityBallDamage = 66;
+        const int TridentDamage = 43;
+        const int OrangeProjDamage = 45;
+        const int SwordProjectileDamage = 69;
+
+        NPCDespawnHandler despawnHandler;
+        bool _swordSpawned;
+        bool _swordDead;
+        bool _announcedSwordBreak;
+        int _protectionTextCooldown;
+        readonly int[] _cowardTimers = new int[Main.maxPlayers];
+        CinderRangedAttack _queuedRangedAttack = CinderRangedAttack.DarkBead;
+        CinderMagicAttack _queuedMagicAttack = CinderMagicAttack.IceStorm;
+        int _magicBurstsRemaining;
+        int _magicBurstTimer;
+
+        enum CinderRangedAttack
+        {
+            SmokeBomb,
+            DarkBead,
+            PhantomSeeker,
+            BioSpit,
+            PlasmaCross
+        }
+
+        enum CinderMagicAttack
+        {
+            IceStorm,
+            PhasedMatterBlast,
+            DemonFireLob,
+            CultistFire,
+            LostSoulCurse
+        }
 
         public override void SetStaticDefaults()
         {
+            Main.npcFrameCount[NPC.type] = 1;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
         }
 
         public override void SetDefaults()
         {
-            NPC.boss = true;
-            NPC.noGravity = true;
-            NPC.noTileCollide = true;
-            NPC.netAlways = true;
-            NPC.friendly = false;
-            NPC.damage = 1;
-            NPC.defense = 90;
-            NPC.lifeMax = 500000;
-            NPC.width = NPC.height = 40;
-            NPC.npcSlots = 50;
+            NPC.aiStyle = -1;
+            NPC.npcSlots = 10;
+            NPC.height = 40;
+            NPC.width = 30;
+            NPC.scale = 1.15f;
+            NPC.damage = 0;
+            NPC.defense = NormalDefense;
+            NPC.lifeMax = 750000;
             NPC.knockBackResist = 0f;
+            NPC.boss = true;
+            NPC.netAlways = true;
+            NPC.lavaImmune = true;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.value = 2000000;
+            NPC.rarity = 47;
+            Music = 12;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.SoulOfCinder.DespawnHandler"), Color.OrangeRed, 6);
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.Agility = 0.25f;
+            globalNPC.CanTeleport = true;
+            globalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
+            globalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Fire;
+            globalNPC.NavSearchRadius = 80;
+            EvasiveProfile.RedKnight(globalNPC);
         }
 
-        private float AI_State
+        public override void OnSpawn(IEntitySource source)
         {
-            get => NPC.ai[0];
-            set => NPC.ai[0] = value;
+            SpawnSwordOfCinder();
         }
-
-        private float AI_Timer
-        { //usually +1 per frame during phases
-            get => NPC.ai[1];
-            set => NPC.ai[1] = value;
-        }
-
-        private float AI_Misc
-        { //miscellaneous tracking inside phases
-            get => NPC.ai[2];
-            set => NPC.ai[2] = value;
-        }
-
-        private float AI_State_Counter
-        { //+1 every phase change 
-            get => NPC.ai[3];
-            set => NPC.ai[3] = value;
-        }
-        private float LOCALAI_Just_Spawned
-        {
-            get => NPC.localAI[0];
-            set => NPC.localAI[0] = value;
-        }
-
-        private enum States
-        {
-            Spawning = -1,
-            Idle = 0,
-            Movement = 1,
-            Tackle = 2,
-            FarronHail = 3,
-            TheArchivist = 4,
-            Ritual = 5,
-            AncientLight = 6,
-            Placeholder1 = 7,
-            Placeholder2 = 8,
-            Placeholder3 = 9,
-            BulletHell = 10
-        }
-
-        private enum DustShapes
-        {
-            Circle = 0,
-            Plus = 1,
-            X = 2
-        }
-
-        Vector2 ArenaCenter;
-        List<Player> TaggedPlayers;
-        public static readonly float ARENA_WIDTH = 864;
-        public static readonly float ARENA_HEIGHT = 656;
-        public static Vector2 ARENA_LOCATION_ADVENTURE = new Vector2(832.5f, 1226) * 16;
-        bool BulletHell;
-
-        NPCDespawnHandler despawnHandler;
 
         public override void AI()
         {
-            bool expertMode = Main.expertMode;
-            bool halfLife = NPC.life <= NPC.lifeMax / 2;
-            bool DontTakeDamage = false;
-            bool DisableHoming = false;
+            base.AI();
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            NPC.TargetClosest(true);
 
-            if (despawnHandler.TargetAndDespawn(NPC.whoAmI))
+            SpawnSwordOfCinder();
+            TickSwordState();
+            TickDistanceRules();
+        }
+
+        void SpawnSwordOfCinder()
+        {
+            if (_swordSpawned || Main.netMode == NetmodeID.MultiplayerClient)
             {
-                InterruptCurrentPhase();
+                return;
             }
 
-            if (halfLife)
+            int swordID = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<SwordOfCinder>(), NPC.whoAmI);
+            Main.npc[swordID].velocity.Y = -10f;
+            Main.npc[swordID].netUpdate = true;
+            _swordSpawned = true;
+            NPC.netUpdate = true;
+        }
+
+        void TickSwordState()
+        {
+            if (_swordDead)
             {
-                NPC.defense = (int)(NPC.defDefense * 0.65f);
+                return;
             }
 
-            if (LOCALAI_Just_Spawned == 0f)
+            if (_swordSpawned && !NPC.AnyNPCs(ModContent.NPCType<SwordOfCinder>()))
             {
-                //dont have to bother syncing npc because it's always 0 on spawn
-                Init();
-                LOCALAI_Just_Spawned = 1f;
-            }
-
-            if (ArenaCenter.Length() > 1)
-            {
-                for (int j = 0; j < 24; j++)
+                _swordDead = true;
+                NPC.defense = SwordBrokenDefense;
+                if (!_announcedSwordBreak)
                 {
-                    Vector2 dir = Main.rand.NextVector2CircularEdge(ARENA_WIDTH, ARENA_HEIGHT);
-                    Vector2 dustPos = new Vector2(ArenaCenter.X, ArenaCenter.Y + 336) + dir;
-                    Vector2 dustVel = Aim(ArenaCenter, dustPos, 16);
-                    Dust.NewDustPerfect(dustPos, 235, dustVel, 200).noGravity = true;
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.SwordShattered"), 150, 75, 255);
+                    _announcedSwordBreak = true;
+                }
+                NPC.netUpdate = true;
+            }
+        }
+
+        void TickDistanceRules()
+        {
+            UsefulFunctions.DustRing(NPC.Center, (int)ProtectionRadius, DustID.BlueTorch, 20, 1f);
+            UsefulFunctions.DustRing(NPC.Center, (int)KillRingRadius, DustID.RedsWingsRun, 1, 1f);
+            UsefulFunctions.DustRing(NPC.Center, (int)KillRingRadius, DustID.Torch, 10, 1f);
+            UsefulFunctions.DustRing(NPC.Center, (int)KillRingRadius, DustID.RedTorch, 5, 2f);
+            UsefulFunctions.DustRing(NPC.Center, (int)KillRingRadius, DustID.Firefly, 100, -3f);
+
+            bool protectedByDistance = NPC.HasValidTarget && NPC.Distance(Main.player[NPC.target].Center) > ProtectionRadius;
+            if (protectedByDistance)
+            {
+                NPC.defense = 9999;
+                if (_protectionTextCooldown <= 0)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Protected"), 175, 75, 255);
+                    _protectionTextCooldown = 200;
                 }
             }
-
-            if (Main.GameUpdateCount % 10 == 0)
+            else if (_protectionTextCooldown <= 0)
             {
-                for (int i = 0; i < Main.maxPlayers; i++)
+                NPC.defense = _swordDead ? SwordBrokenDefense : NormalDefense;
+            }
+
+            if (_protectionTextCooldown > 0)
+            {
+                _protectionTextCooldown--;
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (!player.active || player.dead)
                 {
-                    Player player = Main.player[i];
-                    if (!player.active)
-                        continue;
-                    if (IsPointWithinEllipse(player.Center, ArenaCenter, ARENA_WIDTH, ARENA_HEIGHT))
+                    _cowardTimers[i] = 0;
+                    continue;
+                }
+
+                float distance = NPC.Distance(player.Center);
+                if (distance < KillRingRadius)
+                {
+                    player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
+                }
+                if (distance < 700f)
+                {
+                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
+                }
+
+                if (distance > KillRingRadius)
+                {
+                    _cowardTimers[i]++;
+                    if (_cowardTimers[i] >= CowardGraceTicks)
                     {
-                        TaggedPlayers.Add(player);
+                        player.AddBuff(ModContent.BuffType<CowardsAffliction>(), 30, false);
+                        if (_cowardTimers[i] == CowardGraceTicks)
+                        {
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Coward"), 235, 199, 23);
+                        }
                     }
                 }
-
-                //Stay Inside The Dust Ring You Fool
-                foreach (Player tagged in TaggedPlayers)
+                else
                 {
-                    if (!IsPointWithinEllipse(tagged.Center, ArenaCenter, ARENA_WIDTH + (8 * 16), ARENA_HEIGHT + (8 * 16)))
-                    {
-                        tagged.AddBuff(ModContent.BuffType<CowardsAffliction>(), 30);
-                    }
+                    _cowardTimers[i] = 0;
                 }
             }
+        }
 
-            switch (AI_State)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {
+            target.AddBuff(BuffID.OnFire, 10 * 60, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 40 * 60, false);
+            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60, false);
+            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60, false);
+            if (Main.rand.NextBool(2))
             {
-                case (float)(States.Spawning):
-                    State_Spawning(ref DontTakeDamage, ref DisableHoming);
+                target.AddBuff(BuffID.Weak, 10 * 60, false);
+                target.AddBuff(BuffID.BrokenArmor, 3 * 60, false);
+            }
+        }
+
+        protected override void DoMeleeAttack()
+        {
+            PlayMeleeSwingSound();
+            TryMeleeHit(MeleeRange);
+        }
+
+        protected override void DoStabAttack()
+        {
+            SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.65f, PitchVariance = 0.15f }, NPC.Center);
+            TryMeleeHit(StabRange * 0.7f);
+        }
+
+        protected override void DoPierceDashTick()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || Main.GameUpdateCount % 8 != 0)
+            {
+                return;
+            }
+
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.TackleProjectile>(), MeleeDamage + 7, 1f, Main.myPlayer, 10, NPC.whoAmI);
+        }
+
+        protected override void OnRangedBurstStarted(bool secondary)
+        {
+            Player target = Main.player[NPC.target];
+            if (secondary)
+            {
+                _queuedRangedAttack = NPC.life < NPC.lifeMax / 3 ? CinderRangedAttack.PlasmaCross : CinderRangedAttack.BioSpit;
+                return;
+            }
+
+            float dist = NPC.Distance(target.Center);
+            if (dist < 260f)
+            {
+                _queuedRangedAttack = CinderRangedAttack.SmokeBomb;
+                SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center);
+            }
+            else if (_swordDead && Main.rand.NextBool(3))
+            {
+                _queuedRangedAttack = CinderRangedAttack.PhantomSeeker;
+            }
+            else
+            {
+                _queuedRangedAttack = CinderRangedAttack.DarkBead;
+            }
+        }
+
+        protected override void DoRangedAttack()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            switch (_queuedRangedAttack)
+            {
+                case CinderRangedAttack.SmokeBomb:
+                    FireSmokeBomb(target);
                     break;
-                case (float)(States.Idle):
-                    State_Idle(halfLife);
+                case CinderRangedAttack.PhantomSeeker:
+                    FirePhantomSeeker(target);
                     break;
-                case (float)(States.Movement):
-                    State_Movement();
+                case CinderRangedAttack.BioSpit:
+                    FireBioSpit(target, NPC.life <= NPC.lifeMax / 5 ? BioSpitFinalDamage : BioSpitDamage);
                     break;
-                case (float)(States.Tackle):
-                    State_Tackle(expertMode, halfLife);
-                    break;
-                case (float)(States.FarronHail):
-                    State_FarronHail(expertMode, halfLife);
-                    break;
-                case (float)States.TheArchivist:
-                    State_TheArchivist(expertMode, ref DisableHoming, ref DontTakeDamage);
-                    break;
-                case (float)States.BulletHell:
-                    State_BulletHell(expertMode, ref DontTakeDamage);
+                case CinderRangedAttack.PlasmaCross:
+                    FirePlasmaCross(target);
                     break;
                 default:
-                    State_Idle(halfLife);
+                    FireDarkBead(target);
                     break;
             }
-
-            if (halfLife && !BulletHell)
-            {
-                InterruptCurrentPhase();
-                AI_State = (float)States.BulletHell;
-                BulletHell = true;
-                Main.NewText(LangUtils.GetTextValue("NPCs.SoulOfCinder.BulletHell"));
-            }
-
-
-
-            if (AI_State == (float)States.AncientLight)
-            {
-                //UNFINISHED
-                ReturnToIdle();
-            }
-
-            NPC.dontTakeDamage = DontTakeDamage;
-            NPC.chaseable = !DisableHoming;
-
-
         }
 
-        public override bool? CanBeHitByProjectile(Projectile projectile)
+        void FireSmokeBomb(Player target)
         {
-            bool canBeHurt = false;
-            if (TaggedPlayers != null)
+            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 10f);
+            velocity += Main.rand.NextVector2Circular(-4f, 0f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), SmokeBombDamage, 0f, Main.myPlayer);
+            SoundEngine.PlaySound(SoundID.Item7 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center);
+        }
+
+        void FireDarkBead(Player target)
+        {
+            Vector2 baseVelocity = UsefulFunctions.Aim(NPC.Center, target.Center, 7f);
+            for (int i = -1; i <= 1; i++)
             {
-                foreach (Player p in TaggedPlayers)
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, baseVelocity.RotatedBy(MathHelper.ToRadians(i * 9f)), ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), DarkBeadDamage, 0f, Main.myPlayer);
+            }
+            SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center);
+        }
+
+        void FirePhantomSeeker(Player target)
+        {
+            int id = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20f, 20f), Main.rand.NextVector2Circular(5f, 5f), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), PhantomSeekerDamage, 0f, Main.myPlayer);
+            Main.projectile[id].timeLeft = 460;
+            Main.projectile[id].rotation = Main.rand.Next(700) / 100f;
+            Main.projectile[id].ai[0] = target.whoAmI;
+            SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+        }
+
+        void FireBioSpit(Player target, int damage)
+        {
+            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 10f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), damage, 5f, Main.myPlayer);
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center);
+        }
+
+        void FirePlasmaCross(Player target)
+        {
+            const float speed = 6f;
+            Vector2 origin = NPC.Center;
+            Vector2 aimed = UsefulFunctions.Aim(origin, target.Center, speed);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, aimed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, new Vector2(speed, speed), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, new Vector2(-speed, speed), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, new Vector2(speed, -speed), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, new Vector2(-speed, -speed), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
+            SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.3f }, NPC.Center);
+        }
+
+        protected override void DoMagicAttack()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            float hpFrac = NPC.life / (float)NPC.lifeMax;
+            if (hpFrac <= 0.20f)
+            {
+                _queuedMagicAttack = Main.rand.NextBool() ? CinderMagicAttack.CultistFire : CinderMagicAttack.DemonFireLob;
+            }
+            else if (hpFrac <= 0.50f)
+            {
+                _queuedMagicAttack = Main.rand.NextBool() ? CinderMagicAttack.PhasedMatterBlast : CinderMagicAttack.LostSoulCurse;
+            }
+            else
+            {
+                _queuedMagicAttack = CinderMagicAttack.IceStorm;
+            }
+
+            _magicBurstsRemaining = hpFrac <= 0.33f ? 3 : 2;
+            _magicBurstTimer = 1;
+            _magicAttackTicksOverride = 56;
+            FireQueuedMagic(Main.player[NPC.target]);
+        }
+
+        protected override void DoMagicTick(int ticksRemaining)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || _magicBurstsRemaining <= 1)
+            {
+                return;
+            }
+
+            _magicBurstTimer++;
+            if (_magicBurstTimer >= 18)
+            {
+                _magicBurstTimer = 0;
+                _magicBurstsRemaining--;
+                FireQueuedMagic(Main.player[NPC.target]);
+            }
+        }
+
+        void FireQueuedMagic(Player target)
+        {
+            switch (_queuedMagicAttack)
+            {
+                case CinderMagicAttack.PhasedMatterBlast:
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 6f, 1.06f, true, true), ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), DisruptDamage, 5f, Main.myPlayer);
+                    SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.2f, Pitch = 0.4f }, NPC.Center);
+                    break;
+                case CinderMagicAttack.DemonFireLob:
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 5f), ProjectileID.DD2DrakinShot, FireBreathDamage, 0f, Main.myPlayer);
+                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+                    break;
+                case CinderMagicAttack.CultistFire:
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 0.1f), Main.rand.NextBool() ? ProjectileID.CultistBossFireBall : ProjectileID.CultistBossFireBallClone, Main.rand.NextBool() ? CultistFireDamage : CultistMagicDamage, 0.1f, Main.myPlayer);
+                    SoundEngine.PlaySound(SoundID.NPCHit34, NPC.Center);
+                    break;
+                case CinderMagicAttack.LostSoulCurse:
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 8f, 1.06f, true, true), ProjectileID.DesertDjinnCurse, LostSoulDamage, 7f, Main.myPlayer);
+                    SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = 0.5f }, NPC.Center);
+                    break;
+                default:
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 14f, 0.015f, true), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), IceStormDamage, 0f, Main.myPlayer);
+                    SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.3f }, NPC.Center);
+                    break;
+            }
+        }
+
+        protected override void DoBreathWindup(int elapsed)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            float t = MathHelper.Clamp(elapsed / (float)BreathTelegraphTicks, 0f, 1f);
+            float radius = MathHelper.Lerp(60f, 12f, t);
+            UsefulFunctions.DustRing(NPC.Center, (int)radius, NPC.life > NPC.lifeMax * 0.8f ? DustID.CursedTorch : DustID.Torch, 24, 2f);
+            Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * (1f + t * 3f));
+        }
+
+        protected override void OnBreathStart()
+        {
+            SoundEngine.PlaySound(NPC.life > NPC.lifeMax * 0.8f ? SoundID.NPCHit30 : new SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.5f }, NPC.Center);
+        }
+
+        protected override void DoBreathTick(int ticksRemaining)
+        {
+            Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f);
+            if (Main.netMode == NetmodeID.MultiplayerClient || ticksRemaining % 3 != 0)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, target.Center, 9f) + Main.rand.NextVector2Circular(1.5f, 1.5f);
+            int type = NPC.life > NPC.lifeMax * 0.8f ? ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>() : ModContent.ProjectileType<Projectiles.Enemy.FireBreath>();
+            int damage = NPC.life > NPC.lifeMax * 0.8f ? CursedBreathDamage : FireBreathDamage;
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(5f * NPC.direction, -12f), breathVel, type, damage, 0f, Main.myPlayer);
+            SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.12f, Pitch = 0.2f }, NPC.Center);
+        }
+
+        protected override void DoHomingVolleyFire()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            if (_swordDead)
+            {
+                for (int i = 0; i < 5; i++)
                 {
-                    if (Main.player[projectile.owner].whoAmI == p.whoAmI)
+                    Vector2 targetPoint = target.Center + new Vector2(-480 + 240 * i, 0f);
+                    Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPoint, 12f, 0.1f, true, true);
+                    if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y)
                     {
-                        canBeHurt = true;
-                        break;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), TridentDamage, 0.5f, Main.myPlayer);
                     }
                 }
             }
-            return canBeHurt;
-        }
-
-        public override bool? CanBeHitByItem(Player player, Item item)
-        {
-            bool canBeHurt = false;
-            if (TaggedPlayers != null)
+            else
             {
-                foreach (Player p in TaggedPlayers)
+                Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 6f, 0.1f, true, true);
+                if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y)
                 {
-                    if (player.whoAmI == p.whoAmI)
-                    {
-                        canBeHurt = true;
-                        break;
-                    }
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity + target.velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), GravityBallDamage, 0.5f, Main.myPlayer);
                 }
             }
-            return canBeHurt;
+        }
+
+        protected override void DoBoomerangFire()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Cinder.SwordOfCinder>(), SwordProjectileDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
+        }
+
+        protected override void DoSpiralFanFire(int shotIndex)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            Vector2 origin = NPC.Center + new Vector2(0f, -64f);
+            int bulletCount = _swordDead ? 7 : 5;
+            float spread = _swordDead ? 67f : 52.5f;
+            Vector2 baseVelocity = UsefulFunctions.Aim(origin, target.Center, 24f);
+            for (int i = -(bulletCount / 2); i <= bulletCount / 2; i++)
+            {
+                Vector2 velocity = baseVelocity.RotatedBy(MathHelper.ToRadians(-((spread / (bulletCount - 1)) * i)));
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.FarronHailSpawner>(), OrangeProjDamage, 1f, Main.myPlayer, 0, 30);
+            }
+        }
+
+        protected override int NextSpiralFanDelay(int completedShotIndex)
+        {
+            return completedShotIndex < (_swordDead ? 5 : 3) ? 30 : -1;
+        }
+
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
+        {
+            if (_swordDead)
+            {
+                modifiers.FinalDamage *= 1.1f;
+            }
+            else
+            {
+                modifiers.FinalDamage *= 0.7f;
+            }
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            if (_swordDead)
+            {
+                modifiers.FinalDamage *= 1.1f;
+            }
+            else
+            {
+                modifiers.FinalDamage *= 0.7f;
+            }
+
+            if (projectile.minion)
+            {
+                modifiers.Knockback *= 0f;
+            }
+        }
+
+        public override bool CheckActive()
+        {
+            return false;
+        }
+
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.SuperHealingPotion;
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SoulOfCinderBag>()));
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(NPC.dontTakeDamage);
-            writer.Write(NPC.chaseable);
-            writer.WriteVector2(ArenaCenter);
-            writer.Write(BulletHell);
+            writer.Write(_swordSpawned);
+            writer.Write(_swordDead);
+            writer.Write(_announcedSwordBreak);
         }
+
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            NPC.dontTakeDamage = reader.ReadBoolean();
-            NPC.chaseable = reader.ReadBoolean();
-            ArenaCenter = reader.ReadVector2();
-            BulletHell = reader.ReadBoolean();
-        }
-
-        private void State_Spawning(ref bool DontTakeDamage, ref bool DisableHoming)
-        {
-            NPC.alpha -= 5;
-            if (NPC.alpha < 0)
-            {
-                NPC.alpha = 0;
-            }
-            AI_Timer += 1f;
-
-            if (AI_Timer == 45)
-            {
-                for (int j = 0; j < 96; j++)
-                {
-                    Vector2 dir = Main.rand.NextVector2CircularEdge(5, 5);
-                    Vector2 dustPos = NPC.Center + dir;
-                    Vector2 dustVel = new Vector2(5, 0).RotatedBy(dir.ToRotation());
-                    Dust dust = Dust.NewDustPerfect(dustPos, DustID.Firework_Red, dustVel, 100);
-                    dust.noGravity = true;
-                    dust.scale = 1.2f;
-                }
-            }
-            if (AI_Timer >= 75)
-            {
-                AI_State = 0f;
-                AI_Timer = 0f;
-                NPC.netUpdate = true;
-            }
-
-            DontTakeDamage = true;
-            DisableHoming = true;
-        }
-        private void State_Idle(bool halfLife)
-        {
-            Player player = Main.player[NPC.target];
-            int targetDirection = Math.Sign(player.Center.X - NPC.Center.X);
-            if (targetDirection != 0)
-            {
-                NPC.direction = (NPC.spriteDirection = targetDirection);
-            }
-            AI_Timer += 1f;
-
-            int IdleTime = 15;
-
-            if (halfLife)
-                IdleTime = 8;
-
-            if (AI_Timer == 1)
-            {
-                int maxValue = 6;
-                if (NPC.life < NPC.lifeMax / 3)
-                {
-                    maxValue = 4;
-                }
-                if (NPC.life < NPC.lifeMax / 4)
-                {
-                    maxValue = 3;
-                }
-
-                AI_Misc = Main.rand.Next(maxValue);
-                NPC.netUpdate = true;
-            }
-            if (AI_Timer >= IdleTime)
-            {
-                /* at the end of every phase, AI_State_Counter is incremented by 1 (in ReturnToIdle())
-                 * when AI_State_Counter is even (% 2), StateChange will return 0, which will go straight to Movement
-                 * otherwise, pick the next attack from the predefined sequence in StateChange
-                 * i.e. the sequence is always idle - movement - idle - attack
-                 */
-
-                int statePicker = StateChange(halfLife);
-
-                if (halfLife && (AI_Misc == 0) && statePicker != (int)States.Movement)
-                {
-                    statePicker = (int)States.AncientLight;
-                    AI_Misc = 0;
-                }
-
-                if (statePicker == (int)States.Idle)
-                {
-                    Vector2 toPlayer = new Vector2(player.Center.X, player.Center.Y - 192) - NPC.Center;
-                    float movementTimer = (float)Math.Ceiling(toPlayer.Length() / 30f);
-                    if (movementTimer == 0f)
-                    { //div0 protection
-                        movementTimer = 1f;
-                    }
-                    AI_State = (float)States.Movement;
-                    AI_Timer = movementTimer * 1.35f; //movement has deceleration near the target, so time is increased to compensate
-                    AI_Misc = 0;
-                    NPC.velocity = toPlayer / movementTimer; //longer distances = more velocity, but also longer timer. they balance out
-
-                    NPC.netUpdate = true;
-
-                }
-                else
-                {
-                    AI_Timer = 0;
-                    AI_State = statePicker;
-                    AI_Misc = 0;
-                    NPC.netUpdate = true;
-                }
-            }
-        }
-        private void State_Movement()
-        {
-            Player player = Main.player[NPC.target];
-            //is there air friction for NPCs even if you dont explicitly add it?
-            NPC.velocity.X *= 1.075f;
-            Vector2 toPlayer = player.Center - NPC.Center;
-            if (toPlayer.Length() < 16 * 20)
-            {
-                NPC.velocity *= 0.9f;
-            }
-            //AI_Timer is set to a positive integer at the end of any idle phase that preceeds a movement phase, so decrement instead of incrementing
-            AI_Timer -= 1f;
-            if (AI_Timer <= 0f)
-            {
-                ReturnToIdle();
-            }
-        }
-        private void State_Tackle(bool expertMode, bool halfLife)
-        {
-            int TackleInterval = 20;
-            int TackleSpeed = 38;
-            int TackleDamage = 102;
-            int TackleCount = 5;
-            if (expertMode)
-            {
-                TackleDamage = (int)(TackleDamage * 0.5f);
-                TackleSpeed = 42;
-            }
-
-            if (halfLife)
-            {
-                TackleInterval = 18;
-            }
-
-            Player player = Main.player[NPC.target];
-            Vector2 toPlayer = Vector2.Normalize(player.Center - NPC.Center + player.velocity * 10f);
-
-            //delay the first tackle
-            if (AI_Timer == 0 && AI_Misc == 0)
-            {
-                for (int i = 0; i < 64; i++)
-                {
-                    //and make a ring of dust to announce we're in tackle phase
-                    Vector2 dir = Main.rand.NextVector2CircularEdge(64, 64);
-                    Vector2 dustPos = NPC.Center + dir;
-                    Dust.NewDustPerfect(dustPos, DustID.RuneWizard, dir / 4f, 200).noGravity = true;
-
-                }
-                AI_Timer -= 20;
-                AI_Misc = 1;
-            }
-            //+1 because we use the first one just above
-            if (AI_Misc < TackleCount + 1)
-            {
-                AI_Timer += 1f;
-                if (AI_Timer == TackleInterval)
-                {
-                    NPC.velocity = Vector2.Zero;
-                }
-
-                if (AI_Timer > TackleInterval && AI_Timer < TackleInterval * 2.5)
-                {
-                    int dustRadius = 48;
-                    float speed = 2;
-                    for (int i = 0; i < 8; i++)
-                    {
-                        Vector2 dir = toPlayer.RotatedByRandom(2.35); //135 degrees
-                        Vector2 dustPos = NPC.Center + dir * dustRadius;
-                        Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
-
-                        Dust dust = Dust.NewDustPerfect(dustPos, 106, dustVel, 0, new Color(255, 0, 0), 1f);
-                        dust.noGravity = true;
-
-                    }
-                }
-
-                if (AI_Timer == TackleInterval * 2 && Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 Tackle = toPlayer;
-                    Tackle *= TackleSpeed;
-
-                    //speed up the dash if the target is too far away...
-                    float speedMod = ((player.Center - NPC.Center).Length() / 650f);
-
-                    //...but not to more than 130% speed
-                    speedMod = MathHelper.Clamp(speedMod, 1, 1.3f);
-                    Tackle *= speedMod;
-
-                    NPC.velocity = Tackle;
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<TackleProjectile>(), TackleDamage, 1, Main.myPlayer, TackleInterval / 2, NPC.whoAmI);
-                }
-
-                if (AI_Timer > TackleInterval * 2 && NPC.velocity != Vector2.Zero)
-                {
-                    NPC.velocity.X *= 1.075f;
-                }
-
-                if (AI_Timer > TackleInterval * 3)
-                {
-                    for (int i = 0; i < Main.maxProjectiles; i++)
-                    {
-                        if (Main.projectile[i].type == ModContent.ProjectileType<TackleProjectile>())
-                        {
-                            Main.projectile[i].Kill();
-                            break;
-                        }
-                    }
-                    NPC.velocity *= 0.7f;
-
-                }
-
-                if (AI_Timer > TackleInterval * 3.5)
-                {
-                    AI_Timer = 0;
-                    AI_Misc++;
-                }
-
-            }
-
-            else
-            {
-                ReturnToIdle();
-            }
-
-        }
-        private void State_FarronHail(bool expertMode, bool halfLife)
-        {
-            Player player = Main.player[NPC.target];
-            const float VELOCITY = 24;
-            const int VOLLEY_COUNT = 9;
-            int VolleyInterval = 35;
-            float SpreadAngle = 52.5f;
-            int BulletCount = 5;
-            int FarronHailDamage = 88;
-            if (expertMode)
-            {
-                FarronHailDamage = (int)(FarronHailDamage * 0.5f);
-            }
-            if (halfLife)
-            {
-                VolleyInterval = 30;
-                BulletCount = 7;
-                SpreadAngle = 67f;
-            }
-
-            if (AI_Misc < 90)
-            {
-                //AI_Misc but accessors cant be passed as reference
-                TeleportToPoint(ref NPC.ai[2], ArenaCenter, DustID.Clentaminator_Cyan, DustShapes.Plus);
-            }
-
-            else { AI_Timer++; }
-
-            if (AI_Timer % VolleyInterval == (VolleyInterval - 5))
-            {
-
-                Vector2 pos = new Vector2(NPC.Center.X, NPC.Center.Y - 64);
-                Vector2 toPlayer = (Vector2.Normalize(player.Center - pos)) * VELOCITY;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = -(BulletCount / 2); i < ((BulletCount / 2) + 1); i++)
-                    {
-                        //spread shot like
-                        //....v
-                        //..//|\\
-                        //center line aimed at the player
-                        //alert: one-liner gore
-                        Vector2 shot = toPlayer.RotatedBy(MathHelper.ToRadians(0 - (((float)(SpreadAngle / (BulletCount - 1))) * i)));
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, shot, ModContent.ProjectileType<FarronHailSpawner>(), FarronHailDamage, 1, Main.myPlayer, 0, VolleyInterval);
-                    }
-                }
-            }
-
-            if (AI_Timer > (VOLLEY_COUNT * VolleyInterval))
-            {
-                ReturnToIdle();
-            }
-
-        }
-        private void State_TheArchivist(bool expertMode, ref bool DisableHoming, ref bool DontTakeDamage)
-        {
-
-            if (AI_Misc < 90)
-            {
-                //AI_Misc but accessors cant be passed as reference
-                TeleportToPoint(ref NPC.ai[2], ArenaCenter, DustID.Clentaminator_Purple, DustShapes.X);
-            }
-
-            else { AI_Timer++; }
-            if (AI_Timer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.SwordOfLordGwyn>(), 69, 0.5f, Main.myPlayer, NPC.whoAmI);
-            }
-
-            if (AI_Timer == 60)
-            {
-                //Main.NewText("killing swords");
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Gwyn.SwordOfLordGwyn>())
-                    {
-                        Main.projectile[i].Kill();
-                    }
-                }
-                ReturnToIdle();
-            }
-        }
-        private void State_BulletHell(bool expertMode, ref bool DontTakeDamage)
-        {
-            //this phase is a long one
-            int LaserDamage = 70;
-            int ShotDamage = 70;
-            float shotVelocity = 8f;
-
-            if (expertMode)
-            {
-                ShotDamage = (int)(ShotDamage * 0.5f);
-            }
-
-            if (AI_Misc < 90)
-            {
-                //TeleportToArenaCenter with a different location
-                AI_Misc++;
-                if (AI_Misc >= 0 && AI_Misc < 15)
-                {
-                    float AlphaMod = (AI_Misc) / 15f;
-                    NPC.alpha = (int)(AlphaMod * 255f);
-
-                }
-
-                else if (AI_Misc == 15)
-                {
-                    NPC.alpha = 255;
-                    NPC.Center = new Vector2(ArenaCenter.X, ArenaCenter.Y + (ARENA_HEIGHT / 3));
-                }
-
-                else if (AI_Misc >= 16 && AI_Misc < 30)
-                {
-                    for (int i = 0; i < 10; i++)
-                    {
-                        Vector2 velocity = MakeDustShape(DustShapes.Circle, i);
-                        Dust.NewDustPerfect(NPC.Center, DustID.Clentaminator_Green, velocity).noGravity = true;
-
-                    }
-                }
-
-                else if (AI_Misc >= 30 && AI_Misc < 60)
-                {
-                    float AlphaMod = (AI_Misc - 30f) / 15f;
-                    NPC.alpha = 255 - (int)(AlphaMod * 255f);
-                }
-            }
-
-            else
-            {
-                AI_Timer++;
-            }
-
-            //1
-            if (AI_Timer == 1)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int flipflop = (((i % 2) * 2) - 1); //alternates -1 and 1
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
-                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - (ARENA_HEIGHT / 3)),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<BulletHellSpawner>(),
-                            ShotDamage,
-                            2).ModProjectile as BulletHellSpawner;
-                        spawner.shotInterval = 15;
-                        spawner.lifespan = 420;
-                        spawner.shotVelocity = shotVelocity;
-                        spawner.rotationSpeed = 2 * flipflop;
-                    }
-                }
-            }
-            //2
-            if (AI_Timer == 180)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
-                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 3f),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<BulletHellSpawner>(),
-                            ShotDamage,
-                            2).ModProjectile as BulletHellSpawner;
-                        spawner.shotInterval = 15;
-                        spawner.lifespan = 420;
-                        spawner.shotVelocity = shotVelocity;
-                        spawner.rotationSpeed = 3 * flipflop;
-                    }
-                }
-            }
-            //3
-            if (AI_Timer == 405)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
-                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 25f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 2.5f),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<BulletHellSpawner>(),
-                            ShotDamage,
-                            2).ModProjectile as BulletHellSpawner;
-                        spawner.shotInterval = 12;
-                        spawner.lifespan = 300;
-                        spawner.shotVelocity = shotVelocity;
-                        spawner.rotationSpeed = 5 * flipflop;
-                    }
-                }
-            }
-            //4
-            if (AI_Timer == 700)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
-                            new Vector2(NPC.Center.X, NPC.Center.Y - ARENA_HEIGHT / 3f),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<BulletHellSpawner>(),
-                            ShotDamage,
-                            2).ModProjectile as BulletHellSpawner;
-                        spawner.shotInterval = 6;
-                        spawner.lifespan = 390;
-                        spawner.shotVelocity = shotVelocity;
-                        spawner.rotationSpeed = 5 * flipflop;
-                    }
-                }
-            }
-            //5
-            if (AI_Timer == 910)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
-                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 2.5f),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<BulletHellSpawner>(),
-                            ShotDamage,
-                            2).ModProjectile as BulletHellSpawner;
-                        spawner.shotInterval = 12;
-                        spawner.lifespan = 420;
-                        spawner.shotVelocity = shotVelocity;
-                        spawner.rotationSpeed = -4; //they both rotate the same direction, this is on purpose
-                    }
-                }
-            }
-            //6
-            if (AI_Timer == 1240)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
-                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 2.2f),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<BulletHellSpawner>(),
-                            ShotDamage,
-                            2).ModProjectile as BulletHellSpawner;
-                        spawner.shotInterval = 21; //there are four spawners this time!
-                        spawner.lifespan = 200;
-                        spawner.shotVelocity = shotVelocity;
-                        spawner.rotationSpeed = (i > 1 ? 15 : 5) * flipflop; //15 reduced to 5 on frame 1, used to check if the projectile should rotate on spawn
-                    }
-                }
-            }
-            if (AI_Timer == 1420)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
-                            new Vector2(NPC.Center.X, NPC.Center.Y - ARENA_HEIGHT / 2.5f),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<BulletHellSpawner>(),
-                            ShotDamage,
-                            2).ModProjectile as BulletHellSpawner;
-                        spawner.shotInterval = 3; //it's gamer time
-                        spawner.lifespan = 200;
-                        spawner.shotVelocity = shotVelocity;
-                        spawner.rotationSpeed = 5 * flipflop;
-                    }
-                }
-            }
-            if (AI_Timer == 1620)
-            {
-                ReturnToIdle();
-            }
-        }
-        private void ReturnToIdle()
-        {
-            AI_State = (int)States.Idle;
-            AI_Timer = 0;
-            AI_Misc = 0;
-            AI_State_Counter += 1;
-
-            NPC.velocity = Vector2.Zero;
-            NPC.netUpdate = true;
-        }
-        private void InterruptCurrentPhase()
-        {
-            //ReturnToIdle minus the idle phase change and state counter increment
-            //for hp threshold phase changes 
-            AI_Timer = 0;
-            AI_Misc = 0;
-
-            NPC.velocity = Vector2.Zero;
-            NPC.netUpdate = true;
-        }
-        private int StateChange(bool halfLife)
-        {
-            if (AI_State_Counter % 2 == 0)
-            {
-                return (int)States.Idle;
-            }
-            else
-            {
-                int statePicker = 0;
-                if (false)
-                {
-                    switch ((int)AI_State_Counter)
-                    {
-                        case 1:
-                            statePicker = (int)States.TheArchivist;
-                            break;
-                        case 3:
-                            statePicker = (int)States.TheArchivist;
-                            break;
-                        case 5:
-                            statePicker = (int)States.TheArchivist;
-                            break;
-                        case 7:
-                            statePicker = (int)States.TheArchivist;
-                            break;
-                        case 9:
-                            statePicker = (int)States.TheArchivist;
-                            break;
-                        case 11:
-                            statePicker = (int)States.TheArchivist;
-                            break;
-                        case 13:
-                            statePicker = (int)States.TheArchivist;
-                            break;
-                        case 15:
-                            statePicker = (int)States.TheArchivist;
-                            AI_State_Counter = -1f;
-                            break;
-                        default:
-                            AI_State_Counter = -1f;
-                            break;
-                    }
-                }
-                else
-                {
-                    switch ((int)AI_State_Counter)
-                    {
-                        case 1:
-                            statePicker = (int)States.Tackle;
-                            break;
-                        case 3:
-                            statePicker = (int)States.TheArchivist;
-                            AI_State_Counter = -1f;
-                            break;
-                        /*                        case 5:
-                                                    statePicker = (int)States.FarronHail;
-                                                    AI_State_Counter = -1f;
-                                                    break;*/
-
-                        default:
-                            AI_State_Counter = -1f;
-                            break;
-                    }
-                }
-
-                return statePicker;
-            }
-        }
-        private void TeleportToPoint(ref float timer, Vector2 location, int? DustType = null, DustShapes shape = default)
-        {
-            timer++;
-            if (timer >= 0 && timer < 15)
-            {
-                float AlphaMod = (timer) / 15f;
-                NPC.alpha = (int)(AlphaMod * 255f);
-
-            }
-
-            else if (timer == 15)
-            {
-                NPC.alpha = 255;
-                NPC.Center = ArenaCenter;
-            }
-
-            if (DustType != null)
-            {
-                if (timer >= 16 && timer < 30)
-                {
-                    for (int i = 0; i < 10; i++)
-                    {
-                        Vector2 velocity = MakeDustShape(shape, i);
-                        Dust.NewDustPerfect(NPC.Center, (int)DustType, velocity).noGravity = true;
-
-                    }
-                }
-            }
-
-            else if (timer >= 30 && timer < 60)
-            {
-                float AlphaMod = (timer - 30f) / 15f;
-                NPC.alpha = 255 - (int)(AlphaMod * 255f);
-            }
-        }
-        private Vector2 MakeDustShape(DustShapes shape, int iteration = 0)
-        {
-            Vector2 velocity;
-            switch (shape)
-            {
-                case DustShapes.Circle:
-                    velocity = Main.rand.NextVector2Circular(10, 10);
-                    break;
-                case DustShapes.Plus:
-                case DustShapes.X:
-                    //makes a +
-                    velocity = Main.rand.NextVector2Circular(iteration % 2 == 0 ? 0.3f : 10, iteration % 2 == 0 ? 10 : 0.3f);
-                    if (shape == DustShapes.X)
-                    {
-                        velocity = velocity.RotatedBy(Math.PI / 4);
-                    }
-                    break;
-                default:
-                    velocity = Vector2.Zero;
-                    break;
-            }
-            return velocity;
-        }
-        private void Init()
-        {
-            Player target = Main.player[NPC.target];
-            if (ArenaCenter.Length() < 1 || ArenaCenter == Vector2.Zero)
-            {
-                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-                {
-                    ArenaCenter = ARENA_LOCATION_ADVENTURE;
-                    //if the door is open
-                    if (Framing.GetTileSafely(778, 1243).HasTile && Framing.GetTileSafely(778, 1243).IsActuated)
-                    {
-                        //trigger the switch to close the door and turn on the lights
-                        Wiring.TripWire(782, 1241, 1, 1);
-                    }
-
-                }
-                else
-                {
-                    ArenaCenter = new Vector2(target.Center.X, target.Center.Y - (18 * 16));
-                }
-            }
-            if (TaggedPlayers == null)
-            {
-                TaggedPlayers = new List<Player>();
-            }
-            NPC.alpha = 255;
-            NPC.Center = ArenaCenter;
-            NPC.rotation = 0f;
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                AI_State = (float)States.Spawning;
-                NPC.netUpdate = true;
-            }
+            _swordSpawned = reader.ReadBoolean();
+            _swordDead = reader.ReadBoolean();
+            _announcedSwordBreak = reader.ReadBoolean();
         }
     }
 }

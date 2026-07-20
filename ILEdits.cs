@@ -1,6 +1,7 @@
-﻿using Mono.Cecil.Cil;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
+using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -15,6 +16,42 @@ namespace tsorcRevamp
             Terraria.IL_Player.TileInteractionsUse += PowerCell_Patch;
 
             Terraria.IL_Player.Update += Player_Update;
+            Terraria.IL_Player.Update += WingFallDamage_Patch;
+
+            // NOTE: the SoulsMode crystal system deliberately does NOT raise vanilla's 15/9 consumed-crystal
+            // clamps. Those clamps are exactly what keeps the saved player file well-formed — see
+            // tsorcRevampPlayer.soulsLifeGranted. Raising them (which this file used to do) is what caused the
+            // phantom Life Fruit and the mana reset on reload.
+
+            // Color/White lighting normally composites tiles from cached render targets. Vessel phase 2
+            // needs the live GlobalTile/GlobalWall PreDraw decisions instead, or old biome tiles remain
+            // visible until Terraria happens to rebuild those targets.
+            Terraria.IL_Main.DoDraw += VesselVoid_ForceDirectWorldDrawing;
+
+            // DrawBlack, DrawWalls, and Terraria's cached tile passes bypass or outlive the per-tile
+            // PreDraw decisions and leave block-shaped biome fragments over the Vessel background.
+            // Suppress the complete vanilla tile pass during phase 2; the Vessel overlay redraws only
+            // platform tiles after its fog pass.
+            MethodInfo drawBlack = typeof(Main).GetMethod("DrawBlack", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo drawWalls = typeof(Main).GetMethod("DrawWalls", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo drawTiles = typeof(Main).GetMethod("DrawTiles", BindingFlags.NonPublic | BindingFlags.Instance,
+                null, new[] { typeof(bool), typeof(bool), typeof(bool), typeof(int) }, null);
+            MethodInfo drawTileEntities = typeof(Main).GetMethod("DrawTileEntities", BindingFlags.NonPublic | BindingFlags.Instance,
+                null, new[] { typeof(bool), typeof(bool), typeof(bool) }, null);
+            if (drawBlack != null)
+                MonoModHooks.Modify(drawBlack, new ILContext.Manipulator(VesselVoid_SkipHiddenWorldLayer));
+            if (drawWalls != null)
+                MonoModHooks.Modify(drawWalls, new ILContext.Manipulator(VesselVoid_SkipHiddenWorldLayer));
+            if (drawTiles != null)
+                MonoModHooks.Modify(drawTiles, new ILContext.Manipulator(VesselVoid_SkipHiddenWorldLayer));
+            if (drawTileEntities != null)
+                MonoModHooks.Modify(drawTileEntities, new ILContext.Manipulator(VesselVoid_SkipHiddenWorldLayer));
+
+            MethodInfo drawMapIconButtons = typeof(Main).GetMethod("DrawMapIconButtons", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (drawMapIconButtons != null)
+            {
+                MonoModHooks.Modify(drawMapIconButtons, new ILContext.Manipulator(MapButtons_Patch));
+            }
             //IL.Terraria.Player.Update += Chest_Patch;
 
             //Disable drawing of wires when in adventure mode
@@ -74,7 +111,6 @@ namespace tsorcRevamp
 
         internal static void UnloadILs()
         {
-
         }
 
         internal static void PowerCell_Patch(ILContext il)
@@ -109,6 +145,31 @@ namespace tsorcRevamp
             //outcome: sets 'stack' to 'stack', instead of setting 'stack' to 'stack - 1'.
         }
 
+        internal static void VesselVoid_ForceDirectWorldDrawing(ILContext il)
+        {
+            var c = new ILCursor(il);
+
+            if (!c.TryGotoNext(MoveType.After, instruction => instruction.MatchCall<Lighting>("get_UpdateEveryFrame")))
+            {
+                throw new Exception("Could not find Lighting.UpdateEveryFrame in Main.DoDraw for Vessel void rendering");
+            }
+
+            c.EmitDelegate<Func<bool, bool>>(updateEveryFrame => updateEveryFrame
+                || NPCs.Bosses.VesselOfSouls.VesselOfSoulsFadeSystem.WorldHidden);
+        }
+
+        internal static void VesselVoid_SkipHiddenWorldLayer(ILContext il)
+        {
+            var c = new ILCursor(il);
+            ILLabel drawNormally = il.DefineLabel();
+
+            c.EmitDelegate<Func<bool>>(() =>
+                NPCs.Bosses.VesselOfSouls.VesselOfSoulsFadeSystem.WorldHidden);
+            c.Emit(OpCodes.Brfalse, drawNormally);
+            c.Emit(OpCodes.Ret);
+            c.MarkLabel(drawNormally);
+        }
+
         internal static void DrawWires_Patch(ILContext il)
         {
             var c = new ILCursor(il);
@@ -129,18 +190,64 @@ namespace tsorcRevamp
         internal static void Player_Update(ILContext il)
         {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
-
             ILCursor cursor = new ILCursor(il);
 
-            if (!cursor.TryGotoNext(MoveType.Before,
-                                    i => i.MatchLdfld("Terraria.Player", "statManaMax2"),
-                                    i => i.MatchLdcI4(400)))
+            // Pattern A (older tML): comparison side — ldfld statManaMax2 immediately followed by ldc.i4 400
+            // Matches: if (statManaMax2 > 400) — we replace 400 with int.MaxValue so the cap never triggers.
+            if (cursor.TryGotoNext(MoveType.Before,
+                i => i.MatchLdfld("Terraria.Player", "statManaMax2"),
+                i => i.MatchLdcI4(400)))
             {
-                mod.Logger.Fatal("Could not find instruction to patch (Player_Update)");
+                cursor.Next.Next.Operand = int.MaxValue;
                 return;
             }
 
-            cursor.Next.Next.Operand = int.MaxValue;
+            // Pattern B (newer tML): assignment side — ldc.i4 400 immediately before stfld statManaMax2
+            // Matches: statManaMax2 = 400 — we replace 400 with int.MaxValue so it assigns an unreachable cap.
+            cursor.Index = 0;
+            if (cursor.TryGotoNext(MoveType.Before,
+                i => i.MatchLdcI4(400),
+                i => i.MatchStfld("Terraria.Player", "statManaMax2")))
+            {
+                cursor.Next.Operand = int.MaxValue;
+                return;
+            }
+
+            // If neither pattern matches, tModLoader likely already removed this cap at the framework level.
+            // This is not a fatal error — mana above 400 still works via PostUpdateEquips.
+            mod.Logger.Warn("Player_Update mana-cap patch: instruction not found — tModLoader may have already removed this cap. Mana above 400 should still work.");
+        }
+
+        internal static void WingFallDamage_Patch(ILContext il)
+        {
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
+            ILCursor cursor = new ILCursor(il);
+
+            // Vanilla separately checks `equippedWings != null` when deciding whether landing should
+            // hurt. This bypasses noFallDmg entirely, so a ModPlayer hook cannot opt passive wings back
+            // into fall damage. Filter that one boolean while leaving all other immunity checks intact.
+            if (!cursor.TryGotoNext(MoveType.After,
+                i => i.MatchLdarg(0),
+                i => i.MatchLdfld<Player>("equippedWings"),
+                i => i.MatchLdnull(),
+                i => i.MatchCgtUn()))
+            {
+                mod.Logger.Warn("WingFallDamage_Patch: equipped-wings fall-damage guard not found. Passive wings will still prevent fall damage.");
+                return;
+            }
+
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Func<bool, Player, bool>>((vanillaWingImmunity, player) =>
+            {
+                if (!vanillaWingImmunity)
+                {
+                    return false;
+                }
+
+                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                return modPlayer.SlowfallWingActive
+                    || (player.controlJump && player.velocity.Y > 0f && player.wingsLogic > 0);
+            });
         }
 
         internal static void Chest_Patch(ILContext il)
@@ -239,5 +346,15 @@ namespace tsorcRevamp
             throw new NotImplementedException();
         }
         */
+
+        internal static void MapButtons_Patch(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            if (c.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(22)))
+            {
+                c.Remove();
+                c.EmitDelegate<Func<int>>(() => ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars ? 90 : 22);
+            }
+        }
     }
 }

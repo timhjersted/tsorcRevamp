@@ -764,7 +764,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 // This boss spawns on the surface of the Frozen ocean
                 if (!BossDefeated(ModContent.NPCType<Blight>()))
                 {
-                    chat.Add(ChatUtil("BlightHint"));
+                    chat.Add(ChatUtil("BlightHint", player.name));
                 }
 
                 // Hint about the gate underneath the Frozen Ocean
@@ -775,8 +775,15 @@ namespace tsorcRevamp.NPCs.Friendly
                 }
             }
             // Time to beat the final boss!
-            else 
+            else
             {
+                // Blight is optional now — it no longer gates Gwyn, but keep advertising it
+                // if still undefeated. Added before GwynHint so the Gwyn clue stays higher-weighted.
+                if (!BossDefeated(ModContent.NPCType<Blight>()))
+                {
+                    chat.Add(ChatUtil("BlightHint", player.name));
+                }
+
                 // Tell the player Gwyn's location.
                 // Mention needing a forgotten Gaia Sword or Barrow Blade for his initial defenses
                 chat.Add(ChatUtil("GwynHint", player.name));

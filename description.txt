@@ -1,6 +1,6 @@
-The Story of Red Cloud is a massive 40+ hour Dark Souls-inspired adventure built inside the world of Terraria using a custom world, mod, and companion soundtrack.
+The Story of Red Cloud is a massive 30+ hour Dark Souls-inspired adventure built inside the world of Terraria using a custom world, mod, and companion soundtrack.
 
-In development over 7 years, your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world filled with shortcuts, hidden paths, epic boss fights, and countless secrets.
+In development over 8 years, your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world filled with shortcuts, hidden paths, epic boss fights, and countless secrets.
 
 
 ✅  The Custom World will load automatically when you reach the Select World screen. To create a fresh or updated world, click New on the World screen.
@@ -19,10 +19,18 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=3409707567
 - 43 bosses (27 mod bosses plus 16 vanilla at scripted locations)
 - 100+ new enemies and 8 friendly NPCs
 - 800+ new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
-- Dark Souls game mechanics, including bonfire save points, soul currency and the dodge roll 
+- Dark Souls game mechanics, including bonfire save points, bonfire warping, soul currency, Estus flask, active shields, and the dodge roll with iframes
 - The mod enforces old school adventure map rules, so if you can do it, it's okay to do it!
-- Bearer of The Curse Mode offers the ultimate Dark Souls experience, adding an Estus Flask and Cerulean Tear to your UI, prevents the use of healing potions and makes all weapons use different amounts of stamina
 - New Remix World designed by Xelvaa offers a fresh and expanded experience compared to the classic game world designed by Tim Hjersted, ideal for a 2nd playthrough
+
+
+✅  DIFFICULTY & MECHANICS
+------------------------------------------
+- New players start as Unkindled, with the Darksign in your inventory letting you choose 2 additional ways to play. Left-click the Darksign in your inventory anytime to cycle between tiers:
+   • Unkindled (default): Estus Flask + Cerulean Tear bound to Quick Heal / Quick Mana, with Estus Shards and Sublime Bone Dust dropping from bosses to increase your flask uses and potency. Healing items work at half strength; passive mana regen is reduced outside of bonfires. Weapons use a light amount of stamina. Shield accessories have active use mechanics, including perfect parries. Gain a 2nd Slot for weapons, items or shields, accessible via right mouse click.
+   • Bearer of the Curse: full Dark Souls experience — all Unkindled features plus combat class mechanics, +20% soul gain, and an extra accessory slot. Trade-offs: all weapons drain increased stamina, vanilla healing items don't work, passive mana regen is disabled outside of bonfires, and dying reduces your max HP by 20% until you return to your dropped souls
+   • Classic: vanilla Terraria healing, shield and magic systems, no flask UI 
+- All modes: On death, you drop all your Dark Souls and have one chance to recover them by returning to your bloodstain. For a more forgiving experience, you can disable this in the mod's Config options
 
 
 ✅  DISCORD
@@ -71,15 +79,13 @@ Some mods interfere with the Adventure Map, but may be used if you're playing on
 ------------------------------------------
 - Create a new classic character named Red Cloud (for multiplayer, everyone should use a different name)
 
-- On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
-
 - The new dodge roll action with i-frames can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default. Left Shift is also recommended, with Auto Select bound to Left Alt.)
 
-- In Bearer of the Curse Mode, your Estus Flask is bound to the Quick Heal key and the Cerulian Tear is tied to your Quick Mana key.
+- In Unkindled and Bearer of the Curse modes, your Estus Flask is bound to the Quick Heal key and the Cerulean Tear is bound to your Quick Mana key. Rest near a bonfire to refill both flasks. Left-click the Darksign in your inventory to switch tiers.
 
 - Adventure Mode should stay checked in the TSORC mod config options to play with the custom story world.
 
-- Multiplayer is supported for 4 players. Class diversity recommended. Post issues you find under #bug-reports. Thanks! 
+- Multiplayer is supported for 4 players. Class diversity recommended. Post issues you find under #bug-reports. 
 
 - Go to #tips and #boss-list in our Discord for all game hints and walkthrough help
 
@@ -90,6 +96,6 @@ The game is fairly polished up to the end of the main story (defeating Attraidie
 
 Going forward, we'll continue to release occasional updates to make improvements, address bugs and respond to game feedback as our free time allows.
 
-We're looking for new team members to help us, as our current team is often busy with work or college these days.
+We're looking for new team members to join us, as our current team is often busy with work or college these days. Coders, spriters, & testers all welcome.
 
-To reach our official 1.0 release goals, we really only have a handful of very late-game bosses left to give the full revamp treatment. If you're a coder that would be interested in this, get in touch via our Discord! Or spread the message to people who might be interested! Thanks!
+To reach our official 1.0 release goals, we just have a handful of very late-game bosses left to give the full revamp treatment. If you're a coder that would be interested in this, get in touch via our Discord! Or spread the message to people who might be interested! Thanks!

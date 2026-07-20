@@ -20,10 +20,10 @@ namespace tsorcRevamp.NPCs.Friendly
             Main.npcFrameCount[NPC.type] = 26;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 10;
             NPCID.Sets.AttackFrameCount[NPC.type] = 5;
-            NPCID.Sets.DangerDetectRange[NPC.type] = 450; // keep this low for melee
+            NPCID.Sets.DangerDetectRange[NPC.type] = 550; // keep this low for melee
             NPCID.Sets.AttackType[NPC.type] = 1; // 0 is throwing, 1 is shooting, 2 is magic, 3 is melee
             NPCID.Sets.AttackTime[NPC.type] = 25;
-            NPCID.Sets.AttackAverageChance[NPC.type] = 10;
+            NPCID.Sets.AttackAverageChance[NPC.type] = 9;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
 
@@ -47,8 +47,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.height = 40;
             NPC.aiStyle = 7;
             NPC.damage = 50;
-            NPC.defense = 25;
-            NPC.lifeMax = 1000;
+            NPC.defense = 45;
+            NPC.lifeMax = 7500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.3f;
@@ -162,8 +162,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-
-
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.WandOfFire>())
             {
                 shopCustomPrice = 550,
@@ -175,8 +173,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedEyeOfCthulhu);
-
-
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Scrolls.FlameStrikeScroll>())
             {
@@ -196,25 +192,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
 
-            shop.Add(new Item(ModContent.ItemType<ForgottenIceBowScroll>())
-            {
-                shopCustomPrice = 5000,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
-
-            shop.Add(new Item(ModContent.ItemType<ForgottenThunderBowScroll>())
-            {
-                shopCustomPrice = 5000,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
-
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Scrolls.GreatEnergyBeamScroll>())
-            {
-                shopCustomPrice = 10000,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
-
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Tomes.FlareTome>())
             {
                 shopCustomPrice = 10000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -240,9 +218,6 @@ namespace tsorcRevamp.NPCs.Friendly
                     shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                 }, Condition.DownedEowOrBoc); 
             }
-
-
-
             shop.Register();
         }
 
@@ -263,38 +238,50 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
+            if (weaponChoice < 8) //More likely to use Great Soul Arrow Staff
+            {
+                damage = 30;
+                knockback = 4f;
+            }
+            if (weaponChoice >= 8)
+            {
+                damage = 22;
+                knockback = 5f;
+            }
+
             if (Main.hardMode)
             {
                 if (weaponChoice < 6)
                 {
-                    damage = 50;
+                    damage = 55;
                     knockback = 5f;
                 }
                 if (weaponChoice >= 6)
                 {
-                    damage = 20;
+                    damage = 45;
                     knockback = 6f;
                 }
             }
-            else
+
+            if (tsorcRevampWorld.SuperHardMode)
             {
-                if (weaponChoice < 8) //More likely to use Great Soul Arrow Staff
+                if (weaponChoice < 6)
                 {
-                    damage = 25;
-                    knockback = 4f;
+                    damage = 110;
+                    knockback = 10f;
                 }
-                if (weaponChoice >= 8)
+                if (weaponChoice >= 6)
                 {
-                    damage = 10;
-                    knockback = 5f;
+                    damage = 90;
+                    knockback = 12f;
                 }
             }
         }
 
         public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown)
         {
-            cooldown = 30;
-            randExtraCooldown = 30;
+            cooldown = 28;
+            randExtraCooldown = 28;
         }
         public override void DrawTownAttackGun(ref Texture2D item, ref Rectangle itemFrame, ref float scale, ref int horizontalHoldoutOffset)/* tModPorter Note: closeness is now horizontalHoldoutOffset, use 'horizontalHoldoutOffset = Main.DrawPlayerItemPos(1f, itemtype) - originalClosenessValue' to adjust to the change. See docs for how to use hook with an item type. */
         {

@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Throwing
             Projectile.friendly = true;
             Projectile.height = 14;
             Projectile.penetrate = 1;
-            Projectile.DamageType = DamageClass.Throwing;
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.scale = 0.9f;
             Projectile.tileCollide = true;
             Projectile.width = 14;

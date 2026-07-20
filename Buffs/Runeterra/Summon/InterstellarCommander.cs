@@ -19,10 +19,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         public override void Update(Player player, ref int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>())
-            {
-                player.maxMinions += 1;
-            }
 
             modPlayer.RuneterraMinionHitSoundCooldown--;
             modPlayer.InterstellarBoostCooldown--;

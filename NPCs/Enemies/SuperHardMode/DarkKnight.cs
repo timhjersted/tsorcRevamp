@@ -33,6 +33,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 8000; // was 968 with more health
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DarkKnightBanner>();
+
+            // Step 6 archer levers: blink to elevated firing spots, reposition toward last-known before patrolling.
+            tsorcRevampGlobalNPC archerGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            archerGlobalNPC.PrefersHighGround = true;
+            archerGlobalNPC.RemembersLastKnownPos = true;
+            archerGlobalNPC.NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
+            archerGlobalNPC.CanUseRopes = true;
         }
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */

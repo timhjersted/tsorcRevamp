@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,7 @@ using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
@@ -36,7 +37,6 @@ namespace tsorcRevamp.Items
         {
             ItemID.Sets.ShimmerTransformToItem[ItemID.LunarHook] = ItemID.LunarHook;
         }
-
         public override bool CanUseItem(Item item, Player player)
         {
             if (item.type == ItemID.MagicMirror || item.type == ItemID.RecallPotion)
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items
                 return false;
             }
 
-            if (item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
+            if (item.type == ItemID.SlimySaddle && !NPC.downedQueenBee)
             {
                 return false;
             }
@@ -137,9 +137,19 @@ namespace tsorcRevamp.Items
             return true;
         }
 
+        // Apply the Unkindled heal multiplier to every healing item (mod + vanilla).
+        // Bearer of the Curse never reaches this because CanUseItem above already blocks healLife > 0.
+        // Classic players get the unmodified vanilla amount; Unkindled players get half via ApplyHealing.
+        public override void GetHealLife(Item item, Player player, bool quickHeal, ref int healValue)
+        {
+            if (healValue <= 0) return;
+            healValue = player.GetModPlayer<tsorcRevampPlayer>().ApplyHealing(healValue);
+        }
+
 
         public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
+
             // Cannot equip wings until the hunter has been defeated unless you're in debug mode.
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<DebugTome>()) && !ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
             {
@@ -163,6 +173,55 @@ namespace tsorcRevamp.Items
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoul>()}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.RecipeTooltip")));
             }
 
+            // Life Crystal: replace the vanilla "...by 20" line with the actual party-scaled gain
+            // so SoulsMode players see what they'll actually get. Classic players see the unchanged
+            // vanilla tooltip.
+            if (item.type == ItemID.LifeCrystal && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                int activePlayers = 0;
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i].active) activePlayers++;
+                }
+                int gain = activePlayers >= 4 ? 20 : (activePlayers >= 2 ? 15 : 10);
+
+                // Find the vanilla "permanently increases maximum life" line and rewrite the number.
+                // Falls back to appending a new line if the vanilla one isn't found (other mods etc.).
+                bool replaced = false;
+                for (int i = 0; i < tooltips.Count; i++)
+                {
+                    if (tooltips[i].Mod == "Terraria" && tooltips[i].Text.Contains("20"))
+                    {
+                        tooltips[i].Text = Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.LifeCrystalSoulsMode", gain);
+                        replaced = true;
+                        break;
+                    }
+                }
+                if (!replaced)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "LifeCrystalSoulsMode",
+                        Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.LifeCrystalSoulsMode", gain)));
+                }
+            }
+
+            if (item.type == ItemID.ManaCrystal && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                bool replaced = false;
+                for (int i = 0; i < tooltips.Count; i++)
+                {
+                    if (tooltips[i].Mod == "Terraria" && tooltips[i].Text.Contains("20"))
+                    {
+                        tooltips[i].Text = Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ManaCrystalSoulsMode", 10);
+                        replaced = true;
+                        break;
+                    }
+                }
+                if (!replaced)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "ManaCrystalSoulsMode",
+                        Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ManaCrystalSoulsMode", 10)));
+                }
+            }
             if (badPrefixes.Contains<int>(item.prefix) && !NPC.AnyNPCs(NPCID.GoblinTinkerer))
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "ReforgeTooltip", $"[i:{ItemID.LivingFireBlock}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ReforgeTooltip")));
@@ -219,9 +278,9 @@ namespace tsorcRevamp.Items
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Cursed")));
                 }
-                if (item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
+                if (item.type == ItemID.SlimySaddle && !NPC.downedQueenBee)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.CorruptionCursed")));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.QueenBeeCursed")));
                 }
                 if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
@@ -454,7 +513,7 @@ namespace tsorcRevamp.Items
 
             if (item.type == ItemID.InfluxWaver && NPC.downedMartians)
             {
-                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 5 * 60);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 5 * 60);
             }
             #region Lethal Tempo
             if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
@@ -495,7 +554,7 @@ namespace tsorcRevamp.Items
                     player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
                 }
             }
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.ZoneOldOneArmy)
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && tsorcRevamp.EnemiesOOA.Contains(target.type))
             {
                 if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1)
                 {
@@ -508,11 +567,11 @@ namespace tsorcRevamp.Items
                 player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
             }
             #endregion
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (item.pick != 0 || item.axe != 0 || item.hammer != 0))
+            if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina && (item.pick != 0 || item.axe != 0 || item.hammer != 0))
             {
                 tsorcRevampStaminaPlayer StaminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 int scaledUseAnimation = (int)(item.useAnimation / player.GetAttackSpeed(item.DamageType));
-                StaminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation);
+                StaminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation) * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
             }
         }
 
@@ -557,6 +616,22 @@ namespace tsorcRevamp.Items
                     SoundEngine.PlaySound(SoundID.Grab);
                     SoundEngine.PlaySound(SoundID.Item8);
                     return false;
+                }
+            }
+
+            // Dark Souls Storage: auto-file everything else (weapons, armor, mats, junk, ...) into the bottomless
+            // box. Hard-guarded types (potions/coins/favorited/quest/souls) fall through to normal pickup. If the
+            // storage cap is hit with a remainder, the leftover stays on the item and is picked up normally.
+            if (player.whoAmI == Main.myPlayer)
+            {
+                tsorcRevampPlayer mp = player.GetModPlayer<tsorcRevampPlayer>();
+                if (mp.IsStorageDepositable(item))
+                {
+                    if (mp.DepositToStorage(item))
+                    {
+                        SoundEngine.PlaySound(SoundID.Grab);
+                        return false; // fully stored — suppress the normal "got item" pickup
+                    }
                 }
             }
 
@@ -817,6 +892,12 @@ namespace tsorcRevamp.Items
             {
                 player.statMana += 20;
             }
+            // Life Crystal nerf moved to UseItem (below) � vanilla's Life Crystal handling in
+            // Player.ItemCheck bumps statLifeMax/statLife directly and consumes the stack manually,
+            // bypassing ItemLoader.ConsumeItem entirely. That means this OnConsumeItem hook never
+            // fired for Life Crystals, and the nerf was silently inert. UseItem runs immediately
+            // before vanilla's +20 effect, so we pre-subtract the nerf there and let vanilla's
+            // unconditional +20 produce the intended net gain.
         }
 
         public static void populateSoulRecipes()
@@ -860,6 +941,13 @@ namespace tsorcRevamp.Items
                 }
                 return true;
             }
+
+            // Life Crystal nerf moved to tsorcRevampPlayer.PostUpdate as a statLifeMax-spike detector.
+            // Attempts to pre-subtract here in UseItem (so vanilla's +20 nets to +10) didn't reduce
+            // statLifeMax reliably � the user observed +20 max HP still landing despite the hook
+            // running. The PostUpdate monitor watches statLifeMax across frames and claws back the
+            // nerf the frame after a Life Crystal raises it, which is timing-independent.
+
             return base.UseItem(item, player);
         }
         public override bool CanRightClick(Item item)

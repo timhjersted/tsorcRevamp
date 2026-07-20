@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
         {
             Item.rare = ItemRarityID.Quest; //so people know it's important
             Item.damage = 98;
-            Item.height = 32;
+            Item.height = 38;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Generic;
             Item.scale = 0.9f;
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.noMelee = true;
             //Item.alpha = 240;
             Item.value = PriceByRarity.Blue_1;
-            Item.width = 32;
+            Item.width = 38;
             Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
             //Item.shoot = ModContent.ProjectileType<Projectiles.Shortswords.BarrowBladeProjectile>(); // The projectile is what makes a shortsword work
             Item.shootSpeed = 4.5f; // Was 2.1 - This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             {
 
                 Item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
-                Item.shootSpeed = 14f;
+                Item.shootSpeed = 15f;
                 Item.useTime = 40;
                 Item.useAnimation = 40;
                 Item.damage = 186;
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             {
 
                 Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
-                Item.shootSpeed = 4.5f;
+                Item.shootSpeed = 6.5f;
                 Item.UseSound = SoundID.Item28;
                 Item.useTime = 20;
                 Item.useAnimation = 20;

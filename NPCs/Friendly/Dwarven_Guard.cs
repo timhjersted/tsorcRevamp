@@ -27,10 +27,10 @@ namespace tsorcRevamp.NPCs.Friendly
             Main.npcFrameCount[NPC.type] = 25;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 9;
             NPCID.Sets.AttackFrameCount[NPC.type] = 4;
-            NPCID.Sets.DangerDetectRange[NPC.type] = 60;
+            NPCID.Sets.DangerDetectRange[NPC.type] = 90;
             NPCID.Sets.AttackType[NPC.type] = 3;
             NPCID.Sets.AttackTime[NPC.type] = 18;
-            NPCID.Sets.AttackAverageChance[NPC.type] = 100;
+            NPCID.Sets.AttackAverageChance[NPC.type] = 9;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
 
@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.aiStyle = 7;
             NPC.damage = 50;
             NPC.defense = 45;
-            NPC.lifeMax = 300;
+            NPC.lifeMax = 1000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.5f;
@@ -77,19 +77,30 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
-            damage = 55;
+            damage = 50;
             knockback = 4f;
+            if (Main.hardMode)
+            {
+                damage = 100;
+                knockback = 6f;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                damage = 200;
+                knockback = 12f;
+            }
         }
 
         public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown)
         {
-            cooldown = 30;
-            randExtraCooldown = 30;
+            cooldown = 26;
+            randExtraCooldown = 26;
         }
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref Rectangle itemFrame, ref int itemSize, ref float scale, ref Vector2 offset)
         {
             item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Hammers.AncientWarhammer>()];
+            scale = 1.1f;
             itemSize = 38;
         }
 

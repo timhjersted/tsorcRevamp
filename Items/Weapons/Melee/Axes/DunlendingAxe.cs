@@ -19,8 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.height = 28;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 11;
-            Item.useTime = 11;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 3500;
@@ -34,18 +34,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
 
-            if (target.type == ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Warlock>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.TibianAmazon>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.TibianValkyrie>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.ManHunter>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Necromancer>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.RedCloudHunter>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Assassin>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>()
-                )
+            if (tsorcRevamp.HumanNPCs.Contains(target.type))
             {
-                modifiers.FinalDamage *= 4; // *2 > *4, lets make it actually useful shall we
+                modifiers.FinalDamage *= 3;
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
             {

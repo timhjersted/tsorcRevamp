@@ -33,12 +33,12 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.knockBack = 1f;
             Item.width = 54;
             Item.height = 54;
-            Item.useTime = Item.useAnimation = 30;
+            Item.useTime = Item.useAnimation = 15;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
-            Item.mana = 10;
             Item.UseSound = SoundID.Item44;
+            Item.mana = 10;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<EtherianWyvernBuff>();
             Item.shoot = ModContent.ProjectileType<EtherianWyvernProjectile>();

@@ -10,7 +10,13 @@
 
 	<!-- References -->
 	<ItemGroup>
-		
+
+	</ItemGroup>
+
+	<!-- Unported 1.3-era assets: kept for reference/art, excluded from compilation
+	     (build.txt's buildIgnore excludes them from the in-game tModLoader build) -->
+	<ItemGroup>
+		<Compile Remove="Projectiles\Enemy\UnusedAssets\**" />
 	</ItemGroup>
 
 </Project>

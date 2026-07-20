@@ -29,12 +29,12 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;
-            Item.useTime = Item.useAnimation = 36;
+            Item.useTime = Item.useAnimation = 15;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = Item.buyPrice(0, 25, 0, 0);
-            Item.mana = 10;
             Item.rare = ItemRarityID.Pink;
             Item.UseSound = SoundID.Item44;
+            Item.mana = 10;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<NondescriptOwlBuff>();

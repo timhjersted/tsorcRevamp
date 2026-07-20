@@ -10,8 +10,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class WaterTrail : DynamicTrail
     {
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/WaterTrail";
+
         public override void SetStaticDefaults()
         {
+            Main.projFrames[Type] = 6;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
         }
@@ -42,6 +45,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             base.AI();
+            Animate();
             if (Projectile.ai[0] == 1)
             {
                 Projectile.tileCollide = false;
@@ -61,6 +65,16 @@ namespace tsorcRevamp.Projectiles.Enemy
                 float accel = 2f + (Main.rand.Next(10, 30) * 0.5f);
                 Projectile.velocity.X *= accel;
                 Projectile.velocity.Y *= accel;
+            }
+        }
+
+        void Animate()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 6)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
             }
         }
 

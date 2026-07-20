@@ -34,9 +34,10 @@ namespace tsorcRevamp.Items.Armors
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Melee.ShadowNinjaBottoms>());
-            recipe.AddIngredient(ModContent.ItemType<OolacileDarkMatter>());
+            recipe.AddIngredient(ModContent.ItemType<SoulOfOccultist>());
+            recipe.AddIngredient(ModContent.ItemType<AbyssalFabric>());
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 55000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

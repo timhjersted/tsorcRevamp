@@ -25,21 +25,28 @@ namespace tsorcRevamp.Buffs.Debuffs
 
             if (modPlayer.CurseLevel >= 100)
             {
-                modPlayer.CalculateCurseStats(false);
-                modPlayer.CurseActive = true;
-                player.AddBuff(ModContent.BuffType<Curse>(), 2);
+                TriggerCurse(player);
+            }
+        }
 
-                modPlayer.CurseLevel = 0; // Reset it to 0
+        public static void TriggerCurse(Player player)
+        {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.CalculateCurseStats(false);
+            modPlayer.CurseActive = true;
+            player.AddBuff(ModContent.BuffType<Curse>(), 2);
 
-                player.AddBuff(ModContent.BuffType<Invincible>(), 8 * 60, false); // 8 seconds
-                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 60 * 60, false);
-                player.AddBuff(ModContent.BuffType<Strength>(), 60 * 60, false);
+            modPlayer.CurseLevel = 0; // Reset it to 0
 
-                for (int i = 0; i < 30; i++)
-                {
-                    var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.VilePowder, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 200, Color.Pink, Main.rand.NextFloat(2f, 5f));
-                    dust.noGravity = true;
-                }
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.75f, Pitch = -0.35f, PitchVariance = 0.1f }, player.Center);
+            player.AddBuff(ModContent.BuffType<Invincible>(), 8 * 60, false); // 8 seconds
+            player.AddBuff(ModContent.BuffType<GreenBlossom>(), 60 * 60, false);
+            player.AddBuff(ModContent.BuffType<Strength>(), 60 * 60, false);
+
+            for (int i = 0; i < 30; i++)
+            {
+                var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.VilePowder, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 200, Color.Pink, Main.rand.NextFloat(2f, 5f));
+                dust.noGravity = true;
             }
         }
 

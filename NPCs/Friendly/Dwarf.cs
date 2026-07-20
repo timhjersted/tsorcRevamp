@@ -35,10 +35,10 @@ namespace tsorcRevamp.NPCs.Friendly
             Main.npcFrameCount[NPC.type] = 25;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 9;
             NPCID.Sets.AttackFrameCount[NPC.type] = 4;
-            NPCID.Sets.DangerDetectRange[NPC.type] = 60;
+            NPCID.Sets.DangerDetectRange[NPC.type] = 90;
             NPCID.Sets.AttackType[NPC.type] = 3;
             NPCID.Sets.AttackTime[NPC.type] = 18;
-            NPCID.Sets.AttackAverageChance[NPC.type] = 30;
+            NPCID.Sets.AttackAverageChance[NPC.type] = 7;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
         public override List<string> SetNPCNameList()
@@ -54,8 +54,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.height = 40;
             NPC.aiStyle = 7;
             NPC.damage = 50;
-            NPC.defense = 45;
-            NPC.lifeMax = 300;
+            NPC.defense = 70;
+            NPC.lifeMax = 7500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.5f;
@@ -141,25 +141,39 @@ namespace tsorcRevamp.NPCs.Friendly
             // Consume the Contract
             player.ConsumeItem(ModContent.ItemType<DwarvenContract>());
             givenContract++;
-            tsorcRevampWorld.DwarvenContractsGiven = givenContract;
+            
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                tsorcRevampWorld.DwarvenContractsGiven = givenContract;
+            }
+            else
+            {
+                ModPacket dwarvenContractPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                dwarvenContractPacket.Write(tsorcPacketID.SyncDwarvenContract);
+                dwarvenContractPacket.Write(givenContract);
+                dwarvenContractPacket.Send();
+            }
 
             // Rewards
             switch (givenContract)
             {
                 //PHM section
                 case 1:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 1);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 150); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<OldHalberd>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeCrystal, 1);
                     break;
 
                 case 2:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 5);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 200);  
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.EndurancePotion, 2);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeCrystal, 2);
                     break;
 
                 case 3:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 10);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 100); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<NamelessSoldierSoul>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Humanity>(), 2); 
@@ -167,6 +181,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 case 4:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 15);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 320); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<LostUndeadSoul>(), 2); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LuckPotion, 2);
@@ -175,6 +190,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
                 //HM section
                 case 5:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 20);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 500); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<ProudKnightSoul>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.RagePotion, 1);
@@ -183,6 +199,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 case 6:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 30);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1000); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Humanity>(), 2); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<PurgingStone>(), 1); 
@@ -191,6 +208,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 case 7:  
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 40);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1000); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<ProudKnightSoul>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldenDelight, 1);
@@ -200,7 +218,8 @@ namespace tsorcRevamp.NPCs.Friendly
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeFruit, 2);
                     break;
 
-                case 8:  
+                case 8: 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 50); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1000); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<BraveWarriorSoul>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<PurgingStone>(), 2);
@@ -210,7 +229,8 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 //SHM section
-                case 9:  
+                case 9: 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 75);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1250); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<FlameOfTheAbyss>(), 5);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeforcePotion, 2);
@@ -223,6 +243,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     break;
 
                 case 10: 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.PlatinumCoin, 1);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 1500); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<HeroSoul>(), 2); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<VaultOfEndlessGreed>());
@@ -435,19 +456,30 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
-            damage = 25;
-            knockback = 4f;
+            damage = 60;
+            knockback = 5.5f;
+            if (Main.hardMode)
+            {
+                damage = 120;
+                knockback = 8f;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                damage = 240;
+                knockback = 8f;
+            }
         }
 
         public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown)
         {
-            cooldown = 30;
-            randExtraCooldown = 30;
+            cooldown = 25;
+            randExtraCooldown = 12;
         }
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref Rectangle itemFrame, ref int itemSize, ref float scale, ref Vector2 offset)
         {
             item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Hammers.AncientWarhammer>()];
+            scale = 1.2f;
             itemSize = 38;
         }
 

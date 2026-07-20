@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -19,6 +21,7 @@ using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories.Damage;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Debug;
@@ -33,8 +36,10 @@ using tsorcRevamp.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
@@ -46,17 +51,103 @@ using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using tsorcRevamp;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs
 {
-    public class tsorcRevampGlobalNPC : GlobalNPC
+    // === Patrol/Pursue FSM enums (namespace-scoped so the matching fields on tsorcRevampGlobalNPC
+    // can share the type name via C#'s "Color Color" rule). See
+    // Documentation/PatrolPursue_and_NavTier_Removal.md. ===
+    public enum PursuitState
+    {
+        Pursue, // has LOS, or a valid target + making progress
+        Search, // lost LOS: move to LastKnownPlayerPos and look around (gated by RemembersLastKnownPos)
+        Patrol, // gave up: calm patrol around an anchor, no pursuit jumps
+        Flee    // hit by a player it has no A* path to (and can't blink to): run to a safe distance, then Patrol
+    }
+
+    public enum PatrolMode
+    {
+        Idle,          // mostly stand; occasional short walk routine
+        Pace,          // walk back and forth within a leg around the anchor
+        Wander,        // commit to a direction for many tiles before reconsidering
+        ReturnToSpawn  // walk back to the spawn anchor, then idle there
+    }
+
+    public enum PatrolAnchorSource
+    {
+        SpawnPoint,    // patrol around where the NPC spawned (recorded on first tick)
+        GiveUpLocation // patrol around where pursuit was abandoned
+    }
+
+    // When the disengage resolver decides to blink to re-acquire the player (see 4b in the doc).
+    public enum TeleportStyle
+    {
+        Relaxed,    // gives up, wanders into Patrol a few seconds, THEN blinks. Long cooldown.
+        Normal,     // blinks at the disengage point instead of patrolling (≈ legacy canTeleport). Medium cooldown.
+        Aggressive  // blinks the moment LOS is lost (short debounce), bypassing Search/Patrol. Short cooldown.
+    }
+
+    public enum TeleportVisualStyle
+    {
+        Default,    // one burst of white smoke + shockwave flash (current behavior)
+        GreySmoke,  // heavy grey smoke cloud lingering ~1s at both exit and entry
+        Fire,       // fire + dark smoke cloud lingering ~1s at both exit and entry
+        Plague,     // black/purple lingering cloud; origin cloud applies controlled curse buildup
+        MagicIllusion, // leaves a translucent, invulnerable combat duplicate at the exit for four seconds
+    }
+
+    public enum InvisibilityStyle
+    {
+        Random,    // ambient per-frame flicker between visible/invisible; any hit snaps fully visible
+        Predator,  // invisible while moving (and not attack-telling); a hit reveals for ~1.5s
+        Evasive    // threat-reactive cloak: a hit or a nearby threat rolls the cloak; lingers, then fades
+    }
+
+    public enum PounceStyle
+    {
+        HighArcPounce,
+        DirectPounce,
+        None
+    }
+
+    public enum PreAttackJumpBehavior
+    {
+        VerticalPop,
+        MainAttackHop,
+        ShortForwardHop,
+        HighForwardHop,
+        OffensiveLeap,
+        AttackDashHop,
+        DesperateHighHop,
+        DesperateSprayHop,
+        ErraticFinalHover
+    }
+
+    public partial class tsorcRevampGlobalNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
+        private static readonly SoundStyle DefeatBannerSound = new SoundStyle("tsorcRevamp/Sounds/DarkSouls/boss-defeated") with { Volume = 1f };
+        private const int GhostWallTeleportSmokeTicks = 30;
+        private const int GhostWallTeleportSnapTicks = 15;
+        private const int GhostWallMaxThicknessTiles = 4;
+        private const float GhostWallTeleportMistRadiusScale = 1.25f;
+        private const float GhostMagicKnockbackResist = 0.5f;
+        private const float GhostMagicPoiseKnockbackFloor = 0.5f;
+        private const float GhostMagicPoiseMax = 12f;
+        // Magic weapons usually have a 0 knockback STAT, and no HitModifier can inject knockback into a 0-knockback hit
+        // (the multiply yields 0). So the ghost's magic flinch is applied as a direct velocity impulse instead. Tune here.
+        private const float GhostMagicFlinchVelocity = 2.5f;
 
         float enemyValue;
         float multiplier = 1f;
         float divisorMultiplier = 1f;
         int DarkSoulQuantity;
+        /// <summary>Opt-out for staged encounter actors whose intermediate death must produce no global drops.</summary>
+        public bool SuppressGlobalOnKillDrops;
+        /// <summary>True for a temporary combat duplicate left behind by a MagicIllusion teleport.</summary>
+        public bool IsTeleportIllusion;
+        public int TeleportIllusionTimeLeft;
         public Player lastHitPlayerSummoner = Main.LocalPlayer;
         public Player lastHitPlayerRanger = Main.LocalPlayer;
         public Player lastHitPlayerShadowSickle = Main.LocalPlayer;
@@ -70,6 +161,7 @@ namespace tsorcRevamp.NPCs
         public bool markedByDetonationSignal;
         public bool markedByDominatrix;
         public bool markedByDragoonLash;
+        public bool markedBySupremeDragoonLash;
         public bool markedByEnchantedWhip;
         public bool markedByNightsCracker;
         public bool markedByPolarisLeash;
@@ -122,8 +214,9 @@ namespace tsorcRevamp.NPCs
 
         public bool DarkInferno;
         public bool AbyssInferno;
+        public bool MorgulPoisoning;
         public bool WitchkingCurse;
-
+        public bool AbyssalSinking;
         public bool CCShocked;
         public bool Ignited;
         public bool CrimsonBurn;
@@ -135,10 +228,15 @@ namespace tsorcRevamp.NPCs
         public bool ResetBiohazardBlobs;
         public bool ElectrocutedEffect;
         public bool ElectrocutedEffect2;
+        public bool ElectrocutedEffect3;
         public bool PolarisElectrocutedEffect;
         public bool CrescentMoonlight;
         public bool Soulstruck;
         public bool PhazonCorruption;
+        public bool PlaguesmithBuff;
+        // Set true each tick by SorrowfulCurseBuff (the Cleric of Sorrow's Last Rites dying curse). While active,
+        // the afflicted enemy's attacks inflict Cursed Inferno on the player it hits. Mirrors PlaguesmithBuff.
+        public bool SorrowfulCurse;
 
         public int LionheartMarks = 0;
 
@@ -209,9 +307,875 @@ namespace tsorcRevamp.NPCs
         public bool Initialized;
         public int PounceTimer;
         public int PounceCooldown;
+        public PounceStyle PounceStyle = PounceStyle.HighArcPounce;
+        public Vector2 PounceTarget;
+        public int DirectPounceAfterimageTimer;
+        public int DirectPounceRecoveryTimer;
+        public bool DirectPounceAfterimages = true;
         public int DodgeTimer;
         public int DodgeCooldown;
-        public int BoredTimer;
+        public int FighterPostAttackPauseTimer;
+        public int FighterAttacksSincePause;
+        public bool FighterRangedHitInterruptedPause;
+        public int FighterRangedStandShotsRemaining;  // >0 = standing-fire mode; decrement each shot, exit when zero
+        public int FighterNoLosPursuitBoostTimer;
+
+        // Single source of truth for "this enemy is committed to an attack and cannot be interrupted/knocked back".
+        // Each enemy sets this every AI tick from its own flash-telegraph→fire windows (windup ≈25t before the flash
+        // through the fire frame). EvasiveOnHit reads it (via InAttack) to gate the on-hit reaction. The poise system below
+        // treats AttackCommitted as hyper-armor. See memory: project_poise_stagger_system.
+        public bool AttackCommitted;
+
+        // Windup phase: from when an attack begins through the flash telegraph (pre-AttackCommitted). Poise CAN build
+        // here (a stagger interrupts a windup), but ordinary hits do NOT — the evasive on-hit reaction is suppressed
+        // during any attack. Each enemy sets this each AI tick alongside AttackCommitted.
+        public bool AttackTelegraphing;
+
+        /// <summary>True during any attack (windup or committed). The evasive on-hit reaction only fires when this is
+        /// false (pure neutral); attack interruption is handled solely by the poise stagger.</summary>
+        public bool InAttack => AttackTelegraphing || AttackCommitted;
+
+        // === Pre-attack jump (global attack variation) ===
+        // When an attack COMMITS (hyperarmor begins), optionally launch the enemy upward so the shot — fired later in
+        // the committed window — goes off mid-air. Requires attack-phase tagging (it keys off AttackCommitted). The
+        // SERVER rolls + applies the launch and netUpdates, so MP stays consistent (clients just receive the velocity).
+        // Chance 1f = deterministic (every attack); <1f = a random variation. NOTE: incompatible with CanStopToFire
+        // (its stop-to-fire zeroes velocity.Y each tick and cancels the jump) — use on enemies that don't stand to fire.
+        public bool CanJumpBeforeAttack = false;
+        public float JumpBeforeAttackChance = 0.5f;
+        public float JumpBeforeAttackPower = 8f;   // upward launch velocity
+        public int JumpBeforeAttackDelay = 10;     // frames after commit before the launch (so it's rising at the shot)
+        public bool JumpBeforeAttackRequiresGrounded = true;
+        public float JumpBeforeAttackDesperateLifeFraction = 0.5f;
+        public bool JumpBeforeAttackVerticalPop = false;
+        public bool JumpBeforeAttackMainAttackHop = false;
+        public bool JumpBeforeAttackShortForwardHop = false;
+        public bool JumpBeforeAttackHighForwardHop = false;
+        public bool JumpBeforeAttackOffensiveLeap = false;
+        public bool JumpBeforeAttackDashHop = false;
+        public bool JumpBeforeAttackDesperateHighHop = false;
+        public bool JumpBeforeAttackDesperateSprayHop = false;
+        public bool JumpBeforeAttackErraticFinalHover = false;
+        // Per-tick veto: an enemy sets this true (in its AI) during attacks that should NOT pre-jump (e.g. a stationary
+        // channel like the basilisk magic-ring breath). Checked at the commit edge below. Defaults false each tick.
+        public bool SuppressPreAttackJump = false;
+        private bool wasAttackCommitted = false;   // rising-edge detector for AttackCommitted
+        private int preAttackJumpTimer = -1;        // >0 counting down to the launch; <=0 inactive
+        private PreAttackJumpBehavior queuedPreAttackJump = PreAttackJumpBehavior.VerticalPop;
+        private static readonly List<PreAttackJumpBehavior> PreAttackJumpPool = new List<PreAttackJumpBehavior>(8);
+
+        // Shared cooldown for the on-hit evasive reaction + wall-pin escape, so an enemy doesn't react every frame of a combo.
+        public int FighterEvasionCooldown;
+
+        // === Evasive on-hit capability flags (see EvasiveProfile + tsorcRevampAIs.EvasiveOnHit) ===
+        // Opt-in per enemy in SetDefaults (directly, or via an EvasiveProfile.* bundle). The shared EvasiveOnHit
+        // selector builds a weighted pool from whichever of these are set and samples one when the enemy is hit in
+        // neutral. Each behavior carries its own melee/ranged/both affinity inside the selector, not here.
+        public bool EvasiveRetreatJump;     // hop / leap / high-arc drift away (instant)
+        public bool EvasiveRetreatDash;     // low fast dash away (instant)
+        public bool EvasiveTeleportAway;    // blink away if CanTeleport, else leap (instant)
+        public bool EvasiveLeapForward;     // lunge toward the player to close the gap (instant, ranged-hit counter)
+        public bool EvasiveRunningDash;     // flash telegraph → grounded top-speed burst toward the player (sustained)
+        public bool EvasiveRetreatAndShoot; // forced-flee back-off, then resume firing (sustained, melee-hit counter)
+        public bool EvasiveQuickStep;       // i-frame quick step that passes through the player (sustained)
+        public bool EvasiveBasiliskWalkerCloseBackhop;
+        public bool EvasiveBasiliskWalkerFarScrambleHop;
+        public bool EvasiveBasiliskShifterCloseBackhop;
+        public bool EvasiveBasiliskShifterFarForwardHop;
+
+        // === Sustained evasion state (driven each AI tick by UpdateEvasion; armed by EvasiveOnHit) ===
+        // Only RunningDash / RetreatAndShoot live here; QuickStep has its own standing-dash timer, and
+        // the instant behaviors don't need state. CurrentEvasion is only meaningful while InSustainedEvasion.
+        public bool InSustainedEvasion;
+        public EvasiveBehavior CurrentEvasion;
+        public int EvasiveTimer;            // ticks left in the current phase
+        public bool EvasiveTelegraphing;    // true during a windup/telegraph phase (RunningDash's flash)
+        public float EvasiveDashSpeedMult = 2.2f;   // RunningDash: multiplier on top speed during the burst
+        public int EvasiveDashTelegraphTicks = 20;  // RunningDash: flash/windup length before the burst
+        public int EvasiveDashTicks = 110;          // RunningDash: burst length (~1.8s)
+        public int EvasiveRetreatTicks = 80;        // RetreatAndShoot: back-off length (~1.3s)
+        public float EvasiveRetreatSpeed = 3.5f;    // RetreatAndShoot: grounded back-off speed (away from player)
+        public int QuickStepTimer;          // >0 = mid quick-step: i-frames + passes through player (standing dash, no roll)
+        public int QuickStepRecoveryTimer;  // short post-step pause before pursuit resumes
+        public int QuickStepDir;            // horizontal direction of the active quick step
+        public float QuickStepSpeed = 5f;   // horizontal speed of the quick step
+        public int QuickStepTicks = 16;     // quick-step duration
+        public int QuickStepRecoveryTicks = 30;   // post-step recovery before attacks/pursuit resume (tunable)
+        public float QuickStepForwardRoom = 16f;  // extra px past the player when stepping THROUGH them
+        // True while a behavior should draw the ghost afterimage trail (quick step, or the running-dash burst).
+        public bool EvasiveAfterimagesActive => QuickStepTimer > 0 || (InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RunningDash && !EvasiveTelegraphing);
+        /// <summary>True during any multi-tick evasive action — a parallel to <see cref="InAttack"/> for deference.</summary>
+        public bool InEvasion => InSustainedEvasion || QuickStepTimer > 0 || QuickStepRecoveryTimer > 0;
+        /// <summary>True during a RetreatAndShoot back-off — seizes the body so the driver can drive the retreat velocity.</summary>
+        public bool EvasiveRetreating => InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RetreatAndShoot;
+
+        // AI-tick (NOT on-hit) capability: jump straight up to dodge an incoming aimed projectile. Split out of the
+        // dodgeroll scan (RunFighterCombatTriggers) so a non-rolling enemy can still pre-jump. canDodgeroll already
+        // grants the jump option on its own, so Red/Black Knights keep today's roll-or-jump without setting this.
+        public bool CanJumpToEvade = false;
+
+        // The enemy's SetDefaults knockBackResist, captured once by BasicAI before any AI tick mutates it. Enemies whose
+        // AI zeroes knockBackResist during attacks restore to THIS each tick, so the SetDefaults value (the per-enemy
+        // "weight") stays the source of truth that shapes the poise flinch. -1 = not yet captured.
+        public float BaseKnockBackResist = -1f;
+
+        #region Poise / Stagger (Dark-Souls-style)
+        // Deterministic stagger system (see project_poise_stagger_system).
+        //  • Ordinary hits apply a LIGHT flinch knockback (PoiseFlinchFactor) so weapons feel like they connect, and
+        //    accumulate poise damage = weapon knockback × PoiseDamageMultiplier (global stagger-rate knob).
+        //  • AttackCommitted (post-flash) = hyper-armor: zero knockback, no poise. Windup is NOT committed, so a stagger
+        //    there cancels the attack.
+        //  • When poise fills → STAGGER: launch + ~2s freeze (movement + attack timer) + cancel windup.
+        //  • Anti-stunlock: the break cooldown OUTLASTS the stun, giving a recovery window where the enemy can't be
+        //    re-staggered and takes REDUCED (but non-zero) flinch knockback. Escalation stacks on top — each stagger
+        //    within a long (~120s) window raises EffectivePoiseMax by 60%, so chained re-staggers get progressively harder.
+        // Set PoiseMax > 0 in an enemy's SetDefaults to opt in; PoiseMax <= 0 keeps vanilla knockback behaviour.
+        public float PoiseMax = 0f;               // per-enemy lever; <=0 disables the whole system for that NPC
+        public float Poise = 0f;                  // current accumulated poise damage (0 → EffectivePoiseMax)
+        public int StaggerTimer = 0;              // >0 = currently staggered (frozen; bar shows full + flashes)
+        public int PoiseBreakCooldown = 0;        // >0 = i-frames after a break: zero knockback + immune to poise damage
+        public int PoiseRegenDelay = 0;           // ticks remaining before accumulated poise starts decaying
+        public float StaggerKnockback = 6f;       // horizontal launch magnitude applied on a poise break
+        public float PoiseFlinchFactor = 0.4f;    // fraction of normal knockback applied on ordinary (non-breaking) hits
+        public float PoiseCooldownFlinchFactor = 0.5f; // extra multiplier on flinch during the post-stagger recovery window (still registers, just sturdier)
+        // GLOBAL stagger-rate knob: poise damage per hit = weapon knockback × this. Lower = more hits to stagger across
+        // ALL enemies (doesn't touch flinch). Tune this rather than re-editing every PoiseMax.
+        public static float PoiseDamageMultiplier = 0.5f;
+        public bool PoiseStaggerResetsAI = false; // opt-in: a stagger sets ai[1]=60/ai[2]=-100 (cancels a windup attack)
+        // Set true per-tick by an enemy holding a directional block (shield up). A FRONT hit then builds reduced poise
+        // (ShieldGuardPoiseMult); backstabs are unaffected. The matching damage reduction lives in the enemy's own
+        // front-facing ModifyHitBy block. The enemy re-sets this each frame, so it self-clears when not guarding.
+        public bool ShieldGuarding = false;
+        public const float ShieldGuardPoiseMult = 0.5f; // front hits build half poise while guarding
+
+        // Reactive shield capability (shared by the shield enemies — HollowSoldier/Spearman + the Lothric knights —
+        // configured via ShieldProfile). Layers on TOP of each enemy's own autonomous shield-timer rhythm:
+        //  • PreemptiveBlockChance: per-tick roll, when a threat is detected (incoming projectile, or the player within
+        //    ShieldThreatRange), to raise the guard BEFORE the hit lands.
+        //  • OnHitBlockChance: roll when actually hit to snap the guard up and catch the rest of a combo.
+        //  • ShieldedWalkSpeed: > 0 → advance toward the player at this speed while guarding instead of planting.
+        // A successful reactive block sets ReactiveBlockTimer; while it is > 0 the enemy holds its guard regardless of
+        // its autonomous timer / level gate (decremented centrally in PostAI), so it works against ranged too.
+        public float PreemptiveBlockChance = 0f;
+        public float OnHitBlockChance = 0f;
+        public int ShieldThreatRange = 0;       // px; player within this range counts as a melee threat to guard against
+        public float ShieldedWalkSpeed = 0f;    // 0 = plant in place (legacy); > 0 = slow shielded advance
+        public int ReactiveBlockTimer = 0;      // > 0 = forced guard from a reactive block; ticks down in PostAI
+        // Tunable durations (ticks). Defaults: ~2s stagger, then the cooldown OUTLASTS it (6s total from trigger → ~4s
+        // reduced-flinch + no-re-stagger recovery after the stun), ~3s decay grace.
+        public int StaggerDurationTicks = 120;
+        public int PoiseBreakCooldownTicks = 360;
+        public int PoiseRegenDelayTicks = 180;
+        // Escalation ("the enemy learns"): each recent stagger adds a stack (raising the threshold by 60%) and refreshes
+        // the window. Stacks reset only after the full window elapses with NO new stagger — so chaining staggers makes
+        // each one progressively much harder over a long fight.
+        public int PoiseEscalationStacks = 0;
+        public int PoiseEscalationTimer = 0;       // ticks until stacks reset
+        public const int PoiseEscalationMaxStacks = 8;        // up to +480% threshold (×5.8) for a much-staggered enemy
+        public const float PoiseEscalationPerStack = 0.6f;    // +60% EffectivePoiseMax per stack
+        public const int PoiseEscalationDurationTicks = 7200; // ~120s window (refreshed by each stagger)
+        // Set in ModifyHitBy*, consumed in OnHitBy*: did the pre-strike calc decide this hit breaks poise?
+        internal bool PoiseWillBreakThisHit = false;
+        private float staggerSlideVelocity = 0f;  // horizontal knockback slide held across the stun
+        private bool ghostKnockbackRestorePending = false;
+        private float ghostKnockbackRestoreValue = 0f;
+
+        /// <summary>PoiseMax scaled up by current escalation stacks — the actual threshold a hit must cross.</summary>
+        public float EffectivePoiseMax => PoiseMax * (1f + PoiseEscalationPerStack * PoiseEscalationStacks);
+
+        /// <summary>True when the poise bar should be drawn (and the stamina bar suppressed).</summary>
+        public bool PoiseBarVisible => PoiseMax > 0f && (Poise > 0f || StaggerTimer > 0 || PoiseBreakCooldown > 0);
+
+        private bool IsMagicKnockbackGhost(NPC npc)
+            => HasGhostAfterimages && (npc.knockBackResist <= 0f || ghostKnockbackRestorePending);
+
+        private bool IsPhysicalGhost(NPC npc)
+            => HasGhostAfterimages && npc.knockBackResist <= 0f;
+
+        private static bool HasMagicWeaponBuff(Player player)
+            => player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>())
+            || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>())
+            || player.HasBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>());
+
+        private bool ShouldMagicKnockbackGhost(NPC npc, Player player, Item item)
+            => IsMagicKnockbackGhost(npc)
+            && (item.CountsAsClass(DamageClass.Magic)
+                || (item.CountsAsClass(DamageClass.Melee) && HasMagicWeaponBuff(player)));
+
+        private bool ShouldMagicKnockbackGhost(NPC npc, Projectile projectile)
+            => IsMagicKnockbackGhost(npc)
+            && projectile.DamageType == DamageClass.Magic;
+
+        private void EnableMagicGhostPoise(NPC npc)
+        {
+            if (PoiseMax <= 0f)
+            {
+                PoiseMax = GhostMagicPoiseMax;
+            }
+
+            if (!ghostKnockbackRestorePending)
+            {
+                ghostKnockbackRestoreValue = npc.knockBackResist;
+                ghostKnockbackRestorePending = true;
+            }
+
+            npc.knockBackResist = GhostMagicKnockbackResist;
+        }
+
+        private void RestoreMagicGhostKnockback(NPC npc)
+        {
+            if (!ghostKnockbackRestorePending)
+            {
+                return;
+            }
+
+            npc.knockBackResist = ghostKnockbackRestoreValue;
+            ghostKnockbackRestorePending = false;
+        }
+
+        /// <summary>Magic flinch for the pass-through-walls ghosts: a manual horizontal nudge away from the attacker,
+        /// since their magic weapons usually have 0 knockback stat (so the normal multiplicative flinch can't move them).
+        /// Skipped if this hit already staggered (that launch wins); reduced during the post-stagger recovery window.</summary>
+        private void ApplyGhostMagicFlinch(NPC npc, Vector2 sourceCenter)
+        {
+            // No flinch while staggered (the launch wins) OR during the post-stagger recovery i-frames (white bar = 0
+            // knockback, matching ApplyPoiseToKnockback).
+            if (StaggerTimer > 0 || PoiseBreakCooldown > 0)
+            {
+                return;
+            }
+            float speed = GhostMagicFlinchVelocity;
+            int dir = npc.Center.X >= sourceCenter.X ? 1 : -1;
+            npc.velocity.X = dir * speed;
+            npc.netUpdate = true;
+        }
+
+        /// <summary>Central poise tuning table (NPC type → knockback-resist flinch dial + PoiseMax), applied in
+        /// SetDefaults. Single source of truth for the rollout — retune here. The Red Knight family configure themselves
+        /// in-file; the lore ghosts and anything not listed are left out of the system. See project_poise_stagger_system.</summary>
+        public static readonly Dictionary<int, (float knockBackResist, float poiseMax)> PoiseProfiles = new();
+
+        public static void PopulatePoiseProfiles()
+        {
+            PoiseProfiles.Clear();
+            static void Add<T>(float kbResist, float poiseMax) where T : ModNPC => PoiseProfiles[ModContent.NPCType<T>()] = (kbResist, poiseMax);
+
+            // Bosses
+            Add<Bosses.SuperHardMode.Gwyn>(0.15f, 150f); // the final boss — sturdiest poise in the game
+            Add<Bosses.SuperHardMode.Artorias>(0.15f, 120f);
+            Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
+            Add<Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
+            Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
+            Add<Bosses.HeroofLumelia>(0.15f, 120f);
+            Add<Enemies.SuperHardMode.SlograII>(0.4f, 50f);
+            // Heavy giants / demons
+            Add<Bosses.AncientDemon>(0.15f, 80f);
+            Add<Bosses.AncientOolacileDemon>(0.15f, 80f);
+            Add<Enemies.SuperHardMode.AncientDemonOfTheAbyss>(0.15f, 80f);
+            Add<Enemies.Gigas>(0.15f, 120f); // caster-giant mini-boss: boss-tier poise; its long Wrath of Gold telegraph is the stagger window
+            Add<Enemies.IceGigas>(0.15f, 120f); // frost terrain-controller mini-boss: boss-tier poise; Absolute Zero's channel is the stagger window
+            Add<Bosses.GravelordNito.GravelordNito>(0.15f, 120f); // Skeletron-tier boss: harmless contact body, sword/projectile damage, Death Nova channel is the stagger window
+            Add<Bosses.VesselOfSouls.VesselOfSouls>(0.15f, 120f); // EoC-slot flying eye boss: boss-tier poise; its gravity-well channel (phase 2) will be the stagger window
+            Add<Enemies.DemonLordApocalypse>(0.15f, 80f);
+            // Big bruisers
+            Add<Enemies.Hydra>(0.2f, 60f);
+            Add<Enemies.SuperHardMode.Massacre>(0.2f, 60f);
+            // Elite / heavy knight
+            Add<Enemies.SuperHardMode.TaurusKnight>(0.2f, 55f);
+            Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
+            // Standard fighters
+            Add<Enemies.MinotaurMage>(0.3f, 35f); // beefy caster; its Ring of Cinders cast is the stagger window
+            Add<Enemies.SuperHardMode.DarkBloodKnight>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.OolacileKnight>(0.3f, 35f);
+            Add<Enemies.Basilisk.BasiliskHunter>(0.3f, 35f);
+            Add<Enemies.Dworc.DworcAbysswalker>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.HydrisElemental>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.CorruptedElemental>(0.3f, 35f);
+            // Standard+
+            Add<Enemies.SuperHardMode.DarkKnight>(0.35f, 30f);
+            Add<Enemies.Warlock>(0.35f, 30f);
+            Add<Enemies.FireLurker>(0.35f, 30f);
+            Add<Enemies.Tonberry>(0.35f, 30f);
+            Add<Enemies.QuaraHydromancer>(0.35f, 30f);
+            Add<Enemies.QuaraPincher>(0.3f, 60f); // brood-leader bruiser: Brood Call is the interruptible window
+            Add<Enemies.QuaraClutchCrab>(0.5f, 18f); // summoned support kiter: fragile, easily staggered
+            // Human / skilled
+            Add<Enemies.FallenNecromancer>(0.4f, 26f);
+            Add<Enemies.Necromancer>(0.4f, 26f);
+            Add<Enemies.SuperHardMode.HydrisNecromancer>(0.4f, 26f);
+            Add<Enemies.SuperHardMode.IceSkeleton>(0.4f, 26f);
+            Add<Enemies.FirebombHollow>(0.4f, 26f);
+            Add<Enemies.Basilisk.BasiliskShifter>(0.4f, 26f);
+            // Light / agile
+            Add<Enemies.ClericOfSorrow>(0.4f, 26f); // amphibious frost ritual-caster: Necromancer tier; its Communion/Undertow channels are the stagger windows
+            Add<Enemies.Assassin>(0.45f, 20f);
+            Add<Enemies.TibianAmazon>(0.45f, 20f);
+            Add<Enemies.TibianValkyrie>(0.45f, 20f);
+            // Lighter / hunters
+            Add<Enemies.Basilisk.BasiliskWalker>(0.5f, 18f);
+            Add<Enemies.ManHunter>(0.5f, 18f);
+            Add<Enemies.RedCloudHunter>(0.5f, 18f);
+            // Small
+            Add<Enemies.Sandsprog>(0.55f, 15f);
+            Add<Enemies.SandsprogMage>(0.55f, 15f);
+            // Lightest
+            Add<Enemies.Dworc.DworcFleshhunter>(0.6f, 13f);
+            Add<Enemies.Dworc.DworcVenomsniper>(0.6f, 13f);
+            Add<Enemies.Dunlending>(0.6f, 13f);   // small
+            // Light to knock, but higher HP → sturdier to actually stagger
+            Add<Enemies.Dworc.DworcAlchemist>(0.6f, 25f);
+            Add<Enemies.Dworc.DworcVoodooShaman>(0.6f, 25f);
+        }
+
+        /// <summary>Pre-strike: hyper-armor and active stagger take zero vanilla knockback; everything else gets a light
+        /// flinch (including the post-stagger cooldown). Also decides (deterministically) whether this hit breaks poise,
+        /// so OnHit and the knockback agree.</summary>
+        private void ApplyPoiseToKnockback(NPC npc, float poiseDamage, ref NPC.HitModifiers modifiers, Vector2 sourceCenter)
+        {
+            if (PoiseMax <= 0f)
+            {
+                return;
+            }
+            poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob (affects meter only, not the flinch below)
+            // Shield guard: a FRONT block soaks stagger buildup (backstabs unaffected). Keep in sync with HandlePoiseOnHit.
+            if (ShieldGuarding && Math.Sign(sourceCenter.X - npc.Center.X) == npc.direction)
+            {
+                poiseDamage *= ShieldGuardPoiseMult;
+            }
+            // ZERO knockback whenever the enemy can't take stagger damage = the white-bar states: hyper-armor
+            // (AttackCommitted), already-staggered (manual slide drives it), OR the post-stagger recovery i-frames
+            // (PoiseBreakCooldown). Previously the recovery window took REDUCED flinch; now it's fully immune.
+            if (AttackCommitted || StaggerTimer > 0 || PoiseBreakCooldown > 0)
+            {
+                modifiers.DisableKnockback();
+                PoiseWillBreakThisHit = false;
+                return;
+            }
+            // Neutral / windup: light flinch so the hit always reads.
+            modifiers.Knockback *= PoiseFlinchFactor;
+            PoiseWillBreakThisHit = (Poise + poiseDamage) >= EffectivePoiseMax;
+        }
+
+        /// <summary>Post-strike: accumulate poise and trigger the stagger if it broke. Source is the attacker's center,
+        /// used to pick the knockback direction.</summary>
+        private void HandlePoiseOnHit(NPC npc, float poiseDamage, Vector2 sourceCenter)
+        {
+            if (PoiseMax <= 0f || AttackCommitted)
+            {
+                PoiseWillBreakThisHit = false;
+                return; // hyper-armor: no poise, no knockback
+            }
+            poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob — keep in sync with ApplyPoiseToKnockback
+            // Shield guard: a FRONT block soaks stagger buildup (backstabs unaffected). Mirrors ApplyPoiseToKnockback.
+            if (ShieldGuarding && Math.Sign(sourceCenter.X - npc.Center.X) == npc.direction)
+            {
+                poiseDamage *= ShieldGuardPoiseMult;
+            }
+            if (StaggerTimer > 0)
+            {
+                ApplyStaggerImpulse(npc, sourceCenter, 0.5f); // already broken — a lighter follow-up shove
+                PoiseWillBreakThisHit = false;
+                return;
+            }
+            if (PoiseBreakCooldown > 0)
+            {
+                PoiseWillBreakThisHit = false;
+                return; // post-stagger i-frames: immune to further poise damage (anti-stunlock)
+            }
+
+            Poise += poiseDamage;
+            PoiseRegenDelay = PoiseRegenDelayTicks;
+
+            if (PoiseWillBreakThisHit || Poise >= EffectivePoiseMax)
+            {
+                TriggerStagger(npc, sourceCenter);
+            }
+            PoiseWillBreakThisHit = false;
+        }
+
+        /// <summary>Enter the staggered state: launch, freeze, cancel a windup attack, and escalate.</summary>
+        private void TriggerStagger(NPC npc, Vector2 sourceCenter)
+        {
+            Poise = 0f;
+            StaggerTimer = StaggerDurationTicks;
+            SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.6f, PitchVariance = 0.15f }, npc.Center); // stagger cue
+            // Escalation: add a stack and refresh the (long) window. The rising EffectivePoiseMax is what makes re-staggers
+            // progressively harder — the recovery cooldown stays a flat ~recovery window (not stack-scaled, or it'd balloon).
+            PoiseEscalationStacks = Math.Min(PoiseEscalationStacks + 1, PoiseEscalationMaxStacks);
+            PoiseEscalationTimer = PoiseEscalationDurationTicks;
+            PoiseBreakCooldown = PoiseBreakCooldownTicks;
+            ApplyStaggerImpulse(npc, sourceCenter, 1f);
+            // Cancel a windup attack. Enemies with bespoke attack STATE (C# flags / custom timer slots) implement
+            // IStaggerable to clear exactly their own state; simple ai[1]/ai[2]-timer enemies use PoiseStaggerResetsAI.
+            // The interface wins when both are present — it's strictly more capable.
+            if (npc.ModNPC is IStaggerable staggerable)
+            {
+                staggerable.OnStagger(npc); // bespoke-state enemies clear exactly their own attack state
+            }
+            else
+            {
+                if (PoiseStaggerResetsAI)
+                {
+                    npc.ai[1] = 60f;   // simple ai[1]-timer enemies (Red Knight family): cancel a windup attack → neutral
+                    npc.ai[2] = -100f;
+                }
+                // Universal AddAttack reset: the shared projectile system (Dworcs, casters, archers) drives its windup
+                // off ProjectileTimer, not ai[1]. Resetting it cancels a telegraphing shot and restarts the cooldown.
+                if (AttackList.Count > 0)
+                {
+                    ProjectileTimer = 0f;
+                    AttackTelegraphing = false;
+                    AttackCommitted = false;
+                    FighterRangedStandShotsRemaining = 0;
+                }
+            }
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.3f, Volume = 0.8f }, npc.Center);
+            npc.netUpdate = true;
+        }
+
+        // Pre-attack jump driver: on the rising edge of AttackCommitted, roll the jump and schedule the launch a few
+        // frames later, so the shot (fired later in the committed window) goes off while the enemy is airborne. Server-
+        // only; the launch netUpdates so MP clients receive the velocity. See CanJumpBeforeAttack.
+        private void UpdatePreAttackJump(NPC npc)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                wasAttackCommitted = AttackCommitted;
+                return;
+            }
+
+            if (CanJumpBeforeAttack && AttackCommitted && !wasAttackCommitted && !SuppressPreAttackJump
+                && (!JumpBeforeAttackRequiresGrounded || npc.velocity.Y == 0f) && Main.rand.NextFloat() < JumpBeforeAttackChance)
+            {
+                queuedPreAttackJump = ChoosePreAttackJump(npc);
+                preAttackJumpTimer = Math.Max(1, JumpBeforeAttackDelay);
+            }
+            wasAttackCommitted = AttackCommitted;
+
+            if (preAttackJumpTimer > 0)
+            {
+                preAttackJumpTimer--;
+                if (preAttackJumpTimer == 0)
+                {
+                    preAttackJumpTimer = -1;
+                    // Headroom check: don't launch into a ceiling. Scan up to the full-power apex; if a solid tile is
+                    // closer, cap the launch so the apex tucks ~1 tile under it (or skip entirely if there's < 2 tiles —
+                    // the attack then just fires grounded). apex(tiles) = power² / (2·gravity·16).
+                    ApplyPreAttackJump(npc, queuedPreAttackJump);
+                }
+            }
+        }
+
+        private PreAttackJumpBehavior ChoosePreAttackJump(NPC npc)
+        {
+            PreAttackJumpPool.Clear();
+            bool desperate = npc.life <= npc.lifeMax * JumpBeforeAttackDesperateLifeFraction;
+
+            if (desperate)
+            {
+                AddPreAttackJump(JumpBeforeAttackDesperateHighHop, PreAttackJumpBehavior.DesperateHighHop);
+                AddPreAttackJump(JumpBeforeAttackDesperateSprayHop, PreAttackJumpBehavior.DesperateSprayHop);
+                AddPreAttackJump(JumpBeforeAttackErraticFinalHover, PreAttackJumpBehavior.ErraticFinalHover);
+            }
+
+            if (PreAttackJumpPool.Count == 0)
+            {
+                AddPreAttackJump(JumpBeforeAttackVerticalPop, PreAttackJumpBehavior.VerticalPop);
+                AddPreAttackJump(JumpBeforeAttackMainAttackHop, PreAttackJumpBehavior.MainAttackHop);
+                AddPreAttackJump(JumpBeforeAttackShortForwardHop, PreAttackJumpBehavior.ShortForwardHop);
+                AddPreAttackJump(JumpBeforeAttackHighForwardHop, PreAttackJumpBehavior.HighForwardHop);
+                AddPreAttackJump(JumpBeforeAttackOffensiveLeap, PreAttackJumpBehavior.OffensiveLeap);
+                AddPreAttackJump(JumpBeforeAttackDashHop, PreAttackJumpBehavior.AttackDashHop);
+            }
+
+            return PreAttackJumpPool.Count == 0 ? PreAttackJumpBehavior.VerticalPop : PreAttackJumpPool[Main.rand.Next(PreAttackJumpPool.Count)];
+        }
+
+        private static void AddPreAttackJump(bool enabled, PreAttackJumpBehavior behavior)
+        {
+            if (enabled)
+            {
+                PreAttackJumpPool.Add(behavior);
+            }
+        }
+
+        private void ApplyPreAttackJump(NPC npc, PreAttackJumpBehavior behavior)
+        {
+            float velocityY;
+            float velocityX = 0f;
+
+            switch (behavior)
+            {
+                case PreAttackJumpBehavior.ShortForwardHop:
+                    velocityY = Main.rand.NextFloat(-4f, -2f);
+                    velocityX = npc.direction * Main.rand.NextFloat(1f, 2f);
+                    break;
+                case PreAttackJumpBehavior.MainAttackHop:
+                    velocityY = Main.rand.NextFloat(-10f, -4f);
+                    break;
+                case PreAttackJumpBehavior.HighForwardHop:
+                    velocityY = Main.rand.NextFloat(-10f, -3f);
+                    velocityX = npc.direction * Main.rand.NextFloat(1f, 3f);
+                    break;
+                case PreAttackJumpBehavior.OffensiveLeap:
+                    Lighting.AddLight(npc.Center, Color.OrangeRed.ToVector3());
+                    if (Main.rand.NextBool(2))
+                    {
+                        Dust.NewDust(npc.position, npc.width, npc.height, DustID.Torch, npc.velocity.X, npc.velocity.Y);
+                    }
+                    velocityY = -8f;
+                    velocityX = npc.direction * Main.rand.NextFloat(1f, 5f);
+                    break;
+                case PreAttackJumpBehavior.AttackDashHop:
+                    velocityY = Main.rand.NextFloat(-10f, -2f);
+                    velocityX = npc.direction * Main.rand.NextFloat(2f, 5f);
+                    break;
+                case PreAttackJumpBehavior.DesperateHighHop:
+                    velocityY = Main.rand.NextFloat(-11f, -4f);
+                    velocityX = npc.direction * Main.rand.NextFloat(0f, 1f);
+                    break;
+                case PreAttackJumpBehavior.DesperateSprayHop:
+                    Lighting.AddLight(npc.Center, Color.OrangeRed.ToVector3() * 2f);
+                    if (Main.rand.NextBool(2))
+                    {
+                        int dust = Dust.NewDust(npc.position, npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.OrangeRed);
+                        Main.dust[dust].noGravity = true;
+                    }
+                    velocityY = Main.rand.NextFloat(-7f, -3f);
+                    break;
+                case PreAttackJumpBehavior.ErraticFinalHover:
+                    velocityY = Main.rand.NextFloat(-10f, 3f);
+                    break;
+                default:
+                    velocityY = -JumpBeforeAttackPower;
+                    break;
+            }
+
+            if (velocityY < 0f)
+            {
+                velocityY = -CapPreAttackJumpPower(npc, -velocityY);
+            }
+
+            if (velocityY != 0f || velocityX != 0f)
+            {
+                npc.velocity.Y = velocityY;
+                npc.velocity.X += velocityX;
+                npc.netUpdate = true; // sync the launch to MP clients
+            }
+        }
+
+        private static float CapPreAttackJumpPower(NPC npc, float requestedPower)
+        {
+            // Headroom check: don't launch into a ceiling. Scan up to the full-power apex; if a solid tile is
+            // closer, cap the launch so the apex tucks about 1 tile under it.
+            float gravity = npc.gravity > 0f ? npc.gravity : 0.3f;
+            int wantTiles = (int)Math.Ceiling(requestedPower * requestedPower / (2f * gravity * 16f));
+            int clearTiles = 0;
+            for (int i = 1; i <= wantTiles; i++)
+            {
+                if (UsefulFunctions.IsTileReallySolid(npc.Center + new Vector2(0f, -npc.height / 2f - i * 16f))) break;
+                clearTiles = i;
+            }
+            if (clearTiles >= wantTiles)
+            {
+                return requestedPower;
+            }
+            return clearTiles < 2 ? 0f : (float)Math.Sqrt(2f * gravity * (clearTiles - 1) * 16f);
+        }
+
+        private void ApplyStaggerImpulse(NPC npc, Vector2 sourceCenter, float scale)
+        {
+            if (npc.boss)
+            {
+                scale *= 0.5f; // bosses shrug off some of the launch
+            }
+            int dir = npc.Center.X >= sourceCenter.X ? 1 : -1;
+            staggerSlideVelocity = dir * StaggerKnockback * scale;
+            npc.velocity.X = staggerSlideVelocity; // ApplyStaggerMovement carries/decays it across the stun
+            npc.netUpdate = true;
+        }
+
+        /// <summary>Per-tick poise bookkeeping (timers, escalation reset, poise decay). Called at the start of PostAI.</summary>
+        private void UpdatePoise(NPC npc)
+        {
+            if (PoiseMax <= 0f)
+            {
+                return;
+            }
+            if (StaggerTimer > 0)
+            {
+                StaggerTimer--;
+            }
+            if (PoiseBreakCooldown > 0)
+            {
+                PoiseBreakCooldown--;
+            }
+            if (PoiseEscalationTimer > 0)
+            {
+                PoiseEscalationTimer--;
+                if (PoiseEscalationTimer == 0)
+                {
+                    PoiseEscalationStacks = 0;
+                }
+            }
+            if (PoiseRegenDelay > 0)
+            {
+                PoiseRegenDelay--;
+            }
+            else if (Poise > 0f && StaggerTimer <= 0)
+            {
+                Poise -= PoiseMax / 240f; // full decay in ~4s once the grace window elapses
+                if (Poise < 0f)
+                {
+                    Poise = 0f;
+                }
+            }
+        }
+
+        /// <summary>While staggered, override the AI's pursuit: hold the enemy in place (sliding from the knockback) and
+        /// stop it jumping. Called at the END of PostAI so it wins over the movement the AI set this tick.</summary>
+        private void ApplyStaggerMovement(NPC npc)
+        {
+            if (PoiseMax <= 0f || StaggerTimer <= 0)
+            {
+                return;
+            }
+            npc.velocity.X = staggerSlideVelocity;
+            staggerSlideVelocity *= 0.72f;        // knockback slide bleeds off quickly — a staggered enemy is near-rooted
+            if (Math.Abs(staggerSlideVelocity) < 0.1f)
+            {
+                staggerSlideVelocity = 0f;        // settle fully so it stands stunned rather than drifting
+            }
+            if (npc.velocity.Y < 0f)
+            {
+                npc.velocity.Y = 0f;              // cancel any jump the AI tried to start while stunned
+            }
+        }
+        #endregion
+
+        // Vertical jump power ceiling. Default 9f (apex ≈ 8.4 tiles) so a base-stat enemy can clear a
+        // typical 6-7 tile ledge: ComputeJumpArc requires apex = rise + 1-tile lip, which for a 6-tile
+        // rise needs power ≈ 8.2 — the old default of 8 fell just short and made the jump "infeasible",
+        // so default enemies could never be issued a 6-tile climb. Per-enemy SetDefaults still overrides
+        // (e.g. Assassin at 10f) for nimbler or heavier jumpers.
+        public float MaxJumpPower = 9f;
+        // Horizontal momentum added when jumping a gap
+        public float MaxJumpBoost = 4f;
+        // Whether this NPC can perform a mid-air second jump
+        public bool CanDoubleJump = false;
+        // Tracks whether the double jump has been used this airborne phase (reset on landing)
+        public bool UsedDoubleJump = false;
+        // Strength of the mid-air second jump
+        public float DoubleJumpPower = 6f;
+        // Counts consecutive frames the NPC has barely moved while pursuing; the position-immobility
+        // anti-stuck uses it to disengage a walled/unreachable chase to the FSM (Search/Patrol/teleport).
+        public int StuckTimer = 0;
+        public bool CanStopToFire = false;
+        // === Ranged kiting (smart positioning) ===
+        // When KiteRangeMax > 0, a ranged enemy maintains a preferred DISTANCE BAND from a same-level, visible player
+        // instead of pathing into melee. Read by SmartFighter4AI.TryRangedKite. KiteRangeMax <= 0 = off (normal walk-in
+        // fighter). Closer than Min → back off; in [Min,Max] → slow drift + fire; farther than Max → let pursuit close in.
+        public float KiteRangeMin = 0f;    // tiles
+        public float KiteRangeMax = 0f;    // tiles (0 = kiting off)
+        public float KiteLooseness = 0.3f; // 0..1 — chance per re-roll window to NOT back off, so melee can sometimes close
+        // Flat-ground navigation for large enemies (avoid slopes / narrow ledges where a big sprite hangs off).
+        public int MinSurfaceWidth = 0;                        // 0 = off; >=2 = only stand/walk/jump on flat ground that wide
+        public bool RequiresFlatGround => MinSurfaceWidth > 0; // read-only; single source of truth is MinSurfaceWidth
+        // How many tiles of unevenness the SUPPORT CORE (MinSurfaceWidth tiles) may straddle before a surface is
+        // refused — i.e. how steep a slope/step the core can stand on. 2 lets it walk normal hill slopes; 0 = strictly
+        // flat. The wider sprite EDGES clip/sink separately (BeastSinkMaxTiles). Only consulted when MinSurfaceWidth
+        // > 0, so non-beasts are unaffected.
+        public int MaxSurfaceStep = 2;
+        // === Large-beast positioning (SF4 beasts only — all gated on RequiresFlatGround) ===
+        // A giant should NEVER freeze: when it can't path to the player it falls back to a large preferred band
+        // (KiteRangeMin/Max above) and oscillates in/out instead of standing; it bobs out of melee after each touch;
+        // and it loses interest (wanders) if it can't reach the player AND hasn't been hit for a while.
+        public int FramesSinceHit = 100000;     // ticked in PostAI, reset to 0 on any hit (OnHitByItem/Projectile)
+        public bool BeastStale = false;          // gave up to wander (suppresses LOS re-aggro until hit re-engages)
+        public int BeastUnreachableFrames = 0;   // frames it has had no path to the player (maintained by SF4 positioner)
+        public int BeastContactBackoffTicks = 60;        // post-touch retreat window (anti sprite-center glitch)
+        public float BeastRetreatSpeedHit = 4f;          // backpedal speed when freshly hit (px/frame)
+        public float BeastRetreatSpeedCalm = 1.2f;       // backpedal/drift speed when not recently hit
+        public int BeastStaleWanderTicks = 600;          // ~10s unreachable + unhit → wander off
+        // How many tiles wide an obstruction may be for a beast to bull straight through it (Phase 2 phasing).
+        public int BeastPhaseMaxWidth = 4;
+        // Phase 3 ground-clip: MinSurfaceWidth is now the SUPPORT CORE (the center 2-4 tiles that must be on solid
+        // ground); the wider sprite EDGES are allowed to clip into terrain. This is how far (in tiles) the sprite may
+        // sink to follow the ground under its full width, so the overhang buries into a slope/hill instead of
+        // floating in air. Drawn on top (gfxOffY). ~1/3 of the sprite height is a good ceiling.
+        public int BeastSinkMaxTiles = 3;
+        // Backwards Walking (Moonwalk) fields
+        public bool CanWalkBackwards = false;
+        // Frames spent voluntarily halted at a ledge; used to cap ledge-camping.
+        public int LedgeHaltTimer = 0;
+        // When true, FighterAI will halt at the edge of a significant drop when it already has
+        // line of sight to the player.  Disabled by default — only opt in for enemies that are
+        // supposed to hold the high ground (e.g. ranged enemies that shouldn't charge off ledges).
+        public bool HaltAtLedge = false;
+        // When true, the NPC teleports through solid walls it cannot navigate around.
+        public bool CanPassThroughWalls = false;
+        // Counts ticks the NPC has been grounded and blocked by a wall; triggers teleport at threshold.
+        public int GhostWallTimer = 0;
+        // Wall-phasing ghosts that prove the target is unreachable spend a short stint drifting away instead
+        // of immediately re-fixating on the player's X column.
+        public int GhostUnreachableWanderTimer = 0;
+        // Set true each frame the NPC runs the mod's custom BasicAI/Fighter/Archer AI. Lets PostAI apply
+        // confusion (reversed movement) only to these NPCs — vanilla-AI NPCs already handle Confused themselves,
+        // so we must not double-flip them. Consumed (reset) in PostAI.
+        public bool RunningCustomFighterAI = false;
+        // Teleport visual tuning. Defaults reproduce the current smoke-flash behavior.
+        public int TeleportTelegraphTime = 140;
+        public int TeleportDustType = DustID.Smoke;
+        public Color TeleportDustColor = Color.White;
+        public float TeleportDustScale = 0.8f;
+        public int TeleportDustCount = 20;
+        // Throttle tick for the LogFighterNavDebug file logger.
+        public int LastNavDebugLogTick = 0;
+
+        // === Patrol/Pursue FSM state (Phase 1 — see Documentation/PatrolPursue_and_NavTier_Removal.md) ===
+        // Defaults reproduce a dumb chase-on-sight enemy. Per-enemy levers override in SetDefaults.
+        public PursuitState PursuitState = PursuitState.Pursue;
+        // Give-up clock: ticks of FAILED pursuit (no LOS AND not progressing toward the player/last-known).
+        // Resets on LOS or clear progress. Disengages when it exceeds NavGiveUpTicks. (Replaces BoredTimer.)
+        public int DisengageTimer = 0;
+        // Last position the NPC had line of sight to the player; target for the Search state.
+        public Vector2 LastKnownPlayerPos = Vector2.Zero;
+        // Generalizes BeastUnreachableFrames to ANY SF4 (NavSearchRadius > 0) enemy: consecutive frames spent
+        // Pursuing with no A* plan and unable to engage (maintained by SmartFighter4AI, alongside its own
+        // StuckGiveUpFrames give-up counter). Used as the "genuinely can't reach this player" signal for Flee.
+        public int UnreachableFrames = 0;
+        // === Flee-to-safety state ===
+        // Entered when hit while UnreachableFrames shows the attacker is genuinely unreachable (and this NPC
+        // can't just blink to them). Runs away from the attacker, gently speeding up, until FleeMaxTiles or a
+        // wall/cliff, then settles into a normal Patrol/Wander. Beasts (RequiresFlatGround) keep their own
+        // BeastStale stale-wander instead — Flee doesn't apply to them.
+        public float FleeOriginX = 0f;
+        public int FleeDirection = 0;
+        public int FleeElapsedFrames = 0;
+
+        // -- Deterministic intelligence levers --
+        // SF4 A* search-window radius in tiles. 0 = no global pathfinding (chase-on-sight + give up);
+        // ~16-24 = routes around local dead ends (needs radius >= dead-end depth); 40-50 = solves mazes.
+        // Smaller is both dumber and cheaper. NOTE: size != intelligence (size -> clearance, handled automatically).
+        public int NavSearchRadius = 0;
+        // May this enemy climb ropes (SF4 only)? Default OFF — opt-in per enemy. Puppets default it ON, and the
+        // TibianValkyrieSmart4 rope testbed sets it. A giant beast grabbing a rope looks wrong, hence default off.
+        public bool CanUseRopes = false;
+        // DisengageTimer threshold. Short = skittish (gives up fast); long = relentless hunter.
+        public int NavGiveUpTicks = 600;
+        // When true, on losing LOS the NPC investigates LastKnownPlayerPos (Search) before patrolling.
+        public bool RemembersLastKnownPos = false;
+
+        // -- Patrol configuration --
+        public PatrolMode PatrolMode = PatrolMode.Idle;
+        public PatrolAnchorSource PatrolAnchorSource = PatrolAnchorSource.SpawnPoint;
+        // Leash radius (tiles) for Pace/Wander around PatrolAnchor.
+        public int PatrolRange = 30;
+        // World-space anchor the patrol centres on; set per PatrolAnchorSource.
+        public Vector2 PatrolAnchor = Vector2.Zero;
+        public bool PatrolAnchorSet = false;
+
+        // -- Patrol working state (managed by NavBehavior) --
+        public int PatrolDirection = 0;     // current patrol facing (-1 / +1)
+        public int PatrolLegRemaining = 0;  // tiles left on the current leg before reconsidering direction
+        public int PatrolIdleTimer = 0;     // sub-timer driving the idle stand/walk routine
+        public int PatrolElapsed = 0;       // frames spent in the current Patrol stint (drives Relaxed-teleport delay)
+        // Last frame's distance to the pursuit target; drives the FSM "made progress" (closing distance) test.
+        public float LastPursuitDist = 0f;
+        // Reference position for the position-immobility anti-stuck (robust to wall-bouncing / LOS flicker).
+        public Vector2 StuckCheckPos = Vector2.Zero;
+
+        // === Unified teleport (Phase 1 — 4b; see Documentation/PatrolPursue_and_NavTier_Removal.md) ===
+        // Merges the legacy `canTeleport` AI param and the WeakTeleport system into one re-acquire-on-give-up
+        // blink (reusing TeleportCountdown / QueueTeleport / ExecuteQueuedTeleport for the actual smoke + warp).
+        public bool CanTeleport = false;
+        public bool CanDodgeroll = false; // mirrors the FighterAI canDodgeroll param; read by the wall-pin escape
+        public TeleportStyle TeleportStyle = TeleportStyle.Normal;
+        // -1 = unlimited (legacy canTeleport). A positive value = limited charges that DO NOT recharge
+        // (legacy WeakTeleport = 2). Spent down via TeleportChargesRemaining.
+        public int TeleportMaxCharges = -1;
+        public int TeleportChargesRemaining = -1; // initialised from TeleportMaxCharges on first AI tick
+        public int TeleportCooldownTimer = 0;     // frames until the next blink is allowed (per-style cooldown)
+        // Bias teleport (and, later, patrol/standoff) destinations toward elevated spots with LOS — for archers
+        // and high-ground hunters.
+        public bool PrefersHighGround = false;
+        // Set once TeleportChargesRemaining has been seeded from TeleportMaxCharges (so SetDefaults overrides win).
+        public bool TeleportChargesInitialized = false;
+
+        // === Health-scaled top speed ===
+        // When HealthScaledSpeedBase >= 0, BasicAI replaces the topSpeed parameter each frame with:
+        //   speed = (life/lifeMax) * HealthScaledSpeedMultiplier + HealthScaledSpeedBase
+        // The multiplier uses the 0.0–1.0 life fraction (NOT 0–100 integer percent).
+        // Negative multiplier → enemy speeds up as it loses HP (most common usage).
+        // Example: base=2, multiplier=-1.5 → 0.5 at full HP, 2.0 near death.
+        //   (Equivalent to the legacy inline: intPercent(0-100) * -0.015 + 2)
+        // HealthScaledSpeedBase = -1 (default) disables the feature; the FighterAI topSpeed param is used as-is.
+        public float HealthScaledSpeedBase = -1f;
+        public float HealthScaledSpeedMultiplier = -1.5f;
+
+        // Convenience method for enemies not yet on FighterAI that still want the formula.
+        public float ComputeHealthScaledSpeed(NPC npc, float fallback) =>
+            HealthScaledSpeedBase >= 0
+                ? (npc.life / (float)npc.lifeMax) * HealthScaledSpeedMultiplier + HealthScaledSpeedBase
+                : fallback;
+
+        // === Standoff distance ===
+        // When > 0, PostAI zeroes horizontal velocity while the NPC is grounded, has LOS to its
+        // target, and is within this many tiles horizontally.  Use for ranged enemies that should
+        // stop advancing once in range rather than walking into the player.
+        public int StandoffDistance = 0;
+
+        // === Teleport visual style ===
+        public TeleportVisualStyle TeleportVisualStyle = TeleportVisualStyle.Default;
+        // Frames remaining before NPC position snaps to TeleportTelegraph (smoke/fire styles only).
+        // Set to 30 by ExecuteQueuedTeleport so the NPC moves halfway through the 1s smoke cloud.
+        public int TeleportAppearanceTimer = 0;
+
+        // === Ally heal aura ===
+        // When true, PostAI has a 1-in-HealAlliesChance chance each frame to restore
+        // HealAlliesPercent% of max HP to every enemy NPC within HealAlliesRange tiles.
+        public bool CanHealAllies = false;
+        public int HealAlliesChance = 500;   // 1-in-N per frame
+        public int HealAlliesRange = 50;     // tile radius
+        public int HealAlliesPercent = 10;   // % of lifeMax restored per proc
+
+        // === Passive random self-heal ===
+        // When true, PostAI has a 1-in-SelfHealChance chance per frame to restore SelfHealAmount HP,
+        // capped at lifeMax.  Fires netUpdate so MP clients stay in sync.
+        public bool CanSelfHeal = false;
+        // HP restored per proc (default 5).
+        public int SelfHealAmount = 5;
+        // 1-in-N chance per frame to proc (default 360 ≈ once every ~6 seconds — raised from 250 to cut heal
+        // frequency ~30% across all self-heal enemies; no enemy overrides this).
+        public int SelfHealChance = 360;
+
+        // === Random-flicker invisibility ===
+        // When true, PostAI randomly flickers the NPC between visible and nearly-transparent each frame,
+        // and snaps it fully visible on hit.  All alpha changes fire netUpdate so MP clients stay in sync.
+        public bool CanGoInvisible = false;
+        // Target alpha when hidden (0 = opaque, 255 = invisible; ~205-230 = ghost-like but still targetable).
+        public int InvisibleAlpha = 210;
+        // 1-in-N chance per frame to go invisible (lower = hides more often).
+        public int GoInvisibleChance = 100;
+        // 1-in-N chance per frame to snap back to fully visible (lower = reappears more often).
+        public int GoVisibleChance = 200;
+        public InvisibilityStyle InvisibilityStyle = InvisibilityStyle.Random;
+        // === Evasive style tuning (only used when InvisibilityStyle == Evasive; see EvasiveProfile.EvasiveCloak) ===
+        public float EvasiveCloakChance = 0.3f;        // probability to cloak WHEN a hit/threat triggers it (sneakier enemy = higher)
+        public float InvisibleHitRevealChance = 0.7f;  // chance a hit taken while cloaked ends it early
+        public int EvasiveThreatRange = 0;             // >0 = also cloak when the player is within this many px (melee approach)
+        public int EvasiveCloakDurationTicks = 300;    // how long each cloak lasts (set equal to the cooldown by EvasiveCloak)
+        public int EvasiveCloakCooldownTicks = 300;    // downtime after a reveal before it can cloak again (balances easy cloakers)
+        private int EvasiveCloakTimer = 0;             // ticks left of the current cloak (server-only)
+        private int EvasiveCloakCooldown = 0;          // ticks left of post-reveal downtime (server-only)
+        public bool IsInvisible = false;
+        // Draws the same ghostly afterimage/shimmer used while invisible, without changing alpha or targeting.
+        public bool HasGhostAfterimages = false;
+        private const int HunterVisionInvisibleAlpha = 50;
+        private int InvisibilityRevealTimer = 0;
+        private readonly Vector2[] InvisibilityTrailPositions = new Vector2[8];
+        private bool InvisibilityTrailInitialized = false;
+
         public bool needsNetUpdate;
         public float ProjectileTimer;
         public float ProjectileTimerCap
@@ -225,10 +1189,13 @@ namespace tsorcRevamp.NPCs
         {
             get
             {
-                return ProjectileTimerCap - 24;
+                return ProjectileTimerCap - CurrentAttack.telegraphTime;
             }
         }
         public float ArcherAimDirection;
+        public Vector2 LockedShotVector;
+        public Vector2 LockedShotTargetPosition;
+        public int LockedShotFacingDirection;
         public int TeleportCountdown;
         public List<tsorcRevampAIs.ProjectileData> AttackList = new List<tsorcRevampAIs.ProjectileData>();
         public int AttackIndex;
@@ -264,7 +1231,9 @@ namespace tsorcRevamp.NPCs
         {
             DarkInferno = false;
             AbyssInferno = false;
+            MorgulPoisoning = false;
             WitchkingCurse = false;
+            AbyssalSinking = false;
             CCShocked = false;
             Ignited = false;
             CrimsonBurn = false;
@@ -276,10 +1245,13 @@ namespace tsorcRevamp.NPCs
             ResetBiohazardBlobs = false;
             ElectrocutedEffect = false;
             ElectrocutedEffect2 = false;
+            ElectrocutedEffect3 = false;
             PolarisElectrocutedEffect = false;
             CrescentMoonlight = false;
             Soulstruck = false;
             PhazonCorruption = false;
+            PlaguesmithBuff = false;
+            SorrowfulCurse = false;
             Venomized = false;
             Electrified = false;
             Irradiated = false;
@@ -288,6 +1260,7 @@ namespace tsorcRevamp.NPCs
             markedByDetonationSignal = false;
             markedByDominatrix = false;
             markedByDragoonLash = false;
+            markedBySupremeDragoonLash = false;
             markedByEnchantedWhip = false;
             markedByNightsCracker = false;
             markedByPolarisLeash = false;
@@ -320,7 +1293,514 @@ namespace tsorcRevamp.NPCs
                 needsNetUpdate = false;
                 npc.netUpdate = true;
             }
+
+            // Keep dynamic-event NPCs from despawning on their own. CheckActive blocks the distance despawn, but
+            // many enemies (e.g. dungeon skeletons placed outside the dungeon) call EncourageDespawn every tick,
+            // which caps timeLeft back down — so a one-time set isn't enough. Re-pin it each tick. Without this,
+            // one self-despawning NPC fails the event's all-or-nothing alive check and tears the whole event down.
+            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
+            {
+                npc.timeLeft = int.MaxValue;
+            }
+
             return base.PreAI(npc);
+        }
+
+        public override bool CheckActive(NPC npc)
+        {
+            // NPCs spawned by a player-placed dynamic event are positioned deliberately in the editor; don't let
+            // them despawn the vanilla "no players nearby / off-screen" way. Otherwise a freshly-spawned event NPC
+            // that lands just off-screen vanishes a tick after spawning, which fails the event's all-or-nothing
+            // despawn check and tears the whole event down (seen as warning dust but no NPCs, esp. multi-NPC events).
+            // Scoped to dynamic (editor) events so existing hardcoded encounters keep their original despawn behavior.
+            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
+            {
+                return false;
+            }
+            return base.CheckActive(npc);
+        }
+
+        private void UpdateInvisibility(NPC npc)
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (npc.justHit && InvisibilityStyle != InvisibilityStyle.Evasive)
+                {
+                    // Random/Predator: any hit snaps fully visible. Evasive owns its own hit handling (a hit is a
+                    // cloak TRIGGER when visible, and only a CHANCE to reveal when already cloaked) — see below.
+                    if (InvisibilityStyle == InvisibilityStyle.Predator)
+                    {
+                        InvisibilityRevealTimer = 90;
+                    }
+                    SetInvisible(npc, false);
+                }
+                else if (InvisibilityStyle == InvisibilityStyle.Predator && InvisibilityRevealTimer > 0)
+                {
+                    InvisibilityRevealTimer--;
+                    SetInvisible(npc, false);
+                }
+                else if (InvisibilityStyle == InvisibilityStyle.Predator)
+                {
+                    SetInvisible(npc, ShouldPredatorBeInvisible(npc));
+                }
+                else if (InvisibilityStyle == InvisibilityStyle.Evasive)
+                {
+                    UpdateEvasiveInvisibility(npc);
+                }
+                else if (Main.rand.NextBool(GoVisibleChance))
+                {
+                    SetInvisible(npc, false);
+                }
+                else if (Main.rand.NextBool(GoInvisibleChance))
+                {
+                    SetInvisible(npc, true);
+                }
+                else
+                {
+                    ApplyInvisibilityAlpha(npc, false);
+                }
+            }
+            else
+            {
+                ApplyInvisibilityAlpha(npc, false);
+            }
+        }
+
+        private void SetInvisible(NPC npc, bool invisible)
+        {
+            if (IsInvisible != invisible)
+            {
+                IsInvisible = invisible;
+                npc.netUpdate = true;
+            }
+
+            ApplyInvisibilityAlpha(npc, true);
+        }
+
+        private void ApplyInvisibilityAlpha(NPC npc, bool syncAlphaChanges)
+        {
+            int targetAlpha = IsInvisible ? (LocalPlayerRevealsInvisibleNPCs() ? HunterVisionInvisibleAlpha : InvisibleAlpha) : 0;
+
+            if (npc.alpha != targetAlpha)
+            {
+                npc.alpha = targetAlpha;
+                if (syncAlphaChanges)
+                {
+                    npc.netUpdate = true;
+                }
+            }
+        }
+
+        private bool LocalPlayerRevealsInvisibleNPCs()
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return false;
+            }
+
+            Player player = Main.LocalPlayer;
+            return player != null && player.active && !player.dead && (player.detectCreature || player.HasBuff(BuffID.Hunter));
+        }
+
+        private bool ShouldPredatorBeInvisible(NPC npc)
+        {
+            if (IsUsingAttackTell())
+            {
+                return false;
+            }
+
+            return Math.Abs(npc.velocity.X) > 0.25f || Math.Abs(npc.velocity.Y) > 0.25f;
+        }
+
+        // Evasive style: cloak is a reaction to danger, not an ambient flicker. Runs only when not justHit-handled
+        // above (which it isn't, since Evasive is excluded there) — this method handles hits itself.
+        //  • Cloaked: count the guaranteed-cloak floor down; a hit rolls InvisibleHitRevealChance to drop the cloak,
+        //    and once past the floor GoVisibleChance is the per-frame reveal roll (so it tunes cloak duration).
+        //  • Visible: a hit OR a nearby threat rolls GoInvisibleChance to cloak (and arms the floor).
+        private void UpdateEvasiveInvisibility(NPC npc)
+        {
+            if (IsInvisible)
+            {
+                if (EvasiveCloakTimer > 0)
+                {
+                    EvasiveCloakTimer--;
+                }
+
+                // A poise break always rips the cloak off (the two systems talk via the shared StaggerTimer). An
+                // ordinary hit only has a chance — and higher-tier cloakers (see EvasiveCloak) resist it more.
+                bool staggerReveal = StaggerTimer > 0;
+                bool hitReveal = npc.justHit && Main.rand.NextFloat() < InvisibleHitRevealChance;
+                if (staggerReveal || hitReveal || EvasiveCloakTimer == 0) // staggered, shot out early, or full duration elapsed
+                {
+                    SetInvisible(npc, false);
+                    EvasiveCloakCooldown = EvasiveCloakCooldownTicks; // downtime before it can cloak again
+                }
+                else
+                {
+                    ApplyInvisibilityAlpha(npc, false);
+                }
+            }
+            else
+            {
+                if (EvasiveCloakCooldown > 0)
+                {
+                    EvasiveCloakCooldown--;
+                }
+
+                bool triggered = (npc.justHit || EvasiveThreatNearby(npc)) && EvasiveCloakCooldown == 0;
+                if (triggered && Main.rand.NextFloat() < EvasiveCloakChance)
+                {
+                    SetInvisible(npc, true);
+                    EvasiveCloakTimer = EvasiveCloakDurationTicks;
+                }
+                else
+                {
+                    ApplyInvisibilityAlpha(npc, false);
+                }
+            }
+        }
+
+        // A friendly projectile heading roughly at this NPC, OR (when EvasiveThreatRange > 0) the target player within
+        // that range. Mirrors the incoming-projectile predicate used by the dodge/jump-to-evade scan.
+        private bool EvasiveThreatNearby(NPC npc)
+        {
+            if (EvasiveThreatRange > 0 && npc.HasValidTarget &&
+                npc.DistanceSQ(Main.player[npc.target].Center) < EvasiveThreatRange * EvasiveThreatRange)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile proj = Main.projectile[i];
+                if (proj.active && proj.friendly && proj.damage > 0 && proj.DistanceSQ(npc.Center) < 40000 &&
+                    UsefulFunctions.CompareAngles(proj.velocity, UsefulFunctions.Aim(proj.Center, npc.Center, 1)) < 0.3f)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsUsingAttackTell()
+        {
+            if (ArcherAimDirection != 0f || FighterRangedStandShotsRemaining > 0 || TeleportCountdown > 0 || TeleportAppearanceTimer > 0)
+            {
+                return true;
+            }
+
+            if (AttackList.Count > 0 && AttackIndex >= 0 && AttackIndex < AttackList.Count)
+            {
+                int telegraphStart = Math.Max(0, CurrentAttack.timerCap - 24);
+                return ProjectileTimer >= telegraphStart;
+            }
+
+            return false;
+        }
+
+        private void UpdateInvisibilityTrail(NPC npc)
+        {
+            if (!InvisibilityTrailInitialized)
+            {
+                for (int i = 0; i < InvisibilityTrailPositions.Length; i++)
+                {
+                    InvisibilityTrailPositions[i] = npc.Center;
+                }
+                InvisibilityTrailInitialized = true;
+                return;
+            }
+
+            if (Vector2.DistanceSquared(InvisibilityTrailPositions[0], npc.Center) < 4f)
+            {
+                return;
+            }
+
+            for (int i = InvisibilityTrailPositions.Length - 1; i > 0; i--)
+            {
+                InvisibilityTrailPositions[i] = InvisibilityTrailPositions[i - 1];
+            }
+            InvisibilityTrailPositions[0] = npc.Center;
+        }
+
+        public override void PostAI(NPC npc)
+        {
+            // Anti-despawn for dynamic-event NPCs. Some enemies (e.g. dungeon BoneThrowingSkeleton variants placed
+            // outside the dungeon) set active=false directly the tick they spawn — neither CheckActive nor a timeLeft
+            // pin stops that. PostAI runs after the vanilla AI, so revive them here as long as they're still alive
+            // (life > 0). A player kill drops life to 0, so we never resurrect something that was legitimately killed.
+            // Without this, one self-despawning NPC fails the event's all-or-nothing alive check and tears it down.
+            // EXCLUDED: SelfDeactivatingNPCs (Marilith/Prime intros, Gwyn vision, portals, etc.) deliberately set
+            // active=false mid-AI to transform into the real boss or vanish — reviving them here would fight that
+            // and break the whole encounter (this broke TheMachine/Marilith when the blanket revival first shipped).
+            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID) && !npc.active && npc.life > 0
+                && !tsorcRevamp.SelfDeactivatingNPCs.Contains(npc.type))
+            {
+                npc.active = true;
+                npc.timeLeft = int.MaxValue;
+            }
+
+            if (ReactiveBlockTimer > 0)
+            {
+                ReactiveBlockTimer--;
+            }
+
+            // Hit-recency clock (drives the large-beast retreat-speed scaling + stale-wander give-up). The hooks
+            // below reset it to 0 on a real hit; here it just ages. Capped so it never overflows on a long-lived NPC.
+            if (FramesSinceHit < 1000000) FramesSinceHit++;
+
+            UpdatePoise(npc);
+            UpdatePreAttackJump(npc);
+
+            // Confusion: the mod's custom AI computes movement toward the player and ignores npc.confused, so a
+            // confused enemy still walked straight at you (only showing the "?" emote). Here, after the AI has
+            // run, we reverse a confused custom-AI enemy's horizontal movement so it stumbles AWAY instead.
+            // Vertical velocity (jumps) is left intact so it still hops terrain — just in the wrong direction.
+            // Only applies to NPCs that ran our BasicAI this frame; vanilla-AI NPCs handle Confused on their own.
+            if (RunningCustomFighterAI && npc.confused && npc.target >= 0 && npc.target < Main.maxPlayers)
+            {
+                int away = npc.Center.X < Main.player[npc.target].Center.X ? -1 : 1;
+                float speed = Math.Max(Math.Abs(npc.velocity.X), 1.5f);
+                npc.velocity.X = away * speed;
+                npc.direction = away;
+                npc.spriteDirection = away;
+            }
+            RunningCustomFighterAI = false;
+
+            if (StandoffDistance > 0 && npc.HasValidTarget && npc.velocity.Y == 0)
+            {
+                Player standoffTarget = Main.player[npc.target];
+                if (Collision.CanHitLine(npc.position, npc.width, npc.height, standoffTarget.position, standoffTarget.width, standoffTarget.height)
+                    && Math.Abs(npc.Center.X - standoffTarget.Center.X) < StandoffDistance * 16f)
+                {
+                    npc.velocity.X = 0;
+                }
+            }
+
+            if (CanHealAllies && Main.rand.NextBool(HealAlliesChance) && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float healRange = HealAlliesRange * 16f;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC ally = Main.npc[i];
+                    if (!ally.active || ally.whoAmI == npc.whoAmI || ally.friendly || ally.life <= 0 || ally.life >= ally.lifeMax)
+                        continue;
+                    if (ally.Distance(npc.Center) > healRange)
+                        continue;
+                    int heal = Math.Max(1, (int)(ally.lifeMax * (HealAlliesPercent / 100f)));
+                    ally.life = Math.Min(ally.life + heal, ally.lifeMax);
+                    ally.HealEffect(heal);
+                    ally.netUpdate = true;
+                    if (Main.netMode != NetmodeID.Server)
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), ally.Center, Microsoft.Xna.Framework.Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.HealSpriteVFX>(), 0, 0);
+                }
+            }
+
+            if (CanSelfHeal && Main.rand.NextBool(SelfHealChance))
+            {
+                npc.life = Math.Min(npc.life + SelfHealAmount, npc.lifeMax);
+                npc.HealEffect(SelfHealAmount);
+                npc.netUpdate = true;
+                if (Main.netMode != NetmodeID.Server)
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Microsoft.Xna.Framework.Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.HealSpriteVFX>(), 0, 0);
+            }
+
+            if (CanGoInvisible)
+            {
+                UpdateInvisibility(npc);
+            }
+
+            if (CanGoInvisible || HasGhostAfterimages || EvasiveAfterimagesActive)
+            {
+                UpdateInvisibilityTrail(npc);
+            }
+
+            // Stagger freeze: override the AI's movement so a staggered enemy is stunned in place. Last write to
+            // velocity in the common PostAI path so it wins over pursuit/confusion/standoff set above.
+            ApplyStaggerMovement(npc);
+
+            if (!CanPassThroughWalls)
+                return;
+
+            // ── Ghost wall teleport ───────────────────────────────────────────────
+            // When blocked by a solid wall for ~25 frames, scan for a valid landing
+            // spot on the far side and instantly relocate there.
+            //
+            // BUG FIX: the original code required onGround (velocity.Y == 0) before
+            // accumulating GhostWallTimer.  FighterAI's jump code fires every few
+            // frames against an impassable wall, setting velocity.Y < 0, which made
+            // onGround false and reset the timer to 0 every cycle — the threshold was
+            // never reached and the teleport (and its dust) never fired.
+            // Fix: accumulate whenever a wall tile is present in the forward column,
+            // regardless of vertical velocity.  The timer drains twice as fast when
+            // the column is clear so normal single-frame wall-grazes don't trigger.
+            //
+            // Additional guard: require the NPC to actually be moving forward (velocity in
+            // its facing direction > 0.2 px/tick).  Without this, enemies with custom AI
+            // that decelerate to 0 during attacks (e.g. GhostOfAHollowWarrior's slash) could
+            // silently accumulate the timer and teleport mid-animation.
+            float _ghostFwdVel = npc.direction * npc.velocity.X;
+            bool wallBlocked = _ghostFwdVel > 0.2f && IsWallBlockingAhead(npc);
+
+            if (wallBlocked)
+                GhostWallTimer++;
+            else
+                GhostWallTimer = Math.Max(0, GhostWallTimer - 2);
+
+            if (GhostWallTimer >= 1)
+            {
+                // Only queue if no teleport is already in progress.
+                if (TeleportCountdown == 0 && TeleportAppearanceTimer == 0 && TryGhostWallTeleport(npc))
+                    ProjectileTimer = 0f;
+                // Reset regardless — let FighterAI's direction-flip move the NPC
+                // away before the next accumulation attempt starts.
+                GhostWallTimer = 0;
+            }
+        }
+
+        // ── Ghost wall teleport helpers ───────────────────────────────────────────
+
+        /// <summary>
+        /// Returns true when the tile column immediately in front of the NPC (in its
+        /// current facing direction) contains at least one solid tile at body level —
+        /// i.e. the NPC is walking into a wall it cannot step over normally.
+        /// </summary>
+        private static bool IsWallBlockingAhead(NPC npc)
+        {
+            int dir = npc.direction == 0 ? 1 : npc.direction;
+            int frontTileX = dir == -1
+                ? (int)(npc.position.X / 16f) - 1
+                : (int)((npc.position.X + npc.width) / 16f);
+            int feetTileY   = (int)((npc.position.Y + npc.height) / 16f);
+            int bodyHtTiles = (int)Math.Ceiling(npc.height / 16.0);
+
+            for (int row = feetTileY - bodyHtTiles; row < feetTileY; row++)
+            {
+                if (UsefulFunctions.IsTileReallySolid(frontTileX, row))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Scans ahead for a valid open landing spot on the far side of the wall,
+        /// teleports the NPC there, and spawns grey smoke at both positions.
+        ///
+        /// Valid landing: solid floor, PLUS at least 2 tiles wide × 3 tiles tall of clear
+        /// air space (landing column AND the next column in the direction of travel).
+        /// The 2-wide requirement prevents the NPC landing on a 1-tile ledge next to a
+        /// slope or wall where it immediately gets stuck again.
+        ///
+        /// Scans up to 4 tiles wide (wall thickness), then up to 4 tiles beyond,
+        /// checking ±3 tile Y variation to handle steps/ramps.
+        ///
+        /// Returns false if the wall leads into solid earth (no teleport occurs).
+        /// </summary>
+        private static bool TryGhostWallTeleport(NPC npc)
+        {
+            int dir = npc.direction == 0 ? 1 : npc.direction;
+            int frontTileX  = dir == -1
+                ? (int)(npc.position.X / 16f) - 1
+                : (int)((npc.position.X + npc.width) / 16f);
+            int feetTileY   = (int)((npc.position.Y + npc.height) / 16f);
+            int bodyHtTiles = (int)Math.Ceiling(npc.height / 16.0);
+
+            // Minimum vertical clearance: always at least 3 tiles even for short NPCs.
+            int minClearance = Math.Max(bodyHtTiles, 3);
+
+            // ── Phase 1: find where the wall ends ────────────────────────────────
+            // Scan forward until we find a column where the NPC's body would fit.
+            int wallEndX = -1;
+            for (int i = 0; i <= GhostWallMaxThicknessTiles; i++)
+            {
+                int tx = frontTileX + dir * i;
+                bool columnClear = true;
+                for (int row = feetTileY - bodyHtTiles; row < feetTileY; row++)
+                {
+                    if (UsefulFunctions.IsTileReallySolid(tx, row))
+                    {
+                        columnClear = false;
+                        break;
+                    }
+                }
+                if (columnClear)
+                {
+                    if (i == 0) return false; // no actual wall in front (shouldn't happen)
+                    wallEndX = tx;
+                    break;
+                }
+            }
+            if (wallEndX == -1) return false; // wall > max thickness / solid earth
+
+            // ── Phase 2: find a valid floor at or near wall exit ─────────────────
+            // Try the same Y level first, then offset up/down to handle steps/ramps.
+            int[] yOffsets = { 0, -1, 1, -2, 2, -3, 3 };
+            for (int xi = 0; xi <= 4; xi++)
+            {
+                int tx = wallEndX + dir * xi;
+                foreach (int yOff in yOffsets)
+                {
+                    int groundTile = feetTileY + yOff;
+
+                    // Floor must be solid at the landing column.
+                    if (!UsefulFunctions.IsTileReallySolid(tx, groundTile))
+                        continue;
+
+                    // ── 2-wide × 3-tall clearance check ──────────────────────────
+                    // Both the landing column (tx) and the adjacent column in the travel
+                    // direction (tx + dir) must have minClearance rows of clear air above
+                    // the floor.  This stops the NPC landing on a 1-tile ledge next to a
+                    // slope/wall where it would immediately get wedged.
+                    bool bodyFits = true;
+                    int adjX = tx + dir;
+
+                    for (int col = 0; col < 2 && bodyFits; col++)
+                    {
+                        int checkX = col == 0 ? tx : adjX;
+                        for (int row = groundTile - minClearance; row < groundTile; row++)
+                        {
+                            if (UsefulFunctions.IsTileReallySolid(checkX, row))
+                            {
+                                bodyFits = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!bodyFits) continue;
+
+                    // ── Valid spot found — queue a fast smoke teleport ───────────
+                    // Spawn 0.5s smoke at both ends immediately, then let FighterAI's
+                    // TeleportAppearanceTimer freeze the NPC and snap it halfway through.
+                    Vector2 destPos = new Vector2(
+                        tx * 16f + 8f - npc.width  / 2f,
+                        groundTile * 16f - npc.height
+                    );
+                    Vector2 destCenter = destPos + new Vector2(npc.width / 2f, npc.height / 2f);
+
+                    tsorcRevampGlobalNPC gNpc = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                    gNpc.TeleportTelegraph = destCenter;
+                    gNpc.TeleportCountdown = 0;
+                    gNpc.TeleportAppearanceTimer = GhostWallTeleportSnapTicks;
+                    npc.netUpdate = true;
+
+                    SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float radius = Math.Max(npc.width, npc.height) * GhostWallTeleportMistRadiusScale;
+                        Projectile srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                            ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, 0f, radius);
+                        srcMist.timeLeft = GhostWallTeleportSmokeTicks;
+                        Projectile dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), destCenter, Vector2.Zero,
+                            ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, 0f, radius);
+                        dstMist.timeLeft = GhostWallTeleportSmokeTicks;
+                    }
+
+                    return true;
+                }
+            }
+
+            return false; // far side is solid earth
         }
 
         public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
@@ -329,7 +1809,9 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(DodgeTimer);
             binaryWriter.Write(ProjectileTimer);
             binaryWriter.Write(TeleportCountdown);
+            binaryWriter.Write(TeleportAppearanceTimer);
             binaryWriter.WriteVector2(TeleportTelegraph);
+            binaryWriter.Write(IsInvisible);
 
             binaryWriter.Write(Aggression);
             binaryWriter.Write(Patience);
@@ -339,6 +1821,19 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(CastingSpeed);
             binaryWriter.Write(Strength);
             binaryWriter.Write(Agility);
+
+            // FSM state — divergence here causes lasting behavioral differences on clients
+            binaryWriter.Write((byte)PursuitState);
+            binaryWriter.Write(DisengageTimer);
+            binaryWriter.WriteVector2(LastKnownPlayerPos);
+            binaryWriter.Write(FleeOriginX);
+            binaryWriter.Write(FleeDirection);
+            binaryWriter.Write(FleeElapsedFrames);
+            // Permanent resources — charge counts deplete and never refill, so they must stay in sync
+            binaryWriter.Write(TeleportChargesRemaining);
+            binaryWriter.Write(AttackIndex);
+            binaryWriter.Write(IsTeleportIllusion);
+            binaryWriter.Write(TeleportIllusionTimeLeft);
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
@@ -347,7 +1842,9 @@ namespace tsorcRevamp.NPCs
             DodgeTimer = binaryReader.ReadInt32();
             ProjectileTimer = binaryReader.ReadSingle();
             TeleportCountdown = binaryReader.ReadInt32();
+            TeleportAppearanceTimer = binaryReader.ReadInt32();
             TeleportTelegraph = binaryReader.ReadVector2();
+            IsInvisible = binaryReader.ReadBoolean();
 
             Aggression = binaryReader.ReadSingle();
             Patience = binaryReader.ReadSingle();
@@ -357,12 +1854,24 @@ namespace tsorcRevamp.NPCs
             CastingSpeed = binaryReader.ReadSingle();
             Strength = binaryReader.ReadSingle();
             Agility = binaryReader.ReadSingle();
+
+            PursuitState = (PursuitState)binaryReader.ReadByte();
+            DisengageTimer = binaryReader.ReadInt32();
+            LastKnownPlayerPos = binaryReader.ReadVector2();
+            FleeOriginX = binaryReader.ReadSingle();
+            FleeDirection = binaryReader.ReadInt32();
+            FleeElapsedFrames = binaryReader.ReadInt32();
+            TeleportChargesRemaining = binaryReader.ReadInt32();
+            AttackIndex = binaryReader.ReadInt32();
+            IsTeleportIllusion = binaryReader.ReadBoolean();
+            TeleportIllusionTimeLeft = binaryReader.ReadInt32();
         }
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
             if (npc.type == NPCID.KingSlime)
             {
+                npcLoot.RemoveWhere(rule => rule is CommonDrop drop && (drop.itemId == ItemID.NinjaHood || drop.itemId == ItemID.NinjaShirt || drop.itemId == ItemID.NinjaPants));
                 npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
                 npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>()));
             }
@@ -412,6 +1921,15 @@ namespace tsorcRevamp.NPCs
             int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
             int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
             Player player = spawnInfo.Player;
+
+            //Human enemies can't swim — never let them spawn in water, regardless of their own SpawnChance.
+            if (spawnInfo.Water)
+            {
+                foreach (int humanType in tsorcRevamp.HumanNPCs)
+                {
+                    pool.Remove(humanType);
+                }
+            }
 
             //VANILLA AND SOME MOD NPC SPAWN EDITS
 
@@ -482,7 +2000,8 @@ namespace tsorcRevamp.NPCs
             }
 
             //machine temple (in water)
-            if (spawnInfo.Water && playerY < 1430 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
+            //(depth gate is legacy 2000-space tile-Y; MapTileY shifts it on the expanded world, identity elsewhere)
+            if (spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
             {            
                 // 98 = WallID.GreenDungeonSlabUnsafe
                 
@@ -492,16 +2011,16 @@ namespace tsorcRevamp.NPCs
                     // Add specific NPCs back into the pool with their spawn weights
                     pool.Add(NPCID.GreenJellyfish, 10f);                  
                     pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
-                    pool.Add(ModContent.NPCType<Enemies.GhostOfTheDrowned>(), 2f);
+                    pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 2f);
 
 
 
             }
             //machine temple (not in water)
-            if (!spawnInfo.Water && playerY < 1430 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
+            if (!spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
             {
                 pool.Clear();
-                pool.Add(ModContent.NPCType<Enemies.GhostOfTheDrowned>(), 3f);
+                pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 3f);
                 pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 1f);
 
             }
@@ -510,10 +2029,26 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.GoblinSummoner, 0.01f);
             }
+            if (spawnInfo.Player.ZoneHallow && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.hardMode)
+            {
+                pool.Add(NPCID.Gastropod, 0.18f);
+            }
+            if (spawnInfo.Player.ZoneHallow && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.Pixie, 0.40f);
+                pool.Add(NPCID.Unicorn, 0.09f);
+                pool.Add(NPCID.RainbowSlime, 0.01f);
+            }
             //ocean water (outer thirds of the map)
             if (spawnInfo.Water && Main.hardMode && (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
             {
                 pool.Add(NPCID.SandsharkHallow, 0.3f);
+            }
+
+            if (spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneRockLayerHeight && Main.hardMode)
+            {
+                pool.Add(NPCID.Derpling, 0.25f);
+                pool.Add(NPCID.GiantFlyingFox, 0.25f);
             }
 
             //SUPER HARD MODE SECTION
@@ -523,13 +2058,14 @@ namespace tsorcRevamp.NPCs
             }
 
             //mushroom
-            if (spawnInfo.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode) 
             {
-                pool.Add(NPCID.StardustWormHead, 0.1f); //.1 is 3%
+                pool.Add(NPCID.StardustWormHead, 0.1f); //.1 is 3% 
                 pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
                 pool.Add(NPCID.StardustJellyfishBig, 0.3f);
                 pool.Add(NPCID.StardustSpiderBig, 0.6f);
                 pool.Add(NPCID.StardustSoldier, 1f);
+                pool.Add(NPCID.ShimmerSlime, 0.25f);
             }
             //underground 
             if (spawnInfo.Player.ZoneUnderworldHeight && !spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
@@ -541,12 +2077,16 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.SolarDrakomire, 0.4f);
                 pool.Add(NPCID.SolarSolenian, 0.6f); 
             }
+            //dungeon (rare)
+            if (spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.KnightOfGwyn>(), 0.01f);
+            }
             //catacombs
             if (spawnInfo.SpawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
                 pool.Add(NPCID.NebulaHeadcrab, 0.4f); //.1 is 3%
-                pool.Add(NPCID.NebulaBeast, 0.3f); //.1 is 3%
                 pool.Add(NPCID.NebulaSoldier, 0.4f); //.1 is 3%
             }
             //spaceships or flesh background of crimson biome
@@ -567,10 +2107,7 @@ namespace tsorcRevamp.NPCs
                 // wyvern mage prison (remix map)
                 if (spawnInfo.Player.ZoneMeteor && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && spawnInfo.Player.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
                 {
-                    pool.Add(NPCID.SolarCorite, 0.15f);
-                    pool.Add(NPCID.NebulaBrain, 0.15f);
-                    pool.Add(NPCID.StardustJellyfishBig, 0.15f);
-                    pool.Add(NPCID.VortexLarva, 0.15f);
+                    pool.Add(NPCID.SolarCorite, 0.35f);
                 }
                 // great foundry (remix map)
                 if ((spawnInfo.SpawnTileType == TileID.Cog || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.TinPlating) && tsorcRevampWorld.SuperHardMode)
@@ -590,7 +2127,7 @@ namespace tsorcRevamp.NPCs
             }            
 
             bool invasion = Main.invasionType != 0;
-            if (player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000)
+            if (!tsorcRevampWorld.SuperHardMode && (player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000))
             {
                 invasion = false;
             }
@@ -712,6 +2249,29 @@ namespace tsorcRevamp.NPCs
         {
             Player LocalPlayer = Main.LocalPlayer;
 
+            if (Main.netMode != NetmodeID.Server && !IsTeleportIllusion)
+            {
+                if (EncounterPresentationRegistry.TryGetCompletedEncounter(npc, out BossEncounterPresentation encounter))
+                {
+                    if (encounter.ShowsDefeatBanner)
+                    {
+                        tsorcRevamp.ShowAnnouncementBanner(
+                            EncounterPresentationRegistry.GetBannerText(encounter.DefeatBanner),
+                            encounter.TomeColor);
+                        SoundEngine.PlaySound(DefeatBannerSound);
+                    }
+                }
+                else if (npc.ModNPC is PuppetNPC puppet && puppet.ShouldAnnounceInvaderDefeat)
+                {
+                    EncounterBannerStyle style = puppet.InvaderDefeatBanner;
+                    Color bannerColor = style == EncounterBannerStyle.GreatInvaderVanquished
+                        ? new Color(182, 92, 224)
+                        : new Color(238, 143, 55);
+                    tsorcRevamp.ShowAnnouncementBanner(EncounterPresentationRegistry.GetBannerText(style), bannerColor);
+                    SoundEngine.PlaySound(DefeatBannerSound);
+                }
+            }
+
             if (npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.EmpressOfLight.Forcefield"), Color.Cyan);
@@ -743,7 +2303,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
-            if (Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+            if (!SuppressGlobalOnKillDrops && Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
             {
                 if (Main.rand.NextBool(2))
                 {
@@ -796,6 +2356,7 @@ namespace tsorcRevamp.NPCs
                         // check whether the SHM boss was killed
                         if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
+                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
@@ -808,9 +2369,19 @@ namespace tsorcRevamp.NPCs
                             tsorcRevampWorld.isHellkiteDragonDead = true;
                         }
 
+                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>())
+                        {
+                            tsorcRevampWorld.isOolacileSerpentDead = true;
+                        }
+
                         if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
                         {
                             Main.StartInvasion();
+                        }
+
+                        if ((npc.type == ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && Main.invasionType == 0)
+                        {
+                            Main.StartInvasion(3);
                         }
 
                         tsorcRevampWorld.PopulatePairedBosses();
@@ -939,7 +2510,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
-            if (DodgeTimer > 0)
+            if (DodgeTimer > 0 || QuickStepTimer > 0) // quick step passes through the player (no contact damage)
             {
                 return false;
             }
@@ -960,9 +2531,17 @@ namespace tsorcRevamp.NPCs
             {
                 modifiers.FinalDamage *= 1f + OrbOfFlame.MagicSunder / 100f;
             }
+            if (AbyssalSinking)
+            {
+                modifiers.FinalDamage *= 1.09f;
+            }
             if (Ignited)
             {
                 modifiers.FlatBonusDamage += MagmaBreastplate.OnHitDmg;
+            }
+            if (PlaguesmithBuff)
+            {
+                modifiers.FinalDamage *= 0.65f; 
             }
             if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
             {
@@ -1006,6 +2585,21 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+            // Poise damage scales with the projectile's knockback stat × its per-projectile ProjectilePoiseMultiplier
+            // lever (see project_poise_stagger_system).
+            float poiseKnockback = projectile.knockBack * projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier;
+            bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
+            if (magicGhostHit)
+            {
+                poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
+                EnableMagicGhostPoise(npc);
+            }
+            else if (IsPhysicalGhost(npc))
+            {
+                return;
+            }
+            ApplyPoiseToKnockback(npc, poiseKnockback, ref modifiers, projectile.Center);
+
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             if (ProjectileID.Sets.IsAWhip[projectile.type])
@@ -1235,6 +2829,14 @@ namespace tsorcRevamp.NPCs
                     Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer, 1);
                 }
             }
+            if (markedBySupremeDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
+            {
+                int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(SupremeDragoonLash.BaseDamage);
+                if (projectileOwner.GetModPlayer<tsorcRevampPlayer>().SupremeDragoonLashFireBreathTimer >= 1 && Main.myPlayer == projectileOwner.whoAmI)
+                {
+                    Projectile RgbFireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.RainbowRodBullet, WhipDamage, 1f, Main.myPlayer, 1);
+                }
+            }
             #endregion
 
             #region BotC Whip Debuff Damage Scaling (disabled)
@@ -1296,6 +2898,21 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
+            // Poise damage scales with the weapon's knockback stat × its per-weapon WeaponPoiseMultiplier lever
+            // (see project_poise_stagger_system).
+            float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
+            bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
+            if (magicGhostHit)
+            {
+                poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
+                EnableMagicGhostPoise(npc);
+            }
+            else if (IsPhysicalGhost(npc))
+            {
+                return;
+            }
+            ApplyPoiseToKnockback(npc, poiseKnockback, ref modifiers, player.Center);
+
             if (npc.type == NPCID.DukeFishron && player.wet)
             {
                 modifiers.FinalDamage *= 4;
@@ -1324,8 +2941,59 @@ namespace tsorcRevamp.NPCs
                 }
             }*/
         }
+        private static void TriggerNoLosPursuitBoost(NPC npc, Player player)
+        {
+            if (player == null || !player.active || player.dead)
+            {
+                return;
+            }
+
+            if (!Collision.CanHitLine(npc.Center, 1, 1, player.Center, 1, 1))
+            {
+                tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                globalNPC.FighterNoLosPursuitBoostTimer = 180;
+            }
+        }
+
+        // Any hit refreshes the hit-recency clock and, for a large beast, breaks it out of a stale wander back into
+        // pursuit ("if it's hit it should re-engage"). Called from both OnHitBy hooks.
+        private void RegisterHitForBeast(NPC npc)
+        {
+            FramesSinceHit = 0;
+            if (RequiresFlatGround)
+            {
+                BeastStale = false;
+                BeastUnreachableFrames = 0;
+                if (PursuitState == PursuitState.Patrol)
+                {
+                    PursuitState = PursuitState.Pursue;
+                    DisengageTimer = 0;
+                }
+            }
+        }
+
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
+            // Must match the poise damage computed in ModifyHitByItem above.
+            float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
+            bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
+            if (magicGhostHit)
+            {
+                poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
+            }
+            if (magicGhostHit || !IsPhysicalGhost(npc))
+            {
+                HandlePoiseOnHit(npc, poiseKnockback, player.Center);
+            }
+            if (magicGhostHit)
+            {
+                ApplyGhostMagicFlinch(npc, player.Center);
+            }
+            RestoreMagicGhostKnockback(npc);
+
+            TriggerNoLosPursuitBoost(npc, player);
+            RegisterHitForBeast(npc);
+
             //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
             if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
             {
@@ -1342,6 +3010,38 @@ namespace tsorcRevamp.NPCs
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            // Must match the poise damage computed in ModifyHitByProjectile above.
+            float poiseKnockback = projectile.knockBack * projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier;
+            bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
+            if (magicGhostHit)
+            {
+                poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
+            }
+            if (magicGhostHit || !IsPhysicalGhost(npc))
+            {
+                HandlePoiseOnHit(npc, poiseKnockback, projectile.Center);
+            }
+            if (magicGhostHit)
+            {
+                ApplyGhostMagicFlinch(npc, projectile.Center);
+            }
+            RestoreMagicGhostKnockback(npc);
+
+            if (projectile.owner >= 0 && projectile.owner < Main.maxPlayers)
+            {
+                TriggerNoLosPursuitBoost(npc, Main.player[projectile.owner]);
+            }
+            RegisterHitForBeast(npc);
+
+            if (projectile.friendly && projectile.DamageType != DamageClass.Melee)
+            {
+                tsorcRevampGlobalNPC hitGlobalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                hitGlobalNPC.FighterRangedHitInterruptedPause = hitGlobalNPC.FighterPostAttackPauseTimer > 0
+                                                              || hitGlobalNPC.FighterRangedStandShotsRemaining > 0;
+                hitGlobalNPC.FighterPostAttackPauseTimer = 0;
+                hitGlobalNPC.FighterRangedStandShotsRemaining = 0;
+            }
+
             Player player = Main.player[projectile.owner];
             var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             if (projectile.IsMinionOrSentryRelated && CritColorTier > 0)
@@ -1568,11 +3268,15 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitPlayer(NPC npc, Player target, ref Player.HurtModifiers modifiers)
         {
+            if (PlaguesmithBuff)
+            {
+                modifiers.FinalDamage *= 1.25f;
+            }
         }
 
         public override bool? CanBeHitByItem(NPC npc, Player player, Item item)
         {
-            if (DodgeTimer > 0)
+            if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / standing quick step
             {
                 return false;
             }
@@ -1581,7 +3285,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool? CanBeHitByProjectile(NPC npc, Projectile projectile)
         {
-            if (DodgeTimer > 0)
+            if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / standing quick step
             {
                 return false;
             }
@@ -1591,6 +3295,21 @@ namespace tsorcRevamp.NPCs
         Texture2D ScorchMarksSprite;
         Texture2D ShockMarksSprite;
         Texture2D SunburnMarksSprite;
+        public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            if (!ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyHealthBars)
+            {
+                return false;
+            }
+
+            if (CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs())
+            {
+                return false;
+            }
+
+            return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
+        }
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (npc.HasBuff(ModContent.BuffType<LionheartMark>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks > 0)
@@ -1754,30 +3473,123 @@ namespace tsorcRevamp.NPCs
 
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            float staminaMax = (int)(300 * (1 - globalNPC.Agility));
-            float staminaCurrent = staminaMax - globalNPC.DodgeCooldown;
-            float staminaPercentage = (float)staminaCurrent / staminaMax;
-            if (globalNPC.DodgeCooldown != 0)
+            // Poise bar takes priority over the stamina bar — they share the same container so only one shows at a time.
+            if (globalNPC.PoiseBarVisible)
             {
-                float abovePlayer = 45f; //how far above the player should the bar be?
-                Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
-                Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
-
-                //this is the position on the screen. it should remain relatively constant unless the window is resized
-                Point barOrigin = (npc.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
-                //Main.NewText("" + barOrigin.X + ", " + barOrigin.Y);
-
-                Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
-
-                //empty bar has detailing, so offset the filled bar's destination
-                int padding = 5;
-                //scale the width by the stam percentage
-                Rectangle fillDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, (int)(staminaPercentage * barFill.Width), barFill.Height);
-
-                Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
-                Main.spriteBatch.Draw(barFill, fillDestination, Color.DodgerBlue);
+                // The bar's COLOUR tells you whether the enemy can be staggered right now:
+                //   orange = vulnerable (poise filling toward a break);
+                //   white  = can't take stagger damage — hyperarmor (committed attack) OR the post-stagger recovery i-frames;
+                //   yellow (flashing) = actively staggered/broken.
+                // The "can't stagger" states show a full/locked bar so the white reads as a shield, not an empty sliver.
+                bool cantStagger = globalNPC.AttackCommitted || globalNPC.PoiseBreakCooldown > 0;
+                float poisePercentage = (globalNPC.StaggerTimer > 0 || globalNPC.PoiseBreakCooldown > 0) ? 1f : globalNPC.Poise / globalNPC.EffectivePoiseMax;
+                Color poiseColor;
+                if (globalNPC.StaggerTimer > 0)
+                {
+                    poiseColor = Main.GameUpdateCount % 10 < 5 ? Color.Yellow : Color.Orange; // flash while broken
+                }
+                else if (cantStagger)
+                {
+                    poiseColor = Color.White; // hyperarmor / recovery i-frames
+                }
+                else
+                {
+                    poiseColor = Color.Orange;
+                }
+                DrawResourceBar(npc, poisePercentage, poiseColor);
+            }
+            else if (globalNPC.DodgeCooldown != 0)
+            {
+                float staminaMax = (int)(300 * (1 - globalNPC.Agility));
+                float staminaCurrent = staminaMax - globalNPC.DodgeCooldown;
+                float staminaPercentage = staminaCurrent / staminaMax;
+                DrawResourceBar(npc, staminaPercentage, new Color(40, 190, 80)); // matches the player's green stamina bar
             }
             return preDraw;
+        }
+
+        /// <summary>Draws the enemy stat bar above the NPC using the shared StaminaBar container. The fill area is split
+        /// horizontally: a thin red HEALTH bar on top, and the active resource (green stamina / orange poise) on the
+        /// bottom. Only called while the bar should be visible (stagger or dodge active).</summary>
+        private static void DrawResourceBar(NPC npc, float resourcePercentage, Color resourceColor)
+        {
+            resourcePercentage = MathHelper.Clamp(resourcePercentage, 0f, 1f);
+            float healthPercentage = MathHelper.Clamp(npc.lifeMax > 0 ? (float)npc.life / npc.lifeMax : 0f, 0f, 1f);
+
+            const float abovePlayer = 45f; // how far above the NPC the bar sits
+            Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
+            Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
+
+            Point barOrigin = (npc.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
+            Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
+
+            // The StaminaBar_full sprite is only solid in its bottom rows; use that solid region as the source so the
+            // fills stay crisp instead of squishing the (mostly transparent) sprite into a thin sliver.
+            Rectangle fillSource = new Rectangle(0, 6, barFill.Width, barFill.Height - 6);
+
+            // Keep the fills strictly inside the container's recessed track so the (drawn-on-top) fills tuck BEHIND the
+            // frame's top/left/right border rows. The 39x12 container's track is rows 6-10, cols 6-34 (1px in from the
+            // left/right frame and from the track's top border row 5). Health on top, resource below, no gap.
+            int fillX = barOrigin.X + 6;          // 1px past the left frame
+            int fillWidth = 35 - 6;               // right edge at col 35 = just inside the right cap
+            int trackTop = barOrigin.Y + 6;       // leaves row 5 (track top border) uncovered
+            const int healthHeight = 2;           // rows 6-7
+            const int resourceHeight = 3;         // rows 8-10
+
+            Rectangle healthDestination = new Rectangle(fillX, trackTop, (int)(healthPercentage * fillWidth), healthHeight);
+            Rectangle resourceDestination = new Rectangle(fillX, trackTop + healthHeight, (int)(resourcePercentage * fillWidth), resourceHeight);
+
+            Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
+            Main.spriteBatch.Draw(barFill, healthDestination, fillSource, Color.Red);
+            Main.spriteBatch.Draw(barFill, resourceDestination, fillSource, resourceColor);
+        }
+
+        public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            bool drawInvisibleAfterimages = CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs();
+            if (!drawInvisibleAfterimages && !HasGhostAfterimages && !EvasiveAfterimagesActive)
+            {
+                return;
+            }
+
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Vector2 drawPosition = npc.Center - screenPos + new Vector2(0f, npc.gfxOffY);
+            Vector2 origin = npc.frame.Size() / 2f;
+            float time = (float)Main.timeForVisualEffects;
+            float baseOpacity = drawInvisibleAfterimages
+                ? MathHelper.Clamp((255 - InvisibleAlpha) / 255f, 0.06f, 0.35f)
+                : 0.16f;
+            float endOpacity = drawInvisibleAfterimages
+                ? MathHelper.Clamp((255 - Math.Min(InvisibleAlpha + 20, 250)) / 255f, 0.02f, baseOpacity)
+                : 0.03f;
+
+            int trailCount = InvisibilityTrailPositions.Length;
+            for (int k = trailCount - 1; k >= 0; k--)
+            {
+                if (InvisibilityTrailPositions[k] == Vector2.Zero)
+                {
+                    continue;
+                }
+
+                float fade = (trailCount - k) / (float)trailCount;
+                Vector2 trailPosition = InvisibilityTrailPositions[k] - screenPos + new Vector2(0f, npc.gfxOffY);
+                Color trailColor = Color.White * MathHelper.Lerp(endOpacity, baseOpacity, fade);
+                spriteBatch.Draw(texture, trailPosition, npc.frame, trailColor, npc.rotation, origin, npc.scale * (1f - k * 0.035f), effects, 0f);
+            }
+
+            UsefulFunctions.StartAdditiveSpritebatch(ref spriteBatch);
+
+            float waveX = (float)Math.Sin(time * 0.16f + npc.whoAmI) * 2.2f;
+            float waveY = (float)Math.Cos(time * 0.11f + npc.whoAmI * 0.7f) * 1.4f;
+            Color coolEdge = Color.Cyan * (0.5f * baseOpacity);
+            Color paleEdge = new Color(150, 230, 255) * (0.32f * baseOpacity);
+            Color blueEdge = new Color(80, 180, 255) * (0.45f * baseOpacity);
+
+            spriteBatch.Draw(texture, drawPosition + new Vector2(waveX, waveY), npc.frame, coolEdge, npc.rotation, origin, npc.scale, effects, 0f);
+            spriteBatch.Draw(texture, drawPosition - new Vector2(waveY, waveX) * 0.75f, npc.frame, blueEdge, npc.rotation, origin, npc.scale, effects, 0f);
+            spriteBatch.Draw(texture, drawPosition + new Vector2((float)Math.Sin(time * 0.31f) * 1.1f, -waveY), npc.frame, paleEdge, npc.rotation, origin, npc.scale, effects, 0f);
+            UsefulFunctions.RestartSpritebatch(ref spriteBatch);
         }
 
         public override void ModifyGlobalLoot(GlobalLoot globalLoot)
@@ -1978,82 +3790,88 @@ namespace tsorcRevamp.NPCs
                 damage += DoTPerS;
             }
 
-            if (Scorched)
+            if (Scorched && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
-                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(10);
+                float DoTPerS = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)ScorchingPoint.BaseDmg / 3f);
                 if (SuperScorchDuration > 0)
                 {
-                    DoTPerS *= 3;
+                    DoTPerS *= 1f + RuneterraGauntlets.SuperBurnDmgAmp / 100f;
                 }
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     DoTPerS += 25 * DragonStone.Potency;
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+                npc.lifeRegen -= (int)DoTPerS * 2;
+                damage += (int)DoTPerS;
             }
 
-            if (Shocked)
+            if (Shocked && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
-                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(30);
+                float DoTPerS = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)InterstellarVesselGauntlet.BaseDmg / 3f);
                 if (SuperShockDuration > 0)
                 {
-                    DoTPerS *= 3;
+                    DoTPerS *= 1f + RuneterraGauntlets.SuperBurnDmgAmp / 100f;
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+                npc.lifeRegen -= (int)DoTPerS * 2;
+                damage += (int)DoTPerS;
             }
 
-            if (Sunburnt)
+            if (Sunburnt && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
-                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(110);
+                float DoTPerS = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)CenterOfTheUniverse.BaseDmg / 3f);
                 if (SuperSunburnDuration > 0)
                 {
-                    DoTPerS *= 3;
+                    DoTPerS *= 1f + RuneterraGauntlets.SuperBurnDmgAmp / 100f;
                 }
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     DoTPerS += 25 * DragonStone.Potency;
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+                npc.lifeRegen -= (int)DoTPerS * 2;
+                damage += (int)DoTPerS;
             }
 
-            if (Awestruck)
+            if (Awestruck && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
             {
-                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(440);
+                float DoTPerS = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)CenterOfTheUniverse.BaseDmg);
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     DoTPerS += 25 * DragonStone.Potency;
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+                npc.lifeRegen -= (int)DoTPerS * 2;
+                damage += (int)DoTPerS;
             }
 
             if (DarkInferno)
             {
-                int DoTPerS = 20;
-                if (npc.lifeRegen > 0)
+                int DoTPerS = 30;
+				if (npc.lifeRegen > 0)
                 {
-                    npc.lifeRegen = 0;
+					npc.lifeRegen = 0;
                 }
-                if (tsorcRevampPlayer.DragonStonePotency)
+				npc.lifeRegen -= (int)DoTPerS * 2; 
+
+				if (damage < 10)
                 {
-                    DoTPerS *= DragonStone.Potency;
-                }
+					damage = 10; 
+				}
+
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency;
+					damage = 40;
+				}
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     if (tsorcRevampPlayer.DragonStonePotency)
                     {
-                        DoTPerS += 25 * DragonStone.Potency;
+                        npc.lifeRegen += 25 * DragonStone.Potency;
                     }
                     else
                     {
-                        DoTPerS += 25;
+                        npc.lifeRegen += 25;
                     }
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
 
                 var N = npc;
                 for (int j = 0; j < 6; j++)
@@ -2068,28 +3886,34 @@ namespace tsorcRevamp.NPCs
 
             if (AbyssInferno)
             {
-                int DoTPerS = 121;
-                if (npc.lifeRegen > 0)
+                int DoTPerS = 150;
+				if (npc.lifeRegen > 0)
                 {
-                    npc.lifeRegen = 0;
+					npc.lifeRegen = 0;
                 }
-                if (tsorcRevampPlayer.DragonStonePotency)
+				npc.lifeRegen -= (int)DoTPerS * 2; 
+
+				if (damage < 75)
                 {
-                    DoTPerS *= DragonStone.Potency / 2;
-                }
+					damage = 75; 
+				}
+
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency / 2;
+					damage = 150;
+				}
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     if (tsorcRevampPlayer.DragonStonePotency)
                     {
-                        DoTPerS += 25 * DragonStone.Potency;
+                        npc.lifeRegen += 25 * DragonStone.Potency;
                     }
                     else
                     {
-                        DoTPerS += 25;
+                        npc.lifeRegen += 25;
                     }
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
 
                 var N = npc;
                 if (Main.rand.NextBool(7))
@@ -2108,25 +3932,62 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            if (MorgulPoisoning)
+            {
+                int DoTPerS = 200;
+				if (npc.lifeRegen > 0)
+					npc.lifeRegen = 0;
+
+				npc.lifeRegen -= (int)DoTPerS * 2; 
+
+				if (damage < 30)
+                {
+					damage = 30; 
+				}
+
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency / 2;
+					damage = 60;
+				}
+
+                if (Main.rand.NextBool(10))
+                { 
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.ToxicBubble, npc.velocity.X * 0.2f, npc.velocity.Y * 0.2f, 100, Color.Green, 1.5f);
+                }
+            }
+
             if (WitchkingCurse)
             {
-                int DoTPerS = 401;
-                if (npc.lifeRegen > 0)
+                int DoTPerS = 400;
+				if (npc.lifeRegen > 0)
                 {
-                    npc.lifeRegen = 0;
+					npc.lifeRegen = 0;
                 }
-                if (tsorcRevampPlayer.DragonStonePotency)
+				npc.lifeRegen -= (int)DoTPerS * 2; 
+
+				if (damage < 100)
                 {
-                    DoTPerS *= (DragonStone.Potency / 2);
-                }
-                npc.lifeRegen -= DoTPerS * 2;
-                damage += DoTPerS;
+					damage = 100; 
+				}
+
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency / 2;
+					damage = 200;
+				}
 
                 npc.damage = (int)(npc.damage * 0.8f);
                 npc.defense = Math.Max(0, npc.defDefense - 40);
                 npc.velocity *= 0.95f;
 
                 var N = npc;
+            }
+
+            if (AbyssalSinking)
+            {
+                npc.defense = Math.Max(0, npc.defDefense - 24);
+                npc.velocity *= 0.98f;
             }
 
             if (CCShocked)
@@ -2178,33 +4039,36 @@ namespace tsorcRevamp.NPCs
 
             if (CrimsonBurn)
             {
-                int DoTPerS = 30;
-
-                if (npc.lifeRegen > 0)
+                int DoTPerS = 40;
+				if (npc.lifeRegen > 0)
                 {
-                    npc.lifeRegen = 0;
+					npc.lifeRegen = 0;
                 }
+				npc.lifeRegen -= (int) DoTPerS * 2 * (Main.hardMode ? 2 : 1);
 
-                if (tsorcRevampPlayer.DragonStonePotency)
+				if (damage < 10)
                 {
-                    DoTPerS *= DragonStone.Potency;
-                }
+					damage = 10 * (Main.hardMode ? 2 : 1); 
+				}
 
+				if (tsorcRevampPlayer.DragonStonePotency)
+				{
+					npc.lifeRegen *= DragonStone.Potency / 2;
+					damage = 20 * (Main.hardMode ? 2 : 1);
+				}
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     if (tsorcRevampPlayer.DragonStonePotency)
                     {
-                        DoTPerS += 25 * DragonStone.Potency;
+                        npc.lifeRegen += 25 * DragonStone.Potency;
                     }
                     else
                     {
-                        DoTPerS += 25;
+                        npc.lifeRegen += 25;
                     }
                 }
 
-                npc.lifeRegen -= DoTPerS * (Main.hardMode ? 2 : 1);
-
-                damage += DoTPerS * (Main.hardMode ? 2 : 1); 
+                npc.defense = Math.Max(0, npc.defDefense - 5);
 
                 var N = npc;
                 for (int j = 0; j < 5; j++)
@@ -2333,8 +4197,23 @@ namespace tsorcRevamp.NPCs
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }
-            
+
             if (ElectrocutedEffect2)
+            {
+                int DoTPerS = 36;
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= (DragonStone.Potency / 2);
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            
+            if (ElectrocutedEffect3)
             {
                 int DoTPerS = 116;
                 if (npc.lifeRegen > 0)
@@ -2366,7 +4245,7 @@ namespace tsorcRevamp.NPCs
 
             if (CrescentMoonlight)
             {
-                int DoTPerS = 6;
+                int DoTPerS = 26;
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
@@ -2378,6 +4257,28 @@ namespace tsorcRevamp.NPCs
                     npc.lifeRegen -= DoTPerS * 2;
                     damage += DoTPerS;
                 }
+            }
+
+            if (PlaguesmithBuff)
+            {
+                if (Main.rand.NextBool(4)) 
+                { 
+                    int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, 298, 0f, 0f, 100, default, 1.6f);
+                    Main.dust[dustIndex].noGravity = true; 
+                    Main.dust[dustIndex].velocity *= 0.99f;
+                    Main.dust[dustIndex].fadeIn = 1.2f;
+                }
+            }
+        }
+        public override void OnHitPlayer(NPC npc, Player target, Player.HurtInfo hurtInfo)
+        {
+            if (PlaguesmithBuff)
+            {
+                target.AddBuff(BuffID.Venom, 120);
+            }
+            if (SorrowfulCurse)
+            {
+                target.AddBuff(BuffID.CursedInferno, 300);
             }
         }
 
@@ -2610,6 +4511,12 @@ namespace tsorcRevamp.NPCs
                         {
                             item.AddCondition(new Condition("", () => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode));
                         }
+
+                        shop.Add(new Item(ModContent.ItemType<LoveRing>())
+                        {
+                            shopCustomPrice = 5000, 
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
                         break;
                     }
                 case NPCID.Cyborg:
@@ -2737,6 +4644,28 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
+
+            // Poise/stagger rollout: apply the central tuning table LAST so it's the source of truth for these enemies'
+            // knockback-resist (flinch dial) + PoiseMax. Knights configure themselves in-file and aren't listed here.
+            if (PoiseProfiles.TryGetValue(npc.type, out var poiseProfile))
+            {
+                npc.knockBackResist = poiseProfile.knockBackResist;
+                PoiseMax = poiseProfile.poiseMax;
+            }
+            else if (npc.ModNPC is Puppets.PuppetNPC)
+            {
+                // Every puppet-style invader can channel Estus and must therefore have a poise
+                // meter so the player can interrupt that channel. Per-NPC tuning set in the
+                // content class remains authoritative; this only fills missing profiles.
+                if (PoiseMax <= 0f)
+                {
+                    PoiseMax = npc.boss ? 120f : 30f;
+                }
+                if (npc.knockBackResist <= 0f)
+                {
+                    npc.knockBackResist = npc.boss ? 0.15f : 0.35f;
+                }
+            }
         }
 
         //This method lets us scale the stats of NPC's in expert mode.
@@ -2790,8 +4719,27 @@ namespace tsorcRevamp.NPCs
 
             if (ElectrocutedEffect2)
             {
+                int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .45f);
+                Main.dust[dust].noGravity = true;
+            }
+
+            if (ElectrocutedEffect3)
+            {
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .5f);
                 Main.dust[dust].noGravity = true;
+            }
+
+            if (MorgulPoisoning)
+            {
+                drawColor = Color.Lerp(drawColor, Color.Green, 0.25f);
+
+                if (Main.rand.NextBool(5)) 
+                { 
+                    int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, DustID.ToxicBubble, 0f, 0f, 100, Color.Green, 2f);
+                    Main.dust[dustIndex].noGravity = true; 
+                    Main.dust[dustIndex].velocity *= 0.75f;
+                    Main.dust[dustIndex].fadeIn = 1.3f; 
+                }
             }
 
             if (PolarisElectrocutedEffect)
@@ -2863,6 +4811,19 @@ namespace tsorcRevamp.NPCs
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 5, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), 1f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity += npc.velocity;
+                    Main.dust[dust].fadeIn = 1f;
+                }
+            }
+
+            if (AbyssalSinking)
+            {
+                Lighting.AddLight(npc.position, 0.015f, 0.155f, 0.165f);
+                if (Main.rand.NextBool(6))
+                {
+                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 217, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), 1.8f); ;
+                    Main.dust[dust].velocity *= 0.5f;
+                    Main.dust[dust].noGravity = false;
                     Main.dust[dust].velocity += npc.velocity;
                     Main.dust[dust].fadeIn = 1f;
                 }
@@ -3352,1951 +5313,5 @@ namespace tsorcRevamp.NPCs
                 spriteBatch.Draw(Hat, position, null, Color.White, 0f, new Vector2(Hat.Width / 2, Hat.Height / 2), npc.scale, spriteEffects, 0f);
             }
         }*/
-    }
-
-    ///<summary> 
-    ///Handles boss despawning and targeting.
-    ///This exists to simplify AI code.
-    ///Create an instance of this class in SetDefaults, call targetAndDespawn(npcID) at the start of their AI, and removing any existing targeting or despawning.
-    ///</summary>
-    public class NPCDespawnHandler
-    {
-        ///<summary> 
-        ///Handles all targeting and despawning.
-        ///</summary> 
-        ///<param name="despawnFlavorText">The custom text this boss displays when it despawns</param>
-        ///<param name="textColor">The color of the despawn text</param>
-        ///<param name="DustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
-        ///<param name="range">The boss will despawn if any player gets further away than this. -1 means infinite range.</param>
-        public NPCDespawnHandler(string despawnFlavorText, Color textColor, int DustType, float range = -1)
-        {
-            despawnText = despawnFlavorText;
-            despawnTextColor = textColor;
-            despawnDustType = DustType;
-
-            if (range > 0) //Pre-emptively square it so we don't have to do so later
-            {
-                range *= range;
-            }
-            despawnRange = range;
-        }
-
-        ///<summary> 
-        ///Handles all targeting and despawning.
-        ///</summary> 
-        ///<param name="DustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
-        ///<param name="range">The boss will despawn if any player gets further away than this. -1 means infinite range.</param>
-        public NPCDespawnHandler(int DustType, float range = -1)
-        {
-            despawnDustType = DustType;
-            if (range > 0)
-            {
-                range *= range;
-            }
-            despawnRange = range;
-        }
-
-        readonly string despawnText;
-        readonly Color despawnTextColor;
-        readonly int despawnDustType;
-        bool hasTargeted = false;
-        int targetCount = 0;
-        readonly int[] targetIDs = new int[256];
-        readonly bool[] targetAlive = new bool[256];
-        int despawnTime = -1;
-        float despawnRange;
-        int OutOfBoundsTimer = 600;
-
-        ///<summary> 
-        ///Handles all targeting and despawning.
-        ///</summary>         
-        ///<param name="npcID">The ID of the NPC in question.</param>
-        public bool TargetAndDespawn(int npcID)
-        {
-
-            //When despawning, we set timeLeft to 240. If that's been done, we don't need to check for players or target anyone anymore.
-            if (despawnTime < 0)
-            {
-                //Only run this once. Gets all active players and throws them into these arrays so we can track their status.
-                if (!hasTargeted)
-                {
-                    foreach (Player player in Main.player)
-                    {
-                        //For some reason, Main.player always has 255 entries. This ensures we're only pulling real players from it.
-                        if (player.active && player.name != "MPTestDummy")
-                        {
-                            targetIDs[targetCount] = player.whoAmI;
-                            targetAlive[targetCount] = true;
-                            targetCount++;
-                        }
-                    }
-                    hasTargeted = true;
-                }
-
-
-                //Go through the target list. If everyone has died once, despawn. Else, target the closest one that has not yet died.
-                //It's important that it only targets players who haven't died, because otherwise one living player could hide far away while the other repeatedly respawned and fought the boss.
-                //With this, it will intentionally seek out those it has not yet killed instead.
-                bool viableTarget = false;
-                float closestPlayerDistance = float.MaxValue;
-                float oldTarget = Main.npc[npcID].target;
-                bool foundOutOfBoundsPlayer = false;
-
-                //Iterate through all tracked players in the array
-                for (int i = 0; i < targetCount; i++)
-                {
-                    //For each of them, check if they're dead. If so, mark it down in targetAlive.
-                    if (Main.player[targetIDs[i]].dead && targetAlive[i])
-                    {
-                        targetAlive[i] = false;
-                    }
-                    else if (targetAlive[i] && Main.player[targetIDs[i]].active)
-                    {
-                        //If it found a player that hasn't been killed yet, then don't despawn
-                        viableTarget = true;
-                        //Check if they're the closest one, and if so target them
-                        float distance = Vector2.DistanceSquared(Main.player[targetIDs[i]].position, Main.npc[npcID].position);
-                        if (distance < closestPlayerDistance)
-                        {
-                            closestPlayerDistance = distance;
-                            Main.npc[npcID].target = targetIDs[i];
-                        }
-                        if (despawnRange > 0 && !foundOutOfBoundsPlayer && Vector2.DistanceSquared(Main.player[targetIDs[i]].Center, tsorcRevampWorld.BossIDsAndCoordinates[Main.npc[npcID].type]) * 16 > despawnRange)
-                        {
-                            if (OutOfBoundsTimer == 600)
-                            {
-                                UsefulFunctions.BroadcastText(Main.npc[npcID].TypeName + " " + LangUtils.GetTextValue("NPCs.BossOutOfRange"), Color.Yellow);
-                            }
-                            OutOfBoundsTimer--;
-
-                            //If players have been out of bounds for more than 10 seconds, then despawn the boss
-                            if (OutOfBoundsTimer == 0)
-                            {
-                                for (int j = 0; j < targetAlive.Length; j++)
-                                {
-                                    targetAlive[j] = false;
-                                }
-                            }
-                            foundOutOfBoundsPlayer = true;
-                        }
-                    }
-                }
-
-                //If a npc changes targets, sync it
-                if (oldTarget != Main.npc[npcID].target)
-                {
-                    Main.npc[npcID].netUpdate = true;
-                }
-
-                //If there's no player that has not yet died, then despawn.
-                if (!viableTarget)
-                {
-                    if (despawnText != null)
-                    {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Player.AllDied"), Color.Yellow);
-                        UsefulFunctions.BroadcastText(despawnText, despawnTextColor);
-                    }
-                    despawnTime = 240;
-                }
-            }
-            else
-            {
-                //Adios
-                if (despawnTime == 0)
-                {
-                    for (int i = 0; i < 60; i++)
-                    {
-                        int dustID = Dust.NewDust(Main.npc[npcID].position, Main.npc[npcID].width, Main.npc[npcID].height, despawnDustType, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
-                        Main.dust[dustID].noGravity = true;
-                    }
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        UsefulFunctions.DespawnFlash(Main.npc[npcID].Center);
-                    }
-                    Main.npc[npcID].active = false;
-                }
-                else
-                {
-                    int dustID = Dust.NewDust(Main.npc[npcID].position, Main.npc[npcID].width, Main.npc[npcID].height, despawnDustType, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 1f);
-                    Main.dust[dustID].noGravity = true;
-                    despawnTime--;
-                }
-
-                //The frame before despawning, we return true to let the NPC's AI know it's about to get despawned. This allows it to do anything it needs to with that information (like re-actuating the pyramid)
-                if (despawnTime == 1)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-
-    }
-
-
-    public static class tsorcRevampAIs
-    {
-        ///<summary> 
-        ///Walking AI that walks toward the player. Can be used with SimpleProjectile to fire projectiles, or LeapAtPlayer to leap when the player is close
-        ///</summary>
-        ///<param name="npc">The npc itself this function will run on</param>
-        ///<param name="topSpeed">The max speed it can run at</param>
-        ///<param name="acceleration">How quickly it can speed up</param>
-        ///<param name="brakingPower">How quickly it can slow down</param>
-        ///<param name="canTeleport">Lets it teleport near the player when it gets bored instead of walking around randomly</param>
-        ///<param name="doorBreakingDamage">Setting this above 0 lets the npc break doors, and sets much damage should it deal when it hits them. Doors have 10 "health"</param>
-        ///<param name="hatesLight">Should it run away during daylight?</param>
-        ///<param name="randomSound">What sound should it randomly play?</param>
-        ///<param name="soundFrequency">How often does it play its sound?</param>
-        ///<param name="enragePercent">Accelerates twice as fast when below this % health</param> 
-        ///<param name="enrageTopSpeed">Its new top speed when enraged</param>
-        ///<param name="lavaJumping">Lets it hop around in lava</param>
-        public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 4, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, bool canDodgeroll = true, bool canPounce = true)
-        {
-            npc.aiStyle = -1;
-            BasicAI(npc, topSpeed, acceleration, brakingPower, false, canTeleport, doorBreakingDamage, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping, canDodgeroll, canPounce);
-        }
-
-        ///<summary> 
-        ///Special version of the fighter ai, stopping to shoot when the player is within range. Gets bored if it doesn't have line of sight to the player, and if it can teleport it will attempt to warp to a position with a clean shot.
-        ///Uses npc.ai[2] to control aim direction!! Do not set it yourself if an NPC uses ArcherAI
-        ///</summary>         
-        ///<param name="npc">The npc itself this function will run on</param>
-        ///<param name="projectileType">The ID of the projectile you want to shoot</param>
-        ///<param name="projectileDamage">Damage of the projectile. Multiplied by 2 by default, and then 2 again in expert mode</param>
-        ///<param name="projectileVelocity">Speed of the projectile</param>
-        ///<param name="projectileCooldown">Sets the delay (in ticks) between shots</param>
-        ///<param name="topSpeed">The max speed it can run at</param>
-        ///<param name="acceleration">How quickly it can speed up</param>
-        ///<param name="brakingPower">How quickly it can slow down</param>
-        ///<param name="canTeleport">Lets it teleport near the player when it gets bored instead of walking around randomly</param>
-        ///<param name="hatesLight">Should it run away during daylight? (UNIMPLEMENTED!)</param>
-        ///<param name="shootSound">What sound should it play?</param>
-        ///<param name="soundFrequency">How often does it play its sound?</param>
-        ///<param name="enragePercent">Below this percent health, doubles speed and acceleration</param>
-        ///<param name="lavaJumping">Lets it hop around in lava</param>
-        ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Set 0 for projectiles with no gravity. If your projectile has custom gravity dropoff, stick that here.</param>
-        ///<param name="shootSound">The type of sound to play when it shoots. Defaults to bow.</param>
-        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 4, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, SoundStyle? shootSound = null, bool canDodgeroll = true, bool canPounce = false, Color? telegraphColor = null)
-        {
-            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, doorBreakingDamage, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping, canDodgeroll, false);
-            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-
-            if (telegraphColor == null)
-            {
-                telegraphColor = Color.Gray;
-            }
-
-            //Set default shoot sound
-            if (shootSound == null)
-            {
-                shootSound = SoundID.Item5;
-            }
-
-            //Apply scaling to SHM enemies
-            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
-            {
-                if (!npc.boss)
-                {
-                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
-                    {
-                        projectileDamage = (int)(tsorcRevampWorld.SHMScale * projectileDamage);
-                        projectileVelocity = (int)(tsorcRevampWorld.SubtleSHMScale * projectileVelocity);
-                    }
-                }
-            }
-
-            npc.aiStyle = -1;
-            if (npc.confused)
-            {
-                globalNPC.ArcherAimDirection = 0f; // won't try to stop & aim if confused
-            }
-            else
-            {
-                if (globalNPC.ProjectileTimer > 0f)
-                    globalNPC.ProjectileTimer -= 1f; // decrement fire & reload counter
-
-                if (npc.justHit || npc.velocity.Y != 0f || globalNPC.ProjectileTimer <= 0f) // was just hit?
-                {
-                    globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed); //Reset firing time
-                    globalNPC.ArcherAimDirection = 0f; //Not aiming
-                }
-
-                //Check if we're in range of and can hit the player
-                if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) < 700f && Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && npc.velocity.Y == 0)
-                {
-                    //If so, set boredom to 0
-                    globalNPC.BoredTimer = 0;
-
-                    //If it's not aiming yet, then slow down, aim, and start its cooldown
-                    if (globalNPC.ArcherAimDirection == 0)
-                    {
-                        //Aim at them, and start the shot cooldown
-                        npc.velocity.X *= 0.5f;
-                        globalNPC.ArcherAimDirection = 3f;
-                        globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed);
-                    }
-
-                    npc.velocity.X *= 0.9f; // decelerate to stop & shoot
-                    npc.spriteDirection = npc.direction; // match animation to facing
-
-                    //Fire at halfway through: first half of delay is aim, 2nd half is cooldown
-                    if (globalNPC.ProjectileTimer == (projectileCooldown / 2))
-                    {
-                        //Calculate the actual ballistic trajectory to aim the projectile on
-                        Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
-                        }
-
-                        SoundEngine.PlaySound(shootSound.Value);
-                    }
-                    if (globalNPC.ProjectileTimer - 15 == (projectileCooldown / 2))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Vector2 spawnPosition = npc.position;
-                            if (npc.direction == 1)
-                            {
-                                spawnPosition.X += npc.width;
-                            }
-                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, npc.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(telegraphColor.Value));
-                        }
-                    }
-
-                    //Calculate a vector aiming at the player. This is purely for the npc's sprite visuals, so it can use the much simpler aiming code.
-                    Vector2 aimVector = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, projectileVelocity);
-
-                    if (Math.Abs(aimVector.Y) > Math.Abs(aimVector.X) * 2f) // target steeply above/below NPC
-                    {
-                        if (aimVector.Y > 0f)
-                            globalNPC.ArcherAimDirection = 1f; // aim downward
-                        else
-                            globalNPC.ArcherAimDirection = 5f; // aim upward
-                    }
-                    else if (Math.Abs(aimVector.X) > Math.Abs(aimVector.Y) * 2f) // target on level with NPC
-                        globalNPC.ArcherAimDirection = 3f;  //  aim straight ahead
-                    else if (aimVector.Y > 0f) // target is below NPC
-                        globalNPC.ArcherAimDirection = 2f;  //  aim slight downward
-                    else // target is not below NPC
-                        globalNPC.ArcherAimDirection = 4f;  //  aim slight upward                    
-                }
-                //If we're out of range of the player, don't aim at them
-                else
-                {
-                    globalNPC.ArcherAimDirection = 0;
-                }
-            }
-
-            npc.ai[2] = globalNPC.ArcherAimDirection;
-        }
-
-
-
-        //Todo:
-        //Upgrade gap-jumping code to scale jump x and  y velocity with gap size, up to a limit
-        //Upgrade wall-jumping code to scale jump height with how tall the wall in front of it is. Also let it recognize walls with gaps in them.
-        //More complex "bored" check than simple velocity. Right now it can get bored if it takes too long doing things that require it to move slow.
-        private static void BasicAI(NPC npc, float topSpeed, float acceleration, float brakingPower, bool isArcher, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercentage = 0, float enrageTopSpeed = 0, bool lavaJumping = false, bool canDodgeroll = true, bool canPounce = true)
-        {
-            npc.noTileCollide = false;
-
-            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            topSpeed *= globalNPC.Swiftness;
-            acceleration *= globalNPC.Swiftness;
-
-            if (!globalNPC.Initialized)
-            {
-                //Make damage and health scale with strength
-                npc.damage = (int)(npc.damage * globalNPC.Strength);
-                npc.life = (int)(npc.life * globalNPC.Strength);
-                npc.lifeMax = (int)(npc.lifeMax * globalNPC.Strength);
-                npc.scale *= (float)Math.Pow(globalNPC.Strength, 0.5f); //Make 'scale' only increase with the square root of strength, to make it change less dramatically
-
-                //Make low-frequency attacks somewhat more likely
-                foreach (ProjectileData data in globalNPC.AttackList)
-                {
-                    data.timerCap = (int)(data.timerCap * globalNPC.CastingSpeed);
-                    if (data.weight < 1)
-                    {
-                        data.weight += (1 - data.weight) * globalNPC.Adeptness;
-                    }
-                }
-
-                globalNPC.Initialized = true;
-            }
-
-            //If it has at least one attack, perform it
-            if (globalNPC.AttackList.Count > 0)
-            {
-                SimpleProjectile(npc);
-            }
-
-            if (globalNPC.PounceTimer > 0)
-            {
-                globalNPC.PounceTimer--;
-
-                if (globalNPC.PounceTimer % 5 == 0)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Vector2 spawnPosition = npc.position;
-                        spawnPosition.Y += npc.height;
-                        spawnPosition.X += Main.rand.NextFloat(npc.width);
-                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2), ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer);
-                    }
-                }
-
-                if (globalNPC.PounceTimer == 0)
-                {
-                    float pounceSpeed = topSpeed * 5;
-                    bool hasTrajectory = false;
-                    while (!hasTrajectory)
-                    {
-                        Vector2 trajectory = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), pounceSpeed, npc.gravity, false, false);
-                        if (trajectory == Vector2.Zero)
-                        {
-                            pounceSpeed += topSpeed * 2;
-
-                            //If it requires more than 20 units of speed to make it to the player, give up and just launch normally instead of using a ballistic trajectory
-                            if (pounceSpeed > 20)
-                            {
-                                npc.velocity = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), 20);
-                                npc.netUpdate = true;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            hasTrajectory = true;
-                            npc.velocity = trajectory;
-                            npc.netUpdate = true;
-                        }
-                    }
-                }
-            }
-            else if (globalNPC.PounceCooldown > 0)
-            {
-                globalNPC.PounceCooldown--;
-            }
-
-            if (globalNPC.DodgeTimer > 0)
-            {
-                npc.rotation += MathHelper.TwoPi / 30f * npc.direction;
-                npc.velocity.X = 5 * npc.direction;
-
-                globalNPC.DodgeTimer--;
-                if (globalNPC.DodgeTimer == 0)
-                {
-                    npc.velocity.X = 0;
-                }
-            }
-            else
-            {
-                npc.rotation = 0;
-
-                if (globalNPC.DodgeCooldown > 0)
-                {
-                    globalNPC.DodgeCooldown--;
-                }
-            }
-
-            //Stop moving when teleporting, and handle the logic to execute it
-            if (globalNPC.TeleportCountdown > 0)
-            {
-                globalNPC.BoredTimer = 0;
-                npc.velocity.X = 0;
-                globalNPC.TeleportCountdown--;
-                if (globalNPC.TeleportCountdown == 0)
-                {
-                    ExecuteQueuedTeleport(npc);
-                }
-            }
-
-            //Block firing and reset cooldowns if it's busy doing other things
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.BoredTimer < 0 || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
-            {
-                globalNPC.ProjectileTimer = 0;
-                globalNPC.ArcherAimDirection = 0;
-            }
-
-            //Apply scaling to SHM enemies
-            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
-            {
-                if (!npc.boss)
-                {
-                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
-                    {
-                        topSpeed *= tsorcRevampWorld.SHMScale;
-                        acceleration *= tsorcRevampWorld.SubtleSHMScale;
-                        enrageTopSpeed *= tsorcRevampWorld.SHMScale;
-                    }
-                }
-            }
-
-
-            //If it has a sound to play, roll a chance for playing it
-            if (randomSound != null && Main.rand.Next(soundFrequency) <= 0)
-            {
-                SoundEngine.PlaySound(randomSound.Value, npc.Center);
-            }
-
-            //If we can enrage, do that
-            if (npc.life < (float)npc.lifeMax * enragePercentage)
-            {
-                acceleration *= 2;
-                topSpeed = enrageTopSpeed;
-            }
-
-            //If it can jump in lava and is in lava, do that
-            if (lavaJumping && npc.lavaWet)
-            {
-                npc.velocity.Y -= 2;
-            }
-
-            //If just hit, then it's not bored
-            if (npc.justHit)
-            {
-                globalNPC.BoredTimer = 0;
-            }
-
-            //If fleeing, despawn as soon as it's offscreen (via timeLeft running out)
-            if (globalNPC.Fleeing || (hatesLight && Main.dayTime && (npc.position.Y / 16f) < Main.worldSurface))
-            {
-                globalNPC.BoredTimer = -999;
-                npc.timeLeft = 10;
-            }
-
-            //If bored, target the closest player it has line of sight to. If it doesn't have los to any, just target the closest one.
-            if (globalNPC.BoredTimer != 0)
-            {
-                float distance = 9999999;
-                int target = -1;
-                for (int i = 0; i < Main.maxPlayers; i++)
-                {
-                    if (Main.player[i].active && !Main.player[i].dead)
-                    {
-                        if (Main.player[i].CanHit(npc))
-                        {
-                            float playerDistance = Main.player[i].Distance(npc.Center);
-                            if (playerDistance < distance)
-                            {
-                                distance = playerDistance;
-                                target = i;
-                            }
-                        }
-                    }
-                    if (target != -1)
-                    {
-                        npc.target = target;
-                    }
-                    else
-                    {
-                        npc.TargetClosest(false);
-                    }
-                }
-            }
-
-            //Face the player. Go the other way when bored (aka boredtimer is negative)
-
-            //Only do it when we're far enough away, to stop it from flipping back and forth at mach 10 when directly under the player
-            if (Math.Abs(Main.player[npc.target].Center.X - npc.Center.X) > 30)
-            {
-                if (Main.player[npc.target].Center.X <= npc.Center.X)
-                {
-                    npc.direction = -1;
-                }
-                else
-                {
-                    npc.direction = 1;
-                }
-                if (globalNPC.BoredTimer < 0)
-                {
-                    npc.direction *= -1;
-                }
-            }
-
-            //If moving more than max speed, then slow down
-            if (globalNPC.PounceCooldown <= 240)
-            {
-                if (npc.velocity.X > topSpeed)
-                {
-                    npc.velocity.X -= brakingPower;
-                    if (npc.velocity.X < 0)
-                    {
-                        npc.velocity.X = 0;
-                    }
-                }
-                if (npc.velocity.X < -topSpeed)
-                {
-                    npc.velocity.X += brakingPower;
-                    if (npc.velocity.X > 0)
-                    {
-                        npc.velocity.X = 0;
-                    }
-                }
-            }
-
-            //Accelerate in the direction they are facing (unless the npc is an aiming archer)
-            if (!isArcher || globalNPC.ArcherAimDirection == 0)
-            {
-                if (npc.velocity.X < topSpeed && npc.direction == 1)
-                {
-                    npc.velocity.X += acceleration;
-                    if (npc.velocity.X > topSpeed)
-                    {
-                        npc.velocity.X = topSpeed;
-                    }
-                }
-                else
-                {
-                    if (npc.velocity.X > -topSpeed && npc.direction == -1)
-                    {
-                        npc.velocity.X -= acceleration;
-                        if (npc.velocity.X < -topSpeed)
-                        {
-                            npc.velocity.X = -topSpeed;
-                        }
-                    }
-                }
-            }
-
-
-            //Jumping and platform falling code, copied and edited from Firebomb Hollow
-            int x_in_front;
-            if (npc.direction == -1)
-            {
-                x_in_front = (int)(npc.position.X / 16f) - 1;
-            }
-            else
-            {
-                x_in_front = (int)((npc.position.X + npc.width) / 16f);
-            }
-
-            int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
-            //Dust.DrawDebugBox(new Rectangle(x_in_front * 16, y_above_feet * 16, 16, 16));
-            int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-            bool standing_on_solid_tile = false;
-
-            //Check if standing on a solid tile
-            int x_left_edge = (int)npc.position.X / 16;
-            int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
-            if (npc.velocity.Y == 0)
-            {
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (UsefulFunctions.IsTileReallySolid(l, y_below_feet)) // tile exists and is solid
-                    {
-                        standing_on_solid_tile = true;
-                    }
-                }
-            }
-
-            //If standing on solid tile
-            if (standing_on_solid_tile)
-            {
-                //Moving forward
-                if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
-                {
-                    //3 blocks above ground level (head height) blocked
-                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 2))
-                    {
-                        //4 blocks above ground level (over head) blocked
-                        if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 3))
-                        {
-                            npc.velocity.Y = -8f; //Jump with power 8 (for 4 block steps)
-                            npc.netUpdate = true;
-                        }
-                        else
-                        {
-                            npc.velocity.Y = -7f; //Jump with power 7 (for 3 block steps)
-                            npc.netUpdate = true;
-                        }
-                    }
-                    //For everything else, head height clear:
-                    else if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1))
-                    {
-                        //2 blocks above ground level(mid body height) blocked
-                        npc.velocity.Y = -6f; //Jump with power 6 (for 2 block steps)
-                        npc.netUpdate = true;
-                    }
-                    else if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet))
-                    {
-                        // 1 block above ground level(foot height) blocked
-                        npc.velocity.Y = -5f; //Jump with power 5 (for 1 block steps)
-                        npc.netUpdate = true;
-                    }
-                    else if (npc.directionY < 0 && !UsefulFunctions.IsTileReallySolid(x_in_front, y_below_feet) && !UsefulFunctions.IsTileReallySolid(x_in_front + npc.direction, y_below_feet))
-                    {
-                        //If player is above npc and no solid tile ahead to step on for 2 spaces
-                        npc.velocity.Y = -8f; //Jump with power 8
-                        npc.velocity.X += 4f * npc.direction; //Jump forward hard as well; we're trying to jump a gap
-                        npc.netUpdate = true;
-                    }
-
-                    //Door breaking
-                    //First, it checks if the tile in front of it is solid, a door, and the npc can break it
-                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1) && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && (doorBreakingDamage > 0))
-                    {
-                        npc.velocity.Y = 0;
-                        globalNPC.BoredTimer = 0; // not bored if working on breaking a door
-                        if (Main.GameUpdateCount % 60 == 0)  //  knock once per second
-                        {
-                            npc.velocity.X = 0.5f * -npc.direction; //  slight recoil from hitting it
-                            globalNPC.DoorBreakProgress += doorBreakingDamage;  //  increase door damage counter
-                            WorldGen.KillTile(x_in_front, y_above_feet - 1, true, true, false);  //  kill door ? when door not breaking too? can fail=true; effect only would make more sense, to make knocking sound
-                            if (globalNPC.DoorBreakProgress >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                globalNPC.DoorBreakProgress = 0; //Reset counter
-
-                                //Try to open door
-                                if (!WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction))
-                                {
-                                    //If the door is stuck set the npc to bored
-                                    globalNPC.BoredTimer = 999;
-                                    npc.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
-                                }
-                                else if (Main.netMode == NetmodeID.Server)
-                                {
-                                    //If it didn't fail sync the door opening
-                                    NetMessage.SendData(MessageID.ToggleDoorState, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0); // ??
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            //Can fall through platforms
-            bool standing_on_platforms = true;
-            bool atLeastOnePlatform = false;
-            if (npc.velocity.Y == 0)
-            {
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (TileID.Sets.Platforms[Main.tile[l, y_below_feet].TileType])
-                    {
-                        atLeastOnePlatform = true;
-                    }
-                    else
-                    {
-                        if (Main.tile[l, y_below_feet].HasTile)
-                        {
-                            standing_on_platforms = false;
-                        }
-                    }
-                }
-            }
-
-            if (standing_on_platforms && atLeastOnePlatform && Main.player[npc.target].Center.Y > npc.Center.Y && (globalNPC.BoredTimer > 60 || Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < 300))
-            {
-                npc.noTileCollide = true;
-            }
-
-            bool lineOfSight = Main.player[npc.target].CanHit(npc);
-
-            if (globalNPC.BoredTimer >= 0)
-            {
-                //Increase boredom if it's stuck on a wall it can't pass through, walking back and forth above the player, or can teleport but can't see the player
-                if (!lineOfSight)
-                {
-                    globalNPC.BoredTimer++;
-
-                    //Time it takes to get bored scales with how long it takes to accelerate
-                    if (globalNPC.BoredTimer > 180 * globalNPC.Patience)
-                    {
-                        if (!canTeleport)
-                        {
-                            globalNPC.BoredTimer = -180;
-                            npc.direction *= -1;
-                        }
-                        else
-                        {
-                            //Try to teleport somewhere it has line of sight to the player
-                            if (globalNPC.TeleportCountdown == 0)
-                            {
-                                QueueTeleport(npc, 50, true);
-                            }
-                        }
-                    }
-                }
-                //If it's not stuck not and it's not bored decrease the boredom counter
-                else if (globalNPC.BoredTimer > 0)
-                {
-                    globalNPC.BoredTimer -= 1;
-                    if (globalNPC.BoredTimer < 0)
-                    {
-                        globalNPC.BoredTimer = 0;
-                    }
-                }
-            }
-            else
-            {
-                //Always increase it if it's negative (aka bored)
-                globalNPC.BoredTimer++;
-            }
-
-            //If it has line of sight and is moving at full speed, and the player is near its level, instantly set boredom to 0
-            if (!globalNPC.Fleeing && lineOfSight && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 144)
-            {
-                globalNPC.BoredTimer = 0;
-            }
-
-            //Dodging
-            if (globalNPC.BoredTimer == 0 && globalNPC.TeleportCountdown == 0 && globalNPC.DodgeCooldown == 0)
-            {
-                if (canDodgeroll && npc.Distance(Main.player[npc.target].Center) > 160)
-                {
-                    for (int i = 0; i < Main.maxProjectiles; i++)
-                    {
-                        //If a projectile is within 100 units of the NPC and is within 0.3 radian angle of being aimed at them, then try to dodge
-                        if (Main.projectile[i].active && Main.projectile[i].friendly && Main.projectile[i].damage > 0 && Main.projectile[i].DistanceSQ(npc.Center) < 40000 && UsefulFunctions.CompareAngles(Main.projectile[i].velocity, UsefulFunctions.Aim(Main.projectile[i].Center, npc.Center, 1)) < 0.3f)
-                        {
-                            if (Main.rand.NextFloat() < globalNPC.Agility)
-                            {
-                                bool heightToJump = true;
-                                for (int j = 0; j < 8; j++)
-                                {
-                                    if (UsefulFunctions.IsTileReallySolid(npc.Center + new Vector2(0, -j)))
-                                    {
-                                        heightToJump = false;
-                                        break;
-                                    }
-                                }
-                                //Randomly choose whether to roll or jump
-                                if (Main.rand.NextBool() && heightToJump)
-                                {
-                                    npc.velocity.Y -= 8;
-                                }
-                                else
-                                {
-                                    globalNPC.DodgeTimer = 30;
-                                }
-
-                                globalNPC.DodgeCooldown = (int)(300 * (1 - globalNPC.Agility));
-                            }
-
-                            npc.netUpdate = true;
-                            break;
-                        }
-                    }
-                }
-
-
-                //Pouncing
-                if (canPounce && globalNPC.PounceCooldown == 0 && lineOfSight)
-                {
-                    if (npc.DistanceSQ(Main.player[npc.target].Center) > 40000 / globalNPC.Aggression)
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextFloat() * 180 < globalNPC.Aggression)
-                        {
-                            globalNPC.PounceTimer = 30;
-                            globalNPC.PounceCooldown = 300;
-                            npc.netUpdate = true;
-                        }
-                    }
-                }
-            }
-        }
-
-
-
-
-
-        //AI snippits go here! Simply call these in the npc's main AI function to add them
-        #region AI Snippets
-
-        public static int ProjectileTelegraphTime = 25;
-
-
-        public static bool SimpleProjectile(NPC npc)
-        {
-            return SimpleProjectile(npc, true);
-        }
-
-        ///<summary> 
-        ///Fires a projectile with various parameters. Uses any timer variable you give it, and goes in the npc's AI() function
-        ///</summary>
-        ///<param name="npc">The npc itself this function will run on</param>
-        ///<param name="actuallyFire">This lets you use a condition to block the projectile from firing unless it is true (such as having line of sight to the player)</param>
-        public static bool SimpleProjectile(NPC npc, bool actuallyFire = true)
-        {
-            //Get the globalnpc for this NPC, which holds important data
-            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-
-            //This should only not equal -1 on the frame an attack successfully fires. This resets it afterward.
-            globalNPC.AttackSucceeded = -1;
-
-            //Do not fire if it needs line of sight and does not have it
-            if (globalNPC.CurrentAttack.needsLineOfSight && !Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-            {
-                actuallyFire = false;
-            }
-
-            //If the color was not set, use white
-            if (globalNPC.CurrentAttack.color == null)
-            {
-                globalNPC.CurrentAttack.color = Color.White;
-            }
-
-            //Increment the timer. Stop increasing it once we reach the telegraph time. Only continue once it is actually firing. Once it is actually firing do not stop incrementing the timer, so that it can not stop firing after telegraphing a shot.
-            if (globalNPC.ProjectileTimer < globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime || actuallyFire || globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime)
-            {
-                globalNPC.ProjectileTimer++;
-
-                //Spawn a telegraph flash once the telegraph time is reached
-                if (globalNPC.ProjectileTimer == 1 + globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime)
-                {
-                    Vector2 spawnPosition = npc.position;
-                    if (npc.direction == 1)
-                    {
-                        spawnPosition.X += npc.width;
-                    }
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, npc.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(globalNPC.CurrentAttack.color.Value));
-                    }
-                }
-            }
-
-            //If it's supposed to stop moving when firing, then do so
-            if (globalNPC.CurrentAttack.stopBefore && globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - ProjectileTelegraphTime)
-            {
-                npc.velocity.X = 0;
-            }
-
-            if (globalNPC.ProjectileTimer >= globalNPC.CurrentAttack.timerCap)
-            {
-                globalNPC.ProjectileTimer = 0;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    if (globalNPC.CurrentAttack.overshoot == null)
-                    {
-                        globalNPC.CurrentAttack.overshoot = Vector2.Zero;
-                    }
-                    Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center + globalNPC.CurrentAttack.overshoot.Value, globalNPC.CurrentAttack.velocity, globalNPC.CurrentAttack.gravity);
-                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, globalNPC.CurrentAttack.type, globalNPC.CurrentAttack.damage, 0f, Main.myPlayer, globalNPC.CurrentAttack.ai0, globalNPC.CurrentAttack.ai1);
-                }
-                if (globalNPC.CurrentAttack.sound != null)
-                {
-                    SoundEngine.PlaySound(globalNPC.CurrentAttack.sound.Value, npc.Center);
-                }
-
-                globalNPC.AttackSucceeded = globalNPC.AttackIndex;
-                globalNPC.AttackIndex = globalNPC.NextAttackIndex;
-                globalNPC.NextAttackIndex = WeightedRandomAttackSelection(globalNPC);
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Picks a random attack from AttackList based on the weight of each entry
-        /// </summary>
-        /// <param name="globalNPC">The NPC being operated on</param>
-        /// <returns></returns>
-        public static int WeightedRandomAttackSelection(tsorcRevampGlobalNPC globalNPC)
-        {
-            if (globalNPC.AttackList.Count == 0 || globalNPC.AttackList.Count == 1)
-            {
-                return 0;
-            }
-            float weightMax = 0;
-            foreach (ProjectileData data in globalNPC.AttackList)
-            {
-                weightMax += data.weight;
-            }
-
-            float randomVal = Main.rand.NextFloat(weightMax);
-
-            float runningTotal = 0;
-            for (int i = 0; i < globalNPC.AttackList.Count; i++)
-            {
-                runningTotal += globalNPC.AttackList[i].weight;
-                if (randomVal < runningTotal)
-                {
-                    return i;
-                }
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Simple class which holds all the data relevant to firing a projectile
-        /// </summary>
-        public class ProjectileData
-        {
-            public int timerCap;
-            public int type;
-            public int damage;
-            public float velocity;
-            public SoundStyle? sound;
-            public float gravity;
-            public float ai0;
-            public float ai1;
-            public Vector2? overshoot;
-            public Color? color;
-            public bool stopBefore;
-            public bool needsLineOfSight;
-            public float weight;
-            public Func<NPC, bool> condition;
-
-            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null)
-            {
-                type = projectileType;
-                this.timerCap = timerCap;
-                damage = projectileDamage;
-                velocity = projectileVelocity;
-                sound = shootSound;
-                gravity = projectileGravity;
-                this.ai0 = ai0;
-                this.ai1 = ai1;
-                this.overshoot = overshoot;
-                color = telegraphColor;
-                stopBefore = stopBeforeFiring;
-                this.needsLineOfSight = needsLineOfSight;
-                this.weight = weight;
-                this.condition = condition;
-            }
-        }
-
-        ///<summary> 
-        ///Lets the npc leap at players who are close, does not use any ai slots, and goes in an npc's ai function
-        ///</summary>
-        ///<param name="npc">The npc itself this function will run on</param>
-        ///<param name="hopSpeedX">How fast it leaps horizontally</param>
-        ///<param name="hopSpeedY">How fast it leaps vertically</param>
-        ///<param name="minimumSpeed">How fast it has to be running to be allowed to hop</param>
-        ///<param name="hopRange">It leaps at the player when it is this close to them</param>
-        public static void LeapAtPlayer(NPC npc, float hopSpeedX, float hopSpeedY, float minimumSpeed, float hopRange = 64)
-        {
-            //If the player is within range and if the npc is moving fast enough to be allowed to hop, then hop
-            if (npc.velocity.Y == 0f && Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < hopRange && Math.Abs(npc.Center.Y - Main.player[npc.target].Center.Y) < hopRange && ((npc.direction > 0 && npc.velocity.X >= minimumSpeed) || (npc.direction < 0 && npc.velocity.X <= -minimumSpeed)))
-            {
-                npc.velocity.X = hopSpeedX * npc.direction;
-                npc.velocity.Y = -hopSpeedY;
-                npc.netUpdate = true;
-            }
-        }
-
-        ///<summary> 
-        ///Calculates a position to teleport the NPC to. Returns null if there is no valid position.
-        ///</summary>
-        ///<param name="npc">The npc itself this function will run on</param>
-        ///<param name="range">The max range from the player it can teleport. Minimum is 12 blocks.</param>
-        ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
-        public static Vector2? GenerateTeleportPosition(NPC npc, int range, bool requireLineofSight = true)
-        {
-            //Do not teleport if the player is way way too far away (stops enemies following you home if you mirror away)
-            if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
-            { // far away from target; 2000 pixels = 125 blocks
-                return null;
-            }
-
-            //Try 100 times at most
-            for (int i = 0; i < 100; i++)
-            {
-                //Pick a random point to target. Make sure it's at least 11 blocks away from the player to avoid cheap hits.
-                Vector2 teleportTarget = Vector2.Zero;
-                if (range < 13)
-                {
-                    range = 13;
-                }
-                teleportTarget.X = Main.rand.Next(11, range);
-                if (Main.rand.NextBool())
-                {
-                    teleportTarget.X *= -1;
-                }
-
-                //Move teleportTarget up a few blocks, since in the next step the algorithm will search downward from this point to find a valid landing spot
-                teleportTarget.Y -= 12;
-
-                //Add the player's position to it to convert it to an actual tile coordinate
-                teleportTarget += Main.player[npc.target].position / 16;
-
-                //Starting from the point we picked, go down one block at a time until we find hit a solid block
-                bool odd = false;
-                for (int y = 0; Math.Abs(y) < range / 2;)
-                {
-                    if (odd)
-                    {
-                        y *= -1;
-                        y++;
-                        odd = !odd;
-                    }
-                    else
-                    {
-                        y *= -1;
-                        odd = !odd;
-                    }
-                    if (UsefulFunctions.IsTileReallySolid((int)teleportTarget.X, (int)teleportTarget.Y + y))
-                    {
-                        //Skip to the next tile if any of the following is true:
-
-                        // If there are solid blocks in the way, leaving no room to teleport to
-                        if (Collision.SolidTiles((int)teleportTarget.X - 1, (int)teleportTarget.X + 1, (int)teleportTarget.Y + y - 4, (int)teleportTarget.Y + y - 1))
-                        {
-                            //Main.NewText("Fail 1");
-                            continue;
-                        }
-
-                        //If it requires line of sight, and there is not a clear path, and it has not tried at least 50 times, then skip to the next try
-                        else if (requireLineofSight && !(Collision.CanHit(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2) && Collision.CanHitLine(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2)))
-                        {
-                            //Main.NewText("Fail 3");
-                            continue;
-                        }
-
-                        //If the selected tile has lava above it, and the npc isn't immune
-                        else if (Main.tile[(int)teleportTarget.X, (int)teleportTarget.Y + y - 1].LiquidType == LiquidID.Lava && !npc.lavaImmune)
-                        {
-                            //Main.NewText("Fail 4");
-                            continue;
-                        }
-
-                        //Then teleport and return
-                        teleportTarget.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
-                        teleportTarget.Y = (((int)teleportTarget.Y + y) * 16 - npc.height); //Subtract npc.height from y so block is under feet
-                        npc.TargetClosest(true);
-                        npc.netUpdate = true;
-
-                        if(teleportTarget.Length() < 400)
-                        {
-                            UsefulFunctions.BroadcastText("Teleport error!");
-                            UsefulFunctions.BroadcastText("NPC Name: " + npc.GivenOrTypeName);
-                            UsefulFunctions.BroadcastText("Target coordinates: " + teleportTarget);
-                            UsefulFunctions.BroadcastText("Please report this to our discord!");
-                        }
-                        return teleportTarget;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-
-        ///<summary> 
-        ///Teleports the NPC to a random position within a specified range around the player, includes effects. Does not teleport the enemy if no safe location exists.
-        ///Will not teleport enemies right next to the player. Teleports enemies somewhere with line of sight to the player by default.
-        ///</summary>
-        ///<param name="npc">The npc itself this function will run on</param>
-        ///<param name="range">The max range from the player it can teleport. Minimum is 12 blocks.</param>
-        ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
-        public static void TeleportImmediately(NPC npc, int range, bool requireLineofSight = true)
-        {
-            QueueTeleport(npc, range, requireLineofSight, 60);
-            ExecuteQueuedTeleport(npc);
-        }
-
-        public static void QueueTeleport(NPC npc, int range, bool requireLineofSight = true, int TeleportTelegraphTime = 140)
-        {
-            Vector2? potentialNewPos;
-
-            SoundEngine.PlaySound(SoundID.Item8, npc.Center);
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                for (int i = 0; i < 100; i++)
-                {
-                    potentialNewPos = GenerateTeleportPosition(npc, range, requireLineofSight);
-                    if (potentialNewPos.HasValue && (!requireLineofSight || (Collision.CanHit(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1))))
-                    {
-                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown = TeleportTelegraphTime;
-                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph = potentialNewPos.Value;
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, npc.whoAmI, TeleportTelegraphTime);
-                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: TeleportTelegraphTime);
-                        }
-
-                        break;
-                    }
-                }
-            }
-        }
-
-        public static void ExecuteQueuedTeleport(NPC npc)
-        {
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph == Vector2.Zero)
-            {
-                return;
-            }
-            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-
-            SoundEngine.PlaySound(SoundID.Item8, npc.Center);
-
-
-            Vector2 diff = globalNPC.TeleportTelegraph - npc.Center;
-            float length = diff.Length();
-            diff.Normalize();
-            Vector2 offset = Vector2.Zero;
-
-            for (int i = 0; i < length; i++)
-            {
-                offset += diff;
-                if (Main.rand.NextBool(2))
-                {
-                    Vector2 dustPoint = offset;
-                    dustPoint.X += Main.rand.NextFloat(-npc.width / 2, npc.width / 2);
-                    dustPoint.Y += Main.rand.NextFloat(-npc.height / 2, npc.height / 2);
-                    if (Main.rand.NextBool())
-                    {
-                        Dust.NewDustPerfect(npc.Center + dustPoint, 71, diff * 5, 200, default, 0.8f).noGravity = true;
-                    }
-                    else
-                    {
-                        Dust.NewDustPerfect(npc.Center + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
-                    }
-                }
-            }
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
-                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
-            }
-
-            npc.Center = globalNPC.TeleportTelegraph;
-        }
-
-        public static void FighterOnHit(NPC npc, bool melee)
-        {
-            if (melee)
-            {
-                npc.localAI[1] = 80f; // was 100
-                npc.knockBackResist = 0.09f;
-
-                //TELEPORT MELEE
-                if (Main.rand.NextBool(18))
-                {
-                    TeleportImmediately(npc, 25, true);
-                }
-                //WHEN HIT, CHANCE TO JUMP BACKWARDS 
-                else if (Main.rand.NextBool(8))
-                {
-                    //npc.TargetClosest(false);
-                    npc.velocity.Y = -8f;
-                    npc.velocity.X = -4f * npc.direction;
-                    npc.localAI[1] = 150f;
-                    npc.netUpdate = true;
-                }
-                //WHEN HIT, CHANCE TO DASH STEP BACKWARDS 
-                else if (Main.rand.NextBool(8))
-                {
-                    npc.velocity.Y = -4f;
-                    npc.velocity.X = -7f * npc.direction;
-                    npc.localAI[1] = 150f;
-                    npc.netUpdate = true;
-                }
-                else if (Main.rand.NextBool(4))
-                {
-                    npc.TargetClosest(true);
-                    npc.velocity.Y = -7f;
-                    npc.velocity.X = -10f * npc.direction;
-                    npc.localAI[1] = 150f;
-                    npc.netUpdate = true;
-                }
-
-            }
-            if (!melee && Main.rand.NextBool())
-            {
-                if (Main.rand.NextBool(4))
-                {
-
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
-                    Main.dust[dust].noGravity = true;
-
-                    npc.velocity.Y = -9f;
-                    npc.velocity.X = 4f * npc.direction;
-                    npc.TargetClosest(true);
-
-                    if ((float)npc.direction * npc.velocity.X > 4)
-                    {
-                        npc.velocity.X = (float)npc.direction * 4;
-                    }
-                    npc.netUpdate = true;
-                }
-                if (Main.rand.NextBool(6))
-                {
-
-                    npc.ai[0] = 0f;
-                    npc.velocity.Y = -5f;
-                    npc.velocity.X *= 4f; // burst forward
-                    npc.TargetClosest(true);
-
-                    npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
-                    if ((float)npc.direction * npc.velocity.X > 5)
-                    {
-                        npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
-                    }
-                    //CHANCE TO JUMP AFTER DASH
-                    if (Main.rand.NextBool(8))
-                    {
-                        npc.TargetClosest(true);
-                        npc.spriteDirection = npc.direction;
-                        npc.ai[0] = 0f;
-                        npc.velocity.Y = -6f;
-                    }
-                    npc.netUpdate = true;
-                }
-                if (npc.Distance(Main.player[npc.target].Center) > 300 && Main.rand.NextBool(24))
-                {
-                    TeleportImmediately(npc, 20, false);
-                }
-            }
-
-        }
-        #region Red Knight Hit AI
-        public static void RedKnightOnHit(NPC npc, bool melee) //ref int stunlockBreak
-        {
-            /*
-            // Ensure that the stunlockBreak timer is always decreasing
-            stunlockBreak--;
-
-            // Increment the stunlockBreak timer
-            stunlockBreak += 600;
-
-            // Check if the stunlockBreak timer is greater than or equal to 3000
-            if (stunlockBreak >= 2000)
-            {
-                
-                // Set knockback to 0 and decrement the stunlockBreak timer
-                npc.knockBackResist = 0;
-                
-            }
- 
-            if (stunlockBreak < 0)
-            {
-                stunlockBreak = 0;
-            }
-            */
-            if (melee)
-            {
-                // Ensures melee can't interrupt attack once the flash telegraph triggers
-                if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
-                {
-                    int randomChoice = Main.rand.Next(10);
-
-                    switch (randomChoice)
-                    {
-                        case 0:
-                            npc.ai[1] = 0f;
-                            break;
-
-                        case 1:
-                            npc.ai[1] = 700f;
-                            break;
-
-                        case 2:
-                            npc.ai[1] = 200f;
-                            break;
-
-                        case 3:
-                            npc.ai[1] = 800f;
-                            break;
-                        case 4:
-                            // Big jump back - Spear
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -9f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 140f;
-                                npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                npc.ai[1] = 0f;
-                            }
-                            break;
-                        case 5:
-                            // Small dash back - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = -8f * npc.direction;
-                                npc.ai[1] = 860f;
-                                npc.netUpdate = true;
-
-
-                            }
-                            // Alt dash - Bomb
-                            else if (Main.rand.NextBool(4))
-                            {
-                                npc.ai[1] = 850f;
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -4f;
-                                npc.velocity.X = -9f * npc.direction;
-                            }
-                            break;
-                        case 6:
-                            // Big dash back - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.ai[1] = 880f;
-                                npc.velocity.Y = -8f;
-                                npc.velocity.X = -11f * npc.direction;
-                                npc.netUpdate = true;
-                            }                          
-                            break;
-                        case 7:
-                            // Teleport
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.spriteDirection = npc.direction;
-                                TeleportImmediately(npc, 22, true);
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            {
-                                // Poison TP
-                                npc.spriteDirection = npc.direction;
-                                TeleportImmediately(npc, 22, true);
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -6f * npc.direction;
-                                npc.ai[1] = 260f;
-                            }
-                            break;
-                        case 8:
-                            //Small dash back - Spear
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -3f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 130f;
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(2))
-                            {
-                                // Jump high
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -11f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 130f;
-
-                            }
-                            break;
-                        case 9:
-                            // Dash back - Poison
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 280f;
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 280f;
-                            }
-                            break;
-
-
-                    }
-                    npc.netUpdate = true;
-                }
-                else
-                {
-                    //npc.knockBackResist = 0;
-                }
-
-                //npc.knockBackResist = 0.4f; //was 0.9            
-            }
-
-            if (!melee)
-            {
-                // Ensures ranged can't interrupt attack once the flash telegraph triggers
-                if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
-                {
-                    int randomChoice = Main.rand.Next(9);
-
-                    switch (randomChoice)
-                    {
-                        case 0:
-                            // Burst forward
-                            if (Main.rand.NextBool(5))
-                            {
-                                npc.velocity.Y = -9f;
-                                npc.velocity.X = 4f * npc.direction;
-                                npc.TargetClosest(true);
-
-                                if ((float)npc.direction * npc.velocity.X > 4)
-                                {
-                                    npc.velocity.X = (float)npc.direction * 3;  //  3 was 4 - this caps the top speed
-                                }
-                                npc.netUpdate = true;
-                            }
-                            break;
-
-                        case 1:
-                            // Burst forward
-                            if (Main.rand.NextBool(6))
-                            {
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X *= 4f; // burst forward
-                                npc.TargetClosest(true);
-
-                                npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
-                                if ((float)npc.direction * npc.velocity.X > 5)
-                                {
-                                    npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
-                                }
-
-                                // Chance to jump after dash
-                                if (Main.rand.NextBool(6))
-                                {
-                                    npc.TargetClosest(true);
-                                    npc.spriteDirection = npc.direction;
-                                    npc.velocity.Y = -6f;
-                                }
-
-                                npc.netUpdate = true;
-                            }
-                            break;
-
-                        case 2:
-                            // Teleport
-                            if (npc.Distance(Main.player[npc.target].Center) > 400 && Main.rand.NextBool(4))
-                            {
-                                TeleportImmediately(npc, 15, false);
-                            }
-                            break;
-
-                        case 3:
-                            // Dash backwards - Poison
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 290f;
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 290f;
-                            }
-                            break;
-                        case 4:
-                            // Chance to big jump backwards - Spear
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -9f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 140f;
-                                npc.netUpdate = true;
-                            }
-                            break;
-                        case 5:
-                            // Small dash backwards - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = 6f * npc.direction;
-                                npc.ai[1] = 860f;
-                                npc.netUpdate = true;
-                            }
-                            // Alt dash backwards - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.ai[1] = 850f;
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -4f;
-                                npc.velocity.X = -9f * npc.direction;
-                            }
-                            break;
-                        case 6:
-                            // Big dash backwards - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.ai[1] = 880f;
-                                npc.velocity.Y = -8f;
-                                npc.velocity.X = -11f * npc.direction;
-                                npc.netUpdate = true;
-                            }
-                            break;
-                        case 7:
-                            // Teleport
-                            if (Main.rand.NextBool(4))
-                            {
-                                TeleportImmediately(npc, 20, true);
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            // Poision Teleport
-                            {
-                                TeleportImmediately(npc, 20, true);
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -5f * npc.direction;
-                                npc.ai[1] = 250f;
-                            }
-                            break;
-                        case 8:
-                            // Small dash backwards - Spear
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -3f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 140f;
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            // Jump high, slightly forward
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = 3f * npc.direction;
-                                npc.ai[1] = 130f;
-                                npc.netUpdate = true;
-                            }
-                            break;
-                        case 9:
-                            // Attack interrupt; for Great Red Knight it cycles to DD2 attack at 1/2 health
-                            npc.ai[1] = 700f;
-                            break;
-                    }
-                    npc.netUpdate = true;
-                }
-            }
-        }
-        #endregion
-
-        #region Gwyn Hit AI
-        public static void GwynOnHit(NPC npc, bool melee) //ref int stunlockBreak
-        {
-
-            if (melee)
-            {
-                // Ensures melee can't interrupt attack once the flash telegraph triggers
-                if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
-                {
-                    int randomChoice = Main.rand.Next(10);
-
-                    switch (randomChoice)
-                    {
-                        case 0:
-                            npc.ai[1] = 50f;
-                            break;
-
-                        case 1:
-                            npc.ai[1] = 700f;
-                            break;
-
-                        case 2:
-                            npc.ai[1] = 200f;
-                            break;
-
-                        case 3:
-                            npc.ai[1] = 800f;
-                            break;
-                        case 4:
-                            // Big jump back - Spear
-                            if (Main.rand.NextBool(2))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -9f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 140f;
-                                npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                npc.ai[1] = 50f;
-                            }
-                            break;
-                        case 5:
-                            // Small dash back - Bomb
-                            if (Main.rand.NextBool(2))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = -8f * npc.direction;
-                                npc.ai[1] = 860f;
-                                npc.netUpdate = true;
-
-
-                            }
-                            // Alt dash - Bomb
-                            else
-                            {
-                                npc.ai[1] = 850f;
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -4f;
-                                npc.velocity.X = -9f * npc.direction;
-                            }
-                            break;
-                        case 6:
-                            // Big dash back - Bomb
-                            if (Main.rand.NextBool(2))
-                            {
-                                npc.TargetClosest(true);
-                                npc.ai[1] = 880f;
-                                npc.velocity.Y = -8f;
-                                npc.velocity.X = -11f * npc.direction;
-                                npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                npc.TargetClosest(true);
-                                npc.ai[1] = 50f;
-                            }
-                            break;
-                        case 7:
-                            // Teleport
-                            if (Main.rand.NextBool(2))
-                            {
-                                npc.spriteDirection = npc.direction;
-                                TeleportImmediately(npc, 22, true);
-                                npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                // Poison TP
-                                npc.spriteDirection = npc.direction;
-                                TeleportImmediately(npc, 22, true);
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -6f * npc.direction;
-                                npc.ai[1] = 260f;
-                            }
-                            break;
-                        case 8:
-                            //Small dash back - Spear
-                            if (Main.rand.NextBool(2))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -3f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 130f;
-                                npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                // Jump high
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -11f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 130f;
-
-                            }
-                            break;
-                        case 9:
-                            // Dash back - Poison
-                            if (Main.rand.NextBool(2))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 280f;
-                                npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 280f;
-                            }
-                            break;
-
-
-                    }
-                    npc.netUpdate = true;
-                }
-                else
-                {
-                    npc.knockBackResist = 0;
-                }
-
-                npc.knockBackResist = 0.4f; //was 0.9            
-            }
-
-            if (!melee)
-            {
-                // Ensures ranged can't interrupt attack once the flash telegraph triggers
-                if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
-                {
-                    int randomChoice = Main.rand.Next(9);
-
-                    switch (randomChoice)
-                    {
-                        case 0:
-                            // Burst forward
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.velocity.Y = -9f;
-                                npc.velocity.X = 4f * npc.direction;
-                                npc.TargetClosest(true);
-
-                                if ((float)npc.direction * npc.velocity.X > 4)
-                                {
-                                    npc.velocity.X = (float)npc.direction * 3;  //  3 was 4 - this caps the top speed
-                                }
-                                npc.netUpdate = true;
-                            }
-                            break;
-
-                        case 1:
-                            // Burst forward
-                            if (Main.rand.NextBool(6))
-                            {
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X *= 4f; // burst forward
-                                npc.TargetClosest(true);
-
-                                npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
-                                if ((float)npc.direction * npc.velocity.X > 5)
-                                {
-                                    npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
-                                }
-
-                                // Chance to jump after dash
-                                if (Main.rand.NextBool(6))
-                                {
-                                    npc.TargetClosest(true);
-                                    npc.spriteDirection = npc.direction;
-                                    npc.velocity.Y = -6f;
-                                }
-
-                                npc.netUpdate = true;
-                            }
-                            break;
-
-                        case 2:
-                            // Teleport
-                            if (npc.Distance(Main.player[npc.target].Center) > 400 && Main.rand.NextBool(3))
-                            {
-                                TeleportImmediately(npc, 15, false);
-                            }
-                            break;
-
-                        case 3:
-                            // Dash backwards - Poison
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 290f;
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 290f;
-                            }
-                            break;
-                        case 4:
-                            // Chance to big jump backwards - Spear
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -9f;
-                                npc.velocity.X = -9f * npc.direction;
-                                npc.ai[1] = 140f;
-                                npc.netUpdate = true;
-                            }
-                            break;
-                        case 5:
-                            // Small dash backwards - Bomb
-                            if (Main.rand.NextBool(2))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -6f;
-                                npc.velocity.X = 6f * npc.direction;
-                                npc.ai[1] = 860f;
-                                npc.netUpdate = true;
-                            }
-                            // Alt dash backwards - Bomb
-                            else
-                            {
-                                npc.ai[1] = 850f;
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -4f;
-                                npc.velocity.X = -9f * npc.direction;
-                            }
-                            break;
-                        case 6:
-                            // Big dash backwards - Bomb
-                            if (Main.rand.NextBool(4))
-                            {
-                                npc.TargetClosest(true);
-                                npc.ai[1] = 880f;
-                                npc.velocity.Y = -8f;
-                                npc.velocity.X = -11f * npc.direction;
-                                npc.netUpdate = true;
-                            }
-                            break;
-                        case 7:
-                            // Teleport
-                            if (Main.rand.NextBool(4))
-                            {
-                                TeleportImmediately(npc, 20, true);
-                                npc.netUpdate = true;
-                            }
-                            else if (Main.rand.NextBool(4))
-                            // Poision Teleport
-                            {
-                                TeleportImmediately(npc, 20, true);
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = -5f * npc.direction;
-                                npc.ai[1] = 250f;
-                            }
-                            break;
-                        case 8:
-                            // Small dash backwards - Spear
-                            if (Main.rand.NextBool(3))
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -3f;
-                                npc.velocity.X = -7f * npc.direction;
-                                npc.ai[1] = 140f;
-                                npc.netUpdate = true;
-                            }
-                            else
-                            // Jump high, slightly forward
-                            {
-                                npc.TargetClosest(true);
-                                npc.velocity.Y = -10f;
-                                npc.velocity.X = 3f * npc.direction;
-                                npc.ai[1] = 130f;
-                                npc.netUpdate = true;
-                            }
-                            break;
-                        case 9:
-                            // Attack interrupt; for Great Red Knight it cycles to DD2 attack at 1/2 health
-                            npc.ai[1] = 700f;
-                            break;
-                    }
-                    npc.netUpdate = true;
-                }
-            }
-        }
-        #endregion
-        #endregion
     }
 }

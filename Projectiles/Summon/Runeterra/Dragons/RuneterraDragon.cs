@@ -238,6 +238,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.DontAttachHideToAlpha[Type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
+            ProjectileID.Sets.MinionCannotBeFreed[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
             ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.DragonSummonTagDmgMult / 100f;
@@ -253,7 +254,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             Projectile.hide = true;
 
             Projectile.minion = true;
-            Projectile.minionSlots = 0.5f;
+            Projectile.minionSlots = 0f;
 
             Projectile.friendly = true;
             Projectile.ignoreWater = true;
@@ -373,7 +374,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             {
                 Projectile.timeLeft = 2;
             }
-            Projectile.originalDamage = (int)(BaseOriginalDamage / ((float)DragonTier * 6f) * (float)player.ownedProjectileCounts[PairedProjectileType]);
+            Projectile.originalDamage = (int)(BaseOriginalDamage / 10f * (float)player.ownedProjectileCounts[PairedProjectileType]);
             if (Projectile.damage < 1)
             {
                 Projectile.damage = 1;

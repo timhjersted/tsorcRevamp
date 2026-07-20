@@ -50,6 +50,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.knockBackResist = 0.0f;
             }
 
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.HealthScaledSpeedBase = 2f;
+            g.HealthScaledSpeedMultiplier = -1.25f;
+            g.NavSearchRadius = 70;
+            g.CanUseRopes = true;
+            g.StandoffDistance = 8;
+            g.MaxJumpPower = 7f;
+            g.RemembersLastKnownPos = true;
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -182,51 +190,15 @@ namespace tsorcRevamp.NPCs.Enemies
             Player player = Main.player[NPC.target];
 
 
-            int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
-            float acceleration = 0.02f;
-            float top_speed = (lifePercentage * -0.015f) + 2f; //Increase speed the lower the enemy HP%
-            float braking_power = 0.1f; //Breaking power to slow down after moving above top_speed
+            // Movement is now handled by the shared fighter mover. It walks/jumps terrain, pursues, and —
+            // via StandoffDistance (set in SetDefaults) — halts at firebomb range. The old duplicated
+            // jump-ladder / platform-drop / boredom block was deleted; only the bespoke firebomb attack
+            // state machine remains in-class. (Phase 3 legacy-AI migration.)
+            tsorcRevampAIs.FighterAI(NPC, 2f, 0.10f, 0.1f, canPounce: false, canDodgeroll: false);
 
-
-            //Debug utilities
-
-            //Main.NewText(Math.Abs(npc.velocity.X));
-            //Main.NewText("AI_State is " + AI_State);
-            //Main.NewText("AI_Universal_Timer is " + AI_Universal_Timer);
-            //Main.NewText("AI_State_Timer_1 is " + AI_State_Timer_1);
-            //Main.NewText("AI_Timer is " + AI_Timer);
-            //Main.NewText("npc.frameCounter is " + npc.frameCounter);
-            //Main.NewText("Distance is " + npc.Distance(player.Center));
-            //Main.NewText("knockbackresist is " + npc.knockBackResist);
-
+            bool grounded = NPC.velocity.Y == 0; // proxy for the old standing_on_solid_tile check
 
             #region AI_State Independent
-
-
-            #region Check if standing on a solid tile
-
-            bool standing_on_solid_tile = false;
-            int x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f); // 15 pix in front of center of mass
-            int y_above_feet = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f); // 15 pix above feet
-            int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
-            if (NPC.velocity.Y == 0f) // no jump/fall
-            {
-                int x_left_edge = (int)NPC.position.X / 16;
-                int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (Main.tile[l, y_below_feet] == null) // null tile means ??
-                        return;
-
-                    if (Main.tile[l, y_below_feet].HasTile && Main.tileSolid[(int)Main.tile[l, y_below_feet].TileType]) // tile exists and is solid
-                    {
-                        standing_on_solid_tile = true;
-                        break; // one is enough so stop checking
-                    }
-                } // END traverse blocks under feet
-            } // END no jump/fall
-
-            #endregion
 
 
             if (AI_Universal_Timer < 80)
@@ -280,166 +252,10 @@ namespace tsorcRevamp.NPCs.Enemies
             // PURSUING
             if (AI_State == State_Pursuing)
             {
-
-                #region Target player, turn if can't reach player
-
-
-                if (AI_State_Timer_1 == 0)
-                {
-                    NPC.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
-                }
-
-                if (NPC.velocity.X == 0)
-                {
-                    AI_State_Timer_1++;
-                    if (AI_State_Timer_1 > 120 && NPC.velocity.Y == 0)
-                    {
-                        NPC.direction *= -1;
-                        NPC.spriteDirection = NPC.direction;
-                        AI_State_Timer_1 = 50;
-                    }
-                }
-
-                if (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                {
-                    AI_State_Timer_1 = 0;
-                }
-
-                #endregion
-
-                #region Melee Movement & Drop through platforms - but also sometimes the world :(
-
-                if (Math.Abs(NPC.velocity.X) > top_speed && NPC.velocity.Y == 0)
-                {
-                    NPC.velocity *= (1f - braking_power); //breaking
-                }
-
-                else
-                {
-                    NPC.velocity.X += NPC.direction * acceleration; //accelerating
-                }
-
-
-                if (NPC.direction == 1) //breaking power after turning, to turn fast or to "slip"
-                {
-                    if (NPC.velocity.X > -top_speed)
-                    {
-                        NPC.velocity.X += 0.085f;
-                    }
-                }
-
-                else
-                {
-                    if (NPC.velocity.X < top_speed)
-                    {
-                        NPC.velocity.X += -0.085f;
-                    }
-                }
-
-                //Speed limits
-                if (NPC.velocity.X > 4f) //hard limit of 4f
-                {
-                    NPC.velocity.X = 4f;
-                }
-
-                if (NPC.velocity.X < -4f)
-                {
-                    NPC.velocity.X = -4f;
-                }
-
-
-                if (Main.tile[(int)NPC.position.X / 16, y_below_feet].TileType == TileID.Platforms && Main.tile[(int)(NPC.position.X + (float)NPC.width) / 16, y_below_feet].TileType == TileID.Platforms && NPC.position.Y < (player.position.Y - 4 * 16))
-                {
-                    NPC.noTileCollide = true;
-                }
-                else { NPC.noTileCollide = false; }
-
-                #endregion
-
-                #region New Tile()s, jumping
-                if (standing_on_solid_tile)  //  if standing on solid tile
-                {
-                    if (Main.tile[x_in_front, y_above_feet] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet - 1] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet - 1].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet - 2] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet - 2].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet - 3] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet - 3].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet + 1] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet + 1].ClearTile();
-                    }
-                    //  create? 2 other tiles farther in front
-                    if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
-                    {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
-                    {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
-                    }
-
-                    else // standing on solid tile but not in front of a passable door
-                    {
-                        if ((NPC.velocity.X < 0f && NPC.spriteDirection == -1) || (NPC.velocity.X > 0f && NPC.spriteDirection == 1))
-                        {  //  moving forward
-                            if (Main.tile[x_in_front, y_above_feet - 2].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].TileType])
-                            { // 3 blocks above ground level(head height) blocked
-                                if (Main.tile[x_in_front, y_above_feet - 3].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].TileType])
-                                { // 4 blocks above ground level(over head) blocked
-                                    NPC.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
-                                    NPC.netUpdate = true;
-                                }
-                                else
-                                {
-                                    NPC.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
-                                    NPC.netUpdate = true;
-                                }
-                            } // for everything else, head height clear:
-                            else if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].TileType])
-                            { // 2 blocks above ground level(mid body height) blocked
-                                NPC.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
-                                NPC.netUpdate = true;
-                            }
-                            else if (Main.tile[x_in_front, y_above_feet].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].TileType])
-                            { // 1 block above ground level(foot height) blocked
-                                NPC.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
-                                NPC.netUpdate = true;
-                            }
-                            else if (NPC.directionY < 0 && (!Main.tile[x_in_front, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].TileType]) && (!Main.tile[x_in_front + NPC.direction, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front + NPC.direction, y_above_feet + 1].TileType]))
-                            { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
-                                NPC.velocity.Y = -8f; // jump with power 8
-                                NPC.velocity.X = NPC.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
-                                NPC.netUpdate = true;
-                            }
-
-                        } // END moving forward, still: standing on solid tile but not in front of a passable door
-                    }
-                }
-
-                #endregion
-
-                if (Math.Abs(NPC.Center.X - player.Center.X) < 15 * 16 && NPC.velocity.Y == 0 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                {
-                    NPC.velocity.X = 0;
-                }
-
-                if (AI_Universal_Timer == 80 && standing_on_solid_tile && Math.Abs(NPC.Center.X - player.Center.X) < 15 * 16 && NPC.velocity.Y == 0 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
+                // Movement (pursue / terrain jumps / platform-drop / stop-at-range) is handled by FighterAI
+                // above. All that remains here is the decision to begin a throw: grounded, within firebomb
+                // range, with line of sight, once the inter-throw timer (AI_Universal_Timer) has filled.
+                if (AI_Universal_Timer == 80 && grounded && Math.Abs(NPC.Center.X - player.Center.X) < 15 * 16 && Collision.CanHit(NPC.position, NPC.width, NPC.height, player.position, player.width, player.height))
                 {
                     AI_State = State_Firebombing;
                     AI_State_Timer_1 = 0;
@@ -452,7 +268,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 AI_State_Timer_1 += 1f;
 
-                if (!standing_on_solid_tile || NPC.velocity.Y != 0)
+                if (!grounded)
                 {
                     AI_State = State_Pursuing;
                     AI_Universal_Timer = 40;
@@ -477,7 +293,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (NPC.direction == 1 && NPC.velocity.Y > 0.5f) { NPC.velocity.X -= 0.15f; }
                     if (NPC.direction == -1 && NPC.velocity.Y < -0.5f) { NPC.velocity.X += 0.15f; }
                 }
-                if (AI_State_Timer_1 > 10 && NPC.velocity.Y == 0 && standing_on_solid_tile)
+                if (AI_State_Timer_1 > 10 && grounded)
                 {
                     NPC.velocity.X = 0;
                 }
@@ -493,7 +309,10 @@ namespace tsorcRevamp.NPCs.Enemies
                     Vector2 velocity = new Vector2(0.1f, 0).RotatedBy(difference.ToRotation()); //Give it velocity so it can face the right direction
                     Vector2 throwpower = (Main.player[NPC.target].Center - NPC.Center) / 30;
 
-                    throwpower.Y += Main.rand.Next(-3, -1);
+                    // Arc only when there's enough horizontal room; skip for close-range and steep-upward throws
+                    bool tightAngle = Math.Abs(difference.X) < 4 * 16f || difference.Y < -Math.Abs(difference.X);
+                    if (!tightAngle)
+                        throwpower.Y += Main.rand.Next(-3, -1);
                     velocity += throwpower;
 
                     if (throwpower.Y < -8)
@@ -547,6 +366,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
+            tsorcRevampAIs.FighterOnHit(NPC, true);
+
             if (AI_State == State_Firebombing && AI_State_Timer_1 < 45)
             {
                 AI_State_Timer_1 = -10;
@@ -555,6 +376,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            tsorcRevampAIs.FighterOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+
             if (AI_State == State_Firebombing && AI_State_Timer_1 < 45)
             {
                 AI_State_Timer_1 = 10;

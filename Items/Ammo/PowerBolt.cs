@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.consumable = true;
             Item.DamageType = DamageClass.Ranged;
             Item.ammo = ModContent.ItemType<Bolt>();
-            Item.damage = 10;
+            Item.damage = 9;
             Item.height = 10;
             Item.height = 20;
             Item.knockBack = 3f;
@@ -30,7 +30,8 @@ namespace tsorcRevamp.Items.Ammo
             Recipe recipe = CreateRecipe(100);
             recipe.AddIngredient(ModContent.ItemType<Bolt>(), 100);
             recipe.AddIngredient(ItemID.MeteoriteBar, 1);
-            recipe.AddTile(TileID.Anvils);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }
     }

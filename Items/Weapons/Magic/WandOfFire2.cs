@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.value = PriceByRarity.Green_2;
             Item.DamageType = DamageClass.Magic;
             Item.rare = ItemRarityID.Green;
-            Item.shoot = ModContent.ProjectileType<Projectiles.FireBall>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.FireBallWOF2>();
         }
 
         public override void AddRecipes()

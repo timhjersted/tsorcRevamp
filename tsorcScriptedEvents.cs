@@ -2,6 +2,9 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Reflection;
+using Newtonsoft.Json;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -76,7 +79,7 @@ namespace tsorcRevamp
          * '[Event Name].SetCustomStats(Health, Defense, Damage);'
          * An example of this is below ArtoriasEvent, giving the spawned Artorias dramatically weakened stats
          * * Note: The damage stat here can not change the projectile damage for enemies, since the damage of each projectile is hardcoded independent of their true stats. 
-         * That value MUST be changed via scripting instead. ArtoriasCustomAction shows an example of this.
+         * That value MUST be changed via scripting instead. KnightOfGwynCustomAction shows an example of this.
          * 
          * Adding custom drops:
          * To add drops to a spawned NPC, add this line below your event line
@@ -123,11 +126,13 @@ namespace tsorcRevamp
         //Each scripted event should have a definition here. I added some theoretical examples commented out
         //This name is what the event handler uses to save an event, and marks them as unique.
         private static int GetThoriumNPCType(string name) =>
-        ModLoader.TryGetMod("ThoriumMod", out Mod thorium) 
-            ? thorium.Find<ModNPC>(name).Type 
+        ModLoader.TryGetMod("ThoriumMod", out Mod thorium)
+            ? thorium.Find<ModNPC>(name).Type
             : NPCID.None;
 
-        private static readonly Func<bool> ThoriumActive = () => ModLoader.HasMod("ThoriumMod");
+        // Named method (not lambda) so ev.condition.Method.Name is stable and reflection can re-create it on load.
+        public static bool ThoriumActiveCondition() => ModLoader.HasMod("ThoriumMod");
+        private static readonly Func<bool> ThoriumActive = ThoriumActiveCondition;
         public enum ScriptedEventType
         {
             Pinwheel,
@@ -158,7 +163,7 @@ namespace tsorcRevamp
             KingSlimeEvent,
             HeroofLumeliaFight,
             FireLurkerPain,
-            RedKnightPain,
+            BlackKnightPain,
             RedKnightTwinMountain,
             JungleWyvernFight,
             SeathFight,
@@ -208,7 +213,6 @@ namespace tsorcRevamp
             SpawnMechanic,
             SpawnWizard,
             HellkiteDragonEvent,
-            RemixHellkiteDragonEvent,
             EoL,
             RemixEoL,
             DungeonGuardian,
@@ -221,6 +225,7 @@ namespace tsorcRevamp
             AshCavernRightside,
             MorgulFelegLeftside,
             MorgulFelegRightside,
+            HallowDemonEvent,
             ShadowTempleEvent,
             ShadowTempleEvent2,
             MoltenSkyTempleEvent,
@@ -237,6 +242,7 @@ namespace tsorcRevamp
             FoundryEvent,
             FoundryEvent2,
             FrozenCathedralEvent,
+            EnragedQB,
             Lunatic,
             IceGolemIsland,
             AncestralSpiritRemixEvent,
@@ -249,6 +255,7 @@ namespace tsorcRevamp
             DiscipleOfAttraidiesEvent,
             WyvernFortressEvent,
             SpawnLonelyFairy,
+            Dutchman,
             //THORIUM COMPATIBILITY UNIQUE EVENTS
             ThunderBird,
             ThunderBird2,
@@ -257,7 +264,12 @@ namespace tsorcRevamp
             StarScouter,
             BoreanStrider,
             Lich,
-            ForgottenOne
+            ForgottenOne,
+            //ShadowDarkCloud1,
+            //ShadowDarkCloud2,
+            //ShadowDarkCloud3,
+            //ShadowDarkCloud4,
+            ShadowDarkCloud5
 
 
             //AncientDemonAmbush,
@@ -320,10 +332,14 @@ namespace tsorcRevamp
 
             ScriptedEvent AncestralSpiritRemixEvent = new ScriptedEvent(new Vector2(7344, 768), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Cyan, false, RemixMapCondition);
             //SkeletronHidden
-            ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Blue, false, null, SetNightCustomAction);
+            // Guarded the same way as OldManEvent (which also leads to Skeletron): without this, killing Skeletron
+            // via the OTHER route (e.g. the Old Man arena) never "completes" THIS event from its own bookkeeping
+            // perspective, so it kept re-triggering and re-spawning a redundant Skeletron indefinitely even though
+            // the boss was already down for the world.
+            ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, 181, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Violet, false, SkeletronHiddenSpawnCondition, SetNightCustomAction);
 
             //SkeletronHidden
-            ScriptedEvent OldManEvent = new ScriptedEvent(new Vector2(4979, 1398), 64, NPCID.OldMan, DustID.WhiteTorch, true, true, true, "default", Color.White, false, () => { return !NPC.AnyNPCs(NPCID.OldMan) && !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3; });
+            ScriptedEvent OldManEvent = new ScriptedEvent(new Vector2(4979, 1398), 64, NPCID.OldMan, DustID.WhiteTorch, true, true, true, "default", Color.White, false, OldManSpawnCondition);
 
             //EoC
             ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.EoC"), Color.Blue, false, null, SetNightCustomAction);
@@ -384,9 +400,9 @@ namespace tsorcRevamp
             FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 3, 4 });
 
             //RED KNIGHT IN PATH OF PAIN
-            ScriptedEvent RedKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight1"), Color.Purple, false, default, RedKnightPainCustomAction);
-            RedKnightPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<WorldRune>() }, new List<int>() { 2, 3, 4 });
-            RedKnightPain.SetCustomStats(2660, 10, 65, 3350);
+            ScriptedEvent BlackKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), 27, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightPainCustomAction);
+            BlackKnightPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<WorldRune>() }, new List<int>() { 2, 3, 4 });
+            BlackKnightPain.SetCustomStats(3560, 15, 70, 3550);
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
@@ -452,14 +468,12 @@ namespace tsorcRevamp
             //BlightEvent.SetCustomStats(50000, 30, 50);
 
             //CHAOS
-            ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, OnlyAdventureMapConditionSHM);
+            ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, OnlyAdventureMapCondition);
 
-            ScriptedEvent ChaosEventRemix = new ScriptedEvent(new Vector2(7034, 968), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, RemixMapConditionSHM);
+            ScriptedEvent ChaosEventRemix = new ScriptedEvent(new Vector2(7034, 968), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, RemixMapCondition);
 
             //WYVERN MAGE SHADOW-SHM
-            List<int> WyvernShadowEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>() };
-            List<Vector2> WyvernShadowLocations = new List<Vector2>() { new Vector2(6432, 196), new Vector2(6432, 196) };
-            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 25, WyvernShadowEnemyTypeList, WyvernShadowLocations, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.WyvernMageShadow"), Color.LightBlue, false, SuperHardModeCustomCondition);
+            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 25, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.CrimsonTorch, true, true, true, LangUtils.GetTextValue("Events.WyvernMageShadow"), Color.OrangeRed, false, SuperHardModeCustomCondition);
 
             //DARK CLOUD
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.DarkCloud"), Color.LightCyan, false, OnlyAdventureMapConditionSHM);
@@ -601,13 +615,13 @@ namespace tsorcRevamp
             LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.RadiantLifegem>() }, new List<int>() { 5 });
 
             //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
-            List<int> DrownedAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostOfTheDrowned>() };
+            List<int> DrownedAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostFighter.GhostOfTheDrowned>() };
             List<Vector2> DrownedAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4294, 778) };
             ScriptedEvent DrownedAmbush1 = new ScriptedEvent(new Vector2(4318, 768), 11, DrownedAmbush1EnemyTypeList, DrownedAmbush1EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
             DrownedAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.HealingElixir>() }, new List<int>() { 1 });
 
             //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
-            List<int> DrownedAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostOfTheDrowned>() };
+            List<int> DrownedAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostFighter.GhostOfTheDrowned>() };
             List<Vector2> DrownedAmbush2EnemyLocations = new List<Vector2>() { new Vector2(4117, 823) };
             ScriptedEvent DrownedAmbush2 = new ScriptedEvent(new Vector2(4090, 828), 11, DrownedAmbush2EnemyTypeList, DrownedAmbush2EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
             DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.BoostPotion>() }, new List<int>() { 2 }); 
@@ -622,7 +636,7 @@ namespace tsorcRevamp
             ScriptedEvent ShadowTempleEvent2 = new ScriptedEvent(new Vector2(1734, 1297), 20, NPCID.Paladin, 133, true, true, false, LangUtils.GetTextValue("Events.ShadowTempleEvent2"), Color.Yellow);
 
             //Mushroom Cavern AMBUSH
-            List<int> MushroomCavernEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), ModContent.NPCType<NPCs.Enemies.SuperHardMode.Abysswalker>(), };
+            List<int> MushroomCavernEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), ModContent.NPCType<NPCs.Enemies.Dworc.DworcAbysswalker>(), };
             List<Vector2> MushroomCavernEnemyLocations = new List<Vector2>() { new Vector2(3690, 1545), new Vector2(3675, 1545) };
             ScriptedEvent MushroomCavern = new ScriptedEvent(new Vector2(3690, 1535), 30, MushroomCavernEnemyTypeList, MushroomCavernEnemyLocations, DustID.Water, true, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
 
@@ -638,21 +652,22 @@ namespace tsorcRevamp
             //Morgul Feleg Rightside - Great Demon Of The Abyss
             ScriptedEvent MorgulFelegRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
 
+            //Great Demon Of The Abyss on the Abandonned Hallowed Village (Remix Map)
+            ScriptedEvent HallowDemonEvent = new ScriptedEvent(new Vector2(6761, 1081), 30, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
+
             //Molten Sky Temple 
             ScriptedEvent MoltenSkyTempleEvent = new ScriptedEvent(new Vector2(1040, 1865), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss.SerpentOfTheAbyssHead>(), 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange);
 
             //Molten Sky Temple second event
             ScriptedEvent MoltenSkyTempleEvent2 = new ScriptedEvent(new Vector2(90, 1893), 30, NPCID.MourningWood, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction);
 
-            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, OnlyAdventureMapConditionSHM, SetNightCustomAction);
+            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
 
-            ScriptedEvent RemixHellkiteDragonEvent = new ScriptedEvent(new Vector2(2159, 308), 150, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, false, LangUtils.GetTextValue("Events.RemixHellkiteDragon"), new Color(175, 75, 255), false, RemixMapConditionSHM, SetNightCustomAction);
-
-            ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
+            ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, PreSkeletronDungeonGuardianCondition);
             
             ScriptedEvent KingSlime2Event = new ScriptedEvent(new Vector2(4749, 639), 25, NPCID.KingSlime, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.KingSlime"), Color.Cyan, false, RemixMapCondition);
 
-            ScriptedEvent AbysswalkerEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.Abysswalker>(), 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
+            ScriptedEvent AbysswalkerEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, ModContent.NPCType<NPCs.Enemies.Dworc.DworcAbysswalker>(), 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
 
             List<int> BloodLakeEventEnemyTypeList = new List<int>() { NPCID.ZombieMerman, NPCID.EyeballFlyingFish };
             List<Vector2> BloodLakeEventEnemyLocations = new List<Vector2>() { new Vector2(2999, 889), new Vector2(3009, 889) };
@@ -678,6 +693,13 @@ namespace tsorcRevamp
             ScriptedEvent CatacombsEvent = new ScriptedEvent(new Vector2(3181, 1334), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SlograII>(), DustID.Torch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapCondition);
             CatacombsEvent.SetCustomStats(9000, null, null, null);
 
+            ScriptedEvent Dutchman = new ScriptedEvent(new Vector2(597, 848), 50, NPCID.PirateShip, DustID.GoldFlame, true, false, true, LangUtils.GetTextValue("Events.Dutchman"), Color.Yellow, false, RemixMapCondition);
+            Dutchman.SetCustomStats(null, null, null, 8000);
+
+            ScriptedEvent EnragedQB = new ScriptedEvent(new Vector2(5954, 401), 50, NPCID.QueenBee, DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.EnragedQB"), Color.Yellow, false, RemixMapCondition);
+            EnragedQB.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ModContent.ItemType<Items.Materials.EternalCrystal>() }, new List<int>() { 3, 1, 1 });
+            EnragedQB.SetCustomStats(null, null, null, 2000);
+
             ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
 
             ScriptedEvent FoundryEvent2 = new ScriptedEvent(new Vector2(5801, 1381), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Yellow, false, RemixMapCondition); 
@@ -693,7 +715,7 @@ namespace tsorcRevamp
             
             List<int> WingTrioEventEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.TheRage>(), ModContent.NPCType<NPCs.Bosses.TheSorrow>(), ModContent.NPCType<NPCs.Bosses.TheHunter>() };
             List<Vector2> WingTrioEventEnemyLocations = new List<Vector2>() { new Vector2(3838, 1425), new Vector2(3879, 1425), new Vector2(3858, 1410) };
-            ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, false, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
+            ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, true, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
             WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Materials.EternalCrystal>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>()}, new List<int>() { 3, 1, 1, 1, 1 });
             WingTrioEvent.SetCustomStats(null, null, null, 40000);
 
@@ -713,6 +735,16 @@ namespace tsorcRevamp
             ScriptedEvent WyvernFortressEvent = new ScriptedEvent(new Vector2(7022, 288), 85, NPCID.WyvernHead, 16, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Cyan, false, RemixMapCondition);
 
             ScriptedEvent SandstormElementalEvent2 = new ScriptedEvent(new Vector2(950, 1503), 22, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow, false, RemixMapCondition);
+
+            //ScriptedEvent ShadowDarkCloud1 = new ScriptedEvent(new Vector2(2159, 308), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
+
+            //ScriptedEvent ShadowDarkCloud2 = new ScriptedEvent(new Vector2(2159, 308), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
+
+            //ScriptedEvent ShadowDarkCloud3 = new ScriptedEvent(new Vector2(2159, 308), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
+
+            //ScriptedEvent ShadowDarkCloud4 = new ScriptedEvent(new Vector2(2159, 308), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
+
+            ScriptedEvent ShadowDarkCloud5 = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Special.DarkCloudShadow>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapConditionSHM);
 
             //THORIUM SECTION
             Mod ThoriumMod;
@@ -759,7 +791,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.KingSlimeEvent, KingSlimeEvent},
                 {ScriptedEventType.HeroofLumeliaFight, HeroofLumeliaFight},
                 {ScriptedEventType.FireLurkerPain, FireLurkerPain},
-                {ScriptedEventType.RedKnightPain, RedKnightPain},
+                {ScriptedEventType.BlackKnightPain, BlackKnightPain},
                 {ScriptedEventType.RedKnightTwinMountain, RedKnightTwinMountain},
                 {ScriptedEventType.JungleWyvernFight, JungleWyvernEvent},
                 {ScriptedEventType.SeathFight, SeathEvent},
@@ -811,7 +843,6 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnMechanic, SpawnMechanic},
                 {ScriptedEventType.SpawnWizard, SpawnWizard},
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
-                {ScriptedEventType.RemixHellkiteDragonEvent, RemixHellkiteDragonEvent},
                 {ScriptedEventType.EoL, EoL},
                 {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
                 {ScriptedEventType.DualSandsprogAmbush1, DualSandsprogAmbush1 },
@@ -820,8 +851,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.MushroomCavern, MushroomCavern },
                 {ScriptedEventType.AshCavernLeftside, AshCavernLeftside },
                 {ScriptedEventType.AshCavernRightside, AshCavernRightside },
-                {ScriptedEventType.MorgulFelegLeftside, MorgulFelegLeftside },
+                {ScriptedEventType.MorgulFelegLeftside, MorgulFelegLeftside }, 
                 {ScriptedEventType.MorgulFelegRightside, MorgulFelegRightside },
+                {ScriptedEventType.HallowDemonEvent, HallowDemonEvent },
                 {ScriptedEventType.ShadowTempleEvent, ShadowTempleEvent },
                 {ScriptedEventType.ShadowTempleEvent2, ShadowTempleEvent2 },
                 {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent },
@@ -835,6 +867,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.TwinsEvent, TwinsEvent },
                 {ScriptedEventType.CatacombsEvent, CatacombsEvent },
                 {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
+                {ScriptedEventType.EnragedQB, EnragedQB },
                 {ScriptedEventType.FoundryEvent, FoundryEvent },
                 {ScriptedEventType.FoundryEvent2, FoundryEvent2 },
                 {ScriptedEventType.Lunatic, Lunatic },
@@ -848,6 +881,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },
                 {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent },
+                {ScriptedEventType.Dutchman, Dutchman },
                 {ScriptedEventType.ThunderBird, ThunderBird },
                 {ScriptedEventType.ThunderBird2, ThunderBird2 },
                 {ScriptedEventType.QueenJellyfish, QueenJellyfish },
@@ -856,6 +890,11 @@ namespace tsorcRevamp
                 {ScriptedEventType.BoreanStrider, BoreanStrider },
                 {ScriptedEventType.Lich, Lich },
                 {ScriptedEventType.ForgottenOne, ForgottenOne },
+                //{ScriptedEventType.ShadowDarkCloud1, ShadowDarkCloud1 },
+                //{ScriptedEventType.ShadowDarkCloud2, ShadowDarkCloud2 },
+                //{ScriptedEventType.ShadowDarkCloud3, ShadowDarkCloud3 },
+                //{ScriptedEventType.ShadowDarkCloud4, ShadowDarkCloud4 },
+                {ScriptedEventType.ShadowDarkCloud5, ShadowDarkCloud5 },
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -974,6 +1013,179 @@ namespace tsorcRevamp
         {
             return RemixMapCondition() && tsorcRevampWorld.SuperHardMode;
         }
+        //True only on the 2400-tall Expanded Adventure world. NOTE: the expanded world also satisfies
+        //OnlyAdventureMapCondition (it IS the adventure map), so existing adventure events still run there. Gate NEW,
+        //expanded-only content with this. Content gated here is authored natively in 2400-space and must NOT be routed
+        //through ExpandedWorldTransform (it would be double-shifted).
+        public static bool ExpandedAdventureMapCondition()
+        {
+            return tsorcRevampWorld.ExpandedAdventure;
+        }
+        public static bool ExpandedAdventureMapConditionSHM()
+        {
+            return ExpandedAdventureMapCondition() && tsorcRevampWorld.SuperHardMode;
+        }
+
+        private static Dictionary<int, string> _vanillaIdToName;
+        private static string GetVanillaFieldName(int type)
+        {
+            if (_vanillaIdToName == null)
+            {
+                _vanillaIdToName = new Dictionary<int, string>();
+                foreach (var f in typeof(NPCID).GetFields(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if (f.IsLiteral && (f.FieldType == typeof(short) || f.FieldType == typeof(int)))
+                    {
+                        int id = Convert.ToInt32(f.GetRawConstantValue());
+                        if (!_vanillaIdToName.ContainsKey(id))
+                            _vanillaIdToName[id] = f.Name;
+                    }
+                }
+            }
+            return _vanillaIdToName.TryGetValue(type, out var name) ? name : null;
+        }
+
+        /// <summary>
+        /// Returns a stable name string for <paramref name="type"/>.
+        /// Modded: full mod-relative name e.g. "tsorcRevamp/LeonhardPhase1".
+        /// Vanilla: NPCID field name e.g. "EyeofCthulhu" (resolvable by reflection on load).
+        /// </summary>
+        public static string GetNpcStableName(int type)
+        {
+            var modNpc = NPCLoader.GetNPC(type);
+            if (modNpc != null) return modNpc.FullName;
+            return GetVanillaFieldName(type) ?? type.ToString();
+        }
+
+        private static Dictionary<int, string> _vanillaItemIdToName;
+        private static string GetVanillaItemFieldName(int type)
+        {
+            if (_vanillaItemIdToName == null)
+            {
+                _vanillaItemIdToName = new Dictionary<int, string>();
+                foreach (var f in typeof(ItemID).GetFields(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if (f.IsLiteral && (f.FieldType == typeof(short) || f.FieldType == typeof(int)))
+                    {
+                        int id = Convert.ToInt32(f.GetRawConstantValue());
+                        if (!_vanillaItemIdToName.ContainsKey(id))
+                            _vanillaItemIdToName[id] = f.Name;
+                    }
+                }
+            }
+            return _vanillaItemIdToName.TryGetValue(type, out var name) ? name : null;
+        }
+
+        /// <summary>
+        /// Returns a stable name string for <paramref name="type"/>.
+        /// Modded: full mod-relative name e.g. "tsorcRevamp/DodgerollMemo".
+        /// Vanilla: ItemID field name e.g. "GreaterHealingPotion" (resolvable by reflection on load).
+        /// </summary>
+        public static string GetItemStableName(int type)
+        {
+            var modItem = ItemLoader.GetItem(type);
+            if (modItem != null) return modItem.FullName;
+            return GetVanillaItemFieldName(type) ?? type.ToString();
+        }
+
+        /// <summary>
+        /// Resolves a stored NpcName back to its current runtime NPC type. Modded names go through
+        /// ModContent.TryFind; vanilla names are NPCID field names resolved by reflection (with a raw-int fallback).
+        /// Returns 0 if it can't be resolved.
+        /// </summary>
+        public static int ResolveNpcType(string npcName)
+        {
+            if (string.IsNullOrEmpty(npcName)) return 0;
+            // Modded names are "Mod/Name". Only those go through TryFind (it can throw on a slash-less string).
+            if (npcName.Contains('/'))
+            {
+                try
+                {
+                    if (ModContent.TryFind<ModNPC>(npcName, out ModNPC modNpc)) return modNpc.Type;
+                }
+                catch { /* mod not loaded / malformed name — fall through */ }
+                return 0;
+            }
+            // Vanilla NPCID field name (e.g. "BoneThrowingSkeleton2"). Accept short OR int constants.
+            var field = typeof(NPCID).GetField(npcName, BindingFlags.Public | BindingFlags.Static);
+            if (field != null && (field.FieldType == typeof(short) || field.FieldType == typeof(int)))
+                return Convert.ToInt32(field.GetRawConstantValue());
+            if (int.TryParse(npcName, out int raw)) return raw;
+            return 0;
+        }
+
+        /// <summary>
+        /// Resolves a stored item name back to its current runtime item type. Modded names go through
+        /// ModContent.TryFind; vanilla names are ItemID field names resolved by reflection (with a raw-int fallback).
+        /// Returns 0 if it can't be resolved.
+        /// </summary>
+        public static int ResolveItemType(string itemName)
+        {
+            if (string.IsNullOrEmpty(itemName)) return 0;
+            if (itemName.Contains('/'))
+            {
+                try
+                {
+                    if (ModContent.TryFind<ModItem>(itemName, out ModItem modItem)) return modItem.Type;
+                }
+                catch { /* mod not loaded / malformed name - fall through */ }
+                return 0;
+            }
+
+            var field = typeof(ItemID).GetField(itemName, BindingFlags.Public | BindingFlags.Static);
+            if (field != null && (field.FieldType == typeof(short) || field.FieldType == typeof(int)))
+                return Convert.ToInt32(field.GetRawConstantValue());
+            if (int.TryParse(itemName, out int raw)) return raw;
+            return 0;
+        }
+
+        /// <summary>
+        /// Whether a dynamic event should be shown/editable in the Enemy Debug Tome for the current world.
+        /// Adventure-Map-only events are hidden in a Remix world, and Remix-only events are hidden in a
+        /// classic Adventure world. Events with no world condition show everywhere.
+        /// </summary>
+        public static bool IsEventVisibleInCurrentWorld(DynamicSpawnEvent ev)
+        {
+            if (ev == null)
+                return false;
+            // Legacy events (dumped from hardcoded data) stored world type in MapCondition, not WorldCondition.
+            // Check WorldCondition first; fall back to MapCondition if it contains an Adventure/Remix token.
+            string worldCond = ev.WorldCondition;
+            if (string.IsNullOrEmpty(worldCond) &&
+                (ev.MapCondition?.Contains("OnlyAdventureMap") == true || ev.MapCondition?.Contains("RemixMap") == true))
+            {
+                worldCond = ev.MapCondition;
+            }
+            if (tsorcRevampWorld.RemixMap && worldCond?.Contains("OnlyAdventureMap") == true)
+                return false;
+            if (tsorcRevampWorld.OnlyAdventureMap && worldCond?.Contains("RemixMap") == true)
+                return false;
+            return true;
+        }
+
+        // Named (not an inline lambda) so its Method.Name survives being dumped to JSON — an anonymous lambda's
+        // compiler-generated name (e.g. "<InitializeScriptedEvents>b__11_0") can't be found by reflection on load,
+        // which silently made this condition a no-op and let the Old Man event re-spawn its NPC endlessly,
+        // duplicating alongside the one that's already there or already turned into Skeletron.
+        public static bool OldManSpawnCondition()
+        {
+            return !NPC.AnyNPCs(NPCID.OldMan) && !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3;
+        }
+
+        // Stops the "secret" Skeletron ambush once Skeletron is down, however it was defeated (this event's own
+        // spawn, or the Old Man arena). See the comment at SkeletronHiddenEvent for why this guard is needed.
+        public static bool SkeletronHiddenSpawnCondition()
+        {
+            return !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3;
+        }
+
+        // Same anonymous-lambda-name problem as OldManSpawnCondition above: this ambush should stop once Skeletron
+        // is downed, but the compiler-generated name from the old inline lambda failed to resolve on load, so the
+        // condition silently became "always true" and the guardian kept ambushing post-Skeletron.
+        public static bool PreSkeletronDungeonGuardianCondition()
+        {
+            return !NPC.downedBoss3;
+        }
 
         public static bool MarilithCustomCondition()
         {
@@ -1059,11 +1271,6 @@ namespace tsorcRevamp
             }
         }
 
-        public static bool ThoriumModOnly()
-        {
-           return (ModLoader.HasMod("ThoriumMod"));
-        }
-
         public static bool TwinEoWCustomCondition()
         {
             if (NPC.AnyNPCs(NPCID.EaterofWorldsHead) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
@@ -1074,8 +1281,7 @@ namespace tsorcRevamp
             {
                 return true;
             }
-        }
-
+        }   
         public static bool UndeadMerchantCondition()
         {
             return !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
@@ -1179,13 +1385,13 @@ namespace tsorcRevamp
         }
 
 
-        //This is an example artorias custom action. It spawns meteors and displays text every so often, and also changes the projectile damage for Artorias. Most enemies will require a very small change for their projectile damage changes to work (the word 'public' needs to be in front of the variable controlling that projectile's damage).
-        public static EventActionStatus ArtoriasCustomAction(ScriptedEvent thisEvent)
+        //This is an example custom action (using Knight of Gwyn, which carries Artorias's old FighterAI-era attack pattern). It spawns meteors and displays text every so often, and also changes the projectile damage for the NPC. Most enemies will require a very small change for their projectile damage changes to work (the word 'public' needs to be in front of the variable controlling that projectile's damage).
+        public static EventActionStatus KnightOfGwynCustomAction(ScriptedEvent thisEvent)
         {
             //Spawning meteors:
             if (Main.rand.NextBool(200))
             {
-                //UsefulFunctions.BroadcastText("Artorias rains fire from the Abyss...", Color.Gold);
+                //UsefulFunctions.BroadcastText("Knight of Gwyn rains fire from the Abyss...", Color.Gold);
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     for (int j = 0; j < 10; j++)
@@ -1197,17 +1403,17 @@ namespace tsorcRevamp
 
             //Changing projectile damage:
             //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
-            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())
+            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.KnightOfGwyn>())
             {
                 //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
-                NPCs.Bosses.SuperHardMode.Artorias ourArtorias = (NPCs.Bosses.SuperHardMode.Artorias)thisEvent.eventNPCs[0].npc.ModNPC;
+                NPCs.Enemies.SuperHardMode.KnightOfGwyn ourKnight = (NPCs.Enemies.SuperHardMode.KnightOfGwyn)thisEvent.eventNPCs[0].npc.ModNPC;
 
                 //Now we can change the damages!!
                 //Note: If you can't find the damages for a NPC, their damage stats might not be public.
                 //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case blackBreathDamage and phantomSeekerDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
-                ourArtorias.blackBreathDamage = 40;
-                ourArtorias.phantomSeekerDamage = 50;
+                ourKnight.blackBreathDamage = 40;
+                ourKnight.phantomSeekerDamage = 50;
             }
             return EventActionStatus.Continue;
         }
@@ -1300,14 +1506,14 @@ namespace tsorcRevamp
         }
 
         //RED KNIGHT PAIN CUSTOM ACTION
-        public static EventActionStatus RedKnightPainCustomAction(ScriptedEvent thisEvent)
+        public static EventActionStatus BlackKnightPainCustomAction(ScriptedEvent thisEvent)
         {
-            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
+            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
             {
-                NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.eventNPCs[0].npc.ModNPC;
-                ourRedKnightPain.redKnightsSpearDamage = 17;
-                ourRedKnightPain.redMagicDamage = 13;
-                ourRedKnightPain.redKnightsGreatDamage = 15;
+                NPCs.Enemies.BlackKnight ourBlackKnightPain = (NPCs.Enemies.BlackKnight)thisEvent.eventNPCs[0].npc.ModNPC;
+                ourBlackKnightPain.redKnightsSpearDamage = 17;
+                ourBlackKnightPain.redMagicDamage = 15;
+                ourBlackKnightPain.redKnightsGreatDamage = 19;
             }
             return EventActionStatus.EndAction;
         }
@@ -1327,7 +1533,8 @@ namespace tsorcRevamp
 
         public static EventActionStatus UndeadMerchantAction(ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 1686 * 16, 963 * 16, ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
+            Vector2 pos = ExpandedWorldTransform.MapWorld(new Vector2(1686, 963) * 16);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)pos.X, (int)pos.Y, ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
             return EventActionStatus.CompletedEvent;
         }
 
@@ -1336,18 +1543,22 @@ namespace tsorcRevamp
         public static EventActionStatus TinkererAction(ScriptedEvent thisEvent)
         {
             NPC.savedGoblin = true;
-            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), 4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
-            goblinNPC.homeTileX = 4449;
-            goblinNPC.homeTileY = 1740;
+            Vector2 pos = ExpandedWorldTransform.MapWorld(new Vector2(4456, 1744) * 16);
+            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), (int)pos.X, (int)pos.Y, NPCID.GoblinTinkerer);
+            Microsoft.Xna.Framework.Point home = ExpandedWorldTransform.MapTile(4449, 1740);
+            goblinNPC.homeTileX = home.X;
+            goblinNPC.homeTileY = home.Y;
             return EventActionStatus.CompletedEvent;
         }
 
         public static EventActionStatus FairyAction(ScriptedEvent thisEvent)
         {
             NPC.savedGoblin = true;
-            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), 7707 * 16, 1161 * 16, ModContent.NPCType<NPCs.Friendly.LonelyFairy>());
-            goblinNPC.homeTileX = 7707;
-            goblinNPC.homeTileY = 1161;
+            Vector2 pos = ExpandedWorldTransform.MapWorld(new Vector2(7707, 1161) * 16);
+            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), (int)pos.X, (int)pos.Y, ModContent.NPCType<NPCs.Friendly.LonelyFairy>());
+            Microsoft.Xna.Framework.Point home = ExpandedWorldTransform.MapTile(7707, 1161);
+            goblinNPC.homeTileX = home.X;
+            goblinNPC.homeTileY = home.Y;
             return EventActionStatus.CompletedEvent;
         }
 
@@ -1472,14 +1683,16 @@ namespace tsorcRevamp
 
         public static EventActionStatus MechanicAction(ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 277 * 16, 1366 * 16, NPCID.Mechanic);
+            Vector2 mechPos = ExpandedWorldTransform.MapWorld(new Vector2(277, 1366) * 16);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)mechPos.X, (int)mechPos.Y, NPCID.Mechanic);
             NPC.savedMech = true;
             return EventActionStatus.CompletedEvent;
         }
 
         public static EventActionStatus WizardAction(ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 7322 * 16, 603 * 16, NPCID.Wizard);
+            Vector2 wizPos = ExpandedWorldTransform.MapWorld(new Vector2(7322, 603) * 16);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)wizPos.X, (int)wizPos.Y, NPCID.Wizard);
             NPC.savedWizard = true;
             return EventActionStatus.CompletedEvent;
         }
@@ -1511,7 +1724,7 @@ namespace tsorcRevamp
                 {
                     for (int i = 0; i < Main.maxPlayers; i++)
                     {
-                        if (Main.player[i].active && Main.player[i].GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                        if (Main.player[i].active && Main.player[i].GetModPlayer<tsorcRevampPlayer>().SoulsMode)
                         {
                             Item.NewItem(new EntitySource_Misc("Scripted Event"), Main.player[i].Center, ModContent.ItemType<Items.EstusFlaskShard>());
                         }
@@ -1590,6 +1803,406 @@ namespace tsorcRevamp
             }
         }
 
+        public static List<DynamicSpawnEvent> DynamicEvents = new List<DynamicSpawnEvent>();
+
+        public static void LoadDynamicEvents()
+        {
+            EnabledEvents.RemoveAll(ev => !string.IsNullOrEmpty(ev.DynamicEventID));
+
+            string relativePath = "Content/DynamicEvents.json";
+            string fullPath = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", relativePath);
+            string json = "";
+
+            try
+            {
+                if (File.Exists(fullPath)) // Prioritize local file if developer has it
+                {
+                    json = File.ReadAllText(fullPath);
+                }
+                else
+                {
+                    var stream = ModContent.GetInstance<tsorcRevamp>().GetFileStream(relativePath);
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        json = reader.ReadToEnd();
+                    }
+                }
+            }
+            catch
+            {
+                // File doesn't exist yet, ignore
+                return;
+            }
+
+            if (string.IsNullOrEmpty(json)) return;
+
+            DynamicEvents = JsonConvert.DeserializeObject<List<DynamicSpawnEvent>>(json);
+            if (DynamicEvents == null) return;
+
+            // Coordinate-space normalization for the Expanded Adventure world.
+            // DynamicEvents.json is stored in LEGACY 2000-space (the 135 originals mirror the hardcoded events).
+            // Convert every event to the CURRENT world's runtime space right here, so ALL downstream consumers
+            // (the dedup below, the tome UI, hit-testing, and the ScriptedEvents we build) work in one consistent
+            // space. Identity on legacy/remix/sandbox. The inverse is applied on save (SerializeDynamicEventsToLegacyJson).
+            // This also fixes a duplicate-event bug: the hardcoded-vs-dynamic dedup (further down) compares
+            // dyn.CenterX against the (transformed) hardcoded centerpoint, which only matches when both are runtime-space.
+            if (ExpandedWorldTransform.Active)
+            {
+                foreach (DynamicSpawnEvent e in DynamicEvents)
+                    DynamicEventToRuntimeSpace(e);
+            }
+
+            // Deduplicate dynamic events at the exact same or very close coordinates (within 2 tiles)
+            List<DynamicSpawnEvent> uniqueEvents = new List<DynamicSpawnEvent>();
+            bool changed = false;
+            foreach (var ev in DynamicEvents)
+            {
+                bool isDuplicate = false;
+                foreach (var unique in uniqueEvents)
+                {
+                    if (Math.Abs(unique.CenterX - ev.CenterX) < 2 && Math.Abs(unique.CenterY - ev.CenterY) < 2)
+                    {
+                        isDuplicate = true;
+                        changed = true;
+                        break;
+                    }
+                }
+                if (!isDuplicate)
+                {
+                    uniqueEvents.Add(ev);
+                }
+            }
+            if (changed)
+            {
+                DynamicEvents = uniqueEvents;
+                try
+                {
+                    string cleanJson = SerializeDynamicEventsToLegacyJson();
+                    File.WriteAllText(fullPath, cleanJson);
+                }
+                catch (Exception)
+                {
+                    // Ignore startup write errors, it will save later anyway
+                }
+            }
+
+            // Resolve every entry's runtime NpcID up front, independent of whether the event is enabled this load.
+            // NpcID is normally not serialized, so this must run for ALL events (including completed ones) or the
+            // editor's sprite preview would draw nothing for them.
+            foreach (var dEvent in DynamicEvents)
+            {
+                foreach (var npc in dEvent.Npcs)
+                {
+                    if (!string.IsNullOrEmpty(npc.NpcName))
+                        npc.NpcID = ResolveNpcType(npc.NpcName);
+                    else if (npc.NpcID != 0)
+                        // Legacy entry: name missing but a stored ID survives. Backfill the name so it's stable from now on.
+                        npc.NpcName = GetNpcStableName(npc.NpcID);
+                }
+
+                if (dEvent.ExtraLootItemNames != null && dEvent.ExtraLootItemNames.Count > 0)
+                {
+                    dEvent.ExtraLootItems = new List<int>();
+                    foreach (string itemName in dEvent.ExtraLootItemNames)
+                    {
+                        dEvent.ExtraLootItems.Add(ResolveItemType(itemName));
+                    }
+                }
+                else if (dEvent.ExtraLootItems != null)
+                {
+                    dEvent.ExtraLootItemNames = new List<string>();
+                    foreach (int itemType in dEvent.ExtraLootItems)
+                    {
+                        dEvent.ExtraLootItemNames.Add(GetItemStableName(itemType));
+                    }
+                }
+            }
+
+            foreach (var dEvent in DynamicEvents)
+            {
+                // If it's saved as completed and not repeatable, don't add it.
+                if (dEvent.SaveOnCompletion && tsorcRevampWorld.CompletedDynamicEvents.Contains(dEvent.EventID))
+                    continue;
+
+                // Resolve conditions and actions via reflection.
+                // The World condition (Adventure/Remix/Always) and the Spawn condition are evaluated
+                // independently and ANDed together, so an event can be e.g. "Adventure Map Only" + "Hardmode Only".
+                Func<bool> worldCondition = null;
+                if (!string.IsNullOrEmpty(dEvent.WorldCondition))
+                {
+                    var method = typeof(tsorcScriptedEvents).GetMethod(dEvent.WorldCondition, BindingFlags.Public | BindingFlags.Static);
+                    if (method != null)
+                        worldCondition = (Func<bool>)Delegate.CreateDelegate(typeof(Func<bool>), method);
+                }
+
+                Func<bool> spawnCondition = null;
+                if (!string.IsNullOrEmpty(dEvent.MapCondition))
+                {
+                    var method = typeof(tsorcScriptedEvents).GetMethod(dEvent.MapCondition, BindingFlags.Public | BindingFlags.Static);
+                    if (method != null)
+                        spawnCondition = (Func<bool>)Delegate.CreateDelegate(typeof(Func<bool>), method);
+                }
+
+                Func<bool> condition = () => (worldCondition == null || worldCondition()) && (spawnCondition == null || spawnCondition());
+
+                Func<ScriptedEvent, EventActionStatus> action = null;
+                if (!string.IsNullOrEmpty(dEvent.CustomAction))
+                {
+                    var method = typeof(tsorcScriptedEvents).GetMethod(dEvent.CustomAction, BindingFlags.Public | BindingFlags.Static);
+                    if (method != null)
+                        action = (Func<ScriptedEvent, EventActionStatus>)Delegate.CreateDelegate(typeof(Func<ScriptedEvent, EventActionStatus>), method);
+                }
+
+                // NpcIDs were already resolved from NpcName in the pass above; just collect them here.
+                List<int> npcTypes = new List<int>();
+                List<Vector2> npcCoords = new List<Vector2>();
+                foreach (var npc in dEvent.Npcs)
+                {
+                    npcTypes.Add(npc.NpcID);
+                    npcCoords.Add(new Vector2(npc.SpawnX, npc.SpawnY));
+                }
+
+                // Construct ScriptedEvent.
+                // applyWorldTransform: false — by this point dEvent's coords have ALREADY been normalized to the
+                // current world's runtime space (see the normalization block right after deserialize in this method),
+                // so the ScriptedEvent must NOT transform them again. Save inverts back to legacy for the file.
+                ScriptedEvent newEvent = new ScriptedEvent(
+                    new Vector2(dEvent.CenterX, dEvent.CenterY),
+                    (float)System.Math.Sqrt(dEvent.Radius) / 16f,
+                    npcTypes,
+                    npcCoords,
+                    dEvent.TriggerDust,
+                    dEvent.SaveOnCompletion,
+                    dEvent.VisibleRing,
+                    false, // bossEvent
+                    string.IsNullOrEmpty(dEvent.TextToDisplay) ? "default" : dEvent.TextToDisplay,
+                    ParseColor(dEvent.TextColorHex),
+                    dEvent.Square,
+                    condition,
+                    action,
+                    applyWorldTransform: false
+                );
+
+                for (int i = 0; i < dEvent.Npcs.Count; i++)
+                {
+                    var npc = dEvent.Npcs[i];
+                    if (npc.CustomHealth.HasValue || npc.CustomDamage.HasValue || npc.CustomDefense.HasValue || npc.CustomSouls.HasValue)
+                    {
+                        newEvent.SetCustomStatsForOne(i, npc.CustomHealth, npc.CustomDefense, npc.CustomDamage, npc.CustomSouls);
+                    }
+                }
+
+                if (dEvent.ExtraLootItems != null && dEvent.ExtraLootAmounts != null && dEvent.ExtraLootItems.Count == dEvent.ExtraLootAmounts.Count)
+                {
+                    newEvent.SetCustomDrops(dEvent.ExtraLootItems, dEvent.ExtraLootAmounts, true);
+                }
+                
+                // Track the EventID internally so we can save it on completion!
+                newEvent.DynamicEventID = dEvent.EventID;
+
+                EnabledEvents.Add(newEvent);
+            }
+
+            // Remove any hardcoded events from EnabledEvents that have a corresponding dynamic event (within 2 tiles)
+            EnabledEvents.RemoveAll(hardcoded => {
+                if (!string.IsNullOrEmpty(hardcoded.DynamicEventID)) return false;
+                foreach (var dyn in DynamicEvents)
+                {
+                    float dx = Math.Abs(dyn.CenterX - (hardcoded.centerpoint.X / 16f));
+                    float dy = Math.Abs(dyn.CenterY - (hardcoded.centerpoint.Y / 16f));
+                    if (dx < 2 && dy < 2)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+        
+        // ---- Expanded-world coordinate-space helpers for dynamic events ----------------------------------------
+        // In-memory dynamic events are kept in the CURRENT world's runtime space; the JSON file is always LEGACY
+        // 2000-space. These convert between the two. Identity on non-expanded worlds (MapTile/InverseMapTile no-op).
+
+        private static void DynamicEventToRuntimeSpace(DynamicSpawnEvent e)
+        {
+            Vector2 c = ExpandedWorldTransform.MapTile(new Vector2(e.CenterX, e.CenterY));
+            e.CenterX = c.X; e.CenterY = c.Y;
+            if (e.Npcs != null)
+                foreach (DynamicSpawnEntry n in e.Npcs)
+                {
+                    Vector2 s = ExpandedWorldTransform.MapTile(new Vector2(n.SpawnX, n.SpawnY));
+                    n.SpawnX = s.X; n.SpawnY = s.Y;
+                }
+        }
+
+        private static void DynamicEventToLegacySpace(DynamicSpawnEvent e)
+        {
+            Vector2 c = ExpandedWorldTransform.InverseMapTile(new Vector2(e.CenterX, e.CenterY));
+            e.CenterX = c.X; e.CenterY = c.Y;
+            if (e.Npcs != null)
+                foreach (DynamicSpawnEntry n in e.Npcs)
+                {
+                    Vector2 s = ExpandedWorldTransform.InverseMapTile(new Vector2(n.SpawnX, n.SpawnY));
+                    n.SpawnX = s.X; n.SpawnY = s.Y;
+                }
+        }
+
+        // Serialize the (runtime-space) in-memory DynamicEvents to LEGACY-space JSON for on-disk storage.
+        // Temporarily converts to legacy, serializes, then restores runtime (try/finally so a serialize error
+        // can't leave the in-memory list in legacy space). No-op conversion on non-expanded worlds.
+        private static string SerializeDynamicEventsToLegacyJson()
+        {
+            if (!ExpandedWorldTransform.Active)
+                return JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+
+            foreach (DynamicSpawnEvent e in DynamicEvents) DynamicEventToLegacySpace(e);
+            try
+            {
+                return JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+            }
+            finally
+            {
+                foreach (DynamicSpawnEvent e in DynamicEvents) DynamicEventToRuntimeSpace(e);
+            }
+        }
+
+        public static void SaveDynamicEvents()
+        {
+            string relativePath = "Content/DynamicEvents.json";
+            string fullPath = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", relativePath);
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+                string json = SerializeDynamicEventsToLegacyJson();
+                File.WriteAllText(fullPath, json);
+                LoadDynamicEvents();
+
+                // Re-link the UI's CurrentEvent reference to the newly loaded object instance
+                var configUI = ModContent.GetInstance<tsorcRevamp>().SpawnPointConfigUI;
+                if (configUI != null && configUI.CurrentEvent != null)
+                {
+                    var newEvent = DynamicEvents.Find(ev => ev.EventID == configUI.CurrentEvent.EventID);
+                    if (newEvent != null)
+                    {
+                        configUI.CurrentEvent = newEvent;
+                        // Reload replaced every entry object too; rebind the edit panel to the live NPC entry
+                        // so subsequent stat keystrokes persist instead of editing an orphaned instance.
+                        configUI.RebindEditingNpc();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Error("Failed to save DynamicEvents.json: " + ex.Message);
+            }
+        }
+
+        public static Color ParseColor(string hex)
+        {
+            // Default to white (not transparent black) so events with no saved color show readable spawn text.
+            if (string.IsNullOrEmpty(hex)) return Color.White;
+            if (hex.StartsWith("#")) hex = hex.Substring(1);
+            if (hex.Length != 6 && hex.Length != 8) return Color.White;
+            byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+            byte a = 255;
+            if (hex.Length == 8) a = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+            return new Color(r, g, b, a);
+        }
+
+        public static void DumpOldEventsToJson()
+        {
+            int addedCount = 0;
+            foreach (var pair in ScriptedEventDict)
+            {
+                var ev = pair.Value;
+                
+                // Try to prevent dumping identical events if the user runs this multiple times.
+                // If the event already exists, backfill any missing NpcName values (e.g. from a pre-fix dump).
+                DynamicSpawnEvent existingEvent = null;
+                foreach (var existing in DynamicEvents)
+                {
+                    if (existing.CenterX == (int)(ev.centerpoint.X / 16) && existing.CenterY == (int)(ev.centerpoint.Y / 16) && existing.Radius == ev.radius)
+                    {
+                        existingEvent = existing;
+                        break;
+                    }
+                }
+                if (existingEvent != null)
+                {
+                    if (ev.eventNPCs != null)
+                    {
+                        int count = Math.Min(existingEvent.Npcs.Count, ev.eventNPCs.Count);
+                        for (int i = 0; i < count; i++)
+                        {
+                            string existing = existingEvent.Npcs[i].NpcName;
+                            // Backfill if missing OR unresolvable. A whitespace check ("Eye of Cthulhu") isn't
+                            // reliable — some old display names are a single word that just happens to differ from
+                            // the real NPCID field name (e.g. "Skeletron" the display name vs "SkeletronHead" the
+                            // field), so actually try to resolve it against ground truth instead of guessing.
+                            if (string.IsNullOrEmpty(existing) || ResolveNpcType(existing) == 0)
+                                existingEvent.Npcs[i].NpcName = GetNpcStableName(ev.eventNPCs[i].type);
+                            // Fix NpcID=0 entries (mod wasn't loaded at first dump time, e.g. Thorium events).
+                            if (existingEvent.Npcs[i].NpcID == 0 && ev.eventNPCs[i].type != 0)
+                                existingEvent.Npcs[i].NpcID = ev.eventNPCs[i].type;
+                        }
+                    }
+                    // Fix compiler-generated condition names (anonymous lambdas whose Method.Name contains "b__").
+                    if (existingEvent.MapCondition?.Contains("b__") == true && ev.condition?.Method != null)
+                        existingEvent.MapCondition = ev.condition.Method.Name;
+                    continue;
+                }
+
+                var dynamicEvent = new DynamicSpawnEvent();
+                dynamicEvent.EventID = Guid.NewGuid().ToString();
+                dynamicEvent.CenterX = (int)(ev.centerpoint.X / 16);
+                dynamicEvent.CenterY = (int)(ev.centerpoint.Y / 16);
+                dynamicEvent.Radius = ev.radius;
+                dynamicEvent.Square = ev.square;
+                dynamicEvent.TriggerDust = ev.dustID;
+                dynamicEvent.VisibleRing = ev.visible;
+                dynamicEvent.SaveOnCompletion = ev.save;
+                dynamicEvent.TextToDisplay = ev.eventText;
+                dynamicEvent.TextColorHex = $"{ev.eventTextColor.R:X2}{ev.eventTextColor.G:X2}{ev.eventTextColor.B:X2}{ev.eventTextColor.A:X2}";
+                
+                if (ev.condition != null && ev.condition.Method != null)
+                    dynamicEvent.MapCondition = ev.condition.Method.Name;
+                if (ev.CustomAction != null && ev.CustomAction.Method != null)
+                    dynamicEvent.CustomAction = ev.CustomAction.Method.Name;
+
+                if (ev.eventNPCs != null)
+                {
+                    foreach (var npc in ev.eventNPCs)
+                    {
+                        var dynamicNpc = new DynamicSpawnEntry();
+                        dynamicNpc.NpcID = npc.type;
+                        dynamicNpc.NpcName = GetNpcStableName(npc.type);
+                        dynamicNpc.SpawnX = npc.spawnCoords.X;
+                        dynamicNpc.SpawnY = npc.spawnCoords.Y;
+                        dynamicNpc.CustomHealth = npc.customHealth;
+                        dynamicNpc.CustomDamage = npc.customDamage;
+                        dynamicNpc.CustomDefense = npc.customDefense;
+                        dynamicNpc.CustomSouls = npc.customSouls;
+                        dynamicEvent.Npcs.Add(dynamicNpc);
+                    }
+                }
+
+                if (ev.FinalNPCCustomDrops != null && ev.FinalNPCDropAmounts != null)
+                {
+                    dynamicEvent.ExtraLootItems = new List<int>(ev.FinalNPCCustomDrops);
+                    dynamicEvent.ExtraLootItemNames = ev.FinalNPCCustomDrops.Select(GetItemStableName).ToList();
+                    dynamicEvent.ExtraLootAmounts = new List<int>(ev.FinalNPCDropAmounts);
+                }
+
+                DynamicEvents.Add(dynamicEvent);
+                addedCount++;
+            }
+
+            SaveDynamicEvents();
+            UsefulFunctions.BroadcastText($"Dumped {addedCount} events to JSON.");
+        }
+
         //Experimenting with spreading the checks out over a long period so each one isn't running every tick
         //Counts up each time PlayerScriptedEventCheck is called (aka every tick)
         //int tick = 0;
@@ -1613,93 +2226,103 @@ namespace tsorcRevamp
                 }
 
                 //Check if the player is in range of any inactive events
-                for (int i = 0; i < EnabledEvents.Count; i++)
+                if (Main.player[index].HeldItem.type != ModContent.ItemType<Items.Debug.EnemyDebugTome>())
                 {
-                    if (EnabledEvents[i].condition())
+                    for (int i = 0; i < EnabledEvents.Count; i++)
                     {
-                        float distance = Vector2.DistanceSquared(Main.player[index].position, EnabledEvents[i].centerpoint);
-
-                        if (distance < EnabledEvents[i].radius * 6 && !Main.player[index].dead && EnabledEvents[i].bossEvent && !EnabledEvents[i].disablePeaceCandle)
+                        if (EnabledEvents[i].condition())
                         {
-                            Main.player[index].AddBuff(BuffID.PeaceCandle, 30, false);
-                        }
+                            float distance = Vector2.DistanceSquared(Main.player[index].position, EnabledEvents[i].centerpoint);
 
-                        if (!EnabledEvents[i].square)
-                        {
-
-                            //If the player is nearby, display some dust to make the region visible to them
-                            //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
-                            if (EnabledEvents[i].eventNPCs != null)
+                            if (distance < EnabledEvents[i].radius * 6 && !Main.player[index].dead && EnabledEvents[i].bossEvent && !EnabledEvents[i].disablePeaceCandle)
                             {
-                                if ((EnabledEvents[i].visible && distance < 6000000) || EnabledEvents[i].eventNPCs[0].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000
-                                        || EnabledEvents[i].eventNPCs[0].type == NPCID.HallowBoss && distance < 50000000)
+                                Main.player[index].AddBuff(BuffID.PeaceCandle, 30, false);
+                            }
+
+                            if (!EnabledEvents[i].square)
+                            {
+
+                                //If the player is nearby, display some dust to make the region visible to them
+                                //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
+                                if (EnabledEvents[i].eventNPCs != null && EnabledEvents[i].eventNPCs.Count > 0)
                                 {
-                                    //Add the event to the list of events that need to be synced to clients. These will be sent to the client once we're done here.
-                                    if (Main.netMode == NetmodeID.Server && EnabledEvents[i].visible)
+                                    if ((EnabledEvents[i].visible && distance < 6000000) || EnabledEvents[i].eventNPCs[0].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000
+                                            || EnabledEvents[i].eventNPCs[0].type == NPCID.HallowBoss && distance < 50000000)
                                     {
-                                        bool duplicate = false;
-                                        for (int j = 0; j < NetworkEvents.Count; j++)
+                                        //Add the event to the list of events that need to be synced to clients. These will be sent to the client once we're done here.
+                                        if (Main.netMode == NetmodeID.Server && EnabledEvents[i].visible)
                                         {
-                                            if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
+                                            bool duplicate = false;
+                                            for (int j = 0; j < NetworkEvents.Count; j++)
                                             {
-                                                duplicate = true;
+                                                if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
+                                                {
+                                                    duplicate = true;
+                                                }
+                                            }
+
+                                            if (!duplicate)
+                                            {
+                                                NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, false));
                                             }
                                         }
 
-                                        if (!duplicate)
+                                        DrawCircularEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
+                                    }
+                                }
+
+                                if (distance < EnabledEvents[i].radius && !Main.player[index].dead)
+                                {
+                                    // NPC events burst dust at spawn time (end of the telegraph) instead of here at trigger.
+                                    if (EnabledEvents[i].visible && EnabledEvents[i].noNPCEvent)
+                                    {
+                                        for (int j = 0; j < 100; j++)
                                         {
-                                            NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, false));
+                                            Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                        }
+                                    }
+                                    RunningEvents.Add(EnabledEvents[i]);
+                                    EnabledEvents.RemoveAt(i);
+                                    i--;
+                                }
+                            }
+                            //Do the same thing, but square
+                            else
+                            {
+                                if (EnabledEvents[i].visible && distance < 6000000)
+                                {
+                                    bool duplicate = false;
+                                    for (int j = 0; j < NetworkEvents.Count; j++)
+                                    {
+                                        if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
+                                        {
+                                            duplicate = true;
+                                        }
+                                    }
+                                    if (!duplicate)
+                                    {
+                                        NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, true));
+                                    }
+
+                                    DrawSquareEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
+                                }
+
+                                float sqrtRadius = (float)Math.Sqrt(EnabledEvents[i].radius);
+                                if (!Main.player[index].dead && (Math.Abs(Main.player[index].position.X - EnabledEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(Main.player[index].position.Y - EnabledEvents[i].centerpoint.Y) < sqrtRadius))
+                                {
+                                    // NPC events burst dust at spawn time (end of the telegraph) instead of here at trigger.
+                                    if (EnabledEvents[i].noNPCEvent)
+                                    {
+                                        for (int j = 0; j < 100; j++)
+                                        {
+                                            Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
                                         }
                                     }
 
-                                    DrawCircularEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
+                                    RunningEvents.Add(EnabledEvents[i]);
+                                    EnabledEvents.RemoveAt(i);
+                                    i--;
                                 }
-                            }
-
-                            if (distance < EnabledEvents[i].radius && !Main.player[index].dead)
-                            {
-                                if (EnabledEvents[i].visible)
-                                {
-                                    for (int j = 0; j < 100; j++)
-                                    {
-                                        Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
-                                    }
-                                }
-                                RunningEvents.Add(EnabledEvents[i]);
-                                EnabledEvents.RemoveAt(i);
-                            }
-                        }
-                        //Do the same thing, but square
-                        else
-                        {
-                            if (EnabledEvents[i].visible && distance < 6000000)
-                            {
-                                bool duplicate = false;
-                                for (int j = 0; j < NetworkEvents.Count; j++)
-                                {
-                                    if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
-                                    {
-                                        duplicate = true;
-                                    }
-                                }
-                                if (!duplicate)
-                                {
-                                    NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, true));
-                                }
-
-                                DrawSquareEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
-                            }
-
-                            float sqrtRadius = (float)Math.Sqrt(EnabledEvents[i].radius);
-                            if (!Main.player[index].dead && (Math.Abs(Main.player[index].position.X - EnabledEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(Main.player[index].position.Y - EnabledEvents[i].centerpoint.Y) < sqrtRadius))
-                            {
-                                for (int j = 0; j < 100; j++)
-                                {
-                                    Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
-                                }
-
-                                RunningEvents.Add(EnabledEvents[i]);
-                                EnabledEvents.RemoveAt(i);
                             }
                         }
                     }
@@ -1741,7 +2364,7 @@ namespace tsorcRevamp
             }
 
             //Run any active events
-            for (int i = 0; i < RunningEvents.Count; i++)
+            for (int i = RunningEvents.Count - 1; i >= 0; i--)
             {
                 RunningEvents[i].RunEvent();
             }
@@ -2004,6 +2627,7 @@ namespace tsorcRevamp
     //Class to keep each scripted event encapsulated
     public class ScriptedEvent
     {
+        public string DynamicEventID { get; set; } = null;
         //Condition controls when the event an occur. If it's false, the event will not run.
         //For example, if you only want an event to run in superhardmode, you'd pass tsorcRevampMain.SuperHardMode as condition
         //If you only wanted it to occur between certain times, you would pass (Main.time > 0700 && Main.time < 1800), for example.
@@ -2115,7 +2739,7 @@ namespace tsorcRevamp
         {
             get
             {
-                if (eventNPCs == null)
+                if (eventNPCs == null || eventNPCs.Count == 0)
                 {
                     return true;
                 }
@@ -2171,13 +2795,36 @@ namespace tsorcRevamp
             ConstructScriptedEvent(rangeCenterpoint, rangeRadius, npcList, npcCoords, DustType, saveEvent, visibleRange, bossEvent, flavorText, flavorTextColor, squareRange, customCondition, customAction);
         }
 
-        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs = null, List<Vector2> coords = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null)
+        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs = null, List<Vector2> coords = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null, bool applyWorldTransform = true)
         {
-            ConstructScriptedEvent(rangeCenterpoint, rangeRadius, npcs, coords, DustType, saveEvent, visibleRange, bossEvent, flavorText, flavorTextColor, squareRange, customCondition, customAction);
+            ConstructScriptedEvent(rangeCenterpoint, rangeRadius, npcs, coords, DustType, saveEvent, visibleRange, bossEvent, flavorText, flavorTextColor, squareRange, customCondition, customAction, applyWorldTransform);
         }
 
-        public void ConstructScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs = null, List<Vector2> coords = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null)
+        public void ConstructScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs = null, List<Vector2> coords = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null, bool applyWorldTransform = true)
         {
+            //Expanded Adventure (2400-tall) coordinate transform. Hardcoded events pass their coords in LEGACY
+            //(2000-space), so route them through ExpandedWorldTransform: identity on legacy/remix/sandbox (inactive),
+            //+200/+400 on the expanded world. World-gated, so shared events (no map condition) and remix events
+            //auto-resolve correctly — remix events only run on the 2000-tall remix world where the transform is identity.
+            //TWO exclusions:
+            //  (1) applyWorldTransform == false: DYNAMIC / tome-authored events. These are authored in-place on the
+            //      current world, so their stored coords are ALREADY in that world's space. Transforming them would
+            //      double-shift (e.g. a WitchKing dynamic event saved at 2195 would reload at 2595).
+            //  (2) expandedNative: hardcoded events gated ExpandedAdventureMapCondition are authored directly in
+            //      2400-space and likewise must not be shifted.
+            bool expandedNative = customCondition == tsorcScriptedEvents.ExpandedAdventureMapCondition || customCondition == tsorcScriptedEvents.ExpandedAdventureMapConditionSHM;
+            if (applyWorldTransform && !expandedNative)
+            {
+                rangeCenterpoint = ExpandedWorldTransform.MapTile(rangeCenterpoint);
+                if (coords != null)
+                {
+                    for (int i = 0; i < coords.Count; i++)
+                    {
+                        coords[i] = ExpandedWorldTransform.MapTile(coords[i]);
+                    }
+                }
+            }
+
             rangeDetectionMode = true;
             //Player position is stored as 16 times block distances
             centerpoint = rangeCenterpoint * 16;
@@ -2262,13 +2909,9 @@ namespace tsorcRevamp
         //Runs the event
         public void RunEvent()
         {
-            //If this is its first time running, spawn the NPC's and display the text
+            //If this is its first time running, display the text
             if (eventTimer == 0)
             {
-                if (!noNPCEvent)
-                {
-                    SpawnNPCs();
-                }
                 if (eventText != "default")
                 {
                     UsefulFunctions.BroadcastText(eventText, eventTextColor);
@@ -2287,11 +2930,46 @@ namespace tsorcRevamp
                 }
             }
 
-            //If it has a custom action, then run it
+            // Fill spawn area with smoke dust warning effect for 1 second (60 frames) before actual spawn
+            if (!noNPCEvent && eventTimer < 60)
+            {
+                for (int j = 0; j < eventNPCs.Count; j++)
+                {
+                    // Size the smoke cloud to the NPC's bounding box (×1.25) so the telegraph matches the enemy that appears.
+                    NPC sizeRef = new NPC();
+                    sizeRef.SetDefaults(eventNPCs[j].type);
+                    int boxW = (int)(sizeRef.width * 1.25f);
+                    int boxH = (int)(sizeRef.height * 1.25f);
+
+                    // NPC.NewNPC places the sprite centered horizontally and bottom-aligned at (spawnCoords*16).
+                    Vector2 spawnBottom = new Vector2(eventNPCs[j].spawnCoords.X * 16, eventNPCs[j].spawnCoords.Y * 16);
+                    Vector2 boxTopLeft = spawnBottom - new Vector2(boxW / 2f, boxH);
+                    float dustScale = MathHelper.Clamp(System.Math.Max(boxW, boxH) / 32f, 1f, 3f);
+
+                    for (int k = 0; k < 2; k++)
+                    {
+                        int dust = Dust.NewDust(boxTopLeft, boxW, boxH, DustID.Smoke, 0f, 0f, 100, Color.LightGray, dustScale);
+                        Main.dust[dust].velocity *= 0.4f;
+                        Main.dust[dust].velocity.Y -= 0.6f; // float up slightly
+                        Main.dust[dust].noGravity = true;
+                    }
+                }
+            }
+
+            // Spawn the NPCs after the 1-second warning effect
+            if (eventTimer == 60)
+            {
+                if (!noNPCEvent)
+                {
+                    SpawnNPCs();
+                }
+            }
+
+            //If it has a custom action, then run it (ensure NPCs have spawned first if applicable)
             //If it returns EndAction, mark its action as finished and do not run it again
             //If it returns FailedEvent then immediately mark the event as failed and end it
             //If it returns CompletedEvent then immediately mark the event as completed and end it
-            if (hasCustomAction && !finishedCustomAction)
+            if (hasCustomAction && !finishedCustomAction && (noNPCEvent || eventTimer >= 60))
             {
                 EventActionStatus status = CustomAction(this);
                 if (status == EventActionStatus.EndAction)
@@ -2313,9 +2991,9 @@ namespace tsorcRevamp
             //Updates timer *after* running actions
             eventTimer++;
 
-            //Only perform these checks if an event has NPCs
+            //Only perform these checks if an event has NPCs and they have actually spawned
             //No NPC events must be ended by their actions
-            if (!noNPCEvent)
+            if (!noNPCEvent && eventTimer > 60)
             {
                 if (!bossEvent)
                 {
@@ -2354,6 +3032,14 @@ namespace tsorcRevamp
                         else
                         {
                             //If they aren't marked as killed by a player, but also are dead or the wrong type, then they despawned. End the event as failed.
+                            // Skip the diagnostic for SelfDeactivatingNPCs (Marilith/Prime intros, etc.) — their
+                            // active=false here is the intentional transform-into-boss trigger, not a real despawn,
+                            // so this branch firing for them is expected and not worth alarming the player about.
+                            if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode && !tsorcRevamp.SelfDeactivatingNPCs.Contains(eventNPCs[i].type))
+                            {
+                                Main.NewText($"[Event] Torn down: NPC #{i} (type {eventNPCs[i].type}) " +
+                                    $"active={eventNPCs[i].npc.active}, type now {eventNPCs[i].npc.type}", Color.Orange);
+                            }
                             EndEvent(false);
                             return;
                         }
@@ -2372,12 +3058,39 @@ namespace tsorcRevamp
         {
             for (int i = 0; i < eventNPCs.Count; i++)
             {
+                // Diagnostic: a type of 0 means the NpcName failed to resolve; the "spawn" would be a no-op.
+                if (eventNPCs[i].type == 0)
+                {
+                    if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                        Main.NewText($"[Event] NPC #{i} failed to resolve (type 0) — check its NpcName in DynamicEvents.json", Color.OrangeRed);
+                    continue;
+                }
+
                 eventNPCs[i].index = NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)eventNPCs[i].spawnCoords.X * 16, (int)eventNPCs[i].spawnCoords.Y * 16, eventNPCs[i].type);
+
+                if (eventNPCs[i].index >= Main.maxNPCs)
+                {
+                    if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                        Main.NewText($"[Event] NPC.NewNPC failed for type {eventNPCs[i].type} (no free slot)", Color.OrangeRed);
+                    continue;
+                }
 
                 NPC thisNPC = eventNPCs[i].npc;
 
+                // Burst of trigger dust as the enemy materializes — the payoff at the end of the smoke telegraph.
+                // (The old burst fired at trigger time; it now coincides with the actual spawn.)
+                for (int d = 0; d < 50; d++)
+                {
+                    Dust.NewDustPerfect(thisNPC.Center, dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3).noGravity = true;
+                }
+
                 thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventOwner = this;
                 thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventIndex = i;
+
+                // Keep event NPCs from despawning on their own (e.g. dungeon/surface enemies fleeing at dawn via
+                // timeLeft). CheckActive blocks the distance-based despawn, but not timeLeft. If even one event NPC
+                // despawns, the all-or-nothing alive check tears the whole (multi-NPC) event down — so pin them.
+                thisNPC.timeLeft = int.MaxValue;
 
                 if (eventNPCs[i].customHealth != null)
                 {
@@ -2386,11 +3099,15 @@ namespace tsorcRevamp
                 }
                 if (eventNPCs[i].customDefense != null)
                 {
+                    // Set the default backing field too: mod code (debuffs, scaling) recomputes npc.defense from
+                    // npc.defDefense, which would otherwise reset the custom value back to the vanilla base.
                     thisNPC.defense = eventNPCs[i].customDefense.Value;
+                    thisNPC.defDefense = eventNPCs[i].customDefense.Value;
                 }
                 if (eventNPCs[i].customDamage != null)
                 {
                     thisNPC.damage = eventNPCs[i].customDamage.Value;
+                    thisNPC.defDamage = eventNPCs[i].customDamage.Value;
                 }
                 if (eventNPCs[i].customSouls != null)
                 {
@@ -2420,20 +3137,29 @@ namespace tsorcRevamp
             {
                 if (save)
                 {
-                    foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
+                    if (DynamicEventID != null)
                     {
-                        if (pair.Value == this)
+                        tsorcRevampWorld.CompletedDynamicEvents.Add(DynamicEventID);
+                    }
+                    else
+                    {
+                        foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
                         {
-                            tsorcScriptedEvents.ScriptedEventValues[pair.Key] = true;
+                            if (pair.Value == this)
+                            {
+                                tsorcScriptedEvents.ScriptedEventValues[pair.Key] = true;
+                            }
                         }
                     }
                 }
                 else
                 {
-                    tsorcScriptedEvents.QueuedEvents.Add(this);
+                    // Non-permanent event completed: park in DisabledEvents until the player dies and respawns.
+                    // QueuedEvents auto-restores after a 5-second timer which is too fast for Dark Souls intent.
+                    tsorcScriptedEvents.DisabledEvents.Add(this);
                 }
             }
-            //Otherwise if it wasn't completed, then despawn the NPC's and re-add it to DisabledEvents to be re-initialized once the player respawns
+            //Otherwise if it wasn't completed, then despawn the NPC's and re-add it to QueuedEvents to be re-initialized once the player respawns
             else
             {
                 tsorcScriptedEvents.QueuedEvents.Add(this);
@@ -2559,4 +3285,51 @@ namespace tsorcRevamp
         CompletedEvent
     }
 
+    public class DynamicSpawnEntry
+    {
+        // Resolved from NpcName each load. Normally NOT written to JSON (avoids modded-ID drift across builds),
+        // but IS written as a fallback when NpcName is missing so a legacy entry never loses its identity.
+        public int NpcID { get; set; }
+        public bool ShouldSerializeNpcID() => string.IsNullOrEmpty(NpcName);
+
+        /// <summary>Stable identifier. Modded: "tsorcRevamp/LeonhardPhase1". Vanilla: NPCID field name e.g. "EyeofCthulhu". Resolved to a runtime ID by LoadDynamicEvents.</summary>
+        public string NpcName { get; set; }
+        public float SpawnX { get; set; }
+        public float SpawnY { get; set; }
+        public int? CustomHealth { get; set; }
+        public int? CustomDamage { get; set; }
+        public int? CustomDefense { get; set; }
+        public int? CustomSouls { get; set; }
+    }
+
+    public class DynamicSpawnEvent
+    {
+        public string EventID { get; set; }
+        public float CenterX { get; set; }
+        public float CenterY { get; set; }
+        public float Radius { get; set; }
+        public bool Square { get; set; }
+        public int TriggerDust { get; set; }
+        public bool VisibleRing { get; set; }
+        public bool SaveOnCompletion { get; set; }
+        public string TextToDisplay { get; set; }
+        public string TextColorHex { get; set; }
+        // World-level gate (Adventure Map Only / Remix Map Only / "" = Always). ANDed with MapCondition at runtime.
+        public string WorldCondition { get; set; }
+        // Spawn condition (progression / time-of-day gate). "" = None (no extra restriction).
+        public string MapCondition { get; set; }
+        public string CustomAction { get; set; }
+        // True for "Quick Add" events: a single NPC acts as the event marker/center (no book icon drawn),
+        // and the event is locked to exactly one NPC.
+        public bool SingleNpcMarker { get; set; }
+        public List<DynamicSpawnEntry> Npcs { get; set; } = new List<DynamicSpawnEntry>();
+
+        // Optional custom drops, mostly used for simple single-item drops.
+        public List<int> ExtraLootItems { get; set; }
+        public bool ShouldSerializeExtraLootItems() => ExtraLootItems != null && (ExtraLootItemNames == null || ExtraLootItemNames.Count == 0);
+        public List<string> ExtraLootItemNames { get; set; }
+        public bool ShouldSerializeExtraLootItemNames() => ExtraLootItemNames != null && ExtraLootItemNames.Count > 0;
+        public List<int> ExtraLootAmounts { get; set; }
+        public bool ShouldSerializeExtraLootAmounts() => ExtraLootAmounts != null;
+    }
 }

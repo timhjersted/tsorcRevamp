@@ -2,12 +2,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Audio;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
@@ -59,6 +61,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.knockBackResist = 0f;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.DespawnHandler"), Color.DarkRed, DustID.Firework_Red);
         }
+
+        // Oolacile was the town consumed by the Abyss - fitting for its own abysmal sorcerer to curse everyone
+        // present the moment the fight begins, lasting the whole fight and then some (30 minutes).
+        public override void OnSpawn(IEntitySource source)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    Main.player[i].AddBuff(ModContent.BuffType<Abyss>(), 30 * 60 * 60);
+                }
+            }
+        }
+
         public float DarkBeadShotTimer
         {
             get => NPC.ai[0];
@@ -137,7 +158,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                SpawnNPCs();
                 FireProjectiles();
             }
 
@@ -148,53 +168,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             OolacileTeleport();
-        }
-
-        public void SpawnNPCs()
-        {
-            NPCSpawningTimer++;
-            NPCSpawningTimer2++;
-            //NPCSpawningTimer += (Main.rand.Next(2, 5) * 0.1f);
-            if (NPCSpawningTimer >= 10f)
-            {
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.OolacileDemon>()) < 3) && Main.rand.NextBool(1500))
-                {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileDemon>(), 0);
-                    Main.npc[Spawned].velocity.Y = -8;
-                    Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                    if (Main.netMode == 2)
-                    {
-                        NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-
-                    }
-                }
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.NextBool(1800))
-                {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
-                    Main.npc[Spawned].velocity.Y = -8;
-                    Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                    NPCSpawningTimer = 0;
-                    if (Main.netMode == 2)
-                    {
-                        NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                    }
-                }
-
-            }
-            if (NPCSpawningTimer2 >= 6000f)
-            {
-                if (NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.OolacileSorcerer>()) < 1)
-                {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileSorcerer>(), 0);
-                    Main.npc[Spawned].velocity.Y = -8;
-                    Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                    NPCSpawningTimer2 = 0;
-                    if (Main.netMode == 2)
-                    {
-                        NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                    }
-                }
-            }
         }
 
         public void FireProjectiles()
@@ -401,7 +374,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 1, 2));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 5, 8));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<OolacileDarkMatter>(), 1, 3, 6));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulOfOccultist>(), 1, 3, 6));
             npcLoot.Add(notExpertCondition);
         }
 

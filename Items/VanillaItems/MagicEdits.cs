@@ -42,12 +42,17 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.RainbowGun)
             {
-                item.DamageType = DamageClass.MagicSummonHybrid;
+                item.DamageType = DamageClass.MagicSummonHybrid; 
             }
 
+            if (item.type == ItemID.BeeGun)
+            {
+                item.damage = 8; //vanilla 9
+                item.mana = 7;
+            }
             if (item.type == ItemID.FairyQueenMagicItem)
             {
-                item.damage = 35; //vanilla 50
+                item.damage = 40; //vanilla 50
             }
             if (item.type == ItemID.SparkleGuitar)
             {

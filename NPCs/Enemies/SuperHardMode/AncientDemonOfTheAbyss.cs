@@ -198,6 +198,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.myPlayer);
+                        // CultistBossFireBallClone is shared by several other bosses, so we can't scope Abyss to
+                        // just this attack via OnHitPlayer without also cursing those fights. Apply on cast instead.
+                        player.AddBuff(ModContent.BuffType<Abyss>(), 3 * 60 * 60);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17);
                     NPC.localAI[1] = 0;
@@ -207,6 +210,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBall, cultistFireDamage, 0.1f, Main.myPlayer);
+                        // Same reasoning as above - CultistBossFireBall is shared, so apply on cast rather than hit.
+                        player.AddBuff(ModContent.BuffType<Abyss>(), 3 * 60 * 60);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
                     NPC.localAI[1] = 0;
@@ -550,11 +555,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (!Main.dedServ)
                 {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 1").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 3").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 3").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Great Abyss Demon Gore 1").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Great Abyss Demon Gore 2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Great Abyss Demon Gore 3").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Great Abyss Demon Gore 2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Great Abyss Demon Gore 3").Type, 1f);
                 }
             }
         }
@@ -562,8 +567,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 10, 10, 40));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 10, 5, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Broadswords.Ragnarok>(), 2));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Materials.FlameOfTheAbyss>(), 1, 2, 4));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Materials.CursedSoul>(), 1, 5, 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
         }
     }

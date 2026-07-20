@@ -1,4 +1,4 @@
-﻿using Microsoft.Build.Evaluation;
+using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -26,6 +26,7 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories.Summon;
 using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Armors;
@@ -39,6 +40,7 @@ using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
@@ -60,6 +62,40 @@ namespace tsorcRevamp
     {
         public static readonly int PermanentBuffCount = 59;
         public static List<int> startingItemsList;
+        public StartingClass startingClass = StartingClass.None;
+        private const int StartingClassStatsVersion = 9;
+        public bool appliedStartingClassStats = false;
+        public int appliedStartingClassStatsVersion = 0;
+
+        // Total permanent HP / mana granted by SoulsMode Life and Mana Crystals.
+        //
+        // These have to exist because vanilla never saves statLifeMax/statManaMax. Player.Serialize writes
+        // `100 + ConsumedLifeCrystals * 20 + ConsumedLifeFruit * 5` (and `20 + ConsumedManaCrystals * 20`),
+        // and Deserialize re-derives the counters back out of that single number. The consumed-crystal
+        // counts are therefore the only life/mana state that survives a save — and they cap at 15 and 9.
+        //
+        // That makes a reduced per-crystal gain unrepresentable in vanilla's own bookkeeping: "half a
+        // crystal" has no encoding, and pushing the counters past 15/9 drives the saved number over 400/200,
+        // where Deserialize re-reads the excess as Life Fruit (life) or clamps it away entirely (mana).
+        // So we keep our own authoritative totals here, hold the vanilla counters inside their legal range
+        // purely as a persistence vehicle, and reconcile the two in ModifyMaxStats.
+        // soulsLife/ManaGranted is the SoulsMode valuation (banked at the reduced, party-scaled rate on the
+        // frame each crystal was eaten). lifeCrystalsEaten / manaCrystalsEaten is the raw count, which Classic
+        // re-values at vanilla's flat +20 — see EffectiveLifeGrant. Both are needed: vanilla's own counter can't
+        // stand in for the count because it saturates at 15/9.
+        public int soulsLifeGranted = 0;
+        public int soulsManaGranted = 0;
+        public int lifeCrystalsEaten = 0;
+        public int manaCrystalsEaten = 0;
+
+        // Every class converges on the same ceiling; the starting class only changes how many crystals it
+        // takes to get there (Melee 28 Life Crystals, Summoner 30, Ranged 31, Magic 32 at +10 each solo).
+        // Life Fruit still takes everyone from 400 to 500 afterwards, exactly as in vanilla.
+        public const int SoulsModeMaxLife = 400;
+        public const int SoulsModeMaxMana = 200;
+        public const int SoulsModeManaCrystalGain = 10;
+
+        public bool normansRingAmmoSave = false;
         public List<int> bagsOpened;
         public static int LastHit = 1;
         public static int ShunpoCooldownPerHit = -40;
@@ -69,6 +105,10 @@ namespace tsorcRevamp
         public Dictionary<Vector2, int> soulDeathLocations = new Dictionary<Vector2, int>();
         public int LastAttackedNPCIndex;
         public int DwarvenContractsGiven = 0;
+        private int lastHealthBand = 1;
+        private bool guaranteedHurtSoundForBand = false;
+        // Enforces a 2 second (120 tick) gap between custom player hurt voice sounds.
+        private uint lastHurtSoundTick = 0;
 
         public override void Initialize()
         {
@@ -81,8 +121,20 @@ namespace tsorcRevamp
 
             SoulSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LangUtils.GetTextValue("UI.DarkSouls"), null, SoulSlotCondition, DrawSoulSlotBackground, null, null, false, true);
             SoulSlot.BackOpacity = 0.8f;
+            // Dark Souls can't be pulled out of the slot into the inventory / piggy bank — they auto-deposit on
+            // pickup and are spent at Demon Altars.
+            SoulSlot.DisallowManualRemoval = true;
             SoulSlot.Item = new Item();
             SoulSlot.Item.SetDefaults(0, true);
+
+            RightClickSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LangUtils.GetTextValue("UI.SecondSlotHover"), null, RightClickSlotCondition, DrawRightClickSlotBackground, null, null, false, true);
+            RightClickSlot.BackOpacity = 0.8f;
+            RightClickSlot.HitboxRightAndBottomPadding = 24;
+            RightClickSlot.AppendHoverTextToItemName = true;
+            RightClickSlot.Item = new Item();
+            RightClickSlot.Item.SetDefaults(0, true);
+
+            StorageOpenerSlot = new UI.StorageOpenerSlot(52);
 
             chestBankOpen = false;
             chestBank = -1;
@@ -101,6 +153,7 @@ namespace tsorcRevamp
             if (clone == null) { return; }
 
             SoulSlot.Item.CopyNetStateTo(clone.SoulSlot.Item);
+            RightClickSlot.Item.CopyNetStateTo(clone.RightClickSlot.Item);
         }
         public override void SendClientChanges(ModPlayer clientPlayer)
         {
@@ -110,6 +163,10 @@ namespace tsorcRevamp
             if (oldClone.SoulSlot.Item.IsNotSameTypePrefixAndStack(SoulSlot.Item))
             {
                 SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, SoulSlot.Item, -1, Player.whoAmI);
+            }
+            if (oldClone.RightClickSlot.Item.IsNotSameTypePrefixAndStack(RightClickSlot.Item))
+            {
+                SendSingleItemPacket(tsorcPacketID.SyncRightClickSlot, RightClickSlot.Item, -1, Player.whoAmI);
             }
         }
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
@@ -121,6 +178,13 @@ namespace tsorcRevamp
             packet.Write((byte)Player.whoAmI);
             ItemIO.Send(SoulSlot.Item, packet);
             packet.Send(toWho, fromWho);
+
+            //Sync Right-Click slot
+            ModPacket rightClickPacket = Mod.GetPacket();
+            rightClickPacket.Write((byte)tsorcPacketID.SyncRightClickSlot);
+            rightClickPacket.Write((byte)Player.whoAmI);
+            ItemIO.Send(RightClickSlot.Item, rightClickPacket);
+            rightClickPacket.Send(toWho, fromWho);
 
             /*
             ModPacket packet2 = Mod.GetPacket();
@@ -143,6 +207,10 @@ namespace tsorcRevamp
 
         public override void SaveData(TagCompound tag)
         {
+            // Save storage FIRST so an exception anywhere else in this method can never skip it (the whole method
+            // is the ModPlayer's save, and a throw partway would otherwise lose everything below the throw point).
+            SaveStorage(tag);
+
             tag.Add("greatMirrorWarp", greatMirrorWarpPoint);
             tag.Add("warpWorld", warpWorld);
             tag.Add("warpSet", warpSet);
@@ -151,10 +219,15 @@ namespace tsorcRevamp
             tag.Add("townWarpWorld", townWarpWorld);
             tag.Add("townWarpSet", townWarpSet);
             tag.Add("gotPickaxe", gotPickaxe);
+            tag.Add("gotDarksign", gotDarksign);
             tag.Add("FirstEncounter", FirstEncounter);
             tag.Add("ReceivedGift", ReceivedGift);
+            tag.Add("ReceivedHuntingTome", ReceivedHuntingTome);
+            tag.Add("heraldChatState", heraldChatState);
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
+            tag.Add("Unkindled", Unkindled);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
+            tag.Add("rightClickSlot", ItemIO.Save(RightClickSlot.Item));
             tag.Add("Curse", CurseActive);
             tag.Add("CurseMaxLifeMult", CurseMaxLifeMultiplier);
             tag.Add("CurseLifeRegen", CurseLifeRegenerationBonus);
@@ -173,6 +246,13 @@ namespace tsorcRevamp
             tag.Add("powerfulCurseMoveSpd", powerfulCurseMovementSpeedBonus);
             tag.Add("SoulVessel", SoulVessel);
             tag.Add("DeathTextIndex", currentDeathTextIndex);
+            tag.Add("StartingClass", (int)startingClass);
+            tag.Add("AppliedStartingClassStats", appliedStartingClassStats);
+            tag.Add("AppliedStartingClassStatsVersion", appliedStartingClassStatsVersion);
+            tag.Add("SoulsLifeGranted", soulsLifeGranted);
+            tag.Add("SoulsManaGranted", soulsManaGranted);
+            tag.Add("LifeCrystalsEaten", lifeCrystalsEaten);
+            tag.Add("ManaCrystalsEaten", manaCrystalsEaten);
             //tag.Add("SoulLocation", );
 
             if (bagsOpened == null)
@@ -224,6 +304,11 @@ namespace tsorcRevamp
 
         public override void LoadData(TagCompound tag)
         {
+            // Load storage FIRST so an exception anywhere else in this method can't leave storage unloaded.
+            // (A throw later in LoadData — e.g. a duplicate-key Dictionary.Add in the consumedPotions migration —
+            // is caught per-ModPlayer by tModLoader, which would otherwise silently skip storage entirely.)
+            LoadStorage(tag);
+
             int warpX = tag.GetInt("warpX");
             int warpY = tag.GetInt("warpY");
             greatMirrorWarpPoint = tag.Get<Vector2>("greatMirrorWarp");
@@ -240,11 +325,66 @@ namespace tsorcRevamp
             townWarpWorld = tag.GetInt("townWarpWorld");
             townWarpSet = tag.GetBool("townWarpSet");
             gotPickaxe = tag.GetBool("gotPickaxe");
+            gotDarksign = tag.GetBool("gotDarksign");
             FirstEncounter = tag.GetBool("FirstEncounter");
             ReceivedGift = tag.GetBool("ReceivedGift");
+            ReceivedHuntingTome = tag.GetBool("ReceivedHuntingTome");
+            heraldChatState = tag.GetInt("heraldChatState");
+            startingClass = (StartingClass)tag.GetInt("StartingClass");
+            appliedStartingClassStats = tag.GetBool("AppliedStartingClassStats");
+            appliedStartingClassStatsVersion = tag.ContainsKey("AppliedStartingClassStatsVersion") ? tag.GetInt("AppliedStartingClassStatsVersion") : (appliedStartingClassStats ? 1 : 0);
             BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
+            if (tag.ContainsKey("Unkindled"))
+            {
+                Unkindled = tag.GetBool("Unkindled");
+            }
+            else if (!BearerOfTheCurse)
+            {
+                // Migration: an existing pre-Unkindled save that wasn't BotC was Classic.
+                // Promote them to Unkindled so they pick up the new base Souls mechanics.
+                Unkindled = true;
+            }
+            // Must run after startingClass (the grant caps depend on it) and after Unkindled/BearerOfTheCurse
+            // (SoulsMode depends on them). Vanilla's own life/mana block is deserialized before any ModPlayer
+            // LoadData, so Player.ConsumedLifeCrystals/ConsumedManaCrystals are already populated here.
+            if (tag.ContainsKey("SoulsLifeGranted"))
+            {
+                soulsLifeGranted = tag.GetInt("SoulsLifeGranted");
+                soulsManaGranted = tag.GetInt("SoulsManaGranted");
+            }
+            else if (SoulsMode)
+            {
+                // Migration off the old crystal nerf, which let the vanilla counters run past 15/9 and so had
+                // its saved life/mana mangled on every reload — the life overflow came back as phantom Life
+                // Fruit, and every mana crystal past the 9th was clamped away. Nothing recorded how many
+                // crystals were actually eaten, so reconstruct from the surviving counter at the intended
+                // +10 each. Any Life Fruit on such a character is almost certainly the phantom kind (the old
+                // code raised Life Fruit's unlock threshold to 30 crystals, which was unreachable in practice),
+                // so scrub it. Approximate by design: a badly ratcheted character is better off re-rolled.
+                soulsLifeGranted = Math.Min(SoulsLifeGrantCap, Player.ConsumedLifeCrystals * 10);
+                soulsManaGranted = Math.Min(SoulsManaGrantCap, Player.ConsumedManaCrystals * SoulsModeManaCrystalGain);
+                Player.ConsumedLifeFruit = 0;
+            }
+
+            // Crystal counts were added after the granted totals, so characters saved by the previous build have
+            // the totals but no counts. Recover the count from the total at the solo rate — the only rate a
+            // single-player character can have banked. A Classic character has neither, and gets its counts
+            // repaired from the vanilla counters by ReconcileCrystalState on the first frame.
+            lifeCrystalsEaten = tag.ContainsKey("LifeCrystalsEaten")
+                ? tag.GetInt("LifeCrystalsEaten")
+                : soulsLifeGranted / 10;
+            manaCrystalsEaten = tag.ContainsKey("ManaCrystalsEaten")
+                ? tag.GetInt("ManaCrystalsEaten")
+                : soulsManaGranted / SoulsModeManaCrystalGain;
+
+            NormalizeCrystalCounters();
+
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
+            if (tag.ContainsKey("rightClickSlot"))
+            {
+                RightClickSlot.Item = ItemIO.Load(tag.GetCompound("rightClickSlot")).Clone();
+            }
             CurseActive = tag.GetBool("Curse");
             CurseMaxLifeMultiplier = tag.GetFloat("CurseMaxLifeMult");
             CurseLifeRegenerationBonus = tag.GetFloat("CurseLifeRegen");
@@ -254,7 +394,7 @@ namespace tsorcRevamp
             CurseAttackSpeedBonus = tag.GetFloat("CurseAtkSpd");
             CurseMovementSpeedBonus = tag.GetFloat("CurseMoveSpd");
             powerfulCurseActive = tag.GetBool("powerfulCurse");
-            CurseMaxLifeMultiplier = tag.GetFloat("CurseMaxLifeMult");
+            powerfulCurseMaxLifeMultiplier = tag.GetFloat("powerfulCurseMaxLifeMult");
             powerfulCurseLifeRegenerationBonus = tag.GetFloat("powerfulCurseLifeRegen");
             powerfulCurseDefenseBonus = tag.GetFloat("powerfulCurseDefense");
             powerfulCurseResistanceBonus = tag.GetFloat("powerfulCurseResist");
@@ -354,7 +494,9 @@ namespace tsorcRevamp
                 List<int> potValue = tag.GetList<int>("consumedPotionsValues") as List<int>;
                 for (int i = 0; i < potKey.Count; i++)
                 {
-                    consumedPotions.Add(potKey[i].Type, potValue[i]);
+                    // Indexer (not Add) so a duplicate buff type — e.g. a save that carries both the old
+                    // "consumedPotionsKeys" and new "consumedPotionsBuffTypes" — can't throw and abort LoadData.
+                    consumedPotions[potKey[i].Type] = potValue[i];
                 }
             }
         }
@@ -469,6 +611,11 @@ namespace tsorcRevamp
 
         public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds)
+            {
+                modifiers.DisableSound();
+            }
+
             float REDUCE = CheckReduceDefense(Player.position, Player.width, Player.height, Player.fireWalk);
             if (REDUCE != 0)
             {
@@ -491,9 +638,164 @@ namespace tsorcRevamp
 
         public override void PostHurt(Player.HurtInfo info)
         {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds && Player.whoAmI == Main.myPlayer && info.Damage > 0)
+            {
+                float damagePct = Player.statLifeMax2 > 0 ? (float)info.Damage / Player.statLifeMax2 : 0f;
+                int damageVoiceIndex = 1;
+                if (damagePct <= 0.30f) damageVoiceIndex = 1;
+                else if (damagePct <= 0.40f) damageVoiceIndex = 2;
+                else if (damagePct <= 0.50f) damageVoiceIndex = 3;
+                else if (damagePct <= 0.60f) damageVoiceIndex = 4;
+                else damageVoiceIndex = 5;
+
+                float healthPct = Player.statLifeMax2 > 0 ? (float)Player.statLife / Player.statLifeMax2 : 1f;
+                int currentHealthBand = 1;
+                if (healthPct < 0.30f) currentHealthBand = 5;
+                else if (healthPct < 0.45f) currentHealthBand = 4;
+                else if (healthPct < 0.60f) currentHealthBand = 3;
+                else if (healthPct <= 0.75f) currentHealthBand = 2;
+                else currentHealthBand = 1;
+
+                if (currentHealthBand != lastHealthBand)
+                {
+                    guaranteedHurtSoundForBand = true;
+                    lastHealthBand = currentHealthBand;
+                }
+
+                int voiceIndex = damageVoiceIndex;
+
+                // If the hit itself dealt low damage, calculate the voice variant based on health bands
+                if (damageVoiceIndex == 1)
+                {
+                    if (guaranteedHurtSoundForBand && currentHealthBand > 1)
+                    {
+                        voiceIndex = currentHealthBand;
+                        guaranteedHurtSoundForBand = false;
+                    }
+                    else if (currentHealthBand > 1)
+                    {
+                        // 20% chance to play the low-health variant, otherwise play mild hurt-1
+                        if (Main.rand.NextFloat() < 0.20f)
+                        {
+                            voiceIndex = currentHealthBand;
+                        }
+                        else
+                        {
+                            voiceIndex = 1;
+                        }
+                    }
+                    else
+                    {
+                        voiceIndex = 1;
+                    }
+                }
+
+                // Only play a hurt voice line if at least 2 seconds (120 ticks) have passed since the last one.
+                if (Main.GameUpdateCount - lastHurtSoundTick >= 120)
+                {
+                    float pitchOffset = Main.rand.Next(-1, 2) * 0.08f;
+
+                    if (Player.Male)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-hurt-{voiceIndex}") with { Volume = 0.45f, Pitch = pitchOffset });
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-hurt-{voiceIndex}") with { Volume = 0.45f, Pitch = pitchOffset });
+                    }
+
+                    lastHurtSoundTick = Main.GameUpdateCount;
+                }
+            }
+
+            // Player Hurt Visuals: trigger the red vignette flash, scaled by the fraction of max HP lost.
+            if (Player.whoAmI == Main.myPlayer && info.Damage > 0 && ModContent.GetInstance<tsorcRevampVisualConfig>().PlayerHurtVisuals)
+            {
+                float dmgFrac = Player.statLifeMax2 > 0 ? (float)info.Damage / Player.statLifeMax2 : 0f;
+                float flash = MathHelper.Clamp(0.25f + dmgFrac * 1.4f, 0f, 1f);
+                if (flash > hurtVignetteFlash)
+                {
+                    hurtVignetteFlash = flash;
+                }
+            }
+
             if (info.Damage > 1)
             {
-                Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
+                Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s
+            }
+
+            // Convenant of Everlasting Love
+            if (HasLoveRing && loveHealCooldown <= 0 && info.Damage > 0)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player ally = Main.player[i];
+
+                    if (!ally.active || ally.dead)
+                        continue;
+
+                    if (!(Player.team == 0 || ally.team == Player.team))
+                        continue;
+
+                    if (ally.whoAmI == Player.whoAmI)
+                        continue; 
+
+                    if (Vector2.Distance(Player.Center, ally.Center) < 1000f)
+                    {
+                        ally.statLife += LoveRing.HealAmount;
+                        if (ally.statLife > ally.statLifeMax2)
+                            ally.statLife = ally.statLifeMax2;
+
+                        ally.HealEffect(LoveRing.HealAmount);
+
+                        for (int b = 0; b < ally.buffType.Length; b++)
+                        {
+                            int buff = ally.buffType[b];
+
+                            if (buff <= 0)
+                                continue;
+
+                            if (!Main.debuff[buff])
+                                continue;
+
+                            if (buff == BuffID.PotionSickness || buff == BuffID.ManaSickness) // ofc ingoring these
+                                continue;
+
+                            ally.buffTime[b] -= 120; // 2 seconds
+                            if (ally.buffTime[b] < 0)
+                                ally.buffTime[b] = 0;
+                        }
+
+                        for (int h = 0; h < 45; h++)
+                        {
+                            float t = MathHelper.TwoPi * (h / 40f);
+
+                            float x = 16 * (float)Math.Pow(Math.Sin(t), 3);
+                            float y = 13 * (float)Math.Cos(t)
+                                    - 5 * (float)Math.Cos(2 * t)
+                                    - 2 * (float)Math.Cos(3 * t)
+                                    - (float)Math.Cos(4 * t);
+
+                            Vector2 offset = new Vector2(x, -y) * 1.8f;
+
+                            int dust = Dust.NewDust(
+                                ally.Center + offset,
+                                0, 0,
+                                58,
+                                0f, 0f,
+                                150,
+                                default,
+                                1.5f
+                            );
+
+                            Main.dust[dust].noGravity = true;
+                            Main.dust[dust].velocity *= 0.1f;
+                        }
+                    }
+                }
+
+                // Cooldown Love Ring
+                loveHealCooldown = LoveRing.Cooldown;
             }
         }
 
@@ -746,9 +1048,64 @@ namespace tsorcRevamp
 
                 }
             }
+
+            // Dark Souls Storage: while the Storage pop-up is open, shift-clicking an inventory item sends it
+            // to storage. Scoped to "storage open" so it never hijacks the normal shift-click-into-a-chest path.
+            // Must also check `inventory == Player.inventory`: the Storage grid's own slots reuse this exact
+            // context via ItemSlot.Handle's single-item overload (which hands back ItemSlot.singleSlotArray, a
+            // shared scratch array, not the real inventory) — without this guard, shift-clicking an item that's
+            // already IN storage would re-deposit it into itself and corrupt the stack.
+            if (UI.StorageUIState.Visible
+                && (context == ItemSlot.Context.InventoryItem)
+                && inventory == Player.inventory
+                && IsStorageDepositable(inventory[slot]))
+            {
+                if (DepositToStorage(inventory[slot]))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                    return true;
+                }
+            }
+
             return false;
         }
 
+        private static Item CreateStartingItem(int itemType, int stack = 1, int prefix = 0)
+        {
+            Item item = new Item();
+            item.SetDefaults(itemType);
+            item.stack = stack;
+            if (prefix != 0)
+            {
+                item.prefix = prefix;
+            }
+            return item;
+        }
+
+        private static void AddClassStartingItems(List<Item> startingItems, StartingClass startingClass)
+        {
+            switch (startingClass)
+            {
+                case StartingClass.Ranged:
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>(), prefix: PrefixID.Awful));
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<Bolt>(), 50));
+                    startingItems.Add(CreateStartingItem(ItemID.IronShortsword, prefix: PrefixID.Dull));
+                    break;
+                case StartingClass.Magic:
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<ApprenticesWand>(), prefix: PrefixID.Ignorant));
+                    startingItems.Add(CreateStartingItem(ItemID.BorealWoodSword, prefix: PrefixID.Dull));
+                    break;
+                case StartingClass.Summoner:
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<RustedChain>(), prefix: PrefixID.Terrible));
+                    startingItems.Add(CreateStartingItem(ItemID.BabyBirdStaff, prefix: PrefixID.Terrible));
+                    break;
+                case StartingClass.Melee:
+                default:
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<ForgottenRuneAxe>(), prefix: PrefixID.Dull));
+                    startingItems.Add(CreateStartingItem(ItemID.WoodenBoomerang, prefix: PrefixID.Dull));
+                    break;
+            }
+        }
         public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
         {
             List<Item> startingItems = new List<Item>();
@@ -764,31 +1121,18 @@ namespace tsorcRevamp
             MastersScroll.SetDefaults(ModContent.ItemType<MastersScroll>());
             startingItems.Add(MastersScroll);
 
-            Item ForgottenRuneAxe = new Item();
-            ForgottenRuneAxe.SetDefaults(ModContent.ItemType<ForgottenRuneAxe>());
-            ForgottenRuneAxe.prefix = PrefixID.Dull;
-            startingItems.Add(ForgottenRuneAxe);
+            if (!mediumCoreDeath)
+            {
+                startingItems.Add(CreateStartingItem(ModContent.ItemType<RecommendedControls>()));
+            }
 
-            Item Crossbow = new Item();
-            Crossbow.SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.Specialist.Crossbow>());
-            Crossbow.prefix = PrefixID.Awful;
-            startingItems.Add(Crossbow);
+            startingItems.Add(CreateStartingItem(ModContent.ItemType<NormansRing>()));
 
-            Item ApprenticesWand = new Item();
-            ApprenticesWand.SetDefaults(ModContent.ItemType<ApprenticesWand>());
-            ApprenticesWand.prefix = PrefixID.Ignorant;
-            startingItems.Add(ApprenticesWand);
-
-            Item RustyChain = new Item();
-            RustyChain.SetDefaults(ModContent.ItemType<RustedChain>());
-            RustyChain.prefix = PrefixID.Terrible;
-            startingItems.Add(RustyChain);
-
-            Item Bolt = new Item();
-            Bolt.SetDefaults(ModContent.ItemType<Bolt>());
-            Bolt.stack = 50;
-            startingItems.Add(Bolt);
-
+            if (startingClass == StartingClass.None)
+            {
+                startingClass = tsorcRevamp.PendingStartingClass == StartingClass.None ? StartingClass.Melee : tsorcRevamp.PendingStartingClass;
+            }
+            AddClassStartingItems(startingItems, startingClass);
             if (ModLoader.TryGetMod("MagicStorage", out Mod MagicStorage))
             {
                 Item StorageHeart = new();
@@ -816,7 +1160,96 @@ namespace tsorcRevamp
 
             return startingItems;
         }
+        private const int ArtoriasAbysswalkerPoiseDuration = 3 * 60;
+        private const int ArtoriasAbysswalkerPoiseCooldown = 5 * 60;
+        private const int ArtoriasAbysswalkerMeleeCounter = 1;
+        private const int ArtoriasAbysswalkerMagicCounter = 2;
+
+        public void TryGrantArtoriasAbysswalkerPoise()
+        {
+            if (!ArtoriasAbysswalker || !isDodging || Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>()) || Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoiseCooldown>()))
+            {
+                return;
+            }
+
+            bool dodgedThreat = false;
+            Rectangle paddedHitbox = Player.Hitbox;
+            paddedHitbox.Inflate(8, 8);
+
+            for (int i = 0; i < Main.npc.Length && !dodgedThreat; i++)
+            {
+                NPC npc = Main.npc[i];
+                dodgedThreat = npc.active && !npc.friendly && npc.damage > 0 && !npc.dontTakeDamage && paddedHitbox.Intersects(npc.Hitbox);
+            }
+
+            for (int i = 0; i < Main.projectile.Length && !dodgedThreat; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                dodgedThreat = projectile.active && projectile.hostile && projectile.damage > 0 && paddedHitbox.Intersects(projectile.Hitbox);
+            }
+
+            if (!dodgedThreat)
+            {
+                return;
+            }
+
+            Player.AddBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>(), ArtoriasAbysswalkerPoiseDuration);
+            Player.AddBuff(ModContent.BuffType<ArtoriasAbysswalkerPoiseCooldown>(), ArtoriasAbysswalkerPoiseCooldown);
+            SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.6f, Pitch = -0.35f }, Player.Center);
+
+            for (int i = 0; i < 24; i++)
+            {
+                Dust dust = Dust.NewDustPerfect(Player.Center + Main.rand.NextVector2Circular(18f, 26f), DustID.ShadowbeamStaff, Main.rand.NextVector2Circular(2.5f, 2.5f), 110, Color.MediumPurple, Main.rand.NextFloat(0.9f, 1.6f));
+                dust.noGravity = true;
+            }
+        }
+
+        private bool CanSpendArtoriasAbysswalkerPoise(DamageClass damageType)
+        {
+            return ArtoriasAbysswalker && Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>()) && (damageType == DamageClass.Melee || damageType == DamageClass.MeleeNoSpeed || damageType == DamageClass.Magic);
+        }
+
+        private void SpendArtoriasAbysswalkerPoise(NPC target, NPC.HitInfo hit)
+        {
+            if (ArtoriasAbysswalkerCounterType == 0 || !Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>()))
+            {
+                return;
+            }
+
+            Player.ClearBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>());
+            Player.noKnockback = true;
+            Player.immune = true;
+            Player.SetImmuneTimeForAllTypes(18);
+
+            tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            float staminaRestored = staminaPlayer.staminaResourceMax2 * ArtoriasOfTheAbyssHelm.PoiseStaminaRestore / 100f;
+            staminaPlayer.staminaResourceCurrent = MathHelper.Clamp(staminaPlayer.staminaResourceCurrent + staminaRestored, 0, staminaPlayer.staminaResourceMax2);
+
+            if (Main.myPlayer == Player.whoAmI)
+            {
+                if (ArtoriasAbysswalkerCounterType == ArtoriasAbysswalkerMeleeCounter)
+                {
+                    Vector2 velocity = Player.DirectionTo(target.Center);
+                    if (velocity == Vector2.Zero)
+                    {
+                        velocity = new Vector2(Player.direction, 0);
+                    }
+                    velocity.Normalize();
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center - velocity * 24f, velocity * 14f, ModContent.ProjectileType<Projectiles.Melee.ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Melee).ApplyTo(hit.SourceDamage * 0.55f), 4f, Player.whoAmI, velocity.ToRotation());
+                }
+                else if (ArtoriasAbysswalkerCounterType == ArtoriasAbysswalkerMagicCounter)
+                {
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Magic.ArtoriasAbyssShockwave>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.45f), 5f, Player.whoAmI);
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, new Vector2(-9f, 0f), ModContent.ProjectileType<Projectiles.Melee.ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.25f), 3f, Player.whoAmI, MathHelper.Pi, 1f);
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, new Vector2(9f, 0f), ModContent.ProjectileType<Projectiles.Melee.ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.25f), 3f, Player.whoAmI, 0f, 1f);
+                }
+            }
+
+            ArtoriasAbysswalkerCounterType = 0;
+            SoundEngine.PlaySound(SoundID.Item117 with { Volume = 0.55f, Pitch = -0.25f }, target.Center);
+        }
         public static float AmmoReservationRangedCritDamage = 10f;
+        public static float TitanMeleeSize = 15f;
         public static float SharpenedMeleeArmorPen = 50f;
         public static float MythrilOcrichalcumCritDmg = 25f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -833,9 +1266,14 @@ namespace tsorcRevamp
             {
                 modifiers.CritDamage -= 0.25f;
             }
-            if (CanUseItemsWhileDodging && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
+            if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
             {
                 modifiers.FinalDamage += ArtoriasArmor.DmgMultWhileRolling;
+            }
+            if (CanSpendArtoriasAbysswalkerPoise(modifiers.DamageType))
+            {
+                modifiers.FinalDamage += ArtoriasOfTheAbyssHelm.PoiseDamage / 100f;
+                ArtoriasAbysswalkerCounterType = modifiers.DamageType == DamageClass.Magic ? ArtoriasAbysswalkerMagicCounter : ArtoriasAbysswalkerMeleeCounter;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
             {
@@ -915,7 +1353,7 @@ namespace tsorcRevamp
                     modifiers.SetCrit();
                 }
             }
-            if (CanUseItemsWhileDodging && isDodging && (proj.type == ProjectileID.NebulaBlaze2) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.YianBlade>())
+            if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (proj.type == ProjectileID.NebulaBlaze2) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.YianBlade>())
             {
                 modifiers.FinalDamage -= ArtoriasArmor.DmgMultWhileRolling;
             }
@@ -955,6 +1393,13 @@ namespace tsorcRevamp
             if (ProjectileID.Sets.MinionSacrificable[proj.type])
             {
                 ShunpoCooldownPerHit = -4;
+            }
+        }
+        public override void ModifyItemScale(Item item, ref float scale)
+        {
+            if (Player.GetModPlayer<tsorcRevampPlayer>().TitanPotion && item.DamageType == DamageClass.Melee)
+            {
+                scale += Player.GetModPlayer<tsorcRevampPlayer>().TitanSizeScaling * TitanMeleeSize / 100f;
             }
         }
         public bool WhipTipCrit(in Projectile projectile, in List<Vector2> points, in Rectangle targetHitbox)
@@ -1049,6 +1494,7 @@ namespace tsorcRevamp
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
             }
+            SpendArtoriasAbysswalkerPoise(target, hit);
             if (DemonPower && hit.DamageType == DamageClass.SummonMeleeSpeed && hit.Crit && Main.myPlayer == Player.whoAmI)
             {
                 Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
@@ -1231,29 +1677,7 @@ namespace tsorcRevamp
         {
             if (UndeadTalisman)
             {
-                if (NPCID.Sets.Skeletons[npc.type]
-                    || npc.type == NPCID.Zombie
-                    || npc.type == NPCID.Skeleton
-                    || npc.type == NPCID.BaldZombie
-                    || npc.type == NPCID.AngryBones
-                    || npc.type == NPCID.ArmoredViking
-                    || npc.type == NPCID.UndeadViking
-                    || npc.type == NPCID.DarkCaster
-                    || npc.type == NPCID.CursedSkull
-                    || npc.type == NPCID.UndeadMiner
-                    || npc.type == NPCID.Tim
-                    || npc.type == NPCID.DoctorBones
-                    || npc.type == NPCID.ArmoredSkeleton
-                    || npc.type == NPCID.Mummy
-                    || npc.type == NPCID.DarkMummy
-                    || npc.type == NPCID.LightMummy
-                    || npc.type == NPCID.Wraith
-                    || npc.type == NPCID.SkeletonArcher
-                    || npc.type == NPCID.PossessedArmor
-                    || npc.type == NPCID.TheGroom
-                    || npc.type == NPCID.SkeletronHand
-                    || npc.type == NPCID.SkeletronHead
-                    /* || NT == mod.NPCType("MagmaSkeleton") || NT == mod.NPCType("Troll") || NT == mod.NPCType("HeavyZombie") || NT == mod.NPCType("IceSkeleton") || NT == mod.NPCType("IrateBones")*/)
+                if (tsorcRevamp.UndeadNPCs.Contains(npc.type))
                 {
                     modifiers.FinalDamage.Flat -= Items.Accessories.Defensive.UndeadTalisman.FlatDR;
                 }
@@ -1357,6 +1781,12 @@ namespace tsorcRevamp
             if (tsorcRevamp.toggleDragoonBoots.JustPressed)
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
+            }
+
+            // Guard against the toggle firing while typing into the Storage search bar (default key is 'T').
+            if (tsorcRevamp.StorageKey.JustPressed && !Main.blockInput && !Main.drawingPlayerChat)
+            {
+                ToggleStorage();
             }
             for (int i = 0; i < Main.maxNPCs; i++)
             {
@@ -1463,10 +1893,13 @@ namespace tsorcRevamp
                                 if (npc.active && !npc.friendly && npc.Distance(Player.Center) <= radius)
                                 {
                                     npc.AddBuff(ModContent.BuffType<WitchkingCurse>(), 6 * 60); // 6 seconds
+                                    npc.AddBuff(BuffID.Confused, 4 * 60);
+                                    int baseDamage = (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(800);
+                                    int finalDamage = Main.DamageVar(baseDamage);
                                     
                                     npc.StrikeNPC(new NPC.HitInfo
                                     {
-                                        Damage = (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(800),
+                                        Damage = finalDamage,
                                         Knockback = 0,
                                         HitDirection = 0,
                                         Crit = false,
@@ -1659,11 +2092,17 @@ namespace tsorcRevamp
         //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
         public override void OnHurt(Player.HurtInfo info)
         {
+            if (Player.HasBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>()))
+            {
+                Player.ClearBuff(ModContent.BuffType<ArtoriasAbysswalkerPoise>());
+                Player.AddBuff(ModContent.BuffType<ArtoriasAbysswalkerPoiseCooldown>(), ArtoriasAbysswalkerPoiseCooldown);
+                ArtoriasAbysswalkerCounterType = 0;
+            }
             if (manaShield == 1)
             {
                 if (Player.statMana >= Items.Accessories.Defensive.Shields.ManaShield.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.Defensive.Shields.ManaShield.manaCost;
+                    SpendManaOnHit(Items.Accessories.Defensive.Shields.ManaShield.manaCost); // also applies the Unkindled mana-regen delay
                     Player.manaRegenDelay = Items.Accessories.Defensive.Shields.ManaShield.regenDelay * 60;
                     Player.maxRegenDelay = Items.Accessories.Defensive.Shields.ManaShield.regenDelay * 60;
                 }
@@ -1672,7 +2111,7 @@ namespace tsorcRevamp
             {
                 if (Player.statMana >= Items.Accessories.Defensive.Celestriad.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.Defensive.Celestriad.manaCost;
+                    SpendManaOnHit(Items.Accessories.Defensive.Celestriad.manaCost);
                     Player.manaRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay * 60;
                     Player.maxRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay * 60;
                 }
@@ -1703,14 +2142,394 @@ namespace tsorcRevamp
                     }
                 }
             }
+
+            if (HasSporePowder) 
+            {
+                Vector2 center = Player.Center;
+                float radius = 120f; 
+
+                for (int i = 0; i < 190; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
+                    int dust = Dust.NewDust(center + offset, 1, 1, 44, 0f, 0f, 100, default, 1.4f); 
+                    Main.dust[dust].velocity = offset.SafeNormalize(Vector2.Zero) * 1f;
+                    Main.dust[dust].noGravity = false;
+                }
+
+                for (int n = 0; n < Main.maxNPCs; n++)
+                {
+                    NPC npc = Main.npc[n];
+                    if (npc.active && !npc.friendly && !npc.dontTakeDamage)
+                    {
+                        if (Vector2.Distance(npc.Center, center) <= radius)
+                        {
+                            int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(60);
+                            int finalDamage = Main.DamageVar(baseDamage);
+                            npc.StrikeNPC(new NPC.HitInfo
+                            {
+                                Damage = finalDamage,
+                                Knockback = 2f,
+                                HitDirection = 0,
+                                Crit = false,
+                                DamageType = DamageClass.Generic
+                            }, false, false); // noPlayerInteraction = false, dontTriggerSound = false
+
+                            npc.AddBuff(BuffID.Poisoned, 240); // 4 seconds
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.8f }, Player.Center);
+                        }
+                    }
+                }
+            }
+
+            /*if (HasVenomPowder) 
+            {
+                Vector2 center = Player.Center;
+                float radius = 150f; 
+
+                for (int i = 0; i < 280; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
+                    int dust = Dust.NewDust(center + offset, 1, 1, 171, 0f, 0f, 100, default, 1.6f);
+                    Main.dust[dust].velocity = offset.SafeNormalize(Vector2.Zero) * 1.5f;
+                    Main.dust[dust].noGravity = true;
+                }
+
+                for (int n = 0; n < Main.maxNPCs; n++)
+                {
+                    NPC npc = Main.npc[n];
+                    if (npc.active && !npc.friendly && !npc.dontTakeDamage)
+                    {
+                        if (Vector2.Distance(npc.Center, center) <= radius)
+                        {
+                            int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(90);
+                            int finalDamage = Main.DamageVar(baseDamage);
+                            npc.StrikeNPC(new NPC.HitInfo
+                            {
+                                Damage = finalDamage,
+                                Knockback = 4f,
+                                HitDirection = 0,
+                                Crit = false,
+                                DamageType = DamageClass.Generic
+                            }, false, false); // noPlayerInteraction = false, dontTriggerSound = false
+
+                            npc.AddBuff(BuffID.Venom, 240); // 4 seconds
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17 with { Volume = 0.9f }, Player.Center);
+                        }
+                    }
+                }
+            }*/
         }
 
         //Reduces the mana restored from potions and such to zero
+        public override bool CanConsumeAmmo(Item weapon, Item ammo)
+        {
+            if (normansRingAmmoSave && Main.rand.NextBool(20))
+            {
+                return false;
+            }
+
+            return base.CanConsumeAmmo(weapon, ammo);
+        }
+
+
+        public override void ModifyMaxStats(out StatModifier health, out StatModifier mana)
+        {
+            base.ModifyMaxStats(out health, out mana);
+
+            StartingClass resolvedStartingClass = GetResolvedStartingClass();
+            switch (resolvedStartingClass)
+            {
+                case StartingClass.Melee:
+                    health.Base += 20;
+                    mana.Base -= 10;
+                    break;
+                case StartingClass.Ranged:
+                    health.Base -= 10;
+                    break;
+                case StartingClass.Magic:
+                    health.Base -= 20;
+                    mana.Base += 30;
+                    break;
+                case StartingClass.Summoner:
+                    mana.Base += 10;
+                    break;
+            }
+
+            // Capture the counters BEFORE reconciling. PlayerLoader.ModifyMaxStats calls ResetMaxStatsToVanilla
+            // immediately before this hook, so statLifeMax was already rebuilt from *these* values — subtracting
+            // anything else below would leave the cancellation off by 20 per crystal for a frame, and since
+            // statLife is clamped down to the new maximum on that same frame, that would be real damage rather
+            // than a flicker.
+            int consumedLifeCrystals = Player.ConsumedLifeCrystals;
+            int consumedManaCrystals = Player.ConsumedManaCrystals;
+
+            ReconcileCrystalState(consumedLifeCrystals, consumedManaCrystals);
+            NormalizeCrystalCounters();
+
+            // The cancellation. ResetMaxStatsToVanilla rebuilds statLifeMax as
+            // `100 + 20 * ConsumedLifeCrystals + 5 * ConsumedLifeFruit` every frame; subtracting the counter's
+            // contribution and adding our own valuation cancels the 20-per-crystal term outright, leaving
+            //     statLifeMax = 100 + classOffset + EffectiveLifeGrant + 5 * ConsumedLifeFruit
+            // no matter what vanilla currently believes the crystal count to be. That last part is the point: a
+            // load can legitimately re-decompose the saved number into a different (crystals, fruit) split than
+            // the one we wrote, and this subtraction absorbs the difference instead of drifting.
+            health.Base += EffectiveLifeGrant - consumedLifeCrystals * 20;
+            mana.Base += EffectiveManaGrant - consumedManaCrystals * 20;
+        }
+
+        internal int SoulsLifeGrantCap => SoulsModeMaxLife - GetStartingClassBaseLife();
+        internal int SoulsManaGrantCap => SoulsModeMaxMana - GetStartingClassBaseMana();
+
+        /// The same crystals, valued by the rules of whichever mode you are currently in: SoulsMode pays the
+        /// reduced per-crystal gain that was banked at the moment each one was eaten, Classic pays vanilla's
+        /// flat +20. Both are clamped to the same class ceiling (400 life / 200 mana), so Classic doesn't blow
+        /// past it — it just gets there on far fewer crystals.
+        ///
+        /// This is why lifeCrystalsEaten has to exist alongside soulsLifeGranted. Storing only the granted total
+        /// left Classic with nothing to re-value: it fell back to vanilla's ConsumedLifeCrystals counter, which
+        /// saturates at 15 and so under-reports anyone who ate more than that under SoulsMode's cheaper rate.
+        internal int EffectiveLifeGrant => SoulsMode
+            ? Math.Min(SoulsLifeGrantCap, soulsLifeGranted)
+            : Math.Min(SoulsLifeGrantCap, lifeCrystalsEaten * 20);
+
+        internal int EffectiveManaGrant => SoulsMode
+            ? Math.Min(SoulsManaGrantCap, soulsManaGranted)
+            : Math.Min(SoulsManaGrantCap, manaCrystalsEaten * 20);
+
+        internal bool LifeCrystalsMaxed => EffectiveLifeGrant >= SoulsLifeGrantCap;
+        internal bool ManaCrystalsMaxed => EffectiveManaGrant >= SoulsManaGrantCap;
+
+        /// Repairs our totals from vanilla's counters when those know about crystals we don't — a character that
+        /// predates this system, or one that ate crystals through the vanilla path. Guarded on "not already
+        /// maxed" because NormalizeCrystalCounters deliberately parks the life counter *above* the eaten count
+        /// once maxed (see below), which would otherwise look like untracked crystals and ratchet forever.
+        private void ReconcileCrystalState(int consumedLifeCrystals, int consumedManaCrystals)
+        {
+            if (!LifeCrystalsMaxed && consumedLifeCrystals > lifeCrystalsEaten)
+            {
+                // Valued at the SoulsMode rate, same as if they'd been eaten under this system — a crystal is
+                // worth what a crystal is worth, regardless of which mode it was swallowed in.
+                int missing = consumedLifeCrystals - lifeCrystalsEaten;
+                lifeCrystalsEaten = consumedLifeCrystals;
+                soulsLifeGranted = Math.Min(SoulsLifeGrantCap, soulsLifeGranted + missing * 10);
+            }
+
+            if (!ManaCrystalsMaxed && consumedManaCrystals > manaCrystalsEaten)
+            {
+                int missing = consumedManaCrystals - manaCrystalsEaten;
+                manaCrystalsEaten = consumedManaCrystals;
+                soulsManaGranted = Math.Min(SoulsManaGrantCap, soulsManaGranted + missing * SoulsModeManaCrystalGain);
+            }
+
+            // Deliberately NOT clamping the stored totals to the cap here. The cap depends on the starting class,
+            // and GetResolvedStartingClass falls back to inferring from inventory — if that ever came back None
+            // for a frame, a blanket clamp would permanently truncate a Magic character's 320 down to 300. The
+            // caps are applied non-destructively where the totals are read, in EffectiveLifeGrant.
+        }
+
+        /// Push as much of the current mode's valuation into the vanilla counters as those counters can legally
+        /// hold, so the progress survives Player.Serialize. Anything that doesn't fit is re-applied by the
+        /// cancellation in ModifyMaxStats.
+        ///
+        /// The forced 15 once Life Crystals are maxed is load-bearing, not cosmetic. A maxed Melee is granted
+        /// only 280 HP, which fills just 14 counters, so its saved number would be 100 + 280 = 380 — and
+        /// Deserialize can only recover a Life Fruit count from a saved number *above* 400
+        /// (`ConsumedLifeFruit = (statLifeMax - 400) / 5`). Every fruit a Melee ate would therefore evaporate
+        /// 5 HP at a time on each reload. Parking the counter at 15 puts the saved number at 400 + 5 * fruit,
+        /// where fruit round-trips exactly; the resulting negative remainder (280 - 300 = -20) keeps the total
+        /// at the intended 400. It also means vanilla's own `ConsumedLifeCrystals == 15` gate unlocks Life
+        /// Fruit at the right moment for every class, with no patch needed.
+        internal void NormalizeCrystalCounters()
+        {
+            Player.ConsumedLifeCrystals = LifeCrystalsMaxed
+                ? Terraria.Player.LifeCrystalMax
+                : Math.Min(Terraria.Player.LifeCrystalMax, EffectiveLifeGrant / 20);
+
+            Player.ConsumedManaCrystals = Math.Min(Terraria.Player.ManaCrystalMax, EffectiveManaGrant / 20);
+        }
+
+        /// Called from the ItemCheck_UseLifeCrystal detour in MethodSwaps, which has already checked
+        /// LifeCrystalsMaxed. Runs in both modes — the mod owns crystal consumption outright now, because
+        /// Classic has to keep lifeCrystalsEaten up to date too.
+        internal void GrantLifeCrystal()
+        {
+            int before = EffectiveLifeGrant;
+
+            lifeCrystalsEaten++;
+            soulsLifeGranted = Math.Min(SoulsLifeGrantCap, soulsLifeGranted + GetSoulsModeLifeCrystalGain());
+
+            // The visible gain is whatever the current mode's valuation actually moved by: +10 in SoulsMode
+            // (party size permitting), +20 in Classic, or just the remainder on the crystal that reaches the
+            // ceiling. UseHealthMaxIncreasingItem bumps statLife and fires the heal popup with that real number,
+            // so the "+10" the player sees is genuine rather than a "+20" rewritten after the fact (which only
+            // ever worked on the local client). Its statLifeMax write is transient — ModifyMaxStats rebuilds
+            // that from scratch next frame.
+            int gain = EffectiveLifeGrant - before;
+            NormalizeCrystalCounters();
+            if (gain > 0)
+            {
+                Player.UseHealthMaxIncreasingItem(gain);
+            }
+        }
+
+        internal void GrantManaCrystal()
+        {
+            int before = EffectiveManaGrant;
+
+            manaCrystalsEaten++;
+            soulsManaGranted = Math.Min(SoulsManaGrantCap, soulsManaGranted + SoulsModeManaCrystalGain);
+
+            int gain = EffectiveManaGrant - before;
+            NormalizeCrystalCounters();
+            if (gain > 0)
+            {
+                Player.UseManaMaxIncreasingItem(gain);
+            }
+        }
+
         public override void GetHealMana(Item item, bool quickHeal, ref int healValue)
         {
             if (manaShield >= 1)
             {
                 healValue = 0;
+            }
+        }
+
+        internal void ApplyStartingClassStats(bool force = false, bool clearPending = true)
+        {
+            if (!force && appliedStartingClassStatsVersion >= StartingClassStatsVersion)
+            {
+                return;
+            }
+
+            GetResolvedStartingClass();
+
+            if (startingClass == StartingClass.None)
+            {
+                return;
+            }
+
+            int maxLife = GetStartingClassBaseLife();
+            int maxMana = GetStartingClassBaseMana();
+            float maxStamina = GetStartingClassBaseStamina();
+
+            Player.statLifeMax2 = maxLife;
+            Player.statLife = maxLife;
+            Player.statManaMax2 = maxMana;
+            Player.statMana = maxMana;
+
+            tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            staminaPlayer.staminaResourceMax = maxStamina;
+            staminaPlayer.staminaResourceCurrent = maxStamina;
+
+            appliedStartingClassStats = true;
+            appliedStartingClassStatsVersion = StartingClassStatsVersion;
+            if (clearPending)
+            {
+                tsorcRevamp.PendingStartingClass = StartingClass.None;
+            }
+        }
+
+        private StartingClass GetResolvedStartingClass()
+        {
+            if (startingClass != StartingClass.None)
+            {
+                return startingClass;
+            }
+
+            startingClass = ResolveStartingClassForStats();
+            return startingClass;
+        }
+
+        private StartingClass ResolveStartingClassForStats()
+        {
+            if (tsorcRevamp.PendingStartingClass != StartingClass.None)
+            {
+                return tsorcRevamp.PendingStartingClass;
+            }
+
+            return InferStartingClassFromInventory();
+        }
+
+        private StartingClass InferStartingClassFromInventory()
+        {
+            for (int i = 0; i < Player.inventory.Length; i++)
+            {
+                int itemType = Player.inventory[i]?.type ?? ItemID.None;
+                if (itemType == ModContent.ItemType<ApprenticesWand>() || itemType == ItemID.BorealWoodSword)
+                {
+                    return StartingClass.Magic;
+                }
+                if (itemType == ModContent.ItemType<RustedChain>() || itemType == ItemID.BabyBirdStaff)
+                {
+                    return StartingClass.Summoner;
+                }
+                if (itemType == ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>() || itemType == ItemID.IronShortsword)
+                {
+                    return StartingClass.Ranged;
+                }
+                if (itemType == ModContent.ItemType<ForgottenRuneAxe>() || itemType == ItemID.WoodenBoomerang)
+                {
+                    return StartingClass.Melee;
+                }
+            }
+
+            return StartingClass.None;
+        }
+        // Class starting stamina. Stamina needs no crystal-style bookkeeping — staminaResourceMax is written
+        // straight to our own tag data and never passes through vanilla's save path — but it follows the same
+        // shape: every class converges on StaminaVessel.PermanentStaminaCap (200), and the starting value only
+        // decides how many vessels it takes to get there (Melee 14, Ranged 15, Summoner 16, Magic 17).
+        internal float GetStartingClassBaseStamina()
+        {
+            return GetResolvedStartingClass() switch
+            {
+                StartingClass.Melee => 130,
+                StartingClass.Magic => 115,
+                StartingClass.Summoner => 120,
+                _ => tsorcRevampStaminaPlayer.DefaultStaminaResourceMax
+            };
+        }
+
+        internal int GetStartingClassBaseLife()
+        {
+            return GetResolvedStartingClass() switch
+            {
+                StartingClass.Melee => 120,
+                StartingClass.Ranged => 90,
+                StartingClass.Magic => 80,
+                _ => 100
+            };
+        }
+
+        internal int GetStartingClassBaseMana()
+        {
+            return GetResolvedStartingClass() switch
+            {
+                StartingClass.Melee => 10,
+                StartingClass.Ranged => 20,
+                StartingClass.Magic => 50,
+                StartingClass.Summoner => 30,
+                _ => 20
+            };
+        }
+
+        private void MoveStartingPickaxeToFirstSlot()
+        {
+            if (Player.inventory[0] == null || !Player.inventory[0].IsAir)
+            {
+                return;
+            }
+
+            for (int i = 1; i < 10; i++)
+            {
+                Item item = Player.inventory[i];
+                if (item != null && !item.IsAir && item.pick > 0)
+                {
+                    Player.inventory[0] = item.Clone();
+                    item.TurnToAir();
+                    return;
+                }
             }
         }
 
@@ -1721,13 +2540,37 @@ namespace tsorcRevamp
                 Player.QuickSpawnItem(Player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
+
+            if (!gotDarksign)
+            { // Fresh character: start in Unkindled mode and strip junk starter items.
+                gotDarksign = true;
+                if (!BearerOfTheCurse) Unkindled = true;
+
+                for (int i = 0; i < Player.inventory.Length; i++)
+                {
+                    if (Player.inventory[i].type == ItemID.CopperShortsword || Player.inventory[i].type == ItemID.CopperAxe)
+                        Player.inventory[i].TurnToAir();
+                }
+
+                MoveStartingPickaxeToFirstSlot();
+            }
         }
 
 
 
         public override void OnRespawn()
         {
+            unkindledManaDelayTimer = 0;
             Player.statLife = Player.statLifeMax2;
+
+            // Restore non-permanent completed events (SaveOnCompletion=false) so their spawn rings reappear.
+            // They were parked in DisabledEvents on completion instead of the 5-second QueuedEvents timer.
+            if (Player.whoAmI == Main.myPlayer && tsorcScriptedEvents.DisabledEvents != null && tsorcScriptedEvents.QueuedEvents != null)
+            {
+                foreach (var ev in tsorcScriptedEvents.DisabledEvents)
+                    tsorcScriptedEvents.QueuedEvents.Add(ev);
+                tsorcScriptedEvents.DisabledEvents.Clear();
+            }
             if (BearerOfTheCurse) Player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
             Player.AddBuff(ModContent.BuffType<Invincible>(), 360);
 
@@ -1752,6 +2595,32 @@ namespace tsorcRevamp
             if (modPlayer.HadBuffStrategist)
             {
                 Player.AddBuff(BuffID.WarTable, 1);
+            }
+        }
+
+        public override void OnConsumeMana(Item item, int manaConsumed)
+        {
+            if (Unkindled && manaConsumed > 0)
+            {
+                unkindledManaDelayTimer = 3600; // 60 seconds (3600 ticks at 60fps)
+            }
+        }
+
+        /// <summary>
+        /// Spend mana from a source that ISN'T a normal item use (shields/wards blocking, on-hit drains, etc.).
+        /// Vanilla's OnConsumeMana — which triggers Unkindled's 30s mana-regen delay — only fires for item use,
+        /// so anything subtracting statMana directly must call this to apply the same Unkindled penalty.
+        /// </summary>
+        public void SpendManaOnHit(int amount)
+        {
+            if (amount <= 0)
+            {
+                return;
+            }
+            Player.statMana = System.Math.Max(0, Player.statMana - amount);
+            if (Unkindled)
+            {
+                unkindledManaDelayTimer = 3600;
             }
         }
 

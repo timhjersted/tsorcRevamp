@@ -102,11 +102,19 @@ namespace tsorcRevamp.Projectiles.VFX
                     return;
                 }
 
-                float subdivisionCount = (int)(Math.Abs(Projectile.rotation - lastPercent) * 120);
-                for (float i = 0; i < subdivisionCount; i++)
+                float rotationDelta = MathHelper.WrapAngle(Projectile.rotation - lastPercent);
+                int subdivisionCount = Math.Min((int)(Math.Abs(rotationDelta) * 120), 120);
+                for (int i = 0; i < subdivisionCount; i++)
                 {
-                    trailPositions.Add(owner.Center + new Vector2(trailWidth, 0).RotatedBy(MathHelper.Lerp(lastPercent, Projectile.rotation, i / subdivisionCount) - MathHelper.PiOver2) - Main.screenPosition);
-                    trailRotations.Add(MathHelper.Lerp(lastPercent, Projectile.rotation, i / subdivisionCount) + MathHelper.Pi);
+                    float interpolatedRotation = lastPercent + rotationDelta * (i / (float)subdivisionCount);
+                    trailPositions.Add(owner.Center + new Vector2(trailWidth, 0).RotatedBy(interpolatedRotation - MathHelper.PiOver2) - Main.screenPosition);
+                    trailRotations.Add(interpolatedRotation + MathHelper.Pi);
+                }
+
+                while (trailPositions.Count > trailPointLimit)
+                {
+                    trailPositions.RemoveAt(0);
+                    trailRotations.RemoveAt(0);
                 }
             }
             lastPercent = Projectile.rotation;
@@ -165,8 +173,9 @@ namespace tsorcRevamp.Projectiles.VFX
 
             effect.Parameters["fadeOut"].SetValue(trailIntensity);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["slashCenter"].SetValue(Color.White.ToVector4());
-            effect.Parameters["slashEdge"].SetValue(slashColor.ToVector4());
+            Color lightingColor = Lighting.GetColor(Projectile.Center.ToTileCoordinates());
+            effect.Parameters["slashCenter"].SetValue(Color.White.MultiplyRGB(lightingColor).ToVector4());
+            effect.Parameters["slashEdge"].SetValue(slashColor.MultiplyRGB(lightingColor).ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
 

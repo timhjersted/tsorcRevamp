@@ -427,6 +427,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npcLoot.Add(new CommonDrop(ModContent.ItemType<BattlefrontPotion>(), 100, 1, 1, 5));
             npcLoot.Add(new CommonDrop(ItemID.BloodMoonStarter, 100, 1, 1, 5));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 4));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<FlameOfTheAbyss>()));
         }
     }
 }

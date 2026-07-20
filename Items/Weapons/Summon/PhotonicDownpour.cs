@@ -23,15 +23,15 @@ namespace tsorcRevamp.Items.Weapons.Summon
         {
             Item.damage = 66;
             Item.knockBack = 3f;
-            Item.mana = 10;
             Item.width = 42;
             Item.height = 28;
-            Item.useTime = 30;
-            Item.useAnimation = 30;
+            Item.useTime = 15;
+            Item.useAnimation = 15;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.buyPrice(1, 50, 0, 0);
             Item.rare = ItemRarityID.Pink;
             Item.UseSound = SoundID.Item44;
+            Item.mana = 10;
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;

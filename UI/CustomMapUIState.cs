@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
@@ -34,27 +34,27 @@ namespace tsorcRevamp.UI
             RemoveAllChildren();
             UIElement mapSelector = new UIElement
             {
-                Width = StyleDimension.FromPixels(800f),
-                Height = StyleDimension.FromPixels(950f),
-                Top = StyleDimension.FromPixels(170f),
+                Width = StyleDimension.FromPixels(400f),
+                Height = StyleDimension.FromPixels(475f),
+                Top = StyleDimension.FromPixels(0f),
                 HAlign = 0.5f,
-                VAlign = 0f,
+                VAlign = 0.5f,
             };
 
-            tsorcUICenteredTextButton selectorBackground = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.SelectWorld"), .85f, true)
+            tsorcUICenteredTextButton selectorBackground = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.SelectWorld"), .425f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
-                Height = StyleDimension.FromPixels(445),
-                Top = StyleDimension.FromPixels(100f),
+                Height = StyleDimension.FromPixels(175),
+                Top = StyleDimension.FromPixels(50f),
                 TextVAlign = 0.075f,
                 BackgroundColor = new Color(33, 43, 79) * 0.8f
             };
 
-            newCustomMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.TSORCMap"), .85f, true)
+            newCustomMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.TSORCMap"), .425f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
-                Height = StyleDimension.FromPixels(100),
-                Top = StyleDimension.FromPixels(80f),
+                Height = StyleDimension.FromPixels(35),
+                Top = StyleDimension.FromPixels(40f),
                 HAlign = 0.5f,
                 BackgroundColor = new Color(33, 43, 120).MultiplyRGB(Main.DiscoColor * 0.9f)
             };
@@ -63,11 +63,11 @@ namespace tsorcRevamp.UI
             newCustomMap.OnMouseOut += UnselectCustomMap;
             newCustomMap.OnLeftMouseDown += CustomMapSelected;
 
-            newRemixMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.TSORCXelvaaRemix"), .85f, true)
+            newRemixMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.TSORCXelvaaRemix"), .425f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
-                Height = StyleDimension.FromPixels(100),
-                Top = StyleDimension.FromPixels(200f),
+                Height = StyleDimension.FromPixels(35),
+                Top = StyleDimension.FromPixels(82.5f),
                 HAlign = 0.5f,
                 BackgroundColor = new Color(33, 43, 120).MultiplyRGB(Main.DiscoColor * 0.9f)
             };
@@ -76,11 +76,11 @@ namespace tsorcRevamp.UI
             newRemixMap.OnMouseOut += UnselectRemixMap;
             newRemixMap.OnLeftMouseDown += RemixMapSelected;
 
-            tsorcUICenteredTextButton newVanillaMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.VanillaMap"), .85f, true)
+            tsorcUICenteredTextButton newVanillaMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.VanillaMap"), .425f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
-                Height = StyleDimension.FromPixels(100),
-                Top = StyleDimension.FromPixels(320f),
+                Height = StyleDimension.FromPixels(35),
+                Top = StyleDimension.FromPixels(125f),
                 HAlign = 0.5f,
                 TextVAlign = 0.5f,
                 BackgroundColor = new Color(33, 43, 120)
@@ -98,11 +98,11 @@ namespace tsorcRevamp.UI
             Append(mapSelector);
             
 
-            tsorcUICenteredTextButton backButton = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.Back"), .85f, true)
+            tsorcUICenteredTextButton backButton = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.Back"), .425f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
-                Height = StyleDimension.FromPixels(80),
-                Top = StyleDimension.FromPixels(550f),
+                Height = StyleDimension.FromPixels(40),
+                Top = StyleDimension.FromPixels(227.5f),
                 BackgroundColor = new Color(33, 43, 79),
                 TextHAlign = 0.5f,
 
@@ -248,7 +248,9 @@ namespace tsorcRevamp.UI
 
                         try
                         {
-                            fileToCopy.CopyTo(worldsFolder + userMapFileName, false);
+                            string copiedWorldPath = worldsFolder + userMapFileName;
+                            fileToCopy.CopyTo(copiedWorldPath, false);
+                            tsorcRevamp.StampWorldFileAsCreatedNow(copiedWorldPath, mod.Logger);
                         }
                         catch (System.Security.SecurityException e)
                         {
@@ -285,7 +287,9 @@ namespace tsorcRevamp.UI
                                 }
                             } while (!validName);
 
-                            fileToCopy.CopyTo(worldsFolder + newFileName, false);
+                            string copiedWorldPath = worldsFolder + newFileName;
+                            fileToCopy.CopyTo(copiedWorldPath, false);
+                            tsorcRevamp.StampWorldFileAsCreatedNow(copiedWorldPath, mod.Logger);
                         }
                         catch (System.Security.SecurityException e)
                         {
@@ -334,7 +338,9 @@ namespace tsorcRevamp.UI
 
                         try
                         {
-                            fileToCopy.CopyTo(worldsFolder + userRemixMapFileName, false);
+                            string copiedWorldPath = worldsFolder + userRemixMapFileName;
+                            fileToCopy.CopyTo(copiedWorldPath, false);
+                            tsorcRevamp.StampWorldFileAsCreatedNow(copiedWorldPath, mod.Logger);
                         }
                         catch (System.Security.SecurityException e)
                         {
@@ -371,7 +377,9 @@ namespace tsorcRevamp.UI
                                 }
                             } while (!validName);
 
-                            fileToCopy.CopyTo(worldsFolder + newFileName, false);
+                            string copiedWorldPath = worldsFolder + newFileName;
+                            fileToCopy.CopyTo(copiedWorldPath, false);
+                            tsorcRevamp.StampWorldFileAsCreatedNow(copiedWorldPath, mod.Logger);
                         }
                         catch (System.Security.SecurityException e)
                         {

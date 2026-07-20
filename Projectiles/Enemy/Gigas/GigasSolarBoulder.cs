@@ -1,0 +1,98 @@
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    ///<summary>
+    ///Gigas solar boulder: a huge, slow lobbed sun. Arcs under gravity (ai[0] = gravity per tick),
+    ///detonates on impact into bouncing solar embers and leaves consecrated ground where it lands.
+    ///</summary>
+    class GigasSolarBoulder : ModProjectile
+    {
+        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+
+        public override void SetDefaults()
+        {
+            Projectile.hostile = true;
+            Projectile.width = 36;
+            Projectile.height = 36;
+            Projectile.tileCollide = true;
+            Projectile.penetrate = 1;
+            Projectile.aiStyle = 0;
+            Projectile.timeLeft = 600;
+            Projectile.light = 0.9f;
+        }
+
+        public override void AI()
+        {
+            Projectile.velocity.Y += Projectile.ai[0];
+            if (Projectile.velocity.Y > 16f)
+            {
+                Projectile.velocity.Y = 16f;
+            }
+            Projectile.rotation += 0.06f * (Projectile.velocity.X >= 0f ? 1f : -1f);
+
+            //Roiling golden aura — the boulder is a miniature sun
+            for (int i = 0; i < 4; i++)
+            {
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 60, default, Main.rand.NextFloat(1.8f, 2.4f));
+                Main.dust[dust].noGravity = true;
+                Main.dust[dust].velocity *= 0.3f;
+            }
+            if (Main.rand.NextBool(2))
+            {
+                int sparkle = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldCoin, 0f, -1f, 0, default, 1.1f);
+                Main.dust[sparkle].noGravity = true;
+            }
+            Lighting.AddLight(Projectile.Center, 1f, 0.85f, 0.35f);
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.8f, Pitch = 0.2f }, Projectile.Center);
+            UsefulFunctions.ScreenShake(Projectile.Center, 7f, 14);
+
+            //Detonation flash
+            for (int i = 0; i < 30; i++)
+            {
+                Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, vel.X, vel.Y, 60, default, Main.rand.NextFloat(1.5f, 2.2f));
+                Main.dust[dust].noGravity = true;
+            }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            //Bouncing embers fly up and out
+            int embers = Main.rand.Next(4, 6);
+            for (int i = 0; i < embers; i++)
+            {
+                Vector2 vel = new Vector2(Main.rand.NextFloat(-5f, 5f), Main.rand.NextFloat(-9f, -5f));
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel, ModContent.ProjectileType<GigasSolarEmber>(), (int)(Projectile.damage * 0.5f), 0f, Main.myPlayer, 0.25f);
+            }
+
+            //Consecrate the ground below the impact
+            int tileX = (int)(Projectile.Center.X / 16f);
+            int tileY = (int)(Projectile.Center.Y / 16f);
+            for (int d = 0; d < 6; d++)
+            {
+                int y = tileY + d;
+                if (y >= Main.maxTilesY)
+                {
+                    break;
+                }
+                Tile tile = Main.tile[tileX, y];
+                if (tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType])
+                {
+                    Vector2 patchCenter = new Vector2(tileX * 16f + 8f, y * 16f - GigasConsecratedGround.PatchHeight / 2f);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), patchCenter, Vector2.Zero, ModContent.ProjectileType<GigasConsecratedGround>(), (int)(Projectile.damage * 0.4f), 0f, Main.myPlayer);
+                    break;
+                }
+            }
+        }
+    }
+}

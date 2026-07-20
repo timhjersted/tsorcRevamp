@@ -33,14 +33,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff2>(), 4 * 60);
+            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 4 * 60);
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BurningFist>());
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 15);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
 

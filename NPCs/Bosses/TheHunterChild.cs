@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = -1;
             NPC.lifeMax = 5000;
             NPC.damage = 53;
-            NPC.defense = 32;
+            NPC.defense = 30;
             NPC.knockBackResist = 0f;
             NPC.value = 31500;
             NPC.npcSlots = 1;
@@ -34,6 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.behindTiles = false;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.scale = 1.15f;
             DrawOffsetY = +70;
             NPC.width = 50;
             NPC.height = 30;
@@ -121,7 +122,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (EnrageTimer == 0)
             {
                 // Normal Phase
-                NPC.defense = 26;
+                NPC.defense = 24;
                 if (AttackPhaseTimer < 600)
                 {
                     if (Main.player[NPC.target].position.X < NPC.Center.X)
@@ -152,11 +153,11 @@ namespace tsorcRevamp.NPCs.Bosses
                         Vector2 fireOriginOffset = new Vector2(0, -70);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector + player.velocity, type, sproutDamage, 0, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector.RotatedBy(-0.4) + player.velocity, type, sproutDamage, 0, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector.RotatedBy(0.4) + player.velocity, type, sproutDamage, 0, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector + player.velocity / 1.2f, type, sproutDamage, 0, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector.RotatedBy(-0.4) + player.velocity / 1.2f, type, sproutDamage, 0, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector.RotatedBy(0.4) + player.velocity / 1.2f, type, sproutDamage, 0, Main.myPlayer);
                         }
-                        SprouterShotTimer = -90;
+                        SprouterShotTimer = -150;
                         NPC.netUpdate = true;
                     }
                     NPC.netUpdate = true;
@@ -392,11 +393,6 @@ namespace tsorcRevamp.NPCs.Bosses
             for (int i = 0; i < 100; i++)
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 131, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.DarkGreen, 3f);
-            }
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.Green));
             }
         }
         public override void HitEffect(NPC.HitInfo hit)

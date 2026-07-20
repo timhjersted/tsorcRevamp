@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.lifeMax = 1050; 
                 NPC.defense = 35;
-                NPC.value = 900; 
+                NPC.value = 4200;
             }
         }
 

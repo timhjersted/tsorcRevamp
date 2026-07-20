@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Achievements;
 using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -18,6 +20,7 @@ using Terraria.UI;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.MainMenu;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
@@ -27,6 +30,7 @@ using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Bosses.Pinwheel;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
@@ -41,8 +45,27 @@ namespace tsorcRevamp
 {
     class MethodSwaps
     {
+        private static Vector2 abyssLastScreenPosition;
+        private static Vector2 abyssCameraVelocity;
+        private static Asset<Texture2D> vesselInteriorBackground;
+
+        // This is intentionally one isolated, optional layer. Set false to return to the existing
+        // black + star background unchanged.
+        private const bool UseVesselInteriorBackground = true;
+
         internal static void ApplyMethodSwaps()
         {
+            // Auto-select our own main menu theme on load instead of leaving whatever theme (vanilla/tML/
+            // another mod's) was last saved, so the mod's branding is what greets the player by default.
+            // MenuLoader is part of tModLoader's own API surface (Terraria.ModLoader), not the hooked game
+            // assembly, so there's no HookGen On_MenuLoader wrapper for it - hook it manually via reflection
+            // instead, same pattern as the ItemSlot.OverrideHover hook below.
+            MethodInfo gotoSavedModMenu = typeof(MenuLoader).GetMethod("GotoSavedModMenu", BindingFlags.NonPublic | BindingFlags.Static);
+            if (gotoSavedModMenu != null)
+            {
+                MonoModHooks.Add(gotoSavedModMenu, (Action<Action>)ForceRedCloudMenuDefault);
+            }
+
             Terraria.On_Player.Spawn += SpawnPatch;
 
             Terraria.On_WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
@@ -75,6 +98,17 @@ namespace tsorcRevamp
 
             Terraria.UI.On_ChestUI.LootAll += PotionBagLootAllPatch;
 
+            // Storage: while the Storage pop-up is open, show the vanilla "send to container" cursor icon
+            // (chest + red arrow) when shift-hovering a depositable inventory item. Hooked via reflection so we
+            // don't depend on the exact MonoMod overload-suffix name for ItemSlot.OverrideHover.
+            MethodInfo overrideHover = typeof(ItemSlot).GetMethod("OverrideHover",
+                BindingFlags.Public | BindingFlags.Static, null,
+                new Type[] { typeof(Item[]), typeof(int), typeof(int) }, null);
+            if (overrideHover != null)
+            {
+                MonoModHooks.Add(overrideHover, (Action<Action<Item[], int, int>, Item[], int, int>)ItemSlot_OverrideHover);
+            }
+
             Terraria.On_Player.HasUnityPotion += HasWormholePotion;
             Terraria.On_Player.TakeUnityPotion += ConsumeWormholePotion;
 
@@ -83,6 +117,12 @@ namespace tsorcRevamp
             Terraria.GameContent.On_ShopHelper.GetShoppingSettings += ShopHelper_GetShoppingSettings;
 
             Terraria.GameContent.UI.States.On_UIWorldSelect.NewWorldClick += UIWorldSelect_NewWorldClick;
+            Terraria.GameContent.UI.States.On_UICharacterSelect.NewCharacterClick += UICharacterSelect_NewCharacterClick;
+            Terraria.GameContent.UI.States.On_UICharacterCreation.SetupPlayerStatsAndInventoryBasedOnDifficulty += UICharacterCreation_SetupPlayerStatsAndInventoryBasedOnDifficulty;
+
+            Terraria.On_Player.ItemCheck_UseLifeCrystal += On_Player_ItemCheck_UseLifeCrystal;
+            Terraria.On_Player.ItemCheck_UseManaCrystal += On_Player_ItemCheck_UseManaCrystal;
+            Terraria.IO.On_PlayerFileData.CreateAndSave += PlayerFileData_CreateAndSave;
 
             Terraria.On_Player.HandleBeingInChestRange += Player_HandleBeingInChestRange;
 
@@ -95,6 +135,32 @@ namespace tsorcRevamp
             Terraria.On_Main.CraftItem += Main_CraftItem;
 
             Terraria.On_Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
+            Terraria.On_Main.DrawInterface_16_MapOrMinimap += Main_DrawInterface_16_MapOrMinimap;
+            MethodInfo drawHotbar = typeof(Main).GetMethod("GUIHotbarDrawInner", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (drawHotbar != null)
+            {
+                MonoModHooks.Add(drawHotbar, (Action<Action<Main>, Main>)DrawHotbar_WithTransparencyConfig);
+            }
+            MethodInfo drawMap = typeof(Main).GetMethod("DrawMap", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(GameTime) }, null);
+            if (drawMap != null)
+            {
+                MonoModHooks.Add(drawMap, (Action<Action<Main, GameTime>, Main, GameTime>)DrawMap_WithInventoryVisibilityConfig);
+            }
+
+            // Hide ONLY the vanilla life & mana bars when custom resource bars are enabled. The life/mana bars
+            // are drawn by the active resource-display set's Draw(); there's one concrete set per HUD style, so
+            // we detour all three. The breath (bubbles) meter and buff/debuff icons are drawn elsewhere in
+            // GUIBarsDrawInner and are left untouched.
+            Terraria.GameContent.UI.ResourceSets.On_ClassicPlayerResourcesDisplaySet.Draw += SuppressVanillaResourceSet_Classic;
+            Terraria.GameContent.UI.ResourceSets.On_FancyClassicPlayerResourcesDisplaySet.Draw += SuppressVanillaResourceSet_Fancy;
+            // HorizontalBars resource set: hook its Draw() via reflection + MonoModHooks (works regardless of
+            // whether a generated On_ hook is present for this type).
+            MethodInfo horizontalBarsDraw = typeof(Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet)
+                .GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance);
+            if (horizontalBarsDraw != null)
+            {
+                MonoModHooks.Add(horizontalBarsDraw, (Action<Action<Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet>, Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet>)SuppressVanillaResourceSet_Horizontal);
+            }
 
             Terraria.On_Player.InZonePurity += Player_InZonePurity;
             //On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
@@ -106,6 +172,8 @@ namespace tsorcRevamp
             Terraria.DataStructures.On_PlayerDrawLayers.DrawPlayer_TransformDrawData += PaperMarioMode;
 
             Terraria.On_Main.Draw += Main_Draw;
+
+            Terraria.On_Main.DrawSurfaceBG += Main_DrawSurfaceBG;
 
             Terraria.On_Main.DrawProjectiles += Main_DrawProjectiles;
 
@@ -147,9 +215,310 @@ namespace tsorcRevamp
 
             On_Player.ApplyVanillaHurtEffectModifiers += On_Player_ApplyVanillaHurtEffectModifiers;
 
+            On_Player.KillMe += On_Player_KillMe;
+
             On_NPC.AI_069_DukeFishron += DukeFishronAdjustment;
 
             On_Main.HoverOverNPCs += HidePinwheelLifeOnMouseover;
+
+            // Graveyard biome: don't let thunder get scheduled at all while standing there, rather than trying to
+            // intercept/stop the sound after vanilla already started it (an earlier StopAll(SoundID.Thunder)
+            // approach worked for thunder specifically, but calling into SoundPlayer's tracked-sound bookkeeping
+            // every tick had the side effect of silencing ambient sound in every other biome for the rest of the
+            // session - not worth the risk). NewLightning() is what sets Main's thunderDelay countdown that
+            // later triggers SoundEngine.PlaySound(43, ...); skipping it entirely means that countdown, and the
+            // sound, never happens in the first place - no interaction with the audio engine at all.
+            On_Main.NewLightning += SkipLightningInGraveyard;
+        }
+
+        private static void DrawHotbar_WithTransparencyConfig(Action<Main> orig, Main self)
+        {
+            if (!ModContent.GetInstance<tsorcRevampVisualConfig>().TransparentInventoryBar)
+            {
+                orig(self);
+                return;
+            }
+
+            // Reproduce vanilla's closed-inventory hotbar loop so alpha can be changed per slot without
+            // changing ItemSlot globally. The selected-item name normally drawn above the loop is omitted.
+            if (Main.playerInventory || Main.LocalPlayer.ghost)
+            {
+                return;
+            }
+
+            const float unselectedOpacity = 0.25f;
+            const float adjacentOpacity = 0.5f;
+            int slotX = 20;
+            for (int slot = 0; slot < 10; slot++)
+            {
+                bool selected = slot == Main.LocalPlayer.selectedItem;
+                bool adjacent = Math.Abs(slot - Main.LocalPlayer.selectedItem) == 1;
+                if (selected)
+                {
+                    if (Main.hotbarScale[slot] < 1f)
+                    {
+                        Main.hotbarScale[slot] += 0.05f;
+                    }
+                }
+                else if (Main.hotbarScale[slot] > 0.75f)
+                {
+                    Main.hotbarScale[slot] -= 0.05f;
+                }
+
+                float slotScale = Main.hotbarScale[slot];
+                int slotY = (int)(20f + 22f * (1f - slotScale));
+                int vanillaAlpha = (int)(75f + 150f * slotScale);
+                float opacity = selected ? 1f : adjacent ? adjacentOpacity : unselectedOpacity;
+                Color slotColor = new Color(255, 255, 255, vanillaAlpha) * opacity;
+
+                if (!Main.LocalPlayer.hbLocked && !Terraria.GameInput.PlayerInput.IgnoreMouseInterface
+                    && Main.mouseX >= slotX && Main.mouseX <= slotX + TextureAssets.InventoryBack.Width() * slotScale
+                    && Main.mouseY >= slotY && Main.mouseY <= slotY + TextureAssets.InventoryBack.Height() * slotScale
+                    && !Main.LocalPlayer.channel)
+                {
+                    Main.LocalPlayer.mouseInterface = true;
+                    Main.LocalPlayer.cursorItemIconEnabled = false;
+                    if (Main.mouseLeft && !Main.LocalPlayer.hbLocked && !Main.blockMouse)
+                    {
+                        Main.LocalPlayer.changeItem = slot;
+                    }
+
+                    Main.hoverItemName = Main.LocalPlayer.inventory[slot].AffixName();
+                    if (Main.LocalPlayer.inventory[slot].stack > 1)
+                    {
+                        Main.hoverItemName += " (" + Main.LocalPlayer.inventory[slot].stack + ")";
+                    }
+                    Main.rare = Main.LocalPlayer.inventory[slot].rare;
+                }
+
+                float oldInventoryScale = Main.inventoryScale;
+                Main.inventoryScale = slotScale;
+                Texture2D background = selected ? TextureAssets.InventoryBack14.Value : TextureAssets.InventoryBack.Value;
+                Color backgroundColor = (selected ? Color.White : new Color(200, 200, 200, 200)) * opacity;
+                Main.spriteBatch.Draw(background, new Vector2(slotX, slotY), null, backgroundColor, 0f,
+                    Vector2.Zero, slotScale, SpriteEffects.None, 0f);
+
+                // Context 14 suppresses ItemSlot's own background while retaining its standard item/stack draw.
+                // Skip it completely at zero opacity because some item glow layers ignore the supplied color.
+                if (opacity > 0f)
+                {
+                    ItemSlot.Draw(Main.spriteBatch, Main.LocalPlayer.inventory, 14, slot, new Vector2(slotX, slotY), slotColor);
+                }
+                Main.inventoryScale = oldInventoryScale;
+                slotX += (int)(TextureAssets.InventoryBack.Width() * slotScale) + 4;
+            }
+
+            int selectedItem = Main.LocalPlayer.selectedItem;
+            if (selectedItem >= 10 && (selectedItem != 58 || Main.mouseItem.type > 0))
+            {
+                float oldInventoryScale = Main.inventoryScale;
+                Main.inventoryScale = 1f;
+                ItemSlot.Draw(Main.spriteBatch, Main.LocalPlayer.inventory, 13, selectedItem,
+                    new Vector2(slotX, 20f), new Color(255, 255, 255, 225));
+                Main.inventoryScale = oldInventoryScale;
+            }
+        }
+
+        private static void Main_DrawSurfaceBG(Terraria.On_Main.orig_DrawSurfaceBG orig, Main self)
+        {
+            // Guard against calling GetModPlayer during the loading screen or main menu, where
+            // Main.player[Main.myPlayer] is an uninitialized dummy whose modPlayers array is empty.
+            // GetModPlayer would throw IndexOutOfRangeException every draw frame, preventing orig()
+            // from running and causing the entire DoDraw to abort — which blocks the update loop.
+            int mp = Main.myPlayer;
+            if (!Main.gameMenu && mp >= 0 && mp < Main.player.Length
+                && Main.player[mp] != null && Main.player[mp].active
+                && Main.player[mp].GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
+            {
+                DrawAbyssSpaceBackground();
+                return;
+            }
+
+            orig(self);
+        }
+
+        private static Artorias FindActiveArtorias()
+        {
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].ModNPC is Artorias artorias)
+                {
+                    return artorias;
+                }
+            }
+
+            return null;
+        }
+
+        internal static bool IsAbyssVisualActive()
+        {
+            return IsArtoriasAbyssSurgeActive()
+                || Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true;
+        }
+
+        internal static bool IsArtoriasAbyssSurgeActive()
+        {
+            return FindActiveArtorias()?.AbyssSurgeActive == true;
+        }
+
+        private static bool IsVesselVoidVisualActive()
+        {
+            return NPCs.Bosses.VesselOfSouls.VesselOfSoulsFadeSystem.WorldHidden;
+        }
+
+        private static void DrawAbyssSpaceBackground()
+        {
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Rectangle pixelSource = new Rectangle(0, 0, 1, 1);
+            Main.spriteBatch.Draw(pixel, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), pixelSource, Color.Black);
+
+            if (abyssLastScreenPosition == Vector2.Zero)
+            {
+                abyssLastScreenPosition = Main.screenPosition;
+            }
+            abyssCameraVelocity = Main.screenPosition - abyssLastScreenPosition;
+            abyssLastScreenPosition = Main.screenPosition;
+
+            bool vesselVoid = IsVesselVoidVisualActive();
+            float animationScale = vesselVoid ? 0.5f : 1f;
+            DrawAbyssStarLayer(pixel, 112f, 0.012f, 0.42f, 0.7f,
+                vesselVoid ? new Color(170, 25, 20) : new Color(180, 220, 255),
+                vesselVoid ? new Color(255, 105, 85) : Color.White, animationScale);
+            DrawAbyssStarLayer(pixel, 76f, 0.022f, 0.62f, 1f,
+                vesselVoid ? new Color(255, 95, 70) : Color.White,
+                vesselVoid ? new Color(255, 145, 115) : Color.White, animationScale);
+            DrawAbyssStarLayer(pixel, 48f, 0.038f, 0.28f, 1.25f,
+                vesselVoid ? new Color(255, 155, 120) : new Color(200, 255, 230),
+                vesselVoid ? new Color(255, 85, 65) : Color.White, animationScale);
+        }
+
+        internal static void DrawVesselInteriorBackground(float opacity = 1f)
+        {
+            if (!UseVesselInteriorBackground)
+                return;
+
+            vesselInteriorBackground ??= ModContent.Request<Texture2D>(
+                "tsorcRevamp/Textures/Backgrounds/VesselOfSoulsInterior", AssetRequestMode.ImmediateLoad);
+            Texture2D texture = vesselInteriorBackground.Value;
+
+            // Center-crop to cover the screen at any aspect ratio without stretching the artwork.
+            float screenAspect = Main.screenWidth / (float)Main.screenHeight;
+            float textureAspect = texture.Width / (float)texture.Height;
+            Rectangle source;
+            if (textureAspect > screenAspect)
+            {
+                int sourceWidth = (int)(texture.Height * screenAspect);
+                source = new Rectangle((texture.Width - sourceWidth) / 2, 0, sourceWidth, texture.Height);
+            }
+            else
+            {
+                int sourceHeight = (int)(texture.Width / screenAspect);
+                source = new Rectangle(0, (texture.Height - sourceHeight) / 2, texture.Width, sourceHeight);
+            }
+
+            // Slight translucency preserves the black foundation and lets the existing stars remain crisp.
+            Main.spriteBatch.Draw(texture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight),
+                source, Color.White * (0.9f * MathHelper.Clamp(opacity, 0f, 1f)));
+        }
+
+        private static void DrawAbyssStarLayer(Texture2D pixel, float cellSize, float parallax, float density, float brightness, Color accentColor, Color baseColor, float animationScale)
+        {
+            Vector2 parallaxPosition = Main.screenPosition * parallax;
+            int startCellX = (int)Math.Floor((parallaxPosition.X - 96f) / cellSize);
+            int startCellY = (int)Math.Floor((parallaxPosition.Y - 96f) / cellSize);
+            int endCellX = (int)Math.Ceiling((parallaxPosition.X + Main.screenWidth + 96f) / cellSize);
+            int endCellY = (int)Math.Ceiling((parallaxPosition.Y + Main.screenHeight + 96f) / cellSize);
+
+            for (int cellX = startCellX; cellX <= endCellX; cellX++)
+            {
+                for (int cellY = startCellY; cellY <= endCellY; cellY++)
+                {
+                    float seed = Hash01(cellX, cellY, (int)(cellSize * 10f));
+
+                    float offsetX = Hash01(cellX, cellY, 17) * cellSize;
+                    float offsetY = Hash01(cellX, cellY, 43) * cellSize;
+                    Vector2 starPosition = new Vector2(cellX * cellSize + offsetX, cellY * cellSize + offsetY) - parallaxPosition;
+
+                    // Sample the real light map (same Lighting.GetColor API used all over this codebase for
+                    // chain/weapon draw colors) at the real world position this star sits over - starPosition is
+                    // already screen-relative, so + Main.screenPosition recovers the actual world coordinate
+                    // regardless of this layer's own parallax scaling. darkness is 0 in full light, 1 in full dark.
+                    Vector2 worldPos = starPosition + Main.screenPosition;
+                    Color lightColor = Lighting.GetColor((int)(worldPos.X / 16f), (int)(worldPos.Y / 16f));
+                    float lightLevel = Math.Max(lightColor.R, Math.Max(lightColor.G, lightColor.B)) / 255f;
+                    float darkness = MathHelper.Clamp(1f - lightLevel * 2.5f, 0f, 1f);
+
+                    // Density itself scales up to +50% as darkness approaches 1, so dark patches get noticeably
+                    // more stars, not just brighter ones.
+                    float effectiveDensity = density * (1f + 0.5f * darkness);
+                    if (seed > effectiveDensity)
+                    {
+                        continue;
+                    }
+
+                    // Stars stay visible even in full light (per-request - "harder to see" rather than gone), just
+                    // dimmed down to a low floor; they brighten back up to full as darkness increases.
+                    const float minVisibilityInLight = 0.15f;
+                    float visibility = minVisibilityInLight + (1f - minVisibilityInLight) * darkness;
+
+                    float twinkle = 0.65f + 0.35f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * animationScale * (1.2f + Hash01(cellX, cellY, 71) * 1.6f) + seed * MathHelper.TwoPi);
+                    int size = Hash01(cellX, cellY, 101) > 0.88f ? 2 : 1;
+                    Color color = (Hash01(cellX, cellY, 131) > 0.82f ? accentColor : baseColor) * ((0.2f + 0.58f * twinkle) * brightness * visibility);
+
+                    Main.spriteBatch.Draw(pixel, new Rectangle((int)starPosition.X, (int)starPosition.Y, size, size), color);
+                }
+            }
+        }
+
+        private static void DrawAbyssTrail(Texture2D pixel, Vector2 position, Vector2 trail, Color color, float thickness)
+        {
+            float length = trail.Length();
+            if (length < 1f)
+            {
+                return;
+            }
+
+            Main.spriteBatch.Draw(pixel, position + trail, null, color, trail.ToRotation(), new Vector2(1f, 0.5f), new Vector2(length, thickness), SpriteEffects.None, 0f);
+        }
+
+        private static float Hash01(int x, int y, int seed)
+        {
+            uint hash = (uint)(x * 374761393 + y * 668265263 + seed * 1442695041);
+            hash = (hash ^ (hash >> 13)) * 1274126177;
+            hash ^= hash >> 16;
+            return (hash & 0x00FFFFFF) / 16777216f;
+        }
+
+        // While Storage is open, paint the "send to container" cursor icon for shift-hover over a depositable
+        // inventory item — matches the real chest UX. The actual deposit is performed by ShiftClickSlot.
+        private static void ItemSlot_OverrideHover(Action<Item[], int, int> orig, Item[] inv, int context, int slot)
+        {
+            orig(inv, context, slot);
+
+            if (!UI.StorageUIState.Visible) return;
+            if (context != ItemSlot.Context.InventoryItem) return;
+            if (Main.cursorOverride != -1) return; // don't stomp a legitimate icon (e.g. shop sell)
+
+            Player p = Main.LocalPlayer;
+            if (inv != p.inventory || slot < 0 || slot >= inv.Length) return;
+
+            bool shift = Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift)
+                      || Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift);
+            if (!shift) return;
+
+            if (p.GetModPlayer<tsorcRevampPlayer>().IsStorageDepositable(inv[slot]))
+            {
+                Main.cursorOverride = CursorOverrideID.InventoryToChest;
+            }
+        }
+
+        private static void SkipLightningInGraveyard(On_Main.orig_NewLightning orig)
+        {
+            if (Main.LocalPlayer != null && Main.LocalPlayer.active && Main.LocalPlayer.ZoneGraveyard)
+            {
+                return;
+            }
+            orig();
         }
 
         private static void HidePinwheelLifeOnMouseover(On_Main.orig_HoverOverNPCs orig, Main self, Rectangle mouseRectangle)
@@ -1175,7 +1544,7 @@ namespace tsorcRevamp
             self.dontTakeDamage = !IsVulnerable;
             if (self.Hitbox.Intersects(player.Hitbox) && !IsUnderwater)
             {
-                player.AddBuff(ModContent.BuffType<Stiff>(), 10 * 60);
+                player.AddBuff(ModContent.BuffType<Stiff>(), 5 * 60);
             }
         }
 
@@ -1195,6 +1564,105 @@ namespace tsorcRevamp
             if (self.defendedByPaladin && self.whoAmI == Main.myPlayer && Above25PercentLife)
             {
                 modifiers.FinalDamage *= 0.75f;
+            }
+        }
+
+        // MenuLoader.GotoSavedModMenu picks whatever theme was last saved (vanilla, tML, or another mod's)
+        // and runs exactly once, right after all mods finish loading. There's no public API to make a
+        // ModMenu the default, so once vanilla's own selection logic has run, we reach past it into the
+        // private switchToMenu field it just set, and override it with ours - picked up on the very next
+        // menu draw.
+        //
+        // Only meant to happen once ever, not on every launch - a marker file (outside the ModConfig JSON/UI
+        // system, so there's no visible toggle for it) records that we've already forced the theme once.
+        // After that, whatever the player has manually selected (including switching away from Red Cloud)
+        // is left alone.
+        private static readonly string RedCloudMenuDefaultedMarkerPath =
+            Path.Combine(Terraria.ModLoader.Config.ConfigManager.ModConfigPath, "tsorcRevamp_RedCloudMenuDefaulted.txt");
+
+        private static void ForceRedCloudMenuDefault(Action orig)
+        {
+            orig();
+
+            if (File.Exists(RedCloudMenuDefaultedMarkerPath))
+            {
+                return;
+            }
+
+            FieldInfo switchToMenuField = typeof(MenuLoader).GetField("switchToMenu", BindingFlags.NonPublic | BindingFlags.Static);
+            switchToMenuField?.SetValue(null, ModContent.GetInstance<RedCloudMenu>());
+
+            try
+            {
+                Directory.CreateDirectory(Terraria.ModLoader.Config.ConfigManager.ModConfigPath);
+                File.WriteAllText(RedCloudMenuDefaultedMarkerPath, "1");
+            }
+            catch
+            {
+                // Non-fatal - worst case we force the default theme again on the next launch too.
+            }
+        }
+
+        // Vanilla's Player.KillMe unconditionally drops every Large Gem (Amethyst/Topaz/Sapphire/Emerald/
+        // Ruby/Diamond/Amber) out of the main inventory on death - leftover behavior from the "Capture the
+        // Gem" PvP minigame, where the gem needs to hit the ground for someone else to grab. That's an
+        // unwanted item-loss risk for players just holding them as loot/trophies. We hide the gems from the
+        // inventory before orig runs (so vanilla's drop code and the hardcore/mediumcore DropItems() path
+        // both see nothing there to drop) and restore them afterward - no gem is ever actually spawned into
+        // the world, so there's no duplication risk.
+        private static bool IsLargeGem(int itemType)
+        {
+            return (itemType >= ItemID.LargeAmethyst && itemType <= ItemID.LargeDiamond) || itemType == ItemID.LargeAmber;
+        }
+
+        private static void On_Player_KillMe(On_Player.orig_KillMe orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
+        {
+            bool useCustom = !ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds;
+            if (useCustom && self.whoAmI == Main.myPlayer && !self.dead)
+            {
+                if (self.Male)
+                {
+                    int choice = Main.rand.Next(1, 3);
+                    SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-dead-{choice}") with { Volume = 0.5f });
+                }
+                else
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-dead") with { Volume = 0.5f });
+                }
+            }
+
+            float oldVolume = Main.soundVolume;
+            if (useCustom && self.whoAmI == Main.myPlayer)
+            {
+                Main.soundVolume = 0f;
+            }
+
+            List<(int slot, Item item)> savedGems = new List<(int, Item)>();
+            for (int i = 0; i < self.inventory.Length; i++)
+            {
+                Item invItem = self.inventory[i];
+                if (invItem != null && invItem.stack > 0 && IsLargeGem(invItem.type))
+                {
+                    savedGems.Add((i, invItem.Clone()));
+                    self.inventory[i] = new Item();
+                }
+            }
+
+            try
+            {
+                orig(self, damageSource, dmg, hitDirection, pvp);
+            }
+            finally
+            {
+                foreach ((int slot, Item item) in savedGems)
+                {
+                    self.inventory[slot] = item;
+                }
+
+                if (useCustom && self.whoAmI == Main.myPlayer)
+                {
+                    Main.soundVolume = oldVolume;
+                }
             }
         }
 
@@ -1330,6 +1798,14 @@ namespace tsorcRevamp
 
         private static void On_Player_UpdateManaRegen(On_Player.orig_UpdateManaRegen orig, Player self)
         {
+            if (self.statManaMax2 <= 0)
+            {
+                self.statMana = 0;
+                self.manaRegen = 0;
+                self.manaRegenCount = 0;
+                return;
+            }
+
             if (self.nebulaLevelMana > 0)
             {
                 int num = 6;
@@ -1548,7 +2024,7 @@ namespace tsorcRevamp
         }
         private static Item On_Player_PickupItem(On_Player.orig_PickupItem orig, Player self, int playerIndex, int worldItemArrayIndex, Item itemToPickUp)
         {
-            if ((itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake || itemToPickUp.type == ItemID.ManaCloakStar) && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if ((itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake || itemToPickUp.type == ItemID.ManaCloakStar) && self.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
                 int ManaGain = (int)(self.statManaMax2 * (MagicEdits.BotCManaStarMaxManaPercentage / 100f));
                 SoundEngine.PlaySound(SoundID.Grab, new Vector2((int)self.position.X, (int)self.position.Y));
@@ -1698,6 +2174,67 @@ namespace tsorcRevamp
                 }
                 Main.spriteBatch.End();
             }
+
+            if (IsAbyssVisualActive())
+            {
+                DrawAbyssForegroundParticles();
+            }
+        }
+
+        private static void DrawAbyssForegroundParticles()
+        {
+            if (!Main.IsGraphicsDeviceAvailable || Main.gameMenu || Main.mapFullscreen)
+            {
+                return;
+            }
+
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
+
+            float parallax = 0.08f;
+            float cellSize = 96f;
+            float density = 0.7f; // doubled from 0.35f
+
+            Vector2 parallaxPosition = Main.screenPosition * parallax;
+            bool vesselVoid = IsVesselVoidVisualActive();
+            float movementScale = vesselVoid ? 0.5f : 1f;
+            float visualTime = Main.GlobalTimeWrappedHourly * movementScale;
+            Vector2 windOffset = new Vector2(visualTime * 15f, visualTime * 6f);
+            Vector2 scrollPosition = parallaxPosition + windOffset;
+
+            int startCellX = (int)Math.Floor((scrollPosition.X - cellSize) / cellSize);
+            int startCellY = (int)Math.Floor((scrollPosition.Y - cellSize) / cellSize);
+            int endCellX = (int)Math.Ceiling((scrollPosition.X + Main.screenWidth + cellSize) / cellSize);
+            int endCellY = (int)Math.Ceiling((scrollPosition.Y + Main.screenHeight + cellSize) / cellSize);
+
+            for (int cellX = startCellX; cellX <= endCellX; cellX++)
+            {
+                for (int cellY = startCellY; cellY <= endCellY; cellY++)
+                {
+                    float seed = Hash01(cellX, cellY, 523);
+                    if (seed > density)
+                    {
+                        continue;
+                    }
+
+                    float offsetX = Hash01(cellX, cellY, 29) * cellSize;
+                    float offsetY = Hash01(cellX, cellY, 61) * cellSize;
+                    Vector2 particlePosition = new Vector2(cellX * cellSize + offsetX, cellY * cellSize + offsetY) - scrollPosition;
+                    float pulse = 0.5f + 0.5f * (float)Math.Sin(visualTime * (1.5f + Hash01(cellX, cellY, 113) * 2.0f) + seed * MathHelper.TwoPi);
+                    Color accent = vesselVoid ? new Color(255, 55, 45) : new Color(180, 220, 255);
+                    Color baseColor = vesselVoid ? new Color(255, 125, 105) : Color.White;
+                    Color color = (Hash01(cellX, cellY, 173) > 0.7f ? accent : baseColor) * (0.75f * pulse);
+                    int size = Hash01(cellX, cellY, 233) > 0.85f ? 2 : 1;
+
+                    Main.spriteBatch.Draw(pixel, new Rectangle((int)particlePosition.X, (int)particlePosition.Y, size, size), color);
+                }
+            }
+            Main.spriteBatch.End();
+        }
+
+        private static float PositiveModulo(float value, float modulus)
+        {
+            return (value % modulus + modulus) % modulus;
         }
 
         //Changing the rendertarget destroys everything currently in it
@@ -1792,7 +2329,7 @@ namespace tsorcRevamp
             {
                 bool restrictedHook = false;
 
-                if (self.miscEquips[3].type == ItemID.SlimySaddle && !NPC.downedBoss2)
+                if (self.miscEquips[3].type == ItemID.SlimySaddle && !NPC.downedQueenBee)
                 {
                     restrictedHook = true;
                 }
@@ -1815,7 +2352,7 @@ namespace tsorcRevamp
                     {
                         bool restrictedHook = false;
 
-                        if (self.inventory[i].type == ItemID.SlimySaddle && !NPC.downedBoss2)
+                        if (self.inventory[i].type == ItemID.SlimySaddle && !NPC.downedQueenBee)
                         {
                             restrictedHook = true;
                         }
@@ -1945,6 +2482,55 @@ namespace tsorcRevamp
                 }
                 Main.spriteBatch.DrawString(FontAssets.DeathText.Value, textValue2, new Vector2((float)(Main.screenWidth / 2) - 40 - FontAssets.MouseText.Value.MeasureString(textValue2).X / 2f, (float)(Main.screenHeight / 2) + 220), textColor, 0f, default(Vector2), scale, SpriteEffects.None, 0f);
             }
+        }
+
+
+        private static void DrawMap_WithInventoryVisibilityConfig(Action<Main, GameTime> orig, Main self, GameTime gameTime)
+        {
+            if (ModContent.GetInstance<tsorcRevampVisualConfig>().OnlyShowMapWhenInventoryIsOpen && Main.mapStyle == 2)
+            {
+                if (!Main.playerInventory && !Main.mapFullscreen)
+                {
+                    return;
+                }
+
+                Main.mapOverlayAlpha = 0.2f;
+            }
+
+            orig(self, gameTime);
+        }
+
+        private static void Main_DrawInterface_16_MapOrMinimap(Terraria.On_Main.orig_DrawInterface_16_MapOrMinimap orig, Main self)
+        {
+            if (ModContent.GetInstance<tsorcRevampVisualConfig>().OnlyShowMapWhenInventoryIsOpen && !Main.playerInventory && !Main.mapFullscreen)
+            {
+                return;
+            }
+
+            orig(self);
+        }
+
+        // The active resource-display set's Draw() renders the vanilla life & mana bars. When custom resource
+        // bars are enabled we skip it so only life & mana are hidden — the breath meter and buff/debuff icons
+        // (drawn elsewhere in GUIBarsDrawInner) keep rendering. One detour per concrete HUD style.
+        private static void SuppressVanillaResourceSet_Classic(Terraria.GameContent.UI.ResourceSets.On_ClassicPlayerResourcesDisplaySet.orig_Draw orig, Terraria.GameContent.UI.ResourceSets.ClassicPlayerResourcesDisplaySet self)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars) return;
+            orig(self);
+        }
+
+        private static void SuppressVanillaResourceSet_Fancy(Terraria.GameContent.UI.ResourceSets.On_FancyClassicPlayerResourcesDisplaySet.orig_Draw orig, Terraria.GameContent.UI.ResourceSets.FancyClassicPlayerResourcesDisplaySet self)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars) return;
+            orig(self);
+        }
+
+        // Hooked manually via MonoModHooks (no generated On_ hook for this set), so the orig is a plain
+        // Action<self> rather than a generated orig_Draw delegate.
+        private static void SuppressVanillaResourceSet_Horizontal(Action<Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet> orig, Terraria.GameContent.UI.ResourceSets.HorizontalBarsPlayerResourcesDisplaySet self)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars) return;
+            orig(self);
         }
 
         /*
@@ -2189,6 +2775,80 @@ namespace tsorcRevamp
             Main.MenuUI.SetState(new CustomMapUIState());
         }
 
+        private static void UICharacterSelect_NewCharacterClick(Terraria.GameContent.UI.States.On_UICharacterSelect.orig_NewCharacterClick orig, Terraria.GameContent.UI.States.UICharacterSelect self, UIMouseEvent evt, UIElement listeningElement)
+        {
+            SoundEngine.PlaySound(SoundID.MenuOpen);
+            tsorcRevamp.PendingStartingClass = StartingClass.None;
+            Main.MenuUI.SetState(new StartingClassUIState());
+        }
+
+        // The mod owns Life/Mana Crystal consumption outright, in Classic as well as SoulsMode — vanilla's
+        // ConsumedLifeCrystals counter saturates at 15 and so can't record how many crystals a SoulsMode player
+        // has actually eaten at the reduced rate. tsorcRevampPlayer keeps that count (plus the SoulsMode value
+        // banked per crystal) and feeds the vanilla counter only whole crystals' worth, which keeps the saved
+        // player file inside the range Player.Serialize can round-trip. Classic still has to route through here
+        // or its crystal count would go unrecorded, and switching modes would mis-value it.
+        //
+        // Same guards and same ordering as vanilla, with the cap swapped from `ConsumedLifeCrystals < 15` to our
+        // own per-class, per-mode one. Returning without calling ApplyItemTime is what leaves the crystal
+        // unconsumed — vanilla only decrements the stack once itemTime has been applied — so a maxed-out player
+        // wastes nothing. `orig` is intentionally never called.
+        private static void On_Player_ItemCheck_UseLifeCrystal(Terraria.On_Player.orig_ItemCheck_UseLifeCrystal orig, Player self, Item sItem)
+        {
+            tsorcRevampPlayer modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
+
+            if (sItem.type != ItemID.LifeCrystal || self.itemAnimation <= 0 || modPlayer.LifeCrystalsMaxed || !self.ItemTimeIsZero)
+            {
+                return;
+            }
+
+            self.ApplyItemTime(sItem);
+            modPlayer.GrantLifeCrystal();
+            AchievementsHelper.HandleSpecialEvent(self, 0);
+        }
+
+        private static void On_Player_ItemCheck_UseManaCrystal(Terraria.On_Player.orig_ItemCheck_UseManaCrystal orig, Player self, Item sItem)
+        {
+            tsorcRevampPlayer modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
+
+            if (sItem.type != ItemID.ManaCrystal || self.itemAnimation <= 0 || modPlayer.ManaCrystalsMaxed || !self.ItemTimeIsZero)
+            {
+                return;
+            }
+
+            self.ApplyItemTime(sItem);
+            modPlayer.GrantManaCrystal();
+            AchievementsHelper.HandleSpecialEvent(self, 1);
+        }
+
+        private static FieldInfo characterCreationPlayerField;
+
+        private static void UICharacterCreation_SetupPlayerStatsAndInventoryBasedOnDifficulty(Terraria.GameContent.UI.States.On_UICharacterCreation.orig_SetupPlayerStatsAndInventoryBasedOnDifficulty orig, Terraria.GameContent.UI.States.UICharacterCreation self)
+        {
+            orig(self);
+
+            if (tsorcRevamp.PendingStartingClass == StartingClass.None)
+            {
+                return;
+            }
+
+            characterCreationPlayerField ??= typeof(Terraria.GameContent.UI.States.UICharacterCreation).GetField("_player", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (characterCreationPlayerField?.GetValue(self) is Player player)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().ApplyStartingClassStats(force: true, clearPending: false);
+            }
+        }
+
+        private static Terraria.IO.PlayerFileData PlayerFileData_CreateAndSave(Terraria.IO.On_PlayerFileData.orig_CreateAndSave orig, Player player)
+        {
+            if (tsorcRevamp.PendingStartingClass != StartingClass.None)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().startingClass = tsorcRevamp.PendingStartingClass;
+            }
+
+            player.GetModPlayer<tsorcRevampPlayer>().ApplyStartingClassStats(force: true);
+            return orig(player);
+        }
         static Type ShopHelper = null;
         static FieldInfo currentNPC = null;
         static FieldInfo currentPlayer = null;
@@ -2391,7 +3051,7 @@ namespace tsorcRevamp
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
             tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
-            if (modPlayer.BearerOfTheCurse && player.statMana < player.statManaMax2 && ceruleanPlayer.ceruleanChargesCurrent > 0)
+            if (modPlayer.SoulsMode && player.statMana < player.statManaMax2 && ceruleanPlayer.ceruleanChargesCurrent > 0)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanPlayer.ceruleanChargesCurrent > 0 && player.itemAnimation == 0
                 && !modPlayer.isDodging && !ceruleanPlayer.isDrinking && !player.CCed && !estusPlayer.isDrinking && !ceruleanPlayer.isCeruleanRestoring)
@@ -2399,18 +3059,10 @@ namespace tsorcRevamp
                     ceruleanPlayer.isDrinking = true;
                     ceruleanPlayer.ceruleanDrinkTimer = 0;
 
-                    //I am so tempted
-                    //Dear god I am so tempted
-                    if (modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2)
-                    {
-                        player.AddBuff(BuffID.BrokenArmor, (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f * 2));
-                        player.AddBuff(BuffID.Ichor, (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
-                    }
-                    else
-                    {
-                        player.AddBuff(ModContent.BuffType<Crippled>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
-                        player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
-                    }
+                    // Cerulean drinks intentionally apply NO mobility/defense debuffs — drinking for
+                    // mana shouldn't lock the player down. The Chloranthy ring's "trade slowdown for
+                    // vulnerability" mechanic was moved to the Estus drink (see CustomQuickHeal below)
+                    // since healing drinks happen more often in active combat.
                 }
                 return;
             }
@@ -2465,15 +3117,27 @@ namespace tsorcRevamp
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
             tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
 
-            if (modPlayer.BearerOfTheCurse && player.statLife < player.statLifeMax2)
+            if (modPlayer.SoulsMode && player.statLife < player.statLifeMax2)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.estusChargesCurrent > 0 && player.itemAnimation == 0
                 && !modPlayer.isDodging && !estusPlayer.isDrinking && !player.CCed && !ceruleanPlayer.isDrinking)
                 {
                     estusPlayer.isDrinking = true;
                     estusPlayer.estusDrinkTimer = 0;
-                    player.AddBuff(ModContent.BuffType<Crippled>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
-                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
+                    // Chloranthy Ring (I or II): trade the standard drink slowdown for temporary
+                    // vulnerability. Without the ring, the Crippled debuff blocks extra jumps, wings,
+                    // rocket boots, and reduces moveSpeed by 10% for the drink duration (ground-bound
+                    // and slowed). With the ring, those mobility losses are swapped for Ichor
+                    // (-15 defense + glow) — full mobility but more damage taken if you get hit.
+                    if (modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2)
+                    {
+                        player.AddBuff(BuffID.Ichor, (int)(estusPlayer.estusDrinkTimerMax * 60f));
+                    }
+                    else
+                    {
+                        player.AddBuff(ModContent.BuffType<Crippled>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
+                        player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
+                    }
                 }
                 return;
             }
@@ -2812,6 +3476,7 @@ namespace tsorcRevamp
             if (self.whoAmI == Main.myPlayer && context == PlayerSpawnContext.SpawningIntoWorld)
             {
                 self.SetPlayerDataToOutOfClassFields();
+                self.GetModPlayer<tsorcRevampPlayer>().ApplyStartingClassStats();
                 Main.ReleaseHostAndPlayProcess();
             }
             self.headPosition = Vector2.Zero;
@@ -2890,14 +3555,18 @@ namespace tsorcRevamp
                         //self.Spawn_SetPosition(spawnTileX, spawnTileY);
                         self.position.X = spawnTileX * 16 + 8 - self.width / 2;
                         self.position.Y = spawnTileY * 16 - self.height;
-                        return;
+                        // NOTE: no early return here — fall through so SetTalkNPC(-1) and
+                        // other post-spawn cleanup (lines below) still run.
                     }
-                    //self.Spawn_SetPosition(Main.spawnTileX, Main.spawnTileY);
-                    self.position.X = Main.spawnTileX * 16 + 8 - self.width / 2;
-                    self.position.Y = Main.spawnTileY * 16 - self.height;
-                    if (!IsAreaAValidWorldSpawn(Main.spawnTileX, Main.spawnTileY))
+                    else
                     {
-                        ForceClearArea(Main.spawnTileX, Main.spawnTileY);
+                        //self.Spawn_SetPosition(Main.spawnTileX, Main.spawnTileY);
+                        self.position.X = Main.spawnTileX * 16 + 8 - self.width / 2;
+                        self.position.Y = Main.spawnTileY * 16 - self.height;
+                        if (!IsAreaAValidWorldSpawn(Main.spawnTileX, Main.spawnTileY))
+                        {
+                            ForceClearArea(Main.spawnTileX, Main.spawnTileY);
+                        }
                     }
                 }
                 else
@@ -3042,6 +3711,7 @@ namespace tsorcRevamp
                 Main.ReleaseHostAndPlayProcess();
                 self.RefreshItems(true);
                 self.SetPlayerDataToOutOfClassFields();
+                self.GetModPlayer<tsorcRevampPlayer>().ApplyStartingClassStats();
                 Main.LocalGolfState.SetScoreTime();
                 Main.ActivePlayerFileData.StartPlayTimer();
                 Player.Hooks.EnterWorld(self.whoAmI);

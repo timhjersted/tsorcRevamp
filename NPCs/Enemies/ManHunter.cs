@@ -46,10 +46,18 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.lifeMax = 600;
                 NPC.defense = 38;
-                NPC.value = 1500; 
+                NPC.value = 1500;
                 NPC.damage = 50;
                 archerBoltDamage = 40;
             }
+
+            // Step 6 archer levers. ManHunter has no teleport, so PrefersHighGround stays dormant until the
+            // patrol high-ground bias lands; RemembersLastKnownPos makes it reposition toward where it last saw you.
+            tsorcRevampGlobalNPC archerGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            archerGlobalNPC.PrefersHighGround = true;
+            archerGlobalNPC.RemembersLastKnownPos = true;
+            archerGlobalNPC.NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
+            archerGlobalNPC.CanUseRopes = true;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -82,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.WoodenArrowHostile, 14, 11, 120, 1.3f, 0.08f, canTeleport: false);
+            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FlamingArrow, 14, 11, 120, 1.3f, 0.08f, canTeleport: false);
         }
 
 

@@ -37,6 +37,11 @@ namespace tsorcRevamp.Buffs
                 player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationPotion = true;
             }
 
+            if (type == BuffID.Titan)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().TitanPotion = true;
+            }
+
             if (type == BuffID.Tipsy)
             {
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
@@ -100,6 +105,11 @@ namespace tsorcRevamp.Buffs
             if (type == BuffID.AmmoReservation)
             {
                 tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Ranged.CritDmg", tsorcRevampPlayer.AmmoReservationRangedCritDamage);
+            }
+
+            if (type == BuffID.Titan)
+            {
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Melee.Size", tsorcRevampPlayer.TitanMeleeSize);
             }
 
             if (type == BuffID.Tipsy)

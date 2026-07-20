@@ -1,8 +1,34 @@
 Mods: {
 	tsorcRevamp: {
+		ActiveShield: {
+			// Header: "[Active Shield]"
+			// Defense: Grants {0} defense
+			// Use: Hold Right Click (with a weapon that has no right-click function) to raise it and fully block frontal hits
+			// Cost: Each blocked hit costs {0} {1} + {2}% of the damage blocked
+			// Wall: Stops non-boss enemies from pushing through you
+			// Break: Running out of {0} mid-block breaks your guard (Ichor, Slow, and a brief stagger)
+			// Parry: Perfect parry — raise the shield just as a hit lands to block it at half the cost
+			// Slow: Slows your movement by {0}% while raised
+			// Regen: Stamina does not recover while raised
+			// Stamina: stamina
+			// Mana: mana
+			// ReflectEffect: A perfect parry reflects the blocked damage back at the attacker
+			// Watchful: Watchful — reveals nearby enemies
+			// GazeConfuse: A perfect parry may confuse the attacker
+			// GazePetrify: A perfect parry may confuse or briefly freeze the attacker
+			// GazeBeam: A perfect parry may confuse/freeze the attacker and fires an eye beam back
+			// FireCone: A perfect parry breathes a cone of fire that grows stronger with your defense
+			// BulwarkEffect: A perfect parry applies Vulnerability and deflects projectiles
+			// FrostNova: A perfect parry unleashes a frost nova
+			// WardPulse: Lowering the ward releases a 360° knockback pulse, stronger the longer held
+			// WardPulseBolts: Lowering the ward releases a knockback pulse; held 2s+ also looses 3 homing bolts (50 mana)
+			// DashEffect: Double-tap a direction to dash
+		}
+
 		CommonItemTooltip: {
 			Details: 按住 左Shift 以显示详细信息
 			AggroBoost: 敌人更可能瞄准你
+			// AggroDecrease: Enemies are less likely to target you
 			SetBonus: 套装奖励：
 			NoKnockback: 对击退免疫
 			ObsidianShield: "{$CommonItemTooltip.NoKnockback}、对火块免疫"
@@ -38,6 +64,13 @@ Mods: {
 				'''
 			CorruptionCursed: 该物品已被[c/701070:腐化]力量[c/338338:诅咒]，目前无法使用
 			BotCNoHeal: 无法治愈[c/6d8827:被诅咒者]
+			// UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
+			// LifeCrystalSoulsMode: Permanently increases maximum life by {0}
+			// ManaCrystalSoulsMode: Permanently increases maximum mana by {0}
+			// SoulsModeMobilityLimitRunOnly: Souls Mode mobility limit: ground speed capped at {0}.
+			// SoulsModeMobilityLimitWing: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}.
+			// SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
+			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: 减少 {0}% 元素瓶的使用时间
 			BotCManaFlower: 减少 {0}% 蓝露滴圣杯瓶的使用时间
 			DSPickUpRange: 增加黑暗之魂拾取范围
@@ -108,6 +141,7 @@ Mods: {
 				DmgMult: 乘算增加 {0}% 近战伤害
 				CritMult: 乘算增加 {0}% 近战暴击率
 				AtkSpeedMult: 乘算增加 {0}% 近战速度
+				// Size: Increases the size of melee weapons by {0}%
 			}
 
 			Ranged: {
@@ -115,6 +149,7 @@ Mods: {
 				CritMult: 乘算增加 {0}% 远程暴击率
 				CritDmg: 增加 {0}% 远程暴击伤害
 				NonCritDmg: 减少 {0}% 远程非暴击伤害
+				// ArmorPenRanged: Increases ranged armor penetration by {0}
 				FlatDmg: 增加 {0} 点远程伤害
 				SeedBag: 当此物品在背包中时，树妖会出售种子
 				CurrentAccuracy: 当前准确度：{0}%
@@ -280,7 +315,7 @@ Mods: {
 			GwynTombVisions: default
 			AbyssPortal: default
 			Gwyn: 葛温已苏醒，将你的旅程推向终焉...
-			AbysmalOolacileSorcerer: 堕渊乌拉席露巫师将杀死你...
+			AbysmalOolacileSorcerer: 乌拉席露大秘术师将杀死你...
 			Witchking: 巫师王已经在等你...
 			Blight: 枯萎从洋面上升起！
 			Chaos: 混沌已经进入这个维度！
@@ -301,19 +336,28 @@ Mods: {
 			LothricAmbush1: 遭遇偷袭！
 			LothricAmbush2: 遭遇偷袭！
 			DualSandsprogAmbush1: 遭遇偷袭！
+			EnragedQB: 一只愤怒的蜂后出现了！
 			HellkiteDragon: 村庄受到袭击！一条炼狱鸢龙前来捕食...
 			RemixHellkiteDragon: 一条炼狱鸢龙开始了它的狩猎...
-			// ThunderBird: The Grand Thunder Bird appears!
-			// QueenJellyfish: The Queen Jellyfish has spotted you in the lake...
-			// Viscount: Viscount is bloodthirsty!
-			// StarScouter: A Star Scouter descends from the sky...
-			// Lich: The Lich wants your soul...
-			// ForgottenOne: The Forgotten One sees you!
+			ThunderBird: 惊雷王鹰出现了！
+			QueenJellyfish: 湖中水母皇后正注视着你...
+			Viscount: 蝙蝠子爵正渴求你的鲜血！
+			StarScouter: 星宇航舟自天穹降临...
+			Lich: 巫妖索求你的灵魂...
+			ForgottenOne: T遗忘之主已将你锁定！
 			Bossduration: "耗时: "
 		}
 
 		UI: {
 			Souls: 黑暗之魂
+			// SecondSlot: 2nd
+			// SecondSlotHover: Press {0} to use items or shields in your 2nd Slot. Rebind in controls.
+			// LeftMouseClick: Left mouse click
+			// RightMouseClick: Right mouse click
+			// MiddleMouseClick: Middle mouse click
+			// MouseButton: Mouse button {0}
+			// Storage: Storage
+			// OpenStorage: Open Storage — Shift click to store inventory items while Storage is open
 			StaminaUse: "耐力消耗: "
 			StaminaUseOnHitOnly: "命中时耐力消耗: "
 			Tired: 疲惫
@@ -341,6 +385,12 @@ Mods: {
 			StopEditMarkers: 点击以停止修改标记。
 			ClickToHide: 点这里隐藏
 			ClickToShow: 点这里显示
+			ShowPrefix: 显示
+			TagStory: 剧情
+			TagLore: 传说
+			TagHint: 提示
+			TagTutorial: 教程
+			TagLocation: 地点
 			UpdateMusic: 正在更新音乐包(也可在创意工坊搜索“The Story of Red Cloud Music”订阅音乐包):
 			GetMusic: 创意工坊搜索 “The Story of Red Cloud Music” 订阅音乐包
 			MusicNewUpdate: 点击这里以更新音乐包 (如已手动放置tsorcMusic.tmod，则忽略此提示)
@@ -351,6 +401,11 @@ Mods: {
 			RemixMapUpdated: 重构版地图下载完成！
 			Bless: 在这里放置一个物品以进行祝福
 			SelectWorld: 选择世界大小:
+			// ChooseStartingClass: Choose Starting Class
+			// StartingClassMelee: Melee
+			// StartingClassRanged: Ranged
+			// StartingClassMagic: Magic
+			// StartingClassSummoner: Summoner
 			TSORCMap: 红云物语冒险地图
 			VanillaMap: 原版随机生成地图
 			TSORCXelvaaRemix: 重构版红云地图
@@ -405,12 +460,16 @@ Mods: {
 
 		DropRules: {
 			SHMOnly: "[c/ff9999:仅在击败阿卓迪斯之后掉落]"
+			// NonSHMOnly: "[c/99ccff:Does not drop in Super Hardmode]"
+			// NonSHMFirstKill: "[c/99ccff:Guaranteed on the first kill (not in Super Hardmode)]"
+			// NonSHMRepeatKill: "[c/99ccff:Repeat kills after the first (not in Super Hardmode)]"
 			AbyssOnly: "[c/ff9999: 仅在装备亚尔特留斯之约时掉落]"
 			FirstBagOnly: "[c/ff9999: 只能从第一个打开的特定袋子中掉落]"
 			BotCOnly: "[c/ff9999: 只有玩家是被诅咒者时掉落]"
 			FirstBagBotCOnly: "[c/ff9999: 当玩家是被诅咒者时，只能从第一个打开的特定袋子中掉落]"
 			AdvModeOnly: "[c/ff9999:只在冒险模式内掉落]"
 			SandboxModeOnly: "[c/ff9999:只在冒险模式之外]"
+			// FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: 只在专家模式之外的第一次击杀时掉落]"
 			DownedSkeletron: "[c/ff9999: 击败骷髅王之后掉落]"
 		}
@@ -428,6 +487,27 @@ Mods: {
 			Expelled: 一座强大的力场将你从废墟中驱逐出去！
 		}
 
+		EncounterPresentation: {
+			// ClassifiedName: "{0} ({1})"
+
+			Classifications: {
+				// RequiredMajor: Required Major Boss
+				// OptionalMajor: Optional Major Boss
+				// OptionalGreat: Optional Great Boss
+				// OptionalField: Optional Field Boss
+				// EliteEnemy: Elite Enemy
+			}
+
+			Banners: {
+				// LegendDefeated: Legend Defeated
+				// GreatEnemyDefeated: Great Enemy Defeated
+				// EnemyDefeated: Enemy Defeated
+				// GreatInvaderVanquished: Great Invader Vanquished
+				// InvaderVanquished: Invader Vanquished
+				// InvadedBy: Invaded by {0}
+			}
+		}
+
 		LunaticForcefield: {
 			Grapple: 你尽力用钩爪对抗这股力量，但...！
 			Snap: 你的钩爪失效了...
@@ -436,10 +516,12 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: 探索双峰之间的吊桥...
+			// VesselOfSoulsDesc: The Vessel of Souls occupies the Eye of Cthulhu's arena.
 			PinwheelDesc: 深入村庄入口附近的溺亡者地下墓穴...
 			AncientOolacileDemonDesc: 有传言提到了失落的乌拉席露森林...
 			SlograAndGaibonName: 斯洛格拉和盖波
 			SlograAndGaibonDesc: 在黑曜石神庙深处找到它们...
+			// GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
 			JungleWyvernDesc: 探索失落之城废墟的深处...
 			AncientDemonDesc: 它在地狱中的秘密巢穴等着你...
 			TheRageDesc: 探索东边的神圣洞穴深处...
@@ -458,6 +540,7 @@ Mods: {
 				经常在村庄上方的天空中游荡，寻找它的下一顿餐食...
 				重构版地图: 据说它盘踞于西部沙漠上空的巨型熔岩空岛...
 				'''
+			// OptionalMysteryDesc: Some mysteries can only be discovered through exploration.
 			WaterFiendKrakenDesc:
 				'''
 				双峰之间大裂谷底部的丛林蜥蜴砖大门隐藏着秘密...
@@ -476,7 +559,7 @@ Mods: {
 			ArtoriasDesc:
 				'''
 				深渊的力量渗透了遗忘之城东边的隧道...
-				重构版地图: 找到丛林中大铸造厂的钥匙以打开遗忘之城东边的通路...
+				重构版地图: 找到丛林中大铸造厂里被遗忘的通往阿卓迪斯的的通路...
 				'''
 			SeathTheScalelessDesc: 追寻冻样深处的丛林蜥蜴砖大门...
 			AbysmalOolacileSorcererDesc:
@@ -503,13 +586,14 @@ Mods: {
 				古老的金字塔又一次被黑暗占据...
 				重构版地图: 使用黑镜
 				'''
+			// SoulOfCinderName: Soul of Cinder
+			// SoulOfCinderDesc: A fading champion waits beyond Dark Cloud's shadow. In sandbox worlds, use the Soul of Cinder spawner.
 			GwynName: 葛温—灰烬帝王
 			GwynDesc: 西海之下的珊瑚礁引导你找到他的坟墓
 		}
 
 		Items: {
 			VanillaItems: {
-				LunarPortal: 使用静态免伤无敌帧
 				LockedCrates: 此物品被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
@@ -557,6 +641,7 @@ Mods: {
 				ManaCost1: "消耗 "
 				ManaCost2: " 魔力以发射投掷物"
 				AmmoReservationPotion: "{$CommonItemTooltip.Ranged.CritDmg}"
+				// TitanPotion: "{$CommonItemTooltip.Melee.Size}"
 				AmmoBox: 以弹药基础伤害值的一半增加弹药暴击几率
 				HerosShirt:
 					'''
@@ -564,6 +649,14 @@ Mods: {
 					{$CommonItemTooltip.StaminaRegen@2}
 					{$CommonItemTooltip.PercentIncreasedCritChance}
 					'''
+				// NinjaHood: "{$CommonItemTooltip.PercentIncreasedCritChance} to melee and ranged"
+				// NinjaShirt: "{$CommonItemTooltip.PercentIncreasedDamage} to melee and ranged"
+				/* NinjaPants:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
+					{$CommonItemTooltip.StaminaRegen@2}
+					''' */
 				RedClothRobe:
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
@@ -680,6 +773,11 @@ Mods: {
 				ManaRegenerationPotionBotC: 增加 {0}% 蓝露滴圣杯瓶恢复速度
 				CelestialMagnetBotC: 魔力星只固定恢复[c/6d8827:被诅咒者]最大魔力值的 {0}%
 				MagicCuffsBotC: 只恢复[c/6d8827:被诅咒者]受到伤害 {0}% 的魔力
+				/* CoinGun:
+					'''
+					[c/ffbf00:Can also use soul coins as ammo]
+					[c/ffbf00:Soul coins pierce once]
+					''' */
 			}
 
 			AbandonedStumpBanner: {
@@ -688,8 +786,8 @@ Mods: {
 			}
 
 			AbysswalkerBanner: {
-				DisplayName: "{$NPCs.Abysswalker.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Abysswalker.DisplayName}"
+				DisplayName: "{$NPCs.DworcAbysswalker.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcAbysswalker.DisplayName}"
 			}
 
 			AncientDemonOfTheAbyssBanner: {
@@ -828,8 +926,8 @@ Mods: {
 			}
 
 			DworcVoodoomasterBanner: {
-				DisplayName: "{$NPCs.DworcVoodoomaster.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcVoodoomaster.DisplayName}"
+				DisplayName: "{$NPCs.DworcAlchemist.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcAlchemist.DisplayName}"
 			}
 
 			DworcVoodooShamanBanner: {
@@ -1154,8 +1252,8 @@ Mods: {
 				DisplayName: 超载状态
 				Tooltip:
 					'''
-					敌人每受到一个负面状态的影响，将会受到指数级增加的额外伤害
-					这不包括鞭子造成的效果
+					敌人每受到一个负面状态的影响，将会受到 7% 额外伤害
+					不包括鞭子施加的减益效果
 					"水男火卫二速刷土豆 3=1 来个掠夺"
 					'''
 			}
@@ -1699,11 +1797,6 @@ Mods: {
 					'''
 			}
 
-			HolyNecklace: {
-				DisplayName: 神圣项链
-				Tooltip: 发出淡蓝色的光，增加无敌帧时长，提供星星斗篷效果
-			}
-
 			AquamarineRing: {
 				DisplayName: 海蓝宝石戒指
 				Tooltip: "{$CommonItemTooltip.Magic.ArmorPen}"
@@ -1888,6 +1981,39 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedRangedDamageCritChance}
 					将战败敌人的骨头肆意抛掷
 					'''
+			}
+
+			NormansRing: {
+				// DisplayName: Norman's Ring
+				/* Tooltip:
+					'''
+					The ring your father gave you.
+					A keepsake passed down by your family for generations.
+					''' */
+
+				Stats: {
+					/* Melee:
+						'''
+						+{0}% melee damage
+						+{1} defense
+						''' */
+					/* Ranged:
+						'''
+						+{0}% ranged damage
+						{2}% chance to not consume ammo
+						''' */
+					/* Magic:
+						'''
+						+{0}% magic damage
+						-{3}% mana cost
+						''' */
+					/* Summoner:
+						'''
+						+{0}% summon damage
+						+{4}% whip range
+						''' */
+					// None: Choose a starting class to awaken this ring's power
+				}
 			}
 
 			SoulReaper: {
@@ -2184,6 +2310,49 @@ Mods: {
 					{$CommonItemTooltip.BadDmg}
 					{$CommonItemTooltip.LifeRegen@1}
 					'''
+			}
+
+			FirelinkHelm: {
+				// DisplayName: Firelink Helm
+				/* Tooltip:
+					'''
+					{0}% increased damage
+					{1}% increased critical strike chance
+					Increases maximum mana by {2}
+					{3}% reduced mana cost
+					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					''' */
+				/* SetBonus:
+					'''
+					{0}% increased damage and {1}% increased critical strike chance
+					{2}% increased damage reduction
+					+{3} life regen and {4}% increased stamina recovery speed
+					Allows walking on fire blocks and grants immunity to fire
+					''' */
+			}
+
+			FirelinkArmor: {
+				// DisplayName: Firelink Armor
+				/* Tooltip:
+					'''
+					{0}% increased damage
+					{1}% increased damage reduction
+					Increases your max number of minions by {2}
+					{3}% increased max stamina
+					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					''' */
+			}
+
+			FirelinkLeggings: {
+				// DisplayName: Firelink Leggings
+				/* Tooltip:
+					'''
+					{0}% increased movement speed
+					{1}% increased damage
+					Increases your max number of minions by {2}
+					{3}% increased stamina recovery speed
+					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					''' */
 			}
 
 			DragoonHelmet: {
@@ -2600,6 +2769,96 @@ Mods: {
 			DarkKnightHelmet: {
 				DisplayName: 黑暗骑士头盔
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+			}
+
+			OwlFatherArmor: {
+				// DisplayName: Owl Father Armor
+				// Tooltip: Increases melee damage by {0}%
+			}
+
+			OwlFatherGreaves: {
+				// DisplayName: Owl Father Greaves
+				// Tooltip: Increases melee damage by {0}%
+			}
+
+			OwlFatherMask: {
+				// DisplayName: Owl Father Mask
+				// Tooltip: Increases movement speed by {0}%
+				// SetBonus: Increases melee damage by 15%
+			}
+
+			ArtoriasOfTheAbyssArmor: {
+				// DisplayName: Abysswalker Armor
+				/* Tooltip:
+					'''
+					Increases melee critical strike chance chance by {0}%
+					Increases magic critical strike chance by {1}%
+					{$CommonItemTooltip.DRStat@2}
+					{$CommonItemTooltip.MaxStamina@3}
+					''' */
+			}
+
+			ArtoriasOfTheAbyssGreaves: {
+				// DisplayName: Abysswalker Greaves
+				/* Tooltip:
+					'''
+					Increases movement speed by {0}%
+					Increases melee attack speed by {1}%
+					Increases magic attack speed by {2}%
+					Dodgerolls cost {3}% less stamina
+					''' */
+			}
+
+			ArtoriasOfTheAbyssHelm: {
+				// DisplayName: Abysswalker Helm
+				/* Tooltip:
+					'''
+					Increases melee damage by {0}%
+					Increases magic damage by {1}%
+					{$CommonItemTooltip.IncreasesMaxManaBy@2}
+					{$CommonItemTooltip.PercentReducedManaCost@3}
+					Increases stamina regeneration rate by {4}%
+					''' */
+				/* SetBonus:
+					'''
+					Allows you to use items while dodgerolling
+					Increases melee and magic damage by 10% and movement speed by 12%
+					Dodging through danger grants Abyssal Poise for 3 seconds
+					The next melee or magic hit deals 35% more damage, restores 8% stamina, and releases an abyss counterattack
+					Getting hit before counterattacking removes Abyssal Poise
+					''' */
+			}
+
+			ByakheeMask: {
+				// DisplayName: Byakhee Mask
+				// Tooltip: Increases melee critical strike chance by {0}%
+				// SetBonus: Increases melee speed by 12% and jump speed
+			}
+
+			ByakheeRibplate: {
+				// DisplayName: Byakhee Ribplate
+				// Tooltip: Increases melee damage by {0}%
+			}
+
+			ByakheeTalons: {
+				// DisplayName: Byakhee Talons
+				// Tooltip: Increases movement speed by {0}%
+			}
+
+			CursedDragonHelmet: {
+				// DisplayName: Cursed Dragon Head
+				// SetBonus: Become a cursed dragon. Equip the Dragon Charm to transform while keeping your armor stats.
+				// Tooltip: ""
+			}
+
+			CursedDragonArmor: {
+				// DisplayName: Cursed Dragon Chest
+				// Tooltip: ""
+			}
+
+			CursedDragonGreaves: {
+				// DisplayName: Cursed Dragon Legs
+				// Tooltip: ""
 			}
 
 			FighterBreastplate: {
@@ -3201,14 +3460,14 @@ Mods: {
 			}
 
 			VaultOfEndlessGreed: {
-				// DisplayName: Vault of Endless Greed
-				/* Tooltip:
+				DisplayName: 无尽贪婪之证
+				Tooltip:
 					'''
-					You feel overwhelmed by the sin of avarice.
-					Attacks inflict the Midas debuff
+					贪婪之罪将你彻底吞噬
+					攻击施加迈达斯减益
 					{$CommonItemTooltip.SoulDrops}
-					but the curse of the branded also [c/FF0000:drains a small amount of HP].
-					''' */
+					但是其上烙印的诅咒也会[c/FF0000:蚕食你的生命]
+					'''
 			}
 
 			AttraidiesRelic: {
@@ -3299,6 +3558,16 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
+			SoulOfCinderBag: {
+				// DisplayName: Treasure Bag (Soul of Cinder)
+				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OolacileSerpentBag: {
+				// DisplayName: Treasure Bag (Great Serpent)
+				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
 			HellkiteBag: {
 				DisplayName: 宝藏袋（地狱鸢龙）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
@@ -3340,7 +3609,7 @@ Mods: {
 			}
 
 			OolacileSorcererBag: {
-				DisplayName: 宝藏袋（堕渊乌拉席露巫师）
+				DisplayName: 宝藏袋（乌拉席露大秘术师）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3410,7 +3679,7 @@ Mods: {
 				DisplayName: 堕渊之石
 				Tooltip:
 					'''
-					召唤堕渊乌拉席露巫师
+					召唤乌拉席露大秘术师
 					仅在夜晚使用
 					'''
 			}
@@ -3419,7 +3688,7 @@ Mods: {
 				DisplayName: 枯萎之石
 				Tooltip:
 					'''
-					召唤「枯萎」，深渊六守卫之一
+					召唤「枯萎」，深渊七守卫之一
 					你必须在地表上战斗
 					在你佩戴饰品「亚尔特留斯之约」时枯萎不会受伤
 					'''
@@ -3559,6 +3828,65 @@ Mods: {
 				DisplayName: 地狱风筝石
 				Tooltip: 召唤从天而降的地狱鸢龙...
 				WrongTime: 无事发生...晚上再试试吧
+			}
+
+			GreatSerpentStone: {
+				// DisplayName: Great Serpent Stone
+				// Tooltip: Summons the Great Serpent...
+			}
+
+			SoulOfCinderSpawner: {
+				// DisplayName: Soul of Cinder Spawner
+				// Tooltip: Summons the Soul of Cinder in sandbox worlds.
+			}
+
+			GravelordNitoSpawner: {
+				// DisplayName: Gravelord's Effigy
+				// Tooltip: Summons Gravelord Nito in sandbox worlds.
+			}
+
+			VesselOfSoulsSpawner: {
+				// DisplayName: Hungering Eye
+				// Tooltip: Summons the Vessel of Souls in sandbox worlds.
+			}
+
+			SoulOfTheVessel: {
+				// DisplayName: Soul of the Vessel
+				// Tooltip: The stolen souls of the Vessel, bound into a single essence.
+			}
+
+			SoulReliquaryBell: {
+				// DisplayName: Soul Reliquary
+				/* Tooltip:
+					'''
+					Summons a Lesser Vessel to fight for you
+					A floating soul-eye that spits homing skulls
+					Lasts 2.5 minutes
+					Damage scales with the number of Dark Souls held
+					''' */
+			}
+
+			GravemawTome: {
+				// DisplayName: Gravemaw Tome
+				/* Tooltip:
+					'''
+					Four spells bound in one tome
+					Tap left click: fire a fan of homing soul-skulls
+					Hold left click: charge an expanding soul nova
+					Tap right click: lob an orb that opens a black hole
+					Hold right click: channel an inhaling maw that drains life
+					Advanced control option available in Controls config
+					''' */
+				/* AdvancedTooltip:
+					'''
+					Four spells bound in one tome
+					Aim at or above a point 3 tiles below your feet:
+					Tap left click: fire a fan of homing soul-skulls
+					Hold left click: charge an expanding soul nova
+					Aim more than 3 tiles below your feet:
+					Tap left click: lob an orb that opens a black hole
+					Hold left click: channel an inhaling maw that drains life
+					''' */
 			}
 
 			JungleFeather: {
@@ -3707,7 +4035,74 @@ Mods: {
 				Attraidies1: 阿卓迪斯初始阶段
 				Attraidies2: 阿卓迪斯最终阶段
 				Next: 下一个 Boss:
+				// Location: Where to find:
 				DeathCountText: 死亡次数: {0}
+				// ─────────────────────────────────────────────────────────────────────────────
+				//  Clue index → boss mapping. Each clue N corresponds to the boss with NPC.rarity = N.
+				//  Hover behavior:
+				//    Defeated boss → shows "Next Boss:" + clue (rarity + 1)
+				//    Undefeated (???) → shows "Where to find:" + this boss's own clue (rarity)
+				//  Undefeated clues are gated by era (pre-hardmode/hardmode/SHM) so end-game bosses
+				//  stay hidden until the player has progressed there.
+				//
+				//  Rarity → boss mapping. Modded bosses set NPC.rarity in their own SetDefaults.
+				//  Vanilla bosses get their rarity assigned by tsorcRevamp in NPCs/VanillaChanges.cs
+				//  (search "npc.rarity = N" in that file to find/edit). [PHM] = pre-hardmode,
+				//  [HM] = hardmode, [SHM] = Super Hard Mode.
+				//
+				//    1  [PHM] Leonhard               (Special/LeonhardPhase1)             — modded
+				//    2  [PHM] Red Knight             (Enemies/RedKnight)                  — modded
+				//    3  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded
+				//    4  [PHM] Eye of Cthulhu         (VanillaChanges.cs)                  — vanilla
+				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
+				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
+				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
+				//    8  [PHM] King Slime             (VanillaChanges.cs)                  — vanilla
+				//    9  [PHM] Slogra (+ Gaibon)      (Bosses/Slogra)                      — modded
+				//   10  [PHM] Queen Bee              (VanillaChanges.cs)                  — vanilla
+				//   11  [PHM] Skeletron             (VanillaChanges.cs)                   — vanilla
+				//   12  [PHM] Deerclops              (VanillaChanges.cs)                  — vanilla
+				//   13  [PHM] Jungle Wyvern          (Bosses/JungleWyvern/JungleWyvernHead) — modded
+				//   14  [PHM] Ancient Demon          (Bosses/AncientDemon)                — modded
+				//   15  [PHM] Wall of Flesh          (VanillaChanges.cs)                  — vanilla
+				//   16  [HM]  Queen Slime            (VanillaChanges.cs)                  — vanilla
+				//   17  [HM]  The Rage               (Bosses/TheRage)                     — modded
+				//   18  [HM]  Wyvern Mage            (Bosses/WyvernMage/WyvernMage)       — modded
+				//   19  [HM]  The Sorrow             (Bosses/TheSorrow)                   — modded
+				//   20  [HM]  Serris                 (Bosses/Serris/SerrisX)              — modded
+				//   21  [HM]  Death / True Death     (Bosses/Death, Special/TrueDeath)    — modded
+				//   22  [HM]  The Hunter             (Bosses/TheHunter)                   — modded
+				//   23  [HM]  The Destroyer          (VanillaChanges.cs)                  — vanilla
+				//   24  [HM]  The Machine (PrimeV2)  (Bosses/PrimeV2/TheMachine)          — modded
+				//   25  [HM]  Plantera               (VanillaChanges.cs)                  — vanilla
+				//   26  [HM]  Golem                  (VanillaChanges.cs, GolemHeadFree)   — vanilla
+				//   27  [HM]  Empress of Light       (VanillaChanges.cs, HallowBoss)      — vanilla
+				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
+				//   29  [HM]  Attraidies hidden phases (not shown as their own Tome entry)
+				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
+				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
+				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
+				//   33  [SHM] Moon Lord              (VanillaChanges.cs, MoonLordFreeEye) — vanilla
+				//   34  [SHM] Water Fiend Kraken     (Bosses/SuperHardMode/Fiends/WaterFiendKraken)   — modded
+				//   35  [SHM] Earth Fiend Lich       (Bosses/SuperHardMode/Fiends/EarthFiendLich)     — modded
+				//   36  [SHM] Fire Fiend Marilith    (Bosses/SuperHardMode/Fiends/FireFiendMarilith)  — modded
+				//   37  [SHM] Blight                 (Bosses/SuperHardMode/Blight)        — modded
+				//   38  [SHM] Abysmal Oolacile Sorc. (Bosses/SuperHardMode/AbysmalOolacileSorcerer)   — modded
+				//   39  [SHM] Artorias               (Bosses/SuperHardMode/Artorias)      — modded
+				//   40  [SHM] Seath the Scaleless    (Bosses/SuperHardMode/Seath/SeathTheScalelessHead) — modded
+				//   41  [SHM] Wyvern Mage Shadow     (Bosses/SuperHardMode/GhostWyvernMage/WyvernMageShadow) — modded
+				//   42  [SHM] Chaos                  (Bosses/SuperHardMode/Chaos)         — modded (currently has no rarity set; defaults to 0 — fix in its SetDefaults)
+				//   43  [SHM] Dark Cloud             (Bosses/SuperHardMode/DarkCloud)     — modded
+				//   44  [SHM] Gwyn                   (Bosses/SuperHardMode/Gwyn)          — modded
+				//   45        "True ending" message — shown as the "Next Boss" hint when hovering Gwyn
+				//   48  [PHM] Vessel of Souls        (presentation-only clue index; progression order 5)
+				//
+				//  To rebind a clue to a different boss, edit that boss's `NPC.rarity = N` (or the
+				//  `npc.rarity = N` line in VanillaChanges.cs for vanilla bosses). To rewrite a clue's
+				//  text, just edit the localization line below. Many `*Desc` clues use the shared
+				//  Mods.tsorcRevamp.BossChecklist.*Desc strings (defined near the top of this file)
+				//  so the Boss Checklist mod UI and the Boss Hunting Tome stay in sync.
+				// ─────────────────────────────────────────────────────────────────────────────
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: 李奥纳德出现之地的下方有什么，野心之路的终点又有什么？
 				3: "{$BossChecklist.PinwheelDesc}"
@@ -3765,6 +4160,9 @@ Mods: {
 				43: "{$BossChecklist.DarkCloudDesc}"
 				44: "{$BossChecklist.GwynDesc}"
 				45: 恭喜！你已经解锁了游戏的真实结局！
+				// 46: "{$BossChecklist.OptionalMysteryDesc}"
+				// 47: "{$BossChecklist.OptionalMysteryDesc}"
+				// 48: "{$BossChecklist.VesselOfSoulsDesc}"
 			}
 
 			BraveWarriorSoul: {
@@ -3937,6 +4335,12 @@ Mods: {
 					'''
 				Enabled: 你成为了被诅咒者
 				Disabled: 诅咒已被移除
+				// Unkindled: You rise as the Unkindled — your fire still smolders.
+				// BearerOfTheCurse: You have taken up the burden — the Curse is yours to bear.
+				// Classic: You let the flame fade. The curse is lifted.
+				// State_Classic: "[c/aaaaaa:Currently:] Classic [c/aaaaaa:— click to become] [c/6d8827:Unkindled]"
+				// State_Unkindled: "[c/6d8827:Currently:] Unkindled [c/aaaaaa:— click to take up the] [c/dd3333:Curse]"
+				// State_BotC: "[c/dd3333:Currently:] Bearer of the Curse [c/aaaaaa:— click to return to] [c/aaaaaa:Classic]"
 				Melee:
 					'''
 					[c/ff8400:近战攻速减少至 {0}%]
@@ -3968,12 +4372,6 @@ Mods: {
 					[c/6efaff:堆叠层数增加你的召唤伤害，如果一段时间没有刷新则堆叠层数会减少]
 					[c/6efaff:每层增加 {1}% 伤害，最高到 {3} 层获得 {2}% 加成]
 					[c/6efaff:满层时，增加 {4}% 召唤标记持续时间]
-					'''
-				End:
-					'''
-					在背包中右键点击此物品来查看不同职业的新机制
-					[c/ca1e00:此模式适用于有红云物语模组游玩经验的玩家]
-					[c/ca1e00:第一次游玩时 【不】 推荐开启]
 					'''
 			}
 
@@ -4074,7 +4472,7 @@ Mods: {
 				Tooltip:
 					'''
 					一份关于矮人守卫的契约
-					将召唤一个矮人保卫村庄
+					[c/00ffd4:小矮人对此很感兴趣，或许会回赠你一份礼物]
 					'''
 			}
 
@@ -4200,6 +4598,7 @@ Mods: {
 					'''
 				NoLocation: 你还没有记录传送点！
 				WrongWorld: 保存记录的传送点不在当前世界！
+				// TooFar: The marked location is too far away. Move within {0} tiles of it.
 				OnUse: 正在传送你到上次记录的位置...
 				NewLocation: 新的折跃点已设置！
 				Invalid: 村庄魔镜的传送点只能设置在埃什峰村内部
@@ -4461,6 +4860,26 @@ Mods: {
 					[c/C92CD1:标记收藏的药水] 不会被快速喝药快捷键消耗
 					药水是按角色而不是按袋子存储的，类似于小猪储蓄罐
 					'''
+			}
+
+			RecommendedControls: {
+				// DisplayName: Recommended Controls
+				/* Tooltip:
+					'''
+					Use to switch the Recommended Controls config toggle on or off
+					Enabling it saves your current controls, then applies:
+					Quick Heal / Estus Flask: R
+					Quick Mana / Cerulean Tear: F
+					Inventory: Q
+					Dodge Roll: Left Shift
+					Auto Select: Left Alt
+					Quick Mount: G
+					2nd Slot: Right Click
+					Disabling it restores the controls you previously saved
+					''' */
+				// Enabled: Recommended Controls enabled. Your previous controls have been saved.
+				// Disabled: Recommended Controls disabled. Your previous controls have been restored.
+				// ToggleFailed: Recommended Controls could not be changed. Check the client log for details.
 			}
 
 			ArmorDrugPotion: {
@@ -5074,6 +5493,11 @@ Mods: {
 				Tooltip: 深渊行者—亚尔特留斯的精华
 			}
 
+			SoulOfCinder: {
+				// DisplayName: Soul of Cinder
+				// Tooltip: "'The essence of the Soul of Cinder'"
+			}
+
 			SoulOfAttraidies: {
 				DisplayName: 阿卓迪斯之魂
 				Tooltip:
@@ -5108,7 +5532,7 @@ Mods: {
 				Tooltip:
 					'''
 					永久增加 5 点耐力上限
-					消耗 12 次后耐力达到最大值
+					消耗 {0} 次后耐力达到最大值
 					'''
 				UsedCounter: "当前已使用次数: "
 			}
@@ -5231,11 +5655,6 @@ Mods: {
 				Tooltip: 召唤出一系列碎片，向敌人释放神圣之怒
 			}
 
-			ChaosTome: {
-				DisplayName: 混沌之书
-				Tooltip: 发出一串可以穿过实体物块的紫色火焰
-			}
-
 			CrystalMagicWeapon: {
 				DisplayName: 璀璨魔兵灌注
 				Tooltip:
@@ -5254,6 +5673,15 @@ Mods: {
 					'''
 					召唤诅咒之火折磨敌人
 					伤害随着其移动的速度增加
+					'''
+			}
+
+			DivineAfflicter: {
+				DisplayName: 神罚者
+				Tooltip:
+					'''
+					召唤神血鞭笞，使敌人陷入凋零
+					命中敌人时，其移速越慢，造成的伤害越高
 					'''
 			}
 
@@ -5363,11 +5791,6 @@ Mods: {
 			FlameStrikeScroll: {
 				DisplayName: 燎焱打击卷轴
 				Tooltip: 卷轴上写着"Exori flam"
-			}
-
-			FlareTome: {
-				DisplayName: 照明弹
-				Tooltip: 一本失传的传奇巨著
 			}
 
 			ForgottenIceBow: {
@@ -5568,11 +5991,6 @@ Mods: {
 				Tooltip: 使陨石从天而降
 			}
 
-			MeteorTome: {
-				DisplayName: 流星宝典
-				Tooltip: 传说中的法术巨著，可以召唤出流星风暴
-			}
-
 			PoisonBombRune: {
 				DisplayName: 毒爆符文
 				Tooltip:
@@ -5673,6 +6091,77 @@ Mods: {
 			WandOfFrost: {
 				DisplayName: 霜冻魔杖
 				Tooltip: 一把强大的魔杖，专为与法师战斗而生，可以穿墙
+			}
+
+			DualBladedAxe: {
+				// DisplayName: Dual Bladed Axe
+				// Tooltip: An axe favored by a wild and reckless sort.
+			}
+
+			LordGwynHelm: {
+				// DisplayName: Crown of the Lord of Cinder
+				// Tooltip: Worn by he who linked the First Flame
+			}
+
+			LordGwynArmor: {
+				// DisplayName: Cuirass of the Lord of Cinder
+				// Tooltip: Worn by he who linked the First Flame
+			}
+
+			LordGwynLeggings: {
+				// DisplayName: Greaves of the Lord of Cinder
+				// Tooltip: Worn by he who linked the First Flame
+			}
+
+			EnemySwordOfGwyn: {
+				// DisplayName: Great Lord Greatsword
+				// Tooltip: ""
+			}
+
+			HeartOfWinter: {
+				// DisplayName: Heart of Winter
+				/* Tooltip:
+					'''
+					The Ice Gigas's spell tome — four of its moves bound in one book
+					Tap left click: lance icicles at your foe
+					Hold left click: breathe a cone of frost
+					Tap right click: erupt ice spikes from the ground at your cursor
+					Hold right click: charge, then unleash an expanding freeze ring
+					Advanced control option available in Controls config
+					''' */
+				/* AdvancedTooltip:
+					'''
+					The Ice Gigas's spell tome — four of its moves bound in one book
+					Aim at or above a point 3 tiles below your feet:
+					Tap left click: lance icicles at your foe
+					Hold left click: breathe a cone of frost
+					Aim more than 3 tiles below your feet:
+					Tap left click: erupt ice spikes from the ground at your cursor
+					Hold left click: charge, then unleash an expanding freeze ring
+					''' */
+			}
+
+			WrathOfGold: {
+				// DisplayName: Wrath of Gold
+				/* Tooltip:
+					'''
+					The Holy Gigas's spell tome — four of its moves bound in one book
+					Tap left click: call heavenly spears down upon your cursor
+					Hold left click: gather a halo of hunting suns
+					Tap right click: bring a pillar of judgment light down at your cursor
+					Hold right click: charge, then release a blade of golden lightning
+					Advanced control option available in Controls config
+					''' */
+				/* AdvancedTooltip:
+					'''
+					The Holy Gigas's spell tome — four of its moves bound in one book
+					Aim at or above a point 3 tiles below your feet:
+					Tap left click: call heavenly spears down upon your cursor
+					Hold left click: gather a halo of hunting suns
+					Aim more than 3 tiles below your feet:
+					Tap left click: bring a pillar of judgment light down at your cursor
+					Hold left click: charge, then release a blade of golden lightning
+					''' */
 			}
 
 			WandOfFrost2: {
@@ -5888,15 +6377,6 @@ Mods: {
 					'''
 			}
 
-			Ragnarok: {
-				DisplayName: 诸神黄昏
-				Tooltip:
-					'''
-					施加双足翼龙诅咒减益
-					在地狱时，增加 {0} 点近战护甲穿透
-					'''
-			}
-
 			RuneBlade: {
 				DisplayName: 符文之刃
 				Tooltip:
@@ -5958,6 +6438,16 @@ Mods: {
 			WitchkingsSword: {
 				DisplayName: 巫师王之剑
 				Tooltip: 攻击敌人对其施加 1-2 种随机的减益
+			}
+
+			AbyssalFang: {
+				// DisplayName: Abyssal Fang
+				/* Tooltip:
+					'''
+					A serpent blade steeped in Oolacile's dark venom
+					Inflicts Venom and Abyssal Sinking
+					Occasionally steals a sliver of life on hit
+					''' */
 			}
 
 			YianBlade: {
@@ -6256,14 +6746,14 @@ Mods: {
 				Tooltip: 射程相对较短，但穿透一次。不需要弹药
 			}
 
-			Blast: {
-				DisplayName: 战术高爆发射器
-				Tooltip:
+			TacticalBazooka: {
+				// DisplayName: Tactical Bazooka
+				/* Tooltip:
 					'''
-					将火箭转化为微型核弹
-					威力惊人并有极高风险
-					右键缩放视野
-					'''
+					Converts rockets into mini-nukes 
+					High firepower, but can gravely injure the user
+					Right Click to zoom out 
+					''' */
 			}
 
 			BlizzardBlaster: {
@@ -6273,11 +6763,6 @@ Mods: {
 					发射一阵寒风
 					对锥形范围内的最多 8 个敌人造成伤害
 					'''
-			}
-
-			AncientGreatBow: {
-				DisplayName: 古代大弓
-				Tooltip: ""
 			}
 
 			ArtemisBow: {
@@ -6536,30 +7021,9 @@ Mods: {
 				Tooltip: ""
 			}
 
-			Crissaegrim: {
-				DisplayName: 无限真空刃—祝福之风
-				Tooltip:
-					'''
-					除精金握柄外，通体由纯净暗影锻造而成
-					黑暗的光环在持用者的手中无限地显现四把刀片
-					如果持用者的投掷未命中目标，则会将它们归还
-					'''
-			}
-
 			EphemeralThrowingSpear: {
 				DisplayName: 短暂投掷矛
 				Tooltip: 穿过坚固的墙壁
-			}
-
-			HeavenSword: {
-				DisplayName: 天堂之刃
-				Tooltip:
-					'''
-					除了它的精钢握把之外, 它是一把由纯光制成的投掷剑
-					神圣之光赐福，在持用者的手中无限地显现
-					如果持用者的投掷未命中目标，则会将它归还
-					穿过坚固的墙壁
-					'''
 			}
 
 			RoyalThrowingSpear: {
@@ -6651,6 +7115,18 @@ Mods: {
 					灵灰骑士可以穿墙攻击敌人
 					{$CommonItemTooltip.CritDmg}
 					'''
+			}
+
+			ArcherSpiritBell: {
+				// DisplayName: Archer Spirit Bell
+				/* Tooltip:
+					'''
+					Summons an Archer Spirit to fight for you
+					Looses frostburn arrows that inflict Frostburn on hit
+					Uses 2 summoner slots and costs 100 mana
+					The spirit targets the highest HP enemy nearby
+					Fades away after 3 minutes
+					''' */
 			}
 
 			SunsetQuasar: {
@@ -6864,6 +7340,24 @@ Mods: {
 			Firebomb: {
 				DisplayName: 火焰壶
 				Tooltip: 爆炸，在小范围内造成火焰伤害
+			}
+
+			Caltrop: {
+				// DisplayName: Caltrops
+				/* Tooltip:
+					'''
+					Throws a spread of caltrops that stick to surfaces
+					Consumes mana and stamina
+					''' */
+			}
+
+			FireFlask: {
+				// DisplayName: Fire Flask
+				/* Tooltip:
+					'''
+					Shatters on impact and spreads fire along surfaces
+					Consumes mana and stamina
+					''' */
 			}
 
 			SporePowder: {
@@ -7936,41 +8430,6 @@ Mods: {
 					'''
 			}
 
-			Linklight2sHat: {
-				DisplayName: Linklight2s Hat
-				Tooltip: 仅限测试
-			}
-
-			Linklight2sPants: {
-				DisplayName: Linklight2s Pants
-				Tooltip: 仅限测试
-			}
-
-			Linklight2sShirt: {
-				DisplayName: Linklight2s Shirt
-				Tooltip: 仅限测试
-			}
-
-			Linklight2sBoots: {
-				DisplayName: Linklight2s Boots
-				Tooltip: 仅限测试
-			}
-
-			Linklight2sSword: {
-				DisplayName: Linklight2s Sword
-				Tooltip: 仅限测试
-			}
-
-			WrathOfThePhoenix: {
-				Tooltip: 仅限测试
-				DisplayName: 凤凰怒焰
-			}
-
-			TeleportationRod: {
-				DisplayName: 传送魔棒
-				Tooltip: ""
-			}
-
 			EchoGoggles: {
 				DisplayName: 回声护目镜
 				Tooltip:
@@ -7982,8 +8441,8 @@ Mods: {
 			}
 
 			SpearOfMage: {
-				Tooltip: ""
 				DisplayName: 奥术谜矛
+				Tooltip: ""
 			}
 
 			TaintedArrow: {
@@ -8062,11 +8521,6 @@ Mods: {
 				Tooltip: 古老荒野之神的极致锐利带电利爪
 			}
 
-			OolacileDarkMatter: {
-				DisplayName: 乌拉席露暗物质
-				Tooltip: 来自乌拉席露黑暗深渊的有形暗影能量p
-			}
-
 			SunderedMoon: {
 				DisplayName: 残月秘典
 				Tooltip:
@@ -8075,6 +8529,295 @@ Mods: {
 					释放强效月能光束
 					命中时召唤星辰坠落
 					'''
+			}
+
+			VenomBlade: {
+				DisplayName: 剧毒之刃
+				Tooltip:
+					'''
+					淬毒的飞刀，命中时释放一小团毒云
+					有几率施加酸性毒液
+					'''
+			}
+
+			MeteorStorm: {
+				Tooltip: 传说中可召唤流星风暴的法杖
+				DisplayName: 流星风暴
+			}
+
+			AbyssalDeluge: {
+				DisplayName: 深渊洪流
+				Tooltip:
+					'''
+					来自深渊的强大魔法书，施放一颗水爆弹，爆炸时释放水流冲刷
+					施加深渊沉溺减益，略微提升受到的所有伤害，降低防御力和移动速度
+					'''
+			}
+
+			DivineTouch: {
+				DisplayName: 神圣之触
+				Tooltip:
+					'''
+					你被神明的光辉所祝福
+					装备时为你和队友的光标提供照明
+					发出苍白色大范围光芒，并提升物品拾取范围
+					{$CommonItemTooltip.VanityFunction}
+					'''
+			}
+
+			StarlightMagnetite: {
+				DisplayName: 星光磁石
+				Tooltip:
+					'''
+					发出蓝色光芒，并提升物品拾取范围
+					{$CommonItemTooltip.VanityFunction}
+					'''
+			}
+
+			DragoonLauncher: {
+				// Tooltip: ""
+				// DisplayName: Dragoon Launcher
+			}
+
+			Sanguinis: {
+				// DisplayName: Sanguinis
+				/* Tooltip:
+					'''
+					Your blood and vitality become your weapon
+					Using this weapon drains your life with each use
+					It becomes more powerful below 66% and 33% health
+					''' */
+			}
+
+			ShadowsparkBullet: {
+				// Tooltip: Inflicts Shadowflame and creates shadow sparks on impact
+				// DisplayName: Shadowspark Bullet
+			}
+
+			DraconicArrow: {
+				// Tooltip: ""
+				// DisplayName: Draconic Arrow
+			}
+
+			Ichorthrower: {
+				// Tooltip: ""
+				// DisplayName: Ichorthrower
+			}
+
+			EyeOfTheHunt: {
+				// DisplayName: Mark of the Hunt
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.AggroDecrease}
+					Summon a young hunter to protect you
+					The young hunter inflicts Acid Venom and {0}% more damage on crit
+					Scale with summon damage and critical strike chance
+					''' */
+			}
+
+			LoveRing: {
+				// DisplayName: Covenant of Everlasting Love
+				/* Tooltip:
+					'''
+					[c/ff8da1:'A symbol of our union and eternal love']
+					{$CommonItemTooltip.AggroBoost}
+					Increases your life regeneration and that of all nearby players by {0}
+					When you take damage, nearby players recover {1} health and reduce the duration of debuffs
+					(can only occur once every two seconds, does not affect Mana/Potion Sickness)
+					''' */
+			}
+
+			VenomPowder: {
+				// DisplayName: Venom Powder
+				// Tooltip: Consuming a healing potion/Estus flask or taking damage creates an large explosion of acid venom around you
+			}
+
+			VenomDart: {
+				// Tooltip: Inflicts acid venom in a radius on hit
+				// DisplayName: Venom Dart
+			}
+
+			FrigidDart: {
+				// Tooltip: Bounces between enemies and has a chance to freeze enemies
+				// DisplayName: Frigid Dart
+			}
+
+			AbyssalStar: {
+				// Tooltip: ""
+				// DisplayName: Abyssal Star
+			}
+
+			SoulOfOccultist: {
+				// DisplayName: Soul of the Occultist
+				// Tooltip: "'The essence of dark magic from the remains of Oolacile'"
+			}
+
+			SoulOfAbyssalInvader: {
+				// DisplayName: Soul of the Abyssal Invader
+				// Tooltip: "'The essence of a shadow warrior claimed by the Abyss'"
+			}
+
+			RedKnightTestHelmet: {
+				// Tooltip: ""
+				// DisplayName: Red Knight Test Helmet
+			}
+
+			RedKnightTestGreaves: {
+				// Tooltip: ""
+				// DisplayName: Red Knight Test Greaves
+			}
+
+			RedKnightTestBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Red Knight Test Breastplate
+			}
+
+			EnemyDebugTome: {
+				// DisplayName: Enemy Debug Tome
+				// Tooltip: ""
+			}
+
+			FaraamDraftHelmet: {
+				// Tooltip: ""
+				// DisplayName: Faraam Draft Helmet
+			}
+
+			FaraamDraftGreaves: {
+				// Tooltip: ""
+				// DisplayName: Faraam Draft Greaves
+			}
+
+			FaraamDraftBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Faraam Draft Breastplate
+			}
+
+			AbyssalFabric: {
+				// DisplayName: Abyssal Fabric
+				// Tooltip: A fine and rare cloth from the abyss capable of resonating with the darkness.
+			}
+
+			EnemyCaltrop: {
+				// DisplayName: Enemy Caltrop
+				// Tooltip: ""
+			}
+
+			EnemyDiamondCrusher: {
+				// DisplayName: Enemy Diamond Crusher
+				// Tooltip: ""
+			}
+
+			EnemyFireFlask: {
+				// DisplayName: Enemy Fire Flask
+				// Tooltip: ""
+			}
+
+			EnemyForgottenRuneAxe: {
+				// DisplayName: Enemy Forgotten Rune Axe
+				// Tooltip: ""
+			}
+
+			EnemyNinjaStar: {
+				// DisplayName: Enemy Ninja Star
+				// Tooltip: ""
+			}
+
+			EnemySmokeBomb: {
+				// DisplayName: Enemy Smoke Bomb
+				// Tooltip: ""
+			}
+
+			EnemyTaintedBow: {
+				// DisplayName: Enemy Tainted Bow
+				// Tooltip: ""
+			}
+
+			EnemyYellowTail: {
+				// DisplayName: Enemy Yellow Tail
+				// Tooltip: ""
+			}
+
+			DragonCharm: {
+				// DisplayName: Dragon Charm
+				/* Tooltip:
+					'''
+					Transforms you into a Cursed Dragon
+					Grants Master Ninja Gear abilities, fire immunity, improved jumping, and Tattered Dragon Wings if no wings are equipped
+					Increases stamina regeneration by {0}%
+					Hold right click to breathe fire, draining {1} mana per flame burst
+					Fire breath deals {2} magic damage
+					''' */
+			}
+
+			EnemyVenomStaff: {
+				// Tooltip: ""
+				// DisplayName: Enemy Venom Staff
+			}
+
+			EnemyCursedKnife: {
+				// DisplayName: Enemy Cursed Knife
+				// Tooltip: ""
+			}
+
+			EnemyMeteorStorm: {
+				// DisplayName: Enemy Meteor Storm
+				// Tooltip: ""
+			}
+
+			EnemyPilgrimSpontoon: {
+				// DisplayName: Enemy Pilgrim Spontoon
+				// Tooltip: ""
+			}
+
+			EnemyArtoriasGreatsword: {
+				// DisplayName: Enemy Artorias Greatsword
+				// Tooltip: ""
+			}
+
+			EnemyAncientFireSword: {
+				// DisplayName: Enemy Ancient Fire Sword
+				// Tooltip: ""
+			}
+
+			ArtoriasGreatsword: {
+				// DisplayName: Artorias Greatsword
+				// Tooltip: ""
+			}
+
+			EnemyGreatFireAxe: {
+				// Tooltip: ""
+				// DisplayName: Enemy Great Fire Axe
+			}
+
+			SwordOfLordGwyn: {
+				// DisplayName: Sword Of Lord Gwyn
+				/* Tooltip:
+					'''
+					Tap left click: slash with the First Flame
+					Hold left click: spend {0} mana on a Sunlight Spear
+					Tap right click: spend {1} mana on a rising flame dash
+					Hold right click: spend {2} mana on Cinder Nova
+					Advanced control option available in Controls config
+					''' */
+				/* AdvancedTooltip:
+					'''
+					Aim at or above a point 3 tiles below your feet:
+					Tap left click: slash with the First Flame
+					Hold left click: spend {0} mana on a Sunlight Spear
+					Aim more than 3 tiles below your feet:
+					Tap left click: spend {1} mana on a rising flame dash
+					Hold left click: spend {2} mana on Cinder Nova
+					''' */
+			}
+
+			VesselOfSoulsBag: {
+				// DisplayName: Vessel Of Souls Bag
+				// Tooltip: ""
+			}
+
+			TenthDamageTomb: {
+				// DisplayName: Tenth Damage Tomb
+				// Tooltip: ""
 			}
 		}
 
@@ -8088,7 +8831,6 @@ Mods: {
 					'''
 				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, 受到伤害时击退敌人"
 				WeaponImbue: 增加 {0}% 近战和鞭子暴击率
-				TitanPotion: 增加 {0}% 近战武器大小
 			}
 
 			Curse: {
@@ -8163,6 +8905,22 @@ Mods: {
 				Description: 你的武器充满了不可思议的魔法力量！
 			}
 
+			Abyss: {
+				// DisplayName: The Abyss
+				/* Description:
+					'''
+					The Abyss has taken hold of you.
+					Weakened: reduced melee damage, speed, and defense
+					Defense reduced by 30%
+					Torn Wings: you cannot fly
+					''' */
+			}
+
+			VesselVoid: {
+				// DisplayName: Inside the Vessel
+				// Description: You have been swallowed into the Vessel of Souls.
+			}
+
 			BrokenSpirit: {
 				DisplayName: 魂飞魄散
 				Description: 你感到想要放弃！解除对击退的免疫！
@@ -8218,6 +8976,11 @@ Mods: {
 				Description: ""
 			}
 
+			PuppetSnared: {
+				// DisplayName: Snared
+				// Description: Cut through the cobweb strands with a melee swing to break free
+			}
+
 			PowerfulCurseBuildup: {
 				DisplayName: 邪孽
 				Description: "{$Buffs.Curse.Buildup}"
@@ -8242,9 +9005,24 @@ Mods: {
 				Description: 生命回复被削了
 			}
 
+			Suppressed: {
+				// DisplayName: Suppressed
+				/* Description:
+					'''
+					Something is dampening your speed here.
+					Supersonic Boots, Supersonic Wings, and Supersonic Wings II are reduced to roughly early hardmode levels, and lose their knockback immunity, water-walking, and ice skating.
+					Wings of Seath is weakened as well, but less severely.
+					''' */
+			}
+
 			TornWings: {
 				DisplayName: 翅膀破损
 				Description: 你不能飞行！
+			}
+
+			Tired: {
+				// DisplayName: Tired
+				// Description: Increases stamina use by 25%
 			}
 
 			WitchkingsGrasp: {
@@ -8883,6 +9661,16 @@ Mods: {
 				Description: 冷却结束前你不能再使用瞬步冲刺
 			}
 
+			ArtoriasAbysswalkerPoise: {
+				// DisplayName: Abyssal Poise
+				// Description: Your next melee or magic hit releases an abyss counterattack
+			}
+
+			ArtoriasAbysswalkerPoiseCooldown: {
+				// DisplayName: Abyssal Poise Cooldown
+				// Description: Dodge through danger again after this runs out
+			}
+
 			PhoenixRebirthCooldown: {
 				DisplayName: 凤凰涅槃冷却
 				Description: 冷却结束前你不能再次从灰烬中涅槃重生
@@ -8956,6 +9744,11 @@ Mods: {
 			SpiritAshKnightBuff: {
 				DisplayName: 灵灰骑士
 				Description: 灵灰骑士将为你而战
+			}
+
+			ArcherSpiritBuff: {
+				// DisplayName: Archer Spirit
+				// Description: The Archer Spirit will shoot down your enemies!
 			}
 
 			RustedChainDebuff: {
@@ -9057,9 +9850,9 @@ Mods: {
 				Description: ""
 			}
 
-			ElectrocutedBuff2: {
-				Description: ""
-				DisplayName: 电击减益
+			ElectrocutedBuff3: {
+				// Description: Mods.tsorcRevamp.Buffs.ElectrocutedBuff3.Description
+				// DisplayName: Electrocuted Buff2
 			}
 
 			AbyssInferno: {
@@ -9080,9 +9873,71 @@ Mods: {
 				DisplayName: 巫师尖啸冷却
 				Description: 冷却结束前你无法使用巫师尖啸
 			}
+
+			AbyssalSinking: {
+				DisplayName: 深渊沉溺
+				Description: ""
+			}
+
+			SupremeDragoonLashDebuff: {
+				// DisplayName: Supreme Dragoon Lash Debuff
+				// Description: Mods.tsorcRevamp.Buffs.SupremeDragoonLashDebuff.Description
+			}
+
+			ElectrocutedBuff2: {
+				Description: ""
+				DisplayName: 电击减益
+			}
+
+			YoungHunterBuff: {
+				// DisplayName: Young Hunter
+				// Description: The Young Hunter will hunt for you!
+			}
+
+			EverlastingLoveBuff: {
+				// DisplayName: Everlasting Love
+				/* Description:
+					'''
+					Your bond of love with the wearer is strong! 
+					Increases life regeneration and slightly reduces aggro
+					''' */
+			}
+
+			ShieldGuardBreak: {
+				// Description: Mods.tsorcRevamp.Buffs.ShieldGuardBreak.Description
+				// DisplayName: Shield Guard Break
+			}
+
+			PlaguesmithBuff: {
+				// DisplayName: Plaguesmith Buff
+				// Description: Mods.tsorcRevamp.Buffs.PlaguesmithBuff.Description
+			}
+
+			SorrowfulCurseBuff: {
+				// DisplayName: Sorrowful Curse
+				// Description: The Cleric of Sorrow's dying curse — attacks inflict Cursed Inferno
+			}
+
+			Doused: {
+				// DisplayName: Doused
+				// Description: Coated in flammable ichor — slowed and bleeding. Catch fire and it detonates!
+			}
+
+			DragonForm: {
+				// Description: Transformed into a Cursed Dragon
+				// DisplayName: Dragon Form
+			}
+
+			LesserVesselBuff: {
+				// DisplayName: Lesser Vessel Buff
+				// Description: Mods.tsorcRevamp.Buffs.LesserVesselBuff.Description
+			}
 		}
 
 		Projectiles: {
+			// PurpleSkull.DisplayName: Purple Skull
+			// VesselGravityWell.DisplayName: Gravity Well
+			// VesselSoulNova.DisplayName: Soul Nova
 			BlizzardBlasterShot.DisplayName: 暴风雪冲击波
 			AntiMaterialRound.DisplayName: 反物质榴弹
 			APShot.DisplayName: 穿甲弹
@@ -9139,7 +9994,6 @@ Mods: {
 			BlackBreath.DisplayName: 暗黑之息
 			BlackKnightGhostSpear.DisplayName: 黑骑士幽灵之矛
 			BlackKnightSpear.DisplayName: 黑骑士之矛
-			BlackKnightsSpear.DisplayName: 黑骑士之矛
 			BoulderDropLeft.DisplayName: 爆炸
 			BoulderDropRight.DisplayName: 爆炸
 			Bubble.DisplayName: 泡泡
@@ -9183,7 +10037,7 @@ Mods: {
 			EnemyLingeringLaser.DisplayName: 激光
 			EnemyMeteor.DisplayName: 敌方陨石
 			EnemyPlasmaOrb.DisplayName: Ω爆破
-			EnemyRedirectingShark.DisplayName: 追踪鲨鱼
+			EnemyRedirectingShark.DisplayName: Pulsing Water Fiend Virus
 			EnemyRedLaser.DisplayName: 激光
 			EnemySmokebomb.DisplayName: 高能烟气喷发
 			EnemySpellAbyssPoisonStrike.DisplayName: 深渊毒击
@@ -9257,9 +10111,12 @@ Mods: {
 			GreatFarronDart.DisplayName: 强力法兰短箭
 			GreatFarronDartSpawner.DisplayName: 强力法兰短箭生成器
 			SwordOfLordGwyn.DisplayName: 葛温之刃
+			// SwordOfCinder.DisplayName: Sword of Cinder
 			TackleProjectile.DisplayName: 葛温
 			Hellwing.DisplayName: 地狱之翼
 			HerosArrow.DisplayName: 英雄之箭
+			// HeroPotionBomb.DisplayName: Potion Bomb
+			// HeroFireArc.DisplayName: Fire Crescent
 			HypnoticDisrupter.DisplayName: 虚空之梦
 			IceSpirit.DisplayName: 冰灵
 			InkGeyser.DisplayName: 黯墨喷涌
@@ -9316,6 +10173,78 @@ Mods: {
 			RedKnightsSpear.DisplayName: 红骑士之矛
 			ScrewAttack.DisplayName: 弩箭打击
 			ShadowShot.DisplayName: 影弹
+			// VenomSpit.DisplayName: Venom Spit
+			// AcidPool.DisplayName: Acid Pool
+			// GigasShockwave.DisplayName: Gigas Shockwave
+			// GigasNovaRing.DisplayName: Wrath of Gold
+			// GigasHeavenlySpear.DisplayName: Heavenly Spear
+			// GigasSunPillar.DisplayName: Sun Pillar
+			// GigasConsecratedGround.DisplayName: Consecrated Ground
+			// GigasHaloSun.DisplayName: Halo Sun
+			// GigasSweepBeam.DisplayName: Lightning of the First Sun
+			// GigasSolarBoulder.DisplayName: Solar Boulder
+			// GigasSolarEmber.DisplayName: Solar Ember
+			// GigasSunfallComet.DisplayName: Sunfall Comet
+			// GigasLightHand.DisplayName: Grasping Light
+			// GigasIceSpike.DisplayName: Rimefang Spike
+			// GigasFrostBreathPuff.DisplayName: Frost Breath
+			// GigasHailstone.DisplayName: Hailstone
+			// GigasIceShard.DisplayName: Ice Shard
+			// GigasCrownIcicle.DisplayName: Crown Icicle
+			// GigasFrostZone.DisplayName: Winter's Grasp
+			// GigasFreezeRing.DisplayName: Absolute Zero
+			// GigasPrisonPillar.DisplayName: Ice Prison Pillar
+			// GigasUndertowZone.DisplayName: Undertow of Winter
+			// ClericLastRitesRing.DisplayName: Last Rites
+			// GigasCanopyIcicle.DisplayName: Crystal Canopy
+			// GigasGlazeStrip.DisplayName: Black Ice
+			// HeartOfWinterController.DisplayName: Heart of Winter
+			// TomeIcicle.DisplayName: Crown Icicle
+			// TomeFrostPuff.DisplayName: Frost Breath
+			// TomeIceSpike.DisplayName: Rimefang
+			// TomeFreezeRing.DisplayName: Absolute Zero
+			// WrathOfGoldController.DisplayName: Wrath of Gold
+			// TomeHeavenlySpear.DisplayName: Heavenly Spear
+			// TomeHaloSun.DisplayName: Halo Sun
+			// TomeSunPillar.DisplayName: Sun Pillar
+			// TomeGoldSweep.DisplayName: Lightning of the First Sun
+			// MinotaurEmberBolt.DisplayName: Ember Bolt
+			// MinotaurFlameWave.DisplayName: Flame Wave
+			// MinotaurCinder.DisplayName: Cinder
+			// NecroBoneShard.DisplayName: Bone Shard
+			// GhoulDeathBlast.DisplayName: Spellbound Detonation
+			// GhoulDreamSpark.DisplayName: Dream Spark
+			// GwynFireArc.DisplayName: Cinder Arc
+			// GwynLightningSpear.DisplayName: Spear of the First Sun
+			// GwynLightningStrike.DisplayName: Judgment Bolt
+			// GwynFloorSpark.DisplayName: Coursing Lightning
+			// GwynCinderNova.DisplayName: Cinder Nova
+			// GwynSunlightSpear.DisplayName: Sunlight Spear
+			// GwynSolarSpearNode.DisplayName: Sunlight Spear
+			// GwynFireball.DisplayName: Cinder Rain
+			// GwynFirestorm.DisplayName: Firestorm
+			// GwynFlameGrasp.DisplayName: Lord's Grasp
+			// GwynDescentMeteor.DisplayName: Descent of the Sun
+			// GwynGreatswordBoomerang.DisplayName: Great Lord Greatsword
+			// GwynGravityWell.DisplayName: Gravity of the Sun
+			// NecroGraveHand.DisplayName: Grave Hand
+			// NecroSiphonPulse.DisplayName: Soul Siphon
+			// NecroCurseNova.DisplayName: Curse Nova
+			// GigasIceWaveSegment.DisplayName: Hoarfrost Creep
+			// NitoSwordSlash.DisplayName: Gravelord Sword
+			// NitoBoneShard.DisplayName: Gravelord Bone Shard
+			// NitoDeathNova.DisplayName: Death Nova
+			// NitoGraveSpike.DisplayName: Gravelord Spike
+			// NitoCeilingSpike.DisplayName: Falling Gravelord Spike
+			// NitoGraveHand.DisplayName: Grave Hand
+			// NitoMiasmaCloud.DisplayName: Miasma
+			// QuaraTidalCrest.DisplayName: Tidal Crest
+			// QuaraBurstBubble.DisplayName: Burst Bubble
+			// QuaraDroplet.DisplayName: Droplet
+			// QuaraIchorGlob.DisplayName: Ichor Glob
+			// QuaraIchorPatch.DisplayName: Ichor Patch
+			// QuaraEmber.DisplayName: Ember
+			// QuaraClawSwipe.DisplayName: Claw Swipe
 			SmallFlameJet.DisplayName: 轻型火焰喷射
 			SmallWeaponSlash.DisplayName: 轻型武器斩击
 			Spearhead.DisplayName: 矛头
@@ -9496,6 +10425,9 @@ Mods: {
 			ArcherToken.DisplayName: 箭
 			NondescriptOwlProjectile.DisplayName: 芜！芜！
 			OwlsArrow.DisplayName: 芜！芜！
+			// ArcherSpirit.DisplayName: Archer Spirit
+			// ArcherSpiritArrow.DisplayName: Archer Spirit Arrow
+			// EnemyFrostburnArrow.DisplayName: Enemy Frostburn Arrow
 			FriendlyCataluminance.DisplayName: 耀翳眼
 			FriendlyDragonsBreath.DisplayName: 龙息
 			FriendlyRedLaser.DisplayName: 激光
@@ -9758,9 +10690,147 @@ Mods: {
 			ThunderBowLightning.DisplayName: 遗忘雷弓
 			// ChaosDemonBolt.DisplayName: Chaos Demon Bolt
 			// OolacileBolt.DisplayName: Oolacile Bolt
+			// VenomBlade.DisplayName: Venom Blade
+			// VenomBladeField.DisplayName: Venom Blade Field
+			// AbyssalDeluge.DisplayName: Abyssal Deluge
+			// AbyssalDelugeBall.DisplayName: Abyssal Deluge Ball
+			// DivineAfflicterProjectile.DisplayName: Divine Afflicter Projectile
+			// SanguinisProj.DisplayName: Sanguinis Proj
+			// DragoonRocket.DisplayName: Dragoon Rocket
+			// Ichorthrower.DisplayName: Ichorthrower
+			// SoulCoinProj.DisplayName: Soul Coin Proj
+			// ChaosBlackFire.DisplayName: Chaos Black Fire
+			// ChaosBlackFirelet.DisplayName: Chaos Black Firelet
+			// ShadowSparkle.DisplayName: Shadow Sparkle
+			// ShadowsparkBulletProjectile.DisplayName: Shadowspark Bullet Projectile
+			// Ichorstorm.DisplayName: Ichorstorm
+			// DraconicArrowProjectile.DisplayName: Draconic Arrow Projectile
+			// GaeBolgHeld.DisplayName: Gae Bolg Held
+			// GaeBolgPoke.DisplayName: Gae Bolg Poke
+			// GaeBolgThrown.DisplayName: Gae Bolg Thrown
+			// LonginusThrown.DisplayName: Longinus Thrown
+			// LonginusPoke.DisplayName: Longinus Poke
+			// LonginusHeld.DisplayName: Longinus Held
+			// FriendlyHunterChild.DisplayName: Friendly Hunter Child
+			// YoungHunter.DisplayName: Young Hunter
+			// YoungHunterProjectile.DisplayName: Young Hunter Projectile
+			// YoungHunterVine.DisplayName: Young Hunter Vine
+			// SporePowderProjectile.DisplayName: Spore Powder Projectile
+			// DarkCircleProj.DisplayName: Dark Circle Proj
+			// TaintedIcicle.DisplayName: Tainted Icicle
+			// FireRainProj.DisplayName: Fire Rain Proj
+			// RedMagicProj.DisplayName: Red Magic Proj
+			// ShadowDragonsBreath.DisplayName: Shadow Dragons Breath
+			// VenomDartProjectile.DisplayName: Venom Dart Projectile
+			// FrigidDartProjectile.DisplayName: Frigid Dart Projectile
+			// FireBallWOF2.DisplayName: Fire Ball W O F2
+			// AbyssalStarProj.DisplayName: Abyssal Star Proj
+			// SunderingLightAura.DisplayName: Sundering Light Aura
+			// HeavensTearAura.DisplayName: Heavens Tear Aura
+			// BerserkerNightmareAura.DisplayName: Berserker Nightmare Aura
+			// PowerBoltExplosion.DisplayName: Power Bolt Explosion
+			// SupremeDragoonLashTrail.DisplayName: Supreme Dragoon Lash Trail
+			// DetonationSignalTrail.DisplayName: Detonation Signal Trail
+			// GaiaSmash.DisplayName: Gaia Smash
+			// YianBlaze2.DisplayName: Yian Blaze2
+			// YianBlaze.DisplayName: Yian Blaze
+			// DiamondCrusherShockwave.DisplayName: Diamond Crusher Shockwave
+			// PuppetMeleeHitbox.DisplayName: Puppet Melee Hitbox
+			// PuppetThrowingStar.DisplayName: Puppet Throwing Star
+			// PuppetCrossbowBolt.DisplayName: Puppet Crossbow Bolt
+			// PuppetThrownDualBladedAxe.DisplayName: Thrown Dual-Bladed Axe
+			// GreatMagicMirrorRangeRing.DisplayName: Great Magic Mirror Range Ring
+			// HealSpriteVFX.DisplayName: Heal Sprite V F X
+			// TeleportMistLinger.DisplayName: Teleport Mist Linger
+			// AbyssBreath.DisplayName: Abyss Breath
+			// AbyssFlames.DisplayName: Abyss Flames
+			// NPCAfterimage.DisplayName: N P C Afterimage
+			// PlagueTeleportCloud.DisplayName: Plague Teleport Cloud
+			// FireTeleportBlast.DisplayName: Fire Teleport Blast
+			// TeleportFireFlame.DisplayName: Teleport Fire Flame
+			// EnemyEphemeralThrowingAxeProj.DisplayName: Enemy Ephemeral Throwing Axe Proj
+			// BasiliskLeechTongue.DisplayName: Basilisk Leech Tongue
+			// FireLurkerMeteor.DisplayName: Fire Lurker Meteor
+			// FireLurkerFlameOrb.DisplayName: Fire Lurker Flame Orb
+			// EnemyCaltrop.DisplayName: Enemy Caltrop
+			// EnemyDiamondCrusherBall.DisplayName: Enemy Diamond Crusher Ball
+			// EnemyFireFlask.DisplayName: Enemy Fire Flask
+			// EnemyFireFlaskLingeringFlame.DisplayName: Enemy Fire Flask Lingering Flame
+			// EnemyTaintedArrow.DisplayName: Enemy Tainted Arrow
+			// PuppetSmokeBomb.DisplayName: Puppet Smoke Bomb
+			// Caltrop.DisplayName: Caltrop
+			// FireFlask.DisplayName: Fire Flask
+			// FireFlaskLingeringFlame.DisplayName: Fire Flask Lingering Flame
+			// EnemyNinjaStarProj.DisplayName: Enemy Ninja Star Proj
+			// CursedDragonInvaderBreath.DisplayName: Cursed Dragon Breath
+			// EnemyMeteorStormMeteor.DisplayName: Enemy Meteor Storm Meteor
+			// CursedDragonKnife.DisplayName: Cursed Dragon Knife
+			// EnemyPilgrimArcaneBall.DisplayName: Enemy Pilgrim Arcane Ball
+			// EnemyVenomStaffProj.DisplayName: Enemy Venom Staff Proj
+			// NonAccelDarkSlime.DisplayName: Non Accel Dark Slime
+			// AbyssLurkerFlameOrb.DisplayName: Abyss Lurker Flame Orb
+			// AbyssLurkerMeteor.DisplayName: Abyss Lurker Meteor
+			// OccultistDarkOrb.DisplayName: Occultist Dark Orb
+			// OccultistStar.DisplayName: Occultist Star
+			// OccultistStarBig.DisplayName: Occultist Star Big
+			// AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
+			// AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
+			// AbyssSlash.DisplayName: Abyss Slash
+			// ArtoriasAbyssBlast.DisplayName: Artorias Abyss Blast
+			// ArtoriasAbyssBlaze.DisplayName: Artorias Abyss Blaze
+			// ArtoriasAbyssPillar.DisplayName: Artorias Abyss Pillar
+			// ArtoriasFlameOrb.DisplayName: Artorias Flame Orb
+			// ArtoriasImpalingSword.DisplayName: Artorias Impaling Sword
+			// GhostBubbleBolt.DisplayName: Ghost Bubble Bolt
+			// ArtoriasAbyssShockwave.DisplayName: Artorias Abyss Shockwave
+			// ArtoriasAbyssSlash.DisplayName: Artorias Abyss Slash
+			// GreatBlackKnightFlail.DisplayName: Great Black Knight Flail
+			// GreatBlackKnightFlailEmber.DisplayName: Great Black Knight Flail Ember
+			// GreatBlackKnightFlailEmberLingering.DisplayName: Great Black Knight Flail Ember Lingering
+			// GreatBlackKnightFlailPulse.DisplayName: Great Black Knight Flail Pulse
+			// ArtoriasAbyssTendril.DisplayName: Artorias Abyss Tendril
+			// HomingAbyssOrb.DisplayName: Homing Abyss Orb
+			// BoomerangCrescent.DisplayName: Boomerang Crescent
+			// ArtoriasChargeNova.DisplayName: Artorias Charge Nova
+			// AbyssShard.DisplayName: Abyss Shard
+			// EnemyGreatFireAxeFireball.DisplayName: Enemy Great Fire Axe Fireball
+			// ConsecratedLightning.DisplayName: Consecrated Lightning
+			// EnemyConsecratedLight.DisplayName: Enemy Consecrated Light
+			// EvilEyeFlame.DisplayName: Evil Eye Flame
+			// EvilEyeGroundBlast.DisplayName: Evil Eye Ground Blast
+			// PoisonBurstCloud.DisplayName: Poison Burst Cloud
+			// PoisonSpitBall.DisplayName: Poison Spit Ball
+			// PoisonTrailCloud.DisplayName: Poison Trail Cloud
+			// StickySpitBall.DisplayName: Sticky Spit Ball
+			// StickySpitCloud.DisplayName: Sticky Spit Cloud
+			// ToxicGasNovaFog.DisplayName: Toxic Gas Nova Fog
+			// ToxicGasNovaGlow.DisplayName: Toxic Gas Nova Glow
+			// SwordOfLordGwynSunlightSpear.DisplayName: Sword Of Lord Gwyn Sunlight Spear
+			// SwordOfLordGwynSlash.DisplayName: Sword Of Lord Gwyn Slash
+			// SwordOfLordGwynController.DisplayName: Sword Of Lord Gwyn Controller
+			// SwordOfLordGwynCinderTrail.DisplayName: Sword Of Lord Gwyn Cinder Trail
+			// SwordOfLordGwynCinderNova.DisplayName: Sword Of Lord Gwyn Cinder Nova
+			// LordGwynSunlightStrike.DisplayName: Lord Gwyn Sunlight Strike
+			// LordGwynShortFlame.DisplayName: Lord Gwyn Short Flame
+			// GravemawController.DisplayName: Gravemaw Controller
+			// GravemawMaw.DisplayName: Gravemaw Maw
+			// GravemawNova.DisplayName: Gravemaw Nova
+			// GravemawOrb.DisplayName: Gravemaw Orb
+			// GravemawSoulBolt.DisplayName: Gravemaw Soul Bolt
+			// LesserVessel.DisplayName: Lesser Vessel
+			// LesserVesselSkull.DisplayName: Lesser Vessel Skull
+			// TeleportIllusionDissolve.DisplayName: Teleport Illusion Dissolve
+			// ArtoriasSurgeAura.DisplayName: Artorias Surge Aura
+			// PuppetGroundDustWave.DisplayName: Puppet Ground Dust Wave
+			// PuppetSnareBolt.DisplayName: Puppet Snare Bolt
+			// PuppetSnareNet.DisplayName: Puppet Snare Net
+			// PuppetGreatfireCrescent.DisplayName: Puppet Greatfire Crescent
+			// PuppetFirefallPillar.DisplayName: Puppet Firefall Pillar
 		}
 
 		NPCs: {
+			// MushroomCreature.DisplayName: Mushroom Creature
+
 			Deerclops: {
 				TypeName: 先祖之灵
 				DespawnHandler: 先祖之灵将你破碎的身体拖回巢穴...
@@ -9928,7 +10998,7 @@ Mods: {
 				Hint: 你必须去西海寻找萨满长老...
 				MartianHint: 天空中开始出现火星探测器...
 				AbyssOpen: 连接深渊的裂缝敞开了...
-				// HallowDarker: Darkness spreads through the Hallowed Caves...
+				HallowDarker: 阴影自神圣洞穴中散播...
 			}
 
 			AttraidiesFragment.DisplayName: 阿卓迪斯分身
@@ -9980,8 +11050,8 @@ Mods: {
 			}
 
 			AbysmalOolacileSorcerer: {
-				DisplayName: 堕渊乌拉席露巫师
-				DespawnHandler: 堕渊乌拉席露巫师对你的心智实施了降维打击...
+				DisplayName: 乌拉席露大秘术师
+				DespawnHandler: 乌拉席露大秘术师对你的心智实施了降维打击...
 				Defeated: 黑暗笼罩于世...
 			}
 
@@ -10009,7 +11079,7 @@ Mods: {
 				Heal2: 混沌被无形的护盾保护着 - 你离它太远了...
 				Rips: 混沌撕裂你的翅膀和盔甲！
 				OutOfRange: 混沌受到看不见的力量的保护—你离它太远了！
-				// DarknessLifted: The shadow in the Hallow has been lifted!
+				DarknessLifted: 神圣洞穴中的阴影已被驱散！
 			}
 
 			DarkCloud: {
@@ -10070,6 +11140,7 @@ Mods: {
 			}
 
 			SwordOfLordGwyn.DisplayName: 葛温之刃
+			// SwordOfCinder.DisplayName: Sword of Cinder
 			HellkiteDragonBody.DisplayName: 炼狱鸢龙
 			HellkiteDragonBody2.DisplayName: 炼狱鸢龙
 			HellkiteDragonBody3.DisplayName: 炼狱鸢龙
@@ -10081,6 +11152,16 @@ Mods: {
 
 			HellkiteDragonLegs.DisplayName: 炼狱鸢龙
 			HellkiteDragonTail.DisplayName: 炼狱鸢龙
+			// GreatSerpentBody.DisplayName: Great Serpent
+			// GreatSerpentBody2.DisplayName: Great Serpent
+			// GreatSerpentBody3.DisplayName: Great Serpent
+			// GreatSerpentTail.DisplayName: Great Serpent
+
+			GreatSerpentHead: {
+				// DisplayName: Great Serpent
+				// DespawnHandler: The Great Serpent slithers away into the dark...
+			}
+
 			PrimordialCrystal.DisplayName: 始源晶簇
 			SeathTheScalelessBody.DisplayName: 无鳞的冰龙—希斯
 			SeathTheScalelessBody2.DisplayName: 无鳞的冰龙—希斯
@@ -10222,7 +11303,7 @@ Mods: {
 			Dunlending.DisplayName: 黑蛮地野人
 			DworcFleshhunter.DisplayName: 德沃克血肉捕手
 			DworcVenomsniper.DisplayName: 德沃克猛毒狙击者
-			DworcVoodoomaster.DisplayName: 德沃克炼金术士
+			DworcAlchemist.DisplayName: 德沃克炼金术士
 			DworcVoodooShaman.DisplayName: 德沃克萨满
 			FirebombHollow.DisplayName: 游魂投掷手
 			FireLurker.DisplayName: 火炎潜伏者
@@ -10288,7 +11369,7 @@ Mods: {
 			ShadowMage.DisplayName: 幻影法师
 			SnowOwl.DisplayName: 雪枭
 			StoneGolem.DisplayName: 戈仑石人
-			Abysswalker.DisplayName: 德沃克深渊行者
+			DworcAbysswalker.DisplayName: 德沃克深渊行者
 
 			AncientDemonOfTheAbyss: {
 				DisplayName: 渊古恶魔
@@ -10301,7 +11382,7 @@ Mods: {
 			CorruptedElemental.DisplayName: 堕落元素
 			CorruptedHornet.DisplayName: 堕落黄蜂
 			CrystalKnight.DisplayName: 魔晶骑士
-			DarkBloodKnight.DisplayName: 黑暗血炎骑士
+			DarkBloodKnight.DisplayName: 血魔骑士
 			DarkKnight.DisplayName: 黯骑士
 			DemonWheel.DisplayName: 恶魔之轮
 
@@ -10311,14 +11392,17 @@ Mods: {
 				Destroy: 一位来自深渊的卓越赭骑士正赶来摧毁你...
 			}
 
+			// GreatRedKnightTest.DisplayName: Great Red Knight Test
 			GuardianCorruptor.DisplayName: 腐化守护者
 			HydrisElemental.DisplayName: 海德里斯元素
 			HydrisNecromancer.DisplayName: 海德里斯死灵法师
-			IceSkeleton.DisplayName: 寒霜骷髅
+			IceSkeleton.DisplayName: 希斯门徒
 
 			KnightOfGwyn: {
 				DisplayName: 葛温的骑士
 				DespawnHandler: 葛温的骑士占了上风...
+				Protection: 葛温的骑士被魔法屏障所保护，萨满长老知道如何打破它！
+				Open: 葛温的骑士扩大了深渊！
 			}
 
 			ManOfWar.DisplayName: 战争缔造者
@@ -10375,20 +11459,20 @@ Mods: {
 				Name9: Ofur
 				Name10: Ofi
 				Name11: Bompbi
-				Quote1: 我搞到了一些打折的东西来卖。
-				Quote2: 你怎么样？
-				Quote3: 我好渴...
-				Quote4: 当你打败了世吞之后，我就可以卖给你粘性炸弹了！
-				Quote5: 当你打败悲伤或者铁长直之后，我会有更多货物可卖...
+				Quote1: 你好啊朋友，最近过得怎么样？
+				Quote2: 我有点渴了...要不要一起喝一杯？
+				Quote3: 我们矮人可是热情又乐于助人；遇上什么麻烦，随时来找我们就行！
+				Quote4: 当你打败了世界吞噬者之后，我就可以卖给你粘性炸弹了！
+				Quote5: 当你打败悲伤或者毁灭者之后，我会有更多货物可卖...
 				Quote6: 当你打败悲伤之后，我会有更多货物可卖...
-				Quote7: 当你打败铁长直之后，我会有更多货物可卖...
-				// ContractButton: Dwarven Contract
-				// ContractQuote1: Found any Dwarven Contracts yet, traveler?
-				// ContractQuote2: Bring me one and I’ll send a proper guard to watch over a property, with a gift as a thanks!
-				// ContractQuote3: If you ever find any old Dwarven Contracts lying around, bring them to me.
-				// ContractGiven: Thanks for the contract! A dwarf will come to guard a property. Oh yes, and here's your reward!
-				// FinalContractGiven: You found me every possible contract! Thank you Red for all your hard work, this is your ultimate reward!
-				// ContractMax: Sorry Red, I've already hired every dwarves willing to work. No more contracts!
+				Quote7: 当你打败毁灭者之后，我会有更多货物可卖...
+				ContractButton: 矮人契约
+				ContractQuote1: 旅行者，找到矮人契约了吗？
+				ContractQuote2: 带一份契约给我，我就派个靠谱的守卫去，还有谢礼奉上！
+				ContractQuote3: 要是你在哪儿见到早年的矮人契约，记得带给我。
+				ContractGiven: 多谢你的契约！会有一位矮人去的。对了，这是给你的回报！
+				FinalContractGiven: 你居然把所有能找的契约都集齐了！瑞德，辛苦你啦，这是最终的大礼！
+				ContractMax: 抱歉啊瑞德，愿意干活的矮人我都雇完了。暂时不需要更多契约啦！
 
 				TownNPCMood: {
 					Content: 我很满足。
@@ -10482,11 +11566,15 @@ Mods: {
 				Luck: 祝好运。
 				Gift: 如果你需要更多，你可以在篝火的火焰上烤一些。再见。
 				BotCGift: 被诅咒者，这些生命宝石无疑将在你的旅程中显示它们的价值。再见。
+				// UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems — may they sustain you on the road ahead. Farewell.
 				EasterEgg: 承载...寻求...寻求...免得...
 				button1: 祝福
 				button2v1: 教程引导...
 				button2v2: 收下礼物
 				button2v3: 给予碎片
+				// button2v4: Receive tome
+				// TomeOffer: Before we speak, take this — a [c/6d8827:Boss Hunting Tome]. Hover over any boss in its pages to learn where it dwells, and re-summon those you have already slain.
+				// TomeGiven: May it guide your path. Now then, what knowledge do you seek?
 				BringShards: 如果你碰巧找到了另一个元素瓶碎片，请将其带给我。 这样我就可以减轻你的生存压力。
 				EstusUpgrade: "元素瓶的可使用次数增加了！ 最大容量： "
 				CeruleanUpgrade: "蓝露滴圣杯瓶的可使用次数增加了！ 最大容量： "
@@ -11050,6 +12138,12 @@ Mods: {
 					常人或许会看见自己变成连环杀手，危险但不足以致命
 					{0}，但对你而言，你最清楚体内沉睡的潜能，凝视这镜子恐将招致毁灭
 					'''
+				RemixDarkCloudHint:
+					'''
+					你持有的那面镜子，千万别注视它...这是受深渊诅咒的邪物—会将你拖入深渊深处，并显现出凝视者未来的扭曲倒影
+					常人或许会看见自己变成连环杀手，危险但不足以致命
+					{0}，但对你而言，你最清楚体内沉睡的潜能，凝视这镜子恐将招致毁灭
+					'''
 				GwynHint:
 					'''
 					你已准备好面对深渊之王、火焰守护者葛温。曾为他提供权力的存在尽数败于你手
@@ -11134,6 +12228,12 @@ Mods: {
 					[c/cffffa:火焰恶魔马瑞丽斯]和某些传说在天空中漫游的[c/cffffa:幻影]携带着凶猛的魔法之刃。
 					名为[c/fcff00:巴罗之刃] 的武器或许足以粉碎他们的防护屏障...
 					'''
+				/* RemixAdvModeSHMQuoteCHAOS:
+					'''
+					One last thing: Chaos's prison in the Hallow is cracked, and its darkness is spreading throughout the caves. 
+					Because of this, some barriers have been activated and some passages are blocked. There is only one way back to Chaos in the Hallow; 
+					[c/ffbf00:return to the starting point at the entrance to the Hallowed Caves, and you will find the path.]
+					''' */
 				AdvModeSHMQuote5: 祝你好运，瑞德。
 				SandboxSHMQuote1:
 					'''
@@ -11393,6 +12493,108 @@ Mods: {
 			LichKingDisciple.DisplayName: 巫妖王信徒
 			LeonhardRemix.DisplayName: 李奥纳德
 			TrueDeath.DisplayName: 死神
+			// DarkCloudShadow.DisplayName: Dark Cloud Shadow
+			// AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
+			// StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
+			// ShadowNinja.DisplayName: Shadow Ninja
+			// BlackNinja.DisplayName: Black Ninja
+			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
+			// TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
+			// RedKnightTest.DisplayName: Red Knight Test
+			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
+			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
+			// TibianValkyrieSmart4.DisplayName: Tibian Valkyrie Smart4
+			// DemonLordApocalypse.DisplayName: Demon Lord Apocalypse
+			// Eland.DisplayName: Eland
+			// EvilEye.DisplayName: Evil Eye
+			// Gigas.DisplayName: Holy Gigas
+			// GravelordNito.DisplayName: Gravelord Nito
+			// VesselOfSouls.DisplayName: Vessel of Souls
+			// VesselWatcher.DisplayName: Strange Eye
+			// Hydra.DisplayName: Hydra
+			// IceGigas.DisplayName: Ice Gigas
+			// FrozenGigasStatue.DisplayName: Frozen Echo
+			// SpellboundGhoul.DisplayName: Spellbound Ghoul
+			// Massacre.DisplayName: Juggernaut
+			// MinotaurMage.DisplayName: Minotaur Mage
+			// Plaguesmith.DisplayName: Plaguesmith
+			// QuaraMantassin.DisplayName: Quara Mantassin
+			// QuaraPincher.DisplayName: Quara Pincher
+			// QuaraClutchCrab.DisplayName: Clutch Crab
+			// Sahagin.DisplayName: Sahagin
+
+			BlackMage: {
+				// DisplayName: Black Mage
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+
+				// Census.SpawnCondition: Conditions unknown
+			}
+
+			CaravanMerchant: {
+				// DisplayName: Caravan Merchant
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+
+				// Census.SpawnCondition: Conditions unknown
+			}
+
+			WhiteMage: {
+				// DisplayName: White Mage
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+
+				// Census.SpawnCondition: Conditions unknown
+			}
+
+			// TibianValkyrieTier2.DisplayName: Tibian Valkyrie Tier2
+			// GreatBlackKnight.DisplayName: Great Black Knight
+			// FaraamSpriteTestInvader.DisplayName: Faraam Sprite Test Invader
+			// FirebombHollowOriginal.DisplayName: Old Firebomb Hollow
+			// AbyssLurker.DisplayName: Abyssal Strider
+			// HollowWarriorOriginal.DisplayName: Old Hollow Warrior
+			// HollowSoldierOriginal.DisplayName: Old Hollow Soldier
+			// GhostOfAHollowWarriorOriginal.DisplayName: Old Ghost of a Hollow Warrior
+			// HollowSpearmanOriginal.DisplayName: Old Hollow Spearman
+			// GhostOfTheDrownedOriginal.DisplayName: Old Ghost of the Drowned
+			// GhostOfTheForgottenKnight.DisplayName: Ghost Of The Forgotten Knight
+			// LothricKnightOriginal.DisplayName: Old Lothric Knight
+			// LothricSpearKnightOriginal.DisplayName: Old Lothric Spear Knight
+			// LothricBlackKnightOriginal.DisplayName: Old Lothric Black Knight
+			// RingedKnightOriginal.DisplayName: Old Ringed Knight
+			// CursedDragonInvader.DisplayName: Cursed Dragon
+			// AbysmalOolacileSorcererTEST.DisplayName: Abysmal Oolacile Sorcerer T E S T
+			// OwlFatherInvader.DisplayName: Owl Father Invader
+			// SpiritOfKhaios.DisplayName: Spirit Of Khaios
+			// KhaiosTransitionOrb.DisplayName: Khaios Transition Orb
+			// Khaios.DisplayName: Khaios
 		}
 
 		Prefixes: {
@@ -11450,6 +12652,8 @@ Mods: {
 			"Krakens Cast.DisplayName": 海妖旋风
 			"Witchking Scream.DisplayName": 巫师尖啸
 			"Print Position.DisplayName": 显示玩家位置
+			// "Open Storage.DisplayName": Open Storage
+			// "2nd Slot.DisplayName": 2nd Slot
 		}
 
 		InfoDisplays: {
@@ -11458,258 +12662,371 @@ Mods: {
 		}
 
 		Configs: {
-			tsorcRevampConfig: {
-				DisplayName: "[c/ad4c9f:红][c/ad4c9f:云][c/ad4c9f:物][c/ad4c9f:语] [c/8d9be7:模][c/8d9be7:组][c/8d9be7:设][c/8d9be7:置]"
+			// 01Gameplay.DisplayName: Gameplay
+			// 02Visuals.DisplayName: Visuals
+			// 03Sound.DisplayName: Sound
+			// 04Controls.DisplayName: Controls
+
+			tsorcRevampGameplayConfig: {
+				// DisplayName: Gameplay
+
+				Headers: {
+					// AdventureMode: Adventure Mode
+					// GameplayChanges: Gameplay Changes
+					// GameplayTweaks: Gameplay Tweaks
+				}
 
 				AdventureMode: {
-					Label: 冒险模式：模组游玩基础
-					Tooltip:
+					// Label: Adventure Mode: Main
+					/* Tooltip:
 						'''
-						防止破坏和放置大多数物块
-						它还启用了一些模组配套地图的特性
-						“如果游戏允许你打破它或放置它，那就是允许的，存在即合理！"
-						如果你正在使用模组配套的地图，请启用此功能！
-						'''
+						Prevents breaking and placing most blocks.
+						It also enables some features intended for the custom map.
+						"If the game lets you break it or place it, it's allowed!"
+						Leave this enabled if you're playing with the custom map!
+						''' */
 				}
 
 				SoulsDropOnDeath: {
-					Label: 黑暗之魂在死亡时掉落
-					Tooltip:
+					// Label: Souls Drop On Death
+					/* Tooltip:
 						'''
-						当你死的时候，掉落你所有的黑暗之魂
-						如果启用“死亡时删除掉落的黑暗之魂”
-						在你之前掉落的魂被删除后，开始掉落新的魂
-						多人模式下无效
-						默认为开启
-						'''
+						Drop all your Dark Souls when you die.
+						If "Delete Dropped Souls on Death" is enabled,
+						your Souls will drop after old Souls are deleted.
+						Does not take effect in multiplayer.
+						Defaults to On
+						''' */
 				}
 
 				DeleteDroppedSoulsOnDeath: {
-					Label: 死亡时删除掉落的黑暗之魂
-					Tooltip:
+					// Label: Delete Dropped Souls On Death
+					/* Tooltip:
 						'''
-						当玩家再次死亡时，之前掉落在世界上的黑暗之魂都会被删除
-						如果你在掉落的黑暗之还未被捡起的时候退出游戏，
-						即使这个选项被禁用，你的黑暗之魂也会被删除
-						多人模式下无效
-						默认为开启
-						'''
+						Dark Souls dropped by dying will be deleted if you die again
+						before picking them up. Even if this option is disabled, your
+						Souls will be deleted if you exit the game while your Souls
+						are still on the ground. Does not take effect in multiplayer.
+						Defaults to On
+						''' */
 				}
 
 				BossZenConfig: {
-					Label: Boss禅定
-					Tooltip:
+					// Label: Boss Zen Config
+					/* Tooltip:
 						'''
-						当Boss在场时，会阻止其他敌怪生成
-						默认为开启
-						'''
+						Boss Zen disables enemy spawns while a boss is alive.
+						Defaults to On
+						''' */
 				}
 
-				DisableGloveAutoswing: {
-					Label: 禁用近战武器和鞭子自动挥舞
-					Tooltip:
-						'''
-						禁用猛爪手套及合成物为近战武器和鞭子带来的自动挥舞效果，“自动开火”选项优先级高于此项
-						对于鞭子Buff堆叠来说很有用。默认为关闭
-						'''
+				SoulsModeMobilityLimit: {
+					// Label: Souls Mode Mobility Limit
+					// Tooltip: Limits extreme running and flight speed while Unkindled or Bearer of the Curse. Classic mode is unaffected. Defaults to On.
 				}
 
-				DisableAutomaticQuickMana: {
-					Label: 禁止自动使用魔力回复药水
-					Tooltip:
+				ActiveShieldsRevamp: {
+					// Label: Active Shields Revamp
+					/* Tooltip:
 						'''
-						禁用魔力花及合成物的自动使用魔力回复药水效果，对于防止在被诅咒者模式下不小心使用蓝露滴圣杯瓶很有用
-						默认为关闭
-						'''
-				}
-
-				DisableRifleScopeZoom: {
-					Label: 禁用步枪瞄准镜视野缩放
-					Tooltip:
-						'''
-						禁用步枪瞄准镜及其升级物提供的屏幕外缩放功能
-						不会影响像狙击步枪这样的武器
-						对于具有右键能力的枪很有用。默认为关闭
-						'''
-				}
-
-				DisableDragoonGreavesDoubleJump: {
-					Label: 禁用 龙骑士腿甲 的二段跳
-					Tooltip: 禁用 龙骑士腿甲 的额外跳跃效果。默认为关闭
-				}
-
-				DisableSupersonicWings2ExtraJumps: {
-					Label: 禁用 超音速之翼II 的额外跳跃
-					Tooltip: 禁用 超音速之翼II 的额外跳跃效果。默认为关闭
-				}
-
-				SoulCounterPosX: {
-					Label: 黑暗之魂数量显示 X 轴
-					Tooltip: 黑暗之魂数量显示 X 轴的位置坐标
-				}
-
-				SoulCounterPosY: {
-					Label: 黑暗之魂数量显示 Y 轴
-					Tooltip: 黑暗之魂数量显示 Y 轴的位置坐标
-				}
-
-				EstusFlaskPosX: {
-					Label: 元素瓶数量显示 X 轴
-					Tooltip: 元素瓶数量显示 X 轴的位置坐标
-				}
-
-				EstusFlaskPosY: {
-					Label: 元素瓶数量显示 Y 轴
-					Tooltip: 元素瓶数量显示 Y 轴的位置坐标
-				}
-
-				CeruleanFlaskPosX: {
-					Label: 蓝露滴圣杯瓶数量显示 X 轴
-					Tooltip: 蓝露滴圣杯瓶数量显示 X 轴的位置坐标
-				}
-
-				CeruleanFlaskPosY: {
-					Label: 蓝露滴圣杯瓶数量显示 Y 轴
-					Tooltip: 蓝露滴圣杯瓶数量显示 Y 轴的位置坐标
-				}
-
-				HideCeruleanFlask: {
-					Label: 隐藏蓝露滴圣杯瓶的显示
-					Tooltip:
-						'''
-						如果你不用蓝露滴圣杯瓶，可以用此选项隐藏其在被诅咒模式下的显示
-						默认为关闭
-						'''
-				}
-
-				ChargeCircleOpacity: {
-					Label: 蓄力（充能）武器显示蓄力条
-					Tooltip:
-						'''
-						一些可充能武器在光标周围有一个圆圈，表示当前的充能水平
-						可以在此处设置该圆的不透明度
-						设置为 0 可不显示充能条
-						'''
-				}
-
-				HideSoapstones: {
-					Label: 隐藏阅读过的箴言文字泡
-					Tooltip:
-						'''
-						如果开启, 除非点击显示按钮，
-						否则阅读过的箴言文字泡将不会再显示
-						默认为开启
-						'''
-				}
-
-				SoapstoneScale: {
-					Label: 箴言文字泡缩放比率
-					Tooltip:
-						'''
-						增加所有箴言文字泡对话框的大小比率
-						默认为 0%
-						'''
-				}
-
-				ShowStaminaTooltip: {
-					Label: 耐力消耗提示
-					Tooltip:
-						'''
-						在被诅咒者模式下显示武器的耐力消耗
-						默认为开启
-						'''
-				}
-
-				GravityFix: {
-					Label: 重力药水不再翻转屏幕
-					Tooltip:
-						'''
-						翻转重力时只会翻转你的角色，而不是整个屏幕
-						强烈推荐游玩本模组时开启
-						当它与另一个模组不兼容时可以禁用此选项
-						'''
-				}
-
-				BroadswordRework: {
-					Label: 近战挥舞动作重制
-					Tooltip:
-						'''
-						仍在测试中！  
-						让近战剑再次伟大！  
-						需要重新加载世界以生效
-						'''
-				}
-
-				MiakodaVolume: {
-					Label: Miakoda的音量
-					Tooltip:
-						'''
-						让Miakoda带着你深入游戏探索？
-						这个滑块控制Miakoda的音量
-						设置为 0 禁用Miakoda的声音
-						'''
-				}
-
-				BonfireFlyVolume: {
-					Label: 篝火虫的音量
-					Tooltip:
-						'''
-						不想让篝火虫再挑逗你去找不到的篝火？
-						这个滑块控制篝火虫的音量
-						设置为 0 禁用篝火虫的声音
-						'''
-				}
-
-				BotCMechanicsVolume: {
-					Label: 被诅咒者机制音量
-					Tooltip:
-						'''
-						被诅咒者机制的音量是不是过于吵闹和烦人了？
-						这个滑块控制篝被诅咒者机制的音量
-						设置为 0 禁用被诅咒者机制的声音
-						'''
-				}
-
-				Headers: {
-					Mods: {
-						tsorcRevamp: {
-							Configs: {
-								tsorcRevampConfig: {
-									Headers: {
-										AdventureMode: 冒险模式
-										GameplayChanges: 游戏玩法变化
-										Visual: 视觉效果
-										Sound: 声音
-									}
-								}
-							}
-						}
-					}
-				}
-
-				BotCMechanicsVolumeSlider: {
-					Label: 被诅咒者机制音效滑块
-					Tooltip: ""
-				}
-
-				AdjustBotCMechanicsVolume: {
-					Label: 被诅咒者机制音量
-					Tooltip: ""
+						Reworks shields into Dark Souls-style active blocking: hold Right Click (with a shield equipped and a weapon that has no right-click function) to raise it and fully block frontal hits at the cost of stamina (or mana, for magic wards).
+						Only functions while Unkindled or Bearer of the Curse. Turn off to keep the classic passive shield behavior. Defaults to On.
+						''' */
 				}
 
 				DebugMode: {
-					Tooltip: ""
-					Label: Debug模式
+					// Label: Debug Mode
+					// Tooltip: ""
+				}
+
+				DisableGloveAutoswing: {
+					// Label: Disable Melee/Whip Glove's Autoswing
+					/* Tooltip:
+						'''
+						Disable the Melee/Whip Autoswing feature provided by the Feral Claws and it's upgrades,
+						the Autofire option overrides this. Useful for whip stacking. Defaults to Off.
+						''' */
+				}
+
+				DisableAutomaticQuickMana: {
+					// Label: Disable Automatic Mana Potion drinking
+					/* Tooltip:
+						'''
+						Disable the automatic quick mana feature provided by the Mana Flower and it's upgrades,
+						useful for not accidentally drinking the Cerulean Flask in BotC-mode. Defaults to Off.
+						''' */
+				}
+
+				DisableRifleScopeZoom: {
+					// Label: Disable Rifle Scope Zoom
+					/* Tooltip:
+						'''
+						Disable the Off-Screen Zooming feature provided by the Rifle Scope and it's upgrades,
+						doesn't affect weapons like the Sniper Rifle which have this natively,
+						useful for guns that have a right-click function. Defaults to Off.
+						''' */
+				}
+
+				DisableDragoonGreavesDoubleJump: {
+					// Label: Disable Dragoon Greaves Double Jump
+					// Tooltip: Disable the extra jump provided by both Dragoon Greaves. Defaults to Off.
+				}
+
+				DisableSupersonicWings2ExtraJumps: {
+					// Label: Disable Supersonic Wings II Extra Jumps
+					// Tooltip: Disable the extra jumps provided by the Supersonic Wings II. Defaults to Off.
 				}
 
 				DisableModWingsFallControlDuringFlight: {
-					Tooltip: ""
-					Label: 禁用模组翅膀的加速下落
+					// Label: Disable Mod Wings Fall Control During Flight
+					// Tooltip: ""
+				}
+			}
+
+			tsorcRevampVisualConfig: {
+				// DisplayName: Visuals
+
+				Headers: {
+					// Soapstones: Soapstones
+					// UI: UI
+					// Other: Other
 				}
 
 				DisableSoapstones: {
-					Tooltip: 只有在创建新地图时才生效
-					Label: 禁用箴言文字泡
+					// Label: Disable Soapstones
+					// Tooltip: Only takes effect when creating new map
+				}
+
+				HideSoapstones: {
+					// Label: Hide Read Soapstones
+					/* Tooltip:
+						'''
+						If enabled, soapstone messages that have been read will
+						not be shown until a button is clicked to show them.
+						Defaults to on.
+						''' */
+				}
+
+				AutoOpenSoapstones: {
+					// Label: Auto Open Soapstones
+					// Tooltip: ""
+				}
+
+				DisableStorySoapstones: {
+					// Label: Disable Story Soapstones
+					// Tooltip: ""
+				}
+
+				DisableLoreSoapstones: {
+					// Label: Disable Lore Soapstones
+					// Tooltip: ""
+				}
+
+				DisableTutorialSoapstones: {
+					// Label: Disable Tutorial Soapstones
+					// Tooltip: ""
+				}
+
+				SoapstoneScale: {
+					// Label: Soapstone Size Increase
+					/* Tooltip:
+						'''
+						Increases the size of all soapstone dialogue boxes by a percentage.
+						Defaults to 0%.
+						''' */
+				}
+
+				UseCustomResourceBars: {
+					// Label: Use Custom Resource Bars
+					// Tooltip: Adds custom health, mana, and stamina bars in the upper right corner. Turn off to use vanilla options.
+				}
+
+				HideOverheadStaminaBar: {
+					// Label: Hide Overhead Stamina Bar
+					// Tooltip: ""
+				}
+
+				EnemyHealthBars: {
+					// Label: Enemy Health Bars
+					// Tooltip: Show vanilla health bars below non-boss enemies. Defaults to Off.
+				}
+
+				PlayerHurtVisuals: {
+					// Label: Player Hurt Visuals
+					/* Tooltip:
+						'''
+						Shows a subtle pulsing red vignette around the screen edges when you take damage.
+						Its brightness and intensity scale with how hard you were hit and how low your health is.
+						Defaults to On.
+						''' */
+				}
+
+				HideCeruleanFlask: {
+					// Label: Hide the Cerulean Flask
+					/* Tooltip:
+						'''
+						Hide the Cerulean Flask obtained in Bearer of the Curse mode,
+						if you don't use it. Defaults to Off.
+						''' */
+				}
+
+				ChargeCircleOpacity: {
+					// Label: Charged Weapon Indicator Opacity
+					/* Tooltip:
+						'''
+						Some charged weapons draw a circle around the cursor to indicate the
+						current charge level. The opacity of that circle can be set here.
+						Set to 0 to disable charge circles.
+						''' */
+				}
+
+				DisableLocationBanner: {
+					// Label: Disable Location Banner
+					// Tooltip: ""
+				}
+
+				OnlyShowMapWhenInventoryIsOpen: {
+					// Label: Only Show Map When Inventory Is Open
+					/* Tooltip:
+						'''
+						Hides the minimap and overlay map during normal gameplay, while keeping your
+						selected map mode visible when the inventory is open. Defaults to On.
+						''' */
+				}
+
+				TransparentInventoryBar: {
+					// Label: Transparent Inventory Bar
+					/* Tooltip:
+						'''
+						Keeps the selected hotbar slot visible, its neighbors at 50% opacity, and all remaining slots at 25%.
+						Also hides the selected item name while the inventory is closed. Defaults to Off.
+						''' */
+				}
+
+				ShowStaminaTooltip: {
+					// Label: Show Stamina Use Tooltip
+					/* Tooltip:
+						'''
+						Show the stamina consumption tooltip for Bearer of the Curse mode.
+						Defaults to On.
+						''' */
+				}
+
+				SoulCounterPosX: {
+					// Label: Soul Counter X Position
+					// Tooltip: The X position of the Soul Counter.
+				}
+
+				SoulCounterPosY: {
+					// Label: Soul Counter Y Position
+					// Tooltip: The Y Position of the Soul Counter.
+				}
+
+				EstusFlaskPosX: {
+					// Label: Estus Flask X Position
+					// Tooltip: The X position of the Estus Flask.
+				}
+
+				EstusFlaskPosY: {
+					// Label: Estus Flask Y Position
+					// Tooltip: The Y position of the Estus Flask.
+				}
+
+				CeruleanFlaskPosX: {
+					// Label: Cerulean Flask X Position
+					// Tooltip: The X position of the Cerulean Flask.
+				}
+
+				CeruleanFlaskPosY: {
+					// Label: Cerulean Flask Y Position
+					// Tooltip: The Y position of the Cerulean Flask.
+				}
+
+				GravityFix: {
+					// Label: Gravitation No Longer Flips Screen
+					/* Tooltip:
+						'''
+						Flipping gravity will only flip your character instead of the whole screen.
+						WARNING! Some parts of the mod rely on this, and will be very disorienting otherwise
+						Only disable if it is hard-incompatible with another mod
+						''' */
+				}
+			}
+
+			tsorcRevampSoundConfig: {
+				// DisplayName: Sound
+
+				UseOriginalPlayerHurtSounds: {
+					// Label: Use Original Player Hurt/Death Sounds
+					/* Tooltip:
+						'''
+						Use the vanilla Terraria player hurt and death sounds.
+						If disabled, custom Dark Souls hurt and death voices will be used.
+						Defaults to Off.
+						''' */
+				}
+
+				MiakodaVolume: {
+					// Label: Miakoda Volume
+					/* Tooltip:
+						'''
+						Revamp Miakoda giving you Navi flashbacks?
+						This slider controls Miakoda's volume.
+						Set to 0 to disable Miakoda sounds.
+						''' */
+				}
+
+				BonfireFlyVolume: {
+					// Label: Bonfirefly Volume
+					/* Tooltip:
+						'''
+						Bonfirefly teasing you about a Bonfire which you can't reach yet?
+						This slider controls Bonfirefly's volume.
+						Set to 0 to disable Bonfirefly sounds.
+						''' */
+				}
+
+				BotCMechanicsVolume: {
+					// Label: Bearer of the Curse Class Mechanics Volume
+					/* Tooltip:
+						'''
+						Are the new Curse Bearer mechanics too loud or simply annoying?
+						This slider controls their volume.
+						Set to 0 to disable them.
+						''' */
+				}
+			}
+
+			tsorcRevampControlsConfig: {
+				// DisplayName: Controls
+
+				AdvancedFourAttackWeaponControls: {
+					// Label: Advanced 4-Attack Weapon Controls
+					/* Tooltip:
+						'''
+						Weapons with 4 attacks use left click/hold and right click/hold when Off.
+						Turn On to map all 4 attacks to left click/hold, with 2 attacks mapped above
+						and 2 attacks below a cursor threshold 3 tiles below your feet.
+						This allows equipping two 4-attack weapons at once. Defaults to Off.
+						''' */
+				}
+
+				RecommendedControls: {
+					// Label: Recommended Controls
+					/* Tooltip:
+						'''
+						Applies TSORC's recommended keyboard controls. Defaults to Off.
+						On first load, only Dodge Roll and Auto Select are updated, and only when
+						Dodge Roll is still using its current or old default key.
+						Turning this on manually applies the full preset:
+						Quick Heal / Estus Flask: R
+						Quick Mana / Cerulean Tear: F
+						Inventory: Q
+						Dodge Roll: Left Shift
+						Auto Select: Left Alt
+						Quick Mount: G
+						2nd Slot: Right Click
+						''' */
 				}
 			}
 		}
@@ -11719,6 +13036,7 @@ Mods: {
 			AdventureModeEnabled: 仅限冒险模式
 			DebugModeEnabled: 仅限开发者测试
 			BotCEnabled: 仅限被诅咒者
+			// SoulsModeEnabled: Unkindled or Bearer of the Curse
 			WyvernMageDowned: 击败飞龙法师
 			SorrowDowned: 击败悲伤
 			HunterDowned: 击败猎手
@@ -11728,7 +13046,7 @@ Mods: {
 			SHM9Downed: 九名深渊守护者被击败
 			RageDowned: 击败愤怒
 			SlograGaibonDowned: 击败斯洛格拉或盖波
-			AbysmalOolacileSorcererDowned: 击败堕渊乌拉席露巫师
+			AbysmalOolacileSorcererDowned: 击败乌拉席露大秘术师
 		}
 
 		Achievements: {
@@ -11743,6 +13061,31 @@ Mods: {
 				Description: 夜以继日。
 			}
 
+			ExploreFortyBonfire: {
+				// FriendlyName: Lots of Rest
+				// Description: Activate a total of forty bonfires on a world.
+			}
+
+			ExploreContractFind: {
+				// FriendlyName: Lost Contract
+				// Description: Find an ancient Dwarven Contract by exploring the world.
+			}
+
+			CollectorContractFull: {
+				// FriendlyName: Contract Completed
+				// Description: Give all possible Dwarven Contracts to the Dwarf.
+			}
+
+			CollectorMillionSoul: {
+				// FriendlyName: The Souliest
+				// Description: Have a total of 1 million Dark Souls in your inventory.
+			}
+
+			ChallengerDodge: {
+				// FriendlyName: You were supposed to die!
+				// Description: Dodge a deadly blow from Tonberry.
+			}
+
 			ExploreVillage: {
 				FriendlyName: 那是一座村庄吗？
 				Description: 欢迎你，旅行者。
@@ -11752,6 +13095,178 @@ Mods: {
 				FriendlyName: 击败李奥纳德
 				Description: "{$BossChecklist.LeonhardDesc}"
 			}
+
+			SlayerPinwheel: {
+				// FriendlyName: Family
+				// Description: Defeat Pinwheel, the necromancer cursing the caves below the village.
+			}
+
+			SlayerAncientOolacileDemon: {
+				// FriendlyName: Beast of the Lost Forest
+				// Description: Defeat the Ancient Oolacile Demon, the hidden beast of the Oolacile Forest.
+			}
+
+			SlayerSlograGaibon: {
+				// FriendlyName: Fallen Duo
+				// Description: Defeat Slogra and Gaibon, the undead and the demon refugees in their volcanic crypt.
+			}
+
+			SlayerJungleWyvern: {
+				// FriendlyName: Keeper of the Ruins
+				// Description: Defeat the Ancient Jungle Wyvern, the guardian of the Forgotten City.
+			}
+
+			SlayerDefiledDemon: {
+				// FriendlyName: Scourge of the City
+				// Description: Defeat the Defiled Demon of the Forgotten City, a powerful creature coming from the Underworld.
+			}
+
+			SlayerRage: {
+				// FriendlyName: Renaissance
+				// Description: Defeat the Rage, the phoenix of fire and wrath in the hallowed depths.
+			}
+
+			SlayerWyvernMage: {
+				// FriendlyName: Wyvern Tamer
+				// Description: Defeat the Wyvern Mage and his disciple in their fortress dominating the eastern mountains.
+			}
+
+			SlayerSorrow: {
+				// FriendlyName: Frozen Grief
+				// Description: Defeat the Sorrow, the water eagle lurking in the depths of icy waters.
+			}
+
+			SlayerHeroOfLumelia: {
+				// FriendlyName: Heroic Revenge
+				// Description: Defeat the Hero of Lumelia, coming to avenge his brother and your irresponsible actions against the world.
+			}
+
+			SlayerSerris: {
+				// FriendlyName: Battle X
+				// Description: Defeat Serris, an unknown being from space hidden under a dark tower.
+			}
+
+			SlayerDeath: {
+				// FriendlyName: Fate
+				// Description: Defeat Death.
+			}
+
+			SlayerAbsoluteDeath: {
+				// FriendlyName: Absolute Fate
+				// Description: Defeat Death at his full power during the Blood Moon.
+			}
+
+			ExploreShamanElderHome: {
+				// FriendlyName: Home of the Elder
+				// Description: Find the true home of the Shaman Elder at the edge of the world.
+			}
+
+			SlayerHunter: {
+				// FriendlyName: Hunting Time
+				// Description: Defeat the Hunter, the ferocious great vulture of the desert, the strongest of the Three Wings.
+			}
+
+			ExploreWifeRescured: {
+				// FriendlyName: The Reunion
+				// Description: Find Asha in a prison located deep within the ruins of the desert.
+			}
+
+			SlayerMachine: {
+				// FriendlyName: Flooded Gears
+				// Description: Defeat the Machine, the ancient keeper of the forgotten Machine Temple.
+			}
+
+			SlayerTriad: {
+				// FriendlyName: Triple Attack
+				// Description: Defeat the Triad, the eyes of death constantly observing the world from their giant shrine of glass.
+			}
+
+			SlayerAttraidies: {
+				// FriendlyName: The End?
+				// Description: Defeat Attraidies, the supreme warlock, bane of the world.
+			}
+
+			ExplorerSHM: {
+				// FriendlyName: Beyond Hard!
+				// Description: Opening a portal from the abyss by killing Attraidies, unleashing more dark and oppressive forces across the world.
+			}
+
+			SlayerHellkiteDragon: {
+				// FriendlyName: Dragon Slayer
+				// Description: Defeat the Hellkite Dragon, a fiery beast of the abyss roaming above the village.
+			}
+
+			SlayerKraken: {
+				// FriendlyName: Water Master
+				// Description: Defeat Water Fiend Kraken, the water god resting in fungal caverns.
+			}
+
+			SlayerLich: {
+				// FriendlyName: Earth Master
+				// Description: Defeat Earth Fiend Lich, the god of earth and necromancy, in his terrifying lair.
+			}
+
+			SlayerMarilith: {
+				// FriendlyName: Fire Master
+				// Description: Defeat Fire Fiend Marilith, the demonic fire goddess from the abyss.
+			}
+
+			SlayerWitchking: {
+				// FriendlyName: Bane of Humanity
+				// Description: Defeat the Witchking, a fallen king who has become a wraith wandering in the dark depths.
+			}
+
+			SlayerOccultist: {
+				// FriendlyName: Remnants of Oolacile
+				// Description: Defeat the Grand Occultist of Oolacile, a powerful sorcerer from the distant, ruined land of Oolacile.
+			}
+
+			SlayerArtorias: {
+				// FriendlyName: A Mighty Knight
+				// Description: Defeat Artorias, the great knight of Izalith, waiting in the ruins of the city.
+			}
+
+			SlayerBlight: {
+				// FriendlyName: ???
+				// Description: Defeat Blight, a strange entity from the abyss on the surface of the Frozen Ocean.
+			}
+
+			SlayerSeath: {
+				// FriendlyName: End of Immortality
+				// Description: Defeath Seath the Scaleless, the great undead dragon in search of immortality.
+			}
+
+			SlayerWyvernShadow: {
+				// FriendlyName: Dark Secrets
+				// Description: Defeat the Wyvern Mage Shadow and his phantom disciple, secretly imprisoned in a huge glass structure.
+			}
+
+			SlayerChaos: {
+				// FriendlyName: God of Discord
+				// Description: Defeat Chaos, the forgotten god of discord and darkness.
+			}
+
+			SlayerDarkCloud: {
+				// FriendlyName: Yourself
+				// Description: Defeat Dark Cloud.
+			}
+
+			SlayerGwyn: {
+				// FriendlyName: The First Flame
+				// Description: Defeat Gwyn.
+			}
+		}
+
+		Bestiary: {
+			// DemonElemental: These primordial elementals are composed purely of demonic energy. They roam the Underworld with the sole purpose of fear and destruction.
+			// Dunlending: The Dunlendings are wild men from Dunland, a nearby land of vast plains. Their hatred of men and their savagery drive them to ravage the surrounding lands.
+			// DworcFleshhunter: A small, pigmy-like creature living in the jungle ruins, who ambushes strangers with his spear.
+			// DworcVenomsniper: A small, pigmy-like creature living in the jungle ruins, who secretly shoots darts at his enemies.
+			// DworcAlchemist: Although they appear barbaric, the dworcs have a strong sensitivity to magic and some become powerful sorcerers.
+			// DworcVoodooShaman: The emergence of powerful spirits in Terraria has strengthened the connection to the earth for some dworcs, allowing them to cast powerful elemental spells.
+			// DworcAbysswalker: Some dworcs are interested in dark magic, and the arrival of the abyss drives some to madness, spreading shadows in the depths of the jungle.
 		}
 	}
 }
+
+// LegacyInterface.38: YOU DIED

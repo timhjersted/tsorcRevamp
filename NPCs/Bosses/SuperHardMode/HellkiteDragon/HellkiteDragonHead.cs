@@ -10,6 +10,7 @@ using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 {
@@ -24,6 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Daybreak] = true;
         }
         public override void SetDefaults()
         {
@@ -235,7 +237,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpear>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<FlareTome>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 12, 16));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 600, 700));
             npcLoot.Add(notExpertCondition);

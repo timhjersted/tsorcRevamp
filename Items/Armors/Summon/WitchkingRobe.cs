@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateArmorSet(Player player)
         {
-
+            player.aggro -= 800;
             int i2 = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int j2 = (int)(player.position.Y + 2f) / 16;
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
@@ -60,6 +60,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpookyBreastplate);
             recipe.AddIngredient(ModContent.ItemType<BewitchedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 

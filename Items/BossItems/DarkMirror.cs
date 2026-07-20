@@ -136,7 +136,8 @@ namespace tsorcRevamp.Items.BossItems
                     }
                     else
                     {
-                        player.position = new Vector2(5760, 1774) * 16;
+                        //Legacy 2000-space; +200 band confirmed (neighboring sign 5774,1781 -> +200).
+                        player.position = ExpandedWorldTransform.MapWorld(new Vector2(5760, 1774) * 16);
                     }
                     
 

@@ -25,11 +25,11 @@ namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
             Projectile.friendly = false;
             Projectile.tileCollide = false;
             trailCollision = true;
-            trailWidth = 25;
-            trailPointLimit = 150;
+            trailWidth = 20;
+            trailPointLimit = 145;
             Projectile.DamageType = DamageClass.Magic;
             trailYOffset = 30;
-            trailMaxLength = 150;
+            trailMaxLength = 145;
             NPCSource = false;
             collisionPadding = 0;
             collisionEndPadding = 1;
@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles.Enemy.WyvernMage
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
 
-            Color shaderColor = new Color(0.1f, 0.8f, 0.7f, 0.8f);
+            Color shaderColor = new Color(1.0f, 0.3f, 1.0f, 0.7f);
             shaderColor = UsefulFunctions.ShiftColor(shaderColor, timeFactor, 0.03f);
             effect.Parameters["shaderColor"].SetValue(shaderColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());

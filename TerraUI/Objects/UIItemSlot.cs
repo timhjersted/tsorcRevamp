@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.UI;
@@ -70,6 +69,24 @@ namespace TerraUI.Objects
         /// Whether to scale the slot with the inventory's scale.
         /// </summary>
         public bool ScaleToInventory { get; set; }
+        /// <summary>
+        /// Extra pixels added around the slot rectangle for mouse interaction only.
+        /// </summary>
+        public int HitboxPadding { get; set; }
+        /// <summary>
+        /// Extra pixels added to the right and bottom edges for mouse interaction only.
+        /// </summary>
+        public int HitboxRightAndBottomPadding { get; set; }
+        /// <summary>
+        /// Whether custom hover text should be shown beneath the item name when this slot is occupied.
+        /// </summary>
+        public bool AppendHoverTextToItemName { get; set; }
+        /// <summary>
+        /// When true, the item can't be manually taken out of (or swapped out of) the slot once present —
+        /// only deposited into an empty slot. Used by the souls slot so Dark Souls can't be moved to the
+        /// inventory / piggy bank (they're auto-deposited on pickup and spent at altars).
+        /// </summary>
+        public bool DisallowManualRemoval { get; set; }
         /// <summary>
         /// The item shown in the slot.
         /// </summary>
@@ -140,6 +157,13 @@ namespace TerraUI.Objects
                 return;
             }
 
+            // Locked slots (e.g. the souls slot) accept a deposit into an EMPTY slot, but once occupied the item
+            // can't be picked up or swapped out — that's the path that let Dark Souls leak into the inventory.
+            if (DisallowManualRemoval && item.stack > 0)
+            {
+                return;
+            }
+
             if (Main.mouseItem.stack < 1 || Conditions == null || Conditions(Main.mouseItem))
             {
                 Swap(ref item, ref Main.mouseItem);
@@ -151,6 +175,10 @@ namespace TerraUI.Objects
         /// </summary>
         public override void OnRightClick()
         {
+            if (DisallowManualRemoval && item.stack > 0)
+            {
+                return;
+            }
             if (Conditions(Main.mouseItem))
             {
                 Swap(ref item, ref Main.mouseItem);
@@ -187,48 +215,51 @@ namespace TerraUI.Objects
         /// </summary>
         public override void Update()
         {
-            if (!PlayerInput.IgnoreMouseInterface)
+            UpdateRectangle();
+
+            Rectangle hitbox = GetHitboxRectangle();
+            bool intersectsTick = MouseUtils.Rectangle.Intersects(tickRect) && HasTick();
+            bool intersectsRect = MouseUtils.Rectangle.Intersects(hitbox);
+
+            if (intersectsRect || intersectsTick)
             {
-                bool intersectsTick = MouseUtils.Rectangle.Intersects(tickRect) && HasTick();
-                bool intersectsRect = MouseUtils.Rectangle.Intersects(Rectangle);
+                Main.player[Main.myPlayer].mouseInterface = true;
+            }
 
-                if (intersectsRect || intersectsTick)
+            if (intersectsTick)
+            {
+                Main.hoverItemName =
+                    (ItemVisible ? Language.GetTextValue("LegacyInterface.59") : Language.GetTextValue("GameUI.Hidden"));
+
+                if (MouseUtils.JustPressed(MouseButtons.Left))
                 {
-                    Main.player[Main.myPlayer].mouseInterface = true;
+                    ToggleVisibility();
                 }
+            }
+            else if (intersectsRect)
+            {
+                Main.HoverItem = Item;
 
-                if (intersectsTick)
+                if (Item.stack < 1)
                 {
-                    Main.hoverItemName =
-                        (ItemVisible ? Language.GetTextValue("LegacyInterface.59") : Language.GetTextValue("GameUI.Hidden"));
-
-                    if (MouseUtils.JustPressed(MouseButtons.Left))
-                    {
-                        ToggleVisibility();
-                    }
+                    Main.hoverItemName = HoverText;
                 }
-                else if (intersectsRect)
+                else if (Item.stack > 0)
                 {
-                    Main.HoverItem = Item;
-
-                    if (Item.stack < 1)
-                    {
-                        Main.hoverItemName = HoverText;
-                    }
-                    else if (Item.stack > 0)
-                    {
-                        Main.hoverItemName = Item.Name;
-                    }
-                    else if (Item.stack > 1)
-                    {
-                        Main.hoverItemName = Item.Name + " (" + Item.stack + ")";
-                    }
+                    Main.hoverItemName = AppendHoverTextToItemName ? Item.Name + "\n" + HoverText : Item.Name;
                 }
-
-                if (!intersectsTick)
+                else if (Item.stack > 1)
                 {
-                    base.Update();
+                    Main.hoverItemName = Item.Name + " (" + Item.stack + ")";
                 }
+            }
+
+            if (!intersectsTick && intersectsRect)
+            {
+                Rectangle visualRectangle = Rectangle;
+                Rectangle = hitbox;
+                Handle();
+                Rectangle = visualRectangle;
             }
         }
 
@@ -238,7 +269,7 @@ namespace TerraUI.Objects
         /// <param name="spriteBatch">drawing SpriteBatch</param>
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Rectangle = new Rectangle((int)RelativePosition.X, (int)RelativePosition.Y, (int)Size.X, (int)Size.Y);
+            UpdateRectangle();
 
             if (DrawAsNormalSlot)
             {
@@ -284,6 +315,43 @@ namespace TerraUI.Objects
         }
 
         /// <summary>
+        /// Refresh the visual rectangle using the slot's current scale.
+        /// </summary>
+        protected void UpdateRectangle()
+        {
+            // The slot is drawn scaled (by inventory scale) from its top-left, so the clickable hitbox must use the
+            // same scaled dimensions. Use Ceiling so sub-pixel scale values don't shave off the bottom/right edge.
+            float hitScale = Scale(false);
+            Rectangle rectangle = new Rectangle(
+                (int)RelativePosition.X,
+                (int)RelativePosition.Y,
+                (int)System.Math.Ceiling(Size.X * hitScale),
+                (int)System.Math.Ceiling(Size.Y * hitScale));
+
+            Rectangle = rectangle;
+        }
+
+        /// <summary>
+        /// Gets the mouse interaction rectangle without changing where the slot is drawn.
+        /// </summary>
+        protected Rectangle GetHitboxRectangle()
+        {
+            Rectangle hitbox = Rectangle;
+
+            if (HitboxPadding > 0)
+            {
+                hitbox.Inflate(HitboxPadding, HitboxPadding);
+            }
+            if (HitboxRightAndBottomPadding > 0)
+            {
+                hitbox.Width += HitboxRightAndBottomPadding;
+                hitbox.Height += HitboxRightAndBottomPadding;
+            }
+
+            return hitbox;
+        }
+
+        /// <summary>
         /// The default DrawBackground function.
         /// </summary>
         /// <param name="spriteBatch">drawing SpriteBatch</param>
@@ -321,8 +389,10 @@ namespace TerraUI.Objects
             }
 
             Vector2 origin = rectangle.Size() / 2f;
-            Vector2 position = new Rectangle(Rectangle.X, Rectangle.Y, (int)(Rectangle.Width * Scale(false)),
-                (int)(Rectangle.Height * Scale(false))).Center.ToVector2();
+            // Rectangle is now the scaled visual size of the slot, so center the item directly in it. (Previously
+            // Rectangle was unscaled and this multiplied by Scale(false) to find the visual center; doing that now
+            // would double-apply the scale and push the icon into the upper-left, smaller than the slot.)
+            Vector2 position = Rectangle.Center.ToVector2();
 
             spriteBatch.Draw(
                 texture2D,

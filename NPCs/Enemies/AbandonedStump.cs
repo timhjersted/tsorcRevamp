@@ -10,6 +10,7 @@ using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.NPCs.Friendly;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Magic;
 using tsorcRevamp.Projectiles.Ranged.Ammo;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Utilities;
@@ -38,7 +39,24 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 600;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbandonedStumpBanner>();
+
+            if (Main.hardMode)
+            {
+                NPC.defense = 18;
+                NPC.value = 700;
+                NPC.damage = 28;
+                NPC.lifeMax = 240;
+            }
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.defense = 30;
+                NPC.value = 800;
+                NPC.damage = 40;
+                NPC.lifeMax = 500;
+            }
         }
+        
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {

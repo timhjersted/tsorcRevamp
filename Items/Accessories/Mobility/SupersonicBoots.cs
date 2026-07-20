@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -52,9 +54,13 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             player.rocketBoots = 2;
 
             bool restricted = false;
+            if (player.mount.Active || player.vortexStealthActive)
+            {
+                restricted = true;
+            }
             for (int i = 3; i <= 8; i++)
             {
-                if (player.mount.Active || player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
+                if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
                     || player.armor[i].type == ItemID.LightningBoots || player.armor[i].type == ItemID.FlurryBoots
                     || player.armor[i].type == ItemID.FrostsparkBoots || player.armor[i].type == ItemID.SailfishBoots)
                 {
@@ -63,7 +69,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             }
             if (!restricted)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 1;
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.SupersonicBootsLevel;
 
                 /** W1K's original code
                 if (player.controlLeft) {
@@ -94,6 +100,14 @@ namespace tsorcRevamp.Items.Accessories.Mobility
                 }
             }
 
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (SoulsModeMobility.Enabled(Main.LocalPlayer))
+            {
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitRunOnly", SoulsModeMobility.SupersonicBootsRunSpeed)));
+            }
         }
 
     }

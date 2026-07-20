@@ -19,9 +19,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
             Item.height = 24;
             Item.accessory = true;
             Item.defense = 12;
-            Item.expert = true;
-            Item.value = PriceByRarity.Red_10;
-            Item.rare = ItemRarityID.Expert;
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Purple;
         }
 
         public override void AddRecipes()

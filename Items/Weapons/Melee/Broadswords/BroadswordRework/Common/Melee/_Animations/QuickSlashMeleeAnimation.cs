@@ -101,31 +101,6 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
         }
     }
 
-    // Leg framing
-    public override void UseItemFrame(Item item, Player player)
-    {
-        base.UseItemFrame(item, player);
-
-        if (!Enabled || !AnimateLegs)
-        {
-            return;
-        }
-
-        var aiming = item.GetGlobalItem<ItemMeleeAttackAiming>();
-
-        if (player.velocity.Y == 0f && player.KeyDirection().X == 0f)
-        {
-            if (Math.Abs(aiming.AttackDirection.X) > 0.5f)
-            {
-                player.legFrame = (IsAttackFlipped ? PlayerFrames.Walk8 : PlayerFrames.Jump).ToRectangle();
-            }
-            else
-            {
-                player.legFrame = PlayerFrames.Walk13.ToRectangle();
-            }
-        }
-    }
-
     public bool CanDoMeleeDamage(Item item, Player player)
     {
         if (!Enabled)

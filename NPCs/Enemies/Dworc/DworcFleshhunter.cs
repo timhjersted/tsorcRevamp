@@ -1,0 +1,146 @@
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.NPCs.Enemies.Dworc
+{
+    public class DworcFleshhunter : ModNPC
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 15;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+        }
+        public override void SetDefaults()
+        {
+            NPC.HitSound = SoundID.NPCHit29;
+            NPC.DeathSound = SoundID.NPCDeath29;
+            NPC.damage = 30;
+            NPC.lifeMax = 50;
+            NPC.defense = 12;
+            NPC.value = 220;
+            NPC.width = 18;
+            NPC.aiStyle = -1;
+            NPC.height = 40;
+            NPC.knockBackResist = 0.1f;
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.DworcFleshhunterBanner>();
+
+            // Step 6 beast levers: fast skirmisher — roam (Wander) around where it lost the player.
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
+            globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
+            globalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
+            // Melee rusher: close the gap when shot, and occasionally flash-charge the player (one-off, inline flags).
+            globalNPC.EvasiveLeapForward = true;
+            globalNPC.EvasiveRunningDash = true;
+
+            AnimationType = NPCID.Skeleton;
+
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 100;
+                NPC.defense = 18;
+                NPC.value = 250;
+                NPC.damage = 42;
+                NPC.knockBackResist = 0.05f;
+            }
+        }
+
+        //oh sweet jesus why do you drop so many potions - lol
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingPotion, 30));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.SporePowder>(), 100));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 20, 2, 3));
+
+        }
+
+        //Spawns in the Jungle, mostly Underground and in the Cavern.
+
+        #region Spawn
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        {
+            float chance = 0f;
+            if (spawnInfo.Water) return 0f;
+
+            if (spawnInfo.Player.ZoneDungeon)
+            {
+                return 0f;
+            }
+            else if (!Main.hardMode && spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneOverworldHeight)
+            {
+                return 0.265f;
+            }
+            else if (Main.dayTime && !Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
+            {
+                return 0.37f;
+            }
+            else if (!Main.dayTime && !Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
+            {
+                return 0.25f;
+            }
+
+            return chance;
+        }
+
+        #endregion
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
+
+        public override void AI()
+        {
+            tsorcRevampAIs.FighterAI(NPC, 3.2f, 0.1f);
+            tsorcRevampAIs.LeapAtPlayer(NPC, 2, 5, 0.01f, 64);
+        }
+
+        #region Gore
+        public override void HitEffect(NPC.HitInfo hit)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                int DustType = 5;
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustType);
+                Dust dust = Main.dust[dustIndex];
+                dust.velocity.X += Main.rand.Next(-50, 51) * 0.06f;
+                dust.velocity.Y += Main.rand.Next(-50, 51) * 0.06f;
+                dust.scale *= 1f + Main.rand.Next(-30, 31) * 0.01f;
+                dust.noGravity = true;
+            }
+            if (NPC.life <= 0)
+            {
+                for (int i = 0; i < 25; i++)
+                {
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
+                }
+                if (!Main.dedServ)
+                {
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Dworc Gore 1").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Dworc Gore 2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Dworc Gore 3").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Dworc Gore 2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Dworc Gore 3").Type, 1f);
+                }
+            }
+        }
+        #endregion
+    }
+}

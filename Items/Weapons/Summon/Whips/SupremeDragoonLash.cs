@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class SupremeDragoonLash : ModItem
     {
-        public static float SummonTagCrit = 8;
-        public const int BaseDamage = 80;
+        public static float SummonTagCrit = 10;
+        public const int BaseDamage = 100;
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.shootSpeed = 4;
 
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 25;
-            Item.useAnimation = 25;
+            Item.useTime = 23;
+            Item.useAnimation = 23;
             Item.noMelee = true;
             Item.noUseGraphic = true;
         }
@@ -54,10 +54,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DragoonLash>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 98000);
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 8);
+            recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 8);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfOccultist>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

@@ -4,7 +4,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-
 namespace tsorcRevamp.Projectiles.Enemy
 {
     class GravityDistortion : ModProjectile
@@ -27,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.type = 79;
             for (int i = 0; i < 20; i++)
             {
-                int dust = Dust.NewDust(Projectile.position, (int)(Projectile.width), (int)(Projectile.height), DustID.PurpleTorch, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 9f);
+                int dust = Dust.NewDust(Projectile.position, (int)(Projectile.width), (int)(Projectile.height), DustID.PurpleTorch, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 6f);
                 Main.dust[dust].noGravity = true;
             }
         }
@@ -97,15 +96,15 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (Main.rand.NextBool(4))
             {
-                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X + 10, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Torch, 0, 0, 200, Color.Red, 1f);
+                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X + 10, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.PurpleTorch, 0, 0, 200, default, 1.3f);
                 Main.dust[dust].noGravity = true;
             }
-            Lighting.AddLight((int)(Projectile.position.X / 16f), (int)(Projectile.position.Y / 16f), 0.7f, 0.2f, 0.2f);
+            Lighting.AddLight((int)(Projectile.position.X / 16f), (int)(Projectile.position.Y / 16f), 0.7f, 0.2f, 0.7f);
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(BuffID.Gravitation, 180);
+            target.AddBuff(BuffID.VortexDebuff, 10);
         }
     }
 }

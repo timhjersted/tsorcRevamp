@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +30,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
+using tsorcRevamp.Projectiles.Summon.YoungHunter;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -66,6 +67,13 @@ namespace tsorcRevamp
         public int PullStrength = 0;
         public int PullFrame = 0;
 
+        // Set (and continually refreshed) by whatever is impaling the player - e.g. Artorias's
+        // StabbingPiercingDash - to freeze movement/attacks and anchor the player to the impaling
+        // weapon's tip. Decremented in PreUpdateMovement, so it self-releases a few ticks after
+        // the attacker stops refreshing it (safety net if the attack ends abnormally).
+        public int ImpaleFreezeTimer = 0;
+        public Vector2 ImpaleWorldPosition;
+
 
         public bool Celestriad = false;
         public bool UndeadTalisman = false;
@@ -92,6 +100,12 @@ namespace tsorcRevamp
         public int powerfulCurseDecayTimer = 0;
 
         public bool BrokenSpirit;
+
+        public bool HasSporePowder;
+        public bool HasVenomPowder;
+        public bool HasYoungHunterAccessory;
+        public bool HasLoveRing;
+        private int loveHealCooldown = 0;
 
         public int MaxMinionTurretMultiplier;
 
@@ -136,6 +150,9 @@ namespace tsorcRevamp
         public bool CelestialCloak;
 
         public bool CanUseItemsWhileDodging;
+        public bool ArtoriasAbysswalker;
+        public float ArtoriasAbysswalkerDodgeStaminaCostReduction;
+        public int ArtoriasAbysswalkerCounterType;
         public bool Witch;
 
         public bool Kraken;
@@ -209,11 +226,12 @@ namespace tsorcRevamp
         public float CrystalNunchakuDefenseDamage;
 
         public float DragoonLashFireBreathTimer = 0f;
+        public float SupremeDragoonLashFireBreathTimer = 0f;
 
         public float SummonTagStrength;
         public float SummonTagDuration;
         public bool CrystallineShard;
-        public int CrystallinePower;
+        public float CrystallinePower;
 
         public bool MythrilBulwark = false;
         public bool IceboundMythrilAegis = false;
@@ -240,7 +258,9 @@ namespace tsorcRevamp
         public bool Sharpened = false;
         public bool AmmoBox = false;
         public bool AmmoReservationPotion = false;
+        public bool TitanPotion = false;
         public float AmmoReservationDamageScaling = 1f;
+        public float TitanSizeScaling = 1f;
 
         public bool SOADrain = false;
         public bool VOEGDrain = false;
@@ -248,6 +268,8 @@ namespace tsorcRevamp
         public int supersonicLevel = 0;
 
         public int darkSoulQuantity;
+        private int lastDarkSoulQuantityForGainText;
+        private bool initializedDarkSoulQuantityForGainText;
         public int magicDefense = 0;
 
         //An int because it'll probably be necessary to split it into multiple levels
@@ -297,8 +319,11 @@ namespace tsorcRevamp
         public bool MiakodaNewDust2;
 
         internal bool gotPickaxe;
+        internal bool gotDarksign;
         public bool FirstEncounter;
         public bool ReceivedGift;
+        public bool ReceivedHuntingTome;
+        public int heraldChatState;
 
         public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;
@@ -337,6 +362,33 @@ namespace tsorcRevamp
         public static readonly int DashLeft = 3;
 
         public bool BearerOfTheCurse;
+        public bool Unkindled;
+        public int unkindledManaDelayTimer;
+        // True for either Unkindled or Bearer of the Curse — gate Souls-system features (Estus/Cerulean UI,
+        // bonfire refills, drop bonuses, recipe conditions) on this. BotC-only features keep checking BearerOfTheCurse.
+        public bool SoulsMode => Unkindled || BearerOfTheCurse;
+
+        // Weapon stamina usage. Bearer of the Curse pays full stamina for attacks; Unkindled pays 75% (so stamina still matters but isn't punishing); Classic pays none. Gate weapon-stamina
+        // drains on UsesWeaponStamina and scale the amount by WeaponStaminaMult.
+        public bool UsesWeaponStamina => BearerOfTheCurse || Unkindled;
+        public float WeaponStaminaMult => (BearerOfTheCurse ? 1f : (Unkindled ? 0.75f : 0f)) * TiredStaminaMult;
+
+        // Tired debuff: +25% stamina cost on everything that spends it. Applied here so every existing
+        // WeaponStaminaMult read picks it up automatically; the dodge roll's flat stamina cost (which doesn't
+        // go through WeaponStaminaMult) multiplies by this directly instead - see DodgeRoll().
+        public float TiredStaminaMult => Tired ? 1.25f : 1f;
+
+        // Tier-aware healing scalar applied to instant-heal items (food, potions, Tome of Health, etc.).
+        // Classic: full heal. Unkindled: half heal. Bearer of the Curse: zero (caller should skip heal entirely).
+        // Use this in custom UseItem implementations; for vanilla items the reduction is applied in
+        // tsorcGlobalItem.OnConsumeItem via the same multiplier.
+        public const float UnkindledHealMultiplier = 0.5f;
+        public int ApplyHealing(int baseAmount)
+        {
+            if (BearerOfTheCurse) return 0;
+            if (Unkindled) return (int)(baseAmount * UnkindledHealMultiplier);
+            return baseAmount;
+        }
         public bool LifegemHealing;
         public bool RadiantLifegemHealing;
         public bool StarlightShardRestoration;
@@ -347,6 +399,12 @@ namespace tsorcRevamp
         public int potionBagCountdown = 0; //You can't move items around if an item is still 'in use'. This lets us delay opening the bag until that finishes.
 
         public UIItemSlot SoulSlot;
+
+        //Active Shields Revamp: the SoulsMode-only "Right-Click" (2nd) slot. Holds a usable item or shield that activates on right click.
+        public UIItemSlot RightClickSlot;
+
+        //Dark Souls Storage: a decorative button-slot below the 2nd slot that opens the Storage pop-up. Holds no item.
+        public UI.StorageOpenerSlot StorageOpenerSlot;
 
         public int PiercingGazeCharge;
 
@@ -415,6 +473,15 @@ namespace tsorcRevamp
         public bool HadBuffStrategist;
 
         public bool EnterTheAbyss;
+        // Set by the Vessel of Souls while it has swallowed you (hides the whole player). Reset each tick.
+        public bool SwallowHidden;
+        // Not reset in ResetEffects - persists across ticks so AbyssTransitionEffects() (PostUpdateMiscEffects)
+        // can detect the enter/exit edge instead of re-triggering every tick EnterTheAbyss happens to be true.
+        public bool WasInAbyss;
+        public bool CovenantOfArtoriasEquipped;
+        public bool SlowfallWingActive;
+        public bool Suppressed;
+        public bool Tired;
         public int timeSinceLastAttacked = 0;
 
         // 3 seconds until sinking
@@ -432,6 +499,11 @@ namespace tsorcRevamp
             }
 
             EnterTheAbyss = false;
+            SwallowHidden = false;
+            CovenantOfArtoriasEquipped = false;
+            SlowfallWingActive = false;
+            Suppressed = false;
+            Tired = false;
             BeastMode1 = false;
             SilverSerpentRing = false;
             SoulSerpentRing = false;
@@ -479,7 +551,10 @@ namespace tsorcRevamp
             SummonTagDuration = 1f;
             CrystallineShard = false;
 
-
+            HasSporePowder = false;
+            HasVenomPowder = false;
+            HasYoungHunterAccessory = false;
+            HasLoveRing = false;
             MaxMinionTurretMultiplier = 1;
 
             MythrilBulwark = false;
@@ -490,6 +565,8 @@ namespace tsorcRevamp
             CelestialCloak = false;
 
             CanUseItemsWhileDodging = false;
+            ArtoriasAbysswalker = false;
+            ArtoriasAbysswalkerDodgeStaminaCostReduction = 0f;
 
             Witch = false;
 
@@ -558,8 +635,11 @@ namespace tsorcRevamp
 
             Sharpened = false;
             AmmoBox = false;
+            normansRingAmmoSave = false;
             AmmoReservationPotion = false;
             AmmoReservationDamageScaling = 1f;
+            TitanPotion = false;
+            TitanSizeScaling = 1f;
 
             PhazonCorruption = false;
             LifegemHealing = false;
@@ -593,6 +673,11 @@ namespace tsorcRevamp
         }
         public override void PreUpdate()
         {
+            if (unkindledManaDelayTimer > 0)
+            {
+                unkindledManaDelayTimer--;
+            }
+
             int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
             int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
 
@@ -614,12 +699,15 @@ namespace tsorcRevamp
 
             magicDefense = 0;
 
-
+            if (loveHealCooldown > 0)
+            {
+                loveHealCooldown--;
+            }
             //No more Distorted debuff
             Player.buffImmune[BuffID.VortexDebuff] = true;
 
             //Hacky but necessary. Mount items seem to bypass the CanUseItem check for some stupid reason
-            if (!NPC.downedBoss2)
+            if (!NPC.downedQueenBee)
             {
                 Player.ClearBuff(BuffID.SlimeMount);
             }
@@ -647,6 +735,17 @@ namespace tsorcRevamp
 
             //the item in the soul slot will only ever be souls, so we dont need to check type
             if (SoulSlot.Item.stack > 0) { darkSoulQuantity += SoulSlot.Item.stack; }
+
+            if (!initializedDarkSoulQuantityForGainText)
+            {
+                lastDarkSoulQuantityForGainText = darkSoulQuantity;
+                initializedDarkSoulQuantityForGainText = true;
+            }
+            else if (Player.whoAmI == Main.myPlayer && darkSoulQuantity > lastDarkSoulQuantityForGainText)
+            {
+                CombatText.NewText(Player.getRect(), Color.MediumPurple, $"+{darkSoulQuantity - lastDarkSoulQuantityForGainText}");
+            }
+            lastDarkSoulQuantityForGainText = darkSoulQuantity;
 
             if (!Player.HasBuff(ModContent.BuffType<Bonfire>()))
             { //this ensures that BonfireUIState is only visible when within Bonfire range
@@ -795,22 +894,9 @@ namespace tsorcRevamp
             #endregion manashield
 
             #region Abyss Shader
-            bool hasCoA = false;
-
             if (Player.whoAmI == Main.myPlayer)
             {
-
-                //does the player have a covenant of artorias
-                hasCoA = Player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss;
-
-                //if they do, and the shader is inactive
-                if (hasCoA && !(Filters.Scene["tsorcRevamp:TheAbyss"].Active))
-                {
-                    Filters.Scene.Activate("tsorcRevamp:TheAbyss");
-                }
-
-                //if the abyss shader is active and the player is no longer wearing the CoA                
-                if (Filters.Scene["tsorcRevamp:TheAbyss"].Active && !hasCoA)
+                if (Filters.Scene["tsorcRevamp:TheAbyss"].Active)
                 {
                     Filters.Scene["tsorcRevamp:TheAbyss"].Deactivate();
                 }
@@ -926,9 +1012,8 @@ namespace tsorcRevamp
 
 
             if ((playerX > 6083 && playerX < 6847 && playerY > 1664 && playerY < 1999) &&
-            tsorcRevampWorld.RemixMap && !(Main.LocalPlayer.ZoneOverworldHeight || Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneSkyHeight) && Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.StarlitHeavenWallpaper)
-            {
-                
+            tsorcRevampWorld.RemixMap && !(Main.LocalPlayer.ZoneOverworldHeight || Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneSkyHeight) && Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.ObsidianBrickUnsafe)
+            {     
                 bool DarkCloudIsAlive = false;
 
                 foreach (NPC npc in Main.npc)
@@ -1050,8 +1135,9 @@ namespace tsorcRevamp
                 Main.NewText(LangUtils.GetTextValue("Quest.Teleport"));
             }
 
-            //{7909, 1081} is the underwater observatory's top left corner, and {320, 119} is its rectangular size
-            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(7909, 1081) * 16, new Vector2(320, 119) * 16))
+            //{7909, 1081} is the underwater observatory's top left corner (legacy 2000-space; mapped on the expanded
+            //world), and {320, 119} is its rectangular SIZE (not a coordinate — never transformed)
+            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), ExpandedWorldTransform.MapWorld(new Vector2(7909, 1081) * 16), new Vector2(320, 119) * 16))
             {
                 Main.NewText(LangUtils.GetTextValue("Quest.Finish"));
                 Player.QuickSpawnItem(Player.GetSource_GiftOrReward(), ItemID.RodofDiscord);
@@ -1093,7 +1179,8 @@ namespace tsorcRevamp
 
             if (!NPC.downedGolemBoss && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
             {
-                Vector2 arena = new Vector2(4468, 365);
+                //Legacy 2000-space TILE coord (compared against Player.Center / 16); mapped on the expanded world.
+                Vector2 arena = ExpandedWorldTransform.MapTile(new Vector2(4468, 365));
                 float distance = Vector2.DistanceSquared(Player.Center / 16, arena);
 
                 //If EoL isn't alive, do the big forcefield
@@ -1139,7 +1226,7 @@ namespace tsorcRevamp
                                 }
                             }
 
-                            Player.velocity += UsefulFunctions.Aim(new Vector2(4484, 355) * 16, Player.Center, 20);
+                            Player.velocity += UsefulFunctions.Aim(ExpandedWorldTransform.MapWorld(new Vector2(4484, 355) * 16), Player.Center, 20);
                             if (TextCooldown <= 0)
                             {
                                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("EoLForcefield.Expelled"), Color.Pink);
@@ -1294,10 +1381,6 @@ namespace tsorcRevamp
                     Player.GetDamage(DamageClass.Magic) *= 1f + (BotCMagicDamageAmp / 100f);
                     Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (BotCMagicAttackSpeedAmp / 100f);
                 }
-                if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
-                {
-                    Player.manaRegenDelay = 100;
-                }
 
                 Player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) /= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus); //neutralizing Lethal Tempo attack speed changes
                 Player.GetDamage(DamageClass.Summon) *= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus);
@@ -1307,8 +1390,66 @@ namespace tsorcRevamp
                 {
                     SummonTagDuration += BotCFullConquerorBonusTagDuration;
                 }
+            }
 
+            // Tier-aware mana regen penalty.
+            // Both Unkindled and BotC magic players are expected to lean on the Cerulean Flask. The pin/penalty
+            // only fires when "in combat or away from a bonfire" — sitting at a bonfire with no boss alive lets
+            // mana regen normally for either tier.
+            // BotC: hard pin to manaRegenDelay = 100 each frame, so the countdown never reaches 0 and Stage-2
+            //       regen never starts. Mana comes exclusively from drinking Cerulean charges.
+            // Unkindled: first cut the positive manaRegenBonus to 40% to dampen late-game item/armor scaling
+            //       (vanilla multiplies regen by (1 + manaRegenBonus/100), which gear inflates past any flat
+            //       subtraction), then subtract a fraction of statManaMax2 from manaRegenBonus. Vanilla's rate
+            //       formula includes stationaryBonus = M/3 when standing still, so to hit consistent percent
+            //       targets across all pool sizes we use different subtractions per velocity state:
+            //          standing  → subtract M * 2/5
+            //          moving    → subtract M * 3/10
+            //       Cerulean Flask remains the active recovery option; passive regen is intentionally weak.
+            if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
+            {
+                if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    Player.manaRegenDelay = 100;
+                }
+                else if (Player.GetModPlayer<tsorcRevampPlayer>().Unkindled)
+                {
+                    // Dampen gear scaling first. Vanilla's regen rate is multiplied by (1 + manaRegenBonus/100),
+                    // and late-game items/armor inflate manaRegenBonus enough that a flat subtraction alone can't
+                    // keep up. Cut the positive bonus to 40% so item/armor contributions lose most of their
+                    // effect, THEN apply the flat per-velocity subtraction below. Only dampen when positive so
+                    // we never weaken an already-negative (nerfed) bonus.
+                    if (Player.manaRegenBonus > 0)
+                    {
+                        Player.manaRegenBonus = Player.manaRegenBonus * 2 / 5;
+                    }
 
+                    if (Player.velocity == Vector2.Zero)
+                    {
+                        Player.manaRegenBonus -= Player.statManaMax2 * 2 / 5;
+                    }
+                    else
+                    {
+                        Player.manaRegenBonus -= Player.statManaMax2 * 3 / 10;
+                    }
+
+                    if (unkindledManaDelayTimer > 0)
+                    {
+                        Player.manaRegenDelay = Math.Max(Player.manaRegenDelay, unkindledManaDelayTimer);
+                    }
+                }
+            }
+            else
+            {
+                unkindledManaDelayTimer = 0;
+            }
+
+            // Lifegem / RadiantLifegem / StarlightShard heal & mana-restoration ticks.
+            // These were originally inside the BotC-gated PostUpdateEquips block, which meant Unkindled
+            // players could apply the buffs but never receive HP/mana from them. Gated on SoulsMode so
+            // both Unkindled and Bearer of the Curse get the actual healing/restoration.
+            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
                 #region Lifegem Healing and Starlight Shard Restoration
 
 
@@ -1476,12 +1617,6 @@ namespace tsorcRevamp
                 Player.jumpSpeedBoost = 0f;
                 Player.wingTime = 0;
                 Player.moveSpeed *= 0.9f;
-
-                for (int d = 0; d < 3; d++)
-                {
-                    int dust = Dust.NewDust(new Vector2(Player.position.X - 6, Player.position.Y + 36), 32, 4, 184, 0, 0, 30, default(Color), 1f);
-                    Main.dust[dust].noGravity = true;
-                }
             }
 
             if (WitchkingsGrasp)
@@ -1599,14 +1734,14 @@ namespace tsorcRevamp
                     NPC nPC = Main.npc[l];
                     if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(Player.Center, nPC.Center) <= 240)
                     {
-                        nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 2);
+                        nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 60);
                     }
                 }
 
                 Vector2 centerOffset = new Vector2(Player.Center.X + 2 - Player.width / 2, Player.Center.Y + 6 - Player.height / 2);
                 const float circleRadius = 150f;
                 const int dustType = 235;
-                const int particleCount = 30;
+                const int particleCount = 28;
 
                 for (int j = 1; j < particleCount; j++)
                 {
@@ -1767,9 +1902,9 @@ namespace tsorcRevamp
             if (CrystallineShard)
             {
                 CrystallinePower = Player.maxMinions / MaxMinionTurretMultiplier * Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion;
-                Player.GetDamage(DamageClass.SummonMeleeSpeed) += CrystallinePower * (Items.Accessories.Summon.CrystallineShard.WhipDmgAmp / Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion) / 100f;
+                Player.GetDamage(DamageClass.SummonMeleeSpeed) += CrystallinePower * ((float)Items.Accessories.Summon.CrystallineShard.WhipDmgAmp / (float)Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion) / 100f;
                 SummonTagStrength += CrystallinePower / 100f;
-                Player.whipRangeMultiplier -= CrystallinePower / 100f;
+                Player.whipRangeMultiplier -= CrystallinePower * ((float)Items.Accessories.Summon.CrystallineShard.BadWhipRange / (float)Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion) / 100f;
             }
 
             if (Player.HasAmmo(Player.HeldItem) && Player.HeldItem.useAmmo != 0 && AmmoBox)
@@ -1939,6 +2074,7 @@ namespace tsorcRevamp
                     }
                 }
             }
+
         }
 
         public override void PostUpdateRunSpeeds()
@@ -1949,7 +2085,7 @@ namespace tsorcRevamp
                 float baseSpeed = 1;
 
                 //SupersonicBoots
-                if (supersonicLevel == 1)
+                if (supersonicLevel == SoulsModeMobility.SupersonicBootsLevel)
                 {
                     //moveSpeedPercentBoost is what percent of a player's moveSpeed bonus should be applied to their max running speed
                     //For vanilla hermes boots and their upgrades, this is 0
@@ -1959,14 +2095,14 @@ namespace tsorcRevamp
                     Player.moveSpeed += 0.2f;
                 }
                 //SupersonicWings
-                if (supersonicLevel == 2)
+                if (supersonicLevel == SoulsModeMobility.SupersonicWingsLevel || supersonicLevel == SoulsModeMobility.SupersonicWings2Level)
                 {
                     moveSpeedPercentBoost = 0.5f;
                     baseSpeed = 6.8f;
                     Player.moveSpeed += 0.3f;
                 }
-                //SupersonicWings2
-                if (supersonicLevel == 3)
+                //Wings of Seath
+                if (supersonicLevel == SoulsModeMobility.WingsOfSeathLevel)
                 {
                     moveSpeedPercentBoost = 1f;
                     baseSpeed = 7.5f;
@@ -1979,11 +2115,59 @@ namespace tsorcRevamp
                 Player.accRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
                 Player.maxRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
 
+                if (SoulsModeMobility.Enabled(Player))
+                {
+                    float cappedSpeed = supersonicLevel switch
+                    {
+                        SoulsModeMobility.SupersonicBootsLevel => SoulsModeMobility.SupersonicBootsRunSpeed,
+                        SoulsModeMobility.SupersonicWingsLevel => SoulsModeMobility.SupersonicWingsRunSpeed,
+                        SoulsModeMobility.SupersonicWings2Level => SoulsModeMobility.SupersonicWings2RunSpeed,
+                        SoulsModeMobility.WingsOfSeathLevel => SoulsModeMobility.WingsOfSeathRunSpeed,
+                        _ => Player.maxRunSpeed
+                    };
+
+                    Player.accRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+                    Player.maxRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+                }
+
                 if (FastFallTimer > 0)
                 {
                     Player.maxFallSpeed = 50;
                     FastFallTimer--;
                 }
+
+                if (Suppressed)
+                {
+                    // Roughly early-hardmode boot territory (Spectre/Lightning Boots are 6f-6.75f) for the 3
+                    // named items; Wings of Seath is nerfed less harshly since it's a much later-game item and
+                    // should still clearly outclass the other three while suppressed.
+                    bool isSeath = supersonicLevel == SoulsModeMobility.WingsOfSeathLevel;
+                    float suppressedRunSpeed = isSeath ? 7f : 6f;
+                    float suppressedAcceleration = isSeath ? 0.14f : 0.1f;
+
+                    Player.accRunSpeed = Math.Min(Player.accRunSpeed, suppressedRunSpeed);
+                    Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, suppressedRunSpeed);
+                    Player.runAcceleration = Math.Min(Player.runAcceleration, suppressedAcceleration);
+
+                    bool hasSuppressedWings = supersonicLevel == SoulsModeMobility.SupersonicWingsLevel
+                        || supersonicLevel == SoulsModeMobility.SupersonicWings2Level
+                        || isSeath;
+                    if (hasSuppressedWings)
+                    {
+                        int suppressedWingTime = isSeath ? 180 : 90; // 1.5s, or 3s for Wings of Seath
+                        Player.wingTimeMax = Math.Min(Player.wingTimeMax, suppressedWingTime);
+                        if (Player.wingTime > Player.wingTimeMax)
+                        {
+                            Player.wingTime = Player.wingTimeMax;
+                        }
+                    }
+                }
+            }
+
+            if (SoulsModeMobility.Enabled(Player))
+            {
+                Player.accRunSpeed = Math.Min(Player.accRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+                Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
             }
 
             if (Player.HasBuff<MarilithHold>() || Player.HasBuff<MarilithWind>())
@@ -2056,6 +2240,35 @@ namespace tsorcRevamp
                     Main.dust[particle2].noGravity = true;
                     Main.dust[particle2].noLight = true;
                     Main.dust[particle2].fadeIn = 3f;
+                }
+            }
+
+            if (AbyssInferno)
+            {
+                if (Player.lifeRegen > 0)
+                {
+                    Player.lifeRegen = 0;
+                }
+                Player.lifeRegenTime = 0;
+                Player.lifeRegen -= 16;
+                for (int j = 0; j < 2; j++)
+                {
+                    int dust = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, DustID.PinkTorch, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1.2f);
+                    Main.dust[dust].noGravity = true;
+
+                    int dust2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 223, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1.2f); //54 was 58
+                    Main.dust[dust2].noGravity = true;
+                }
+
+                if (Main.rand.NextBool(4))
+                {
+                    // Render fire particles [every frame]
+                    int particle = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, DustID.PinkTorch, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 160, default(Color), 2.3f);
+                    Main.dust[particle].noGravity = true;
+                    Main.dust[particle].velocity *= 1.4f;
+                    int lol = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 223, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 160, default(Color), 2.3f);
+                    Main.dust[lol].noGravity = true;
+                    Main.dust[lol].velocity *= 1.4f;
                 }
             }
 
@@ -2147,6 +2360,20 @@ namespace tsorcRevamp
             if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap && Player.lifeRegen > 0)
             {
                 Player.lifeRegen /= 2;
+            }
+
+            // Unkindled life regen penalty — mirrors the mana-regen design: only fires when in combat
+            // or away from a bonfire, and at half BotC's strength (−25% vs BotC's −50%) since Unkindled
+            // is the gentler tier. The BotC halving above already covers BotC's full−50%, gated on its
+            // own "stamina not full" condition (which fires constantly in BotC combat).
+            if (Player.GetModPlayer<tsorcRevampPlayer>().Unkindled && Player.lifeRegen > 0)
+            {
+                bool inCombatOrAwayFromBonfire = Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200])
+                                                  || !Player.HasBuff(ModContent.BuffType<Bonfire>());
+                if (inCombatOrAwayFromBonfire)
+                {
+                    Player.lifeRegen = Player.lifeRegen * 3 / 4;
+                }
             }
         }
 
@@ -2326,6 +2553,21 @@ namespace tsorcRevamp
         }
         public override void PreUpdateMovement()
         {
+            // This is the last tModLoader player hook before vanilla resolves collision and fall damage.
+            // Wings normally set noFallDmg for their entire equipped duration; retain it only while the
+            // player is actively gliding downward (or has the Wings of Seath slow-fall toggle enabled).
+            bool activelyGliding = Player.controlJump
+                && Player.velocity.Y > 0f
+                && Player.wingsLogic > 0;
+            Player.noFallDmg = SlowfallWingActive || activelyGliding;
+
+            if (ImpaleFreezeTimer > 0)
+            {
+                Player.velocity = Vector2.Zero;
+                Player.Center = ImpaleWorldPosition;
+                ImpaleFreezeTimer--;
+                return;
+            }
             if (ShunpoTimer == 3)
             {
                 Player.velocity = Vector2.Zero;
@@ -2389,6 +2631,7 @@ namespace tsorcRevamp
 
                 DarkInferno = false;
                 AbyssInferno = false;
+                MorgulPoisoning = false;
                 PhazonCorruption = false;
                 Falling = false;
                 FracturingArmor = 1;
@@ -2408,6 +2651,10 @@ namespace tsorcRevamp
 
         public override void PostUpdateMiscEffects()
         {
+            AbyssTransitionEffects();
+            ReduceGraveyardDesaturation();
+            SpawnAbyssMist();
+
             if (GravityField)
             {
                 if (InSpace(Player))
@@ -2562,10 +2809,187 @@ namespace tsorcRevamp
                     }
                 }
             }
+
+            if (HasLoveRing)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player ally = Main.player[i];
+
+                    if (ally.whoAmI == Player.whoAmI)
+                        continue;
+
+                    if (!ally.active || ally.dead)
+                        continue;
+
+                    if (!(Player.team == 0 || ally.team == Player.team))
+                        continue;
+
+                    if (Vector2.Distance(Player.Center, ally.Center) < 1000f)
+                    {
+                        ally.AddBuff(ModContent.BuffType<EverlastingLoveBuff>(), 3);
+                    }
+                }
+            }
+        }
+
+        // How much max HP one Life Crystal is worth in SoulsMode, scaled by party size. Read once at the moment
+        // the crystal is eaten (see GrantLifeCrystal) and banked permanently into soulsLifeGranted, so a
+        // crystal is worth what it was worth when you swallowed it — players joining or leaving later can't
+        // retroactively rewrite your max HP. Mana has no party scaling; it is a flat SoulsModeManaCrystalGain.
+        private int GetSoulsModeLifeCrystalGain()
+        {
+            int activePlayers = 0;
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active) activePlayers++;
+            }
+
+            if (activePlayers >= 4) return 20;
+            if (activePlayers >= 2) return 15;
+            return 10;
+        }
+
+        // Purple dust burst + a portal-ish whoosh on the exact tick EnterTheAbyss flips, so stepping into (or
+        // out of) the Abyss reads as a reality shift rather than just a debuff icon appearing. Entering uses a
+        // darker tint and a lower pitch (sinking into somewhere heavier); exiting is lighter/brighter-pitched
+        // (surfacing back to normal reality). Reuses vanilla's Etherian portal sound rather than new audio.
+        private void AbyssTransitionEffects()
+        {
+            if (EnterTheAbyss == WasInAbyss)
+            {
+                return;
+            }
+
+            bool entering = EnterTheAbyss;
+            WasInAbyss = EnterTheAbyss;
+
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            Color tint = entering ? new Color(70, 20, 110) : new Color(205, 165, 235);
+
+            for (int i = 0; i < 45; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(7f, 7f);
+                int dust = Dust.NewDust(Player.position, Player.width, Player.height, DustID.PurpleTorch, velocity.X, velocity.Y, 100, tint, Main.rand.NextFloat(1.5f, 2.3f));
+                Main.dust[dust].noGravity = true;
+            }
+            for (int i = 0; i < 15; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(3.5f, 3.5f);
+                int dust = Dust.NewDust(Player.position, Player.width, Player.height, DustID.Shadowflame, velocity.X, velocity.Y, 100, default, 1.6f);
+                Main.dust[dust].noGravity = true;
+            }
+
+            SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen with { Volume = 0.6f, Pitch = entering ? -0.25f : 0.25f }, Player.Center);
+
+            UsefulFunctions.ScreenShake(Player.Center, uniqueIdentity: "AbyssTransition");
+        }
+
+        // Vanilla's "Graveyard" scene filter (Player.UpdateBiomes, runs earlier in the tick) desaturates the
+        // screen while GraveyardVisualIntensity > 0, using UseProgress(0..0.75) and a flat UseIntensity(1.2).
+        // We can't tune vanilla's own call, so we just overwrite both with weaker values right after it runs.
+        // Set GraveyardDesaturationMultiplier to 0f for full removal instead of a reduction.
+        private const float GraveyardDesaturationMultiplier = 0.4f;
+
+        private void ReduceGraveyardDesaturation()
+        {
+            if (!Filters.Scene["Graveyard"].IsActive())
+            {
+                return;
+            }
+
+            if (GraveyardDesaturationMultiplier <= 0f)
+            {
+                Filters.Scene.Deactivate("Graveyard");
+                return;
+            }
+
+            float progress = MathHelper.Lerp(0f, 0.75f, Main.GraveyardVisualIntensity) * GraveyardDesaturationMultiplier;
+            Filters.Scene["Graveyard"].GetShader().UseProgress(progress).UseIntensity(1.2f * GraveyardDesaturationMultiplier);
+        }
+
+        // Ambient ground mist for the Abyss, using real vanilla Dust instead of a custom-drawn sprite/cloud
+        // layer (three earlier attempts at that all hit stability or rendering bugs - see git history on
+        // MethodSwaps.cs). Dust is simplest here specifically because we don't have to draw, position, fade, or
+        // clean it up ourselves - Terraria's own dust system already handles all of that once spawned, the same
+        // way Rain (Terraria/Rain.cs) doesn't re-derive anything about the world each frame, it just spawns a
+        // particle with its own position/velocity and lets it live its own life.
+        //
+        // Style (dust type 77/Ebonwood, alpha 180, scale 1.25) matches ArtoriasArmor.cs's own UpdateArmorSet
+        // aura dust exactly - that one reads as subtle, ours (Cloud/alpha 80/bigger scale) was too heavy.
+        //
+        // Spawn positions come from an actual surface scan (first tile with open air above a solid tile) within
+        // a fixed 20-tile radius of the player - but unlike the earlier tile-scanning attempts, this list is
+        // only rebuilt periodically (every AbyssMistRefreshInterval ticks), not every frame, and it's anchored
+        // to the player's position rather than the viewport. That's what avoids the flicker: a per-frame scan
+        // tied to the camera changes its answer on every tiny movement, but a radius tied to the player's own
+        // position barely changes tick to tick, and only actually re-evaluates on a slow timer regardless.
+        private const int AbyssMistDustType = DustID.Ebonwood;
+        private static readonly Color AbyssMistTint = new Color(150, 110, 210);
+        private const int AbyssMistScanRadius = 20; // tiles
+        private const int AbyssMistRefreshInterval = 60; // ticks between rescans (1 second)
+
+        private List<Point> abyssMistSurfaceTiles = new List<Point>();
+        private int abyssMistRefreshTimer;
+
+        private void SpawnAbyssMist()
+        {
+            if ((!EnterTheAbyss && !MethodSwaps.IsAbyssVisualActive()) || Main.dedServ)
+            {
+                return;
+            }
+
+            if (abyssMistRefreshTimer <= 0)
+            {
+                abyssMistRefreshTimer = AbyssMistRefreshInterval;
+                RefreshAbyssMistSurfaceTiles();
+            }
+            else
+            {
+                abyssMistRefreshTimer--;
+            }
+
+            if (abyssMistSurfaceTiles.Count == 0 || !Main.rand.NextBool(2))
+            {
+                return;
+            }
+
+            Point tile = abyssMistSurfaceTiles[Main.rand.Next(abyssMistSurfaceTiles.Count)];
+            Vector2 spawnPos = new Vector2(tile.X * 16f - 5f, tile.Y * 16f);
+            int dustIndex = Dust.NewDust(spawnPos, 26, 16, AbyssMistDustType, 0f, -2f, 180, AbyssMistTint, 1.25f);
+            Main.dust[dustIndex].noGravity = true;
+        }
+
+        private void RefreshAbyssMistSurfaceTiles()
+        {
+            abyssMistSurfaceTiles.Clear();
+
+            int playerTileX = (int)(Player.Center.X / 16f);
+            int playerTileY = (int)(Player.Center.Y / 16f);
+
+            for (int x = Math.Max(1, playerTileX - AbyssMistScanRadius); x <= Math.Min(Main.maxTilesX - 2, playerTileX + AbyssMistScanRadius); x++)
+            {
+                for (int y = Math.Max(1, playerTileY - AbyssMistScanRadius); y <= Math.Min(Main.maxTilesY - 2, playerTileY + AbyssMistScanRadius); y++)
+                {
+                    Tile tile = Main.tile[x, y];
+                    Tile above = Main.tile[x, y - 1];
+                    if (tile.HasTile && Main.tileSolid[tile.TileType] && !above.HasTile)
+                    {
+                        abyssMistSurfaceTiles.Add(new Point(x, y - 1));
+                    }
+                }
+            }
         }
 
         public override void PostUpdate()
         {
+            // Update the red hurt vignette (local player only, handled inside).
+            UpdateHurtVignette();
+
             if ((Player.HasBuff(ModContent.BuffType<MagicWeapon>()) || Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()) || Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>())) && Player.meleeEnchant > 0)
             {
                 int buffIndex = 0;
@@ -2581,6 +3005,23 @@ namespace tsorcRevamp
                 }
             }
             SetDirection();
+
+            if (!HasYoungHunterAccessory)
+            {
+                Player.ClearBuff(ModContent.BuffType<YoungHunterBuff>());
+
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    Projectile summon = Main.projectile[i];
+                    if (summon.active && summon.owner == Player.whoAmI && summon.type == ModContent.ProjectileType<YoungHunter>())
+                    {
+                        summon.Kill();
+                    }
+                }
+            }
+
+            if (loveHealCooldown > 0)
+            loveHealCooldown--;
 
             if (!Player.mount.Active)
             {
@@ -2631,6 +3072,15 @@ namespace tsorcRevamp
 
             if (Player.ZoneGraveyard) { Player.AddBuff(BuffID.WaterCandle, 2); }
 
+            // Dungeon during Super Hard Mode: keep Suppressed topped up at a short fixed duration (rather than
+            // silently re-adding every tick) so enemy attacks can also inflict it and have that duration matter.
+            // A lit bonfire is a safe rest point and must not immediately reapply the debuff after buff updates.
+            if (Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode
+                && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
+            {
+                Player.AddBuff(ModContent.BuffType<Suppressed>(), 60);
+            }
+
             if (gilled && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidAmount != 0 && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidType == LiquidID.Water)
             {
                 if (Player.breath < Player.breathMax)
@@ -2667,6 +3117,11 @@ namespace tsorcRevamp
                     //Main.NewText("Hallow");
                     Player.ZoneHallow = true;
                 }
+            }
+
+            if (Player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
+            {
+                // TODO: Slightly reduce the volume and pitch of the music when the player is in the abyss
             }
         }
 
@@ -2757,6 +3212,17 @@ namespace tsorcRevamp
 
             int pickedNegativeStats = 0;
             int NegativeStatsAmount = Main.rand.Next(isCursePowerful ? 4 : 3) + 1;
+            pickedMaxHealth = true;
+            pickedNegativeStats++;
+            if (isCursePowerful)
+            {
+                powerfulCurseMaxLifeMultiplier = -powerfulCurseBonus / (float)NegativeStatsAmount;
+            }
+            else
+            {
+                CurseMaxLifeMultiplier = -weakCurseBonus / (float)NegativeStatsAmount;
+            }
+
             //calculating negative stats
             while (pickedNegativeStats < NegativeStatsAmount)
             {
@@ -2865,21 +3331,7 @@ namespace tsorcRevamp
             //calculating positive stats
             while (pickedPositiveStats < PositiveStatsAmount)
             {
-                if (Main.rand.NextBool(7) && !pickedMaxHealth)
-                {
-                    pickedMaxHealth = true;
-                    pickedPositiveStats++;
-
-                    if (isCursePowerful)
-                    {
-                        powerfulCurseMaxLifeMultiplier = (powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
-                    }
-                    else
-                    {
-                        CurseMaxLifeMultiplier = (weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
-                    }
-                }
-                else if (Main.rand.NextBool(7) && !pickedLifeRegeneration)
+                if (Main.rand.NextBool(7) && !pickedLifeRegeneration)
                 {
                     pickedLifeRegeneration = true;
                     pickedPositiveStats++;
@@ -3074,7 +3526,10 @@ namespace tsorcRevamp
                 powerfulCurseAttackSpeedBonus = 0;
                 powerfulCurseMovementSpeedBonus = 0;
             }
-            Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f + ((CurseMaxLifeMultiplier / 100f) * ((CurseMaxLifeMultiplier > 0) ? CursePositiveStatsMultiplier : 1f)) + ((powerfulCurseMaxLifeMultiplier / 100f) * ((powerfulCurseMaxLifeMultiplier > 0) ? CursePositiveStatsMultiplier : 1f))));
+            float curseMaxLifeMultiplier = Math.Min(CurseMaxLifeMultiplier, 0f);
+            float powerfulCurseMaxLifeMultiplierToApply = Math.Min(powerfulCurseMaxLifeMultiplier, 0f);
+            Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f + (curseMaxLifeMultiplier / 100f) + (powerfulCurseMaxLifeMultiplierToApply / 100f)));
+            Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
             //life regen is in updateregen functions
             Player.statDefense += (int)MathF.Round((CurseDefenseBonus * ((CurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseDefenseBonus * ((powerfulCurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)));
             Player.endurance += ((CurseResistanceBonus * ((CurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseResistanceBonus * ((powerfulCurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;

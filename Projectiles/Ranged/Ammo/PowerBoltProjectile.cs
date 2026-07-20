@@ -52,32 +52,59 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 
         private void Explode()
         {
-            int explosionRadius = 100;
-
-            for (int i = 0; i < 30; i++)
-            {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, Scale: 1.5f);
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Scale: 1.5f);
-            }
-
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
 
-            foreach (NPC npc in Main.npc)
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<PowerBoltExplosion>(), Projectile.damage / 3, 0f, Projectile.owner);
+        }
+    }
+
+    public class PowerBoltExplosion : ModProjectile
+    {
+        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 160;   
+            Projectile.height = 160;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 2;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.hide = true;
+            Projectile.ArmorPenetration = 5;
+        }
+
+        public override void AI()
+        {
+            for (int i = 0; i < 16; i++)
             {
-                if (npc.active && !npc.friendly && npc.Distance(Projectile.Center) <= explosionRadius)
-                {
-        
-                    int explosionDamage = (int)(Projectile.damage * 0.33f);
+                Vector2 velocity = Main.rand.NextVector2Circular(9f, 9f);
+                Dust dust = Dust.NewDustPerfect(
+                    Projectile.Center + Main.rand.NextVector2Circular(23f, 23f),
+                    DustID.Smoke,
+                    velocity,
+                    0,
+                    default,
+                    Main.rand.NextFloat(2.0f, 2.4f)
+                );
+                dust.noGravity = true;
+            }
 
-                    NPC.HitInfo hitInfo = new NPC.HitInfo
-                    {
-                        Damage = explosionDamage,
-                        Knockback = 0f,
-                        HitDirection = Projectile.Center.X < npc.Center.X ? 1 : -1
-                    };
-
-                    npc.StrikeNPC(hitInfo, fromNet: false);
-                }
+            for (int i = 0; i < 16; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(8f, 8f);
+                Dust dust = Dust.NewDustPerfect(
+                    Projectile.Center + Main.rand.NextVector2Circular(21f, 21f),
+                    DustID.Torch,
+                    velocity,
+                    0,
+                    default,
+                    Main.rand.NextFloat(2.0f, 2.3f)
+                );
+                dust.noGravity = true;
             }
         }
     }

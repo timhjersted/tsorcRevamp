@@ -38,8 +38,15 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 2000; //220
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.HasGhostAfterimages = true;
         }
-        float customAi1;
+        const int AttackIdleTime = 120;
+        const int AttackComboGapTime = 30;
+        int attackDelay = AttackIdleTime;
+        int queuedAttackPatterns;
+        int lastAttackPattern = -1;
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -81,11 +88,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
 
-            //I don't know why this is multiplied by its scale, don't even ask. Its scale is 1, so this doesn't even do anything.
-            customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
-
-
-
             if (NPC.life > NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 2f);
@@ -99,65 +101,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
             #region Shooting code
-            if (customAi1 >= 10f)
-            {
-
-                NPC.TargetClosest(true);
-                if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
-                {
-                    if (Main.rand.NextBool(30))
-                    {
-                        float num48 = 8f;
-                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                        {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int damage = (int)(14f * NPC.scale);
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>();//44;//0x37; //14;
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-                                Main.projectile[num54].timeLeft = 120;
-                            }
-                            //Main.projectile[num54].aiStyle = 4;
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                            customAi1 = 1f;
-                        }
-                        NPC.netUpdate = true;
-                    }
-                    if (Main.rand.NextBool(20))
-                    {
-                        float num48 = 3f;
-                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-50, 50) / 100;
-                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-50, 50) / 100;
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                        {
-
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int damage = 19;//(int) (14f * npc.scale);
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>();//44;//0x37; //14;
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-                                Main.projectile[num54].timeLeft = 150;
-                            }
-                            //Main.projectile[num54].aiStyle = 19;
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                            customAi1 = 1f;
-                        }
-                        NPC.netUpdate = true;
-                    }
-                }
-            }
+            RunAttackStateMachine();
             #endregion
             if (NPC.justHit)
             {
@@ -429,6 +373,154 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0f, 0.25f);
             return;
+        }
+
+        void RunAttackStateMachine()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            NPC.TargetClosest(true);
+            Player target = Main.player[NPC.target];
+
+            if (!target.active || target.dead || !Collision.CanHit(NPC.position, NPC.width, NPC.height, target.position, target.width, target.height))
+            {
+                return;
+            }
+
+            if (attackDelay > 0)
+            {
+                attackDelay--;
+                return;
+            }
+
+            bool enraged = NPC.life <= NPC.lifeMax / 2;
+            if (queuedAttackPatterns <= 0)
+            {
+                queuedAttackPatterns = enraged ? Main.rand.Next(2, 4) : Main.rand.Next(1, 3);
+            }
+
+            FireRandomAttackPattern(target);
+            queuedAttackPatterns--;
+            attackDelay = queuedAttackPatterns > 0 ? AttackComboGapTime : AttackIdleTime;
+            NPC.netUpdate = true;
+        }
+
+        void FireRandomAttackPattern(Player target)
+        {
+            int pattern = Main.rand.Next(6);
+            if (pattern == lastAttackPattern)
+            {
+                pattern = (pattern + Main.rand.Next(1, 6)) % 6;
+            }
+            lastAttackPattern = pattern;
+
+            switch (pattern)
+            {
+                case 0:
+                    FireDemonSpiritNeedle(target);
+                    break;
+                case 1:
+                    FireDemonSpiritFork(target);
+                    break;
+                case 2:
+                    FireDemonSpiritSplit(target);
+                    break;
+                case 3:
+                    FirePurpleCrushShot(target);
+                    break;
+                case 4:
+                    FirePurpleCrushFan(target);
+                    break;
+                default:
+                    FirePurpleCrushCage(target);
+                    break;
+            }
+        }
+
+        void FireDemonSpiritNeedle(Player target)
+        {
+            Vector2 velocity = AimAtTarget(target, 8f, 20f);
+            SpawnProjectile(NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 120);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+        }
+
+        void FireDemonSpiritFork(Player target)
+        {
+            Vector2 velocity = AimAtTarget(target, 7.2f, 10f);
+            for (int i = -1; i <= 1; i++)
+            {
+                SpawnProjectile(NPC.Center, velocity.RotatedBy(MathHelper.ToRadians(14f * i)), ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 120);
+            }
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+        }
+
+        void FireDemonSpiritSplit(Player target)
+        {
+            Vector2 velocity = AimAtTarget(target, 6.6f, 8f);
+            Vector2 perpendicular = velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 20f;
+
+            SpawnProjectile(NPC.Center + perpendicular, velocity.RotatedBy(MathHelper.ToRadians(-8f)), ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 135);
+            SpawnProjectile(NPC.Center - perpendicular, velocity.RotatedBy(MathHelper.ToRadians(8f)), ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 135);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+        }
+
+        void FirePurpleCrushShot(Player target)
+        {
+            Vector2 velocity = AimAtTarget(target, 3f, 0f);
+            SpawnProjectile(NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>(), 19, 150);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, NPC.Center);
+        }
+
+        void FirePurpleCrushFan(Player target)
+        {
+            Vector2 velocity = AimAtTarget(target, 2.7f, 0f);
+            for (int i = -1; i <= 1; i++)
+            {
+                SpawnProjectile(NPC.Center, velocity.RotatedBy(MathHelper.ToRadians(18f * i)), ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>(), 19, 150);
+            }
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, NPC.Center);
+        }
+
+        void FirePurpleCrushCage(Player target)
+        {
+            Vector2 velocity = AimAtTarget(target, 2.4f, 0f);
+            for (int i = -1; i <= 1; i += 2)
+            {
+                SpawnProjectile(NPC.Center + new Vector2(0, 18f * i), velocity.RotatedBy(MathHelper.ToRadians(24f * i)), ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>(), 19, 170);
+                SpawnProjectile(NPC.Center + new Vector2(18f * i, 0), velocity.RotatedBy(MathHelper.ToRadians(-24f * i)), ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>(), 19, 170);
+            }
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, NPC.Center);
+        }
+
+        Vector2 AimAtTarget(Player target, float speed, float randomSpread)
+        {
+            Vector2 aimPoint = target.Center;
+            if (randomSpread > 0)
+            {
+                aimPoint += new Vector2(Main.rand.NextFloat(-randomSpread, randomSpread), Main.rand.NextFloat(-randomSpread, randomSpread));
+            }
+
+            Vector2 velocity = aimPoint - NPC.Center;
+            if (velocity.LengthSquared() < 1f)
+            {
+                velocity = Vector2.UnitY;
+            }
+            velocity.Normalize();
+            return velocity * speed;
+        }
+
+        void SpawnProjectile(Vector2 position, Vector2 velocity, int type, int damage, int timeLeft)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            int projectileIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), position, velocity, type, damage, 0f, Main.myPlayer);
+            Main.projectile[projectileIndex].timeLeft = timeLeft;
         }
         #endregion
 

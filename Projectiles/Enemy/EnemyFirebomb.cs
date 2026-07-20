@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 240;
             Projectile.penetrate = -1;
             Projectile.knockBack = 9;
-            Projectile.scale = .8f;
+            Projectile.scale = 1f;
             Projectile.light = 1f;
 
             // These 2 help the projectile hitbox be centered on the projectile sprite.

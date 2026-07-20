@@ -38,8 +38,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.height = 40;
             NPC.aiStyle = 7;
             NPC.damage = 50;
-            NPC.defense = 15;
-            NPC.lifeMax = 1000;
+            NPC.defense = 45;
+            NPC.lifeMax = 7500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.5f;
@@ -237,7 +237,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
             else
             {
-                damage = 60;
+                damage = 50;
                 knockback = 5f;
             }
         }

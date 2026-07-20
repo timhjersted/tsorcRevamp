@@ -47,8 +47,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CrystalShard, 5);
-            recipe.AddIngredient(ItemID.SoulofLight, 4);
+            recipe.AddIngredient(ItemID.CrystalShard, 8);
+            recipe.AddIngredient(ItemID.SoulofLight, 6);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 11000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

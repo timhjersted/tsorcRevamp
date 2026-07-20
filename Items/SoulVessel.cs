@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items
         }
         public override bool CanUseItem(Player player)
         {
-            return (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampPlayer>().SoulVessel < 2);
+            return (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.GetModPlayer<tsorcRevampPlayer>().SoulVessel < 2);
         }
 
         public override bool? UseItem(Player player)

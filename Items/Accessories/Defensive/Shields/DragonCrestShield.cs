@@ -41,6 +41,15 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
         {
             base.UpdateEquip(player);
 
+            if (tsorcRevampActiveShieldPlayer.ActiveFor(player))
+            {
+                // Active Shields Revamp replaces this shield's passive stamina-block with on-demand active
+                // blocking; keep only the passive utility (fire + knockback immunity).
+                player.buffImmune[BuffID.OnFire] = true;
+                player.noKnockback = true;
+                return;
+            }
+
             player.GetModPlayer<tsorcRevampPlayer>().DragonCrestShieldEquipped = true;
 
             player.GetModPlayer<tsorcRevampPlayer>().staminaShield = 1;

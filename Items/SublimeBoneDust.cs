@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items
 
         public override bool CanUseItem(Player player)
         {
-            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 300)
+            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 300)
             {
                 return true;
             }
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items
         }
         public override bool? UseItem(Player player)
         {
-            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 300)
+            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 300)
             {
                 player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain += 30;
                 player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain += 30;

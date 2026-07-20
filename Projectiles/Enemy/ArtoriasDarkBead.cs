@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                 Main.dust[pink2].noGravity = true;
             }
-            Lighting.AddLight((int)(Projectile.position.X / 16f), (int)(Projectile.position.Y / 16f), 1.4f, 1.1f, 1.1f);
+            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.25f);
 
             if (Projectile.velocity.X <= 4 && Projectile.velocity.Y <= 4 && Projectile.velocity.X >= -4 && Projectile.velocity.Y >= -4)
             {

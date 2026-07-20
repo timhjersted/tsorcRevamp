@@ -26,22 +26,39 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.GraniteGolem;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.StoneGolemBanner>();
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 120;
+                NPC.defense = 18;
+                NPC.damage = 30;
+                NPC.knockBackResist = 0.15f;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 350;
+                NPC.defense = 50;
+                NPC.damage = 80;
+                NPC.knockBackResist = 0.01f;
+            }
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            if (Main.hardMode)
-            {
-                return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.07f;
-            }
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.01f;
-            }
-            else
-            {
-                return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.15f;
-            }
+            //if (spawnInfo.Player.ZoneDesert && spawnInfo.Player.ZoneSnow)
+            //{
+                if (Main.hardMode)
+                {
+                    return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.07f;
+                }
+                if (tsorcRevampWorld.SuperHardMode)
+                {
+                    return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.01f;
+                }
+                else
+                {
+                    return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.15f;
+                }
+            //}
         
         }
 

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -56,6 +58,12 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
         {
             speed = 6.5f;
             acceleration = 0.3f;
+            if (SoulsModeMobility.Enabled(player))
+            {
+                speed = SoulsModeMobility.SupersonicWings2FlightSpeed;
+                acceleration = SoulsModeMobility.SupersonicWings2FlightAcceleration;
+            }
+            SoulsModeMobility.ApplyFlightCap(player, ref speed, ref acceleration);
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -63,14 +71,14 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             player.jumpBoost = true;
             player.fireWalk = true;
             player.noKnockback = true;
-            player.noFallDmg = true;
             player.canRocket = true;
             player.iceSkate = true;
-            player.rocketTime = 1200;
+            int flightTime = SoulsModeMobility.Enabled(player) ? SoulsModeMobility.SupersonicWings2FlightTime : 1200;
+            player.rocketTime = flightTime;
             player.rocketBoots = 2;
-            player.rocketTimeMax = 1200;
+            player.rocketTimeMax = flightTime;
             player.jumpSpeedBoost = 3.2f;
-            player.wingTimeMax = 1200;
+            player.wingTimeMax = flightTime;
 
             if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSupersonicWings2ExtraJumps)
             {
@@ -80,6 +88,10 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             }
 
             bool restricted = false;
+            if (player.mount.Active || player.vortexStealthActive)
+            {
+                restricted = true;
+            }
             for (int i = 3; i <= 8; i++)
             {
                 if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
@@ -91,7 +103,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             }
             if (!restricted)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 2;
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.SupersonicWings2Level;
 
                 // Fall faster if player holds down
                 if (player.TryingToHoverDown && !player.controlJump &&
@@ -130,6 +142,14 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
                     Main.dust[sonicDust].noLight = false;
 
                 }
+            }
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (SoulsModeMobility.Enabled(Main.LocalPlayer))
+            {
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitWingTimed", SoulsModeMobility.SupersonicWings2RunSpeed, SoulsModeMobility.SupersonicWings2FlightSpeed, SoulsModeMobility.SupersonicWings2FlightTime / 60)));
             }
         }
     }

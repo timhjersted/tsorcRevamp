@@ -20,15 +20,15 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
         {
             Item.damage = 36;
             Item.knockBack = 9f;
-            Item.mana = 10;
             Item.width = 36;
             Item.height = 58;
-            Item.useTime = 30;
-            Item.useAnimation = 30;
+            Item.useTime = 18;
+            Item.useAnimation = 18;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.buyPrice(0, 30, 0, 0);
             Item.rare = ItemRarityID.Orange;
             Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
+            Item.mana = 10;
             Item.sentry = true;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;

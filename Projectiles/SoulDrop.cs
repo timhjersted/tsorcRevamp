@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -53,8 +53,12 @@ namespace tsorcRevamp.Projectiles
                                 {
                                     if (Main.myPlayer == Main.player[i].whoAmI)
                                     {
+                                        if (Main.player[i].HasBuff(ModContent.BuffType<Buffs.Debuffs.Hollowed>()))
+                                        {
+                                            Main.player[i].ClearBuff(ModContent.BuffType<Buffs.Debuffs.Hollowed>());
+                                        }
                                         Main.player[i].QuickSpawnItem(Main.player[i].GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), (int)Projectile.ai[0]);
-
+                                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/souls-regained"));
                                     }
                                     Projectile.Kill();
                                     //CombatText.NewText(player.Hitbox, Color.Purple, itemText);

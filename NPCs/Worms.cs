@@ -15,9 +15,22 @@ namespace tsorcRevamp.NPCs
 {
     class Worms : GlobalNPC
     {
+        public override void SetStaticDefaults()
+        {
+            /*foreach (int npcType in tsorcRevamp.EaterOfWorldsSegments)
+            {
+                NPCID.Sets.ImmuneToRegularBuffs[npcType] = true;
+            }*/
+            NPCID.Sets.ImmuneToRegularBuffs[NPCID.EaterofWorldsBody] = true; //this only applies to the first head and tail segments, after killing them the new head/tail are still immune to debuffs, probably not worth fixing
+        }
+
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            if (tsorcRevamp.DestroyerSegments.Contains(npc.type)) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
+            if (tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type)) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
+            { 
+                modifiers.FinalDamage *= 0.75f;
+            }
+            if (tsorcRevamp.DestroyerSegments.Contains(npc.type) || tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type)) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
             { //could do some trickery with modifydamage in global item but this makes more sense
                 modifiers.FinalDamage *= 0.65f;
             }
@@ -33,8 +46,15 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+            if (tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type))
+            {
+                if (projectile.IsMinionOrSentryRelated) 
+                {
+                    modifiers.FinalDamage *= 0.8f;
+                }
+            }
 
-            if (tsorcRevamp.DestroyerSegments.Contains(npc.type))
+            if (tsorcRevamp.DestroyerSegments.Contains(npc.type) || tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type))
             {
                 if (projectile.IsMinionOrSentryRelated) //destroyer minion dmg reduction (flat, can't alter minion damage because they're mostly permanent projectiles)
                 {
@@ -75,23 +95,27 @@ namespace tsorcRevamp.NPCs
             bool IsFlamethrower = projectile.type == ModContent.ProjectileType<Projectiles.Freezethrower>()
             || projectile.type == ModContent.ProjectileType<Projectiles.Ranged.MeltdownFirestorm>();
 
-            if (tsorcRevamp.DestroyerSegments.Contains(npc.type))
+            if (tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type))
+            {
+                if (!projectile.IsMinionOrSentryRelated && !IsFlamethrower)
+                {
+                    projectile.damage = (int)(projectile.damage * 0.9f);
+                }
+            }
+
+            if (tsorcRevamp.DestroyerSegments.Contains(npc.type) || tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type))
             {
                 if (!projectile.IsMinionOrSentryRelated && !IsFlamethrower)
                 {
                     projectile.damage = (int)(projectile.damage * 0.8f);
                 }
-                if (IsFlamethrower)
-                {
-                    hit.Damage = (int)Math.Round(hit.Damage * 0.2f);
-                }
-                /*for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (DestroyerSegments.Contains(Main.npc[i].type))
-                    {
-                        Main.npc[i].immune[projectile.owner] = 5;
-                    }
-                }*/
+
+                // Per-segment pierce immunity: a piercing projectile can't hit the same
+                // segment twice in quick succession, but each segment is independent so a
+                // piercing weapon can still hit multiple segments in one pass.
+                // This is intentionally weaker than Seath's cross-body immune=1, which
+                // prevents ANY segment from registering more than one hit per frame.
+                // penetrate == 1 means "last hit remaining" (or non-piercing), so skip those.
             }
             if (tsorcRevamp.JungleWyvernSegments.Contains(npc.type))
             {
@@ -99,20 +123,12 @@ namespace tsorcRevamp.NPCs
                 {
                     projectile.damage = (int)(projectile.damage * 0.85f);
                 }
-                if (IsFlamethrower)
-                {
-                    hit.Damage = (int)Math.Round(hit.Damage * 0.3f);
-                }
             }
             if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))
             {
                 if (!projectile.IsMinionOrSentryRelated && !IsFlamethrower)
                 {
                     projectile.damage = (int)(projectile.damage * 0.92f);
-                }
-                if (IsFlamethrower)
-                {
-                    hit.Damage = (int)Math.Round(hit.Damage * 0.4f);
                 }
             }
             base.OnHitByProjectile(npc, projectile, hit, damageDone);

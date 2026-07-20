@@ -34,8 +34,8 @@ namespace tsorcRevamp.Items.Tools
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ModContent.ItemType<Potions.HealingElixir>());
+            recipe.AddIngredient(ModContent.ItemType<MagicShieldScroll>());
+            recipe.AddIngredient(ModContent.ItemType<Potions.HealingElixir>()); 
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 

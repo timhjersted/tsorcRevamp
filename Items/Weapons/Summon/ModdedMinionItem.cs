@@ -23,7 +23,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public abstract float SummonTagDmgMulti { get; }
         public abstract float Knockback {  get; }
         public abstract int UseTimeAnimation { get; }
-        public abstract int Mana {  get; }
         public abstract int Rarity { get; }
         public override void SetStaticDefaults()
         {
@@ -43,8 +42,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.useStyle = ItemUseStyleID.Swing;
             Item.rare = Rarity;
             Item.value = PriceByRarity.fromItem(Item);
-            Item.mana = 10;
             Item.UseSound = SoundID.Item44;
+            Item.mana = 10;
             Item.DamageType = DamageClass.Summon;
             Item.shoot = MinionProjectileType;
             Item.buffType = MinionBuffType;

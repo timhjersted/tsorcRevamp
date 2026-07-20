@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.rotation = Projectile.velocity.ToRotation();
 
 
-            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.FireworkFountain_Red, Projectile.velocity.X / 3, Projectile.velocity.Y / 3, 50, Color.Chartreuse, 0.5f);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 88, Projectile.velocity.X / 3, Projectile.velocity.Y / 3, 50, Color.Chartreuse, 0.8f);
             Main.dust[dust].noGravity = true;
 
             if (Projectile.velocity.X <= 4 && Projectile.velocity.Y <= 4 && Projectile.velocity.X >= -4 && Projectile.velocity.Y >= -4)

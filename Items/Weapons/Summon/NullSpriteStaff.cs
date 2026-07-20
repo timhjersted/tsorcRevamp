@@ -14,31 +14,25 @@ namespace tsorcRevamp.Items.Weapons.Summon
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Null Sprite Staff");
-            /* Tooltip.SetDefault("Summons a null sprite to fight for you" +
-                "\nNull sprites apply a permanent stacking debuff" +
-                "\nthat increases damage taken from all sources" +
-                "\nTakes 3/4th of a minion slot"); */
-
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 0.75f;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1f;
         }
 
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Buffs.Dissolving.MaxDissolvingStacks);
         public override void SetDefaults()
         {
-            Item.damage = 65;
+            Item.damage = 66;
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;
-            Item.useTime = Item.useAnimation = 18;
+            Item.useTime = Item.useAnimation = 12;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = Item.buyPrice(2, 0, 0, 0);
-            Item.mana = 10;
             Item.rare = ModContent.RarityType<OrangeRed>();
             Item.UseSound = SoundID.Item44;
+            Item.mana = 10;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<NullSpriteBuff>();

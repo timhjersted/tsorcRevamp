@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 
 namespace tsorcRevamp.Projectiles.Melee.Shortswords

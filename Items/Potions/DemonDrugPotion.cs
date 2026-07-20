@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Potions
         {
             Item.width = 14;
             Item.height = 24;
-            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useStyle = ItemUseStyleID.DrinkLiquid;
             Item.useAnimation = 15;
             Item.useTime = 15;
             Item.useTurn = true;

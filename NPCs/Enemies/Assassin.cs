@@ -20,6 +20,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 35; //normal mode stat
             NPC.lifeMax = 500; //normal mode stat
+            NPC.defense = 40;
+            NPC.value = 5000; // life / 1 bc rare : was 460
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 2000;
@@ -28,8 +30,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 20000; // life / 1 bc rare : was 690
             }
             NPC.scale = 1.0f;
-            NPC.defense = 40;
-            NPC.value = 5000; // life / 1 bc rare : was 460
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 48;
@@ -39,6 +39,23 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.AssassinBanner>();
 
             AnimationType = NPCID.SkeletonArcher;
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.MaxJumpPower = 10f;
+            globalNPC.MaxJumpBoost = 6f;
+            // No double jump -- the Assassin relies on its teleport for escape
+            // Step 6 archer levers: blink to elevated firing spots, reposition toward last-known before patrolling.
+            globalNPC.PrefersHighGround = true;
+            globalNPC.RemembersLastKnownPos = true;
+            globalNPC.StandoffDistance = 15;
+            globalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
+            globalNPC.CanUseRopes = true;
+            globalNPC.CanGoInvisible = true;
+            globalNPC.InvisibleAlpha = 220;
+            globalNPC.InvisibilityStyle = InvisibilityStyle.Predator;
+            globalNPC.GoInvisibleChance = 60;
+            globalNPC.GoVisibleChance = 250;
+            globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
@@ -202,7 +219,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             NPC.timeLeft = 100;
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .05f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .1f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green, telegraphTicks: 30);
         }
 
 

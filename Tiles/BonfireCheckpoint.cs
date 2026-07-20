@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ObjectInteractions;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -41,7 +43,7 @@ namespace tsorcRevamp.Tiles
 
             AnimationFrameHeight = 74;
             DustType = DustID.Web;
-            AdjTiles = new int[] { TileID.Campfire };
+            AdjTiles = new int[] { TileID.Campfire, TileID.DemonAltar };
 
             LocalizedText name = CreateMapEntryName();
             AddMapEntry(new Color(215, 60, 0), name);
@@ -118,6 +120,7 @@ namespace tsorcRevamp.Tiles
             if (Main.tile[i, j].TileFrameY >= 74 && distance <= 80f && !player.dead && !Main.gamePaused)
             {
                 player.AddBuff(ModContent.BuffType<Buffs.Bonfire>(), 30);
+                player.adjTile[TileID.DemonAltar] = true;
 
                 player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
 

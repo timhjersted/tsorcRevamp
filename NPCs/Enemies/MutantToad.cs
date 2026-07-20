@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 30;
             NPC.lifeMax = 40;
-            NPC.scale = 0.9f;
+            NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.2f;
@@ -40,6 +40,15 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 55;
                 NPC.lifeMax = 200;
                 NPC.knockBackResist = 0.1f;
+            }
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.defense = 54;
+                NPC.value = 760;
+                NPC.damage = 60;
+                NPC.lifeMax = 450;
+                NPC.knockBackResist = 0.05f;
             }
 
         }

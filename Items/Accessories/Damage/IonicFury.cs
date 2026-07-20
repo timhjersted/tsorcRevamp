@@ -23,9 +23,9 @@ namespace tsorcRevamp.Items.Accessories.Damage
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.SetAuraState(tsorcAuraState.Ion);
 
-            if (Main.GameUpdateCount % 180 == 0 && player.whoAmI == Main.myPlayer)
+            if (Main.GameUpdateCount % 105 == 0 && player.whoAmI == Main.myPlayer)
             {
-                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Main.rand.NextVector2CircularEdge(7, 7), ModContent.ProjectileType<Projectiles.Accessories.FriendlyIonBomb>(), 200, 0, Main.myPlayer, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Main.rand.NextVector2CircularEdge(8, 8), ModContent.ProjectileType<Projectiles.Accessories.FriendlyIonBomb>(), 333, 0, Main.myPlayer, player.whoAmI);
             }
         }
 

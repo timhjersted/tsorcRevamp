@@ -199,7 +199,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void TeleportToArenaCenter()
         {
             DarkCloudParticleEffect(-2);
-            NPC.Center = new Vector2(5827.5f, 1698) * 16;
+            NPC.Center = ExpandedWorldTransform.MapWorld(new Vector2(5827.5f, 1698) * 16);
             DarkCloudParticleEffect(6);
         }
         #endregion
