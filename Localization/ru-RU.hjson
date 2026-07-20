@@ -27,7 +27,6 @@ Mods: {
 
 		CommonItemTooltip: {
 			Details: Удерживайте левый Shift, чтобы увидеть подробности
-			AggroBoost: Враги чаще будут нацелены на вас
 			AggroBoost: Враги с большей вероятностью будут нацелены на вас
 			// AggroDecrease: Enemies are less likely to target you
 			SetBonus: "Бонус комплекта: "
@@ -74,7 +73,7 @@ Mods: {
 			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: Сокращает время, необходимое для использования фляги эстуса на {0}%
 			BotCManaFlower: Сокращает время, необходимое для использования фляги лазурных слёз на {0}%
-			DSPickUpRange: "Увеличивает дальность подбора тёмных душ"
+			DSPickUpRange: Увеличивает дальность подбора тёмных душ
 			VanityFunction: Также работает в слотах для украшения
 			DragoonGearCompatible: Совместимо с Драгунскими ботинками и Драгунским снаряжением.
 			BootsDisableThis: Не работает, если экипированы ботинки гермеса или спектральные ботинки.
@@ -82,7 +81,7 @@ Mods: {
 			OnFire: В огне
 			CursedInferno: Проклятое инферно
 			Ichor: Ихор
-			Banner: "Баннер"
+			Banner: Баннер
 			Limited: Количество этого предмета ограничено, Поэтому он никогда не будет использован нажатием клавиши быстрого усиления
 			NoFallDmg: Даёт иммунитет к урону от падения
 			HolyDodge: Даёт святое уклонение. Характеристики, получаемые от этого комплекта брони, удваиваются, пока святое уклонение активно
@@ -149,7 +148,6 @@ Mods: {
 				DmgMult: Мультипликативно увеличивает урон дальнего боя на {0}%
 				CritMult: Мультипликативно увеличивает шанс крит. удара дальнего боя на {0}%
 				CritDmg: Увеличивает крит. урон дальнего боя на {0}%
-				NonCritDmg: Уменьшает урон не крит. атак дальнего боя на {0}%
 				NonCritDmg: Уменьшает урон не критических атак дальнего боя на {0}%
 				// ArmorPenRanged: Increases ranged armor penetration by {0}
 				FlatDmg: Увеличивает урон дальнего боя на {0} ед.
@@ -311,11 +309,11 @@ Mods: {
 			WyvernMage: Ты меня впечатлил, Рэд! Но на этом твое путешествие заканчивается...
 			SlograAndGaibon: Слогра и Гайбон восстали из глубин!
 			Serris: Тройняшки Серриса в ярости!
-			Marilith:
-			TheMachine:
+			Marilith: TheMachine:
+			// TheMachine: default
 			WaterFiendKraken: Водяной Дьявол восстаёт!
-			GwynTombVisions:
-			AbyssPortal:
+			GwynTombVisions: AbyssPortal:
+			// AbyssPortal: default
 			Gwyn: Гвин пробудился, чтобы закончить ваше путешествие...
 			AbysmalOolacileSorcerer: Колдун Бездны Олачиля сейчас выпотрошит тебя...
 			Witchking: Король-Чародей ждал тебя...
@@ -338,23 +336,15 @@ Mods: {
 			LothricAmbush1: Засада!
 			LothricAmbush2: Засада!
 			DualSandsprogAmbush1: Засада!
-			HellkiteDragon: На деревню совершено нападение! Адский дракон прибыл, чтобы перекусить...
-			RemixHellkiteDragon: Адский дракон прибыл, чтобы перекусить...
+			// EnragedQB: An angry Queen Bee appears!
+			HellkiteDragon: На деревню совершено нападение! Адский дракон прибыл чтобы покормиться...
+			RemixHellkiteDragon: Адский дракон прибыл чтобы покормиться...
 			ThunderBird: Великая Громовая Птица пробуждается!
 			QueenJellyfish: Королева Медуз заметила вас в озере...
 			Viscount: Виконт жаждет крови!
 			StarScouter: Звёздный разведчик спускается с неба...
 			Lich: Лич желает вашу душу...
 			ForgottenOne: Забытый заметил тебя!
-			// EnragedQB: An angry Queen Bee appears!
-			HellkiteDragon: На деревню совершено нападение! Адский дракон прибыл чтобы покормиться...
-			RemixHellkiteDragon: Адский дракон прибыл чтобы покормиться...
-			// ThunderBird: The Grand Thunder Bird appears!
-			// QueenJellyfish: The Queen Jellyfish has spotted you in the lake...
-			// Viscount: Viscount is bloodthirsty!
-			// StarScouter: A Star Scouter descends from the sky...
-			// Lich: The Lich wants your soul...
-			// ForgottenOne: The Forgotten One sees you!
 			Bossduration: "Продолжительность пребывания босса: "
 		}
 
@@ -478,7 +468,6 @@ Mods: {
 			BotCOnly: "[c/ff9999: Выпадает только в том случае, если игрок является носителем Проклятия]"
 			FirstBagBotCOnly: "[c/ff9999: Выпадает только из первого открытого особого мешка босса, пока игрок является Носителем проклятия]"
 			AdvModeOnly: "[c/ff9999:Выпадает только в режиме приключения]"
-			SandboxModeOnly: "[c/ff9999:Выпадает только вне режима приключения]"
 			SandboxModeOnly: "[c/ff9999:Выпадает только вне режима приключений]"
 			// FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Выпадает только при первом убийстве вне режима эксперта]"
@@ -531,7 +520,6 @@ Mods: {
 			PinwheelDesc: Найдите Катакомбы Утопленников под входом в деревню.
 			AncientOolacileDemonDesc: В легендах упоминается лес Олачиль...
 			SlograAndGaibonName: Слогра и Гайбон
-			SlograAndGaibonDesc: Найден в глубинах Храма Метеорита.
 			SlograAndGaibonDesc: Найден в глубинах Храма Метеора.
 			// GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
 			JungleWyvernDesc: Найдена в глубинах Забытого города.
@@ -8496,11 +8484,6 @@ Mods: {
 				Tooltip: Чрезвычайно острые, электрические когти древнего дикого бога.
 			}
 
-			OolacileDarkMatter: {
-				DisplayName: Тёмная материя Олачиля
-				Tooltip: Ощутимая теневая энергия из тьмы Олачиля.
-			}
-
 			SunderedMoon: {
 				DisplayName: Расколотая луна
 				Tooltip:
@@ -8509,9 +8492,6 @@ Mods: {
 					Создаёт мощные потоки лунной энергии
 					Может призвать звёзды при попадании
 					'''
-					A legendary tome drawing on lunar power.
-					Casts powerful lunar energy streaks
-					''' */
 			}
 
 			VenomBlade: {
@@ -10673,14 +10653,6 @@ Mods: {
 			ThunderBowLightning.DisplayName: Молния громового лука
 			ChaosDemonBolt.DisplayName: Выстрел демона хаоса
 			OolacileBolt.DisplayName: Выстрел Олачиля
-			// BloodShot.DisplayName: Blood Shot
-			// SunderedMoon.DisplayName: Sundered Moon
-			// DragoonLanceZap.DisplayName: Dragoon Lance Zap
-			// OldUltimaExplosion.DisplayName: Old Ultima Explosion
-			// SuperPhazonRound.DisplayName: Super Phazon Round
-			// ThunderBowLightning.DisplayName: Thunder Bow Lightning
-			// ChaosDemonBolt.DisplayName: Chaos Demon Bolt
-			// OolacileBolt.DisplayName: Oolacile Bolt
 			// VenomBlade.DisplayName: Venom Blade
 			// VenomBladeField.DisplayName: Venom Blade Field
 			// AbyssalDeluge.DisplayName: Abyssal Deluge
@@ -12244,7 +12216,8 @@ Mods: {
 				SandboxSHMQuote3:
 					'''
 					Однако победить [c/ffbf00:Арториаса] будет невозможно без некоторых знаний.
-					Чтобы найти его, ты должен разыскать [c/383838:Короля-чародея] и вернуть ему тёмное кольцо, которое он обронил.
+					Чтобы найти его, ты должен разыскать [c/383838:Короля-чародея] и вернуть ему тёмное кольцо,
+					SandboxSHMQuote3: которое он обронил.
 					Иногда он будет появляться по ночам, а чаще - глубже под землей, особенно в темницах.
 					Однако самый надежный способ найти его - это самому спуститься в Бездну, используя кольцо Ковенанта Арториаса.
 					'''
@@ -12444,7 +12417,7 @@ Mods: {
 
 				TownNPCMood: {
 					NoHome: Я ненавижу, когда у меня нет дома.
-					Content:  Я удовлетворена.
+					Content: Я удовлетворена.
 					FarFromHome: Я слишком далеко от дома.
 					LoveSpace: Мне нравится, когда у меня много места.
 					DislikeCrowded: Мне не нравится, когда у меня тесно.
@@ -12483,8 +12456,6 @@ Mods: {
 			LichKingDisciple.DisplayName: Ученик Короля-лича
 			LeonhardRemix.DisplayName: Леонард
 			TrueDeath.DisplayName: Абсолютная смерть
-			// LeonhardRemix.DisplayName: Leonhard
-			// TrueDeath.DisplayName: Absolute Death
 			// DarkCloudShadow.DisplayName: Dark Cloud Shadow
 			// AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
 			// StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
@@ -13003,9 +12974,6 @@ Mods: {
 						''' */
 				}
 
-				DisableSoapstones: {
-					Tooltip: Вступает в силу только при создании новой карты
-					Label: Отключить белые знаки
 				RecommendedControls: {
 					// Label: Recommended Controls
 					/* Tooltip:
@@ -13027,34 +12995,33 @@ Mods: {
 		}
 
 		Conditions: {
-			AdventureModeDisabled: Только обычная игра
-			AdventureModeEnabled: Только режим приключений
-			DebugModeEnabled: Только для тестирования
-			BotCEnabled: Только для носителя проклятия
-			WyvernMageDowned: Маг виверн был побеждён
+			// AdventureModeDisabled: Sandbox-only
+			// AdventureModeEnabled: Adventure Mode-only
+			// DebugModeEnabled: For testing-only
+			// BotCEnabled: Bearer of the Curse-only
 			// SoulsModeEnabled: Unkindled or Bearer of the Curse
 			// WyvernMageDowned: The Wyvern Mage has been defeated
-			SorrowDowned: Скорбь была побеждена
-			HunterDowned: Охотник был побеждён
-			SHM1Downed: Первый страж бездны побеждён
-			SHM3Downed: Третий страж бездны побеждён
-			SHM6Downed: Шестой страж бездны побёжден
-			SHM9Downed: Девятый страж бездны побеждён
-			RageDowned: Ярость была побеждена
-			SlograGaibonDowned: Mods.tsorcRevamp.Conditions.SlograGaibonDowned
-			AbysmalOolacileSorcererDowned: Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned
+			// SorrowDowned: The Sorrow has been defeated
+			// HunterDowned: The Hunter has been defeated
+			// SHM1Downed: One Guardians of the Abyss slain
+			// SHM3Downed: Three Guardians of the Abyss slain
+			// SHM6Downed: Six Guardians of the Abyss slain
+			// SHM9Downed: Nine Guardians of the Abyss slain
+			// RageDowned: The Rage has been defeated
+			// SlograGaibonDowned: Mods.tsorcRevamp.Conditions.SlograGaibonDowned
+			// AbysmalOolacileSorcererDowned: Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned
 		}
 
 		Achievements: {
 			ChallengerEternalCrystalAchievement: {
-				FriendlyName: Отдай мне кристалл!
-				Description: Найдите кристально-космическую ящерицу
-				Progress: Вы продвигаетесь к [c/ff8000:{0}],продолжайте в том же духе.
+				// FriendlyName: Give Me Crystal!
+				// Description: Find cosmic crystal lizard.
+				// Progress: You are making progress towards [c/ff8000:{0}], keep at it.
 			}
 
 			CollectorCosmicWatch: {
-				FriendlyName: Манипулятор временем
-				Description: День за ночью
+				// FriendlyName: Time controller
+				// Description: Try to instantly advance time with a cosmic watch.
 			}
 
 			ExploreFortyBonfire: {
@@ -13083,13 +13050,13 @@ Mods: {
 			}
 
 			ExploreVillage: {
-				FriendlyName: Это что, деревня?
-				Description: Добро пожаловать, путешественник
+				// FriendlyName: Is that a Village?
+				// Description: Welcome travellor!
 			}
 
 			SlayerLeonhard: {
-				FriendlyName: Победите леонарда
-				Description: "{$BossChecklist.LeonhardDesc}"
+				// FriendlyName: A Mysterious Encounter
+				// Description: Defeat Leonhard, a mysterious man keeping the high bridge between the mountains.
 			}
 
 			SlayerPinwheel: {
