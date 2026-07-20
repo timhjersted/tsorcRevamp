@@ -27,10 +27,11 @@ Mods: {
 
 		CommonItemTooltip: {
 			Details: Удерживайте левый Shift, чтобы увидеть подробности
+			AggroBoost: Враги чаще будут нацелены на вас
 			AggroBoost: Враги с большей вероятностью будут нацелены на вас
 			// AggroDecrease: Enemies are less likely to target you
 			SetBonus: "Бонус комплекта: "
-			NoKnockback: Дарует иммунитет к отбрасыванию
+			NoKnockback: Даёт иммунитет к отбрасыванию
 			ObsidianShield: "{$CommonItemTooltip.NoKnockback} и огненным блокам"
 			ForBotCOnly: " для [c/6d8827:Носителя проклятия]"
 			UniqueBarrier: Не суммируется с другими заклинаниями барьера или щита
@@ -38,10 +39,10 @@ Mods: {
 			UnusableDuringBoss: Нельзя использовать, пока босс жив!
 			MeleeWhipAutoswing: Включает автоматическую атаку для оружия ближнего боя
 			RecipeTooltip: "[c/66fc03:Материал для рецепта из тёмных душ]"
-			ReforgeTooltip: "[c/206100:Изумрудный Вестник] может [c/d1a21f:благословить] это, чтобы убрать негативный префикс"
+			ReforgeTooltip: "[c/206100:Изумрудный Вестник] может [c/d1a21f:благословить] это, чтобы убрать негативный модификатор"
 			WingsDisabled:
 				'''
-				Эти крылья были [c/383838:прокляты] свирепым [c/009400:охотником]
+				Эти крылья были [c/383838:прокляты] свирепым [c/009400:Охотником]
 				Их нельзя использовать до тех пор, пока он не будет побеждён
 				'''
 			WingsDisabled2:
@@ -73,7 +74,7 @@ Mods: {
 			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: Сокращает время, необходимое для использования фляги эстуса на {0}%
 			BotCManaFlower: Сокращает время, необходимое для использования фляги лазурных слёз на {0}%
-			DSPickUpRange: " Увеличивает дальность подбора тёмных душ"
+			DSPickUpRange: "Увеличивает дальность подбора тёмных душ"
 			VanityFunction: Также работает в слотах для украшения
 			DragoonGearCompatible: Совместимо с Драгунскими ботинками и Драгунским снаряжением.
 			BootsDisableThis: Не работает, если экипированы ботинки гермеса или спектральные ботинки.
@@ -81,10 +82,10 @@ Mods: {
 			OnFire: В огне
 			CursedInferno: Проклятое инферно
 			Ichor: Ихор
-			Banner: " Баннер"
+			Banner: "Баннер"
 			Limited: Количество этого предмета ограничено, Поэтому он никогда не будет использован нажатием клавиши быстрого усиления
 			NoFallDmg: Даёт иммунитет к урону от падения
-			HolyDodge: Дарует святое уклонение. Характеристики, получаемые от этого комплекта брони, удваиваются, пока святое уклонение активно
+			HolyDodge: Даёт святое уклонение. Характеристики, получаемые от этого комплекта брони, удваиваются, пока святое уклонение активно
 			TitaniumBonus: При атаке создаёт защитный барьер из титановых осколков, который усиливается от всех типов урона
 			ShunpoKeybind1: "Нажмите "
 			ShunpoKeybind2: " наведите курсор на врага, чтобы переместиться к нему и ненадолго стать неуязвимым"
@@ -98,26 +99,26 @@ Mods: {
 			UniqueImbue:
 				'''
 				Имеет шанс 1/8 отразить снаряды
-				Несовместим с другими свойствами оружия
+				Несовместимо с другими свойствами оружия
 				'''
 			LifeRegen: Увеличивает регенерацию здоровья на {0} ед.
 			BadLifeRegen: Уменьшает регенерацию здоровья на {0} ед.
 			BadDefense: Уменьшает защиту на {0} ед.
 			BadDmg: Уменьшает наносимый урон на {0}%
 			ArmorPen: Увеличиват пробивание брони на {0}
-			DmgMult: Увеличивает урон на {0}% мультипликативно
-			BadDmgMult: Уменьшает урон на {0}% мультипликативно
+			DmgMult: Мультипликативно величивает урон на {0}%
+			BadDmgMult: Мультипликативно уменьшает урон на {0}%
 			AtkSpeed: Увеличивает скорость атаки на {0}%
 			StaminaRegen: Увеличивает регенерацию выносливости на {0}%
 			StaminaRecovery: Увеличивает скорость восстановления выносливости на {0}%
-			DRStat: Увеличивает сопротивление на {0}
-			BadDRStat: Уменьшает сопротивление на {0}
+			DRStat: Увеличивает сопротивление на {0} ед.
+			BadDRStat: Уменьшает сопротивление на {0} ед.
 			Cooldown: "{0} секунд перезарядки"
 			CritDmg: Критические удары наносят на {0}% больше урона
 			LifeThreshold: "Если текущее здоровье меньше {0}%: "
 			Slowness: Замедляет скорость движения на {0}%
-			Thorns: Увеличивает отражение урона на {0}%
-			SoulDrops: Увеличивает количестко душ, выпадающих из убитых врагов, на {0}%
+			Thorns: Усиливает отражение урона на {0}%
+			SoulDrops: Увеличивает количество выпадающих душ на {0}%
 			ConsumableSoulDrops: Увеличивает вероятность выпадения расходуемых душ на {0}%
 			MeleeWhipDmg: Увеличивает урон ближнего боя и урон хлыстов на {0}%
 			MoveSpeedMult: Мультипликативно увеличивает скорость передвижения на {0}%
@@ -126,10 +127,10 @@ Mods: {
 			NonMeleeBadDmg: Уменьшает весь урон кроме ближнего боя на {0}%
 			Luck: Увеличивает удачу на {0}%
 			BadMaxLife: Уменьшает максимальное количество здоровья на {0}%
-			DefenseCap: Защита ограничена показателем в {0} ед.
+			DefenseCap: Ограничивает максимальную защиту показателем в {0} ед.
 			FlatDmg: Увеличивает наносимый урона на {0} ед.
 			MaxStamina: Увеличивает максимальную выносливать на {0}%
-			CanBeBlessed: для починки этого сломаного предмета необходимо благословление Изумрудного Вестника.
+			CanBeBlessed: Для починки этого предмета необходимо благословление Изумрудного Вестника.
 			Trident: Улучшает подвижность в воде при удержании
 
 			Melee: {
@@ -148,6 +149,7 @@ Mods: {
 				DmgMult: Мультипликативно увеличивает урон дальнего боя на {0}%
 				CritMult: Мультипликативно увеличивает шанс крит. удара дальнего боя на {0}%
 				CritDmg: Увеличивает крит. урон дальнего боя на {0}%
+				NonCritDmg: Уменьшает урон не крит. атак дальнего боя на {0}%
 				NonCritDmg: Уменьшает урон не критических атак дальнего боя на {0}%
 				// ArmorPenRanged: Increases ranged armor penetration by {0}
 				FlatDmg: Увеличивает урон дальнего боя на {0} ед.
@@ -199,7 +201,7 @@ Mods: {
 					'''
 					[c/77ff77:Даёт более слабый эффект от зелья {0}, который увеличивается]
 					[c/77ff77:по силе с каждым выпитыми зельем]
-					[c/77ff77:{0} . Всего выпито:] {1}
+					[c/77ff77:{0}. Всего выпито:] {1}
 					[c/77ff77:текущая сила эффекта ]{2}%
 					'''
 				NoScaling: Постоянно накладывает  эффект зелья {0}.
@@ -215,32 +217,32 @@ Mods: {
 		}
 
 		DeathText: {
-			01: Уклонение делает вас неуязвимым для атак. Овладеть им необходимо для выживания!
-			02: Светящиеся зеленые черепа часто хранят важные секреты... Нажмите ПКМ, чтобы открыть их
-			03: Привязку клавиши уклонения можно изменить в настройках управления. Попробуйте использовать левый Shift для уклонения и левый Alt для автоматического выбора
-			04: Осколки кристаллов часто намекают на секреты, сундуки или скрытые тропы поблизости...
-			05: Потеря душ после смерти может быть отключена в конфигурации. Попробуйте это, Чтобы получить опыт как в The Legend Of Zelda
+			01: Перекат делает вас неуязвимым для атак. Овладеть им необходимо для выживания!
+			02: Светящиеся зелёные черепа часто хранят важные секреты... Нажмите ПКМ, чтобы обобрать их
+			03: Привязку клавиши переката можно изменить в настройках управления. Попробуйте использовать левый Shift или левый Alt
+			04: Осколки кристаллов часто намекают на секреты, сундуки или скрытые проходы, находящиеся поблизости...
+			05: Потеря душ после смерти может быть отключена в конфигурации. Попробуйте это, Чтобы получить опыт, схожий с The Legend Of Zelda
 			06: Проверьте описание ваших предметов, чтобы узнать, можно ли улучшить какие-либо из них с помощью тёмных душ
 			07: Бирюзовые нажимные плиты могут быть активированы только при помощи небольших снарядов
-			08: Если ты можешь что-то сделать, значит, так и должно быть! Будь умным и используй "дешевые" уловки, чтобы добиться максимального преимущества
+			08: Если ты можешь что-то сделать, значит, так и должно быть! Будь хитёр и используй "дешёвые" уловки, чтобы добиться максимального преимущества
 			09: Использование зелий во время обычного боя часто необходимо для выживания
-			PermaPot: Для постоянных зелий нужны особые кристаллы, но обычные осколки можно переработать в них
-			10: Вы можете уклоняться в воздухе, чтобы избежать атак, преодолевать большие расстояния и мгновенно менять направление движения...
+			PermaPot: Для постоянных зелий нужны особые кристаллы. Обычные осколки можно переработать в них
+			10: Вы можете перекатываться в воздухе, чтобы избежать атак, преодолевать большие расстояния и мгновенно менять направление движения...
 			11: У оружия плохой модификатор? Поговорите с Джейд, Изумрудным Вестником. Она может снять его с помощью своего благословения
-			12: Если вы чувствуете, что заблудились, ищите темные места на своей карте. Секреты и пути есть почти в каждом направлении
+			12: Если вы чувствуете, что заблудились, ищите тёмные места на своей карте. Секреты и проходы есть почти в каждом направлении
 			13: Белые знаки дают много важных советов
 			14: Играйте с модом Recipe Browser, чтобы легко увидеть, во что можно превратить вашу добычу
 			15: Удар по врагам кончиком хлыста всегда приводит к критическому урону
 			16: Я чертовски зол
-			PermaPot2: Некоторые постоянные зелья могут быть усилены и в конечном итоге превзойти свои обычные версии.
+			PermaPot2: Некоторые постоянные зелья могут быть усилены, и в конечном итоге превзойти свои обычные версии.
 			17: Некоторые ванильные рецепты были удалены. Вы должны найти эти предметы в мире путём исследования
 			18: Подсказки к предметам часто содержат информацию, жизненно важную для вашего выживания...
-			19: Вы можете столкнуться с боссами, прежде чем сможете победить их. Если сомневаетесь, возвращайтесь, когда станете сильнее
+			19: Вы можете столкнуться с боссами, прежде чем сможете победить их. Если сомневаетесь — возвращайтесь, когда станете сильнее
 			20: Добро пожаловать в Dark Souls в Террарии
-			21: Ворота из серого камня невозможно сломать, их можно открыть только с помощью рычага или переключателя.
-			22: Кольцо Хлорантии значительно улучшает ваши перекаты, позволяя превосходно уклоняться...
-			23: Враги в определенных темных областях теряют человечность, что позволяет повторно использовать характеристики проклятия
-			24: Нужны еще советы? Присоединяйтесь к нашему Discord и получайте советы, даже не умирая за них.
+			21: Стены из серого камня невозможно сломать, их можно открыть только с помощью рычага или переключателя.
+			22: Хлорантиевое кольцо значительно улучшает ваши перекаты, позволяя превосходно уклоняться...
+			23: Враги в определённых темных областях теряют человечность, что позволяет повторно использовать характеристики проклятия
+			24: Нужно больше советов? Присоединяйтесь к нашему серверу в Discord и получайте советы, даже не умирая за них.
 			25: Подсказки к прохождению можно найти, наведя курсор на записи в книге "Матч-реванш с боссом" или на некоторые уникальные предметы, выпавшие из боссов
 			26: Помните о перекатах
 			27: Если шанс крита превысит 100%, вы получите шанс мультикрита, что позволит вам наносить в 4 или более раз больше урона.
@@ -253,24 +255,24 @@ Mods: {
 				     пока не облысеешь.
 				'''
 			WallDeathReason: " был поглощён Стеной плоти"
-			BotC1: Режим Носителя Проклятия можно отключить в любой момент...
-			BotC2: Режим "Носитель проклятия" предназначен для опытных игроков.
-			BotC3: Попробуйте прочитать описание Темного знака
+			BotC1: Режим Носителя проклятия можно отключить в любой момент...
+			BotC2: Режим Носителя проклятия предназначен для опытных игроков.
+			BotC3: Попробуйте прочитать описание Тёмного знака
 			IWantToRemoveThisCaptainObviousShit: Избегайте вражеских атак
 			TotallyNotMeantToBeToxic: Получай удовольствие :)
-			HeavyRoll: Тяжёлый у тебя получился бросок!
+			HeavyRoll: Тяжёлый у тебя получился перекат!
 			BossDeath1: Не сдавайтесь! Победа над некоторыми боссами может занять несколько попыток
-			BossDeath2: С некоторыми боссами можно сразиться раньше, чем нужно. Если вы испытываете трудности, попробуйте подождать, пока вы не станете более сильным.
+			BossDeath2: С некоторыми боссами можно сразиться раньше, чем нужно. Если вы испытываете трудности, попробуйте подождать, пока не станете сильнее.
 			DarkCloud: Ты не можешь убежать от своей тени
 			Tonberry: (O_O;)
-			Marilith: Некоторые мощные атаки можно избежать, только при помощи переката!
-			ChloranthyRingTip: Кольцо Хлорантии значительно улучшает ваш перекат, позволяя еще больше уклоняться...
+			Marilith: Некоторых мощных атак можно избежать только при помощи переката!
+			ChloranthyRingTip: Кольцо Хлорантии значительно улучшает ваш перекат, позволяя ещё больше уклоняться...
 			Tip: "Совет: "
 		}
 
 		Events: {
 			Pinwheel: Вертопрах обращает свой взгляд на вас.
-			Death: Настал роковой день твоей смерти.
+			Death: Настал день твоей смерти.
 			QueenSlime: Королева Слизней выходит из своей священной пещеры!
 			GreatRedKnightInvasion: Великий красный рыцарь вторгся в ваш мир!
 			GoblinShark: Гемоглобиновая акула жаждет крови!
@@ -280,7 +282,7 @@ Mods: {
 			EoC: Глаз видит тебя!
 			EoW: Пожиратель миров готов к трапезе!
 			EoL: Императрица Света пробуждается!
-			Lunatic: Ты не сможешь победить то, что тебя ждет, Рэд.
+			Lunatic: Ты не сможешь победить то, что тебя ждёт, Рэд.
 			LichKing: Король-лич пробуждается!
 			Hunter: Охота начинается...
 			Rage: Ярость пробуждается!
@@ -292,15 +294,15 @@ Mods: {
 			BloodBossEvent3: Дреднаутилус, демон кровавой луны, пробудился!
 			FrozenCathedralEvent: Ты хочешь замёрзнуть, как те дураки до тебя, Рэд?
 			ShadowTempleEvent: Странное видение явилось из-за ваших страхов...
-			ShadowTempleEvent2: Появляется паладин, чтобы сразить вас!
-			WingTrio: Трио крыльев снова объединились, чтобы сразиться с вами!
+			ShadowTempleEvent2: Паладин появляется, чтобы сразить вас!
+			WingTrio: Крылатое трио снова объединились, чтобы сразиться с вами!
 			SandstormElementalEvent: Призван могущественный элементаль!
 			Dutchman: Летучий голландец вторгается в тропики!
 			DiscipleOfAttraidiesEvent: Вам противостоит могущественный маг из армии Аттрайдиса
 			IceGolemWyvern: !!!
 			IceGolem: !
 			KingSlime: Король Слизней появляется!
-			HeroOfLumelia: "'Ты убил моего брата, Рэд! ... Ты обрушил ад на этот мир' Герой из Лумелии прибыл в поисках справедливости... "
+			HeroOfLumelia: "'Ты убил моего брата, Рэд! ... Ты обрушил ад на этот мир' Герой из Люмелии прибыл в поисках справедливости... "
 			FireLurker: Появляется проклятый Хранитель Огня...
 			RedKnight1: Красный Рыцарь вторгся в ваш мир!
 			RedKnight2: Красный Рыцарь вторгся в ваш мир!
@@ -309,22 +311,22 @@ Mods: {
 			WyvernMage: Ты меня впечатлил, Рэд! Но на этом твое путешествие заканчивается...
 			SlograAndGaibon: Слогра и Гайбон восстали из глубин!
 			Serris: Тройняшки Серриса в ярости!
-			Marilith: по умолчанию
-			TheMachine: по умолчанию
+			Marilith:
+			TheMachine:
 			WaterFiendKraken: Водяной Дьявол восстаёт!
-			GwynTombVisions: по умолчанию
-			AbyssPortal: по умолчанию
-			Gwyn: Гвин пробудился, чтобы довести ваше путешествие до конца...
-			AbysmalOolacileSorcerer: Колдун Бездны Оолациля сейчас выпотрошит тебя...
+			GwynTombVisions:
+			AbyssPortal:
+			Gwyn: Гвин пробудился, чтобы закончить ваше путешествие...
+			AbysmalOolacileSorcerer: Колдун Бездны Олачиля сейчас выпотрошит тебя...
 			Witchking: Король-Чародей ждал тебя...
-			Blight: Мор вырывается на поверхность из океана!
-			Chaos: Хаос вторгся в это измерение!
-			WyvernMageShadow: Маг виверн был освобожден из своей клетки!
-			DarkCloud: Твое теневое "я" проявилось из твоих самых темных страхов...
-			Artorias: Арториас, Странник Бездны прибыл, чтобы вырвать тебя из этого мира...
+			Blight: Мор вырывается из океана на поверхность!
+			Chaos: Хаос вторгся в ваше измерение!
+			WyvernMageShadow: Маг виверн был освобождён из своей клетки!
+			DarkCloud: Твоё теневое "я" проявилось из твоих самых темных страхов...
+			Artorias: Арториас, Странник Бездны, прибыл, чтобы вырвать тебя из этого мира...
 			BlackKnight: Из тени появляется Чёрный Рыцарь...
 			SorrowAttraidies: '''[c/D3D3D3:Аттрайдис:] "Посмотрим, сможешь ли ты с этим справиться."'''
-			TwinEaters: Пожиратели близнецов всплывают из глубин!
+			TwinEaters: Близнецы-пожиратели всплывают из глубин!
 			DunlendingAmbush: Засада!
 			AlienAmbush: Обнаружена инопланетная форма жизни
 			FirebombHollowAmbush: Засада!
@@ -336,6 +338,14 @@ Mods: {
 			LothricAmbush1: Засада!
 			LothricAmbush2: Засада!
 			DualSandsprogAmbush1: Засада!
+			HellkiteDragon: На деревню совершено нападение! Адский дракон прибыл, чтобы перекусить...
+			RemixHellkiteDragon: Адский дракон прибыл, чтобы перекусить...
+			ThunderBird: Великая Громовая Птица пробуждается!
+			QueenJellyfish: Королева Медуз заметила вас в озере...
+			Viscount: Виконт жаждет крови!
+			StarScouter: Звёздный разведчик спускается с неба...
+			Lich: Лич желает вашу душу...
+			ForgottenOne: Забытый заметил тебя!
 			// EnragedQB: An angry Queen Bee appears!
 			HellkiteDragon: На деревню совершено нападение! Адский дракон прибыл чтобы покормиться...
 			RemixHellkiteDragon: Адский дракон прибыл чтобы покормиться...
@@ -372,16 +382,16 @@ Mods: {
 
 				Естественная регенерация [c/ff9955:отключена] во время использования
 				'''
-			PerSecond: / в секунду
+			PerSecond: /в секунду
 			DarkSouls: Тёмные души
-			Soapstone: Если вы чувствуете, что заблудились, ищите тёмные места на своей карте. Секреты и пути есть почти в каждом направлении
+			Soapstone: Если вы чувствуете, что заблудились, ищите тёмные места на своей карте. Секреты и проходы есть почти в каждом направлении
 			BonfireLit: Костер зажжён, точка возрождения установлена!
 			BonfireTP: Откройте мини-карту, чтобы мгновенно телепортироваться к любому костру в мире.
 			AdvModeAutoEnabled: Обнаружена пользовательская карта. Режим приключения включён автоматически.
-			// RemixAdvModeAutoEnabled: Remix map detected. Adventure Mode auto-enabled.
+			RemixAdvModeAutoEnabled: Ремикс-карта обнаружена. Режим приключения включён автоматически.
 			AdvModeAutoDisabled: Обнаружена случайно сгенерированная карта. Режим приключения автоматически отключён.
-			SelectMarker: Нажмите, чтобы выбрать метку на карте. Щёлкните на карте, чтобы поставить её.
-			EraseMarkers: Нажмите, чтобы стирать метки.
+			SelectMarker: Нажмите, чтобы выбрать метку на карте. Щёлкните, чтобы поставить её.
+			EraseMarkers: Нажмите, чтобы стереть метку.
 			StopEditMarkers: Нажмите, чтобы остановить редактирование меток.
 			ClickToHide: " Нажмите, чтобы скрыть"
 			ClickToShow: " Нажмите, чтобы показать  "
@@ -395,10 +405,10 @@ Mods: {
 			GetMusic: Нажмите сюда, чтобы установить мод Story of Red Cloud Music!
 			MusicNewUpdate: Доступно обновление музыкального мода, нажмите здесь, чтобы загрузить! (Игра перезапустится!)
 			MusicFail: Загрузка музыкального мода не удалась, нажмите, чтобы повторить попытку...
-			AdvMapDownloadProgress: Иёет загрузка карты приключений:
+			AdvMapDownloadProgress: Идёт загрузка карты приключений:
 			AdvMapUpdated: Обновление карты приключений завершено!
-			RemixMapDownloadProgress: "Загрузка ремикс-карты в процессе: "
-			RemixMapUpdated: Обновление ремикс-карты завершено!
+			RemixMapDownloadProgress: "Загрузка ремикс карты в процессе: "
+			RemixMapUpdated: Обновление ремикс карты завершено!
 			Bless: Поместите сюда предмет для благословения
 			SelectWorld: Выберите тип мира:
 			// ChooseStartingClass: Choose Starting Class
@@ -417,7 +427,7 @@ Mods: {
 				'''
 			TSORCRemixMapFailed:
 				'''
-				Ошибка: Шаблон ремикс-карты отсутствует или повреждён!
+				Ошибка: Шаблон ремикс карты отсутствует или повреждён!
 				Вернитесь в главное меню и убедитесь, что загрузка завершена.
 				Если эта ошибка повторяется, загрузите её вручную с нашего Discord: https://discord.gg/UGE6Mstrgz
 				'''
@@ -447,9 +457,9 @@ Mods: {
 				'''
 			TPToBonfire: Телепортироваться к костру
 			NoTPCombat: Невозможно телепортироваться во время боя!
-			NoTPBoss: Нельзя телепортироваться, пока босс жив!
-			AbyssalFissure: Глубинная трещина
-			DropSouls1: "Падение "
+			NoTPBoss: Невозможно телепортироваться, пока босс жив!
+			AbyssalFissure: Трещина бездны
+			DropSouls1: "Выпавшие "
 			DropsSouls2: души
 			MonolithLocked:
 				'''
@@ -468,6 +478,7 @@ Mods: {
 			BotCOnly: "[c/ff9999: Выпадает только в том случае, если игрок является носителем Проклятия]"
 			FirstBagBotCOnly: "[c/ff9999: Выпадает только из первого открытого особого мешка босса, пока игрок является Носителем проклятия]"
 			AdvModeOnly: "[c/ff9999:Выпадает только в режиме приключения]"
+			SandboxModeOnly: "[c/ff9999:Выпадает только вне режима приключения]"
 			SandboxModeOnly: "[c/ff9999:Выпадает только вне режима приключений]"
 			// FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Выпадает только при первом убийстве вне режима эксперта]"
@@ -518,8 +529,9 @@ Mods: {
 			LeonhardDesc: Исследуйте подвесной мост между заснеженными вершинами гор.
 			// VesselOfSoulsDesc: The Vessel of Souls occupies the Eye of Cthulhu's arena.
 			PinwheelDesc: Найдите Катакомбы Утопленников под входом в деревню.
-			AncientOolacileDemonDesc: В легендах упоминается лес Оолациле...
+			AncientOolacileDemonDesc: В легендах упоминается лес Олачиль...
 			SlograAndGaibonName: Слогра и Гайбон
+			SlograAndGaibonDesc: Найден в глубинах Храма Метеорита.
 			SlograAndGaibonDesc: Найден в глубинах Храма Метеора.
 			// GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
 			JungleWyvernDesc: Найдена в глубинах Забытого города.
@@ -1020,17 +1032,17 @@ Mods: {
 			}
 
 			OolacileDemonBanner: {
-				DisplayName: Знамя демона Оолациля
+				DisplayName: Знамя демона Олачиля
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileDemon.DisplayName}"
 			}
 
 			OolacileKnightBanner: {
-				DisplayName: Знамя рыцаря Оолациля
+				DisplayName: Знамя рыцаря Олачиля
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
 			}
 
 			OolacileSorcererBanner: {
-				DisplayName: Знамя колдуна Оолациля
+				DisplayName: Знамя колдуна Олачиля
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileSorcerer.DisplayName}"
 			}
 
@@ -1535,7 +1547,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Повышает вашу ловкость и уклончивость при уклонении от ударов]
-					БотКОнли: "[c/ca1e00:Когда вы пьете из лазурной фляги, ваши движения больше не стеснены ценой временной уязвимости.]"
+					Режим носителя проклятия: "[c/ca1e00:Когда вы пьете из лазурной фляги, ваши движения больше не стеснены ценой временной уязвимости.]"
 					Увеличивает дальность подбора капель выносливости.
 					Это старое кольцо получило свое название из-за своего декоративного зеленого цветка, 
 					но его блеск давно померк.
@@ -1549,7 +1561,7 @@ Mods: {
 					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Повышает вашу ловкость и уклончивость при уклонении от ударов]
 					[c/ffbf00:Придаёт эффект чёрного пояса и превосходную ловкость в воздухе]
-					БотКОнли: "[c/ca1e00:Когда вы пьете из лазурной фляги, ваши движения больше не стеснены ценой временной уязвимости.]"
+					Режим носителя проклятия: "[c/ca1e00:Когда вы пьете из лазурной фляги, ваши движения больше не стеснены ценой временной уязвимости.]"
 					Это кольцо названо так из-за его декоративного зеленого цветка. 
 					Теперь его блеск полностью восстановлен.
 					'''
@@ -1647,7 +1659,7 @@ Mods: {
 				DisplayName: Кольцо с сумеречной короной
 				Tooltip:
 					'''
-					Это волшебное кольцо в форме короны было подарено принцессе Даск из Оолациле при ее рождении.
+					Это волшебное кольцо в форме короны было подарено принцессе Даск из Олачиля при её рождении.
 					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
 					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}]
 					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] При снятии кольца ваш предыдущий максимальный уровень здоровья восстанавливается
@@ -3411,7 +3423,7 @@ Mods: {
 			}
 
 			SymbolOfAvarice: {
-				DisplayName: Символ алчности
+				DisplayName: Символ жадности
 				Tooltip:
 					'''
 					{$CommonItemTooltip.SoulDrops}
@@ -3420,14 +3432,14 @@ Mods: {
 			}
 
 			VaultOfEndlessGreed: {
-				// DisplayName: Vault of Endless Greed
-				/* Tooltip:
+				DisplayName: Хранилище бесконечной жадности
+				Tooltip:
 					'''
-					You feel overwhelmed by the sin of avarice.
-					Attacks inflict the Midas debuff
+					Вы чувствуете, что погрязли в алчности.
+					Ваши атаки накладывают дебафф Мидаса
 					{$CommonItemTooltip.SoulDrops}
-					but the curse of the branded also [c/FF0000:drains a small amount of HP].
-					''' */
+					но проклятие заклейменных также [c/FF0000:отнимает небольшое количество здоровья].
+					'''
 			}
 
 			AttraidiesRelic: {
@@ -3563,12 +3575,12 @@ Mods: {
 			}
 
 			OolacileDemonBag: {
-				DisplayName: Мешок с сокровищами (Древний демон Оолациля)
+				DisplayName: Мешок с сокровищами (Древний демон Олачиля)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
 			OolacileSorcererBag: {
-				DisplayName: Мешок с сокровищами (Ужасающий колдун Оолациля)
+				DisplayName: Мешок с сокровищами (Ужасающий колдун Олачиля)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3638,7 +3650,7 @@ Mods: {
 				DisplayName: Ужасающий камень
 				Tooltip:
 					'''
-					Призывает ужасающего колдуна Оолациля
+					Призывает ужасающего колдуна Олачиля
 					Может быть использован только ночью
 					'''
 			}
@@ -8484,9 +8496,18 @@ Mods: {
 				Tooltip: Чрезвычайно острые, электрические когти древнего дикого бога.
 			}
 
+			OolacileDarkMatter: {
+				DisplayName: Тёмная материя Олачиля
+				Tooltip: Ощутимая теневая энергия из тьмы Олачиля.
+			}
+
 			SunderedMoon: {
-				// DisplayName: Sundered Moon
-				/* Tooltip:
+				DisplayName: Расколотая луна
+				Tooltip:
+					'''
+					Легендарный фолиант, основанный на лунной силе.
+					Создаёт мощные потоки лунной энергии
+					Может призвать звёзды при попадании
 					'''
 					A legendary tome drawing on lunar power.
 					Casts powerful lunar energy streaks
@@ -10126,9 +10147,9 @@ Mods: {
 			StardustBeam.DisplayName: Имя лазера по умолчанию
 			StardustShot.DisplayName: Выстрел в звездную пыль
 			VortexOrb.DisplayName: Вихревой шар
-			OolacileDarkBead.DisplayName: Оолацильная Темная бусина
+			OolacileDarkBead.DisplayName: Олачильня Темная бусина
 			OolacileDarkOrb.DisplayName: Блестящий Темный шар
-			OolacileSeeker.DisplayName: Искатель Оолациля
+			OolacileSeeker.DisplayName: Искатель Олачиля
 			PoisonCrystalFire.DisplayName: Ядовитый Кристаллический Огонь
 			PoisonFlames.DisplayName: Ядовитое пламя
 			PurpleCrush.DisplayName: Фиолетовая давка
@@ -10644,6 +10665,14 @@ Mods: {
 			XBowArrow.DisplayName: Стрела X лука
 			DragoonSpearZap.DisplayName: Заряд копья дракона
 			FlameScrollStrike.DisplayName: Удар огненного свитка
+			BloodShot.DisplayName: Кровавый выстрел
+			SunderedMoon.DisplayName: Расколотая луна
+			DragoonLanceZap.DisplayName: Заряд копья Драгуна
+			OldUltimaExplosion.DisplayName: Взрыв старой Ультимы
+			SuperPhazonRound.DisplayName: Суперфазон Круглый
+			ThunderBowLightning.DisplayName: Молния громового лука
+			ChaosDemonBolt.DisplayName: Выстрел демона хаоса
+			OolacileBolt.DisplayName: Выстрел Олачиля
 			// BloodShot.DisplayName: Blood Shot
 			// SunderedMoon.DisplayName: Sundered Moon
 			// DragoonLanceZap.DisplayName: Dragoon Lance Zap
@@ -10844,8 +10873,8 @@ Mods: {
 			}
 
 			AncientOolacileDemon: {
-				DisplayName: Древний демон Оолациля
-				DespawnHandler: Древний демон Оолациля решает проявить милосердие...
+				DisplayName: Древний демон Олачиля
+				DespawnHandler: Древний демон Олачиля решает проявить милосердие...
 			}
 
 			Cataluminance: {
@@ -10960,7 +10989,7 @@ Mods: {
 				Hint: Ты должен найти Старейшину-Шамана за Западным морем...
 				MartianHint: В небе были замечены марсианские зонды...
 				AbyssOpen: Портал из Бездны остаётся открытым...
-				// HallowDarker: Darkness spreads through the Hallowed Caves...
+				HallowDarker: Тьма распространяется по Священным Пещерам...
 			}
 
 			AttraidiesFragment.DisplayName: Фрагмент Аттрайдиса
@@ -11012,8 +11041,8 @@ Mods: {
 			}
 
 			AbysmalOolacileSorcerer: {
-				DisplayName: Колдун Бездны Оолациля
-				DespawnHandler: Колдун Бездны Оолациля разрушил твой разум...
+				DisplayName: Колдун Бездны Олачиля
+				DespawnHandler: Колдун Бездны Олачиля разрушил твой разум...
 				Defeated: Тьма была рассеяна над миром...
 			}
 
@@ -11041,7 +11070,7 @@ Mods: {
 				Heal2: Хаос продолжает исцелять себя...
 				Rips: Хаос разрывает твои крылья и пробивает твою броню!
 				OutOfRange: Хаос защищён невидимыми силами - ты слишком далеко!
-				// DarknessLifted: The shadow in the Hallow has been lifted!
+				DarknessLifted: Тень в Освящении рассеялась!
 			}
 
 			DarkCloud: {
@@ -11368,17 +11397,17 @@ Mods: {
 			}
 
 			ManOfWar.DisplayName: Человек войны
-			OolacileDemon.DisplayName: Эфемерный демон Оолациля
+			OolacileDemon.DisplayName: Эфемерный демон Олачиля
 
 			OolacileKnight: {
-				DisplayName: Рыцарь Оолациля
+				DisplayName: Рыцарь Олачиля
 				Intent: Древний воин пришёл, чтобы изгнать вас из жизни...
 				Hunt: На вас объявлена охота...
 			}
 
 			OolacileSorcerer: {
-				DisplayName: Колдун Оолациля
-				Defeated: Колдун Оолациля был повержен...
+				DisplayName: Колдун Олачия
+				Defeated: Колдун Олачия был повержен...
 			}
 
 			SerpentOfTheAbyssBody.DisplayName: Змей бездны
@@ -11428,13 +11457,13 @@ Mods: {
 				Quote5: Если ты сможешь победить Скорбь или Уничтожителя, позже у меня будет еще кое-что на продажу...
 				Quote6: Если ты сможешь победить Скорбь, позже у меня будет еще кое-что на продажу...
 				Quote7: Если ты сможешь победить Уничтожителя, позже у меня будет еще кое-что на продажу...
-				// ContractButton: Dwarven Contract
-				// ContractQuote1: Found any Dwarven Contracts yet, traveler?
-				// ContractQuote2: Bring me one and I’ll send a proper guard to watch over a property, with a gift as a thanks!
-				// ContractQuote3: If you ever find any old Dwarven Contracts lying around, bring them to me.
-				// ContractGiven: Thanks for the contract! A dwarf will come to guard a property. Oh yes, and here's your reward!
-				// FinalContractGiven: You found me every possible contract! Thank you Red for all your hard work, this is your ultimate reward!
-				// ContractMax: Sorry Red, I've already hired every dwarves willing to work. No more contracts!
+				ContractButton: Контракт дворфа
+				ContractQuote1: Ты уже нашёл какие-нибудь контракты Дворфов, путешественник?
+				ContractQuote2: Принеси мне один, и я пошлю настоящего защитника твоей собственности, с подарком в виде благодарности!
+				ContractQuote3: Если ты когда-нибудь найдёшь старые контракты Дворфов, принеси их мне.
+				ContractGiven: Спасибо за контракт Дворф придёт охранять вашу собственность. И, конечно, вот ваша награда!
+				FinalContractGiven: Ты нашёл для меня все возможные контракты! Спасибо тебе, Рэд, за всю твою тяжкую работу, это твоя главная награда!
+				ContractMax: Извини, Рэд, я уже нанял всех Дворфов, готовых работать. Никаких больше контрактов!
 
 				TownNPCMood: {
 					Content: Я удовлетворён.
@@ -12382,7 +12411,7 @@ Mods: {
 					NoHome: Я ненавижу, когда у меня нет дома.
 					FarFromHome: Я слишком далеко от дома.
 					LoveSpace: Мне нравится, что у меня так много места.
-					DislikeCrowded: Мне не нравится, когда у меня так тесно.
+					DislikeCrowded: Мне не нравится, когда у меня тесно.
 					HateCrowded: Я ненавижу, когда у меня так тесно.
 					LoveBiome: Я люблю {BiomeName}.
 					LikeBiome: Мне нравится {BiomeName}.
@@ -12400,31 +12429,31 @@ Mods: {
 			}
 
 			LonelyFairy: {
-				// DisplayName: Lonely Fairy
-				// Name1: Aurora
-				// Name2: Faye
-				// Name3: Jasmine
-				// Name4: Lyra
-				// Name5: Elora
-				// Quote1: Greetings human, I'm not used to meeting people, as I've been living in the Grove alone for years, but your presence doesn't bother me.
-				// Quote2: I may have some interesting things to sell you; during my long life I have collected a significant number of souls and various objects.
-				// Quote3: How old am I? Long enough, I would say... I remember the time when the Empress filled the sky with her light, the fairies captivated by it.
-				// Quote4: I sense incredible will and kindness in you, little one.
-				// Quote5: The spirits of nature are stirring, darkness is approaching, but with this comes a glimmer of hope that has never been so bright.
-				// Quote6: "[c/ffbf00:If you come back after a while, maybe my list of items for sale will grow and it could interest you in your adventure.]"
+				DisplayName: Одинокая фея
+				Name1: Аврора
+				Name2: Фэй
+				Name3: Жасмин
+				Name4: Лира
+				Name5: Элора
+				Quote1: Приветствую тебя, человек. Я не привыкла встречаться с людьми, так как живу совсем одна в Роще уже много лет, но твоё присутствие меня не беспокоит.
+				Quote2: Возможно, у меня есть что-нибудь интересное для вас на продажу; за свою долгую жизнь я собрала значительное количество душ и различных предметов.
+				Quote3: Сколько мне лет? Я бы сказала, достаточно... Я помню то время, когда императрица наполняла небо своим светом, очаровывая им фей.
+				Quote4: Я чувствую в тебе невероятную волю и доброту, малыш.
+				Quote5: Духи природы пробуждаются. Надвигается темнота. Но вместе с этим появляется проблеск надежды, который ещё никогда не был таким ярким.
+				Quote6: "[c/ffbf00:Если ты вернёшься через некоторое время, возможно, мой список товаров пополнится, и это заинтересует тебя в твоём приключении.]"
 
 				TownNPCMood: {
-					// NoHome: I hate not having a home.
-					// Content: I am content.
-					// FarFromHome: I am too far from home.
-					// LoveSpace: I love having so much space.
-					// DislikeCrowded: I dislike how crowded I am.
-					// HateCrowded: I hate how crowded I am.
-					// LikeNPC_Princess: I like {NPCName}.
-					// Princess_LovesNPC: I like {NPCName}.
+					NoHome: Я ненавижу, когда у меня нет дома.
+					Content:  Я удовлетворена.
+					FarFromHome: Я слишком далеко от дома.
+					LoveSpace: Мне нравится, когда у меня много места.
+					DislikeCrowded: Мне не нравится, когда у меня тесно.
+					HateCrowded: Я ненавижу, когда у меня тесно
+					LikeNPC_Princess: Мне нравится {NPCName}.
+					Princess_LovesNPC: Мне нравится {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Условия неизвестны
 			}
 
 			HomingMissile.DisplayName: Самонаводящаяся ракета
@@ -12432,7 +12461,7 @@ Mods: {
 			ClericOfSorrow.DisplayName: Жрец скорби
 			Willowisp.DisplayName: Блуждающий огонь
 			GreatRedThresher.DisplayName: Большой красный Молотильщик
-			LeonhardPhase2.DisplayName: Леонард Фаза2
+			LeonhardPhase2.DisplayName: Леонард Фаза 2
 			MountedSandsprog.DisplayName: Песчаный наездник
 			MountedSandsprogMage.DisplayName: Песчаный наездник-маг
 			Sandsprog.DisplayName: Песчаный бегун
@@ -12452,6 +12481,8 @@ Mods: {
 			AbyssCataclysm.DisplayName: Катаклизм бездны
 			AttraidiesShield.DisplayName: Щит Аттрайдиса
 			LichKingDisciple.DisplayName: Ученик Короля-лича
+			LeonhardRemix.DisplayName: Леонард
+			TrueDeath.DisplayName: Абсолютная смерть
 			// LeonhardRemix.DisplayName: Leonhard
 			// TrueDeath.DisplayName: Absolute Death
 			// DarkCloudShadow.DisplayName: Dark Cloud Shadow
@@ -12972,6 +13003,9 @@ Mods: {
 						''' */
 				}
 
+				DisableSoapstones: {
+					Tooltip: Вступает в силу только при создании новой карты
+					Label: Отключить белые знаки
 				RecommendedControls: {
 					// Label: Recommended Controls
 					/* Tooltip:
@@ -12997,6 +13031,7 @@ Mods: {
 			AdventureModeEnabled: Только режим приключений
 			DebugModeEnabled: Только для тестирования
 			BotCEnabled: Только для носителя проклятия
+			WyvernMageDowned: Маг виверн был побеждён
 			// SoulsModeEnabled: Unkindled or Bearer of the Curse
 			// WyvernMageDowned: The Wyvern Mage has been defeated
 			SorrowDowned: Скорбь была побеждена
@@ -13006,8 +13041,8 @@ Mods: {
 			SHM6Downed: Шестой страж бездны побёжден
 			SHM9Downed: Девятый страж бездны побеждён
 			RageDowned: Ярость была побеждена
-			// SlograGaibonDowned: Mods.tsorcRevamp.Conditions.SlograGaibonDowned
-			// AbysmalOolacileSorcererDowned: Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned
+			SlograGaibonDowned: Mods.tsorcRevamp.Conditions.SlograGaibonDowned
+			AbysmalOolacileSorcererDowned: Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned
 		}
 
 		Achievements: {
