@@ -37,8 +37,9 @@ class RuneMage : ModNPC
         NPC.knockBackResist = 0f;
         NPC.noGravity = false;
         NPC.noTileCollide = false;
-        NPC.width = 50;
-        NPC.height = 50;
+        NPC.width = 70;
+        NPC.height = 110;
+        NPC.scale = 0.75f;
         NPC.damage = ContactDmg;
         NPC.defense = Defense;
         HealthScale = Main.masterMode ? 1.5f : 1f;
@@ -191,20 +192,25 @@ class RuneMage : ModNPC
             }
         }*/
     }
-
+    private int ChatTimer = 0;
     private void IdlePatrolling(Player target)
     {
         if (Main.netMode == NetmodeID.Server | Main.netMode == NetmodeID.SinglePlayer)
         {
-            foreach (Player player in Main.ActivePlayers)
+            ChatTimer++;
+            if (ChatTimer > 120)
             {
-                var modPlayer = Main.player[player.whoAmI].GetModPlayer<tsorcRevampPlayer>();
-                modPlayer.RuneMageChatTimer++;
-                if (player.position.Distance(NPC.position) < 500 && modPlayer.RuneMageChatTimer > 120)
+                int speechRoll = Main.rand.Next(3) + 1;
+                
+                foreach (Player player in Main.ActivePlayers)
                 {
-                    ChatHelper.SendChatMessageToClient(NetworkText.FromKey("LocationinLangFile"), Color.Aqua, player.whoAmI);
-                    modPlayer.RuneMageChatTimer = 0;
+                    if (player.position.Distance(NPC.position) < 500)
+                    {
+                        ChatHelper.SendChatMessageToClient(NetworkText.FromKey("LocationinLangFile" + speechRoll), Color.Aqua, player.whoAmI);
+                    }
                 }
+
+                ChatTimer = 0;
             }
         }
     }
