@@ -619,21 +619,21 @@ namespace tsorcRevamp.Items
                 }
             }
 
-            // Dark Souls Storage: auto-file everything else (weapons, armor, mats, junk, ...) into the bottomless
-            // box. Hard-guarded types (potions/coins/favorited/quest/souls) fall through to normal pickup. If the
-            // storage cap is hit with a remainder, the leftover stays on the item and is picked up normally.
-            if (player.whoAmI == Main.myPlayer)
-            {
-                tsorcRevampPlayer mp = player.GetModPlayer<tsorcRevampPlayer>();
-                if (mp.IsStorageDepositable(item))
-                {
-                    if (mp.DepositToStorage(item))
-                    {
-                        SoundEngine.PlaySound(SoundID.Grab);
-                        return false; // fully stored — suppress the normal "got item" pickup
-                    }
-                }
-            }
+            // Dark Souls Storage: auto-file-on-pickup is disabled — all picked-up items go to the normal
+            // inventory like vanilla. Storage is still reachable manually (opener slot / keybind, and
+            // shift-click while the Storage UI is open via tsorcRevampPlayerMain.ShiftClickSlot).
+            // if (player.whoAmI == Main.myPlayer)
+            // {
+            //     tsorcRevampPlayer mp = player.GetModPlayer<tsorcRevampPlayer>();
+            //     if (mp.IsStorageDepositable(item))
+            //     {
+            //         if (mp.DepositToStorage(item))
+            //         {
+            //             SoundEngine.PlaySound(SoundID.Grab);
+            //             return false; // fully stored — suppress the normal "got item" pickup
+            //         }
+            //     }
+            // }
 
             return base.OnPickup(item, player);
         }
