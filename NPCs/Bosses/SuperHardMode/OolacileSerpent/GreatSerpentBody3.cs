@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             NPC.width = 18;
             NPC.height = 44;
             DrawOffsetY = 0;
-            NPC.aiStyle = 6;
+            NPC.aiStyle = -1; // fully custom AI (SerpentAI); -1 stops vanilla worm AI + its dig sound
             NPC.knockBackResist = 0;
             NPC.scale = 1f;
             NPC.timeLeft = 22750;

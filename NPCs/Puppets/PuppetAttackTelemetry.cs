@@ -15,6 +15,7 @@ namespace tsorcRevamp.NPCs.Puppets
         public int NpcId;
         public int NpcType;
         public string NpcName;
+        public string NpcContentName;
         public string AttackName;
         public string Phase;
         public int PhaseTimer;
@@ -87,22 +88,31 @@ namespace tsorcRevamp.NPCs.Puppets
         public float RawWeaponRotationDeg;
         public float DrawWeaponRotationDeg;
         public float CompositeArmRotationDeg;
+        public float BackCompositeArmRotationDeg;
         public float ArmWorldRotationDeg;
         public float ArmWeaponErrorDeg;
         public bool CompositeArmActive;
         public string CompositeStretch;
+        public bool BackCompositeArmActive;
+        public string BackCompositeStretch;
+        public Vector2 BackHandWorld;
+        public Vector2 BackGripTargetWorld;
+        public float BackGripError;
         public bool BladeArmed;
         public string SpriteEffects;
         public bool BladeFlipActive;
     }
 
     /// <summary>
-    /// Buffered JSON-lines telemetry for puppet attacks. Each attack is a self-contained run:
-    /// run_start -> ai_frame/render_frame records -> run_summary with derived anomaly flags.
+    /// Buffered JSON-lines telemetry for puppet attacks. Each world load owns a timestamped file,
+    /// and each attack is a self-contained run inside that session:
+    /// session_start -> run_start -> ai_frame/render_frame -> run_summary -> session_end.
     /// </summary>
     internal static class PuppetAttackTelemetry
     {
-        internal const string FileName = "tsorcRevamp-puppet-attack.jsonl";
+        private const string FileNamePrefix = "tsorcRevamp-puppet-attack";
+        internal static string FileName => _sessionFileName ?? $"{FileNamePrefix}-pending.jsonl";
+        internal static string SessionId => _sessionId ?? "pending";
 
         private sealed class RunState
         {
@@ -110,6 +120,7 @@ namespace tsorcRevamp.NPCs.Puppets
             public int NpcId;
             public int NpcType;
             public string NpcName;
+            public string NpcContentName;
             public string AttackName;
             public long StartTick;
             public int StartDirection;
@@ -125,6 +136,13 @@ namespace tsorcRevamp.NPCs.Puppets
             public float MaxRotationStepDeg;
             public float MaxLocalTipStep;
             public float MaxArmWeaponErrorDeg;
+            public float MaxBackGripError;
+            public float MaxBackArmRotationStepDeg;
+            public int BackArmRotationSnaps;
+            public int BackStretchChanges;
+            public bool HasLastBackArm;
+            public float LastBackArmRotationDeg;
+            public string LastBackStretch;
             public float MinTargetDistance = float.MaxValue;
             public float MaxNpcSpeed;
             public int HitWindowFrames;
@@ -153,12 +171,90 @@ namespace tsorcRevamp.NPCs.Puppets
         private static readonly Dictionary<int, RunState> ActiveRuns = new();
         private static readonly StringBuilder Buffer = new(64 * 1024);
         private static int _nextRunId = 1;
+        private static int _sessionRunCount;
+        private static string _sessionId;
+        private static string _sessionFileName;
+        private static DateTimeOffset _sessionStartedAt;
+        private static bool _sessionActive;
+        private static bool _sessionUnavailable;
 
         internal static bool IsActive(int npcId) => ActiveRuns.ContainsKey(npcId);
+
+        internal static void StartSession(string reason)
+        {
+            if (Main.dedServ)
+                return;
+
+            _sessionUnavailable = false;
+
+            if (_sessionActive)
+                EndSession($"restarted:{reason}");
+
+            ActiveRuns.Clear();
+            Buffer.Clear();
+            _nextRunId = 1;
+            _sessionRunCount = 0;
+            _sessionStartedAt = DateTimeOffset.Now;
+            _sessionId = _sessionStartedAt.ToString("yyyyMMdd-HHmmss-fff", CultureInfo.InvariantCulture);
+            _sessionFileName = CreateUniqueSessionFileName(_sessionId);
+            _sessionActive = true;
+
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(LogPath));
+                File.WriteAllText(LogPath, string.Empty);
+                AppendLine(
+                    $"{{\"event\":\"session_start\",\"schema\":3,\"session\":{Q(_sessionId)}," +
+                    $"\"startedAt\":{Q(_sessionStartedAt.ToString("O", CultureInfo.InvariantCulture))}," +
+                    $"\"reason\":{Q(reason)},\"world\":{Q(Main.worldName)},\"worldId\":{Main.worldID}," +
+                    $"\"file\":{Q(_sessionFileName)}}}", flush: true);
+            }
+            catch
+            {
+                Buffer.Clear();
+                _sessionActive = false;
+                _sessionUnavailable = true;
+            }
+        }
+
+        internal static void EndSession(string reason)
+        {
+            if (!_sessionActive)
+                return;
+
+            StopAll(reason);
+            DateTimeOffset endedAt = DateTimeOffset.Now;
+            AppendLine(
+                $"{{\"event\":\"session_end\",\"schema\":3,\"session\":{Q(_sessionId)}," +
+                $"\"endedAt\":{Q(endedAt.ToString("O", CultureInfo.InvariantCulture))}," +
+                $"\"reason\":{Q(reason)},\"runs\":{_sessionRunCount}," +
+                $"\"durationSeconds\":{F((float)(endedAt - _sessionStartedAt).TotalSeconds)}}}", flush: true);
+            _sessionActive = false;
+        }
+
+        private static void EnsureSession()
+        {
+            if (!_sessionActive && !_sessionUnavailable)
+                StartSession("lazy-start");
+        }
+
+        private static string CreateUniqueSessionFileName(string sessionId)
+        {
+            string fileName = $"{FileNamePrefix}-{sessionId}.jsonl";
+            string logDirectory = Path.Combine(Main.SavePath, "Logs");
+            int suffix = 2;
+            while (File.Exists(Path.Combine(logDirectory, fileName)))
+                fileName = $"{FileNamePrefix}-{sessionId}-{suffix++}.jsonl";
+            return fileName;
+        }
 
         internal static void RecordAI(PuppetAttackAiSample sample)
         {
             if (!PuppetNPC.SwingDebugLog || Main.dedServ)
+                return;
+
+            EnsureSession();
+            if (!_sessionActive)
                 return;
 
             PruneInactiveRuns();
@@ -229,8 +325,10 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             AppendLine(
-                $"{{\"event\":\"ai_frame\",\"run\":{run.RunId},\"tick\":{Main.GameUpdateCount}," +
-                $"\"npcId\":{sample.NpcId},\"phase\":{Q(sample.Phase)},\"phaseTimer\":{sample.PhaseTimer}," +
+                $"{{\"event\":\"ai_frame\",\"session\":{Q(SessionId)},\"run\":{run.RunId},\"tick\":{Main.GameUpdateCount}," +
+                $"\"puppet\":{Q(run.NpcContentName)},\"puppetDisplayName\":{Q(run.NpcName)}," +
+                $"\"puppetType\":{run.NpcType},\"npcId\":{sample.NpcId},\"attack\":{Q(run.AttackName)}," +
+                $"\"phase\":{Q(sample.Phase)},\"phaseTimer\":{sample.PhaseTimer}," +
                 $"\"motion\":{Q(sample.Motion)},\"step\":{sample.ComboStep},\"stepCount\":{sample.ComboStepCount}," +
                 $"\"dir\":{sample.Direction},\"spriteDir\":{sample.SpriteDirection},\"lockedDir\":{sample.LockedDirection}," +
                 $"\"targetPlayer\":{sample.TargetPlayerId},\"targetSide\":{sample.TargetSide}," +
@@ -269,10 +367,35 @@ namespace tsorcRevamp.NPCs.Puppets
             run.LastRenderTick = sample.Tick;
             run.RenderFrames++;
             run.MaxArmWeaponErrorDeg = Math.Max(run.MaxArmWeaponErrorDeg, sample.ArmWeaponErrorDeg);
+            if (sample.BackCompositeArmActive)
+                run.MaxBackGripError = Math.Max(run.MaxBackGripError, sample.BackGripError);
             if (sample.LockedDirection != 0 && sample.Direction != sample.LockedDirection)
                 run.LockMismatches++;
             if (run.RenderFrames > 1 && renderGap <= 2 && sample.Direction != run.LastDirection)
                 run.FacingChanges++;
+
+            if (sample.BackCompositeArmActive)
+            {
+                if (run.HasLastBackArm && renderGap <= 2)
+                {
+                    float backRotationStep = AngularDistanceDeg(
+                        sample.BackCompositeArmRotationDeg, run.LastBackArmRotationDeg);
+                    run.MaxBackArmRotationStepDeg = Math.Max(
+                        run.MaxBackArmRotationStepDeg, backRotationStep);
+                    if (backRotationStep > 45f)
+                        run.BackArmRotationSnaps++;
+                    if (sample.BackCompositeStretch != run.LastBackStretch)
+                        run.BackStretchChanges++;
+                }
+                run.HasLastBackArm = true;
+                run.LastBackArmRotationDeg = sample.BackCompositeArmRotationDeg;
+                run.LastBackStretch = sample.BackCompositeStretch;
+            }
+            else
+            {
+                run.HasLastBackArm = false;
+                run.LastBackStretch = null;
+            }
 
             Vector2 localTip = sample.VisualTipWorld - sample.NpcCenter;
             // Only compare consecutive visible frames. A thrown weapon can intentionally disappear
@@ -294,7 +417,9 @@ namespace tsorcRevamp.NPCs.Puppets
             run.LastDirection = sample.Direction;
 
             AppendLine(
-                $"{{\"event\":\"render_frame\",\"run\":{run.RunId},\"tick\":{sample.Tick}," +
+                $"{{\"event\":\"render_frame\",\"session\":{Q(SessionId)},\"run\":{run.RunId},\"tick\":{sample.Tick}," +
+                $"\"puppet\":{Q(run.NpcContentName)},\"puppetDisplayName\":{Q(run.NpcName)}," +
+                $"\"puppetType\":{run.NpcType},\"npcId\":{run.NpcId},\"attack\":{Q(run.AttackName)}," +
                 $"\"phase\":{Q(sample.Phase)},\"phaseTimer\":{sample.PhaseTimer},\"motion\":{Q(sample.Motion)}," +
                 $"\"dir\":{sample.Direction},\"spriteDir\":{sample.SpriteDirection}," +
                 $"\"lockedDir\":{sample.LockedDirection},\"npc\":{V(sample.NpcCenter)}," +
@@ -305,7 +430,12 @@ namespace tsorcRevamp.NPCs.Puppets
                 $"\"rawRotDeg\":{F(sample.RawWeaponRotationDeg)},\"drawRotDeg\":{F(sample.DrawWeaponRotationDeg)}," +
                 $"\"compositeRotDeg\":{N(sample.CompositeArmRotationDeg)},\"armWorldDeg\":{N(sample.ArmWorldRotationDeg)}," +
                 $"\"armWeaponErrorDeg\":{F(sample.ArmWeaponErrorDeg)},\"composite\":{B(sample.CompositeArmActive)}," +
-                $"\"stretch\":{Q(sample.CompositeStretch)},\"bladeArmed\":{B(sample.BladeArmed)}," +
+                $"\"stretch\":{Q(sample.CompositeStretch)}," +
+                $"\"backComposite\":{B(sample.BackCompositeArmActive)}," +
+                $"\"backCompositeRotDeg\":{N(sample.BackCompositeArmRotationDeg)}," +
+                $"\"backStretch\":{Q(sample.BackCompositeStretch)},\"backHand\":{V(sample.BackHandWorld)}," +
+                $"\"backGripTarget\":{V(sample.BackGripTargetWorld)},\"backGripError\":{F(sample.BackGripError)}," +
+                $"\"bladeArmed\":{B(sample.BladeArmed)}," +
                 $"\"effects\":{Q(sample.SpriteEffects)},\"bladeFlip\":{B(sample.BladeFlipActive)}}}");
         }
 
@@ -327,11 +457,9 @@ namespace tsorcRevamp.NPCs.Puppets
 
         internal static void Clear()
         {
-            ActiveRuns.Clear();
-            Buffer.Clear();
-            _nextRunId = 1;
-            Directory.CreateDirectory(Path.GetDirectoryName(LogPath));
-            File.WriteAllText(LogPath, string.Empty);
+            // Preserve the completed file for sharing; "clear" now means begin a fresh timestamped
+            // session instead of erasing the only copy of the previous run.
+            StartSession("manual-new-session");
         }
 
         private static RunState BeginRun(PuppetAttackAiSample sample)
@@ -342,6 +470,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NpcId = sample.NpcId,
                 NpcType = sample.NpcType,
                 NpcName = sample.NpcName,
+                NpcContentName = sample.NpcContentName,
                 AttackName = sample.AttackName,
                 StartTick = (long)Main.GameUpdateCount,
                 StartDirection = sample.Direction,
@@ -350,12 +479,14 @@ namespace tsorcRevamp.NPCs.Puppets
                 StartTargetCenter = sample.TargetCenter,
                 LastPhase = sample.Phase,
             };
+            _sessionRunCount++;
 
             Vector2 relativeTarget = sample.TargetCenter - sample.NpcCenter;
             AppendLine(
-                $"{{\"event\":\"run_start\",\"schema\":1,\"run\":{run.RunId},\"tick\":{run.StartTick}," +
+                $"{{\"event\":\"run_start\",\"schema\":3,\"session\":{Q(SessionId)},\"run\":{run.RunId},\"tick\":{run.StartTick}," +
                 $"\"time\":{Q(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture))}," +
-                $"\"npcId\":{sample.NpcId},\"npcType\":{sample.NpcType},\"npc\":{Q(sample.NpcName)}," +
+                $"\"puppet\":{Q(sample.NpcContentName)},\"puppetDisplayName\":{Q(sample.NpcName)}," +
+                $"\"puppetType\":{sample.NpcType},\"npcId\":{sample.NpcId}," +
                 $"\"attack\":{Q(sample.AttackName)},\"startPhase\":{Q(sample.Phase)},\"dir\":{sample.Direction}," +
                 $"\"npcStart\":{V(sample.NpcCenter)},\"targetStart\":{V(sample.TargetCenter)}," +
                 $"\"targetRelative\":{V(relativeTarget)},\"targetDistance\":{F(sample.TargetDistance)}," +
@@ -380,6 +511,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 anomalies.Add($"local_weapon_tip_snaps_over_48px:{run.TipSnaps}");
             if (run.MaxArmWeaponErrorDeg > 30f)
                 anomalies.Add($"arm_weapon_angle_error:{run.MaxArmWeaponErrorDeg:F1}deg");
+            if (run.BackArmRotationSnaps > 0)
+                anomalies.Add($"back_arm_rotation_snaps_over_45deg:{run.BackArmRotationSnaps}");
             if (run.MaxRetrieveIncreasingStreak >= 4)
                 anomalies.Add($"retrieval_moved_away_for_ticks:{run.MaxRetrieveIncreasingStreak}");
             if (run.RetrieveCrossings > 1)
@@ -390,15 +523,20 @@ namespace tsorcRevamp.NPCs.Puppets
             long duration = Math.Max(0L, (long)Main.GameUpdateCount - run.StartTick);
             string anomalyJson = "[" + string.Join(",", anomalies.Select(Q)) + "]";
             AppendLine(
-                $"{{\"event\":\"run_summary\",\"run\":{run.RunId},\"tick\":{Main.GameUpdateCount}," +
-                $"\"npc\":{Q(run.NpcName)},\"attack\":{Q(run.AttackName)},\"endReason\":{Q(reason)}," +
+                $"{{\"event\":\"run_summary\",\"session\":{Q(SessionId)},\"run\":{run.RunId},\"tick\":{Main.GameUpdateCount}," +
+                $"\"puppet\":{Q(run.NpcContentName)},\"puppetDisplayName\":{Q(run.NpcName)}," +
+                $"\"puppetType\":{run.NpcType},\"npcId\":{run.NpcId}," +
+                $"\"attack\":{Q(run.AttackName)},\"endReason\":{Q(reason)}," +
                 $"\"durationTicks\":{duration},\"aiFrames\":{run.AiFrames},\"renderFrames\":{run.RenderFrames}," +
                 $"\"phaseTransitions\":{run.PhaseTransitions},\"startDir\":{run.StartDirection}," +
                 $"\"hitWindowFrames\":{run.HitWindowFrames},\"bladeOverlapFrames\":{run.BladeOverlapFrames}," +
                 $"\"hitConnected\":{B(run.HitConnected)}," +
                 $"\"minTargetDistance\":{N(run.MinTargetDistance)},\"maxNpcSpeed\":{F(run.MaxNpcSpeed)}," +
                 $"\"maxRotationStepDeg\":{F(run.MaxRotationStepDeg)},\"maxLocalTipStep\":{F(run.MaxLocalTipStep)}," +
-                $"\"maxArmWeaponErrorDeg\":{F(run.MaxArmWeaponErrorDeg)},\"facingChanges\":{run.FacingChanges}," +
+                $"\"maxArmWeaponErrorDeg\":{F(run.MaxArmWeaponErrorDeg)},\"maxBackGripError\":{F(run.MaxBackGripError)}," +
+                $"\"maxBackArmRotationStepDeg\":{F(run.MaxBackArmRotationStepDeg)}," +
+                $"\"backArmRotationSnaps\":{run.BackArmRotationSnaps},\"backStretchChanges\":{run.BackStretchChanges}," +
+                $"\"facingChanges\":{run.FacingChanges}," +
                 $"\"lockMismatchFrames\":{run.LockMismatches},\"spriteDirectionMismatchFrames\":{run.SpriteDirectionMismatches}," +
                 $"\"thrownSeen\":{B(run.ThrownWeaponSeen)}," +
                 $"\"embeddedFrames\":{run.EmbeddedFrames},\"retrievalStarted\":{B(run.RetrievalStarted)}," +
@@ -457,6 +595,7 @@ namespace tsorcRevamp.NPCs.Puppets
             catch
             {
                 // Debug telemetry must never break combat or rendering.
+                Buffer.Clear();
             }
         }
     }

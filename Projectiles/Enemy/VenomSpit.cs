@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item54 with { Volume = 0.4f, PitchVariance = 0.2f }, Projectile.Center); //splash
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath26 with { Volume = 0.25f, PitchVariance = 0.2f }, Projectile.Center); //acid splash
 
             //Purple splash burst
             for (int i = 0; i < 18; i++)

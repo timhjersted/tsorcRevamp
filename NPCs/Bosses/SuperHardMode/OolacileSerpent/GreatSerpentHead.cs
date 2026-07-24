@@ -28,13 +28,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             NPC.netAlways = true;
             NPC.npcSlots = 6;
             //Head sprite sheet = 76 x (3 frames). Frame height auto-adapts to the PNG (76x303 -> 101/frame now;
-            //a 76x468 sheet -> 156/frame, both slice cleanly). Hitbox is a fair sub-rect of the visible head;
-            //DrawOffsetY 0 (tight crop). Tune width/height/DrawOffsetY in-game once you see the head move --
-            //bump the hitbox up if the head sprite ends up taller.
+            //a 76x468 sheet -> 156/frame, both slice cleanly). Hitbox is a fair sub-rect of the visible head.
+            //The neck-removed crop leaves ~15-25px of transparent padding below the rounded stub within each
+            //frame. That padding is compensated in PreDraw's rotation ORIGIN (HeadStubInsetFromBottom), not via
+            //DrawOffsetY -- DrawOffsetY is a fixed SCREEN-space nudge that never rotates with the head, so it
+            //produced a visual gap that stayed constant no matter how the neck was bent (the "head always N px
+            //above the body" bug). Leave this at 0; see PreDraw.
             NPC.width = 50;
             NPC.height = 64;
             DrawOffsetY = 0;
-            NPC.aiStyle = 6;
+            NPC.aiStyle = -1; // fully custom AI (SerpentAI); -1 stops vanilla worm AI + its dig sound
             NPC.scale = 1f;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
@@ -82,14 +85,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public int CrossOverDir;
 
         //Anti-stuck failsafe. If the head can't make progress (wedged on a ledge, marooned in a room above the
-        //player, boxed in), Unstick lets it phase straight toward the player through terrain for a while. Without
-        //this it can end up permanently marooned, since it otherwise only ever rides the surface it's standing on.
+        //player, boxed in), it forces a terrain-respecting RunWander window for a while. Without this it can end
+        //up permanently marooned, since it otherwise only ever rides the surface it's standing on. NEVER clips
+        //through terrain -- a prior version of this failsafe (Unstick) did, and was removed per feedback.
         public Vector2 StuckCheckPos = Vector2.Zero;
         public int StuckTimer;
-        public int UnstickTimer;
+        public int StuckWanderTimer;
         //Climb budget: how many more tiles of vertical rise this climb is allowed, so it can't ascend forever
         //(that's how it ended up inside a ceiling).
         public int ClimbBudget;
+
+        //-- SmartSerpent4AI navigation (see NPCs/SmartSerpent4AI.cs) --
+        //Span-graph A* plan state. Lives directly on the head alongside the other nav-adjacent fields
+        //(ClimbBudget/StuckTimer), per this boss's convention -- not a separate NavState object like SF4's.
+        public System.Collections.Generic.List<SmartSerpent4AI.PlanStep> Plan;
+        public int PlanIndex;
+        public int PlanStepTimer;        //progress/timeout countdown for the current step
+        public int ReplanCooldownTimer;  //min gap between graph rebuilds (SF4's ReplanCooldown convention)
+        //Recently-failed step targets (tile coords) -> expiry tick; the planner penalizes routes through them.
+        public System.Collections.Generic.Dictionary<(int x, int y), int> BadEdges = new System.Collections.Generic.Dictionary<(int, int), int>();
+        public string LastPlanResult = "";
 
         //How long it's been unable to reach the player (no LOS / out of range). Drives wander, then despawn.
         public int UnreachableTimer;
@@ -97,6 +112,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
 
         //Diagnostics (Logs/tsorcRevamp-serpent.log)
         public string LastAction = "init";
+
+        //Repeating slither-movement sound cadence (only plays near top speed).
+        public int MoveSoundTimer;
+
+        //Tail hide/reveal: 0 = fully collapsed/invisible into the last body segment, 1 = fully out. Idles at 0;
+        //ramps to 1 the instant a tail attack starts (so it "pokes out" through Coiling) and back to 0 after.
+        public float TailExtend;
 
         public int ChargeTelegraphTimer;
         public int ChargeTimer;
@@ -158,9 +180,50 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public Vector2 TailStabAnchor;  //junction (last grounded segment) world center = the arc's base
         public bool TailStabDamaging;   //true only during the downward stab -> tail contact damage on
 
+        //-- Predator-style hunting cloak + scripted HP-threshold ambush --
+        //0 = fully visible; >0 = the alpha the WHOLE chain (every segment reads this off the head) should show.
+        //Two different depths: a light cloak while hunting without line of sight, a much deeper one during the
+        //scripted ambush below. See SerpentAI's IdleCloakAlpha/AmbushCloakAlpha/CloakCooldownTicks.
+        public int CloakAlphaTarget;
+        public int CloakCooldown; //ticks left before the hunting cloak (not the ambush) may trigger again
+
+        //Retreat-then-sneak-attack: at each 30%-of-max-HP step lost, vanish, sneak back in from the shadows,
+        //and reveal itself right as the next attack's telegraph begins (see SerpentAI.RunAmbush).
+        public enum AmbushState { None, Vanish, Reposition }
+        public AmbushState Ambush = AmbushState.None;
+        public int AmbushTimer;
+        public int AmbushThresholdsTriggered; //how many 30% HP steps have already spent their ambush, so each fires once
+
+        //-- Scripted death: fade to invisible + spray blood instead of an instant vanilla pop --
+        //CheckDead() intercepts the killing blow (see below) so this can play out over DeathFadeDuration ticks
+        //before the real kill (loot/OnKill/etc) actually happens.
+        public bool IsDying;
+        public int DeathFadeTimer;
+
         public override bool CheckActive()
         {
             return false;
+        }
+
+        ///<summary>
+        ///Intercepts the killing blow: the first time life would hit 0, cancel the real death (return false),
+        ///peg life at 1 and stop damage, and let SerpentAI's RunDeathFade play a fade-to-invisible + blood-spray
+        ///sequence in AI() for DeathFadeTimer ticks. Once that finishes it sets life back to 0 and calls
+        ///NPC.checkDead() itself, which calls back in here -- by then DeathFadeTimer is <=0, so this returns true
+        ///and the real kill (loot, OnKill, despawn) finally goes through, exactly once.
+        ///</summary>
+        public override bool CheckDead()
+        {
+            if (!IsDying)
+            {
+                IsDying = true;
+                DeathFadeTimer = SerpentAI.DeathFadeDuration;
+                NPC.life = 1;
+                NPC.dontTakeDamage = true;
+                NPC.netUpdate = true;
+                return false;
+            }
+            return DeathFadeTimer <= 0;
         }
 
         public override void AI()
@@ -203,22 +266,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             NPC.frame.Y = frameHeight * frame;
         }
 
-        //Sprite echoes during the bite/pounce lunges, same convention as LeonhardPhase2.PreDraw.
+        //The frame's rotation pivot: normally frame-center, but the neck-removed crop leaves transparent padding
+        //BELOW the actual neck stub, so the true joint sits above the frame's bottom edge by this many pixels.
+        //MUST live in the rotation origin (rotates with the sprite), not a translated draw position -- see the
+        //DrawOffsetY comment in SetDefaults for why. Bumped 20 -> 60 (+40px) per in-game feedback: the first
+        //guess still left a visible gap between the head and the neck.
+        const float HeadStubInsetFromBottom = 60f;
+
+        //Full custom draw (returns false): sprite echoes during the bite/pounce lunges, same convention as
+        //LeonhardPhase2.PreDraw, then the real head using a pivot that stays correct under rotation.
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Vector2 origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height - HeadStubInsetFromBottom);
+
             if (IsLunging)
             {
-                Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                Vector2 origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height / 2f);
                 for (int k = 0; k < NPC.oldPos.Length; k++)
                 {
-                    Vector2 drawPos = NPC.oldPos[k] + new Vector2(NPC.width / 2f, NPC.height / 2f + DrawOffsetY + NPC.gfxOffY) - screenPos;
+                    Vector2 drawPos = NPC.oldPos[k] + new Vector2(NPC.width / 2f, NPC.height / 2f) - screenPos;
                     Color color = NPC.GetAlpha(drawColor) * ((float)(NPC.oldPos.Length - k) / NPC.oldPos.Length) * 0.6f;
                     spriteBatch.Draw(texture, drawPos, NPC.frame, color, NPC.rotation, origin, NPC.scale, effects, 0f);
                 }
             }
-            return true;
+
+            spriteBatch.Draw(texture, NPC.Center - screenPos, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, effects, 0f);
+            return false;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -227,6 +301,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         }
 
         //Poise break: cancel whatever SerpentAI was mid-doing so the flop doesn't fight leftover state.
-        public void OnStagger(NPC npc) => SerpentAI.OnStagger(npc);
+        //Also strips the cloak -- a staggered flop should always be fully visible, win or lose.
+        public void OnStagger(NPC npc)
+        {
+            SerpentAI.OnStagger(npc);
+            CloakAlphaTarget = 0;
+            npc.alpha = 0;
+        }
     }
 }

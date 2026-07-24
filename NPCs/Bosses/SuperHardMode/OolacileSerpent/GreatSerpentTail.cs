@@ -24,11 +24,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         {
             NPC.netAlways = true;
             NPC.npcSlots = 2;
-            //Tight-cropped sprite (GreatSerpentTail.png = 22x44). Height is the along-chain link length.
-            NPC.width = 22;
-            NPC.height = 44;
+            //Tight-cropped sprite (GreatSerpentTail.png is actually 10x98 -- long and narrow; these dims were
+            //stale copy-paste from Body2's 22x44 and didn't match the real art at all, which is very likely why
+            //the tail read as bent/misaligned/wrong-facing: physics packed it at a ~44px link length while the
+            //ACTUAL drawn sprite was more than double that, so the visible tail always overshot well past where
+            //the chain math thought it ended). Height is the along-chain link length.
+            NPC.width = 10;
+            NPC.height = 98;
             DrawOffsetY = 0;
-            NPC.aiStyle = 6;
+            NPC.aiStyle = -1; // fully custom AI (SerpentAI); -1 stops vanilla worm AI + its dig sound
             NPC.knockBackResist = 0;
             NPC.scale = 1f;
             NPC.timeLeft = 22750;
