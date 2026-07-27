@@ -91,6 +91,34 @@ namespace tsorcRevamp.Items
                 return false;
             }
 
+            tsorcRevampPlayer soulsPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+            // Carried over from the Bearer-of-the-Curse gate further below, which has always exempted
+            // these three. They were never stamina-blocked, so the new universal gate must not start
+            // blocking them without that being a deliberate call.
+            bool exemptFromStaminaGate =
+                item.type == ModContent.ItemType<Weapons.Ranged.Bows.SagittariusBow>()
+                || item.type == ModContent.ItemType<Weapons.Ranged.Bows.ArtemisBow>()
+                || item.type == ModContent.ItemType<Weapons.Ranged.Bows.CernosPrime>();
+
+            // Dark Souls gate: any stamina at all lets you commit to the swing, even when it costs more
+            // than you have. Overdrawing dumps you to zero and the regen delay locks you out — that
+            // lockout is the punishment, not a refusal to swing and not an exhaustion debuff.
+            //
+            // Requiring the full cost up front was tried and removed: it made a weapon silently
+            // unresponsive at partial stamina, and it prevented the very overdraw it was meant to price.
+            if (soulsPlayer.UsesWeaponStamina && item.damage >= 1 && !item.accessory && !exemptFromStaminaGate)
+            {
+                tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                if (staminaPlayer.staminaResourceCurrent <= 0f)
+                {
+                    // No "Tired" floating text — the weapon simply not swinging, plus the empty stamina bar,
+                    // already communicates this. The text fired on every attempted swing while empty, which is
+                    // exactly when a player is mashing the button, so it spammed hardest when least wanted.
+                    return false;
+                }
+            }
+
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if ((player.GetModPlayer<tsorcRevampPlayer>().isDodging && !player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging) || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking || player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
@@ -98,33 +126,13 @@ namespace tsorcRevamp.Items
                     return false;
                 }
 
-                if (item.damage >= 1 && item.useAnimation * .8f > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent == player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
-                {
-                    return true;
-                }
-                else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && !item.CountsAsClass(DamageClass.Melee) && !(item.type == ModContent.ItemType<Weapons.Ranged.Bows.SagittariusBow>() || item.type == ModContent.ItemType<Weapons.Ranged.Bows.ArtemisBow>() || item.type == ModContent.ItemType<Weapons.Ranged.Bows.CernosPrime>()))
-                {
-                    if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
-                    {
-                        CombatText.NewText(player.Hitbox, Color.White, LangUtils.GetTextValue("UI.Tired"));
-                    }
-                    return false;
-                }
-                else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.GetAttackSpeed(DamageClass.Melee) * .8f && item.CountsAsClass(DamageClass.Melee))
-                {
-                    if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
-                    {
-                        CombatText.NewText(player.Hitbox, Color.White, LangUtils.GetTextValue("UI.Tired"));
-                    }
-                    return false;
-                }
+                // The old Bearer-of-the-Curse cost gate (block unless stamina >= useAnimation * 0.8) has
+                // been removed. It required the full price up front, which is the opposite of the Dark
+                // Souls rule now applied above to both Souls classes, and being BotC-only it would have
+                // left BotC unable to overdraw while Unkindled could.
 
                 if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 50 && (item.type == ModContent.ItemType<Weapons.Magic.DivineSpark>() || (item.type == ModContent.ItemType<Weapons.Magic.DivineBoomCannon>())))
                 {
-                    if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
-                    {
-                        CombatText.NewText(player.Hitbox, Color.White, LangUtils.GetTextValue("UI.Tired"));
-                    }
                     return false;
                 }
 
@@ -482,6 +490,12 @@ namespace tsorcRevamp.Items
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+            if (player.whoAmI == Main.myPlayer
+                && modPlayer.UsesWeaponStamina)
+            {
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().RecordWeaponOutputDamage(item.type, damageDone);
+            }
+
             if (modPlayer.MiakodaCrescentBoost)
             {
                 target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 240);
@@ -552,6 +566,26 @@ namespace tsorcRevamp.Items
                 if (hit.Crit)
                 {
                     player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
+                }
+            }
+            // Attunement: magic builds the same Conqueror stacks, but cashes them out as a mana-cost
+            // reduction instead of summon damage (see tsorcRevampPlayer.ModifyManaCost). Magic's
+            // scarcity in Souls mode is mana, not damage — passive regen is pinned off and every point
+            // comes from a Cerulean charge — so the reward is more casts per charge, not bigger hits.
+            if (item.DamageType == DamageClass.Magic && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                if (modPlayer.BotCAttunementStacks < modPlayer.BotCAttunementMaxStacks - 1)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
+                }
+                else if (modPlayer.BotCAttunementStacks == modPlayer.BotCAttunementMaxStacks - 1)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
+                }
+                player.AddBuff(ModContent.BuffType<Buffs.Runeterra.Magic.Attunement>(), player.GetModPlayer<tsorcRevampPlayer>().BotCAttunementDuration * 60);
+                if (hit.Crit)
+                {
+                    player.AddBuff(ModContent.BuffType<Buffs.Runeterra.Magic.Attunement>(), player.GetModPlayer<tsorcRevampPlayer>().BotCAttunementDuration * 60);
                 }
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && tsorcRevamp.EnemiesOOA.Contains(target.type))

@@ -10,7 +10,17 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
     public class ChloranthyRing2 : ModItem
     {
+        // The Chloranthy line is the dedicated stamina-regen accessory and is meant to be the BEST source of it:
+        // 25% beats the Bottomless Green Tea Pot's 20%, which is correct because this costs an accessory slot
+        // and the pot costs nothing to carry. A no-slot permanent should be the floor, not the ceiling.
         public static float StaminaRecoverySpeed = 25f;
+        /// <summary>Percentage points of shield-hold movement slow this ring cancels (see
+        /// tsorcRevampActiveShieldPlayer.ApplyBlockSlow). Ring II replaces Ring I rather than stacking.</summary>
+        public static float ShieldSlowReduction = 8f;
+        /// <summary>Percent cut from the post-spend stamina regen DELAY (tsorcRevampStaminaPlayer.PauseStaminaRegen).</summary>
+        public static float RegenDelayReduction = 20f;
+        /// <summary>Percent of normal stamina regen retained while a shield is RAISED (normally zero).</summary>
+        public static float BlockStaminaRegen = 20f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRecoverySpeed);
         public override void SetStaticDefaults()
         {

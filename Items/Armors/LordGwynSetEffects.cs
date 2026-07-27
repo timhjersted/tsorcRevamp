@@ -161,7 +161,7 @@ namespace tsorcRevamp.Items.Armors
             Player.fireWalk = true;
             Player.buffImmune[BuffID.OnFire] = true;
             Player.buffImmune[BuffID.OnFire3] = true;
-            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + LordGwynSetEffects.SetStaminaRegen / 100f;
+            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += LordGwynSetEffects.SetStaminaRegen / 100f;
             Player.armorEffectDrawShadow = true;
 
             if (AboveHalfMana)

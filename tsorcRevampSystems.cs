@@ -1603,7 +1603,7 @@ namespace tsorcRevamp
             int GetFillWidth(float val, float maxVal) => (int)ScaleResource(Math.Min(val, maxVal));
 
             // Reusable bar drawing helper using 3-slice rendering of the overhead stamina bar sprite
-            void DrawBar(int y, float current, float visualCurrent, float max, Color fillColor, Color highlightColor, Color shadowColor, Color bgColor)
+            void DrawBar(int y, float current, float visualCurrent, float max, Color fillColor, Color highlightColor, Color shadowColor, Color bgColor, float debt = 0f)
             {
                 int maxBarWidth = GetBarWidth(max);
                 int startX = rightX - maxBarWidth;
@@ -1642,6 +1642,18 @@ namespace tsorcRevamp
                         // Draw yellow shadow (bottom row, 2px high)
                         spriteBatch.Draw(pixel, new Rectangle(startX + fillStart, y + 9, fillWidth, 2), new Color(160, 110, 10));
                     }
+                }
+
+                // Stamina debt: what you owe from overdrawing, drawn red from the left edge. It only ever exists
+                // while current is 0, so it can never overlap the normal fill — the bar reads as red draining
+                // away to nothing, and only then does green start climbing back. That sequence is the whole
+                // point: it shows the player WHY they're locked out, and for how much longer.
+                int debtFillWidth = GetFillWidth(debt, max);
+                if (debtFillWidth > 0)
+                {
+                    spriteBatch.Draw(pixel, new Rectangle(startX, y + 2, debtFillWidth, 2), new Color(235, 90, 90));
+                    spriteBatch.Draw(pixel, new Rectangle(startX, y + 4, debtFillWidth, 5), new Color(190, 35, 45));
+                    spriteBatch.Draw(pixel, new Rectangle(startX, y + 9, debtFillWidth, 2), new Color(110, 15, 25));
                 }
 
                 // Draw current resource fill
@@ -1702,9 +1714,11 @@ namespace tsorcRevamp
 
             // Stamina (Green)
             int stamY = startY + (barHeight + gap) * 2;
-            DrawBar(stamY, staminaCurrent, visualStamina, staminaMax, new Color(40, 190, 80), new Color(120, 230, 150), new Color(15, 90, 40), new Color(10, 40, 15, 180));
+            DrawBar(stamY, staminaCurrent, visualStamina, staminaMax, new Color(40, 190, 80), new Color(120, 230, 150), new Color(15, 90, 40), new Color(10, 40, 15, 180), staminaPlayer.staminaDebt);
 
-            // Retain divider line on Stamina bar (dodge threshold at 30 stamina)
+            // Divider at the dodge roll's cost. This used to mark the hard minimum needed to roll at all; the roll
+            // now follows the universal rule (any stamina above zero) so it instead reads as "below this line,
+            // rolling puts you into debt" — which is more useful information than the old gate ever was.
             if (staminaMax > 30)
             {
                 int stamStartX = rightX - GetBarWidth(staminaMax);

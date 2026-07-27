@@ -84,6 +84,9 @@ namespace tsorcRevamp.Projectiles
         public bool ModdedFlail = false;
         public bool KrakenEmpowered = false;
 
+        public int WeaponStaminaSourceItemType = -1;
+        public bool WeaponStaminaSourceIsSummon;
+
         // Per-projectile poise-damage lever, mirrors tsorcInstancedGlobalItem.WeaponPoiseMultiplier for melee weapons.
         // Multiplies the knockback-derived poise damage THIS projectile deals (see project_poise_stagger_system). Does
         // NOT affect the projectile's actual knockback/flinch — only the stagger meter. Set it from the ModProjectile's
@@ -103,6 +106,28 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
+
+            // Attribute projectile and child-projectile damage to the item activation that produced it.
+            if (source is EntitySource_ItemUse_WithAmmo withAmmo && withAmmo.Item != null && !withAmmo.Item.IsAir)
+            {
+                WeaponStaminaSourceItemType = withAmmo.Item.type;
+                WeaponStaminaSourceIsSummon = withAmmo.Item.DamageType == DamageClass.Summon;
+            }
+            else if (source is EntitySource_ItemUse itemUse && itemUse.Item != null && !itemUse.Item.IsAir)
+            {
+                WeaponStaminaSourceItemType = itemUse.Item.type;
+                WeaponStaminaSourceIsSummon = itemUse.Item.DamageType == DamageClass.Summon;
+            }
+            else if (source is EntitySource_Parent { Entity: Projectile parent })
+            {
+                tsorcGlobalProjectile parentData = parent.GetGlobalProjectile<tsorcGlobalProjectile>();
+                WeaponStaminaSourceItemType = parentData.WeaponStaminaSourceItemType;
+                WeaponStaminaSourceIsSummon = parentData.WeaponStaminaSourceIsSummon;
+            }
+
+            WeaponStaminaSourceIsSummon |= projectile.minion
+                || projectile.sentry
+                || projectile.DamageType == DamageClass.Summon;
             /*projectilesource experiments
              * if (projectile.type == ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>())
             {
@@ -470,6 +495,33 @@ namespace tsorcRevamp.Projectiles
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+            if (projectile.owner == Main.myPlayer
+                && projectile.friendly
+                && !projectile.hostile
+                && modPlayer.UsesWeaponStamina)
+            {
+                tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                // Minion damage must NOT feed the summoning staff's measured damage-per-use. The output EMA
+                // banks everything a weapon deals between activations, and a minion keeps dealing damage for
+                // as long as it's alive — so a staff summoned once and left running would record minutes of
+                // minion output as the cost of a single cast, pinning it at the relativePower clamp forever.
+                // Excluding it lets the staff fall back to its own damage value, so a summon is priced like
+                // the single deliberate action it is. Minions still pay their own way just below.
+                if (WeaponStaminaSourceItemType > 0 && !WeaponStaminaSourceIsSummon)
+                {
+                    staminaPlayer.RecordWeaponOutputDamage(WeaponStaminaSourceItemType, damageDone);
+                }
+                // DISABLED: minions no longer drain stamina. A minion is "cast once, damage forever", so a
+                // per-damage drain is an uncontrollable tax — it scales with how long a fight runs and how many
+                // minions are out, neither of which the player is actively choosing moment to moment. The
+                // summoner's stamina cost now lives entirely on the inputs they control: the staff cast and
+                // whip swings. Re-enable by uncommenting if minions should nibble stamina again.
+                //if (WeaponStaminaSourceIsSummon)
+                //{
+                //    staminaPlayer.SpendStaminaForSummonDamage(damageDone);
+                //}
+            }
+
             if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaCrescent>())
             {
                 target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 3 * 60); // Adds the ExampleJavelin debuff for a very small DoT
@@ -790,12 +842,10 @@ namespace tsorcRevamp.Projectiles
                     if (HitSomething)
                     {
                         modPlayer.BotCCurrentAccuracyPercent += modPlayer.BotCAccuracyGain;
-                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCHit", (int)(MathF.Min(modPlayer.BotCCurrentAccuracyPercent, 1f) * 100f)));
                     }
-                    else if (!HitSomething)
+                    else
                     {
                         modPlayer.BotCCurrentAccuracyPercent -= modPlayer.BotCAccuracyLoss;
-                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCMiss", (int)(MathF.Max(modPlayer.BotCCurrentAccuracyPercent, 0) * 100f)));
                     }
                     if (modPlayer.BotCCurrentAccuracyPercent > modPlayer.BotcAccuracyPercentMax)
                     {
@@ -805,6 +855,25 @@ namespace tsorcRevamp.Projectiles
                     {
                         modPlayer.BotCCurrentAccuracyPercent = 0;
                     }
+
+                    // Combat text fires only when the meter crosses into a new 10% band — the same bands the
+                    // Accuracy buff icon shows — instead of once per projectile. That's roughly a tenth of the
+                    // text, and what remains actually means something: your crit tier changed. The exact
+                    // percentage now lives permanently in the buff tooltip rather than scrolling past.
+                    // The two extremes always announce themselves, since bottoming out and capping are the
+                    // states worth noticing.
+                    int band = Buffs.Runeterra.Ranged.Accuracy.BandOf(modPlayer.BotCCurrentAccuracyPercent);
+                    bool atExtreme = modPlayer.BotCCurrentAccuracyPercent <= 0f
+                                     || modPlayer.BotCCurrentAccuracyPercent >= modPlayer.BotcAccuracyPercentMax;
+                    if ((band != modPlayer.BotCLastAccuracyBand || atExtreme)
+                        && owner.whoAmI == Main.myPlayer
+                        && ModContent.GetInstance<tsorcRevampConfig>().AccuracyCombatText)
+                    {
+                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue(
+                            HitSomething ? "UI.BotCHit" : "UI.BotCMiss",
+                            (int)(modPlayer.BotCCurrentAccuracyPercent * 100f)));
+                    }
+                    modPlayer.BotCLastAccuracyBand = band;
                 }
             }
 

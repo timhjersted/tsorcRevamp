@@ -1121,6 +1121,11 @@ namespace tsorcRevamp
             MastersScroll.SetDefaults(ModContent.ItemType<MastersScroll>());
             startingItems.Add(MastersScroll);
 
+            // Reference book for the mod's non-vanilla systems. Right-click pages through it.
+            Item GameManual = new Item();
+            GameManual.SetDefaults(ModContent.ItemType<Items.Lore.GameManual>());
+            startingItems.Add(GameManual);
+
             if (!mediumCoreDeath)
             {
                 startingItems.Add(CreateStartingItem(ModContent.ItemType<RecommendedControls>()));

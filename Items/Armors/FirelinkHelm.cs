@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.Armors
             player.fireWalk = true;
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.OnFire3] = true;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + SetStaminaRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += SetStaminaRegen / 100f;
         }
 
         public override void ArmorSetShadows(Player player)

@@ -118,7 +118,12 @@ namespace tsorcRevamp
         public float BotCRangedBaseCritMult = 0.5f;
         public float BotCCurrentAccuracyPercent = 0f;
         public float BotcAccuracyPercentMax = 1f;
-        public float BotCAccuracyMaxFlatCrit = 8.5f;
+        // 10, not 8.5, so each of the ten 10% accuracy bands is worth exactly 1% crit — the buff icon shows
+        // which band you're in, and "one frame = one percent" is a rule the player can hold in their head.
+        public float BotCAccuracyMaxFlatCrit = 10f;
+        /// <summary>Which 10% band the accuracy meter was in last frame, for the buff icon frame and to fire
+        /// combat text only on band changes instead of on every projectile. -1 = uninitialised.</summary>
+        public int BotCLastAccuracyBand = -1;
         public float BotCAccuracyMaxCritMult = 0.75f;
         public float BotCAccuracyGain = 0.04f;
         public float BotCAccuracyLoss = 0.08f;
@@ -133,6 +138,15 @@ namespace tsorcRevamp
         public float BotCConquerorStacks = 0;
         public int BotCConquerorMaxStacks = 10;
         public float BotCConquerorBonus = 0.06f;
+
+        // Attunement (magic). Its own counter rather than sharing Conqueror's, so the two buffs can
+        // each describe themselves accurately and a magic/summon hybrid isn't paid twice per stack.
+        /// <summary>Mana cost reduction per stack. At the 10-stack cap this is 30% off, roughly 1.43x
+        /// the casts out of one Cerulean charge — a real stretch without trivialising the flask economy.</summary>
+        public float BotCAttunementManaReduction = 0.03f;
+        public int BotCAttunementDuration = 4;
+        public float BotCAttunementStacks = 0;
+        public int BotCAttunementMaxStacks = 10;
         public float BotCFullConquerorBonusTagDuration = 0.1f;
 
         public bool SteraksGage = false;
@@ -368,10 +382,59 @@ namespace tsorcRevamp
         // bonfire refills, drop bonuses, recipe conditions) on this. BotC-only features keep checking BearerOfTheCurse.
         public bool SoulsMode => Unkindled || BearerOfTheCurse;
 
-        // Weapon stamina usage. Bearer of the Curse pays full stamina for attacks; Unkindled pays 75% (so stamina still matters but isn't punishing); Classic pays none. Gate weapon-stamina
-        // drains on UsesWeaponStamina and scale the amount by WeaponStaminaMult.
+        /// <summary>
+        /// Attunement payout: Conqueror stacks make magic cheaper to cast.
+        ///
+        /// Restricted to magic so it can't quietly discount summon staves, which already benefit from
+        /// the same stacks through Conqueror's damage bonus and would otherwise be paid twice.
+        /// </summary>
+        public override void ModifyManaCost(Item item, ref float reduce, ref float mult)
+        {
+            if (!BearerOfTheCurse || BotCAttunementStacks <= 0 || item.DamageType != DamageClass.Magic)
+            {
+                return;
+            }
+
+            float reduction = Math.Min(
+                BotCAttunementStacks * BotCAttunementManaReduction,
+                BotCAttunementMaxStacks * BotCAttunementManaReduction);
+            mult *= 1f - reduction;
+        }
+
+        // Weapon stamina usage. Classic pays none either way.
+        //
+        // BASE (0.85 Unkindled / 1.15 BotC, paired with 1.25 and 2.0 regen in tsorcRevampPlayerStamina):
+        // the two classes drain at nearly the same net rate (~-14/sec each while attacking). The old base
+        // (0.75 / 1.0 with 1.0 and 2.0 regen) left BotC at only ~-9/sec versus Unkindled's ~-14/sec, so its
+        // 2x regen very nearly cancelled its higher cost and the higher-power class was the one that felt
+        // the resource LEAST. Converging them means the classes differ in tempo — BotC spends and recovers
+        // faster — rather than in how much stamina constrains them.
+        //
+        // EXPERIMENTAL (config, default off): pushes both costs up and widens the regen gap instead.
+        /// <summary>
+        /// Convert a "percent of max life per second" drain into Terraria's lifeRegen units.
+        ///
+        /// lifeRegen is half-HP per second (the engine adds it to lifeRegenCount each frame and grants 1 HP per
+        /// 120), hence the x2. Floored at 2 (-1 HP/sec) so a low-life character still feels the curse.
+        /// Percent rather than flat because a flat drain shrinks against a growing pool: the old flat 8 cost 80%
+        /// of an early 100 HP bar over 20s but only 20% of a late 400 HP one.
+        /// </summary>
+        private int PercentLifeDrain(float percentPerSecond)
+            => Math.Max(2, (int)Math.Round(Player.statLifeMax2 * percentPerSecond * 2f / 100f));
+
         public bool UsesWeaponStamina => BearerOfTheCurse || Unkindled;
-        public float WeaponStaminaMult => (BearerOfTheCurse ? 1f : (Unkindled ? 0.75f : 0f)) * TiredStaminaMult;
+        public float WeaponStaminaMult
+        {
+            get
+            {
+                bool experimentalStaminaValues = ModContent.GetInstance<tsorcRevampConfig>().NewSoulsModeStaminaSystem;
+                float classStaminaMult = BearerOfTheCurse
+                    ? (experimentalStaminaValues ? 1.5f : 1.15f)
+                    : (Unkindled ? (experimentalStaminaValues ? 1f : 0.85f) : 0f);
+
+                return classStaminaMult * TiredStaminaMult;
+            }
+        }
 
         // Tired debuff: +25% stamina cost on everything that spends it. Applied here so every existing
         // WeaponStaminaMult read picks it up automatically; the dodge roll's flat stamina cost (which doesn't
@@ -1333,6 +1396,18 @@ namespace tsorcRevamp
                 Player.noKnockback = true;
             }
 
+            // Accuracy meter readout. Unlike its stack-based siblings this isn't granted by landing a hit — it's
+            // a persistent meter, so the buff is refreshed every frame (2 ticks to avoid flicker) rather than
+            // given a duration. Shown while you're holding a ranged weapon OR the meter is above zero, so a
+            // ranged build always has the readout while a melee BotC never sees it on their buff bar.
+            if (BearerOfTheCurse
+                && (BotCCurrentAccuracyPercent > 0f
+                    || (Player.HeldItem != null && !Player.HeldItem.IsAir
+                        && Player.HeldItem.DamageType == DamageClass.Ranged && Player.HeldItem.damage > 0)))
+            {
+                Player.AddBuff(ModContent.BuffType<Buffs.Runeterra.Ranged.Accuracy>(), 2);
+            }
+
             if (Player.HasBuff(BuffID.WellFed))
             {
                 Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += MinorEdits.BotCWellFedStaminaRegen / 100f;
@@ -1544,11 +1619,6 @@ namespace tsorcRevamp
             if (manaShield > 0)
             {
                 Player.manaRegenBuff = false;
-            }
-
-            if (Player.position.X == Player.oldPosition.X)
-            {
-                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.5f;
             }
 
             if (Shunpo && !Player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
@@ -2297,7 +2367,17 @@ namespace tsorcRevamp
                     Player.lifeRegen = 0;
                 }
                 Player.lifeRegenTime = 0;
-                Player.lifeRegen -= 8;
+                // Both drains are percent-of-max-life and they STACK deliberately — Symbol of Avarice and Power
+                // Within are unrelated curses, and wearing the greed helm while burning your own life force
+                // should cost what both cost.
+                if (SOADrain)
+                {
+                    Player.lifeRegen -= PercentLifeDrain(Items.Armors.SymbolOfAvarice.LifeDrainPercent);
+                }
+                if (PowerWithin)
+                {
+                    Player.lifeRegen -= PercentLifeDrain(Items.Tools.PowerWithin.LifeDrainPercent);
+                }
                 if (Main.rand.NextBool(3))
                 {
                     int dust = Dust.NewDust(Player.position, Player.width, Player.height, 235, Player.velocity.X, Player.velocity.Y, 140, default, 0.8f);
@@ -2362,19 +2442,13 @@ namespace tsorcRevamp
                 Player.lifeRegen /= 2;
             }
 
-            // Unkindled life regen penalty — mirrors the mana-regen design: only fires when in combat
-            // or away from a bonfire, and at half BotC's strength (−25% vs BotC's −50%) since Unkindled
-            // is the gentler tier. The BotC halving above already covers BotC's full−50%, gated on its
-            // own "stamina not full" condition (which fires constantly in BotC combat).
-            if (Player.GetModPlayer<tsorcRevampPlayer>().Unkindled && Player.lifeRegen > 0)
-            {
-                bool inCombatOrAwayFromBonfire = Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200])
-                                                  || !Player.HasBuff(ModContent.BuffType<Bonfire>());
-                if (inCombatOrAwayFromBonfire)
-                {
-                    Player.lifeRegen = Player.lifeRegen * 3 / 4;
-                }
-            }
+            // Unkindled and Bearer of the Curse now share the same −50% life regen, applied by the
+            // "stamina not full" halving above (which is not class-gated, so it covers both).
+            //
+            // Unkindled previously took an extra ×3/4 on top of that halving, leaving it on 37.5% while
+            // BotC sat on 50% — the gentler tier was punished harder than the harsh one, the opposite of
+            // the intent. Removing the extra penalty is what puts them on parity; do not re-add a
+            // class-specific multiplier here without first making the halving above class-gated.
         }
 
 

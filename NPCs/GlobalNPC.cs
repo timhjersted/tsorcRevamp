@@ -693,6 +693,40 @@ namespace tsorcRevamp.NPCs
             PoiseWillBreakThisHit = false;
         }
 
+        /// <summary>
+        /// Riposte: poise damage dealt by a player's perfect parry, as a fraction of the enemy's current poise bar.
+        ///
+        /// Deliberately IGNORES AttackCommitted (hyper-armor), unlike every other poise source. A parry is by
+        /// definition timed against an incoming attack, so the enemy is nearly always mid-commit when it lands —
+        /// respecting hyper-armor here would mean parries essentially never staggered anything, which is the exact
+        /// opposite of the intent. Anti-stunlock (PoiseBreakCooldown) and the already-staggered case are still
+        /// honoured, so a parry can't chain-lock an enemy that's already down.
+        /// </summary>
+        public void ApplyParryPoise(NPC npc, float poiseFraction, Vector2 sourceCenter)
+        {
+            if (PoiseMax <= 0f || poiseFraction <= 0f)
+            {
+                return;
+            }
+            if (PoiseBreakCooldown > 0)
+            {
+                return; // post-stagger i-frames — same anti-stunlock rule as ordinary hits
+            }
+            if (StaggerTimer > 0)
+            {
+                ApplyStaggerImpulse(npc, sourceCenter, 0.5f); // already down: just a shove, no re-break
+                return;
+            }
+
+            Poise += EffectivePoiseMax * poiseFraction;
+            PoiseRegenDelay = PoiseRegenDelayTicks;
+            if (Poise >= EffectivePoiseMax)
+            {
+                TriggerStagger(npc, sourceCenter);
+            }
+            npc.netUpdate = true;
+        }
+
         /// <summary>Enter the staggered state: launch, freeze, cancel a windup attack, and escalate.</summary>
         private void TriggerStagger(NPC npc, Vector2 sourceCenter)
         {

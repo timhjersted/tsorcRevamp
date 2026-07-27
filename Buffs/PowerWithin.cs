@@ -15,8 +15,11 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            player.GetDamage(DamageClass.Generic) *= modPlayer.BearerOfTheCurse ? (1f + (2f * Items.Tools.PowerWithin.DamageIncrease / 100f)) : (1f + Items.Tools.PowerWithin.DamageIncrease / 100f);
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= modPlayer.BearerOfTheCurse ? (1f + (2f * Items.Tools.PowerWithin.StaminaRegen / 100f)) : (1f + Items.Tools.PowerWithin.StaminaRegen / 100f);
+            player.GetDamage(DamageClass.Generic) *= 1f + Items.Tools.PowerWithin.DamageIncrease / 100f;
+            // Regen goes on staminaResourceGainMult, additively, NOT on staminaResourceRegenRate. regenRate is a
+            // separate multiplicative channel (gain = gainMult x regenRate), so anything living there sits outside
+            // the additive gear pool and escapes every balance lever applied to it.
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += Items.Tools.PowerWithin.StaminaRegen / 100f;
             modPlayer.PowerWithin = true;
         }
     }

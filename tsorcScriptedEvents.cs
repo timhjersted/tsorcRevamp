@@ -504,7 +504,7 @@ namespace tsorcRevamp
             {
                 DunledingAmbush.SetCustomStats((int?)(player.statLifeMax2 * .5f), null, (int?)(player.statLifeMax2 * 0.10f) + 25); //damage doesn't double for Expert
             }
-            DunledingAmbush.SetCustomDrops(new List<int>() { ModContent.ItemType<DodgerollMemo>() }, new List<int>() { 1 }, true);
+            DunledingAmbush.SetCustomDrops(new List<int>() { ItemID.LifeCrystal }, new List<int>() { 1 }, true); //was DodgerollMemo — its contents are now the Game Manual's dodge roll page
 
             List<int> RemixDunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
             List<Vector2> RemixDunledingAmbushEnemyLocations = new List<Vector2>() { new Vector2(4691, 854), new Vector2(4733, 854), new Vector2(4698, 853) };
@@ -513,7 +513,7 @@ namespace tsorcRevamp
             {
                 RemixDunledingAmbush.SetCustomStats((int?)(player.statLifeMax2 * .5f), null, (int?)(player.statLifeMax2 * 0.10f) + 25); //damage doesn't double for Expert
             }
-            RemixDunledingAmbush.SetCustomDrops(new List<int>() { ModContent.ItemType<DodgerollMemo>() }, new List<int>() { 1 }, true);
+            RemixDunledingAmbush.SetCustomDrops(new List<int>() { ItemID.LifeCrystal }, new List<int>() { 1 }, true); //was DodgerollMemo — its contents are now the Game Manual's dodge roll page
 
 
             //ALIEN AMBUSH

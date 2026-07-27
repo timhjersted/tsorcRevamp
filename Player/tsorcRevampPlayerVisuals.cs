@@ -708,7 +708,21 @@ namespace tsorcRevamp
                             }
                         }
 
-                        //draw a line at the amount of stamina needed to roll
+                        // Stamina debt from overdrawing, drawn red from the left. Debt only exists while stamina
+                        // is zero, so it can't overlap the green fill: the red drains away to nothing first, then
+                        // green climbs back. That sequence is what tells the player why they're still locked out.
+                        float staminaDebt = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaDebt;
+                        Rectangle debtDestination = new Rectangle(0, 0, 0, 0);
+                        bool showDebt = staminaDebt > 0f && staminaMax > 0f;
+                        if (showDebt)
+                        {
+                            int debtFillWidth = (int)(Math.Min(staminaDebt / staminaMax, 1f) * barFill.Width);
+                            showDebt = debtFillWidth > 0;
+                            debtDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, debtFillWidth, barFill.Height);
+                        }
+
+                        // Line at the dodge roll's cost. Formerly the hard minimum needed to roll; the roll now
+                        // follows the universal rule, so it reads as "below this, rolling puts you into debt".
                         float stamPercentToRoll = 30 / staminaMax;
                         Rectangle minRollStamDestination = new Rectangle(barOrigin.X + padding + (int)(stamPercentToRoll * barFill.Width), barOrigin.Y, 2, barFill.Height); //displays 2px of the bar
 
@@ -716,6 +730,10 @@ namespace tsorcRevamp
                         if (showYellow)
                         {
                             Main.spriteBatch.Draw(barFill, yellowDestination, new Color(240, 190, 50));
+                        }
+                        if (showDebt)
+                        {
+                            Main.spriteBatch.Draw(barFill, debtDestination, new Color(190, 35, 45));
                         }
                         Main.spriteBatch.Draw(barFill, fillDestination, new Color(40, 190, 80));
                         Main.spriteBatch.Draw(barFill, minRollStamDestination, Color.White);

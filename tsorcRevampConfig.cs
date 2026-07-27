@@ -111,6 +111,18 @@ namespace tsorcRevamp
             set => ModContent.GetInstance<tsorcRevampGameplayConfig>().ActiveShieldsRevamp = value;
         }
 
+        public bool AccuracyCombatText
+        {
+            get => ModContent.GetInstance<tsorcRevampVisualConfig>().AccuracyCombatText;
+            set => ModContent.GetInstance<tsorcRevampVisualConfig>().AccuracyCombatText = value;
+        }
+
+        public bool NewSoulsModeStaminaSystem
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().NewSoulsModeStaminaSystem;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().NewSoulsModeStaminaSystem = value;
+        }
+
         public bool DebugMode
         {
             get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DebugMode;
@@ -321,6 +333,9 @@ namespace tsorcRevamp
         public bool ActiveShieldsRevamp { get; set; }
 
         [DefaultValue(false)]
+        public bool NewSoulsModeStaminaSystem { get; set; }
+
+        [DefaultValue(false)]
         public bool DebugMode { get; set; }
 
         [Header("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.Headers.GameplayTweaks")]
@@ -390,6 +405,9 @@ namespace tsorcRevamp
 
         [DefaultValue(false)]
         public bool EnemyHealthBars { get; set; }
+
+        [DefaultValue(true)]
+        public bool AccuracyCombatText { get; set; }
 
         [DefaultValue(true)]
         public bool PlayerHurtVisuals { get; set; }

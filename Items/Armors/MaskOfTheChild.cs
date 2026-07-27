@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += MoveSpeedMult / 100f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 1f + StaminaRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRegen / 100f;
         }
     }
 }

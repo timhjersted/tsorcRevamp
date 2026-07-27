@@ -88,13 +88,35 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             get => 44;
         }
 
+        /// <summary>Ceiling on EffectPotency. Override per potion when a permanent shouldn't be allowed to
+        /// exceed its drinkable counterpart by the default 50% margin.
+        /// NOTE: only reaches potions that use the base EffectPotency — several (the WellFed line, etc.)
+        /// override EffectPotency wholesale and bypass this.</summary>
+        public virtual float MaxPotency
+        {
+            get => 1.5f;
+        }
+
+        /// <summary>
+        /// Scale a value but never above 1.0 potency, for effects that shouldn't exceed the drinkable version
+        /// even though the rest of the potion scales past it.
+        ///
+        /// EffectPotency feeds EVERY line of a PotionEffect, so capping it would flatten defense, crit, damage
+        /// and speed alongside. Stamina regen is the one stat we don't want a permanent to beat its consumable
+        /// at, so it uses this instead and leaves the other seven bonuses on the full 1.5x curve.
+        /// </summary>
+        public float ApplyScalingCapped(float value)
+        {
+            return value * Math.Min(EffectPotency, 1f);
+        }
+
         public virtual float EffectPotency
         {
             get
             {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
                 potency += 0.1f;
-                return Math.Min(potency, 1.5f);
+                return Math.Min(potency, MaxPotency);
             }
         }
         public virtual List<PermanentPotion> ExclusivePermanents
@@ -1203,7 +1225,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetKnockback(DamageClass.Summon) += ApplyScaling(0.5f);
             player.moveSpeed += ApplyScaling(0.2f);
             player.pickSpeed -= ApplyScaling(0.05f);
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(VanillaItems.MinorEdits.BotCWellFedStaminaRegen / 100f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScalingCapped(VanillaItems.MinorEdits.BotCWellFedStaminaRegen / 100f);
         }
     }
 
@@ -1238,7 +1260,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetKnockback(DamageClass.Summon) += ApplyScaling(0.75f);
             player.moveSpeed += ApplyScaling(0.30f);
             player.pickSpeed += ApplyScaling(0.1f);
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(VanillaItems.MinorEdits.BotCPlentySatisfiedStaminaRegen / 100f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScalingCapped(VanillaItems.MinorEdits.BotCPlentySatisfiedStaminaRegen / 100f);
         }
     }
 
@@ -1272,7 +1294,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetKnockback(DamageClass.Summon) += ApplyScaling(1f);
             player.moveSpeed += ApplyScaling(0.4f);
             player.pickSpeed -= ApplyScaling(0.15f);
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(VanillaItems.MinorEdits.BotCExquisitelyStuffedStaminaRegen / 100f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScalingCapped(VanillaItems.MinorEdits.BotCExquisitelyStuffedStaminaRegen / 100f);
         }
     }
     public class PermanentGreenBlossom : PermanentPotion
@@ -1282,7 +1304,12 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int PermanentID => 56;
         public override int BuffType => ModContent.BuffType<Buffs.GreenBlossom>();
         public override bool CanScale => true;
-        public override int ScalingFactor => 15;
+        // 40 (was 15) so it takes 36 blossoms to cap rather than 21, and 1.0 (was the default 1.5) so the pot
+        // tops out at exactly the drinkable's 20% instead of the 45% it hit before, when it was comfortably the
+        // largest single regen source in the game. Capping at parity keeps its identity as "the same bonus,
+        // without the upkeep" and leaves the slot-costing Chloranthy rings as the actual premium option.
+        public override int ScalingFactor => 40;
+        public override float MaxPotency => 1f;
 
         public override void PotionEffect(Player player)
         {

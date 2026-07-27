@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors
         {
             player.moveSpeed += MoveSpeed / 100f;
             player.maxMinions += MinionSlots;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + StaminaRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRegen / 100f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStamina / 100f;
         }
         public override void AddRecipes()

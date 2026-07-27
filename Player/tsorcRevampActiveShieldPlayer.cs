@@ -45,6 +45,11 @@ namespace tsorcRevamp
         private int blockHoldFrames;
         private int heldShieldType = -1;
 
+        // Dragon Crest sustained fire-breath state (local player only; see UpdateFireBreath).
+        private bool fireBreathActive;      // burns until the guard drops or mana runs out — no duration cap
+        private int fireBreathFlameTimer;   // frames until the next flame spawns
+        private float fireBreathManaAccum;  // fractional mana carried between frames
+
         // Right-Click (2nd) slot use: while active, the slot item is temporarily the held item and is driven by RMB.
         public bool usingSecondSlotItem;
         private int swappedSlotIndex = -1;     // the hotbar index we swapped the slot item into
@@ -147,6 +152,13 @@ namespace tsorcRevamp
             }
             // Can't raise a shield while guard-broken (the debuff lasts longer than the brief blockLockTimer).
             if (Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>()))
+            {
+                return false;
+            }
+            // Can't raise a guard you can't pay for. Without this, blocking while empty or in stamina debt
+            // would guard-break on every single hit, which compounds into a death spiral — and "the shield
+            // won't come up" reads far more clearly than "the shield breaks instantly, repeatedly".
+            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent <= 0f)
             {
                 return false;
             }
@@ -503,6 +515,15 @@ namespace tsorcRevamp
                 // passive — instead of block-only.
                 Player.ApplyEquipFunctional(rc, true);
             }
+
+            // Greatshield equip-load tax, applied for BOTH branches. Neither path reaches
+            // ActiveShieldGlobalItem.UpdateEquip (which handles the accessory slots): the mod branch calls
+            // ModItem.UpdateEquip directly, and ApplyEquipFunctional only invokes ItemLoader.UpdateAccessory,
+            // not UpdateEquip. So this is the sole application point for a 2nd-slot shield — no double-dip.
+            if (data.PassiveRegenPenalty > 0f)
+            {
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult -= data.PassiveRegenPenalty;
+            }
         }
 
         public override bool FreeDodge(Player.HurtInfo info)
@@ -573,9 +594,18 @@ namespace tsorcRevamp
                 cost = (float)Math.Ceiling(cost * PerfectParryCostMult);
             }
 
+            tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+
+            // Stability break: a hit heavy enough relative to your MAXIMUM stamina overwhelms the guard even when
+            // you can comfortably afford it. This is what makes shield progression mean something beyond arithmetic —
+            // a big telegraphed attack simply cannot be held with a starter shield and must be dodged, while a late
+            // shield eats the same blow. Scaled off max (not current) so it's a property of the shield-vs-attack
+            // matchup, not of how tired you happen to be. A perfect parry is always exempt — that's the reward.
+            bool stabilityBreak = !perfectParry && cost > staminaPlayer.staminaResourceMax2 * StabilityBreakFraction;
+
             if (data.Resource == ShieldResource.Stamina)
             {
-                tsorcRevampStaminaPlayer stamina = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                tsorcRevampStaminaPlayer stamina = staminaPlayer;
                 if (stamina.staminaResourceCurrent >= cost)
                 {
                     stamina.staminaResourceCurrent -= cost;
@@ -591,7 +621,7 @@ namespace tsorcRevamp
             {
                 // Mana wards spend mana (scaled) AND a flat stamina sip (~1/3 of the base cost), so a mage
                 // who never otherwise touches stamina still has a real resource limit on the 360° block.
-                tsorcRevampStaminaPlayer stamina = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                tsorcRevampStaminaPlayer stamina = staminaPlayer;
                 int stamSip = (int)Math.Ceiling(data.BaseCost / 3f);
                 if (perfectParry)
                 {
@@ -612,6 +642,34 @@ namespace tsorcRevamp
                 }
             }
 
+            // A stability break still costs the resource (paid above) — the guard just fails anyway.
+            if (stabilityBreak && !guardBroke)
+            {
+                TriggerGuardBreak(data.Resource == ShieldResource.Mana);
+                guardBroke = true;
+            }
+
+            // Post-block regen pause. An ordinary block doubles the class's normal spend delay (60 Unkindled /
+            // 30 BotC); a perfect parry keeps the ordinary one (30 / 15). That gap is the point: the shield-down
+            // window between a kiter's spaced shots was long enough to refill what the block cost, so a
+            // block→shoot loop never lost ground. Doubling it makes sloppy blocking bleed while clean timing
+            // still recovers at the normal rate. Set explicitly rather than leaning on UpdateResource's generic
+            // "you spent stamina" detector, so a future change to the parry cost can't silently drop the pause.
+            // Mana wards included — they spend a stamina sip per block, and a block is a block.
+            //
+            // BlockRegenDelayMult is the greatshield/buckler axis: a no-chip greatshield stretches this pause
+            // instead of leaking HP, a buckler shortens it. Perfect parries ignore the multiplier entirely, so
+            // clean timing recovers at the same rate no matter which shield you're holding.
+            staminaPlayer.PauseStaminaRegen(perfectParry
+                ? staminaPlayer.SpendRegenDelay
+                : (int)Math.Round(staminaPlayer.BlockRegenDelay * data.BlockRegenDelayMult));
+
+            // Chip: an ordinary block leaks a slice of the raw hit as unblockable HP loss. Perfect parry negates fully.
+            if (!perfectParry)
+            {
+                ApplyChipDamage(data, info);
+            }
+
             ApplyOnBlockEffects(activeShieldType, info, perfectParry);
 
             // Grant a brief immunity window after a block. FreeDodge by itself grants no i-frames, so an enemy
@@ -624,11 +682,172 @@ namespace tsorcRevamp
             // Block feedback (metallic clang) — skip it on a perfect parry (its own brighter chime) and on a
             // guard break (TriggerGuardBreak plays its distinct pitched-down tink), so those sounds aren't
             // masked by the normal full-pitch clang.
+            //
+            // Pitch encodes shield quality, so you can HEAR what you're holding: a stable endgame shield rings
+            // high and crisp, a leaky starter thuds low and dull. Pairs with the chip number — the sound tells you
+            // roughly how much leaked before you read the damage.
             if (!perfectParry && !guardBroke)
             {
-                SoundEngine.PlaySound(SoundID.NPCHit4, Player.Center);
+                float pitch = MathHelper.Lerp(BlockPitchBest, BlockPitchWorst, data.QualityT);
+                SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = pitch }, Player.Center);
             }
             return true;
+        }
+
+        /// <summary>Light the Dragon Crest fire-breath, if the player can pay the ignition cost.
+        /// The flat cost is what stops "ignite, drop the guard, re-ignite" from farming near-free flames.</summary>
+        private void TryIgniteFireBreath()
+        {
+            // Player.manaCost is the global "spells cost more/less" stat; honouring it means Smough's armor
+            // (+50% mana cost, -50% attack speed) pays extra for the very trick its attack-speed penalty
+            // makes attractive in the first place.
+            int ignitionCost = (int)Math.Ceiling(DragonCrestFireIgnitionMana * Math.Max(0.1f, Player.manaCost));
+            if (Player.statMana < ignitionCost)
+            {
+                return; // not enough mana to light it — the parry still blocked, it just doesn't breathe
+            }
+            Player.GetModPlayer<tsorcRevampPlayer>().SpendManaOnHit(ignitionCost);
+            fireBreathActive = true;
+            fireBreathFlameTimer = 0;
+            fireBreathManaAccum = 0f;
+        }
+
+        /// <summary>
+        /// The player's current damage-per-second, as the yardstick the fire breath is priced against.
+        ///
+        /// Uses the stamina system's measured damage-per-use EMA (what the player actually deals, learned from
+        /// real hits) converted to per-second via the held weapon's attack-speed-scaled use animation. That makes
+        /// the breath self-calibrating: it tracks gear, class, buffs and progression with no table to maintain.
+        /// Falls back to the coarse tier table only until the EMA has data.
+        /// </summary>
+        private float EstimatePlayerDps()
+        {
+            float perUse = Player.GetModPlayer<tsorcRevampStaminaPlayer>().PlayerDamagePerUseEma;
+            Item held = Player.HeldItem;
+            if (perUse > 0f && held != null && !held.IsAir && held.useAnimation > 0 && held.damage > 0)
+            {
+                float attackSpeed = Math.Max(0.05f, Player.GetAttackSpeed(held.DamageType));
+                float scaledUseAnimation = Math.Max(1f, held.useAnimation / attackSpeed);
+                return perUse * 60f / scaledUseAnimation;
+            }
+            return FireBreathTierReferenceDps[ProgressionTier()];
+        }
+
+        /// <summary>
+        /// Per-frame driver for the Dragon Crest fire-breath. Ends early when the guard drops or mana runs out,
+        /// so it costs tempo (no attacking, no stamina regen while it burns) rather than being fire-and-forget.
+        /// </summary>
+        private void UpdateFireBreath()
+        {
+            if (!fireBreathActive)
+            {
+                return;
+            }
+            if (Player.whoAmI != Main.myPlayer)
+            {
+                fireBreathActive = false;
+                return;
+            }
+            // Lowering the shield (or a guard break, which forces isBlocking false) snuffs it out.
+            if (!isBlocking || activeShieldType != ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>())
+            {
+                fireBreathActive = false;
+                return;
+            }
+
+            // Sustain cost, accumulated fractionally so 10/sec doesn't round to 0 every frame.
+            fireBreathManaAccum += DragonCrestFireManaPerSecond / 60f * Math.Max(0.1f, Player.manaCost);
+            if (fireBreathManaAccum >= 1f)
+            {
+                int tickCost = (int)fireBreathManaAccum;
+                fireBreathManaAccum -= tickCost;
+                if (Player.statMana < tickCost)
+                {
+                    fireBreathActive = false; // out of mana — the breath dies
+                    return;
+                }
+                Player.GetModPlayer<tsorcRevampPlayer>().SpendManaOnHit(tickCost);
+            }
+
+            if (fireBreathFlameTimer > 0)
+            {
+                fireBreathFlameTimer--;
+                return;
+            }
+            fireBreathFlameTimer = DragonCrestFireFlameInterval;
+
+            // Per-flame damage = (tier reference DPS x share) spread over the flame rate, then flavoured by defense.
+            // Because it's derived from a DPS target, holding the breath longer never inflates the rate — it just
+            // trades more mana and more shield-up time for proportionally more damage, which is a fair trade.
+            float flamesPerSecond = 60f / DragonCrestFireFlameInterval;
+            float defenseMult = Math.Clamp(FireBreathDefenseBase + Player.statDefense / FireBreathDefensePerPoint,
+                                           FireBreathDefenseMultMin, FireBreathDefenseMultMax);
+            int fireDamage = Math.Max(1, (int)Math.Round(EstimatePlayerDps() * FireBreathDpsShare / flamesPerSecond * defenseMult));
+            // Aimed at the cursor rather than the original attacker: the breath outlives any single hit, and the
+            // player already faces the cursor while blocking, so this keeps it steerable.
+            Vector2 dir = (Main.MouseWorld - Player.Center).SafeNormalize(new Vector2(Player.direction, 0f));
+            Projectile.NewProjectile(Player.GetSource_Misc("ActiveShieldBlock"), Player.Center,
+                dir.RotatedBy(Main.rand.NextFloat(-0.12f, 0.12f)) * 7f,
+                ProjectileID.Flames, fireDamage, 1f, Player.whoAmI);
+        }
+
+        /// <summary>
+        /// Unblockable HP leak on an ordinary (non-perfect) block. Scales on the RAW incoming damage rather than
+        /// post-defense, because the whole point is that stacking defense shouldn't buy back free turtling.
+        ///
+        /// Applied as a direct statLife write rather than through Player.Hurt — routing it through Hurt would
+        /// re-enter FreeDodge and spend a second block on the chip itself. Same pattern as BasiliskLeechTongue.
+        /// Chip CAN kill: turtling at low HP is supposed to be the wrong answer.
+        /// </summary>
+        private void ApplyChipDamage(ActiveShieldData data, Player.HurtInfo info)
+        {
+            // Player HP is owned by the client that owns the player; the server must not write it for a remote.
+            if (Player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            float frac = data.ResolvedChipFraction;
+            if (frac <= 0f)
+            {
+                return; // greatshield: takes no chip, pays in tempo instead (BlockRegenDelayMult)
+            }
+
+            // Melee/contact blocks chip less than projectile blocks. The behaviour this whole system exists to
+            // tax is the ranged block-shoot loop — camping a distance, eating spaced telegraphed shots, firing
+            // back — so projectile blocks carry the full rate. A contact block already costs you far more: the
+            // enemy is on top of you, your flanks are exposed (rear/side hits don't block at all), and the
+            // stability break threatens the heavy swings. It doesn't need the full chip rate on top.
+            bool fromProjectile = info.DamageSource.SourceProjectileLocalIndex >= 0
+                                  || info.DamageSource.SourceProjectileType > 0;
+            if (!fromProjectile)
+            {
+                frac *= MeleeChipMult;
+            }
+
+            // Mana wards pay a SECOND resource (mana) for every block and grant zero ActiveDefense, and they're
+            // carried by the squishiest builds. Without this they'd sit at the worst chip rate on the curve while
+            // also blocking mostly projectiles (full rate) — three penalties stacked on the thinnest HP pool.
+            if (data.Resource == ShieldResource.Mana)
+            {
+                frac *= ManaWardChipMult;
+            }
+
+            float raw = info.SourceDamage > 0 ? info.SourceDamage : info.Damage;
+            int chip = (int)Math.Round(raw * frac);
+            // Floor of 1 so every ordinary block costs something; cap as a share of max HP so one enormous boss
+            // hit can't delete a full bar through a raised shield.
+            int cap = Math.Max(1, (int)(Player.statLifeMax2 * MaxChipFractionOfMaxLife));
+            chip = Math.Clamp(chip, 1, cap);
+
+            Player.statLife -= chip;
+            CombatText.NewText(Player.Hitbox, ChipDamageColor, chip);
+
+            if (Player.statLife <= 0)
+            {
+                // Reuse the incoming hit's death reason so the death message names the real attacker.
+                Player.KillMe(info.DamageSource, chip, info.HitDirection);
+            }
         }
 
         /// <summary>Per-shield effects that fire when a hit is successfully blocked (Phase 5).
@@ -680,6 +899,18 @@ namespace tsorcRevamp
                 return;
             }
 
+            // RIPOSTE: a clean parry staggers. Until now every parry reward was the *absence* of a penalty (half
+            // cost, no chip, normal regen delay) — nothing good actually happened. Poise damage scales with shield
+            // quality, so a starter shield needs ~4 clean parries to break an enemy and the best needs ~2. Uses
+            // ApplyParryPoise, which bypasses hyper-armor: a parry lands mid-swing by definition, and the ordinary
+            // poise path would discard it for exactly that reason.
+            if (tsorcRevamp.ActiveShieldRegistry != null
+                && tsorcRevamp.ActiveShieldRegistry.TryGetValue(shieldType, out ActiveShieldData parryData))
+            {
+                float poiseFrac = MathHelper.Lerp(RipostePoiseBest, RipostePoiseWorst, parryData.QualityT);
+                attacker.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ApplyParryPoise(attacker, poiseFrac, Player.Center);
+            }
+
             // Thorns shields reflect the blocked damage back at the attacker.
             if (shieldType == ModContent.ItemType<Items.Accessories.Defensive.Shields.SpikedIronShield>()
                 || shieldType == ModContent.ItemType<Items.Accessories.Defensive.Shields.AncientDemonShield>())
@@ -727,19 +958,12 @@ namespace tsorcRevamp
                 }
             }
 
-            // Dragon Crest — a short fire-breath cone (perfect-parry gated like the others, above).
+            // Dragon Crest — ignite the sustained fire-breath (perfect-parry gated like the others, above).
+            // The breath itself is driven per-frame by UpdateFireBreath; this only lights it.
             if (shieldType == ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>()
                 && Player.whoAmI == Main.myPlayer)
             {
-                // Fire-cone damage scales with the player's defense, so it's modest when you first get the shield
-                // but grows into a real payoff late game — and rewards tanky/melee builds most.
-                int fireDamage = Math.Max(DragonCrestFireMinDamage, (int)(Player.statDefense * DragonCrestFireDefenseScale));
-                Vector2 baseDir = (attacker.Center - Player.Center).SafeNormalize(new Vector2(Player.direction, 0f));
-                for (int i = -1; i <= 1; i++)
-                {
-                    Projectile.NewProjectile(Player.GetSource_Misc("ActiveShieldBlock"), Player.Center,
-                        baseDir.RotatedBy(i * 0.25f) * 7f, ProjectileID.Flames, fireDamage, 1f, Player.whoAmI);
-                }
+                TryIgniteFireBreath();
             }
 
             // Icebound Mythril Aegis — a small frost nova on block.
@@ -903,11 +1127,11 @@ namespace tsorcRevamp
             tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
             if (modPlayer.ChloranthyRing2)
             {
-                slow = Math.Min(1f, slow + 0.04f);
+                slow = Math.Min(1f, slow + Items.Accessories.Mobility.ChloranthyRing2.ShieldSlowReduction / 100f);
             }
             else if (modPlayer.ChloranthyRing1)
             {
-                slow = Math.Min(1f, slow + 0.02f);
+                slow = Math.Min(1f, slow + Items.Accessories.Mobility.ChloranthyRing.ShieldSlowReduction / 100f);
             }
             Player.maxRunSpeed *= slow;
             Player.accRunSpeed *= slow;
@@ -935,10 +1159,94 @@ namespace tsorcRevamp
         private const float MinBlockKnockback = 3.5f; // floor so even knockback-immune (0-resist) non-boss enemies bump ~3 tiles
         private const float MaxBlockKnockback = 8f;    // cap so the strongest shield only shoves a few tiles (melee keeps them in range)
         public const float BlockStaminaRegenMult = 0f; // stamina regen retained while a shield is raised (0 = no regen, Dark-Souls style)
+
+        // --- Chip damage (ordinary blocks only; perfect parry always fully negates) ---
+        private const float MeleeChipMult = 0.75f;            // contact/melee blocks chip less than projectile blocks
+        private const float ManaWardChipMult = 0.7f;          // mana wards already pay mana + have 0 ActiveDefense
+        private const float MaxChipFractionOfMaxLife = 0.10f; // backstop: one block can never leak >10% of max HP
+        private static readonly Color ChipDamageColor = new Color(205, 95, 45); // rust/ember — distinct from vanilla red
+
+        // --- Stability break: a hit costing more than this share of MAX stamina breaks the guard even if affordable ---
+        private const float StabilityBreakFraction = 0.60f;
+
+        // --- Riposte: perfect parry poise damage, as a fraction of the enemy's current poise bar ---
+        private const float RipostePoiseBest = 0.45f;  // best shield in the registry
+        private const float RipostePoiseWorst = 0.25f; // worst — ~a third of the bar at the centre, so 2-4 parries stagger
+
+        // --- Block sound pitch by shield quality (crisp ring → dull thud) ---
+        private const float BlockPitchBest = 0.25f;
+        private const float BlockPitchWorst = -0.35f;
         private const int PerfectParryWindow = 12; // frames after raising a shield within which a blocked hit counts as a perfect parry (~0.2s)
         private const float PerfectParryCostMult = 0.5f; // a perfect parry costs this fraction of the normal block cost (50% off)
-        private const float DragonCrestFireDefenseScale = 2f; // Dragon Crest parry fire-cone damage per point of player defense
-        private const int DragonCrestFireMinDamage = 15;       // floor so the fire cone still stings at low defense
+        // --- Dragon Crest sustained fire-breath (perfect parry only) ---
+        //
+        // Was an instant 3-flame burst dealing statDefense * 2 each, uncapped. That scaled off the exact stat a
+        // shield/turtle build stacks, so the payoff for a parry grew past the payoff for actually attacking and
+        // the optimal play became "stop swinging, only parry" (a player killed Queen Bee — 3400 HP, 8 defense —
+        // in ~6 parries in Smough's, whose -50% attack speed makes that trade even better). Note ProjectileID.Flames
+        // carries ArmorPenetration 15, so against most early/mid enemies the listed damage is the delivered damage.
+        //
+        // Now: flatter and CAPPED scaling, delivered as a sustained breath (dodgeable, and it costs you tempo since
+        // you must keep the guard up) on two independent limiters — the frame cap bounds a single parry's payoff,
+        // and mana bounds how many breaths you get per fight. Mana is the right resource here because SoulsMode
+        // mana regen is pinned off while a boss is alive, so a 200 pool is a hard per-fight budget, not a faucet.
+        // Scaling is denominated in DPS, not in burst. The original bug wasn't "6 parries killed Queen Bee" — it was
+        // that those 6 parries were 6 INSTANTS, delivering a 15-second kill in about a second of real time (~15x the
+        // player's weapon DPS). Six parries spread over 18 seconds of sustained breath is just a normal kill. So the
+        // number that has to stay honest is damage-per-second while breathing; once that's right, a long hold is fine
+        // and burst caps stop being load-bearing.
+        //
+        // Base comes from a per-tier reference DPS (progression), and defense becomes a bounded MODIFIER rather than
+        // the base — so a tanky build is rewarded without the runaway feedback loop that caused the original problem.
+        private const float FireBreathDpsShare = 0.8f;          // MASTER DIAL: breath output as a share of tier reference DPS
+        private const float FireBreathDefenseBase = 0.6f;       // defense multiplier at 0 defense
+        private const float FireBreathDefensePerPoint = 150f;   // divisor: +1.0x per this many defense
+        private const float FireBreathDefenseMultMin = 0.6f;
+        private const float FireBreathDefenseMultMax = 1.5f;    // bounded — defense can flavour it, never run away with it
+
+        // No duration cap: the breath runs as long as you hold the guard and can pay for it. Safe because the
+        // output is denominated in DPS — a longer hold buys proportionally more damage for proportionally more
+        // mana and shield-up time, which is a fair trade, not an exploit. Mana is now the sole uptime limiter.
+        private const int DragonCrestFireFlameInterval = 10;    // one flame per 10 frames => 6/sec
+        private const int DragonCrestFireIgnitionMana = 15;     // flat cost to light it (also blocks tap-ignite abuse)
+        // 25/sec puts it in line with what an actual magic weapon burns to sustain its DPS (a ~20 useTime staff at
+        // ~10 mana/cast is ~30 mana/sec). At the old 10/sec the breath was roughly 3x more mana-efficient than the
+        // spells it's competing with, which is the wrong answer for something billed as a mana weapon.
+        private const float DragonCrestFireManaPerSecond = 25f;
+
+        /// <summary>
+        /// BOOTSTRAP ONLY: reference DPS per progression tier, used until the player's measured output EMA exists
+        /// (fresh character who hasn't swung anything, or a non-weapon in hand). Once the EMA is live it wins —
+        /// it's the same number but personalised and self-calibrating. Rough estimates; the Balance Telemetry log
+        /// (Utilities/Balance/) is the right source if these ever need to be accurate.
+        /// </summary>
+        private static readonly float[] FireBreathTierReferenceDps =
+        {
+            60f,    // 0: pre-boss
+            120f,   // 1: post EoC / EoW / BoC
+            220f,   // 2: post Skeletron / Queen Bee
+            550f,   // 3: hardmode
+            900f,   // 4: post-mech
+            1600f,  // 5: post-Plantera
+            2800f,  // 6: post-Golem / Cultist
+            4500f,  // 7: post-Moon Lord
+            9000f   // 8: SuperHardMode
+        };
+
+        /// <summary>Coarse world progression tier (0-8), indexing FireBreathTierReferenceDps.
+        /// Local to the fire breath for now; worth promoting to UsefulFunctions if anything else needs it.</summary>
+        private static int ProgressionTier()
+        {
+            if (tsorcRevampWorld.SuperHardMode) return 8;
+            if (NPC.downedMoonlord) return 7;
+            if (NPC.downedGolemBoss || NPC.downedAncientCultist) return 6;
+            if (NPC.downedPlantBoss) return 5;
+            if (NPC.downedMechBossAny) return 4;
+            if (Main.hardMode) return 3;
+            if (NPC.downedBoss3 || NPC.downedQueenBee) return 2;
+            if (NPC.downedBoss1 || NPC.downedBoss2) return 1;
+            return 0;
+        }
         private const int MaxDashShieldFrames = 75;            // safety cap (~1.25s) on how long the EoC dash window can be re-armed
 
         public override void PostUpdate()
@@ -947,6 +1255,9 @@ namespace tsorcRevamp
             {
                 return;
             }
+
+            // Dragon Crest sustained fire-breath (lit by a perfect parry; self-terminates on guard-down / no mana).
+            UpdateFireBreath();
 
             // EoC dash window. The mod shows the Shield of Cthulhu for the whole dash (until you slow back to
             // walking speed), but vanilla's ram window (eocDash) — the part that lets the shield HIT enemies and

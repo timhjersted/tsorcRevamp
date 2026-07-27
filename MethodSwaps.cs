@@ -191,6 +191,8 @@ namespace tsorcRevamp
 
             On_Projectile.StatusNPC += On_Projectile_StatusNPC;
 
+            On_NPC.CanBeChasedBy += On_NPC_CanBeChasedBy;
+
             On_Player.ApplyEquipFunctional += On_Player_ApplyEquipFunctional;
 
             On_Player.UpdateEquips += On_Player_UpdateEquips;
@@ -1951,6 +1953,26 @@ namespace tsorcRevamp
                 modPlayer.WaterWalkingBoots = true;
             }
             orig(self, currentItem, hideVisual);
+        }
+
+        /// <summary>
+        /// Makes Target Dummies valid targets for minions and homing weapons.
+        ///
+        /// Vanilla dummies set <c>immortal = true</c>, and <see cref="NPC.CanBeChasedBy"/> ends with
+        /// <c>return !immortal</c> — so every minion, sentry and homing projectile in the game ignores
+        /// them. That makes summoner and homing-weapon DPS impossible to benchmark on a dummy, which is
+        /// the one thing a dummy exists for. Patching here fixes all ~42 in-mod targeting sites at once,
+        /// plus vanilla's own, instead of special-casing each minion.
+        ///
+        /// Gated on the weapon bench being enabled so <c>/weaponbench off</c> restores vanilla behaviour
+        /// exactly — otherwise minions would fixate on a decorative dummy in someone's base.
+        /// </summary>
+        private static bool On_NPC_CanBeChasedBy(On_NPC.orig_CanBeChasedBy orig, NPC self, object attacker, bool ignoreDontTakeDamage)
+        {
+            if (self.type == NPCID.TargetDummy && self.active && Utilities.Balance.WeaponBench.AutoEnabled)
+                return true;
+
+            return orig(self, attacker, ignoreDontTakeDamage);
         }
 
         private static void On_Projectile_StatusNPC(On_Projectile.orig_StatusNPC orig, Projectile self, int i)

@@ -28,10 +28,21 @@ namespace tsorcRevamp
             {
                 return;
             }
-            if (tsorcRevamp.ActiveShieldRegistry.TryGetValue(item.type, out ActiveShieldData data) && data.ActiveDefense > 0)
+            if (!tsorcRevamp.ActiveShieldRegistry.TryGetValue(item.type, out ActiveShieldData data))
+            {
+                return;
+            }
+            if (data.ActiveDefense > 0)
             {
                 player.statDefense -= item.defense;
                 player.statDefense += data.ActiveDefense;
+            }
+            // Greatshield "equip load": an always-on regen tax that applies whether or not you ever raise it.
+            // Safe here (UpdateEquip runs before the stamina system's PostUpdateMiscEffects, same as armor);
+            // do NOT move it to PostUpdateRunSpeeds, which is after the regen calc.
+            if (data.PassiveRegenPenalty > 0f)
+            {
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult -= data.PassiveRegenPenalty;
             }
         }
 
@@ -115,6 +126,22 @@ namespace tsorcRevamp
             if (slowPct > 0)
             {
                 tooltips.Add(new TooltipLine(Mod, "ActiveShieldSlow", Language.GetTextValue(Key + "Slow", slowPct)) { OverrideColor = bodyColor });
+            }
+            // Chip: the greatshield's "none gets through" is the archetype's selling point, so it gets the
+            // highlight color; every other shield shows its actual leak rate as an ordinary stat.
+            if (data.IsGreatshield)
+            {
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldGreatshield", Language.GetTextValue(Key + "Greatshield")) { OverrideColor = new Color(255, 223, 80) });
+            }
+            else
+            {
+                int chipPct = (int)Math.Round(data.ResolvedChipFraction * 100f);
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldChip", Language.GetTextValue(Key + "Chip", chipPct)) { OverrideColor = bodyColor });
+            }
+            if (data.PassiveRegenPenalty > 0f)
+            {
+                int penaltyPct = (int)Math.Round(data.PassiveRegenPenalty * 100f);
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldRegenPenalty", Language.GetTextValue(Key + "RegenPenalty", penaltyPct)) { OverrideColor = bodyColor });
             }
             // Per-shield signature effect.
             string effectKey = EffectKey(item.type);
