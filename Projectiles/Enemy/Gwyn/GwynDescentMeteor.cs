@@ -5,7 +5,6 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using VFXApi = global::tsorcRevamp.VFX.VFX;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -49,6 +48,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             GroundY = FindGroundY(new Vector2(Projectile.ai[1], Projectile.Center.Y), 60);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.9f, Pitch = -0.5f }, Projectile.Center);
+            if (GroundY > 0f && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(source, new Vector2(Projectile.ai[1], GroundY), Vector2.Zero,
+                    ModContent.ProjectileType<GwynDescentColumn>(), 0, 0f, Projectile.owner,
+                    GwynDescentColumn.TelegraphMode, Projectile.whoAmI);
+            }
         }
 
         public override bool? CanDamage()
@@ -111,12 +116,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 impactPosition = new Vector2(Projectile.Center.X, GroundY > 0f ? GroundY : Projectile.Bottom.Y);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.5f }, impactPosition);
             UsefulFunctions.ScreenShake(impactPosition, 18f, 30);
-            VFXApi.GroundEruption(impactPosition, new Color(85, 55, 35), new Color(255, 190, 45), 190f, 44);
-            VFXApi.FlamePillar(impactPosition, 380f, 170f, new Color(255, 115, 25), Color.White, 48);
-            VFXApi.Ring(impactPosition, 35f, 280f, 18f, new Color(255, 220, 90), 36,
-                global::tsorcRevamp.VFX.VFXMaterial.Turbulent);
-            VFXApi.Burst(impactPosition, new Color(255, 235, 150), 36, 13f);
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < 24; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(9f, 9f);
                 int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
@@ -125,6 +125,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), impactPosition, Vector2.Zero,
+                    ModContent.ProjectileType<GwynDescentColumn>(), 0, 0f, Projectile.owner,
+                    GwynDescentColumn.ImpactMode);
+
                 //Crater fireballs burst outward across the ground
                 for (int i = 0; i < CraterFireballs; i++)
                 {

@@ -7,8 +7,8 @@ namespace tsorcRevamp.Utilities
 {
     /// <summary>
     /// Live A/B + tuning switch for the experimental composite-arm puppet swing.
-    /// Only puppets that opt in via <c>UseCompositeArmSwing</c> (currently just
-    /// StuddedLeatherWarrior) are affected — this command flips the global master enable
+    /// Only puppets that opt in via <c>UseCompositeArmSwing</c> are affected — this command
+    /// flips the global master enable
     /// and tunes the shared rotation offset / arm stretch without a rebuild.
     ///
     /// Usage:
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Utilities
     ///   /swingarm stretch none|quarter|threequarters|full
     ///   /swingarm flip [on|off]         → toggle the blade-leads-the-swing mirror (single-bladed weapons)
     ///   /swingarm aim [on|off]          → toggle full-360 aim-centered swing (axe archetype)
-    ///   /swingarm log clear             → clear the structured attack and older puppet debug logs
+    ///   /swingarm log clear             → close this session and start a fresh timestamped file
     ///   /swingarm status                → print current values
     /// </summary>
     public class SwingArmCommand : ModCommand
@@ -112,9 +112,11 @@ namespace tsorcRevamp.Utilities
                     else
                         PuppetNPC.SwingDebugLog = !PuppetNPC.SwingDebugLog;
                     if (wasLogging && !PuppetNPC.SwingDebugLog)
-                        PuppetAttackTelemetry.StopAll("logging-disabled");
+                        PuppetAttackTelemetry.EndSession("logging-disabled");
+                    else if (!wasLogging && PuppetNPC.SwingDebugLog)
+                        PuppetAttackTelemetry.StartSession("logging-enabled");
                     caller.Reply(
-                        $"Puppet attack telemetry: {(PuppetNPC.SwingDebugLog ? "ON" : "OFF")} " +
+                        $"Puppet attack telemetry: {(PuppetNPC.SwingDebugLog ? "ON (automatic)" : "OFF")} " +
                         $"(Logs/{PuppetAttackTelemetry.FileName})",
                         PuppetNPC.SwingDebugLog ? Color.Lime : Color.Gray);
                     break;
@@ -152,7 +154,7 @@ namespace tsorcRevamp.Utilities
                 $"Aim-centered swing: {(PuppetNPC.AimSwingMasterEnable ? "ON (full 360 aim)" : "OFF (legacy fixed arc)")}",
                 PuppetNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
             caller.Reply(
-                $"Puppet attack telemetry: {(PuppetNPC.SwingDebugLog ? "ON" : "OFF")} (Logs/{PuppetAttackTelemetry.FileName})",
+                $"Puppet attack telemetry: {(PuppetNPC.SwingDebugLog ? "ON (automatic)" : "OFF")} (Logs/{PuppetAttackTelemetry.FileName})",
                 PuppetNPC.SwingDebugLog ? Color.Lime : Color.Gray);
         }
 
@@ -165,7 +167,7 @@ namespace tsorcRevamp.Utilities
                 PuppetAttackTelemetry.Clear();
                 System.IO.File.WriteAllText(System.IO.Path.Combine(logDir, "tsorcRevamp-puppet-swing.log"), string.Empty);
                 System.IO.File.WriteAllText(System.IO.Path.Combine(logDir, "tsorcRevamp-puppet-weapon.log"), string.Empty);
-                caller.Reply($"Puppet telemetry cleared ({PuppetAttackTelemetry.FileName}).", Color.Lime);
+                caller.Reply($"New puppet telemetry session started (Logs/{PuppetAttackTelemetry.FileName}).", Color.Lime);
             }
             catch (System.Exception e)
             {

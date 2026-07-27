@@ -150,16 +150,16 @@ namespace tsorcRevamp.NPCs.Puppets
 
             float dx = Math.Abs(targetCenter.X - attackerCenter.X);
             float dy = targetCenter.Y - attackerCenter.Y;
-            // Keep every endpoint inside the composite arm's reliable range. This makes the aim
-            // allowance naturally asymmetric for an overhead strike that already starts near its
-            // upper limit instead of letting a high target fold the arm past vertical.
+            // Keep every endpoint inside the composite arm's authored range. A modest amount of
+            // behind-the-head travel is intentional for full overhead windups; only much deeper
+            // rotations fold the arm back through the torso.
             float clipMinimum = Math.Min(
                 Clip.OppositeWindupRotation,
                 Math.Min(Clip.AttackStartRotation, Clip.AttackEndRotation));
             float clipMaximum = Math.Max(
                 Clip.OppositeWindupRotation,
                 Math.Max(Clip.AttackStartRotation, Clip.AttackEndRotation));
-            float minimumCorrection = Math.Max(-Clip.MaxAimCorrection, -1.50f - clipMinimum);
+            float minimumCorrection = Math.Max(-Clip.MaxAimCorrection, -1.85f - clipMinimum);
             float maximumCorrection = Math.Min(Clip.MaxAimCorrection, 1.40f - clipMaximum);
             if (minimumCorrection > maximumCorrection)
                 minimumCorrection = maximumCorrection = 0f;

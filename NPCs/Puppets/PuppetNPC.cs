@@ -80,6 +80,11 @@ namespace tsorcRevamp.NPCs.Puppets
         private int  _cachedRangedType = -1;
         private int  _cachedSecondaryRangedType = -1;
         private int  _cachedMagicType = -1;
+        private Player.CompositeArmStretchAmount _twoHandedBackStretch = Player.CompositeArmStretchAmount.ThreeQuarters;
+        private float _twoHandedBackRotation;
+        private Vector2 _twoHandedBackHandWorld;
+        private Vector2 _twoHandedBackGripTargetWorld;
+        private float _twoHandedBackGripError;
 
         // ── Loadout ───────────────────────────────────────────────────────────────
         protected abstract int HeadArmorItemType  { get; }
@@ -160,6 +165,19 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Peak opacity and draw scale for the slash swoosh.</summary>
         protected virtual float SlashVFXOpacity => 0.4f;
         protected virtual float SlashVFXScale => 1f;
+        protected virtual bool SuppressSlashVFXForCurrentPhase => false;
+
+        /// <summary>Per-phase escape hatch for attacks that temporarily replace the melee weapon
+        /// with a bespoke holdout. Returning true suppresses the ordinary held-item sprite.</summary>
+        protected virtual bool DrawSpecialHeldWeapon(ref PlayerDrawSet drawInfo) => false;
+
+        /// <summary>Per-puppet cadence multiplier for the vanilla 14-frame walk cycle. Fast bosses
+        /// can lower this without changing their actual movement speed.</summary>
+        protected virtual float WalkAnimationSpeedMultiplier => 1f;
+
+        /// <summary>Extra rotation applied only to overhead-style windups. Zero preserves the
+        /// established archetype pose; individual bosses can pull the blade farther behind the head.</summary>
+        protected virtual float OverheadWindupOvershoot => 0f;
 
         // Telegraph minimum: 30 ticks = 0.5 s.  Long enough for the player to read the
         // wind-up arc (sword raises, holds at apex, then swings).  Heavier attacks override
@@ -665,6 +683,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Fraction (0-1) through the swing at which <see cref="DoHomingVolleyFire"/> fires.</summary>
         protected virtual float HomingVolleyFireProgress        => 0.5f;
         protected virtual int   HomingVolleyRecoveryTicks       => 120;
+        /// <summary>Uses the player-style raised-hand hold followed by Use1-Use4 release frames.
+        /// The held visual itself is supplied by <see cref="DrawSpecialHeldWeapon"/>.</summary>
+        protected virtual bool  UseRaisedHomingVolleyHoldoutPose => false;
 
         /// <summary>Called every tick of the overhead chop, elapsed/total counting swing progress -
         /// override to spawn dust along the blade's current arc position.</summary>
@@ -2166,6 +2187,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NpcId = NPC.whoAmI,
                 NpcType = NPC.type,
                 NpcName = NPC.TypeName,
+                NpcContentName = NPC.ModNPC?.FullName ?? $"Terraria/{NPC.type}",
                 AttackName = TelemetryAttackName,
                 Phase = Phase.ToString(),
                 PhaseTimer = PhaseTimer,
@@ -4448,8 +4470,9 @@ namespace tsorcRevamp.NPCs.Puppets
             if (SlowDownBeforeMelee && _attackRuntimeV2.Stage != PuppetAttackStage.Recovery)
                 NPC.velocity.X *= 1f - _activeMeleeCombo.MoveBrake;
 
-            if (AimSwingActive)
-                _attackRuntimeV2.UpdateAim(NPC.Center, target.Center);
+            // A V2 clip owns its own bounded correction and aim-lock contract. Do not make that
+            // contract depend on the legacy archetype opt-in used by the old combo renderer.
+            _attackRuntimeV2.UpdateAim(NPC.Center, target.Center);
             _weaponRotation = _attackRuntimeV2.SampleRotation();
             PhaseTimer = _attackRuntimeV2.TicksRemaining;
 
@@ -5901,7 +5924,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // Same OverheadArc shape as the combo system's OverheadArc case, so the plain
                 // one-shot swing (DoMeleeAttack/TryMeleeHit, used outside the combo system) gets
                 // the same easing/flip/aim-bias opt-ins instead of only combos getting them.
-                float a0 = -1.3f, a1 = 1.0f;
+                float a0 = -1.3f - OverheadWindupOvershoot, a1 = 1.0f;
                 if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
                 if (UseAimAdaptiveArc || AimSwingActive) { a0 += _comboAimBias; a1 += _comboAimBias; }
 
@@ -5963,7 +5986,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     case ComboMotion.OverheadArc:
                     {
-                        var (a0, a1) = Endpoints(-1.3f, 1.0f);
+                        var (a0, a1) = Endpoints(-1.3f - OverheadWindupOvershoot, 1.0f);
                         if (inTel)        _weaponRotation = UseLogicalMeleeTelegraphs
                             ? LogicalSwingWindup(a1, a0, comboTelegraphT)
                             : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
@@ -5997,7 +6020,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.VerticalChop:
                     {
                         // Straight overhead → straight down (hammer)
-                        var (a0, a1) = Endpoints(-1.55f, 1.4f);
+                        var (a0, a1) = Endpoints(-1.55f - OverheadWindupOvershoot, 1.4f);
                         if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.32f);
                         else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.119f), 0.18f);
                         else              _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
@@ -6026,7 +6049,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     case ComboMotion.GroundSlam:
                     {
-                        var (a0, a1) = Endpoints(-1.55f, 1.5f);
+                        var (a0, a1) = Endpoints(-1.55f - OverheadWindupOvershoot, 1.5f);
                         if (inTel) _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
                         else       _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
                         break;
@@ -6035,7 +6058,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         // Wind up overhead, then carry the axe up-and-FORWARD (toward the player,
                         // ~1 o'clock facing right / ~11 facing left) through the airborne arc, and
                         // slam down hard as it descends / lands.
-                        if (inTel)                    _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.45f, 0.30f);
+                        if (inTel)                    _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.45f - OverheadWindupOvershoot, 0.30f);
                         else if (NPC.velocity.Y < 0f) _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.9f, 0.20f);
                         else                          _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.4f, 0.22f);
                         break;
@@ -6054,7 +6077,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.Feint:
                     {
                         // Raise exactly like a real overhead attack, then hold the apex as bait.
-                        var (a0, a1) = Endpoints(-1.3f, 1.0f);
+                        var (a0, a1) = Endpoints(-1.3f - OverheadWindupOvershoot, 1.0f);
                         _weaponRotation = inTel && UseLogicalMeleeTelegraphs
                             ? LogicalSwingWindup(a1, a0, comboTelegraphT)
                             : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
@@ -6062,7 +6085,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     case ComboMotion.DoubleSpinSlam:
                     {
-                        var (a0, a1) = Endpoints(-1.3f, 1.4f);
+                        var (a0, a1) = Endpoints(-1.3f - OverheadWindupOvershoot, 1.4f);
                         if (inTel)
                         {
                             _weaponRotation = UseLogicalMeleeTelegraphs
@@ -6669,15 +6692,28 @@ namespace tsorcRevamp.NPCs.Puppets
 
             SyncFrames();
 
-            // ── Composite-arm swing experiment ──────────────────────────────────────
-            // Set AFTER SyncFrames so it overrides the front-arm portion of the chosen body
-            // frame.  We bypass Player.PlayerFrame() (which would normally drive this), so the
-            // value we set here persists straight into DrawPlayer.  Disabled → explicitly clear
-            // it so a stale composite pose never leaks into the legacy 4-frame path.
+            // Set AFTER SyncFrames so the continuously-authored arms override the matching pieces
+            // of the selected body frame. The front hand remains authoritative for weapon draw and
+            // collision. An opt-in rear arm is visual-only and solves toward a second hilt grip.
             if (CompositeArmActive)
                 _puppet.SetCompositeArmFront(true, CompositeArmStretch, CompositeArmRotation);
             else
                 _puppet.SetCompositeArmFront(false, Player.CompositeArmStretchAmount.Full, 0f);
+
+            if (TwoHandedCompositeArmActive)
+            {
+                ResolveTwoHandedBackArmPose();
+                _puppet.SetCompositeArmBack(true, _twoHandedBackStretch, _twoHandedBackRotation);
+            }
+            else
+            {
+                _puppet.SetCompositeArmBack(false, Player.CompositeArmStretchAmount.Full, 0f);
+                _twoHandedBackStretch = Player.CompositeArmStretchAmount.ThreeQuarters;
+                _twoHandedBackRotation = 0f;
+                _twoHandedBackHandWorld = Vector2.Zero;
+                _twoHandedBackGripTargetWorld = Vector2.Zero;
+                _twoHandedBackGripError = 0f;
+            }
         }
 
         private void SyncFrames()
@@ -6690,7 +6726,8 @@ namespace tsorcRevamp.NPCs.Puppets
             // Guard against Main.gamePaused so the animation freezes with every other NPC.
             if (onGround && moving && !Main.gamePaused)
             {
-                _frameCounter += Math.Abs(NPC.velocity.X) * 0.55f;
+                _frameCounter += Math.Abs(NPC.velocity.X) * 0.55f
+                    * Math.Max(0f, WalkAnimationSpeedMultiplier);
                 if (_frameCounter >= 14f) _frameCounter = 0f;
             }
 
@@ -6779,6 +6816,39 @@ namespace tsorcRevamp.NPCs.Puppets
             else if (Phase == AttackPhase.KnivesThrow)
             {
                 bodyRow = 3; // Use3 — arm forward at release
+            }
+            else if (Phase == AttackPhase.TendrilTelegraph || Phase == AttackPhase.TendrilReach)
+            {
+                // The grab is a bare, forward-reaching hand. Keeping Use3 here prevents an
+                // ordinary walk frame from fighting the hand position while the tendril is live.
+                bodyRow = 3;
+            }
+            else if (Phase == AttackPhase.TendrilSwingTelegraph || Phase == AttackPhase.TendrilSwing)
+            {
+                bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
+            }
+            else if (Phase == AttackPhase.HomingVolleyDodgeback
+                  || Phase == AttackPhase.HomingVolleySwingTelegraph
+                  || Phase == AttackPhase.HomingVolleySwing)
+            {
+                if (UseRaisedHomingVolleyHoldoutPose)
+                {
+                    if (Phase == AttackPhase.HomingVolleySwing)
+                    {
+                        float release = HomingVolleySwingTicks > 0
+                            ? 1f - PhaseTimer / (float)HomingVolleySwingTicks
+                            : 1f;
+                        bodyRow = 1 + Math.Min(3, (int)(MathHelper.Clamp(release, 0f, 0.999f) * 4f));
+                    }
+                    else
+                    {
+                        bodyRow = 1; // player Sword of Gwyn's held-spear Use1 pose
+                    }
+                }
+                else
+                {
+                    bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
+                }
             }
             else if (Phase == AttackPhase.MeleeComboTelegraph
                   || Phase == AttackPhase.MeleeComboAttack
@@ -7087,7 +7157,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         internal void DrawSlashToLayer(ref PlayerDrawSet drawInfo)
         {
-            if (!HasSlashVFX)
+            if (!HasSlashVFX || SuppressSlashVFXForCurrentPhase)
                 return;
 
             bool standardSwing = Phase == AttackPhase.MeleeAttack || Phase == AttackPhase.StabAttack
@@ -7105,7 +7175,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length
                 && (IsArcSwingMotion(_activeMeleeCombo.Steps[_meleeComboStepIndex].Motion)
                     || _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion == ComboMotion.LeapSlam
-                    || _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion == ComboMotion.RisingUppercutLeap);
+                    || _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion == ComboMotion.RisingUppercutLeap
+                    || _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion == ComboMotion.Spin
+                    || _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion == ComboMotion.ApexDiveCleave);
             bool runtimeV2Slash = _attackRuntimeV2.Active
                 && _attackRuntimeV2.Stage == PuppetAttackStage.Active;
             bool needsComboVisualFallback = visualComboSlash && (!_bladeArmed || _activeBladeReach <= 0f);
@@ -7174,7 +7246,9 @@ namespace tsorcRevamp.NPCs.Puppets
 
             Vector2 direction = GetWeaponWorldDirection();
             float rotation = direction.ToRotation();
-            Vector2 position = GetHandPosition() + direction * 2f;
+            // Match BroadswordRework's player layer: the arc is centered on the wielder, while
+            // rotation and scale communicate the live blade direction and reach.
+            Vector2 position = NPC.Center + direction * 2f;
             Rectangle sourceRectangle = frame.GetSourceRectangle(_slashVFXTex);
             Vector2 origin = sourceRectangle.Size() * 0.5f;
             float scale = reach / 30f * SlashVFXScale;
@@ -7202,6 +7276,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 DrawEstusFlaskToLayer(ref drawInfo);
                 return;
             }
+
+            if (DrawSpecialHeldWeapon(ref drawInfo))
+                return;
 
             if (Phase == AttackPhase.FleeToHeal || !_weaponVisible || _heldItemType <= 0)
                 return;
@@ -7398,10 +7475,18 @@ namespace tsorcRevamp.NPCs.Puppets
                     CompositeArmRotationDeg = CompositeArmActive
                         ? MathHelper.ToDegrees(CompositeArmRotation)
                         : float.NaN,
+                    BackCompositeArmRotationDeg = TwoHandedCompositeArmActive
+                        ? MathHelper.ToDegrees(_twoHandedBackRotation)
+                        : float.NaN,
                     ArmWorldRotationDeg = armWorldDeg,
                     ArmWeaponErrorDeg = armWeaponErrorDeg,
                     CompositeArmActive = CompositeArmActive,
                     CompositeStretch = CompositeArmStretch.ToString(),
+                    BackCompositeArmActive = TwoHandedCompositeArmActive,
+                    BackCompositeStretch = _twoHandedBackStretch.ToString(),
+                    BackHandWorld = _twoHandedBackHandWorld,
+                    BackGripTargetWorld = _twoHandedBackGripTargetWorld,
+                    BackGripError = _twoHandedBackGripError,
                     BladeArmed = _bladeArmed,
                     SpriteEffects = fx.ToString(),
                     BladeFlipActive = BladeFlipActive,
@@ -7635,15 +7720,15 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             (float a0, float a1) = step.Motion switch
             {
-                ComboMotion.OverheadArc     => (-1.3f, 1.0f),
+                ComboMotion.OverheadArc     => (-1.3f - OverheadWindupOvershoot, 1.0f),
                 ComboMotion.UnderhandArc    => (1.0f, -1.0f),
                 ComboMotion.HorizontalSweep => (-0.4f, 0.6f),
-                ComboMotion.VerticalChop    => (-1.55f, 1.4f),
-                ComboMotion.GroundSlam      => (-1.55f, 1.5f),
+                ComboMotion.VerticalChop    => (-1.55f - OverheadWindupOvershoot, 1.4f),
+                ComboMotion.GroundSlam      => (-1.55f - OverheadWindupOvershoot, 1.5f),
                 ComboMotion.IaidoDraw       => (1.2f, -0.5f),
                 ComboMotion.Feint           => (-1.3f, -1.3f),
                 ComboMotion.ChargeChop      => (-0.95f, -0.95f),
-                ComboMotion.DoubleSpinSlam  => (-1.3f, 1.4f),
+                ComboMotion.DoubleSpinSlam  => (-1.3f - OverheadWindupOvershoot, 1.4f),
                 ComboMotion.ThrownWeaponRetrieve => (HoldRotation, HoldRotation),
                 ComboMotion.LowAxeRun       => (1.9f, 1.9f),
                 ComboMotion.RisingUppercutLeap => (1.9f, -1.0f),
@@ -7672,6 +7757,22 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <c>GetFrontHandPosition</c> on a puppet) — both are what this experiment validates.</summary>
         protected virtual bool UseCompositeArmSwing => false;
 
+        /// <summary>Opt-in great-weapon pose. The front arm continues to own the weapon anchor and
+        /// collision; the back arm follows the same authored swing and reaches for a second hilt
+        /// point. This is intentionally independent of vanilla golf/use-style animation.</summary>
+        protected virtual bool UseTwoHandedCompositeSwing => false;
+
+        /// <summary>Distance from the authoritative front-hand anchor toward the blade/crossguard
+        /// where the rear hand tries to grip. Kept small because Terraria composite arms are short.</summary>
+        protected virtual float TwoHandedBackGripOffset => 4f;
+
+        /// <summary>Maximum angular separation between the arms. The bound prevents the inverse-
+        /// kinematics solution from folding through the torso when the desired grip crosses a shoulder.</summary>
+        protected virtual float TwoHandedBackArmMaxSeparation => MathHelper.ToRadians(70f);
+
+        /// <summary>Pixel-equivalent hysteresis cost for changing the rear elbow stretch frame.</summary>
+        protected virtual float TwoHandedBackStretchSwitchPenalty => 2f;
+
         /// <summary>Runtime master kill-switch for the composite-arm experiment.  Lets you flip the
         /// new arm path off globally (e.g. from a debug command) for instant A/B without a rebuild.</summary>
         internal static bool CompositeArmSwingMasterEnable = true;
@@ -7683,21 +7784,25 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Tunable: how far the composite front arm extends from the shoulder.</summary>
         internal static Player.CompositeArmStretchAmount CompositeArmStretch = Player.CompositeArmStretchAmount.Full;
 
-        /// <summary>When true, every weapon-visible swing frame is written to
-        /// <c>tsorcRevamp-puppet-swing.log</c> for diagnosing arm/weapon alignment.
-        /// Toggle in-game with <c>/swingarm log</c>.</summary>
-        internal static bool SwingDebugLog = false;
+        /// <summary>Automatic structured attack telemetry master switch. World load enables it and
+        /// starts a timestamped JSONL session; <c>/swingarm log</c> remains a manual override.</summary>
+        internal static bool SwingDebugLog = true;
 
         /// <summary>Phases whose <c>_weaponRotation</c> represents an actual swinging-arm motion
         /// (as opposed to a held-aim pose).  Only these drive the composite arm experiment.</summary>
         private bool IsMeleeSwingPosePhase =>
             Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack ||
             Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
-            Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery;
+            Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery ||
+            Phase == AttackPhase.TendrilSwingTelegraph || Phase == AttackPhase.TendrilSwing ||
+            Phase == AttackPhase.BoomerangSwingTelegraph || Phase == AttackPhase.BoomerangSwing;
 
         /// <summary>True when the composite-arm swing path should be active this frame.</summary>
         private bool CompositeArmActive =>
             UseCompositeArmSwing && CompositeArmSwingMasterEnable && IsMeleeSwingPosePhase;
+
+        private bool TwoHandedCompositeArmActive =>
+            CompositeArmActive && UseTwoHandedCompositeSwing;
 
         /// <summary>Rotation handed to the composite arm / <c>GetFrontHandPosition</c>.  Converts our
         /// weapon-swing convention (0 = broadsword hold diagonal, −1.3 = raised overhead, +1.0 =
@@ -7709,5 +7814,89 @@ namespace tsorcRevamp.NPCs.Puppets
         /// vanilla callers pre-negate for direction −1 the same way (e.g. useStyle 9).</summary>
         private float CompositeArmRotation =>
             (_weaponRotation - MathHelper.PiOver2 + CompositeArmRotationOffset) * NPC.direction;
+
+        /// <summary>
+        /// A small one-segment inverse-kinematics solve for the visual rear arm. Terraria exposes
+        /// exact front/back hand endpoints but only four discrete elbow stretches, so each stretch
+        /// is evaluated against the desired hilt point. A switch penalty avoids elbow-frame chatter,
+        /// and the separation bound keeps the arm on a continuous, readable path through the swing.
+        /// </summary>
+        private void ResolveTwoHandedBackArmPose()
+        {
+            Vector2 frontHand = _puppet.GetFrontHandPosition(CompositeArmStretch, CompositeArmRotation);
+            _twoHandedBackGripTargetWorld = frontHand
+                + GetWeaponWorldDirection() * TwoHandedBackGripOffset;
+
+            float maxSeparation = Math.Max(0f, TwoHandedBackArmMaxSeparation);
+            float switchPenaltySq = TwoHandedBackStretchSwitchPenalty * TwoHandedBackStretchSwitchPenalty;
+            float bestScore = float.MaxValue;
+            Player.CompositeArmStretchAmount bestStretch = _twoHandedBackStretch;
+            float bestRotation = CompositeArmRotation;
+            Vector2 bestHand = frontHand;
+
+            // Evaluate the current elbow first so exact ties preserve continuity, then cover all
+            // four vanilla composite-arm stretch frames. The duplicate current entry is harmless.
+            EvaluateTwoHandedBackCandidate(_twoHandedBackStretch,
+                maxSeparation, switchPenaltySq, ref bestScore, ref bestStretch, ref bestRotation, ref bestHand);
+            EvaluateTwoHandedBackCandidate(Player.CompositeArmStretchAmount.ThreeQuarters,
+                maxSeparation, switchPenaltySq, ref bestScore, ref bestStretch, ref bestRotation, ref bestHand);
+            EvaluateTwoHandedBackCandidate(Player.CompositeArmStretchAmount.Quarter,
+                maxSeparation, switchPenaltySq, ref bestScore, ref bestStretch, ref bestRotation, ref bestHand);
+            EvaluateTwoHandedBackCandidate(Player.CompositeArmStretchAmount.Full,
+                maxSeparation, switchPenaltySq, ref bestScore, ref bestStretch, ref bestRotation, ref bestHand);
+            EvaluateTwoHandedBackCandidate(Player.CompositeArmStretchAmount.None,
+                maxSeparation, switchPenaltySq, ref bestScore, ref bestStretch, ref bestRotation, ref bestHand);
+
+            _twoHandedBackStretch = bestStretch;
+            _twoHandedBackRotation = bestRotation;
+            _twoHandedBackHandWorld = bestHand;
+            _twoHandedBackGripError = Vector2.Distance(bestHand, _twoHandedBackGripTargetWorld);
+        }
+
+        private void EvaluateTwoHandedBackCandidate(
+            Player.CompositeArmStretchAmount stretch,
+            float maxSeparation,
+            float switchPenaltySq,
+            ref float bestScore,
+            ref Player.CompositeArmStretchAmount bestStretch,
+            ref float bestRotation,
+            ref Vector2 bestHand)
+        {
+            GetBackArmEllipse(stretch, out float radiusX, out float radiusY);
+            Vector2 shoulder = _puppet.MountedCenter + new Vector2(6f * NPC.direction, -2f);
+            Vector2 targetFromShoulder = _twoHandedBackGripTargetWorld - shoulder;
+            float endpointAngle = (float)Math.Atan2(
+                targetFromShoulder.Y / radiusY,
+                targetFromShoulder.X / radiusX);
+            float candidateRotation = endpointAngle - MathHelper.PiOver2;
+            float separation = MathHelper.WrapAngle(candidateRotation - CompositeArmRotation);
+            candidateRotation = CompositeArmRotation
+                + MathHelper.Clamp(separation, -maxSeparation, maxSeparation);
+
+            Vector2 candidateHand = _puppet.GetBackHandPosition(stretch, candidateRotation);
+            float errorSq = Vector2.DistanceSquared(candidateHand, _twoHandedBackGripTargetWorld);
+            float score = errorSq + (stretch == _twoHandedBackStretch ? 0f : switchPenaltySq);
+            if (score < bestScore)
+            {
+                bestScore = score;
+                bestStretch = stretch;
+                bestRotation = candidateRotation;
+                bestHand = candidateHand;
+            }
+        }
+
+        private static void GetBackArmEllipse(
+            Player.CompositeArmStretchAmount stretch,
+            out float radiusX,
+            out float radiusY)
+        {
+            (radiusX, radiusY) = stretch switch
+            {
+                Player.CompositeArmStretchAmount.Full => (10f, 12f),
+                Player.CompositeArmStretchAmount.ThreeQuarters => (8f, 10f),
+                Player.CompositeArmStretchAmount.Quarter => (6f, 8f),
+                _ => (4f, 6f),
+            };
+        }
     }
 }

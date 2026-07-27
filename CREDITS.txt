@@ -4,7 +4,7 @@ Tim Hjersted aka Vibrent / the entire map, built from 2012-2014, 2018-2024, 2026
 
 ADVENTURE REMIX MAP
 -------------------------------
-Xelvaa / a massive expansion on top of the original
+Xelvaa / a massive expansion on top of the 2024 original
 
 MOD REVAMP (2018-2026)
 -------------------------------
@@ -47,6 +47,7 @@ BlazeDayzYT / Healing Dusk Crown Ring sprite
 Sapharan / two enemies
 Mratitherat / Radiant Strand and Sundered Moon sprites
 LuckyLuke / Enchanted Moon Charm, Upgraded Mirror, and Oil Pot sprites
+Zedotagger / Gravelord Nito sprite and main menu art
 
 ORIGINAL 2012 MOD 
 -------------------------------
@@ -108,10 +109,9 @@ TCONFIG EDITION SPECIAL THANKS
 *Yoraizor: responsible for virtually all of the unique features related to the Dark Souls aspects of the mod and has always been super helpful
 *Binary Construct: made the Tedit map editing program - couldn't have made the map without it
 *Surfpup: made tConfig - would have never attempted to get into modding without tconfig's added accessibility
+*Omnir: a ton of the mod content is from his Omnir mod 
 *W1k: helped me a ton with mod questions
 *Draykon: made the initial Dark Souls mechanic for the mod in like 3 hours!
 *Diggaroo, Zebri and Triangular Satellite: each made a great trailer for the mod
-*Omnir: a ton of the mod content is from his Omnir mod - the guy just pumps out tons of quality work
-*Yoraizor: did I mention how helpful he's been? Can't thank him enough for helping me all the times I've been stumped by a mod issue
 *Eikester: made Game Launcher and improved tConfig installation
 *Surfpup: again for updating tConfig to version 0.36, making the original TSORC playable again in 2018! 

@@ -701,24 +701,27 @@ namespace tsorcRevamp
             #endregion
             //--------
             #region StorageExcludedTypes list
-            // Grab-on-touch resources that are consumed on contact — never store these.
-            StorageExcludedTypes = new HashSet<int>()
-            {
-                // Life pickups (Heart + Halloween/Christmas variants)
-                ItemID.Heart, ItemID.CandyApple, ItemID.CandyCane,
-                // Mana pickups (Star + Halloween/Christmas variants)
-                ItemID.Star, ItemID.SoulCake, ItemID.SugarPlum,
-                // Nebula armor boosters
-                ItemID.NebulaPickup1, ItemID.NebulaPickup2, ItemID.NebulaPickup3,
-                // Permanent stat-up consumables — keep handy, don't bury them
-                ItemID.LifeCrystal, ItemID.LifeFruit, ItemID.ManaCrystal,
-                // Goodie/present bags (boss "Treasure Bags" + fishing crates are caught dynamically in IsStorageDepositable)
-                ItemID.GoodieBag, ItemID.Present,
-                // Mod resource droplets / currency (consumed or spent at altars, not stored)
-                ModContent.ItemType<StaminaDroplet>(),
-                ModContent.ItemType<Items.Materials.DarkSoul>(),
-                ModContent.ItemType<SoulCoin>(),
-            };
+            // Auto-deposit-on-pickup is disabled entirely (see tsorcGlobalItem.OnPickup), so this exclusion
+            // list is no longer needed there. Left commented out rather than deleted in case auto-deposit is
+            // reinstated later. IsStorageDepositable's null-check on StorageExcludedTypes means leaving this
+            // unassigned is safe.
+            // StorageExcludedTypes = new HashSet<int>()
+            // {
+            //     // Life pickups (Heart + Halloween/Christmas variants)
+            //     ItemID.Heart, ItemID.CandyApple, ItemID.CandyCane,
+            //     // Mana pickups (Star + Halloween/Christmas variants)
+            //     ItemID.Star, ItemID.SoulCake, ItemID.SugarPlum,
+            //     // Nebula armor boosters
+            //     ItemID.NebulaPickup1, ItemID.NebulaPickup2, ItemID.NebulaPickup3,
+            //     // Permanent stat-up consumables — keep handy, don't bury them
+            //     ItemID.LifeCrystal, ItemID.LifeFruit, ItemID.ManaCrystal,
+            //     // Goodie/present bags (boss "Treasure Bags" + fishing crates are caught dynamically in IsStorageDepositable)
+            //     ItemID.GoodieBag, ItemID.Present,
+            //     // Mod resource droplets / currency (consumed or spent at altars, not stored)
+            //     ModContent.ItemType<StaminaDroplet>(),
+            //     ModContent.ItemType<Items.Materials.DarkSoul>(),
+            //     ModContent.ItemType<SoulCoin>(),
+            // };
             #endregion
             //--------
             #region RestrictedHooks list

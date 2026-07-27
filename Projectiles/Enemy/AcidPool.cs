@@ -43,8 +43,15 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.velocity = Vector2.Zero;
 
-            //Dense boiling surface layer (the pool itself, in its own body row)
-            for (int i = 0; i < 3; i++)
+            if (Main.dedServ)
+            {
+                return; //all of this is purely cosmetic dust -- nothing to do server-side
+            }
+
+            //Boiling surface layer (the pool itself, in its own body row). Thinned from an unconditional 3/tick
+            //-- with the AcidBody attack able to have several of these pools alive at once (6s lifetime, one
+            //per body segment), that added up to a major chunk of the reported dust-flood lag.
+            if (Main.rand.NextBool(2))
             {
                 Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(PoolWidth), Projectile.position.Y + Main.rand.NextFloat(PoolHeight * 0.6f));
                 int dust = Dust.NewDust(pos, 4, 4, DustID.AncientLight, 0f, -1f, 120, Color.Purple, 1.2f);
@@ -52,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Main.dust[dust].velocity *= 0.2f;
                 Main.dust[dust].velocity.Y = -0.8f;
             }
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(6))
             {
                 Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(PoolWidth), Projectile.position.Y + Main.rand.NextFloat(PoolHeight * 0.5f));
                 int bubble = Dust.NewDust(pos, 4, 4, DustID.Venom, 0f, -1.2f, 100, default, 1.3f);
@@ -62,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             //Sparse dissipating gas one tile above -- fades as the pool ages
             float remaining = Projectile.timeLeft / (float)Lifetime;
-            if (Main.rand.NextFloat() < 0.4f * remaining)
+            if (Main.rand.NextFloat() < 0.15f * remaining)
             {
                 Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(PoolWidth), Projectile.position.Y - 16f + Main.rand.NextFloat(12f));
                 int gas = Dust.NewDust(pos, 4, 4, DustID.AncientLight, 0f, -1.5f, 200, Color.MediumPurple, 0.8f);

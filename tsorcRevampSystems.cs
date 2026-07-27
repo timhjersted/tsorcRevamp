@@ -1511,6 +1511,7 @@ namespace tsorcRevamp
 
         public override void Unload()
         {
+            PuppetAttackTelemetry.EndSession("mod-unload");
             UpgradedMirrors = null;
             CobaltHelmets = null;
             Texture2D textureToDispose = hurtVignetteTexture;
@@ -1529,10 +1530,18 @@ namespace tsorcRevamp
             visualLife = -1f;
             visualMana = -1f;
             visualStamina = -1f;
+            PuppetNPC.SwingDebugLog = true;
+            PuppetAttackTelemetry.StartSession("world-load");
+        }
+
+        public override void OnWorldUnload()
+        {
+            PuppetAttackTelemetry.EndSession("world-unload");
         }
 
         public override void PreSaveAndQuit()
         {
+            PuppetAttackTelemetry.EndSession("save-and-quit");
             TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun");
             TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
             TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");

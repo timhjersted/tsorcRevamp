@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -11,6 +12,7 @@ using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.Projectiles.Melee.Broadswords;
 using tsorcRevamp.Utilities;
 
 // NOTE: the folder is Gwyn/, but the namespace stays flat (…SuperHardMode) — a namespace segment
@@ -46,10 +48,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int HeadArmorItemType => ModContent.ItemType<LordGwynHelm>();
         protected override int BodyArmorItemType => ModContent.ItemType<LordGwynArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<LordGwynLeggings>();
+        // The composite body sheet supplies the gray sleeve, gold wrist, and brown hand. Its
+        // transparent joins still use the synthetic player's skin substrate, so match that to
+        // Gwyn's dark-brown authored palette instead of PuppetNPC's bright orange invader default.
+        protected override Color PuppetSkinColor => new Color(130, 90, 60);
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemySwordOfGwyn>();
         protected override int RangedWeaponItemType => -1; // melee + bespoke fire/lightning magic
-        protected override float MeleeWeaponDrawScale => 0.5f;
+        protected override Vector2 MeleeHandleNorm => new Vector2(0.14f, 0.86f);
+        protected override float MeleeWeaponDrawScale => 0.65f;
+        protected override float ComboReachBase => 125f;
+        protected override float MeleeBladeWidth => 30f;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
 
@@ -77,6 +86,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float MeleeRange => 110f;
         protected override float StabRange => 180f;
         protected override float ComboMaxStartRange => 340f;
+        // The sword's authored arc now drives the arm, weapon, swept collision, and slash VFX.
+        // Alternating the arc would muddy the explicit Backhand and Guillotine telegraphs.
+        protected override bool UseSwingEasing => true;
+        protected override bool UseAlternateFlip => false;
+        protected override bool UseAimAdaptiveArc => true;
+        protected override bool UseLogicalMeleeTelegraphs => true;
+        protected override bool UseCompositeArmSwing => true;
+        protected override bool UseTwoHandedCompositeSwing => true;
+        protected override bool MirrorMeleeSwingRotationByFacing => true;
+        protected override bool HasSlashVFX => true;
+        protected override Color SlashVFXColor => new Color(255, 112, 28);
+        protected override float SlashVFXOpacity => 0.24f;
+        protected override float SlashVFXScale => 0.72f;
+        protected override float WalkAnimationSpeedMultiplier => 0.35f;
+        protected override float OverheadWindupOvershoot => MathHelper.ToRadians(17f);
+        protected override bool SuppressSlashVFXForCurrentPhase =>
+            Phase == AttackPhase.HomingVolleyDodgeback
+            || Phase == AttackPhase.HomingVolleySwingTelegraph
+            || Phase == AttackPhase.HomingVolleySwing;
         protected override bool SlowDownBeforeMelee => false; // pursue through the windup — no walking out of the telegraph
 
         // ── The greatsword moveset (bespoke, reactive) ───────────────────────────
@@ -90,11 +118,73 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause, float dmg = 1f, float reach = 1f, float push = 0f)
             => new MeleeComboStep { Motion = m, TelegraphTicks = tel, AttackTicks = atk, PostStepPause = pause, DamageMult = dmg, ReachMult = reach, ForwardPushMult = push };
 
+        // Complete grounded strikes use the single-clock runtime. Movement attacks and linked
+        // strings stay on MeleeCombo because their locomotion and continuation are the behavior.
+        static readonly PuppetAttackClip CleaveV2 = new PuppetAttackClip(
+            name: "Cleave",
+            pose: PuppetPosePreset.TwoHandedSwing,
+            windupTicks: 30,
+            activeTicks: 24,
+            recoveryTicks: 20,
+            oppositeWindupRotation: 0.85f,
+            attackStartRotation: -0.75f,
+            attackEndRotation: 0.85f,
+            hitWindowStart: 0.12f,
+            hitWindowEnd: 0.82f,
+            swingEase: SwingEaseStyle.Snap,
+            maxAimCorrection: 0.30f,
+            aimLockTicksBeforeActive: 14);
+
+        static readonly PuppetAttackClip CinderfallV2 = new PuppetAttackClip(
+            name: "Cinderfall",
+            pose: PuppetPosePreset.TwoHandedSwing,
+            windupTicks: 34,
+            activeTicks: 28,
+            recoveryTicks: 26,
+            oppositeWindupRotation: 1.10f,
+            attackStartRotation: -1.70f,
+            attackEndRotation: 1.25f,
+            hitWindowStart: 0.22f,
+            hitWindowEnd: 0.88f,
+            swingEase: SwingEaseStyle.Whip,
+            maxAimCorrection: 0.25f,
+            aimLockTicksBeforeActive: 18);
+
+        static readonly PuppetAttackClip GuillotineV2 = new PuppetAttackClip(
+            name: "Guillotine",
+            pose: PuppetPosePreset.TwoHandedSwing,
+            windupTicks: 40,
+            activeTicks: 30,
+            recoveryTicks: 30,
+            oppositeWindupRotation: 1.10f,
+            attackStartRotation: -1.75f,
+            attackEndRotation: 1.15f,
+            hitWindowStart: 0.22f,
+            hitWindowEnd: 0.82f,
+            swingEase: SwingEaseStyle.Whip,
+            maxAimCorrection: 0.22f,
+            aimLockTicksBeforeActive: 20);
+
+        static readonly PuppetAttackClip BackhandV2 = new PuppetAttackClip(
+            name: "Backhand Step",
+            pose: PuppetPosePreset.TwoHandedSwing,
+            windupTicks: 30,
+            activeTicks: 20,
+            recoveryTicks: 16,
+            oppositeWindupRotation: -0.65f,
+            attackStartRotation: 0.80f,
+            attackEndRotation: -0.65f,
+            hitWindowStart: 0.12f,
+            hitWindowEnd: 0.78f,
+            swingEase: SwingEaseStyle.Snap,
+            maxAimCorrection: 0.30f,
+            aimLockTicksBeforeActive: 10);
+
         static readonly MeleeCombo[] GwynCombos = new[]
         {
             // 0 — Cleave: the bread-and-butter wide swing
             new MeleeCombo { Name = "Cleave", BaseWeight = 100, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Orange, CooldownAfterUse = 40,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 40, RuntimeV2Clip = CleaveV2,
                 Steps = new[] { GS(ComboMotion.HorizontalSweep, 15, 18, 0, 1.0f, 1.1f) } },
             // 1 — Under-Over juggle: rising launch into an overhead chop
             new MeleeCombo { Name = "Under-Over", BaseWeight = 70, Preferred = ComboRangeBand.Close,
@@ -115,17 +205,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             new MeleeCombo { Name = "Sunspin", BaseWeight = 45, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Yellow, CooldownAfterUse = 170, HeavyCommit = true,
                 Steps = new[] { GS(ComboMotion.Spin, 20, 26, 0, 1.1f, 1.15f, 0.6f) } },
-            // 5 — Flipping Cinderfall: forward flip → ground slam + fire AoE
+            // 5 — Cinderfall: committed ground cleave + fire AoE
             new MeleeCombo { Name = "Cinderfall", BaseWeight = 40, Preferred = ComboRangeBand.Mid,
-                InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = CinderfallV2,
                 Steps = new[] { GS(ComboMotion.GroundSlam, 25, 24, 0, 1.6f, 1.3f) } },
             // 6 — Guillotine Drop: heavy standing overhead, the "respect me" punish
             new MeleeCombo { Name = "Guillotine", BaseWeight = 45, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = GuillotineV2,
                 Steps = new[] { GS(ComboMotion.OverheadArc, 30, 22, 0, 1.8f, 1.15f) } },
             // 7 — Backhand + Step: quick re-engaging sweep, denies a roll-back
             new MeleeCombo { Name = "Backhand Step", BaseWeight = 60, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Orange, CooldownAfterUse = 70,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 70, RuntimeV2Clip = BackhandV2,
                 Steps = new[] { GS(ComboMotion.HorizontalSweep, 12, 16, 0, 0.9f, 1.1f, 0.8f) } },
             // 8 — 3-Hit Standard: the staple pressure string
             new MeleeCombo { Name = "3-Hit", BaseWeight = 55, Preferred = ComboRangeBand.Close,
@@ -1137,20 +1227,44 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         ///<summary>Each swing trails cinder-fire; the heavier ones (reach ≥ 1.15) fling a fire
         ///crescent forward so melee reaches a tile or two past the blade.</summary>
-        protected override void DoComboMeleeHit(MeleeComboStep step)
+        protected override void OnMeleeComboAttackTick(
+            MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
-            base.DoComboMeleeHit(step);
-
-            //Fire dust along the blade arc — every swing reads as flame
-            Vector2 bladeTip = NPC.Center + new Vector2(NPC.direction * 34f, -10f);
-            for (int i = 0; i < 5; i++)
+            // Leap hits resolve on landing; emitting their fire at takeoff would contradict the
+            // telegraph. All other attacks shed cinders as the authored blade crosses forward.
+            if (step.Motion != ComboMotion.LeapSlam && elapsed == total / 2)
             {
-                int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
-                int dust = Dust.NewDust(bladeTip - new Vector2(8f, 20f), 16, 40, type, NPC.direction * 1.5f, 0f, 60, default, 1.4f);
-                Main.dust[dust].noGravity = true;
+                EmitComboCinders(step);
+            }
+        }
+
+        protected override void OnComboStepCompleted(MeleeComboStep step)
+        {
+            // Only a real landing gets the leap's impact crescent. A timed-out airborne leap keeps
+            // its normal recovery without producing a disconnected ground effect.
+            if (step.Motion == ComboMotion.LeapSlam && NPC.velocity.Y == 0f)
+            {
+                EmitComboCinders(step);
+            }
+        }
+
+        void EmitComboCinders(MeleeComboStep step)
+        {
+
+            // Fire dust follows the same authored hand-to-tip line as collision and slash VFX.
+            if (Main.netMode != NetmodeID.Server)
+            {
+                float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+                Vector2 bladeTip = PuppetWeaponTipPosition(bladeReach);
+                for (int i = 0; i < 5; i++)
+                {
+                    int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                    int dust = Dust.NewDust(bladeTip - new Vector2(8f, 20f), 16, 40, type, NPC.direction * 1.5f, 0f, 60, default, 1.4f);
+                    Main.dust[dust].noGravity = true;
+                }
             }
 
-            //Heavy swings throw a reach crescent (vertical bias tilts it for overhead/rising arcs)
+            // Heavy swings throw a reach crescent (vertical bias tilts it for overhead/rising arcs).
             if (step.ReachMult >= 1.15f && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 float vBias = step.Motion switch
@@ -1160,8 +1274,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     ComboMotion.UnderhandArc => -3f,
                     _ => 0f,
                 };
-                Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
+                float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+                Vector2 bladeTip = PuppetWeaponTipPosition(bladeReach);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), bladeTip, Vector2.Zero,
                     ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * step.DamageMult * 0.6f), 2f, Main.myPlayer, NPC.direction, vBias);
             }
         }
@@ -1187,8 +1302,53 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   HomingVolleySwingTicks       => 28;
         protected override float HomingVolleyFireProgress     => 0.55f;   // hurl it partway through the downswing
         protected override int   HomingVolleyRecoveryTicks    => 45;
+        protected override bool  UseRaisedHomingVolleyHoldoutPose => true;
 
         const int LightningSpearDamage = 50;
+
+        protected override bool DrawSpecialHeldWeapon(ref PlayerDrawSet drawInfo)
+        {
+            bool bareHandGrasp = Phase == AttackPhase.TendrilTelegraph
+                || Phase == AttackPhase.TendrilReach;
+            if (bareHandGrasp)
+                return true;
+
+            bool spearPhase = Phase == AttackPhase.HomingVolleyDodgeback
+                || Phase == AttackPhase.HomingVolleySwingTelegraph
+                || Phase == AttackPhase.HomingVolleySwing;
+            if (!spearPhase)
+                return false;
+
+            if (Phase == AttackPhase.HomingVolleySwing)
+            {
+                float release = HomingVolleySwingTicks > 0
+                    ? 1f - PhaseTimer / (float)HomingVolleySwingTicks
+                    : 1f;
+                if (release >= HomingVolleyFireProgress)
+                    return true;
+            }
+
+            Player target = Main.player[NPC.target];
+            Vector2 hand = PuppetHandPosition;
+            Vector2 aim = target != null && target.active && !target.dead
+                ? (target.Center - hand).SafeNormalize(new Vector2(NPC.direction, 0f))
+                : new Vector2(NPC.direction, 0f);
+
+            Texture2D texture = ModContent.Request<Texture2D>(
+                "tsorcRevamp/Projectiles/Enemy/Gwyn/GwynLightningSpear").Value;
+            int frameHeight = texture.Height / GwynLightningSpearFrames.FrameCount;
+            int frameIndex = (int)(Main.GameUpdateCount / 5UL) % GwynLightningSpearFrames.FrameCount;
+            Rectangle frame = new Rectangle(0, frameIndex * frameHeight, texture.Width, frameHeight);
+            Vector2 origin = GwynLightningSpearFrames.GetVisualOrigin(frameIndex);
+            SpriteEffects effects = aim.X < 0f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if (effects == SpriteEffects.FlipHorizontally)
+                origin.X = texture.Width - origin.X;
+
+            drawInfo.DrawDataCache.Add(new DrawData(
+                texture, hand - Main.screenPosition, frame, Color.White, aim.ToRotation(), origin,
+                NPC.scale * 0.6f, effects, 0));
+            return true;
+        }
 
         ///<summary>Lightning gathers on the raised blade through the windup — the telegraph read.</summary>
         protected override void DoHomingVolleySwingTick(int elapsed, int total)
@@ -1197,10 +1357,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 return;
             }
-            float swingT = total > 0 ? elapsed / (float)total : 1f;
-            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
-            Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);
-            Vector2 bladePos = NPC.Center + dir * 48f;
+            if (total > 0 && elapsed >= total * HomingVolleyFireProgress)
+            {
+                return;
+            }
+            Player target = Main.player[NPC.target];
+            Vector2 hand = PuppetHandPosition;
+            Vector2 aim = target != null && target.active && !target.dead
+                ? (target.Center - hand).SafeNormalize(new Vector2(NPC.direction, 0f))
+                : new Vector2(NPC.direction, 0f);
+            Vector2 bladePos = hand + aim * 42f;
             for (int i = 0; i < 2; i++)
             {
                 int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
@@ -1220,7 +1386,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Player target = Main.player[NPC.target];
-            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 20f, -30f);
+            Vector2 origin = PuppetHandPosition;
             Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 15f;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
                 ModContent.ProjectileType<Projectiles.Enemy.GwynLightningSpear>(), LightningSpearDamage, 4f, Main.myPlayer);

@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -98,10 +99,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             int frameHeight = texture.Height / Main.projFrames[Projectile.type];
             Rectangle frame = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
-            Vector2 origin = new Vector2(texture.Width / 2f, frameHeight / 2f);
-            //Sprite art runs horizontally; rotation aligns it to travel
-            SpriteEffects fx = Projectile.velocity.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, Color.White, Projectile.rotation, origin, 0.7f, fx, 0);
+            Vector2 origin = GwynLightningSpearFrames.GetVisualOrigin(Projectile.frame);
+            // The authored spear tip is on the left. Mirror rightward throws and mirror the
+            // brightness-weighted origin with it so all four crackle frames stay locked in place.
+            SpriteEffects fx = Projectile.velocity.X < 0f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if (fx == SpriteEffects.FlipHorizontally)
+                origin.X = texture.Width - origin.X;
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, Color.White,
+                Projectile.rotation, origin, 0.6f, fx, 0);
             return false;
         }
     }
