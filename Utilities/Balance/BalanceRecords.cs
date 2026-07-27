@@ -93,9 +93,9 @@ namespace tsorcRevamp.Utilities.Balance
         /// <summary>"Classic", "Unkindled" or "BearerOfTheCurse".</summary>
         public string soulsMode;
         public bool usesWeaponStamina;
-        /// <summary>The player-wide damage-per-use EMA that the output-based stamina system normalises every
+        /// <summary>The player-wide damage-per-SECOND EMA that the output-based stamina system normalises every
         /// weapon's cost against. Logged because it's the denominator behind every staminaCostPerUse above.</summary>
-        public float playerDamagePerUseEma;
+        public float playerDamagePerSecondEma;
         /// <summary>Effective cost multiplier on everything that spends stamina, already including the
         /// stamina-system config and the Tired debuff. Divide staminaSpent by this to compare across
         /// modes.</summary>

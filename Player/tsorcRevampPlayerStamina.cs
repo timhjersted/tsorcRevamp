@@ -65,18 +65,26 @@ namespace tsorcRevamp
         private sealed class WeaponOutputState
         {
             public float DamagePerUseEma;
+            /// <summary>Attack-speed-scaled use animation of the activation currently accumulating PendingDamage.
+            /// Stored because the damage is banked now but folded into the per-second player baseline later, by
+            /// which point the held weapon (and its speed) may have changed.</summary>
+            public int PendingUseAnimation = 1;
             public float PendingDamage;
             public bool HasPendingActivation;
         }
 
         private readonly Dictionary<int, WeaponOutputState> weaponOutputStates = new();
-        private float playerDamagePerUseEma;
+        private float playerDamagePerSecondEma;
 
-        /// <summary>Slow EMA of this player's measured damage-per-use across ALL weapons — i.e. "how hard you hit
-        /// right now", tracking progression automatically. 0 until the player has swung something. Exposed so
+        /// <summary>Slow EMA of this player's measured damage per SECOND across ALL weapons — i.e. "how hard you
+        /// hit right now", tracking progression automatically. 0 until the player has swung something. Exposed so
         /// abilities that want to scale with the player's own power (Dragon Crest's fire breath) can share the
-        /// same yardstick the stamina system uses, instead of maintaining a parallel progression table.</summary>
-        public float PlayerDamagePerUseEma => playerDamagePerUseEma;
+        /// same yardstick the stamina system uses, instead of maintaining a parallel progression table.
+        ///
+        /// Per-SECOND, not per-use: comparing per-use figures across weapons of different speeds counts swing
+        /// speed twice (see CalculateOutputBasedWeaponCost). Anything consuming this must not divide by a use
+        /// animation — it is already a rate.</summary>
+        public float PlayerDamagePerSecondEma => playerDamagePerSecondEma;
 
         /// <summary>This weapon's learned damage-per-use, or 0 if it hasn't been used yet. For telemetry.</summary>
         public float GetWeaponDamagePerUseEma(int itemType)
@@ -117,9 +125,10 @@ namespace tsorcRevamp
 
         public float BeginOutputBasedWeaponUse(Item item, int scaledUseAnimation)
         {
-            WeaponOutputState state = GetOrCreateWeaponOutputState(item);
-            FinalizePendingWeaponOutput(state);
+            WeaponOutputState state = GetOrCreateWeaponOutputState(item, scaledUseAnimation);
+            FinalizePendingWeaponOutput(state); // folds the PREVIOUS activation, using its own stored speed
             state.PendingDamage = 0f;
+            state.PendingUseAnimation = Math.Max(1, scaledUseAnimation);
             state.HasPendingActivation = true;
             return CalculateOutputBasedWeaponCost(item, scaledUseAnimation, state.DamagePerUseEma);
         }
@@ -155,7 +164,7 @@ namespace tsorcRevamp
             staminaResourceCurrent = Math.Max(0f, staminaResourceCurrent - cost);
         }
 
-        private WeaponOutputState GetOrCreateWeaponOutputState(Item item)
+        private WeaponOutputState GetOrCreateWeaponOutputState(Item item, int scaledUseAnimation)
         {
             if (!weaponOutputStates.TryGetValue(item.type, out WeaponOutputState state))
             {
@@ -163,13 +172,17 @@ namespace tsorcRevamp
                 weaponOutputStates[item.type] = state;
             }
 
-            if (playerDamagePerUseEma <= 0f)
+            if (playerDamagePerSecondEma <= 0f)
             {
-                playerDamagePerUseEma = state.DamagePerUseEma;
+                playerDamagePerSecondEma = ToDps(state.DamagePerUseEma, scaledUseAnimation);
             }
 
             return state;
         }
+
+        /// <summary>Convert a damage-per-USE figure into damage per second at a given swing speed.</summary>
+        private static float ToDps(float damagePerUse, int scaledUseAnimation)
+            => damagePerUse * 60f / Math.Max(1, scaledUseAnimation);
 
         private void FinalizePendingWeaponOutput(WeaponOutputState state)
         {
@@ -178,14 +191,42 @@ namespace tsorcRevamp
                 return;
             }
 
+            // Per-weapon EMA stays per-USE: that's the honest measurement of one activation, and it's what the
+            // per-swing cost is ultimately derived from. The PLAYER baseline is per-SECOND — see the comment on
+            // CalculateOutputBasedWeaponCost for why comparing per-use figures against each other was wrong.
             state.DamagePerUseEma = MathHelper.Lerp(state.DamagePerUseEma, state.PendingDamage, WeaponOutputEmaWeight);
-            playerDamagePerUseEma = MathHelper.Lerp(playerDamagePerUseEma, state.PendingDamage, PlayerOutputEmaWeight);
+            playerDamagePerSecondEma = MathHelper.Lerp(
+                playerDamagePerSecondEma,
+                ToDps(state.PendingDamage, state.PendingUseAnimation),
+                PlayerOutputEmaWeight);
         }
 
+        /// <summary>
+        /// Cost for one activation.
+        ///
+        /// relativePower compares DAMAGE PER SECOND, not damage per use. Comparing per-use figures counted swing
+        /// speed TWICE — once because a slow weapon packs a whole second of damage into a single swing (inflating
+        /// its per-use output against a mixed baseline), and again in useTimeFactor. The result was that
+        /// damage-per-stamina reduced to 60*baseline/(TARGET*classMult*useAnimation): it depended ONLY on swing
+        /// speed, so two weapons with identical DPS were priced completely differently. Measured on the real
+        /// roster that made a fast weapon ~2.25x more stamina-efficient than a slow one of comparable DPS —
+        /// the mirror image of the old swing-speed-only curve this system replaced, and worse.
+        ///
+        /// Comparing per-second makes the two speed factors cancel exactly: cost/swing reduces to
+        /// TARGET * damagePerUse / baselineDps * classMult, so damage-per-stamina is CONSTANT across the roster
+        /// regardless of swing speed, while cost-per-second correctly tracks how much DPS a weapon produces.
+        /// A weapon sitting exactly at the player's average DPS still pays TARGET per second at any speed, so
+        /// OutputStaminaPerSecond keeps its meaning and needs no recalibration.
+        /// </summary>
         private float CalculateOutputBasedWeaponCost(Item item, int scaledUseAnimation, float weaponOutput)
         {
-            float baseline = Math.Max(1f, playerDamagePerUseEma > 0f ? playerDamagePerUseEma : GetBootstrapDamage(item));
-            float relativePower = MathHelper.Clamp(weaponOutput / baseline, MinimumRelativePower, MaximumRelativePower);
+            float weaponDps = ToDps(weaponOutput, scaledUseAnimation);
+            float baselineDps = playerDamagePerSecondEma > 0f
+                ? playerDamagePerSecondEma
+                : ToDps(GetBootstrapDamage(item), scaledUseAnimation);
+            baselineDps = Math.Max(1f, baselineDps);
+
+            float relativePower = MathHelper.Clamp(weaponDps / baselineDps, MinimumRelativePower, MaximumRelativePower);
             float archetypeMultiplier = IsWhip(item)
                 ? WhipStaminaMultiplier
                 : (item.DamageType == DamageClass.Summon ? SummonStaffStaminaMultiplier : 1f);
@@ -218,7 +259,7 @@ namespace tsorcRevamp
             // per-weapon EMAs converge ~10x faster than the baseline (0.2 vs 0.02), multi-hit weapons spiked
             // toward the relativePower clamp for the first few minutes of every session before settling back.
             // That made stamina costs both inconsistent between sessions and dependent on swing order.
-            tag["playerDamagePerUseEma"] = playerDamagePerUseEma;
+            tag["playerDamagePerSecondEma"] = playerDamagePerSecondEma;
 
             List<string> keys = new();
             List<float> values = new();
@@ -245,7 +286,7 @@ namespace tsorcRevamp
 
             staminaResourceMax = tag.GetFloat("staminaResourceMax");
 
-            playerDamagePerUseEma = tag.GetFloat("playerDamagePerUseEma");
+            playerDamagePerSecondEma = tag.GetFloat("playerDamagePerSecondEma");
 
             weaponOutputStates.Clear();
             if (tag.ContainsKey("weaponOutputKeys") && tag.ContainsKey("weaponOutputEmas"))
@@ -303,7 +344,7 @@ namespace tsorcRevamp
             staminaResourceCurrent = staminaResourceMax;
             staminaDebt = 0f;
             weaponOutputStates.Clear();
-            playerDamagePerUseEma = 0f;
+            playerDamagePerSecondEma = 0f;
         }
 
         public override void OnRespawn()
@@ -368,19 +409,39 @@ namespace tsorcRevamp
         /// of the recovery for whichever class refills fastest — a shared 30 ticks quietly ate most of
         /// BotC's 2x regen advantage. Halving it for BotC keeps its burst identity intact.
         /// </summary>
-        internal const int StaminaRegenDelayTicks = 30;
-        internal const int StaminaRegenDelayTicksBotC = 15;
+        /// <summary>
+        /// 60 / 40, up from 30 / 15 — half a second was barely perceptible and did almost nothing to price the
+        /// swing-pause-swing rhythm it exists to tax.
+        ///
+        /// The 2:3 split is what keeps the classes level, and two independent measures agree on it:
+        ///   • Equal stamina forgone (delay x regen): 60 x (18.75 / 30) = 37.5 ticks.
+        ///   • Equal tempo advantage — the felt quantity is time until you can act again, `delay + cost/regen`.
+        ///     Regen rates alone give BotC a 1.6x edge; at 60/40 it keeps 1.56x, at 60/45 1.49x, but at an equal
+        ///     60/60 it collapses to 1.30x. A flat delay quietly erodes the very thing that makes BotC distinct,
+        ///     because dead time is worth more to whoever recovers fastest.
+        /// </summary>
+        internal const int StaminaRegenDelayTicks = 60;
+        internal const int StaminaRegenDelayTicksBotC = 40;
 
         /// <summary>
-        /// Regen pause applied when a hit is absorbed by a raised shield — double the ordinary spend delay.
+        /// Regen pause applied when a hit is absorbed by a raised shield — 1.5x the ordinary spend delay.
         ///
         /// Blocking a hit is a heavier commitment than a swing: the shield-down window between an enemy's
         /// spaced shots was long enough to refill everything the block cost, which is what made the
-        /// block-shoot loop free. Doubling the pause makes a sustained block loop bleed the pool instead.
+        /// block-shoot loop free. A longer pause makes a sustained block loop bleed the pool instead.
         /// A perfect parry deliberately keeps the ordinary delay (see FreeDodge) — that's the timing reward.
+        ///
+        /// THESE MUST STAY ABOVE StaminaRegenDelayTicks. They are separate constants rather than a multiple of
+        /// the base, so raising the base silently inverts the relationship: at base 60/40 the old 60/30 values
+        /// left BotC's *block* penalty (30) SHORTER than an ordinary swing (40), and since PauseStaminaRegen
+        /// takes the max, the block penalty would have disappeared entirely.
+        ///
+        /// 1.5x rather than the original 2x because the base doubled. Straight doubling would put an ordinary
+        /// block at 2 full seconds, and a greatshield (up to 1.75x on top) at 3.5 — long enough that a single
+        /// block, with no regen while the guard is up, would decide a fight on its own.
         /// </summary>
-        internal const int BlockStaminaRegenDelayTicks = 60;
-        internal const int BlockStaminaRegenDelayTicksBotC = 30;
+        internal const int BlockStaminaRegenDelayTicks = 90;
+        internal const int BlockStaminaRegenDelayTicksBotC = 60;
 
         internal int staminaRegenDelayTimer;
         private float _staminaLastFrame;

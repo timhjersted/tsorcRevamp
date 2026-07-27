@@ -534,7 +534,7 @@ namespace tsorcRevamp.Utilities.Balance
                     : souls.Unkindled ? "Unkindled"
                     : "Classic";
                 snapshot.usesWeaponStamina = souls.UsesWeaponStamina;
-                snapshot.playerDamagePerUseEma = player.GetModPlayer<tsorcRevampStaminaPlayer>().PlayerDamagePerUseEma;
+                snapshot.playerDamagePerSecondEma = player.GetModPlayer<tsorcRevampStaminaPlayer>().PlayerDamagePerSecondEma;
                 snapshot.weaponStaminaMult = souls.WeaponStaminaMult;
                 snapshot.tired = souls.Tired;
 

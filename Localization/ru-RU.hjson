@@ -4404,16 +4404,16 @@ Mods: {
 				// Heading2: Your Extra Inventory Slots
 				/* Page2:
 					'''
-					Souls Slot: Your Dark Souls collect here automatically.
 					2nd Slot: Equip a second weapon, tool, consumable or shield in this slot and use with right mouse.
 					Storage Slot: a bottomless container to keep your inventory uncluttered. Press T to open it from anywhere. Shift-click to transfer items.			
 					Guide Slot: drop any item in to see every recipe that uses it.
+					Souls Slot: Your Dark Souls collect here automatically.					
 					''' */
 				// Heading3: Controls
 				/* Page3:
 					'''
 					Recommended Controls rebinds several keys at once to a layout built for this mod.
-					The dodge roll, storage menu open key, can be rebound in TModLoader's controls menu.
+					The dodge roll and other mod-specific actions can be rebound via Settings: Controls.
 					Your Estus Flask is bound to Quick Heal, and the Cerulean Tear to Quick Mana.
 					''' */
 				// Heading4: The 2nd Slot
@@ -4438,37 +4438,38 @@ Mods: {
 					Rolling costs stamina and makes you briefly invulnerable.
 					Learn the timing and you can pass straight through an attack.
 					Rolling in the air allows you to cross bigger gaps and reverse your momentum instantly.
-					A perfect dodge refunds half of its cost.
+					A perfect dodge refunds half its cost.
 					''' */
 				// Heading7: Estus, Cerulean and Bonfires
 				/* Page7:
 					'''
 					The Estus Flask heals and the Cerulean Tear restores mana. Both hold limited charges.
 					Rest at a bonfire to refill every charge and set your respawn point.
-					Bonfires also let you warp to any other one you have already lit.
+					Bonfires also let you warp to any other bonfire you already lit.
 					Estus Flask Shards add charges. Sublime Bone Dust makes each charge stronger.
 					''' */
 				// Heading8: Dark Souls
 				/* Page8:
 					'''
 					Dark Souls are your currency, gathered from everything you kill.
-					Look for items labeled as a Dark Souls crating material and place in the Guide slot to see what you can make. 
-					Use your souls at bonfires and demon altars, or convert them into soul coins to buy items from shop keepers.
-					When you die you drop every soul you are carrying and leave a bloodstain where you fell.
+					Look for items labeled as a "Dark Souls recipe material" and place in the Guide slot to see what you can make. 
+					Craft souls into new items at bonfires and demon altars, or convert them into soul coins to buy items from shop keepers.
+					When you die you drop every soul you are carrying and leave a bloodstain where you fell. 
 					Return to it to take them all back — but die again before you reach it and they are gone for good.					
 					This can be turned off in the mod's config if you would rather not lose them.
+					Dropped souls survive save & reload.
 					''' */
 				// Heading9: Finding Your Way
 				/* Page9:
 					'''
-					The Emerald Herald will give you the Boss Hunting Tome. Keep it.
+					The Emerald Herald will give you the Boss Hunting Tome.
 					Hovering over any undiscovered boss in its menu offers a clue for where that boss is found,
 					which is the best way to work out where to go next when you are lost. 
-					Glowing red = next major required boss. Orange = major optional bosses. Yellow = optional field boss.
+					Glowing red = next required major boss. Purple = optional major boss. Orange = optional great boss. Yellow = optional field boss.
 					Clues for optional bosses and the next required boss is unlocked by defeating the current required boss. 
 					Defeated bosses offer a clue for the next recommended boss.
 					You can re-summon some bosses you have already beaten, but most bosses drop all their loot on the first kill.
-					You can place markers on your map — use them for shortcuts and doors you cannot open yet.
+					You can place markers on your map — use them for gates you cannot open yet or bosses to come back to later.
 					''' */
 				// Heading10: Game Modes
 				/* Page10:
@@ -4477,17 +4478,17 @@ Mods: {
 					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
 					20% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
 					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
-					Left-click the Darksign to switch, and right-click it to read your class mechanic.
+					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
 					''' */
 				// Heading11: Shields and Blocking
 				/* Page11:
 					'''
 					Hold right mouse with a shield to raise it. It covers your front, above and below,
-					but not your back. Harder hits use more stamina.
-					Raise it just as a blow lands for a perfect parry: no damage, half the stamina, and it does stagger damage.
+					but not your back. Harder hits and weaker shields use more stamina.
+					Raise it just as a blow lands for a perfect parry: no damage, half the stamina, and it does stagger damage against melee attacks.
 					Block any sooner than that and a little chip damage leaks through. Worse shields leak more.
 					A heavy enough hit will break your guard outright, however much stamina you have.
-					Greatshields leak nothing at all but are slow to recover. Bucklers are the opposite.
+					Greatshields leak nothing at all but are slower to recover. Bucklers are the opposite.
 					''' */
 			}
 

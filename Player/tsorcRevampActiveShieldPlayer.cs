@@ -715,22 +715,18 @@ namespace tsorcRevamp
         /// <summary>
         /// The player's current damage-per-second, as the yardstick the fire breath is priced against.
         ///
-        /// Uses the stamina system's measured damage-per-use EMA (what the player actually deals, learned from
-        /// real hits) converted to per-second via the held weapon's attack-speed-scaled use animation. That makes
-        /// the breath self-calibrating: it tracks gear, class, buffs and progression with no table to maintain.
+        /// Reads the stamina system's measured output EMA directly — that baseline is already per-second, so no
+        /// conversion happens here. It used to be a per-USE figure that this method divided by the held weapon's
+        /// use animation; when the stamina system switched its baseline to per-second, leaving that conversion in
+        /// would have divided by swing speed a second time and made the breath weaker the slower your weapon.
+        ///
+        /// Self-calibrating either way: it tracks gear, class, buffs and progression with no table to maintain.
         /// Falls back to the coarse tier table only until the EMA has data.
         /// </summary>
         private float EstimatePlayerDps()
         {
-            float perUse = Player.GetModPlayer<tsorcRevampStaminaPlayer>().PlayerDamagePerUseEma;
-            Item held = Player.HeldItem;
-            if (perUse > 0f && held != null && !held.IsAir && held.useAnimation > 0 && held.damage > 0)
-            {
-                float attackSpeed = Math.Max(0.05f, Player.GetAttackSpeed(held.DamageType));
-                float scaledUseAnimation = Math.Max(1f, held.useAnimation / attackSpeed);
-                return perUse * 60f / scaledUseAnimation;
-            }
-            return FireBreathTierReferenceDps[ProgressionTier()];
+            float measuredDps = Player.GetModPlayer<tsorcRevampStaminaPlayer>().PlayerDamagePerSecondEma;
+            return measuredDps > 0f ? measuredDps : FireBreathTierReferenceDps[ProgressionTier()];
         }
 
         /// <summary>
