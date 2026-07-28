@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -37,9 +38,9 @@ class RuneMage : ModNPC
         NPC.knockBackResist = 0f;
         NPC.noGravity = false;
         NPC.noTileCollide = false;
-        NPC.width = 70;
-        NPC.height = 110;
-        NPC.scale = 0.75f;
+        NPC.width = 60;
+        NPC.height = 104;
+        NPC.scale = 0.6f;
         NPC.damage = ContactDmg;
         NPC.defense = Defense;
         HealthScale = Main.masterMode ? 1.5f : 1f;
@@ -56,18 +57,19 @@ class RuneMage : ModNPC
     public const int RunePrisonDmg = 20;
 
     public ref float AiState => ref NPC.ai[0];
-    public ref float AiTimer => ref NPC.ai[1];
+    public ref float AiTimer1 => ref NPC.ai[1];
     
-    public ref float SpellFluxCooldown => ref NPC.ai[2];
-    public ref float OverloadCooldown => ref NPC.ai[3];
-    public float RunePrisonCooldown;
+    public ref float AiTimer2 => ref NPC.ai[2];
+    public ref float AiTimer3 => ref NPC.ai[3];
+    
     
     public override void AI()
     {
         var target = Main.player[NPC.target];
+        
         switch (AiState)
         {
-            case (float)ActionState.Patrolling:
+            case (float)ActionState.IdlePatrolling:
             {
                 IdlePatrolling(target);
                 break;
@@ -110,11 +112,79 @@ class RuneMage : ModNPC
         }
     }
 
+    public override void OnSpawn(IEntitySource source)
+    {
+        NPC.direction = 1;
+        ServerPreRollingRandoms(1);
+    }
+
+    private int IdlePatrolRoll = 0;
+    private void ServerPreRollingRandoms(in int rollType)
+    {
+        if (Main.netMode != NetmodeID.MultiplayerClient)
+        {
+            switch (rollType)
+            {
+                case 1: //rolling for IdlePatrolling random
+                {
+                    if (AiTimer1 > 0) //if positive
+                    {
+                        IdlePatrolRoll = Main.rand.Next(-420, -180 + -1);
+                    }
+                    else //if negative
+                    {
+                        IdlePatrolRoll = Main.rand.Next(120, 300 + 1);
+                    }
+                    NPC.netUpdate = true;
+                    break;
+                }
+            }
+            
+        }
+    }
+
+    public override void SendExtraAI(BinaryWriter writer)
+    {
+        writer.Write(IdlePatrolRoll);
+    }
+
+    public override void ReceiveExtraAI(BinaryReader reader)
+    {
+        reader.ReadInt32();
+    }
+
+    private int FrameDuration;
     public override void FindFrame(int frameHeight)
     {
+        switch (AiState)
+        {
+            case (float)ActionState.IdlePatrolling:
+            {
+                if (AiTimer1 < 0) NPC.frame.Y = (int)FrameState.Idle * frameHeight;
+                FrameDuration = 5;
+                if (NPC.velocity.X != 0)
+                {
+                    NPC.frameCounter++;
+                    if (NPC.frameCounter >= FrameDuration)
+                    {
+                        NPC.frame.Y += frameHeight;
+                        NPC.frameCounter = 0;
+
+                        if (NPC.frame.Y >= ((int)FrameState.Walking14 + 1) * frameHeight)
+                            NPC.frame.Y = (int)FrameState.Walking1 * frameHeight;
+                    }
+                }
+                else
+                {
+                    NPC.frame.Y = (int)FrameState.Idle * frameHeight;
+                }
+
+                break;
+            }
+        }
+        NPC.spriteDirection = -NPC.direction;
         /*
         FrameDuration = 10;
-        NPC.spriteDirection = NPC.direction;
 
         switch (AiState)
         {
@@ -193,9 +263,68 @@ class RuneMage : ModNPC
         }*/
     }
     private int ChatTimer = 0;
+    private const float WalkSpeed = 1.25f;
     private void IdlePatrolling(Player target)
     {
-        if (Main.netMode == NetmodeID.Server | Main.netMode == NetmodeID.SinglePlayer)
+        DialogueHandler();
+        if (AiTimer1 == 60) //roll a second in advance to decide what it does next
+        {
+            //roll some random action, decide whether he walks again or keeps standing still, maybe turn around
+            ServerPreRollingRandoms(1);
+            AiTimer1--;
+        }        
+        else if (AiTimer1 == -60)
+        {            
+            //roll some random action, decide whether he walks again or keeps standing still, maybe turn around
+            ServerPreRollingRandoms(1);
+            AiTimer1++;
+        }
+        else if (AiTimer1 == 0)
+        {
+            AiTimer1 = IdlePatrolRoll;
+            AiTimer2 = 0;
+            if (IdlePatrolRoll > 0)
+            {
+                NPC.velocity.X = WalkSpeed * NPC.direction; //walk into direction it is facing
+            }
+        }
+        else if (AiTimer1 > 0) //if positive
+        {
+            AiTimer1--;
+            AiTimer2++;
+
+            Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed,
+                ref NPC.gfxOffY,
+                (int)Main.LocalPlayer.gravDir);
+            
+            if (NPC.collideX && AiTimer2 > 1) //if colliding with a wall
+            {
+                NPC.velocity.X *= -1f; //turn back
+                SetDirection();
+                NPC.velocity.X = WalkSpeed * NPC.direction; //walk into direction it is facing
+                AiTimer2 = 0;
+            }
+            
+        }
+        else if (AiTimer1 < 0) //if negative
+        {
+            AiTimer1++;
+            
+            NPC.velocity.X = 0; //stand still
+
+            AiTimer2++;
+            
+            if (AiTimer2 >= 180) //turn around every three seconds
+            {
+                NPC.direction *= -1;
+                AiTimer2 = 0;
+            }
+        }
+    }
+
+    private void DialogueHandler()
+    {
+        if (Main.netMode != NetmodeID.MultiplayerClient)
         {
             ChatTimer++;
             if (ChatTimer > 120)
@@ -232,7 +361,7 @@ class RuneMage : ModNPC
         if (NPC.collideX && NPC.velocity.Y >= 0)
         {
             AiState = (float)ActionState.JumpingPhase1;
-            AiTimer = 0;
+            AiTimer1 = 0;
         }
     }
     private void JumpingPhase1(Player target)
@@ -287,7 +416,7 @@ class RuneMage : ModNPC
 
     private enum ActionState
     {
-        Patrolling,
+        IdlePatrolling,
         WalkingPhase1,
         JumpingPhase1,
         PhaseTransition,
