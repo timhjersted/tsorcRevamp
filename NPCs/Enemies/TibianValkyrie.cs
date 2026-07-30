@@ -53,9 +53,19 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             // "Throwing Spear" - calm aimed spear toss.
-            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, telegraphTime: 30, commitFraction: 0f);
+            int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();
+            UsefulFunctions.AddAttack(NPC, 190, spearProjectileType, spearDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, telegraphTime: 30, commitFraction: 0f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Standard(
+                spearDamage, (int)(spearDamage * 1.25f),
+                guardPressureUnblockable: true,
+                guardPressureTelegraphTicks: 90);
+            globalNPC.ConfigureHumanoidMelee(meleeProfile);
+            CombatTempoProfile.Standard(globalNPC,
+                new CombatComboMove(spearProjectileType, 96f, float.MaxValue, canRepeat: true, weight: 1.05f),
+                meleeProfile.CloseHop.ComboMove,
+                meleeProfile.LongHop.ComboMove);
             globalNPC.MaxJumpPower   = 9f;
             globalNPC.NavSearchRadius = 80;  
             globalNPC.CanUseRopes = true;
@@ -71,6 +81,16 @@ namespace tsorcRevamp.NPCs.Enemies
             // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) - not here.
             globalNPC.EvasiveRetreatAndShoot = true;
             globalNPC.EvasiveQuickStep = true;
+            globalNPC.QuickStepSpeed = 6f;
+            globalNPC.QuickStepForwardRoom = 48f;
+            globalNPC.QuickStepForwardChance = 0.8f;
+            globalNPC.QuickStepMaxForwardTicks = 40;
+            // Its authored held-weapon jump/walk/idle presentation supports attacking while the body is moving.
+            globalNPC.CanAdvanceAndShoot = true;
+            globalNPC.CanFireWhileAdvancing = true;
+            globalNPC.AdvanceAndShootSpeedMultiplier = 1.35f;
+            globalNPC.AdvanceAndShootAccelerationMultiplier = 1.3f;
+
             globalNPC.KiteRangeMin = 4f;
             globalNPC.KiteRangeMax = 10f;
             globalNPC.KiteLooseness = 0.65f;
@@ -157,18 +177,29 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 140)
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (NPC.alpha >= 255 || globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0)
+            {
+                return;
+            }
+
+            if (globalNPC.ProjectileTimer >= 140 || globalNPC.CombatMeleeActive)
             {
                 Texture2D spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianValkyrie_Spear");
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == -1)
+                int facingDirection = globalNPC.CombatMeleeActive ? globalNPC.ActiveCombatMeleeDirection : NPC.spriteDirection;
+                SpriteEffects effects = facingDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                Rectangle sourceRectangle = new Rectangle(NPC.frame.X, NPC.frame.Y, 76, 58);
+                Vector2 drawPosition = NPC.Center - Main.screenPosition;
+                Vector2 origin = new Vector2(38f, 34f);
+                if (globalNPC.ActiveAttackBypassesShield)
                 {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 76, 58), drawColor, NPC.rotation, new Vector2(38, 34), NPC.scale, effects, 0);
+                    AttackTelegraphDraw.DrawUnblockableWeaponAura(
+                        spriteBatch, spearTexture, drawPosition, sourceRectangle, NPC.rotation, origin, NPC.scale, effects);
+                    drawColor = Color.Lerp(drawColor, new Color(255, 55, 55), 0.8f);
+                    Lighting.AddLight(NPC.Center, Color.Red.ToVector3() * 0.7f);
                 }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 76, 58), drawColor, NPC.rotation, new Vector2(38, 34), NPC.scale, effects, 0);
-                }
+                spriteBatch.Draw(spearTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation,
+                    origin, NPC.scale, effects, 0f);
             }
         }
 

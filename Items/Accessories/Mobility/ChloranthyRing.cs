@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         /// A different axis from the regen rate — you start recovering sooner rather than recovering faster, which
         /// is what's actually felt between swings. Nothing else in the game modifies this timer.</summary>
         public static float RegenDelayReduction = 10f;
-        /// <summary>Percent of normal stamina regen retained while a shield is RAISED (normally zero).</summary>
-        public static float BlockStaminaRegen = 10f;
+        /// <summary>Percentage points added to the normal stamina regen retained while a shield is raised.</summary>
+        public static float BlockStaminaRegenBonus = 10f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRecoverySpeed);
         public override void SetStaticDefaults()
         {

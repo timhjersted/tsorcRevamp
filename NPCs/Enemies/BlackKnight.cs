@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,12 +10,15 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class BlackKnight : ModNPC
+    class BlackKnight : ModNPC, IHumanoidMeleeHitEffects
     {
         public int redKnightsSpearDamage = 15;
+        const int HomingComboMoveKey = -10;
+        const int BombComboMoveKey = -11;
         public int redMagicDamage = 14;
         public int redKnightsGreatDamage = 18;
         Vector2 storedPlayerPosition = Vector2.Zero;
@@ -91,6 +95,28 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.MaxJumpBoost = 7f;
             blackKnightGlobalNPC.CanDoubleJump = true;
             blackKnightGlobalNPC.DoubleJumpPower = 7f;
+            // Item/close-range hits restore this anti-melee spacing band. Distant projectile hits temporarily
+            // collapse it to zero so the knight closes in; the attack pool remains distance-aware in both postures.
+            blackKnightGlobalNPC.KiteRangeMin = 8f;
+            blackKnightGlobalNPC.KiteRangeMax = 15f;
+            blackKnightGlobalNPC.KiteLooseness = 0.28f;
+
+            int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>();
+            HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Elite(
+                redKnightsSpearDamage,
+                (int)(redKnightsSpearDamage * 1.3f),
+                closeTelegraphTicks: 45,
+                longTelegraphTicks: 60,
+                guardPressureUnblockable: true,
+                guardPressureTelegraphTicks: 90,
+                openerCondition: npc => npc.ai[1] >= 60f && npc.ai[1] < 90f);
+            blackKnightGlobalNPC.ConfigureHumanoidMelee(meleeProfile);
+            CombatTempoProfile.Elite(blackKnightGlobalNPC,
+                new CombatComboMove(spearProjectileType, 120f, float.MaxValue, canRepeat: true, weight: 1.2f),
+                new CombatComboMove(HomingComboMoveKey, 120f, 900f, canRepeat: false, weight: 1f),
+                new CombatComboMove(BombComboMoveKey, 160f, 900f, canRepeat: false, weight: 1.05f),
+                new CombatComboMove(CombatComboMoveKey.CloseHopMelee, 0f, 90f, canRepeat: true, weight: 0.8f),
+                new CombatComboMove(CombatComboMoveKey.LongHopMelee, 112f, 280f, canRepeat: false, weight: 0.75f));
         }
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -123,6 +149,150 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
+        private void SpawnSpearProjectile(Vector2 velocity, tsorcRevampGlobalNPC globalNPC)
+        {
+            int projectileIndex = Projectile.NewProjectile(
+                NPC.GetSource_FromThis(), NPC.Center, velocity,
+                ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(),
+                redKnightsSpearDamage, 0f, Main.myPlayer);
+            tsorcGlobalProjectile.SetDefenseTraits(projectileIndex, globalNPC.ActiveAttackDefenseTraits);
+        }
+
+        private void CompleteSpearAttack(tsorcRevampGlobalNPC globalNPC)
+        {
+            if (globalNPC.ActiveAttackBypassesShield)
+            {
+                globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
+            }
+            else
+            {
+                TryQueueComboFollowup(globalNPC, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>());
+            }
+        }
+
+        private void TryCompressGuardPressureNeutral(tsorcRevampGlobalNPC globalNPC)
+        {
+            if (globalNPC.ActiveAttackBypassesShield)
+            {
+                return;
+            }
+
+            // Shared melee claims the fourth stack first when it is executable. This is the ranged spear fallback
+            // when Black Knight cannot currently reach with either distance-aware melee move.
+            if (Main.netMode != NetmodeID.MultiplayerClient && globalNPC.IsMaximumGuardPressureReady(NPC))
+            {
+                globalNPC.TryBeginGuardPressureSequence(NPC);
+                if (globalNPC.GetActiveGuardPressureSequenceStacks(NPC) >= tsorcRevampGlobalNPC.GuardPressureMaxBlocks)
+                {
+                    globalNPC.SetActiveAttackDefenseTraits(NPC, AttackDefenseTraits.BypassesActiveShield);
+                    NPC.ai[1] = 89f; // increments to 90 below: 90 held-spear ticks before release at 180
+                    globalNPC.AttackTelegraphing = true;
+                    globalNPC.AttackCommitted = false;
+                    tsorcRevampAIs.SpawnTelegraphFlash(NPC, Color.Red);
+                    NPC.netUpdate = true;
+                    return;
+                }
+            }
+
+            float timer = NPC.ai[1];
+            float telegraphBoundary;
+            float nextExactEvent;
+
+            if (timer < 125f)
+            {
+                telegraphBoundary = 125f;
+                nextExactEvent = timer < 120f ? 120f : 125f;
+            }
+            else if (timer > 180f && timer < 270f)
+            {
+                telegraphBoundary = 270f;
+                nextExactEvent = timer < 265f ? 265f : 270f;
+            }
+            else if (timer > 375f && timer < 870f)
+            {
+                telegraphBoundary = 870f;
+                nextExactEvent = 870f;
+            }
+            else
+            {
+                return;
+            }
+
+            int remainingNeutralTicks = Math.Max(0, (int)Math.Floor(telegraphBoundary - timer));
+            int maximumSafeSkip = Math.Max(0, (int)Math.Floor(nextExactEvent - timer) - 1);
+            int skippedTicks = globalNPC.TryGetGuardPressureNeutralSkip(NPC, remainingNeutralTicks, maximumSafeSkip);
+            if (skippedTicks > 0)
+            {
+                NPC.ai[1] += skippedTicks;
+                NPC.netUpdate = true;
+            }
+        }
+        private bool TryQueueComboFollowup(tsorcRevampGlobalNPC globalNPC, int completedMoveKey)
+        {
+            bool continueCombo = globalNPC.TryChooseCombatComboFollowup(
+                NPC,
+                completedMoveKey,
+                attackEndsCombo: false,
+                moveKey => !globalNPC.CanHumanoidMeleeHandleMove(moveKey) || globalNPC.CanExecuteHumanoidMeleeMove(NPC, moveKey),
+                out int followupMoveKey,
+                out _,
+                out _);
+            if (!continueCombo)
+            {
+                return false;
+            }
+
+            globalNPC.QueueCombatComboMove(followupMoveKey, globalNPC.GetCombatComboGapTicks(NPC));
+            NPC.ai[1] = 60f;
+            NPC.netUpdate = true;
+            return true;
+        }
+
+        private bool HoldForOrStartQueuedComboMove(tsorcRevampGlobalNPC globalNPC)
+        {
+            if (!globalNPC.HasPendingCombatComboMove)
+            {
+                return false;
+            }
+
+            NPC.ai[1] = 60f;
+            if (globalNPC.PendingCombatMoveGapTimer > 0 || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return true;
+            }
+
+            int moveKey = globalNPC.PendingCombatMoveKey;
+            if (!globalNPC.TryGetCombatComboMove(moveKey, out CombatComboMove move) || !move.IsInRange(NPC))
+            {
+                globalNPC.EndInvalidQueuedCombatMove(NPC);
+                return true;
+            }
+
+            int timerBeforeWindup;
+            if (moveKey == ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>())
+            {
+                timerBeforeWindup = 124;
+            }
+            else if (moveKey == HomingComboMoveKey)
+            {
+                timerBeforeWindup = 269;
+            }
+            else if (moveKey == BombComboMoveKey)
+            {
+                timerBeforeWindup = 869;
+            }
+            else
+            {
+                globalNPC.EndInvalidQueuedCombatMove(NPC);
+                return true;
+            }
+
+            globalNPC.TryConsumePendingCombatComboMove(moveKey);
+            NPC.ai[1] = timerBeforeWindup;
+            NPC.netUpdate = true;
+            return false;
+        }
+
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f, enragePercent: 0.5f, enrageTopSpeed: 2.9f, canTeleport: true, canDodgeroll: true);
@@ -138,16 +308,37 @@ namespace tsorcRevamp.NPCs.Enemies
             // Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
+            if (globalNPC.CombatMeleeActive)
+            {
+                // Shared melee owns the body while active. Pause this bespoke attack clock so finishing a jab or
+                // leap resumes the authored ranged cycle instead of restarting it and starving later attacks.
+                return;
+            }
+
+            if (HoldForOrStartQueuedComboMove(globalNPC))
+            {
+                return;
+            }
+
             // Hyper-armor window: FLASH telegraph → fire only. Windup excluded so a stagger can interrupt it.
             // Spear 155→180, poison 300→375, bomb 900→925.
+            bool spearUnblockable = globalNPC.ActiveAttackBypassesShield;
             globalNPC.AttackCommitted = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
                                         (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
                                         (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f);
 
-            // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
-            globalNPC.AttackTelegraphing = (NPC.ai[1] >= 125f && NPC.ai[1] < 155f) ||
+            // The unblockable spear adds a full 90-tick held-weapon tell without shortening the ordinary tell.
+            globalNPC.AttackTelegraphing = (spearUnblockable
+                                               ? NPC.ai[1] >= 89f && NPC.ai[1] < 155f
+                                               : NPC.ai[1] >= 125f && NPC.ai[1] < 155f) ||
                                            (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
                                            (NPC.ai[1] >= 870f && NPC.ai[1] < 900f);
+            if (!globalNPC.AttackTelegraphing && !globalNPC.AttackCommitted
+                && !globalNPC.HasPendingCombatComboMove && !globalNPC.InCombatComboRecovery
+                && (NPC.ai[2] < 100f || NPC.ai[2] > 235f))
+            {
+                TryCompressGuardPressureNeutral(globalNPC);
+            }
 
             if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0)
             {
@@ -159,6 +350,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     NPC.ai[1] = 60f;
                     NPC.ai[2] = -100f;
+                    globalNPC.ResetCombatTempoSequence(clearRecovery: true);
                 }
             }
 
@@ -221,7 +413,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 #endregion
 
                 // Skip spear if player is at melee range — it's a ranged weapon
-                if (NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f)
+                if (NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f && !globalNPC.ActiveAttackBypassesShield)
                 {
                     NPC.ai[1] = 200f;
                     NPC.netUpdate = true;
@@ -252,7 +444,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(globalNPC.ActiveAttackBypassesShield ? Color.Red : Color.OrangeRed));
                     }
 
                     // Store the player's center
@@ -279,7 +471,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speed += Main.player[NPC.target].velocity;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        SpawnSpearProjectile(speed, globalNPC);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
@@ -289,12 +481,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Move closer to next attack
                     NPC.ai[1] = 200f;
 
-                    // Chance to fire Spear again
-                    if (Main.rand.NextBool(2))
-                    {
-                        NPC.ai[1] = 90f;
-                        NPC.netUpdate = true;
-                    }
+                    CompleteSpearAttack(globalNPC);
                 }
                 // Spear Attack Close
                 if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
@@ -308,7 +495,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speed += Main.player[NPC.target].velocity;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        SpawnSpearProjectile(speed, globalNPC);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
@@ -318,13 +505,13 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Move closer to next attack
                     NPC.ai[1] = 200f;
 
-                    // Chance to fire Spear again
-                    if (Main.rand.NextBool(3))
-                    {
-                        NPC.ai[1] = 90f;
-                        NPC.netUpdate = true;
-                    }
+                    CompleteSpearAttack(globalNPC);
                 }
+                if (NPC.ai[1] == 180f && !hasPlayerLOS)
+                {
+                    globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
+                }
+
                 #endregion
 
                 #region Homing Attack
@@ -432,18 +619,26 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                     }
 
-                    // Shorter or longer pause before bomb attack
-                    if (Main.rand.NextBool(2))
+                    if (!TryQueueComboFollowup(globalNPC, HomingComboMoveKey))
                     {
-                        NPC.ai[1] = 700f;
-                        NPC.netUpdate = true;
-                    }
-                    else
-                    {
-                        NPC.ai[1] = 800f;
-                        NPC.netUpdate = true;
+                        // Preserve the authored variable pause when the combo ends here.
+                        if (Main.rand.NextBool(2))
+                        {
+                            NPC.ai[1] = 700f;
+                            NPC.netUpdate = true;
+                        }
+                        else
+                        {
+                            NPC.ai[1] = 800f;
+                            NPC.netUpdate = true;
+                        }
                     }
                 }
+                if (NPC.ai[1] == 375f && !hasPlayerLOS)
+                {
+                    globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
+                }
+
                 #endregion
 
                 #region Bomb Attack
@@ -507,12 +702,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Reset attack counter
                     NPC.ai[1] = 0f;
 
-                    // Chance to throw again
-                    if (Main.rand.NextBool(2))
-                    {
-                        NPC.ai[1] = 830f;
-                        NPC.netUpdate = true;
-                    }
+                    TryQueueComboFollowup(globalNPC, BombComboMoveKey);
                 }
                 // Bomb Attack Close
                 if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
@@ -533,13 +723,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     NPC.ai[1] = 0f;
 
-                    // Chance to throw again
-                    if (Main.rand.NextBool(2))
-                    {
-                        NPC.ai[1] = 830f;
-                        NPC.netUpdate = true;
-                    }
+                    TryQueueComboFollowup(globalNPC, BombComboMoveKey);
                 }
+                if (NPC.ai[1] == 925f && !hasPlayerLOS)
+                {
+                    globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
+                }
+
                 #endregion
 
                 #region AI 2 Attacks
@@ -587,6 +777,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Ultrakill Telegraph: Shrinking Dust Circle
                 if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
                 {
+                    if (NPC.ai[2] == 100f)
+                    {
+                        globalNPC.ResetCombatTempoSequence(clearRecovery: true);
+                    }
                     NPC.knockBackResist = 0f;
                     NPC.ai[1] = -130;
                     UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((200 - NPC.ai[2]) / 20)), DustID.BoneTorch, 48, 4);
@@ -706,6 +900,16 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
+            ApplyHitDebuffs(target);
+        }
+
+        public void OnHumanoidMeleeHit(Player target)
+        {
+            ApplyHitDebuffs(target);
+        }
+
+        private static void ApplyHitDebuffs(Player target)
+        {
             target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 600, false);
             target.AddBuff(36, 600, false); //broken armor
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
@@ -766,6 +970,23 @@ namespace tsorcRevamp.NPCs.Enemies
             return handWorld;
         }
 
+        void DrawHeldSpear(SpriteBatch spriteBatch, Vector2 screenPosition, float rotation, Color drawColor,
+            tsorcRevampGlobalNPC globalNPC, float spriteScale, float gripSlide = 0f)
+        {
+            Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, gripSlide);
+            if (globalNPC.ActiveAttackBypassesShield)
+            {
+                Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
+                Vector2 auraCenter = screenPosition + forward * gripSlide;
+                AttackTelegraphDraw.DrawUnblockableWeaponAura(
+                    spriteBatch, spearTexture, screenPosition, null, rotation, gripOrigin, NPC.scale * spriteScale);
+                drawColor = Color.Lerp(drawColor, new Color(255, 55, 55), 0.8f);
+                Lighting.AddLight(auraCenter + Main.screenPosition, Color.Red.ToVector3() * 0.75f);
+            }
+
+            spriteBatch.Draw(spearTexture, screenPosition, null, drawColor, rotation,
+                gripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0f);
+        }
         void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
         {
             if (handTexture == null)
@@ -796,14 +1017,28 @@ namespace tsorcRevamp.NPCs.Enemies
                 handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/BlackKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (globalNPC.CombatMeleeActive)
+            {
+                const float spriteScale = 0.8f;
+                int meleeDirection = globalNPC.ActiveCombatMeleeDirection;
+                float maximumExtension = globalNPC.ActiveCombatMeleeKey == CombatComboMoveKey.LongHopMelee ? 22f : 14f;
+                float thrustOffset = globalNPC.CombatMeleeThrustProgress * maximumExtension;
+                Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
+                float rotation = new Vector2(meleeDirection, 0f).ToRotation() + MathHelper.PiOver2;
+                DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale, thrustOffset);
+                DrawHandOverlay(spriteBatch, drawColor);
+                return;
+            }
+
             // Spear
-            if (NPC.ai[1] >= 120 && NPC.ai[1] <= 180f)
+            if (NPC.ai[1] >= (globalNPC.ActiveAttackBypassesShield ? 90f : 120f) && NPC.ai[1] <= 180f)
             {
                 float spriteScale = 0.8f;
                 Vector2 spearAim = NPC.ai[1] >= 155f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
-                spriteBatch.Draw(spearTexture, handWorld, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, SpearGripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0);
+                DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
             // Bomb

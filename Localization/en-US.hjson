@@ -12,7 +12,7 @@ Mods: {
 			Chip: An ordinary block leaks {0}% of the damage through as chip damage; a perfect parry leaks none
 			Greatshield: Greatshield: no damage leaks through, but it is heavy and slow to recover from
 			RegenPenalty: Its weight reduces stamina regeneration by {0}% while equipped
-			Regen: Stamina does not recover while raised
+			Regen: Stamina recovers at {0}% of its normal rate while raised, after the usual delay
 			Stamina: stamina
 			Mana: mana
 			ReflectEffect: A perfect parry reflects the blocked damage back at the attacker
@@ -363,6 +363,8 @@ Mods: {
 			OpenStorage: Open Storage — Shift click to store inventory items while Storage is open
 			StaminaUse: "Stamina Use: "
 			StaminaUseOnHitOnly: "Stamina Use on-hit: "
+			StaminaUseToolSwing: "Stamina Use (per swing): "
+			StaminaUseToolHitSurcharge: " (+{0} on hitting an enemy)"
 			Tired: Tired
 			14: "14"
 			StaminaRegenReduction:
@@ -1569,7 +1571,7 @@ Mods: {
 					[c/ffbf00:Enhances your agility and evasiveness when dodge rolling]
 					[c/ffbf00:Reduces the movement penalty for holding a shield by 4%]
 					[c/ffbf00:Stamina begins recovering 10% sooner after you spend it]
-					[c/ffbf00:Recover 10% of your stamina regeneration even while your shield is raised]
+					[c/ffbf00:Increases stamina regeneration while your shield is raised by 10% of its normal rate]
 					[c/ca1e00:When drinking your Estus Flask, your movement is no longer hindered, at the cost of being inflicted with Ichor (-15 defense)]
 					Increases Stamina Droplet pickup range.
 					This old ring is named for its decorative green blossom,
@@ -1585,7 +1587,7 @@ Mods: {
 					[c/ffbf00:Further enhances your agility and evasiveness when dodge rolling]
 					[c/ffbf00:Reduces the movement penalty for holding a shield by 8%]
 					[c/ffbf00:Stamina begins recovering 20% sooner after you spend it]
-					[c/ffbf00:Recover 20% of your stamina regeneration even while your shield is raised]
+					[c/ffbf00:Increases stamina regeneration while your shield is raised by 20% of its normal rate]
 					[c/ffbf00:Grants the Black Belt's effect & superior mid-air dexterity]
 					[c/ca1e00:When drinking your Estus Flask, your movement is no longer hindered, at the cost of being inflicted with Ichor (-15 defense)]
 					This ring is named for its decorative green blossom.
@@ -10058,9 +10060,19 @@ Mods: {
 					'''
 			}
 
+			PerfectDodge: {
+				DisplayName: Perfect Dodge
+				Description: Increases stamina regeneration by {0}% and critical strike chance by {1}%
+			}
+
 			ShieldGuardBreak: {
-				Description: Mods.tsorcRevamp.Buffs.ShieldGuardBreak.Description
+				Description: Shields, items, and flight are disabled; stamina recovery is heavily reduced
 				DisplayName: Shield Guard Break
+			}
+
+			Stagger: {
+				Description: Ichor is applied; shields, items, and flight are disabled; movement and stamina recovery are heavily reduced
+				DisplayName: Staggered
 			}
 
 			PlaguesmithBuff: {
@@ -10982,6 +10994,7 @@ Mods: {
 			PuppetGreatfireCrescent.DisplayName: Puppet Greatfire Crescent
 			PuppetFirefallPillar.DisplayName: Puppet Firefall Pillar
 			GwynDescentColumn.DisplayName: Gwyn Descent Column
+			HumanoidMeleeHitbox.DisplayName: Humanoid Melee Hitbox
 		}
 
 		NPCs: {

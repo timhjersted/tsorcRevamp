@@ -1,13 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
@@ -87,12 +89,108 @@ namespace tsorcRevamp.Projectiles
         public int WeaponStaminaSourceItemType = -1;
         public bool WeaponStaminaSourceIsSummon;
 
+        // Enemy attack attribution. Hostile projectiles generally use owner = 255, so owner cannot identify the
+        // firing NPC when a player blocks a shot. Carry the source explicitly and inherit it through child shots.
+        public int SourceNPCIndex = -1;
+        public int SourceNPCType = -1;
+        public AttackDefenseTraits DefenseTraits;
+
         // Per-projectile poise-damage lever, mirrors tsorcInstancedGlobalItem.WeaponPoiseMultiplier for melee weapons.
         // Multiplies the knockback-derived poise damage THIS projectile deals (see project_poise_stagger_system). Does
         // NOT affect the projectile's actual knockback/flinch — only the stagger meter. Set it from the ModProjectile's
         // own OnSpawn/AI, e.g. `Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier = 1.5f;`.
         // Default 1f = no change.
         public float ProjectilePoiseMultiplier = 1f;
+
+        public static void SetDefenseTraits(int projectileIndex, AttackDefenseTraits traits)
+        {
+            if (traits == AttackDefenseTraits.None || projectileIndex < 0 || projectileIndex >= Main.maxProjectiles)
+            {
+                return;
+            }
+
+            Projectile projectile = Main.projectile[projectileIndex];
+            projectile.GetGlobalProjectile<tsorcGlobalProjectile>().DefenseTraits |= traits;
+            projectile.netUpdate = true;
+        }
+
+        /// <summary>
+        /// Treats a raised shield like a real collision for ordinary single-impact hostile projectiles. Persistent
+        /// beams, fields, and deliberately piercing attacks are left alone; projectile-local Kill/PreKill effects
+        /// provide the weapon-specific impact visuals.
+        /// </summary>
+        public static bool TryBreakOnShieldImpact(Projectile projectile)
+        {
+            if (projectile == null || !projectile.active || !projectile.hostile || projectile.penetrate != 1)
+            {
+                return false;
+            }
+
+            projectile.Kill();
+            return true;
+        }
+
+        public bool TryGetSourceNPC(out NPC sourceNPC)
+        {
+            sourceNPC = null;
+            if (SourceNPCIndex < 0 || SourceNPCIndex >= Main.maxNPCs)
+            {
+                return false;
+            }
+
+            NPC candidate = Main.npc[SourceNPCIndex];
+            if (!candidate.active || candidate.type != SourceNPCType)
+            {
+                return false;
+            }
+
+            sourceNPC = candidate;
+            return true;
+        }
+
+        public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
+        {
+            byte metadataFlags = 0;
+            if (SourceNPCIndex >= 0)
+            {
+                metadataFlags |= 1;
+            }
+            if (DefenseTraits != AttackDefenseTraits.None)
+            {
+                metadataFlags |= 2;
+            }
+
+            binaryWriter.Write(metadataFlags);
+            if ((metadataFlags & 1) != 0)
+            {
+                binaryWriter.Write((short)SourceNPCIndex);
+                binaryWriter.Write(SourceNPCType);
+            }
+            if ((metadataFlags & 2) != 0)
+            {
+                binaryWriter.Write((ushort)DefenseTraits);
+            }
+        }
+
+        public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
+        {
+            byte metadataFlags = binaryReader.ReadByte();
+            if ((metadataFlags & 1) != 0)
+            {
+                SourceNPCIndex = binaryReader.ReadInt16();
+                SourceNPCType = binaryReader.ReadInt32();
+            }
+            else
+            {
+                SourceNPCIndex = -1;
+                SourceNPCType = -1;
+            }
+
+            DefenseTraits = (metadataFlags & 2) != 0
+                ? (AttackDefenseTraits)binaryReader.ReadUInt16()
+                : AttackDefenseTraits.None;
+        }
+
         public override void SetDefaults(Projectile entity)
         {
             if (entity.IsMinionOrSentryRelated || ProjectileID.Sets.LightPet[entity.type] || Main.projPet[entity.type])
@@ -106,6 +204,14 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
+
+            // Attribute enemy shots at their common spawn seam instead of configuring every enemy separately.
+            // EntitySource_Parent is what NPC.GetSource_FromThis/GetSource_FromAI produce.
+            if (source is EntitySource_Parent { Entity: NPC sourceNPC })
+            {
+                SourceNPCIndex = sourceNPC.whoAmI;
+                SourceNPCType = sourceNPC.type;
+            }
 
             // Attribute projectile and child-projectile damage to the item activation that produced it.
             if (source is EntitySource_ItemUse_WithAmmo withAmmo && withAmmo.Item != null && !withAmmo.Item.IsAir)
@@ -123,6 +229,9 @@ namespace tsorcRevamp.Projectiles
                 tsorcGlobalProjectile parentData = parent.GetGlobalProjectile<tsorcGlobalProjectile>();
                 WeaponStaminaSourceItemType = parentData.WeaponStaminaSourceItemType;
                 WeaponStaminaSourceIsSummon = parentData.WeaponStaminaSourceIsSummon;
+                SourceNPCIndex = parentData.SourceNPCIndex;
+                SourceNPCType = parentData.SourceNPCType;
+                DefenseTraits = parentData.DefenseTraits;
             }
 
             WeaponStaminaSourceIsSummon |= projectile.minion
@@ -894,6 +1003,21 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreDraw(Projectile projectile, ref Color lightColor)
         {
+            if ((DefenseTraits & AttackDefenseTraits.BypassesActiveShield) != 0
+                && !projectile.hide && projectile.alpha < 255)
+            {
+                Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[projectile.type].Value;
+                int frameCount = Math.Max(1, Main.projFrames[projectile.type]);
+                int frame = Math.Clamp(projectile.frame, 0, frameCount - 1);
+                Rectangle sourceRectangle = texture.Frame(1, frameCount, 0, frame);
+                Vector2 drawPosition = projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
+                AttackTelegraphDraw.DrawUnblockableWeaponAura(
+                    Main.spriteBatch, texture, drawPosition, sourceRectangle, projectile.rotation,
+                    sourceRectangle.Size() * 0.5f, projectile.scale);
+                lightColor = Color.Lerp(lightColor, new Color(255, 70, 70), 0.7f);
+                Lighting.AddLight(projectile.Center, Color.Red.ToVector3() * 0.55f);
+            }
+
             if (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] != 0)
             {
                 Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[projectile.type];

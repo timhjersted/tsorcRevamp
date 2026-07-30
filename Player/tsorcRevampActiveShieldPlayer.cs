@@ -6,6 +6,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp
 {
@@ -29,6 +30,8 @@ namespace tsorcRevamp
         // Last values pushed to the network, so we only send a packet when the block state actually changes.
         private bool lastSyncedBlocking;
         private int lastSyncedShield = -1;
+        private bool hasAcceptedBlockReport;
+        private ulong lastAcceptedBlockReportTick;
 
         // True while we've forced Player.shield to draw a 2nd-slot shield's sprite (so we can clear it after).
         private bool shieldDrawForcedBySlot;
@@ -136,6 +139,19 @@ namespace tsorcRevamp
             packet.Send();
         }
 
+        internal bool TryAcceptBlockReport()
+        {
+            ulong now = Main.GameUpdateCount;
+            if (hasAcceptedBlockReport && now - lastAcceptedBlockReportTick < BlockReportMinInterval)
+            {
+                return false;
+            }
+
+            hasAcceptedBlockReport = true;
+            lastAcceptedBlockReportTick = now;
+            return true;
+        }
+
         private bool ComputeBlocking()
         {
             if (!RevampActive)
@@ -150,8 +166,9 @@ namespace tsorcRevamp
             {
                 return false;
             }
-            // Can't raise a shield while guard-broken (the debuff lasts longer than the brief blockLockTimer).
-            if (Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>()))
+            // Both debuffs force the guard down, but remain separate so their durations and penalties can diverge.
+            if (Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>())
+                || Player.HasBuff(ModContent.BuffType<Stagger>()))
             {
                 return false;
             }
@@ -485,6 +502,16 @@ namespace tsorcRevamp
         // defense) — so any shield in the 2nd slot behaves like it would in an accessory slot.
         public override void PostUpdateEquips()
         {
+            // Reassert after accessory effects so infinite-flight equipment cannot refill the flight timers after
+            // the debuff's own Update. Ordinary and extra jumps are intentionally left alone.
+            if (Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>())
+                || Player.HasBuff(ModContent.BuffType<Stagger>()))
+            {
+                Player.wingTime = 0f;
+                Player.canRocket = false;
+                Player.rocketTime = 0;
+            }
+
             if (!RevampActive || !Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode || usingSecondSlotItem)
             {
                 return;
@@ -536,6 +563,7 @@ namespace tsorcRevamp
             {
                 return false;
             }
+            int blockingShieldType = activeShieldType;
 
             // Physical shields cover the front + top + bottom (everything but the rear): we can't aim the shield
             // vertically, so a hit coming more from above/below than the side is always blocked, while a side-
@@ -567,6 +595,21 @@ namespace tsorcRevamp
                              || src.SourcePlayerIndex >= 0;
             if (!blockable)
             {
+                return false;
+            }
+
+            TryResolveAttackingNPC(info, out NPC attacker, out Projectile attackingProjectile);
+            // Only the spawned spear/hitbox carries the bypass. The NPC's active trait is authoring state used to
+            // tag that projectile and draw the held weapon; it must not make incidental body contact unblockable.
+            AttackDefenseTraits defenseTraits = attackingProjectile != null
+                ? attackingProjectile.GetGlobalProjectile<tsorcGlobalProjectile>().DefenseTraits
+                : AttackDefenseTraits.None;
+            if ((defenseTraits & AttackDefenseTraits.BypassesActiveShield) != 0)
+            {
+                // The spear still follows Terraria's ordinary hurt path, but trying to catch it on a raised shield
+                // pays the full authored block cost and triggers the complete guard-break penalty. It never counts
+                // as a successful block, perfect parry, or pressure-building event.
+                TriggerUnblockableGuardBreak(data, info);
                 return false;
             }
 
@@ -670,7 +713,17 @@ namespace tsorcRevamp
                 ApplyChipDamage(data, info);
             }
 
-            ApplyOnBlockEffects(activeShieldType, info, perfectParry);
+            ReportBlockedAttack(attacker, attackingProjectile, (int)Math.Ceiling(blockedDamage), perfectParry);
+            ApplyOnBlockEffects(blockingShieldType, info, perfectParry, attacker, attackingProjectile);
+            SpawnShieldImpactFeedback(attacker, attackingProjectile, perfectParry);
+
+            // A blocked single-impact projectile should break exactly as if it struck terrain or the player. Do
+            // this after signature shield effects so a perfect Mythril Bulwark reflection can claim the shot first.
+            // Dedicated servers perform the authoritative kill when they validate the block-report packet below.
+            if (Main.netMode != NetmodeID.Server)
+            {
+                tsorcGlobalProjectile.TryBreakOnShieldImpact(attackingProjectile);
+            }
 
             // Grant a brief immunity window after a block. FreeDodge by itself grants no i-frames, so an enemy
             // pressed against the shield would otherwise re-trigger a block every single frame and instantly
@@ -848,35 +901,15 @@ namespace tsorcRevamp
 
         /// <summary>Per-shield effects that fire when a hit is successfully blocked (Phase 5).
         /// <paramref name="perfectParry"/> is true when the hit landed within the perfect-parry window of raising.</summary>
-        private void ApplyOnBlockEffects(int shieldType, Player.HurtInfo info, bool perfectParry)
+        private void ApplyOnBlockEffects(int shieldType, Player.HurtInfo info, bool perfectParry, NPC attacker, Projectile attackingProjectile)
         {
-            // Resolve the attacking NPC (contact hits and NPC-owned projectiles).
-            NPC attacker = null;
-            int npcIndex = info.DamageSource.SourceNPCIndex;
-            if (npcIndex >= 0 && npcIndex < Main.maxNPCs && Main.npc[npcIndex].active)
-            {
-                attacker = Main.npc[npcIndex];
-            }
-            else
-            {
-                int projIndex = info.DamageSource.SourceProjectileLocalIndex;
-                if (projIndex >= 0 && projIndex < Main.maxProjectiles && Main.projectile[projIndex].active)
-                {
-                    Projectile proj = Main.projectile[projIndex];
-                    if (proj.owner >= 0 && proj.owner < Main.maxNPCs && proj.hostile && Main.npc[proj.owner].active)
-                    {
-                        attacker = Main.npc[proj.owner];
-                    }
-                }
-            }
             if (attacker == null || attacker.friendly)
             {
                 return;
             }
 
-            // A blocked hit shoves the attacker back: per-shield strength scaled by knockback resistance, but with
-            // a floor (even 0-resist enemies bump ~3 tiles so the slowed player can back off) and a cap (the
-            // strongest shield only nudges a few tiles — melee still wants them in range). Bosses aren't flung.
+            // A blocked hit shoves the attacker back: per-shield strength scaled by knockback resistance, with
+            // a floor so even knockback-resistant enemies visibly recoil and a cap so bosses aren't flung.
             if (!attacker.boss)
             {
                 float kb = tsorcRevamp.ActiveShieldRegistry != null
@@ -919,10 +952,11 @@ namespace tsorcRevamp
             {
                 attacker.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
                 // ...and deflects a blocked hostile projectile straight back at its source.
-                int projIdx = info.DamageSource.SourceProjectileLocalIndex;
-                if (projIdx >= 0 && projIdx < Main.maxProjectiles && Main.projectile[projIdx].active && Main.projectile[projIdx].hostile)
+                if (attackingProjectile != null && attackingProjectile.active && attackingProjectile.hostile
+                    && attackingProjectile.type !=
+                        ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>())
                 {
-                    Projectile p = Main.projectile[projIdx];
+                    Projectile p = attackingProjectile;
                     p.hostile = false;
                     p.friendly = true;
                     p.owner = Player.whoAmI;
@@ -980,6 +1014,59 @@ namespace tsorcRevamp
 
         // Mana wards release a 360° feedback pulse when lowered, stronger the longer they were held.
         // Celestriad additionally looses 3 seeking bolts if it was held at least ~2s.
+        /// <summary>
+        /// Short steel spark at the shield plane for every successful block. Source-anchored melee and contact
+        /// attacks add a small recoil puff and local bump so the enemy's physical bounce reads as an impact.
+        /// Perfect parries layer their existing gold burst over this ordinary metal contact.
+        /// </summary>
+        private void SpawnShieldImpactFeedback(NPC attacker, Projectile attackingProjectile, bool perfectParry)
+        {
+            if (Player.whoAmI != Main.myPlayer || Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
+
+            Vector2 sourceCenter = attackingProjectile != null && attackingProjectile.active
+                ? attackingProjectile.Center
+                : attacker?.Center ?? Player.Center + new Vector2(Player.direction, 0f);
+            Vector2 impactDirection = (sourceCenter - Player.Center).SafeNormalize(new Vector2(Player.direction, 0f));
+            Vector2 impactPoint = Player.Center + impactDirection * 18f;
+
+            for (int i = 0; i < 10; i++)
+            {
+                Vector2 velocity = impactDirection.RotatedByRandom(0.9f) * Main.rand.NextFloat(2.4f, 5.2f);
+                Dust spark = Dust.NewDustPerfect(impactPoint, DustID.Iron, velocity, 80, Color.White, Main.rand.NextFloat(0.9f, 1.25f));
+                spark.noGravity = true;
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 velocity = -impactDirection * Main.rand.NextFloat(0.5f, 1.8f) + Main.rand.NextVector2Circular(0.8f, 0.8f);
+                Dust smoke = Dust.NewDustPerfect(impactPoint, DustID.Smoke, velocity, 150, Color.Gray, Main.rand.NextFloat(0.65f, 0.95f));
+                smoke.noGravity = true;
+            }
+
+            bool sourceAnchoredMelee = attackingProjectile != null
+                && attackingProjectile.type == ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>();
+            bool meleeImpact = attackingProjectile == null || sourceAnchoredMelee;
+            if (meleeImpact)
+            {
+                UsefulFunctions.ScreenShake(Player.Center, perfectParry ? 1.1f : 0.7f, perfectParry ? 4 : 3,
+                    distanceFalloff: 260f, uniqueIdentity: perfectParry ? "PerfectParryImpact" : "ShieldMeleeImpact");
+
+                if (attacker != null)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Dust recoil = Dust.NewDustDirect(attacker.Bottom - new Vector2(8f, 4f), 16, 6,
+                            DustID.Smoke, -impactDirection.X * Main.rand.NextFloat(0.8f, 2f), -Main.rand.NextFloat(0.2f, 1.1f),
+                            150, Color.Gray, Main.rand.NextFloat(0.65f, 0.9f));
+                        recoil.noGravity = true;
+                    }
+                }
+            }
+        }
+
         private void OnBlockReleased(int shieldType, int holdFrames)
         {
             if (Player.whoAmI != Main.myPlayer
@@ -1047,9 +1134,16 @@ namespace tsorcRevamp
             for (int i = 0; i < 18; i++)
             {
                 Vector2 vel = (MathHelper.TwoPi * i / 18f).ToRotationVector2() * Main.rand.NextFloat(2.5f, 5f);
-                int d = Dust.NewDust(origin, 4, 4, DustID.GoldFlame, vel.X, vel.Y, 100, Color.White, 1.4f);
-                Main.dust[d].noGravity = true;
+                Dust spark = Dust.NewDustPerfect(origin, DustID.GoldFlame, vel, 80, Color.White, 1.4f);
+                spark.noGravity = true;
             }
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2 vel = Main.rand.NextVector2Circular(1.2f, 1.2f);
+                Dust twinkle = Dust.NewDustPerfect(origin, DustID.TreasureSparkle, vel, 40, Color.White, 1.15f);
+                twinkle.noGravity = true;
+            }
+            Lighting.AddLight(origin, new Vector3(0.8f, 0.65f, 0.2f));
         }
 
         /// <summary>One-time white twinkle around the player marking a Celestriad ward reaching full charge.</summary>
@@ -1063,6 +1157,75 @@ namespace tsorcRevamp
                 Main.dust[d].velocity *= 0.2f;
             }
             SoundEngine.PlaySound(SoundID.Item25 with { Pitch = 0.5f }, Player.Center); // soft chime
+        }
+
+        private static bool TryResolveAttackingNPC(Player.HurtInfo info, out NPC attacker, out Projectile attackingProjectile)
+        {
+            attacker = null;
+            attackingProjectile = null;
+            Terraria.DataStructures.PlayerDeathReason source = info.DamageSource;
+
+            if (source.SourceNPCIndex >= 0 && source.SourceNPCIndex < Main.maxNPCs)
+            {
+                NPC contactAttacker = Main.npc[source.SourceNPCIndex];
+                if (contactAttacker.active && !contactAttacker.friendly)
+                {
+                    attacker = contactAttacker;
+                    return true;
+                }
+            }
+
+            int projectileIndex = source.SourceProjectileLocalIndex;
+            if (projectileIndex < 0 || projectileIndex >= Main.maxProjectiles)
+            {
+                return false;
+            }
+
+            Projectile projectile = Main.projectile[projectileIndex];
+            if (!projectile.active || !projectile.hostile)
+            {
+                return false;
+            }
+
+            attackingProjectile = projectile;
+            if (projectile.GetGlobalProjectile<tsorcGlobalProjectile>().TryGetSourceNPC(out NPC projectileAttacker)
+                && !projectileAttacker.friendly)
+            {
+                attacker = projectileAttacker;
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ReportBlockedAttack(NPC attacker, Projectile attackingProjectile, int blockedDamage, bool perfectParry)
+        {
+            if (attacker == null || attacker.friendly)
+            {
+                return;
+            }
+
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                attacker.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>()
+                    .RegisterBlockedAttack(attacker, Player.whoAmI, blockedDamage, perfectParry);
+                return;
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient || Player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            ModPacket packet = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+            packet.Write(tsorcPacketID.ReportBlockedAttack);
+            packet.Write(attacker.whoAmI);
+            packet.Write(attacker.type);
+            packet.Write(attackingProjectile?.whoAmI ?? -1);
+            packet.Write(attackingProjectile?.type ?? -1);
+            packet.Write(Math.Max(0, blockedDamage));
+            packet.Write(perfectParry);
+            packet.Send();
         }
 
         /// <summary>Best-effort world position of whatever dealt this hit (NPC, projectile, or player).</summary>
@@ -1089,20 +1252,54 @@ namespace tsorcRevamp
             return false;
         }
 
+        private void TriggerUnblockableGuardBreak(ActiveShieldData data, Player.HurtInfo info)
+        {
+            float incomingDamage = info.SourceDamage > 0 ? info.SourceDamage : info.Damage;
+            float blockCost = (float)Math.Ceiling(data.BaseCost + incomingDamage * data.DamageFactor);
+            tsorcRevampStaminaPlayer stamina = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+
+            if (data.Resource == ShieldResource.Stamina)
+            {
+                stamina.staminaResourceCurrent = Math.Max(0f, stamina.staminaResourceCurrent - blockCost);
+            }
+            else
+            {
+                // Mana wards mirror their ordinary block payment: scaled mana plus the flat stamina sip.
+                Player.GetModPlayer<tsorcRevampPlayer>().SpendManaOnHit((int)blockCost);
+                int staminaSip = (int)Math.Ceiling(data.BaseCost / 3f);
+                stamina.staminaResourceCurrent = Math.Max(0f, stamina.staminaResourceCurrent - staminaSip);
+            }
+
+            stamina.PauseStaminaRegen((int)Math.Round(stamina.BlockRegenDelay * data.BlockRegenDelayMult));
+            TriggerGuardBreak(data.Resource == ShieldResource.Mana);
+        }
+
+        private void ApplyShieldGuardBreakDebuff()
+        {
+            Player.AddBuff(ModContent.BuffType<ShieldGuardBreak>(), ShieldGuardBreak.DurationTicks); // shield lock + reduced stamina regen
+            blockLockTimer = Math.Max(blockLockTimer, 30);
+            isBlocking = false;
+            activeShieldType = -1;
+            blockHoldFrames = 0;
+            heldShieldType = -1;
+            fireBreathActive = false;
+            if (Player.whoAmI == Main.myPlayer && Main.netMode != NetmodeID.Server)
+            {
+                UsefulFunctions.ScreenShake(Player.Center, strength: 1.25f, frames: 6,
+                    distanceFalloff: 300f, uniqueIdentity: "ShieldGuardBreak");
+            }
+            SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.6f }, Player.Center);
+        }
+
         private void TriggerGuardBreak(bool manaWard)
         {
             Player.AddBuff(BuffID.Ichor, 120);   // 2s
             Player.AddBuff(BuffID.Slow, 60);     // 1s
-            Player.AddBuff(ModContent.BuffType<ShieldGuardBreak>(), 120); // 2s reduced regen
             if (manaWard)
             {
                 Player.AddBuff(BuffID.ManaSickness, 120);
             }
-            blockLockTimer = 30; // brief lock; the ShieldGuardBreak debuff keeps the shield down for its full duration
-            isBlocking = false;
-            activeShieldType = -1;
-            // Guard-break feedback: the shield-hit "tink", pitched down so it reads as a heavy, failed block.
-            SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.6f }, Player.Center);
+            ApplyShieldGuardBreakDebuff();
         }
 
         public override void PostUpdateRunSpeeds()
@@ -1152,9 +1349,10 @@ namespace tsorcRevamp
         private const float BodyBlockKnockbackSpeed = 4f;
         private const int ShieldWallReach = 12; // px the wall extends past the player's front edge
         private const int BlockImmuneFrames = 36; // i-frames granted after a block, to gate how often a pressed enemy re-triggers a block (~0.6s)
-        private const float MinBlockKnockback = 3.5f; // floor so even knockback-immune (0-resist) non-boss enemies bump ~3 tiles
-        private const float MaxBlockKnockback = 8f;    // cap so the strongest shield only shoves a few tiles (melee keeps them in range)
-        public const float BlockStaminaRegenMult = 0f; // stamina regen retained while a shield is raised (0 = no regen, Dark-Souls style)
+        private const int BlockReportMinInterval = 30; // server-side duplicate/spam guard; stays below the real block i-frame window
+        private const float MinBlockKnockback = 3.5f; // floor so even knockback-immune enemies visibly recoil
+        private const float MaxBlockKnockback = 8f; // cap so high-knockback shields do not launch enemies excessively
+        public const float BlockStaminaRegenMult = 0.20f; // fraction of normal stamina regen retained while a shield is raised
 
         // --- Chip damage (ordinary blocks only; perfect parry always fully negates) ---
         private const float MeleeChipMult = 0.75f;            // contact/melee blocks chip less than projectile blocks

@@ -58,6 +58,24 @@ namespace tsorcRevamp.NPCs.Enemies
             archerGlobalNPC.RemembersLastKnownPos = true;
             archerGlobalNPC.NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
             archerGlobalNPC.CanUseRopes = true;
+            archerGlobalNPC.KiteRangeMin = 8f;
+            archerGlobalNPC.KiteRangeMax = 22f;
+            archerGlobalNPC.KiteLooseness = 0.35f;
+            archerGlobalNPC.CanAdvanceAndShoot = true;
+            // Uses the fixed vanilla Skeleton Archer sheet: it has aim/fire frames but no walk-while-firing frames.
+            // AdvanceAndShoot may accelerate its approach between shots, but stop-to-fire must remain enabled.
+            archerGlobalNPC.CanFireWhileAdvancing = false;
+            archerGlobalNPC.AdvanceAndShootSpeedMultiplier = 1.45f;
+            archerGlobalNPC.AdvanceAndShootAccelerationMultiplier = 1.4f;
+
+            // The forward branch of QuickStep is the shared flank move: cross completely through the target and
+            // leave a three-tile gap, while retaining the ordinary backstep when a safe cross is out of reach.
+            archerGlobalNPC.EvasiveQuickStep = true;
+            archerGlobalNPC.QuickStepSpeed = 6f;
+            archerGlobalNPC.QuickStepForwardRoom = 48f;
+            archerGlobalNPC.QuickStepForwardChance = 0.8f;
+            archerGlobalNPC.QuickStepMaxForwardTicks = 36;
+            CombatTempoProfile.Standard(archerGlobalNPC, ProjectileID.FlamingArrow);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -94,6 +112,16 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+        }
 
         public override void HitEffect(NPC.HitInfo hit)
         {

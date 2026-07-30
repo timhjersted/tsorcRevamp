@@ -60,6 +60,7 @@ using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
 using tsorcRevamp.NPCs.Special;
+using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
 using tsorcRevamp.Projectiles.Summon.NullSprite;
@@ -467,7 +468,10 @@ namespace tsorcRevamp
                 // a much longer post-block regen pause, a heavier slow, and an always-on regen tax ("equip load") that
                 // costs you even when you never raise it. The alternative to leaking HP is leaking tempo.
                 // The three greatshields (DragonCrest → Paladin's → Frozen) get progressively less punishing.
-                { ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>(),     new ActiveShieldData(24f, 0.35f, 0.87f, 5, 5.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.75f, passiveRegenPenalty: 0.05f) }, // repositioned to mid pre-hardmode
+                // All three trimmed -0.15 off blockRegenDelayMult (was 1.75/1.7/1.6) — the no-chip trade was
+                // landing as more punishing than intended; the flat trim keeps the relative spacing/progression
+                // between the three untouched while softening the pause across the board.
+                { ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>(),     new ActiveShieldData(24f, 0.35f, 0.87f, 5, 5.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.60f, passiveRegenPenalty: 0.05f) }, // repositioned to mid pre-hardmode
                 { ModContent.ItemType<Items.Accessories.Damage.MythrilBulwark>(),                   new ActiveShieldData(22f, 0.32f, 0.92f, 6, 5.2f) },
                 { ModContent.ItemType<Items.Accessories.Defensive.Shields.IceboundMythrilAegis>(),  new ActiveShieldData(9f,  0.14f, 0.99f, 15, 7.0f) },
 
@@ -485,12 +489,12 @@ namespace tsorcRevamp
                 { ItemID.CobaltShield,    new ActiveShieldData(30f, 0.40f, 0.89f, 0, 4.4f) },
                 { ItemID.ObsidianShield,  new ActiveShieldData(27f, 0.38f, 0.90f, 0, 4.6f) },
                 // GREATSHIELD archetype (hardmode entry): the tower shield of the vanilla line.
-                { ItemID.PaladinsShield,  new ActiveShieldData(21f, 0.30f, 0.88f, 0, 5.4f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.7f, passiveRegenPenalty: 0.05f) },
+                { ItemID.PaladinsShield,  new ActiveShieldData(21f, 0.30f, 0.88f, 0, 5.4f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.55f, passiveRegenPenalty: 0.05f) },
                 { ItemID.AnkhShield,      new ActiveShieldData(18f, 0.27f, 0.95f, 0, 5.8f) },
                 // GREATSHIELD archetype (top of the line): a wall of ice — nothing chips through, but you barely move
                 // and recover slowly. The lighter Ankh/Hero shields around it stay leaky-but-nimble by contrast, so
                 // upgrading Frozen → Hero is a side-grade (lose no-chip, gain mobility + utility), not a strict win.
-                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.90f, 0, 6.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.6f, passiveRegenPenalty: 0.05f) },
+                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.90f, 0, 6.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.45f, passiveRegenPenalty: 0.05f) },
                 { ItemID.HeroShield,      new ActiveShieldData(12f, 0.20f, 0.97f, 0, 6.5f) }, // top vanilla shield (Ankh + Frozen + Berserker)
                 // Shield of Cthulhu: early-game right-click block (7% slow, def 2). Its vanilla double-tap dash is
                 // untouched and shows the shield while dashing (see tsorcRevampActiveShieldPlayer.PostUpdate).
@@ -2414,6 +2418,100 @@ namespace tsorcRevamp
                             shieldPacket.Write(blocking);
                             shieldPacket.Write(shieldType);
                             shieldPacket.Send();
+                        }
+                        break;
+                    }
+                case tsorcPacketID.ReportBlockedAttack:
+                    {
+                        int npcIndex = reader.ReadInt32();
+                        int npcType = reader.ReadInt32();
+                        int projectileIndex = reader.ReadInt32();
+                        int projectileType = reader.ReadInt32();
+                        int reportedDamage = reader.ReadInt32();
+                        bool perfectParry = reader.ReadBoolean();
+
+                        if (Main.netMode != NetmodeID.Server
+                            || whoAmI < 0 || whoAmI >= Main.maxPlayers)
+                        {
+                            break;
+                        }
+
+                        Player blockingPlayer = Main.player[whoAmI];
+                        tsorcRevampActiveShieldPlayer shieldPlayer =
+                            blockingPlayer.GetModPlayer<tsorcRevampActiveShieldPlayer>();
+                        if (!blockingPlayer.active || blockingPlayer.dead || !shieldPlayer.isBlocking
+                            || shieldPlayer.activeShieldType < 0 || ActiveShieldRegistry == null
+                            || !ActiveShieldRegistry.ContainsKey(shieldPlayer.activeShieldType)
+                            || npcIndex < 0 || npcIndex >= Main.maxNPCs)
+                        {
+                            break;
+                        }
+
+                        NPC attacker = Main.npc[npcIndex];
+                        if (!attacker.active || attacker.type != npcType || attacker.friendly || attacker.townNPC)
+                        {
+                            break;
+                        }
+
+                        int damageLimit;
+                        Projectile attackingProjectile = null;
+                        if (projectileIndex >= 0)
+                        {
+                            if (projectileIndex >= Main.maxProjectiles)
+                            {
+                                break;
+                            }
+
+                            attackingProjectile = Main.projectile[projectileIndex];
+                            tsorcGlobalProjectile projectileData =
+                                attackingProjectile.GetGlobalProjectile<tsorcGlobalProjectile>();
+                            float projectileBlockRange = Math.Max(240f,
+                                attackingProjectile.width + attackingProjectile.height + 160f);
+                            if (!attackingProjectile.active || !attackingProjectile.hostile
+                                || attackingProjectile.type != projectileType
+                                || attackingProjectile.Distance(blockingPlayer.Center) > projectileBlockRange
+                                || !projectileData.TryGetSourceNPC(out NPC projectileSource)
+                                || projectileSource.whoAmI != npcIndex || projectileSource.type != npcType)
+                            {
+                                break;
+                            }
+
+                            damageLimit = Math.Max(1, attackingProjectile.damage * 4);
+                        }
+                        else
+                        {
+                            float contactBlockRange = Math.Max(240f, attacker.width + attacker.height + 160f);
+                            if (projectileType != -1 || attacker.Distance(blockingPlayer.Center) > contactBlockRange)
+                            {
+                                break;
+                            }
+
+                            damageLimit = Math.Max(1, Math.Max(attacker.damage, attacker.defDamage) * 4);
+                        }
+
+                        int blockedDamage = Math.Clamp(reportedDamage, 0, damageLimit);
+                        if (blockedDamage <= 0 || !shieldPlayer.TryAcceptBlockReport())
+                        {
+                            break;
+                        }
+
+                        attacker.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>()
+                            .RegisterBlockedAttack(attacker, whoAmI, blockedDamage, perfectParry);
+                        if (attackingProjectile != null)
+                        {
+                            bool mythrilReflection = perfectParry
+                                && shieldPlayer.activeShieldType == ModContent.ItemType<Items.Accessories.Damage.MythrilBulwark>()
+                                && attackingProjectile.type !=
+                                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>();
+                            if (mythrilReflection)
+                            {
+                                attackingProjectile.hostile = false;
+                                attackingProjectile.friendly = true;
+                                attackingProjectile.owner = whoAmI;
+                                attackingProjectile.velocity = -attackingProjectile.velocity;
+                                attackingProjectile.netUpdate = true;
+                            }
+                            else tsorcGlobalProjectile.TryBreakOnShieldImpact(attackingProjectile);
                         }
                         break;
                     }
@@ -4659,6 +4757,7 @@ namespace tsorcRevamp
         /// </summary>
         public const byte SyncRightClickSlot = 23;
         public const byte SyncDwarvenContract = 24;
+        public const byte ReportBlockedAttack = 25;
     }
 
     //config moved to separate file

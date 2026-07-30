@@ -161,6 +161,31 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
+        /// <summary>Keep combat-owned SF4 frames in the same diagnostic stream as ordinary movement.</summary>
+        internal static void LogCombatSeizure(NPC npc, bool lineOfSight)
+        {
+            if (!npc.HasValidTarget)
+            {
+                return;
+            }
+
+            Player player = Main.player[npc.target];
+            NavState state = GetState(npc);
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            string action = globalNPC.CombatMeleeActive ? "combat-melee"
+                : globalNPC.InGuardPressureRecovery ? "guard-recovery"
+                : globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 ? "teleport"
+                : globalNPC.PounceTimer > 0 ? "pounce"
+                : globalNPC.DodgeTimer > 0 ? "dodge"
+                : globalNPC.InSustainedEvasion ? "evasion"
+                : "combat-seize";
+            string reason = globalNPC.CombatMeleeActive
+                ? $"key={globalNPC.ActiveCombatMeleeKey} tick={globalNPC.ActiveCombatMeleeTimer}"
+                : "combat owns movement";
+
+            LogFrame(npc, player, state, IsGrounded(npc), lineOfSight, globalNPC.InAttack, action, reason);
+        }
+
         // movementOnly (Phase 2 Step 4): act as BasicAI's pluggable MOVEMENT substrate instead of a standalone
         // driver. When true, BasicAI already advanced the shared FSM and fired combat this frame, so SF4 must NOT
         // re-run UpdateState (side effects → double give-up clock) or fire its own attacks (double shot) — it
@@ -1204,7 +1229,22 @@ namespace tsorcRevamp.NPCs
             float topSpeed, float acceleration, bool los, out string action, out string reason)
         {
             action = ""; reason = "";
-            if (g.KiteRangeMax <= 0f || g.AttackList.Count == 0 || !los) return false;
+            // KiteRangeMax is the explicit opt-in. Bespoke timeline enemies such as Red Knight have a real ranged
+            // pool even though AttackList is intentionally empty.
+            if (g.KiteRangeMax <= 0f) return false;
+
+            // Distant projectile pressure temporarily disables the preferred kite band. Returning false hands
+            // movement back to ordinary pursuit/pathfinding, whose effective target distance is zero. Existing
+            // distance-aware attacks can claim the body naturally when their melee or ranged band becomes valid.
+            if (g.IsClosingOnRangedThreat(npc, player))
+            {
+                s.KiteTargetDist = 0f;
+                s.KiteRerollTimer = 0;
+                s.KiteLetClose = false;
+                return false;
+            }
+
+            if (!los) return false;
             // Horizontal kiting only — a player on a different level is the standoff's / pursuit's job.
             if (Math.Abs(player.Center.Y - npc.Center.Y) > 48f) return false;
 
@@ -1336,9 +1376,15 @@ namespace tsorcRevamp.NPCs
             int faceP = player.Center.X >= npc.Center.X ? 1 : -1;
             npc.direction = faceP; npc.spriteDirection = faceP;
             float distTiles = npc.Distance(player.Center) / TileF;
+            bool closeOnRangedThreat = g.IsClosingOnRangedThreat(npc, player);
 
             // Re-roll the band target occasionally so it can't reverse course every frame (hysteresis).
-            if (s.KiteRerollTimer <= 0)
+            if (closeOnRangedThreat)
+            {
+                s.KiteTargetDist = 0f;
+                s.KiteRerollTimer = 0;
+            }
+            else if (s.KiteRerollTimer <= 0)
             {
                 float lo = g.KiteRangeMin > 0 ? g.KiteRangeMin : 6f;
                 float hi = g.KiteRangeMax > 0 ? g.KiteRangeMax : 20f;
@@ -1351,7 +1397,11 @@ namespace tsorcRevamp.NPCs
             const float deadband = 2f;
             bool approachBlocked = IsBeastStepBlocked(npc, faceP);
             int desired; float speed;
-            if (!approachBlocked && distTiles > s.KiteTargetDist + deadband)
+            if (closeOnRangedThreat)
+            {
+                desired = faceP; speed = topSpeed;                                // pressure posture: approach-only
+            }
+            else if (!approachBlocked && distTiles > s.KiteTargetDist + deadband)
             {
                 desired = faceP; speed = topSpeed;                              // too far → close as far as terrain allows
             }
@@ -1368,7 +1418,8 @@ namespace tsorcRevamp.NPCs
             int moveDir = BeastStepDir(npc, desired, faceP);
             ApplyChase(npc, moveDir, speed, acceleration);
             npc.spriteDirection = faceP;
-            action = "beast-oscillate"; reason = $"d={distTiles:F0} t={s.KiteTargetDist:F0}";
+            action = closeOnRangedThreat ? "beast-ranged-pursuit" : "beast-oscillate";
+            reason = $"d={distTiles:F0} t={s.KiteTargetDist:F0}";
         }
 
         // ── Phase 2: bull through thin (<= BeastPhaseMaxWidth) body/head obstructions ─────────────────────────────
@@ -3147,6 +3198,19 @@ namespace tsorcRevamp.NPCs
                 }
                 int facePlayer = player.Center.X >= npc.Center.X ? 1 : -1;
                 bool wrongAimFace = npc.ai[2] != 0f && npc.spriteDirection != facePlayer;
+                string combatStr = "";
+                if (g.CombatTempo != null || g.KiteRangeMax > 0f || g.BlockedRecently > 0)
+                {
+                    string meleeState = g.CombatMeleeActive
+                        ? $"{g.ActiveCombatMeleeKey}@{g.ActiveCombatMeleeTimer}/t{g.ActiveCombatMeleeTelegraphTicks}"
+                        : "off";
+                    combatStr = $" ai1={npc.ai[1]:F0} melee={meleeState}"
+                        + $" pending={g.PendingCombatMoveKey}@{g.PendingCombatMoveGapTimer} combo={g.CombatComboStep}/{g.CombatComboMaximum}/rec{g.CombatComboRecoveryTimer}"
+                        + $" guard={g.BlockedRecently}/{tsorcRevampGlobalNPC.GuardPressureMaxBlocks}/unblock{g.ActiveAttackBypassesShield}"
+                        + $" kite={g.KiteRangeMin:F1}-{g.KiteRangeMax:F1}/threat{g.KiteRangedThreatTimer}"
+                        + $"/advance{g.IsAdvanceAndShootActive(npc, player)}"
+                        + $"/movingFire{g.CanUseMovingFireDuringAdvance(npc, player)}";
+                }
                 string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI}"
                     + $" pos=({npc.Center.X / TileF:F1},{npc.Center.Y / TileF:F1})"
                     + $" player=({player.Center.X / TileF:F1},{player.Center.Y / TileF:F1})"
@@ -3166,6 +3230,7 @@ namespace tsorcRevamp.NPCs
                     + $" tp={(g.CanTeleport ? $"{g.TeleportStyle}/ch{(g.TeleportChargesRemaining == int.MaxValue ? "inf" : g.TeleportChargesRemaining.ToString())}/cd{g.TeleportCooldownTimer}/cnt{g.TeleportCountdown}" : "off")}"
                     + $" stopFire={g.CanStopToFire}"
                     + $" action={action} reason={reason} attack={attack}"
+                    + combatStr
                     + ropeStr;
                 File.AppendAllText(path, line + Environment.NewLine);
             }

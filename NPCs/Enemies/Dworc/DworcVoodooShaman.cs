@@ -32,26 +32,37 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             BannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
             AnimationType = NPCID.Skeleton;
             // "Poison Strike" — fast aimed poison bolt
-            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, SoundID.Item20, 0);
+            int poisonStrikeType = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>();
+            UsefulFunctions.AddAttack(NPC, 150, poisonStrikeType, 18, 8, SoundID.Item20, 0);
             // "Poison Storm" — heavy lobbed ball that bursts into a poison storm (no LOS needed). The shrinking-ring
             // telegraph runs 90t (see AI()), so telegraphTime: 90 makes the poise telegraph/commit window match the
             // visible ring; commitFraction: 0.5f = first half of the shrink is cancellable, second half committed.
-            UsefulFunctions.AddAttack(NPC, 480, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.2f, telegraphTime: 90, commitFraction: 0.5f);
+            int poisonStormType = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();
+            UsefulFunctions.AddAttack(NPC, 480, poisonStormType, 25, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.2f, telegraphTime: 90, commitFraction: 0.5f, endsCombo: true);
             // "Demon Spirit" — summons a homing spirit (rare; no LOS needed)
-            UsefulFunctions.AddAttack(NPC, 200, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 20, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.05f);
+            int demonSpiritType = ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>();
+            UsefulFunctions.AddAttack(NPC, 200, demonSpiritType, 20, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.05f, endsCombo: true);
 
             // Step 6 caster lever: remember last-known position before patrolling.
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanGoInvisible = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().InvisibleAlpha = 205;
-            EvasiveProfile.EvasiveCloak(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), cloakChance: 0.30f, threatRange: 220);
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.RemembersLastKnownPos = true;
+            globalNPC.NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
+            globalNPC.CanUseRopes = true;
+            globalNPC.CanGoInvisible = true;
+            globalNPC.InvisibleAlpha = 205;
+            EvasiveProfile.EvasiveCloak(globalNPC, cloakChance: 0.30f, threatRange: 220);
             // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
             // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
-            EvasiveProfile.DworcShaman(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>());
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanSelfHeal = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 20;
+            EvasiveProfile.DworcShaman(globalNPC);
+            globalNPC.CanSelfHeal = true;
+            globalNPC.SelfHealAmount = 20;
+
+            // Only offensive casts participate. Self-healing remains an independent utility action.
+            // Preserve authored rarity in follow-ups; the storm and summon always finish a chain.
+            CombatTempoProfile.Standard(globalNPC,
+                new CombatComboMove(poisonStrikeType, 0f, float.MaxValue, canRepeat: true, weight: 1f),
+                new CombatComboMove(poisonStormType, 0f, float.MaxValue, canRepeat: false, weight: 0.2f),
+                new CombatComboMove(demonSpiritType, 0f, float.MaxValue, canRepeat: false, weight: 0.05f));
         }
         //yes i tweaked the drop rates. Fight Me
         public override void ModifyNPCLoot(NPCLoot npcLoot)

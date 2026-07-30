@@ -209,7 +209,21 @@ namespace tsorcRevamp
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult;
                 }
 
-                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
+                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                {
+                    // Paid on every swing now (hit, miss, tile, or air) instead of only on a landed NPC
+                    // hit — see ToolSwingStaminaMult for why this is its own knob and not WeaponStaminaMult
+                    // alone. The old on-hit-only charge (tsorcGlobalItem.OnHitNPC) let whiffing skip the
+                    // cost entirely and made a single connecting swing pay for every miss that led up to it.
+                    //
+                    // MUST return here: falling through hits the second if/else-if chain below (the
+                    // "useAnimation * 0.8 > max" block), which is not pick/axe/hammer-excluded and would
+                    // charge the full, un-scaled ReduceStamina cost a second time on top of this one.
+                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult * tsorcRevampStaminaPlayer.ToolSwingStaminaMult;
+                    return true;
+                }
+
+                else if (item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
                 {
                     return true;
                 }
@@ -260,8 +274,8 @@ namespace tsorcRevamp
         }
 
         /// <summary>
-        /// Perfect dodge: rolling into an attack that was about to connect refunds half the roll's stamina.
-        /// Mirrors the shield's perfect parry (same 12-frame window, same 50%), for both Souls classes.
+        /// Perfect dodge: rolling into an attack that was about to connect refunds half the roll's stamina and
+        /// grants a short stamina-regeneration and critical-strike buff.
         ///
         /// Detected by hitbox overlap rather than by hooking the hit, because a successful dodge produces
         /// no hit to hook — the roll sets <c>Player.immune</c>, and damage sources check that themselves
@@ -316,16 +330,24 @@ namespace tsorcRevamp
             stamina.staminaResourceCurrent = Math.Min(
                 stamina.staminaResourceCurrent + lastRollStaminaCost * PerfectDodgeRefundMult,
                 stamina.staminaResourceMax2);
+            Player.AddBuff(ModContent.BuffType<Buffs.PerfectDodge>(), Buffs.PerfectDodge.DurationTicks);
 
             SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.35f, PitchVariance = 0.2f }, Player.position);
 
-            for (int i = 0; i < 12; i++)
+            Vector2 origin = Player.Center;
+            for (int i = 0; i < 16; i++)
             {
-                Dust dust = Dust.NewDustDirect(Player.position, Player.width, Player.height,
-                    DustID.SilverFlame, 0f, 0f, 120, default, 1.1f);
+                Vector2 velocity = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * Main.rand.NextFloat(2.2f, 4.4f);
+                Dust dust = Dust.NewDustPerfect(origin, DustID.SilverFlame, velocity, 90, Color.White, 1.15f);
                 dust.noGravity = true;
-                dust.velocity *= 1.4f;
             }
+            for (int i = 0; i < 5; i++)
+            {
+                Dust twinkle = Dust.NewDustPerfect(origin + Main.rand.NextVector2Circular(12f, 18f),
+                    DustID.TreasureSparkle, Main.rand.NextVector2Circular(0.8f, 0.8f), 70, Color.White, 0.95f);
+                twinkle.noGravity = true;
+            }
+            Lighting.AddLight(origin, new Vector3(0.45f, 0.55f, 0.75f));
         }
 
         //request that the compiler inlines this method, as opposed to making method calls which are slightly slower

@@ -110,6 +110,14 @@ namespace tsorcRevamp.NPCs
         {
             BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, doorBreakingDamage, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping, canDodgeroll, false);
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (globalNPC.InCombatComboRecovery || globalNPC.InGuardPressureRecovery)
+            {
+                globalNPC.ProjectileTimer = 0f;
+                globalNPC.ArcherAimDirection = 0f;
+                npc.ai[2] = 0f;
+                return;
+            }
+
 
             if (telegraphColor == null)
             {
@@ -152,7 +160,13 @@ namespace tsorcRevamp.NPCs
 
                 // Don't let airborne state abort a shot once the telegraph has already fired.
                 bool inTelegraphWindow = globalNPC.ProjectileTimer <= telegraphTick && globalNPC.ProjectileTimer > fireTick;
-                if (npc.justHit || (npc.velocity.Y != 0f && !inTelegraphWindow) || globalNPC.ProjectileTimer <= 0f)
+                bool attackInterrupted = npc.justHit || (npc.velocity.Y != 0f && !inTelegraphWindow);
+                if (attackInterrupted && globalNPC.CombatTempo != null)
+                {
+                    globalNPC.ResetCombatTempoSequence(clearRecovery: false);
+                }
+
+                if (attackInterrupted || globalNPC.ProjectileTimer <= 0f)
                 {
                     globalNPC.ProjectileTimer = scaledProjectileCooldown; //Reset firing time
                     globalNPC.ArcherAimDirection = 0f; //Not aiming
@@ -169,10 +183,12 @@ namespace tsorcRevamp.NPCs
                     if (globalNPC.ArcherAimDirection == 0)
                     {
                         //Aim at them, and start the shot cooldown
-                        npc.velocity.X *= 0.5f;
+                        if (!globalNPC.CanUseMovingFireDuringAdvance(npc, Main.player[npc.target])) npc.velocity.X *= 0.5f;
                         globalNPC.ArcherAimDirection = 3f;
                         globalNPC.ProjectileTimer = scaledProjectileCooldown;
                         // Clear any stale lock from a previous aim cycle. The lock before the shot
+                        int authoredNeutralTicks = Math.Max(0, scaledProjectileCooldown - telegraphTick);
+                        BeginArcherCombatTempoSequence(npc, globalNPC, authoredNeutralTicks);
                         // only sets LockedShotVector while grounded; if this cycle's lock frame is missed (e.g.
                         // the archer is airborne then), the fire-time fallback below re-aims instead of firing a
                         // stale/zero vector (which spawned a zero-velocity arrow that just dropped — the Assassin bug).
@@ -180,7 +196,7 @@ namespace tsorcRevamp.NPCs
 
                         // Standing-fire roll: tier-2 NPCs may plant their feet and fire N shots
                         // before resuming pursuit. High Aggression skips this; high Patience adds shots.
-                        if (globalNPC.CanStopToFire && globalNPC.FighterRangedStandShotsRemaining == 0
+                        if (globalNPC.CombatTempo == null && globalNPC.CanStopToFire && globalNPC.FighterRangedStandShotsRemaining == 0
                             && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float stopBeforeChance = GetStandingFireChance(globalNPC, 0.1f);
@@ -194,12 +210,13 @@ namespace tsorcRevamp.NPCs
 
                     // Standing-fire: fully pin velocity so the NPC holds position and
                     // shows a standing animation frame rather than a walk/jump frame.
-                    if (globalNPC.FighterRangedStandShotsRemaining > 0)
+                    bool fireWhileAdvancing = globalNPC.CanUseMovingFireDuringAdvance(npc, Main.player[npc.target]);
+                    if (!fireWhileAdvancing && globalNPC.FighterRangedStandShotsRemaining > 0)
                     {
                         npc.velocity.X = 0f;
                         npc.velocity.Y = 0f;
                     }
-                    else
+                    else if (!fireWhileAdvancing)
                     {
                         npc.velocity.X *= 0.9f; // decelerate to stop & shoot
                         npc.velocity.Y = 0f;    // suppress jump-frame animation while aiming
@@ -223,7 +240,8 @@ namespace tsorcRevamp.NPCs
                     }
 
                     //Fire at halfway through: first half of delay is aim, 2nd half is cooldown
-                    if (globalNPC.ProjectileTimer == fireTick)
+                    bool firedThisTick = globalNPC.ProjectileTimer == fireTick;
+                    if (firedThisTick)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -277,16 +295,75 @@ namespace tsorcRevamp.NPCs
                         else // target is not below NPC
                             globalNPC.ArcherAimDirection = 4f;  //  aim slight upward
                     }
+
+                    if (firedThisTick && globalNPC.CombatTempo != null)
+                    {
+                        FinishArcherCombatTempoShot(npc, globalNPC, projectileType, fireTick, telegraphTicks);
+                    }
                 }
                 //If we're out of range of the player, don't aim at them
                 else
                 {
+                    if (globalNPC.CombatTempo != null)
+                    {
+                        globalNPC.ResetCombatTempoSequence(clearRecovery: false);
+                    }
                     globalNPC.ArcherAimDirection = 0;
                     globalNPC.FighterRangedStandShotsRemaining = 0; // abort standing-fire if target leaves range
                 }
             }
 
             npc.ai[2] = globalNPC.ArcherAimDirection;
+        }
+
+        private static void BeginArcherCombatTempoSequence(NPC npc, tsorcRevampGlobalNPC globalNPC, int authoredNeutralTicks)
+        {
+            if (globalNPC.CombatTempo == null || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            int skippedTicks = globalNPC.TryGetGuardPressureNeutralSkip(npc, authoredNeutralTicks, authoredNeutralTicks);
+            if (skippedTicks > 0)
+            {
+                globalNPC.ProjectileTimer = Math.Max(0f, globalNPC.ProjectileTimer - skippedTicks);
+                npc.netUpdate = true;
+            }
+        }
+
+        private static void FinishArcherCombatTempoShot(NPC npc, tsorcRevampGlobalNPC globalNPC,
+            int projectileType, int postShotRecoveryTicks, int telegraphTicks)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            bool hasFollowup = globalNPC.TryChooseCombatComboFollowup(
+                npc,
+                projectileType,
+                attackEndsCombo: false,
+                key => key == projectileType,
+                out _,
+                out int attacksCompleted,
+                out _);
+
+            if (hasFollowup)
+            {
+                int chainGapTicks = globalNPC.GetCombatComboGapTicks(npc);
+                globalNPC.ProjectileTimer = postShotRecoveryTicks + telegraphTicks + chainGapTicks;
+                globalNPC.ArcherAimDirection = 3f;
+            }
+            else
+            {
+                globalNPC.ProjectileTimer = 0f;
+                globalNPC.ArcherAimDirection = 0f;
+                globalNPC.FighterRangedStandShotsRemaining = 0;
+                globalNPC.FighterPostAttackPauseTimer = 0;
+                globalNPC.BeginCombatComboRecovery(postShotRecoveryTicks, attacksCompleted);
+            }
+
+            npc.netUpdate = true;
         }
 
 
@@ -678,11 +755,26 @@ namespace tsorcRevamp.NPCs
             //                           is unchanged either way — it lives above this line.
             bool lineOfSight = Main.player[npc.target].CanHit(npc);
             intent.HoldForAttack = SenseHoldForAttack(npc, globalNPC, lineOfSight);
+            bool advanceAndShootActive = globalNPC.IsAdvanceAndShootActive(npc, Main.player[npc.target]);
+            bool fireWhileAdvancing = globalNPC.CanUseMovingFireDuringAdvance(npc, Main.player[npc.target]);
+            if (advanceAndShootActive)
+            {
+                // The ordinary ranged-threat posture already bypasses the kite band. This opt-in turns that posture
+                // into a real ability and closes decisively; moving fire remains a separate animation capability.
+                topSpeed *= Math.Max(1f, globalNPC.AdvanceAndShootSpeedMultiplier);
+                acceleration *= Math.Max(1f, globalNPC.AdvanceAndShootAccelerationMultiplier);
+            }
+            if (fireWhileAdvancing)
+            {
+                globalNPC.FighterRangedStandShotsRemaining = 0;
+                globalNPC.FighterPostAttackPauseTimer = 0;
+                intent.HoldForAttack = false;
+            }
             if (globalNPC.NavSearchRadius > 0)
             {
                 // SF4 has no isArcher accel-gate of its own, so fold the archer-aim hold into holdForAttack HERE
                 // (only at the SF4 call-site, leaving the verified LocalMover path untouched).
-                bool sf4Hold = intent.HoldForAttack || (isArcher && globalNPC.ArcherAimDirection != 0f);
+                bool sf4Hold = !fireWhileAdvancing && (intent.HoldForAttack || (isArcher && globalNPC.ArcherAimDirection != 0f));
                 // SeizesBody guard: combat/teleport owns the body this frame, so don't let A* pathing fight it.
                 if (!intent.SeizesBody)
                     SmartFighter4AI.Run(npc, topSpeed, acceleration, doorBreakingDamage, 700f, movementOnly: true, holdForAttack: sf4Hold, brakingPower: brakingPower);
@@ -690,15 +782,21 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
-                lineOfSight = LocalMover.Run(npc, globalNPC, topSpeed, acceleration, brakingPower, isArcher, doorBreakingDamage, fleeing, lineOfSight, ref intent);
+                lineOfSight = LocalMover.Run(npc, globalNPC, topSpeed, acceleration, brakingPower, isArcher && !fireWhileAdvancing, doorBreakingDamage, fleeing, lineOfSight, ref intent);
             }
 
             // SF4 enemies already logged this frame's movement via the smart log (LogFrame) on the Pursue/Search
             // path, so only emit the FSM-layer line here when the SF4 mover was SKIPPED (combat seized the body —
             // pounce/dodge/teleport). LocalMover enemies (radius 0) always log. Patrol frames are logged via the
             // early-return path above. This keeps SF4 enemies to a single, non-duplicated shared log file.
-            if (globalNPC.NavSearchRadius == 0 || intent.SeizesBody)
+            if (globalNPC.NavSearchRadius == 0)
+            {
                 LogFighterNavDebug(npc, globalNPC, lineOfSight);
+            }
+            else if (intent.SeizesBody)
+            {
+                SmartFighter4AI.LogCombatSeizure(npc, lineOfSight);
+            }
 
             // Combat triggers (Step 1): the end-of-frame decision to START a dodge or pounce. Runs after the
             // movement phase refreshed `lineOfSight`; the timers it sets are executed at the top of the NEXT
@@ -719,8 +817,9 @@ namespace tsorcRevamp.NPCs
         // (this code runs before enrage scaling), preserving the original pounceSpeed = topSpeed * 5.
         private static void RunFighterCombatExec(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, bool fleeing, ref FighterCombatIntent intent)
         {
+            bool combatMeleeSeizesBody = globalNPC.TickHumanoidMelee(npc);
             //If it has at least one attack, perform it
-            if (globalNPC.AttackList.Count > 0)
+            if (globalNPC.AttackList.Count > 0 && !combatMeleeSeizesBody)
             {
                 SimpleProjectile(npc);
             }
@@ -862,7 +961,22 @@ namespace tsorcRevamp.NPCs
             // Quick step drives its own velocity; the running-dash TELEGRAPH holds the enemy still while it flashes
             // (the burst itself does NOT seize the body — it runs via the topSpeed multiplier so the mover pursues).
             bool dashTelegraphHold = globalNPC.InSustainedEvasion && globalNPC.CurrentEvasion == EvasiveBehavior.RunningDash && globalNPC.EvasiveTelegraphing;
-            intent.SeizesBody = teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
+            bool guardPressureRecoveryHold = globalNPC.InGuardPressureRecovery && npc.velocity.Y == 0f;
+            if (globalNPC.InGuardPressureRecovery)
+            {
+                globalNPC.AttackTelegraphing = false;
+                globalNPC.AttackCommitted = false;
+                globalNPC.ArcherAimDirection = 0f;
+                if (guardPressureRecoveryHold)
+                {
+                    npc.velocity.X *= 0.6f;
+                    if (Math.Abs(npc.velocity.X) < 0.15f)
+                    {
+                        npc.velocity.X = 0f;
+                    }
+                }
+            }
+            intent.SeizesBody = combatMeleeSeizesBody || guardPressureRecoveryHold || teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
         }
 
         private static bool ShouldEvasionResetProjectileTimer(tsorcRevampGlobalNPC globalNPC)
@@ -1034,6 +1148,11 @@ namespace tsorcRevamp.NPCs
         // timers it sets here are executed next frame by RunFighterCombatExec.
         private static void RunFighterCombatTriggers(NPC npc, tsorcRevampGlobalNPC globalNPC, bool fleeing, bool lineOfSight, bool canDodgeroll, bool canPounce)
         {
+            if (globalNPC.CombatMeleeActive || globalNPC.HasPendingCombatComboMove || globalNPC.InGuardPressureRecovery)
+            {
+                return;
+            }
+
             //Dodging — only while actively pursuing (not searching/patrolling/fleeing/teleporting)
             if (globalNPC.PursuitState == PursuitState.Pursue && !fleeing && globalNPC.TeleportCountdown == 0 && globalNPC.TeleportAppearanceTimer == 0 && globalNPC.DodgeCooldown == 0)
             {
@@ -1318,6 +1437,56 @@ namespace tsorcRevamp.NPCs
 
             //This should only not equal -1 on the frame an attack successfully fires. This resets it afterward.
             globalNPC.AttackSucceeded = -1;
+            if (globalNPC.InGuardPressureRecovery)
+            {
+                globalNPC.AttackTelegraphing = false;
+                globalNPC.AttackCommitted = false;
+                return false;
+            }
+            if (globalNPC.CombatMeleeActive)
+            {
+                return false;
+            }
+
+            if (globalNPC.HasPendingCombatComboMove)
+            {
+                if (Main.netMode == NetmodeID.MultiplayerClient || globalNPC.PendingCombatMoveGapTimer > 0)
+                {
+                    return false;
+                }
+
+                int pendingMoveKey = globalNPC.PendingCombatMoveKey;
+                bool stillInRange = globalNPC.TryGetCombatComboMove(pendingMoveKey, out CombatComboMove pendingMove)
+                    && pendingMove.IsInRange(npc);
+                int pendingAttackIndex = stillInRange
+                    ? WeightedRandomComboProjectileSelection(npc, globalNPC, pendingMoveKey)
+                    : -1;
+                if (pendingAttackIndex < 0)
+                {
+                    globalNPC.EndInvalidQueuedCombatMove(npc);
+                    return false;
+                }
+
+                globalNPC.TryConsumePendingCombatComboMove(pendingMoveKey);
+                globalNPC.AttackIndex = pendingAttackIndex;
+                globalNPC.NextAttackIndex = WeightedRandomAttackSelection(globalNPC);
+                int authoredNeutralTicks = Math.Max(0, globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime);
+                globalNPC.ProjectileTimer = authoredNeutralTicks;
+                npc.netUpdate = true;
+            }
+            if (globalNPC.InCombatComboRecovery)
+            {
+                globalNPC.AttackTelegraphing = false;
+                globalNPC.AttackCommitted = false;
+                return false;
+            }
+
+            int currentAuthoredNeutralTicks = Math.Max(0, globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime);
+            if (!globalNPC.AttackTelegraphing && !globalNPC.AttackCommitted
+                && globalNPC.ProjectileTimer <= currentAuthoredNeutralTicks)
+            {
+                globalNPC.TryApplyGuardPressureToProjectileNeutral(npc, currentAuthoredNeutralTicks);
+            }
 
             //Do not fire if it needs line of sight and does not have it
             // True (hitscan) LOS: CanHitLine is the strict straight-line check (blocked by solids, ignores platforms),
@@ -1385,7 +1554,8 @@ namespace tsorcRevamp.NPCs
             }
 
             //If it's supposed to stop moving when firing, then do so
-            if (globalNPC.CanStopToFire && globalNPC.CurrentAttack.stopBefore && !globalNPC.CanPassThroughWalls)
+            if (globalNPC.CanStopToFire && globalNPC.CurrentAttack.stopBefore && !globalNPC.CanPassThroughWalls
+                && !globalNPC.CanUseMovingFireDuringAdvance(npc, Main.player[npc.target]))
             {
                 bool inTelegraphWindow = globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime;
                 float stopBeforeChance = GetStandingFireChance(globalNPC, globalNPC.CurrentAttack.stopBeforeChance);
@@ -1399,6 +1569,7 @@ namespace tsorcRevamp.NPCs
                     // may commit to firing N shots in a row without resuming movement.
                     // Aggression lowers the chance to stand; Patience raises the burst count.
                     if (globalNPC.CanStopToFire && globalNPC.FighterRangedStandShotsRemaining == 0
+                        && globalNPC.CombatTempo == null
                         && globalNPC.ProjectileTimer == globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime + 1
                         && Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -1413,6 +1584,7 @@ namespace tsorcRevamp.NPCs
 
             if (globalNPC.ProjectileTimer >= globalNPC.CurrentAttack.timerCap)
             {
+                ProjectileData completedAttack = globalNPC.CurrentAttack;
                 globalNPC.ProjectileTimer = 0;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1433,17 +1605,76 @@ namespace tsorcRevamp.NPCs
                 }
 
                 globalNPC.AttackSucceeded = globalNPC.AttackIndex;
-                RegisterFighterAttack(npc);
-                globalNPC.AttackIndex = globalNPC.NextAttackIndex;
-                globalNPC.NextAttackIndex = WeightedRandomAttackSelection(globalNPC);
-
-                // Consume one standing-fire charge. When exhausted, exit standing mode.
-                if (globalNPC.FighterRangedStandShotsRemaining > 0)
+                if (globalNPC.CombatTempo == null)
                 {
-                    if (--globalNPC.FighterRangedStandShotsRemaining == 0)
+                    RegisterFighterAttack(npc);
+                    int completedGuardPressureStacks = globalNPC.CompleteGuardPressureSequence(npc);
+                    globalNPC.AttackIndex = globalNPC.NextAttackIndex;
+                    globalNPC.NextAttackIndex = WeightedRandomAttackSelection(globalNPC);
+                    if (completedGuardPressureStacks >= tsorcRevampGlobalNPC.GuardPressureMaxBlocks)
                     {
-                        npc.TargetClosest(true); // resume pursuit
+                        int nextAuthoredNeutralTicks = Math.Max(0, globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime);
+                        globalNPC.ProjectileTimer = nextAuthoredNeutralTicks;
                     }
+
+                    // Consume one standing-fire charge. When exhausted, exit standing mode.
+                    if (globalNPC.FighterRangedStandShotsRemaining > 0)
+                    {
+                        if (--globalNPC.FighterRangedStandShotsRemaining == 0)
+                        {
+                            npc.TargetClosest(true); // resume pursuit
+                        }
+                    }
+                }
+                else if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    bool continueCombo = globalNPC.TryChooseCombatComboFollowup(
+                        npc,
+                        completedAttack.type,
+                        completedAttack.endsCombo,
+                        moveKey => globalNPC.CanHumanoidMeleeHandleMove(moveKey)
+                            ? globalNPC.CanExecuteHumanoidMeleeMove(npc, moveKey)
+                            : HasEligibleComboProjectileAttack(npc, globalNPC, moveKey),
+                        out int followupMoveKey,
+                        out int attacksCompleted,
+                        out int completedGuardPressureStacks);
+                    if (continueCombo)
+                    {
+                        globalNPC.NextAttackIndex = WeightedRandomAttackSelection(globalNPC);
+                        globalNPC.QueueCombatComboMove(followupMoveKey, globalNPC.GetCombatComboGapTicks(npc));
+                        globalNPC.ProjectileTimer = 0f;
+                        globalNPC.AttackTelegraphing = false;
+                        globalNPC.AttackCommitted = false;
+                    }
+                    else
+                    {
+                        globalNPC.AttackIndex = globalNPC.NextAttackIndex;
+                        globalNPC.NextAttackIndex = WeightedRandomAttackSelection(globalNPC);
+                        int authoredNeutralTicks = Math.Max(0, globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime);
+                        int recoveryNeutralTicks = authoredNeutralTicks;
+                        if (attacksCompleted <= 1 && completedGuardPressureStacks > 0
+                            && completedGuardPressureStacks < tsorcRevampGlobalNPC.GuardPressureMaxBlocks)
+                        {
+                            recoveryNeutralTicks = globalNPC.GetGuardPressureCompressedNeutralTicks(
+                                authoredNeutralTicks,
+                                completedGuardPressureStacks);
+                        }
+                        globalNPC.BeginCombatComboRecovery(recoveryNeutralTicks, attacksCompleted);
+
+                        // Hold this scheduler at the telegraph boundary. Once recovery expires, it advances into the
+                        // next attack's complete flash-to-release window.
+                        globalNPC.ProjectileTimer = authoredNeutralTicks;
+                        globalNPC.AttackTelegraphing = false;
+                        globalNPC.AttackCommitted = false;
+                    }
+
+                    npc.netUpdate = true;
+                }
+                else
+                {
+                    // The server owns combo rolls and sends the selected attack plus its timer state.
+                    globalNPC.AttackTelegraphing = false;
+                    globalNPC.AttackCommitted = false;
                 }
             }
 
@@ -1500,6 +1731,66 @@ namespace tsorcRevamp.NPCs
         }
 
         /// <summary>
+        /// Returns whether this logical move currently has at least one executable AddAttack entry.
+        /// </summary>
+        private static bool HasEligibleComboProjectileAttack(NPC npc, tsorcRevampGlobalNPC globalNPC, int moveKey)
+        {
+            for (int i = 0; i < globalNPC.AttackList.Count; i++)
+            {
+                ProjectileData candidate = globalNPC.AttackList[i];
+                bool meetsCondition = candidate.condition == null || candidate.condition(npc);
+                if (candidate.type == moveKey && meetsCondition && candidate.weight > 0f)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>Picks an executable AddAttack entry for a logical projectile move key.</summary>
+        private static int WeightedRandomComboProjectileSelection(NPC npc, tsorcRevampGlobalNPC globalNPC, int moveKey)
+        {
+            float weightMax = 0f;
+            for (int i = 0; i < globalNPC.AttackList.Count; i++)
+            {
+                ProjectileData candidate = globalNPC.AttackList[i];
+                bool meetsCondition = candidate.condition == null || candidate.condition(npc);
+                if (candidate.type == moveKey && meetsCondition && candidate.weight > 0f)
+                {
+                    weightMax += candidate.weight;
+                }
+            }
+
+            if (weightMax <= 0f)
+            {
+                return -1;
+            }
+
+            float randomVal = Main.rand.NextFloat(weightMax);
+            float runningTotal = 0f;
+            int fallbackIndex = -1;
+            for (int i = 0; i < globalNPC.AttackList.Count; i++)
+            {
+                ProjectileData candidate = globalNPC.AttackList[i];
+                bool meetsCondition = candidate.condition == null || candidate.condition(npc);
+                if (candidate.type != moveKey || !meetsCondition || candidate.weight <= 0f)
+                {
+                    continue;
+                }
+
+                fallbackIndex = i;
+                runningTotal += candidate.weight;
+                if (randomVal < runningTotal)
+                {
+                    return i;
+                }
+            }
+
+            return fallbackIndex;
+        }
+
+        /// <summary>
         /// Simple class which holds all the data relevant to firing a projectile
         /// </summary>
         public class ProjectileData
@@ -1526,8 +1817,9 @@ namespace tsorcRevamp.NPCs
             // first half of the tell is cancellable, second half committed (e.g. a shrinking magic ring); 1 = cancellable
             // right up to the shot. Drives AttackTelegraphing/AttackCommitted in SimpleProjectile → the poise system.
             public float commitFraction;
+            public bool endsCombo;
 
-            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f, bool lockAimAtTelegraph = false)
+            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f, bool lockAimAtTelegraph = false, bool endsCombo = false)
             {
                 type = projectileType;
                 this.timerCap = timerCap;
@@ -1547,6 +1839,7 @@ namespace tsorcRevamp.NPCs
                 this.telegraphTime = telegraphTime ?? ProjectileTelegraphTime;
                 this.commitFraction = commitFraction;
                 this.lockAimAtTelegraph = lockAimAtTelegraph;
+                this.endsCombo = endsCombo;
             }
         }
 
@@ -2161,7 +2454,7 @@ namespace tsorcRevamp.NPCs
 
             // Never react while attacking (windup or committed), staggered, or already mid-evasion (don't let a hit
             // restart/override an in-progress dash/retreat/quick-step) — interruption is the poise stagger's job.
-            if (globalNPC.InAttack || globalNPC.StaggerTimer > 0 || globalNPC.InEvasion)
+            if (globalNPC.InAttack || globalNPC.StaggerTimer > 0 || globalNPC.InEvasion || globalNPC.InGuardPressureRecovery)
             {
                 return;
             }
@@ -2308,15 +2601,16 @@ namespace tsorcRevamp.NPCs
         {
             int away = -npc.direction; // enemy faces the player, so -direction points away from them
             Player target = Main.player[npc.target];
-            const int maxForwardQuickStepTicks = 30;
             float crossDistance = Math.Abs(target.Center.X - npc.Center.X) + (target.width + npc.width) * 0.5f + globalNPC.QuickStepForwardRoom;
-            bool canCrossThrough = allowForward && crossDistance <= globalNPC.QuickStepSpeed * maxForwardQuickStepTicks;
-            bool stepForward = canCrossThrough && Main.rand.NextBool();
+            int maxForwardTicks = Math.Max(globalNPC.QuickStepTicks, globalNPC.QuickStepMaxForwardTicks);
+            bool canCrossThrough = allowForward && crossDistance <= globalNPC.QuickStepSpeed * maxForwardTicks;
+            bool stepForward = canCrossThrough
+                && Main.rand.NextFloat() < MathHelper.Clamp(globalNPC.QuickStepForwardChance, 0f, 1f);
             globalNPC.QuickStepDir = stepForward ? -away : away;
             globalNPC.QuickStepRecoveryTimer = 0;
             if (stepForward)
             {
-                globalNPC.QuickStepTimer = Math.Clamp((int)Math.Ceiling(crossDistance / globalNPC.QuickStepSpeed), globalNPC.QuickStepTicks, maxForwardQuickStepTicks);
+                globalNPC.QuickStepTimer = Math.Clamp((int)Math.Ceiling(crossDistance / globalNPC.QuickStepSpeed), globalNPC.QuickStepTicks, maxForwardTicks);
             }
             else
             {

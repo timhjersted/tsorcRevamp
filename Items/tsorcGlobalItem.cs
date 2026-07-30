@@ -601,11 +601,16 @@ namespace tsorcRevamp.Items
                 player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
             }
             #endregion
-            if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina && (item.pick != 0 || item.axe != 0 || item.hammer != 0))
+            // Pick/axe/hammer combat surcharge: the swing itself already paid ToolSwingStaminaMult in
+            // PreItemCheck (tsorcRevampPlayerDodgeRoll.cs) regardless of what it hit — tile, air, or NPC —
+            // so fighting with one of these tools costs a bit more than idly chopping wood or mining
+            // without reintroducing the old "only pay when you connect" behaviour that let the swing cost
+            // be dodged entirely by whiffing. Trees/tiles never reach OnHitNPC, so pure wood-chopping only
+            // ever pays the swing cost.
+            if (modPlayer.UsesWeaponStamina && (item.pick != 0 || item.axe != 0 || item.hammer != 0))
             {
-                tsorcRevampStaminaPlayer StaminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                int scaledUseAnimation = (int)(item.useAnimation / player.GetAttackSpeed(item.DamageType));
-                StaminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation) * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -=
+                    tsorcRevampStaminaPlayer.ToolCombatHitSurcharge * modPlayer.WeaponStaminaMult;
             }
         }
 

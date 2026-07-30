@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -61,6 +61,29 @@ namespace tsorcRevamp
         // Both archetype multipliers are neutral now; the seam is kept for future per-archetype trims.
         private const float SummonStaffStaminaMultiplier = 1f;
         public const float SummonDamageStaminaRate = 0.02f;
+
+        /// <summary>
+        /// Stamina multiplier for pick/axe/hammer swings — deliberately its own knob, separate from
+        /// WeaponStaminaMult, so wood-chopping/mining throughput can be tuned without touching
+        /// sword/spear combat costs.
+        ///
+        /// These tools were previously excluded from BOTH the real-time output-based system (see
+        /// UsesOutputBasedWeaponCost below) and the per-swing legacy path in PreItemCheck, and instead
+        /// paid stamina only in tsorcGlobalItem.OnHitNPC — i.e. only when a swing actually connected
+        /// with an enemy. That meant whiffing (or chopping wood/mining, which never fires OnHitNPC at
+        /// all) was completely free, and a single connecting swing paid the FULL per-swing cost by
+        /// itself, which read as disconnected from the swing rhythm and unusually punishing per hit.
+        /// This constant is the base cost now paid on every swing instead (hit, miss, tile, or air),
+        /// matching how every other weapon already works. See ToolCombatHitSurcharge for the small
+        /// extra now added specifically when the swing lands on an NPC.
+        /// </summary>
+        public const float ToolSwingStaminaMult = 0.6f;
+
+        /// <summary>Extra flat stamina charged (before WeaponStaminaMult) on top of the swing cost when a
+        /// pick/axe/hammer actually lands on an NPC — so fighting with one of these costs a bit more than
+        /// idly chopping wood or mining, without reintroducing the old "only pay when you connect"
+        /// behaviour that let the swing cost itself be skipped entirely by whiffing.</summary>
+        public const float ToolCombatHitSurcharge = 8f;
 
         private sealed class WeaponOutputState
         {
@@ -353,6 +376,16 @@ namespace tsorcRevamp
             staminaDebt = 0f; // dying clears the slate — respawning already full but still in debt would be absurd
         }
 
+        public override void OnHurt(Player.HurtInfo info)
+        {
+            // Current stamina is normally converted into the positive debt field at the end of UpdateResource.
+            // Check both representations so a hit on the exact overdraw frame cannot slip through the seam.
+            if (info.Damage > 0 && (staminaResourceCurrent < 0f || staminaDebt > 0f))
+            {
+                Buffs.Debuffs.Stagger.Apply(Player);
+            }
+        }
+
         public override void ResetEffects()
         {
             ResetVariables();
@@ -540,9 +573,8 @@ namespace tsorcRevamp
             }
         }
 
-        /// <summary>Fraction of normal regen kept while a shield is raised. Zero by default
-        /// (tsorcRevampActiveShieldPlayer.BlockStaminaRegenMult); a Chloranthy Ring is the only thing that
-        /// currently lifts it, which is what makes the line the shield build's ring.</summary>
+        /// <summary>Fraction of normal regen kept while a shield is raised. Starts at the shared shield baseline;
+        /// Chloranthy adds to that baseline, with Ring II replacing Ring I rather than stacking.</summary>
         private float BlockRegenFraction
         {
             get
@@ -551,13 +583,13 @@ namespace tsorcRevamp
                 tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
                 if (modPlayer.ChloranthyRing2)
                 {
-                    return Math.Max(fraction, Items.Accessories.Mobility.ChloranthyRing2.BlockStaminaRegen / 100f);
+                    fraction += Items.Accessories.Mobility.ChloranthyRing2.BlockStaminaRegenBonus / 100f;
                 }
-                if (modPlayer.ChloranthyRing1)
+                else if (modPlayer.ChloranthyRing1)
                 {
-                    return Math.Max(fraction, Items.Accessories.Mobility.ChloranthyRing.BlockStaminaRegen / 100f);
+                    fraction += Items.Accessories.Mobility.ChloranthyRing.BlockStaminaRegenBonus / 100f;
                 }
-                return fraction;
+                return Math.Min(1f, fraction);
             }
         }
 
@@ -684,7 +716,8 @@ namespace tsorcRevamp
                 staminaResourceGain *= 1.5f;
             }
 
-            // Active Shields Revamp: no stamina recovery while a shield is raised (Dark-Souls "guard up = no regen").
+            // A raised shield retains only a fraction of normal stamina recovery. The existing post-block delay
+            // still has to expire first; this multiplier changes recovery rate, not when recovery begins.
             // Applied here, at the point regen is computed, because setting staminaResourceGainMult from the shield
             // ModPlayer's hooks raced this calc and never landed. Reads isBlocking, which is set earlier in the frame.
             if (Player.GetModPlayer<tsorcRevampActiveShieldPlayer>().isBlocking)
@@ -802,9 +835,12 @@ namespace tsorcRevamp
                 if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
                 if (item.type == ItemID.EoCShield) return;
                 StringBuilder tipToAdd = new();
-                if (item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                bool isToolWeapon = item.pick != 0 || item.axe != 0 || item.hammer != 0;
+                if (isToolWeapon)
                 {
-                    tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaUseOnHitOnly"));
+                    // No longer "on-hit only" — pick/axe/hammer now pay this per swing, same as every
+                    // other weapon, plus a small extra shown separately for landing on an NPC.
+                    tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaUseToolSwing"));
                 }
                 else
                 {
@@ -873,8 +909,14 @@ namespace tsorcRevamp
                     int staminaUse = outputBased
                         ? (int)Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>()
                             .GetExpectedOutputBasedWeaponCost(item, scaledUseAnimation)
-                        : (int)(LegacyWeaponStaminaCost(scaledUseAnimation) * staminaMult);
+                        : (int)(LegacyWeaponStaminaCost(scaledUseAnimation) * staminaMult * (isToolWeapon ? ToolSwingStaminaMult : 1f));
                     tipToAdd.Append($"{staminaUse}");
+
+                    if (isToolWeapon)
+                    {
+                        int surcharge = (int)(ToolCombatHitSurcharge * staminaMult);
+                        tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaUseToolHitSurcharge", surcharge));
+                    }
 
                     // DebugMode side-by-side. Comparing the old swing-speed-only cost against the live
                     // output-based one is a DISPLAY concern, not a gameplay one — doing it this way means

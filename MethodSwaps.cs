@@ -3068,8 +3068,19 @@ namespace tsorcRevamp
             }
         }
 
+        private static bool HasGuardActionLock(Player player)
+        {
+            return player.HasBuff(ModContent.BuffType<ShieldGuardBreak>())
+                || player.HasBuff(ModContent.BuffType<Stagger>());
+        }
+
         public static void TryUseQuickMana(Player player)
         {
+            if (HasGuardActionLock(player))
+            {
+                return;
+            }
+
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
             tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
@@ -3135,6 +3146,11 @@ namespace tsorcRevamp
 
         private static void CustomQuickHeal(Terraria.On_Player.orig_QuickHeal orig, Player player)
         {
+            if (HasGuardActionLock(player))
+            {
+                return;
+            }
+
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
             tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();

@@ -8,9 +8,9 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
-    class GhostOfTheForgottenKnight : ModNPC
+    class GhostOfTheForgottenKnight : ModNPC, IHumanoidMeleeHitEffects
     {
-        public int spearDamage = 15;
+        public int spearDamage = 20;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
@@ -53,15 +53,28 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             }
 
             // "Spectral Spear Throw" — commitFraction 0.5: first half cancellable (by magic), second half hyperarmor.
-            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17, stopBeforeFiring: false, commitFraction: 0f);
+            int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();
+            UsefulFunctions.AddAttack(NPC, 180, spearProjectileType, spearDamage, 8, SoundID.Item17,
+                telegraphColor: Color.LightBlue, stopBeforeFiring: false, needsLineOfSight: true,
+                telegraphTime: 45, commitFraction: 0.5f, lockAimAtTelegraph: true);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Standard(
+                spearDamage,
+                (int)(spearDamage * 1.25f),
+                guardPressureUnblockable: true,
+                guardPressureTelegraphTicks: 90);
+            globalNPC.ConfigureHumanoidMelee(meleeProfile);
+            CombatTempoProfile.Standard(globalNPC,
+                new CombatComboMove(spearProjectileType, 96f, float.MaxValue, canRepeat: true, weight: 1.15f),
+                new CombatComboMove(CombatComboMoveKey.CloseHopMelee, 0f, 90f, canRepeat: true, weight: 1f),
+                new CombatComboMove(CombatComboMoveKey.LongHopMelee, 112f, 240f, canRepeat: false, weight: 0.8f));
             globalNPC.CanPassThroughWalls = true;
             EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
-            // Smart positioning: spear-thrower may close to melee range but stays within a medium 0-16 band.
-            globalNPC.KiteRangeMin = 0f;
-            globalNPC.KiteRangeMax = 16f;
-            globalNPC.KiteLooseness = 0.8f;
+            // Smart positioning: ordinary pressure favors a 7-14 tile band; distant projectile hits make it close.
+            globalNPC.KiteRangeMin = 7f;
+            globalNPC.KiteRangeMax = 14f;
+            globalNPC.KiteLooseness = 0.55f;
             globalNPC.HasGhostAfterimages = true;
             globalNPC.MaxJumpPower = 13f; // experimental: can route up to roughly 15-tile ledges
             globalNPC.MaxJumpBoost = 6f;
@@ -100,6 +113,16 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {
+            ApplyHitDebuff(target);
+        }
+
+        public void OnHumanoidMeleeHit(Player target)
+        {
+            ApplyHitDebuff(target);
+        }
+
+        private static void ApplyHitDebuff(Player target)
         {
             if (Main.rand.NextBool(2))
             {
@@ -197,6 +220,24 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             return handWorld;
         }
 
+        void DrawHeldSpear(SpriteBatch spriteBatch, Vector2 handPosition, float rotation, Color drawColor,
+            tsorcRevampGlobalNPC globalNPC, float gripSlide = 0f)
+        {
+            const float spriteScale = 0.8f;
+            Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, gripSlide);
+            if (globalNPC.ActiveAttackBypassesShield)
+            {
+                Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
+                Vector2 auraCenter = handPosition + forward * gripSlide;
+                AttackTelegraphDraw.DrawUnblockableWeaponAura(
+                    spriteBatch, spearTexture, handPosition, null, rotation, gripOrigin, NPC.scale * spriteScale);
+                drawColor = Color.Lerp(drawColor, new Color(255, 65, 65), 0.8f);
+                Lighting.AddLight(auraCenter + Main.screenPosition, Color.Red.ToVector3() * 0.7f);
+            }
+
+            spriteBatch.Draw(spearTexture, handPosition, null, drawColor, rotation,
+                gripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0f);
+        }
         void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
         {
             if (handTexture == null)
@@ -220,12 +261,26 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             {
                 handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150)
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (globalNPC.CombatMeleeActive)
+            {
+                int meleeDirection = globalNPC.ActiveCombatMeleeDirection;
+                float maximumExtension = globalNPC.ActiveCombatMeleeKey == CombatComboMoveKey.LongHopMelee ? 22f : 14f;
+                float gripSlide = globalNPC.CombatMeleeThrustProgress * maximumExtension;
+                float rotation = new Vector2(meleeDirection, 0f).ToRotation() + MathHelper.PiOver2;
+                DrawHeldSpear(spriteBatch, CurrentSpearWorld() - Main.screenPosition, rotation, drawColor, globalNPC, gripSlide);
+                DrawHandOverlay(spriteBatch, drawColor);
+                return;
+            }
+
+            if (!globalNPC.InCombatComboRecovery && globalNPC.ProjectileTimer >= globalNPC.ProjectileTelegraphStart)
             {
                 Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.3f);
-
-                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-                spriteBatch.Draw(spearTexture, CurrentSpearWorld() - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, SpearGripOrigin, NPC.scale * 0.8f, SpriteEffects.None, 0);
+                Vector2 aimTarget = globalNPC.LockedShotTargetPosition != Vector2.Zero
+                    ? globalNPC.LockedShotTargetPosition
+                    : Main.player[NPC.target].Center;
+                float rotation = UsefulFunctions.Aim(NPC.Center, aimTarget, 1).ToRotation() + MathHelper.PiOver2;
+                DrawHeldSpear(spriteBatch, CurrentSpearWorld() - Main.screenPosition, rotation, drawColor, globalNPC);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
         }

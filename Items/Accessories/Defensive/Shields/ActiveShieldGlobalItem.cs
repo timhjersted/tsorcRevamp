@@ -152,7 +152,8 @@ namespace tsorcRevamp
             }
             if (data.Resource == ShieldResource.Stamina)
             {
-                tooltips.Add(new TooltipLine(Mod, "ActiveShieldRegen", Language.GetTextValue(Key + "Regen")) { OverrideColor = bodyColor });
+                int raisedRegenPct = (int)Math.Round(tsorcRevampActiveShieldPlayer.BlockStaminaRegenMult * 100f);
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldRegen", Language.GetTextValue(Key + "Regen", raisedRegenPct)) { OverrideColor = bodyColor });
             }
         }
 

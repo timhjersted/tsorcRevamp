@@ -846,6 +846,21 @@ namespace tsorcRevamp
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
+            // Shared humanoid melee uses an invisible projectile for collision and shield traits, but the helper's
+            // internal name should never appear in death text. Preserve projectile attribution through the hit,
+            // then swap only the final death reason to the NPC that authored it.
+            int sourceProjectileIndex = damageSource.SourceProjectileLocalIndex;
+            if (sourceProjectileIndex >= 0 && sourceProjectileIndex < Main.maxProjectiles)
+            {
+                Projectile sourceProjectile = Main.projectile[sourceProjectileIndex];
+                if (sourceProjectile.active
+                    && sourceProjectile.type == ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>()
+                    && sourceProjectile.GetGlobalProjectile<Projectiles.tsorcGlobalProjectile>().TryGetSourceNPC(out NPC sourceNPC))
+                {
+                    damageSource = PlayerDeathReason.ByNPC(sourceNPC.whoAmI);
+                }
+            }
+
             if (Player.whoAmI == Main.myPlayer)
             {                
                 DeathText = PickDeathText();
