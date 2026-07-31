@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -48,6 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int HeadArmorItemType => ModContent.ItemType<LordGwynHelm>();
         protected override int BodyArmorItemType => ModContent.ItemType<LordGwynArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<LordGwynLeggings>();
+        protected override float PuppetDrawScale => 1.2f;
         // The composite body sheet supplies the gray sleeve, gold wrist, and brown hand. Its
         // transparent joins still use the synthetic player's skin substrate, so match that to
         // Gwyn's dark-brown authored palette instead of PuppetNPC's bright orange invader default.
@@ -92,19 +94,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool UseAlternateFlip => false;
         protected override bool UseAimAdaptiveArc => true;
         protected override bool UseLogicalMeleeTelegraphs => true;
-        protected override bool UseCompositeArmSwing => true;
-        protected override bool UseTwoHandedCompositeSwing => true;
+        // Gwyn's armor sheet authors the straight Use1-Use4 swing arms, like Abyssal Ninja.
+        // Composite arms select the bent elbow pieces instead, which is the wrong silhouette.
+        protected override bool UseCompositeArmSwing => false;
+        protected override bool UseTwoHandedCompositeSwing => false;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
-        protected override bool HasSlashVFX => true;
-        protected override Color SlashVFXColor => new Color(255, 112, 28);
-        protected override float SlashVFXOpacity => 0.24f;
-        protected override float SlashVFXScale => 0.72f;
+        protected override bool HasSlashVFX => false; // Gwyn draws a dedicated shader-lit fire slash in PostDraw.
         protected override float WalkAnimationSpeedMultiplier => 0.35f;
         protected override float OverheadWindupOvershoot => MathHelper.ToRadians(17f);
-        protected override bool SuppressSlashVFXForCurrentPhase =>
-            Phase == AttackPhase.HomingVolleyDodgeback
-            || Phase == AttackPhase.HomingVolleySwingTelegraph
-            || Phase == AttackPhase.HomingVolleySwing;
         protected override bool SlowDownBeforeMelee => false; // pursue through the windup — no walking out of the telegraph
 
         // ── The greatsword moveset (bespoke, reactive) ───────────────────────────
@@ -379,6 +376,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
+            _drawFireSlash = false;
             //Contact only hurts during the Unbroken Advance march (all other damage is weapon hitboxes)
             NPC.damage = TooEarly ? TooEarlyDamage : (_advanceTimer > 0 ? MeleeDamage : 0);
 
@@ -1103,6 +1101,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
                                 ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * 0.7f), 4f, Main.myPlayer, NPC.direction, 2f);
+                            for (int direction = -1; direction <= 1; direction += 2)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Bottom - new Vector2(0f, 20f), Vector2.Zero,
+                                    ModContent.ProjectileType<Projectiles.Enemy.GwynGroundFireWave>(), (int)(MeleeDamage * 0.55f), 5f,
+                                    Main.myPlayer, direction, 20f);
+                            }
                         }
                         Flight?.RequestLand();
                         _plungePhase = 3;
@@ -1221,6 +1225,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //    magic set-pieces (lightning spear etc.) layer on in Phase 3. ──────────────────────────
         protected override void DoMeleeAttack()
         {
+            ArmFireSlash(0.5f, ComboReachBase * 0.7f);
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.2f }, NPC.Center);
             TryMeleeHit();
         }
@@ -1230,6 +1235,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override void OnMeleeComboAttackTick(
             MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
+            float progress = elapsed / (float)Math.Max(1, total - 1);
+            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+            ArmFireSlash(progress, bladeReach);
+            EmitSwingFireDust(bladeReach, elapsed);
+
             // Leap hits resolve on landing; emitting their fire at takeoff would contradict the
             // telegraph. All other attacks shed cinders as the authored blade crosses forward.
             if (step.Motion != ComboMotion.LeapSlam && elapsed == total / 2)
@@ -1238,6 +1248,96 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        bool _drawFireSlash;
+        float _fireSlashProgress;
+        float _fireSlashReach;
+        static Asset<Effect> fireSlashEffect;
+        static Asset<Texture2D> fireSlashTexture;
+        static Asset<Texture2D> fireSlashNoise;
+
+        void ArmFireSlash(float progress, float reach)
+        {
+            _drawFireSlash = true;
+            _fireSlashProgress = MathHelper.Clamp(progress, 0f, 1f);
+            _fireSlashReach = Math.Max(24f, reach);
+        }
+
+        void EmitSwingFireDust(float bladeReach, int elapsed)
+        {
+            if (Main.netMode == NetmodeID.Server || elapsed % 2 != 0)
+                return;
+
+            Vector2 hand = PuppetHandPosition;
+            Vector2 tip = PuppetWeaponTipPosition(bladeReach);
+            Vector2 direction = (tip - hand).SafeNormalize(new Vector2(NPC.direction, 0f));
+            for (int i = 0; i < 3; i++)
+            {
+                Vector2 position = Vector2.Lerp(hand, tip, Main.rand.NextFloat(0.38f, 1f))
+                    + Main.rand.NextVector2Circular(6f, 6f);
+                int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                Dust dust = Dust.NewDustPerfect(position, type,
+                    direction * Main.rand.NextFloat(1.2f, 2.8f) + Main.rand.NextVector2Circular(0.8f, 0.8f),
+                    60, default, Main.rand.NextFloat(1.05f, 1.55f));
+                dust.noGravity = true;
+            }
+        }
+
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (!_drawFireSlash || _fireSlashReach <= 0f)
+                return;
+
+            fireSlashEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GwynCinderTrail", AssetRequestMode.ImmediateLoad);
+            fireSlashTexture ??= ModContent.Request<Texture2D>(
+                "tsorcRevamp/Items/Weapons/Melee/Broadswords/BroadswordRework/Common/Melee/Slash",
+                AssetRequestMode.ImmediateLoad);
+            fireSlashNoise ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
+
+            Texture2D texture = fireSlashTexture.Value;
+            var frame = new SpriteFrame(1, 3) { CurrentRow = (byte)Math.Min(2, (int)(_fireSlashProgress * 3f)) };
+            Rectangle source = frame.GetSourceRectangle(texture);
+            Vector2 hand = PuppetHandPosition;
+            Vector2 tip = PuppetWeaponTipPosition(_fireSlashReach);
+            Vector2 direction = (tip - hand).SafeNormalize(new Vector2(NPC.direction, 0f));
+            Vector2 position = NPC.Center + direction * 3f - Main.screenPosition;
+            float rotation = direction.ToRotation();
+            float scale = _fireSlashReach / 30f * 0.88f * PuppetDrawScale;
+            SpriteEffects effects = NPC.direction > 0 ? SpriteEffects.FlipVertically : SpriteEffects.None;
+            float envelope = (float)Math.Sin(_fireSlashProgress * MathHelper.Pi);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            Effect effect = fireSlashEffect.Value;
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+            try
+            {
+                graphicsDevice.Textures[1] = fireSlashNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+                effect.CurrentTechnique = effect.Techniques["GwynCinderBlade"];
+                effect.Parameters["CinderColor"].SetValue(new Color(255, 32, 2).ToVector3());
+                effect.Parameters["FlameColor"].SetValue(new Color(255, 126, 12).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 238, 174).ToVector3());
+                effect.Parameters["Opacity"].SetValue(0.9f * envelope);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["PrimaryTextureSize"].SetValue(texture.Size());
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                Main.EntitySpriteDraw(texture, position, source, Color.White * 0.42f, rotation,
+                    source.Size() * 0.5f, scale * 1.12f, effects, 0);
+                Main.EntitySpriteDraw(texture, position, source, Color.White, rotation,
+                    source.Size() * 0.5f, scale, effects, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+            }
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+        }
         protected override void OnComboStepCompleted(MeleeComboStep step)
         {
             // Only a real landing gets the leap's impact crescent. A timed-out airborne leap keeps
@@ -1340,9 +1440,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             int frameIndex = (int)(Main.GameUpdateCount / 5UL) % GwynLightningSpearFrames.FrameCount;
             Rectangle frame = new Rectangle(0, frameIndex * frameHeight, texture.Width, frameHeight);
             Vector2 origin = GwynLightningSpearFrames.GetVisualOrigin(frameIndex);
-            SpriteEffects effects = aim.X < 0f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            if (effects == SpriteEffects.FlipHorizontally)
-                origin.X = texture.Width - origin.X;
+            //Rotation already points the authored spear toward either aim direction. Mirroring it
+            //on right-facing holds reverses the spearhead, so the held version never needs a flip.
+            SpriteEffects effects = SpriteEffects.None;
 
             drawInfo.DrawDataCache.Add(new DrawData(
                 texture, hand - Main.screenPosition, frame, Color.White, aim.ToRotation(), origin,
@@ -1426,6 +1526,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoNovaChargeTick(int elapsed, int total)
         {
+            if (elapsed == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.GwynCinderNovaTelegraph>(), 0, 0f,
+                    Main.myPlayer, NPC.whoAmI, total);
+            }
             if (Main.dedServ)
             {
                 return;

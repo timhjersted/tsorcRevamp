@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -21,6 +22,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         const int TelegraphTicks = 40;
         const int StrikeTicks = 12;
         const int FloorSparkTiles = 12;
+        const string TextureRoot = "tsorcRevamp/Textures/Noise/";
+
+        static Asset<Effect> judgmentEffect;
+        static Asset<Texture2D> smoothNoise;
+        static Asset<Texture2D> brokenNoise;
+        static Asset<Texture2D> impactFlare;
 
         int Timer => (int)Projectile.localAI[0];
         bool Striking => Timer > TelegraphTicks;
@@ -74,26 +81,22 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Thunder with { Volume = 0.7f, Pitch = 0.2f }, Projectile.Center);
                     UsefulFunctions.ScreenShake(new Vector2(Projectile.Center.X, groundY), 5f, 12);
                     //Electricity races along the floor both ways from the strike point
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        for (int dir = -1; dir <= 1; dir += 2)
-                        {
-                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(Projectile.Center.X, groundY - 16f), Vector2.Zero,
-                                ModContent.ProjectileType<GwynFloorSpark>(), Projectile.damage, 3f, Projectile.owner, dir, FloorSparkTiles);
-                        }
-                    }
+                    SpawnFloorPulse(groundY, false);
                 }
                 return;
             }
 
-            //Strike: a blazing lightning column along the full height
-            for (int i = 0; i < 12; i++)
+            if (Timer == TelegraphTicks + 4 || Timer == TelegraphTicks + 8)
+                SpawnFloorPulse(groundY, true);
+
+            //The shader is the bolt. Keep only a few pinprick sparks so the silhouette never
+            //turns back into the broad gold cloud that used to obscure the impact.
+            for (int i = 0; i < 3; i++)
             {
-                Vector2 pos = new Vector2(Projectile.Center.X + Main.rand.NextFloat(-24f, 24f), Projectile.position.Y + Main.rand.NextFloat(Projectile.height));
-                int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
-                int dust = Dust.NewDust(pos, 4, 4, type, 0f, 0f, 40, default, Main.rand.NextFloat(1.5f, 2.3f));
+                Vector2 pos = new Vector2(Projectile.Center.X + Main.rand.NextFloat(-12f, 12f), Projectile.position.Y + Main.rand.NextFloat(Projectile.height));
+                int dust = Dust.NewDust(pos, 2, 2, DustID.Electric, 0f, 0f, 80, new Color(255, 211, 84), Main.rand.NextFloat(0.7f, 1.05f));
                 Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity = new Vector2(Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-3f, 3f));
+                Main.dust[dust].velocity = Main.rand.NextVector2Circular(1.2f, 1.8f);
             }
             for (int seg = 0; seg < 4; seg++)
             {
@@ -101,28 +104,116 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
+        void SpawnFloorPulse(float groundY, bool visualOnly)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            for (int dir = -1; dir <= 1; dir += 2)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(Projectile.Center.X, groundY - 16f), Vector2.Zero,
+                    ModContent.ProjectileType<GwynFloorSpark>(), visualOnly ? 0 : Projectile.damage, 3f,
+                    Projectile.owner, dir, FloorSparkTiles, visualOnly ? 1f : 0f);
+            }
+        }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, 5 * 60);
         }
 
-        ///<summary>The rune circle mark, drawn flat on the ground, spinning + brightening as the
-        ///strike nears; hidden once the bolt actually falls (the dust column takes over).</summary>
+        static void LoadAssets()
+        {
+            judgmentEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GwynSunlightJudgment", AssetRequestMode.ImmediateLoad);
+            smoothNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
+            brokenNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
+            impactFlare ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Flare_666", AssetRequestMode.ImmediateLoad);
+        }
+
+        ///<summary>The rune remains the non-damaging ground warning. A descending filament builds
+        ///above it, then the shader fills the exact 60x220 collision column during the strike.</summary>
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Striking)
-            {
-                return false;
-            }
-            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            float progress = Timer / (float)TelegraphTicks;
+            LoadAssets();
+
             float groundY = Projectile.position.Y + Projectile.height;
-            Vector2 pos = new Vector2(Projectile.Center.X, groundY - 6f) - Main.screenPosition;
-            float scale = 0.28f;                       // 408px art → ~7-tile mark
-            float alpha = 0.3f + 0.6f * progress;
-            Color col = new Color(255, 220, 90) * alpha;
-            Main.EntitySpriteDraw(texture, pos, null, col, Main.GlobalTimeWrappedHourly * 2f, texture.Size() / 2f, scale, SpriteEffects.None, 0);
+            Vector2 groundPosition = new Vector2(Projectile.Center.X, groundY - 6f) - Main.screenPosition;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            float progress = Striking
+                ? MathHelper.Clamp((Timer - TelegraphTicks) / (float)StrikeTicks, 0f, 1f)
+                : MathHelper.Clamp(Timer / (float)TelegraphTicks, 0f, 1f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            if (!Striking)
+                DrawRune(groundPosition, progress);
+            else
+                DrawImpactFlare(groundPosition, progress);
+
+            DrawJudgmentColumn(drawPosition, progress);
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             return false;
+        }
+
+        void DrawRune(Vector2 groundPosition, float progress)
+        {
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            float scale = 0.28f;
+            float alpha = 0.3f + 0.6f * progress;
+            Main.EntitySpriteDraw(texture, groundPosition, null, new Color(255, 220, 90) * alpha,
+                Main.GlobalTimeWrappedHourly * 2f, texture.Size() * 0.5f, scale, SpriteEffects.None, 0);
+        }
+
+        void DrawImpactFlare(Vector2 groundPosition, float progress)
+        {
+            float flash = 1f - MathHelper.Clamp(progress / 0.55f, 0f, 1f);
+            if (flash <= 0f)
+                return;
+
+            Texture2D texture = impactFlare.Value;
+            Main.EntitySpriteDraw(texture, groundPosition, null, new Color(255, 211, 84) * flash,
+                0f, texture.Size() * 0.5f, MathHelper.Lerp(0.07f, 0.12f, progress), SpriteEffects.None, 0);
+        }
+
+        void DrawJudgmentColumn(Vector2 drawPosition, float progress)
+        {
+            Effect effect = judgmentEffect.Value;
+            Rectangle source = new Rectangle(0, 0, Projectile.width, Projectile.height);
+            float opacity = Striking
+                ? MathHelper.Clamp(Projectile.timeLeft / 4f, 0.55f, 1f)
+                : 0.42f + progress * 0.38f;
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+
+            try
+            {
+                graphicsDevice.Textures[1] = brokenNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                effect.CurrentTechnique = effect.Techniques["GwynSunlightJudgmentColumn"];
+                effect.Parameters["GoldColor"].SetValue(new Color(255, 147, 22).ToVector3());
+                effect.Parameters["HotColor"].SetValue(new Color(255, 221, 92).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 252, 218).ToVector3());
+                effect.Parameters["Opacity"].SetValue(opacity);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["DrawSize"].SetValue(source.Size());
+                effect.Parameters["PrimaryTextureSize"].SetValue(smoothNoise.Value.Size());
+                effect.Parameters["Progress"].SetValue(progress);
+                effect.Parameters["Active"].SetValue(Striking ? 1f : 0f);
+                effect.Parameters["Direction"].SetValue(1f);
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                Main.EntitySpriteDraw(smoothNoise.Value, drawPosition, source, Color.White, 0f,
+                    source.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+            }
         }
 
         static float FindGroundY(Vector2 worldPos, int maxTilesDown)

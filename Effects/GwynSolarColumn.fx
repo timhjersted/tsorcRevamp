@@ -48,7 +48,9 @@ float4 GwynSolarColumnPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOOR
     color = lerp(color, CoreColor, saturate(core * 1.35));
 
     float alpha = saturate((body * 0.72 + core) * axialFade * Opacity);
-    return float4(sampleColor.rgb * color * intensity * Opacity, sampleColor.a * alpha);
+    // Additive SpriteBatch scales RGB by source alpha, so Opacity belongs in alpha only. Applying
+    // it to RGB as well would square the fade and make the telegraph disappear too quickly.
+    return float4(sampleColor.rgb * color * intensity, sampleColor.a * alpha);
 }
 
 technique GwynSolarColumn

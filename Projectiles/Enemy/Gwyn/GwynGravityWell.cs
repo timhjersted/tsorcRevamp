@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -20,9 +22,22 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float PullPerTick = 0.28f;
         const float PullSpeedCap = 6.5f;  //never accelerates a player beyond this toward him
         const float InnerDeadzone = 90f;  //no pull once you're already delivered
+        const int SpiralSourceSize = 320;
+        const string TextureRoot = "tsorcRevamp/Textures/Noise/";
+
+        static Asset<Effect> solarVortexEffect;
+        static Asset<Texture2D> smoothNoise;
+        static Asset<Texture2D> brokenNoise;
+        static Asset<Texture2D> spiralCore;
 
         int ParentIndex => (int)Projectile.ai[0];
         int Duration => (int)Projectile.ai[1] > 0 ? (int)Projectile.ai[1] : 120;
+        float Age => Projectile.localAI[0];
+
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = (int)PullRadius;
+        }
 
         public override void SetDefaults()
         {
@@ -55,6 +70,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Projectile.Center = parent.Center;
             Projectile.velocity = Vector2.Zero;
+            Projectile.localAI[0]++;
 
             //Radial drag on every client (each client is authoritative for its own player)
             for (int i = 0; i < Main.maxPlayers; i++)
@@ -94,6 +110,79 @@ namespace tsorcRevamp.Projectiles.Enemy
             Main.dust[core].noGravity = true;
             Main.dust[core].velocity *= 0.1f;
             Lighting.AddLight(parent.Center, 1.2f, 1f, 0.4f);
+        }
+
+        static void LoadAssets()
+        {
+            solarVortexEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GwynSolarVortex", AssetRequestMode.ImmediateLoad);
+            smoothNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
+            brokenNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
+            spiralCore ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Spiral07", AssetRequestMode.ImmediateLoad);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            LoadAssets();
+
+            float fadeIn = MathHelper.Clamp(Age / 18f, 0f, 1f);
+            float fadeOut = MathHelper.Clamp(Projectile.timeLeft / 16f, 0.3f, 1f);
+            float opacity = fadeIn * fadeOut;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            DrawSpiralCore(drawPosition, opacity);
+            DrawVortexField(drawPosition, opacity);
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            return false;
+        }
+
+        void DrawSpiralCore(Vector2 drawPosition, float opacity)
+        {
+            Texture2D texture = spiralCore.Value;
+            Rectangle source = new Rectangle(0, 0, SpiralSourceSize, SpiralSourceSize);
+            float scale = InnerDeadzone * 2f / SpiralSourceSize;
+            Main.EntitySpriteDraw(texture, drawPosition, source, new Color(255, 184, 48) * (opacity * 0.72f),
+                -Main.GlobalTimeWrappedHourly * 0.82f, source.Size() * 0.5f, scale, SpriteEffects.None, 0);
+        }
+
+        void DrawVortexField(Vector2 drawPosition, float opacity)
+        {
+            Effect effect = solarVortexEffect.Value;
+            int fieldDiameter = (int)(PullRadius * 2f);
+            Rectangle source = new Rectangle(0, 0, fieldDiameter, fieldDiameter);
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+
+            try
+            {
+                graphicsDevice.Textures[1] = brokenNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                effect.CurrentTechnique = effect.Techniques["GwynSolarVortex"];
+                effect.Parameters["BoundaryColor"].SetValue(new Color(255, 117, 16).ToVector3());
+                effect.Parameters["StreamColor"].SetValue(new Color(255, 196, 62).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 244, 180).ToVector3());
+                effect.Parameters["Opacity"].SetValue(opacity);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["DrawSize"].SetValue(source.Size());
+                effect.Parameters["PrimaryTextureSize"].SetValue(smoothNoise.Value.Size());
+                effect.Parameters["PullRadius"].SetValue(PullRadius);
+                effect.Parameters["InnerRadius"].SetValue(InnerDeadzone);
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                Main.EntitySpriteDraw(smoothNoise.Value, drawPosition, source, Color.White, 0f,
+                    source.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+            }
         }
     }
 }

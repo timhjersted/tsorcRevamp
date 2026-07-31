@@ -8,17 +8,6 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class LordGwynArmor : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // LordGwynArmor_Body uses the same composite construction as Studded Leather: the
-            // normal player arm is the substrate, then the sheet layers shoulder/sleeve/wrist and
-            // its authored hand over it. Hiding top skin removes that substrate and leaves the
-            // shoulder cropped with a detached hand during continuous composite-arm swings.
-            ArmorIDs.Body.Sets.HidesTopSkin[Item.bodySlot] = false;
-            ArmorIDs.Body.Sets.HidesArms[Item.bodySlot] = false;
-            ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = true;
-        }
-
         public override void SetDefaults()
         {
             Item.width = 18;

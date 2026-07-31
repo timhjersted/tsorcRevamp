@@ -10995,6 +10995,8 @@ Mods: {
 			PuppetFirefallPillar.DisplayName: Puppet Firefall Pillar
 			GwynDescentColumn.DisplayName: Gwyn Descent Column
 			HumanoidMeleeHitbox.DisplayName: Humanoid Melee Hitbox
+			GwynCinderNovaTelegraph.DisplayName: Gwyn Cinder Nova Telegraph
+			GwynGroundFireWave.DisplayName: Gwyn Ground Fire Wave
 		}
 
 		NPCs: {

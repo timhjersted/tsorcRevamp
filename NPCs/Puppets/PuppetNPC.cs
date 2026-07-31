@@ -102,6 +102,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual Color PuppetSkinColor => new Color(255, 125, 90);
         protected virtual Color PuppetEyeColor => new Color(105, 90, 75);
         protected virtual int PuppetSkinVariant => 0;
+        /// <summary>Visual-only scale passed through Terraria's complete player draw pipeline.
+        /// This enlarges the puppet, armor, accessories, and custom held-weapon layer together
+        /// without changing the NPC hitbox or any combat reach calculations.</summary>
+        protected virtual float PuppetDrawScale => 1f;
         protected abstract int MeleeWeaponItemType  { get; }   // -1 = none
         protected abstract int RangedWeaponItemType { get; }   // -1 = none
         protected virtual  int MagicWeaponItemType  => -1;
@@ -1766,7 +1770,7 @@ namespace tsorcRevamp.NPCs.Puppets
             _puppet.firstFractalAfterImageOpacity = EchoStepOpacity;
 
             Vector2 echoTopLeft = _echoStepPos - new Vector2(NPC.width / 2f, NPC.height / 2f);
-            Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, echoTopLeft, 0f, Vector2.Zero);
+            Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, echoTopLeft, 0f, Vector2.Zero, 0f, PuppetDrawScale);
 
             _puppet.isFirstFractalAfterImage = wasFractal;
             _puppet.firstFractalAfterImageOpacity = wasOpacity;
@@ -7029,7 +7033,7 @@ namespace tsorcRevamp.NPCs.Puppets
             DrawingPuppetFor = this;
             try
             {
-                Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.position, 0f, Vector2.Zero);
+                Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.position, 0f, Vector2.Zero, 0f, PuppetDrawScale);
             }
             finally
             {
@@ -7067,7 +7071,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     if (NPC.oldPos[k] == Vector2.Zero) continue;
                     _puppet.firstFractalAfterImageOpacity = AfterimageOpacity * (1f - (float)k / NPC.oldPos.Length);
-                    Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.oldPos[k], 0f, Vector2.Zero);
+                    Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.oldPos[k], 0f, Vector2.Zero, 0f, PuppetDrawScale);
                 }
                 _puppet.isFirstFractalAfterImage = false;
             }
@@ -7080,7 +7084,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 _puppet.firstFractalAfterImageOpacity = 0.2f;
             }
 
-            Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.position, 0f, Vector2.Zero);
+            Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.position, 0f, Vector2.Zero, 0f, PuppetDrawScale);
             _puppet.isFirstFractalAfterImage = previousFractal;
             _puppet.firstFractalAfterImageOpacity = previousOpacity;
             DrawingPuppetFor = null;
