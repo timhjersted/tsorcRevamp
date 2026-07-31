@@ -54,16 +54,32 @@ namespace tsorcRevamp
         Walk14,
         Count
     }
+    /// <summary>
+    /// The Souls-mode bonus accessory slot. Available to both Unkindled and Bearer of the Curse.
+    ///
+    /// The class name is now a misnomer, but renaming it would change the slot's identity — accessory
+    /// slot contents are saved keyed by slot name, so a rename would silently empty this slot for every
+    /// existing Bearer of the Curse save. Not worth it for a cosmetic fix.
+    /// </summary>
     public class BearerOfTheCurseAccessorySlot : ModAccessorySlot
     {
         public override bool IsEnabled()
         {
             if (Main.gameMenu) return false;
-            return Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse;
+            return Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode;
         }
     }
     public partial class tsorcRevampPlayer : ModPlayer
     {
+        /// <summary>Seconds from the start of a roll within which an incoming attack counts as a perfect
+        /// dodge. 12 frames, matching the shield's PerfectParryWindow.</summary>
+        public const float PerfectDodgeWindow = 12f / 60f;
+        /// <summary>Fraction of the roll's stamina cost refunded on a perfect dodge (matches PerfectParryCostMult).</summary>
+        public const float PerfectDodgeRefundMult = 0.5f;
+
+        private float lastRollStaminaCost;
+        private bool perfectDodgeTriggered;
+
         public static float DodgeTimeMax => 0.37f;
         public static uint DodgeDefaultCooldown => 30;
         public static int DefaultDodgeImmuneTime = 18;
@@ -157,7 +173,7 @@ namespace tsorcRevamp
 
             #region Souls Mode Stamina Usage
 
-            // Bearer of the Curse pays full weapon stamina; Unkindled pays 75% (mult = 0.75).
+            // Apply the selected class multiplier and, when enabled, the output-based weapon cost experiment.
             if (Player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
             {
 
@@ -181,12 +197,33 @@ namespace tsorcRevamp
                     scaledUseAnimation /= 10;
                 }*/
 
+                if (tsorcRevampStaminaPlayer.UsesOutputBasedWeaponCost(item))
+                {
+                    float staminaCost = modPlayer.BeginOutputBasedWeaponUse(item, scaledUseAnimation);
+                    modPlayer.staminaResourceCurrent -= Math.Min(staminaCost, modPlayer.staminaResourceMax2);
+                    return true;
+                }
+
                 if (item.type == ItemID.CoinGun) //coin gun has a damage stat of zero but can still do damage!
                 {
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult;
                 }
 
-                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
+                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                {
+                    // Paid on every swing now (hit, miss, tile, or air) instead of only on a landed NPC
+                    // hit — see ToolSwingStaminaMult for why this is its own knob and not WeaponStaminaMult
+                    // alone. The old on-hit-only charge (tsorcGlobalItem.OnHitNPC) let whiffing skip the
+                    // cost entirely and made a single connecting swing pay for every miss that led up to it.
+                    //
+                    // MUST return here: falling through hits the second if/else-if chain below (the
+                    // "useAnimation * 0.8 > max" block), which is not pick/axe/hammer-excluded and would
+                    // charge the full, un-scaled ReduceStamina cost a second time on top of this one.
+                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult * tsorcRevampStaminaPlayer.ToolSwingStaminaMult;
+                    return true;
+                }
+
+                else if (item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
                 {
                     return true;
                 }
@@ -236,6 +273,83 @@ namespace tsorcRevamp
             }
         }
 
+        /// <summary>
+        /// Perfect dodge: rolling into an attack that was about to connect refunds half the roll's stamina and
+        /// grants a short stamina-regeneration and critical-strike buff.
+        ///
+        /// Detected by hitbox overlap rather than by hooking the hit, because a successful dodge produces
+        /// no hit to hook — the roll sets <c>Player.immune</c>, and damage sources check that themselves
+        /// and skip out before <c>Player.Hurt</c> (and therefore any ModPlayer dodge hook) is ever reached.
+        /// From the game's perspective nothing happened, so "what would have hit me" has to be inferred.
+        ///
+        /// That makes this approximate where the parry is exact. It can over-trigger on a projectile that
+        /// overlapped but would have expired or been on its own immunity cooldown, and it misses attacks
+        /// that deal damage through custom checks instead of hitbox overlap.
+        /// </summary>
+        private void CheckPerfectDodge()
+        {
+            if (perfectDodgeTriggered
+                || !Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode
+                || Player.whoAmI != Main.myPlayer
+                || dodgeTime > PerfectDodgeWindow)
+            {
+                return;
+            }
+
+            Rectangle playerHitbox = Player.Hitbox;
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                // timeLeft > 1 skips projectiles dying this frame, which would not have landed anyway.
+                if (projectile != null && projectile.active && projectile.hostile && projectile.damage > 0
+                    && projectile.timeLeft > 1 && projectile.Hitbox.Intersects(playerHitbox))
+                {
+                    AwardPerfectDodge();
+                    return;
+                }
+            }
+
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC npc = Main.npc[i];
+                if (npc != null && npc.active && !npc.friendly && !npc.dontTakeDamage
+                    && npc.damage > 0 && npc.Hitbox.Intersects(playerHitbox))
+                {
+                    AwardPerfectDodge();
+                    return;
+                }
+            }
+        }
+
+        private void AwardPerfectDodge()
+        {
+            perfectDodgeTriggered = true;
+
+            tsorcRevampStaminaPlayer stamina = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            stamina.staminaResourceCurrent = Math.Min(
+                stamina.staminaResourceCurrent + lastRollStaminaCost * PerfectDodgeRefundMult,
+                stamina.staminaResourceMax2);
+            Player.AddBuff(ModContent.BuffType<Buffs.PerfectDodge>(), Buffs.PerfectDodge.DurationTicks);
+
+            SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.35f, PitchVariance = 0.2f }, Player.position);
+
+            Vector2 origin = Player.Center;
+            for (int i = 0; i < 16; i++)
+            {
+                Vector2 velocity = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * Main.rand.NextFloat(2.2f, 4.4f);
+                Dust dust = Dust.NewDustPerfect(origin, DustID.SilverFlame, velocity, 90, Color.White, 1.15f);
+                dust.noGravity = true;
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                Dust twinkle = Dust.NewDustPerfect(origin + Main.rand.NextVector2Circular(12f, 18f),
+                    DustID.TreasureSparkle, Main.rand.NextVector2Circular(0.8f, 0.8f), 70, Color.White, 0.95f);
+                twinkle.noGravity = true;
+            }
+            Lighting.AddLight(origin, new Vector3(0.45f, 0.55f, 0.75f));
+        }
+
         //request that the compiler inlines this method, as opposed to making method calls which are slightly slower
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static internal float ReduceStamina(int itemUseAnimation)
@@ -278,7 +392,11 @@ namespace tsorcRevamp
             bool isLocal = Player.whoAmI == Main.myPlayer;
 
             if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !Player.mouseInterface
-                && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30 && !Player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking && !Player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking
+                // > 0, not > 30: the roll now follows the same rule as every other action — you may act with any
+                // stamina at all, and overdrawing banks the shortfall as debt you must repay before acting again.
+                // The old hard gate was the odd one out, and it made the roll silently unresponsive rather than
+                // letting the player make the risky call themselves.
+                && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 0 && !Player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking && !Player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking
                 && !Player.HasBuff(BuffID.Frozen) && !Player.HasBuff(ModContent.BuffType<Hold>()) && !Player.HasBuff(BuffID.Stoned) && !Player.HasBuff(ModContent.BuffType<Stiff>()))
             {
                 QueueDodgeroll(0.25f, (sbyte)KeyDirection(Player));
@@ -349,7 +467,14 @@ namespace tsorcRevamp
 
             }
             //only subtract stamina on a successful roll
-            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30 * Player.GetModPlayer<tsorcRevampPlayer>().TiredStaminaMult * (1f - Player.GetModPlayer<tsorcRevampPlayer>().ArtoriasAbysswalkerDodgeStaminaCostReduction / 100f);
+            float rollStaminaCost = 30 * Player.GetModPlayer<tsorcRevampPlayer>().TiredStaminaMult * (1f - Player.GetModPlayer<tsorcRevampPlayer>().ArtoriasAbysswalkerDodgeStaminaCostReduction / 100f);
+            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= rollStaminaCost;
+
+            // Remembered so a perfect dodge can refund half of what this specific roll actually cost —
+            // the cost is charged up front, before anything is known about the roll's timing, so the
+            // discount has to arrive later as a refund.
+            lastRollStaminaCost = rollStaminaCost;
+            perfectDodgeTriggered = false;
             Player.immune = true;
             DodgeImmuneTime = DefaultDodgeImmuneTime;
             Player.immuneTime = DodgeImmuneTime;
@@ -555,6 +680,8 @@ namespace tsorcRevamp
             //Progress the dodgeroll
             dodgeTime += 1f / 60f;
             Player.immune = true;
+
+            CheckPerfectDodge();
 
             if (dodgeTime >= DodgeTimeMax * 0.6f)
             {

@@ -25,7 +25,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         const int ColumnHeight = 760;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
-        static Asset<Effect> lightBeamEffect;
+        static Asset<Effect> solarColumnEffect;
+        static Asset<Texture2D> solarFlowNoise;
         static Asset<Texture2D> flameCurtain;
         static Asset<Texture2D> fireFlipbook;
         static Asset<Texture2D> smokeFlipbook;
@@ -120,7 +121,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         static void LoadAssets()
         {
-            lightBeamEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/LightBeam", AssetRequestMode.ImmediateLoad);
+            solarColumnEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GwynSolarColumn", AssetRequestMode.ImmediateLoad);
+            solarFlowNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_CloudNoise_Tiled", AssetRequestMode.ImmediateLoad);
             flameCurtain ??= ModContent.Request<Texture2D>(TextureRoot + "T_FirePanningCyl45", AssetRequestMode.ImmediateLoad);
             fireFlipbook ??= ModContent.Request<Texture2D>(TextureRoot + "T_fire_flipbook4_sm", AssetRequestMode.ImmediateLoad);
             smokeFlipbook ??= ModContent.Request<Texture2D>(TextureRoot + "T_smoke41_flipbook", AssetRequestMode.ImmediateLoad);
@@ -155,8 +157,9 @@ namespace tsorcRevamp.Projectiles.Enemy
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             DrawGroundMark(drawPosition, (0.28f + progress * 0.34f) * pulse, 0.62f + progress * 0.18f);
-            DrawShaderBeam(drawPosition, 22f + 34f * progress, new Color(255, 116, 24),
-                (0.16f + progress * 0.24f) * pulse, 0.35f);
+            DrawSolarColumn(drawPosition, 22f + 34f * progress,
+                new Color(255, 79, 12), new Color(255, 180, 46), new Color(255, 244, 186),
+                (0.16f + progress * 0.24f) * pulse, 0.34f, 0.36f);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
@@ -178,14 +181,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             DrawGroundMark(drawPosition, columnFade, 1.05f + Age * 0.008f);
             DrawImpactRays(drawPosition, columnFade);
             DrawFlameCurtain(drawPosition, columnFade);
-
-            // Wide flowing orange body, narrower gold body, then a white-hot moving core. The
-            // LightBeam effect samples turbulent noise, so none of these read as flat rectangles.
-            DrawShaderBeam(drawPosition + new Vector2(-8f, 0f), 255f, new Color(255, 62, 8), columnFade * 0.72f, 0.42f);
-            DrawShaderBeam(drawPosition + new Vector2(9f, 0f), 170f, new Color(255, 153, 22), columnFade * 0.86f, 0.64f);
-            DrawShaderBeam(drawPosition, 76f, new Color(255, 224, 122), columnFade, 1f);
-
             DrawFireball(drawPosition, columnFade);
+
+            // One purpose-built pass now owns the turbulent silhouette, orange/gold body, and
+            // white-hot core. Keeping those layers in one shader prevents three generic beams from
+            // sliding apart and reading as overlapping laser rectangles.
+            DrawSolarColumn(drawPosition, 255f,
+                new Color(255, 44, 5), new Color(255, 139, 18), new Color(255, 239, 174),
+                columnFade, 0.62f, 1.45f);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
@@ -262,23 +265,49 @@ namespace tsorcRevamp.Projectiles.Enemy
                 SpriteEffects.FlipHorizontally, 0);
         }
 
-        void DrawShaderBeam(Vector2 drawPosition, float width, Color color, float opacity, float coreMode)
+        void DrawSolarColumn(
+            Vector2 drawPosition,
+            float width,
+            Color outerColor,
+            Color middleColor,
+            Color coreColor,
+            float opacity,
+            float edgeTurbulence,
+            float coreStrength)
         {
             if (opacity <= 0f)
                 return;
 
-            Effect effect = lightBeamEffect.Value;
+            Effect effect = solarColumnEffect.Value;
             Rectangle source = new Rectangle(0, 0, ColumnHeight, Math.Max(2, (int)width));
-            effect.Parameters["Color"].SetValue((color * opacity).ToVector3());
-            effect.Parameters["SecondaryColor"].SetValue(Vector3.One);
-            effect.Parameters["FadeOut"].SetValue(coreMode);
-            effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly * 100f);
-            effect.Parameters["ProjectileSize"].SetValue(source.Size());
-            effect.Parameters["TextureSize"].SetValue((float)tsorcRevamp.NoiseTurbulent.Width);
-            effect.CurrentTechnique.Passes[0].Apply();
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
 
-            Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, drawPosition, source, Color.White * opacity,
-                -MathHelper.PiOver2, new Vector2(0f, source.Height * 0.5f), 1f, SpriteEffects.None, 0);
+            try
+            {
+                graphicsDevice.Textures[1] = solarFlowNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                effect.Parameters["OuterColor"].SetValue(outerColor.ToVector3());
+                effect.Parameters["MiddleColor"].SetValue(middleColor.ToVector3());
+                effect.Parameters["CoreColor"].SetValue(coreColor.ToVector3());
+                effect.Parameters["Opacity"].SetValue(opacity);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["DrawSize"].SetValue(source.Size());
+                effect.Parameters["PrimaryTextureSize"].SetValue(tsorcRevamp.NoiseTurbulent.Size());
+                effect.Parameters["EdgeTurbulence"].SetValue(edgeTurbulence);
+                effect.Parameters["CoreStrength"].SetValue(coreStrength);
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, drawPosition, source, Color.White,
+                    -MathHelper.PiOver2, new Vector2(0f, source.Height * 0.5f), 1f, SpriteEffects.None, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+            }
         }
 
         void DrawFireball(Vector2 drawPosition, float opacity)

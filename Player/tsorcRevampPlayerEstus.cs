@@ -40,7 +40,9 @@ namespace tsorcRevamp
         public float estusDrinkTimerMax = estusDrinkTimerMaxBase; //This is actually seconds. How long it takes to drink a charge
         public float estusDrinkTimer; //How far through the animation we are
         public float estusHealthPerTick; //How much health to restore per tick
-        public float estusHealingTimerMax = 90; //Timer for how long drinking the estus will heal for
+        public const float DefaultEstusHealingTimerMax = 90; //Ticks the heal is spread over
+        public const float UnkindledEstusHealingTimerMax = 60; //Unkindled resolves its heal faster
+        public float estusHealingTimerMax = DefaultEstusHealingTimerMax; //Timer for how long drinking the estus will heal for
         public float estusHealingTimer; //How far through the healing timer we are
 
         public override void SaveData(TagCompound tag) //Save max amount of charges, current amount of charges and also health gained for next time the player enters the world
@@ -91,6 +93,13 @@ namespace tsorcRevamp
         {
             estusHealthGainBonus = 0;
             estusHealthGainMaxHealthBonus = 0;
+
+            // Unkindled's heal lands over 60 ticks instead of 90. The total restored is unchanged —
+            // per-tick healing is (gain + bonus) / estusHealingTimerMax, so the window only controls
+            // how long you stay committed and vulnerable, which is the point.
+            estusHealingTimerMax = Player.GetModPlayer<tsorcRevampPlayer>().Unkindled
+                ? UnkindledEstusHealingTimerMax
+                : DefaultEstusHealingTimerMax;
             if (Player.pStone)
             {
                 estusDrinkTimerMax = estusDrinkTimerMaxBase - estusDrinkTimerReductionPStone;

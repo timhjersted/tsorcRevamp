@@ -1,13 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
@@ -84,12 +86,111 @@ namespace tsorcRevamp.Projectiles
         public bool ModdedFlail = false;
         public bool KrakenEmpowered = false;
 
+        public int WeaponStaminaSourceItemType = -1;
+        public bool WeaponStaminaSourceIsSummon;
+
+        // Enemy attack attribution. Hostile projectiles generally use owner = 255, so owner cannot identify the
+        // firing NPC when a player blocks a shot. Carry the source explicitly and inherit it through child shots.
+        public int SourceNPCIndex = -1;
+        public int SourceNPCType = -1;
+        public AttackDefenseTraits DefenseTraits;
+
         // Per-projectile poise-damage lever, mirrors tsorcInstancedGlobalItem.WeaponPoiseMultiplier for melee weapons.
         // Multiplies the knockback-derived poise damage THIS projectile deals (see project_poise_stagger_system). Does
         // NOT affect the projectile's actual knockback/flinch — only the stagger meter. Set it from the ModProjectile's
         // own OnSpawn/AI, e.g. `Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier = 1.5f;`.
         // Default 1f = no change.
         public float ProjectilePoiseMultiplier = 1f;
+
+        public static void SetDefenseTraits(int projectileIndex, AttackDefenseTraits traits)
+        {
+            if (traits == AttackDefenseTraits.None || projectileIndex < 0 || projectileIndex >= Main.maxProjectiles)
+            {
+                return;
+            }
+
+            Projectile projectile = Main.projectile[projectileIndex];
+            projectile.GetGlobalProjectile<tsorcGlobalProjectile>().DefenseTraits |= traits;
+            projectile.netUpdate = true;
+        }
+
+        /// <summary>
+        /// Treats a raised shield like a real collision for ordinary single-impact hostile projectiles. Persistent
+        /// beams, fields, and deliberately piercing attacks are left alone; projectile-local Kill/PreKill effects
+        /// provide the weapon-specific impact visuals.
+        /// </summary>
+        public static bool TryBreakOnShieldImpact(Projectile projectile)
+        {
+            if (projectile == null || !projectile.active || !projectile.hostile || projectile.penetrate != 1)
+            {
+                return false;
+            }
+
+            projectile.Kill();
+            return true;
+        }
+
+        public bool TryGetSourceNPC(out NPC sourceNPC)
+        {
+            sourceNPC = null;
+            if (SourceNPCIndex < 0 || SourceNPCIndex >= Main.maxNPCs)
+            {
+                return false;
+            }
+
+            NPC candidate = Main.npc[SourceNPCIndex];
+            if (!candidate.active || candidate.type != SourceNPCType)
+            {
+                return false;
+            }
+
+            sourceNPC = candidate;
+            return true;
+        }
+
+        public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
+        {
+            byte metadataFlags = 0;
+            if (SourceNPCIndex >= 0)
+            {
+                metadataFlags |= 1;
+            }
+            if (DefenseTraits != AttackDefenseTraits.None)
+            {
+                metadataFlags |= 2;
+            }
+
+            binaryWriter.Write(metadataFlags);
+            if ((metadataFlags & 1) != 0)
+            {
+                binaryWriter.Write((short)SourceNPCIndex);
+                binaryWriter.Write(SourceNPCType);
+            }
+            if ((metadataFlags & 2) != 0)
+            {
+                binaryWriter.Write((ushort)DefenseTraits);
+            }
+        }
+
+        public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
+        {
+            byte metadataFlags = binaryReader.ReadByte();
+            if ((metadataFlags & 1) != 0)
+            {
+                SourceNPCIndex = binaryReader.ReadInt16();
+                SourceNPCType = binaryReader.ReadInt32();
+            }
+            else
+            {
+                SourceNPCIndex = -1;
+                SourceNPCType = -1;
+            }
+
+            DefenseTraits = (metadataFlags & 2) != 0
+                ? (AttackDefenseTraits)binaryReader.ReadUInt16()
+                : AttackDefenseTraits.None;
+        }
+
         public override void SetDefaults(Projectile entity)
         {
             if (entity.IsMinionOrSentryRelated || ProjectileID.Sets.LightPet[entity.type] || Main.projPet[entity.type])
@@ -103,6 +204,39 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
+
+            // Attribute enemy shots at their common spawn seam instead of configuring every enemy separately.
+            // EntitySource_Parent is what NPC.GetSource_FromThis/GetSource_FromAI produce.
+            if (source is EntitySource_Parent { Entity: NPC sourceNPC })
+            {
+                SourceNPCIndex = sourceNPC.whoAmI;
+                SourceNPCType = sourceNPC.type;
+            }
+
+            // Attribute projectile and child-projectile damage to the item activation that produced it.
+            if (source is EntitySource_ItemUse_WithAmmo withAmmo && withAmmo.Item != null && !withAmmo.Item.IsAir)
+            {
+                WeaponStaminaSourceItemType = withAmmo.Item.type;
+                WeaponStaminaSourceIsSummon = withAmmo.Item.DamageType == DamageClass.Summon;
+            }
+            else if (source is EntitySource_ItemUse itemUse && itemUse.Item != null && !itemUse.Item.IsAir)
+            {
+                WeaponStaminaSourceItemType = itemUse.Item.type;
+                WeaponStaminaSourceIsSummon = itemUse.Item.DamageType == DamageClass.Summon;
+            }
+            else if (source is EntitySource_Parent { Entity: Projectile parent })
+            {
+                tsorcGlobalProjectile parentData = parent.GetGlobalProjectile<tsorcGlobalProjectile>();
+                WeaponStaminaSourceItemType = parentData.WeaponStaminaSourceItemType;
+                WeaponStaminaSourceIsSummon = parentData.WeaponStaminaSourceIsSummon;
+                SourceNPCIndex = parentData.SourceNPCIndex;
+                SourceNPCType = parentData.SourceNPCType;
+                DefenseTraits = parentData.DefenseTraits;
+            }
+
+            WeaponStaminaSourceIsSummon |= projectile.minion
+                || projectile.sentry
+                || projectile.DamageType == DamageClass.Summon;
             /*projectilesource experiments
              * if (projectile.type == ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>())
             {
@@ -470,6 +604,33 @@ namespace tsorcRevamp.Projectiles
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+            if (projectile.owner == Main.myPlayer
+                && projectile.friendly
+                && !projectile.hostile
+                && modPlayer.UsesWeaponStamina)
+            {
+                tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                // Minion damage must NOT feed the summoning staff's measured damage-per-use. The output EMA
+                // banks everything a weapon deals between activations, and a minion keeps dealing damage for
+                // as long as it's alive — so a staff summoned once and left running would record minutes of
+                // minion output as the cost of a single cast, pinning it at the relativePower clamp forever.
+                // Excluding it lets the staff fall back to its own damage value, so a summon is priced like
+                // the single deliberate action it is. Minions still pay their own way just below.
+                if (WeaponStaminaSourceItemType > 0 && !WeaponStaminaSourceIsSummon)
+                {
+                    staminaPlayer.RecordWeaponOutputDamage(WeaponStaminaSourceItemType, damageDone);
+                }
+                // DISABLED: minions no longer drain stamina. A minion is "cast once, damage forever", so a
+                // per-damage drain is an uncontrollable tax — it scales with how long a fight runs and how many
+                // minions are out, neither of which the player is actively choosing moment to moment. The
+                // summoner's stamina cost now lives entirely on the inputs they control: the staff cast and
+                // whip swings. Re-enable by uncommenting if minions should nibble stamina again.
+                //if (WeaponStaminaSourceIsSummon)
+                //{
+                //    staminaPlayer.SpendStaminaForSummonDamage(damageDone);
+                //}
+            }
+
             if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaCrescent>())
             {
                 target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 3 * 60); // Adds the ExampleJavelin debuff for a very small DoT
@@ -790,12 +951,10 @@ namespace tsorcRevamp.Projectiles
                     if (HitSomething)
                     {
                         modPlayer.BotCCurrentAccuracyPercent += modPlayer.BotCAccuracyGain;
-                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCHit", (int)(MathF.Min(modPlayer.BotCCurrentAccuracyPercent, 1f) * 100f)));
                     }
-                    else if (!HitSomething)
+                    else
                     {
                         modPlayer.BotCCurrentAccuracyPercent -= modPlayer.BotCAccuracyLoss;
-                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCMiss", (int)(MathF.Max(modPlayer.BotCCurrentAccuracyPercent, 0) * 100f)));
                     }
                     if (modPlayer.BotCCurrentAccuracyPercent > modPlayer.BotcAccuracyPercentMax)
                     {
@@ -805,6 +964,25 @@ namespace tsorcRevamp.Projectiles
                     {
                         modPlayer.BotCCurrentAccuracyPercent = 0;
                     }
+
+                    // Combat text fires only when the meter crosses into a new 10% band — the same bands the
+                    // Accuracy buff icon shows — instead of once per projectile. That's roughly a tenth of the
+                    // text, and what remains actually means something: your crit tier changed. The exact
+                    // percentage now lives permanently in the buff tooltip rather than scrolling past.
+                    // The two extremes always announce themselves, since bottoming out and capping are the
+                    // states worth noticing.
+                    int band = Buffs.Runeterra.Ranged.Accuracy.BandOf(modPlayer.BotCCurrentAccuracyPercent);
+                    bool atExtreme = modPlayer.BotCCurrentAccuracyPercent <= 0f
+                                     || modPlayer.BotCCurrentAccuracyPercent >= modPlayer.BotcAccuracyPercentMax;
+                    if ((band != modPlayer.BotCLastAccuracyBand || atExtreme)
+                        && owner.whoAmI == Main.myPlayer
+                        && ModContent.GetInstance<tsorcRevampConfig>().AccuracyCombatText)
+                    {
+                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue(
+                            HitSomething ? "UI.BotCHit" : "UI.BotCMiss",
+                            (int)(modPlayer.BotCCurrentAccuracyPercent * 100f)));
+                    }
+                    modPlayer.BotCLastAccuracyBand = band;
                 }
             }
 
@@ -825,6 +1003,21 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreDraw(Projectile projectile, ref Color lightColor)
         {
+            if ((DefenseTraits & AttackDefenseTraits.BypassesActiveShield) != 0
+                && !projectile.hide && projectile.alpha < 255)
+            {
+                Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[projectile.type].Value;
+                int frameCount = Math.Max(1, Main.projFrames[projectile.type]);
+                int frame = Math.Clamp(projectile.frame, 0, frameCount - 1);
+                Rectangle sourceRectangle = texture.Frame(1, frameCount, 0, frame);
+                Vector2 drawPosition = projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
+                AttackTelegraphDraw.DrawUnblockableWeaponAura(
+                    Main.spriteBatch, texture, drawPosition, sourceRectangle, projectile.rotation,
+                    sourceRectangle.Size() * 0.5f, projectile.scale);
+                lightColor = Color.Lerp(lightColor, new Color(255, 70, 70), 0.7f);
+                Lighting.AddLight(projectile.Center, Color.Red.ToVector3() * 0.55f);
+            }
+
             if (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] != 0)
             {
                 Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[projectile.type];

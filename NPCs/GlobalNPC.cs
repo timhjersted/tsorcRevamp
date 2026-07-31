@@ -331,9 +331,79 @@ namespace tsorcRevamp.NPCs
         // during any attack. Each enemy sets this each AI tick alongside AttackCommitted.
         public bool AttackTelegraphing;
 
-        /// <summary>True during any attack (windup or committed). The evasive on-hit reaction only fires when this is
+        /// <summary>True during a windup, committed attack, or shared melee follow-through. Evasive reactions only fire when this is
         /// false (pure neutral); attack interruption is handled solely by the poise stagger.</summary>
-        public bool InAttack => AttackTelegraphing || AttackCommitted;
+        public bool InAttack => AttackTelegraphing || AttackCommitted || CombatMeleeActive;
+
+        // === Guard pressure (Combat Balance B0/B1) ===
+        // Block attribution/state lives here; the independent cadence snapshot and recovery live in
+        // GlobalNPC.GuardPressure.cs. CombatTempo never requires this state to run.
+        public const int GuardPressureMaxBlocks = 4;
+        public const int GuardPressureFirstDecayTicks = 480;
+        public const int GuardPressureStackDecayTicks = 240;
+        public int BlockedRecently;
+        public int BlockedDamageRecently;
+        public int BlockedRecentlyByPlayer = -1;
+        public int BlockedRecentlyDecayTimer;
+
+        public void RegisterBlockedAttack(NPC npc, int playerIndex, int blockedDamage, bool perfectParry)
+        {
+            // A perfect parry is the player's successful counterplay, so it must not feed the anti-turtle ramp.
+            if (Main.netMode == NetmodeID.MultiplayerClient || perfectParry
+                || playerIndex < 0 || playerIndex >= Main.maxPlayers || !Main.player[playerIndex].active)
+            {
+                return;
+            }
+
+            // Keep one pressure target per enemy. A different player's block starts their own sequence instead of
+            // inheriting a nearly-complete ramp built against somebody else.
+            if (BlockedRecentlyByPlayer != playerIndex)
+            {
+                BlockedRecently = 0;
+                BlockedDamageRecently = 0;
+                BlockedRecentlyByPlayer = playerIndex;
+            }
+
+            BlockedRecently = Math.Min(GuardPressureMaxBlocks, BlockedRecently + 1);
+            BlockedDamageRecently = (int)Math.Min(1000000L, (long)BlockedDamageRecently + Math.Max(0, blockedDamage));
+            // Every new block restores the full grace period. If the defender disengages from blocking after that,
+            // pressure bleeds away one stack at a time rather than forgetting the entire exchange at once.
+            BlockedRecentlyDecayTimer = GuardPressureFirstDecayTicks;
+            npc.netUpdate = true;
+        }
+
+        private void DecayGuardPressureStack(NPC npc)
+        {
+            if (BlockedRecently <= 1)
+            {
+                ClearGuardPressure(npc);
+                return;
+            }
+
+            int previousStacks = BlockedRecently;
+            BlockedRecently--;
+            // Individual blocked-damage samples are not stored, so decay the aggregate proportionally with the
+            // stack count. This keeps the dormant telemetry representative if it is used for tuning later.
+            BlockedDamageRecently = (int)((long)BlockedDamageRecently * BlockedRecently / previousStacks);
+            BlockedRecentlyDecayTimer = GuardPressureStackDecayTicks;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                npc.netUpdate = true;
+            }
+        }
+
+        private void ClearGuardPressure(NPC npc)
+        {
+            bool hadPressure = BlockedRecently != 0 || BlockedDamageRecently != 0 || BlockedRecentlyByPlayer != -1;
+            BlockedRecently = 0;
+            BlockedDamageRecently = 0;
+            BlockedRecentlyByPlayer = -1;
+            BlockedRecentlyDecayTimer = 0;
+            if (hadPressure && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                npc.netUpdate = true;
+            }
+        }
 
         // === Pre-attack jump (global attack variation) ===
         // When an attack COMMITS (hyperarmor begins), optionally launch the enemy upward so the shot — fired later in
@@ -402,6 +472,8 @@ namespace tsorcRevamp.NPCs
         public int QuickStepTicks = 16;     // quick-step duration
         public int QuickStepRecoveryTicks = 30;   // post-step recovery before attacks/pursuit resume (tunable)
         public float QuickStepForwardRoom = 16f;  // extra px past the player when stepping THROUGH them
+        public float QuickStepForwardChance = 0.5f; // chance to cross instead of backstep when a forward landing is reachable
+        public int QuickStepMaxForwardTicks = 30;   // longer than the ordinary backstep so a configured flank can start farther away
         // True while a behavior should draw the ghost afterimage trail (quick step, or the running-dash burst).
         public bool EvasiveAfterimagesActive => QuickStepTimer > 0 || (InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RunningDash && !EvasiveTelegraphing);
         /// <summary>True during any multi-tick evasive action — a parallel to <see cref="InAttack"/> for deference.</summary>
@@ -693,6 +765,40 @@ namespace tsorcRevamp.NPCs
             PoiseWillBreakThisHit = false;
         }
 
+        /// <summary>
+        /// Riposte: poise damage dealt by a player's perfect parry, as a fraction of the enemy's current poise bar.
+        ///
+        /// Deliberately IGNORES AttackCommitted (hyper-armor), unlike every other poise source. A parry is by
+        /// definition timed against an incoming attack, so the enemy is nearly always mid-commit when it lands —
+        /// respecting hyper-armor here would mean parries essentially never staggered anything, which is the exact
+        /// opposite of the intent. Anti-stunlock (PoiseBreakCooldown) and the already-staggered case are still
+        /// honoured, so a parry can't chain-lock an enemy that's already down.
+        /// </summary>
+        public void ApplyParryPoise(NPC npc, float poiseFraction, Vector2 sourceCenter)
+        {
+            if (PoiseMax <= 0f || poiseFraction <= 0f)
+            {
+                return;
+            }
+            if (PoiseBreakCooldown > 0)
+            {
+                return; // post-stagger i-frames — same anti-stunlock rule as ordinary hits
+            }
+            if (StaggerTimer > 0)
+            {
+                ApplyStaggerImpulse(npc, sourceCenter, 0.5f); // already down: just a shove, no re-break
+                return;
+            }
+
+            Poise += EffectivePoiseMax * poiseFraction;
+            PoiseRegenDelay = PoiseRegenDelayTicks;
+            if (Poise >= EffectivePoiseMax)
+            {
+                TriggerStagger(npc, sourceCenter);
+            }
+            npc.netUpdate = true;
+        }
+
         /// <summary>Enter the staggered state: launch, freeze, cancel a windup attack, and escalate.</summary>
         private void TriggerStagger(NPC npc, Vector2 sourceCenter)
         {
@@ -729,6 +835,7 @@ namespace tsorcRevamp.NPCs
                     FighterRangedStandShotsRemaining = 0;
                 }
             }
+            ResetCombatTempoSequence(clearRecovery: true);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.3f, Volume = 0.8f }, npc.Center);
             npc.netUpdate = true;
         }
@@ -1545,6 +1652,19 @@ namespace tsorcRevamp.NPCs
                 ReactiveBlockTimer--;
             }
 
+            if (BlockedRecentlyDecayTimer > 0)
+            {
+                BlockedRecentlyDecayTimer--;
+                if (BlockedRecentlyDecayTimer == 0)
+                {
+                    DecayGuardPressureStack(npc);
+                }
+            }
+
+            UpdateGuardPressureBehavior(npc);
+            UpdateKiteThreatResponse(npc);
+            UpdateCombatTempo(npc);
+
             // Hit-recency clock (drives the large-beast retreat-speed scaling + stale-wander give-up). The hooks
             // below reset it to 0 on a real hit; here it just ages. Capped so it never overflows on a long-lived NPC.
             if (FramesSinceHit < 1000000) FramesSinceHit++;
@@ -1834,6 +1954,13 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(AttackIndex);
             binaryWriter.Write(IsTeleportIllusion);
             binaryWriter.Write(TeleportIllusionTimeLeft);
+            binaryWriter.Write(BlockedRecently);
+            binaryWriter.Write(BlockedDamageRecently);
+            binaryWriter.Write(BlockedRecentlyByPlayer);
+            binaryWriter.Write(BlockedRecentlyDecayTimer);
+            SendGuardPressureBehavior(binaryWriter);
+            SendKiteThreat(binaryWriter);
+            SendCombatTempo(binaryWriter);
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
@@ -1865,6 +1992,13 @@ namespace tsorcRevamp.NPCs
             AttackIndex = binaryReader.ReadInt32();
             IsTeleportIllusion = binaryReader.ReadBoolean();
             TeleportIllusionTimeLeft = binaryReader.ReadInt32();
+            BlockedRecently = binaryReader.ReadInt32();
+            BlockedDamageRecently = binaryReader.ReadInt32();
+            BlockedRecentlyByPlayer = binaryReader.ReadInt32();
+            BlockedRecentlyDecayTimer = binaryReader.ReadInt32();
+            ReceiveGuardPressureBehavior(binaryReader);
+            ReceiveKiteThreat(binaryReader);
+            ReceiveCombatTempo(binaryReader);
         }
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
@@ -2510,7 +2644,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
-            if (DodgeTimer > 0 || QuickStepTimer > 0) // quick step passes through the player (no contact damage)
+            if (DodgeTimer > 0 || QuickStepTimer > 0 || CombatMeleeActive || InGuardPressureRecovery) // shared melee/recovery cannot deal passive body-contact damage
             {
                 return false;
             }
@@ -2993,6 +3127,8 @@ namespace tsorcRevamp.NPCs
 
             TriggerNoLosPursuitBoost(npc, player);
             RegisterHitForBeast(npc);
+            RegisterKiteThreatFromItem(npc, player);
+            RegisterCombatTempoDamage(npc, damageDone);
 
             //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
             if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
@@ -3032,12 +3168,20 @@ namespace tsorcRevamp.NPCs
                 TriggerNoLosPursuitBoost(npc, Main.player[projectile.owner]);
             }
             RegisterHitForBeast(npc);
+            bool distantProjectileThreat = RegisterKiteThreatFromProjectile(npc, projectile);
+            RegisterCombatTempoDamage(npc, damageDone);
 
-            if (projectile.friendly && projectile.DamageType != DamageClass.Melee)
+            if (projectile.friendly && (projectile.DamageType != DamageClass.Melee || distantProjectileThreat))
             {
                 tsorcRevampGlobalNPC hitGlobalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-                hitGlobalNPC.FighterRangedHitInterruptedPause = hitGlobalNPC.FighterPostAttackPauseTimer > 0
-                                                              || hitGlobalNPC.FighterRangedStandShotsRemaining > 0;
+                // Preserve the legacy ranged-evasion hand-off flag for non-melee DamageClass hits. A distant
+                // melee-class projectile still breaks the pause so pursuit can begin, but remains a melee hit for
+                // the enemy's separately-authored EvasiveOnHit response.
+                if (projectile.DamageType != DamageClass.Melee)
+                {
+                    hitGlobalNPC.FighterRangedHitInterruptedPause = hitGlobalNPC.FighterPostAttackPauseTimer > 0
+                                                                  || hitGlobalNPC.FighterRangedStandShotsRemaining > 0;
+                }
                 hitGlobalNPC.FighterPostAttackPauseTimer = 0;
                 hitGlobalNPC.FighterRangedStandShotsRemaining = 0;
             }

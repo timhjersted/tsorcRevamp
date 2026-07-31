@@ -9,7 +9,10 @@ Mods: {
 			// Break: Running out of {0} mid-block breaks your guard (Ichor, Slow, and a brief stagger)
 			// Parry: Perfect parry — raise the shield just as a hit lands to block it at half the cost
 			// Slow: Slows your movement by {0}% while raised
-			// Regen: Stamina does not recover while raised
+			// Chip: An ordinary block leaks {0}% of the damage through as chip damage; a perfect parry leaks none
+			// Greatshield: Greatshield: no damage leaks through, but it is heavy and slow to recover from
+			// RegenPenalty: Its weight reduces stamina regeneration by {0}% while equipped
+			// Regen: Stamina recovers at {0}% of its normal rate while raised, after the usual delay
 			// Stamina: stamina
 			// Mana: mana
 			// ReflectEffect: A perfect parry reflects the blocked damage back at the attacker
@@ -17,7 +20,7 @@ Mods: {
 			// GazeConfuse: A perfect parry may confuse the attacker
 			// GazePetrify: A perfect parry may confuse or briefly freeze the attacker
 			// GazeBeam: A perfect parry may confuse/freeze the attacker and fires an eye beam back
-			// FireCone: A perfect parry breathes a cone of fire that grows stronger with your defense
+			// FireCone: A perfect parry breathes fire while the shield stays raised, growing stronger with your defense (costs mana to light and to sustain)
 			// BulwarkEffect: A perfect parry applies Vulnerability and deflects projectiles
 			// FrostNova: A perfect parry unleashes a frost nova
 			// WardPulse: Lowering the ward releases a 360° knockback pulse, stronger the longer held
@@ -360,6 +363,8 @@ Mods: {
 			// OpenStorage: Open Storage — Shift click to store inventory items while Storage is open
 			StaminaUse: "耐力消耗: "
 			StaminaUseOnHitOnly: "命中时耐力消耗: "
+			// StaminaUseToolSwing: "Stamina Use (per swing): "
+			// StaminaUseToolHitSurcharge: " (+{0} on hitting an enemy)"
 			Tired: 疲惫
 			14: "14"
 			StaminaRegenReduction:
@@ -1372,9 +1377,8 @@ Mods: {
 					[c/ffbf00:消耗玩家的魔力形成一个护盾]
 					{$CommonItemTooltip.DRStat}, 每次受击会消耗 {1} 魔力值
 					[c/00ffd4:{$CommonItemTooltip.IncreasesMaxManaByPercent@2}]
-					[c/00ffd4:{$CommonItemTooltip.StaminaRegen@3}]
-					触发后一段时间内抑制魔力的自然恢复与人为恢复({$CommonItemTooltip.SecondDuration@4})
-					乘算减少 {5}% 魔法、召唤、远程伤害
+					触发后一段时间内抑制魔力的自然恢复与人为恢复({$CommonItemTooltip.SecondDuration@3})
+					乘算减少 {4}% 魔法、召唤、远程伤害
 					'''
 			}
 
@@ -4428,6 +4432,109 @@ Mods: {
 				Tooltip: 这项交易已被宣布是违法的，我不能卖给你
 			}
 
+			GameManual: {
+				// DisplayName: Game Manual
+				// Tooltip: ""
+				// PageHeader: — Page {0} of {1}: {2} —
+				// Turn: Right-click to turn the page
+				// TurnAndToggle: Right-click to turn the page · Left-click to toggle Recommended Controls
+				// Heading1: How to Read This Manual
+				/* Page1:
+					'''
+					Right-click this book to turn the page. 
+					Page 2 explains your extra inventory slots, page 3 explains the controls, and pages 4–11 explain the mod's core mechanics.
+					''' */
+				// Heading2: Your Extra Inventory Slots
+				/* Page2:
+					'''
+					2nd Slot: Equip a second weapon, tool, consumable or shield in this slot and use with right mouse.
+					Storage Slot: a bottomless container to keep your inventory uncluttered. Press T to open it from anywhere. Shift-click to transfer items.			
+					Guide Slot: drop any item in to see every recipe that uses it.
+					Souls Slot: Your Dark Souls collect here automatically.					
+					''' */
+				// Heading3: Controls
+				/* Page3:
+					'''
+					Recommended Controls rebinds several keys at once to a layout built for this mod.
+					The dodge roll and other mod-specific actions can be rebound via Settings: Controls.
+					Your Estus Flask is bound to Quick Heal, and the Cerulean Tear to Quick Mana.
+					''' */
+				// Heading4: The 2nd Slot
+				/* Page4:
+					'''
+					It takes weapons without a right-click function, throwables, consumables, tools and shields.
+					Accessories cannot be equipped in the slot.
+					Shields are the exception. They also keep their full passive effects,
+					exactly as if worn in an accessory slot, which frees that slot for something else.
+					Right mouse priority: your held weapon's alt-fire, then this slot, then an equipped shield.
+					''' */
+				// Heading5: Stamina
+				/* Page5:
+					'''
+					Attacking, dodge rolling and blocking all spend stamina.
+					Run out and you cannot attack or roll until some comes back.
+					Stamina Vessels found throughout the world raise your maximum permanently.
+					''' */
+				// Heading6: Dodge Rolling
+				/* Page6:
+					'''
+					Rolling costs stamina and makes you briefly invulnerable.
+					Learn the timing and you can pass straight through an attack.
+					Rolling in the air allows you to cross bigger gaps and reverse your momentum instantly.
+					A perfect dodge refunds half its cost.
+					''' */
+				// Heading7: Estus, Cerulean and Bonfires
+				/* Page7:
+					'''
+					The Estus Flask heals and the Cerulean Tear restores mana. Both hold limited charges.
+					Rest at a bonfire to refill every charge and set your respawn point.
+					Bonfires also let you warp to any other bonfire you already lit.
+					Estus Flask Shards add charges. Sublime Bone Dust makes each charge stronger.
+					''' */
+				// Heading8: Dark Souls
+				/* Page8:
+					'''
+					Dark Souls are your currency, gathered from everything you kill.
+					Look for items labeled as a "Dark Souls recipe material" and place in the Guide slot to see what you can make. 
+					Craft souls into new items at bonfires and demon altars, or convert them into soul coins to buy items from shop keepers.
+					When you die you drop every soul you are carrying and leave a bloodstain where you fell. 
+					Return to it to take them all back — but die again before you reach it and they are gone for good.					
+					This can be turned off in the mod's config if you would rather not lose them.
+					Dropped souls survive save & reload.
+					''' */
+				// Heading9: Finding Your Way
+				/* Page9:
+					'''
+					The Emerald Herald will give you the Boss Hunting Tome.
+					Hovering over any undiscovered boss in its menu offers a clue for where that boss is found,
+					which is the best way to work out where to go next when you are lost. 
+					Glowing red = next required major boss. Purple = optional major boss. Orange = optional great boss. Yellow = optional field boss.
+					Clues for optional bosses and the next required boss is unlocked by defeating the current required boss. 
+					Defeated bosses offer a clue for the next recommended boss.
+					You can re-summon some bosses you have already beaten, but most bosses drop all their loot on the first kill.
+					You can place markers on your map — use them for gates you cannot open yet or bosses to come back to later.
+					''' */
+				// Heading10: Game Modes
+				/* Page10:
+					'''
+					Unkindled: the default. Flasks, stamina on weapons, active shields and an extra accesory slot.
+					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
+					20% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
+					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
+					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
+					''' */
+				// Heading11: Shields and Blocking
+				/* Page11:
+					'''
+					Hold right mouse with a shield to raise it. It covers your front, above and below,
+					but not your back. Harder hits and weaker shields use more stamina.
+					Raise it just as a blow lands for a perfect parry: no damage, half the stamina, and it does stagger damage against melee attacks.
+					Block any sooner than that and a little chip damage leaks through. Worse shields leak more.
+					A heavy enough hit will break your guard outright, however much stamina you have.
+					Greatshields leak nothing at all but are slower to recover. Bucklers are the opposite.
+					''' */
+			}
+
 			DodgerollMemo: {
 				DisplayName: 躲闪备忘录
 				Tooltip:
@@ -4442,6 +4549,8 @@ Mods: {
 					或许我应该在战斗中多加练习，避免重蹈覆辙？
 					[c/ffbf00:按 左Alt 翻滚，或在控制中将其绑定到你用着顺手的键位]
 					'''
+				// RollKey: "[c/ffbf00:Press {0} to roll.]"
+				// RebindHint: "[c/ffbf00:You can change this key bind in Settings: Controls.]"
 			}
 
 			DragonEssence: {
@@ -9726,6 +9835,27 @@ Mods: {
 				Description: 增加召唤伤害
 			}
 
+			Accuracy: {
+				// DisplayName: Accuracy
+				/* Description:
+					'''
+					Every ranged shot that connects raises your accuracy by {0}%; every one that misses lowers it by {1}%.
+					At full accuracy you gain {2}% critical strike chance and {3}% critical damage.
+					Currently [c/deb887:{4}%] accuracy: [c/ea00ea:+{5}% crit chance, +{6}% crit damage]
+					''' */
+			}
+
+			Attunement: {
+				// DisplayName: Attunement
+				/* Description:
+					'''
+					Landing magic hits grants a stack of Attunement (2 on a crit).
+					Each stack reduces spell mana cost by {0}%, up to {1}% at {2} stacks.
+					Stacks fall off one at a time if you stop landing hits.
+					Currently {3}/{2} stacks: [c/ea00ea:-{4}% mana cost]
+					''' */
+			}
+
 			Stiff: {
 				DisplayName: 呆板
 				Description: 你无法翻滚！
@@ -9903,9 +10033,19 @@ Mods: {
 					''' */
 			}
 
+			PerfectDodge: {
+				// DisplayName: Perfect Dodge
+				// Description: Increases stamina regeneration by {0}% and critical strike chance by {1}%
+			}
+
 			ShieldGuardBreak: {
-				// Description: Mods.tsorcRevamp.Buffs.ShieldGuardBreak.Description
+				// Description: Shields, items, and flight are disabled; stamina recovery is heavily reduced
 				// DisplayName: Shield Guard Break
+			}
+
+			Stagger: {
+				// Description: Ichor is applied; shields, items, and flight are disabled; movement and stamina recovery are heavily reduced
+				// DisplayName: Staggered
 			}
 
 			PlaguesmithBuff: {
@@ -10826,6 +10966,10 @@ Mods: {
 			// PuppetSnareNet.DisplayName: Puppet Snare Net
 			// PuppetGreatfireCrescent.DisplayName: Puppet Greatfire Crescent
 			// PuppetFirefallPillar.DisplayName: Puppet Firefall Pillar
+			// GwynDescentColumn.DisplayName: Gwyn Descent Column
+			// HumanoidMeleeHitbox.DisplayName: Humanoid Melee Hitbox
+			// GwynCinderNovaTelegraph.DisplayName: Gwyn Cinder Nova Telegraph
+			// GwynGroundFireWave.DisplayName: Gwyn Ground Fire Wave
 		}
 
 		NPCs: {
@@ -12735,6 +12879,16 @@ Mods: {
 						''' */
 				}
 
+				NewSoulsModeStaminaSystem: {
+					// Label: Experimental Stamina Values
+					/* Tooltip:
+						'''
+						Replaces the standard Souls Mode stamina numbers with a more demanding experimental set.
+						Unkindled pays 1x weapon stamina cost and regenerates at 1.5x. Bearer of the Curse pays 1.5x and regenerates at 3x.
+						By default (off) Unkindled pays 0.85x and regenerates at 1.25x, while Bearer of the Curse pays 1.15x and regenerates at 2x. Defaults to Off.
+						''' */
+				}
+
 				DebugMode: {
 					// Label: Debug Mode
 					// Tooltip: ""
@@ -12850,6 +13004,15 @@ Mods: {
 				EnemyHealthBars: {
 					// Label: Enemy Health Bars
 					// Tooltip: Show vanilla health bars below non-boss enemies. Defaults to Off.
+				}
+
+				AccuracyCombatText: {
+					// Label: Accuracy Combat Text
+					/* Tooltip:
+						'''
+						Show floating text when Bearer of the Curse's ranged accuracy crosses into a new 10% band.
+						Your exact accuracy is always readable on the Accuracy buff regardless of this setting. Defaults to On.
+						''' */
 				}
 
 				PlayerHurtVisuals: {

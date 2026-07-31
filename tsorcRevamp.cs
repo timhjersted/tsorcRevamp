@@ -60,6 +60,7 @@ using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
 using tsorcRevamp.NPCs.Special;
+using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
 using tsorcRevamp.Projectiles.Summon.NullSprite;
@@ -193,6 +194,10 @@ namespace tsorcRevamp
         //Active Shields Revamp: NPC types that the shield "body-block" wall should stop even though they're flagged
         //as bosses (mini-boss / elite knight types). Populated in PopulateArrays().
         public static HashSet<int> BodyBlockableNPCs;
+
+        /// <summary>Accessories allowed to roll the stamina-regen prefixes (Refreshing / Revitalizing /
+        /// Invigorating). See Prefixes/Refreshing.cs — CanRoll gates on membership here.</summary>
+        public static HashSet<int> StaminaPrefixAccessories;
 
         internal BonfireUIState BonfireUIState;
         internal UserInterface _bonfireUIState; //"but zeo!", you say
@@ -459,7 +464,14 @@ namespace tsorcRevamp
                 { ModContent.ItemType<Items.Accessories.Defensive.Shields.IronShield>(),          new ActiveShieldData(32f, 0.42f, 0.88f, 2, 4.0f) },
                 { ModContent.ItemType<Items.Accessories.Defensive.Shields.SpikedIronShield>(),     new ActiveShieldData(29f, 0.39f, 0.89f, 3, 4.2f) },
                 { ModContent.ItemType<Items.Accessories.Defensive.Shields.AncientDemonShield>(),    new ActiveShieldData(25f, 0.36f, 0.91f, 5, 4.8f) },
-                { ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>(),     new ActiveShieldData(24f, 0.35f, 0.91f, 5, 5.0f) }, // repositioned to mid pre-hardmode
+                // GREATSHIELD archetype: takes no chip at all (dragonscale stops the whole blow), and pays for it with
+                // a much longer post-block regen pause, a heavier slow, and an always-on regen tax ("equip load") that
+                // costs you even when you never raise it. The alternative to leaking HP is leaking tempo.
+                // The three greatshields (DragonCrest → Paladin's → Frozen) get progressively less punishing.
+                // All three trimmed -0.15 off blockRegenDelayMult (was 1.75/1.7/1.6) — the no-chip trade was
+                // landing as more punishing than intended; the flat trim keeps the relative spacing/progression
+                // between the three untouched while softening the pause across the board.
+                { ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>(),     new ActiveShieldData(24f, 0.35f, 0.87f, 5, 5.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.60f, passiveRegenPenalty: 0.05f) }, // repositioned to mid pre-hardmode
                 { ModContent.ItemType<Items.Accessories.Damage.MythrilBulwark>(),                   new ActiveShieldData(22f, 0.32f, 0.92f, 6, 5.2f) },
                 { ModContent.ItemType<Items.Accessories.Defensive.Shields.IceboundMythrilAegis>(),  new ActiveShieldData(9f,  0.14f, 0.99f, 15, 7.0f) },
 
@@ -476,13 +488,19 @@ namespace tsorcRevamp
                 //--- Vanilla physical shields (stamina) --- keep native vanilla defense (activeDefense unused for these)
                 { ItemID.CobaltShield,    new ActiveShieldData(30f, 0.40f, 0.89f, 0, 4.4f) },
                 { ItemID.ObsidianShield,  new ActiveShieldData(27f, 0.38f, 0.90f, 0, 4.6f) },
-                { ItemID.PaladinsShield,  new ActiveShieldData(21f, 0.30f, 0.93f, 0, 5.4f) },
+                // GREATSHIELD archetype (hardmode entry): the tower shield of the vanilla line.
+                { ItemID.PaladinsShield,  new ActiveShieldData(21f, 0.30f, 0.88f, 0, 5.4f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.55f, passiveRegenPenalty: 0.05f) },
                 { ItemID.AnkhShield,      new ActiveShieldData(18f, 0.27f, 0.95f, 0, 5.8f) },
-                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.96f, 0, 6.0f) },
+                // GREATSHIELD archetype (top of the line): a wall of ice — nothing chips through, but you barely move
+                // and recover slowly. The lighter Ankh/Hero shields around it stay leaky-but-nimble by contrast, so
+                // upgrading Frozen → Hero is a side-grade (lose no-chip, gain mobility + utility), not a strict win.
+                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.90f, 0, 6.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.45f, passiveRegenPenalty: 0.05f) },
                 { ItemID.HeroShield,      new ActiveShieldData(12f, 0.20f, 0.97f, 0, 6.5f) }, // top vanilla shield (Ankh + Frozen + Berserker)
                 // Shield of Cthulhu: early-game right-click block (7% slow, def 2). Its vanilla double-tap dash is
                 // untouched and shows the shield while dashing (see tsorcRevampActiveShieldPlayer.PostUpdate).
-                { ItemID.EoCShield,       new ActiveShieldData(30f, 0.40f, 0.93f, 2, 4.0f) },
+                // BUCKLER archetype: the opposite trade — leaks the most chip of any physical shield, but recovers
+                // fastest (0.7x pause) and barely slows you. Rewards short reactive blocks, punishes turtling.
+                { ItemID.EoCShield,       new ActiveShieldData(30f, 0.40f, 0.95f, 2, 4.0f, ShieldResource.Stamina, chipFactor: 0.175f, blockRegenDelayMult: 0.7f) },
             };
 
             //Mini-boss / elite enemies that are flagged npc.boss but should still be stopped by the shield wall.
@@ -495,6 +513,50 @@ namespace tsorcRevamp
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(),
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(),
                 ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(),
+            };
+            #endregion
+            //--------
+            #region Stamina-regen prefix eligibility
+            // Which accessories may roll Refreshing / Revitalizing / Invigorating (+4 / +6 / +8% stamina regen).
+            //
+            // Restricted to MOBILITY accessories. The prefixes are PrefixCategory.Accessory, so before this they
+            // could roll on any of the 7 accessory slots — and since reforging is unlimited, a determined player
+            // could reach +56% stamina regen that no per-item audit catches and no single tooltip communicates.
+            // That made it the largest regen source in the game, invisibly.
+            //
+            // Restricting by TYPE rather than capping the stack was the deliberate choice: an ineligible accessory
+            // simply rolls an ordinary prefix instead, so nothing is silently wasted (unlike a "highest roll only"
+            // rule, which would quietly make duplicate rolls dead). It also gives mobility gear an identity.
+            // Realistically you'd wear 3-4 of these at once, so the practical ceiling is ~+24-32% and it costs you
+            // real slots to get there.
+            //
+            // TO ADD MORE: just add the item type here. Everything in Items/Accessories/Mobility/ belongs.
+            StaminaPrefixAccessories = new HashSet<int>
+            {
+                // --- Mod mobility accessories (Items/Accessories/Mobility/) ---
+                ModContent.ItemType<Items.Accessories.Mobility.BootsOfHaste>(),
+                ModContent.ItemType<Items.Accessories.Mobility.ChloranthyRing>(),
+                ModContent.ItemType<Items.Accessories.Mobility.ChloranthyRing2>(),
+                ModContent.ItemType<Items.Accessories.Mobility.DragoonBoots>(),
+                ModContent.ItemType<Items.Accessories.Mobility.ReflectionShift>(),
+                ModContent.ItemType<Items.Accessories.Mobility.SpeedTalisman>(),
+                ModContent.ItemType<Items.Accessories.Mobility.SupersonicBoots>(),
+
+                // --- Vanilla movement-speed accessories --- included so a player on vanilla boots isn't shut
+                // out arbitrarily. Deliberately the SPEED line only, not every mobility item: wings, balloons and
+                // the ninja/dodge gear are left off to keep the eligible slot count (and therefore the stack) low.
+                ItemID.HermesBoots,
+                ItemID.FlurryBoots,
+                ItemID.SailfishBoots,
+                ItemID.SandBoots, // Dunerider Boots
+                ItemID.AmphibianBoots,
+                ItemID.FairyBoots,
+                ItemID.SpectreBoots,
+                ItemID.LightningBoots,
+                ItemID.FrostsparkBoots,
+                ItemID.TerrasparkBoots,
+                ItemID.AnkletoftheWind,
+                ItemID.Aglet,
             };
             #endregion
             //--------
@@ -2359,6 +2421,100 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.ReportBlockedAttack:
+                    {
+                        int npcIndex = reader.ReadInt32();
+                        int npcType = reader.ReadInt32();
+                        int projectileIndex = reader.ReadInt32();
+                        int projectileType = reader.ReadInt32();
+                        int reportedDamage = reader.ReadInt32();
+                        bool perfectParry = reader.ReadBoolean();
+
+                        if (Main.netMode != NetmodeID.Server
+                            || whoAmI < 0 || whoAmI >= Main.maxPlayers)
+                        {
+                            break;
+                        }
+
+                        Player blockingPlayer = Main.player[whoAmI];
+                        tsorcRevampActiveShieldPlayer shieldPlayer =
+                            blockingPlayer.GetModPlayer<tsorcRevampActiveShieldPlayer>();
+                        if (!blockingPlayer.active || blockingPlayer.dead || !shieldPlayer.isBlocking
+                            || shieldPlayer.activeShieldType < 0 || ActiveShieldRegistry == null
+                            || !ActiveShieldRegistry.ContainsKey(shieldPlayer.activeShieldType)
+                            || npcIndex < 0 || npcIndex >= Main.maxNPCs)
+                        {
+                            break;
+                        }
+
+                        NPC attacker = Main.npc[npcIndex];
+                        if (!attacker.active || attacker.type != npcType || attacker.friendly || attacker.townNPC)
+                        {
+                            break;
+                        }
+
+                        int damageLimit;
+                        Projectile attackingProjectile = null;
+                        if (projectileIndex >= 0)
+                        {
+                            if (projectileIndex >= Main.maxProjectiles)
+                            {
+                                break;
+                            }
+
+                            attackingProjectile = Main.projectile[projectileIndex];
+                            tsorcGlobalProjectile projectileData =
+                                attackingProjectile.GetGlobalProjectile<tsorcGlobalProjectile>();
+                            float projectileBlockRange = Math.Max(240f,
+                                attackingProjectile.width + attackingProjectile.height + 160f);
+                            if (!attackingProjectile.active || !attackingProjectile.hostile
+                                || attackingProjectile.type != projectileType
+                                || attackingProjectile.Distance(blockingPlayer.Center) > projectileBlockRange
+                                || !projectileData.TryGetSourceNPC(out NPC projectileSource)
+                                || projectileSource.whoAmI != npcIndex || projectileSource.type != npcType)
+                            {
+                                break;
+                            }
+
+                            damageLimit = Math.Max(1, attackingProjectile.damage * 4);
+                        }
+                        else
+                        {
+                            float contactBlockRange = Math.Max(240f, attacker.width + attacker.height + 160f);
+                            if (projectileType != -1 || attacker.Distance(blockingPlayer.Center) > contactBlockRange)
+                            {
+                                break;
+                            }
+
+                            damageLimit = Math.Max(1, Math.Max(attacker.damage, attacker.defDamage) * 4);
+                        }
+
+                        int blockedDamage = Math.Clamp(reportedDamage, 0, damageLimit);
+                        if (blockedDamage <= 0 || !shieldPlayer.TryAcceptBlockReport())
+                        {
+                            break;
+                        }
+
+                        attacker.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>()
+                            .RegisterBlockedAttack(attacker, whoAmI, blockedDamage, perfectParry);
+                        if (attackingProjectile != null)
+                        {
+                            bool mythrilReflection = perfectParry
+                                && shieldPlayer.activeShieldType == ModContent.ItemType<Items.Accessories.Damage.MythrilBulwark>()
+                                && attackingProjectile.type !=
+                                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>();
+                            if (mythrilReflection)
+                            {
+                                attackingProjectile.hostile = false;
+                                attackingProjectile.friendly = true;
+                                attackingProjectile.owner = whoAmI;
+                                attackingProjectile.velocity = -attackingProjectile.velocity;
+                                attackingProjectile.netUpdate = true;
+                            }
+                            else tsorcGlobalProjectile.TryBreakOnShieldImpact(attackingProjectile);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -3339,6 +3495,11 @@ namespace tsorcRevamp
                 return;
             }
 
+            // Runs on EVERY load, deliberately outside the first-run marker below: existing profiles are exactly
+            // the ones carrying a blank Open Storage binding, so a first-run-only repair would never reach them.
+            // Safe to repeat — it only fills a genuinely empty binding and only when T is otherwise unused.
+            EnsureStorageKeybindDefault();
+
             string dataDir = Path.Combine(Main.SavePath, "ModConfigs", "tsorcRevampData");
             string markerPath = Path.Combine(dataDir, "control-defaults-v4.txt");
             if (File.Exists(markerPath))
@@ -3580,6 +3741,71 @@ namespace tsorcRevamp
             }
 
             return changed;
+        }
+
+        /// <summary>
+        /// Repair an unbound "Open Storage" by giving it T.
+        ///
+        /// The keybind is registered with Keys.T as its default, but tModLoader only applies a registered
+        /// default the first time a trigger is seen. Any profile that saved a blank entry for it — from a build
+        /// where it was registered differently, or a manual clear — keeps that blank forever, which is why it
+        /// reads as unbound on a fresh character despite the config showing T as the default.
+        ///
+        /// Only fills an ACTUALLY empty binding, and only when nothing else in that profile already uses T, so
+        /// a player who has rebound storage or spent T elsewhere is never overridden.
+        /// </summary>
+        internal static void EnsureStorageKeybindDefault()
+        {
+            if (Main.dedServ || PlayerInput.Profiles == null)
+            {
+                return;
+            }
+
+            const string trigger = "tsorcRevamp/Open Storage";
+            const string defaultKey = "T";
+            bool changed = false;
+
+            foreach (PlayerInputProfile profile in PlayerInput.Profiles.Values)
+            {
+                if (!profile.InputModes.TryGetValue(InputMode.Keyboard, out KeyConfiguration keyboard))
+                {
+                    continue;
+                }
+
+                if (keyboard.KeyStatus.TryGetValue(trigger, out List<string> keys) && keys.Count > 0)
+                {
+                    continue; // already bound to something — leave it alone
+                }
+
+                // Don't steal T from another action the player is relying on.
+                bool taken = false;
+                foreach (KeyValuePair<string, List<string>> binding in keyboard.KeyStatus)
+                {
+                    if (binding.Key != trigger && binding.Value != null && binding.Value.Contains(defaultKey))
+                    {
+                        taken = true;
+                        break;
+                    }
+                }
+                if (taken)
+                {
+                    continue;
+                }
+
+                if (keys == null)
+                {
+                    keys = new List<string>();
+                    keyboard.KeyStatus[trigger] = keys;
+                }
+                keys.Clear();
+                keys.Add(defaultKey);
+                changed = true;
+            }
+
+            if (changed)
+            {
+                PlayerInput.Save();
+            }
         }
 
         internal static bool RecommendedControlBindingsMatch()
@@ -4531,6 +4757,7 @@ namespace tsorcRevamp
         /// </summary>
         public const byte SyncRightClickSlot = 23;
         public const byte SyncDwarvenContract = 24;
+        public const byte ReportBlockedAttack = 25;
     }
 
     //config moved to separate file

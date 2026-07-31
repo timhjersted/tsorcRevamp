@@ -9,6 +9,15 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     public class ChloranthyRing : ModItem
     {
         public static float StaminaRecoverySpeed = 15f;
+        /// <summary>Percentage points of shield-hold movement slow this ring cancels (see
+        /// tsorcRevampActiveShieldPlayer.ApplyBlockSlow). Ring II replaces this rather than stacking.</summary>
+        public static float ShieldSlowReduction = 4f;
+        /// <summary>Percent cut from the post-spend stamina regen DELAY (tsorcRevampStaminaPlayer.PauseStaminaRegen).
+        /// A different axis from the regen rate — you start recovering sooner rather than recovering faster, which
+        /// is what's actually felt between swings. Nothing else in the game modifies this timer.</summary>
+        public static float RegenDelayReduction = 10f;
+        /// <summary>Percentage points added to the normal stamina regen retained while a shield is raised.</summary>
+        public static float BlockStaminaRegenBonus = 10f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRecoverySpeed);
         public override void SetStaticDefaults()
         {

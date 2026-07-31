@@ -9,9 +9,17 @@ namespace tsorcRevamp.Items.Tools
 {
     public class PowerWithin : ModItem
     {
-        public static float DamageIncrease = 10f;
-        public static float StaminaRegen = 30f;
+        // Same values for every class. The old design doubled BOTH the damage and the regen for Bearer of the
+        // Curse, which compounded an advantage BotC already gets from its 2x base stamina regen.
+        public static float DamageIncrease = 20f;
+        public static float StaminaRegen = 20f;
         public static int Duration = 20;
+        /// <summary>Life drained per second while the buff is up, as a percent of MAX life.
+        /// Was a flat 8 lifeRegen (-4 HP/sec) regardless of pool size, which meant the drawback cost 80% of an
+        /// early 100 HP bar but only 20% of a late 400 HP one — the cost evaporated exactly as the buff's regen
+        /// bonus started to matter. As a percentage it stays a consistent ~30% of your bar per full duration.</summary>
+        public static float LifeDrainPercent = 1.5f;
+        public static int ManaCost = 20;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, StaminaRegen, Duration);
         public override void SetStaticDefaults()
         {
@@ -26,6 +34,9 @@ namespace tsorcRevamp.Items.Tools
             Item.useTime = 60;
             Item.useAnimation = 60;
             Item.value = 15000;
+            // Vanilla's ItemCheck gates ANY item with mana > 0 through CheckMana, so this both blocks the cast
+            // below 20 mana and routes through OnConsumeMana — which is what applies Unkindled's mana-regen delay.
+            Item.mana = ManaCost;
 
         }
 

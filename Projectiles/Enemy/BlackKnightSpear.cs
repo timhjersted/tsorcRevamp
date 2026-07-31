@@ -21,6 +21,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.width = 12;
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            // Route player impacts through the same death path as tile impacts so the spear breaks visibly.
+            Projectile.Kill();
+        }
+
         #region Kill
         public override void OnKill(int timeLeft)
         {

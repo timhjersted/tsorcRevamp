@@ -46,10 +46,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 throwingKnifeDamage = 20;
             }
             // "Throwing Knife" - quick aimed knife toss.
-            UsefulFunctions.AddAttack(NPC, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, telegraphTime: 25, commitFraction: 0f);
+            int throwingKnifeType = ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>();
+            UsefulFunctions.AddAttack(NPC, 160, throwingKnifeType, throwingKnifeDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, telegraphTime: 25, commitFraction: 0f);
 
             // paces around its post when it gives up.
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Standard(throwingKnifeDamage, (int)(throwingKnifeDamage * 1.25f));
+            globalNPC.ConfigureHumanoidMelee(meleeProfile);
+            CombatTempoProfile.Standard(globalNPC,
+                new CombatComboMove(throwingKnifeType, 92f, float.MaxValue, canRepeat: true, weight: 1.05f),
+                meleeProfile.CloseHop.ComboMove,
+                meleeProfile.LongHop.ComboMove);
             globalNPC.PatrolMode = NPCs.PatrolMode.Pace;
             globalNPC.NavSearchRadius = 70; // SmartFighter4AI movement
             globalNPC.CanUseRopes = true;
@@ -129,9 +136,10 @@ namespace tsorcRevamp.NPCs.Enemies
         public static Texture2D knifeTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimerCap * 3f / 4f)
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (globalNPC.ProjectileTimer >= globalNPC.ProjectileTimerCap * 3f / 4f || globalNPC.CombatMeleeActive)
             {
-                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
+                float rotation = globalNPC.CombatMeleeActive ? 0f : UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
                 SpriteEffects effects = NPC.spriteDirection > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
                 UsefulFunctions.EnsureLoaded(ref knifeTexture, "tsorcRevamp/NPCs/Enemies/TibianAmazon_Knife");

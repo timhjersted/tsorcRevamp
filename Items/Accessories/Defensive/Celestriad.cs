@@ -14,10 +14,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public static float damageResistance = 35f;
         public static int manaCost = 90;
         public static float MaxManaPercentIncrease = 50f;
-        public static float StaminaRegen = 15f;
         public static int regenDelay = 13;
         public static float BadDmgMultiplier = 25f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(damageResistance, manaCost, MaxManaPercentIncrease, StaminaRegen, regenDelay, BadDmgMultiplier);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(damageResistance, manaCost, MaxManaPercentIncrease, regenDelay, BadDmgMultiplier);
         public override void SetStaticDefaults()
         {
         }
@@ -46,8 +45,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            // Kept in both modes (and in either slot): the stamina-regen and max-mana boosts.
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRegen / 100f;
+            // Kept in both modes (and in either slot): the max-mana boost. The stamina-regen bonus was removed —
+            // this is a mana ward, and stamina regen belongs to the Chloranthy line rather than being sprinkled
+            // onto accessories that have nothing to do with it.
             player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier += MaxManaPercentIncrease;
 
             // Under Active Shields Revamp this ward blocks on demand (held, via FreeDodge, 360°, mana + a stamina

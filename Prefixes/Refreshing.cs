@@ -9,16 +9,26 @@ namespace tsorcRevamp.Prefixes
         public static float RefreshingPower = 4f;
         public virtual float _power => RefreshingPower / 100f;
 
-        public override float RollChance(Item item) //we don't want players getting it naturally
+        // NOTE: an older comment here claimed this prefix used PrefixCategory.Custom and that RollChance/CanRoll
+        // were ignored in favour of tsorcInstancedGlobalItem.ChoosePrefix. That was never true of the shipped
+        // code — Category below is Accessory, ChoosePrefix returns -1, and BOTH hooks below are live.
+        public override float RollChance(Item item)
         {
-            return 0.8f;                              //NOTE: Because we are using PrefixCategory.Custom, we should use ChoosePrefix from tsorcInstancedGlobalItem instead
+            return 0.8f; // weight relative to a standard accessory prefix (1f)
         }
 
-        public override bool CanRoll(Item item)     //This also gets ignored, do it via ChoosePrefix from tsorcInstancedGlobalItem
-            => true;
+        /// <summary>
+        /// Only mobility accessories may roll the stamina-regen prefixes.
+        ///
+        /// Reforging is unlimited, so without this a player could put Invigorating on all 7 accessory slots for
+        /// +56% stamina regen — larger than any single item in the game, and invisible to a per-item audit.
+        /// Gating by type rather than capping the stack means an ineligible accessory just rolls a normal prefix,
+        /// so no roll is ever silently wasted. Registry lives in tsorcRevamp.PopulateArrays().
+        /// </summary>
+        public override bool CanRoll(Item item)
+            => tsorcRevamp.StaminaPrefixAccessories != null
+               && tsorcRevamp.StaminaPrefixAccessories.Contains(item.type);
 
-
-        //Defaults to Custom
         public override PrefixCategory Category
             => PrefixCategory.Accessory;
 

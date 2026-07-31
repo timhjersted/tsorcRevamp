@@ -65,6 +65,21 @@ namespace tsorcRevamp.NPCs.Enemies
             hunterGlobalNPC.CanGoInvisible = true;
             hunterGlobalNPC.InvisibleAlpha = 200;
             EvasiveProfile.EvasiveCloak(hunterGlobalNPC, cloakChance: 0.20f, threatRange: 220);
+            hunterGlobalNPC.CanAdvanceAndShoot = true;
+            // Uses the fixed vanilla Skeleton Archer sheet: it has aim/fire frames but no walk-while-firing frames.
+            // AdvanceAndShoot may accelerate its approach between shots, but stop-to-fire must remain enabled.
+            hunterGlobalNPC.CanFireWhileAdvancing = false;
+            hunterGlobalNPC.AdvanceAndShootSpeedMultiplier = 1.5f;
+            hunterGlobalNPC.AdvanceAndShootAccelerationMultiplier = 1.4f;
+            hunterGlobalNPC.EvasiveQuickStep = true;
+            hunterGlobalNPC.QuickStepSpeed = 6.5f;
+            hunterGlobalNPC.QuickStepForwardRoom = 56f;
+            hunterGlobalNPC.QuickStepForwardChance = 0.85f;
+            hunterGlobalNPC.QuickStepMaxForwardTicks = 40;
+
+            int frostburnArrowType = ModContent.ProjectileType<Projectiles.Enemy.EnemyFrostburnArrow>();
+            CombatTempoProfile.Elite(hunterGlobalNPC, frostburnArrowType);
+
             // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
             // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
         }
@@ -141,6 +156,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.frameCounter = 0.0;
                 NPC.frame.Y = 0;
             }
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, true);
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         #region Gore

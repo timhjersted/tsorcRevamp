@@ -55,15 +55,28 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
             // "Ephemeral Axe Throw" — commitFraction 0.5: first half of the tell is stagger-cancellable (by magic, per
             // the ghost poise), second half is committed/hyperarmor.
-            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemyEphemeralThrowingAxeProj>(), warriorDamage, 8, SoundID.Item17, telegraphColor: Color.Orange, stopBeforeFiring: false, telegraphTime: 25, commitFraction: 0f);
+            int axeProjectileType = ModContent.ProjectileType<Projectiles.Enemy.EnemyEphemeralThrowingAxeProj>();
+            UsefulFunctions.AddAttack(NPC, 300, axeProjectileType, warriorDamage, 8, SoundID.Item17,
+                telegraphColor: Color.Orange, stopBeforeFiring: false, needsLineOfSight: true,
+                telegraphTime: 45, commitFraction: 0.5f, lockAimAtTelegraph: true);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Standard(
+                warriorDamage,
+                (int)(warriorDamage * 1.3f),
+                guardPressureUnblockable: true,
+                guardPressureTelegraphTicks: 90);
+            globalNPC.ConfigureHumanoidMelee(meleeProfile);
+            CombatTempoProfile.Standard(globalNPC,
+                new CombatComboMove(axeProjectileType, 96f, 360f, canRepeat: true, weight: 1f),
+                new CombatComboMove(CombatComboMoveKey.CloseHopMelee, 0f, 90f, canRepeat: true, weight: 1.15f),
+                new CombatComboMove(CombatComboMoveKey.LongHopMelee, 112f, 240f, canRepeat: false, weight: 0.95f));
             globalNPC.CanPassThroughWalls = true;
             EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
-            // Smart positioning: the thrown axe is short-range, so it may close to melee range within a 0-15 band.
-            globalNPC.KiteRangeMin = 0f;
-            globalNPC.KiteRangeMax = 15f;
-            globalNPC.KiteLooseness = 0.8f;
+            // Smart positioning: ordinary pressure favors a 4-13 tile band; distant projectile hits make it close.
+            globalNPC.KiteRangeMin = 4f;
+            globalNPC.KiteRangeMax = 13f;
+            globalNPC.KiteLooseness = 0.5f;
             globalNPC.HasGhostAfterimages = true;
             globalNPC.MaxJumpPower = 9f;
             globalNPC.MaxJumpBoost = 5f;
@@ -187,6 +200,48 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             return new Vector2(x, y);
         }
 
+        float GetMeleeAxeRotation(tsorcRevampGlobalNPC globalNPC)
+        {
+            int direction = globalNPC.ActiveCombatMeleeDirection;
+            float readyRotation = direction * 0.2f;
+            float windupRotation = direction * -0.9f;
+            float strikeRotation = direction * 1.35f;
+
+            if (globalNPC.ActiveCombatMeleeTimer <= globalNPC.ActiveCombatMeleeTelegraphTicks)
+            {
+                float windupProgress = MathHelper.SmoothStep(0f, 1f, globalNPC.CombatMeleeTelegraphProgress);
+                return MathHelper.Lerp(readyRotation, windupRotation, windupProgress);
+            }
+
+            if (globalNPC.InCombatMeleeHitWindow)
+            {
+                float swingProgress = MathHelper.SmoothStep(0f, 1f, globalNPC.CombatMeleeActiveProgress);
+                return MathHelper.Lerp(windupRotation, strikeRotation, swingProgress);
+            }
+
+            float recoveryProgress = MathHelper.SmoothStep(
+                0f, 1f, globalNPC.CombatMeleeFollowThroughProgress);
+            return MathHelper.Lerp(strikeRotation, readyRotation, recoveryProgress);
+        }
+
+        void DrawHeldAxe(SpriteBatch spriteBatch, Vector2 handPosition, float rotation, Color drawColor,
+            tsorcRevampGlobalNPC globalNPC)
+        {
+            if (globalNPC.ActiveAttackBypassesShield)
+            {
+                Vector2 axeHeadDirection = -Vector2.UnitY.RotatedBy(rotation);
+                Vector2 auraCenter = handPosition + axeHeadDirection * 18f * NPC.scale;
+                AttackTelegraphDraw.DrawUnblockableWeaponAura(
+                    spriteBatch, axeTexture, handPosition, null, rotation, AxeGripOrigin, NPC.scale * HeldAxeScale);
+                drawColor = Color.Lerp(drawColor, new Color(255, 65, 65), 0.8f);
+                Lighting.AddLight(auraCenter + Main.screenPosition, Color.Red.ToVector3() * 0.7f);
+            }
+
+            // AxeGripOrigin remains on CurrentHandWorld while only rotation changes, so the weapon never orbits
+            // or detaches from the fixed hand pixel during the windup, cleave, and recovery.
+            spriteBatch.Draw(axeTexture, handPosition, null, drawColor, rotation,
+                AxeGripOrigin, NPC.scale * HeldAxeScale, SpriteEffects.None, 0f);
+        }
         void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
         {
             if (handTexture == null)
@@ -211,15 +266,29 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/GhostFighter/GhostOfTheForgottenWarrior_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.ProjectileTimer >= globalNPC.ProjectileTimerCap - HeldAxeWindupTicks)
+            if (globalNPC.CombatMeleeActive)
             {
-                Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                float meleeRotation = GetMeleeAxeRotation(globalNPC);
+                DrawHeldAxe(spriteBatch, CurrentHandWorld() - Main.screenPosition, meleeRotation, drawColor, globalNPC);
+                DrawHandOverlay(spriteBatch, drawColor);
+                return;
+            }
+
+            if (!globalNPC.InCombatComboRecovery
+                && globalNPC.ProjectileTimer >= globalNPC.ProjectileTimerCap - HeldAxeWindupTicks)
+            {
+                Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.3f);
                 if (Main.rand.NextBool(3))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
                 }
-                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2 - (NPC.spriteDirection * HeldAxeRotationOffset);
-                spriteBatch.Draw(axeTexture, CurrentHandWorld() - Main.screenPosition, new Rectangle(0, 0, axeTexture.Width, axeTexture.Height), drawColor, rotation, AxeGripOrigin, NPC.scale * HeldAxeScale, SpriteEffects.None, 0);
+
+                Vector2 aimTarget = globalNPC.LockedShotTargetPosition != Vector2.Zero
+                    ? globalNPC.LockedShotTargetPosition
+                    : Main.player[NPC.target].Center;
+                float rotation = UsefulFunctions.Aim(NPC.Center, aimTarget, 1).ToRotation()
+                    + MathHelper.PiOver2 - NPC.spriteDirection * HeldAxeRotationOffset;
+                DrawHeldAxe(spriteBatch, CurrentHandWorld() - Main.screenPosition, rotation, drawColor, globalNPC);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
         }

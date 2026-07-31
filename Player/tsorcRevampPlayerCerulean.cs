@@ -31,6 +31,8 @@ namespace tsorcRevamp
         public bool isDrinking; //Whether or not the player is currently drinking estus
         public bool isCeruleanRestoring; //Whether or not the player is currently healing after drinking estus
 
+        public const float CeruleanRestorationTicksBase = 300f; //5 seconds for a charge to fully land
+        public const float CeruleanRestorationTicksUnkindled = 150f; //Unkindled resolves in 2.5s
         public const float ceruleanDrinkTimerMaxBase = 1.25f; //This is actually seconds. How long it takes to drink a charge
         public const float ceruleanManaFlowerStrength = 33.4f;
         public float ceruleanDrinkTimerReductionManaFlower = ceruleanDrinkTimerMaxBase * (ceruleanManaFlowerStrength / 100f);
@@ -94,7 +96,13 @@ namespace tsorcRevamp
             {
                 ceruleanRestorationTimerBonus = 1f + (ManaRegenPotRestorationTimerBonus / 100f) + (Player.manaRegenDelayBonus / (ManaRegenDelayBonusDivisor - 0.4f));
             }
-            ceruleanRestorationTimerMax = 300 * ceruleanRestorationTimerBonus; //base value does not affect the total mana restored
+            // Unkindled's charge lands in 2.5s instead of 5s. Total mana restored is unchanged — per-tick
+            // restoration divides by this same value — so this only shortens how long you are committed
+            // and mana-starved after drinking. Bearer of the Curse and Classic keep the full 5s.
+            float restorationTicks = Player.GetModPlayer<tsorcRevampPlayer>().Unkindled
+                ? CeruleanRestorationTicksUnkindled
+                : CeruleanRestorationTicksBase;
+            ceruleanRestorationTimerMax = restorationTicks * ceruleanRestorationTimerBonus;
             if (ModContent.GetInstance<tsorcRevampConfig>().DisableAutomaticQuickMana)
             {
                 Player.manaFlower = false;

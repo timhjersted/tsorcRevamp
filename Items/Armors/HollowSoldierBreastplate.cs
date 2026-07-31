@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Armors
                 player.lifeRegenTime = 0;
             }
             player.GetCritChance(DamageClass.Generic) += Dmg / 2;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + MaxStaminaAndRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += MaxStaminaAndRegen / 100f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStaminaAndRegen / 100f;
         }
         public override void AddRecipes()

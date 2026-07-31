@@ -33,7 +33,8 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             AnimationType = NPCID.Skeleton;
             Main.npcFrameCount[NPC.type] = 15;
             // "Venom Bolt" — long-range aimed arrow (green telegraph)
-            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 9, 8, SoundID.Item63, telegraphColor: Color.GreenYellow);
+            int venomBoltType = ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>();
+            UsefulFunctions.AddAttack(NPC, 180, venomBoltType, 9, 8, SoundID.Item63, telegraphColor: Color.GreenYellow);
 
             // Step 6: sniper gains a single re-acquire blink toward an elevated firing spot.
             tsorcRevampGlobalNPC sniperGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -42,6 +43,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             sniperGlobalNPC.PrefersHighGround = true;
             sniperGlobalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
             EvasiveProfile.DworcSniper(sniperGlobalNPC); // kite when meleed, quick-step through incoming fire
+            CombatTempoProfile.Standard(sniperGlobalNPC, venomBoltType);
 
             if (Main.hardMode)
             {
