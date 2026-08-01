@@ -39,8 +39,15 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawElandVenomProjectile(Projectile.Center, Projectile.velocity, new Vector2(60f, 20f), 0.9f);
+            return true;
+        }
+
         public override void OnKill(int timeLeft)
         {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.ElandVenomImpact);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,

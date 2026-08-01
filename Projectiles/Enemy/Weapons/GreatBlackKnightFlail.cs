@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -27,13 +29,36 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         private const int EmberCount = 7;
 
         // ai[] is already spoken for (owner index, spin flag) — localAI[0] is the base class's own tick counter,
-        // so the empowered roll lives in the other localAI slot. Rolled once in OnSpawn so it's stable for the
-        // whole throw rather than re-rolled every tick.
-        private bool Empowered => Projectile.localAI[1] == 1f;
+        // empowerment is instead a private bit synchronized through SendExtraAI/ReceiveExtraAI. The server rolls
+        // it once in OnSpawn, keeping the gameplay and the client-side shader presentation in agreement.
+        private bool empowered;
+        private Vector2 visualMotion;
+        private bool Empowered => empowered;
 
         public override void OnSpawn(IEntitySource source)
         {
-            Projectile.localAI[1] = Main.rand.NextFloat() < EmpoweredChance ? 1f : 0f;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                empowered = Main.rand.NextFloat() < EmpoweredChance;
+                Projectile.netUpdate = true;
+            }
+        }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(empowered);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => empowered = reader.ReadBoolean();
+
+        public override void AI()
+        {
+            Vector2 previousCenter = Projectile.Center;
+            base.AI();
+            visualMotion = Projectile.Center - previousCenter;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawGreatBlackKnightFlail(Projectile.Center, visualMotion, Empowered);
+            return base.PreDraw(ref lightColor);
         }
 
         protected override void OnFlailTick(NPC owner, Vector2 hand)

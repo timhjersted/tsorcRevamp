@@ -47,6 +47,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             return true;
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = 1f - Projectile.timeLeft / 600f;
+            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 36f, progress, true, false);
+            return true;
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Poisoned, 12 * 60, false);

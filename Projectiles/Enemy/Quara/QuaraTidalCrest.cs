@@ -150,6 +150,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         ///renders above projectiles, so the sculpture layers on top of it automatically.</summary>
         public override bool PreDraw(ref Color lightColor)
         {
+            EnemyVFX.DrawQuaraTidalCrest(Projectile.Center, new Vector2(Projectile.width, Projectile.height), Direction);
             if (!DrawWaveSprite)
             {
                 return false;

@@ -37,7 +37,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         Vector2 initialVelocity;
         public override void AI()
         {
-            Dust.NewDustPerfect(Projectile.Center, 29, null, 200, default, 3).noGravity = true;
+            if (Main.rand.NextBool(4))
+            {
+                Dust.NewDustPerfect(Projectile.Center, 29, null, 200, default, 1.4f).noGravity = true;
+            }
 
             if (initialVelocity == Vector2.Zero)
             {
@@ -62,6 +65,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 target.AddBuff(BuffID.Wet, 5 * 60); //soaked — ink sticks to a wet target
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawQuaraBubble(Projectile.Center, Vector2.One * 24f, 0.5f, Soaking);
+            return true;
         }
 
         public override bool PreKill(int timeLeft)

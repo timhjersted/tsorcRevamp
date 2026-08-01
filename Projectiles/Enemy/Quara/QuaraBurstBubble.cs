@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             //The shell: a shimmering ring of water dust + the occasional inner gleam
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 1; i++)
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
                 Vector2 pos = Projectile.Center + angle.ToRotationVector2() * 17f;
@@ -61,6 +61,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             Lighting.AddLight(Projectile.Center, 0.2f, 0.35f, 0.55f);
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = 1f - Projectile.timeLeft / 240f;
+            EnemyVFX.DrawQuaraBubble(Projectile.Center, Vector2.One * 38f, progress, true);
+            return false;
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Wet, 5 * 60);
@@ -68,6 +75,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.QuaraWaterBurst);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item54 with { Volume = 0.7f, Pitch = 0.2f }, Projectile.Center);
             for (int i = 0; i < 16; i++)
             {

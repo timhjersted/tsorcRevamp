@@ -45,8 +45,15 @@ namespace tsorcRevamp.Projectiles.Enemy
             target.AddBuff(BuffID.Poisoned, 6 * 60, false);
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawElandVenomProjectile(Projectile.Center, Projectile.velocity, new Vector2(54f, 18f));
+            return true;
+        }
+
         public override void OnKill(int timeLeft)
         {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.ElandVenomImpact);
             for (int i = 0; i < 8; i++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Poisoned, 0f, 0f, 100, default, 1.3f);

@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -39,12 +40,19 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
             }
 
-            if (Main.rand.NextBool(3))
+            if (Main.rand.NextBool(6))
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Poisoned, 0f, 0f, 150, default, 1f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 0.2f;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = 1f - Projectile.timeLeft / (10f * 60f);
+            EnemyVFX.DrawElandToxicField(Projectile.Center, new Vector2(Projectile.width, Projectile.height), progress, true, false);
+            return true;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

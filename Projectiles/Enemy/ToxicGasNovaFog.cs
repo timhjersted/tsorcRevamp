@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.hide = true; // dust-only visual, no sprite
+            Projectile.hide = false; //transparent placeholder; shader is drawn in PreDraw
             Projectile.light = 0.4f;
             Projectile.timeLeft = 4 * 60;
         }
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             float radius = Projectile.width / 2f;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 1; i++)
             {
                 Vector2 spot = Projectile.Center + Main.rand.NextVector2Circular(radius, radius);
                 int dust = Dust.NewDust(spot, 1, 1, DustID.Poisoned, 0f, 0f, 150, default, 1.6f);
@@ -49,12 +49,22 @@ namespace tsorcRevamp.Projectiles.Enemy
             Lighting.AddLight(Projectile.Center, 0.1f, 0.4f, 0.1f);
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = 1f - Projectile.timeLeft / (4f * 60f);
+            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * Diameter, progress, true, true);
+            return false;
+        }
+
         // True circular hit-test instead of the square AABB, so only players genuinely inside the
         // 400px blast radius (not just inside its bounding box) take the hit.
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float radius = Projectile.width / 2f;
-            return Vector2.DistanceSquared(Projectile.Center, targetHitbox.Center.ToVector2()) <= radius * radius;
+            Vector2 closest = Vector2.Clamp(Projectile.Center,
+                new Vector2(targetHitbox.Left, targetHitbox.Top),
+                new Vector2(targetHitbox.Right, targetHitbox.Bottom));
+            return Vector2.DistanceSquared(Projectile.Center, closest) <= radius * radius;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.hide = true; // dust-only visual, no sprite
+            Projectile.hide = false; //transparent placeholder; shader is drawn in PreDraw
             Projectile.light = 0.4f;
             Projectile.timeLeft = 6 * 60;
         }
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             // Fill the box with lazily-drifting toxic dust; fades in/out with remaining lifetime.
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(5))
             {
                 Vector2 spot = Projectile.position + new Vector2(Main.rand.NextFloat(Projectile.width), Main.rand.NextFloat(Projectile.height));
                 int dust = Dust.NewDust(spot, 1, 1, DustID.Poisoned, 0f, 0f, 150, default, 1.4f);
@@ -46,6 +46,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             Lighting.AddLight(Projectile.Center, 0.05f, 0.3f, 0.05f);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = 1f - Projectile.timeLeft / (6f * 60f);
+            EnemyVFX.DrawElandToxicField(Projectile.Center, new Vector2(Projectile.width, Projectile.height), progress, true, false);
+            return false;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

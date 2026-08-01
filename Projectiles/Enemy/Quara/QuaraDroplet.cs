@@ -42,6 +42,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             target.AddBuff(BuffID.Wet, 4 * 60);
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawQuaraBubble(Projectile.Center, Vector2.One * 13f, 0.5f, false);
+            return false;
+        }
+
         public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.3f, Pitch = 0.5f }, Projectile.Center);

@@ -186,7 +186,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.rotation *= 0.85f;
 
             //Idle identity: dripping wet, faint blue staff glow, the occasional gurgle
-            if (Main.rand.NextBool(5))
+            if (Main.rand.NextBool(8))
             {
                 Vector2 pos = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height * 0.6f));
                 int drip = Dust.NewDust(pos, 4, 4, DustID.Water, 0f, 1f, 100, default, 0.8f);
@@ -344,7 +344,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 //BLUE: water gathering into the staff
                 float progress = AttackTimer / (float)BarrageTelegraphTicks;
-                for (int i = 0; i < 1 + (int)(progress * 2f); i++)
+                for (int i = 0; i < 1 + (int)progress; i++)
                 {
                     float angle = Main.rand.NextFloat(MathHelper.TwoPi);
                     Vector2 pos = StaffTip + angle.ToRotationVector2() * Main.rand.NextFloat(8f, 24f);
@@ -381,10 +381,10 @@ namespace tsorcRevamp.NPCs.Enemies
                     SoundEngine.PlaySound(SoundID.Item21 with { Volume = 0.6f, Pitch = -0.4f }, NPC.Center);
                 }
                 //CYAN at the staff while water visibly mounds at its feet — the wave forming
-                int staff = Dust.NewDust(StaffTip, 4, 4, DustID.Water, 0f, -1f, 60, default, 1.2f);
-                Main.dust[staff].noGravity = true;
-                if (Main.rand.NextBool(2))
+                if (Main.rand.NextBool(3))
                 {
+                    int staff = Dust.NewDust(StaffTip, 4, 4, DustID.Water, 0f, -1f, 60, default, 1.2f);
+                    Main.dust[staff].noGravity = true;
                     Vector2 pos = new Vector2(NPC.position.X + Main.rand.NextFloat(NPC.width) + NPC.direction * 12f, NPC.Bottom.Y - 6f);
                     int mound = Dust.NewDust(pos, 4, 4, DustID.Water, 0f, -2f, 80, default, 1.2f);
                     Main.dust[mound].noGravity = true;
@@ -429,7 +429,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 //The bubble visibly inflating at the staff
                 float progress = AttackTimer / (float)BurstCastTicks;
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     float angle = Main.rand.NextFloat(MathHelper.TwoPi);
                     Vector2 pos = StaffTip + angle.ToRotationVector2() * (6f + progress * 14f);
@@ -522,9 +522,16 @@ namespace tsorcRevamp.NPCs.Enemies
                     Main.dust[splash].noGravity = true;
                 }
                 //Soaks anyone it flows through (no contact damage — NPC.damage is 0)
-                if (!player.dead && NPC.Hitbox.Intersects(player.Hitbox))
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    player.AddBuff(BuffID.Wet, 5 * 60);
+                    for (int i = 0; i < Main.maxPlayers; i++)
+                    {
+                        Player soakedPlayer = Main.player[i];
+                        if (soakedPlayer.active && !soakedPlayer.dead && NPC.Hitbox.Intersects(soakedPlayer.Hitbox))
+                        {
+                            soakedPlayer.AddBuff(BuffID.Wet, 5 * 60);
+                        }
+                    }
                 }
                 bool arrived = (rushDir > 0 && NPC.Center.X >= rushDestX) || (rushDir < 0 && NPC.Center.X <= rushDestX);
                 if (arrived || (NPC.collideX && AttackTimer > RushDissolveTicks + 8))
@@ -568,6 +575,76 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
             }
+        }
+
+        public override bool PreDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            bool hiddenSurge = State == AttackState.TideRush
+                && AttackTimer > RushDissolveTicks
+                && AttackTimer <= RushDissolveTicks + RushMaxSurgeTicks;
+            return !hiddenSurge;
+        }
+
+        public override void PostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (State == AttackState.None)
+            {
+                return;
+            }
+
+            if (State == AttackState.TideRush)
+            {
+                if (AttackTimer <= RushDissolveTicks)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawQuaraTideRush(NPC.Center,
+                        new Vector2(NPC.width, NPC.height), AttackTimer / (float)RushDissolveTicks, false, NPC.direction);
+                }
+                else if (AttackTimer <= RushDissolveTicks + RushMaxSurgeTicks)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawQuaraTideRush(NPC.Center,
+                        new Vector2(NPC.width, NPC.height), 1f, false, rushDir);
+                }
+                else
+                {
+                    float reform = MathHelper.Clamp((AttackTimer - RushDissolveTicks - RushMaxSurgeTicks) / (float)RushReformTicks, 0f, 1f);
+                    Projectiles.Enemy.EnemyVFX.DrawQuaraTideRush(NPC.Center,
+                        new Vector2(NPC.width, NPC.height), reform, true, rushDir);
+                }
+                return;
+            }
+
+            float progress;
+            int pattern;
+            switch (State)
+            {
+                case AttackState.BubbleBarrage:
+                    if (AttackTimer > BarrageTelegraphTicks + 12)
+                        return;
+                    progress = MathHelper.Clamp(AttackTimer / (float)BarrageTelegraphTicks, 0f, 1f);
+                    pattern = 0;
+                    break;
+                case AttackState.TidalCrest:
+                    if (AttackTimer > CrestTelegraphTicks)
+                        return;
+                    progress = MathHelper.Clamp(AttackTimer / (float)CrestTelegraphTicks, 0f, 1f);
+                    pattern = 1;
+                    break;
+                case AttackState.BurstBubble:
+                    if (AttackTimer > BurstCastTicks)
+                        return;
+                    progress = MathHelper.Clamp(AttackTimer / (float)BurstCastTicks, 0f, 1f);
+                    pattern = 2;
+                    break;
+                case AttackState.InkGeyser:
+                    if (AttackTimer > InkTelegraphTicks)
+                        return;
+                    progress = MathHelper.Clamp(AttackTimer / (float)InkTelegraphTicks, 0f, 1f);
+                    pattern = 3;
+                    break;
+                default:
+                    return;
+            }
+            Projectiles.Enemy.EnemyVFX.DrawQuaraCast(StaffTip, progress, pattern);
         }
 
         #region Gore

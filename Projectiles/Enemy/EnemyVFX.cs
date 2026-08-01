@@ -13,7 +13,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         BlackKnightMoonfuryBlast,
         BlackKnightSpearImpact,
         DemonSpiritSoulBurst,
-        EvilEyeFlameImpact
+        EvilEyeFlameImpact,
+        ElandVenomImpact,
+        QuaraWaterBurst,
+        QuaraInkBurst
     }
 
     internal static class EnemyVFX
@@ -33,6 +36,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Effect> evilEyeChargeLane;
         static Asset<Effect> evilEyeNovaHalo;
         static Asset<Effect> evilEyeFlameTrail;
+        static Asset<Effect> elandToxicVFX;
+        static Asset<Effect> quaraWaterVFX;
+        static Asset<Effect> quaraInkVFX;
+        static Asset<Effect> greatBlackKnightFlail;
 
         static Asset<Texture2D> circle;
         static Asset<Texture2D> gradient;
@@ -54,6 +61,18 @@ namespace tsorcRevamp.Projectiles.Enemy
         static readonly Color EyeDark = new(8, 12, 34);
         static readonly Color EyeMid = new(54, 112, 226);
         static readonly Color EyeCore = new(214, 246, 255);
+        static readonly Color ToxicDark = new(8, 25, 8);
+        static readonly Color ToxicMid = new(66, 176, 54);
+        static readonly Color ToxicCore = new(213, 255, 133);
+        static readonly Color WaterDark = new(5, 25, 52);
+        static readonly Color WaterMid = new(32, 150, 221);
+        static readonly Color WaterCore = new(213, 249, 255);
+        static readonly Color InkDark = new(3, 3, 9);
+        static readonly Color InkMid = new(30, 25, 67);
+        static readonly Color InkCore = new(142, 197, 226);
+        static readonly Color FrostCurseDark = new(4, 7, 18);
+        static readonly Color FrostCurseMid = new(42, 78, 142);
+        static readonly Color FrostCurseCore = new(204, 241, 255);
 
         static void LoadAssets()
         {
@@ -74,6 +93,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             evilEyeChargeLane ??= ModContent.Request<Effect>(EffectRoot + "EvilEyeChargeLane", AssetRequestMode.ImmediateLoad);
             evilEyeNovaHalo ??= ModContent.Request<Effect>(EffectRoot + "EvilEyeNovaHalo", AssetRequestMode.ImmediateLoad);
             evilEyeFlameTrail ??= ModContent.Request<Effect>(EffectRoot + "EvilEyeFlameTrail", AssetRequestMode.ImmediateLoad);
+            elandToxicVFX ??= ModContent.Request<Effect>(EffectRoot + "ElandToxicVFX", AssetRequestMode.ImmediateLoad);
+            quaraWaterVFX ??= ModContent.Request<Effect>(EffectRoot + "QuaraWaterVFX", AssetRequestMode.ImmediateLoad);
+            quaraInkVFX ??= ModContent.Request<Effect>(EffectRoot + "QuaraInkVFX", AssetRequestMode.ImmediateLoad);
+            greatBlackKnightFlail ??= ModContent.Request<Effect>(EffectRoot + "GreatBlackKnightFlail", AssetRequestMode.ImmediateLoad);
 
             circle ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_CircleFit1", AssetRequestMode.ImmediateLoad);
             gradient ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Gradient_circle22", AssetRequestMode.ImmediateLoad);
@@ -286,6 +309,116 @@ namespace tsorcRevamp.Projectiles.Enemy
                 0.95f, 0.5f, seeking ? 1f : 0f, 1f);
         }
 
+        internal static void DrawElandToxicField(Vector2 center, Vector2 size, float progress, bool active, bool circular)
+        {
+            LoadAssets();
+            Draw(elandToxicVFX, "ElandToxicField", circle, brokenNoise,
+                center, size, 0f, ToxicDark, ToxicMid, ToxicCore,
+                active ? 0.78f : 0.68f, progress, active ? 1f : 0f, circular ? 1f : 0f,
+                BlendState.AlphaBlend);
+        }
+
+        internal static void DrawElandVenomProjectile(Vector2 center, Vector2 velocity, Vector2 size, float opacity = 0.8f)
+        {
+            Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
+            LoadAssets();
+            Draw(elandToxicVFX, "ElandVenomGlob", windstreak, brokenNoise,
+                center - direction * size.X * 0.28f, size, direction.ToRotation(),
+                ToxicDark, ToxicMid, ToxicCore, opacity, 0.5f, 1f, 1f);
+        }
+
+        internal static void DrawQuaraCast(Vector2 center, float progress, int pattern)
+        {
+            LoadAssets();
+            Color mid = pattern == 3 ? new Color(28, 42, 78) : WaterMid;
+            Color core = pattern == 3 ? InkCore : WaterCore;
+            Draw(quaraWaterVFX, "QuaraWaterCast", circle, smoothNoise,
+                center, Vector2.One * (58f + pattern * 5f), pattern * 0.22f,
+                WaterDark, mid, core, 0.76f, progress, pattern, 1f);
+        }
+
+        internal static void DrawQuaraBubble(Vector2 center, Vector2 size, float progress, bool pressurized)
+        {
+            LoadAssets();
+            Draw(quaraWaterVFX, "QuaraBubble", circle, smoothNoise,
+                center, size, 0f, WaterDark, WaterMid, WaterCore,
+                0.88f, progress, pressurized ? 1f : 0f, 1f, BlendState.AlphaBlend);
+        }
+
+        internal static void DrawQuaraTidalCrest(Vector2 center, Vector2 size, int direction)
+        {
+            LoadAssets();
+            Draw(quaraWaterVFX, "QuaraTidalCrest", gradient, smoothNoise,
+                center, size, 0f, WaterDark, WaterMid, WaterCore,
+                0.82f, 0.5f, 1f, direction, BlendState.AlphaBlend);
+        }
+
+        internal static void DrawQuaraTideRush(Vector2 center, Vector2 size, float progress, bool reforming, int direction)
+        {
+            LoadAssets();
+            Draw(quaraWaterVFX, "QuaraTideRush", gradient, smoothNoise,
+                center, size, 0f, WaterDark, WaterMid, WaterCore,
+                0.84f, progress, reforming ? 1f : 0f, direction, BlendState.AlphaBlend);
+            if (!reforming)
+            {
+                Draw(quaraWaterVFX, "QuaraTidalCrest", windstreak, smoothNoise,
+                    center - new Vector2(direction * 20f, 0f), new Vector2(64f, size.Y), 0f,
+                    WaterDark, WaterMid, WaterCore, 0.34f, progress, 1f, direction, BlendState.AlphaBlend);
+            }
+        }
+
+        internal static void DrawQuaraInkGeyser(Vector2 center, float progress, bool active)
+        {
+            LoadAssets();
+            Draw(quaraInkVFX, "QuaraInkGeyser", circle, brokenNoise,
+                center, Vector2.One * 80f, 0f, InkDark, InkMid, InkCore,
+                active ? 0.9f : 0.72f, progress, active ? 1f : 0f, 1f, BlendState.AlphaBlend);
+        }
+
+        internal static void DrawQuaraInkJet(Vector2 center, Vector2 velocity)
+        {
+            Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
+            LoadAssets();
+            Draw(quaraInkVFX, "QuaraInkJet", windstreak, brokenNoise,
+                center - direction * 31f, new Vector2(82f, 26f), direction.ToRotation(),
+                InkDark, InkMid, InkCore, 0.84f, 0.5f, 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        internal static void DrawGreatBlackKnightFlail(Vector2 center, Vector2 motion, bool empowered)
+        {
+            LoadAssets();
+            if (motion.LengthSquared() > 0.25f)
+            {
+                Vector2 direction = motion.SafeNormalize(Vector2.UnitX);
+                Draw(greatBlackKnightFlail, "GreatBlackKnightFlailTrail", windstreak, brokenNoise,
+                    center - direction * 34f, new Vector2(92f, 34f), direction.ToRotation(),
+                    FrostCurseDark, FrostCurseMid, FrostCurseCore,
+                    empowered ? 0.78f : 0.42f, 0.5f, empowered ? 1f : 0f, 1f, BlendState.AlphaBlend);
+            }
+            Draw(greatBlackKnightFlail, "GreatBlackKnightFlailHead", gradient, brokenNoise,
+                center, Vector2.One * (empowered ? 62f : 50f), 0f,
+                FrostCurseDark, FrostCurseMid, FrostCurseCore,
+                empowered ? 0.9f : 0.54f, 0.5f, empowered ? 1f : 0f, 1f, BlendState.AlphaBlend);
+        }
+
+        internal static void DrawGreatBlackKnightFlailPulse(Vector2 center, float progress)
+        {
+            LoadAssets();
+            Draw(greatBlackKnightFlail, "GreatBlackKnightFlailPulse", circle, brokenNoise,
+                center, Vector2.One * 110f, 0f, FrostCurseDark, FrostCurseMid, FrostCurseCore,
+                0.9f, progress, 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        internal static void DrawGreatBlackKnightEmber(Vector2 center, Vector2 velocity, Vector2 size, float opacity)
+        {
+            Vector2 direction = velocity.SafeNormalize(-Vector2.UnitY);
+            LoadAssets();
+            Draw(greatBlackKnightFlail, "GreatBlackKnightFlailEmber", windstreak, smoothNoise,
+                center - direction * size.X * 0.25f, size, direction.ToRotation(),
+                FrostCurseDark, FrostCurseMid, FrostCurseCore, opacity, 0.5f, 1f, 1f,
+                BlendState.AlphaBlend);
+        }
+
         internal static void DrawBurst(EnemyVFXBurstKind kind, Vector2 center, float progress, float opacity)
         {
             LoadAssets();
@@ -313,6 +446,21 @@ namespace tsorcRevamp.Projectiles.Enemy
                 case EnemyVFXBurstKind.EvilEyeFlameImpact:
                     Draw(evilEyeFlameTrail, "EvilEyeFlameImpact", circle, smoothNoise,
                         center, Vector2.One * 48f, 0f, EyeDark, EyeMid, EyeCore, opacity, progress, 1f, 1f);
+                    break;
+                case EnemyVFXBurstKind.ElandVenomImpact:
+                    Draw(elandToxicVFX, "ElandVenomImpact", circle, brokenNoise,
+                        center, Vector2.One * 92f, 0f, ToxicDark, ToxicMid, ToxicCore,
+                        opacity, progress, 1f, 1f, BlendState.AlphaBlend);
+                    break;
+                case EnemyVFXBurstKind.QuaraWaterBurst:
+                    Draw(quaraWaterVFX, "QuaraWaterBurst", circle, smoothNoise,
+                        center, Vector2.One * 104f, 0f, WaterDark, WaterMid, WaterCore,
+                        opacity, progress, 1f, 1f, BlendState.AlphaBlend);
+                    break;
+                case EnemyVFXBurstKind.QuaraInkBurst:
+                    Draw(quaraInkVFX, "QuaraInkBurst", circle, brokenNoise,
+                        center, Vector2.One * 92f, 0f, InkDark, InkMid, InkCore,
+                        opacity, progress, 1f, 1f, BlendState.AlphaBlend);
                     break;
             }
         }
@@ -385,6 +533,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             EnemyVFXBurstKind.BlackKnightMoonfuryBlast => 20,
             EnemyVFXBurstKind.DemonSpiritSoulBurst => 18,
+            EnemyVFXBurstKind.QuaraWaterBurst => 18,
             _ => 14
         };
 

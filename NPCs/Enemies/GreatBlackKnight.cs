@@ -748,6 +748,44 @@ namespace tsorcRevamp.NPCs.Enemies
             spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
         }
 
+        void DrawGreatBlackKnightMagicOverlays(Phase phase, AttackKind currentAttack)
+        {
+            bool active = phase == Phase.Telegraph || phase == Phase.Committed;
+            if (active)
+            {
+                int duration = phase == Phase.Telegraph
+                    ? TelegraphTicksByAttack[(int)currentAttack]
+                    : CommitTicksByAttack[(int)currentAttack];
+                float progress = MathHelper.Clamp(NPC.ai[1] / Math.Max(1f, duration - 1f), 0f, 1f);
+                Vector2 hand = CurrentHandWorld();
+
+                if (currentAttack == AttackKind.Homing)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightHexCrystal(hand, Vector2.Zero, progress, phase == Phase.Committed);
+                }
+                else if (currentAttack == AttackKind.Ultrakill)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center,
+                        phase == Phase.Telegraph ? progress : 1f);
+                    if (phase == Phase.Committed && storedPlayerPosition != Vector2.Zero)
+                    {
+                        Projectiles.Enemy.EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition, progress);
+                    }
+                }
+                else if (currentAttack == AttackKind.Flail)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawGreatBlackKnightFlail(hand, Vector2.Zero, phase == Phase.Committed);
+                }
+            }
+
+            ulong stormCycle = Main.GameUpdateCount % 420;
+            if (NPC.life <= NPC.lifeMax / 3 && stormCycle >= 400)
+            {
+                float stormProgress = MathHelper.Clamp((stormCycle - 400f) / 20f, 0f, 1f);
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightHexCrystal(NPC.Center, Vector2.Zero, stormProgress, false);
+            }
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (spearTexture == null || spearTexture.IsDisposed)
@@ -776,6 +814,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 spearAim = phase == Phase.Committed ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
+                if (phase == Phase.Committed)
+                {
+                    Vector2 forward = spearAim.SafeNormalize(new Vector2(NPC.spriteDirection, 0f));
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                        handWorld + Main.screenPosition + forward * 34f,
+                        forward.ToRotation(), new Vector2(74f, 16f), 0.52f);
+                }
                 spriteBatch.Draw(spearTexture, handWorld, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, SpearGripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
@@ -785,9 +830,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 bombAim = phase == Phase.Committed ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                float fuseProgress = phase == Phase.Telegraph
+                    ? MathHelper.Clamp(NPC.ai[1] / TelegraphTicksByAttack[(int)AttackKind.Bomb], 0f, 1f)
+                    : 1f;
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightMoonfury(
+                    handWorld + Main.screenPosition, Vector2.Zero, fuseProgress, phase == Phase.Committed);
                 spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
+
+            DrawGreatBlackKnightMagicOverlays(phase, currentAttack);
         }
         #endregion
 

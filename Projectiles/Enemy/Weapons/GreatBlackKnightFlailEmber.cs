@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.penetrate = 1;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.light = 0.3f;
-            Projectile.hide = true;
+            Projectile.hide = false;
         }
 
         public override void AI()
@@ -42,11 +42,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 Projectile.velocity.Y = 16f;
             }
 
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(5))
             {
                 Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.IceTorch, Projectile.velocity * 0.2f, 100, default, 1f);
                 dust.noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawGreatBlackKnightEmber(Projectile.Center, Projectile.velocity, new Vector2(48f, 16f), 0.84f);
+            return false;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -115,7 +121,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.light = 0.5f;
-            Projectile.hide = true;
+            Projectile.hide = false;
         }
 
         public override void AI()
@@ -128,12 +134,23 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             normal.Normalize();
             Projectile.velocity = Vector2.Zero;
 
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(6))
             {
                 Vector2 dustPos = Projectile.Center - normal * 4f + Main.rand.NextVector2Circular(6f, 6f);
                 Vector2 dustVel = normal * Main.rand.NextFloat(0.4f, 1.2f) + Main.rand.NextVector2Circular(0.3f, 0.3f);
                 Dust.NewDustPerfect(dustPos, DustID.IceTorch, dustVel, 100, default, Main.rand.NextFloat(1f, 1.8f)).noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Vector2 normal = new Vector2(Projectile.ai[0], Projectile.ai[1]);
+            if (normal == Vector2.Zero)
+            {
+                normal = -Vector2.UnitY;
+            }
+            EnemyVFX.DrawGreatBlackKnightEmber(Projectile.Center, normal, new Vector2(34f, 20f), 0.68f);
+            return false;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

@@ -52,7 +52,13 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
+            EnemyVFX.DrawQuaraInkJet(Projectile.Center, Projectile.velocity);
             return false;
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.QuaraInkBurst);
         }
     }
 }
