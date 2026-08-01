@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -27,6 +28,17 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.Kill();
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Projectile.ai[2] == 1f)
+            {
+                Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+                RedKnightVFX.DrawSpearWake(Projectile.Center - direction * 28f,
+                    direction.ToRotation(), new Vector2(82f, 18f), 0.64f, empowered: false);
+            }
+            return true;
+        }
+
         #region Kill
         public override void OnKill(int timeLeft)
         {
@@ -38,6 +50,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 0;
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+                if (Projectile.ai[2] == 1f && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                        ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
+                        (float)RedKnightBurstKind.SpearImpact, 0.85f);
+                }
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);

@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -63,6 +64,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             return false;*/
             Projectile.timeLeft = 2;
             return false;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Projectile.ai[2] == 1f && Projectile.timeLeft > 2)
+            {
+                float progress = MathHelper.Clamp((240f - Projectile.timeLeft) / 210f, 0f, 1f);
+                RedKnightVFX.DrawBombFuse(Projectile.Center, progress, planted: false);
+            }
+            return true;
         }
         public override void AI()
         {
@@ -142,12 +153,20 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Play explosion sound
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
 
-            // Fire Dust spawn
-            for (int i = 0; i < 200; i++)
+            if (Projectile.ai[2] == 1f && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                    ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
+                    (float)RedKnightBurstKind.BombExplosion, 1f);
+            }
+
+            // Knight bombs use a shader burst with a 120px footprint, matching their actual explosion hitbox.
+            int dustCount = Projectile.ai[2] == 1f ? 28 : 200;
+            for (int i = 0; i < dustCount; i++)
             {
                 int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 2f);
                 Main.dust[dustIndex].noGravity = true;
-                Main.dust[dustIndex].velocity *= 3.5f;
+                Main.dust[dustIndex].velocity *= Projectile.ai[2] == 1f ? 2.4f : 3.5f;
             }
             // Large Smoke Gore spawn
             for (int g = 0; g < 2; g++)

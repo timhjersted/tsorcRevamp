@@ -27,11 +27,21 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            for (int i = 0; i < 2; i++)
+            int dustCount = Projectile.ai[2] == 1f ? 1 : 2;
+            for (int i = 0; i < dustCount; i++)
             {
                 Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(8f, 8f), DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120, default, 1.3f);
                 dust.noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Projectile.ai[2] == 1f)
+            {
+                RedKnightVFX.DrawToxicMotes(Projectile.Center, 3, 0.8f, 12f);
+            }
+            return true;
         }
 
         public override bool PreKill(int timeLeft)

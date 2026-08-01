@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -39,8 +40,16 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-            EnemyVFX.DrawBlackKnightSpearWake(Projectile.Center - direction * 34f,
-                direction.ToRotation(), new Vector2(92f, 20f), 0.72f);
+            if (Projectile.ai[2] == 1f)
+            {
+                RedKnightVFX.DrawSpearWake(Projectile.Center - direction * 34f,
+                    direction.ToRotation(), new Vector2(102f, 22f), 0.82f, empowered: true);
+            }
+            else
+            {
+                EnemyVFX.DrawBlackKnightSpearWake(Projectile.Center - direction * 34f,
+                    direction.ToRotation(), new Vector2(92f, 20f), 0.72f);
+            }
             return true;
         }
 
@@ -72,7 +81,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 0;
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit54, Projectile.Center); //death sound
-                EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightSpearImpact);
+                if (Projectile.ai[2] == 1f && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                        ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
+                        (float)RedKnightBurstKind.SpearImpact, 1.15f);
+                }
+                else
+                {
+                    EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightSpearImpact);
+                }
                 if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), Projectile.damage, 3f, Projectile.owner);
                 Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int arg_1394_1 = Projectile.width;

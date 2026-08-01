@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -14,7 +15,7 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
     [AutoloadBossHead]
-    class GreatRedKnight : ModNPC
+    class GreatRedKnight : ModNPC, IHumanoidMeleeHitEffects
     {
         public int poisonStrikeDamage = 35;
         public int redKnightsSpearDamage = 45;
@@ -22,6 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public int redKnightsGreatDamage = 50;
 
         Vector2 storedPlayerPosition = Vector2.Zero;
+        readonly RedKnightAttackController specialAttacks = new RedKnightAttackController();
 
         public int framesSinceStoredPosition = 0;
 
@@ -90,6 +92,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             get => Main.player[NPC.target];
         }
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(storedPlayerPosition.X);
+            writer.Write(storedPlayerPosition.Y);
+            specialAttacks.Send(writer);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            storedPlayerPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            specialAttacks.Receive(reader);
+        }
+
         #region On Hit
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
@@ -110,9 +125,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4, canDodgeroll: true);
-            tsorcRevampAIs.LeapAtPlayer(NPC, 7, 5, 1.5f, 128);
-
             // Proximity Debuffs
             if (NPC.Distance(player.Center) < 700)
             {
@@ -120,10 +132,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1 * 60, false);
             }
 
+            specialAttacks.TickCooldowns();
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            KnightAttackStats attackStats = new KnightAttackStats(redKnightsSpearDamage, redMagicDamage, redKnightsGreatDamage);
+            if (specialAttacks.Active)
+            {
+                specialAttacks.Tick(NPC, player, attackStats);
+                Lighting.AddLight(NPC.Center, new Color(190, 35, 30).ToVector3() * 0.65f);
+                return;
+            }
+
+            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4, canDodgeroll: true);
+            tsorcRevampAIs.LeapAtPlayer(NPC, 7, 5, 1.5f, 128);
+
             Vector2 targetPosition = Vector2.Zero;
 
             //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            if (specialAttacks.TryStartGreat(NPC, player, globalNPC))
+            {
+                specialAttacks.Tick(NPC, player, attackStats);
+                return;
+            }
 
             // Hyper-armor window: FLASH telegraph → fire only. Windup excluded so a stagger can interrupt it.
             // Spear 180→210, poison 300→375, attack4 450→485, DD2/bomb 725→955.
@@ -271,7 +302,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     speed += Main.player[NPC.target].velocity;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
@@ -300,7 +331,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     speed.Y += Main.rand.NextFloat(-1f, 1f); //adds random variation from -1 to 2
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
@@ -469,7 +500,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // DD2DrakinShot Attack Telegraph at 1/2 health
-                if ((NPC.ai[1] == 725 || NPC.ai[1] == 825) && NPC.life <= NPC.lifeMax / 2)
+                if ((NPC.ai[1] == 725 || NPC.ai[1] == 825) && specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -482,7 +513,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 // DD2DrakinShot Attack at 1/2 health
-                if ((NPC.ai[1] >= 750 && NPC.ai[1] < 800 || NPC.ai[1] >= 850 && NPC.ai[1] < 900) && NPC.life <= NPC.lifeMax / 2 && hasPlayerLOS)
+                if ((NPC.ai[1] >= 750 && NPC.ai[1] < 800 || NPC.ai[1] >= 850 && NPC.ai[1] < 900) && specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2 && hasPlayerLOS)
                 {
                     bool clearSpace = true;
                     for (int i = 0; i < 15; i++)
@@ -558,7 +589,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
 
@@ -585,7 +616,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
 
@@ -647,16 +678,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Ultrakill Telegraph: Shrinking Dust Circle
-                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
+                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
                 {
                     NPC.knockBackResist = 0f;
                     NPC.ai[1] = -130;
-                    UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((200 - NPC.ai[2]) / 20)), DustID.Torch, 48, 4);
-                    Lighting.AddLight(NPC.Center * 2, Color.WhiteSmoke.ToVector3() * 5);
+                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f);
                     NPC.velocity.X *= 0.85f;
                 }
                 // Ultrakill Telegraph: Flash
-                if (NPC.ai[2] == 165f)
+                if (specialAttacks.HalfHeraldComplete && NPC.ai[2] == 165f)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -681,7 +711,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 }
                 // Ultrakill Attack
-                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 235f)
+                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 235f)
                 {
                     NPC.velocity.X *= 0.25f;
 
@@ -720,7 +750,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 #endregion
 
                 // Jellyfish Lightning Attack at 1/3 life
-                if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 300 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (specialAttacks.ThirdHeraldComplete && NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 300 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Player closestPlayer = UsefulFunctions.GetClosestPlayer(NPC.Center);
                     if (closestPlayer != null)
@@ -731,7 +761,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Rain of Cursed Flame at 1/3 life
-                if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 60 == 0)
+                if (specialAttacks.ThirdHeraldComplete && NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 60 == 0)
                 {
                     Player nT = Main.player[NPC.target];
 
@@ -799,6 +829,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
+            ApplyHitDebuffs(target);
+        }
+
+        public void OnHumanoidMeleeHit(Player target)
+        {
+            ApplyHitDebuffs(target);
+        }
+
+        static void ApplyHitDebuffs(Player target)
+        {
             target.AddBuff(BuffID.OnFire, 30 * 60, false);
             target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 6 * 60, false); // knockback on hit
             target.AddBuff(ModContent.BuffType<DarkInferno>(), 6 * 60, false); // no health regen
@@ -810,6 +850,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region PreDraw
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (NPC.alpha < 255 && globalNPC.TeleportCountdown <= 0 && globalNPC.TeleportAppearanceTimer <= 0)
+            {
+                if (specialAttacks.IsHerald)
+                {
+                    Projectiles.Enemy.RedKnightVFX.DrawHerald(NPC.Center,
+                        specialAttacks.TelegraphProgress,
+                        specialAttacks.Attack == KnightSpecialAttack.StormHerald);
+                }
+                else if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
+                    && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
+                {
+                    Projectiles.Enemy.RedKnightVFX.DrawUltrakillSeal(NPC.Center,
+                        MathHelper.Clamp((NPC.ai[2] - 100f) / 100f, 0f, 1f));
+                }
+            }
+
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             if (NPC.velocity.X > 5f || NPC.velocity.X < -5f)
@@ -887,7 +944,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float MagicBallBodyInset = 8f;
 
         // World position of the body's gripping hand for the current animation frame.
-        Vector2 CurrentHandWorld()
+        Vector2 CurrentHandWorld(int facingDirection)
         {
             int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
             if (frame < 0 || frame >= OverlayHandPixel.Length)
@@ -896,9 +953,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             Vector2 fp = OverlayHandPixel[frame];
             // Map a 70x56 frame pixel to world: horizontally centered on the hitbox, bottom of frame 4px below the hitbox bottom.
-            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
+            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -facingDirection;
             float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
             return new Vector2(x, y) + OverlayFudge;
+        }
+
+        Vector2 CurrentHandWorld()
+        {
+            return CurrentHandWorld(NPC.spriteDirection);
         }
 
         Vector2 CurrentMagicBallWorld()
@@ -908,9 +970,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return handWorld + new Vector2(bodyDirection * MagicBallBodyInset, 0f);
         }
 
-        Vector2 CurrentSpearWorld()
+        Vector2 CurrentSpearWorld(int facingDirection)
         {
-            Vector2 handWorld = CurrentHandWorld();
+            Vector2 handWorld = CurrentHandWorld(facingDirection);
             int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
             if (frame == 0)
             {
@@ -919,21 +981,45 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return handWorld;
         }
 
-        void DrawArmOverlay(SpriteBatch spriteBatch, Color drawColor)
+        Vector2 CurrentSpearWorld()
+        {
+            return CurrentSpearWorld(NPC.spriteDirection);
+        }
+
+        void DrawHeldSpear(SpriteBatch spriteBatch, Vector2 screenPosition, float rotation,
+            Color drawColor, float gripSlide = 0f)
+        {
+            Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, gripSlide);
+            spriteBatch.Draw(spearTexture, screenPosition, null, drawColor, rotation,
+                gripOrigin, NPC.scale, SpriteEffects.None, 0f);
+        }
+
+        void DrawArmOverlay(SpriteBatch spriteBatch, Color drawColor, int facingDirection)
         {
             if (armOverlayTexture == null)
             {
                 return;
             }
 
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            SpriteEffects effects = facingDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
             Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
             spriteBatch.Draw(armOverlayTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
         }
 
+        void DrawArmOverlay(SpriteBatch spriteBatch, Color drawColor)
+        {
+            DrawArmOverlay(spriteBatch, drawColor, NPC.spriteDirection);
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (NPC.alpha >= 255 || globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0)
+            {
+                return;
+            }
+
             if (spearTexture == null)
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightSpear"); // the spear Tibian Valkyrie uses (14x62), held gripped at its middle
@@ -954,6 +1040,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 armOverlayTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/RedKnight_LeftArm", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
+            if (specialAttacks.Active)
+            {
+                DrawSpecialAttack(spriteBatch, drawColor);
+                return;
+            }
+
             // Spear
             if (NPC.ai[1] >= 120 && NPC.ai[1] <= 210f)
             {
@@ -962,7 +1054,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
 
                 // Weapon behind the hand, pivoting on the grip so it aims at the throw target.
-                spriteBatch.Draw(spearTexture, handWorld, null, drawColor, rotation, SpearGripOrigin, NPC.scale, SpriteEffects.None, 0);
+                DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor);
                 DrawArmOverlay(spriteBatch, drawColor);
             }
             // Magic ball
@@ -988,6 +1080,49 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 DrawArmOverlay(spriteBatch, drawColor);
             }
 
+        }
+
+        void DrawSpecialAttack(SpriteBatch spriteBatch, Color drawColor)
+        {
+            KnightHeldProp heldProp = specialAttacks.HeldProp;
+            if (heldProp == KnightHeldProp.Spear)
+            {
+                Vector2 handWorld = CurrentSpearWorld(specialAttacks.Direction);
+                float rotation = specialAttacks.GetSpearRotation(handWorld);
+                float gripSlide = specialAttacks.SpearGripSlide;
+                if (specialAttacks.SpearDamageWake)
+                {
+                    Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
+                    Projectiles.Enemy.RedKnightVFX.DrawSpearWake(
+                        handWorld + forward * (42f + gripSlide), forward.ToRotation(),
+                        new Vector2(112f, 23f), 0.9f, empowered: true);
+                }
+                DrawHeldSpear(spriteBatch, handWorld - Main.screenPosition, rotation, drawColor, gripSlide);
+                DrawArmOverlay(spriteBatch, drawColor, specialAttacks.Direction);
+                return;
+            }
+
+            if (heldProp == KnightHeldProp.Bomb)
+            {
+                Vector2 handWorld = CurrentHandWorld(specialAttacks.Direction);
+                float rotation = new Vector2(specialAttacks.Direction, 0f).ToRotation() + MathHelper.PiOver2;
+                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(handWorld,
+                    specialAttacks.TelegraphProgress, planted: false);
+                spriteBatch.Draw(bombTexture, handWorld - Main.screenPosition, null, drawColor,
+                    rotation, BombGripOrigin, 1f, SpriteEffects.None, 0f);
+                DrawArmOverlay(spriteBatch, drawColor, specialAttacks.Direction);
+                return;
+            }
+
+            if (heldProp == KnightHeldProp.Magic)
+            {
+                Vector2 magicBallWorld = CurrentMagicBallWorld();
+                spriteBatch.Draw(magicBallTexture, magicBallWorld - Main.screenPosition, null, drawColor,
+                    0f, MagicBallGripOrigin, 1f, SpriteEffects.None, 0f);
+                Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 3,
+                    specialAttacks.TelegraphProgress, 20f);
+                DrawArmOverlay(spriteBatch, drawColor, specialAttacks.Direction);
+            }
         }
         #endregion
 
