@@ -526,33 +526,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<MarilithAura>(), 0, 0.5f, Main.myPlayer);
             }
 
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                //3111, 1682 Top left5
-                //3346, 1682 Top right
-                //3346, 1781 Bottom right
-                //3111, 1781 Bottom left
-
-                //Left firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), ExpandedWorldTransform.MapWorld(new Vector2(3111, 1731) * 16), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 0, 100);
-                //Right firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), ExpandedWorldTransform.MapWorld(new Vector2(3346, 1731) * 16), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 1, 100);
-                //Top firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), ExpandedWorldTransform.MapWorld(new Vector2(3228, 1682) * 16), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 2, 237);
-                //Bottom firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), ExpandedWorldTransform.MapWorld(new Vector2(3228, 1784) * 16), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 3, 237);
-            }
-            else
-            {
-                //TODO: Actually configure these correctly lol
-                //Left firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-1000, 0), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 0, 100);
-                //Right firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(1000, 0), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 1, 100);
-                //Top firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 800), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 2, 237);
-                //Bottom firewall
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 800), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 3, 237);
+                // One controller now owns the complete rounded boundary, keeping its shader and collision geometry identical.
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, MarilithFirewall.RoundedControllerStyle);
             }
         }
 

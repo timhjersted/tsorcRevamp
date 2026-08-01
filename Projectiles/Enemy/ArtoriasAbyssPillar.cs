@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.25f);
 
-            for (int i = 0; i < 3; i++)
+            if (Projectile.timeLeft % 2 == 0)
             {
                 Vector2 pos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-20f, 20f), 0f);
                 Vector2 vel = new Vector2(Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-9f, -3f));
@@ -46,13 +46,23 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = 1f - Projectile.timeLeft / (float)Lifetime;
+            float fade = MathHelper.Clamp(Projectile.timeLeft / 5f, 0f, 1f);
+            ArtoriasVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 5f),
+                new Vector2(78f, 34f), progress, 0.72f * fade);
+            ArtoriasVFX.DrawEruption(Projectile.Center, Projectile.Size, progress, 0.92f * fade);
+            return false;
+        }
+
         public override void OnKill(int timeLeft)
         {
             if (Main.dedServ)
             {
                 return;
             }
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(5f, 5f);
                 Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, vel, 60, new Color(230, 120, 220), 1.4f);

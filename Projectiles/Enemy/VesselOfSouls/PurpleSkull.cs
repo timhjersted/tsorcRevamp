@@ -23,6 +23,8 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 4;
+            ProjectileID.Sets.TrailCacheLength[Type] = 12;
+            ProjectileID.Sets.TrailingMode[Type] = 0;
         }
 
         public override void SetDefaults()
@@ -62,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
             Projectile.rotation = 0f; // the skull sprite is upright; flip (not rotate) so it never inverts
 
             // Purple soul-trail
-            if (Main.rand.NextBool(2))
+            if (!Main.dedServ && Main.rand.NextBool(6))
             {
                 int d = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PurpleTorch, 0f, 0f, 120, default, 1f);
                 Main.dust[d].noGravity = true;
@@ -74,6 +76,7 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
         // Drawn UPRIGHT (no rotation) so it never appears upside down; just mirrored to face travel L/R.
         public override bool PreDraw(ref Color lightColor)
         {
+            VesselVFX.DrawSoulTrail(Projectile, 0.78f);
             Texture2D tex = TextureAssets.Projectile[Type].Value;
             int frameH = tex.Height / Main.projFrames[Type];
             Rectangle src = new Rectangle(0, Projectile.frame * frameH, tex.Width, frameH);

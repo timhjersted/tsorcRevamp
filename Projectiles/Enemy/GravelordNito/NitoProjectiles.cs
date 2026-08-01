@@ -48,12 +48,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.Center = owner.Center + new Vector2(0f, 30f) + global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashOffset(Kind, Dir, progress);
             Projectile.rotation = global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashWorldAngle(Kind, Dir, progress);
 
-            // Dense confetti packed tightly ALONG the blade (hilt->tip) instead of scattered in a wide
-            // cloud, so the slash reads as a sharp sweeping edge rather than dispersed sparkles.
+            // The shader carries the blade silhouette; retain only a few bone sparks as texture.
             Vector2 blade = Projectile.rotation.ToRotationVector2();
             Vector2 hilt = Projectile.Center - blade * 40f;
             Vector2 tip = Projectile.Center + blade * 150f;
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 2; i++)
             {
                 Vector2 pos = Vector2.Lerp(hilt, tip, Main.rand.NextFloat()) + Main.rand.NextVector2Circular(7f, 7f);
                 Dust d = Dust.NewDustPerfect(pos, DustID.BoneTorch, blade * Main.rand.NextFloat(0.5f, 2f), 90, default, 1f);
@@ -69,12 +68,26 @@ namespace tsorcRevamp.Projectiles.Enemy
             return Collision.CheckAABBvLineCollision(new Vector2(targetHitbox.X, targetHitbox.Y), new Vector2(targetHitbox.Width, targetHitbox.Height), hilt, tip, Kind == 2 ? 34f : 48f, ref collisionPoint);
         }
 
-        public override bool PreDraw(ref Color lightColor) => false; // invisible — the boss draws the blade
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = MathHelper.Clamp(Timer / (float)SwingTicks, 0f, 1f);
+            Vector2 blade = Projectile.rotation.ToRotationVector2();
+            Vector2 center = Projectile.Center + blade * 50f;
+            NitoVFX.DrawSlash(center, Projectile.rotation,
+                new Vector2(255f, Kind == 2 ? 62f : 88f), progress, 0.9f);
+            return false;
+        }
     }
 
     class NitoBoneShard : ModProjectile
     {
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.Bone;
+
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+        }
 
         public override void SetDefaults()
         {
@@ -93,12 +106,20 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.rotation += Projectile.velocity.X * 0.04f;
             Projectile.velocity.Y += 0.08f;
             Lighting.AddLight(Projectile.Center, 0.16f, 0.16f, 0.22f);
-            // Dense, tight trail hugging the bone rather than a sparse scatter.
-            for (int i = 0; i < 2; i++)
+            if (Main.rand.NextBool(2))
             {
                 Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(5f, 5f), DustID.BoneTorch, Projectile.velocity * -0.05f, 110, default, 0.85f);
                 d.noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+            Vector2 center = Projectile.Center - direction * 24f;
+            float progress = MathHelper.Clamp(1f - Projectile.timeLeft / 210f, 0.08f, 0.72f);
+            NitoVFX.DrawSoulTrail(center, direction.ToRotation(), new Vector2(78f, 24f), progress, 0.62f);
+            return true;
         }
     }
 
@@ -131,7 +152,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.velocity = Vector2.Zero;
             Projectile.localAI[0] += ExpandSpeed;
-            for (int i = 0; i < 34; i++)
+            for (int i = 0; i < 4; i++)
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
                 Vector2 pos = Projectile.Center + angle.ToRotationVector2() * (Radius + Main.rand.NextFloat(-7f, 7f));
@@ -139,6 +160,21 @@ namespace tsorcRevamp.Projectiles.Enemy
                 d.noGravity = true;
             }
             Lighting.AddLight(Projectile.Center, 0.45f, 0.35f, 0.65f);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Radius > 2f)
+            {
+                NitoVFX.DrawDeathRing(Projectile.Center, Radius, RingHalfThickness, 0.95f);
+                float flashProgress = MathHelper.Clamp(Radius / 88f, 0f, 1f);
+                if (flashProgress < 1f)
+                {
+                    NitoVFX.DrawDeathFlash(Projectile.Center, Vector2.One * 176f,
+                        flashProgress, 0.72f * (1f - flashProgress));
+                }
+            }
+            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -199,7 +235,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             float bottom = Projectile.position.Y + Projectile.height;
             if (!Erupted)
             {
-                for (int i = 0; i < 2; i++)
+                if (Main.rand.NextBool(2))
                 {
                     Dust.NewDust(new Vector2(Projectile.position.X, bottom - 10f), Projectile.width, 8, DustID.BoneTorch, 0f, -0.8f, 100, default, 0.9f);
                 }
@@ -231,10 +267,20 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             float progress = RiseProgress();
+            float bottomY = Projectile.position.Y + Projectile.height + 2f;
+            float telegraphProgress = TelegraphTicks > 0
+                ? MathHelper.Clamp(Timer / (float)TelegraphTicks, 0f, 1f)
+                : 1f;
+            float riftOpacity = Sinking ? MathHelper.Clamp(progress, 0f, 1f) : 0.82f;
+            NitoVFX.DrawGroundRift(new Vector2(Projectile.Center.X, bottomY - 4f),
+                new Vector2(96f * HeightScale, 44f), telegraphProgress, riftOpacity);
+
             if (progress <= 0f)
             {
                 return false;
             }
+            NitoVFX.DrawGraveEruption(Projectile.Center + new Vector2(0f, Projectile.height * 0.12f),
+                new Vector2(74f * HeightScale, Projectile.height * 1.35f), progress, 0.48f);
             // The sword-dance blade (GravelordNitoSwordDance.png) SLIDES up out of the ground and back
             // down (translate) instead of growing in place (a Y-squash, which read like the blade
             // flopping over in 3D). Drawn at full — now DOUBLE — size the whole time; the un-emerged
@@ -276,7 +322,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.localAI[0]++;
             if (Timer <= TelegraphTicks)
             {
-                for (int i = 0; i < 3; i++)
+                if (Main.rand.NextBool(2))
                 {
                     Dust.NewDust(Projectile.BottomLeft - new Vector2(0f, 8f), Projectile.width, 12, DustID.BoneTorch, 0f, -1f, 100, default, 0.9f);
                 }
@@ -284,11 +330,27 @@ namespace tsorcRevamp.Projectiles.Enemy
             else if (Timer == TelegraphTicks + 1)
             {
                 SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.6f, Pitch = -0.4f }, Projectile.Center);
-                for (int i = 0; i < 22; i++)
+                for (int i = 0; i < 8; i++)
                 {
                     Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-4f, -1f), 80, default, 1.1f);
                 }
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float telegraphProgress = MathHelper.Clamp(Timer / (float)TelegraphTicks, 0f, 1f);
+            float activeProgress = Timer <= TelegraphTicks
+                ? telegraphProgress * 0.3f
+                : MathHelper.Clamp((Timer - TelegraphTicks) / 10f, 0f, 1f);
+            float fade = Timer < TelegraphTicks + 28
+                ? 1f
+                : MathHelper.Clamp((Projectile.timeLeft - 4f) / 12f, 0f, 1f);
+            NitoVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 7f),
+                new Vector2(Projectile.width * 1.35f, 48f), telegraphProgress, 0.8f * fade);
+            NitoVFX.DrawGraveHand(Projectile.Center, new Vector2(Projectile.width * 1.15f, Projectile.height * 1.35f),
+                activeProgress, 0.82f * fade);
+            return false;
         }
     }
 
@@ -300,6 +362,9 @@ namespace tsorcRevamp.Projectiles.Enemy
     class NitoCeilingSpike : ModProjectile
     {
         public override string Texture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordSpike";
+
+        int DelayTicks => (int)Projectile.ai[0];
+        int Timer => (int)Projectile.localAI[0];
 
         public override void SetDefaults()
         {
@@ -313,9 +378,19 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.aiStyle = 0;
         }
 
+        public override bool ShouldUpdatePosition() => Timer > DelayTicks;
+
+        public override bool? CanDamage() => Timer > DelayTicks;
+
         public override void AI()
         {
+            Projectile.localAI[0]++;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // sprite points down at rest
+            if (Timer <= DelayTicks)
+            {
+                Lighting.AddLight(Projectile.Center, 0.22f, 0.18f, 0.3f);
+                return;
+            }
             Projectile.velocity.Y += 0.15f;
             if (Projectile.velocity.Y > 13f)
             {
@@ -326,6 +401,22 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, -Projectile.velocity.X * 0.1f, -Projectile.velocity.Y * 0.1f, 100, default, 0.8f);
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Timer <= DelayTicks && DelayTicks > 0)
+            {
+                float progress = MathHelper.Clamp(Timer / (float)DelayTicks, 0f, 1f);
+                NitoVFX.DrawRainPortal(Projectile.Center, new Vector2(118f, 54f), progress, 0.92f);
+            }
+            else
+            {
+                Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
+                NitoVFX.DrawSoulTrail(Projectile.Center - direction * 28f, direction.ToRotation(),
+                    new Vector2(92f, 26f), 0.45f, 0.55f);
+            }
+            return true;
         }
 
         public override void OnKill(int timeLeft)
@@ -355,13 +446,24 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
+            Projectile.localAI[0]++;
             Projectile.velocity *= 0.98f;
             Projectile.rotation += 0.03f;
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(4))
             {
                 Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(28f, 28f), DustID.Poisoned, Main.rand.NextVector2Circular(1f, 1f), 120, default, Main.rand.NextFloat(1.1f, 1.8f));
                 d.noGravity = true;
             }
+            Lighting.AddLight(Projectile.Center, 0.1f, 0.18f, 0.07f);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = MathHelper.Clamp(Projectile.localAI[0] / 95f, 0f, 1f);
+            float fade = MathHelper.Clamp(Projectile.timeLeft / 18f, 0f, 1f);
+            NitoVFX.DrawMiasma(Projectile.Center, new Vector2(74f, 70f), Projectile.rotation,
+                progress, 0.88f * fade);
+            return false;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

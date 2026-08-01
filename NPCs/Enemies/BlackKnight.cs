@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -23,6 +24,8 @@ namespace tsorcRevamp.NPCs.Enemies
         public int redKnightsGreatDamage = 18;
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
+        Vector2[] gravefallPositions;
+        Vector2[] gravefallVelocities;
 
 
         NPCDespawnHandler despawnHandler;
@@ -147,6 +150,17 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             get => Main.player[NPC.target];
         }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(storedPlayerPosition.X);
+            writer.Write(storedPlayerPosition.Y);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            storedPlayerPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+        }
         #endregion
 
         private void SpawnSpearProjectile(Vector2 velocity, tsorcRevampGlobalNPC globalNPC)
@@ -168,6 +182,57 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 TryQueueComboFollowup(globalNPC, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>());
             }
+        }
+
+        private void PrepareGravefall(Player target, bool wideWave)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            int count = wideWave ? 6 : 4;
+            gravefallPositions = new Vector2[count];
+            gravefallVelocities = new Vector2[count];
+            for (int i = 0; i < count; i++)
+            {
+                if (wideWave)
+                {
+                    gravefallPositions[i] = new Vector2(target.position.X - 500f + Main.rand.Next(1000), target.position.Y - 300f);
+                    gravefallVelocities[i] = new Vector2(Main.rand.Next(10) / 10f, 3.1f);
+                }
+                else
+                {
+                    gravefallPositions[i] = new Vector2(target.position.X, target.position.Y - 300f);
+                    gravefallVelocities[i] = new Vector2((-100 + Main.rand.Next(100)) / 10f, 5.1f);
+                }
+
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), gravefallPositions[i], Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.BlackKnightGravefallTelegraph>(), 0, 0f, Main.myPlayer);
+            }
+        }
+
+        private void ReleaseGravefall(Player target, bool wideWave)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            int count = wideWave ? 6 : 4;
+            if (gravefallPositions == null || gravefallVelocities == null || gravefallPositions.Length != count)
+            {
+                PrepareGravefall(target, wideWave);
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), gravefallPositions[i], gravefallVelocities[i],
+                    ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage,
+                    wideWave ? 4f : 3f, Main.myPlayer, 1f);
+            }
+            gravefallPositions = null;
+            gravefallVelocities = null;
         }
 
         private void TryCompressGuardPressureNeutral(tsorcRevampGlobalNPC globalNPC)
@@ -455,6 +520,9 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                         {
                             storedPlayerPosition = Main.player[targetPlayer].Center;
+                            NPC.netUpdate = true;
+                            NPC.netUpdate = true;
+                            NPC.netUpdate = true;
                         }
                     }
                 }
@@ -736,20 +804,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Air attack targeting indicator — shadow dust appears above drop zone 3 frames before each wave
                 if ((NPC.ai[2] == 72 || NPC.ai[2] == 97 || NPC.ai[2] == 522 || NPC.ai[2] == 547 || NPC.ai[2] == 572 || NPC.ai[2] == 597) && !inActiveAttack && NPC.Distance(player.Center) > 250 && hasPlayerLOS)
                 {
-                    for (int i = 0; i < 6; i++)
-                        Dust.NewDust(new Vector2(player.position.X - 10 + Main.rand.Next(player.width + 20), player.position.Y - 290f), 4, 4, DustID.ShadowbeamStaff, 0f, 3f, 100, default, 1.2f);
+                    bool wideWave = NPC.ai[2] == 97 || NPC.ai[2] == 547 || NPC.ai[2] == 597;
+                    PrepareGravefall(player, wideWave);
                 }
 
                 // Death Attack from Air
                 if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && !inActiveAttack && NPC.Distance(player.Center) > 250 && hasPlayerLOS)
                 {
-                    for (int pcy = 0; pcy < 4; pcy++)
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 300f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 3f, Main.myPlayer);
-                        }
-                    }
+                    ReleaseGravefall(player, false);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
                     NPC.netUpdate = true;
                 }
@@ -757,13 +819,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Slightly Delayed Death Attack From Air
                 if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && !inActiveAttack && NPC.Distance(player.Center) > 270 && hasPlayerLOS)
                 {
-                    for (int pcy = 0; pcy < 6; pcy++)
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(1000), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 3.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 4f, Main.myPlayer);
-                        }
-                    }
+                    ReleaseGravefall(player, true);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
                     NPC.netUpdate = true;
                 }
@@ -783,8 +839,14 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     NPC.knockBackResist = 0f;
                     NPC.ai[1] = -130;
-                    UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((200 - NPC.ai[2]) / 20)), DustID.BoneTorch, 48, 4);
-                    Lighting.AddLight(NPC.Center * 2, Color.WhiteSmoke.ToVector3() * 5);
+                    if (Main.rand.NextBool(4))
+                    {
+                        float collapse = MathHelper.Clamp((200f - NPC.ai[2]) / 100f, 0f, 1f);
+                        Vector2 offset = Main.rand.NextVector2CircularEdge(240f, 240f) * collapse;
+                        Dust mote = Dust.NewDustPerfect(NPC.Center + offset, DustID.BoneTorch, -offset * 0.025f, 120, default, 0.9f);
+                        mote.noGravity = true;
+                    }
+                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1.2f);
                     NPC.velocity.X *= 0.85f;
                 }
                 // Ultrakill Telegraph: Flash
@@ -828,7 +890,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speed += Main.rand.NextVector2Circular(1, 5);//was -12, -16
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer, 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center); //Play flame sound
 
@@ -837,7 +899,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speed2 += Main.rand.NextVector2Circular(-5, 5);//was -4, -2, then -12, -16
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer, 2f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.9f, PitchVariance = 2f }, NPC.Center);
                     NPC.netUpdate = true;
@@ -1000,6 +1062,27 @@ namespace tsorcRevamp.NPCs.Enemies
             spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
         }
 
+        void DrawBlackKnightMagicOverlays()
+        {
+            if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
+            {
+                float progress = MathHelper.Clamp((NPC.ai[2] - 100f) / 100f, 0f, 1f);
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center, progress);
+                if (NPC.ai[2] >= 165f && storedPlayerPosition != Vector2.Zero)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition,
+                        MathHelper.Clamp((NPC.ai[2] - 165f) / 35f, 0f, 1f));
+                }
+            }
+
+            ulong stormCycle = Main.GameUpdateCount % 420;
+            if (NPC.life <= NPC.lifeMax / 3 && stormCycle >= 400)
+            {
+                float stormProgress = MathHelper.Clamp((stormCycle - 400f) / 20f, 0f, 1f);
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightHexCrystal(NPC.Center, Vector2.Zero, stormProgress, false);
+            }
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (spearTexture == null || spearTexture.IsDisposed)
@@ -1026,8 +1109,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 float thrustOffset = globalNPC.CombatMeleeThrustProgress * maximumExtension;
                 Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
                 float rotation = new Vector2(meleeDirection, 0f).ToRotation() + MathHelper.PiOver2;
+                if (globalNPC.InCombatMeleeHitWindow)
+                {
+                    Vector2 forward = new Vector2(meleeDirection, 0f);
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                        handWorld + Main.screenPosition + forward * (38f + thrustOffset),
+                        forward.ToRotation(), new Vector2(82f, 18f), 0.62f);
+                }
                 DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale, thrustOffset);
                 DrawHandOverlay(spriteBatch, drawColor);
+                DrawBlackKnightMagicOverlays();
                 return;
             }
 
@@ -1047,9 +1138,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 bombAim = NPC.ai[1] >= 900f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                float fuseProgress = MathHelper.Clamp((NPC.ai[1] - 865f) / 60f, 0f, 1f);
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightMoonfury(handWorld + Main.screenPosition,
+                    Vector2.Zero, fuseProgress, NPC.ai[1] >= 900f);
                 spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
+
+            DrawBlackKnightMagicOverlays();
 
         }
         #endregion

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.rotation += 5f;
 
 
-            for (int i = 0; i < 2; i++)
+            if (Main.rand.NextBool(3))
             {
                 int pink = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Wraith, Projectile.velocity.X, Projectile.velocity.Y, Scale: 1f, Alpha: 200);
                 Main.dust[pink].noGravity = true;
@@ -42,6 +42,18 @@ namespace tsorcRevamp.Projectiles.Enemy
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, 0, 0, 50, Color.DarkGray, 0.7f);
                 Main.dust[dust].noGravity = true;
             }
+        }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Projectile.ai[0] == 1f)
+            {
+                EnemyVFX.DrawBlackKnightGraveTrail(Projectile.Center, Projectile.velocity);
+            }
+            else if (Projectile.ai[0] == 2f)
+            {
+                EnemyVFX.DrawBlackKnightDeathTrail(Projectile.Center, Projectile.velocity, new Vector2(78f, 25f), 0.66f);
+            }
+            return true;
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {

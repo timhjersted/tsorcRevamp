@@ -247,11 +247,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Vector2 origin = GetOriginPosition(owner);
             Vector2 tip = Projectile.Center;
-            int segments = (int)MathHelper.Clamp(Vector2.Distance(origin, tip) / 20f, 1, 30);
+            int segments = (int)MathHelper.Clamp(Vector2.Distance(origin, tip) / 48f, 1, 10);
 
             for (int i = 0; i <= segments; i++)
             {
-                if (!Main.rand.NextBool(2))
+                if (!Main.rand.NextBool(7))
                     continue;
 
                 Vector2 pos = Vector2.Lerp(origin, tip, i / (float)segments);
@@ -265,9 +265,16 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (TryGetOwner(out NPC owner))
             {
-                DrawChain(GetOriginPosition(owner), Projectile.Center);
+                int state = (int)Projectile.ai[1];
+                float tension = state == StateYanking
+                    ? 1f
+                    : state == StateFlying
+                        ? MathHelper.Clamp(launchTimer / (float)MaxFlightTicks, 0f, 0.72f)
+                        : 0.28f;
+                ArtoriasVFX.DrawTendril(GetOriginPosition(owner), Projectile.Center,
+                    tension, state == StateRetracting ? 0.48f : 0.88f, CanGrabPlayer);
             }
-            return true; // let vanilla's default draw still render the tip sprite/frame on top
+            return false;
         }
 
         // Three overlapping wavy strands, same technique as BasiliskLeechTongue.DrawTendril -

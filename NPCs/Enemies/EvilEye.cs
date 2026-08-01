@@ -79,6 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies{
         int groundBlastCooldown;
         bool enraged;
         int commitFlashTimer;
+        int enrageHaloTimer;
 
         public override void SetDefaults()
         {
@@ -155,7 +156,7 @@ namespace tsorcRevamp.NPCs.Enemies{
         // and drifts inward, reading as the eye pulling energy into itself before it releases.
         void SpawnInwardChargeDust(Vector2 center, float progress)
         {
-            if (Main.rand.NextFloat() < 0.3f + progress * 0.6f)
+            if (Main.rand.NextFloat() < 0.15f + progress * 0.25f)
             {
                 Vector2 edge = Main.rand.NextVector2CircularEdge(50f, 50f);
                 int dust = Dust.NewDust(center + edge, 2, 2, DustID.BlueTorch, 0, 0, 100, default, 1f + progress);
@@ -185,10 +186,11 @@ namespace tsorcRevamp.NPCs.Enemies{
                 return;
             }
             enraged = true;
+            enrageHaloTimer = 65;
             NPC.netUpdate = true;
             SoundEngine.PlaySound(SoundID.Item72 with { Volume = 1f, Pitch = 0.5f }, NPC.Center);
             UsefulFunctions.ScreenShake(NPC.Center, 10f, 20);
-            UsefulFunctions.DustRingPrecise(NPC.Center, 30f, DustID.BlueTorch, 40, 4f, 150, 1.8f);
+            UsefulFunctions.DustRingPrecise(NPC.Center, 30f, DustID.BlueTorch, 20, 4f, 150, 1.8f);
             EnterState(State.NovaRing);
         }
 
@@ -362,7 +364,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 return;
             }
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.9f, Pitch = -0.2f }, NPC.Center);
-            UsefulFunctions.DustRingPrecise(NPC.Center, 30f, DustID.BlueTorch, 30, 0f, 150, 1.5f);
+            UsefulFunctions.DustRingPrecise(NPC.Center, 30f, DustID.BlueTorch, 12, 0f, 150, 1.5f);
             for (int i = 0; i < NovaShotCount; i++)
             {
                 float angle = MathHelper.TwoPi * i / NovaShotCount;
@@ -405,7 +407,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             NPC.ai[1]++;
             NPC.velocity = dashDirection * DashSpeed;
 
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(4))
             {
                 int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BlueTorch, 0, 0, 100, default, 1.5f);
                 Main.dust[dust].noGravity = true;
@@ -475,6 +477,10 @@ namespace tsorcRevamp.NPCs.Enemies{
             if (commitFlashTimer > 0)
             {
                 commitFlashTimer--;
+            }
+            if (enrageHaloTimer > 0)
+            {
+                enrageHaloTimer--;
             }
 
             // Idle ambiance - a faint constant glow and drifting motes even when it isn't
@@ -642,6 +648,26 @@ namespace tsorcRevamp.NPCs.Enemies{
             Vector2 origin = new Vector2(FrameWidth / 2f, FrameHeight / 2f);
             Rectangle sourceRect = new Rectangle(NPC.frame.X, NPC.frame.Y, FrameWidth, FrameHeight);
             Vector2 drawCenter = NPC.Center - screenPos + new Vector2(0f, NPC.gfxOffY);
+
+            if (state == State.NovaRing && NPC.ai[1] <= NovaTelegraphTicks + 5f)
+            {
+                float novaProgress = MathHelper.Clamp(NPC.ai[1] / NovaTelegraphTicks, 0f, 1f);
+                Projectiles.Enemy.EnemyVFX.DrawEvilEyeNova(NPC.Center, novaProgress, enrageHaloTimer > 0);
+            }
+
+            if (state == State.ChargeTelegraph || state == State.ChargeDash)
+            {
+                float telegraphDuration = enraged ? ChargeTelegraphTicks * 0.7f : ChargeTelegraphTicks;
+                bool activeCharge = state == State.ChargeDash;
+                float chargeProgress = activeCharge
+                    ? MathHelper.Clamp(NPC.ai[1] / DashTicks, 0f, 1f)
+                    : MathHelper.Clamp(NPC.ai[1] / telegraphDuration, 0f, 1f);
+                Vector2 chargeAim = activeCharge
+                    ? dashDirection
+                    : Main.player[NPC.target].Center - NPC.Center;
+                Projectiles.Enemy.EnemyVFX.DrawEvilEyeCharge(NPC.Center, chargeAim,
+                    chargeProgress, activeCharge, enraged);
+            }
 
             if (state == State.ChargeTelegraph || state == State.ChargeDash)
             {

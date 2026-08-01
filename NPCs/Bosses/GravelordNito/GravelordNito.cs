@@ -466,13 +466,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             if (AttackTimer < cast)
             {
                 NPC.velocity.X *= 0.8f;
-                for (int i = 0; i < 2; i++) Dust.NewDust(player.position + new Vector2(Main.rand.NextFloat(-180f, 180f), -260f), 8, 8, DustID.BoneTorch, 0f, 1f, 90, default, 1f);
+                if (Main.rand.NextBool(2)) Dust.NewDust(player.position + new Vector2(Main.rand.NextFloat(-180f, 180f), -260f), 8, 8, DustID.BoneTorch, 0f, 1f, 90, default, 1f);
             }
             if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer >= cast && AttackTimer <= cast + 48 && (AttackTimer - cast) % 12 == 0)
             {
                 Vector2 pos = player.Center + new Vector2(Main.rand.NextFloat(-220f, 220f), -330f);
                 Vector2 velocity = UsefulFunctions.Aim(pos, player.Center + new Vector2(Main.rand.NextFloat(-40f, 40f), 0f), 8.5f);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, velocity, ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, velocity, ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, 14f);
             }
             if (AttackTimer >= cast + 90) EndAttack(190);
         }
@@ -526,7 +526,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             if (AttackTimer <= LongChannelTicks)
             {
                 float radius = MathHelper.Lerp(220f, 32f, AttackTimer / (float)LongChannelTicks);
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     Vector2 pos = NPC.Center + Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2() * radius;
                     Dust d = Dust.NewDustPerfect(pos, DustID.Shadowflame, UsefulFunctions.Aim(pos, NPC.Center, 2.5f), 80, default, 1.1f);
@@ -646,12 +646,12 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             if (AttackTimer < cast)
             {
                 NPC.velocity.X *= 0.78f;
-                for (int i = 0; i < 2; i++) Dust.NewDust(player.position + new Vector2(Main.rand.NextFloat(-240f, 240f), Main.rand.NextFloat(-330f, -220f)), 8, 8, DustID.BoneTorch, 0f, 0.8f, 80, default, 1.15f);
+                if (Main.rand.NextBool(2)) Dust.NewDust(player.position + new Vector2(Main.rand.NextFloat(-240f, 240f), Main.rand.NextFloat(-330f, -220f)), 8, 8, DustID.BoneTorch, 0f, 0.8f, 80, default, 1.15f);
             }
             if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer >= cast && AttackTimer <= cast + 54 && (AttackTimer - cast) % 9 == 0)
             {
                 Vector2 pos = player.Center + new Vector2(Main.rand.NextFloat(-280f, 280f), -360f);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, new Vector2(Main.rand.NextFloat(-0.8f, 0.8f), 9f), ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, new Vector2(Main.rand.NextFloat(-0.8f, 0.8f), 9f), ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, 10f);
             }
             if (AttackTimer >= cast + 98) EndAttack(220);
         }
@@ -890,7 +890,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
         void GraveDust(Vector2 center)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 1; i++)
             {
                 Dust d = Dust.NewDustPerfect(center + new Vector2(Main.rand.NextFloat(-120f, 120f), -Main.rand.NextFloat(4f, 18f)), DustID.BoneTorch, new Vector2(0f, Main.rand.NextFloat(-1.5f, -0.2f)), 110, default, 0.9f);
                 d.noGravity = true;
@@ -918,7 +918,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         {
             float pulse = State == AttackState.None ? 0f : (float)Math.Sin(Main.GlobalTimeWrappedHourly * 9f) * 0.08f;
             Lighting.AddLight(NPC.Center, 0.2f + pulse, 0.2f + pulse, 0.28f + pulse);
-            if (Main.rand.NextBool(State == AttackState.None ? 5 : 3))
+            if (Main.rand.NextBool(State == AttackState.None ? 8 : 5))
             {
                 Dust d = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(55f, 105f), PhaseTwo ? DustID.Shadowflame : DustID.BoneTorch, new Vector2(0f, Main.rand.NextFloat(-1.4f, -0.3f)), 120, default, 0.75f);
                 d.noGravity = true;
@@ -945,6 +945,42 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            float auraOpacity = PhaseTwo ? 0.34f : 0.22f;
+            if (State == AttackState.PhaseTransition)
+            {
+                auraOpacity = 0.72f;
+            }
+            else if (State == AttackState.DeathNova || State == AttackState.HollowCommand
+                || State == AttackState.GravelordJudgment)
+            {
+                auraOpacity = 0.52f;
+            }
+            float auraPulse = State == AttackState.None
+                ? 0f
+                : 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 4.5f);
+            float soulFlowDirection = State == AttackState.PhaseTransition || State == AttackState.DeathNova ? -1f : 1f;
+            NitoVFX.DrawAura(NPC.Center + new Vector2(0f, -30f), new Vector2(250f, 320f),
+                auraOpacity, PhaseTwo, auraPulse, soulFlowDirection);
+
+            if ((State == AttackState.SwordRain || State == AttackState.GravelordJudgment)
+                && NPC.target >= 0 && NPC.target < Main.maxPlayers && Main.player[NPC.target].active)
+            {
+                Player target = Main.player[NPC.target];
+                bool judgment = State == AttackState.GravelordJudgment;
+                float veilProgress = MathHelper.Clamp(AttackTimer / (judgment ? 50f : 42f), 0f, 1f);
+                NitoVFX.DrawRainPortal(target.Center + new Vector2(0f, judgment ? -350f : -320f),
+                    new Vector2(judgment ? 600f : 480f, judgment ? 112f : 96f), veilProgress,
+                    judgment ? 0.24f : 0.18f);
+            }
+
+            if (State == AttackState.DeathNova && AttackTimer > 0 && AttackTimer <= LongChannelTicks)
+            {
+                float chargeProgress = MathHelper.Clamp(AttackTimer / (float)LongChannelTicks, 0f, 1f);
+                float chargeRadius = MathHelper.Lerp(220f, 38f, chargeProgress);
+                NitoVFX.DrawDeathRing(NPC.Center, chargeRadius, 10f,
+                    MathHelper.Lerp(0.28f, 0.72f, chargeProgress));
+            }
+
             // Body is ALWAYS the no-sword sheet (TextureAssets.Npc[Type] = GravelordNitoAttacking.png,
             // which has no blade painted in). The single loose sword layer below is the ONLY sword —
             // this is what removes the old "two swords" (a baked-in blade + the loose one).

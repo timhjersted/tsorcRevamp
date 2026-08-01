@@ -40,19 +40,24 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Animate();
 
-            if (!Main.dedServ)
+            if (!Main.dedServ && Main.rand.NextBool(3))
             {
-                for (int i = 0; i < 3; i++)
-                {
-                    bool white = Main.rand.NextBool(5);
-                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(18f, 12f) * Projectile.scale;
-                    Dust d = Dust.NewDustPerfect(position,
-                        white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
-                        -Projectile.velocity * Main.rand.NextFloat(0.05f, 0.16f) + Main.rand.NextVector2Circular(0.6f, 0.6f),
-                        90, white ? Color.White : Color.DarkViolet, Main.rand.NextFloat(0.85f, 1.25f));
-                    d.noGravity = true;
-                }
+                bool white = Main.rand.NextBool(5);
+                Dust d = Dust.NewDustPerfect(Projectile.Center,
+                    white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
+                    -Projectile.velocity * 0.08f, 110, white ? Color.White : Color.DarkViolet, 0.85f);
+                d.noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+            float rotation = direction.ToRotation();
+            ArtoriasVFX.DrawProjectileTrail(Projectile.Center - direction * 34f, rotation,
+                new Vector2(76f, 26f), 0.35f, 0.70f);
+            ArtoriasVFX.DrawCrescent(Projectile.Center, rotation, new Vector2(54f, 46f), false, 0.92f);
+            return false;
         }
 
         void Animate()
@@ -91,7 +96,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 return;
             }
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 4; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(3f, 3f);
                 Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, vel, 60, default, 1f);

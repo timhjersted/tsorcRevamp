@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -97,10 +97,18 @@ namespace tsorcRevamp.Projectiles.Enemy
             timer++;
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float dormantProgress = MathHelper.Clamp(timer / 60f, 0f, 1f);
+            EnemyVFX.DrawBlackKnightHexCrystal(Projectile.Center, Projectile.velocity, dormantProgress, timer > 60);
+            return true;
+        }
+
         #region Kill   
         public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie82 with { Volume = 0.6f, Pitch = -3f, PitchVariance = 2f, MaxInstances = 5 }, Projectile.Center); //wraith
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightHexShatter);
 
 
             // setup projectile for explosion
@@ -119,7 +127,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //}
 
             // Fire Dust spawn
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 10; i++)
             {
                 int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 228, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
                 Main.dust[dustIndex].noGravity = true;
@@ -143,13 +151,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
             // create unknown embers that fill the explosion's radius
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 8; i++)
             {
                 float velX = 1f - ((float)Main.rand.Next(20)) / 5f;
                 float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
                 velX *= 2f;
                 velY *= 2f;
-                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
                 Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
                 //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
                 //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
@@ -203,7 +210,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //}
 
             // Fire Dust spawn
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 6; i++)
             {
                 int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 228, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
                 Main.dust[dustIndex].noGravity = true;
@@ -227,13 +234,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
             // create unknown embers that fill the explosion's radius
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 4; i++)
             {
                 float velX = 1f - ((float)Main.rand.Next(20)) / 5f;
                 float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
                 velX *= 2f;
                 velY *= 2f;
-                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
                 Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
                 //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
                 //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);

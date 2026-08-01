@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
             Projectile.velocity = Vector2.Zero;
             Projectile.localAI[0] += ExpandSpeed;
 
-            int points = 40;
+            int points = Main.dedServ ? 0 : 8;
             for (int i = 0; i < points; i++)
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -52,6 +52,12 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
                 Main.dust[dust].velocity = angle.ToRotationVector2() * 2.5f;
             }
             Lighting.AddLight(Projectile.Center, 0.7f, 0.2f, 0.9f);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            VesselVFX.DrawNova(Projectile.Center, Radius, RingHalfThickness, 0.94f);
+            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

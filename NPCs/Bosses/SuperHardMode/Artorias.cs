@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
@@ -39,9 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
         protected override bool HasSlashVFX => true;
-        protected override Color SlashVFXColor => Color.DarkViolet;
-        protected override float SlashVFXOpacity => 0.22f;
-        protected override float SlashVFXScale => 0.72f;
+        protected override bool SuppressSlashVFXForCurrentPhase => true;
 
         protected override int MeleeDamage => 55;
         protected override int RangedDamage => 0; // unused, no ranged weapon
@@ -108,6 +107,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float ImpaleSwordReach    = 70f;
 
         private int _impaleSwordProjIndex = -1;
+        readonly Vector2[] _weaponWakeHands = new Vector2[6];
+        readonly Vector2[] _weaponWakeDirections = new Vector2[6];
 
         NPCDespawnHandler despawnHandler;
 
@@ -124,6 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float RingBandHalfWidth = 40f;
         Vector2 _ringCenter;
         public Vector2 RingCenter => _ringCenter;
+        public float RingBandHalfWidthPixels => RingBandHalfWidth;
         int _ringVfxTimer;
 
         // Live effective radius - equal to RingRadius except during a Ring Collapse (below), which
@@ -149,6 +151,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int   RingCollapseTelegraphTicks = 30;
         const int   RingCollapseMoveTicks      = 120;       // 2s each way - "slowly"
         const int   RingCollapseHoldTicks      = 10 * 60;   // 10s held at the contracted radius
+        public bool RingCollapseWarningActive => _ringCollapseState == RingCollapseState.Telegraph;
+        public float RingCollapseWarningRadius => RingRadius * (1f - RingCollapseContractFrac);
 
         public override void SetStaticDefaults()
         {
@@ -197,6 +201,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void OnSpawn(IEntitySource source)
         {
             _ringCenter = NPC.Center;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), _ringCenter, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasBoundaryVFX>(), 0, 0f,
+                    Main.myPlayer, NPC.whoAmI);
+            }
             NPC.netUpdate = true;
         }
 
@@ -226,6 +236,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             base.AI();
+            CacheWeaponWakeSample();
             TickProjectileSwordTelegraphs();
 
             // The puppet body and hand-drawn greatsword both sample the normal light map, so this
@@ -245,6 +256,131 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 _abyssShardUnlocked = true;
             }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            DrawArtoriasAttackVFX();
+            return base.PreDraw(spriteBatch, screenPos, drawColor);
+        }
+
+        void DrawArtoriasAttackVFX()
+        {
+            if (_novaStageIndex >= 0 && Phase == AttackPhase.NovaCharge)
+            {
+                float chargeProgress = MathHelper.Clamp(1f - PhaseTimer / (float)NovaChargeTicks, 0f, 1f);
+                float radius = NovaStages[_novaStageIndex].radius;
+                Projectiles.Enemy.ArtoriasVFX.DrawDetonation(NPC.Center, radius, chargeProgress,
+                    MathHelper.Lerp(0.20f, 0.62f, chargeProgress), active: false);
+                Projectiles.Enemy.ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -16f),
+                    new Vector2(190f, 240f), 0.40f + chargeProgress * 0.32f,
+                    0.8f + chargeProgress * 0.55f, -1f);
+            }
+
+            bool majorCast = Phase == AttackPhase.AbyssSlashTelegraph
+                || Phase == AttackPhase.AbyssSlashPause
+                || Phase == AttackPhase.TendrilTelegraph
+                || Phase == AttackPhase.TendrilReach
+                || Phase == AttackPhase.HomingVolleySwingTelegraph
+                || Phase == AttackPhase.BoomerangSwingTelegraph
+                || Phase == AttackPhase.SpiralFanSwingTelegraph;
+            if (majorCast && !AbyssSurgeActive)
+            {
+                Projectiles.Enemy.ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -14f),
+                    new Vector2(150f, 205f), 0.34f, 0.72f, 1f);
+            }
+            if (PuppetEchoStepSwinging)
+            {
+                Projectiles.Enemy.ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -12f),
+                    new Vector2(175f, 215f), 0.44f, 1.05f, -1f);
+            }
+
+            bool ordinarySwing = Phase == AttackPhase.MeleeAttack
+                || Phase == AttackPhase.StabAttack
+                || Phase == AttackPhase.MeleeComboAttack;
+            bool specialSwing = IsSpecialWakePhase();
+            bool piercing = Phase == AttackPhase.PierceDash;
+            if (!ordinarySwing && !specialSwing && !piercing)
+            {
+                return;
+            }
+
+            float progress = PuppetWeaponAnimationProgress;
+            if (specialSwing)
+            {
+                progress = Phase switch
+                {
+                    AttackPhase.JumpSlashAttack => 1f - PhaseTimer / (float)JumpSlashAttackTicks,
+                    AttackPhase.FlipSlashRise => 1f - PhaseTimer / (float)FlipSlashRiseMaxTicks,
+                    AttackPhase.FlipSlashLand => 1f - PhaseTimer / (float)FlipSlashLandHoldTicks,
+                    AttackPhase.AbyssSlashSwipe => 1f - PhaseTimer / (float)AbyssSlashSwipeTicks,
+                    AttackPhase.TendrilSwing => 1f - PhaseTimer / (float)TendrilSwingTicks,
+                    AttackPhase.HomingVolleySwing => 1f - PhaseTimer / (float)HomingVolleySwingTicks,
+                    AttackPhase.BoomerangSwing => 1f - PhaseTimer / (float)BoomerangSwingTicks,
+                    AttackPhase.SpiralFanSwing => 1f - PhaseTimer / (float)SpiralFanSwingTicks,
+                    _ => progress,
+                };
+            }
+            else if (piercing)
+            {
+                progress = MathHelper.Clamp(1f - PhaseTimer / (float)PierceDashTicks, 0f, 1f);
+            }
+            progress = MathHelper.Clamp(progress, 0f, 1f);
+
+            Vector2 direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
+            float reach = piercing ? 118f : Math.Max(72f, PuppetActiveBladeReach);
+            float opacity = piercing ? 0.94f : (float)Math.Sin(progress * MathHelper.Pi) * 0.92f;
+            if (Phase == AttackPhase.FlipSlashRise)
+            {
+                opacity = 0.74f;
+            }
+            Vector2 center = PuppetHandPosition + direction * reach * 0.5f;
+            for (int i = _weaponWakeDirections.Length - 1; i >= 1; i -= 2)
+            {
+                if (_weaponWakeDirections[i] == Vector2.Zero)
+                {
+                    continue;
+                }
+                float history = 1f - i / (float)_weaponWakeDirections.Length;
+                Vector2 oldDirection = _weaponWakeDirections[i];
+                Vector2 oldCenter = _weaponWakeHands[i] + oldDirection * reach * 0.5f;
+                Projectiles.Enemy.ArtoriasVFX.DrawGreatswordWake(oldCenter, oldDirection.ToRotation(),
+                    new Vector2(reach, piercing ? 40f : 62f), progress + i * 0.08f,
+                    opacity * history * 0.48f, piercing);
+            }
+            Projectiles.Enemy.ArtoriasVFX.DrawGreatswordWake(center, direction.ToRotation(),
+                new Vector2(reach, piercing ? 44f : 58f), progress, opacity, piercing);
+        }
+
+        bool IsSpecialWakePhase()
+        {
+            return Phase == AttackPhase.JumpSlashAttack
+                || Phase == AttackPhase.FlipSlashRise
+                || Phase == AttackPhase.FlipSlashLand
+                || Phase == AttackPhase.AbyssSlashSwipe
+                || Phase == AttackPhase.TendrilSwing
+                || Phase == AttackPhase.HomingVolleySwing
+                || Phase == AttackPhase.BoomerangSwing
+                || Phase == AttackPhase.SpiralFanSwing;
+        }
+
+        void CacheWeaponWakeSample()
+        {
+            bool active = Phase == AttackPhase.MeleeAttack
+                || Phase == AttackPhase.StabAttack
+                || Phase == AttackPhase.MeleeComboAttack
+                || Phase == AttackPhase.PierceDash
+                || IsSpecialWakePhase();
+
+            for (int i = _weaponWakeDirections.Length - 1; i > 0; i--)
+            {
+                _weaponWakeDirections[i] = active ? _weaponWakeDirections[i - 1] : Vector2.Zero;
+                _weaponWakeHands[i] = _weaponWakeHands[i - 1];
+            }
+            _weaponWakeDirections[0] = active
+                ? PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f))
+                : Vector2.Zero;
+            _weaponWakeHands[0] = PuppetHandPosition;
         }
 
         void TickProjectileSwordTelegraphs()
@@ -267,7 +403,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             Vector2 hand = PuppetHandPosition;
             Vector2 tip = PuppetWeaponTipPosition(54f);
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 1; i++)
             {
                 Vector2 position = Vector2.Lerp(hand, tip, Main.rand.NextFloat(0.45f, 1f))
                     + Main.rand.NextVector2Circular(5f, 5f);
@@ -365,8 +501,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             else
             {
-                _ringVfxTimer = 4;
-                UsefulFunctions.DustRingPrecise(_ringCenter, _currentRingRadius, DustID.BlueTorch, 90, alpha: 40, scale: 1.6f);
+                _ringVfxTimer = 10;
+                UsefulFunctions.DustRingPrecise(_ringCenter, _currentRingRadius, DustID.BlueTorch, 28, alpha: 80, scale: 1.15f);
                 SpawnAbyssRingFlames();
             }
 
@@ -404,7 +540,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            const int flameCount = 12;
+            const int flameCount = 4;
             for (int i = 0; i < flameCount; i++)
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -438,9 +574,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             switch (_ringCollapseState)
             {
                 case RingCollapseState.Telegraph:
-                    if (!Main.dedServ && Main.rand.NextBool(2))
+                    if (!Main.dedServ && Main.rand.NextBool(6))
                     {
-                        UsefulFunctions.DustRingPrecise(_ringCenter, _ringCollapseTo, DustID.PurpleTorch, 60, alpha: 60, scale: 1.4f);
+                        UsefulFunctions.DustRingPrecise(_ringCenter, _ringCollapseTo, DustID.PurpleTorch, 20, alpha: 100, scale: 1.1f);
                     }
                     if (--_ringCollapseTimer <= 0)
                     {
@@ -688,6 +824,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
+            SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
         }
 
         // ── Forward Flip Slash hooks ─────────────────────────────────────────────
@@ -739,6 +876,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void OnFlipSlashLand()
         {
+            SpawnLandingImpactVFX(NPC.Bottom, 96f, 78f);
             switch (_flipVariant)
             {
                 case FlipVariant.PurpleOrbBlast:
@@ -753,6 +891,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        void SpawnLandingImpactVFX(Vector2 position, float width, float height)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasLandingImpactVFX>(), 0, 0f,
+                Main.myPlayer, width, height);
+        }
+
         void OnFlipSlashLandBasic()
         {
             UsefulFunctions.ScreenShake(NPC.Center, strength: 4f, frames: 10);
@@ -762,7 +911,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            for (int i = 0; i < 18; i++)
+            for (int i = 0; i < 8; i++)
             {
                 float spawnX = Main.rand.NextFloat(-24f, 24f);
                 Vector2 spawnPos = NPC.Bottom + new Vector2(spawnX, -4f);
@@ -985,26 +1134,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             float innerT = elapsed / (float)total;                     // 0 -> 1 over the full charge
-            float outerT = Math.Min(innerT * 1.6f, 1f);                 // outer ring races out ahead
-
             float radius = NovaStages[_novaStageIndex].radius;
 
-            // Heavy engulfing dust thickening around Artorias, radius growing with innerT.
-            int count = 2 + elapsed / 8;
+            // Sparse physical motes complement the shader without obscuring its exact disc.
+            int count = elapsed % 5 == 0 ? 2 : 0;
             for (int i = 0; i < count; i++)
             {
-                float r = MathHelper.Lerp(20f, radius * 0.35f, innerT);
+                float r = MathHelper.Lerp(20f, radius * 0.24f, innerT);
                 Vector2 pos = NPC.Center + Main.rand.NextVector2Circular(r, r);
                 Color tint = Main.rand.NextBool(3) ? (Main.rand.NextBool() ? Color.Black : Color.White) : default;
                 Dust d = Dust.NewDustPerfect(pos, DustID.PurpleTorch, Vector2.Zero, 60, tint, Main.rand.NextFloat(1.3f, 2f));
                 d.noGravity = true;
             }
 
-            // Thin outer telegraph ring, expanding faster than the inner dust cloud.
-            if (elapsed % 3 == 0)
-            {
-                UsefulFunctions.DustRingPrecise(NPC.Center, radius * outerT, DustID.PurpleTorch, 40, alpha: 70, scale: 1.3f);
-            }
         }
 
         protected override void DoNovaBlast()

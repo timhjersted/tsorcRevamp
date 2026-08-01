@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            for (int i = 0; i < 2; i++)
+            if (Main.rand.NextBool(3))
             {
                 int wraith = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.Wraith, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
                 Main.dust[wraith].noGravity = true;
@@ -34,6 +34,14 @@ namespace tsorcRevamp.Projectiles.Enemy
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.DarkGray, 1.0f);
                 Main.dust[dust].noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+            EnemyVFX.DrawBlackKnightSpearWake(Projectile.Center - direction * 34f,
+                direction.ToRotation(), new Vector2(92f, 20f), 0.72f);
+            return true;
         }
 
         public override bool PreKill(int timeLeft)
@@ -64,6 +72,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 0;
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit54, Projectile.Center); //death sound
+                EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightSpearImpact);
                 if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), Projectile.damage, 3f, Projectile.owner);
                 Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int arg_1394_1 = Projectile.width;

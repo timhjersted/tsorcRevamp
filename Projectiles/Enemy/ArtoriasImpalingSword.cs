@@ -70,6 +70,20 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         // The held greatsword already follows this exact raise-and-flick pose. This helper only
         // anchors the player; drawing its texture as well produced a duplicate sword.
-        public override bool PreDraw(ref Color lightColor) => false;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (OwnerWhoAmI >= 0 && OwnerWhoAmI < Main.maxNPCs && Main.npc[OwnerWhoAmI].active
+                && Main.npc[OwnerWhoAmI].ModNPC is Artorias artorias)
+            {
+                Vector2 start = Projectile.Center;
+                if (TargetWhoAmI >= 0 && TargetWhoAmI < Main.maxPlayers && Main.player[TargetWhoAmI].active)
+                {
+                    start = Main.player[TargetWhoAmI].Center;
+                }
+                ArtoriasVFX.DrawTendril(start, artorias.NPC.Center,
+                    artorias.GetImpaleRaiseProgress01(), 0.48f, hostileTip: false);
+            }
+            return false;
+        }
     }
 }

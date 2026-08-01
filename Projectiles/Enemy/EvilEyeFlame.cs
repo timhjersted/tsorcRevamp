@@ -42,12 +42,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Vector2 desiredVel = toTarget * Projectile.velocity.Length();
                     Projectile.velocity = Vector2.Lerp(Projectile.velocity, desiredVel, 0.06f);
                 }
-                int seekDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Electric, 0f, 0f, 100, default, 1.2f);
-                Main.dust[seekDust].noGravity = true;
-                Main.dust[seekDust].velocity *= 0.2f;
+                if (Main.rand.NextBool(3))
+                {
+                    int seekDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Electric, 0f, 0f, 100, default, 1.1f);
+                    Main.dust[seekDust].noGravity = true;
+                    Main.dust[seekDust].velocity *= 0.2f;
+                }
             }
 
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(5))
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BlueTorch, 0f, 0f, 100, default, 1.1f);
                 Main.dust[dust].noGravity = true;
@@ -57,13 +60,21 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.EvilEyeFlameImpact);
             SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.5f, Pitch = 0.4f }, Projectile.position);
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 5; i++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BlueTorch, 0f, 0f, 100, default, 1.4f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 1.5f;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            bool seeking = Projectile.ai[0] == 1f && Projectile.timeLeft > 120f - SeekTicks;
+            EnemyVFX.DrawEvilEyeFlame(Projectile.Center, Projectile.velocity, seeking);
+            return false;
         }
     }
 }

@@ -10970,6 +10970,10 @@ Mods: {
 			// HumanoidMeleeHitbox.DisplayName: Humanoid Melee Hitbox
 			// GwynCinderNovaTelegraph.DisplayName: Gwyn Cinder Nova Telegraph
 			// GwynGroundFireWave.DisplayName: Gwyn Ground Fire Wave
+			// ArtoriasBoundaryVFX.DisplayName: Artorias Boundary V F X
+			// ArtoriasLandingImpactVFX.DisplayName: Artorias Landing Impact V F X
+			// VesselSoulRuptureVFX.DisplayName: Vessel Soul Rupture V F X
+			// SwordOfLordGwynImpactLightning.DisplayName: Sword Of Lord Gwyn Impact Lightning
 		}
 
 		NPCs: {

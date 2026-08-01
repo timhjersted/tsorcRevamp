@@ -6400,6 +6400,20 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>World-space point along the currently drawn melee weapon's blade.</summary>
         protected Vector2 PuppetWeaponTipPosition(float reach) => GetHandPosition() + GetWeaponWorldDirection() * reach;
 
+        /// <summary>World-space direction of the visible weapon, exposed so subclass VFX can use
+        /// the same authored pose as drawing and blade collision.</summary>
+        protected Vector2 PuppetWeaponDirection => GetWeaponWorldDirection();
+
+        /// <summary>Current armed blade reach, with the normal special-swing reach as fallback.</summary>
+        protected float PuppetActiveBladeReach => _activeBladeReach > 0f ? _activeBladeReach : MeleeRange * 0.7f;
+
+        /// <summary>Normalized progress through the current ordinary weapon animation.</summary>
+        protected float PuppetWeaponAnimationProgress => MathHelper.Clamp(
+            _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f, 0f, 1f);
+
+        /// <summary>True while an Umbral Echo Step replay swing is visible.</summary>
+        protected bool PuppetEchoStepSwinging => IsEchoStepSwinging;
+
         /// <summary>
         /// World-space unit direction the currently-drawn melee weapon sprite points, matching
         /// <see cref="DrawWeaponToLayer"/>'s actual render rotation exactly — including the

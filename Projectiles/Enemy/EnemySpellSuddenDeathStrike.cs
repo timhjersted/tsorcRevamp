@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             //It flies through walls, so it must be LOUD: shadowflame wisp trail + purple glow
-            for (int i = 0; i < 2; i++)
+            if (Main.rand.NextBool(3))
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Shadowflame, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
                 Main.dust[dust].noGravity = true;
@@ -48,6 +48,15 @@ namespace tsorcRevamp.Projectiles.Enemy
             Lighting.AddLight(Projectile.Center, 0.35f, 0.15f, 0.5f);
         }
         #endregion
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Projectile.ai[0] == 1f)
+            {
+                EnemyVFX.DrawBlackKnightDeathTrail(Projectile.Center, Projectile.velocity, new Vector2(92f, 34f), 0.76f);
+            }
+            return true;
+        }
 
         public override void OnKill(int timeLeft)
         {

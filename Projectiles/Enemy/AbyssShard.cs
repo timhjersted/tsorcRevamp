@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (elapsed < TelegraphTicks)
             {
                 Projectile.alpha = 255;
-                if (!Main.dedServ && elapsed % 3 == 0)
+                if (!Main.dedServ && elapsed % 8 == 0)
                 {
                     SpawnTelegraphDust();
                 }
@@ -144,6 +144,21 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
+            int elapsed = TotalTicks - Projectile.timeLeft;
+            if (elapsed < TelegraphTicks)
+            {
+                float telegraph = elapsed / (float)TelegraphTicks;
+                ArtoriasVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 4f),
+                    new Vector2(58f, 26f), telegraph, 0.36f + telegraph * 0.38f);
+                return false;
+            }
+
+            float activeProgress = MathHelper.Clamp((elapsed - TelegraphTicks) / (float)(PopHoldTicks + FadeTicks), 0f, 1f);
+            float activeOpacity = 1f - MathHelper.Clamp((activeProgress - 0.55f) / 0.45f, 0f, 1f);
+            ArtoriasVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 4f),
+                new Vector2(58f, 26f), 1f, 0.65f * activeOpacity);
+            ArtoriasVFX.DrawEruption(Projectile.Center, Projectile.Size, activeProgress, 0.80f * activeOpacity);
+
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Rectangle source = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
             bool pointsRight = Projectile.frame % 2 == 0;
@@ -168,7 +183,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            for (int i = 0; i < 18; i++)
+            for (int i = 0; i < 6; i++)
             {
                 Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : Color.White;
                 Vector2 vel = new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-4f, -1f));

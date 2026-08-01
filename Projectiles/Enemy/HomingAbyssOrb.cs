@@ -21,6 +21,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 4;
+            ProjectileID.Sets.TrailCacheLength[Type] = 10;
+            ProjectileID.Sets.TrailingMode[Type] = 0;
         }
 
         public override void SetDefaults()
@@ -61,19 +63,49 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.rotation += 0.15f;
 
-            if (!Main.dedServ)
+            if (!Main.dedServ && Main.rand.NextBool(4))
             {
-                for (int i = 0; i < 3; i++)
+                bool white = Main.rand.NextBool(5);
+                Color tint = white ? Color.White : new Color(190, 90, 255);
+                Dust d = Dust.NewDustPerfect(Projectile.Center,
+                    white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
+                    -Projectile.velocity * 0.1f, 110, tint, 0.9f);
+                d.noGravity = true;
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float straightTicks = Projectile.ai[0];
+            float curveTicks = Projectile.ai[1] <= 0 ? 16f : Projectile.ai[1];
+            float elapsed = Projectile.localAI[0];
+            float warning = straightTicks > 0f
+                ? MathHelper.Clamp((elapsed - (straightTicks - 10f)) / 10f, 0f, 1f)
+                : 1f;
+            float steering = MathHelper.Clamp((elapsed - straightTicks) / curveTicks, 0f, 1f);
+            float state = System.Math.Max(warning * (1f - steering), steering);
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+            if (steering > 0.05f && Projectile.oldPos[6] != Vector2.Zero)
+            {
+                Vector2 oldStart = Projectile.oldPos[6] + Projectile.Size * 0.5f;
+                Vector2 oldEnd = Projectile.oldPos[2] + Projectile.Size * 0.5f;
+                Vector2 oldDelta = oldEnd - oldStart;
+                if (oldDelta.LengthSquared() > 4f)
                 {
-                    bool white = Main.rand.NextBool(5);
-                    Color tint = white ? Color.White : (Main.rand.NextBool() ? new Color(190, 90, 255) : Color.DarkViolet);
-                    Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f),
-                        white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
-                        -Projectile.velocity * Main.rand.NextFloat(0.06f, 0.18f) + Main.rand.NextVector2Circular(0.5f, 0.5f),
-                        90, tint, Main.rand.NextFloat(0.9f, 1.3f));
-                    d.noGravity = true;
+                    ArtoriasVFX.DrawProjectileTrail(Vector2.Lerp(oldStart, oldEnd, 0.5f),
+                        oldDelta.ToRotation(), new Vector2(oldDelta.Length() + 18f, 24f),
+                        state, 0.48f);
                 }
             }
+            ArtoriasVFX.DrawProjectileTrail(Projectile.Center - direction * 38f, direction.ToRotation(),
+                new Vector2(88f, 28f), state, 0.72f);
+            ArtoriasVFX.DrawOrb(Projectile.Center, new Vector2(48f, 48f), Projectile.rotation, state, 0.94f);
+            if (warning > 0f && steering <= 0f)
+            {
+                ArtoriasVFX.DrawTransitionFlash(Projectile.Center, Vector2.One * 62f,
+                    warning, 0.72f * warning);
+            }
+            return false;
         }
 
         void Animate()
@@ -97,7 +129,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 return;
             }
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 5; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(3f, 3f);
                 Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);

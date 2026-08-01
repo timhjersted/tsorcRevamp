@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -137,14 +137,22 @@ namespace tsorcRevamp.Projectiles.Enemy
             return;
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float fuseProgress = MathHelper.Clamp(1f - Projectile.timeLeft / 240f, 0f, 1f);
+            EnemyVFX.DrawBlackKnightMoonfury(Projectile.Center, Projectile.velocity, fuseProgress, Projectile.timeLeft <= 2);
+            return Projectile.timeLeft > 2;
+        }
+
         public override void OnKill(int timeLeft)
         {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightMoonfuryBlast);
             // Play explosion sound
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath55 with { PitchVariance = 2f }, Projectile.Center);
 
 
             // Fire Dust spawn
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 24; i++)
             {
                 int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, DustID.ShadowbeamStaff, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, Color.Purple, 2.1f);
                 Main.dust[dustIndex].noGravity = true;
@@ -152,7 +160,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             // Large Smoke Gore spawn
-            for (int g = 0; g < 10; g++)
+            for (int g = 0; g < 4; g++)
             {
                 if (!Main.dedServ)
                 {

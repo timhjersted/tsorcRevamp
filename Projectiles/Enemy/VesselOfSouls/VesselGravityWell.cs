@@ -75,6 +75,9 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
             Projectile.timeLeft = Duration;
+            Vector2 center = Projectile.Center;
+            Projectile.width = Projectile.height = (int)(PullRadius * 2f);
+            Projectile.Center = center;
         }
 
         public override bool? CanDamage() => false;
@@ -111,7 +114,7 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
             float streamRamp = IsSwallowWell
                 ? MathHelper.SmoothStep(0f, 1f, AgeProgress)
                 : 1f;
-            int streamCount = IsSwallowWell ? 2 + (int)(streamRamp * 3f) : 5;
+            int streamCount = Main.dedServ ? 0 : IsSwallowWell ? 1 + (int)(streamRamp * 2f) : 2;
             float streamSpeedMin = IsSwallowWell ? MathHelper.Lerp(2.5f, 6f, streamRamp) : 6f;
             float streamSpeedMax = IsSwallowWell ? MathHelper.Lerp(4f, 10f, streamRamp) : 10f;
             for (int i = 0; i < streamCount; i++)
@@ -125,6 +128,13 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
                 Main.dust[dust].fadeIn = 0.3f;
             }
             Lighting.AddLight(mouth, 0.6f, 0.15f, 0.8f);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            VesselVFX.DrawMaw(Projectile.Center, PullRadius, AgeProgress,
+                IsSwallowWell && AgeProgress >= 0.5f, InnerDeadzone);
+            return false;
         }
     }
 }

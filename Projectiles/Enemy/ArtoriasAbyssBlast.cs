@@ -37,10 +37,18 @@ namespace tsorcRevamp.Projectiles.Enemy
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.25f);
 
             float t = 1f - Projectile.timeLeft / (float)Lifetime;
-            if (Projectile.timeLeft % 2 == 0)
+            if (!Main.dedServ && Projectile.timeLeft % 5 == 0)
             {
-                UsefulFunctions.DustRingPrecise(Projectile.Center, Radius * t, DustID.PurpleTorch, 24, alpha: 40, scale: 1.4f);
+                UsefulFunctions.DustRingPrecise(Projectile.Center, Radius * t, DustID.PurpleTorch, 8, alpha: 90, scale: 1.05f);
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = 1f - Projectile.timeLeft / (float)Lifetime;
+            float fade = MathHelper.Clamp(Projectile.timeLeft / 5f, 0f, 1f);
+            ArtoriasVFX.DrawDetonation(Projectile.Center, Radius, progress, 0.90f * fade, active: true);
+            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -55,7 +63,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < 10; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PurpleTorch, vel.X, vel.Y, 60, default, 1.6f);

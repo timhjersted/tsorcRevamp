@@ -66,10 +66,12 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             }
             for (int i = 0; i < 2; i++)
             {
-                int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, type, 0f, 0f, 50, default, 1.25f);
+                Vector2 trailVelocity = -Projectile.velocity * Main.rand.NextFloat(0.045f, 0.09f)
+                    + Main.rand.NextVector2Circular(0.65f, 0.65f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height,
+                    DustID.Electric, trailVelocity.X, trailVelocity.Y, 65,
+                    new Color(255, 226, 116), Main.rand.NextFloat(0.65f, 1.05f));
                 Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity = -Projectile.velocity * 0.08f;
             }
             Lighting.AddLight(Projectile.Center, 0.85f, 0.7f, 0.25f);
         }
@@ -83,19 +85,28 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
         public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item94 with { Volume = 0.55f, Pitch = 0.25f }, Projectile.Center);
-            if (Projectile.ai[0] == 1f && Main.myPlayer == Projectile.owner)
+            if (Main.myPlayer == Projectile.owner)
             {
-                for (int j = 0; j < 5; j++)
+                bool empowered = Projectile.ai[0] == 1f;
+                int arcCount = empowered ? 8 : 6;
+                float rotationOffset = Projectile.velocity.ToRotation() + MathHelper.Pi / arcCount;
+                for (int j = 0; j < arcCount; j++)
                 {
-                    Vector2 vel = (MathHelper.TwoPi * j / 5f).ToRotationVector2() * 5f;
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel, ModContent.ProjectileType<LordGwynShortFlame>(), Projectile.damage / 3, Projectile.knockBack * 0.5f, Projectile.owner);
+                    Vector2 velocity = (rotationOffset + MathHelper.TwoPi * j / arcCount).ToRotationVector2()
+                        * (empowered ? 10.5f : 9f);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity,
+                        ModContent.ProjectileType<SwordOfLordGwynImpactLightning>(),
+                        (int)(Projectile.damage * (empowered ? 0.42f : 0.34f)),
+                        Projectile.knockBack * 0.45f, Projectile.owner, empowered ? 1f : 0f);
                 }
             }
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 16; i++)
             {
-                Vector2 vel = Main.rand.NextVector2Circular(4.5f, 4.5f);
-                int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, type, vel.X, vel.Y, 45, default, 1.45f);
+                Vector2 velocity = Main.rand.NextVector2CircularEdge(5.5f, 5.5f)
+                    * Main.rand.NextFloat(0.45f, 1f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height,
+                    DustID.Electric, velocity.X, velocity.Y, 45,
+                    new Color(255, 236, 155), Main.rand.NextFloat(0.8f, 1.25f));
                 Main.dust[dust].noGravity = true;
             }
         }

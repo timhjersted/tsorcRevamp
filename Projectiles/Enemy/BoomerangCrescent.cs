@@ -24,6 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         int OwnerIndex => (int)Projectile.ai[1];
 
         bool _returning;
+        int _turnFlashTimer;
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/AbyssSlash";
 
@@ -64,6 +65,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 if (elapsed >= OutboundArcTicks)
                 {
                     _returning = true;
+                    _turnFlashTimer = 12;
                 }
             }
             else if (owner != null && owner.active)
@@ -80,12 +82,32 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.rotation += 0.18f * CurveDir;
 
-            if (Main.rand.NextBool(2))
+            if (_turnFlashTimer > 0)
+            {
+                _turnFlashTimer--;
+            }
+
+            if (!Main.dedServ && Main.rand.NextBool(5))
             {
                 Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);
                 Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, -Projectile.velocity * 0.1f, 100, tint, 1.1f);
                 d.noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+            ArtoriasVFX.DrawProjectileTrail(Projectile.Center - direction * 42f, direction.ToRotation(),
+                new Vector2(96f, 32f), _returning ? 1f : 0.24f, 0.74f);
+            ArtoriasVFX.DrawCrescent(Projectile.Center, Projectile.rotation,
+                new Vector2(72f, 64f), _returning, 0.96f);
+            if (_turnFlashTimer > 0)
+            {
+                float progress = 1f - _turnFlashTimer / 12f;
+                ArtoriasVFX.DrawTransitionFlash(Projectile.Center, Vector2.One * 84f, progress, 0.82f);
+            }
+            return false;
         }
 
         void Animate()
@@ -109,7 +131,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 return;
             }
-            for (int i = 0; i < 14; i++)
+            for (int i = 0; i < 5; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(3.5f, 3.5f);
                 Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);
