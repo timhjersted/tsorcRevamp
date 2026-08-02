@@ -23,6 +23,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         const int PopHoldTicks   = 10;
         const int FadeTicks      = 10;
         const int TotalTicks     = TelegraphTicks + PopHoldTicks + FadeTicks;
+        const int EmergenceTicks = 14;
+        const float EmergenceDepth = 52f;
 
         bool _grounded;
         bool _popped;
@@ -66,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (elapsed < TelegraphTicks)
             {
                 Projectile.alpha = 255;
-                if (!Main.dedServ && elapsed % 8 == 0)
+                if (!Main.dedServ && elapsed % 5 == 0)
                 {
                     SpawnTelegraphDust();
                 }
@@ -133,12 +135,15 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         void SpawnTelegraphDust()
         {
-            Vector2 pos = Projectile.Bottom - new Vector2(0f, 4f);
-            bool white = Main.rand.NextBool(3);
-            Color tint = white ? Color.White : Color.DarkViolet;
-            Dust d = Dust.NewDustPerfect(pos + Main.rand.NextVector2Circular(12f, 4f),
-                white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
-                new Vector2(0f, -0.6f), 100, tint, Main.rand.NextFloat(0.8f, 1.3f));
+            Vector2 pos = Projectile.Bottom - new Vector2(0f, 3f);
+            bool white = Main.rand.NextBool(5);
+            int dustType = white ? DustID.SilverFlame
+                : Main.rand.NextBool(3) ? DustID.ShadowbeamStaff : DustID.Smoke;
+            Color tint = white ? new Color(224, 214, 255)
+                : dustType == DustID.Smoke ? new Color(25, 8, 38) : new Color(118, 32, 180);
+            Dust d = Dust.NewDustPerfect(pos + new Vector2(Main.rand.NextFloat(-26f, 26f), Main.rand.NextFloat(-5f, 3f)),
+                dustType, new Vector2(Main.rand.NextFloat(-1.3f, 1.3f), Main.rand.NextFloat(-1.4f, -0.25f)),
+                110, tint, Main.rand.NextFloat(0.9f, 1.4f));
             d.noGravity = true;
         }
 
@@ -149,7 +154,20 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 float telegraph = elapsed / (float)TelegraphTicks;
                 ArtoriasVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 4f),
-                    new Vector2(58f, 26f), telegraph, 0.36f + telegraph * 0.38f);
+                    new Vector2(76f, 32f), telegraph, 0.42f + telegraph * 0.42f);
+
+                float emergence = MathHelper.Clamp(
+                    (elapsed - (TelegraphTicks - EmergenceTicks)) / (float)EmergenceTicks, 0f, 1f);
+                if (emergence > 0f)
+                {
+                    float eased = MathHelper.SmoothStep(0f, 1f, emergence);
+                    Vector2 source = Projectile.Bottom - new Vector2(0f, 5f);
+                    ArtoriasVFX.DrawOrb(source, new Vector2(68f, 28f),
+                        Main.GlobalTimeWrappedHourly * 1.8f, emergence, 0.58f * emergence);
+                    DrawShardSprite(Projectile.Bottom + new Vector2(0f,
+                        MathHelper.Lerp(EmergenceDepth, 0f, eased)),
+                        new Color(200, 140, 255, (int)(255f * emergence)));
+                }
                 return false;
             }
 
@@ -159,18 +177,19 @@ namespace tsorcRevamp.Projectiles.Enemy
                 new Vector2(58f, 26f), 1f, 0.65f * activeOpacity);
             ArtoriasVFX.DrawEruption(Projectile.Center, Projectile.Size, activeProgress, 0.80f * activeOpacity);
 
+            DrawShardSprite(Projectile.Bottom, GetAlpha(lightColor) ?? lightColor);
+            return false;
+        }
+
+        void DrawShardSprite(Vector2 bottom, Color color)
+        {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Rectangle source = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
-            bool pointsRight = Projectile.frame % 2 == 0;
-            Vector2 origin = pointsRight
-                ? new Vector2(0f, source.Height * 0.5f)
-                : new Vector2(source.Width, source.Height * 0.5f);
-            float rotation = pointsRight ? -MathHelper.PiOver2 : MathHelper.PiOver2;
-            Color color = GetAlpha(lightColor) ?? lightColor;
-
-            Main.EntitySpriteDraw(texture, Projectile.Bottom - Main.screenPosition, source, color,
-                rotation, origin, Projectile.scale, SpriteEffects.None, 0);
-            return false;
+            // Every authored frame points right; the previous alternating assumption inverted
+            // odd-numbered frames. Rotating all frames the same way makes every shard rise upward.
+            Vector2 origin = new Vector2(0f, source.Height * 0.5f);
+            Main.EntitySpriteDraw(texture, bottom - Main.screenPosition, source, color,
+                -MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
         }
 
         void Pop()
@@ -183,11 +202,13 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 12; i++)
             {
                 Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : Color.White;
-                Vector2 vel = new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-4f, -1f));
-                Dust d = Dust.NewDustPerfect(Projectile.Bottom, DustID.PurpleTorch, vel, 60, tint, Main.rand.NextFloat(1.1f, 1.7f));
+                Vector2 vel = new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), Main.rand.NextFloat(-6f, -1.4f));
+                int type = i % 4 == 0 ? DustID.SilverFlame : DustID.ShadowbeamStaff;
+                Dust d = Dust.NewDustPerfect(Projectile.Bottom + new Vector2(Main.rand.NextFloat(-18f, 18f), -2f),
+                    type, vel, 70, tint, Main.rand.NextFloat(0.9f, 1.45f));
                 d.noGravity = true;
             }
         }

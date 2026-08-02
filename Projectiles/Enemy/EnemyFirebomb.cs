@@ -71,7 +71,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Projectile.ai[2] == 1f && Projectile.timeLeft > 2)
             {
                 float progress = MathHelper.Clamp((240f - Projectile.timeLeft) / 210f, 0f, 1f);
-                RedKnightVFX.DrawBombFuse(Projectile.Center, progress, planted: false);
+                Vector2 fusePoint = Projectile.Center + new Vector2(3f, -8f).RotatedBy(Projectile.rotation);
+                RedKnightVFX.DrawBombFuse(fusePoint, progress, planted: false);
             }
             return true;
         }

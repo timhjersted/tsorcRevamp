@@ -57,7 +57,10 @@ float4 TrailPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLO
     float streak = tex2D(PrimarySampler, uv).r;
     float noise = tex2D(DetailSampler, uv * float2(2.0, 3.5) + float2(-Time * 0.18, Time * 0.04)).r;
     float taper = saturate(uv.x * 4.5) * saturate((1.0 - uv.x) * 2.0);
-    float body = saturate(streak * 0.75 + noise * 0.35 - 0.27) * taper;
+    float edgeFade = saturate((0.5 - abs(uv.y - 0.5)) * 5.4);
+    float flameWave = 0.5 + 0.5 * sin(uv.x * 18.0 - Time * 8.0 + noise * 3.2);
+    float body = saturate(streak * 0.72 + noise * 0.38 + flameWave * 0.14 - 0.34)
+        * taper * edgeFade;
     float core = body * body * (0.45 + Active * 0.55);
     float3 stateColor = lerp(MidColor, float3(0.95, 0.24, 0.68), Active);
     float3 color = lerp(DarkColor, stateColor, body);

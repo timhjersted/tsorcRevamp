@@ -96,7 +96,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             _ => 75
         };
         Vector2 GroundPoint => new Vector2(Projectile.ai[0], Projectile.ai[1]);
-        Vector2 PlantedCenter => GroundPoint - new Vector2(0f, 31f);
+        Vector2 PlantedCenter => GroundPoint - new Vector2(0f, 20f);
 
         public override void SetDefaults()
         {
@@ -109,6 +109,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
+            Projectile.scale = 0.8f;
         }
 
         public override bool ShouldUpdatePosition() => false;
@@ -125,7 +126,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Vector2 direction = (PlantedCenter - startPosition).SafeNormalize(Vector2.UnitY);
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
-                Projectile.Center - direction * 28f, Projectile.Center + direction * 28f,
+                Projectile.Center - direction * 24f, Projectile.Center + direction * 24f,
                 7f, ref collisionPoint);
         }
 
@@ -154,6 +155,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             {
                 PlaySound(SoundID.Dig with { Volume = 0.65f, Pitch = -0.15f }, GroundPoint);
                 SpawnBurst(RedKnightBurstKind.StandardImpact, GroundPoint, Mode == KnightStandardMode.RedKnight ? 0.75f : 1f);
+                EmitPlantDust();
             }
             if (plantedAge == ChargeTicks)
             {
@@ -188,6 +190,23 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 Mode == KnightStandardMode.RedKnight ? 0.9f : 1.2f);
         }
 
+        void EmitPlantDust()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 7; i++)
+            {
+                int dustType = i < 4 ? DustID.Stone : DustID.Torch;
+                Dust dust = Dust.NewDustPerfect(GroundPoint + new Vector2(Main.rand.NextFloat(-7f, 7f), -2f),
+                    dustType, new Vector2(Main.rand.NextFloat(-1.5f, 1.5f), Main.rand.NextFloat(-2.8f, -0.7f)),
+                    100, default, Main.rand.NextFloat(0.65f, 1f));
+                dust.noGravity = dustType == DustID.Torch;
+            }
+        }
+
         void SpawnWave(int direction)
         {
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), GroundPoint - new Vector2(0f, 9f),
@@ -208,7 +227,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             else
             {
                 float progress = MathHelper.Clamp((age - FlightTicks) / (float)Math.Max(1, ChargeTicks), 0f, 1f);
-                RedKnightVFX.DrawStandardCharge(GroundPoint, progress, Mode != KnightStandardMode.RedKnight);
+                RedKnightVFX.DrawStandardCharge(GroundPoint, progress, Mode);
             }
             return true;
         }
@@ -347,8 +366,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         {
             int age = (int)Projectile.localAI[0];
             float fuseProgress = age < FlightTicks ? 0f : MathHelper.Clamp((age - FlightTicks) / (float)PlantedTicks, 0f, 1f);
-            Vector2 fuseCenter = age < FlightTicks ? Projectile.Center : GroundPoint - new Vector2(0f, 40f);
-            RedKnightVFX.DrawBombFuse(fuseCenter, fuseProgress, planted: age >= FlightTicks);
+            Vector2 fusePoint = Projectile.Center + new Vector2(3f, -8f).RotatedBy(Projectile.rotation);
+            RedKnightVFX.DrawBombFuse(fusePoint, fuseProgress, planted: age >= FlightTicks);
             return age < FlightTicks + PlantedTicks;
         }
 

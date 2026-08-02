@@ -1069,19 +1069,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
         Vector2 CurrentSpearWorld(int facingDirection)
         {
-            Vector2 handWorld = CurrentHandWorld(facingDirection);
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame == 0)
-            {
-                // Preserve the authored idle grip, but lower the former armpit placement by twelve pixels.
-                handWorld.Y -= 9f;
-            }
-            else if (frame >= 2)
-            {
-                // The walking hand sits lower than the raised jump pose on the fixed overlay sheet.
-                handWorld.Y += 12f;
-            }
-            return handWorld;
+            // The held weapon and the matching arm overlay must use the same literal hand pivot.
+            // Per-frame offsets here detach the spear whenever the body frame changes during a windup.
+            return CurrentHandWorld(facingDirection);
         }
 
         Vector2 CurrentSpearWorld()
@@ -1095,11 +1085,6 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, gripSlide);
             if (globalNPC.ActiveAttackBypassesShield)
             {
-                float bandProgress = globalNPC.CombatMeleeActive
-                    ? globalNPC.CombatMeleeTelegraphProgress
-                    : MathHelper.Clamp((NPC.ai[1] - 119f) / 91f, 0f, 1f);
-                Projectiles.Enemy.RedKnightVFX.DrawUnblockableSpearBands(
-                    screenPosition + Main.screenPosition, rotation, bandProgress, NPC.scale);
                 Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
                 Vector2 auraCenter = screenPosition + forward * gripSlide;
                 AttackTelegraphDraw.DrawUnblockableWeaponAura(
@@ -1218,6 +1203,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 bombAim = NPC.ai[1] >= 925f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
 
+                Vector2 fusePoint = handWorld + Main.screenPosition + new Vector2(0f, -15f).RotatedBy(rotation);
+                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(fusePoint,
+                    MathHelper.Clamp((NPC.ai[1] - 895f) / 60f, 0f, 1f), planted: false);
                 spriteBatch.Draw(bombTexture, handWorld, null, drawColor, rotation, BombGripOrigin, 1f, SpriteEffects.None, 0);
                 DrawArmOverlay(spriteBatch, drawColor, globalNPC, NPC.spriteDirection);
             }
@@ -1229,7 +1217,9 @@ namespace tsorcRevamp.NPCs.Enemies
             KnightHeldProp heldProp = specialAttacks.HeldProp;
             if (heldProp == KnightHeldProp.Spear)
             {
-                Vector2 handWorld = CurrentSpearWorld(specialAttacks.Direction);
+                // Special attacks rotate freely, so use the literal overlay hand anchor without the old
+                // horizontal-only idle/walk offsets. The weapon pivot and overlay hand now share one point.
+                Vector2 handWorld = CurrentHandWorld(specialAttacks.Direction);
                 float rotation = specialAttacks.GetSpearRotation(handWorld);
                 float gripSlide = specialAttacks.SpearGripSlide;
                 if (specialAttacks.SpearDamageWake)
@@ -1249,7 +1239,8 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 Vector2 handWorld = CurrentHandWorld(specialAttacks.Direction);
                 float rotation = new Vector2(specialAttacks.Direction, 0f).ToRotation() + MathHelper.PiOver2;
-                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(handWorld,
+                Vector2 fusePoint = handWorld + new Vector2(0f, -15f).RotatedBy(rotation);
+                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(fusePoint,
                     specialAttacks.TelegraphProgress, planted: false);
                 spriteBatch.Draw(bombTexture, handWorld - Main.screenPosition, null, drawColor,
                     rotation, BombGripOrigin, 1f, SpriteEffects.None, 0f);

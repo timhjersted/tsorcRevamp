@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 4;
-            ProjectileID.Sets.TrailCacheLength[Type] = 10;
+            ProjectileID.Sets.TrailCacheLength[Type] = 20;
             ProjectileID.Sets.TrailingMode[Type] = 0;
         }
 
@@ -63,13 +63,21 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.rotation += 0.15f;
 
-            if (!Main.dedServ && Main.rand.NextBool(4))
+            if (!Main.dedServ && Main.rand.NextBool(2))
             {
-                bool white = Main.rand.NextBool(5);
-                Color tint = white ? Color.White : new Color(190, 90, 255);
-                Dust d = Dust.NewDustPerfect(Projectile.Center,
-                    white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
-                    -Projectile.velocity * 0.1f, 110, tint, 0.9f);
+                bool white = Main.rand.NextBool(7);
+                int type = white ? DustID.SilverFlame
+                    : Main.rand.NextBool(4) ? DustID.PurpleTorch : DustID.ShadowbeamStaff;
+                Color tint = white ? new Color(232, 224, 255) : new Color(174, 66, 238);
+                Vector2 tailPos = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitX)
+                    * Main.rand.NextFloat(8f, 28f);
+                Vector2 perpendicular = Projectile.velocity.SafeNormalize(Vector2.UnitX)
+                    .RotatedBy(MathHelper.PiOver2);
+                Dust d = Dust.NewDustPerfect(tailPos + Main.rand.NextVector2Circular(4f, 4f),
+                    type, -Projectile.velocity * Main.rand.NextFloat(0.08f, 0.18f)
+                        + perpendicular * Main.rand.NextFloat(-1.15f, 1.15f)
+                        + Main.rand.NextVector2Circular(0.25f, 0.25f), 115, tint,
+                    Main.rand.NextFloat(0.64f, 0.94f));
                 d.noGravity = true;
             }
         }
@@ -85,20 +93,36 @@ namespace tsorcRevamp.Projectiles.Enemy
             float steering = MathHelper.Clamp((elapsed - straightTicks) / curveTicks, 0f, 1f);
             float state = System.Math.Max(warning * (1f - steering), steering);
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-            if (steering > 0.05f && Projectile.oldPos[6] != Vector2.Zero)
+            float waveTime = Main.GlobalTimeWrappedHourly * 8.4f + Projectile.identity * 0.63f;
+            if (Projectile.oldPos[18] != Vector2.Zero)
             {
-                Vector2 oldStart = Projectile.oldPos[6] + Projectile.Size * 0.5f;
-                Vector2 oldEnd = Projectile.oldPos[2] + Projectile.Size * 0.5f;
-                Vector2 oldDelta = oldEnd - oldStart;
-                if (oldDelta.LengthSquared() > 4f)
+                for (int i = 18; i >= 4; i -= 4)
                 {
-                    ArtoriasVFX.DrawProjectileTrail(Vector2.Lerp(oldStart, oldEnd, 0.5f),
-                        oldDelta.ToRotation(), new Vector2(oldDelta.Length() + 18f, 24f),
-                        state, 0.48f);
+                    Vector2 oldCenter = Projectile.oldPos[i] + Projectile.Size * 0.5f;
+                    Vector2 newerCenter = Projectile.oldPos[i - 2] + Projectile.Size * 0.5f;
+                    Vector2 oldDirection = (newerCenter - oldCenter).SafeNormalize(direction);
+                    if (Vector2.DistanceSquared(oldCenter, newerCenter) > 4f)
+                    {
+                        float age = i / 19f;
+                        float freshness = 1f - age;
+                        Vector2 perpendicular = new(-oldDirection.Y, oldDirection.X);
+                        float lateralWave = (float)System.Math.Sin(waveTime - i * 0.72f)
+                            * MathHelper.Lerp(10f, 2.5f, freshness);
+                        float width = MathHelper.Lerp(9f, 28f, freshness);
+                        float length = MathHelper.Lerp(28f, 86f, freshness);
+                        float opacity = (float)System.Math.Pow(freshness, 1.35f) * 0.44f;
+                        Vector2 wispCenter = oldCenter - oldDirection * (length * 0.25f)
+                            + perpendicular * lateralWave;
+                        ArtoriasVFX.DrawHomingFlameWisp(wispCenter, oldDirection,
+                            state, opacity, width, length);
+                    }
                 }
             }
-            ArtoriasVFX.DrawProjectileTrail(Projectile.Center - direction * 38f, direction.ToRotation(),
-                new Vector2(88f, 28f), state, 0.72f);
+            Vector2 currentPerpendicular = new(-direction.Y, direction.X);
+            float currentWave = (float)System.Math.Sin(waveTime) * 3.5f;
+            ArtoriasVFX.DrawHomingFlameWisp(
+                Projectile.Center - direction * 34f + currentPerpendicular * currentWave,
+                direction, state, 0.88f, 32f, 104f);
             ArtoriasVFX.DrawOrb(Projectile.Center, new Vector2(48f, 48f), Projectile.rotation, state, 0.94f);
             if (warning > 0f && steering <= 0f)
             {

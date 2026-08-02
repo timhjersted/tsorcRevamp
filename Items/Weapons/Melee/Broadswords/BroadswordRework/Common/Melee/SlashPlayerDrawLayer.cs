@@ -83,6 +83,8 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
         var attackDirection = meleeAiming.AttackDirection;
         float attackAngle = meleeAiming.AttackAngle;
         float attackRange = ItemMeleeAttackAiming.GetAttackRange(item, player);
+        float visualScale = MathHelper.Max(0.05f,
+            item.GetGlobalItem<global::tsorcRevamp.Items.tsorcInstancedGlobalItem>().slashVisualScale);
 
         // Drawing info
         var tex = texture.Value;
@@ -90,7 +92,7 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
         var sourceRectangle = frame.GetSourceRectangle(tex);
         float rotation = attackAngle;
         Vector2 origin = sourceRectangle.Size() * 0.5f;
-        float scale = attackRange / 30f;
+        float scale = attackRange / 30f * visualScale;
         var effect = player.direction > 0 ^ flipped ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
         // Color calculation

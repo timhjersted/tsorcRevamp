@@ -37,7 +37,8 @@ float4 MantleBodyPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) :
     float center = saturate((0.34 - length(uv - 0.5)) * 3.0) * Active;
     float3 color = lerp(DarkColor, MidColor, edge * 0.36);
     float alpha = (body * 0.66 + center * 0.16) * Opacity;
-    return float4(sampleColor.rgb * color, sampleColor.a * alpha);
+    alpha *= sampleColor.a;
+    return float4(sampleColor.rgb * color * alpha, alpha);
 }
 
 float4 MantleEdgePixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0

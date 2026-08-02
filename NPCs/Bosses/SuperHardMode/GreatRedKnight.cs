@@ -972,13 +972,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         Vector2 CurrentSpearWorld(int facingDirection)
         {
-            Vector2 handWorld = CurrentHandWorld(facingDirection);
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame == 0)
-            {
-                handWorld.Y -= 21f;
-            }
-            return handWorld;
+            // Keep the weapon pivot on the exact hand pixel used by the arm overlay in every frame.
+            return CurrentHandWorld(facingDirection);
         }
 
         Vector2 CurrentSpearWorld()
@@ -1076,6 +1071,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Vector2 bombAim = NPC.ai[1] >= 925f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
 
+                Vector2 fusePoint = handWorld + Main.screenPosition + new Vector2(0f, -15f).RotatedBy(rotation);
+                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(fusePoint,
+                    MathHelper.Clamp((NPC.ai[1] - 895f) / 60f, 0f, 1f), planted: false);
                 spriteBatch.Draw(bombTexture, handWorld, null, drawColor, rotation, BombGripOrigin, 1f, SpriteEffects.None, 0);
                 DrawArmOverlay(spriteBatch, drawColor);
             }
@@ -1087,7 +1085,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             KnightHeldProp heldProp = specialAttacks.HeldProp;
             if (heldProp == KnightHeldProp.Spear)
             {
-                Vector2 handWorld = CurrentSpearWorld(specialAttacks.Direction);
+                Vector2 handWorld = CurrentHandWorld(specialAttacks.Direction);
                 float rotation = specialAttacks.GetSpearRotation(handWorld);
                 float gripSlide = specialAttacks.SpearGripSlide;
                 if (specialAttacks.SpearDamageWake)
@@ -1106,7 +1104,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Vector2 handWorld = CurrentHandWorld(specialAttacks.Direction);
                 float rotation = new Vector2(specialAttacks.Direction, 0f).ToRotation() + MathHelper.PiOver2;
-                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(handWorld,
+                Vector2 fusePoint = handWorld + new Vector2(0f, -15f).RotatedBy(rotation);
+                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(fusePoint,
                     specialAttacks.TelegraphProgress, planted: false);
                 spriteBatch.Draw(bombTexture, handWorld - Main.screenPosition, null, drawColor,
                     rotation, BombGripOrigin, 1f, SpriteEffects.None, 0f);

@@ -10937,6 +10937,17 @@ Mods: {
 			// ArtoriasLandingImpactVFX.DisplayName: Artorias Landing Impact V F X
 			// VesselSoulRuptureVFX.DisplayName: Vessel Soul Rupture V F X
 			// SwordOfLordGwynImpactLightning.DisplayName: Sword Of Lord Gwyn Impact Lightning
+			// BlackKnightGravefallTelegraph.DisplayName: Black Knight Gravefall Telegraph
+			// EnemyShaderBurst.DisplayName: Enemy Shader Burst
+			// CrimsonDominionController.DisplayName: Crimson Dominion Controller
+			// RedKnightDelayedBomb.DisplayName: Red Knight Delayed Bomb
+			// RedKnightGroundWave.DisplayName: Red Knight Ground Wave
+			// RedKnightLightningLane.DisplayName: Red Knight Lightning Lane
+			// RedKnightLungeHitbox.DisplayName: Red Knight Lunge Hitbox
+			// RedKnightStandard.DisplayName: Red Knight Standard
+			// RedKnightVFXBurst.DisplayName: Red Knight V F X Burst
+			// ArtoriasSwordSlashTrail.DisplayName: Artorias Sword Slash Trail
+			// ArtoriasFanSourceVFX.DisplayName: Artorias Fan Source V F X
 		}
 
 		NPCs: {

@@ -13,8 +13,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            Projectile.width = 1900;
-            Projectile.height = 1900;
+            // Match the full exterior draw canvas so Terraria does not cull the projectile while
+            // the camera is near or beyond the arena edge.
+            Projectile.width = 5600;
+            Projectile.height = 5600;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
@@ -48,7 +50,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             ArtoriasVFX.DrawBoundary(artorias.RingCenter, artorias.EffectiveRingRadius,
-                artorias.RingBandHalfWidthPixels, 0.88f, warning: false);
+                artorias.RingBandHalfWidthPixels, 1f, warning: false);
 
             if (artorias.RingCollapseWarningActive)
             {
