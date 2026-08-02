@@ -1274,17 +1274,11 @@ namespace tsorcRevamp
         public static float MythrilOcrichalcumCritDmg = 25f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
+            modifiers.HideCombatText(); //CustomCombatText displays a customizable combat text instead
             if (SmoughAttackSpeedReduction)
             {
-                if (modifiers.DamageType != DamageClass.SummonMeleeSpeed)
-                {
-                    modifiers.SetCrit();
-                }
+                modifiers.SetCrit();
                 modifiers.CritDamage -= SmoughArmor.BadCritDmg / 100f;
-            }
-            if (modifiers.DamageType == DamageClass.MagicSummonHybrid)
-            {
-                modifiers.CritDamage -= 0.25f;
             }
             if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
             {
@@ -1345,7 +1339,7 @@ namespace tsorcRevamp
             {
                 modifiers.TargetDamageMultiplier *= 1.05f;
             }
-            OverCrit(Player.GetWeaponCrit(Player.HeldItem), item.DamageType, ref modifiers, out CritColorTier, false, null, target.Hitbox);
+            OverCrit(Player.GetWeaponCrit(Player.HeldItem), item.DamageType, ref modifiers, out CritColorTier);
 
             if (target.whoAmI == tsorcRevampPlayer.LastHit)
             {
@@ -1397,6 +1391,10 @@ namespace tsorcRevamp
             {
                 modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f / 3f; //guaranteed crit is in overcrit
             }
+            if (ProjectileID.Sets.IsAWhip[proj.type] && WhipTipCrit(proj, proj.WhipPointsForCollision, target.Hitbox))
+            {
+                modifiers.SourceDamage += WhipTipCritBonusDamage / 100f;
+            }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
                 modifiers.TargetDamageMultiplier *= 1f + Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;
@@ -1408,7 +1406,7 @@ namespace tsorcRevamp
             }
             if (!proj.IsMinionOrSentryRelated)
             {
-                OverCrit(proj.CritChance, proj.DamageType, ref modifiers, out CritColorTier, ProjectileID.Sets.IsAWhip[proj.type], proj, target.Hitbox);
+                OverCrit(proj.CritChance, proj.DamageType, ref modifiers, out CritColorTier);
             }
             if (ProjectileID.Sets.MinionSacrificable[proj.type])
             {
@@ -1433,7 +1431,7 @@ namespace tsorcRevamp
             }
             return false;
         }
-        public void OverCrit(in int CritChance, DamageClass damageType, ref NPC.HitModifiers modifiers, out int critColorTier, in bool IsWhip, Projectile projectile, Rectangle targetHitbox)
+        public void OverCrit(in int CritChance, DamageClass damageType, ref NPC.HitModifiers modifiers, out int critColorTier)
         {
             int critLevel = (int)(Math.Floor(CritChance / 100f));
             critColorTier = 0;
@@ -1455,7 +1453,7 @@ namespace tsorcRevamp
                     critColorTier++;
                 }
             }
-            else if (critLevel != 0 && (damageType == DamageClass.Summon || damageType == DamageClass.SummonMeleeSpeed) && !IsWhip)
+            else if (critLevel != 0 && (damageType == DamageClass.Summon | damageType == DamageClass.SummonMeleeSpeed))
             {
                 modifiers.SetCrit();
                 if (critLevel > 1)
@@ -1474,7 +1472,7 @@ namespace tsorcRevamp
                     critColorTier++;
                 }
             }
-            else if (IsWhip)
+            /*else if (IsWhip)
             {
                 if (WhipTipCrit(projectile, projectile.WhipPointsForCollision, targetHitbox) || (Goredrinker && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung))
                 {
@@ -1495,7 +1493,7 @@ namespace tsorcRevamp
                         critColorTier++;
                     }
                 }
-            }
+            }*/
             else
             {
                 if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
@@ -1506,10 +1504,6 @@ namespace tsorcRevamp
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (CritColorTier > 0 && hit.DamageType != DamageClass.MagicSummonHybrid)
-            {
-                OverCritColor(target.Hitbox, damageDone, CritColorTier);
-            }
             if (MagmaArmor && target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3))
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
@@ -1590,9 +1584,9 @@ namespace tsorcRevamp
                 Player.GetAttackSpeed(DamageClass.Melee) *= 27f / 21f; //reduced the use time of pilgrim spontoon
             }
         }
-        public void OverCritColor(in Rectangle targetHitbox, in int damageDealt, in int CritColorTier)
+        public void CustomCombatText(in Rectangle targetHitbox, in int damageDealt, in int CritColorTier, in bool isCrit, bool isWhipTipCrit = false)
         {
-            Color ColorOfCrit = Color.Red;
+            Color ColorOfCrit = Color.Orange;
             switch (CritColorTier)
             {
                 case 1:
@@ -1606,24 +1600,34 @@ namespace tsorcRevamp
                         break;
                     }
                 case 3:
-                    {
-                        ColorOfCrit = Color.DarkViolet;
+                {
+                    ColorOfCrit = Color.White;
                         break;
                     }
                 case 4:
                     {
-                        ColorOfCrit = Color.White;
+                        ColorOfCrit = Color.Black;
                         break;
                     }
+                case 5:
+                {
+                    ColorOfCrit = Color.Red;
+                    break;
+                }
                 default:
                     {
+                        if (isCrit)
+                        {
+                            ColorOfCrit = Color.OrangeRed;
+                        }
                         break;
                     }
             }
-            CombatText.NewText(targetHitbox, ColorOfCrit, damageDealt, true, false);
+            CombatText.NewText(targetHitbox, ColorOfCrit, damageDealt + (isWhipTipCrit ? "!" : ""), isCrit, false);
         }
         public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
         {
+            CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit);  
             if (MeleeArmorVamp10)
             {
                 if (Main.rand.NextBool(10))
@@ -1638,6 +1642,14 @@ namespace tsorcRevamp
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
             Player owner = Main.player[proj.owner];
+            if (ProjectileID.Sets.IsAWhip[proj.type])
+            {
+                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit, WhipTipCrit(proj, proj.WhipPointsForCollision, target.Hitbox));
+            }
+            else if (!proj.IsMinionOrSentryRelated)
+            {
+                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit);
+            }
             if (LudensTempest && hit.DamageType == DamageClass.Magic && !owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && !owner.DeadOrGhost)
             {
                 int? closest = UsefulFunctions.GetClosestEnemyNPC(target.Center);
