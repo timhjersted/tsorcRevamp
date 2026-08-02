@@ -2736,10 +2736,6 @@ namespace tsorcRevamp.NPCs
 
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
-            if (ProjectileID.Sets.IsAWhip[projectile.type])
-            {
-                modifiers.CritDamage -= (200f - modPlayerProjectileOwner.WhipCritDamage) / 100f;
-            }
             float SummonTagDamageMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
             SummonTagFlatDamage = 0f;
             SummonTagCriticalStrikeChance = 0;
@@ -2952,7 +2948,7 @@ namespace tsorcRevamp.NPCs
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
                 FinalSummonCriticalStrikeChance = projectile.CritChance + (SummonTagCriticalStrikeChance * modPlayerProjectileOwner.SummonTagStrength);
 
-                modPlayerProjectileOwner.OverCrit((int)FinalSummonCriticalStrikeChance, projectile.DamageType, ref modifiers, out CritColorTier, ProjectileID.Sets.IsAWhip[projectile.type], projectile, npc.Hitbox);
+                modPlayerProjectileOwner.OverCrit((int)FinalSummonCriticalStrikeChance, projectile.DamageType, ref modifiers, out CritColorTier);
 
             }
             if (markedByDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
@@ -3188,9 +3184,9 @@ namespace tsorcRevamp.NPCs
 
             Player player = Main.player[projectile.owner];
             var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
-            if (projectile.IsMinionOrSentryRelated && CritColorTier > 0)
+            if (projectile.IsMinionOrSentryRelated)
             {
-                modPlayer.OverCritColor(npc.Hitbox, damageDone, CritColorTier);
+                modPlayer.CustomCombatText(npc.Hitbox, damageDone, CritColorTier, hit.Crit);
             }
             //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
             if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)

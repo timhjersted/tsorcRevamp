@@ -8382,8 +8382,7 @@ Mods: {
 					Minion Slots: {5}
 					Turret Slots: {6}
 					Whip Range: {7}%
-					Tips: Hitting enemies with the tip of a whip always results in a crit
-					Whip tip critical strike damage is {8}%
+					Tips: Hitting enemies with the tip of a whip increases damage dealt by {8}%
 					Minions can crit based on your summon critical strike chance
 					'''
 			}
