@@ -5,18 +5,20 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
     public class NightbringerThrust : ModProjectile
     {
+        public bool AppliedOnSpawn = false;
         public bool Hit = false;
         public const int FadeInDuration = 7;
         public const int FadeOutDuration = 4;
 
         public const int TotalDuration = 32;
 
-        public float CollisionWidth => 10f * Projectile.scale;
+        public float CollisionWidth = 20f;
 
         public int Timer
         {
@@ -30,11 +32,13 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void SetDefaults()
         {
             Projectile.Size = new Vector2(18);
+            Projectile.width = 244;
+            Projectile.height = 50;
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.scale = 1f;
+            Projectile.scale = Nightbringer.BaseScale;
             Projectile.usesOwnerMeleeHitCD = true;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.ownerHitCheck = true;
@@ -53,6 +57,14 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+
+            if (!AppliedOnSpawn)
+            {
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem) * 1.25f;
+                Projectile.Resize((int)(Projectile.width / Nightbringer.BaseScale * Projectile.scale), (int)(Projectile.height / Nightbringer.BaseScale * Projectile.scale));
+                CollisionWidth *= Projectile.scale;
+                AppliedOnSpawn = true;
+            }
 
             Timer += 1;
             if (Timer >= TotalDuration)
@@ -107,17 +119,19 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
         public override void CutTiles()
         {
+            Player player = Main.player[Projectile.owner];
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             DelegateMethods.tileCutIgnore = Terraria.ID.TileID.Sets.TileCutIgnore.None;
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
+            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 24f * player.GetAdjustedItemScale(player.HeldItem);
             Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            Player player = Main.player[Projectile.owner];
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity * 17f;
+            Vector2 end = start + Projectile.velocity * 24f * player.GetAdjustedItemScale(player.HeldItem);
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
         }

@@ -13,6 +13,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
     public class RuneterraKatanaTornado : ModProjectile
     {
+        public bool AppliedOnSpawn = false;
         public bool Hit = false;
         public const int baseTimeLeft = 180;
         public string SoundPath;
@@ -20,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public float yScale;
         public Color Color;
         public int numrings;
+        public float _xscalebonus = 0;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 8;
@@ -27,8 +29,8 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         }
         public override void SetDefaults()
         {
-            Projectile.width = 80;
-            Projectile.height = 150;
+            Projectile.width = 90;
+            Projectile.height = 160;
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
@@ -47,32 +49,57 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         }
         public override void OnSpawn(IEntitySource source)
         {
-            switch (Projectile.ai[0])
-            {
-                case 1:
-                    {
-                        dustID = DustID.Smoke;
-                        break;
-                    }
-                case 2:
-                    {
-                        dustID = DustID.CoralTorch;
-                        Projectile.width = 120;
-                        Projectile.height = 180;
-                        break;
-                    }
-                case 3:
-                    {
-                        dustID = DustID.Torch;
-                        Projectile.width = 140;
-                        Projectile.height = 180;
-                        break;
-                    }
-            }
         }
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+            
+            if (!AppliedOnSpawn)
+            {
+                float baseScale = 1f;
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
+                switch (Projectile.ai[0])
+                {
+                    case 1:
+                    {
+                        dustID = DustID.Smoke;
+                        baseScale = SteelTempest.BaseScale;
+                        
+                        yScale = 0.57f * Projectile.scale;
+                        numrings = (int)(40 * Projectile.scale);
+                        Color = new Color(1, 1, 1, 0.3f);
+                        break;
+                    }
+                    case 2:
+                    {
+                        dustID = DustID.CoralTorch;
+                        baseScale = PlasmaWhirlwind.BaseScale;
+                        Projectile.width = 120;
+                        Projectile.height = 166;
+                        
+                        yScale = 0.32f * Projectile.scale;
+                        numrings = (int)(32 * Projectile.scale);
+                        _xscalebonus = 0.05f * Projectile.scale;
+                        Color = new Color(0.498f, 1f, 0.831f, 0.3f);
+                        break;
+                    }
+                    case 3:
+                    {
+                        dustID = DustID.Torch;
+                        baseScale = Nightbringer.BaseScale;
+                        Projectile.width = 140;
+                        Projectile.height = 190;
+                        
+                        yScale = 0.9f * Projectile.scale;
+                        numrings = (int)(40 * Projectile.scale);
+                        _xscalebonus = 0.19f * Projectile.scale;
+                        Color = new Color(0.886f, 0.245f, 0.033f, 0.3f);
+                        break;
+                    }
+                }
+                Projectile.Resize((int)(Projectile.width / baseScale * Projectile.scale), (int)(Projectile.height / baseScale * Projectile.scale));
+                AppliedOnSpawn = true;
+            }
             Vector2 mountedCenter = player.MountedCenter + new Vector2(-player.width / 2, 0);
             Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustID, Scale: 2);
             dust.noGravity = true;
@@ -115,35 +142,9 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                 SoundEngine.PlaySound(new SoundStyle(SoundPath + "TornadoHit") with { Volume = SoundVolume });
             }
         }
+
         public override bool PreDraw(ref Color lightColor)
         {
-            float _xscalebonus = 0;
-            switch (Projectile.ai[0])
-            {
-                case 1:
-                    {
-                        yScale = 0.4f;
-                        numrings = 24;
-                        Color = new Color(1, 1, 1, 0.3f);
-                        break;
-                    }
-                case 2:
-                    {
-                        yScale = 0.5f;
-                        numrings = 30;
-                        _xscalebonus = 0.1f;
-                        Color = new Color(0.498f, 1f, 0.831f, 0.3f);
-                        break;
-                    }
-                case 3:
-                    {
-                        yScale = 0.4f;
-                        numrings = 30;
-                        _xscalebonus = 0.15f;
-                        Color = new Color(0.886f, 0.345f, 0.133f, 0.3f);
-                        break;
-                    }
-            }
             if (Projectile.velocity != Vector2.Zero)
             {
                 _xscalebonus = 0;

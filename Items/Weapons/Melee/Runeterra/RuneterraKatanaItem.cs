@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            AttackSpeedScalingDuration = (int)(4 / player.GetTotalAttackSpeed(DamageClass.Melee) * 60); //3 seconds divided by player's melee speed
+            AttackSpeedScalingDuration = (int)((4f * (1f - ((player.GetTotalAttackSpeed(DamageClass.Melee) - 1f) / 1.67f))) * 60f); //4 seconds reduced by bonus attack speed
             if (AttackSpeedScalingDuration <= 80)
             {
                 AttackSpeedScalingDuration = 80; //1.33 seconds minimum
@@ -162,7 +162,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "Thrust") with { Volume = SwingSoundVolume });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile.NewProjectile(source, position, velocity, ThrustProjectileID, damage, ItemKnockback * 2, player.whoAmI);
+                        Projectile.NewProjectile(source, position, velocity / player.GetTotalAttackSpeed(DamageClass.Melee), ThrustProjectileID, damage, ItemKnockback * 2, player.whoAmI);
                     }
                 }
                 else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
@@ -174,9 +174,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "TornadoCast") with { Volume = SwingSoundVolume });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, ItemKnockback * 2, player.whoAmI, Tier);
-                        Tornado.width = 80;
-                        Tornado.height = 150;
+                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity / player.GetTotalAttackSpeed(DamageClass.Melee), ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, ItemKnockback * 2, player.whoAmI, Tier);
                     }
                 }
             }
@@ -198,7 +196,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     }
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile.NewProjectile(source, position, velocity, ThrustProjectileID, damage, knockback * 2, player.whoAmI);
+                        Projectile.NewProjectile(source, position, velocity / player.GetTotalAttackSpeed(DamageClass.Melee), ThrustProjectileID, damage, knockback * 2, player.whoAmI);
                     }
                 }
                 else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2 && player.HasBuff(DashBuffID))
@@ -210,7 +208,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "Spin") with { Volume = 1f });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile.NewProjectile(source, position, velocity, SpinProjectileID, damage, knockback * 2, player.whoAmI);
+                        Projectile.NewProjectile(source, position, velocity / player.GetTotalAttackSpeed(DamageClass.Melee), SpinProjectileID, damage, knockback * 2, player.whoAmI);
                     }
                 }
                 else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && !player.HasBuff(DashBuffID))
@@ -222,22 +220,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "TornadoCast") with { Volume = 1f });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, knockback * 2, player.whoAmI, Tier);
-                        switch (Tier)
-                        {
-                            case 2:
-                                {
-                                    Tornado.width = 80;
-                                    Tornado.height = 180;
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    Tornado.width = 90;
-                                    Tornado.height = 180;
-                                    break;
-                                }
-                        }
+                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity / player.GetTotalAttackSpeed(DamageClass.Melee), ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, knockback * 2, player.whoAmI, Tier);
                     }
                 }
                 else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.HasBuff(DashBuffID))
