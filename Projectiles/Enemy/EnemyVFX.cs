@@ -63,13 +63,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> swirlyNoise;
         static Asset<Texture2D> perlinTiled;
         static Asset<Texture2D> wavyDetailNoise;
+        static Asset<Texture2D> veinNoise;
+        static Asset<Texture2D> turbulentNoise;
 
         static readonly Color CurseDark = new(8, 4, 15);
         static readonly Color CurseMid = new(98, 38, 138);
         static readonly Color CurseCore = new(236, 216, 255);
-        static readonly Color SteelDark = new(19, 17, 22);
-        static readonly Color SteelMid = new(139, 47, 52);
-        static readonly Color SteelCore = new(226, 232, 238);
         static readonly Color EyeDark = new(8, 12, 34);
         static readonly Color EyeMid = new(54, 112, 226);
         static readonly Color EyeCore = new(214, 246, 255);
@@ -82,9 +81,22 @@ namespace tsorcRevamp.Projectiles.Enemy
         static readonly Color InkDark = new(3, 3, 9);
         static readonly Color InkMid = new(30, 25, 67);
         static readonly Color InkCore = new(142, 197, 226);
-        static readonly Color FrostCurseDark = new(4, 7, 18);
-        static readonly Color FrostCurseMid = new(42, 78, 142);
-        static readonly Color FrostCurseCore = new(204, 241, 255);
+        // Black plague magic (Black Knight / Great Black Knight). Deliberately its own palette rather
+        // than an edit to Curse*, which DemonSpirit shares. The core is ASH, not white: a near-white
+        // CoreColor driven additively is why every one of these effects used to read as a white blob.
+        static readonly Color PlagueDark = new(10, 6, 16);
+        static readonly Color PlagueMid = new(86, 40, 122);
+        static readonly Color PlagueCore = new(196, 182, 206);
+        // Great Black Knight: same family, deeper and colder so the two read as related but distinct.
+        static readonly Color GreatPlagueDark = new(7, 5, 12);
+        static readonly Color GreatPlagueMid = new(64, 30, 104);
+        static readonly Color GreatPlagueCore = new(172, 164, 186);
+        // Weapon motion (spear wake, flail smear): grey steel-ash with no colour of its own, so a
+        // swing reads as displaced air rather than as another magic effect. Replaces the old red
+        // Steel* set, which fought the plague theme.
+        static readonly Color PlagueAshDark = new(16, 14, 20);
+        static readonly Color PlagueAshMid = new(74, 66, 86);
+        static readonly Color PlagueAshCore = new(198, 196, 206);
 
         static void LoadAssets()
         {
@@ -135,6 +147,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             swirlyNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "SwirlyNoise", AssetRequestMode.ImmediateLoad);
             perlinTiled ??= ModContent.Request<Texture2D>(NoiseRoot + "T_PerlinNoise_Tiled", AssetRequestMode.ImmediateLoad);
             wavyDetailNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Noise_Wf4", AssetRequestMode.ImmediateLoad);
+            // Black plague kit. Vein_07 is a reticulated cell web that reads as diseased tissue;
+            // Turbulence_05 is dark with bright filaments, for detonation churn. Both are seamless,
+            // so they tile cleanly at any sample scale. These replace T_Windstreak3 and T_trail12,
+            // which were wired as SHAPE sources for six lane/trail techniques and are the wrong
+            // shapes entirely: the "windstreak" is a vertical teardrop blob (hence the hard white
+            // lozenges) and "trail12" is a small centred 4-point star flare.
+            veinNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Vein_07-512x512", AssetRequestMode.ImmediateLoad);
+            turbulentNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Turbulence_05-512x512", AssetRequestMode.ImmediateLoad);
         }
 
         internal static void DrawBlackKnightHexCrystal(Vector2 center, Vector2 velocity, float dormantProgress, bool active)
@@ -143,13 +163,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (active)
             {
                 Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
-                Draw(blackKnightHexCrystal, "BlackKnightHexComet", windstreak, brokenNoise,
+                Draw(blackKnightHexCrystal, "BlackKnightHexComet", veinNoise, cloudNoise,
                     center - direction * 36f, new Vector2(96f, 30f), direction.ToRotation(),
-                    CurseDark, CurseMid, CurseCore, 0.82f, dormantProgress, 1f, 1f);
+                    PlagueDark, PlagueMid, PlagueCore, 0.82f, dormantProgress, 1f, 1f);
             }
-            Draw(blackKnightHexCrystal, "BlackKnightHexSeal", circle, brokenNoise,
-                center, active ? new Vector2(44f, 36f) : Vector2.One * 74f, 0f,
-                CurseDark, CurseMid, CurseCore, active ? 0.9f : 0.74f,
+            Draw(blackKnightHexCrystal, "BlackKnightHexSeal", perlinTiled, veinNoise,
+                center, active ? new Vector2(48f, 40f) : Vector2.One * 74f, 0f,
+                PlagueDark, PlagueMid, PlagueCore, active ? 0.9f : 0.74f,
                 dormantProgress, active ? 1f : 0f, 1f);
         }
 
@@ -157,8 +177,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             LoadAssets();
             float size = MathHelper.Lerp(500f, 96f, progress);
-            Draw(blackKnightDeathVolley, "BlackKnightDeathSeal", circle, brokenNoise,
-                center, Vector2.One * size, 0f, CurseDark, CurseMid, CurseCore,
+            Draw(blackKnightDeathVolley, "BlackKnightDeathSeal", perlinTiled, veinNoise,
+                center, Vector2.One * size, 0f, PlagueDark, PlagueMid, PlagueCore,
                 0.78f, progress, 1f, 1f);
         }
 
@@ -171,25 +191,27 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
             LoadAssets();
-            Draw(blackKnightDeathVolley, "BlackKnightAimThread", trail, smoothNoise,
-                Vector2.Lerp(start, end, 0.5f), new Vector2(length, 12f), delta.ToRotation(),
-                CurseDark, CurseMid, CurseCore, 0.48f, progress, 1f, 1f);
+            // 12px was too thin to carry a halo now that the thread is procedural rather than a
+            // stretched star flare; 18px gives the soft outer glow somewhere to live.
+            Draw(blackKnightDeathVolley, "BlackKnightAimThread", wavyDetailNoise, turbulentNoise,
+                Vector2.Lerp(start, end, 0.5f), new Vector2(length, 18f), delta.ToRotation(),
+                PlagueDark, PlagueMid, PlagueCore, 0.62f, progress, 1f, 1f);
         }
 
         internal static void DrawBlackKnightDeathTrail(Vector2 center, Vector2 velocity, Vector2 size, float opacity)
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
             LoadAssets();
-            Draw(blackKnightDeathVolley, "BlackKnightDeathTrail", windstreak, brokenNoise,
+            Draw(blackKnightDeathVolley, "BlackKnightDeathTrail", veinNoise, cloudNoise,
                 center - direction * size.X * 0.28f, size, direction.ToRotation(),
-                CurseDark, CurseMid, CurseCore, opacity, 0.5f, 1f, 1f);
+                PlagueDark, PlagueMid, PlagueCore, opacity, 0.5f, 1f, 1f);
         }
 
         internal static void DrawBlackKnightGraveTear(Vector2 center, float progress)
         {
             LoadAssets();
-            Draw(blackKnightGravefall, "BlackKnightGraveTear", circle, brokenNoise,
-                center, new Vector2(104f, 42f), 0f, CurseDark, CurseMid, CurseCore,
+            Draw(blackKnightGravefall, "BlackKnightGraveTear", wavyDetailNoise, cloudNoise,
+                center, new Vector2(104f, 42f), 0f, PlagueDark, PlagueMid, PlagueCore,
                 0.88f, progress, 0f, 1f);
         }
 
@@ -197,9 +219,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitY);
             LoadAssets();
-            Draw(blackKnightGravefall, "BlackKnightGraveTrail", windstreak, smoothNoise,
+            // Rot cloud, so it occludes rather than glows.
+            Draw(blackKnightGravefall, "BlackKnightGraveTrail", veinNoise, cloudNoise,
                 center - direction * 32f, new Vector2(86f, 22f), direction.ToRotation(),
-                CurseDark, CurseMid, CurseCore, 0.68f, 0.5f, 1f, 1f);
+                PlagueDark, PlagueMid, PlagueCore, 0.68f, 0.5f, 1f, 1f, BlendState.AlphaBlend);
         }
 
         internal static void DrawBlackKnightMoonfury(Vector2 center, Vector2 velocity, float progress, bool active)
@@ -208,21 +231,25 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (velocity.LengthSquared() > 0.2f)
             {
                 Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
-                Draw(blackKnightMoonfury, "BlackKnightMoonfurySmoke", smoke, brokenNoise,
+                Draw(blackKnightMoonfury, "BlackKnightMoonfurySmoke", perlinTiled, cloudNoise,
                     center - direction * 31f, new Vector2(82f, 34f), direction.ToRotation(),
-                    CurseDark, CurseMid, CurseCore, 0.46f, progress, active ? 1f : 0f, 1f, BlendState.AlphaBlend);
+                    PlagueDark, PlagueMid, PlagueCore, 0.46f, progress, active ? 1f : 0f, 1f, BlendState.AlphaBlend);
             }
-            Draw(blackKnightMoonfury, "BlackKnightMoonfuryCoal", gradient, brokenNoise,
-                center, Vector2.One * (active ? 70f : 48f), 0f,
-                CurseDark, CurseMid, CurseCore, 0.88f, progress, active ? 1f : 0f, 1f);
+            // The bomb sprite is 34x34 and the orb now carries a bloom out past r=0.86, so the quad
+            // has to be comfortably larger than the sprite or the bloom has nowhere to spill.
+            Draw(blackKnightMoonfury, "BlackKnightMoonfuryCoal", wavyDetailNoise, veinNoise,
+                center, Vector2.One * (active ? 82f : 58f), 0f,
+                PlagueDark, PlagueMid, PlagueCore, 0.88f, progress, active ? 1f : 0f, 1f);
         }
 
         internal static void DrawBlackKnightSpearWake(Vector2 center, float rotation, Vector2 size, float opacity)
         {
             LoadAssets();
-            Draw(blackKnightSpearWake, "BlackKnightSpearWake", windstreak, brokenNoise,
-                center, size, rotation, SteelDark, SteelMid, SteelCore,
-                opacity, 0.5f, 1f, 1f);
+            // Wind, not a glow: alpha-blended grey-ash so a swing reads as displaced air. Additive
+            // was half of why this looked like a solid white lozenge against a bright sky.
+            Draw(blackKnightSpearWake, "BlackKnightSpearWake", perlinTiled, cloudNoise,
+                center, size, rotation, PlagueAshDark, PlagueAshMid, PlagueAshCore,
+                opacity, 0.5f, 1f, 1f, BlendState.AlphaBlend);
         }
 
         internal static void DrawDemonSpiritCastSigil(Vector2 center, int pattern, float progress, Vector2 aimDirection)
@@ -450,22 +477,22 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (motion.LengthSquared() > 0.25f)
             {
                 Vector2 direction = motion.SafeNormalize(Vector2.UnitX);
-                Draw(greatBlackKnightFlail, "GreatBlackKnightFlailTrail", windstreak, brokenNoise,
+                Draw(greatBlackKnightFlail, "GreatBlackKnightFlailTrail", veinNoise, cloudNoise,
                     center - direction * 34f, new Vector2(92f, 34f), direction.ToRotation(),
-                    FrostCurseDark, FrostCurseMid, FrostCurseCore,
+                    GreatPlagueDark, GreatPlagueMid, GreatPlagueCore,
                     empowered ? 0.78f : 0.42f, 0.5f, empowered ? 1f : 0f, 1f, BlendState.AlphaBlend);
             }
-            Draw(greatBlackKnightFlail, "GreatBlackKnightFlailHead", gradient, brokenNoise,
+            Draw(greatBlackKnightFlail, "GreatBlackKnightFlailHead", perlinTiled, veinNoise,
                 center, Vector2.One * (empowered ? 62f : 50f), 0f,
-                FrostCurseDark, FrostCurseMid, FrostCurseCore,
+                GreatPlagueDark, GreatPlagueMid, GreatPlagueCore,
                 empowered ? 0.9f : 0.54f, 0.5f, empowered ? 1f : 0f, 1f, BlendState.AlphaBlend);
         }
 
         internal static void DrawGreatBlackKnightFlailPulse(Vector2 center, float progress)
         {
             LoadAssets();
-            Draw(greatBlackKnightFlail, "GreatBlackKnightFlailPulse", circle, brokenNoise,
-                center, Vector2.One * 110f, 0f, FrostCurseDark, FrostCurseMid, FrostCurseCore,
+            Draw(greatBlackKnightFlail, "GreatBlackKnightFlailPulse", perlinTiled, veinNoise,
+                center, Vector2.One * 110f, 0f, GreatPlagueDark, GreatPlagueMid, GreatPlagueCore,
                 0.9f, progress, 1f, 1f, BlendState.AlphaBlend);
         }
 
@@ -473,9 +500,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Vector2 direction = velocity.SafeNormalize(-Vector2.UnitY);
             LoadAssets();
-            Draw(greatBlackKnightFlail, "GreatBlackKnightFlailEmber", windstreak, smoothNoise,
+            Draw(greatBlackKnightFlail, "GreatBlackKnightFlailEmber", wavyDetailNoise, cloudNoise,
                 center - direction * size.X * 0.25f, size, direction.ToRotation(),
-                FrostCurseDark, FrostCurseMid, FrostCurseCore, opacity, 0.5f, 1f, 1f,
+                GreatPlagueDark, GreatPlagueMid, GreatPlagueCore, opacity, 0.5f, 1f, 1f,
                 BlendState.AlphaBlend);
         }
 
@@ -485,19 +512,19 @@ namespace tsorcRevamp.Projectiles.Enemy
             switch (kind)
             {
                 case EnemyVFXBurstKind.BlackKnightHexShatter:
-                    Draw(blackKnightHexCrystal, "BlackKnightHexShatter", flare, brokenNoise,
-                        center, Vector2.One * 82f, 0f, CurseDark, CurseMid, CurseCore, opacity, progress, 1f, 1f);
+                    Draw(blackKnightHexCrystal, "BlackKnightHexShatter", perlinTiled, veinNoise,
+                        center, Vector2.One * 82f, 0f, PlagueDark, PlagueMid, PlagueCore, opacity, progress, 1f, 1f);
                     break;
                 case EnemyVFXBurstKind.BlackKnightMoonfuryBlast:
-                    Draw(blackKnightMoonfury, "BlackKnightMoonfurySmoke", smoke, brokenNoise,
-                        center, Vector2.One * 170f, 0f, CurseDark, CurseMid, CurseCore,
+                    Draw(blackKnightMoonfury, "BlackKnightMoonfurySmoke", perlinTiled, cloudNoise,
+                        center, Vector2.One * 170f, 0f, PlagueDark, PlagueMid, PlagueCore,
                         opacity * 0.45f, progress, 1f, 1f, BlendState.AlphaBlend);
-                    Draw(blackKnightMoonfury, "BlackKnightMoonfuryBlast", circle, brokenNoise,
-                        center, Vector2.One * 109f, 0f, CurseDark, CurseMid, CurseCore, opacity, progress, 1f, 1f);
+                    Draw(blackKnightMoonfury, "BlackKnightMoonfuryBlast", cloudNoise, turbulentNoise,
+                        center, Vector2.One * 109f, 0f, PlagueDark, PlagueMid, PlagueCore, opacity, progress, 1f, 1f);
                     break;
                 case EnemyVFXBurstKind.BlackKnightSpearImpact:
-                    Draw(blackKnightSpearWake, "BlackKnightSpearImpact", circle, brokenNoise,
-                        center, Vector2.One * 84f, 0f, SteelDark, SteelMid, SteelCore, opacity, progress, 1f, 1f);
+                    Draw(blackKnightSpearWake, "BlackKnightSpearImpact", perlinTiled, cloudNoise,
+                        center, Vector2.One * 84f, 0f, PlagueAshDark, PlagueAshMid, PlagueAshCore, opacity, progress, 1f, 1f);
                     break;
                 case EnemyVFXBurstKind.DemonSpiritSoulBurst:
                     Draw(demonSpiritSoulComet, "DemonSpiritSoulBurst", circle, brokenNoise,

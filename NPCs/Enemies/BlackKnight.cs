@@ -1051,56 +1051,95 @@ namespace tsorcRevamp.NPCs.Enemies
         static readonly Vector2 SpearGripOrigin = new Vector2(8f, 38f);
         static readonly Vector2 BombGripOrigin = new Vector2(14f, 4f);
 
-        Vector2 CurrentHandWorld()
+        // Lift from the idle frame's hand pixel up to the authored throwing grip. The throw
+        // telegraph's placement is the one that reads correctly in game, so it is the reference
+        // every other state is matched against.
+        const float IdleGripLift = 21f;
+
+        // One frame-index helper so the hand and the spear can never disagree about which frame
+        // they are on.
+        int CurrentFrameIndex()
         {
             int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame < 0 || frame >= HandPixel.Length)
-            {
-                frame = 0;
-            }
+            return frame < 0 || frame >= HandPixel.Length ? 0 : frame;
+        }
 
-            Vector2 fp = HandPixel[frame];
-            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
+        // Single frame-pixel -> world mapping. Everything that attaches to the body goes through it,
+        // so a held prop's draw position and the occlusion mask's lookup cannot drift apart.
+        // facingDirection is explicit because a melee attack locks its own direction: rotating the
+        // spear by the locked direction while mirroring its anchor by NPC.spriteDirection put the
+        // shaft on the far side of the body whenever the two disagreed.
+        Vector2 FramePixelToWorld(Vector2 fp, int facingDirection)
+        {
+            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -facingDirection;
             float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
             return new Vector2(x, y);
         }
 
-        Vector2 CurrentSpearWorld()
+        // The grip, in frame space: per-frame X so the shaft tracks the arm's horizontal swing, and
+        // a Y fixed to the idle frame's so the melee jab and the throw telegraph agree by
+        // construction. The old code applied its lift only on frame 0, and AnimationType 28 puts the
+        // knight on frames 2-15 whenever it moves — so a jab (which happens mid-stride) sat the lift
+        // plus the walk-cycle offset too low, ~24px in all. Measured from BlackKnight_Hand.png:
+        // idle fist centroid (46.5, 30.4), walk-frame fists (46.7, 33.4).
+        Vector2 CurrentSpearFramePixel()
         {
-            Vector2 handWorld = CurrentHandWorld();
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame == 0)
-            {
-                handWorld.Y -= 21f;
-            }
-            return handWorld;
+            return new Vector2(HandPixel[CurrentFrameIndex()].X, HandPixel[0].Y - IdleGripLift / NPC.scale);
         }
 
+        Vector2 CurrentHandWorld(int facingDirection) => FramePixelToWorld(HandPixel[CurrentFrameIndex()], facingDirection);
+
+        Vector2 CurrentHandWorld() => CurrentHandWorld(NPC.spriteDirection);
+
+        Vector2 CurrentSpearWorld(int facingDirection) => FramePixelToWorld(CurrentSpearFramePixel(), facingDirection);
+
+        Vector2 CurrentSpearWorld() => CurrentSpearWorld(NPC.spriteDirection);
+
+        // 0 disables the body mask and falls back to a plain draw — the A/B switch for judging the
+        // occlusion in game without a rebuild-per-guess.
+        const float SpearMaskStrength = 1f;
+
         void DrawHeldSpear(SpriteBatch spriteBatch, Vector2 screenPosition, float rotation, Color drawColor,
-            tsorcRevampGlobalNPC globalNPC, float spriteScale, float gripSlide = 0f)
+            tsorcRevampGlobalNPC globalNPC, float spriteScale, float gripSlide = 0f, int facingDirection = 0)
         {
             Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, gripSlide);
             if (globalNPC.ActiveAttackBypassesShield)
             {
                 Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
                 Vector2 auraCenter = screenPosition + forward * gripSlide;
+                // The aura is a silhouette glow, deliberately drawn unmasked so the unblockable tell
+                // stays legible even where the body would cover the shaft.
                 AttackTelegraphDraw.DrawUnblockableWeaponAura(
                     spriteBatch, spearTexture, screenPosition, null, rotation, gripOrigin, NPC.scale * spriteScale);
                 drawColor = Color.Lerp(drawColor, new Color(255, 55, 55), 0.8f);
                 Lighting.AddLight(auraCenter + Main.screenPosition, Color.Red.ToVector3() * 0.75f);
             }
 
-            spriteBatch.Draw(spearTexture, screenPosition, null, drawColor, rotation,
-                gripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0f);
+            if (facingDirection == 0)
+            {
+                facingDirection = NPC.spriteDirection;
+            }
+
+            // Punch the knight's own silhouette out of the shaft so it reads as gripped rather than
+            // laid over the sprite. The mask is the body sheet, not BlackKnight_Hand: that overlay is
+            // only a 14x8 fist on the walk frames and hides almost nothing.
+            HeldPropDraw.DrawOccluded(
+                spriteBatch, spearTexture, screenPosition, drawColor, rotation, gripOrigin,
+                NPC.scale * spriteScale,
+                Terraria.GameContent.TextureAssets.Npc[NPC.type].Value,
+                new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH),
+                CurrentSpearFramePixel(), facingDirection, NPC.scale, SpearMaskStrength);
         }
-        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
+        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor) => DrawHandOverlay(spriteBatch, drawColor, NPC.spriteDirection);
+
+        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor, int facingDirection)
         {
             if (handTexture == null)
             {
                 return;
             }
 
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            SpriteEffects effects = facingDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
             Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
             spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
@@ -1151,17 +1190,19 @@ namespace tsorcRevamp.NPCs.Enemies
                 int meleeDirection = globalNPC.ActiveCombatMeleeDirection;
                 float maximumExtension = globalNPC.ActiveCombatMeleeKey == CombatComboMoveKey.LongHopMelee ? 22f : 14f;
                 float thrustOffset = globalNPC.CombatMeleeThrustProgress * maximumExtension;
-                Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
+                Vector2 handWorld = CurrentSpearWorld(meleeDirection) - Main.screenPosition;
                 float rotation = new Vector2(meleeDirection, 0f).ToRotation() + MathHelper.PiOver2;
                 if (globalNPC.InCombatMeleeHitWindow)
                 {
                     Vector2 forward = new Vector2(meleeDirection, 0f);
+                    // Anchored ahead of the tip, which sits 30px out from the grip (the 14x84 spear
+                    // is gripped at y=38 and drawn at 0.8 scale), plus however far the jab extends.
                     Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + Main.screenPosition + forward * (38f + thrustOffset),
                         forward.ToRotation(), new Vector2(82f, 18f), 0.62f);
                 }
-                DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale, thrustOffset);
-                DrawHandOverlay(spriteBatch, drawColor);
+                DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale, thrustOffset, meleeDirection);
+                DrawHandOverlay(spriteBatch, drawColor, meleeDirection);
                 DrawBlackKnightMagicOverlays();
                 return;
             }

@@ -3,58 +3,116 @@ sampler DetailSampler : register(s1);
 float3 DarkColor, MidColor, CoreColor;
 float Opacity, Time, Progress, Active, Direction;
 float2 DrawSize, PrimaryTextureSize;
-float2 UV(float2 c) { return c * PrimaryTextureSize / max(DrawSize, float2(1, 1)); }
 
+// Plague corona around the flail head. The old version drew a crisp analytic shell at r = 0.38,
+// which read as a hard ellipse pasted behind the sprite; the shell is gone. What is left is a dark
+// rotting core with a corona whose reach is itself noise-driven, so the edge is organic everywhere.
 float4 FlailHead(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
 {
-    float2 uv = UV(c);
-    float2 p = uv - 0.5;
+    float2 p = c - 0.5;
     float r = length(p);
-    float n = tex2D(DetailSampler, uv * 3.8 + float2(Time * 0.09, -Time * 0.13)).r;
-    float aura = saturate((0.5 - r) * 3.0) * saturate(n * 1.7 - 0.58);
-    float shell = saturate((0.05 - abs(r - 0.38)) * 20.0);
-    float core = Active * saturate((0.22 - r) * 5.0) * (0.55 + 0.2 * sin(Time * 9.0));
-    float3 color = lerp(DarkColor, MidColor, aura + shell);
-    color = lerp(color, CoreColor, shell + core);
-    return float4(color * (aura * 0.5 + shell + core * 1.35), saturate(aura + shell + core) * Opacity) * v;
+    float2 dir = p / max(r, 0.0005);
+
+    // Ring-space: continuous all the way around, no tiling grid and no atan2 seam.
+    float n1 = tex2D(DetailSampler, dir * (0.38 + r * 0.34) + float2(0.5 + Time * 0.043, 0.5 - Time * 0.037)).r;
+    float n2 = tex2D(PrimarySampler, dir * (0.24 - r * 0.15) + float2(0.5 - Time * 0.029, 0.5 + Time * 0.051)).r;
+    float rot = saturate(n1 * 0.85 + n2 * 0.60 - 0.24);
+
+    // Noise-modulated falloff distance: the corona reaches further in some directions than others,
+    // which kills the hard rim without eroding the shape after the fact.
+    float reach = 0.20 + rot * 0.22;
+    float corona = saturate((reach - r) * 4.6) * (0.35 + rot * 0.85);
+    // Pulse folded straight into the core rather than kept as its own term: FlailHead started at
+    // 69/64 arithmetic slots. The separate pulse variable, a corona*corona bloom and the Active
+    // brightening were the decorative parts; the shape math is untouched. Empowered still reads
+    // clearly because the C# call varies both draw size (62 vs 50) and opacity (0.9 vs 0.54).
+    float core = saturate((0.15 - r) * 7.0) * (0.70 + rot * 0.30 + 0.16 * sin(Time * 7.0));
+
+    float f = saturate((0.5 - r) * 7.0);
+    f *= f;
+    corona *= f;
+    core *= f;   // core lives inside r < 0.15 where f is already 1.0, so sharing it is free
+
+    float3 color = lerp(DarkColor, MidColor, saturate(corona * 1.25));
+    color = lerp(color, CoreColor, saturate(core * 1.3));
+    return float4(color * (corona * 0.65 + core * 1.25), saturate(corona * 0.85 + core) * Opacity) * v;
 }
 
+// Motion smear behind the swinging head: the spear wake's wider, heavier sibling. Procedural, so
+// nothing here can degrade into the stretched T_Windstreak3 blob the old version drew.
 float4 FlailTrail(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
 {
-    float2 uv = UV(c);
-    float streak = tex2D(PrimarySampler, uv).r;
-    float n = tex2D(DetailSampler, uv * float2(2.8, 3.7) + float2(-Time * 0.24, Time * 0.04)).r;
-    float taper = saturate(uv.x * 5.0) * saturate((1.0 - uv.x) * 2.0);
-    float body = saturate(streak * 0.68 + n * 0.42 - 0.36) * taper;
-    float core = saturate((streak - 0.72) * 3.6) * taper * Active;
-    float3 color = lerp(DarkColor, MidColor, body);
-    color = lerp(color, CoreColor, core);
-    return float4(color * (body * 0.58 + core * 1.35), saturate(body + core) * Opacity) * v;
+    float across = abs(c.y - 0.5) * 2.0;
+    float along = c.x;
+
+    float spine = saturate(along * 1.5) * saturate((1.0 - along) * 2.8);
+    float width = saturate(1.0 - across / max(spine, 0.08));
+
+    float n1 = tex2D(DetailSampler, float2(c.x * 1.7 - Time * 1.05, c.y * 2.2 + Time * 0.05)).r;
+    float n2 = tex2D(PrimarySampler, float2(c.x * 2.9 - Time * 1.70, c.y * 1.4 - Time * 0.08)).r;
+    float churn = saturate(n1 * 0.90 + n2 * 0.55 - 0.30);
+
+    float body = width * width * saturate(churn + along * 0.40 - 0.06);
+    float ember = width * saturate(along - 0.62) * 2.4 * saturate(churn * 1.6 - 0.45) * Active;
+
+    float fade = saturate(along * 5.0) * saturate((1.0 - along) * 3.6) * saturate((1.0 - across) * 3.0);
+    body *= fade * fade;
+    ember *= fade;
+
+    float3 color = lerp(DarkColor, MidColor, saturate(body * 1.3));
+    color = lerp(color, CoreColor, saturate(ember * 1.5));
+    return float4(color, saturate(body * 0.62 + ember * 0.45) * Opacity) * v;
 }
 
+// Ground shockwave telegraph. The collapsing ring is the readable threat, so it stays; the static
+// outer ring at r = 0.46 (a second hard ellipse) is gone and the survivor is eroded by noise.
 float4 FlailPulse(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
 {
-    float2 p = UV(c) - 0.5;
+    float2 p = c - 0.5;
     float r = length(p);
-    float n = tex2D(DetailSampler, UV(c) * 3.0 + float2(Time * 0.08, -Time * 0.06)).r;
-    float ring = saturate((0.03 - abs(r - 0.46)) * 34.0);
-    float inward = saturate((0.05 - abs(r - lerp(0.46, 0.18, Progress))) * 20.0);
-    float haze = saturate((0.46 - r) * 4.0) * saturate(n * 1.6 - 0.68);
-    float3 color = lerp(DarkColor, MidColor, haze + inward);
-    color = lerp(color, CoreColor, ring + inward);
-    return float4(color * (haze * 0.4 + inward + ring * 1.4), saturate(haze + inward + ring) * Opacity) * v;
+    float2 dir = p / max(r, 0.0005);
+
+    float n1 = tex2D(DetailSampler, dir * (0.42 + r * 0.24) + float2(0.5 + Time * 0.031, 0.5 - Time * 0.026)).r;
+    float n2 = tex2D(PrimarySampler, dir * (0.27 - r * 0.13) + float2(0.5 - Time * 0.022, 0.5 + Time * 0.018)).r;
+    float grain = saturate(n1 * 0.80 + n2 * 0.60 - 0.22);
+
+    // Inward collapse: the shrinking radius is the tell, and outrunning it is the counterplay.
+    float radius = lerp(0.44, 0.13, Progress);
+    float ring = saturate((0.055 - abs(r - radius)) * 20.0) * (0.40 + grain * 0.80);
+    float haze = saturate((radius - r) * 3.4) * saturate(grain * 1.5 - 0.42);
+
+    float f = saturate((0.5 - r) * 7.0);
+    ring *= f * f;
+    haze *= f * f;
+
+    float3 color = lerp(DarkColor, MidColor, saturate(haze * 1.4 + ring * 0.5));
+    color = lerp(color, CoreColor, saturate(ring * ring * 1.2));
+    return float4(color * (haze * 0.45 + ring * 1.30), saturate(haze * 0.7 + ring) * Opacity) * v;
 }
 
+// Falling ember shed by the flail: a small teardrop with a wisp trailing it.
 float4 FlailEmber(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
 {
-    float2 uv = UV(c);
-    float streak = tex2D(PrimarySampler, uv).r;
-    float n = tex2D(DetailSampler, uv * float2(2.5, 3.4) + float2(-Time * 0.2, Time * 0.04)).r;
-    float taper = saturate(uv.x * 5.0) * saturate((1.0 - uv.x) * 2.2);
-    float body = saturate(streak * 0.7 + n * 0.42 - 0.35) * taper;
-    float3 color = lerp(DarkColor, MidColor, body);
-    color = lerp(color, CoreColor, saturate((streak - 0.76) * 4.0));
-    return float4(color * body, body * Opacity) * v;
+    float across = abs(c.y - 0.5) * 2.0;
+    float along = c.x;
+
+    float spine = saturate(along * 2.6) * saturate((1.0 - along) * 2.2);
+    float width = saturate(1.0 - across / max(spine, 0.10));
+
+    float n1 = tex2D(DetailSampler, float2(c.x * 2.4 - Time * 0.85, c.y * 2.0 + Time * 0.11)).r;
+    float n2 = tex2D(PrimarySampler, float2(c.x * 1.3 + Time * 0.30, c.y * 3.1 - Time * 0.07)).r;
+    float grain = saturate(n1 * 0.80 + n2 * 0.65 - 0.28);
+
+    float body = width * width * saturate(grain + 0.30);
+    float head = width * saturate(along - 0.70) * 3.0;
+
+    float fade = saturate(along * 5.5) * saturate((1.0 - along) * 4.0) * saturate((1.0 - across) * 3.2);
+    body *= fade * fade;
+    head *= fade;
+
+    float3 color = lerp(DarkColor, MidColor, saturate(body * 1.5));
+    color = lerp(color, CoreColor, saturate(head * 1.4));
+    return float4(color * (body * 0.70 + head * 1.20), saturate(body * 0.55 + head * 0.60) * Opacity) * v;
 }
 
 technique GreatBlackKnightFlailHead { pass P { PixelShader = compile ps_2_0 FlailHead(); } }
