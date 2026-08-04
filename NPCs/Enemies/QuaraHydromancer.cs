@@ -579,10 +579,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override bool PreDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            bool hiddenSurge = State == AttackState.TideRush
-                && AttackTimer > RushDissolveTicks
-                && AttackTimer <= RushDissolveTicks + RushMaxSurgeTicks;
-            return !hiddenSurge;
+            return true;
         }
 
         public override void PostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

@@ -244,7 +244,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         // Bright, converging purple telegraph so the incoming shot is easy to read.
         void TelegraphTick()
         {
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 3; i++)
             {
                 float ang = Main.rand.NextFloat(MathHelper.TwoPi);
                 Vector2 from = NPC.Center + ang.ToRotationVector2() * Main.rand.NextFloat(28f, 46f);
@@ -278,7 +278,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         {
             if (Main.dedServ) return;
             float p = 1f - ticksLeft / (float)DetonateWindup; // 0 → 1
-            int count = age % 4 == 0 ? 1 : 0;
+            int count = 1 + (int)(p * 4f);
             for (int i = 0; i < count; i++)
             {
                 float ang = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -305,13 +305,13 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.7f, Pitch = -0.2f }, NPC.Center);
                 for (int i = 0; i < 6; i++) // +40% gores (was ~4), bigger
                     Gore.NewGore(NPC.GetSource_Death(), NPC.Center - new Vector2(8f), Main.rand.NextVector2Circular(3.2f, 3.2f), GoreID.Smoke1 + Main.rand.Next(3), 1.35f);
-                for (int i = 0; i < 12; i++)
+                for (int i = 0; i < 46; i++)
                 {
                     Vector2 vel = Main.rand.NextVector2Circular(7f, 7f);
                     int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, vel.X, vel.Y, 70, default, Main.rand.NextFloat(1.4f, 2.2f));
                     Main.dust[d].noGravity = true;
                 }
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 24; i++)
                 {
                     Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
                     int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.RedTorch, vel.X, vel.Y, 90, default, 1.6f);

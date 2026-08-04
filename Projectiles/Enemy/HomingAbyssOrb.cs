@@ -63,22 +63,18 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.rotation += 0.15f;
 
-            if (!Main.dedServ && Main.rand.NextBool(2))
+            if (!Main.dedServ)
             {
-                bool white = Main.rand.NextBool(7);
-                int type = white ? DustID.SilverFlame
-                    : Main.rand.NextBool(4) ? DustID.PurpleTorch : DustID.ShadowbeamStaff;
-                Color tint = white ? new Color(232, 224, 255) : new Color(174, 66, 238);
-                Vector2 tailPos = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitX)
-                    * Main.rand.NextFloat(8f, 28f);
-                Vector2 perpendicular = Projectile.velocity.SafeNormalize(Vector2.UnitX)
-                    .RotatedBy(MathHelper.PiOver2);
-                Dust d = Dust.NewDustPerfect(tailPos + Main.rand.NextVector2Circular(4f, 4f),
-                    type, -Projectile.velocity * Main.rand.NextFloat(0.08f, 0.18f)
-                        + perpendicular * Main.rand.NextFloat(-1.15f, 1.15f)
-                        + Main.rand.NextVector2Circular(0.25f, 0.25f), 115, tint,
-                    Main.rand.NextFloat(0.64f, 0.94f));
-                d.noGravity = true;
+                for (int i = 0; i < 3; i++)
+                {
+                    bool white = Main.rand.NextBool(5);
+                    Color tint = white ? Color.White : (Main.rand.NextBool() ? new Color(190, 90, 255) : Color.DarkViolet);
+                    Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f),
+                        white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
+                        -Projectile.velocity * Main.rand.NextFloat(0.06f, 0.18f) + Main.rand.NextVector2Circular(0.5f, 0.5f),
+                        90, tint, Main.rand.NextFloat(0.9f, 1.3f));
+                    d.noGravity = true;
+                }
             }
         }
 
@@ -129,7 +125,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 ArtoriasVFX.DrawTransitionFlash(Projectile.Center, Vector2.One * 62f,
                     warning, 0.72f * warning);
             }
-            return false;
+            return true;
         }
 
         void Animate()
@@ -153,7 +149,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 return;
             }
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 12; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(3f, 3f);
                 Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);

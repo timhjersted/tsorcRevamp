@@ -29,8 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         const string DashTeleportEventID = "EvilEyeDashTeleport";
 
-        const int FrameWidth = 80;
-        const int FrameHeight = 40;
+        const int FrameWidth = 126;
+        const int FrameHeight = 156;
 
         const float BaseContactDamage = 50f;
         const float ChargeContactDamage = 80f;
@@ -156,7 +156,7 @@ namespace tsorcRevamp.NPCs.Enemies{
         // and drifts inward, reading as the eye pulling energy into itself before it releases.
         void SpawnInwardChargeDust(Vector2 center, float progress)
         {
-            if (Main.rand.NextFloat() < 0.15f + progress * 0.25f)
+            if (Main.rand.NextFloat() < 0.3f + progress * 0.6f)
             {
                 Vector2 edge = Main.rand.NextVector2CircularEdge(50f, 50f);
                 int dust = Dust.NewDust(center + edge, 2, 2, DustID.BlueTorch, 0, 0, 100, default, 1f + progress);
@@ -190,7 +190,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             NPC.netUpdate = true;
             SoundEngine.PlaySound(SoundID.Item72 with { Volume = 1f, Pitch = 0.5f }, NPC.Center);
             UsefulFunctions.ScreenShake(NPC.Center, 10f, 20);
-            UsefulFunctions.DustRingPrecise(NPC.Center, 30f, DustID.BlueTorch, 20, 4f, 150, 1.8f);
+            UsefulFunctions.DustRingPrecise(NPC.Center, 30f, DustID.BlueTorch, 40, 4f, 150, 1.8f);
             EnterState(State.NovaRing);
         }
 
@@ -364,7 +364,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 return;
             }
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.9f, Pitch = -0.2f }, NPC.Center);
-            UsefulFunctions.DustRingPrecise(NPC.Center, 30f, DustID.BlueTorch, 12, 0f, 150, 1.5f);
+            UsefulFunctions.DustRingPrecise(NPC.Center, 30f, DustID.BlueTorch, 30, 0f, 150, 1.5f);
             for (int i = 0; i < NovaShotCount; i++)
             {
                 float angle = MathHelper.TwoPi * i / NovaShotCount;
@@ -407,7 +407,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             NPC.ai[1]++;
             NPC.velocity = dashDirection * DashSpeed;
 
-            if (Main.rand.NextBool(4))
+            if (Main.rand.NextBool(2))
             {
                 int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BlueTorch, 0, 0, 100, default, 1.5f);
                 Main.dust[dust].noGravity = true;

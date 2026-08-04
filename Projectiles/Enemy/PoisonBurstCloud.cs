@@ -49,8 +49,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float progress = 1f - Projectile.timeLeft / 600f;
-            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 36f, progress, true, false);
+            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 36f, 0.45f, false, false);
             return true;
         }
 

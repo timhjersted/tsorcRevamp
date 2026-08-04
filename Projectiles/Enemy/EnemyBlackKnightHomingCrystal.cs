@@ -127,7 +127,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //}
 
             // Fire Dust spawn
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 30; i++)
             {
                 int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 228, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
                 Main.dust[dustIndex].noGravity = true;
@@ -151,16 +151,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
             // create unknown embers that fill the explosion's radius
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 30; i++)
             {
                 float velX = 1f - ((float)Main.rand.Next(20)) / 5f;
                 float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
                 velX *= 2f;
                 velY *= 2f;
                 Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
-                //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
-                //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
-
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
             }
 
 
@@ -210,7 +208,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //}
 
             // Fire Dust spawn
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 30; i++)
             {
                 int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 228, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
                 Main.dust[dustIndex].noGravity = true;
@@ -234,16 +232,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
             // create unknown embers that fill the explosion's radius
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 30; i++)
             {
                 float velX = 1f - ((float)Main.rand.Next(20)) / 5f;
                 float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
                 velX *= 2f;
                 velY *= 2f;
                 Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
-                //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
-                //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
-
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
             }
         }
 

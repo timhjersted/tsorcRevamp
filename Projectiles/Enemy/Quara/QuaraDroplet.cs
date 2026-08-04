@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             EnemyVFX.DrawQuaraBubble(Projectile.Center, Vector2.One * 13f, 0.5f, false);
-            return false;
+            return true;
         }
 
         public override void OnKill(int timeLeft)

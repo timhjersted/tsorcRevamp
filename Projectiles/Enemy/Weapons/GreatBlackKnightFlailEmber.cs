@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 Projectile.velocity.Y = 16f;
             }
 
-            if (Main.rand.NextBool(5))
+            if (Main.rand.NextBool(2))
             {
                 Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.IceTorch, Projectile.velocity * 0.2f, 100, default, 1f);
                 dust.noGravity = true;
@@ -134,7 +134,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             normal.Normalize();
             Projectile.velocity = Vector2.Zero;
 
-            if (Main.rand.NextBool(6))
+            if (Main.rand.NextBool(2))
             {
                 Vector2 dustPos = Projectile.Center - normal * 4f + Main.rand.NextVector2Circular(6f, 6f);
                 Vector2 dustVel = normal * Main.rand.NextFloat(0.4f, 1.2f) + Main.rand.NextVector2Circular(0.3f, 0.3f);

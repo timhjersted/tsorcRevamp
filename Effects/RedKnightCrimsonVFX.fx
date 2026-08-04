@@ -166,6 +166,25 @@ float4 UltrakillGatherPixel(float4 vertexColor : COLOR0, float2 uv : TEXCOORD0) 
     return float4(vertexColor.rgb * color * energy, vertexColor.a * alpha);
 }
 
+float4 VoidGatherPixel(float4 vertexColor : COLOR0, float2 uv : TEXCOORD0) : COLOR0
+{
+    float2 p = (uv - 0.5) * 2.0;
+    float radius = length(p);
+
+    // Swirl the sample angle by an amount that grows with radius so the noise reads as
+    // shadow dragged around in a vortex rather than a static blob.
+    float swirl = atan2(p.y, p.x) + radius * 3.4 - Time * 0.6;
+    float2 swirlUV = float2(cos(swirl), sin(swirl)) * radius * 0.5 + 0.5;
+    float cloud = tex2D(FlowSampler, swirlUV * 2.3 + float2(Time * 0.05, -Time * 0.07)).r;
+
+    float falloff = 1.0 - smoothstep(0.18, 1.0, radius);
+    float body = falloff * saturate(0.30 + cloud * 0.9);
+
+    float3 color = DarkColor * lerp(0.35, 1.0, cloud) + MidColor * (cloud * falloff * 0.25);
+    float alpha = body * Opacity;
+    return float4(vertexColor.rgb * color, vertexColor.a * alpha);
+}
+
 technique RedKnightSpearWake
 {
     pass WakePass { PixelShader = compile ps_2_0 SpearWakePixel(); }
@@ -194,4 +213,9 @@ technique RedKnightPoisonOrb
 technique RedKnightBombBlast
 {
     pass BombPass { PixelShader = compile ps_2_0 BombBlastPixel(); }
+}
+
+technique RedKnightVoidGather
+{
+    pass VoidPass { PixelShader = compile ps_2_0 VoidGatherPixel(); }
 }

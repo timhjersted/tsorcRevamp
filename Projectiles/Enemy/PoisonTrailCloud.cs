@@ -35,13 +35,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Fill the box with lazily-drifting toxic dust; fades in/out with remaining lifetime.
             if (Main.rand.NextBool(5))
             {
-                Vector2 spot = Projectile.position + new Vector2(Main.rand.NextFloat(Projectile.width), Main.rand.NextFloat(Projectile.height));
-                int dust = Dust.NewDust(spot, 1, 1, DustID.Poisoned, 0f, 0f, 150, default, 1.4f);
-                Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity = new Vector2(Main.rand.NextFloat(-0.3f, 0.3f), Main.rand.NextFloat(-0.5f, -0.1f));
-                if (Projectile.timeLeft < 60)
+                for (int i = 0; i < 2; i++)
                 {
-                    Main.dust[dust].alpha = 255 - (int)(255 * (Projectile.timeLeft / 60f));
+                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Poisoned, 0f, 0f, 100, default, 2f);
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity *= 0.3f;
                 }
             }
 
@@ -50,9 +48,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float progress = 1f - Projectile.timeLeft / (6f * 60f);
-            EnemyVFX.DrawElandToxicField(Projectile.Center, new Vector2(Projectile.width, Projectile.height), progress, true, false);
-            return false;
+            float progress = 1f - Projectile.timeLeft / 180f;
+            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 36f, progress, true, false);
+            return true;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

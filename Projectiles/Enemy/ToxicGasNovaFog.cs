@@ -34,16 +34,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             float radius = Projectile.width / 2f;
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 3; i++)
             {
                 Vector2 spot = Projectile.Center + Main.rand.NextVector2Circular(radius, radius);
                 int dust = Dust.NewDust(spot, 1, 1, DustID.Poisoned, 0f, 0f, 150, default, 1.6f);
                 Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity = Main.rand.NextVector2Circular(0.4f, 0.4f);
-                if (Projectile.timeLeft < 60)
-                {
-                    Main.dust[dust].alpha = 255 - (int)(255 * (Projectile.timeLeft / 60f));
-                }
+                Main.dust[dust].velocity = new Vector2(Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(-0.4f, -0.1f));
             }
 
             Lighting.AddLight(Projectile.Center, 0.1f, 0.4f, 0.1f);
@@ -53,7 +49,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             float progress = 1f - Projectile.timeLeft / (4f * 60f);
             EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * Diameter, progress, true, true);
-            return false;
+            return true;
         }
 
         // True circular hit-test instead of the square AABB, so only players genuinely inside the

@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Projectile.ai[0] < TelegraphTicks)
             {
                 float t = Projectile.ai[0] / TelegraphTicks;
-                if (Main.rand.NextFloat() < 0.2f + t * 0.2f)
+                if (Main.rand.NextFloat() < 0.35f + t * 0.3f)
                 {
                     Vector2 edge = Main.rand.NextVector2CircularEdge(30f, 30f) * (1f - t * 0.5f);
                     int dust = Dust.NewDust(Projectile.Center + edge, 2, 2, DustID.BlueTorch, 0f, 0f, 150, default, 1f + t);
@@ -61,7 +61,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             float progress = MathHelper.Clamp(Projectile.ai[0] / TelegraphTicks, 0f, 1f);
             bool active = Projectile.ai[0] >= TelegraphTicks;
             EnemyVFX.DrawEvilEyeGroundGlyph(Projectile.Center, progress, active);
-            return false;
+            return true;
         }
     }
 }

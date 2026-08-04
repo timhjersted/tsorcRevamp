@@ -145,7 +145,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         internal static void DrawCrimsonDominion(Vector2 center, int age, float baseRotation,
-            int rotationDirection, float sweepAngle, int movementDirection, bool sweepActive)
+            int rotationDirection)
         {
             LoadAssets();
             if (Main.dedServ || dominionEffect == null)
@@ -162,7 +162,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (age < CrimsonDominionController.BuildTicks)
             {
                 float build = MathHelper.Clamp(age / (float)CrimsonDominionController.BuildTicks, 0f, 1f);
-                fieldOpacity = MathHelper.Lerp(0f, 0.78f, build);
+                fieldOpacity = MathHelper.Lerp(0f, 1f, build);
                 edgeOpacity = MathHelper.Lerp(0.08f, 0.95f, build);
                 float gatherSize = MathHelper.Lerp(96f, 188f, build);
                 DrawDominionQuad("DominionNova", center, Vector2.One * gatherSize, 0f,
@@ -170,14 +170,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             else if (age < CrimsonDominionController.EscapeStart)
             {
-                fieldOpacity = 0.8f;
+                // Fully opaque black wall once containment locks in — no more see-through arena
+                // boundary; the red energy waves (DominionEdge, additive) render on top of it.
+                fieldOpacity = 1f;
                 edgeOpacity = 1f;
             }
             else
             {
                 float escape = MathHelper.Clamp((age - CrimsonDominionController.EscapeStart) /
                     (float)CrimsonDominionController.EscapeTicks, 0f, 1f);
-                fieldOpacity = 0.8f * (1f - escape);
+                fieldOpacity = 1f - escape;
                 edgeOpacity = MathHelper.Lerp(0.9f, 0.22f, escape);
             }
 
@@ -189,29 +191,17 @@ namespace tsorcRevamp.Projectiles.Enemy
                     edgeOpacity, 1f, 0f, 1.08f, radiusRatio, rotationDirection, BlendState.Additive);
             }
 
-            if (age < CrimsonDominionController.BuildTicks)
-            {
-                float build = MathHelper.Clamp(age / (float)CrimsonDominionController.BuildTicks, 0f, 1f);
-                DrawDominionPair(center, baseRotation, rotationDirection, active: false,
-                    MathHelper.Lerp(0.08f, 0.62f, build), 42f);
-            }
-
-            if (age >= CrimsonDominionController.BuildTicks && age < CrimsonDominionController.EscapeStart
-                && sweepActive)
-            {
-                DrawDominionPair(center, sweepAngle, movementDirection, active: true, 0.9f, 54f);
-                float previewAngle = sweepAngle + movementDirection * MathHelper.Pi / 10f;
-                DrawDominionPair(center, previewAngle, movementDirection, active: false, 0.28f, 34f);
-            }
-
             if (age >= CrimsonDominionController.EscapeStart && age < CrimsonDominionController.NovaStart)
             {
+                // Pre-nova charge-up: now a full 210t telegraph (was 90t) with a much stronger
+                // opacity ramp so "the explosion is coming" reads clearly instead of fading in barely
+                // visible right up until it fires.
                 float charge = MathHelper.Clamp((age - CrimsonDominionController.EscapeStart) /
                     (float)CrimsonDominionController.EscapeTicks, 0f, 1f);
                 Vector2 novaSize = Vector2.One * arenaRadius * 2f;
                 DrawDominionQuad("DominionNova", center, novaSize, 0f,
-                    MathHelper.Lerp(0.12f, 0.58f, charge), charge, 0f,
-                    MathHelper.Lerp(0.55f, 0.92f, charge), 0.5f, rotationDirection,
+                    MathHelper.Lerp(0.22f, 0.88f, charge), charge, 0f,
+                    MathHelper.Lerp(0.6f, 1.15f, charge), 0.5f, rotationDirection,
                     BlendState.NonPremultiplied);
             }
             else if (age >= CrimsonDominionController.NovaStart)
@@ -226,20 +216,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                 DrawDominionQuad("DominionNova", center, novaSize, 0f,
                     0.92f * fade, 1f, 1f, 1.34f, 0.5f, rotationDirection,
                     BlendState.Additive);
-            }
-        }
-
-        static void DrawDominionPair(Vector2 center, float angle, int movementDirection,
-            bool active, float opacity, float width)
-        {
-            Vector2 direction = angle.ToRotationVector2();
-            float length = CrimsonDominionController.Radius - CrimsonDominionController.InnerRadius;
-            for (int sign = -1; sign <= 1; sign += 2)
-            {
-                Vector2 signedDirection = direction * sign;
-                DrawDominionLance(center + signedDirection * CrimsonDominionController.InnerRadius,
-                    signedDirection, length, width, active ? 1f : 0.68f, active,
-                    opacity, movementDirection * sign);
             }
         }
 
@@ -296,6 +272,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             float eased = progress * progress * (3f - 2f * progress);
             float gatherRadius = MathHelper.Lerp(128f, 34f, eased);
             float pulse = 0.92f + 0.08f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 9f);
+
+            // Black swirling shadow behind the gather so the pink glow reads against darkness
+            // instead of hovering transparent over the arena background.
+            DrawVoidGather(center, new Vector2(320f, 260f),
+                (0.7f + progress * 0.2f) * pulse, new Color(10, 0, 8), new Color(90, 6, 20));
+
             DrawCrimsonQuad("RedKnightUltrakillGather", center, 0f,
                 new Vector2(270f, 205f), (0.62f + progress * 0.18f) * pulse,
                 new Color(22, 0, 22), new Color(176, 10, 46), new Color(255, 118, 92),
@@ -334,16 +316,37 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (storm)
             {
-                float radius = MathHelper.Lerp(42f, 148f, MathHelper.Clamp(progress * 1.1f, 0f, 1f));
-                DrawRadialBand(center, radius, 4f, 18f, envelope * 0.38f,
-                    StormCinder, StormFlame, StormCore);
-                for (int i = 0; i < 3; i++)
+                float radius = MathHelper.Lerp(46f, 172f, MathHelper.Clamp(progress * 1.05f, 0f, 1f));
+
+                // Dark storm-cloud gathering — reads as "a storm is being summoned" instead of the
+                // old flat expanding ring, which was just a blue circle with no weight behind it.
+                DrawVoidGather(center, new Vector2(radius * 2.6f, radius * 2.2f),
+                    envelope * 0.85f + 0.1f, new Color(3, 6, 14), new Color(40, 90, 150));
+
+                // Crackling lightning strands lick around the knight, staggering in one at a time
+                // over the buildup instead of a single faint ring at ~7% opacity.
+                const int strandCount = 6;
+                for (int i = 0; i < strandCount; i++)
                 {
-                    Vector2 direction = (MathHelper.TwoPi * i / 3f - MathHelper.PiOver2
-                        - progress * 0.45f).ToRotationVector2();
-                    DrawJudgmentLane(center + direction * 48f, direction, 92f, 7f,
-                        progress, active: false, envelope * 0.18f);
+                    float strandThreshold = i / (float)strandCount * 0.7f;
+                    if (progress < strandThreshold)
+                    {
+                        continue;
+                    }
+                    float strandProgress = MathHelper.Clamp((progress - strandThreshold) / 0.3f, 0f, 1f);
+                    float angle = MathHelper.TwoPi * i / strandCount - MathHelper.PiOver2
+                        - progress * 0.9f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 5f + i) * 0.12f;
+                    Vector2 direction = angle.ToRotationVector2();
+                    float strandRadius = radius * (0.55f + 0.1f * (i % 3));
+                    DrawJudgmentLane(center + direction * strandRadius * 0.4f, direction,
+                        strandRadius * 0.85f, 5f + (i % 2) * 2f,
+                        strandProgress, active: false, envelope * 0.62f * strandProgress);
                 }
+
+                // Thin bright rim so the gather keeps a readable edge — much thinner and hotter
+                // than the old dominant band, now an accent rather than the whole effect.
+                DrawRadialBand(center, radius, 2.5f, 12f, envelope * 0.22f,
+                    StormCinder, StormFlame, StormCore);
             }
             else
             {
@@ -601,6 +604,56 @@ namespace tsorcRevamp.Projectiles.Enemy
                 graphicsDevice.Textures[2] = previousTexture2;
                 graphicsDevice.SamplerStates[1] = previousSampler1;
                 graphicsDevice.SamplerStates[2] = previousSampler2;
+                UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            }
+        }
+
+        /// <summary>Dark swirling shadow drawn with real (non-additive) alpha so it darkens the
+        /// background behind an additive glow instead of just adding more light on top of it.</summary>
+        internal static void DrawVoidGather(Vector2 center, Vector2 size, float opacity,
+            Color darkColor, Color midColor)
+        {
+            LoadAssets();
+            if (Main.dedServ || crimsonEffect == null || turbulentNoise == null
+                || opacity <= 0f || size.X <= 0f || size.Y <= 0f)
+            {
+                return;
+            }
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture1 = graphicsDevice.Textures[1];
+            SamplerState previousSampler1 = graphicsDevice.SamplerStates[1];
+            try
+            {
+                graphicsDevice.Textures[1] = turbulentNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                Effect effect = crimsonEffect.Value;
+                effect.CurrentTechnique = effect.Techniques["RedKnightVoidGather"];
+                effect.Parameters["DarkColor"].SetValue(darkColor.ToVector3());
+                effect.Parameters["MidColor"].SetValue(midColor.ToVector3());
+                effect.Parameters["CoreColor"].SetValue(midColor.ToVector3());
+                effect.Parameters["Opacity"].SetValue(opacity);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["Progress"].SetValue(0f);
+                effect.Parameters["Intensity"].SetValue(1f);
+                effect.Parameters["Direction"].SetValue(0f);
+                effect.Parameters["TailStrength"].SetValue(0f);
+                effect.Parameters["DrawSize"]?.SetValue(size);
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                Texture2D pixel = TextureAssets.MagicPixel.Value;
+                Main.EntitySpriteDraw(pixel, center - Main.screenPosition, null, Color.White,
+                    0f, pixel.Size() * 0.5f, size / pixel.Size(), SpriteEffects.None, 0f);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture1;
+                graphicsDevice.SamplerStates[1] = previousSampler1;
                 UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             }
         }

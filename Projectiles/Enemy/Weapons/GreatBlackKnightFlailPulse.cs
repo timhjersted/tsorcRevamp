@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             }
             Projectile.Center = Main.projectile[ballID].Center;
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 24; i++)
             {
                 float angle = MathHelper.TwoPi * i / 24f;
                 Vector2 pos = Projectile.Center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 55f;

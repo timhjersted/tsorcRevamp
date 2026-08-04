@@ -569,6 +569,12 @@ namespace tsorcRevamp.NPCs
             npc.netUpdate = true;
         }
 
+        // Ground positions for the Stormbreaker lightning strikes, offset from the locked target
+        // point. 180px between adjacent marks — wide enough for a full dodge-roll-and-stand safe lane
+        // between any two bolts, with open space beyond the outer pair. Replaces the old narrow
+        // +-20 degree fan of 5 lines radiating from the knight's own body (no room to move).
+        static readonly float[] StormboltOffsets = { -270f, -90f, 90f, 270f };
+
         void TickStormbreaker(NPC npc, Player target, KnightAttackStats stats)
         {
             if (Timer < 60)
@@ -587,21 +593,37 @@ namespace tsorcRevamp.NPCs
                 npc.velocity = new Vector2(Direction * 8f, -2.2f);
                 PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.35f }, npc.Center);
             }
-            if (Timer == 82 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Timer == 82)
             {
-                for (int i = -2; i <= 2; i++)
-                {
-                    Vector2 velocity = new Vector2(Direction, 0f).RotatedBy(i * 0.18f);
-                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, velocity,
-                        ModContent.ProjectileType<RedKnightLightningLane>(), stats.MagicDamage,
-                        0f, Main.myPlayer, ai0: 40f, ai1: 10f, ai2: 520f);
-                }
+                // Reuses RedKnightLightningLane's existing telegraph/active/fade timeline and
+                // shader (DrawJudgmentLane) unchanged — just re-spawned vertically at spaced-apart
+                // ground marks instead of horizontally from the knight's center.
+                SpawnStormboltVolley(npc, LockedTarget, stats.MagicDamage);
+                PlaySound(SoundID.Item74 with { Volume = 0.85f, Pitch = -0.2f }, npc.Center);
                 npc.velocity.X *= 0.35f;
                 npc.netUpdate = true;
             }
             if (Timer > 82)
             {
                 npc.velocity.X *= 0.8f;
+            }
+        }
+
+        static void SpawnStormboltVolley(NPC npc, Vector2 targetPoint, int damage)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            foreach (float offset in StormboltOffsets)
+            {
+                if (!TryFindGround(targetPoint + new Vector2(offset, 0f), 12, 30, out Vector2 groundPoint))
+                {
+                    continue;
+                }
+                Projectile.NewProjectile(npc.GetSource_FromThis(), groundPoint, new Vector2(0f, -1f),
+                    ModContent.ProjectileType<RedKnightLightningLane>(), damage, 0f, Main.myPlayer,
+                    ai0: 46f, ai1: 12f, ai2: 620f);
             }
         }
 
@@ -666,10 +688,13 @@ namespace tsorcRevamp.NPCs
                 KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 203,
                 KnightSpecialAttack.RoyalStandard => Timer >= 69 && Timer < 83,
                 KnightSpecialAttack.StormbreakerEdict => Timer >= 60 && Timer < 76,
-                KnightSpecialAttack.CrimsonDominion => Timer >= 60 && Timer < 505,
+                // +120t to match CrimsonDominionController's EscapeTicks extension (90t -> 210t):
+                // stay committed (hyper-armor) through the whole longer pre-nova charge-up, only
+                // exposed again once the nova has actually gone off.
+                KnightSpecialAttack.CrimsonDominion => Timer >= 60 && Timer < 625,
                 _ => false
             };
-            bool dominionRecovery = Attack == KnightSpecialAttack.CrimsonDominion && Timer >= 505;
+            bool dominionRecovery = Attack == KnightSpecialAttack.CrimsonDominion && Timer >= 625;
             globalNPC.AttackCommitted = committed;
             globalNPC.AttackTelegraphing = !committed && !dominionRecovery && !IsHerald && Timer < Duration(Attack) - 20;
         }
@@ -733,7 +758,9 @@ namespace tsorcRevamp.NPCs
                 KnightSpecialAttack.FurnacePincer => 230,
                 KnightSpecialAttack.RoyalStandard => 330,
                 KnightSpecialAttack.StormbreakerEdict => 200,
-                KnightSpecialAttack.CrimsonDominion => 600,
+                // +120t to match CrimsonDominionController's EscapeTicks extension (TotalTicks 480 -> 600),
+                // keeping the original 120t buffer after the projectile finishes before the knight regains control.
+                KnightSpecialAttack.CrimsonDominion => 720,
                 KnightSpecialAttack.FurnaceHerald => 150,
                 KnightSpecialAttack.StormHerald => 150,
                 _ => 1
@@ -803,9 +830,9 @@ namespace tsorcRevamp.NPCs
                     {
                         return MathHelper.Lerp(0f, 20f, MathHelper.Clamp(Timer / 60f, 0f, 1f));
                     }
-                    if (Timer >= 550)
+                    if (Timer >= 670)
                     {
-                        return MathHelper.Lerp(20f, 0f, MathHelper.Clamp((Timer - 550f) / 50f, 0f, 1f));
+                        return MathHelper.Lerp(20f, 0f, MathHelper.Clamp((Timer - 670f) / 50f, 0f, 1f));
                     }
                     return 20f;
                 }

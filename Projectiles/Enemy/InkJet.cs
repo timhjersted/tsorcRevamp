@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             EnemyVFX.DrawQuaraInkJet(Projectile.Center, Projectile.velocity);
-            return false;
+            return true;
         }
 
         public override void OnKill(int timeLeft)

@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             //It flies through walls, so it must be LOUD: shadowflame wisp trail + purple glow
-            if (Main.rand.NextBool(3))
+            for (int i = 0; i < 2; i++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Shadowflame, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
                 Main.dust[dust].noGravity = true;

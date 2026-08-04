@@ -463,9 +463,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         internal const int BuildTicks = 45;
         internal const int SweepTicks = 300;
         internal const int CycleTicks = 75;
-        internal const int SweepActiveTicks = 55;
         internal const int ExecutionSpawnTick = 35;
-        internal const int EscapeTicks = 90;
+        // +120t over the original 90t so the pre-nova charge-up gives a real warning window
+        // instead of the detonation arriving almost as soon as it becomes visible.
+        internal const int EscapeTicks = 210;
         internal const int NovaTicks = 10;
         internal const int FadeTicks = 35;
         internal const int EscapeStart = BuildTicks + SweepTicks;
@@ -474,8 +475,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         internal const int TotalTicks = FadeStart + FadeTicks;
         internal const float Radius = 420f;
         internal const float InnerRadius = 58f;
-        const float SweepCollisionWidth = 16f;
-        const float SweepRadiansPerTick = MathHelper.Pi / 120f;
+        internal const int LightningBoltSectors = 5;
 
         public override string Texture => "Terraria/Images/MagicPixel";
 
@@ -507,6 +507,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             if (Age >= BuildTicks && Age < EscapeStart)
             {
                 int cyclePhase = (Age - BuildTicks) % CycleTicks;
+                int cycleIndex = (Age - BuildTicks) / CycleTicks;
+                if (cyclePhase == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    SpawnLightningWave(cycleIndex);
+                }
                 if (cyclePhase == ExecutionSpawnTick && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     SpawnExecutionLane();
@@ -570,34 +575,44 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 Projectile.knockBack, Main.myPlayer);
         }
 
-        internal bool GetSweepState(out float angle, out int movementDirection, out bool active)
+        /// <summary>
+        /// Replaces the old continuous rotating dual-beam sweep. Fires LightningBoltSectors-1 lightning
+        /// bolts radiating out from the boss toward the wall, evenly spaced around the ring, in a
+        /// randomized firing order (staggered a few ticks apart) with exactly one sector left as a
+        /// safe gap. The safe sector rotates every wave (cycleIndex) so it isn't camp-able, and the
+        /// whole ring's base angle also drifts each wave so the same screen-space spot isn't always safe.
+        /// </summary>
+        void SpawnLightningWave(int cycleIndex)
         {
-            int sweepAge = Age - BuildTicks;
-            if (sweepAge < 0 || sweepAge >= SweepTicks)
+            int safeSector = cycleIndex % LightningBoltSectors;
+            float sectorStep = MathHelper.TwoPi / LightningBoltSectors;
+            float baseAngle = BaseRotation + RotationDirection * cycleIndex * (MathHelper.TwoPi / 7f);
+
+            Span<int> order = stackalloc int[LightningBoltSectors];
+            for (int i = 0; i < LightningBoltSectors; i++)
             {
-                angle = BaseRotation;
-                movementDirection = RotationDirection;
-                active = false;
-                return false;
+                order[i] = i;
+            }
+            for (int i = LightningBoltSectors - 1; i > 0; i--)
+            {
+                int j = Main.rand.Next(i + 1);
+                (order[i], order[j]) = (order[j], order[i]);
             }
 
-            int cycle = sweepAge / CycleTicks;
-            int cyclePhase = sweepAge % CycleTicks;
-            int activeAge = cycle * SweepActiveTicks + Math.Min(cyclePhase, SweepActiveTicks);
-            const int turnaroundTick = SweepActiveTicks * 2;
-            if (activeAge <= turnaroundTick)
+            int stagger = 0;
+            for (int slot = 0; slot < LightningBoltSectors; slot++)
             {
-                angle = BaseRotation + RotationDirection * SweepRadiansPerTick * activeAge;
-                movementDirection = RotationDirection;
+                int sector = order[slot];
+                if (sector == safeSector)
+                {
+                    continue;
+                }
+                Vector2 direction = (baseAngle + sector * sectorStep).ToRotationVector2();
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction,
+                    ModContent.ProjectileType<CrimsonDominionExecutionLane>(), Projectile.damage,
+                    Projectile.knockBack, Main.myPlayer, stagger);
+                stagger += 6;
             }
-            else
-            {
-                angle = BaseRotation + RotationDirection * SweepRadiansPerTick * turnaroundTick
-                    - RotationDirection * SweepRadiansPerTick * (activeAge - turnaroundTick);
-                movementDirection = -RotationDirection;
-            }
-            active = cyclePhase < SweepActiveTicks;
-            return true;
         }
 
         public override bool? CanDamage()
@@ -611,26 +626,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         {
             if (Age >= BuildTicks && Age < EscapeStart)
             {
-                if (FarthestCornerDistance(targetHitbox, Projectile.Center) >= Radius)
-                {
-                    return true;
-                }
-
-                GetSweepState(out float angle, out _, out bool sweepActive);
-                if (!sweepActive)
-                {
-                    return false;
-                }
-
-                Vector2 direction = angle.ToRotationVector2();
-                float collisionPoint = 0f;
-                bool forward = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
-                    Projectile.Center + direction * InnerRadius, Projectile.Center + direction * Radius,
-                    SweepCollisionWidth, ref collisionPoint);
-                bool backward = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
-                    Projectile.Center - direction * InnerRadius, Projectile.Center - direction * Radius,
-                    SweepCollisionWidth, ref collisionPoint);
-                return forward || backward;
+                // The wall itself still hurts if a player presses against it; the actual offense
+                // inside the ring now comes entirely from the lightning wave + execution lane
+                // sub-projectiles rather than a hazard owned by this controller.
+                return FarthestCornerDistance(targetHitbox, Projectile.Center) >= Radius;
             }
 
             if (Age >= NovaStart && Age < FadeStart)
@@ -642,9 +641,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override bool PreDraw(ref Color lightColor)
         {
-            GetSweepState(out float sweepAngle, out int movementDirection, out bool sweepActive);
-            RedKnightVFX.DrawCrimsonDominion(Projectile.Center, Age, BaseRotation,
-                RotationDirection, sweepAngle, movementDirection, sweepActive);
+            RedKnightVFX.DrawCrimsonDominion(Projectile.Center, Age, BaseRotation, RotationDirection);
             return false;
         }
 
@@ -666,6 +663,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         }
     }
 
+    /// <summary>
+    /// A single fixed-direction lightning lance from the Dominion's center out to the wall. Used both
+    /// for the periodic beam aimed at the current target (SpawnExecutionLane, no delay) and for the
+    /// scattered lightning wave (SpawnLightningWave, staggered via ai[0] so 4 of them fire in a rolling
+    /// randomized sequence rather than all flashing at once).
+    /// </summary>
     public class CrimsonDominionExecutionLane : ModProjectile
     {
         internal const int TelegraphTicks = 30;
@@ -675,7 +678,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override string Texture => "Terraria/Images/MagicPixel";
 
-        int Age => TelegraphTicks + ActiveTicks + FadeTicks - Projectile.timeLeft;
+        int StartDelay => (int)Projectile.ai[0];
+
+        // Held at 0 (idle) while StartDelay counts down; only begins advancing once it hits 0, so
+        // staggered wave bolts each get their own full telegraph→active→fade timeline in sequence.
+        int Age => (int)Projectile.localAI[0];
 
         public override void SetDefaults()
         {
@@ -683,7 +690,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.height = 2;
             Projectile.hostile = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = TelegraphTicks + ActiveTicks + FadeTicks;
+            // Flat budget generous enough to cover the longest stagger delay used by SpawnLightningWave
+            // (4 bolts * 6t) plus the full telegraph/active/fade lifetime.
+            Projectile.timeLeft = TelegraphTicks + ActiveTicks + FadeTicks + 60;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
@@ -693,15 +702,26 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void AI()
         {
+            if (StartDelay > 0)
+            {
+                Projectile.ai[0]--;
+                return;
+            }
+
             if (Age == TelegraphTicks)
             {
                 SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.62f, Pitch = -0.42f }, Projectile.Center);
             }
             Lighting.AddLight(Projectile.Center, new Vector3(0.54f, 0.02f, 0.06f)
                 * (Age >= TelegraphTicks ? 0.9f : 0.35f));
+            Projectile.localAI[0]++;
+            if (Age >= TelegraphTicks + ActiveTicks + FadeTicks)
+            {
+                Projectile.Kill();
+            }
         }
 
-        public override bool? CanDamage() => Age >= TelegraphTicks && Age < TelegraphTicks + ActiveTicks;
+        public override bool? CanDamage() => StartDelay <= 0 && Age >= TelegraphTicks && Age < TelegraphTicks + ActiveTicks;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
@@ -715,6 +735,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (StartDelay > 0)
+            {
+                return false;
+            }
             float progress = MathHelper.Clamp(Age / (float)TelegraphTicks, 0f, 1f);
             bool active = Age >= TelegraphTicks && Age < TelegraphTicks + ActiveTicks;
             float fade = Age < TelegraphTicks + ActiveTicks ? 1f

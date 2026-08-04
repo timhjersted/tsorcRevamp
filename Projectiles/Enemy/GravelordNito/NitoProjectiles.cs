@@ -152,7 +152,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.velocity = Vector2.Zero;
             Projectile.localAI[0] += ExpandSpeed;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 34; i++)
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
                 Vector2 pos = Projectile.Center + angle.ToRotationVector2() * (Radius + Main.rand.NextFloat(-7f, 7f));
@@ -174,7 +174,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                         flashProgress, 0.72f * (1f - flashProgress));
                 }
             }
-            return false;
+            return true;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -235,7 +235,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             float bottom = Projectile.position.Y + Projectile.height;
             if (!Erupted)
             {
-                if (Main.rand.NextBool(2))
+                for (int i = 0; i < 2; i++)
                 {
                     Dust.NewDust(new Vector2(Projectile.position.X, bottom - 10f), Projectile.width, 8, DustID.BoneTorch, 0f, -0.8f, 100, default, 0.9f);
                 }
@@ -322,7 +322,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.localAI[0]++;
             if (Timer <= TelegraphTicks)
             {
-                if (Main.rand.NextBool(2))
+                for (int i = 0; i < 3; i++)
                 {
                     Dust.NewDust(Projectile.BottomLeft - new Vector2(0f, 8f), Projectile.width, 12, DustID.BoneTorch, 0f, -1f, 100, default, 0.9f);
                 }
@@ -330,7 +330,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             else if (Timer == TelegraphTicks + 1)
             {
                 SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.6f, Pitch = -0.4f }, Projectile.Center);
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 22; i++)
                 {
                     Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-4f, -1f), 80, default, 1.1f);
                 }
@@ -350,7 +350,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 new Vector2(Projectile.width * 1.35f, 48f), telegraphProgress, 0.8f * fade);
             NitoVFX.DrawGraveHand(Projectile.Center, new Vector2(Projectile.width * 1.15f, Projectile.height * 1.35f),
                 activeProgress, 0.82f * fade);
-            return false;
+            return true;
         }
     }
 
@@ -449,7 +449,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.localAI[0]++;
             Projectile.velocity *= 0.98f;
             Projectile.rotation += 0.03f;
-            if (Main.rand.NextBool(4))
+            if (Main.rand.NextBool(2))
             {
                 Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(28f, 28f), DustID.Poisoned, Main.rand.NextVector2Circular(1f, 1f), 120, default, Main.rand.NextFloat(1.1f, 1.8f));
                 d.noGravity = true;
@@ -463,7 +463,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             float fade = MathHelper.Clamp(Projectile.timeLeft / 18f, 0f, 1f);
             NitoVFX.DrawMiasma(Projectile.Center, new Vector2(74f, 70f), Projectile.rotation,
                 progress, 0.88f * fade);
-            return false;
+            return true;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

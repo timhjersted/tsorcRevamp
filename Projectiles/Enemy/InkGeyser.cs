@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -44,28 +44,28 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
-            //Core swirl (shader kept here only — it reads as ink without needing a hundred edge dusts)
-            if (Main.rand.NextBool(3))
+            //Core swirl
+            for (int j = 0; j < 6f * (timer / 120f); j++)
             {
                 Vector2 dir = Main.rand.NextVector2Circular(64, 64);
                 Vector2 dustPos = Projectile.Center + dir;
-                Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 1.3f);
-                dustVel /= 16f;
-                Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.Asphalt, dustVel, 0, default, 2f);
+                Vector2 dustVel = new Vector2(5, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
+                Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.Asphalt, dustVel, 0, default, 1.2f);
                 thisDust.noGravity = true;
                 thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.BlackDye), Main.LocalPlayer);
             }
-            //Sparse edge breakup; the shader now carries the exact 40px danger boundary.
-            if (Main.GameUpdateCount % 4 == 0)
+            //Edge ring
+            for (int j = 0; j < 16; j++)
             {
-                for (int j = 0; j < 2; j++)
+                Vector2 dir = Main.rand.NextVector2CircularEdge(65, 65);
+                Vector2 dustPos = Projectile.Center + dir;
+                Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
+                int DustType = DustID.Asphalt;
+                if (Main.GameUpdateCount % 5 == 0)
                 {
-                    Vector2 dir = Main.rand.NextVector2CircularEdge(40, 40);
-                    Vector2 dustPos = Projectile.Center + dir;
-                    Vector2 dustVel = new Vector2(2f, 0f).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
-                    int dustType = Main.rand.NextBool(5) ? DustID.CursedTorch : DustID.Asphalt;
-                    Dust.NewDustPerfect(dustPos, dustType, dustVel, 0, default, 1f).noGravity = true;
+                    DustType = DustID.CursedTorch;
                 }
+                Dust.NewDustPerfect(dustPos, DustType, dustVel, 0, default, 1).noGravity = true;
             }
         }
 
@@ -87,7 +87,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 ? MathHelper.Clamp(1f - Projectile.timeLeft / 120f, 0f, 1f)
                 : MathHelper.Clamp(timer / 120f, 0f, 1f);
             EnemyVFX.DrawQuaraInkGeyser(Projectile.Center, progress, active);
-            return false;
+            return true;
         }
 
         public override void OnKill(int timeLeft)

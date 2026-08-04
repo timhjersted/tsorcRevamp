@@ -44,7 +44,9 @@ float4 DominionFieldPS(PixelInput input) : COLOR0
     float depth = smoothstep(RadiusRatio, RadiusRatio + 0.16, radius);
     float3 color = lerp(DarkColor, MidColor, cloud * 0.82);
     color *= lerp(0.54, 0.92, depth) * Intensity;
-    float alpha = outside * Opacity * saturate(0.72 + cloud * 0.34);
+    // Alpha is driven only by the boundary mask (outside) and the caller's Opacity, not by the cloud
+    // noise — otherwise the wall always had faint see-through troughs even at full Opacity.
+    float alpha = outside * Opacity;
     return float4(color, alpha) * input.Color;
 }
 

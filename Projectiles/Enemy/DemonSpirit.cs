@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), explosionCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 280, 18);
             }
 
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 44; i++)
             {
                 Vector2 dustPosition = explosionCenter + Main.rand.NextVector2Circular(ExplosionDustRadius, ExplosionDustRadius);
                 Vector2 dustVelocity = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(1.7f, 3.4f);
@@ -61,7 +61,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 dust.noGravity = true;
             }
 
-            for (int i = 0; i < 18; i++)
+            for (int i = 0; i < 60; i++)
             {
                 Vector2 dustPosition = explosionCenter + Main.rand.NextVector2Circular(ExplosionDustRadius, ExplosionDustRadius);
                 Vector2 dustVelocity = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(1.2f, 3.8f);
@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 smoke.noGravity = true;
             }
 
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 50; i++)
             {
                 Vector2 dustPosition = explosionCenter + Main.rand.NextVector2Circular(ExplosionDustRadius, ExplosionDustRadius);
                 Vector2 dustVelocity = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(2f, 5f);
@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 flame.noGravity = true;
             }
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 24; i++)
             {
                 Vector2 dustVelocity = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(3f, 6f);
                 Dust firework = Dust.NewDustPerfect(explosionCenter, DustID.FireworkFountain_Red, dustVelocity, 120, Color.Violet, Main.rand.NextFloat(0.9f, 1.4f));
@@ -110,11 +110,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Color color = new Color();
             float dustScale = Projectile.timeLeft <= 30 ? 1f + (30f - Projectile.timeLeft) / 30f * 0.8f : 1f;
-            if (Main.rand.NextBool(4))
-            {
-                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.CrystalPulse, 0, 0, 160, color, dustScale);
-                Main.dust[dust].noGravity = true;
-            }
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.CrystalPulse, 0, 0, 160, color, dustScale);
+            Main.dust[dust].noGravity = true;
 
             this.Projectile.ai[0] += 1f;
 

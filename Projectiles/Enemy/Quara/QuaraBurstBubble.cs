@@ -44,13 +44,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             //The shell: a shimmering ring of water dust + the occasional inner gleam
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 3; i++)
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
                 Vector2 pos = Projectile.Center + angle.ToRotationVector2() * 17f;
-                int shell = Dust.NewDust(pos, 2, 2, DustID.Water, 0f, 0f, 80, default, 1f);
-                Main.dust[shell].noGravity = true;
-                Main.dust[shell].velocity = Projectile.velocity * 0.5f;
+                int dust = Dust.NewDust(pos, 2, 2, DustID.Water, 0f, 0f, 60, default, 1f);
+                Main.dust[dust].noGravity = true;
+                Main.dust[dust].velocity *= 0.1f;
             }
             if (Main.rand.NextBool(4))
             {
@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             float progress = 1f - Projectile.timeLeft / 240f;
             EnemyVFX.DrawQuaraBubble(Projectile.Center, Vector2.One * 38f, progress, true);
-            return false;
+            return true;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     return specialAttacks.DebugAttackName;
                 }
                 if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
-                    && NPC.ai[2] >= 100f && NPC.ai[2] <= 235f)
+                    && NPC.ai[2] >= 100f && NPC.ai[2] <= 249f)
                 {
                     return "Ultrakill Barrage";
                 }
@@ -213,7 +213,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                           (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
                                           (NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
                                           (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f) ||
-                                          (NPC.ai[2] >= 165f && NPC.ai[2] <= 235f);
+                                          (NPC.ai[2] >= 165f && NPC.ai[2] <= 249f);
                 if (!inProtectedAttack)
                 {
                     NPC.ai[1] = 60f;
@@ -233,7 +233,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 bool inActiveAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 485f) ||
                                        (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f) ||
-                                       (NPC.ai[2] >= 165f && NPC.ai[2] <= 235f);
+                                       (NPC.ai[2] >= 165f && NPC.ai[2] <= 249f);
 
                 // Gate projectile firing on LOS — prevents shooting through floors/ceilings
                 bool hasPlayerLOS = Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1);
@@ -736,8 +736,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                 }
-                // Ultrakill Attack
-                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 235f)
+                // Ultrakill Attack — pure hand barrage (~50 InsanityShadowHostile claws). The old
+                // "Exlosives" EnemyGreatAttack spawn was cut: it only existed to trigger a pink
+                // RedKnightVFXBurst explosion + vanilla BombSkeletronPrime bomb-smoke dust on death,
+                // neither of which reads as "hands" and both just cluttered the screen.
+                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 249f)
                 {
                     NPC.velocity.X *= 0.25f;
 
@@ -746,15 +749,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     // Set targetPosition with an offset of 10f * direction units from the storedPlayerPosition along the X-axis.
                     targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
-
-                    // Exlosives
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 10, fallback: true);
-                    speed += Main.rand.NextVector2Circular(-12, -16);//was -4, -2, then -12, -16
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyGreatAttack>(), redKnightsGreatDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center); //Play flame sound
 
                     // Insanity Hands
                     Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 6, fallback: true);
@@ -767,9 +761,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.netUpdate = true;
                 }
                 // After Ultrakill attack completes
-                if (NPC.ai[2] == 236f)
+                if (NPC.ai[2] == 250f)
                 {
-                    // Reset the targetPosition 
+                    // Reset the targetPosition
                     targetPosition = Vector2.Zero;
                 }
 
