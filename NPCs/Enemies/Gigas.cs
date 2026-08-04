@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 	// hyper-armored (AttackCommitted from the first windup frame). The one LONG telegraph — Wrath of Gold —
 	// is staggerable (AttackTelegraphing) for its first two thirds, then commits; a normal poise break in
 	// that window cancels the cast (IStaggerable.OnStagger) and scatters any orbiting halo suns.
-	public class Gigas : ModNPC, IStaggerable
+	public class Gigas : ModNPC, IStaggerable, IDebugAttackLabel
 	{
         enum AttackState : byte
         {
@@ -70,6 +70,12 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         AttackState State = AttackState.None;
         AttackState LastAttack = AttackState.None;
+
+        /// <summary>DebugMode above-head readout (see IDebugAttackLabel).</summary>
+        public string DebugAttackLabel => NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0
+            ? "Staggered"
+            : State == AttackState.None ? "Idle" : DebugLabels.Humanize(State.ToString());
+
         int AttackTimer;
         int AttackCooldown = 150;
         int SlamPhase;          //sub-phase for SunlightSlam / LedgeLeap: 0 windup, 1 rising, 2 apex, 3 dive, 4 recovery

@@ -30,6 +30,22 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 6 * 60;
         }
 
+        // Per-puff quad rotation, rolled once on spawn. The fog shader samples its noise in local UV
+        // space, so without this every puff samples the identical pattern and a row of them reads as
+        // the same stamp repeated - which is exactly why the trail looked like separate pieces rather
+        // than one gas cloud. Rotating the quad rotates the sampled noise; the fog is radially
+        // symmetric so nothing else changes. Stored in ai[1] so it survives multiplayer sync.
+        float PuffRotation => Projectile.ai[1];
+
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            if (Projectile.ai[1] == 0f)
+            {
+                Projectile.ai[1] = Main.rand.NextFloat(MathHelper.TwoPi);
+                Projectile.netUpdate = true;
+            }
+        }
+
         public override void AI()
         {
             // Fill the box with lazily-drifting toxic dust; fades in/out with remaining lifetime.
@@ -43,13 +59,24 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
+            // Gentle rise + sway so the puff is never static; neighbouring puffs drift apart slightly
+            // and their soft edges knit together instead of sitting as a rigid row of discs.
+            Projectile.position.Y -= 0.09f;
+            Projectile.position.X += (float)System.Math.Sin((Projectile.whoAmI * 0.7f)
+                + Main.GlobalTimeWrappedHourly * 0.8f) * 0.10f;
+
             Lighting.AddLight(Projectile.Center, 0.05f, 0.3f, 0.05f);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float progress = 1f - Projectile.timeLeft / 180f;
-            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 36f, progress, true, false);
+            // Divisor must match the 6*60 lifetime set in SetDefaults. It was 180f, so progress
+            // started at -1 and the shader's fade curve rendered the cloud completely INVISIBLE for
+            // its first ~1.5s - it only became visible during its back half.
+            float progress = 1f - Projectile.timeLeft / (6f * 60f);
+            // Drawn well wider than the 48px hitbox so consecutive puffs physically overlap and blend
+            // into a continuous bank of gas; the shader's circular cutoff keeps the extra size soft.
+            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 92f, progress, true, PuffRotation);
             return true;
         }
 

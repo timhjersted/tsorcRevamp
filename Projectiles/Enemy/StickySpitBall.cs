@@ -41,7 +41,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            EnemyVFX.DrawElandVenomProjectile(Projectile.Center, Projectile.velocity, new Vector2(60f, 20f), 0.9f);
+            // Short + fat: was 60x20, which read as a thin green line rather than a blob of poison liquid.
+            EnemyVFX.DrawElandVenomProjectile(Projectile.Center, Projectile.velocity, new Vector2(34f, 27f), 0.9f);
             return true;
         }
 

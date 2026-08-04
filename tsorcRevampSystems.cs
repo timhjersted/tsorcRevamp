@@ -943,15 +943,19 @@ namespace tsorcRevamp
                             : comboTag.Length > 0 ? comboTag
                             : inv.DebugPhaseName;
                 }
-                else if (npc.ModNPC is NPCs.Enemies.RedKnight redKnight)
+                else if (npc.ModNPC is NPCs.IDebugAttackLabel labelled)
                 {
-                    current = redKnight.DebugAttackLabel;
-                }
-                else if (npc.ModNPC is NPCs.Bosses.SuperHardMode.GreatRedKnight greatRedKnight)
-                {
-                    current = greatRedKnight.DebugAttackLabel;
+                    // Any ModNPC implementing IDebugAttackLabel opts in automatically - no per-enemy
+                    // branch needed here. (PuppetNPC stays special-cased above because its label is
+                    // composed from three separate sources.)
+                    current = labelled.DebugAttackLabel;
                 }
                 else
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(current))
                 {
                     continue;
                 }

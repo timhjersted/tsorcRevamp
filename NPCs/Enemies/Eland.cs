@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs.Enemies
 {
     // Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
-    public class Eland : ModNPC
+    public class Eland : ModNPC, IDebugAttackLabel
     {
         float npcAcSPD = 0.7f; //How fast they accelerate.
         float npcSPD = 2.3f; //Max speed
@@ -249,6 +249,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
         SpitState spitState = SpitState.Idle;
         SpitAttack activeSpit;
+
+        /// <summary>
+        /// DebugMode above-head readout (see IDebugAttackLabel). Shows both the chosen attack and
+        /// which half of it is running, since the telegraph/fire split is the whole counterplay.
+        /// </summary>
+        public string DebugAttackLabel => spitState == SpitState.Idle
+            ? "Idle"
+            : $"{DebugLabels.Humanize(activeSpit.ToString())} ({spitState})";
+
         int spitTimer;
         int recoveryTimer; // shared FSM lockout after any attack finishes
         int volleyIndex;

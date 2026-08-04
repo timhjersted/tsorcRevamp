@@ -16,7 +16,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         EvilEyeFlameImpact,
         ElandVenomImpact,
         QuaraWaterBurst,
-        QuaraInkBurst
+        QuaraInkBurst,
+        EvilEyeGhostBurst,
+        EvilEyeTeleportBurst
     }
 
     internal static class EnemyVFX
@@ -36,9 +38,14 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Effect> evilEyeChargeLane;
         static Asset<Effect> evilEyeNovaHalo;
         static Asset<Effect> evilEyeFlameTrail;
+        static Asset<Effect> evilEyeDeathBurst;
+        static Asset<Effect> evilEyeTeleport;
         static Asset<Effect> elandToxicVFX;
-        static Asset<Effect> quaraWaterVFX;
-        static Asset<Effect> quaraInkVFX;
+        static Asset<Effect> quaraHydromancyCast;
+        static Asset<Effect> quaraWaterProjectile;
+        static Asset<Effect> quaraTidalCrest;
+        static Asset<Effect> quaraInkGeyser;
+        static Asset<Effect> quaraTideRush;
         static Asset<Effect> greatBlackKnightFlail;
 
         static Asset<Texture2D> circle;
@@ -51,6 +58,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> smoke;
         static Asset<Texture2D> aura;
         static Asset<Texture2D> flare;
+        static Asset<Texture2D> cloudNoise;
+        static Asset<Texture2D> voronoiNoise;
+        static Asset<Texture2D> swirlyNoise;
+        static Asset<Texture2D> perlinTiled;
+        static Asset<Texture2D> wavyDetailNoise;
 
         static readonly Color CurseDark = new(8, 4, 15);
         static readonly Color CurseMid = new(98, 38, 138);
@@ -93,9 +105,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             evilEyeChargeLane ??= ModContent.Request<Effect>(EffectRoot + "EvilEyeChargeLane", AssetRequestMode.ImmediateLoad);
             evilEyeNovaHalo ??= ModContent.Request<Effect>(EffectRoot + "EvilEyeNovaHalo", AssetRequestMode.ImmediateLoad);
             evilEyeFlameTrail ??= ModContent.Request<Effect>(EffectRoot + "EvilEyeFlameTrail", AssetRequestMode.ImmediateLoad);
+            evilEyeDeathBurst ??= ModContent.Request<Effect>(EffectRoot + "EvilEyeDeathBurst", AssetRequestMode.ImmediateLoad);
+            evilEyeTeleport ??= ModContent.Request<Effect>(EffectRoot + "EvilEyeTeleport", AssetRequestMode.ImmediateLoad);
             elandToxicVFX ??= ModContent.Request<Effect>(EffectRoot + "ElandToxicVFX", AssetRequestMode.ImmediateLoad);
-            quaraWaterVFX ??= ModContent.Request<Effect>(EffectRoot + "QuaraWaterVFX", AssetRequestMode.ImmediateLoad);
-            quaraInkVFX ??= ModContent.Request<Effect>(EffectRoot + "QuaraInkVFX", AssetRequestMode.ImmediateLoad);
+            quaraHydromancyCast ??= ModContent.Request<Effect>(EffectRoot + "QuaraHydromancyCast", AssetRequestMode.ImmediateLoad);
+            quaraWaterProjectile ??= ModContent.Request<Effect>(EffectRoot + "QuaraWaterProjectile", AssetRequestMode.ImmediateLoad);
+            quaraTidalCrest ??= ModContent.Request<Effect>(EffectRoot + "QuaraTidalCrest", AssetRequestMode.ImmediateLoad);
+            quaraInkGeyser ??= ModContent.Request<Effect>(EffectRoot + "QuaraInkGeyser", AssetRequestMode.ImmediateLoad);
+            quaraTideRush ??= ModContent.Request<Effect>(EffectRoot + "QuaraTideRush", AssetRequestMode.ImmediateLoad);
             greatBlackKnightFlail ??= ModContent.Request<Effect>(EffectRoot + "GreatBlackKnightFlail", AssetRequestMode.ImmediateLoad);
 
             circle ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_CircleFit1", AssetRequestMode.ImmediateLoad);
@@ -108,6 +125,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             smoke ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_RoundSmoke71", AssetRequestMode.ImmediateLoad);
             aura ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Aurax44", AssetRequestMode.ImmediateLoad);
             flare ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_Flare_666", AssetRequestMode.ImmediateLoad);
+            // Eland's poison kit: billowing tileable cloud for the gas body, voronoi cells for the
+            // corrosive bubbling. Both are seamless, so they tile cleanly at any sample scale.
+            cloudNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_CloudNoise_Tiled", AssetRequestMode.ImmediateLoad);
+            voronoiNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Voronoi_10-512x512", AssetRequestMode.ImmediateLoad);
+            // EvilEye's blink: wispy swirls over a slow seamless underlayer. Both were unused
+            // mod-wide, deliberately picked so the portal doesn't reuse the same broken-noise look
+            // that already appears on three other effects.
+            swirlyNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "SwirlyNoise", AssetRequestMode.ImmediateLoad);
+            perlinTiled ??= ModContent.Request<Texture2D>(NoiseRoot + "T_PerlinNoise_Tiled", AssetRequestMode.ImmediateLoad);
+            wavyDetailNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Noise_Wf4", AssetRequestMode.ImmediateLoad);
         }
 
         internal static void DrawBlackKnightHexCrystal(Vector2 center, Vector2 velocity, float dormantProgress, bool active)
@@ -301,20 +328,41 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
             LoadAssets();
+            // Longer and taller than before so the squiggle and the bell-curve width have room to
+            // actually be visible; the tail is procedural now so the primary texture is only a quad.
             Draw(evilEyeFlameTrail, "EvilEyeFlameTail", windstreak, smoothNoise,
-                center - direction * 25f, new Vector2(68f, 22f), direction.ToRotation(),
-                EyeDark, EyeMid, EyeCore, 0.8f, 0.5f, seeking ? 1f : 0f, 1f);
+                center - direction * 40f, new Vector2(96f, 30f), direction.ToRotation(),
+                EyeDark, EyeMid, EyeCore, 0.85f, 0.5f, seeking ? 1f : 0f, 1f);
+            // 18f -> 34f: the sprite is 16px, so the old orb was entirely hidden behind it. At this
+            // size the shader's halo spills past the sprite's silhouette and reads as a glow around it.
             Draw(evilEyeFlameTrail, "EvilEyeFlameCore", gradient, smoothNoise,
-                center, Vector2.One * 18f, 0f, EyeDark, EyeMid, EyeCore,
+                center, Vector2.One * 34f, 0f, EyeDark, EyeMid, EyeCore,
                 0.95f, 0.5f, seeking ? 1f : 0f, 1f);
         }
 
-        internal static void DrawElandToxicField(Vector2 center, Vector2 size, float progress, bool active, bool circular)
+        /// <summary>
+        /// How much larger than the damaging radius the gas cloud is drawn. The shader keeps the fog
+        /// dense out to the real damage edge and feathers away inside this extra margin, so the cloud
+        /// has no visible border - the trade is that the visible gas extends past what actually hurts.
+        /// </summary>
+        const float FogVisualScale = 1.3f;
+
+        /// <param name="rotation">
+        /// Per-instance quad rotation. The shader samples its noise in local UV space, so without
+        /// this every puff of a trail samples the identical pattern and they read as the same stamp
+        /// repeated. Rotating the quad rotates the sampled noise, making each puff visually distinct
+        /// for free (the fog is radially symmetric, so nothing else is affected).
+        /// </param>
+        internal static void DrawElandToxicField(Vector2 center, Vector2 size, float progress, bool active,
+            float rotation = 0f)
         {
             LoadAssets();
-            Draw(elandToxicVFX, "ElandToxicField", circle, brokenNoise,
-                center, size, 0f, ToxicDark, ToxicMid, ToxicCore,
-                active ? 0.78f : 0.68f, progress, active ? 1f : 0f, circular ? 1f : 0f,
+            // Direction carries the damage-radius ratio (see ElandToxicVFX.fx ToxicField) - it is no
+            // longer a circular/box flag. Every poison cloud is round now; the old box path is what
+            // rendered those hard white squares on screen.
+            Draw(elandToxicVFX, "ElandToxicField", voronoiNoise, cloudNoise,
+                center, size * FogVisualScale, rotation, ToxicDark, ToxicMid, ToxicCore,
+                active ? 0.78f : 0.68f, progress, active ? 1f : 0f, 1f / FogVisualScale,
                 BlendState.AlphaBlend);
         }
 
@@ -322,7 +370,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
             LoadAssets();
-            Draw(elandToxicVFX, "ElandVenomGlob", windstreak, brokenNoise,
+            Draw(elandToxicVFX, "ElandVenomGlob", voronoiNoise, cloudNoise,
                 center - direction * size.X * 0.28f, size, direction.ToRotation(),
                 ToxicDark, ToxicMid, ToxicCore, opacity, 0.5f, 1f, 1f);
         }
@@ -332,7 +380,15 @@ namespace tsorcRevamp.Projectiles.Enemy
             LoadAssets();
             Color mid = pattern == 3 ? new Color(28, 42, 78) : WaterMid;
             Color core = pattern == 3 ? InkCore : WaterCore;
-            Draw(quaraWaterVFX, "QuaraWaterCast", circle, smoothNoise,
+            string technique = pattern switch
+            {
+                0 => "QuaraBarrageCast",
+                1 => "QuaraCrestCast",
+                2 => "QuaraBubbleCast",
+                3 => "QuaraInkCast",
+                _ => "QuaraRushCast"
+            };
+            Draw(quaraHydromancyCast, technique, circle, swirlyNoise,
                 center, Vector2.One * (58f + pattern * 5f), pattern * 0.22f,
                 WaterDark, mid, core, 0.76f, progress, pattern, 1f);
         }
@@ -340,37 +396,41 @@ namespace tsorcRevamp.Projectiles.Enemy
         internal static void DrawQuaraBubble(Vector2 center, Vector2 size, float progress, bool pressurized)
         {
             LoadAssets();
-            Draw(quaraWaterVFX, "QuaraBubble", circle, smoothNoise,
+            Draw(quaraWaterProjectile, "QuaraBubble", circle, smoothNoise,
                 center, size, 0f, WaterDark, WaterMid, WaterCore,
                 0.88f, progress, pressurized ? 1f : 0f, 1f, BlendState.AlphaBlend);
         }
 
-        internal static void DrawQuaraTidalCrest(Vector2 center, Vector2 size, int direction)
+        internal static void DrawQuaraDroplet(Vector2 center, Vector2 size, float progress)
         {
             LoadAssets();
-            Draw(quaraWaterVFX, "QuaraTidalCrest", gradient, smoothNoise,
+            Draw(quaraWaterProjectile, "QuaraDroplet", circle, smoothNoise,
                 center, size, 0f, WaterDark, WaterMid, WaterCore,
-                0.82f, 0.5f, 1f, direction, BlendState.AlphaBlend);
+                0.84f, progress, 1f, 1f, BlendState.AlphaBlend);
         }
 
-        internal static void DrawQuaraTideRush(Vector2 center, Vector2 size, float progress, bool reforming, int direction)
+        internal static void DrawQuaraTidalCrest(Vector2 center, Vector2 drawSize, Texture2D waveTexture, Rectangle sourceFrame, int direction)
         {
             LoadAssets();
-            Draw(quaraWaterVFX, "QuaraTideRush", gradient, smoothNoise,
-                center, size, 0f, WaterDark, WaterMid, WaterCore,
-                0.84f, progress, reforming ? 1f : 0f, direction, BlendState.AlphaBlend);
-            if (!reforming)
-            {
-                Draw(quaraWaterVFX, "QuaraTidalCrest", windstreak, smoothNoise,
-                    center - new Vector2(direction * 20f, 0f), new Vector2(64f, size.Y), 0f,
-                    WaterDark, WaterMid, WaterCore, 0.34f, progress, 1f, direction, BlendState.AlphaBlend);
-            }
+            Draw(quaraTidalCrest, "QuaraTidalCrest", waveTexture, wavyDetailNoise.Value,
+                center, drawSize, 0f, WaterDark, WaterMid, WaterCore,
+                0.92f, 0.5f, 1f, direction, BlendState.AlphaBlend, sourceFrame);
+        }
+
+        internal static void DrawQuaraTideRush(Vector2 center, Vector2 drawSize, float progress, bool reforming, int direction)
+        {
+            LoadAssets();
+            // Draw on a circle quad — the shader creates its own procedural puddle shape
+            // so we no longer need the NPC sprite texture or source frame
+            Draw(quaraTideRush, "QuaraTideRush", circle, wavyDetailNoise,
+                center, drawSize * 1.6f, 0f, WaterDark, WaterMid, WaterCore,
+                0.92f, progress, reforming ? 1f : 0f, direction, BlendState.AlphaBlend);
         }
 
         internal static void DrawQuaraInkGeyser(Vector2 center, float progress, bool active)
         {
             LoadAssets();
-            Draw(quaraInkVFX, "QuaraInkGeyser", circle, brokenNoise,
+            Draw(quaraInkGeyser, "QuaraInkGeyser", circle, brokenNoise,
                 center, Vector2.One * 80f, 0f, InkDark, InkMid, InkCore,
                 active ? 0.9f : 0.72f, progress, active ? 1f : 0f, 1f, BlendState.AlphaBlend);
         }
@@ -379,7 +439,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
             LoadAssets();
-            Draw(quaraInkVFX, "QuaraInkJet", windstreak, brokenNoise,
+            Draw(quaraInkGeyser, "QuaraInkJet", windstreak, brokenNoise,
                 center - direction * 31f, new Vector2(82f, 26f), direction.ToRotation(),
                 InkDark, InkMid, InkCore, 0.84f, 0.5f, 1f, 1f, BlendState.AlphaBlend);
         }
@@ -448,19 +508,31 @@ namespace tsorcRevamp.Projectiles.Enemy
                         center, Vector2.One * 48f, 0f, EyeDark, EyeMid, EyeCore, opacity, progress, 1f, 1f);
                     break;
                 case EnemyVFXBurstKind.ElandVenomImpact:
-                    Draw(elandToxicVFX, "ElandVenomImpact", circle, brokenNoise,
+                    Draw(elandToxicVFX, "ElandVenomImpact", voronoiNoise, cloudNoise,
                         center, Vector2.One * 92f, 0f, ToxicDark, ToxicMid, ToxicCore,
                         opacity, progress, 1f, 1f, BlendState.AlphaBlend);
                     break;
                 case EnemyVFXBurstKind.QuaraWaterBurst:
-                    Draw(quaraWaterVFX, "QuaraWaterBurst", circle, smoothNoise,
+                    Draw(quaraWaterProjectile, "QuaraWaterBurst", circle, smoothNoise,
                         center, Vector2.One * 104f, 0f, WaterDark, WaterMid, WaterCore,
                         opacity, progress, 1f, 1f, BlendState.AlphaBlend);
                     break;
                 case EnemyVFXBurstKind.QuaraInkBurst:
-                    Draw(quaraInkVFX, "QuaraInkBurst", circle, brokenNoise,
+                    Draw(quaraInkGeyser, "QuaraInkBurst", circle, brokenNoise,
                         center, Vector2.One * 92f, 0f, InkDark, InkMid, InkCore,
                         opacity, progress, 1f, 1f, BlendState.AlphaBlend);
+                    break;
+                case EnemyVFXBurstKind.EvilEyeGhostBurst:
+                    Draw(evilEyeDeathBurst, "EvilEyeGhostBurst", circle, brokenNoise,
+                        center, Vector2.One * 200f, 0f, EyeDark, EyeMid, EyeCore,
+                        opacity, progress, 1f, 1f, BlendState.AlphaBlend);
+                    break;
+                case EnemyVFXBurstKind.EvilEyeTeleportBurst:
+                    // Own technique now, not DemonSpiritSoulBurst: that one bakes in a square SDF
+                    // that drew a white rectangle around the portal, and it is shared with
+                    // DemonSpirit's live explosion so it can't be edited in place.
+                    Draw(evilEyeTeleport, "EvilEyeTeleportRift", perlinTiled, swirlyNoise,
+                        center, Vector2.One * 300f, 0f, CurseDark, CurseMid, CurseCore, opacity, progress, 1f, 1f);
                     break;
             }
         }
@@ -472,18 +544,26 @@ namespace tsorcRevamp.Projectiles.Enemy
             float opacity, float progress, float active, float direction,
             BlendState blendState = null)
         {
-            if (Main.dedServ || effectAsset == null || primaryAsset == null || detailAsset == null)
+            if (primaryAsset == null) return;
+            Draw(effectAsset, techniqueName, primaryAsset.Value, detailAsset?.Value,
+                worldCenter, drawSize, rotation, darkColor, midColor, coreColor,
+                opacity, progress, active, direction, blendState, null);
+        }
+
+        static void Draw(Asset<Effect> effectAsset, string techniqueName,
+            Texture2D primaryTexture, Texture2D detailTexture,
+            Vector2 worldCenter, Vector2 drawSize, float rotation,
+            Color darkColor, Color midColor, Color coreColor,
+            float opacity, float progress, float active, float direction,
+            BlendState blendState = null, Rectangle? sourceRectangle = null)
+        {
+            if (Main.dedServ || effectAsset == null || primaryTexture == null)
             {
                 return;
             }
 
             blendState ??= BlendState.Additive;
-            Texture2D primaryTexture = primaryAsset.Value;
-            Texture2D detailTexture = detailAsset.Value;
-            int sourceWidth = System.Math.Clamp((int)drawSize.X, 1, primaryTexture.Width);
-            int sourceHeight = System.Math.Clamp((int)drawSize.Y, 1, primaryTexture.Height);
-            Rectangle source = new(0, 0, sourceWidth, sourceHeight);
-            Vector2 actualSize = source.Size();
+            Vector2 actualSize = sourceRectangle.HasValue ? sourceRectangle.Value.Size() : primaryTexture.Size();
             Vector2 scale = drawSize / actualSize;
 
             Main.spriteBatch.End();
@@ -497,9 +577,20 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             try
             {
-                graphicsDevice.Textures[1] = detailTexture;
-                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+                if (detailTexture != null)
+                {
+                    graphicsDevice.Textures[1] = detailTexture;
+                    graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+                }
                 effect.CurrentTechnique = effect.Techniques[techniqueName];
+                Vector4 uSourceRect = sourceRectangle.HasValue
+                    ? new Vector4(
+                        sourceRectangle.Value.X / (float)primaryTexture.Width,
+                        sourceRectangle.Value.Y / (float)primaryTexture.Height,
+                        sourceRectangle.Value.Width / (float)primaryTexture.Width,
+                        sourceRectangle.Value.Height / (float)primaryTexture.Height)
+                    : new Vector4(0f, 0f, 1f, 1f);
+
                 effect.Parameters["DarkColor"]?.SetValue(darkColor.ToVector3());
                 effect.Parameters["MidColor"]?.SetValue(midColor.ToVector3());
                 effect.Parameters["CoreColor"]?.SetValue(coreColor.ToVector3());
@@ -510,9 +601,10 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Direction"]?.SetValue(direction);
                 effect.Parameters["DrawSize"]?.SetValue(actualSize);
                 effect.Parameters["PrimaryTextureSize"]?.SetValue(primaryTexture.Size());
+                effect.Parameters["uSourceRect"]?.SetValue(uSourceRect);
                 effect.CurrentTechnique.Passes[0].Apply();
 
-                Main.EntitySpriteDraw(primaryTexture, worldCenter - Main.screenPosition, source, Color.White,
+                Main.EntitySpriteDraw(primaryTexture, worldCenter - Main.screenPosition, sourceRectangle, Color.White,
                     rotation, actualSize * 0.5f, scale, SpriteEffects.None, 0f);
             }
             finally
@@ -534,6 +626,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             EnemyVFXBurstKind.BlackKnightMoonfuryBlast => 20,
             EnemyVFXBurstKind.DemonSpiritSoulBurst => 18,
             EnemyVFXBurstKind.QuaraWaterBurst => 18,
+            EnemyVFXBurstKind.EvilEyeGhostBurst => 34,
+            // Poison should hang in the air rather than blink out - the default 14t splash read as
+            // an instant pop, which is off-theme for a corrosive hit. 40t still went too quickly to
+            // appreciate the squiggly rim, so it now lingers for well over a second.
+            EnemyVFXBurstKind.ElandVenomImpact => 75,
+            // User's explicit ask: long enough to actually see it (~60t), independent of
+            // DemonSpiritSoulBurst's own 18t so DemonSpirit's real explosion is untouched.
+            EnemyVFXBurstKind.EvilEyeTeleportBurst => 60,
             _ => 14
         };
 

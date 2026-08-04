@@ -12,7 +12,7 @@ using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 {
-    public class GravelordNito : ModNPC, IStaggerable
+    public class GravelordNito : ModNPC, IStaggerable, NPCs.IDebugAttackLabel
     {
         public override string Texture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordNitoAttacking";
         // Explicit head path — [AutoloadBossHead] can't be used because it would derive the head from the
@@ -57,6 +57,12 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const int LongChannelStaggerTicks = 80;
 
         AttackState State = AttackState.None;
+
+        /// <summary>DebugMode above-head readout (see IDebugAttackLabel).</summary>
+        public string DebugAttackLabel => NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0
+            ? "Staggered"
+            : State == AttackState.None ? "Idle" : NPCs.DebugLabels.Humanize(State.ToString());
+
         AttackState LastAttack = AttackState.None;
         int AttackTimer;
         int AttackCooldown = 150;

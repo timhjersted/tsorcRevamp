@@ -14,7 +14,7 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class RedKnight : ModNPC, IHumanoidMeleeHitEffects
+    class RedKnight : ModNPC, IHumanoidMeleeHitEffects, IDebugAttackLabel
     {
         #region Defaults
         const int PoisonComboMoveKey = -10;
@@ -178,7 +178,7 @@ namespace tsorcRevamp.NPCs.Enemies
             get => Main.player[NPC.target];
         }
 
-        internal string DebugAttackLabel
+        public string DebugAttackLabel
         {
             get
             {

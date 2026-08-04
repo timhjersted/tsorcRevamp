@@ -15,7 +15,7 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
     [AutoloadBossHead]
-    class GreatRedKnight : ModNPC, IHumanoidMeleeHitEffects
+    class GreatRedKnight : ModNPC, IHumanoidMeleeHitEffects, NPCs.IDebugAttackLabel
     {
         public int poisonStrikeDamage = 35;
         public int redKnightsSpearDamage = 45;
@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             get => Main.player[NPC.target];
         }
 
-        internal string DebugAttackLabel
+        public string DebugAttackLabel
         {
             get
             {

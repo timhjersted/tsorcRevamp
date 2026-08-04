@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies
     // Poise contract (0.35/30 in PoiseProfiles): short casts hyper-armored; Burst Bubble's long cast
     // is staggerable for its first two thirds. The old justHit hop spaghetti is replaced by the
     // shared evasion system (retreat-jump / quick-step), gated to neutral.
-    class QuaraHydromancer : ModNPC, IStaggerable
+    class QuaraHydromancer : ModNPC, IStaggerable, IDebugAttackLabel
     {
         enum AttackState : byte
         {
@@ -143,11 +143,21 @@ namespace tsorcRevamp.NPCs.Enemies
             SHM = reader.ReadBoolean();
         }
 
-        ///<summary>Its coral staff's tip — every cast's color language originates here.</summary>
-        Vector2 StaffTip => NPC.Center + new Vector2(NPC.direction * 16f, -10f);
+        ///<summary>Its coral staff's tip — every cast's color language originates here at top crescent head.</summary>
+        Vector2 StaffTip => NPC.Center + new Vector2(NPC.direction * 14f, -32f);
 
         bool InkUnlocked => tsorcRevampWorld.SuperHardMode
             || tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>()));
+
+        public string DebugAttackLabel => State switch
+        {
+            AttackState.BubbleBarrage => "Bubble Barrage",
+            AttackState.TidalCrest => "Tidal Crest",
+            AttackState.BurstBubble => "Burst Bubble",
+            AttackState.InkGeyser => "Ink Geyser",
+            AttackState.TideRush => "Tide Rush",
+            _ => "Neutral"
+        };
 
         ///<summary>Poise break (neutral or the Burst Bubble's staggerable window): the cast pops early
         ///and harmlessly in its hands.</summary>
@@ -257,12 +267,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 (AttackState.TidalCrest,    distTiles < 18f && sameLevel ? 0.9f : 0f),
                 (AttackState.BurstBubble,   0.6f),
                 (AttackState.InkGeyser,     InkUnlocked ? 0.7f : 0f),
-                (AttackState.TideRush,      distTiles < 6f ? 1.5f : 0.15f),
+                (AttackState.TideRush,      distTiles < 10f ? 2.5f : 1.2f),
             };
             float total = 0f;
             for (int i = 0; i < pool.Length; i++)
             {
-                if (pool[i].state == LastAttack)
+                if (pool[i].state == LastAttack && pool[i].state != AttackState.TideRush)
                 {
                     pool[i].weight *= 0.5f;
                 }
@@ -497,12 +507,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (AttackTimer == RushDissolveTicks && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    //Retreat, or flank to the player's far side — make them turn around
+                    //Retreat, or flank to the player's far side with 6 tiles space
                     int towardPlayer = player.Center.X > NPC.Center.X ? 1 : -1;
                     bool flank = Main.rand.NextBool();
                     rushDestX = flank
-                        ? player.Center.X + towardPlayer * 12 * 16f  //past the player, far side
-                        : NPC.Center.X - towardPlayer * 12 * 16f;    //straight back to kiting range
+                        ? player.Center.X + towardPlayer * 6 * 16f  //flanking past player with 6 tiles space
+                        : NPC.Center.X - towardPlayer * 8 * 16f;    //retreat away 8 tiles
                     rushDir = Math.Sign(rushDestX - NPC.Center.X);
                     savedKnockBackResist = NPC.knockBackResist;
                     NPC.knockBackResist = 0f; //a rushing puddle can't be shoved off course
@@ -511,14 +521,14 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else if (AttackTimer <= RushDissolveTicks + RushMaxSurgeTicks)
             {
-                //The surge: a low racing puddle — damageable but unshovable, harmless except for the soak
+                //The surge: a low racing puddle — damageable but unshovable
                 g.AttackCommitted = true;
                 NPC.velocity.X = rushDir * 9f;
-                //Splash trail
-                for (int i = 0; i < 2; i++)
+                //Splash trail - increased water dust density
+                for (int i = 0; i < 4; i++)
                 {
                     Vector2 pos = new Vector2(NPC.position.X + Main.rand.NextFloat(NPC.width), NPC.Bottom.Y - Main.rand.NextFloat(14f));
-                    int splash = Dust.NewDust(pos, 4, 4, DustID.Water, -rushDir * 2f, -1.5f, 60, default, 1.2f);
+                    int splash = Dust.NewDust(pos, 4, 4, DustID.Water, -rushDir * 2.5f, -2f, 60, default, 1.4f);
                     Main.dust[splash].noGravity = true;
                 }
                 //Soaks anyone it flows through (no contact damage — NPC.damage is 0)
@@ -556,7 +566,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (AttackTimer >= RushDissolveTicks + RushMaxSurgeTicks + RushReformTicks)
                 {
-                    EndAttack(180);
+                    EndAttack(0);
                 }
             }
         }
@@ -579,6 +589,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override bool PreDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (State == AttackState.TideRush && AttackTimer > RushDissolveTicks && AttackTimer <= RushDissolveTicks + RushMaxSurgeTicks)
+            {
+                NPC.alpha = 217; // 85% transparent during water surge dash
+            }
+            else
+            {
+                NPC.alpha = 0; // 100% opaque
+            }
             return true;
         }
 

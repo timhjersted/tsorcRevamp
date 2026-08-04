@@ -12,7 +12,7 @@ using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor
+    public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor, IDebugAttackLabel
     {
         public int redKnightsSpearDamage = 45;
         public int redMagicDamage = 40;
@@ -43,6 +43,28 @@ namespace tsorcRevamp.NPCs.Enemies
         // just can't start a new attack — before returning to Neutral.
         private enum Phase { Neutral = 0, Telegraph = 1, Committed = 2, Recovery = 3 }
         private enum AttackKind { Spear = 0, Homing = 1, Bomb = 2, Ultrakill = 3, Flail = 4 }
+
+        /// <summary>
+        /// DebugMode above-head readout (see IDebugAttackLabel). Includes the phase because the
+        /// telegraph/committed/recovery split is what decides whether a hit staggers or bounces.
+        /// </summary>
+        public string DebugAttackLabel
+        {
+            get
+            {
+                if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0)
+                {
+                    return "Staggered";
+                }
+                Phase phase = (Phase)(int)NPC.ai[0];
+                if (phase == Phase.Neutral)
+                {
+                    return "Idle";
+                }
+                AttackKind attack = (AttackKind)(int)NPC.ai[2];
+                return $"{attack} ({phase})";
+            }
+        }
 
         private static readonly int[] TelegraphTicksByAttack = { 30, 30, 30, 65, 20 };   // Spear, Homing, Bomb, Ultrakill, Flail
         private static readonly int[] CommitTicksByAttack = { 25, 25, 25, 70, 20 };

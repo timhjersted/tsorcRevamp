@@ -15,11 +15,55 @@ using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class BlackKnight : ModNPC, IHumanoidMeleeHitEffects
+    class BlackKnight : ModNPC, IHumanoidMeleeHitEffects, IDebugAttackLabel
     {
         public int redKnightsSpearDamage = 15;
         const int HomingComboMoveKey = -10;
         const int BombComboMoveKey = -11;
+
+        /// <summary>
+        /// DebugMode above-head readout (see IDebugAttackLabel). This enemy has no attack enum - its
+        /// moves are windows on the ai[1]/ai[2] clocks - so the ranges below mirror the firing points
+        /// in AI(). Keep them in sync if those timings move.
+        /// </summary>
+        public string DebugAttackLabel
+        {
+            get
+            {
+                tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                if (globalNPC.StaggerTimer > 0)
+                {
+                    return "Staggered";
+                }
+                if (globalNPC.CombatMeleeActive)
+                {
+                    return "Melee Combo";
+                }
+                // ai[2] clock: the half-health Ultrakill channel and the air-dropped death waves.
+                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 235f)
+                {
+                    return NPC.ai[2] < 200f ? "Ultrakill (Telegraph)" : "Ultrakill Barrage";
+                }
+                if ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f))
+                {
+                    return "Death From Above";
+                }
+                // ai[1] clock: spear 155->180, homing 300->375, bomb 900->925 (windups precede each).
+                if (NPC.ai[1] >= 120f && NPC.ai[1] <= 200f)
+                {
+                    return NPC.ai[1] < 155f ? "Spear Throw (Windup)" : "Spear Throw";
+                }
+                if (NPC.ai[1] >= 270f && NPC.ai[1] <= 400f)
+                {
+                    return NPC.ai[1] < 300f ? "Homing Volley (Windup)" : "Homing Volley";
+                }
+                if (NPC.ai[1] >= 865f && NPC.ai[1] <= 950f)
+                {
+                    return NPC.ai[1] < 900f ? "Bomb Throw (Windup)" : "Bomb Throw";
+                }
+                return "Idle";
+            }
+        }
         public int redMagicDamage = 14;
         public int redKnightsGreatDamage = 18;
         Vector2 storedPlayerPosition = Vector2.Zero;

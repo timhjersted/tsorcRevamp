@@ -150,7 +150,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         ///renders above projectiles, so the sculpture layers on top of it automatically.</summary>
         public override bool PreDraw(ref Color lightColor)
         {
-            EnemyVFX.DrawQuaraTidalCrest(Projectile.Center, new Vector2(Projectile.width, Projectile.height), Direction);
             if (!DrawWaveSprite)
             {
                 return false;
@@ -158,6 +157,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             int frameHeight = texture.Height / Main.projFrames[Projectile.type];
             Rectangle frame = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
+
+            EnemyVFX.DrawQuaraTidalCrest(Projectile.Center, new Vector2(texture.Width * SpriteScale, frameHeight * SpriteScale), texture, frame, Direction);
+
             Vector2 bottomCenter = new Vector2(Projectile.Center.X, Projectile.position.Y + Projectile.height + 2f) - Main.screenPosition;
             SpriteEffects flip = Direction > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Main.EntitySpriteDraw(texture, bottomCenter, frame, lightColor * 0.8f, 0f,

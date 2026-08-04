@@ -10986,6 +10986,7 @@ Mods: {
 			// ArtoriasSwordSlashTrail.DisplayName: Artorias Sword Slash Trail
 			// ArtoriasFanSourceVFX.DisplayName: Artorias Fan Source V F X
 			// CrimsonDominionExecutionLane.DisplayName: Crimson Dominion Execution Lane
+			// EvilEyeTeleportBlast.DisplayName: Evil Eye Teleport Blast
 		}
 
 		NPCs: {

@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -22,16 +22,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 360;
         }
 
-        //ai[1] == 1: the Hydromancer's upgraded barrage — collides with tiles and soaks the target (Wet).
-        //Default (0) keeps the legacy wall-piercing behavior for other users (Archdeacon).
+        //ai[1] == 1: the Hydromancer's upgraded barrage — soaks the target (Wet).
         bool Soaking => Projectile.ai[1] == 1f;
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            if (Soaking)
-            {
-                Projectile.tileCollide = true;
-            }
+            Projectile.tileCollide = false;
         }
 
         Vector2 initialVelocity;

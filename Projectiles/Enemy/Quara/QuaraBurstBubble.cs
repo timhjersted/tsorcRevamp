@@ -83,15 +83,14 @@ namespace tsorcRevamp.Projectiles.Enemy
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Water, vel.X, vel.Y, 50, default, 1.3f);
                 Main.dust[dust].noGravity = true;
             }
-            //The burst: six droplets radially, biased upward so they rain back down
+            //The burst: 5 soaking wavy bubbles in 5 radial directions
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    Vector2 vel = (MathHelper.TwoPi * i / 6f + Main.rand.NextFloat(0.3f)).ToRotationVector2() * 5f;
-                    vel.Y -= 1.5f;
+                    Vector2 vel = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 5f;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel,
-                        ModContent.ProjectileType<QuaraDroplet>(), (int)(Projectile.damage * 0.6f), 1f, Main.myPlayer, 0.15f);
+                        ModContent.ProjectileType<Bubble>(), (int)(Projectile.damage * 0.6f), 1f, Main.myPlayer, 0f, 1f);
                 }
             }
         }

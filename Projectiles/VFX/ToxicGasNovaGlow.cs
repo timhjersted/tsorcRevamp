@@ -45,10 +45,13 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public override bool PreDraw(ref Color lightColor)
         {
+            // Pass real 0->1 progress: the old `progress * 0.18f` was a brightness hack that also
+            // pinned the shader to the very start of its animation curve. Telegraph dimming is the
+            // shader's own job now (the active:false path renders at roughly half strength).
             float progress = MathHelper.Clamp(Projectile.localAI[0] / DurationTicks, 0f, 1f);
             Projectiles.Enemy.EnemyVFX.DrawElandToxicField(
                 Projectile.Center, Vector2.One * Projectile.ai[1] * 2f,
-                progress * 0.18f, false, true);
+                progress, false);
             return false;
         }
     }
