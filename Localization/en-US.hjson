@@ -11011,6 +11011,7 @@ Mods: {
 			RedKnightVFXBurst.DisplayName: Red Knight V F X Burst
 			ArtoriasSwordSlashTrail.DisplayName: Artorias Sword Slash Trail
 			ArtoriasFanSourceVFX.DisplayName: Artorias Fan Source V F X
+			CrimsonDominionExecutionLane.DisplayName: Crimson Dominion Execution Lane
 		}
 
 		NPCs: {

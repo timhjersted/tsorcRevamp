@@ -105,7 +105,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             else
             {
                 // Smoke and fuse dust spawn.
-                if (Main.rand.NextBool(2))
+                if (Projectile.ai[2] != 1f && Main.rand.NextBool(2))
                 {
                     int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, default(Color), 1f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
@@ -170,7 +170,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Main.dust[dustIndex].velocity *= Projectile.ai[2] == 1f ? 2.4f : 3.5f;
             }
             // Large Smoke Gore spawn
-            for (int g = 0; g < 2; g++)
+            int smokeBursts = Projectile.ai[2] == 1f ? 1 : 2;
+            for (int g = 0; g < smokeBursts; g++)
             {
                 if (!Main.dedServ)
                 {

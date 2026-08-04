@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -42,8 +43,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             if (Projectile.ai[2] == 1f)
             {
-                RedKnightVFX.DrawSpearWake(Projectile.Center - direction * 34f,
-                    direction.ToRotation(), new Vector2(102f, 22f), 0.82f, empowered: true);
+                RedKnightVFX.DrawSpearWake(Projectile.Center - direction * 16f,
+                    direction.ToRotation(), new Vector2(72f, 16f), 0.5f, empowered: true);
+                Texture2D basicSpear = ModContent.Request<Texture2D>(
+                    "tsorcRevamp/Projectiles/Enemy/BlackKnightSpear").Value;
+                Main.EntitySpriteDraw(basicSpear, Projectile.Center - Main.screenPosition, null,
+                    lightColor, Projectile.rotation, basicSpear.Size() * 0.5f,
+                    0.8f, SpriteEffects.None, 0f);
+                return false;
             }
             else
             {

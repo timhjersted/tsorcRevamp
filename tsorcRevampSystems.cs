@@ -934,14 +934,30 @@ namespace tsorcRevamp
 
             foreach (NPC npc in Main.ActiveNPCs)
             {
-                if (npc.ModNPC is not PuppetNPC inv) continue;
+                PuppetNPC inv = npc.ModNPC as PuppetNPC;
+                string current;
+                if (inv != null)
+                {
+                    string comboTag = inv.DebugComboTag;
+                    current = !string.IsNullOrEmpty(inv.DebugAttackLabel) ? inv.DebugAttackLabel
+                            : comboTag.Length > 0 ? comboTag
+                            : inv.DebugPhaseName;
+                }
+                else if (npc.ModNPC is NPCs.Enemies.RedKnight redKnight)
+                {
+                    current = redKnight.DebugAttackLabel;
+                }
+                else if (npc.ModNPC is NPCs.Bosses.SuperHardMode.GreatRedKnight greatRedKnight)
+                {
+                    current = greatRedKnight.DebugAttackLabel;
+                }
+                else
+                {
+                    continue;
+                }
+
                 float dist = Vector2.Distance(npc.Center, Main.LocalPlayer.Center);
                 if (dist > 2400f) continue;
-
-                string comboTag = inv.DebugComboTag;
-                string current = !string.IsNullOrEmpty(inv.DebugAttackLabel) ? inv.DebugAttackLabel
-                               : comboTag.Length > 0 ? comboTag
-                               : inv.DebugPhaseName;
 
                 bool hadHistory = _debugAttackColor.TryGetValue(npc.whoAmI, out var history);
                 if (!hadHistory || history.current != current)
@@ -974,14 +990,13 @@ namespace tsorcRevamp
                     headPos.X - curSize.X * 0.5f, headPos.Y,
                     Color.White, Color.Black, Vector2.Zero, 0.8f);
 
-                if (dist < nearestDist)
+                if (inv != null && dist < nearestDist)
                 {
                     nearestDist = dist;
                     nearestInv = inv;
                     nearestNpc = npc;
                 }
             }
-
             // ── Lower-left detail block (UI space, nearest invader only, throttled) ──
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);

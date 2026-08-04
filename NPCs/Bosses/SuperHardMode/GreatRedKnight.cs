@@ -92,6 +92,44 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             get => Main.player[NPC.target];
         }
 
+        internal string DebugAttackLabel
+        {
+            get
+            {
+                if (specialAttacks.Active)
+                {
+                    return specialAttacks.DebugAttackName;
+                }
+                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
+                    && NPC.ai[2] >= 100f && NPC.ai[2] <= 235f)
+                {
+                    return "Ultrakill Barrage";
+                }
+                if ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f))
+                {
+                    return "Abyssal Rain";
+                }
+                if (NPC.ai[1] >= 120f && NPC.ai[1] <= 230f)
+                {
+                    return "Spear Throw";
+                }
+                if (NPC.ai[1] >= 270f && NPC.ai[1] <= 525f)
+                {
+                    return "Poison Salvo";
+                }
+                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
+                    && NPC.ai[1] >= 695f && NPC.ai[1] < 900f)
+                {
+                    return "Drakin Bombardment";
+                }
+                if (NPC.ai[1] >= 865f)
+                {
+                    return "Firebomb Throw";
+                }
+                return "Idle";
+            }
+        }
+
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(storedPlayerPosition.X);
@@ -388,7 +426,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer, ai2: 1f);
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 2f }, NPC.Center);
                         }
@@ -439,7 +477,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer, ai2: 1f);
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 2f }, NPC.Center);
                         }
@@ -475,7 +513,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 speed2 += Main.rand.NextVector2Circular(0.5f, 0.5f);
                                 if (((speed2.X < 0f) && (NPC.direction < 0)) || ((speed2.X > 0f) && (NPC.direction > 0)))
                                 {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer, ai2: 1f);
                                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.4f, PitchVariance = 2f }, NPC.Center);
                                 }
                             }
@@ -636,36 +674,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 #region AI 2 Attacks
                 // Air attack targeting indicator — dust appears above drop zone 3 frames before each wave
                 // (telegraph still shows without LOS so the player gets fair warning when the knight IS above them)
-                if ((NPC.ai[2] == 72 || NPC.ai[2] == 97 || NPC.ai[2] == 522 || NPC.ai[2] == 547 || NPC.ai[2] == 572 || NPC.ai[2] == 597) && !inActiveAttack && NPC.Distance(player.Center) > 350 && hasPlayerLOS)
+                if ((NPC.ai[2] == 68 || NPC.ai[2] == 93 || NPC.ai[2] == 518 || NPC.ai[2] == 543 || NPC.ai[2] == 568 || NPC.ai[2] == 593) && !inActiveAttack)
                 {
                     for (int i = 0; i < 6; i++)
-                        Dust.NewDust(new Vector2(player.position.X - 10 + Main.rand.Next(player.width + 20), player.position.Y - 340f), 4, 4, DustID.Torch, 0f, 3f, 100, default, 1.2f);
+                        Dust.NewDust(new Vector2(player.Center.X - 130f + Main.rand.Next(260), player.Top.Y - 250f), 4, 4, DustID.CursedTorch, 0f, 2f, 100, new Color(130, 205, 28), 1.05f);
                 }
 
                 // Fire Attack from Air
-                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && !inActiveAttack && NPC.Distance(player.Center) > 350 && hasPlayerLOS)
+                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && !inActiveAttack)
                 {
-                    for (int pcy = 0; pcy < 3; pcy++)
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 360f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 1f, Main.myPlayer);
-                        }
-                    }
+                    SpawnAbyssalRainVolley(player, 3, 190f, 250f, 5.4f);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
                     NPC.netUpdate = true;
                 }
 
                 // Slightly Delayed Fire Attack From Air
-                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && !inActiveAttack && NPC.Distance(player.Center) > 370 && hasPlayerLOS)
+                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && !inActiveAttack)
                 {
-                    for (int pcy = 0; pcy < 4; pcy++)
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 400 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 1.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer);
-                        }
-                    }
+                    SpawnAbyssalRainVolley(player, 4, 420f, 280f, 4.8f);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
                     NPC.netUpdate = true;
                 }
@@ -782,6 +808,50 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         }
 
+
+        void SpawnAbyssalRainVolley(Player target, int count, float spread, float height, float downwardSpeed)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || count <= 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                float lane = count == 1 ? 0.5f : i / (float)(count - 1);
+                float x = MathHelper.Lerp(target.Center.X - spread * 0.5f,
+                    target.Center.X + spread * 0.5f, lane) + Main.rand.NextFloat(-14f, 14f);
+                Vector2 spawn = FindOpenRainOrigin(new Vector2(x, target.Top.Y - height), target.Top.Y);
+                Vector2 velocity = new(Main.rand.NextFloat(-0.75f, 0.75f),
+                    downwardSpeed + Main.rand.NextFloat(-0.25f, 0.35f));
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, velocity,
+                    ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(),
+                    redMagicDamage, 1f, Main.myPlayer, ai2: 1f);
+            }
+        }
+
+        static Vector2 FindOpenRainOrigin(Vector2 preferred, float targetTop)
+        {
+            Vector2 halfSize = new Vector2(8f);
+            for (int step = 0; step <= 14; step++)
+            {
+                Vector2 candidate = preferred + new Vector2(0f, step * 16f);
+                if (candidate.Y <= targetTop - 48f
+                    && !Collision.SolidCollision(candidate - halfSize, 16, 16))
+                {
+                    return candidate;
+                }
+            }
+            for (int step = 1; step <= 12; step++)
+            {
+                Vector2 candidate = preferred - new Vector2(0f, step * 16f);
+                if (!Collision.SolidCollision(candidate - halfSize, 16, 16))
+                {
+                    return candidate;
+                }
+            }
+            return new Vector2(preferred.X, targetTop - 64f);
+        }
 
 
         public override void OnKill()
@@ -972,8 +1042,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         Vector2 CurrentSpearWorld(int facingDirection)
         {
-            // Keep the weapon pivot on the exact hand pixel used by the arm overlay in every frame.
-            return CurrentHandWorld(facingDirection);
+            // Preserve the authored spear grip used by the original throw telegraph.
+            Vector2 handWorld = CurrentHandWorld(facingDirection);
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame == 0)
+            {
+                handWorld.Y -= 21f;
+            }
+            else if (frame >= 2)
+            {
+                handWorld.Y -= 5f;
+            }
+            return handWorld;
         }
 
         Vector2 CurrentSpearWorld()
@@ -1042,7 +1122,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             // Spear
-            if (NPC.ai[1] >= 120 && NPC.ai[1] <= 210f)
+            if (NPC.ai[1] >= 120 && NPC.ai[1] < 210f)
             {
                 Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
                 Vector2 spearAim = NPC.ai[1] >= 180f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
@@ -1056,12 +1136,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] >= 350 && NPC.ai[1] <= 375f) || (NPC.ai[1] >= 400 && NPC.ai[1] <= 480f)))
             {
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
-                spriteBatch.Draw(magicBallTexture, magicBallWorld - Main.screenPosition, null, drawColor, 0f, MagicBallGripOrigin, 1f, SpriteEffects.None, 0);
-                if (Main.rand.NextBool(2))
-                {
-                    Dust dust = Dust.NewDustPerfect(magicBallWorld + Main.rand.NextVector2Circular(6f, 6f), DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120, default, 1.3f);
-                    dust.noGravity = true;
-                }
+                Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 3, 0.78f, 20f);
                 DrawArmOverlay(spriteBatch, drawColor);
             }
             // Bomb
@@ -1085,15 +1160,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             KnightHeldProp heldProp = specialAttacks.HeldProp;
             if (heldProp == KnightHeldProp.Spear)
             {
-                Vector2 handWorld = CurrentHandWorld(specialAttacks.Direction);
+                Vector2 handWorld = CurrentSpearWorld(specialAttacks.Direction);
+                if (specialAttacks.Attack == KnightSpecialAttack.CrimsonAdvance)
+                {
+                    handWorld.Y += 5f;
+                }
                 float rotation = specialAttacks.GetSpearRotation(handWorld);
                 float gripSlide = specialAttacks.SpearGripSlide;
                 if (specialAttacks.SpearDamageWake)
                 {
                     Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
                     Projectiles.Enemy.RedKnightVFX.DrawSpearWake(
-                        handWorld + forward * (42f + gripSlide), forward.ToRotation(),
-                        new Vector2(112f, 23f), 0.9f, empowered: true);
+                        handWorld + forward * (gripSlide * 0.5f), forward.ToRotation(),
+                        new Vector2(76f, 18f), 0.56f, empowered: true);
                 }
                 DrawHeldSpear(spriteBatch, handWorld - Main.screenPosition, rotation, drawColor, gripSlide);
                 DrawArmOverlay(spriteBatch, drawColor, specialAttacks.Direction);
@@ -1116,8 +1195,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (heldProp == KnightHeldProp.Magic)
             {
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
-                spriteBatch.Draw(magicBallTexture, magicBallWorld - Main.screenPosition, null, drawColor,
-                    0f, MagicBallGripOrigin, 1f, SpriteEffects.None, 0f);
                 Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 3,
                     specialAttacks.TelegraphProgress, 20f);
                 DrawArmOverlay(spriteBatch, drawColor, specialAttacks.Direction);

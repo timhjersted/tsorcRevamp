@@ -96,7 +96,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             _ => 75
         };
         Vector2 GroundPoint => new Vector2(Projectile.ai[0], Projectile.ai[1]);
-        Vector2 PlantedCenter => GroundPoint - new Vector2(0f, 20f);
+        Vector2 PlantedCenter => GroundPoint - new Vector2(0f, 15f);
 
         public override void SetDefaults()
         {
@@ -199,7 +199,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
             for (int i = 0; i < 7; i++)
             {
-                int dustType = i < 4 ? DustID.Stone : DustID.Torch;
+                int dustType = i < 4 ? DustID.Stone : DustID.RedTorch;
                 Dust dust = Dust.NewDustPerfect(GroundPoint + new Vector2(Main.rand.NextFloat(-7f, 7f), -2f),
                     dustType, new Vector2(Main.rand.NextFloat(-1.5f, 1.5f), Main.rand.NextFloat(-2.8f, -0.7f)),
                     100, default, Main.rand.NextFloat(0.65f, 1f));
@@ -212,7 +212,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), GroundPoint - new Vector2(0f, 9f),
                 new Vector2(direction * (Mode == KnightStandardMode.RedKnight ? 6f : 7f), 0f),
                 ModContent.ProjectileType<RedKnightGroundWave>(), Projectile.damage, 2.5f,
-                Main.myPlayer, ai0: Mode == KnightStandardMode.RedKnight ? 210f : 260f);
+                Main.myPlayer, ai0: Mode == KnightStandardMode.RedKnight ? 210f : 520f);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -221,8 +221,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             if (age < FlightTicks)
             {
                 Vector2 direction = (PlantedCenter - startPosition).SafeNormalize(Vector2.UnitY);
-                RedKnightVFX.DrawSpearWake(Projectile.Center - direction * 26f, direction.ToRotation(),
-                    new Vector2(78f, 17f), 0.55f, empowered: Mode != KnightStandardMode.RedKnight);
+                RedKnightVFX.DrawSpearWake(Projectile.Center - direction * 14f, direction.ToRotation(),
+                    new Vector2(66f, 15f), 0.44f, empowered: Mode != KnightStandardMode.RedKnight);
             }
             else
             {
@@ -260,7 +260,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.height = 18;
             Projectile.hostile = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 48;
+            Projectile.timeLeft = 84;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
@@ -281,9 +281,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
             if (!Main.dedServ && Main.rand.NextBool(3))
             {
+                int dustType = Main.rand.NextBool(4) ? DustID.Shadowflame : DustID.RedTorch;
                 Dust ember = Dust.NewDustPerfect(Projectile.Bottom + new Vector2(Main.rand.NextFloat(-18f, 18f), -2f),
-                    DustID.Torch, new Vector2(-Projectile.velocity.X * 0.08f, Main.rand.NextFloat(-2.4f, -0.8f)),
-                    100, new Color(255, 70, 30), Main.rand.NextFloat(0.7f, 1.1f));
+                    dustType, new Vector2(-Projectile.velocity.X * 0.08f, Main.rand.NextFloat(-2.4f, -0.8f)),
+                    100, new Color(205, 24, 54), Main.rand.NextFloat(0.7f, 1.05f));
                 ember.noGravity = true;
             }
         }
@@ -291,7 +292,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         public override bool PreDraw(ref Color lightColor)
         {
             float opacity = MathHelper.Clamp(Projectile.timeLeft / 12f, 0f, 1f);
-            RedKnightVFX.DrawGroundWave(Projectile.Center, Projectile.velocity, new Vector2(54f, 20f), opacity);
+            RedKnightVFX.DrawGroundWave(Projectile.Bottom, Projectile.velocity, new Vector2(54f, 20f), opacity);
             return false;
         }
     }
@@ -459,17 +460,26 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
     public class CrimsonDominionController : ModProjectile
     {
-        const int BuildTicks = 30;
-        const int JudgmentTicks = 360;
-        const int CollapseTicks = 60;
-        const int RingTicks = 40;
-        const float Radius = 420f;
-        const float LaneWidth = 18f;
-        const float InnerRadius = 62f;
+        internal const int BuildTicks = 45;
+        internal const int SweepTicks = 300;
+        internal const int CycleTicks = 75;
+        internal const int SweepActiveTicks = 55;
+        internal const int ExecutionSpawnTick = 35;
+        internal const int EscapeTicks = 90;
+        internal const int NovaTicks = 10;
+        internal const int FadeTicks = 35;
+        internal const int EscapeStart = BuildTicks + SweepTicks;
+        internal const int NovaStart = EscapeStart + EscapeTicks;
+        internal const int FadeStart = NovaStart + NovaTicks;
+        internal const int TotalTicks = FadeStart + FadeTicks;
+        internal const float Radius = 420f;
+        internal const float InnerRadius = 58f;
+        const float SweepCollisionWidth = 16f;
+        const float SweepRadiansPerTick = MathHelper.Pi / 120f;
 
         public override string Texture => "Terraria/Images/MagicPixel";
 
-        int Age => (int)Projectile.localAI[0];
+        int Age => TotalTicks - Projectile.timeLeft;
         int RotationDirection => Projectile.ai[0] < 0f ? -1 : 1;
         float BaseRotation => Projectile.ai[1];
 
@@ -479,7 +489,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.height = 2;
             Projectile.hostile = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 540;
+            Projectile.timeLeft = TotalTicks;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
@@ -489,76 +499,229 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void AI()
         {
-            Projectile.localAI[0]++;
-            Lighting.AddLight(Projectile.Center, new Vector3(0.45f, 0.03f, 0.01f));
+            float intensity = Age < EscapeStart ? 0.72f
+                : Age < NovaStart ? 0.46f
+                : Age < FadeStart ? 1f : 0.28f;
+            Lighting.AddLight(Projectile.Center, new Vector3(0.62f, 0.025f, 0.045f) * intensity);
+
+            if (Age >= BuildTicks && Age < EscapeStart)
+            {
+                int cyclePhase = (Age - BuildTicks) % CycleTicks;
+                if (cyclePhase == ExecutionSpawnTick && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    SpawnExecutionLane();
+                }
+            }
+
+            if (Age == EscapeStart)
+            {
+                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.8f, Pitch = -0.28f }, Projectile.Center);
+            }
+            else if (Age == NovaStart)
+            {
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.38f }, Projectile.Center);
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    for (int i = 0; i < 24; i++)
+                    {
+                        Vector2 direction = Main.rand.NextVector2Unit();
+                        Dust dust = Dust.NewDustPerfect(Projectile.Center
+                            + direction * Main.rand.NextFloat(48f, Radius),
+                            Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.RedTorch,
+                            direction * Main.rand.NextFloat(1.4f, 3.8f), 90,
+                            new Color(210, 20, 50), Main.rand.NextFloat(0.8f, 1.25f));
+                        dust.noGravity = true;
+                    }
+                }
+            }
         }
 
-        bool InJudgment(out int beat, out int phase)
+        void SpawnExecutionLane()
         {
-            int local = Age - BuildTicks;
-            beat = local >= 0 ? local / 60 : 0;
-            phase = local >= 0 ? local % 60 : 0;
-            return local >= 0 && local < JudgmentTicks;
+            Player target = null;
+            int sourceNpcIndex = (int)Projectile.ai[2];
+            if (sourceNpcIndex >= 0 && sourceNpcIndex < Main.maxNPCs)
+            {
+                NPC sourceNpc = Main.npc[sourceNpcIndex];
+                if (sourceNpc.active && sourceNpc.target >= 0 && sourceNpc.target < Main.maxPlayers)
+                {
+                    Player selected = Main.player[sourceNpc.target];
+                    if (selected.active && !selected.dead)
+                    {
+                        target = selected;
+                    }
+                }
+            }
+
+            if (target == null)
+            {
+                int playerIndex = Player.FindClosest(Projectile.Center, 1, 1);
+                Player closest = Main.player[playerIndex];
+                if (!closest.active || closest.dead)
+                {
+                    return;
+                }
+                target = closest;
+            }
+
+            Vector2 direction = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitX);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction,
+                ModContent.ProjectileType<CrimsonDominionExecutionLane>(), Projectile.damage,
+                Projectile.knockBack, Main.myPlayer);
         }
 
-        bool RingActive => Age >= BuildTicks + JudgmentTicks + CollapseTicks
-            && Age < BuildTicks + JudgmentTicks + CollapseTicks + RingTicks;
+        internal bool GetSweepState(out float angle, out int movementDirection, out bool active)
+        {
+            int sweepAge = Age - BuildTicks;
+            if (sweepAge < 0 || sweepAge >= SweepTicks)
+            {
+                angle = BaseRotation;
+                movementDirection = RotationDirection;
+                active = false;
+                return false;
+            }
+
+            int cycle = sweepAge / CycleTicks;
+            int cyclePhase = sweepAge % CycleTicks;
+            int activeAge = cycle * SweepActiveTicks + Math.Min(cyclePhase, SweepActiveTicks);
+            const int turnaroundTick = SweepActiveTicks * 2;
+            if (activeAge <= turnaroundTick)
+            {
+                angle = BaseRotation + RotationDirection * SweepRadiansPerTick * activeAge;
+                movementDirection = RotationDirection;
+            }
+            else
+            {
+                angle = BaseRotation + RotationDirection * SweepRadiansPerTick * turnaroundTick
+                    - RotationDirection * SweepRadiansPerTick * (activeAge - turnaroundTick);
+                movementDirection = -RotationDirection;
+            }
+            active = cyclePhase < SweepActiveTicks;
+            return true;
+        }
 
         public override bool? CanDamage()
         {
-            if (InJudgment(out _, out int phase))
-            {
-                return phase >= 45 && phase < 55;
-            }
-            return RingActive;
+            bool containmentActive = Age >= BuildTicks && Age < EscapeStart;
+            bool novaActive = Age >= NovaStart && Age < FadeStart;
+            return containmentActive || novaActive;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (InJudgment(out int beat, out int phase) && phase >= 45 && phase < 55)
+            if (Age >= BuildTicks && Age < EscapeStart)
             {
-                float angle = BaseRotation + RotationDirection * beat * MathHelper.Pi / 6f;
+                if (FarthestCornerDistance(targetHitbox, Projectile.Center) >= Radius)
+                {
+                    return true;
+                }
+
+                GetSweepState(out float angle, out _, out bool sweepActive);
+                if (!sweepActive)
+                {
+                    return false;
+                }
+
                 Vector2 direction = angle.ToRotationVector2();
                 float collisionPoint = 0f;
                 bool forward = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
                     Projectile.Center + direction * InnerRadius, Projectile.Center + direction * Radius,
-                    LaneWidth, ref collisionPoint);
+                    SweepCollisionWidth, ref collisionPoint);
                 bool backward = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
                     Projectile.Center - direction * InnerRadius, Projectile.Center - direction * Radius,
-                    LaneWidth, ref collisionPoint);
+                    SweepCollisionWidth, ref collisionPoint);
                 return forward || backward;
             }
 
-            if (RingActive)
+            if (Age >= NovaStart && Age < FadeStart)
             {
-                float progress = (Age - BuildTicks - JudgmentTicks - CollapseTicks) / (float)RingTicks;
-                float radius = MathHelper.Lerp(70f, Radius, progress);
-                return RectangleIntersectsRing(targetHitbox, Projectile.Center, radius, 16f);
+                return ClosestPointDistance(targetHitbox, Projectile.Center) <= Radius;
             }
             return false;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            RedKnightVFX.DrawCrimsonDominion(Projectile.Center, Age, BaseRotation, RotationDirection);
+            GetSweepState(out float sweepAngle, out int movementDirection, out bool sweepActive);
+            RedKnightVFX.DrawCrimsonDominion(Projectile.Center, Age, BaseRotation,
+                RotationDirection, sweepAngle, movementDirection, sweepActive);
             return false;
         }
 
-        static bool RectangleIntersectsRing(Rectangle rectangle, Vector2 center, float radius, float width)
+        static float ClosestPointDistance(Rectangle rectangle, Vector2 center)
         {
             float closestX = MathHelper.Clamp(center.X, rectangle.Left, rectangle.Right);
             float closestY = MathHelper.Clamp(center.Y, rectangle.Top, rectangle.Bottom);
-            float minimumDistance = Vector2.Distance(center, new Vector2(closestX, closestY));
+            return Vector2.Distance(center, new Vector2(closestX, closestY));
+        }
 
+        static float FarthestCornerDistance(Rectangle rectangle, Vector2 center)
+        {
             float maximumDistance = 0f;
             maximumDistance = Math.Max(maximumDistance, Vector2.Distance(center, rectangle.TopLeft()));
             maximumDistance = Math.Max(maximumDistance, Vector2.Distance(center, rectangle.TopRight()));
             maximumDistance = Math.Max(maximumDistance, Vector2.Distance(center, rectangle.BottomLeft()));
             maximumDistance = Math.Max(maximumDistance, Vector2.Distance(center, rectangle.BottomRight()));
+            return maximumDistance;
+        }
+    }
 
-            float inner = Math.Max(0f, radius - width * 0.5f);
-            float outer = radius + width * 0.5f;
-            return minimumDistance <= outer && maximumDistance >= inner;
+    public class CrimsonDominionExecutionLane : ModProjectile
+    {
+        internal const int TelegraphTicks = 30;
+        internal const int ActiveTicks = 10;
+        internal const int FadeTicks = 12;
+        const float CollisionWidth = 20f;
+
+        public override string Texture => "Terraria/Images/MagicPixel";
+
+        int Age => TelegraphTicks + ActiveTicks + FadeTicks - Projectile.timeLeft;
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 2;
+            Projectile.height = 2;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = TelegraphTicks + ActiveTicks + FadeTicks;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
+        }
+
+        public override bool ShouldUpdatePosition() => false;
+
+        public override void AI()
+        {
+            if (Age == TelegraphTicks)
+            {
+                SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.62f, Pitch = -0.42f }, Projectile.Center);
+            }
+            Lighting.AddLight(Projectile.Center, new Vector3(0.54f, 0.02f, 0.06f)
+                * (Age >= TelegraphTicks ? 0.9f : 0.35f));
+        }
+
+        public override bool? CanDamage() => Age >= TelegraphTicks && Age < TelegraphTicks + ActiveTicks;
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+            float collisionPoint = 0f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
+                Projectile.Center + direction * CrimsonDominionController.InnerRadius,
+                Projectile.Center + direction * CrimsonDominionController.Radius,
+                CollisionWidth, ref collisionPoint);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = MathHelper.Clamp(Age / (float)TelegraphTicks, 0f, 1f);
+            bool active = Age >= TelegraphTicks && Age < TelegraphTicks + ActiveTicks;
+            float fade = Age < TelegraphTicks + ActiveTicks ? 1f
+                : MathHelper.Clamp(1f - (Age - TelegraphTicks - ActiveTicks) / (float)FadeTicks, 0f, 1f);
+            RedKnightVFX.DrawDominionExecution(Projectile.Center,
+                Projectile.velocity.SafeNormalize(Vector2.UnitX), progress, active, fade);
+            return false;
         }
     }
 

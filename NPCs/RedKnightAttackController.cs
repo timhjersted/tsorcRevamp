@@ -70,6 +70,21 @@ namespace tsorcRevamp.NPCs
 
         public bool Active => Attack != KnightSpecialAttack.None;
 
+        public string DebugAttackName => Attack switch
+        {
+            KnightSpecialAttack.EmberReversal => "Ember Reversal",
+            KnightSpecialAttack.VenomWake => "Venom Wake",
+            KnightSpecialAttack.CrimsonStandard => "Crimson Standard",
+            KnightSpecialAttack.CrimsonAdvance => "Crimson Advance",
+            KnightSpecialAttack.FurnacePincer => "Furnace Pincer",
+            KnightSpecialAttack.RoyalStandard => "Royal Standard",
+            KnightSpecialAttack.StormbreakerEdict => "Stormbreaker Edict",
+            KnightSpecialAttack.CrimsonDominion => "Crimson Dominion",
+            KnightSpecialAttack.FurnaceHerald => "Furnace Herald",
+            KnightSpecialAttack.StormHerald => "Storm Herald",
+            _ => null
+        };
+
         public bool IsHerald => Attack == KnightSpecialAttack.FurnaceHerald || Attack == KnightSpecialAttack.StormHerald;
 
         public void TickCooldowns()
@@ -178,7 +193,7 @@ namespace tsorcRevamp.NPCs
 
             int targetDirection = target.Center.X >= npc.Center.X ? 1 : -1;
             Vector2 behindPoint = target.Bottom + new Vector2(targetDirection * 165f, 0f);
-            if (HalfHeraldComplete && hasLineOfSight && distance >= 150f && distance <= 620f
+            if (HalfHeraldComplete && hasLineOfSight && distance >= 150f && distance <= 720f
                 && TryFindGround(behindPoint, 10, 30, out Vector2 furnaceGround))
             {
                 candidates[count++] = KnightSpecialAttack.FurnacePincer;
@@ -188,7 +203,7 @@ namespace tsorcRevamp.NPCs
             {
                 candidates[count++] = KnightSpecialAttack.StormbreakerEdict;
             }
-            if (HalfHeraldComplete && dominionCooldown <= 0 && npc.velocity.Y == 0f)
+            if (HalfHeraldComplete && dominionCooldown <= 0 && npc.velocity.Y == 0f && distance <= 360f)
             {
                 candidates[count++] = KnightSpecialAttack.CrimsonDominion;
             }
@@ -255,7 +270,10 @@ namespace tsorcRevamp.NPCs
             npc.spriteDirection = Direction;
             npc.ai[1] = 60f;
             npc.ai[2] = -100f;
-            npc.velocity.X *= 0.25f;
+            if (attack != KnightSpecialAttack.CrimsonStandard && attack != KnightSpecialAttack.RoyalStandard)
+            {
+                npc.velocity.X *= 0.25f;
+            }
             globalNPC.ResetCombatTempoSequence(clearRecovery: true);
             globalNPC.AttackTelegraphing = true;
             globalNPC.AttackCommitted = false;
@@ -324,6 +342,14 @@ namespace tsorcRevamp.NPCs
                 case KnightSpecialAttack.StormHerald:
                     TickHerald(npc, Attack == KnightSpecialAttack.StormHerald);
                     break;
+            }
+
+            // Standards own the knight only through the throw. Their planted charge and delayed
+            // projectiles are self-contained, so the knight can immediately resume normal movement
+            // and attack selection while the standard resolves independently.
+            if (!Active)
+            {
+                return true;
             }
 
             Timer++;
@@ -407,23 +433,22 @@ namespace tsorcRevamp.NPCs
 
         void TickCrimsonStandard(NPC npc, KnightAttackStats stats)
         {
-            if (Timer < 45)
-            {
-                npc.velocity.X *= 0.78f;
-            }
             if (Timer == 45)
             {
-                npc.velocity = new Vector2(Direction * 0.8f, -5.2f);
+                float horizontalVelocity = Direction * npc.velocity.X >= 0.8f
+                    ? npc.velocity.X
+                    : Direction * 0.8f;
+                npc.velocity = new Vector2(horizontalVelocity, -5.2f);
                 npc.netUpdate = true;
             }
-            if (Timer == 75 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Timer == 75)
             {
-                SpawnStandard(npc, LockedTarget, stats.MagicDamage, KnightStandardMode.RedKnight);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    SpawnStandard(npc, LockedTarget, stats.MagicDamage, KnightStandardMode.RedKnight);
+                }
                 PlaySound(SoundID.Item1 with { Volume = 0.85f, Pitch = -0.1f }, npc.Center);
-            }
-            if (Timer > 81)
-            {
-                npc.velocity.X *= 0.9f;
+                ReleaseDetachedStandard(npc);
             }
         }
 
@@ -433,17 +458,26 @@ namespace tsorcRevamp.NPCs
             {
                 npc.velocity.X *= 0.7f;
             }
+            if (Timer == 40)
+            {
+                LockedTarget = target.Center;
+                Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
+                npc.netUpdate = true;
+            }
             if (Timer == 60)
             {
-                SpawnLunge(npc, stats.SpearDamage, 108f, 52f, 14, 5f);
-                npc.velocity = new Vector2(Direction * 6.2f, -2.5f);
+                Vector2 firstTarget = Vector2.Lerp(npc.Center, LockedTarget, 0.62f);
+                LockedVelocity = GuidedLeapVelocity(npc.Center, firstTarget, 18);
+                SpawnLunge(npc, stats.SpearDamage, 108f, 52f, 20, 5f);
+                npc.velocity = LockedVelocity;
                 PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.15f }, npc.Center);
+                npc.netUpdate = true;
             }
-            if (Timer > 74 && Timer < 98)
+            if (Timer > 80 && Timer < 105)
             {
                 npc.velocity.X *= 0.72f;
             }
-            if (Timer == 90)
+            if (Timer == 105)
             {
                 Direction = target.Center.X >= npc.Center.X ? 1 : -1;
                 LockedTarget = target.Center;
@@ -451,11 +485,13 @@ namespace tsorcRevamp.NPCs
             }
             if (Timer == 135)
             {
-                SpawnLunge(npc, stats.GreatDamage, 96f, 54f, 12, 5.5f);
-                npc.velocity = new Vector2(Direction * 7f, -2f);
+                LockedVelocity = GuidedLeapVelocity(npc.Center, LockedTarget, 20);
+                SpawnLunge(npc, stats.GreatDamage, 96f, 54f, 22, 5.5f);
+                npc.velocity = LockedVelocity;
                 PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = 0.05f }, npc.Center);
+                npc.netUpdate = true;
             }
-            if (Timer > 147)
+            if (Timer > 157)
             {
                 npc.velocity.X *= 0.78f;
             }
@@ -482,11 +518,13 @@ namespace tsorcRevamp.NPCs
             }
             if (Timer == 165)
             {
-                SpawnLunge(npc, stats.GreatDamage, 112f, 54f, 14, 6f);
-                npc.velocity = new Vector2(Direction * 7.5f, -2.4f);
+                LockedVelocity = GuidedLeapVelocity(npc.Center, LockedTarget, 36);
+                SpawnLunge(npc, stats.GreatDamage, 112f, 54f, 38, 6f);
+                npc.velocity = LockedVelocity;
                 PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.25f }, npc.Center);
+                npc.netUpdate = true;
             }
-            if (Timer > 179)
+            if (Timer > 203)
             {
                 npc.velocity.X *= 0.75f;
             }
@@ -494,26 +532,41 @@ namespace tsorcRevamp.NPCs
 
         void TickRoyalStandard(NPC npc, KnightAttackStats stats)
         {
-            if (Timer < 45)
-            {
-                npc.velocity.X *= 0.76f;
-            }
             if (Timer == 45)
             {
-                npc.velocity = new Vector2(Direction * 0.6f, -6f);
+                float horizontalVelocity = Direction * npc.velocity.X >= 0.6f
+                    ? npc.velocity.X
+                    : Direction * 0.6f;
+                npc.velocity = new Vector2(horizontalVelocity, -6f);
                 npc.netUpdate = true;
             }
-            if (Timer == 75 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Timer == 75)
             {
-                SpawnStandard(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter);
-                SpawnStandard(npc, AuxiliaryTargetA, stats.MagicDamage, KnightStandardMode.GreatLeft);
-                SpawnStandard(npc, AuxiliaryTargetB, stats.MagicDamage, KnightStandardMode.GreatRight);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    SpawnStandard(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter);
+                    SpawnStandard(npc, AuxiliaryTargetA, stats.MagicDamage, KnightStandardMode.GreatLeft);
+                    SpawnStandard(npc, AuxiliaryTargetB, stats.MagicDamage, KnightStandardMode.GreatRight);
+                }
                 PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.2f }, npc.Center);
+                ReleaseDetachedStandard(npc);
             }
-            if (Timer > 81)
-            {
-                npc.velocity.X *= 0.88f;
-            }
+        }
+
+        void ReleaseDetachedStandard(NPC npc)
+        {
+            KnightSpecialAttack completed = Attack;
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            Attack = KnightSpecialAttack.None;
+            Timer = 0;
+            LockedVelocity = Vector2.Zero;
+            globalNPC.AttackTelegraphing = false;
+            globalNPC.AttackCommitted = false;
+            globalNPC.SetActiveAttackDefenseTraits(npc, AttackDefenseTraits.None);
+            npc.ai[1] = 60f;
+            npc.ai[2] = -100f;
+            attackCooldown = IsGreatAttack(completed) ? Main.rand.Next(260, 401) : Main.rand.Next(320, 481);
+            npc.netUpdate = true;
         }
 
         void TickStormbreaker(NPC npc, Player target, KnightAttackStats stats)
@@ -609,15 +662,16 @@ namespace tsorcRevamp.NPCs
                 KnightSpecialAttack.EmberReversal => Timer >= 45 && Timer < 57,
                 KnightSpecialAttack.VenomWake => (Timer >= 60 && Timer < 67) || (Timer >= 120 && Timer < 126),
                 KnightSpecialAttack.CrimsonStandard => Timer >= 69 && Timer < 81,
-                KnightSpecialAttack.CrimsonAdvance => (Timer >= 60 && Timer < 74) || (Timer >= 135 && Timer < 147),
-                KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 179,
+                KnightSpecialAttack.CrimsonAdvance => (Timer >= 60 && Timer < 80) || (Timer >= 135 && Timer < 157),
+                KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 203,
                 KnightSpecialAttack.RoyalStandard => Timer >= 69 && Timer < 83,
                 KnightSpecialAttack.StormbreakerEdict => Timer >= 60 && Timer < 76,
-                KnightSpecialAttack.CrimsonDominion => Timer >= 60 && Timer < 550,
+                KnightSpecialAttack.CrimsonDominion => Timer >= 60 && Timer < 505,
                 _ => false
             };
+            bool dominionRecovery = Attack == KnightSpecialAttack.CrimsonDominion && Timer >= 505;
             globalNPC.AttackCommitted = committed;
-            globalNPC.AttackTelegraphing = !committed && !IsHerald && Timer < Duration(Attack) - 20;
+            globalNPC.AttackTelegraphing = !committed && !dominionRecovery && !IsHerald && Timer < Duration(Attack) - 20;
         }
 
         void Finish(NPC npc, tsorcRevampGlobalNPC globalNPC)
@@ -695,7 +749,7 @@ namespace tsorcRevamp.NPCs
             KnightSpecialAttack.CrimsonStandard when Timer < 75 => KnightHeldProp.Spear,
             KnightSpecialAttack.CrimsonAdvance => KnightHeldProp.Spear,
             KnightSpecialAttack.FurnacePincer when Timer < 60 => KnightHeldProp.Bomb,
-            KnightSpecialAttack.FurnacePincer when Timer >= 105 && Timer < 185 => KnightHeldProp.Spear,
+            KnightSpecialAttack.FurnacePincer when Timer >= 105 && Timer < 205 => KnightHeldProp.Spear,
             KnightSpecialAttack.RoyalStandard when Timer < 75 => KnightHeldProp.Spear,
             KnightSpecialAttack.StormbreakerEdict when Timer < 122 => KnightHeldProp.Spear,
             KnightSpecialAttack.CrimsonDominion => KnightHeldProp.Spear,
@@ -729,7 +783,11 @@ namespace tsorcRevamp.NPCs
             {
                 if (Attack == KnightSpecialAttack.CrimsonAdvance)
                 {
-                    return PulseWindow(Timer, 60, 74, 20f) + PulseWindow(Timer, 135, 147, 18f);
+                    return PulseWindow(Timer, 60, 80, 20f) + PulseWindow(Timer, 135, 157, 18f);
+                }
+                if (Attack == KnightSpecialAttack.FurnacePincer)
+                {
+                    return PulseWindow(Timer, 165, 203, 24f);
                 }
                 if (Attack == KnightSpecialAttack.StormbreakerEdict)
                 {
@@ -758,8 +816,8 @@ namespace tsorcRevamp.NPCs
         public bool SpearDamageWake => Attack switch
         {
             KnightSpecialAttack.EmberReversal => Timer >= 45 && Timer < 57,
-            KnightSpecialAttack.CrimsonAdvance => (Timer >= 60 && Timer < 74) || (Timer >= 135 && Timer < 147),
-            KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 179,
+            KnightSpecialAttack.CrimsonAdvance => (Timer >= 60 && Timer < 80) || (Timer >= 135 && Timer < 157),
+            KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 203,
             KnightSpecialAttack.StormbreakerEdict => Timer >= 60 && Timer < 76,
             _ => false
         };
@@ -784,7 +842,7 @@ namespace tsorcRevamp.NPCs
                 int start = Attack switch
                 {
                     KnightSpecialAttack.VenomWake when Timer >= 60 => 60,
-                    KnightSpecialAttack.CrimsonAdvance when Timer >= 60 => 90,
+                    KnightSpecialAttack.CrimsonAdvance when Timer >= 60 => 105,
                     KnightSpecialAttack.FurnacePincer when Timer >= 60 => 105,
                     _ => 0
                 };
@@ -800,6 +858,16 @@ namespace tsorcRevamp.NPCs
             }
             float progress = (timer - start) / (float)Math.Max(1, end - start - 1);
             return (float)Math.Sin(progress * MathHelper.Pi) * maximum;
+        }
+
+        static Vector2 GuidedLeapVelocity(Vector2 source, Vector2 target, int flightTicks)
+        {
+            const float gravityPerTick = 0.35f;
+            float ticks = Math.Max(1, flightTicks);
+            Vector2 delta = target - source;
+            float gravityDrop = gravityPerTick * (ticks - 1f) * ticks * 0.5f;
+            return new Vector2(delta.X / ticks,
+                MathHelper.Clamp((delta.Y - gravityDrop) / ticks, -14f, 8f));
         }
 
         static void SpawnLunge(NPC npc, int damage, float reach, float height, int duration, float knockback)

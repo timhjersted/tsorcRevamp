@@ -178,6 +178,46 @@ namespace tsorcRevamp.NPCs.Enemies
             get => Main.player[NPC.target];
         }
 
+        internal string DebugAttackLabel
+        {
+            get
+            {
+                if (specialAttacks.Active)
+                {
+                    return specialAttacks.DebugAttackName;
+                }
+
+                tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                if (globalNPC.CombatMeleeActive)
+                {
+                    return globalNPC.ActiveCombatMeleeKey == CombatComboMoveKey.LongHopMelee
+                        ? "Long Spear Dash"
+                        : "Close Spear Dash";
+                }
+                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 235f)
+                {
+                    return "Ultrakill Barrage";
+                }
+                if ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f))
+                {
+                    return "Abyssal Rain";
+                }
+                if (NPC.ai[1] >= 120f && NPC.ai[1] <= 230f)
+                {
+                    return globalNPC.ActiveAttackBypassesShield ? "Unblockable Spear Throw" : "Spear Throw";
+                }
+                if (NPC.ai[1] >= 270f && NPC.ai[1] <= 420f)
+                {
+                    return "Poison Volley";
+                }
+                if (NPC.ai[1] >= 865f)
+                {
+                    return "Firebomb Throw";
+                }
+                return "Idle";
+            }
+        }
+
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(storedPlayerPosition.X);
@@ -614,7 +654,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer, ai2: 1f);
                             }
                         }
                     }
@@ -663,7 +703,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer, ai2: 1f);
                             }
                         }
                     }
@@ -788,7 +828,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 360f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 1f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 360f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 1f, Main.myPlayer, ai2: 1f);
                         }
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -801,7 +841,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 400 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 1.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 400 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 1.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer, ai2: 1f);
                         }
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -1069,9 +1109,19 @@ namespace tsorcRevamp.NPCs.Enemies
 
         Vector2 CurrentSpearWorld(int facingDirection)
         {
-            // The held weapon and the matching arm overlay must use the same literal hand pivot.
-            // Per-frame offsets here detach the spear whenever the body frame changes during a windup.
-            return CurrentHandWorld(facingDirection);
+            // Preserve the authored spear grip used by the original throw telegraph. Melee and
+            // special attacks share this method so every held-spear state uses the same placement.
+            Vector2 handWorld = CurrentHandWorld(facingDirection);
+            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+            if (frame == 0)
+            {
+                handWorld.Y -= 9f;
+            }
+            else if (frame >= 2)
+            {
+                handWorld.Y += 12f;
+            }
+            return handWorld;
         }
 
         Vector2 CurrentSpearWorld()
@@ -1164,8 +1214,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Vector2 forward = new Vector2(meleeDirection, 0f);
                     Projectiles.Enemy.RedKnightVFX.DrawSpearWake(
-                        handWorld + Main.screenPosition + forward * (38f + thrustOffset),
-                        forward.ToRotation(), new Vector2(86f, 18f), 0.68f,
+                        handWorld + Main.screenPosition + forward * (thrustOffset * 0.5f),
+                        forward.ToRotation(), new Vector2(70f, 16f), 0.48f,
                         globalNPC.ActiveAttackBypassesShield);
                 }
                 DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, thrustOffset);
@@ -1188,12 +1238,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] >= 375 && NPC.ai[1] <= 405f)))
             {
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
-                spriteBatch.Draw(magicBallTexture, magicBallWorld - Main.screenPosition, null, drawColor, 0f, MagicBallGripOrigin, 1f, SpriteEffects.None, 0);
-                if (Main.rand.NextBool(2))
-                {
-                    Dust dust = Dust.NewDustPerfect(magicBallWorld + Main.rand.NextVector2Circular(6f, 6f), DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120, default, 1.3f);
-                    dust.noGravity = true;
-                }
+                Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 2, 0.72f, 16f);
                 DrawArmOverlay(spriteBatch, drawColor, globalNPC, NPC.spriteDirection);
             }
             // Bomb
@@ -1217,17 +1262,15 @@ namespace tsorcRevamp.NPCs.Enemies
             KnightHeldProp heldProp = specialAttacks.HeldProp;
             if (heldProp == KnightHeldProp.Spear)
             {
-                // Special attacks rotate freely, so use the literal overlay hand anchor without the old
-                // horizontal-only idle/walk offsets. The weapon pivot and overlay hand now share one point.
-                Vector2 handWorld = CurrentHandWorld(specialAttacks.Direction);
+                Vector2 handWorld = CurrentSpearWorld(specialAttacks.Direction);
                 float rotation = specialAttacks.GetSpearRotation(handWorld);
                 float gripSlide = specialAttacks.SpearGripSlide;
                 if (specialAttacks.SpearDamageWake)
                 {
                     Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
                     Projectiles.Enemy.RedKnightVFX.DrawSpearWake(
-                        handWorld + forward * (38f + gripSlide), forward.ToRotation(),
-                        new Vector2(92f, 19f), 0.72f, empowered: false);
+                        handWorld + forward * (gripSlide * 0.5f), forward.ToRotation(),
+                        new Vector2(72f, 16f), 0.48f, empowered: false);
                 }
                 DrawHeldSpear(spriteBatch, handWorld - Main.screenPosition, rotation,
                     drawColor, globalNPC, gripSlide);
@@ -1251,8 +1294,6 @@ namespace tsorcRevamp.NPCs.Enemies
             if (heldProp == KnightHeldProp.Magic)
             {
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
-                spriteBatch.Draw(magicBallTexture, magicBallWorld - Main.screenPosition, null, drawColor,
-                    0f, MagicBallGripOrigin, 1f, SpriteEffects.None, 0f);
                 Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 2,
                     specialAttacks.TelegraphProgress, 16f);
                 DrawArmOverlay(spriteBatch, drawColor, globalNPC, specialAttacks.Direction);
