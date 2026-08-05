@@ -27,13 +27,13 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         }
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 12;
+            Main.projFrames[Projectile.type] = 11;
         }
         public override void SetDefaults()
         {
             Projectile.Size = new Vector2(18);
-            Projectile.width = 244;
-            Projectile.height = 50;
+            Projectile.width = 186;
+            Projectile.height = 220;
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
             if (!AppliedOnSpawn)
             {
-                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem) * 1.25f;
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem) * 1.15f;
                 Projectile.Resize((int)(Projectile.width / Nightbringer.BaseScale * Projectile.scale), (int)(Projectile.height / Nightbringer.BaseScale * Projectile.scale));
                 CollisionWidth *= Projectile.scale;
                 AppliedOnSpawn = true;
@@ -80,14 +80,14 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.Opacity = Utils.GetLerpValue(0f, FadeInDuration, Timer, clamped: true) * Utils.GetLerpValue(TotalDuration, TotalDuration - FadeOutDuration, Timer, clamped: true);
 
             Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
-            Projectile.Center = playerCenter + Projectile.velocity * (Timer - 1f);
+            Projectile.Center = playerCenter + Projectile.velocity * (Timer + 10f);
 
-            //Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
+            Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
 
-            Projectile.rotation = Projectile.velocity.ToRotation();
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
 
-            const int HalfSpriteWidth = 244 / 2;//needs adjustments for sprite
-            const int HalfSpriteHeight = 50 / 2;
+            const int HalfSpriteWidth = 186 / 2;//needs adjustments for sprite
+            const int HalfSpriteHeight = 220 / 2;
 
             int HalfProjWidth = Projectile.width / 2;
             int HalfProjHeight = Projectile.height / 2;
@@ -96,19 +96,14 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
             DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
 
-            float frameSpeed = 3f;
+            DrawOriginOffsetX = 0;
+            DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
+            DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
 
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
+            Projectile.frame = (int)((Timer / 28f) * 11f);
+            if (Timer > 28f)
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
-                {
-                    Projectile.frame = 0;
-                }
+                Projectile.frame = 0;
             }
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
         }
@@ -135,7 +130,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
         }
-        public static Texture2D texture;
+        /*public static Texture2D texture;
         public static Texture2D glowTexture;
         public override bool PreDraw(ref Color lightColor)
         {
@@ -158,7 +153,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
 
             return false;
-        }
+        }*/
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];

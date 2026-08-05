@@ -79,7 +79,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                         
                         yScale = 0.32f * Projectile.scale;
                         numrings = (int)(32 * Projectile.scale);
-                        _xscalebonus = 0.05f * Projectile.scale;
+                        _xscalebonus = 0.1f * Projectile.scale;
                         Color = new Color(0.498f, 1f, 0.831f, 0.3f);
                         break;
                     }

@@ -67,7 +67,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
             if (!AppliedOnSpawn)
             {
-                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem) * 1.15f;
                 Projectile.Resize((int)(Projectile.width / Nightbringer.BaseScale * Projectile.scale), (int)(Projectile.height / Nightbringer.BaseScale * Projectile.scale));
                 AppliedOnSpawn  = true;
             }
