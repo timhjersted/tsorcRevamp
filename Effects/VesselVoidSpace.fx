@@ -12,20 +12,45 @@ float Direction;
 float2 DrawSize;
 float2 PrimaryTextureSize;
 
+// Inside the gullet — the phase-2 nebula. Fullscreen, drawn at the wall layer: after the interior
+// background image and before every tile, NPC, player, projectile and dust, so it tints the world
+// without touching the UI or hiding gameplay.
+//
+// Density profile is the whole point here, per the owner's brief:
+//   - the CENTRE stays mostly transparent so the interior background reads through it
+//   - the CORNERS and edges carry the weight, on a smooth gradient with no visible boundary
+//   - the clouds' inner limit is noise-perturbed, so they reach inward as organic tendrils rather
+//     than stopping on a clean circle
+// DrawSize carries the screen dimensions purely so the vignette can be aspect-corrected: without
+// that the "corners" of a 16:9 screen are nowhere near the corners.
 float4 VoidSpacePixel(float4 sampleColor : COLOR0, float2 uv : TEXCOORD0) : COLOR0
 {
     float aspect = DrawSize.x / max(DrawSize.y, 1.0);
     float2 centered = uv - 0.5;
     centered.x *= aspect;
-    float flow = tex2D(PrimarySampler, uv * float2(1.45, 1.1) + float2(Time * 0.012, -Time * 0.018)).r;
-    float organic = tex2D(DetailSampler, uv * float2(2.8, 2.1) + float2(-Time * 0.025, Time * 0.011)).r;
-    float current = saturate(flow * 0.62 + organic * 0.48 - 0.38);
-    float throat = saturate((0.72 - length(centered)) * 1.15);
-    float pale = saturate((organic - 0.74) * 3.85) * current;
-    float3 color = lerp(DarkColor, MidColor, current * 0.54);
-    color = lerp(color, CoreColor, pale * 0.26);
-    float alpha = saturate(0.38 + current * 0.42 + throat * 0.18) * Opacity;
-    return float4(sampleColor.rgb * color * (0.58 + current * 0.34), sampleColor.a * alpha);
+    // Normalised so 0 is the screen centre and ~1.0 is a corner, on any aspect ratio.
+    float radial = length(centered) / (0.5 * sqrt(aspect * aspect + 1.0));
+
+    // Two layers drifting against each other at different scales and directions: the pair never
+    // shares a phase, so there are no repeating scroll lines.
+    float flow = tex2D(PrimarySampler, uv * float2(1.35, 1.0) + float2(Time * 0.010, -Time * 0.016)).r;
+    float swirl = tex2D(DetailSampler, uv * float2(2.30, 1.7) + float2(-Time * 0.021, Time * 0.009)).r;
+    float cloud = saturate(flow * 0.75 + swirl * 0.55 - 0.30);
+
+    // Smooth edge ramp, and the noise pushes its inner limit around so the clouds send tendrils
+    // toward the middle instead of ending on a circle.
+    float t = saturate((radial - 0.30 + (cloud - 0.5) * 0.34) * 1.55);
+    t = t * t * (3.0 - 2.0 * t);          // smoothstep curve — no seam anywhere on the ramp
+
+    // Sparse pink highlights only in the denser outer material.
+    float highlight = saturate(cloud * 1.9 - 1.15) * t;
+
+    float3 color = lerp(DarkColor, MidColor, saturate(cloud * 0.85 + t * 0.35));
+    color = lerp(color, CoreColor, saturate(highlight * 0.85));
+
+    // Near-transparent at the centre, heavy in the corners.
+    float alpha = (0.06 + t * 0.66) * (0.55 + cloud * 0.65) * Opacity;
+    return float4(color, saturate(alpha));
 }
 
 technique VesselVoidSpace

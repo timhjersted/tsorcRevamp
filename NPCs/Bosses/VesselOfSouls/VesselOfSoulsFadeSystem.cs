@@ -171,8 +171,11 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         private static void DrawVesselVoidSpace(SpriteBatch spriteBatch, float opacity)
         {
+            // Full opacity: the shader now owns the whole density profile (near-transparent at the
+            // centre so the interior background reads through, weight carried at the edges and
+            // corners). The old 0.76 scale-down existed only because the fog was a flat wash.
             Projectiles.Enemy.VesselOfSouls.VesselVFX.DrawVoidSpace(
-                spriteBatch, MathHelper.Clamp(opacity * 0.76f, 0f, 1f));
+                spriteBatch, MathHelper.Clamp(opacity, 0f, 1f));
         }
 
         public override void Update(GameTime gameTime)
