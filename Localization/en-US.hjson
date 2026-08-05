@@ -36,6 +36,7 @@ Mods: {
 					[c/6cac6c:-{1}% mana cost]
 					'''
 				Hard: "[c/6cac6c:+{0} resistance]"
+				Guarding: "[c/6cac6c:+{0} resistance]"
 			}
 
 			Details: Hold Left Shift to reveal details
