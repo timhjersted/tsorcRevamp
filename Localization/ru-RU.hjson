@@ -29,6 +29,15 @@ Mods: {
 		}
 
 		CommonItemTooltip: {
+			AccessoryPrefixes: {
+				/* Arcane:
+					'''
+					[c/6cac6c:+{0} mana]
+					[c/6cac6c:-{1}% mana cost]
+					''' */
+				// Hard: "[c/6cac6c:+{0} resistance]"
+			}
+
 			Details: Удерживайте левый Shift, чтобы увидеть подробности
 			AggroBoost: Враги с большей вероятностью будут нацелены на вас
 			// AggroDecrease: Enemies are less likely to target you

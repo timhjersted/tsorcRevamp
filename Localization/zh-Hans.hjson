@@ -29,6 +29,15 @@ Mods: {
 		}
 
 		CommonItemTooltip: {
+			AccessoryPrefixes: {
+				/* Arcane:
+					'''
+					[c/6cac6c:+{0} mana]
+					[c/6cac6c:-{1}% mana cost]
+					''' */
+				// Hard: "[c/6cac6c:+{0} resistance]"
+			}
+
 			Details: 按住 左Shift 以显示详细信息
 			AggroBoost: 敌人更可能瞄准你
 			// AggroDecrease: Enemies are less likely to target you
