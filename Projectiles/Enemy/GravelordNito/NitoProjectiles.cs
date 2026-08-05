@@ -74,7 +74,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 blade = Projectile.rotation.ToRotationVector2();
             Vector2 center = Projectile.Center + blade * 50f;
             NitoVFX.DrawSlash(center, Projectile.rotation,
-                new Vector2(255f, Kind == 2 ? 62f : 88f), progress, 0.9f);
+                new Vector2(255f, Kind == 2 ? 62f : 88f), progress, 0.9f,
+                Projectile.identity * 0.517f + Kind * 0.31f);
             return false;
         }
     }
@@ -118,7 +119,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             Vector2 center = Projectile.Center - direction * 24f;
             float progress = MathHelper.Clamp(1f - Projectile.timeLeft / 210f, 0.08f, 0.72f);
-            NitoVFX.DrawSoulTrail(center, direction.ToRotation(), new Vector2(78f, 24f), progress, 0.62f);
+            NitoVFX.DrawSoulTrail(center, direction.ToRotation(), new Vector2(78f, 24f), progress, 0.62f,
+                Projectile.identity * 0.437f);
             return true;
         }
     }
@@ -307,12 +309,24 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetDefaults()
         {
             Projectile.hostile = true;
-            Projectile.width = 86;
-            Projectile.height = 78;
+            // DOUBLED (was 86x78) on request — the grasping hand reads as a set piece now, not a prop.
+            // This is the one deliberate gameplay change in the shader pass: the grab area doubles with
+            // it, so visual and hitbox stay in parity. Halve these two numbers to revert.
+            Projectile.width = 172;
+            Projectile.height = 156;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 70;
             Projectile.aiStyle = 0;
+        }
+
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            // NewProjectile centres the hitbox on the spawn point, so doubling the height would have
+            // buried the hand's wrist 39px further into the floor and dragged the ground-rift telegraph
+            // (drawn at Projectile.Bottom) underground with it. Re-anchor so the BOTTOM sits where the
+            // old 78px hand's bottom sat.
+            Projectile.position.Y -= 39f;
         }
 
         public override bool? CanDamage() => Timer > TelegraphTicks && Timer < TelegraphTicks + 16;
@@ -414,7 +428,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
                 NitoVFX.DrawSoulTrail(Projectile.Center - direction * 28f, direction.ToRotation(),
-                    new Vector2(92f, 26f), 0.45f, 0.55f);
+                    new Vector2(92f, 26f), 0.45f, 0.55f, Projectile.identity * 0.437f);
             }
             return true;
         }
@@ -462,7 +476,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             float progress = MathHelper.Clamp(Projectile.localAI[0] / 95f, 0f, 1f);
             float fade = MathHelper.Clamp(Projectile.timeLeft / 18f, 0f, 1f);
             NitoVFX.DrawMiasma(Projectile.Center, new Vector2(74f, 70f), Projectile.rotation,
-                progress, 0.88f * fade);
+                progress, 0.88f * fade, Projectile.identity * 0.613f);
             return true;
         }
 

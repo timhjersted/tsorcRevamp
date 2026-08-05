@@ -127,7 +127,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 move = Vector2.Zero;
             float distance = 900f;
             bool target = false;
-            float speed = 2.25f;
+            float speed = 4.5f; // was 2.25f — doubled, the homing spirit read as non-threatening at the old speed
             if (!target)
             {
                 int targetIndex = GetClosestPlayer();

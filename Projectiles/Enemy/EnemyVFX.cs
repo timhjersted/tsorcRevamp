@@ -56,7 +56,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> smoothNoise;
         static Asset<Texture2D> brokenNoise;
         static Asset<Texture2D> smoke;
-        static Asset<Texture2D> aura;
         static Asset<Texture2D> flare;
         static Asset<Texture2D> cloudNoise;
         static Asset<Texture2D> voronoiNoise;
@@ -135,7 +134,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             smoothNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
             brokenNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
             smoke ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_RoundSmoke71", AssetRequestMode.ImmediateLoad);
-            aura ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Aurax44", AssetRequestMode.ImmediateLoad);
             flare ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_Flare_666", AssetRequestMode.ImmediateLoad);
             // Eland's poison kit: billowing tileable cloud for the gas body, voronoi cells for the
             // corrosive bubbling. Both are seamless, so they tile cleanly at any sample scale.
@@ -290,7 +288,13 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
             LoadAssets();
-            Draw(demonSpiritSoulComet, "DemonSpiritSoulComet", aura, brokenNoise,
+            // Primary was T_Aurax44 — a discrete wisp graphic, mostly black canvas, not a tileable
+            // turbulence field, so scrolling through it as "noise" sampled black almost everywhere
+            // and the trail was a barely-visible scribble. turbulentNoise (Turbulence_05, sampled
+            // twice at independent scale/phase inside the shader) drives the body now; veinNoise
+            // (Vein_07) is the sparkle-glint detail layer. Both already loaded for the Black Knight
+            // kit, so this needed no new asset.
+            Draw(demonSpiritSoulComet, "DemonSpiritSoulComet", turbulentNoise, veinNoise,
                 center - direction * 42f, new Vector2(112f, 42f), direction.ToRotation(),
                 CurseDark, CurseMid, CurseCore, 0.78f, expiryProgress, 1f, 1f);
             if (expiryProgress > 0f)
