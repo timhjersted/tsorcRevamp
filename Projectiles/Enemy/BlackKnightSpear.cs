@@ -33,8 +33,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Projectile.ai[2] == 1f)
             {
                 Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-                RedKnightVFX.DrawSpearWake(Projectile.Center - direction * 28f,
-                    direction.ToRotation(), new Vector2(82f, 18f), 0.64f, empowered: false);
+                // Was RedKnightVFX.DrawSpearWake; now the shared Black Knight grey wake.
+                EnemyVFX.DrawBlackKnightSpearWake(Projectile.Center - direction * 28f,
+                    direction.ToRotation(), new Vector2(84f, 18f), 0.66f);
             }
             return true;
         }

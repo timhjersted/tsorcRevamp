@@ -65,8 +65,35 @@ namespace tsorcRevamp.NPCs
         public bool HalfHeraldComplete { get; private set; }
         public bool ThirdHeraldComplete { get; private set; }
 
+        // ---------------------------------------------------------------------------------------
+        // CRIMSON DOMINION — no longer a timed attack, it is a one-way PHASE.
+        //
+        // Round 3 rework. Dominion used to be a 720-tick special that ran a containment ring, twelve
+        // arena-edge bolts and a finishing nova the player had to escape, then handed control back
+        // with a cooldown. It is now a permanent phase transition at 30% health:
+        //
+        //   Phase 1  "Plant & hold"  — DominionHoldTicks (300t) as a normal blocking special attack:
+        //                              the knight plants its spear, is engulfed, and cannot move.
+        //                              Contact damage stays ON (this is a trap, not a free hit).
+        //   Phase 2  "Retract & fight" — the special attack ENDS and normal AI resumes, but
+        //                              DominionEngaged stays true forever: faster, more evasive,
+        //                              and the lightning sequence below runs on top of combat.
+        //   Finale   — the seal + nova is now GRK's DEATH animation, fired from CheckDead(), not
+        //                              on a timer. See GreatRedKnight.CheckDead.
+        //
+        // DominionEngaged is never cleared, so Dominion can never re-trigger and needs no cooldown.
+        // ---------------------------------------------------------------------------------------
+        public const int DominionHoldTicks = 300;
+        public const float DominionHealthGate = 0.30f;
+
+        /// <summary>True from the moment Dominion begins until the knight dies. Never cleared.</summary>
+        public bool DominionEngaged { get; private set; }
+
+        /// <summary>Ticks since Dominion began. Drives the A→D lightning loop; keeps running through
+        /// the plant-and-hold, which is why the first two or three Stage A bolts land during it.</summary>
+        public int DominionSequenceTimer { get; private set; }
+
         int attackCooldown = 240;
-        int dominionCooldown;
 
         public bool Active => Attack != KnightSpecialAttack.None;
 
@@ -87,6 +114,36 @@ namespace tsorcRevamp.NPCs
 
         public bool IsHerald => Attack == KnightSpecialAttack.FurnaceHerald || Attack == KnightSpecialAttack.StormHerald;
 
+        /// <summary>Which stage of the permanent Dominion lightning loop is running, for the
+        /// above-head debug readout (vfx-shader-tips §41).</summary>
+        public string DominionStageName
+        {
+            get
+            {
+                if (!DominionEngaged)
+                {
+                    return "Inactive";
+                }
+                int t = DominionSequenceTimer % DomLoopTicks;
+                if (t < DomStageABolts * DomStageAInterval)
+                {
+                    return $"Stage A ({t / DomStageAInterval + 1}/{DomStageABolts})";
+                }
+                if (t < DomStageBStart) return "Pause A";
+                if (t < DomStageBStart + DomStageBBolts * DomStageBInterval)
+                {
+                    return $"Stage B ({(t - DomStageBStart) / DomStageBInterval + 1}/{DomStageBBolts})";
+                }
+                if (t < DomStageCStart) return "Pause B";
+                if (t < DomStageCStart + DomStageCPairs * DomStageCInterval)
+                {
+                    return $"Stage C ({(t - DomStageCStart) / DomStageCInterval + 1}/{DomStageCPairs})";
+                }
+                if (t < DomStageDStart) return "Pause C";
+                return "Stage D (sky)";
+            }
+        }
+
         public void TickCooldowns()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -96,10 +153,6 @@ namespace tsorcRevamp.NPCs
             if (attackCooldown > 0)
             {
                 attackCooldown--;
-            }
-            if (dominionCooldown > 0)
-            {
-                dominionCooldown--;
             }
         }
 
@@ -167,6 +220,24 @@ namespace tsorcRevamp.NPCs
                 Begin(npc, target, globalNPC, KnightSpecialAttack.StormHerald);
                 return true;
             }
+            // CRIMSON DOMINION — a FORCED one-way transition at 30% health, checked with the
+            // heralds rather than rolled from the random candidate pool below. It is a phase
+            // change, and as a candidate it could simply never come up.
+            //
+            // The gate is now `life <= 30%` alone; it is deliberately NOT tied to
+            // HalfHeraldComplete any more. That flag still has plenty of work — it gates
+            // FurnacePincer here, and the Ultrakill / DD2 / bomb windows in GreatRedKnight's normal
+            // AI (GreatRedKnight.cs:549, 562, 715, 723, 753, 963) — so decoupling Dominion from it
+            // breaks nothing. Ordering is safe by construction: FurnaceHerald (50%) and StormHerald
+            // (33%) both sit above 30%, so they always fire first even on a burst-damage spike.
+            if (!DominionEngaged
+                && npc.life <= npc.lifeMax * DominionHealthGate
+                && npc.velocity.Y == 0f
+                && npc.Distance(target.Center) <= 360f)
+            {
+                Begin(npc, target, globalNPC, KnightSpecialAttack.CrimsonDominion);
+                return true;
+            }
             if (attackCooldown > 0)
             {
                 return false;
@@ -183,8 +254,8 @@ namespace tsorcRevamp.NPCs
             }
 
             bool hasRoyalCenter = TryFindGround(target.Bottom, 10, 30, out Vector2 royalCenter);
-            bool hasRoyalLeft = TryFindGround(target.Bottom + new Vector2(-180f, 0f), 10, 30, out Vector2 royalLeft);
-            bool hasRoyalRight = TryFindGround(target.Bottom + new Vector2(180f, 0f), 10, 30, out Vector2 royalRight);
+            bool hasRoyalLeft = TryFindGround(target.Bottom + new Vector2(-RoyalSpearSpacing, 0f), 10, 30, out Vector2 royalLeft);
+            bool hasRoyalRight = TryFindGround(target.Bottom + new Vector2(RoyalSpearSpacing, 0f), 10, 30, out Vector2 royalRight);
             bool hasRoyalGround = hasRoyalCenter && hasRoyalLeft && hasRoyalRight;
             if (hasRoyalGround)
             {
@@ -203,10 +274,7 @@ namespace tsorcRevamp.NPCs
             {
                 candidates[count++] = KnightSpecialAttack.StormbreakerEdict;
             }
-            if (HalfHeraldComplete && dominionCooldown <= 0 && npc.velocity.Y == 0f && distance <= 360f)
-            {
-                candidates[count++] = KnightSpecialAttack.CrimsonDominion;
-            }
+            // (CrimsonDominion is no longer a candidate — it is a forced phase transition above.)
 
             if (count == 0)
             {
@@ -277,6 +345,14 @@ namespace tsorcRevamp.NPCs
             globalNPC.ResetCombatTempoSequence(clearRecovery: true);
             globalNPC.AttackTelegraphing = true;
             globalNPC.AttackCommitted = false;
+            if (attack == KnightSpecialAttack.CrimsonDominion)
+            {
+                // One-way latch. From here the knight is in Dominion for the rest of the fight, and
+                // the lightning loop's clock starts NOW — which is what puts the first Stage A
+                // bolts inside the 300t plant-and-hold.
+                DominionEngaged = true;
+                DominionSequenceTimer = 0;
+            }
             tsorcRevampAIs.SpawnTelegraphFlash(npc, TelegraphColor(attack));
             npc.netUpdate = true;
         }
@@ -532,6 +608,17 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        // Horizontal offset of the outer two Royal Standard spears from the centre one. Was 180px;
+        // +10 tiles (160px) as requested, which also stops the three overlapping flame walls from
+        // merging into one continuous sheet of fire with no gaps to stand in.
+        const float RoyalSpearSpacing = 340f;
+
+        // Ticks between the three Royal Standard throws. Deliberately shorter than a standard's own
+        // flight (30t) + telegraph (26t), so spear N+1 is already in the air before spear N's flame
+        // resolves — the three read as one continuous cascade rather than three discrete beats.
+        const int RoyalThrowInterval = 20;
+        const int RoyalFirstThrow = 75;
+
         void TickRoyalStandard(NPC npc, KnightAttackStats stats)
         {
             if (Timer == 45)
@@ -542,17 +629,45 @@ namespace tsorcRevamp.NPCs
                 npc.velocity = new Vector2(horizontalVelocity, -6f);
                 npc.netUpdate = true;
             }
-            if (Timer == 75)
+
+            // One spear per throw, back to back, instead of all three at once. The order SWEEPS
+            // away from the knight — nearest mark first, far side last — so the cascade of flame
+            // walls reads as a wave rolling across the arena rather than three unrelated beats.
+            // AuxiliaryTargetA is the left mark and B the right, so which of the two is "near"
+            // depends on which way the knight is facing. Each standard carries its own short
+            // telegraph and fires its own shockwave when it lands (RedKnightStandard.ChargeTicks),
+            // which is what keeps the sequence gapless: spear 2 is airborne before spear 1 erupts.
+            bool facingRight = Direction >= 0;
+            Vector2 nearMark = facingRight ? AuxiliaryTargetA : AuxiliaryTargetB;
+            Vector2 farMark = facingRight ? AuxiliaryTargetB : AuxiliaryTargetA;
+            KnightStandardMode nearMode = facingRight ? KnightStandardMode.GreatLeft : KnightStandardMode.GreatRight;
+            KnightStandardMode farMode = facingRight ? KnightStandardMode.GreatRight : KnightStandardMode.GreatLeft;
+
+            if (Timer == RoyalFirstThrow)
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    SpawnStandard(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter);
-                    SpawnStandard(npc, AuxiliaryTargetA, stats.MagicDamage, KnightStandardMode.GreatLeft);
-                    SpawnStandard(npc, AuxiliaryTargetB, stats.MagicDamage, KnightStandardMode.GreatRight);
-                }
-                PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.2f }, npc.Center);
+                ThrowRoyalSpear(npc, nearMark, stats.MagicDamage, nearMode, -0.2f);
+            }
+            else if (Timer == RoyalFirstThrow + RoyalThrowInterval)
+            {
+                // The centre mark keeps GreatCenter: it is the one with a damaging spear in flight
+                // and the heavier damage, and it lands on the player's own position.
+                ThrowRoyalSpear(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter, -0.05f);
+            }
+            else if (Timer == RoyalFirstThrow + RoyalThrowInterval * 2)
+            {
+                ThrowRoyalSpear(npc, farMark, stats.MagicDamage, farMode, 0.1f);
+                // Only release the knight once the LAST spear is away, not after the first.
                 ReleaseDetachedStandard(npc);
             }
+        }
+
+        void ThrowRoyalSpear(NPC npc, Vector2 target, int damage, KnightStandardMode mode, float pitch)
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                SpawnStandard(npc, target, damage, mode);
+            }
+            PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = pitch }, npc.Center);
         }
 
         void ReleaseDetachedStandard(NPC npc)
@@ -630,6 +745,15 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        /// <summary>
+        /// Dominion PHASE 1 — plant &amp; hold, <see cref="DominionHoldTicks"/> (300t / 5s).
+        ///
+        /// The knight hops, slams its spear into the ground and holds it there, engulfed. It no
+        /// longer spawns <see cref="CrimsonDominionController"/> — the containment ring and its
+        /// escape-nova are gone; that nova is now the death animation instead
+        /// (GreatRedKnight.CheckDead). The lightning sequence is already running by this point (it
+        /// starts at Begin), so the first two or three Stage A bolts land during the hold.
+        /// </summary>
         void TickCrimsonDominion(NPC npc, KnightAttackStats stats)
         {
             npc.velocity.X = 0f;
@@ -642,17 +766,210 @@ namespace tsorcRevamp.NPCs
             {
                 npc.velocity.Y = Math.Max(npc.velocity.Y, 4.5f);
             }
-            if (Timer == 60 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Timer == 60)
             {
-                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
-                    ModContent.ProjectileType<CrimsonDominionController>(), stats.GreatDamage,
-                    0f, Main.myPlayer, ArenaRotationDirection, ArenaBaseRotation, npc.whoAmI);
                 PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.65f }, npc.Center);
+                tsorcRevampAIs.SpawnTelegraphFlash(npc, new Color(206, 16, 34));
             }
             if (Timer >= 60)
             {
                 npc.velocity.X = 0f;
             }
+            // The spear is planted, but the knight is NOT a free hit: touching it during the hold
+            // has to hurt. GlobalNPC.CanHitPlayer (NPCs/GlobalNPC.cs:2645) is the ONLY thing that
+            // suppresses contact damage, via DodgeTimer / QuickStepTimer / CombatMeleeActive /
+            // InGuardPressureRecovery. Nothing zeroes NPC.damage anywhere in this kit, so contact
+            // damage just needs those four to be clear.
+            //   - CombatMeleeActive and the guard-pressure recovery are both cleared by the
+            //     ResetCombatTempoSequence(clearRecovery: true) that Begin() already performs, and
+            //     neither can restart while a special attack owns the knight. They are also both
+            //     read-only properties, so they cannot be forced from here.
+            //   - DodgeTimer / QuickStepTimer are settable, so clear them defensively every tick:
+            //     an evasive reaction landing on the same frame as the plant would otherwise make
+            //     the knight briefly intangible in the middle of its own trap.
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.DodgeTimer = 0;
+            globalNPC.QuickStepTimer = 0;
+        }
+
+        // -------------------------------------------------------------------------------------
+        // Dominion PHASE 2 — the lightning sequence. Runs every tick from the moment Dominion
+        // begins until the knight dies, ALONGSIDE normal combat (it is not a blocking attack).
+        //
+        // Two deliberately different lightning looks, which is a design requirement, not an
+        // oversight:
+        //   Stages A/B/C — the "hunting" bolts — use SmallRedLightning, the OLD branching red
+        //                  lightning the regular RedKnight already fires at 1/3 health
+        //                  (NPCs/Enemies/RedKnight.cs:940). It is a GenericLaser with a texture
+        //                  and no custom .fx at all.
+        //   Stage D      — the round-1 shader lightning, RedKnightLightningLane (which draws with
+        //                  the RedKnightLightningBolt technique in RedKnightDestinedDeath.fx) —
+        //                  reserved for the telegraphed straight-down strikes.
+        //
+        // Loop layout (ticks from Dominion start), repeating forever:
+        //   0    .. 1439  Stage A : 12 bolts, one every 120t (2s), each aimed at a player
+        //   1440 .. 1619  pause 180t (3s)
+        //   1620 .. 1799  Stage B : 3 bolts, one every 60t (1s)
+        //   1800 .. 2099  pause 300t (5s)
+        //   2100 .. 2639  Stage C : 3 PAIRS, one pair every 180t (3s); one bolt at a player, the
+        //                           other at a second player if there is one, else elsewhere
+        //   2640 .. 2759  pause 120t (2s)
+        //   2760 .. 2859  Stage D : 3 shader bolts straight down, 40t telegraph, uneven X
+        // -------------------------------------------------------------------------------------
+        public const int DomStageABolts = 12;
+        public const int DomStageAInterval = 120;
+        public const int DomStageAStart = 0;
+        public const int DomPauseA = 180;
+        public const int DomStageBBolts = 3;
+        public const int DomStageBInterval = 60;
+        public const int DomStageBStart = DomStageAStart + DomStageABolts * DomStageAInterval + DomPauseA;   // 1620
+        public const int DomPauseB = 300;
+        public const int DomStageCPairs = 3;
+        public const int DomStageCInterval = 180;
+        public const int DomStageCStart = DomStageBStart + DomStageBBolts * DomStageBInterval + DomPauseB;   // 2100
+        public const int DomPauseC = 120;
+        public const int DomStageDStart = DomStageCStart + DomStageCPairs * DomStageCInterval + DomPauseC;   // 2760
+        public const int DomStageDBolts = 3;
+        public const int DomStageDTelegraph = 40;
+        public const int DomStageDTail = 60;
+        public const int DomLoopTicks = DomStageDStart + DomStageDTelegraph + DomStageDTail;                 // 2860
+
+        /// <summary>Ticks the ongoing Dominion lightning loop. Server-authoritative; call every
+        /// frame from GreatRedKnight.AI once <see cref="DominionEngaged"/>, whether or not a
+        /// blocking special attack happens to be running.</summary>
+        public void TickDominionSequence(NPC npc, Player target, KnightAttackStats stats)
+        {
+            if (!DominionEngaged)
+            {
+                return;
+            }
+
+            // The clock advances on EVERY machine so the debug readout and any client-side visuals
+            // stay in step between netUpdates; only the spawns below are server-authoritative.
+            int t = DominionSequenceTimer % DomLoopTicks;
+            DominionSequenceTimer++;
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            int damage = stats.GreatDamage;
+
+            // --- Stage A: 12 single hunting bolts, 2s apart -------------------------------------
+            if (t < DomStageABolts * DomStageAInterval)
+            {
+                if (t % DomStageAInterval == 0)
+                {
+                    SpawnHuntingBolt(npc, PickBoltTarget(npc, target, null), damage);
+                }
+                return;
+            }
+
+            // --- Stage B: 3 single hunting bolts, 1s apart ---------------------------------------
+            if (t >= DomStageBStart && t < DomStageBStart + DomStageBBolts * DomStageBInterval)
+            {
+                if ((t - DomStageBStart) % DomStageBInterval == 0)
+                {
+                    SpawnHuntingBolt(npc, PickBoltTarget(npc, target, null), damage);
+                }
+                return;
+            }
+
+            // --- Stage C: 3 pairs, 3s apart. Second bolt must land somewhere ELSE ---------------
+            if (t >= DomStageCStart && t < DomStageCStart + DomStageCPairs * DomStageCInterval)
+            {
+                if ((t - DomStageCStart) % DomStageCInterval == 0)
+                {
+                    Player firstPlayer = target;
+                    Vector2 firstPoint = PickBoltTarget(npc, firstPlayer, null);
+                    SpawnHuntingBolt(npc, firstPoint, damage);
+                    SpawnHuntingBolt(npc, PickBoltTarget(npc, firstPlayer, firstPlayer), damage);
+                }
+                return;
+            }
+
+            // --- Stage D: 3 telegraphed straight-down shader bolts, uneven X ---------------------
+            if (t == DomStageDStart)
+            {
+                SpawnDominionSkyVolley(npc, target, damage);
+            }
+        }
+
+        /// <summary>
+        /// Picks where a hunting bolt should land. With <paramref name="excludePlayer"/> set it
+        /// tries to find a DIFFERENT living player first (so a pair in Stage C splits across two
+        /// targets in multiplayer); failing that — i.e. solo — it picks a spot elsewhere in the
+        /// arena, deliberately offset well clear of the excluded player.
+        /// </summary>
+        static Vector2 PickBoltTarget(NPC npc, Player primary, Player excludePlayer)
+        {
+            if (excludePlayer != null)
+            {
+                int candidateCount = 0;
+                Span<int> candidateIndices = stackalloc int[Main.maxPlayers];
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player other = Main.player[i];
+                    if (other.active && !other.dead && other.whoAmI != excludePlayer.whoAmI
+                        && npc.Distance(other.Center) <= 1400f)
+                    {
+                        candidateIndices[candidateCount++] = i;
+                    }
+                }
+                if (candidateCount > 0)
+                {
+                    return Main.player[candidateIndices[Main.rand.Next(candidateCount)]].Center;
+                }
+
+                // Solo: land it elsewhere. At least 220px from the player, up to 620px out.
+                float offset = Main.rand.NextFloat(220f, 620f) * (Main.rand.NextBool() ? 1f : -1f);
+                Vector2 elsewhere = excludePlayer.Center + new Vector2(offset, Main.rand.NextFloat(-80f, 40f));
+                return elsewhere;
+            }
+
+            return primary.Center;
+        }
+
+        /// <summary>
+        /// One OLD-style bolt: SmallRedLightning, fired from the knight toward a point, exactly as
+        /// NPCs/Enemies/RedKnight.cs:940 already fires it. FollowHost is baked into that class's
+        /// SetDefaults, so ai1 must carry the host NPC index; the velocity supplies the aim.
+        /// </summary>
+        static void SpawnHuntingBolt(NPC npc, Vector2 point, int damage)
+        {
+            Vector2 aim = UsefulFunctions.Aim(npc.Center, point, 1);
+            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, aim,
+                ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.SmallRedLightning>(),
+                damage, 1f, Main.myPlayer, 0, npc.whoAmI);
+        }
+
+        /// <summary>
+        /// Stage D: three of the round-1 shader bolts striking straight down, with a 40t telegraph
+        /// and DELIBERATELY uneven X positions (a random offset per bolt within its own band, not
+        /// an even fan) so the volley never reads as a metronome.
+        /// </summary>
+        static void SpawnDominionSkyVolley(NPC npc, Player target, int damage)
+        {
+            // Three overlapping bands across ~1000px of arena, each sampled randomly inside itself.
+            // Bands keep the bolts from stacking; the intra-band randomness keeps them irregular.
+            Span<float> bandCentres = stackalloc float[DomStageDBolts] { -330f, 20f, 360f };
+            for (int i = 0; i < DomStageDBolts; i++)
+            {
+                float offsetX = bandCentres[i] + Main.rand.NextFloat(-140f, 140f);
+                Vector2 probe = target.Bottom + new Vector2(offsetX, 0f);
+                if (!TryFindGround(probe, 12, 34, out Vector2 groundPoint))
+                {
+                    continue;
+                }
+                // Same spawn form as Stormbreaker Edict's bolts: the lane points UP from the ground
+                // point and is drawn as a vertical column, so a "sky strike" is a ground anchor plus
+                // an upward direction and a length.
+                Projectile.NewProjectile(npc.GetSource_FromThis(), groundPoint, new Vector2(0f, -1f),
+                    ModContent.ProjectileType<RedKnightLightningLane>(), damage, 0f, Main.myPlayer,
+                    ai0: DomStageDTelegraph, ai1: 12f, ai2: 640f);
+            }
+            PlaySound(SoundID.Item122 with { Volume = 0.7f, Pitch = -0.2f }, npc.Center);
         }
 
         void TickHerald(NPC npc, bool storm)
@@ -689,15 +1006,17 @@ namespace tsorcRevamp.NPCs
                 KnightSpecialAttack.CrimsonStandard => Timer >= 69 && Timer < 81,
                 KnightSpecialAttack.CrimsonAdvance => (Timer >= 60 && Timer < 80) || (Timer >= 135 && Timer < 157),
                 KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 203,
-                KnightSpecialAttack.RoyalStandard => Timer >= 69 && Timer < 83,
+                // Extended to cover all three back-to-back throws (75 / 95 / 115), not just the
+                // first — the knight is committed for the whole cascade now.
+                KnightSpecialAttack.RoyalStandard => Timer >= 69 && Timer < 123,
                 KnightSpecialAttack.StormbreakerEdict => Timer >= 60 && Timer < 76,
-                // +120t to match CrimsonDominionController's EscapeTicks extension (90t -> 210t):
-                // stay committed (hyper-armor) through the whole longer pre-nova charge-up, only
-                // exposed again once the nova has actually gone off.
-                KnightSpecialAttack.CrimsonDominion => Timer >= 60 && Timer < 625,
+                // Hyper-armored from the moment the spear is planted until it starts retracting,
+                // so the hold cannot simply be staggered out of. Rescaled to the 300t hold.
+                KnightSpecialAttack.CrimsonDominion => Timer >= 60 && Timer < DominionHoldTicks - 50,
                 _ => false
             };
-            bool dominionRecovery = Attack == KnightSpecialAttack.CrimsonDominion && Timer >= 625;
+            bool dominionRecovery = Attack == KnightSpecialAttack.CrimsonDominion
+                && Timer >= DominionHoldTicks - 50;
             globalNPC.AttackCommitted = committed;
             globalNPC.AttackTelegraphing = !committed && !dominionRecovery && !IsHerald && Timer < Duration(Attack) - 20;
         }
@@ -726,7 +1045,11 @@ namespace tsorcRevamp.NPCs
             attackCooldown = IsGreatAttack(completed) ? Main.rand.Next(260, 401) : Main.rand.Next(320, 481);
             if (completed == KnightSpecialAttack.CrimsonDominion)
             {
-                dominionCooldown = Main.rand.Next(1200, 1501);
+                // PHASE 1 -> PHASE 2. The hold is over: the knight retracts its spear and goes back
+                // to normal (faster, more evasive) melee combat. DominionEngaged stays true, so the
+                // lightning loop keeps running and Dominion can never be re-selected — no cooldown
+                // is needed or wanted. Give it a short leash so it re-engages promptly.
+                attackCooldown = 90;
             }
             npc.netUpdate = true;
         }
@@ -761,9 +1084,11 @@ namespace tsorcRevamp.NPCs
                 KnightSpecialAttack.FurnacePincer => 230,
                 KnightSpecialAttack.RoyalStandard => 330,
                 KnightSpecialAttack.StormbreakerEdict => 200,
-                // +120t to match CrimsonDominionController's EscapeTicks extension (TotalTicks 480 -> 600),
-                // keeping the original 120t buffer after the projectile finishes before the knight regains control.
-                KnightSpecialAttack.CrimsonDominion => 720,
+                // Dominion's BLOCKING part is now only the plant-and-hold. Everything that used to
+                // fill the other 420 ticks (containment ring, arena-edge barrage, escape nova) is
+                // either gone or moved: the lightning is an ongoing loop and the nova is the death
+                // animation. See the phase notes at the top of this class.
+                KnightSpecialAttack.CrimsonDominion => DominionHoldTicks,
                 KnightSpecialAttack.FurnaceHerald => 150,
                 KnightSpecialAttack.StormHerald => 150,
                 _ => 1
@@ -780,7 +1105,8 @@ namespace tsorcRevamp.NPCs
             KnightSpecialAttack.CrimsonAdvance => KnightHeldProp.Spear,
             KnightSpecialAttack.FurnacePincer when Timer < 60 => KnightHeldProp.Bomb,
             KnightSpecialAttack.FurnacePincer when Timer >= 105 && Timer < 205 => KnightHeldProp.Spear,
-            KnightSpecialAttack.RoyalStandard when Timer < 75 => KnightHeldProp.Spear,
+            // Holds a spear through all THREE back-to-back throws now, not just the first.
+            KnightSpecialAttack.RoyalStandard when Timer < RoyalFirstThrow + RoyalThrowInterval * 2 => KnightHeldProp.Spear,
             KnightSpecialAttack.StormbreakerEdict when Timer < 122 => KnightHeldProp.Spear,
             KnightSpecialAttack.CrimsonDominion => KnightHeldProp.Spear,
             _ => KnightHeldProp.None
@@ -829,13 +1155,16 @@ namespace tsorcRevamp.NPCs
                 }
                 if (Attack == KnightSpecialAttack.CrimsonDominion)
                 {
+                    // Plant over the first 60t, hold, then RETRACT over the last 50t of the 300t
+                    // hold — the retract is the visual handoff into phase 2's melee.
                     if (Timer < 60)
                     {
                         return MathHelper.Lerp(0f, 20f, MathHelper.Clamp(Timer / 60f, 0f, 1f));
                     }
-                    if (Timer >= 670)
+                    if (Timer >= DominionHoldTicks - 50)
                     {
-                        return MathHelper.Lerp(20f, 0f, MathHelper.Clamp((Timer - 670f) / 50f, 0f, 1f));
+                        return MathHelper.Lerp(20f, 0f,
+                            MathHelper.Clamp((Timer - (DominionHoldTicks - 50)) / 50f, 0f, 1f));
                     }
                     return 20f;
                 }
@@ -863,7 +1192,8 @@ namespace tsorcRevamp.NPCs
                     KnightSpecialAttack.CrimsonStandard => 75,
                     KnightSpecialAttack.CrimsonAdvance => Timer < 60 ? 60 : 135,
                     KnightSpecialAttack.FurnacePincer => Timer < 60 ? 60 : 165,
-                    KnightSpecialAttack.RoyalStandard => 75,
+                    // Ramps across the whole three-throw cascade rather than stopping at the first.
+                    KnightSpecialAttack.RoyalStandard => RoyalFirstThrow + RoyalThrowInterval * 2,
                     KnightSpecialAttack.StormbreakerEdict => 60,
                     KnightSpecialAttack.CrimsonDominion => 90,
                     KnightSpecialAttack.FurnaceHerald or KnightSpecialAttack.StormHerald => 150,
@@ -964,7 +1294,10 @@ namespace tsorcRevamp.NPCs
             writer.Write(HalfHeraldComplete);
             writer.Write(ThirdHeraldComplete);
             writer.Write(attackCooldown);
-            writer.Write(dominionCooldown);
+            // Dominion is a permanent phase, so a resyncing or late-joining client MUST learn both
+            // the latch and where the lightning loop is, or its visuals desync from the server.
+            writer.Write(DominionEngaged);
+            writer.Write(DominionSequenceTimer);
         }
 
         public void Receive(BinaryReader reader)
@@ -981,7 +1314,8 @@ namespace tsorcRevamp.NPCs
             HalfHeraldComplete = reader.ReadBoolean();
             ThirdHeraldComplete = reader.ReadBoolean();
             attackCooldown = reader.ReadInt32();
-            dominionCooldown = reader.ReadInt32();
+            DominionEngaged = reader.ReadBoolean();
+            DominionSequenceTimer = reader.ReadInt32();
         }
 
         static void WriteVector(BinaryWriter writer, Vector2 value)

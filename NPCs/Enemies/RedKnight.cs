@@ -890,8 +890,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
                 }
-                // Ultrakill Attack
-                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 235f)
+                // Ultrakill Attack — 30 hands
+                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 229f)
                 {
                     NPC.velocity.X *= 0.25f;
 
@@ -920,7 +920,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center);
                 }
                 // After Ultrakill attack completes
-                if (NPC.ai[2] == 236f)
+                if (NPC.ai[2] == 230f)
                 {
                     // Reset the targetPosition 
                     targetPosition = Vector2.Zero;
@@ -1213,10 +1213,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (globalNPC.InCombatMeleeHitWindow)
                 {
                     Vector2 forward = new Vector2(meleeDirection, 0f);
-                    Projectiles.Enemy.RedKnightVFX.DrawSpearWake(
+                    // Was RedKnightVFX.DrawSpearWake; now the shared Black Knight grey wake. The
+                    // old `empowered` flag (unblockable attacks) becomes a bigger, stronger quad.
+                    bool unblockable = globalNPC.ActiveAttackBypassesShield;
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + Main.screenPosition + forward * (thrustOffset * 0.5f),
-                        forward.ToRotation(), new Vector2(70f, 16f), 0.48f,
-                        globalNPC.ActiveAttackBypassesShield);
+                        forward.ToRotation(),
+                        unblockable ? new Vector2(80f, 18f) : new Vector2(72f, 16f),
+                        unblockable ? 0.62f : 0.52f);
                 }
                 DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, thrustOffset);
                 DrawArmOverlay(spriteBatch, drawColor, globalNPC, meleeDirection);
@@ -1268,9 +1272,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (specialAttacks.SpearDamageWake)
                 {
                     Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
-                    Projectiles.Enemy.RedKnightVFX.DrawSpearWake(
+                    // Was RedKnightVFX.DrawSpearWake; now the shared Black Knight grey wake.
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + forward * (gripSlide * 0.5f), forward.ToRotation(),
-                        new Vector2(72f, 16f), 0.48f, empowered: false);
+                        new Vector2(74f, 16f), 0.54f);
                 }
                 DrawHeldSpear(spriteBatch, handWorld - Main.screenPosition, rotation,
                     drawColor, globalNPC, gripSlide);

@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -284,8 +284,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         public RenderTarget2D tempTarget;
         public RenderTarget2D lightningTarget;
         // Leave the original LightningLine + BlurEffect route available for quick A/B comparisons.
-        // Marilith alone opts into the sharper combined core/glow shader by default.
-        private const bool UseLegacyLightningVisuals = false;
+        // Restored to true for the original blue lightning visual effect.
+        private const bool UseLegacyLightningVisuals = true;
         public override bool PreDraw(ref Color lightColor)
         {
             //Don't draw anything if it hasn't generated the branches

@@ -185,6 +185,9 @@ float4 VoidGatherPixel(float4 vertexColor : COLOR0, float2 uv : TEXCOORD0) : COL
     return float4(vertexColor.rgb * color, vertexColor.a * alpha);
 }
 
+// Kept despite the Red Knight spear swings moving to BlackKnightSpearWake.fx: the Ultrakill
+// gather (RedKnightVFX.DrawUltrakillGather) still draws its three inward crimson filaments with
+// this technique. Do not delete without re-checking that call site.
 technique RedKnightSpearWake
 {
     pass WakePass { PixelShader = compile ps_2_0 SpearWakePixel(); }

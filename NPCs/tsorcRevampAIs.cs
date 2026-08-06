@@ -2137,12 +2137,39 @@ namespace tsorcRevamp.NPCs
 
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.4f }, position);
 
+            // RING 1 -- the damaging one. Fast, wide, short-lived: this is the ring the player has
+            // to read and get out of, so nothing about it changes.
             for (int i = 0; i < FireTeleportFlameCount; i++)
             {
                 Vector2 velocity = (rotationOffset + MathHelper.TwoPi * i / FireTeleportFlameCount).ToRotationVector2() * FireTeleportFlameSpeed;
                 Projectile flame = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), position, velocity,
                     ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), damage, 5f, Main.myPlayer);
                 flame.timeLeft = flameLifetime;
+            }
+
+            // RING 2 -- purely decorative, and deliberately different in EVERY parameter rather
+            // than being ring 1 at another radius (vfx-shader-tips section 33): fewer flames, a
+            // little over half the speed, an anti-phase angular offset so its flames sit in ring
+            // 1's gaps, an inward starting radius, and a longer life so it is still burning after
+            // the fast ring has expired. That trailing overlap is what makes the burst read as a
+            // volume of fire instead of one flat expanding wheel.
+            //
+            // It does NO damage (hostile/friendly cleared below) on purpose -- doubling the number
+            // of damaging flames on a teleport would be a balance change, not a polish pass
+            // (vfx-shader-tips section 39). ai[1] = 1 marks it decorative so FireBreath.PreKill
+            // can skip its flamethrower sound and 20 flames don't stack into a roar.
+            const int decorativeFlameCount = 8;
+            float decorativeOffset = rotationOffset + MathHelper.Pi / decorativeFlameCount + 0.37f;
+            for (int i = 0; i < decorativeFlameCount; i++)
+            {
+                Vector2 outward = (decorativeOffset + MathHelper.TwoPi * i / decorativeFlameCount).ToRotationVector2();
+                Projectile flame = Projectile.NewProjectileDirect(npc.GetSource_FromThis(),
+                    position + outward * 14f, outward * (FireTeleportFlameSpeed * 0.55f),
+                    ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), 1, 0f, Main.myPlayer, 0f, 1f);
+                flame.timeLeft = flameLifetime + 16;
+                flame.hostile = false;
+                flame.friendly = false;
+                flame.damage = 0;
             }
         }
 

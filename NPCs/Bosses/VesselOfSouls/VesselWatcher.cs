@@ -324,7 +324,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
                     ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselSoulRuptureVFX>(),
                     0, 0f, Main.myPlayer, 105f, 1f, 20f);
-                int n = 16;
+                int n = 12;
                 for (int i = 0; i < n; i++)
                 {
                     // Timed-out Watcher death burst: 25% slower than before (6-8.5 -> 4.5-6.375).

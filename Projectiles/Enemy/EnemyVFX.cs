@@ -86,6 +86,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         static readonly Color PlagueDark = new(10, 6, 16);
         static readonly Color PlagueMid = new(86, 40, 122);
         static readonly Color PlagueCore = new(196, 182, 206);
+        // Hex crystal aura: rich black & gold palette (dark abyssal black -> warm ember gold -> soft bright gold core)
+        static readonly Color HexGoldDark = new(8, 4, 12);
+        static readonly Color HexGoldMid = new(210, 140, 25);
+        static readonly Color HexGoldCore = new(255, 215, 110);
         // Great Black Knight: same family, deeper and colder so the two read as related but distinct.
         static readonly Color GreatPlagueDark = new(7, 5, 12);
         static readonly Color GreatPlagueMid = new(64, 30, 104);
@@ -163,11 +167,11 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
                 Draw(blackKnightHexCrystal, "BlackKnightHexComet", veinNoise, cloudNoise,
                     center - direction * 36f, new Vector2(96f, 30f), direction.ToRotation(),
-                    PlagueDark, PlagueMid, PlagueCore, 0.82f, dormantProgress, 1f, 1f);
+                    HexGoldDark, HexGoldMid, HexGoldCore, 0.82f, dormantProgress, 1f, 1f);
             }
             Draw(blackKnightHexCrystal, "BlackKnightHexSeal", perlinTiled, veinNoise,
                 center, active ? new Vector2(48f, 40f) : Vector2.One * 74f, 0f,
-                PlagueDark, PlagueMid, PlagueCore, active ? 0.9f : 0.74f,
+                HexGoldDark, HexGoldMid, HexGoldCore, active ? 0.9f : 0.74f,
                 dormantProgress, active ? 1f : 0f, 1f);
         }
 
@@ -540,7 +544,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 case EnemyVFXBurstKind.BlackKnightHexShatter:
                     Draw(blackKnightHexCrystal, "BlackKnightHexShatter", perlinTiled, veinNoise,
-                        center, Vector2.One * 82f, 0f, PlagueDark, PlagueMid, PlagueCore, opacity, progress, 1f, 1f);
+                        center, Vector2.One * 82f, 0f, HexGoldDark, HexGoldMid, HexGoldCore, opacity, progress, 1f, 1f);
                     break;
                 case EnemyVFXBurstKind.BlackKnightMoonfuryBlast:
                     Draw(blackKnightMoonfury, "BlackKnightMoonfurySmoke", perlinTiled, cloudNoise,

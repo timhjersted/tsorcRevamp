@@ -9165,6 +9165,11 @@ Mods: {
 				Description: You cannot fly!
 			}
 
+			DestinedDeath: {
+				DisplayName: Destined Death
+				Description: Maximum life is reduced by 10% on hit (up to 60%). At 60% loss, you gain 15% increased damage.
+			}
+
 			Tired: {
 				DisplayName: Tired
 				Description: Increases stamina use by 25%
@@ -11030,7 +11035,11 @@ Mods: {
 			BlackKnightSpearBlightSwarm.DisplayName: Black Knight Spear Blight Swarm
 			DragonMeteorExplosion.DisplayName: Dragon Meteor Explosion
 			FireLurkerFireBurst.DisplayName: Fire Lurker Fire Burst
-
+			DestinedDeathBlaze.DisplayName: Destined Death Blaze
+			DestinedDeathExplosion.DisplayName: Destined Death Explosion
+			GreatRedKnightHandBeam.DisplayName: Great Red Knight Hand Beam
+			GreatRedKnightUltrakillHand.DisplayName: Great Red Knight Ultrakill Hand
+			EnemyShadowflameArrow.DisplayName: Enemy Shadowflame Arrow
 		}
 
 		NPCs: {
@@ -12700,6 +12709,7 @@ Mods: {
 			DarkCloudShadow.DisplayName: Dark Cloud Shadow
 			AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
 			StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
+			Blaidd.DisplayName: Blaidd
 			ShadowNinja.DisplayName: Shadow Ninja
 			BlackNinja.DisplayName: Black Ninja
 			TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart

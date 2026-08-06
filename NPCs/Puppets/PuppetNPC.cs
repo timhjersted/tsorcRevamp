@@ -5907,9 +5907,9 @@ namespace tsorcRevamp.NPCs.Puppets
             return Math.Max(1, useAnimation > 0 ? useAnimation : DefaultWeaponAnimMax);
         }
 
-        private int GetMeleeSwingTicks(int requestedTicks)
+        protected virtual int GetMeleeSwingTicks(int requestedTicks)
         {
-            return Math.Max(requestedTicks, GetWeaponUseAnimation(MeleeWeaponItemType));
+            return requestedTicks > 0 ? requestedTicks : GetWeaponUseAnimation(MeleeWeaponItemType);
         }
 
         private float LogicalSwingWindup(float oppositeEnd, float attackStart, float progress)

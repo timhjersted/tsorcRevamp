@@ -455,7 +455,10 @@ EvilEye's telegraph looked disconnected because the iris sits **22px above** the
 Sections 1–30 are technique. These are the specific ways real effects in this repo turned out to be
 broken, each found more than once. Repo-specific compile-pipeline details (`fxc.exe` diagnostics, the
 `saturate()`-on-uniform compiler bug, texture-channel traps) live in
-`.agents/skills/vfx-pipeline/SKILL.md` — check both before starting.
+`.agents/skills/vfx-pipeline/SKILL.md` — check both before starting. The **particle** counterpart to
+these notes (DustID selection, the count-vs-scale chunkiness rule, layered bursts, and the fact that
+`fadeIn` is a grow-to-scale target rather than an alpha ramp) is
+`.agents/skills/vfx-dust-tips/SKILL.md`; §20/§21/§23/§33/§45 below all have a dust analogue there.
 
 ---
 

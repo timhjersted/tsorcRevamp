@@ -1,0 +1,128 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    /// <summary>
+    /// Decorative flame sprite that rides the Red Knight standards' ground shockwave
+    /// (<see cref="Weapons.RedKnightGroundWave"/>), which spawns these at an increasing rate as it
+    /// travels. Same "spawn a short-lived sprite alongside the damaging projectile" pattern the
+    /// knight's other secondary VFX use; it carries no hitbox of its own so it cannot change the
+    /// attack's damage footprint (§39).
+    ///
+    /// Sheet is 86x410 = FrameCount frames of 86x82 — MEASURED, not assumed: scanning for content
+    /// bands puts them at y 32-53, 112-133, 186-221, 264-311 and 340-395, which lands one band
+    /// inside each 82px slice. 410 does not divide by 4, so the "4-frame" description was wrong.
+    ///
+    /// ai[0] = travel direction (-1 / +1)
+    /// ai[1] = 0 for a ground-hugging blaze, 1 for one that lifts off near the end of the wave's run
+    /// </summary>
+    public class DestinedDeathBlaze : ModProjectile
+    {
+        const int FrameCount = 5;
+        const int TicksPerFrame = 5;
+        const int Lifetime = 46;
+
+        int Direction => Projectile.ai[0] < 0f ? -1 : 1;
+        bool Lifting => Projectile.ai[1] > 0.5f;
+
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = FrameCount;
+        }
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 2;
+            Projectile.height = 2;
+            Projectile.hostile = false;
+            Projectile.friendly = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = Lifetime;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.scale = 1f;
+        }
+
+        public override bool? CanDamage() => false;
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            // Start on a random frame and a random scale so a cluster never reads as one stamp
+            // repeated (vfx-shader-tips §33) — these spawn several at a time along the wave.
+            Projectile.frame = Main.rand.Next(FrameCount);
+            Projectile.frameCounter = Main.rand.Next(TicksPerFrame);
+            Projectile.scale = Main.rand.NextFloat(0.42f, 0.78f);
+            Projectile.rotation = Main.rand.NextFloat(-0.16f, 0.16f);
+            if (Lifting)
+            {
+                Projectile.velocity.Y -= Main.rand.NextFloat(1.4f, 3.1f);
+            }
+        }
+
+        public override void AI()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= TicksPerFrame)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame = (Projectile.frame + 1) % FrameCount;
+            }
+
+            // Tip BACKWARD, away from the direction of travel, as if the blaze is being blown over
+            // by the wave's own motion: counterclockwise when moving right, clockwise when moving
+            // left. Terraria's Y axis points down, so a NEGATIVE rotation delta reads as
+            // counterclockwise on screen.
+            Projectile.rotation -= Direction * 0.026f;
+
+            // Drag on the horizontal run so blazes fall behind the wave front rather than pacing it
+            // forever; lifting ones keep rising and slow down faster.
+            Projectile.velocity.X *= 0.965f;
+            if (Lifting)
+            {
+                Projectile.velocity.Y = Math.Max(Projectile.velocity.Y - 0.06f, -4.2f);
+                Projectile.velocity.X *= 0.94f;
+            }
+            else
+            {
+                Projectile.velocity.Y *= 0.9f;
+            }
+
+            Lighting.AddLight(Projectile.Center, new Vector3(0.42f, 0.03f, 0.04f) * Projectile.scale);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+            int frameHeight = texture.Height / FrameCount;
+            Rectangle frame = new(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
+
+            // Smooth in and smooth out — no hard pop at either end.
+            float life = 1f - Projectile.timeLeft / (float)Lifetime;
+            float fade = Utils.Clamp(life * 4.5f, 0f, 1f) * Utils.Clamp((1f - life) * 2.2f, 0f, 1f);
+
+            // Additive: this is a bright flame licking over the shockwave the shader already drew,
+            // and it is meant to STACK with it, so it is honestly just light (§43's exception).
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            try
+            {
+                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame,
+                    Color.White * fade * 0.85f, Projectile.rotation,
+                    new Vector2(frame.Width * 0.5f, frame.Height), Projectile.scale,
+                    Direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+            }
+            finally
+            {
+                UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            }
+            return false;
+        }
+    }
+}

@@ -56,8 +56,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             if (Projectile.ai[2] == 1f)
             {
-                RedKnightVFX.DrawSpearWake(Projectile.Center - direction * 16f,
-                    direction.ToRotation(), new Vector2(72f, 16f), 0.5f, empowered: true);
+                // Was RedKnightVFX.DrawSpearWake; now the same grey wake the non-Red-Knight branch
+                // below already uses, sized a touch smaller because this spear draws at 0.8 scale.
+                EnemyVFX.DrawBlackKnightSpearWake(Projectile.Center - direction * 16f,
+                    direction.ToRotation(), new Vector2(84f, 18f), 0.62f);
                 Texture2D basicSpear = ModContent.Request<Texture2D>(
                     "tsorcRevamp/Projectiles/Enemy/BlackKnightSpear").Value;
                 Main.EntitySpriteDraw(basicSpear, Projectile.Center - Main.screenPosition, null,
@@ -101,11 +103,19 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 0;
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit54, Projectile.Center); //death sound
-                if (Projectile.ai[2] == 1f && Main.netMode != NetmodeID.MultiplayerClient)
+                if (Projectile.ai[2] == 1f)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-                        ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
-                        (float)RedKnightBurstKind.SpearImpact, 1.15f);
+                    // Red Knight family only. In hardmode the impact upgrades to the
+                    // DestinedDeathExplosion sheet plus red/black dust; pre-hardmode falls through
+                    // to the original burst completely unchanged.
+                    if (!DestinedDeathExplosion.TrySpawn(Projectile.GetSource_Death(),
+                            Projectile.Center, 1.15f)
+                        && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                            ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
+                            (float)RedKnightBurstKind.SpearImpact, 1.15f);
+                    }
                 }
                 else
                 {

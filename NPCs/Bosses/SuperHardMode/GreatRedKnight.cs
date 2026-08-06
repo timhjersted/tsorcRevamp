@@ -21,9 +21,49 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public int redKnightsSpearDamage = 45;
         public int redMagicDamage = 40;
         public int redKnightsGreatDamage = 50;
+        // The bomb used to be spawned with redKnightsSpearDamage (45) and then had its explosion
+        // damage OVERWRITTEN by EnemyFirebomb's flat 38 tier value, so it landed below every other
+        // attack in this kit despite being the slowest and most heavily telegraphed. Benchmarked
+        // against this boss's own numbers rather than picked out of the air: the great attack (50)
+        // is the heaviest thing it has, and a lobbed AoE with an arc, a visible fuse and a 120px
+        // blast the player has ~2s to walk out of should sit just above it.
+        public int redKnightsBombDamage = 62;
 
         Vector2 storedPlayerPosition = Vector2.Zero;
         readonly RedKnightAttackController specialAttacks = new RedKnightAttackController();
+
+        // --- Crimson Dominion death finale ----------------------------------------------------
+        // Dominion no longer ends on a timer, so its finishing seal + nova is GRK's DEATH: the
+        // moment lethal damage lands, CheckDead pins the knight at 1 HP and refuses to let it die
+        // until the blast actually goes off. Precedent for the pattern: BossBase.CheckDead
+        // (deathAnimationProgress) and Cataluminance.CheckDead (NPCs/Bosses/Cataluminance.cs:747).
+        //
+        // The order is deliberately NOVA-FIRST, DEATH-SECOND — the explosion is a real last attack,
+        // not a cosmetic parting shot:
+        //
+        //   t = 0   .. 59   REPLANT. The knight freezes, drives its spear back into the ground and
+        //                   the Destined Death engulf returns. Nothing is dead yet.
+        //   t = 60          The finale CrimsonDominionController spawns and the seal starts filling.
+        //   t = 60  .. 149  Seal fill (SealFillTicks = 90) — the telegraph to get clear.
+        //   t = 150         NOVA. The blast fires AND the knight dies on the same tick, so loot,
+        //                   Dark Souls, boss-down flags and BossExtras (all of which hang off the
+        //                   real OnKill) land exactly when the explosion does.
+        //
+        // The controller projectile outlives the NPC by ~45 ticks to finish the nova + fade. That
+        // is safe: it is netImportant, ShouldUpdatePosition() => false, and never dereferences the
+        // NPC (ai[2] carries whoAmI but nothing reads it).
+        // -1 = not started.
+        int dominionDeathTimer = -1;
+
+        /// <summary>Ticks the finale spends re-planting the spear before the seal begins to fill.</summary>
+        public const int DominionDeathReplantTicks = 60;
+
+        /// <summary>Ticks from lethal damage to the knight's ACTUAL death — which is the tick the
+        /// nova fires, not the end of its fade.</summary>
+        public const int DominionDeathSequenceTicks = DominionDeathReplantTicks
+            + Projectiles.Enemy.Weapons.CrimsonDominionController.SealFillTicks;
+
+        public bool InDominionDeathSequence => dominionDeathTimer >= 0;
 
         public int framesSinceStoredPosition = 0;
 
@@ -83,6 +123,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             redKnightsSpearDamage = (int)(redKnightsSpearDamage * tsorcRevampWorld.SHMScale);
             redMagicDamage = (int)(redMagicDamage * tsorcRevampWorld.SHMScale);
             redKnightsGreatDamage = (int)(redKnightsGreatDamage * tsorcRevampWorld.SHMScale);
+            redKnightsBombDamage = (int)(redKnightsBombDamage * tsorcRevampWorld.SHMScale);
         }
         #endregion
 
@@ -96,9 +137,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             get
             {
+                if (dominionDeathTimer >= 0)
+                {
+                    string beat = dominionDeathTimer < DominionDeathReplantTicks
+                        ? "Replant"
+                        : "Seal Fill";
+                    return $"Dominion Finale — {beat} ({dominionDeathTimer}/{DominionDeathSequenceTicks})";
+                }
                 if (specialAttacks.Active)
                 {
                     return specialAttacks.DebugAttackName;
+                }
+                // Dominion is a permanent phase, so surface which lightning stage is running —
+                // otherwise the readout says "nothing" for the entire second half of the fight.
+                if (specialAttacks.DominionEngaged)
+                {
+                    return "Dominion — " + specialAttacks.DominionStageName;
                 }
                 if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
                     && NPC.ai[2] >= 100f && NPC.ai[2] <= 249f)
@@ -135,12 +189,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write(storedPlayerPosition.X);
             writer.Write(storedPlayerPosition.Y);
             specialAttacks.Send(writer);
+            // CheckDead only ever runs server-side, so without this a multiplayer client would see
+            // the knight freeze with its spear in hand and no flames while the finale played.
+            writer.Write(dominionDeathTimer);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             storedPlayerPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             specialAttacks.Receive(reader);
+            dominionDeathTimer = reader.ReadInt32();
         }
 
         #region On Hit
@@ -173,6 +231,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             specialAttacks.TickCooldowns();
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             KnightAttackStats attackStats = new KnightAttackStats(redKnightsSpearDamage, redMagicDamage, redKnightsGreatDamage);
+
+            // DEATH FINALE owns the knight completely — no movement, no attacks, no new lightning.
+            if (dominionDeathTimer >= 0)
+            {
+                TickDominionDeathSequence();
+                return;
+            }
+
+            // CRIMSON DOMINION phase 2 runs the lightning loop on top of everything else, including
+            // during the plant-and-hold below, which is what puts the first Stage A bolts inside it.
+            specialAttacks.TickDominionSequence(NPC, player, attackStats);
+
             if (specialAttacks.Active)
             {
                 specialAttacks.Tick(NPC, player, attackStats);
@@ -180,8 +250,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4, canDodgeroll: true);
-            tsorcRevampAIs.LeapAtPlayer(NPC, 7, 5, 1.5f, 128);
+            // Dominion phase 2: "retract & fight". Slightly faster, and the knight stops being a
+            // purely reactive retreater — EvasiveLeapForward and EvasiveRunningDash are the two
+            // AGGRESSIVE gap-closers in the existing Evasive System (the LothricKnight profile uses
+            // them; see EvasiveProfile.cs). Turning them on alongside the RedKnight retreat set is
+            // what "melee hops and dashes" concretely maps to: no new movement code, just the
+            // existing behaviours enabled. Agility up so it rolls/hops through fire more often, and
+            // LeapAtPlayer's hop range widened so it closes with a jump rather than a walk.
+            if (specialAttacks.DominionEngaged)
+            {
+                globalNPC.EvasiveLeapForward = true;
+                globalNPC.EvasiveRunningDash = true;
+                globalNPC.Agility = 0.58f;   // was 0.45f
+                tsorcRevampAIs.FighterAI(NPC, 2.6f, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 5, canDodgeroll: true);
+                tsorcRevampAIs.LeapAtPlayer(NPC, 8, 5.5f, 1.4f, 180);
+            }
+            else
+            {
+                tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4, canDodgeroll: true);
+                tsorcRevampAIs.LeapAtPlayer(NPC, 7, 5, 1.5f, 128);
+            }
 
             Vector2 targetPosition = Vector2.Zero;
 
@@ -627,7 +715,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsBombDamage, 0f, Main.myPlayer, ai2: 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
 
@@ -654,7 +742,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsBombDamage, 0f, Main.myPlayer, ai2: 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
 
@@ -740,7 +828,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // "Exlosives" EnemyGreatAttack spawn was cut: it only existed to trigger a pink
                 // RedKnightVFXBurst explosion + vanilla BombSkeletronPrime bomb-smoke dust on death,
                 // neither of which reads as "hands" and both just cluttered the screen.
-                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 249f)
+                // Ultrakill Attack — 30 hand barrage. Each hand projectile slow-drifts and fires a
+                // red lightning beam telegraph and attack.
+                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 229f)
                 {
                     NPC.velocity.X *= 0.25f;
 
@@ -752,16 +842,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     // Insanity Hands
                     Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 6, fallback: true);
-                    speed2 += Main.rand.NextVector2Circular(-4, 4);//was -4, -2, then -12, -16
+                    speed2 += Main.rand.NextVector2Circular(-4, 4);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ProjectileID.InsanityShadowHostile, redKnightsGreatDamage, 0f, Main.myPlayer);
+                        float handIndex = NPC.ai[2] - 200f;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y,
+                            ModContent.ProjectileType<Projectiles.Enemy.GreatRedKnightUltrakillHand>(),
+                            redKnightsGreatDamage, 0f, Main.myPlayer, ai0: handIndex);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center);
                     NPC.netUpdate = true;
                 }
                 // After Ultrakill attack completes
-                if (NPC.ai[2] == 250f)
+                if (NPC.ai[2] == 230f)
                 {
                     // Reset the targetPosition
                     targetPosition = Vector2.Zero;
@@ -848,6 +941,89 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
 
+        #region Dominion death finale
+        /// <summary>
+        /// Crimson Dominion's finishing seal + nova, repurposed as GRK's death animation. Once the
+        /// knight is in Dominion it never leaves, so the blast is triggered by lethal damage rather
+        /// than by a timer: pin at 1 HP, refuse to die, play the sequence, then actually die.
+        ///
+        /// Same pattern as BossBase.CheckDead's deathAnimationProgress gate and
+        /// Cataluminance.CheckDead (NPCs/Bosses/Cataluminance.cs:747). Loot and boss-down flags all
+        /// hang off OnKill, so they simply happen ~2.3s later — nothing else needs to know.
+        /// </summary>
+        public override bool CheckDead()
+        {
+            // Killed before ever reaching 30% (e.g. a burst kill from above the gate): no Dominion,
+            // no finale, die normally. Never gate the boss's death on a phase it never entered.
+            if (!specialAttacks.DominionEngaged)
+            {
+                return true;
+            }
+
+            if (dominionDeathTimer < 0)
+            {
+                // BEAT 1 — the replant. The knight stops dead and drives its spear back into the
+                // ground; the engulf ramps back on over the next 30 ticks. No projectile yet, and
+                // emphatically no loot yet: the fight is not over until the nova fires.
+                dominionDeathTimer = 0;
+                NPC.dontTakeDamage = true;
+                NPC.velocity = Vector2.Zero;
+                Terraria.Audio.SoundEngine.PlaySound(
+                    SoundID.Item74 with { Volume = 0.9f, Pitch = -0.7f }, NPC.Center);
+                tsorcRevampAIs.SpawnTelegraphFlash(NPC, new Color(206, 16, 34));
+                NPC.netUpdate = true;
+            }
+
+            if (dominionDeathTimer < DominionDeathSequenceTicks)
+            {
+                NPC.life = 1;
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>Runs instead of the normal AI while the finale plays. The knight is frozen,
+        /// re-planted and engulfed, and immune; on the tick the nova fires it takes the killing
+        /// blow it was spared, so OnKill (and therefore all loot) coincides with the explosion.</summary>
+        void TickDominionDeathSequence()
+        {
+            dominionDeathTimer++;
+            NPC.velocity.X = 0f;
+            NPC.velocity.Y = Math.Min(NPC.velocity.Y + 0.35f, 10f);
+            NPC.dontTakeDamage = true;
+            NPC.knockBackResist = 0f;
+            Lighting.AddLight(NPC.Center, new Color(206, 16, 34).ToVector3()
+                * (0.5f + 0.5f * (dominionDeathTimer / (float)DominionDeathSequenceTicks)));
+
+            // BEAT 2 — the spear is in the ground and the flames are up, so the seal starts to
+            // fill. |ai[0]| == 2 selects finale mode: seal fill -> nova -> fade, with none of the
+            // containment ring, wall or arena-edge barrage. See CrimsonDominionController.
+            if (dominionDeathTimer == DominionDeathReplantTicks
+                && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_Death(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.CrimsonDominionController>(),
+                    redKnightsGreatDamage, 0f, Main.myPlayer,
+                    2f, Main.rand.NextFloat(MathHelper.Pi / 12f), NPC.whoAmI);
+                Terraria.Audio.SoundEngine.PlaySound(
+                    SoundID.Item74 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center);
+            }
+
+            // BEAT 3 — the nova fires on this exact tick (spawn + SealFillTicks), and the knight
+            // dies with it. Releasing the pin here is what makes loot / Dark Souls / boss-down
+            // flags / BossExtras land on the explosion rather than before or after it.
+            // Server-authoritative: a client must never kill the NPC itself, it just plays the
+            // animation and waits for the server's death packet.
+            if (dominionDeathTimer >= DominionDeathSequenceTicks
+                && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                NPC.dontTakeDamage = false;
+                NPC.life = 0;
+                NPC.checkDead();
+            }
+        }
+        #endregion
+
         public override void OnKill()
         {
 
@@ -913,16 +1089,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         #region PreDraw
         /// <summary>
-        /// Ramp for Crimson Dominion's body engulf: on over the first 45t, held through the whole
-        /// spear-holding phase, off over the last 60t of the attack's 720t duration.
+        /// Ramp for Crimson Dominion's body engulf. The flame belongs to the PLANTED SPEAR, not to
+        /// the Dominion phase: it appears when the spear goes into the ground and leaves when the
+        /// spear comes back out. So it plays exactly twice — across phase 1's plant-and-hold, and
+        /// again across the death finale's replant — and is completely absent during phase 2's
+        /// melee, where the knight is hopping and dashing with the spear in hand.
         /// </summary>
         float DominionEngulfOpacity
         {
             get
             {
-                int timer = specialAttacks.Timer;
-                return MathHelper.Clamp(timer / 45f, 0f, 1f)
-                    * MathHelper.Clamp((720f - timer) / 60f, 0f, 1f);
+                // DEATH FINALE — the spear is driven back in and the flames return as the finale's
+                // opening beat, then hold at full through the seal fill and the nova.
+                if (dominionDeathTimer >= 0)
+                {
+                    return MathHelper.Clamp(dominionDeathTimer / 30f, 0f, 1f);
+                }
+
+                // PHASE 1 (plant & hold) — on over the first 45t, and off again across the same
+                // 50t window in which SpearGripSlide retracts the spear, so flame and spear leave
+                // together instead of the fire outliving the thing it is burning on.
+                if (specialAttacks.Attack == KnightSpecialAttack.CrimsonDominion)
+                {
+                    int timer = specialAttacks.Timer;
+                    return MathHelper.Clamp(timer / 45f, 0f, 1f)
+                        * MathHelper.Clamp(
+                            (RedKnightAttackController.DominionHoldTicks - timer) / 50f, 0f, 1f);
+                }
+
+                // PHASE 2 (retract & fight) — no engulf at all.
+                return 0f;
             }
         }
 
@@ -937,12 +1133,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         specialAttacks.TelegraphProgress,
                         specialAttacks.Attack == KnightSpecialAttack.StormHerald);
                 }
-                else if (specialAttacks.Attack == KnightSpecialAttack.CrimsonDominion)
+                else if (DominionEngulfOpacity > 0f)
                 {
-                    // Body engulf for the whole spear-holding phase: the knight stands wrapped in
-                    // the same black-and-crimson Destined Death flame the arena seal detonates with.
-                    // Anchored on the sprite's FEET (bottom-centre, gfxOffY applied), because the
-                    // flame technique is bottom-anchored — using NPC.Center would float it.
+                    // Body engulf, drawn only while the spear is actually planted (phase 1's hold
+                    // and the death finale's replant — see DominionEngulfOpacity). The knight
+                    // stands wrapped in the same black-and-crimson Destined Death flame the death
+                    // seal detonates with. Anchored on the sprite's FEET (bottom-centre, gfxOffY
+                    // applied), because the flame technique is bottom-anchored — NPC.Center floats it.
+                    //
+                    // Gating on the opacity rather than on DominionEngaged also matters for the
+                    // branch BELOW: an engaged-based gate swallowed the Ultrakill seal for the
+                    // entire second half of the fight, because this else-if always won.
                     Projectiles.Enemy.RedKnightVFX.DrawDominionEngulf(
                         NPC.Bottom - new Vector2(0f, NPC.gfxOffY), NPC.scale,
                         DominionEngulfOpacity * 0.95f, front: false);
@@ -1065,7 +1266,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
             if (frame == 0)
             {
-                handWorld.Y -= 21f;
+                handWorld.Y -= 16f;
             }
             else if (frame >= 2)
             {
@@ -1133,20 +1334,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 armOverlayTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/RedKnight_LeftArm", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
-            if (specialAttacks.Active)
+            // Front half of the body engulf, drawn after the sprite AND any held prop so the flame
+            // wraps the knight instead of only silhouetting behind it. Much lighter than the
+            // PreDraw pass so the sprite stays readable through it. Only runs while the spear is
+            // planted, same as the PreDraw pass.
+            void DrawDominionEngulfFront()
             {
-                DrawSpecialAttack(spriteBatch, drawColor);
-                if (specialAttacks.Attack == KnightSpecialAttack.CrimsonDominion)
+                if (DominionEngulfOpacity > 0f)
                 {
-                    // Front half of the body engulf, drawn after the sprite AND the held spear so
-                    // the flame wraps the knight instead of only silhouetting behind it. Much
-                    // lighter than the PreDraw pass so the sprite stays readable through it.
                     Projectiles.Enemy.RedKnightVFX.DrawDominionEngulf(
                         NPC.Bottom - new Vector2(0f, NPC.gfxOffY), NPC.scale,
                         DominionEngulfOpacity * 0.42f, front: true);
                 }
+            }
+
+            // DEATH FINALE: specialAttacks is no longer Active by this point, so the planted spear
+            // has to be drawn here or the knight would stand empty-handed through its own replant.
+            if (InDominionDeathSequence)
+            {
+                DrawDominionFinaleSpear(spriteBatch, drawColor);
+                DrawDominionEngulfFront();
                 return;
             }
+
+            if (specialAttacks.Active)
+            {
+                DrawSpecialAttack(spriteBatch, drawColor);
+                DrawDominionEngulfFront();
+                return;
+            }
+            DrawDominionEngulfFront();
 
             // Spear
             if (NPC.ai[1] >= 120 && NPC.ai[1] < 210f)
@@ -1182,6 +1399,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         }
 
+        /// <summary>
+        /// The death finale's re-planted spear. Mirrors what DrawSpecialAttack does for Dominion
+        /// in phase 1 — same hand anchor, same straight-down rotation
+        /// (RedKnightAttackController.GetSpearRotation uses Vector2.UnitY for Dominion) — but drives
+        /// the grip slide off the finale clock instead of the attack timer, so the spear visibly
+        /// drives into the ground over the first 30 ticks and then stays there.
+        /// </summary>
+        void DrawDominionFinaleSpear(SpriteBatch spriteBatch, Color drawColor)
+        {
+            int facing = NPC.direction >= 0 ? 1 : -1;
+            Vector2 handWorld = CurrentSpearWorld(facing);
+            float rotation = Vector2.UnitY.ToRotation() + MathHelper.PiOver2;
+            float gripSlide = MathHelper.Lerp(0f, 20f,
+                MathHelper.Clamp(dominionDeathTimer / 30f, 0f, 1f));
+            DrawHeldSpear(spriteBatch, handWorld - Main.screenPosition, rotation, drawColor, gripSlide);
+            DrawArmOverlay(spriteBatch, drawColor, facing);
+        }
+
         void DrawSpecialAttack(SpriteBatch spriteBatch, Color drawColor)
         {
             KnightHeldProp heldProp = specialAttacks.HeldProp;
@@ -1197,9 +1432,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (specialAttacks.SpearDamageWake)
                 {
                     Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
-                    Projectiles.Enemy.RedKnightVFX.DrawSpearWake(
+                    // Was RedKnightVFX.DrawSpearWake (the crimson filament wake) — retired in favour
+                    // of the generic grey displaced-air wake the Black Knights already use. The old
+                    // `empowered: true` is folded in as a larger, slightly stronger quad.
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + forward * (gripSlide * 0.5f), forward.ToRotation(),
-                        new Vector2(76f, 18f), 0.56f, empowered: true);
+                        new Vector2(86f, 20f), 0.66f);
                 }
                 DrawHeldSpear(spriteBatch, handWorld - Main.screenPosition, rotation, drawColor, gripSlide);
                 DrawArmOverlay(spriteBatch, drawColor, specialAttacks.Direction);

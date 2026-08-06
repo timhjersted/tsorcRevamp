@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -22,7 +23,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     {
         SpearImpact,
         StandardImpact,
-        BombExplosion
+        BombExplosion,
+        /// <summary>
+        /// The thrown-firebomb detonation. Draws the same RedKnightBombBlast technique as
+        /// <see cref="BombExplosion"/> but as TWO layered shells (a big fast faint outer one behind
+        /// a tighter core) so it reads as a volume instead of one flat disc. Kept as a separate
+        /// kind so the plain BombExplosion look is untouched for its other callers
+        /// (EnemyGreatAttack, the planted Red Knight standard bomb).
+        /// </summary>
+        BombExplosionLayered
     }
 
     public class RedKnightLungeHitbox : ModProjectile
@@ -89,14 +98,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         KnightStandardMode Mode => (KnightStandardMode)(int)Projectile.ai[2];
         int FlightTicks => Mode == KnightStandardMode.RedKnight ? 24 : 30;
-        int ChargeTicks => Mode switch
-        {
-            KnightStandardMode.RedKnight => 60,
-            KnightStandardMode.GreatCenter => 135,
-            _ => 75
-        };
+        // The Great modes are now thrown BACK TO BACK (see RedKnightAttackController.TickRoyalStandard)
+        // rather than all three at once, so each spear only gets a SHORT telegraph before its own
+        // shockwave rather than a long shared charge — otherwise the sequence reintroduces exactly
+        // the dead air the sequencing was meant to remove. RedKnight's single spear is unchanged.
+        int ChargeTicks => Mode == KnightStandardMode.RedKnight ? 60 : 26;
         Vector2 GroundPoint => new Vector2(Projectile.ai[0], Projectile.ai[1]);
-        Vector2 PlantedCenter => GroundPoint - new Vector2(0f, 15f);
+        // +5px versus the first pass: the spear was reading as hovering just above the floor
+        // instead of driven into it.
+        Vector2 PlantedCenter => GroundPoint - new Vector2(0f, 10f);
+        /// <summary>Where the flame's ground band sits — the same +5px down as the spear.</summary>
+        Vector2 FlameAnchor => GroundPoint + new Vector2(0f, 5f);
 
         public override void SetDefaults()
         {
@@ -110,6 +122,23 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
             Projectile.scale = 0.8f;
+            // Required for DrawBehind to be honoured; the projectile is drawn manually from the
+            // layer DrawBehind assigns it to instead of the default projectile pass.
+            Projectile.hide = true;
+        }
+
+        /// <summary>
+        /// Draw the planted spear (and its flame) BEHIND tiles, so it reads as physically driven
+        /// into the ground rather than pasted on top of it. Matches the repo's existing convention
+        /// for this — e.g. ArtoriasImpalingSword uses the same DrawBehind + Projectile.hide pair.
+        /// The flame rides the same layer, which is what we want: everything above the floor is in
+        /// open air and unoccluded, while the shader's new downward billow is naturally masked by
+        /// the floor it is burning against.
+        /// </summary>
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
+            List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCsAndTiles.Add(index);
         }
 
         public override bool ShouldUpdatePosition() => false;
@@ -154,7 +183,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             if (plantedAge == 0)
             {
                 PlaySound(SoundID.Dig with { Volume = 0.65f, Pitch = -0.15f }, GroundPoint);
-                SpawnBurst(RedKnightBurstKind.StandardImpact, GroundPoint, Mode == KnightStandardMode.RedKnight ? 0.75f : 1f);
+                float impactScale = Mode == KnightStandardMode.RedKnight ? 0.75f : 1f;
+                // Hardmode gets the DestinedDeathExplosion sheet + red/black dust; pre-hardmode
+                // keeps the original burst untouched.
+                if (!DestinedDeathExplosion.TrySpawn(Projectile.GetSource_FromThis(),
+                        GroundPoint, impactScale))
+                {
+                    SpawnBurst(RedKnightBurstKind.StandardImpact, GroundPoint, impactScale);
+                }
                 EmitPlantDust();
             }
             if (plantedAge == ChargeTicks)
@@ -221,15 +257,31 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             if (age < FlightTicks)
             {
                 Vector2 direction = (PlantedCenter - startPosition).SafeNormalize(Vector2.UnitY);
-                RedKnightVFX.DrawSpearWake(Projectile.Center - direction * 14f, direction.ToRotation(),
-                    new Vector2(66f, 15f), 0.44f, empowered: Mode != KnightStandardMode.RedKnight);
+                // Was RedKnightVFX.DrawSpearWake; now the shared Black Knight grey wake. The old
+                // `empowered` (non-RedKnight standards) becomes a larger, stronger quad.
+                bool empoweredStandard = Mode != KnightStandardMode.RedKnight;
+                EnemyVFX.DrawBlackKnightSpearWake(Projectile.Center - direction * 14f, direction.ToRotation(),
+                    empoweredStandard ? new Vector2(76f, 17f) : new Vector2(68f, 15f),
+                    empoweredStandard ? 0.56f : 0.48f);
+                DrawSpearSprite(lightColor);
+                return false;
             }
-            else
-            {
-                float progress = MathHelper.Clamp((age - FlightTicks) / (float)Math.Max(1, ChargeTicks), 0f, 1f);
-                RedKnightVFX.DrawStandardCharge(GroundPoint, progress, Mode);
-            }
-            return true;
+
+            // Order INVERTED versus the first pass: the spear sprite is drawn first and the flame
+            // over the top of it, so the fire engulfs the planted spear instead of the spear
+            // sitting flatly on top of its own flame.
+            DrawSpearSprite(lightColor);
+            float progress = MathHelper.Clamp((age - FlightTicks) / (float)Math.Max(1, ChargeTicks), 0f, 1f);
+            RedKnightVFX.DrawStandardCharge(FlameAnchor, progress, Mode);
+            return false;
+        }
+
+        void DrawSpearSprite(Color lightColor)
+        {
+            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null,
+                Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() * 0.5f,
+                Projectile.scale, SpriteEffects.None, 0f);
         }
 
         static void SpawnBurst(RedKnightBurstKind kind, Vector2 position, float scale)
@@ -252,12 +304,23 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
     public class RedKnightGroundWave : ModProjectile
     {
+        // The nominal size handed to the VFX helper; the helper scales this up into the actual quad.
+        static readonly Vector2 NominalVisual = new(54f, 20f);
+
         public override string Texture => "Terraria/Images/MagicPixel";
 
         public override void SetDefaults()
         {
-            Projectile.width = 44;
-            Projectile.height = 18;
+            // Hitbox is deliberately ~20% inside the VISIBLE flame in both axes, derived from the
+            // shader's own reach constants rather than eyeballed, so the fire always looks a little
+            // more dangerous than it is. Erring this way is always right (vfx-shader-tips §39): a
+            // visual that overruns its hitbox feels generous, the reverse feels like a bug.
+            float visibleWidth = RedKnightVFX.FlameReachWidth(
+                RedKnightVFX.GroundWaveQuadWidth(NominalVisual.X));
+            float visibleAbove = RedKnightVFX.FlameReachAbove(
+                RedKnightVFX.GroundWaveQuadHeight(NominalVisual.Y));
+            Projectile.width = Math.Max(8, (int)(visibleWidth * 0.8f));
+            Projectile.height = Math.Max(8, (int)(visibleAbove * 0.8f));
             Projectile.hostile = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 84;
@@ -268,16 +331,21 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void AI()
         {
+            float travelLimit = Math.Max(64f, Projectile.ai[0]);
             Projectile.localAI[0] += Math.Abs(Projectile.velocity.X);
-            if (Projectile.localAI[0] >= Math.Max(64f, Projectile.ai[0]))
+            if (Projectile.localAI[0] >= travelLimit)
             {
                 Projectile.Kill();
                 return;
             }
 
             float groundY = PuppetGroundDustWave.FindGroundY(Projectile.Center.X, Projectile.Center.Y + 9f);
+            // The flame's ground band sits on Projectile.Bottom, and the hitbox now sits entirely
+            // ABOVE that band (the shader's downward billow is decorative and carries no damage).
             Projectile.Center = new Vector2(Projectile.Center.X, groundY - Projectile.height * 0.5f);
             Lighting.AddLight(Projectile.Center, new Vector3(0.7f, 0.08f, 0.02f));
+
+            SpawnBlazes(Math.Min(Projectile.localAI[0] / travelLimit, 1f));
 
             if (!Main.dedServ && Main.rand.NextBool(3))
             {
@@ -289,10 +357,46 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             }
         }
 
+        /// <summary>
+        /// Decorative DestinedDeathBlaze sprites riding the wave. Density RAMPS with how far the
+        /// wave has travelled rather than being a fixed burst at t=0, and past ~65% of the run some
+        /// of them lift off instead of hugging the floor, so the tail of the attack builds into a
+        /// growing wall of flame rather than thinning out.
+        /// Client-side only: these carry no hitbox, so there is nothing to keep in sync.
+        /// </summary>
+        void SpawnBlazes(float travelProgress)
+        {
+            if (Main.dedServ || Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
+
+            // 1-in-9 at the start rising to 1-in-3 at full extent. Deliberately not denser than
+            // that: Royal Standard now fires up to six of these waves, and at a 46t blaze lifetime
+            // a 1-in-2 rate put ~140 decorative projectiles on screen at once.
+            int chance = Math.Max(3, (int)MathHelper.Lerp(9f, 3f, travelProgress));
+            if (!Main.rand.NextBool(chance))
+            {
+                return;
+            }
+
+            int direction = Projectile.velocity.X < 0f ? -1 : 1;
+            // Lift-off only near the end of the run, and only for some of them.
+            bool lifting = travelProgress > 0.65f && Main.rand.NextBool(2);
+            Vector2 spawn = Projectile.Bottom
+                + new Vector2(Main.rand.NextFloat(-26f, 26f), Main.rand.NextFloat(-4f, 3f));
+            Vector2 velocity = new(Projectile.velocity.X * Main.rand.NextFloat(0.55f, 0.95f),
+                Main.rand.NextFloat(-0.6f, 0.2f));
+
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, velocity,
+                ModContent.ProjectileType<DestinedDeathBlaze>(), 0, 0f, Main.myPlayer,
+                direction, lifting ? 1f : 0f);
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             float opacity = MathHelper.Clamp(Projectile.timeLeft / 12f, 0f, 1f);
-            RedKnightVFX.DrawGroundWave(Projectile.Bottom, Projectile.velocity, new Vector2(54f, 20f), opacity);
+            RedKnightVFX.DrawGroundWave(Projectile.Bottom, Projectile.velocity, NominalVisual, opacity);
             return false;
         }
     }
@@ -498,9 +602,34 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         public const int SealFillTicks = 90;
         public const int SealStart = NovaStart - SealFillTicks;
 
+        // -----------------------------------------------------------------------------------
+        // FINALE MODE (round 3). Crimson Dominion is now a permanent phase that ends only when
+        // the knight dies, so this controller has two jobs:
+        //
+        //   NORMAL mode  — unused by Great Red Knight now, but kept intact because the class is
+        //                  still a general containment-ring implementation and nothing about it
+        //                  had to change.
+        //   FINALE mode  — spawned from GreatRedKnight.CheckDead. Skips straight to the seal
+        //                  fill, so the sequence the player sees is exactly "circle fills, circle
+        //                  explodes" with no ring, no wall, and no arena-edge barrage.
+        //
+        // The mode rides on the SIGN-vs-MAGNITUDE of ai[0]: |ai[0]| == 2 means finale, anything
+        // else means normal, and RotationDirection only ever reads the sign — so all three ai
+        // slots keep their existing meanings and the flag syncs for free. Documented at both ends.
+        // -----------------------------------------------------------------------------------
+        public const int FinaleTotalTicks = SealFillTicks + NovaTicks + FadeTicks;
+
         public override string Texture => "Terraria/Images/MagicPixel";
 
-        int Age => TotalTicks - Projectile.timeLeft;
+        bool FinaleMode => Math.Abs(Projectile.ai[0]) >= 1.5f;
+
+        /// <summary>Age in NORMAL-mode timeline units. In finale mode the projectile lives only
+        /// FinaleTotalTicks, so its age is offset forward to land on SealStart — every existing
+        /// phase comparison below (and the whole draw path) then works unmodified.</summary>
+        int Age => FinaleMode
+            ? SealStart + (FinaleTotalTicks - Projectile.timeLeft)
+            : TotalTicks - Projectile.timeLeft;
+
         int RotationDirection => Projectile.ai[0] < 0f ? -1 : 1;
         float BaseRotation => Projectile.ai[1];
 
@@ -514,6 +643,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
+        }
+
+        // ai[] is not populated during SetDefaults, so finale mode's shorter lifetime has to be
+        // applied here.
+        public override void OnSpawn(IEntitySource source)
+        {
+            if (FinaleMode)
+            {
+                Projectile.timeLeft = FinaleTotalTicks;
+            }
         }
 
         public override bool ShouldUpdatePosition() => false;
@@ -579,6 +718,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override bool? CanDamage()
         {
+            // The finale nova DAMAGES, exactly as the mid-fight one does — reviewed and confirmed
+            // as intended. It is Great Red Knight's genuine last attack, not a cosmetic parting
+            // shot: the 90-tick seal fill is the telegraph, and getting clear of a 420px radius in
+            // ~1.5s is meant to be tight. A player who reads it lives; one who stands in it does
+            // not. Nothing special-cases FinaleMode here, so the phase windows below govern both
+            // modes identically (in finale mode `Age` is offset so only the nova window is ever
+            // reached — the containment window is already behind it at spawn).
             bool containmentActive = Age >= BuildTicks && Age < EscapeStart;
             bool novaActive = Age >= NovaStart && Age < FadeStart;
             return containmentActive || novaActive;
@@ -603,7 +749,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override bool PreDraw(ref Color lightColor)
         {
-            RedKnightVFX.DrawCrimsonDominion(Projectile.Center, Age, BaseRotation, RotationDirection);
+            RedKnightVFX.DrawCrimsonDominion(Projectile.Center, Age, BaseRotation, RotationDirection, FinaleMode);
             return false;
         }
 
@@ -627,6 +773,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
     public class RedKnightVFXBurst : ModProjectile
     {
+        const int DefaultLifetime = 24;
+        // Bomb detonations run 20t longer than the other bursts — a 0.4s explosion was over before
+        // the eye had resolved it. Impact bursts keep the original snappy 24t.
+        const int BombLifetime = DefaultLifetime + 20;
+
+        RedKnightBurstKind Kind => (RedKnightBurstKind)(int)Projectile.ai[0];
+
+        int Lifetime => Kind == RedKnightBurstKind.BombExplosion
+                || Kind == RedKnightBurstKind.BombExplosionLayered
+            ? BombLifetime
+            : DefaultLifetime;
+
         public override string Texture => "Terraria/Images/MagicPixel";
 
         public override void SetDefaults()
@@ -635,17 +793,24 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.height = 2;
             Projectile.hostile = false;
             Projectile.friendly = false;
-            Projectile.timeLeft = 24;
+            Projectile.timeLeft = DefaultLifetime;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+        }
+
+        // ai[] is not populated during SetDefaults, so the kind-dependent lifetime has to be applied
+        // here instead.
+        public override void OnSpawn(IEntitySource source)
+        {
+            Projectile.timeLeft = Lifetime;
         }
 
         public override bool ShouldUpdatePosition() => false;
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float progress = 1f - Projectile.timeLeft / 24f;
-            RedKnightVFX.DrawBurst((RedKnightBurstKind)(int)Projectile.ai[0], Projectile.Center,
+            float progress = 1f - Projectile.timeLeft / (float)Lifetime;
+            RedKnightVFX.DrawBurst(Kind, Projectile.Center,
                 progress, Projectile.ai[1] <= 0f ? 1f : Projectile.ai[1]);
             return false;
         }

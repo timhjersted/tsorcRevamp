@@ -145,6 +145,7 @@ static class Preview
     {
         MacroSampler = new Tex("T_Noise_6Yu1");
         DetailSampler = new Tex("Turbulence_07-512x512");
+        CrimsonFlowSampler = new Tex("Turbulence_05-512x512");
     }
 
     // Palettes, copied from the C# helper.
@@ -158,7 +159,7 @@ static class Preview
     static (V3, float) DestinedDeathFlame(V2 uv, float Time, float Progress, float Opacity,
         float Intensity, float Direction)
     {
-        float rise = 1.0f - uv.y;
+        const float GroundLine = 0.74f, InvAbove = 1.351f, InvBelow = 3.846f;
         float x = uv.x + Direction * 0.137f;
 
         float macroN = MacroSampler.R(new V2(x * 2.90f - Time * 0.13f, uv.y * 1.05f - Time * 0.62f));
@@ -167,18 +168,23 @@ static class Preview
         float shape = sat(macroN * 1.30f - 0.18f);
         float fire = sat(macroN * 0.70f + fineN * 0.52f - 0.10f);
 
-        float span = sat(uv.x * 7.0f) * sat((1.0f - uv.x) * 7.0f);
-        float surge = 0.42f + sat(MathF.Min(Progress * 5.0f, (1.06f - Progress) * 3.2f) * span) * 0.58f;
-        float reach = span * (0.30f + shape * 0.54f) * surge;
-        float baseFade = sat(rise * 40.0f);
-        float body = sat((reach - rise) * 6.5f) * span * baseFade;
+        float endT = sat(uv.x * 2.6f) * sat((1.0f - uv.x) * 2.6f);
+        float span = endT * endT * sat(endT * 2.2f + shape * 0.9f - 0.28f);
+        float surge = 0.42f + Progress * 0.58f;
+
+        float d = uv.y - GroundLine;
+        float t = sat(-d * InvAbove) + sat(d * InvBelow);
+        float belowScale = 1.0f - sat(d * 400.0f) * 0.4f;
+        float reach = (0.30f + shape * 0.54f) * belowScale * (0.32f + span * 0.68f) * surge;
+        float body = sat((reach - t) * 6.5f) * span;
 
         float ember = sat(fire * 1.45f - 0.34f);
-        float core = sat((reach * 0.46f - rise) * 8.0f) * span * baseFade * sat(fire * 1.30f - 0.42f);
+        float core = sat((reach * 0.46f - t) * 8.0f) * span * ember;
 
-        float alpha = sat(body * (0.82f + ember * 0.22f)) * Opacity;
+        float emit = Opacity * Intensity;
+        float alpha = sat(body * 0.94f) * Opacity;
         V3 rgb = lerp(FlameDark, FlameMid, ember * ember) * alpha
-            + (FlameMid * (body * ember * 0.46f) + FlameCore * (core * 0.85f)) * (Opacity * Intensity);
+            + (FlameMid * (body * ember * 0.46f) + FlameCore * (core * 0.85f)) * emit;
         return (rgb, alpha);
     }
 
@@ -294,6 +300,90 @@ static class Preview
         return (rgb, alpha);
     }
 
+    // ---- Effects/RedKnightCrimsonVFX.fx : BombBlastPixel ------------------------------------
+    // Samplers per RedKnightVFX.DrawCrimsonQuad: s1 = Turbulence_05-512x512 (FlowSampler),
+    // s2 = Grainy_07-512x512 (DetailSampler). BombBlastPixel only uses FlowSampler.
+    static Tex CrimsonFlowSampler;
+
+    static (V3, float) BombBlast(V2 uv, float Time, float Progress, float Opacity,
+        V3 DarkColor, V3 MidColor, V3 CoreColor)
+    {
+        V2 p = (uv - 0.5f) * 2.0f;
+        float broad = CrimsonFlowSampler.R(uv * 2.35f + new V2(-Time * 0.22f, Time * 0.17f));
+
+        float eased = Progress * (2.0f - Progress);
+        float radius = 0.12f + (0.92f - 0.12f) * eased;
+        float distortedDistance = length(p) + (broad - 0.5f) * 0.19f;
+        float body = sat((radius - distortedDistance) * 5.9f);
+        float rollingEdge = sat(1.0f - abs(distortedDistance - radius + 0.05f) * 7.0f)
+            * sat(broad * 1.2f - 0.2f);
+        float core = sat((radius * 0.46f - distortedDistance) * 6.2f) * (1.0f - Progress * 0.55f);
+
+        V3 color = lerp(DarkColor, MidColor, sat(body * 0.68f + rollingEdge * 0.54f));
+        color = lerp(color, CoreColor, core);
+        float energy = body * (0.52f + broad * 0.48f) + rollingEdge * 0.86f + core * 1.18f;
+        float alpha = sat(body * 0.70f + rollingEdge * 0.82f + core) * Opacity * (1.0f - Progress * 0.78f);
+        return (color * energy, alpha);
+    }
+
+    /// The three-shell BombExplosionLayered composite from RedKnightVFX.DrawBurst, resolved in
+    /// PANEL space so the real anchor offsets are exercised. DrawCrimsonQuad anchors each quad at
+    /// its BOTTOM-CENTRE, so a quad of height H is centred H/2 above the point passed in; the
+    /// caller shifts each shell by (H - diameter)/2 to keep them concentric. All layers are
+    /// BlendState.Additive (DrawCrimsonQuad hardcodes it).
+    /// `layered == false` renders only the core, i.e. the old single-quad look, for A/B.
+    static (V3, float) BombLayeredComposite(V2 panelUV, float Time, float Progress, bool layered)
+    {
+        const float diameter = 132f;
+        float outerW = diameter * 1.38f, outerH = outerW * 0.92f;   // 182.2 x 167.6
+        float innerW = diameter * 0.66f, innerH = innerW * 1.08f;   //  87.1 x  94.1
+
+        // Panel spans the widest shell; its centre is the shared visual centre of all three.
+        float panelW = outerW, panelH = outerH;
+        V2 d = new((panelUV.x - 0.5f) * panelW, (panelUV.y - 0.5f) * panelH);
+
+        // Accumulate back-to-front in PREMULTIPLIED space, then hand the result to the harness as a
+        // single premultiplied-alpha panel. Two different blend contracts are in play, matching the
+        // real call:
+        //   - an AlphaBlend layer OCCLUDES:  acc.rgb = src.rgb + acc.rgb*(1-src.a);
+        //                                    acc.a   = src.a   + acc.a  *(1-src.a)
+        //   - an Additive layer only ADDS:   acc.rgb += src.rgb * src.a;  acc.a unchanged
+        V3 rgb = new(0, 0, 0);
+        float acc = 0f;
+
+        (V3, float) Layer(float w, float h, float dx, float layerProgress, float opacity,
+            V3 dark, V3 mid, V3 core)
+        {
+            V2 luv = new((d.x - dx) / w + 0.5f, d.y / h + 0.5f);
+            if (luv.x < 0f || luv.x > 1f || luv.y < 0f || luv.y > 1f) return (new V3(0, 0, 0), 0f);
+            return BombBlast(luv, Time, layerProgress, opacity, dark, mid, core);
+        }
+
+        if (layered)
+        {
+            // OUTER shell — BlendState.AlphaBlend, premultiplied. This is the occluding one.
+            var (oc, oa) = Layer(outerW, outerH, 0f, sat(Progress + 0.14f), 0.72f,
+                C(14, 1, 5), C(104, 12, 12), C(190, 70, 28));
+            rgb = oc + rgb * (1f - oa);
+            acc = oa + acc * (1f - oa);
+        }
+        {
+            // CORE — Additive, unchanged from the original single-quad blast.
+            var (cc, ca) = Layer(diameter, diameter, 0f, Progress, 0.96f,
+                C(30, 0, 12), C(244, 42, 25), C(255, 164, 78));
+            rgb = rgb + cc * ca;
+        }
+        if (layered && Progress > 0.18f)
+        {
+            // INNER late puff — Additive.
+            var (ic, ia) = Layer(innerW, innerH, 2f, sat((Progress - 0.18f) / 0.82f), 0.72f,
+                C(24, 0, 10), C(244, 42, 25), C(255, 164, 78));
+            rgb = rgb + ic * ia;
+        }
+
+        return (rgb, acc);
+    }
+
     static Panel[] Panels() => FocusPanels ?? AllPanels();
 
     // Set from Main via the FOCUS env var to render a single technique big.
@@ -304,17 +394,17 @@ static class Preview
         // EXACT sizes the call sites pass. DrawGroundWave body pass = 102x42, crest = 64x58;
         // DrawStandardCharge (empowered, full charge) = 128x96; DrawDominionEngulf at NPC.scale
         // 1.15 = 110x124. Aspect matters — a technique tuned at 1:1 falls apart at the real one.
-        new Panel("Wave body P=.55", 102, 42, Blend.PremultipliedAlpha,
+        new Panel("Wave body P=.55", 151, 56, Blend.PremultipliedAlpha,
             c => DestinedDeathFlame(c, 3.7f, 0.55f, 0.9f, 0.9f, 1.7f)),
-        new Panel("Wave crest P=.7", 64, 58, Blend.PremultipliedAlpha,
+        new Panel("Wave crest P=.7", 94, 78, Blend.PremultipliedAlpha,
             c => DestinedDeathFlame(c, 3.7f, 0.7f, 1f, 1.15f, -0.8f)),
-        new Panel("Standard charge P=.67", 128, 96, Blend.PremultipliedAlpha,
-            c => DestinedDeathFlame(c, 6.4f, 0.67f, 0.98f, 1.2f, 1.3f)),
-        new Panel("Standard charge P=.05", 128, 96, Blend.PremultipliedAlpha,
+        new Panel("Standard charge P=1", 190, 130, Blend.PremultipliedAlpha,
+            c => DestinedDeathFlame(c, 6.4f, 1f, 0.98f, 1.2f, 1.3f)),
+        new Panel("Standard charge P=.05", 190, 130, Blend.PremultipliedAlpha,
             c => DestinedDeathFlame(c, 6.4f, 0.05f, 0.30f, 1.2f, 1.3f)),
-        new Panel("Dominion engulf P=.5", 110, 124, Blend.PremultipliedAlpha,
+        new Panel("Dominion engulf P=.5", 161, 161, Blend.PremultipliedAlpha,
             c => DestinedDeathFlame(c, 9.1f, 0.5f, 0.95f, 1.15f, 0f)),
-        new Panel("Engulf side P=.62", 60, 159, Blend.PremultipliedAlpha,
+        new Panel("Engulf side P=.62", 90, 202, Blend.PremultipliedAlpha,
             c => DestinedDeathFlame(c, 9.1f, 0.62f, 0.76f, 1.3f, 2.9f)),
 
         new Panel("Seal P=0.15", 190, 190, Blend.PremultipliedAlpha,
@@ -354,6 +444,46 @@ static class Preview
     static void Main()
     {
         LoadTextures();
+        if (Environment.GetEnvironmentVariable("FOCUS") == "wall")
+        {
+            // The wall/shockwave sizes after the widening that the softer end-taper needs.
+            FocusPanels = new[]
+            {
+                new Panel("Wave body P=.55", 152, 78, Blend.PremultipliedAlpha,
+                    c => DestinedDeathFlame(c, 3.7f, 0.55f, 0.9f, 0.9f, 1.7f)),
+                new Panel("Wave crest P=.7", 96, 96, Blend.PremultipliedAlpha,
+                    c => DestinedDeathFlame(c, 4.9f, 0.7f, 1f, 1.15f, -0.8f)),
+                new Panel("Charge P=.67", 190, 130, Blend.PremultipliedAlpha,
+                    c => DestinedDeathFlame(c, 6.4f, 0.67f, 0.98f, 1.2f, 1.3f)),
+                new Panel("Charge P=.05", 190, 130, Blend.PremultipliedAlpha,
+                    c => DestinedDeathFlame(c, 6.4f, 0.05f, 0.4f, 1.2f, 1.3f)),
+                new Panel("Engulf P=.5", 140, 150, Blend.PremultipliedAlpha,
+                    c => DestinedDeathFlame(c, 9.1f, 0.5f, 0.95f, 1.15f, 0f)),
+                new Panel("Engulf P=.95", 140, 150, Blend.PremultipliedAlpha,
+                    c => DestinedDeathFlame(c, 12.3f, 0.95f, 0.95f, 1.15f, 0f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "bomb")
+        {
+            // A/B for RedKnightBurstKind.BombExplosionLayered. Top row = the old single quad,
+            // bottom row = the three-shell layered composite, at matched Progress values across
+            // the bomb's 44-tick life. Panel is the widest shell's footprint (182x168).
+            FocusPanels = new[]
+            {
+                new Panel("OLD single P=.10", 182, 168, Blend.PremultipliedAlpha,
+                    c => BombLayeredComposite(c, 5.2f, 0.10f, layered: false)),
+                new Panel("OLD single P=.40", 182, 168, Blend.PremultipliedAlpha,
+                    c => BombLayeredComposite(c, 5.6f, 0.40f, layered: false)),
+                new Panel("OLD single P=.75", 182, 168, Blend.PremultipliedAlpha,
+                    c => BombLayeredComposite(c, 6.1f, 0.75f, layered: false)),
+                new Panel("NEW layered P=.10", 182, 168, Blend.PremultipliedAlpha,
+                    c => BombLayeredComposite(c, 5.2f, 0.10f, layered: true)),
+                new Panel("NEW layered P=.40", 182, 168, Blend.PremultipliedAlpha,
+                    c => BombLayeredComposite(c, 5.6f, 0.40f, layered: true)),
+                new Panel("NEW layered P=.75", 182, 168, Blend.PremultipliedAlpha,
+                    c => BombLayeredComposite(c, 6.1f, 0.75f, layered: true)),
+            };
+        }
         if (Environment.GetEnvironmentVariable("FOCUS") == "herald")
         {
             FocusPanels = new[]

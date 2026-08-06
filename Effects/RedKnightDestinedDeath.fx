@@ -35,12 +35,18 @@ float2 DrawSize;
 
 // ---------------------------------------------------------------------------------------------
 // 1. Destined Death flame — the general-purpose black+red flame body.
-//    Bottom-anchored: uv.y == 1 is the ground line / the caster's feet, uv.y == 0 is the tip.
+//    BAND-anchored, Marilith-style: the fire burns off a horizontal band at uv.y == GroundLine,
+//    climbing TALL above it and billowing SHORT below it. The band, not the quad's bottom edge, is
+//    the ground line — so the caller places GroundLine on the floor and the flame licks over it in
+//    both directions instead of being sliced flat.
 //    Used by the Royal / Crimson Standard ground shockwaves AND by Crimson Dominion's body engulf.
 // ---------------------------------------------------------------------------------------------
+#define GroundLine 0.74
+#define InvAbove   1.351   // 1 / GroundLine
+#define InvBelow   3.846   // 1 / (1 - GroundLine)
+
 float4 DestinedDeathFlamePixel(float2 uv : TEXCOORD0) : COLOR0
 {
-    float rise = 1.0 - uv.y;
     float x = uv.x + Direction * 0.137;   // Direction doubles as a per-instance phase offset
 
     // HIGH sampling frequency across the column, LOW up it, so noise features elongate VERTICALLY
@@ -52,33 +58,51 @@ float4 DestinedDeathFlamePixel(float2 uv : TEXCOORD0) : COLOR0
     float shape = saturate(macroN * 1.30 - 0.18);              // macro only -> silhouette
     float fire = saturate(macroN * 0.70 + fineN * 0.52 - 0.10); // combined  -> colour detail
 
-    // span is 0 at both side edges. reach maxes at 1 * (0.30 + 0.54) * 1.0 = 0.84 < 1.0, and the
-    // baseFade term is 0 at uv.y == 1. So `body` provably reaches zero before ALL FOUR quad edges
-    // no matter what the noise does (§31 / §47) — nothing here can paint the boundary.
-    float span = saturate(uv.x * 7.0) * saturate((1.0 - uv.x) * 7.0);
+    // Long, noise-eroded taper at BOTH ends. The old span reached full strength within 14% of the
+    // quad width, which read in game as a hard vertical cliff where the fire started and stopped.
+    // `endT` now ramps over ~38% a side, is squared for a smooth shoulder, and is then chewed by
+    // the macro layer so the ends are ragged rather than geometric. endT is 0 at uv.x 0 and 1, so
+    // `span` provably is too whatever the noise does — the cutoff is kept, only softened (§31/§47).
+    float endT = saturate(uv.x * 2.6) * saturate((1.0 - uv.x) * 2.6);
+    float span = endT * endT * saturate(endT * 2.2 + shape * 0.9 - 0.28);
 
-    // Smooth in and out; never a hard pop at either end of the effect's life. NOTE the `* span`:
-    // the D3DX EFFECT compiler cannot compile a saturate() whose argument is purely uniform, and
-    // reports it as a bogus "error compiling expression" on the technique line (vfx-pipeline §2).
-    // Folding the per-pixel `span` in both dodges that and is a slot cheaper than two saturates.
-    float surge = 0.42 + saturate(min(Progress * 5.0, (1.06 - Progress) * 3.2) * span) * 0.58;
-    float reach = span * (0.30 + shape * 0.54) * surge;
-    float baseFade = saturate(rise * 40.0);
-    float body = saturate((reach - rise) * 6.5) * span * baseFade;
+    // Callers clamp Progress to 0..1 and drive their own fade via Opacity (§37), so this only has
+    // to ramp UP — the two-sided saturate/min envelope it replaced cost four slots for a fade-out
+    // no call site relied on, and this technique is the tightest in the file.
+    float surge = 0.42 + Progress * 0.58;
+
+    // `above` and `below` are each zero on the far side of the band, so their SUM is the normalised
+    // distance from the band in whichever direction this pixel lies — no branch, no lerp needed.
+    float d = uv.y - GroundLine;
+    float t = saturate(-d * InvAbove) + saturate(d * InvBelow);
+    // reach maxes at 0.84 above the band and 0.6 * 0.84 = 0.50 below it, both < 1.0, and `t` reaches
+    // exactly 1.0 at the top and bottom quad edges — so `body` provably hits zero before both of
+    // them. `span` is 0 at the two side edges and multiplies `body` directly, so all four edges are
+    // covered with no noise term able to drag alpha back above zero at the boundary (§31 / §47).
+    // The downward reach is expressed as a SCALE of the upward one rather than as its own
+    // shape-driven expression; that is two slots cheaper and keeps the asymmetry explicit.
+    float belowScale = 1.0 - saturate(d * 400.0) * 0.4;
+    // `(0.32 + span * 0.68)` rather than a bare `span`: a bare span made the wall a MOUND, tall in
+    // the middle and flat at the ends.
+    float reach = (0.30 + shape * 0.54) * belowScale * (0.32 + span * 0.68) * surge;
+    float body = saturate((reach - t) * 6.5) * span;
 
     // Black flame vs red flame. Noise is the SMALLER half of the ember term (§46) so the fire
     // undulates instead of speckling; everything the ember term does not claim stays sooty and
     // OCCLUDES, which is what makes the black read as black rather than as a dark tint.
     float ember = saturate(fire * 1.45 - 0.34);
-    float core = saturate((reach * 0.46 - rise) * 8.0) * span * baseFade
-        * saturate(fire * 1.30 - 0.42);
+    // The hot core sits ON the band (t == 0 there), which is where a real flame is hottest.
+    // Shares `ember` as its noise modulation rather than ramping a second saturate off `fire` —
+    // visually interchangeable, two slots cheaper, and this technique is the file's tightest (§50).
+    float core = saturate((reach * 0.46 - t) * 8.0) * span * ember;
 
     // NOTE: the emissive term MUST be gated by `body`. An ungated `MidColor * ember` is non-zero
     // everywhere in the quad, and under premultiplied alpha that paints a flat tinted rectangle
     // exactly the size of the draw quad wherever alpha is 0 (§43). Caught in the first preview.
-    float alpha = saturate(body * (0.82 + ember * 0.22)) * Opacity;
+    float emit = Opacity * Intensity;   // one scalar multiply instead of three per-channel ones
+    float alpha = saturate(body * 0.94) * Opacity;
     float3 rgb = lerp(DarkColor, MidColor, ember * ember) * alpha
-        + (MidColor * body * ember * 0.46 + CoreColor * core * 0.85) * Opacity * Intensity;
+        + (MidColor * (body * ember * 0.46) + CoreColor * (core * 0.85)) * emit;
     return float4(rgb, alpha);
 }
 

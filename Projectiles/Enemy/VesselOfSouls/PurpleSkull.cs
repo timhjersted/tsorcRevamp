@@ -42,6 +42,32 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
 
         public override void AI()
         {
+            // Initial velocity 30% slower on spawn, ramping up to full speed over the first 30 ticks
+            if (Projectile.localAI[1] == 0f)
+            {
+                float initialSpeed = Projectile.velocity.Length();
+                if (initialSpeed > 0.001f)
+                {
+                    Projectile.localAI[1] = initialSpeed; // full target speed
+                    Projectile.velocity *= 0.7f;          // 30% slower initial velocity
+                }
+                else
+                {
+                    Projectile.localAI[1] = 1f;
+                }
+            }
+
+            if (Projectile.timeLeft > 330) // first 30 ticks of lifetime
+            {
+                float targetSpeed = Projectile.localAI[1];
+                float currentSpeed = Projectile.velocity.Length();
+                if (currentSpeed > 0.001f && currentSpeed < targetSpeed)
+                {
+                    float nextSpeed = MathHelper.Lerp(currentSpeed, targetSpeed, 0.08f);
+                    Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * nextSpeed;
+                }
+            }
+
             // Spin animation
             if (++Projectile.frameCounter >= 6)
             {

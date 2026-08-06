@@ -17,21 +17,23 @@ float4 Seal(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
     float n2 = tex2D(PrimarySampler, dir * (0.25 - r * 0.14) + float2(0.5 - Time * 0.024, 0.5 + Time * 0.019)).r;
     float rot = saturate(n1 * 0.85 + n2 * 0.60 - 0.24);
 
-    float radius = lerp(0.42, 0.26, Progress);
-    float rim = saturate((0.045 - abs(r - radius)) * 24.0) * (0.40 + rot * 0.80);
-    float teeth = saturate((0.13 - abs(r - radius)) * 8.0) * saturate(rot * 2.0 - 0.85);
-    float haze = saturate((radius - r) * 4.0) * (0.16 + rot * 0.34);
+    float radius = lerp(0.38, 0.24, Progress);
+    float dist = abs(r - radius);
 
-    float f = saturate((0.5 - r) * 7.0);
-    f *= f;
-    rim *= f;
-    teeth *= f;
-    haze *= f;
+    // Blurry, soft feathered radial glow — no hard step edges
+    float softGlow = smoothstep(0.24, 0.0, dist) * (0.35 + rot * 0.65);
+    float softCenter = smoothstep(radius, 0.0, r) * (0.20 + rot * 0.30);
 
-    float body = saturate(haze + teeth * 0.7);
+    float f = smoothstep(0.5, 0.05, r);
+    softGlow *= f;
+    softCenter *= f;
+
+    float body = saturate(softCenter + softGlow * 0.7);
     float3 color = lerp(DarkColor, MidColor, body);
-    color = lerp(color, CoreColor, saturate(rim * 1.2));
-    return float4(color * (body * 0.70 + rim * 1.30), saturate(body * 0.85 + rim) * Opacity) * v;
+    color = lerp(color, CoreColor, softGlow * softGlow);
+
+    float alpha = saturate(body * 0.85 + softGlow * 0.5) * Opacity;
+    return float4(color * alpha, alpha) * v;
 }
 
 // Trail behind the live crystal. Procedural comet: a head bulge with a wake tapering off behind it.

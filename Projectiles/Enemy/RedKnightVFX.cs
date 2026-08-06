@@ -86,16 +86,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             muzzleTwo ??= ModContent.Request<Texture2D>(ParticleRoot + "muzzle_02_a", AssetRequestMode.ImmediateLoad);
         }
 
-        internal static void DrawSpearWake(Vector2 center, float rotation, Vector2 size, float opacity, bool empowered)
-        {
-            Vector2 wakeSize = new(Math.Min(size.X, 82f), Math.Min(size.Y, 18f));
-            DrawCrimsonQuad("RedKnightSpearWake", center, rotation, wakeSize,
-                Math.Min(opacity, empowered ? 0.58f : 0.48f),
-                new Color(20, 23, 28),
-                empowered ? new Color(176, 188, 202) : new Color(142, 151, 162),
-                empowered ? new Color(248, 252, 255) : new Color(224, 231, 238),
-                0.45f, empowered ? 0.92f : 0.72f, 1f, 1f);
-        }
+        // DrawSpearWake was deleted (round 3): every Red Knight family spear swing/throw now calls
+        // EnemyVFX.DrawBlackKnightSpearWake instead, the generic grey displaced-air wake. The
+        // `RedKnightSpearWake` *technique* in RedKnightCrimsonVFX.fx is deliberately KEPT — the
+        // Ultrakill gather (DrawUltrakillGather, below) still uses it for its inward crimson
+        // filament streaks, which is what that technique is actually good at (§35).
 
         /// <summary>
         /// The travelling flame shockwave a planted standard throws out. Was RedKnightGroundMiasma,
@@ -103,11 +98,18 @@ namespace tsorcRevamp.Projectiles.Enemy
         /// Death black+red flame, two overlapping instances at different phases and speeds so the
         /// wave churns instead of translating rigidly.
         /// </summary>
+        /// <summary>The quad width the wave draws, given its caller's nominal size. Public so the
+        /// projectile can inset its hitbox from the same number rather than duplicating it.</summary>
+        internal static float GroundWaveQuadWidth(float nominalWidth) => Math.Max(nominalWidth, 40f) * 2.8f;
+        internal static float GroundWaveQuadHeight(float nominalHeight) => Math.Max(nominalHeight, 16f) * 3.9f;
+
         internal static void DrawGroundWave(Vector2 groundPoint, Vector2 velocity, Vector2 size, float opacity)
         {
             int direction = velocity.X < 0f ? -1 : 1;
-            float width = Math.Max(size.X, 40f) * 1.9f;
-            float height = Math.Max(size.Y, 16f) * 2.9f;
+            // Widened over the first pass: the shader's end taper now feathers away the outer ~38%
+            // of each side, so the quad has to be bigger to leave the same amount of visible fire.
+            float width = GroundWaveQuadWidth(size.X);
+            float height = GroundWaveQuadHeight(size.Y);
             // Two passes: a wide low body and a narrower taller crest slightly ahead of it. Their
             // phases differ so they never sample the same noise and read as one flat stamp (§33).
             DrawDestinedDeathFlame(groundPoint, new Vector2(width, height * 0.72f),
@@ -119,8 +121,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         internal static void DrawStandardCharge(Vector2 groundPoint, float progress, KnightStandardMode mode)
         {
             bool empowered = mode != KnightStandardMode.RedKnight;
-            float width = MathHelper.Lerp(46f, empowered ? 128f : 100f, progress);
-            float height = MathHelper.Lerp(30f, empowered ? 96f : 76f, progress);
+            // Widened/heightened alongside the shader's softer end taper (see DrawGroundWave).
+            float width = MathHelper.Lerp(66f, empowered ? 190f : 148f, progress);
+            float height = MathHelper.Lerp(42f, empowered ? 130f : 104f, progress);
             float opacity = MathHelper.Lerp(0.22f, empowered ? 0.98f : 0.86f, progress);
 
             // Charge ramps the flame up in place: `progress` also drives the shader's own envelope,
@@ -163,8 +166,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                 progress, active, fade, phase);
         }
 
+        /// <param name="finale">
+        /// True when this is Great Red Knight's DEATH sequence rather than the mid-fight
+        /// containment attack. The seal-fill and blast below are drawn identically (the finale
+        /// replays exactly the same `age` window, SealStart→TotalTicks, so every Progress and fade
+        /// value the shader sees is unchanged) — but the containment FIELD and EDGE must not draw,
+        /// or a half-opaque arena wall would appear out of nowhere for the finale's first 90 ticks.
+        /// </param>
         internal static void DrawCrimsonDominion(Vector2 center, int age, float baseRotation,
-            int rotationDirection)
+            int rotationDirection, bool finale = false)
         {
             LoadAssets();
             if (Main.dedServ || dominionEffect == null)
@@ -201,7 +211,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 edgeOpacity = MathHelper.Lerp(0.9f, 0.22f, escape);
             }
 
-            if (age < CrimsonDominionController.NovaStart)
+            if (!finale && age < CrimsonDominionController.NovaStart)
             {
                 DrawDominionQuad("DominionField", center, Vector2.One * coverage, 0f,
                     fieldOpacity, 1f, 0f, 0.88f, radiusRatio, rotationDirection, BlendState.NonPremultiplied);
@@ -262,14 +272,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (front)
             {
                 DrawDestinedDeathFlame(feet + new Vector2(-6f * scale, 0f),
-                    new Vector2(58f, 118f) * scale, 0.58f, opacity, 1.25f, 5.1f);
+                    new Vector2(86f, 150f) * scale, 0.58f, opacity, 1.25f, 5.1f);
                 return;
             }
-            DrawDestinedDeathFlame(feet, new Vector2(96f, 108f) * scale, 0.5f, opacity, 1.15f, 0f);
+            DrawDestinedDeathFlame(feet, new Vector2(140f, 140f) * scale, 0.5f, opacity, 1.15f, 0f);
             DrawDestinedDeathFlame(feet + new Vector2(-14f * scale, 0f),
-                new Vector2(52f, 138f) * scale, 0.62f, opacity * 0.8f, 1.3f, 2.9f);
+                new Vector2(78f, 176f) * scale, 0.62f, opacity * 0.8f, 1.3f, 2.9f);
             DrawDestinedDeathFlame(feet + new Vector2(15f * scale, 0f),
-                new Vector2(46f, 124f) * scale, 0.44f, opacity * 0.8f, 1.25f, -3.4f);
+                new Vector2(70f, 160f) * scale, 0.44f, opacity * 0.8f, 1.25f, -3.4f);
         }
 
         internal static void DrawToxicMotes(Vector2 center, int count, float progress, float radius)
@@ -389,7 +399,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         internal static void DrawBurst(RedKnightBurstKind kind, Vector2 center, float progress, float scale)
         {
-            if (kind != RedKnightBurstKind.BombExplosion)
+            if (kind != RedKnightBurstKind.BombExplosion
+                && kind != RedKnightBurstKind.BombExplosionLayered)
             {
                 bool empowered = kind == RedKnightBurstKind.StandardImpact || scale >= 1f;
                 float envelope = (1f - progress) * (empowered ? 0.96f : 0.78f);
@@ -400,10 +411,57 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             float diameter = 132f * scale;
+
+            // NOTE on geometry: DrawCrimsonQuad's origin is the quad's BOTTOM-CENTRE (see its
+            // EntitySpriteDraw call), so a quad of height H has its visual centre H/2 ABOVE the
+            // point passed in, and any non-zero rotation pivots the whole quad about that bottom
+            // edge rather than spinning it in place. Layers therefore (a) shift their anchor by
+            // (H - diameter) / 2 to keep every shell concentric with the core, and (b) all pass
+            // rotation 0. Noise decorrelation between the shells comes from their different quad
+            // sizes (uv is normalised per quad, so 2.35 tiles spans a different world distance in
+            // each) plus their different Progress values, not from a rotation.
+
+            // BombExplosionLayered draws an extra OUTER shell first, behind the core: bigger, and
+            // ~0.14 further along the shader's own expansion curve, so it is always the wider,
+            // fainter, faster front (RedKnightBombBlast grows and fades with Progress by design).
+            //
+            // It is the ONLY layer drawn with premultiplied AlphaBlend rather than Additive, and
+            // that is the point of it. The offline preview showed the plain additive blast clipping
+            // to a featureless white disc against Terraria's daytime sky (§43) — no amount of extra
+            // additive energy can fix that, it only makes the white bigger. This shell OCCLUDES
+            // instead, giving the detonation a sooty dark rim that survives on a bright background
+            // and gives the hot additive core something to sit inside.
+            if (kind == RedKnightBurstKind.BombExplosionLayered)
+            {
+                float outerProgress = MathHelper.Clamp(progress + 0.14f, 0f, 1f);
+                float outerWidth = diameter * 1.38f;
+                float outerHeight = outerWidth * 0.92f;
+                DrawCrimsonQuad("RedKnightBombBlast",
+                    center + new Vector2(0f, (outerHeight - diameter) * 0.5f), 0f,
+                    new Vector2(outerWidth, outerHeight), 0.72f,
+                    new Color(14, 1, 5), new Color(104, 12, 12), new Color(190, 70, 28),
+                    outerProgress, 0.82f, 1f, 0f, BlendState.AlphaBlend);
+            }
+
             DrawCrimsonQuad("RedKnightBombBlast", center, 0f,
                 new Vector2(diameter, diameter), 0.96f,
                 new Color(30, 0, 12), GreatFlame, GreatCore,
                 progress, 1f, 1f, 0f);
+
+            // ...and a third, small, LATE-starting hot puff over the core. It lags the core by 0.18
+            // so the detonation keeps evolving through its longer 44-tick life instead of being
+            // visually finished after the first few frames.
+            if (kind == RedKnightBurstKind.BombExplosionLayered && progress > 0.18f)
+            {
+                float innerProgress = MathHelper.Clamp((progress - 0.18f) / 0.82f, 0f, 1f);
+                float innerWidth = diameter * 0.66f;
+                float innerHeight = innerWidth * 1.08f;
+                DrawCrimsonQuad("RedKnightBombBlast",
+                    center + new Vector2(2f * scale, (innerHeight - diameter) * 0.5f), 0f,
+                    new Vector2(innerWidth, innerHeight), 0.72f,
+                    new Color(24, 0, 10), GreatFlame, GreatCore,
+                    innerProgress, 1.15f, 1f, 0f);
+            }
 
             if (progress < 0.16f)
             {
@@ -560,9 +618,19 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
+        /// <param name="blendState">
+        /// Defaults to Additive, which is what every pre-existing caller of this helper was getting
+        /// when the blend was hardcoded — so passing nothing is a no-op for all of them. Pass
+        /// BlendState.AlphaBlend for a shell that has to OCCLUDE: additive physically cannot make a
+        /// dark or saturated colour over Terraria's daytime sky (~0.6, 0.75, 0.9) — anything bright
+        /// enough to see clips to white (vfx-shader-tips §43). Every technique in
+        /// RedKnightCrimsonVFX.fx already returns `colour * <density term>`, i.e. premultiplied, so
+        /// they are all safe to draw alpha-blended without touching the HLSL.
+        /// </param>
         static void DrawCrimsonQuad(string techniqueName, Vector2 center, float rotation, Vector2 size,
             float opacity, Color darkColor, Color midColor, Color coreColor,
-            float progress, float intensity, float direction, float tailStrength)
+            float progress, float intensity, float direction, float tailStrength,
+            BlendState blendState = null)
         {
             LoadAssets();
             if (Main.dedServ || crimsonEffect == null || turbulentNoise == null || grainNoise == null
@@ -572,7 +640,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, blendState ?? BlendState.Additive, SamplerState.LinearWrap,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
@@ -779,11 +847,31 @@ namespace tsorcRevamp.Projectiles.Enemy
         /// </summary>
         /// <param name="phase">Per-instance sampling offset so adjacent flames are not one stamp
         /// repeated (§33). Any value works; neighbouring callers should differ by ~1.</param>
+        /// <summary>
+        /// Fraction of the flame quad that sits ABOVE the ground band. Must stay in lockstep with
+        /// <c>GroundLine</c> in RedKnightDestinedDeath.fx — the shader burns fire off that band in
+        /// both directions, so the quad is anchored on it rather than on its own bottom edge.
+        /// Anything that wants to know how far the flame visually reaches should go through
+        /// <see cref="FlameReachAbove"/> / <see cref="FlameReachBelow"/> instead of guessing.
+        /// </summary>
+        internal const float FlameGroundLine = 0.74f;
+
+        /// <summary>Visible flame height above the ground band, for a quad of this height.
+        /// (reach maxes at 0.84 of the above-band half in the shader.)</summary>
+        internal static float FlameReachAbove(float quadHeight) => quadHeight * FlameGroundLine * 0.84f;
+
+        /// <summary>Visible billow depth below the band (the shader's downward reach is 0.6x).</summary>
+        internal static float FlameReachBelow(float quadHeight) => quadHeight * (1f - FlameGroundLine) * 0.50f;
+
+        /// <summary>Visible flame width, after the long noise-eroded end taper eats the quad's
+        /// outer thirds. Used to inset hitboxes so the visual never undersells them (§39).</summary>
+        internal static float FlameReachWidth(float quadWidth) => quadWidth * 0.72f;
+
         internal static void DrawDestinedDeathFlame(Vector2 groundPoint, Vector2 size,
             float progress, float opacity, float intensity = 1f, float phase = 0f)
         {
             DrawDestinedDeathQuad("DestinedDeathFlame", groundPoint, 0f, size,
-                new Vector2(0.5f, 1f), opacity, progress, intensity, 0f, phase,
+                new Vector2(0.5f, FlameGroundLine), opacity, progress, intensity, 0f, phase,
                 DestinedSoot, DestinedFlame, DestinedCore);
         }
 

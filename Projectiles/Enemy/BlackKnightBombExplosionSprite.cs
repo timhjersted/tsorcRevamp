@@ -1,4 +1,7 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -33,8 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Main.projFrames[Type] * FrameTicks + HoldTicks;
-            // Native frame is 98x98; the blast's real quad/hitbox is ~100-110px, so scale up a
-            // little so the sprite comfortably fills the blast area instead of sitting inside it.
+            // Native frame is 98x98; scale up so the sprite comfortably fills the blast area.
             Projectile.scale = 1.25f;
         }
 
@@ -44,8 +46,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (Projectile.frame >= Main.projFrames[Projectile.type] - 1)
             {
-                // Held on the last frame; timeLeft (sized to exactly cover the play-through plus
-                // HoldTicks) kills it — advancing frame further here would draw out of bounds.
+                // Held on the last frame; timeLeft (sized to cover play-through plus HoldTicks) kills it.
                 return;
             }
 
@@ -55,6 +56,34 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.frameCounter = 0;
                 Projectile.frame++;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D tex = TextureAssets.Projectile[Type].Value;
+            int frameHeight = tex.Height / Main.projFrames[Type];
+            Rectangle src = new Rectangle(0, Projectile.frame * frameHeight, tex.Width, frameHeight);
+
+            // Origin at bottom-center of the frame (49, 98)
+            Vector2 origin = new Vector2(tex.Width / 2f, frameHeight);
+
+            // Bomb sprite is 34x34 (radius 17px).
+            // Position bottom-center of explosion frame at exact bottom edge of the bomb sprite (Center.Y + 17).
+            Vector2 drawPos = Projectile.Center + new Vector2(0f, 17f) - Main.screenPosition;
+
+            Main.EntitySpriteDraw(
+                tex,
+                drawPos,
+                src,
+                Color.White * 0.9f,
+                0f,
+                origin,
+                Projectile.scale,
+                SpriteEffects.None,
+                0
+            );
+
+            return false;
         }
     }
 }

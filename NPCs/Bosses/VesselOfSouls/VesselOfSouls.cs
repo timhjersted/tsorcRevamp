@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         }
 
         // ── Attack timings (ticks, 60/sec) ──
-        const int LungeWindupTicks = 30;
+        const int LungeWindupTicks = 60; // 60t (1s) telegraph (+30t) so player has clear reaction time
         const int LungeDashTicks = 42;
         const int LungeRecoveryTicks = 30;
         const int SpewTelegraphTicks = 30;
@@ -416,7 +416,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             Span<(VesselAttack a, float w)> pool = Phase2
                 ? stackalloc (VesselAttack, float)[]
                 {
-                    (VesselAttack.VesselLunge, dt < 55f ? 1.0f : 0.3f),
+                    (VesselAttack.VesselLunge, (dt > 20f && dt < 55f) ? 1.0f : 0.3f),
                     (VesselAttack.SoulSpew,    1.0f),
                     (VesselAttack.GravityWell, dt < 40f ? 0.5f : 1.0f),
                     (VesselAttack.WatchingWall,0.8f),
@@ -425,7 +425,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 }
                 : stackalloc (VesselAttack, float)[]
                 {
-                    (VesselAttack.VesselLunge,  dt < 55f ? 1.1f : 0.4f),
+                    (VesselAttack.VesselLunge,  (dt > 20f && dt < 55f) ? 1.1f : 0.4f),
                     (VesselAttack.SoulSpew,     1.0f),
                     (VesselAttack.GravemawTug,  dt < 45f ? 1.0f : 0.5f),
                     (VesselAttack.SpawnWatchers,0.7f),
@@ -497,7 +497,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 case 0: // windup
                     MouthOpen = true;
                     Vector2 away = (NPC.Center - player.Center).SafeNormalize(Vector2.UnitX);
-                    NPC.velocity = Vector2.Lerp(NPC.velocity, away * 3f, 0.1f);
+                    float currentDist = Vector2.Distance(NPC.Center, player.Center);
+                    // Dynamic retreat speed: back up stronger if close to maintain minimum charging distance (~380px)
+                    float retreatSpeed = MathHelper.Lerp(12f, 4f, MathHelper.Clamp(currentDist / 380f, 0f, 1f));
+                    NPC.velocity = Vector2.Lerp(NPC.velocity, away * retreatSpeed, 0.15f);
                     if (AttackTimer == 1) SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
                     SpawnInhaleMote();
                     // Pink "dash incoming" flash at the mouth, ~25 ticks before the dash launches.

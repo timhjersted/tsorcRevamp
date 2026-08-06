@@ -144,22 +144,21 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
             float active = detonating ? 1f : chargeProgress;
             Color mid = detonating ? WineRed : SoulMagenta;
             Color core = detonating ? CommitmentPink : SoulPale;
-            // Bigger quads than before (72/104) so the ring's new outer halo has somewhere to spill
-            // instead of ending at the quad edge.
+            // Ring shader 20% smaller (0.8x scale)
             Draw(gazeEffect, "VesselWatcherIris", compound, crackle, center,
-                Vector2.One * (detonating ? 150f : 96f), 0f,
+                Vector2.One * (detonating ? 150f : 96f) * 0.8f, 0f,
                 HollowBlack, mid, core, detonating ? 0.90f : 0.70f,
                 chargeProgress, active, 1f, BlendState.Additive);
 
             if (!detonating && chargeProgress > 0.05f)
             {
                 Vector2 delta = target - center;
-                float length = MathHelper.Min(delta.Length(), 620f);
+                // Line 80% shorter (0.2x length) and 20% more transparent (0.8x opacity)
+                float length = MathHelper.Min(delta.Length(), 620f) * 0.2f;
                 Vector2 direction = delta.SafeNormalize(Vector2.UnitY);
-                // 10px was too thin to carry a halo now that the thread is procedural.
                 Draw(gazeEffect, "VesselWatcherLine", filament, crackle,
                     center + direction * length * 0.5f, new Vector2(length, 16f), direction.ToRotation(),
-                    HollowBlack, WineRed, SoulPale, 0.22f + chargeProgress * 0.38f,
+                    HollowBlack, WineRed, SoulPale, (0.22f + chargeProgress * 0.38f) * 0.8f,
                     chargeProgress, chargeProgress, 1f, BlendState.Additive);
             }
         }
