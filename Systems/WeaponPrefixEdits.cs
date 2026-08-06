@@ -32,10 +32,11 @@ class WeaponPrefixEdits
                     kb = 1.1f;
                     break;
                 case PrefixID.Forceful:
-                    kb = 1.15f;
+                    kb = 1.2f;
                     break;
                 case PrefixID.Broken:
                     dmg = 0.7f;
+                    crt = 50;
                     kb = 0.8f;
                     break;
                 case PrefixID.Damaged:
@@ -49,22 +50,22 @@ class WeaponPrefixEdits
                     dmg = 1.1f;
                     break;
                 case PrefixID.Strong:
-                    kb = 1.15f;
+                    kb = 1.25f;
                     break;
                 case PrefixID.Unpleasant:
-                    kb = 1.15f;
+                    kb = 1.1f;
                     dmg = 1.05f;
                     break;
                 case PrefixID.Weak:
                     kb = 0.8f;
                     break;
                 case PrefixID.Ruthless:
-                    kb = 0.9f;
-                    dmg = 1.18f;
+                    kb = 0.8f;
+                    dmg = 1.2f;
                     break;
                 case PrefixID.Godly:
-                    kb = 1.15f;
-                    dmg = 1.15f;
+                    kb = 1.12f;
+                    dmg = 1.12f;
                     crt = 5;
                     break;
                 case PrefixID.Demonic:
@@ -72,7 +73,7 @@ class WeaponPrefixEdits
                     crt = 5;
                     break;
                 case PrefixID.Zealous:
-                    crt = 5;
+                    crt = 8;
                     break;
                 #endregion
 
@@ -86,21 +87,23 @@ class WeaponPrefixEdits
                     break;
                 case PrefixID.Agile:
                     spd = 0.9f;
-                    crt = 3;
+                    crt = 6;
                     break;
                 case PrefixID.Nimble:
                     spd = 0.95f;
                     break;
                 case PrefixID.Murderous:
-                    crt = 3;
+                    crt = 10;
                     spd = 0.94f;
-                    dmg = 1.07f;
+                    dmg = 1.05f;
                     break;
                 case PrefixID.Slow:
                     spd = 1.15f;
+                    kb = 1.25f;
                     break;
                 case PrefixID.Sluggish:
                     spd = 1.2f;
+                    kb = 1.35f;
                     break;
                 case PrefixID.Lazy:
                     spd = 1.08f;
@@ -110,10 +113,10 @@ class WeaponPrefixEdits
                     spd = 1.15f;
                     break;
                 case PrefixID.Nasty:
-                    kb = 0.9f;
-                    spd = 0.9f;
-                    dmg = 1.05f;
-                    crt = 2;
+                    kb = 0.7f;
+                    spd = 0.95f;
+                    dmg = 1.15f;
+                    crt = 4;
                     break;
                 #endregion
 
@@ -122,16 +125,19 @@ class WeaponPrefixEdits
                     size = 1.12f;
                     break;
                 case PrefixID.Massive:
-                    size = 1.38f; //default 1.18
+                    size = 1.33f; //default 1.18
+                    spd = 1.15f;
+                    dmg = 1.1f;
+                    kb = 1.1f;
                     break;
                 case PrefixID.Dangerous:
                     dmg = 1.05f;
-                    crt = 2;
-                    size = 1.05f;
+                    crt = 4;
+                    size = 1.1f;
                     break;
                 case PrefixID.Savage:
                     dmg = 1.1f;
-                    size = 1.1f;
+                    size = 1.2f;
                     kb = 1.1f;
                     break;
                 case PrefixID.Sharp:
@@ -139,9 +145,11 @@ class WeaponPrefixEdits
                     break;
                 case PrefixID.Pointy:
                     dmg = 1.1f;
+                    crt = 5;
                     break;
                 case PrefixID.Tiny:
-                    size = 0.82f;
+                    size = 0.8f;
+                    spd = 0.75f;
                     break;
                 case PrefixID.Terrible:
                     kb = 0.85f;
@@ -150,6 +158,7 @@ class WeaponPrefixEdits
                     break;
                 case PrefixID.Small:
                     size = 0.9f;
+                    spd = 0.92f;
                     break;
                 case PrefixID.Dull:
                     dmg = 0.85f;
@@ -160,28 +169,28 @@ class WeaponPrefixEdits
                     size = 0.9f;
                     break;
                 case PrefixID.Bulky:
-                    kb = 1.1f;
-                    dmg = 1.05f;
-                    size = 1.1f;
+                    kb = 1.25f;
+                    dmg = 1.1f;
+                    size = 1.25f;
                     spd = 1.15f;
                     break;
                 case PrefixID.Shameful:
                     kb = 0.8f;
                     dmg = 0.9f;
-                    size = 1.1f;
+                    size = 1.42f;
                     break;
                 case PrefixID.Heavy:
-                    kb = 1.15f;
-                    spd = 1.1f;
+                    kb = 1.5f;
+                    spd = 1.15f;
                     break;
                 case PrefixID.Light:
-                    kb = 0.9f;
-                    spd = 0.85f;
+                    kb = 0.5f;
+                    spd = 0.8f;
                     break;
                 case PrefixID.Legendary:
-                    kb = 1.15f;
-                    dmg = 1.15f;
-                    crt = 5;
+                    kb = 1.1f;
+                    dmg = 1.1f;
+                    crt = 4;
                     spd = 0.9f;
                     size = 1.1f;
                     break;
@@ -194,30 +203,33 @@ class WeaponPrefixEdits
 
                 #region Ranged Modifiers
                 case PrefixID.Sighted:
-                    dmg = 1.1f;
-                    crt = 3;
+                    dmg = 1.15f;
+                    crt = 9;
+                    spd = 1.1f;
                     break;
                 case PrefixID.Rapid:
                     spd = 0.85f;
                     shtspd = 1.1f;
                     break;
                 case PrefixID.Hasty:
-                    spd = 0.9f;
-                    shtspd = 1.15f;
+                    spd = 0.8f;
+                    shtspd = 1.2f;
+                    crt = -5;
                     break;
                 case PrefixID.Intimidating:
+                    dmg = 1.1f;
                     kb = 1.15f;
-                    shtspd = 1.05f;
+                    shtspd = 1.5f;
                     break;
                 case PrefixID.Deadly:
-                    kb = 1.05f;
-                    shtspd = 1.05f;
-                    dmg = 1.1f;
-                    spd = 0.95f;
-                    crt = 2;
+                    kb = 1.25f;
+                    shtspd = 1.25f;
+                    dmg = 1.05f;
+                    spd = 0.9f;
+                    crt = 3;
                     break;
                 case PrefixID.Staunch:
-                    kb = 1.15f;
+                    kb = 1.5f;
                     dmg = 1.1f;
                     break;
                 case PrefixID.Awful:
@@ -231,20 +243,21 @@ class WeaponPrefixEdits
                     break;
                 case PrefixID.Awkward:
                     spd = 1.1f;
-                    kb = 0.8f;
+                    kb = 1.7f;
                     break;
                 case PrefixID.Powerful:
                     spd = 1.1f;
                     dmg = 1.15f;
-                    crt = 1;
+                    crt = 15;
                     break;
                 case PrefixID.Frenzying:
-                    spd = 0.85f;
+                    spd = 0.72f;
                     dmg = 0.85f;
+                    crt = -8;
                     break;
                 case PrefixID.Unreal:
-                    kb = 1.15f;
-                    dmg = 1.15f;
+                    kb = 1.1f;
+                    dmg = 1.1f;
                     crt = 5;
                     spd = 0.9f;
                     shtspd = 1.1f;
@@ -253,8 +266,9 @@ class WeaponPrefixEdits
 
                 #region Magic modifiers
                 case PrefixID.Mystic:
-                    mcst = 0.85f;
+                    mcst = 0.8f;
                     dmg = 1.1f;
+                    crt = 6;
                     break;
                 case PrefixID.Adept:
                     mcst = 0.85f;
@@ -274,10 +288,12 @@ class WeaponPrefixEdits
                 case PrefixID.Deranged:
                     kb = 0.9f;
                     dmg = 0.9f;
+                    crt = 20;
                     break;
                 case PrefixID.Intense:
-                    mcst = 1.15f;
-                    dmg = 1.1f;
+                    mcst = 1.2f;
+                    dmg = 1.15f;
+                    spd = 0.9f;
                     break;
                 case PrefixID.Taboo:
                     mcst = 1.1f;
@@ -288,22 +304,22 @@ class WeaponPrefixEdits
                     mcst = 0.9f;
                     kb = 1.1f;
                     spd = 1.1f;
-                    dmg = 1.1f;
+                    dmg = 1.2f;
                     break;
                 case PrefixID.Furious:
-                    mcst = 1.2f;
-                    dmg = 1.15f;
+                    mcst = 1.4f;
+                    dmg = 1.3f;
                     kb = 1.15f;
                     break;
                 case PrefixID.Manic:
-                    mcst = 0.9f;
+                    mcst = 1.2f;
                     dmg = 0.9f;
-                    spd = 0.9f;
+                    spd = 0.65f;
                     break;
                 case PrefixID.Mythical:
-                    kb = 1.15f;
-                    dmg = 1.15f;
-                    crt = 5;
+                    kb = 1.1f;
+                    dmg = 1.1f;
+                    crt = 4;
                     spd = 0.9f;
                     mcst = 0.9f;
                     break;

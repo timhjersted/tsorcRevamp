@@ -105,7 +105,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             {
                 Projectile.frame = 0;
             }
-            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
+            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 1.4f);
         }
         public override bool ShouldUpdatePosition()
         {
@@ -130,7 +130,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
         }
-        /*public static Texture2D texture;
+        public static Texture2D texture;
         public static Texture2D glowTexture;
         public override bool PreDraw(ref Color lightColor)
         {
@@ -139,9 +139,9 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (Main.player[Projectile.owner].direction == 1)
             {
             }
-            else if (Main.player[Projectile.owner].direction != 1)
+            else
             {
-                spriteEffects = SpriteEffects.FlipVertically;
+                spriteEffects = SpriteEffects.FlipHorizontally;
             }
             texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
             glowTexture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
@@ -153,7 +153,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
 
             return false;
-        }*/
+        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];

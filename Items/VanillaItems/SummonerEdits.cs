@@ -366,67 +366,9 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override void HoldItem(Item item, Player player)
         {
-            float scaleDelta;
-            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+            if (item.DamageType == DamageClass.SummonMeleeSpeed && item.type != ModContent.ItemType<DarkSword>())
             {
-                    switch (item.prefix)
-                    {
-
-                        case PrefixID.Large:
-
-                            scaleDelta = 0.12f;
-                            break;
-
-                        case PrefixID.Massive:
-
-                            scaleDelta = 0.18f;
-                            break;
-
-                        case PrefixID.Dangerous:
-
-                            scaleDelta = 0.06f;
-                            break;
-
-                        case PrefixID.Tiny:
-
-                            scaleDelta = -0.18f;
-                            break;
-
-                        case PrefixID.Terrible:
-
-                            scaleDelta = -0.14f;
-                            break;
-
-                        case PrefixID.Small:
-
-                            scaleDelta = -0.1f;
-                            break;
-
-                        case PrefixID.Unhappy:
-
-                            scaleDelta = -0.1f;
-                            break;
-
-                        case PrefixID.Bulky:
-
-                            scaleDelta = 0.1f;
-                            break;
-
-                        case PrefixID.Shameful:
-
-                            scaleDelta = 0.1f;
-                            break;
-
-                        case PrefixID.Legendary:
-
-                            scaleDelta = 0.1f;
-                            break;
-
-                        default:
-                            scaleDelta = 0;
-                            break;
-                    }
-                player.whipRangeMultiplier += scaleDelta;
+                player.whipRangeMultiplier += player.GetAdjustedItemScale(player.HeldItem) - 1f;
             }
         }
         public static int FlinxFurMaxMinionIncrease = 1;

@@ -67,8 +67,8 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
             if (!AppliedOnSpawn)
             {
-                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem) * 1.1f;
-                Projectile.Resize((int)(Projectile.width / PlasmaWhirlwind.BaseScale * Projectile.scale), (int)(Projectile.height / PlasmaWhirlwind.BaseScale * Projectile.scale));
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
+                //Projectile.Resize((int)(Projectile.width / PlasmaWhirlwind.BaseScale * Projectile.scale), (int)(Projectile.height / PlasmaWhirlwind.BaseScale * Projectile.scale));
                 AppliedOnSpawn  = true;
             }
             
@@ -192,6 +192,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                     Projectile.frame = 0;
                 }
             }
+            Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3() * 3f);
         }
         public override void CutTiles()
         {
