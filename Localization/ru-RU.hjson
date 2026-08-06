@@ -30,13 +30,75 @@ Mods: {
 
 		CommonItemTooltip: {
 			AccessoryPrefixes: {
+				/* Hard:
+					'''
+					[c/6cac6c:+{0} defense]
+					[c/6cac6c:+{1}% thorns]
+					''' */
+				/* Guarding:
+					'''
+					[c/6cac6c:+{0} defense]
+					[c/6cac6c:+{1}% stamina recovery speed]
+					''' */
+				// Armored: "[c/6cac6c:+{0} resistance]"
+				// Jagged: "[c/6cac6c:+{0} flat crit damage]"
+				/* Spiked:
+					'''
+					[c/6cac6c:+{0}% thorns]
+					[c/9b6263:-{1} defense]
+					''' */
+				/* Angry:
+					'''
+					[c/6cac6c:+{0}% damage]
+					[c/6cac6c:+{1}% stamina recovery speed]
+					''' */
+				// Precise: "[c/6cac6c:+{0}% ranged crit chance]"
+				/* Lucky:
+					'''
+					[c/6cac6c:+{0}% crit chance]
+					[c/6cac6c:+{1}% luck]
+					''' */
+				/* Brisk:
+					'''
+					[c/6cac6c:+{0}% movement speed]
+					[c/6cac6c:+{1}% damage]
+					''' */
+				/* Fleeting:
+					'''
+					[c/6cac6c:+{0}% movement speed]
+					[c/9b6263:-{1} resistance]
+					''' */
+				/* Hasty:
+					'''
+					[c/6cac6c:+{0}% movement speed]
+					[c/9b6263:-{1} crit chance]
+					''' */
+				// Quick: "[c/6cac6c:+{0}% movement speed]"
+				/* Wild:
+					'''
+					[c/6cac6c:+{0}% attack speed]
+					[c/9b6263:-{1} resistance]
+					''' */
+				/* Rash:
+					'''
+					[c/6cac6c:+{0}% attack speed]
+					[c/9b6263:-{1} life regen]
+					''' */
+				/* Intrepid:
+					'''
+					[c/6cac6c:+{0}% attack speed]
+					[c/6cac6c:+{1} defense]
+					''' */
 				/* Arcane:
 					'''
 					[c/6cac6c:+{0} mana]
 					[c/6cac6c:-{1}% mana cost]
 					''' */
-				// Hard: "[c/6cac6c:+{0} resistance]"
-				// Guarding: "[c/6cac6c:+{0} resistance]"
+				/* Encouraging:
+					'''
+					[c/6cac6c:+{0} summon tag damage]
+					[c/6cac6c:+{1}% summon tag strength]
+					''' */
 			}
 
 			Details: Удерживайте левый Shift, чтобы увидеть подробности
@@ -10967,7 +11029,6 @@ Mods: {
 			// BlackKnightSpearBlightSwarm.DisplayName: Black Knight Spear Blight Swarm
 			// DragonMeteorExplosion.DisplayName: Dragon Meteor Explosion
 			// FireLurkerFireBurst.DisplayName: Fire Lurker Fire Burst
-
 		}
 
 		NPCs: {
@@ -12760,6 +12821,7 @@ Mods: {
 			Sadistic.DisplayName: Садистский
 			Tenacious.DisplayName: Цепкий
 			Undisciplined.DisplayName: Недисциплинированный
+			// Encouraging.DisplayName: Encouraging
 		}
 
 		Tiles: {

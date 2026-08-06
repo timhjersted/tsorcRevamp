@@ -200,6 +200,10 @@ namespace tsorcRevamp
         public float fallStartY;
         public int fallStart_old = -1;
 
+        public int JaggedFlatCritDmgBonus = 0;
+        public int RashBadLifeRegenPerSec = 0;
+        public float EncouragingSummonTagDmg = 0f;
+
         public bool MeleeArmorVamp10 = false;
 
         public bool MagmaArmor;
@@ -586,6 +590,10 @@ namespace tsorcRevamp
             InfinityEdge = false;
             LudensTempest = false;
             Goredrinker = false;
+
+            JaggedFlatCritDmgBonus = 0;
+            RashBadLifeRegenPerSec = 0;
+            EncouragingSummonTagDmg = 0f;
 
             MaskOfTheFather = false;
             BoneRing = false;
@@ -2449,6 +2457,8 @@ namespace tsorcRevamp
             // BotC sat on 50% — the gentler tier was punished harder than the harsh one, the opposite of
             // the intent. Removing the extra penalty is what puts them on parity; do not re-add a
             // class-specific multiplier here without first making the halving above class-gated.
+
+            Player.lifeRegen -= RashBadLifeRegenPerSec * 2;
         }
 
 

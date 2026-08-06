@@ -1274,7 +1274,11 @@ namespace tsorcRevamp
         public static float MythrilOcrichalcumCritDmg = 25f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.HideCombatText(); //CustomCombatText displays a customizable combat text instead
+            if (modifiers.DamageType != DamageClass.Default)
+            {
+                modifiers.HideCombatText(); //CustomCombatText displays a customizable combat text instead
+            }
+            modifiers.CritDamage.Flat += JaggedFlatCritDmgBonus;
             if (SmoughAttackSpeedReduction)
             {
                 modifiers.SetCrit();

@@ -2822,6 +2822,23 @@ namespace tsorcRevamp.NPCs
             if (projectile.IsMinionOrSentryRelated)
             {
                 #region Minion effects
+                foreach (int buffType in npc.buffType)
+                {
+                    List<int> NonWhipTagBuffs = new List<int>()
+                    {
+                        ModContent.BuffType<MythrilRamDebuff>(),
+                        ModContent.BuffType<ScorchingDebuff>(),
+                        ModContent.BuffType<ShockedDebuff>(),
+                        ModContent.BuffType<SunburnDebuff>(),
+                        ModContent.BuffType<Heatstroke>(),
+                        ModContent.BuffType<Charmed>()
+                    };
+                    if (BuffID.Sets.IsATagBuff[buffType] && !NonWhipTagBuffs.Contains(buffType))
+                    {
+                        SummonTagFlatDamage += modPlayerProjectileOwner.EncouragingSummonTagDmg;
+                        break;
+                    }
+                }
                 /*if (((Scorched || Shocked || Sunburnt) && (SuperScorchDuration > 0 || SuperShockDuration > 0 || SuperSunburnDuration > 0)) || Awestruck)
                 {
                     SummonTagCriticalStrikeChance += ScorchingPoint.SummonTagCrit;
