@@ -91,7 +91,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 {
                     NPC other = Main.npc[i];
 
-                    if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, player.GetModPlayer<tsorcRevampPlayer>().MouseHitboxSize)) & other.Distance(player.Center) <= 400 && !other.HasBuff(DashCooldownBuffID))
+                    if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, player.GetModPlayer<tsorcRevampPlayer>().MouseHitboxSize)) 
+                        & other.Distance(player.Center) <= 400 && !other.HasBuff(DashCooldownBuffID) && Collision.CanHitLine(player.position, player.width, player.height, other.position, other.width, other.height))
                     {
                         UsefulFunctions.DustRing(other.Center, other.width / 2, DashDustID, 5, 2);
                     }
