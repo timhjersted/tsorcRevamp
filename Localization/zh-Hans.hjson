@@ -99,6 +99,7 @@ Mods: {
 					[c/6cac6c:+{0} summon tag damage]
 					[c/6cac6c:+{1}% summon tag strength]
 					''' */
+				// Blessed: "[c/6cac6c:+{0} defense]"
 			}
 
 			Details: 按住 左Shift 以显示详细信息
@@ -12859,6 +12860,7 @@ Mods: {
 			Tenacious.DisplayName: 坚韧的
 			Undisciplined.DisplayName: 涣散的
 			// Encouraging.DisplayName: Encouraging
+			// Blessed2.DisplayName: Blessed
 		}
 
 		Tiles: {
