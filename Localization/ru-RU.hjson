@@ -99,7 +99,7 @@ Mods: {
 					[c/6cac6c:+{0} summon tag damage]
 					[c/6cac6c:+{1}% summon tag strength]
 					''' */
-				// Blessed: "[c/6cac6c:+{0} defense]"
+				// Blessed: "[c/6cac6c:+{0}% luck]"
 			}
 
 			Details: Удерживайте левый Shift, чтобы увидеть подробности

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Prefixes;
 
 public class Blessed2 : ModPrefix
 {
-    public const int Defense = 1;
+    public const float Luck = 3f;
     
     public override PrefixCategory Category => PrefixCategory.Accessory;
 
@@ -24,12 +24,12 @@ public class Blessed2 : ModPrefix
 
     public override void ApplyAccessoryEffects(Player player)
     {
-        player.statDefense += Defense;
+        player.luck += Luck / 100f;
     }
 
     public override IEnumerable<TooltipLine> GetTooltipLines(Item item)
     {
-        yield return new TooltipLine(Mod, "Blessed2", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Blessed", Defense))
+        yield return new TooltipLine(Mod, "Blessed2", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Blessed", Luck))
         {
             IsModifier = true
         };
