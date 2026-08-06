@@ -20,6 +20,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     /// </summary>
     public class GreatBlackKnightFlail : EnemyFlailProjectileBase
     {
+        // ~30 tiles of reach: launch speed 16 (set by the knight) x 30 outward ticks = 480px.
+        // The return leg from that distance takes ~37 ticks at ReturnSpeed, so the lifetime has to
+        // cover 9 windup + 30 out + ~37 back with headroom, or the head vanishes mid-flight.
+        protected override float OutwardTicks => 30f;
+        protected override float ReturnSpeed => 15f;
+        protected override int Lifetime => 110;
+
         protected override string ChainTexturePath => "tsorcRevamp/Projectiles/Melee/Flails/BerserkerNightmareChain";
 
         public override string Texture => "tsorcRevamp/Projectiles/Melee/Flails/BerserkerNightmareBall";

@@ -14,26 +14,35 @@ float4 Wake(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
     float across = abs(c.y - 0.5) * 2.0;   // 0 on the centreline, 1 at the rim
     float along = c.x;                     // 0 at the tail, 1 at the leading edge
 
-    // Lens: widest just behind the head, pinched to nothing at both ends.
-    float spine = saturate(along * 1.7) * saturate((1.0 - along) * 3.2);
-    float width = saturate(1.0 - across / max(spine, 0.06));
+    // Lens: widest just behind the tip, pinched to nothing at both ends.
+    float spine = saturate(along * 2.2) * saturate((1.0 - along) * 2.6);
+    float width = saturate(1.0 - across / max(spine, 0.05));
 
-    // Two layers streaming backwards at different rates, so the interior churns instead of sliding.
-    float n1 = tex2D(DetailSampler, float2(c.x * 1.9 - Time * 1.35, c.y * 2.4 + Time * 0.06)).r;
-    float n2 = tex2D(PrimarySampler, float2(c.x * 3.3 - Time * 2.10, c.y * 1.5 - Time * 0.09)).r;
-    float streak = saturate(n1 * 0.85 + n2 * 0.55 - 0.26);
+    // SHEAR: rows further from the centreline lag further behind. That velocity gradient is what
+    // reads as air being dragged along, rather than a texture sliding sideways.
+    float shear = (c.y - 0.5) * 1.35;
+    // Anisotropic sampling — barely scaled along x, heavily across y — so features are LONG thin
+    // streaks instead of round granules. This is what separates "flowing air" from "sparkle".
+    float s1 = tex2D(DetailSampler, float2(c.x * 1.05 - Time * 2.4 + shear, c.y * 4.6)).r;
+    float s2 = tex2D(PrimarySampler, float2(c.x * 1.75 - Time * 3.6 - shear, c.y * 2.7 + 0.37)).r;
+    float flow = saturate(s1 * 0.95 + s2 * 0.65 - 0.28);
 
-    // Density gathers at the leading edge and frays out behind it.
-    float body = width * width * saturate(streak + along * 0.45 - 0.10);
-    float edge = width * saturate(along - 0.58) * 2.4 * streak;
+    // Thin filaments over a faint haze, so it reads as moving air rather than a solid smear.
+    float filament = width * saturate(flow * 2.2 - 0.28);
+    float haze = width * width * flow * 0.75;
 
     // Noise-independent cutoff: provably zero before every quad boundary, in every direction.
-    float fade = saturate(along * 6.0) * saturate((1.0 - along) * 4.0) * saturate((1.0 - across) * 3.0);
-    body *= fade * fade;
-    edge *= fade;
+    float fade = saturate(along * 7.0) * saturate((1.0 - along) * 3.2) * saturate((1.0 - across) * 2.6);
+    fade *= fade;
+    filament *= fade;
+    haze *= fade;
 
-    float3 color = lerp(MidColor, CoreColor, saturate(body * 0.7 + edge * 1.2));
-    return float4(color, saturate(body * 0.50 + edge * 0.40) * Opacity) * v;
+    float alpha = saturate(filament * 1.25 + haze * 0.55) * Opacity;
+    float3 color = lerp(MidColor, CoreColor, saturate(filament * 1.5));
+    // PREMULTIPLIED. Terraria's BlendState.AlphaBlend is (One, InvSrcAlpha), so returning straight
+    // colour adds it at full strength wherever alpha is near zero — which drew this effect as a
+    // solid white rectangle covering the whole quad. Every alpha-blended technique must premultiply.
+    return float4(color * alpha, alpha) * v;
 }
 
 // Spear landing / parry impact. The old version drew a literal plus-sign from

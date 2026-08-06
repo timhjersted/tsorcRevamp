@@ -84,6 +84,19 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.Bone;
 
+        // Optional spin-up telegraph. ai[0] = 0 keeps the original fire-immediately behaviour (used by
+        // Hollow Command's radial burst, which is its own telegraph); Bone Volley passes 60 so its
+        // shards materialise, hang and spin for a full second first.
+        int ChargeTicks => (int)Projectile.ai[0];
+        int OwnerIndex => (int)Projectile.ai[1];
+        float FanOffset => Projectile.ai[2];
+        int Timer => (int)Projectile.localAI[0];
+        float LaunchSpeed => Projectile.localAI[1];
+        // ChargeTicks > 0 guard matters: CanDamage/ShouldUpdatePosition can be queried BEFORE the first
+        // AI() tick, when Timer is still 0 — without it a zero-charge shard (Hollow Command's radial
+        // burst) would read as "charging" and spend its first frame frozen and harmless.
+        bool Charging => ChargeTicks > 0 && Timer <= ChargeTicks;
+
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;
@@ -102,8 +115,42 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.aiStyle = 0;
         }
 
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            // Remember the speed the spawner asked for, then hold position; the launch below restores
+            // it along a freshly-aimed vector.
+            Projectile.localAI[1] = Projectile.velocity.Length();
+            if (ChargeTicks > 0)
+            {
+                Projectile.timeLeft += ChargeTicks;
+                Projectile.velocity = Vector2.Zero;
+            }
+        }
+
+        // A shard hanging in the air waiting to launch must not clip on terrain or deal damage.
+        public override bool ShouldUpdatePosition() => !Charging;
+        public override bool? CanDamage() => Charging ? false : null;
+
         public override void AI()
         {
+            Projectile.localAI[0]++;
+            if (Charging)
+            {
+                Projectile.velocity = Vector2.Zero;
+                Projectile.rotation += 0.42f; // spin in place — the actual "incoming" tell
+                Lighting.AddLight(Projectile.Center, 0.18f, 0.18f, 0.2f);
+                if (Main.rand.NextBool(2))
+                {
+                    Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(14f, 14f),
+                        DustID.Smoke, Main.rand.NextVector2Circular(1.1f, 1.1f), 120, new Color(150, 150, 150), 1f);
+                    d.noGravity = true;
+                }
+                return;
+            }
+            if (Timer == ChargeTicks + 1 && ChargeTicks > 0)
+            {
+                LaunchAtTarget();
+            }
             Projectile.rotation += Projectile.velocity.X * 0.04f;
             Projectile.velocity.Y += 0.08f;
             Lighting.AddLight(Projectile.Center, 0.16f, 0.16f, 0.22f);
@@ -114,8 +161,35 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
+        ///<summary>Aims at release rather than at spawn: a full second of lead time locked in at spawn
+        ///would make every volley trivially walk-away-able. The telegraph warns; the shot still tracks.</summary>
+        void LaunchAtTarget()
+        {
+            float speed = LaunchSpeed > 0.1f ? LaunchSpeed : 7.5f;
+            Vector2 aim = new Vector2(speed, 0f);
+            if (OwnerIndex >= 0 && OwnerIndex < Main.maxNPCs)
+            {
+                NPC owner = Main.npc[OwnerIndex];
+                if (owner.active && owner.target >= 0 && owner.target < Main.maxPlayers)
+                {
+                    Player target = Main.player[owner.target];
+                    if (target.active && !target.dead)
+                    {
+                        aim = UsefulFunctions.Aim(Projectile.Center, target.Center, speed);
+                    }
+                }
+            }
+            Projectile.velocity = aim.RotatedBy(FanOffset);
+            SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.35f, Pitch = 0.3f }, Projectile.Center);
+            Projectile.netUpdate = true;
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
+            if (Charging)
+            {
+                return true; // no motion trail on a shard that isn't moving yet — just the spinning bone
+            }
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             Vector2 center = Projectile.Center - direction * 24f;
             float progress = MathHelper.Clamp(1f - Projectile.timeLeft / 210f, 0.08f, 0.72f);
@@ -204,7 +278,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         const int RiseTicks = 7;
         const int HoldTicks = 80;
-        const int SinkTicks = 12;
+        // 12 -> 60: the blade used to vanish almost the instant it started withdrawing. It now sinks
+        // slowly AND fades out over the same window (see the `fade` term in PreDraw).
+        const int SinkTicks = 60;
         int TelegraphTicks => (int)Projectile.ai[0];
         float HeightScale => Projectile.ai[1] > 0f ? Projectile.ai[1] : 1f;
         int Timer => (int)Projectile.localAI[0];
@@ -246,6 +322,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Timer == TelegraphTicks + 1)
             {
                 SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.55f, Pitch = -0.5f }, Projectile.Center);
+                // Bursting out of the ground throws grave-fire at the breach point.
+                NitoVFX.PyreBurst(new Vector2(Projectile.Center.X, bottom), 26, 4.5f, 1.2f, 20f, 8f);
+            }
+            if (Timer == TelegraphTicks + RiseTicks + HoldTicks + 1)
+            {
+                // ...and again as it begins withdrawing, so the exit reads as deliberate rather than
+                // the sprite simply being switched off.
+                NitoVFX.PyreBurst(new Vector2(Projectile.Center.X, bottom), 18, 3.2f, 1f, 18f, 8f);
             }
             if (!Sinking && Main.rand.NextBool(4))
             {
@@ -266,6 +350,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             return MathHelper.Min(1f, (Timer - TelegraphTicks) / (float)RiseTicks);
         }
 
+        ///<summary>Blades erupt from the ground, so they must render BEHIND the tiles — otherwise the
+        ///buried portion draws over the floor and the whole spike reads as floating on top of the
+        ///terrain instead of being driven through it.</summary>
+        public override void DrawBehind(int index, System.Collections.Generic.List<int> behindNPCsAndTiles,
+            System.Collections.Generic.List<int> behindNPCs, System.Collections.Generic.List<int> behindProjectiles,
+            System.Collections.Generic.List<int> overPlayers, System.Collections.Generic.List<int> overWiresUI)
+        {
+            behindNPCsAndTiles.Add(index);
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             float progress = RiseProgress();
@@ -273,6 +367,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             float telegraphProgress = TelegraphTicks > 0
                 ? MathHelper.Clamp(Timer / (float)TelegraphTicks, 0f, 1f)
                 : 1f;
+            // Withdrawing now fades as well as sinks (progress runs 1 -> 0 across SinkTicks).
+            float fade = Sinking ? MathHelper.Clamp(progress, 0f, 1f) : 1f;
             float riftOpacity = Sinking ? MathHelper.Clamp(progress, 0f, 1f) : 0.82f;
             NitoVFX.DrawGroundRift(new Vector2(Projectile.Center.X, bottomY - 4f),
                 new Vector2(96f * HeightScale, 44f), telegraphProgress, riftOpacity);
@@ -282,29 +378,51 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return false;
             }
             NitoVFX.DrawGraveEruption(Projectile.Center + new Vector2(0f, Projectile.height * 0.12f),
-                new Vector2(74f * HeightScale, Projectile.height * 1.35f), progress, 0.48f);
-            // The sword-dance blade (GravelordNitoSwordDance.png) SLIDES up out of the ground and back
-            // down (translate) instead of growing in place (a Y-squash, which read like the blade
-            // flopping over in 3D). Drawn at full — now DOUBLE — size the whole time; the un-emerged
-            // fraction is simply pushed below the floor line. Undyed: the sprite's own crimson reads.
+                new Vector2(74f * HeightScale, Projectile.height * 1.35f), progress, 0.48f * fade);
+            // The sword-dance blade (GravelordNitoSwordDance.png, 58x224 — already a tall, straight,
+            // upright blade shape) SLIDES up out of the ground and back down (translate) instead of
+            // growing in place (a Y-squash, which read like the blade flopping over in 3D). Drawn at
+            // full — now DOUBLE — size the whole time; the un-emerged fraction is simply pushed below
+            // the floor line. Undyed: the sprite's own crimson reads.
+            // Scale must be UNIFORM (X == Y): the old code derived scaleX from Projectile.width (the
+            // narrow 26px HITBOX, unrelated to the art) against the texture's width, independently of
+            // scaleY — squashing the tall, slender texture into a short, fat, visibly "warped" shape.
             const float SizeScale = 2f; // twice as big as the old draw
             Texture2D texture = TextureAssets.Projectile[Type].Value;
-            float scaleX = Projectile.width / (float)texture.Width * 1.5f * SizeScale;
-            float scaleY = Projectile.height / (float)texture.Height * SizeScale;
-            float drawnHeight = texture.Height * scaleY; // == Projectile.height * SizeScale
+            float scale = Projectile.height / (float)texture.Height * SizeScale;
+            float drawnHeight = texture.Height * scale; // == Projectile.height * SizeScale
             float emerge = (1f - progress) * drawnHeight; // pushes the blade down into the floor when not fully risen
             Vector2 bottom = new Vector2(Projectile.Center.X, Projectile.position.Y + Projectile.height + 2f + emerge) - Main.screenPosition;
-            Main.EntitySpriteDraw(texture, bottom, null, Color.White, 0f, new Vector2(texture.Width / 2f, texture.Height), new Vector2(scaleX, scaleY), SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, bottom, null, Color.White * fade, 0f, new Vector2(texture.Width / 2f, texture.Height), new Vector2(scale, scale), SpriteEffects.None, 0);
             return false;
         }
     }
 
+    ///<summary>
+    ///A pair of these erupts flanking the player, holds for a beat, then CLAPS together on the spot
+    ///the player was standing when they rose — detonating a blast at the meeting point. The two hands
+    ///share a convergence centre (ai[1]) and exactly one of them (ai[2]) is the designated exploder,
+    ///so the blast fires once rather than twice. Each also leaves a lingering grave-fire (NitoPyreFire)
+    ///burning at its own breach point, which is what actually denies the flanks while they close.
+    ///</summary>
     class NitoGraveHand : ModProjectile
     {
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
 
         int TelegraphTicks => Projectile.ai[0] > 0f ? (int)Projectile.ai[0] : 18;
+        float ConvergeCenterX => Projectile.ai[1];
+        bool IsExploder => Projectile.ai[2] > 0.5f;
         int Timer => (int)Projectile.localAI[0];
+
+        const int GrabTicks = 16;    // the initial damaging emergence
+        const int PauseTicks = 60;   // the 1-second beat before they start closing
+        const float ConvergeSpeed = 3.1f;
+        const int MaxConvergeTicks = 150; // failsafe so a hand can never chase forever
+        const float BlastRadius = 125f;   // ~250px across
+
+        int EmergeTick => TelegraphTicks;
+        int ConvergeStartTick => TelegraphTicks + GrabTicks + PauseTicks;
+        bool Converging => Timer > ConvergeStartTick;
 
         public override void SetDefaults()
         {
@@ -327,27 +445,79 @@ namespace tsorcRevamp.Projectiles.Enemy
             // (drawn at Projectile.Bottom) underground with it. Re-anchor so the BOTTOM sits where the
             // old 78px hand's bottom sat.
             Projectile.position.Y -= 39f;
+            Projectile.timeLeft = ConvergeStartTick + MaxConvergeTicks + 20;
         }
 
-        public override bool? CanDamage() => Timer > TelegraphTicks && Timer < TelegraphTicks + 16;
+        ///<summary>Hands claw up out of the ground, so like the blades they belong behind the tiles —
+        ///otherwise the wrist draws on top of the floor it is supposedly bursting through.</summary>
+        public override void DrawBehind(int index, System.Collections.Generic.List<int> behindNPCsAndTiles,
+            System.Collections.Generic.List<int> behindNPCs, System.Collections.Generic.List<int> behindProjectiles,
+            System.Collections.Generic.List<int> overPlayers, System.Collections.Generic.List<int> overWiresUI)
+        {
+            behindNPCsAndTiles.Add(index);
+        }
+
+        // Dangerous on the way up, and again while sweeping inward — but not during the hold, which is
+        // the player's window to get out from between them.
+        public override bool? CanDamage() =>
+            (Timer > EmergeTick && Timer < EmergeTick + GrabTicks) || Converging;
 
         public override void AI()
         {
             Projectile.localAI[0]++;
-            if (Timer <= TelegraphTicks)
+            if (Timer <= EmergeTick)
             {
                 for (int i = 0; i < 3; i++)
                 {
                     Dust.NewDust(Projectile.BottomLeft - new Vector2(0f, 8f), Projectile.width, 12, DustID.BoneTorch, 0f, -1f, 100, default, 0.9f);
                 }
+                return;
             }
-            else if (Timer == TelegraphTicks + 1)
+            if (Timer == EmergeTick + 1)
             {
                 SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.6f, Pitch = -0.4f }, Projectile.Center);
                 for (int i = 0; i < 22; i++)
                 {
                     Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-4f, -1f), 80, default, 1.1f);
                 }
+                NitoVFX.PyreBurst(Projectile.Bottom, 30, 5f, 1.3f, 30f, 10f);
+                // The breach itself keeps burning after the hand has left it.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Bottom, Vector2.Zero,
+                        ModContent.ProjectileType<NitoPyreFire>(), Projectile.damage / 2, 0f, Projectile.owner);
+                }
+                return;
+            }
+            if (!Converging)
+            {
+                return; // the held beat
+            }
+
+            int dir = ConvergeCenterX >= Projectile.Center.X ? 1 : -1;
+            Projectile.velocity = new Vector2(dir * ConvergeSpeed, 0f);
+            if (Main.rand.NextBool(2))
+            {
+                NitoVFX.PyreBurst(Projectile.Bottom + new Vector2(0f, -6f), 1, 1.6f, 0.8f, 26f, 10f);
+            }
+
+            // Met in the middle: detonate. Only the flagged hand spawns the blast so a pair produces
+            // one explosion, but BOTH retire on contact.
+            if (System.Math.Abs(Projectile.Center.X - ConvergeCenterX) <= ConvergeSpeed + 1f)
+            {
+                if (IsExploder)
+                {
+                    Vector2 blastCenter = new Vector2(ConvergeCenterX, Projectile.Center.Y);
+                    SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.9f, Pitch = -0.35f }, blastCenter);
+                    UsefulFunctions.ScreenShake(blastCenter, 7f, 16);
+                    NitoVFX.PyreBurst(blastCenter, 60, 9f, 1.6f, 40f, 40f);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), blastCenter, Vector2.Zero,
+                            ModContent.ProjectileType<NitoDeathNova>(), Projectile.damage, 6f, Projectile.owner, BlastRadius);
+                    }
+                }
+                Projectile.Kill();
             }
         }
 
@@ -357,14 +527,86 @@ namespace tsorcRevamp.Projectiles.Enemy
             float activeProgress = Timer <= TelegraphTicks
                 ? telegraphProgress * 0.3f
                 : MathHelper.Clamp((Timer - TelegraphTicks) / 10f, 0f, 1f);
-            float fade = Timer < TelegraphTicks + 28
-                ? 1f
-                : MathHelper.Clamp((Projectile.timeLeft - 4f) / 12f, 0f, 1f);
-            NitoVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 7f),
-                new Vector2(Projectile.width * 1.35f, 48f), telegraphProgress, 0.8f * fade);
+            float fade = MathHelper.Clamp((Projectile.timeLeft - 4f) / 12f, 0f, 1f);
+            // The rift stays behind at the BREACH point rather than sliding along with a converging
+            // hand — the hole in the ground doesn't travel.
+            if (!Converging)
+            {
+                NitoVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 7f),
+                    new Vector2(Projectile.width * 1.35f, 48f), telegraphProgress, 0.8f * fade);
+            }
             NitoVFX.DrawGraveHand(Projectile.Center, new Vector2(Projectile.width * 1.15f, Projectile.height * 1.35f),
                 activeProgress, 0.82f * fade);
             return true;
+        }
+    }
+
+    ///<summary>
+    ///The red-and-black grave-fire a grave hand leaves burning in the hole it tore open. Damaging for
+    ///its full 3-second life, then eases out over the last half-second with a scatter of ember dust
+    ///rather than blinking off. Reuses the pyre-family plume shader the eruptions already use.
+    ///</summary>
+    class NitoPyreFire : ModProjectile
+    {
+        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+
+        const int BurnTicks = 180;  // 3 seconds
+        const int FadeTicks = 30;
+        int Timer => (int)Projectile.localAI[0];
+
+        public override void SetDefaults()
+        {
+            Projectile.hostile = true;
+            Projectile.width = 110;
+            Projectile.height = 70;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = BurnTicks + FadeTicks;
+            Projectile.aiStyle = 0;
+        }
+
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            // Spawned at the breach (a ground point), so lift the box to sit ON the ground.
+            Projectile.position.Y -= Projectile.height * 0.75f;
+        }
+
+        // Stops biting once it starts guttering out, so the visual tail is never an invisible hitbox.
+        public override bool? CanDamage() => Timer < BurnTicks;
+
+        public override void DrawBehind(int index, System.Collections.Generic.List<int> behindNPCsAndTiles,
+            System.Collections.Generic.List<int> behindNPCs, System.Collections.Generic.List<int> behindProjectiles,
+            System.Collections.Generic.List<int> overPlayers, System.Collections.Generic.List<int> overWiresUI)
+        {
+            behindNPCsAndTiles.Add(index);
+        }
+
+        public override void AI()
+        {
+            Projectile.localAI[0]++;
+            Projectile.velocity = Vector2.Zero;
+            Lighting.AddLight(Projectile.Center, 0.5f, 0.16f, 0.1f);
+            if (Timer < BurnTicks && Main.rand.NextBool(2))
+            {
+                NitoVFX.PyreBurst(Projectile.Center + new Vector2(0f, 10f), 1, 2.2f, 0.9f, 46f, 12f);
+            }
+            else if (Timer == BurnTicks)
+            {
+                NitoVFX.PyreBurst(Projectile.Center, 22, 3.4f, 1.1f, 44f, 16f);
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float fade = Timer < BurnTicks
+                ? MathHelper.Clamp(Timer / 12f, 0f, 1f)                        // quick flare-up
+                : MathHelper.Clamp(1f - (Timer - BurnTicks) / (float)FadeTicks, 0f, 1f); // smooth guttering
+            float progress = MathHelper.Clamp(Timer / (float)BurnTicks, 0f, 1f);
+            NitoVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 6f),
+                new Vector2(Projectile.width * 1.3f, 46f), 1f, 0.72f * fade);
+            NitoVFX.DrawGraveEruption(Projectile.Center,
+                new Vector2(Projectile.width * 1.1f, Projectile.height * 1.5f), progress, 0.6f * fade);
+            return false;
         }
     }
 
@@ -454,14 +696,17 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 58;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 95;
+            Projectile.timeLeft = 190; // was 95 — lingers twice as long
             Projectile.aiStyle = 0;
         }
 
         public override void AI()
         {
             Projectile.localAI[0]++;
-            Projectile.velocity *= 0.98f;
+            // 0.98 -> 0.995: at the old drag the (already slow) cloud shed most of its speed within
+            // half a second and stalled almost on top of Nito. Combined with the doubled launch speed
+            // this is what actually carries the breath across the arena.
+            Projectile.velocity *= 0.995f;
             Projectile.rotation += 0.03f;
             if (Main.rand.NextBool(2))
             {
@@ -473,7 +718,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float progress = MathHelper.Clamp(Projectile.localAI[0] / 95f, 0f, 1f);
+            float progress = MathHelper.Clamp(Projectile.localAI[0] / 190f, 0f, 1f);
             float fade = MathHelper.Clamp(Projectile.timeLeft / 18f, 0f, 1f);
             NitoVFX.DrawMiasma(Projectile.Center, new Vector2(74f, 70f), Projectile.rotation,
                 progress, 0.88f * fade, Projectile.identity * 0.613f);

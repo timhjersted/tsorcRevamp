@@ -29,6 +29,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         private const int WindupSpinTicks = 9;
         private Vector2 _launchVelocity;
 
+        /// <summary>Ticks the head flies outward before reeling back. Reach = this * launch speed.</summary>
+        protected virtual float OutwardTicks => 18f;
+        /// <summary>Speed the head reels back in at.</summary>
+        protected virtual float ReturnSpeed => 13f;
+        /// <summary>Total lifetime. Must cover windup + outward + the return trip, or the head is
+        /// deleted mid-flight and the chain visually snaps.</summary>
+        protected virtual int Lifetime => 54;
+
         public override void SetDefaults()
         {
             Projectile.width = 26;
@@ -38,7 +46,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = 54;
+            Projectile.timeLeft = Lifetime;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 16;
@@ -115,7 +123,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                     }
 
                     // After flying out a bit, reel back toward the hand.
-                    if (Projectile.localAI[0] - WindupSpinTicks > 18f)
+                    if (Projectile.localAI[0] - WindupSpinTicks > OutwardTicks)
                     {
                         Vector2 toHand = hand - Projectile.Center;
                         if (toHand.Length() < 18f)
@@ -124,7 +132,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                             return;
                         }
 
-                        Projectile.velocity = Vector2.Lerp(Projectile.velocity, toHand.SafeNormalize(Vector2.Zero) * 13f, 0.18f);
+                        Projectile.velocity = Vector2.Lerp(Projectile.velocity, toHand.SafeNormalize(Vector2.Zero) * ReturnSpeed, 0.18f);
                     }
                 }
             }

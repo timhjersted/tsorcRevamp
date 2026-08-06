@@ -53,7 +53,9 @@ float4 Trail(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
 
     float3 color = lerp(DarkColor, MidColor, saturate(body * 1.25));
     color = lerp(color, CoreColor, saturate(mote * 1.2));
-    return float4(color, saturate(body * 0.60 + mote * 0.45) * Opacity) * v;
+    // PREMULTIPLIED — this technique is alpha-blended; see BlackKnightSpearWake.fx.
+    float alpha = saturate(body * 0.60 + mote * 0.45) * Opacity;
+    return float4(color * alpha, alpha) * v;
 }
 
 technique BlackKnightGraveTear { pass P { PixelShader = compile ps_2_0 Tear(); } }

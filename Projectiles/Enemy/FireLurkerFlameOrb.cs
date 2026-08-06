@@ -111,7 +111,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (Projectile.velocity.LengthSquared() > 0.01f)
             {
-                Projectile.spriteDirection = Projectile.velocity.X < 0f ? -1 : 1;
+                Projectile.spriteDirection = Projectile.velocity.X < 0f ? 1 : -1;
                 Projectile.rotation = MathHelper.PiOver2;
             }
         }

@@ -61,7 +61,9 @@ float4 FlailTrail(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
 
     float3 color = lerp(DarkColor, MidColor, saturate(body * 1.3));
     color = lerp(color, CoreColor, saturate(ember * 1.5));
-    return float4(color, saturate(body * 0.62 + ember * 0.45) * Opacity) * v;
+    // PREMULTIPLIED — this technique is alpha-blended; see BlackKnightSpearWake.fx.
+    float alpha = saturate(body * 0.62 + ember * 0.45) * Opacity;
+    return float4(color * alpha, alpha) * v;
 }
 
 // Ground shockwave telegraph. The collapsing ring is the readable threat, so it stays; the static

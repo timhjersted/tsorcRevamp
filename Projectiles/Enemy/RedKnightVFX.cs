@@ -22,17 +22,17 @@ namespace tsorcRevamp.Projectiles.Enemy
         const string ParticleRoot = "tsorcRevamp/Textures/Particles/";
 
         static Asset<Effect> cinderTrailEffect;
-        static Asset<Effect> cinderNovaEffect;
-        static Asset<Effect> judgmentEffect;
         static Asset<Effect> crimsonEffect;
         static Asset<Effect> dominionEffect;
+        static Asset<Effect> destinedDeathEffect;
         static Asset<Texture2D> auraNoise;
         static Asset<Texture2D> smoothNoise;
-        static Asset<Texture2D> brokenNoise;
         static Asset<Texture2D> turbulentNoise;
         static Asset<Texture2D> grainNoise;
         static Asset<Texture2D> marbleNoise;
         static Asset<Texture2D> veinNoise;
+        static Asset<Texture2D> blobNoise;
+        static Asset<Texture2D> billowNoise;
         static Asset<Texture2D> flare;
         static Asset<Texture2D> flameOne;
         static Asset<Texture2D> flameTwo;
@@ -45,9 +45,15 @@ namespace tsorcRevamp.Projectiles.Enemy
         static readonly Color GreatCinder = new(48, 1, 3);
         static readonly Color GreatFlame = new(244, 42, 25);
         static readonly Color GreatCore = new(255, 164, 78);
-        static readonly Color StormCinder = new(3, 15, 36);
-        static readonly Color StormFlame = new(38, 132, 226);
-        static readonly Color StormCore = new(126, 218, 255);
+        // Destined Death palette. DarkColor is very nearly black on purpose — under premultiplied
+        // alpha that is what lets the sooty half of the flame OCCLUDE the background and read as
+        // genuine black fire rather than as a dark tint (vfx-shader-tips §43).
+        static readonly Color DestinedSoot = new(6, 0, 3);
+        static readonly Color DestinedFlame = new(198, 14, 30);
+        static readonly Color DestinedCore = new(255, 132, 86);
+        static readonly Color BoltSoot = new(26, 0, 6);
+        static readonly Color BoltFlame = new(206, 16, 34);
+        static readonly Color BoltCore = new(255, 138, 110);
         static readonly Color PoisonCinder = new(15, 25, 2);
         static readonly Color PoisonBody = new(118, 174, 12);
         static readonly Color PoisonCore = new(226, 255, 102);
@@ -60,17 +66,19 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             cinderTrailEffect ??= ModContent.Request<Effect>(EffectRoot + "GwynCinderTrail", AssetRequestMode.ImmediateLoad);
-            cinderNovaEffect ??= ModContent.Request<Effect>(EffectRoot + "GwynCinderNova", AssetRequestMode.ImmediateLoad);
-            judgmentEffect ??= ModContent.Request<Effect>(EffectRoot + "GwynSunlightJudgment", AssetRequestMode.ImmediateLoad);
             crimsonEffect ??= ModContent.Request<Effect>(EffectRoot + "RedKnightCrimsonVFX", AssetRequestMode.ImmediateLoad);
             dominionEffect ??= ModContent.Request<Effect>(EffectRoot + "GreatRedKnightDominion", AssetRequestMode.ImmediateLoad);
+            destinedDeathEffect ??= ModContent.Request<Effect>(EffectRoot + "RedKnightDestinedDeath", AssetRequestMode.ImmediateLoad);
             auraNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Aurax44", AssetRequestMode.ImmediateLoad);
             smoothNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
-            brokenNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
             turbulentNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Turbulence_05-512x512", AssetRequestMode.ImmediateLoad);
             grainNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Grainy_07-512x512", AssetRequestMode.ImmediateLoad);
             marbleNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_MarbleNoise_tiled", AssetRequestMode.ImmediateLoad);
             veinNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Vein_04-512x512", AssetRequestMode.ImmediateLoad);
+            // Destined Death sampler pair. Both were picked by LOOKING (preview/ContactSheet.ps1)
+            // and both survived the -Tile2x2 seam pass, which every scrolling shader needs (§44).
+            blobNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Noise_6Yu1", AssetRequestMode.ImmediateLoad);
+            billowNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Turbulence_07-512x512", AssetRequestMode.ImmediateLoad);
             flare ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_Flare_666", AssetRequestMode.ImmediateLoad);
             flameOne ??= ModContent.Request<Texture2D>(ParticleRoot + "flame_01_a", AssetRequestMode.ImmediateLoad);
             flameTwo ??= ModContent.Request<Texture2D>(ParticleRoot + "flame_02_a", AssetRequestMode.ImmediateLoad);
@@ -89,36 +97,40 @@ namespace tsorcRevamp.Projectiles.Enemy
                 0.45f, empowered ? 0.92f : 0.72f, 1f, 1f);
         }
 
+        /// <summary>
+        /// The travelling flame shockwave a planted standard throws out. Was RedKnightGroundMiasma,
+        /// a flat quad whose only animation was the noise sliding sideways; it is now the Destined
+        /// Death black+red flame, two overlapping instances at different phases and speeds so the
+        /// wave churns instead of translating rigidly.
+        /// </summary>
         internal static void DrawGroundWave(Vector2 groundPoint, Vector2 velocity, Vector2 size, float opacity)
         {
             int direction = velocity.X < 0f ? -1 : 1;
-            DrawGroundMiasma(groundPoint, direction,
-                Math.Min(size.X, 58f), Math.Min(size.Y + 14f, 36f),
-                Math.Min(opacity * 0.28f, 0.25f), 0.92f, 0.72f, empowered: false);
-            DrawCrimsonFlameCluster(groundPoint + new Vector2(0f, 6f),
-                0.76f, opacity * 0.94f, 0.72f, 11f, direction);
+            float width = Math.Max(size.X, 40f) * 1.9f;
+            float height = Math.Max(size.Y, 16f) * 2.9f;
+            // Two passes: a wide low body and a narrower taller crest slightly ahead of it. Their
+            // phases differ so they never sample the same noise and read as one flat stamp (§33).
+            DrawDestinedDeathFlame(groundPoint, new Vector2(width, height * 0.72f),
+                0.55f, opacity * 0.9f, 0.9f, direction * 1.7f);
+            DrawDestinedDeathFlame(groundPoint + new Vector2(direction * width * 0.16f, 0f),
+                new Vector2(width * 0.62f, height), 0.7f, opacity, 1.15f, direction * -0.8f);
         }
 
         internal static void DrawStandardCharge(Vector2 groundPoint, float progress, KnightStandardMode mode)
         {
             bool empowered = mode != KnightStandardMode.RedKnight;
-            float length = MathHelper.Lerp(34f, empowered ? 82f : 68f, progress);
-            float height = MathHelper.Lerp(24f, empowered ? 44f : 36f, progress);
-            float opacity = MathHelper.Lerp(0.14f, empowered ? 0.66f : 0.54f, progress);
+            float width = MathHelper.Lerp(46f, empowered ? 128f : 100f, progress);
+            float height = MathHelper.Lerp(30f, empowered ? 96f : 76f, progress);
+            float opacity = MathHelper.Lerp(0.22f, empowered ? 0.98f : 0.86f, progress);
 
-            if (mode != KnightStandardMode.GreatRight)
-            {
-                DrawGroundMiasma(groundPoint, 1, length, height, opacity * 0.28f,
-                    progress, 0.48f + progress * 0.32f, empowered);
-            }
-            if (mode != KnightStandardMode.GreatLeft)
-            {
-                DrawGroundMiasma(groundPoint, -1, length, height, opacity * 0.28f,
-                    progress, 0.48f + progress * 0.32f, empowered);
-            }
-            DrawCrimsonFlameCluster(groundPoint + new Vector2(0f, 7f), progress,
-                opacity * 1.18f, empowered ? 1.22f : 0.96f,
-                empowered ? 24f : 17f, mode == KnightStandardMode.GreatLeft ? 1 : -1);
+            // Charge ramps the flame up in place: `progress` also drives the shader's own envelope,
+            // so the pillar grows AND its noise intensifies as the standard nears its release.
+            DrawDestinedDeathFlame(groundPoint, new Vector2(width, height),
+                MathHelper.Clamp(progress * 0.82f, 0f, 1f), opacity,
+                empowered ? 1.2f : 0.95f, (int)mode * 1.3f);
+            DrawDestinedDeathFlame(groundPoint, new Vector2(width * 0.5f, height * 1.24f),
+                MathHelper.Clamp(progress * 0.9f, 0f, 1f), opacity * 0.85f,
+                empowered ? 1.35f : 1.05f, (int)mode * 1.3f + 2.4f);
         }
 
         /// <summary>Emit a simple flame dust from the bomb sprite's fixed top anchor.</summary>
@@ -136,12 +148,19 @@ namespace tsorcRevamp.Projectiles.Enemy
             spark.fadeIn = 0.25f;
         }
 
+        /// <summary>
+        /// The standard red lightning lane. Was routing into Gwyn's SunlightJudgment column tinted
+        /// storm-BLUE, which is why Stormbreaker Edict read as a different boss's attack; it now
+        /// draws the family's own crimson bolt technique.
+        /// The widths are much larger than the old 15/8 — at a 620px lane those made the bolt one
+        /// pixel of jitter wide, and none of the lightning shape was visible.
+        /// </summary>
         internal static void DrawLightningLane(Vector2 start, Vector2 velocity, float length,
-            float progress, bool active, float fade, float activeWidth = 15f)
+            float progress, bool active, float fade, float activeWidth = 46f, float phase = 0f)
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
-            DrawJudgmentLane(start, direction, length, active ? activeWidth : 8f,
-                progress, active, fade);
+            DrawCrimsonBolt(start, direction, length, active ? activeWidth : activeWidth * 0.6f,
+                progress, active, fade, phase);
         }
 
         internal static void DrawCrimsonDominion(Vector2 center, int age, float baseRotation,
@@ -164,9 +183,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 float build = MathHelper.Clamp(age / (float)CrimsonDominionController.BuildTicks, 0f, 1f);
                 fieldOpacity = MathHelper.Lerp(0f, 1f, build);
                 edgeOpacity = MathHelper.Lerp(0.08f, 0.95f, build);
-                float gatherSize = MathHelper.Lerp(96f, 188f, build);
-                DrawDominionQuad("DominionNova", center, Vector2.One * gatherSize, 0f,
-                    0.22f * build, build, 0f, 0.78f, 0.5f, rotationDirection, BlendState.Additive);
+                DrawDestinedDeathBlast(center, MathHelper.Lerp(96f, 188f, build),
+                    1f - build * 0.5f, 0.30f * build);
             }
             else if (age < CrimsonDominionController.EscapeStart)
             {
@@ -191,52 +209,67 @@ namespace tsorcRevamp.Projectiles.Enemy
                     edgeOpacity, 1f, 0f, 1.08f, radiusRatio, rotationDirection, BlendState.Additive);
             }
 
-            if (age >= CrimsonDominionController.EscapeStart && age < CrimsonDominionController.NovaStart)
+            // The finishing "get out of the circle" sequence. Replaces the old DominionNova pair,
+            // which peaked at 0.88 alpha of a mostly-transparent field and read as a faded wash.
+            // Now: a black Destined Death seal FILLS the arena over SealFillTicks, its crimson
+            // energy intensifying toward the advancing edge, then detonates.
+            //
+            // The seal deliberately starts LATE in the escape window rather than at EscapeStart.
+            // The escape window itself is a balance number (it is how long the player has to reach
+            // the boundary) and is left alone; only the visual is retimed, so the whole readable
+            // "fill then blast" beat lands in roughly two seconds as intended.
+            if (age >= CrimsonDominionController.SealStart && age < CrimsonDominionController.NovaStart)
             {
-                // Pre-nova charge-up: now a full 210t telegraph (was 90t) with a much stronger
-                // opacity ramp so "the explosion is coming" reads clearly instead of fading in barely
-                // visible right up until it fires.
-                float charge = MathHelper.Clamp((age - CrimsonDominionController.EscapeStart) /
-                    (float)CrimsonDominionController.EscapeTicks, 0f, 1f);
-                Vector2 novaSize = Vector2.One * arenaRadius * 2f;
-                DrawDominionQuad("DominionNova", center, novaSize, 0f,
-                    MathHelper.Lerp(0.22f, 0.88f, charge), charge, 0f,
-                    MathHelper.Lerp(0.6f, 1.15f, charge), 0.5f, rotationDirection,
-                    BlendState.NonPremultiplied);
+                float fill = MathHelper.Clamp((age - CrimsonDominionController.SealStart) /
+                    (float)CrimsonDominionController.SealFillTicks, 0f, 1f);
+                DrawDestinedDeathSeal(center, arenaRadius * 2f, fill,
+                    MathHelper.Lerp(0.45f, 1f, fill));
             }
             else if (age >= CrimsonDominionController.NovaStart)
             {
+                // One continuous blast curve across nova + fade so the explosion keeps expanding
+                // while it dissipates instead of snapping to a second animation.
+                float blast = MathHelper.Clamp((age - CrimsonDominionController.NovaStart) /
+                    (float)(CrimsonDominionController.NovaTicks + CrimsonDominionController.FadeTicks),
+                    0f, 1f);
                 float fade = age < CrimsonDominionController.FadeStart ? 1f
                     : MathHelper.Clamp(1f - (age - CrimsonDominionController.FadeStart) /
                         (float)CrimsonDominionController.FadeTicks, 0f, 1f);
-                Vector2 novaSize = Vector2.One * arenaRadius * 2f;
-                DrawDominionQuad("DominionNova", center, novaSize, 0f,
-                    0.72f * fade, 1f, 1f, 0.96f, 0.5f, rotationDirection,
-                    BlendState.NonPremultiplied);
-                DrawDominionQuad("DominionNova", center, novaSize, 0f,
-                    0.92f * fade, 1f, 1f, 1.34f, 0.5f, rotationDirection,
-                    BlendState.Additive);
+                DrawDestinedDeathBlast(center, arenaRadius * 2f, blast, fade);
+                // A second, slightly larger and hotter pass for the first instant only — this is
+                // the flash, and it is the one place additive stacking is honestly wanted.
+                if (age < CrimsonDominionController.FadeStart)
+                {
+                    DrawDestinedDeathBlast(center, arenaRadius * 2.16f, blast * 0.7f, fade * 0.55f);
+                }
             }
         }
 
-        internal static void DrawDominionExecution(Vector2 center, Vector2 direction,
-            float progress, bool active, float fade)
+        /// <summary>
+        /// Crimson Dominion's body engulf: the knight stands holding its spear wrapped in the same
+        /// black-and-crimson Destined Death flame the seal detonates with. Anchored on the sprite's
+        /// bottom edge (feet), not its centre, so the flame sits on the ground it is standing on.
+        /// </summary>
+        /// <param name="front">false = the heavy pass drawn behind the sprite (PreDraw); true = the
+        /// thin pass drawn after the sprite and its held spear (PostDraw), so the flame wraps the
+        /// knight rather than only silhouetting behind it.</param>
+        internal static void DrawDominionEngulf(Vector2 feet, float scale, float opacity, bool front)
         {
-            direction = direction.SafeNormalize(Vector2.UnitX);
-            float length = CrimsonDominionController.Radius - CrimsonDominionController.InnerRadius;
-            DrawDominionLance(center + direction * CrimsonDominionController.InnerRadius,
-                direction, length, active ? 76f : 58f, progress, active,
-                fade * (active ? 1f : 0.82f), direction.X < 0f ? -1 : 1);
-        }
-
-        static void DrawDominionLance(Vector2 start, Vector2 direction, float length,
-            float width, float progress, bool active, float opacity, int movementDirection)
-        {
-            direction = direction.SafeNormalize(Vector2.UnitX);
-            Vector2 center = start + direction * length * 0.5f;
-            DrawDominionQuad("DominionLance", center, new Vector2(length, width), direction.ToRotation(),
-                opacity, progress, active ? 1f : 0f, active ? 1.25f : 0.82f, 0.5f,
-                movementDirection, BlendState.Additive);
+            if (opacity <= 0f)
+            {
+                return;
+            }
+            if (front)
+            {
+                DrawDestinedDeathFlame(feet + new Vector2(-6f * scale, 0f),
+                    new Vector2(58f, 118f) * scale, 0.58f, opacity, 1.25f, 5.1f);
+                return;
+            }
+            DrawDestinedDeathFlame(feet, new Vector2(96f, 108f) * scale, 0.5f, opacity, 1.15f, 0f);
+            DrawDestinedDeathFlame(feet + new Vector2(-14f * scale, 0f),
+                new Vector2(52f, 138f) * scale, 0.62f, opacity * 0.8f, 1.3f, 2.9f);
+            DrawDestinedDeathFlame(feet + new Vector2(15f * scale, 0f),
+                new Vector2(46f, 124f) * scale, 0.44f, opacity * 0.8f, 1.25f, -3.4f);
         }
 
         internal static void DrawToxicMotes(Vector2 center, int count, float progress, float radius)
@@ -316,37 +349,24 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (storm)
             {
-                float radius = MathHelper.Lerp(46f, 172f, MathHelper.Clamp(progress * 1.05f, 0f, 1f));
+                // Complete redo. Was a blue/cyan gather (DrawVoidGather + six Gwyn judgment strands
+                // + a storm-blue radial band) that read as a different boss's attack and as a flat
+                // ring. It is now one dedicated crimson technique: a dark occluding storm body with
+                // branching crimson discharge crackling through it and a hot heart on the knight.
+                float diameter = MathHelper.Lerp(150f, 470f, MathHelper.Clamp(progress * 1.05f, 0f, 1f));
+                DrawStormHeraldGather(center, diameter, progress,
+                    MathHelper.Clamp(0.35f + envelope * 0.65f, 0f, 1f));
 
-                // Dark storm-cloud gathering — reads as "a storm is being summoned" instead of the
-                // old flat expanding ring, which was just a blue circle with no weight behind it.
-                DrawVoidGather(center, new Vector2(radius * 2.6f, radius * 2.2f),
-                    envelope * 0.85f + 0.1f, new Color(3, 6, 14), new Color(40, 90, 150));
-
-                // Crackling lightning strands lick around the knight, staggering in one at a time
-                // over the buildup instead of a single faint ring at ~7% opacity.
-                const int strandCount = 6;
-                for (int i = 0; i < strandCount; i++)
+                if (!Main.dedServ && envelope > 0.08f && Main.rand.NextBool(2))
                 {
-                    float strandThreshold = i / (float)strandCount * 0.7f;
-                    if (progress < strandThreshold)
-                    {
-                        continue;
-                    }
-                    float strandProgress = MathHelper.Clamp((progress - strandThreshold) / 0.3f, 0f, 1f);
-                    float angle = MathHelper.TwoPi * i / strandCount - MathHelper.PiOver2
-                        - progress * 0.9f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 5f + i) * 0.12f;
-                    Vector2 direction = angle.ToRotationVector2();
-                    float strandRadius = radius * (0.55f + 0.1f * (i % 3));
-                    DrawJudgmentLane(center + direction * strandRadius * 0.4f, direction,
-                        strandRadius * 0.85f, 5f + (i % 2) * 2f,
-                        strandProgress, active: false, envelope * 0.62f * strandProgress);
+                    Vector2 dustPosition = center + Main.rand.NextVector2CircularEdge(
+                        diameter * 0.34f, diameter * 0.34f);
+                    Dust arc = Dust.NewDustPerfect(dustPosition,
+                        Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.RedTorch,
+                        (center - dustPosition).SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(1.4f, 3f),
+                        110, new Color(206, 16, 34), Main.rand.NextFloat(0.7f, 1.15f));
+                    arc.noGravity = true;
                 }
-
-                // Thin bright rim so the gather keeps a readable edge — much thinner and hotter
-                // than the old dominant band, now an accent rather than the whole effect.
-                DrawRadialBand(center, radius, 2.5f, 12f, envelope * 0.22f,
-                    StormCinder, StormFlame, StormCore);
             }
             else
             {
@@ -389,19 +409,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 DrawSmallFlare(center, GreatCore, (1f - progress / 0.16f) * 0.075f * scale);
             }
-        }
-
-        static void DrawGroundMiasma(Vector2 groundOrigin, int direction, float length, float height,
-            float opacity, float progress, float intensity, bool empowered)
-        {
-            direction = direction < 0 ? -1 : 1;
-            Vector2 size = new(Math.Max(4f, length), Math.Max(4f, height));
-            Vector2 center = groundOrigin + new Vector2(direction * size.X * 0.5f, -size.Y * 0.5f + 2f);
-            DrawCrimsonQuad("RedKnightGroundMiasma", center, 0f, size, opacity,
-                empowered ? new Color(38, 0, 28) : new Color(28, 0, 20),
-                empowered ? new Color(218, 18, 52) : new Color(174, 10, 40),
-                empowered ? new Color(255, 124, 82) : new Color(246, 72, 58),
-                progress, intensity, direction, 0f);
         }
 
         static void DrawCrimsonFlameCluster(Vector2 groundPoint, float progress,
@@ -702,105 +709,123 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        static void DrawRadialBand(Vector2 center, float radius, float halfThickness, float trailLength,
-            float opacity, Color outerColor, Color flameColor, Color coreColor)
+        /// <summary>
+        /// The one entry point for every RedKnightDestinedDeath.fx technique. Always premultiplied
+        /// AlphaBlend — the shaders return float4(colour * alpha + emissive, alpha), which is what
+        /// makes black flame possible at all (vfx-shader-tips §43). Do NOT call this with Additive.
+        /// </summary>
+        /// <param name="origin">Normalised anchor inside the quad: (0.5, 0.5) centres it,
+        /// (0.5, 1) hangs it off its bottom edge, which is what the bottom-anchored flame wants.</param>
+        static void DrawDestinedDeathQuad(string techniqueName, Vector2 anchor, float rotation,
+            Vector2 size, Vector2 origin, float opacity, float progress, float intensity,
+            float active, float direction, Color darkColor, Color midColor, Color coreColor)
         {
             LoadAssets();
-            if (Main.dedServ || cinderNovaEffect == null || smoothNoise == null || brokenNoise == null
-                || opacity <= 0f || radius <= 0f)
+            if (Main.dedServ || destinedDeathEffect == null || blobNoise == null || billowNoise == null
+                || opacity <= 0f || size.X <= 0f || size.Y <= 0f)
             {
                 return;
             }
 
-            float drawRadius = Math.Max(2f, radius + halfThickness + 5f);
-            int diameter = Math.Max(2, (int)Math.Ceiling(drawRadius * 2f));
-            Rectangle source = new(0, 0, diameter, diameter);
-
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
-            Texture previousTexture = graphicsDevice.Textures[1];
-            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+            Texture previousTexture1 = graphicsDevice.Textures[1];
+            Texture previousTexture2 = graphicsDevice.Textures[2];
+            SamplerState previousSampler1 = graphicsDevice.SamplerStates[1];
+            SamplerState previousSampler2 = graphicsDevice.SamplerStates[2];
             try
             {
-                graphicsDevice.Textures[1] = brokenNoise.Value;
+                graphicsDevice.Textures[1] = blobNoise.Value;
+                graphicsDevice.Textures[2] = billowNoise.Value;
                 graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
-                Effect effect = cinderNovaEffect.Value;
-                effect.CurrentTechnique = effect.Techniques["GwynCinderNova"];
-                effect.Parameters["OuterColor"].SetValue(outerColor.ToVector3());
-                effect.Parameters["FlameColor"].SetValue(flameColor.ToVector3());
+                graphicsDevice.SamplerStates[2] = SamplerState.LinearWrap;
+
+                Effect effect = destinedDeathEffect.Value;
+                effect.CurrentTechnique = effect.Techniques[techniqueName];
+                effect.Parameters["DarkColor"].SetValue(darkColor.ToVector3());
+                effect.Parameters["MidColor"].SetValue(midColor.ToVector3());
                 effect.Parameters["CoreColor"].SetValue(coreColor.ToVector3());
                 effect.Parameters["Opacity"].SetValue(opacity);
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                effect.Parameters["DrawSize"].SetValue(source.Size());
-                effect.Parameters["PrimaryTextureSize"].SetValue(smoothNoise.Value.Size());
-                effect.Parameters["RingRadius"].SetValue(radius);
-                effect.Parameters["RingHalfThickness"].SetValue(Math.Max(2f, halfThickness));
-                effect.Parameters["TrailLength"].SetValue(Math.Max(4f, trailLength));
+                effect.Parameters["Progress"].SetValue(MathHelper.Clamp(progress, 0f, 1f));
+                effect.Parameters["Intensity"].SetValue(intensity);
+                effect.Parameters["Active"].SetValue(active);
+                effect.Parameters["Direction"].SetValue(direction);
+                effect.Parameters["DrawSize"]?.SetValue(size);
                 effect.CurrentTechnique.Passes[0].Apply();
 
-                Main.EntitySpriteDraw(smoothNoise.Value, center - Main.screenPosition, source, Color.White,
-                    0f, source.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Texture2D pixel = TextureAssets.MagicPixel.Value;
+                Main.EntitySpriteDraw(pixel, anchor - Main.screenPosition, null, Color.White,
+                    rotation, pixel.Size() * origin, size / pixel.Size(), SpriteEffects.None, 0f);
             }
             finally
             {
-                graphicsDevice.Textures[1] = previousTexture;
-                graphicsDevice.SamplerStates[1] = previousSampler;
+                graphicsDevice.Textures[1] = previousTexture1;
+                graphicsDevice.Textures[2] = previousTexture2;
+                graphicsDevice.SamplerStates[1] = previousSampler1;
+                graphicsDevice.SamplerStates[2] = previousSampler2;
                 UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             }
         }
 
-        static void DrawJudgmentLane(Vector2 start, Vector2 direction, float length, float width,
-            float progress, bool active, float opacity)
+        /// <summary>
+        /// Elden-Ring "Destined Death" flame: black fire and crimson fire burning together, anchored
+        /// on its bottom edge so <paramref name="groundPoint"/> is the ground line (or the caster's
+        /// feet). General purpose — the standard shockwaves, the standard charge and Crimson
+        /// Dominion's body engulf are all this one technique at different sizes.
+        /// </summary>
+        /// <param name="phase">Per-instance sampling offset so adjacent flames are not one stamp
+        /// repeated (§33). Any value works; neighbouring callers should differ by ~1.</param>
+        internal static void DrawDestinedDeathFlame(Vector2 groundPoint, Vector2 size,
+            float progress, float opacity, float intensity = 1f, float phase = 0f)
         {
-            LoadAssets();
-            if (Main.dedServ || judgmentEffect == null || smoothNoise == null || brokenNoise == null
-                || opacity <= 0f)
-            {
-                return;
-            }
+            DrawDestinedDeathQuad("DestinedDeathFlame", groundPoint, 0f, size,
+                new Vector2(0.5f, 1f), opacity, progress, intensity, 0f, phase,
+                DestinedSoot, DestinedFlame, DestinedCore);
+        }
 
+        /// <summary>Crimson Dominion's finishing circle while it FILLS.</summary>
+        internal static void DrawDestinedDeathSeal(Vector2 center, float diameter,
+            float progress, float opacity)
+        {
+            DrawDestinedDeathQuad("DestinedDeathSeal", center, 0f, Vector2.One * diameter,
+                Vector2.One * 0.5f, opacity, progress, 1f, 0f, 0f,
+                DestinedSoot, DestinedFlame, DestinedCore);
+        }
+
+        /// <summary>The detonation the seal culminates in.</summary>
+        internal static void DrawDestinedDeathBlast(Vector2 center, float diameter,
+            float progress, float opacity)
+        {
+            DrawDestinedDeathQuad("DestinedDeathBlast", center, 0f, Vector2.One * diameter,
+                Vector2.One * 0.5f, opacity, progress, 1f, 0f, 0f,
+                DestinedSoot, DestinedFlame, DestinedCore);
+        }
+
+        /// <summary>The Storm Herald gather, crimson rather than the old storm-blue.</summary>
+        internal static void DrawStormHeraldGather(Vector2 center, float diameter,
+            float progress, float opacity)
+        {
+            DrawDestinedDeathQuad("RedKnightStormHerald", center, 0f, Vector2.One * diameter,
+                Vector2.One * 0.5f, opacity, progress, 1f, 0f, 0f,
+                DestinedSoot, DestinedFlame, DestinedCore);
+        }
+
+        /// <summary>
+        /// THE standard Red Knight lightning bolt. Every lightning in the family routes through here
+        /// so Stormbreaker Edict and Crimson Dominion cannot drift into two different looks.
+        /// </summary>
+        static void DrawCrimsonBolt(Vector2 start, Vector2 direction, float length, float width,
+            float progress, bool active, float opacity, float phase)
+        {
             direction = direction.SafeNormalize(Vector2.UnitX);
-            Rectangle source = new(0, 0, Math.Max(4, (int)Math.Ceiling(width)), Math.Max(8, (int)Math.Ceiling(length)));
-            Vector2 center = start + direction * length * 0.5f;
-            float rotation = direction.ToRotation() - MathHelper.PiOver2;
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
-                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
-            Texture previousTexture = graphicsDevice.Textures[1];
-            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
-            try
-            {
-                graphicsDevice.Textures[1] = brokenNoise.Value;
-                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
-                Effect effect = judgmentEffect.Value;
-                effect.CurrentTechnique = effect.Techniques["GwynSunlightJudgmentColumn"];
-                effect.Parameters["GoldColor"].SetValue(StormCinder.ToVector3());
-                effect.Parameters["HotColor"].SetValue(StormFlame.ToVector3());
-                effect.Parameters["CoreColor"].SetValue(StormCore.ToVector3());
-                effect.Parameters["Opacity"].SetValue(opacity);
-                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                effect.Parameters["DrawSize"].SetValue(source.Size());
-                effect.Parameters["PrimaryTextureSize"].SetValue(smoothNoise.Value.Size());
-                effect.Parameters["Progress"].SetValue(progress);
-                effect.Parameters["Active"].SetValue(active ? 1f : 0f);
-                effect.Parameters["Direction"]?.SetValue(Math.Sign(direction.X));
-                effect.CurrentTechnique.Passes[0].Apply();
-
-                Main.EntitySpriteDraw(smoothNoise.Value, center - Main.screenPosition, source, Color.White,
-                    rotation, source.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-            }
-            finally
-            {
-                graphicsDevice.Textures[1] = previousTexture;
-                graphicsDevice.SamplerStates[1] = previousSampler;
-                UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
-            }
+            DrawDestinedDeathQuad("RedKnightLightningBolt", start + direction * length * 0.5f,
+                direction.ToRotation(), new Vector2(length, width), Vector2.One * 0.5f,
+                opacity, progress, 1f, active ? 1f : 0f, phase,
+                BoltSoot, BoltFlame, BoltCore);
         }
 
         static void DrawSmallFlare(Vector2 center, Color color, float scale)

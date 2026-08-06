@@ -223,16 +223,39 @@ namespace tsorcRevamp.Projectiles.Enemy
                 PlagueDark, PlagueMid, PlagueCore, 0.68f, 0.5f, 1f, 1f, BlendState.AlphaBlend);
         }
 
+        /// <summary>
+        /// Red fuse sparks for a held Moonfury bomb. Replaces the Moonfury shader that used to be
+        /// drawn on the held-bomb telegraph and sat visibly offset from the sprite — dust needs no
+        /// quad-to-sprite alignment to read correctly, so it cannot drift out of place.
+        /// </summary>
+        internal static void SpawnBombFuseSparks(Vector2 fuseWorld, float fuseProgress)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            // Ramps as the fuse burns down, so the telegraph still says "about to go off".
+            int count = 1 + (int)(fuseProgress * 2f);
+            for (int i = 0; i < count; i++)
+            {
+                Dust spark = Dust.NewDustPerfect(
+                    fuseWorld + Main.rand.NextVector2Circular(3f, 3f), DustID.RedTorch,
+                    new Vector2(Main.rand.NextFloat(-0.6f, 0.6f), Main.rand.NextFloat(-1.8f, -0.8f)),
+                    0, default, MathHelper.Lerp(0.9f, 1.5f, fuseProgress));
+                spark.noGravity = true;
+                spark.fadeIn = 0.4f;
+            }
+            Lighting.AddLight(fuseWorld, 0.75f * (0.4f + fuseProgress), 0.10f, 0.04f);
+        }
+
         internal static void DrawBlackKnightMoonfury(Vector2 center, Vector2 velocity, float progress, bool active)
         {
             LoadAssets();
-            if (velocity.LengthSquared() > 0.2f)
-            {
-                Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
-                Draw(blackKnightMoonfury, "BlackKnightMoonfurySmoke", perlinTiled, cloudNoise,
-                    center - direction * 31f, new Vector2(82f, 34f), direction.ToRotation(),
-                    PlagueDark, PlagueMid, PlagueCore, 0.46f, progress, active ? 1f : 0f, 1f, BlendState.AlphaBlend);
-            }
+            // The thrown bomb's smoke trail was removed on request — it read as a flat purple box.
+            // (Root cause was the premultiplied-alpha bug now fixed in the shader, but the trail
+            // added little over the bomb's own glow, so it stays gone. The explosion still draws
+            // its own smoke via DrawBurst.)
             // The bomb sprite is 34x34 and the orb now carries a bloom out past r=0.86, so the quad
             // has to be comfortably larger than the sprite or the bloom has nowhere to spill.
             Draw(blackKnightMoonfury, "BlackKnightMoonfuryCoal", wavyDetailNoise, veinNoise,
@@ -654,7 +677,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         EnemyVFXBurstKind Kind => (EnemyVFXBurstKind)(int)Projectile.ai[0];
         int Duration => Kind switch
         {
-            EnemyVFXBurstKind.BlackKnightMoonfuryBlast => 20,
+            // Was 20t (~0.33s) — "like only a frame before it disappears" per playtest. +30t so the
+            // fireball/cool-down curve in BlackKnightMoonfury.fx's Blast technique is actually visible.
+            EnemyVFXBurstKind.BlackKnightMoonfuryBlast => 50,
             EnemyVFXBurstKind.DemonSpiritSoulBurst => 18,
             EnemyVFXBurstKind.QuaraWaterBurst => 18,
             EnemyVFXBurstKind.EvilEyeGhostBurst => 34,

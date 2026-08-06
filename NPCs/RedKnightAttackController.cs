@@ -286,8 +286,10 @@ namespace tsorcRevamp.NPCs
             return attack switch
             {
                 KnightSpecialAttack.VenomWake => Color.GreenYellow,
-                KnightSpecialAttack.StormbreakerEdict => Color.Cyan,
-                KnightSpecialAttack.StormHerald => new Color(120, 220, 255),
+                // Stormbreaker and the Storm Herald both used a cyan/ice-blue accent that no longer
+                // matches anything they draw — every lightning in the kit is crimson now.
+                KnightSpecialAttack.StormbreakerEdict => new Color(226, 40, 52),
+                KnightSpecialAttack.StormHerald => new Color(206, 16, 34),
                 _ => Color.OrangeRed
             };
         }
@@ -570,10 +572,10 @@ namespace tsorcRevamp.NPCs
         }
 
         // Ground positions for the Stormbreaker lightning strikes, offset from the locked target
-        // point. 180px between adjacent marks — wide enough for a full dodge-roll-and-stand safe lane
-        // between any two bolts, with open space beyond the outer pair. Replaces the old narrow
-        // +-20 degree fan of 5 lines radiating from the knight's own body (no room to move).
-        static readonly float[] StormboltOffsets = { -270f, -90f, 90f, 270f };
+        // point. 212px between adjacent marks (was 180) — wide enough for a full dodge-roll-and-stand
+        // safe lane between any two bolts, with open space beyond the outer pair. Replaces the old
+        // narrow +-20 degree fan of 5 lines radiating from the knight's own body (no room to move).
+        static readonly float[] StormboltOffsets = { -318f, -106f, 106f, 318f };
 
         void TickStormbreaker(NPC npc, Player target, KnightAttackStats stats)
         {
@@ -595,9 +597,10 @@ namespace tsorcRevamp.NPCs
             }
             if (Timer == 82)
             {
-                // Reuses RedKnightLightningLane's existing telegraph/active/fade timeline and
-                // shader (DrawJudgmentLane) unchanged — just re-spawned vertically at spaced-apart
-                // ground marks instead of horizontally from the knight's center.
+                // Reuses RedKnightLightningLane's existing telegraph/active/fade timeline, spawned
+                // vertically at spaced-apart ground marks. The lane now draws the family's own
+                // crimson bolt technique instead of Gwyn's storm-BLUE SunlightJudgment column, so
+                // this is the standard red lightning the rest of the kit uses.
                 SpawnStormboltVolley(npc, LockedTarget, stats.MagicDamage);
                 PlaySound(SoundID.Item74 with { Volume = 0.85f, Pitch = -0.2f }, npc.Center);
                 npc.velocity.X *= 0.35f;
@@ -656,7 +659,7 @@ namespace tsorcRevamp.NPCs
         {
             npc.velocity.X *= 0.82f;
             Lighting.AddLight(npc.Center,
-                (storm ? new Color(90, 185, 255) : new Color(255, 55, 20)).ToVector3()
+                (storm ? new Color(226, 40, 52) : new Color(255, 55, 20)).ToVector3()
                 * (0.45f + TelegraphProgress * 0.55f));
 
             if (Timer == 0)
@@ -669,7 +672,7 @@ namespace tsorcRevamp.NPCs
                     ? SoundID.Item122 with { Volume = 0.72f, Pitch = -0.15f }
                     : SoundID.Item20 with { Volume = 0.78f, Pitch = -0.35f }, npc.Center);
                 tsorcRevampAIs.SpawnTelegraphFlash(npc,
-                    storm ? new Color(115, 220, 255) : new Color(255, 75, 25));
+                    storm ? new Color(226, 40, 52) : new Color(255, 75, 25));
             }
             else if (Timer == 135)
             {

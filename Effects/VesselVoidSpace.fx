@@ -49,8 +49,11 @@ float4 VoidSpacePixel(float4 sampleColor : COLOR0, float2 uv : TEXCOORD0) : COLO
     color = lerp(color, CoreColor, saturate(highlight * 0.85));
 
     // Near-transparent at the centre, heavy in the corners.
-    float alpha = (0.06 + t * 0.66) * (0.55 + cloud * 0.65) * Opacity;
-    return float4(color, saturate(alpha));
+    float alpha = saturate((0.06 + t * 0.66) * (0.55 + cloud * 0.65) * Opacity);
+    // PREMULTIPLIED. Terraria's BlendState.AlphaBlend is (One, InvSrcAlpha), so returning straight
+    // colour adds it at full strength even where alpha is ~0 — which would have flooded the whole
+    // screen with a flat wash instead of the intended transparent-centre gradient.
+    return float4(color * alpha, alpha);
 }
 
 technique VesselVoidSpace

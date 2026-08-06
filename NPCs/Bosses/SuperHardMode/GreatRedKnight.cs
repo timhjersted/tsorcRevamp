@@ -912,6 +912,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #endregion
 
         #region PreDraw
+        /// <summary>
+        /// Ramp for Crimson Dominion's body engulf: on over the first 45t, held through the whole
+        /// spear-holding phase, off over the last 60t of the attack's 720t duration.
+        /// </summary>
+        float DominionEngulfOpacity
+        {
+            get
+            {
+                int timer = specialAttacks.Timer;
+                return MathHelper.Clamp(timer / 45f, 0f, 1f)
+                    * MathHelper.Clamp((720f - timer) / 60f, 0f, 1f);
+            }
+        }
+
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -922,6 +936,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Projectiles.Enemy.RedKnightVFX.DrawHerald(NPC.Center,
                         specialAttacks.TelegraphProgress,
                         specialAttacks.Attack == KnightSpecialAttack.StormHerald);
+                }
+                else if (specialAttacks.Attack == KnightSpecialAttack.CrimsonDominion)
+                {
+                    // Body engulf for the whole spear-holding phase: the knight stands wrapped in
+                    // the same black-and-crimson Destined Death flame the arena seal detonates with.
+                    // Anchored on the sprite's FEET (bottom-centre, gfxOffY applied), because the
+                    // flame technique is bottom-anchored — using NPC.Center would float it.
+                    Projectiles.Enemy.RedKnightVFX.DrawDominionEngulf(
+                        NPC.Bottom - new Vector2(0f, NPC.gfxOffY), NPC.scale,
+                        DominionEngulfOpacity * 0.95f, front: false);
                 }
                 else if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
                     && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
@@ -1112,6 +1136,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (specialAttacks.Active)
             {
                 DrawSpecialAttack(spriteBatch, drawColor);
+                if (specialAttacks.Attack == KnightSpecialAttack.CrimsonDominion)
+                {
+                    // Front half of the body engulf, drawn after the sprite AND the held spear so
+                    // the flame wraps the knight instead of only silhouetting behind it. Much
+                    // lighter than the PreDraw pass so the sprite stays readable through it.
+                    Projectiles.Enemy.RedKnightVFX.DrawDominionEngulf(
+                        NPC.Bottom - new Vector2(0f, NPC.gfxOffY), NPC.scale,
+                        DominionEngulfOpacity * 0.42f, front: true);
+                }
                 return;
             }
 

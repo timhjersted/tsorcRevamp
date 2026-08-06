@@ -11013,6 +11013,13 @@ Mods: {
 			ArtoriasFanSourceVFX.DisplayName: Artorias Fan Source V F X
 			CrimsonDominionExecutionLane.DisplayName: Crimson Dominion Execution Lane
 			EvilEyeTeleportBlast.DisplayName: Evil Eye Teleport Blast
+			ElandVenomSplash.DisplayName: Eland Venom Splash
+			GreatBlackKnightSpearHitbox.DisplayName: Great Black Knight Spear Hitbox
+			NitoPyreFire.DisplayName: Nito Pyre Fire
+			BlackKnightBombExplosionSprite.DisplayName: Black Knight Bomb Explosion Sprite
+			BlackKnightSpearBlightSwarm.DisplayName: Black Knight Spear Blight Swarm
+			DragonMeteorExplosion.DisplayName: Dragon Meteor Explosion
+			FireLurkerFireBurst.DisplayName: Fire Lurker Fire Burst
 		}
 
 		NPCs: {

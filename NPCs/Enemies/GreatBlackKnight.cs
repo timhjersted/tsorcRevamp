@@ -70,7 +70,10 @@ namespace tsorcRevamp.NPCs.Enemies
         // All three are indexed by AttackKind and MUST stay the same length as the enum.
         private static readonly int[] TelegraphTicksByAttack = { 30, 30, 30, 65, 20, 40 };   // Spear, Homing, Bomb, Ultrakill, Flail, SpearMelee
         private static readonly int[] CommitTicksByAttack = { 25, 25, 25, 70, 20, 26 };
-        private static readonly int[] BaseWeightByAttack = { 40, 35, 25, 30, 35, 40 };
+        // Flail is this knight's signature weapon and was barely showing up: it needed melee range
+        // AND had to win a roll against four other attacks. Now it is the heaviest weight in the
+        // table and eligible out to 30 tiles, so it reads as the thing he actually fights with.
+        private static readonly int[] BaseWeightByAttack = { 30, 25, 20, 30, 110, 40 };
 
         // Spear jab. The 40-tick telegraph sits inside the 30-60 tick band that matches the player's
         // dodge-roll window, so the windup is something to react to rather than a surprise.
@@ -81,6 +84,10 @@ namespace tsorcRevamp.NPCs.Enemies
         private const float SpearMeleeReach = 92f;      // hitbox width; the visual thrust must not outrun it
         private const float SpearMeleeHeight = 40f;
         private const float SpearMeleeRange = 110f;     // Spear THROW needs >= 120f, so the jab fills the gap
+        // 30 tiles. Must stay in step with GreatBlackKnightFlail's OutwardTicks * the launch speed
+        // in RunFlailCommit, or he throws the flail at players it cannot physically reach.
+        private const float FlailReach = 480f;
+        private const float FlailLaunchSpeed = 16f;
         private const int UltrakillChannelTicks = 35; // trailing slice of Ultrakill's commit window that actually fires
 
         // Combo/recovery tuning (see the AskUserQuestion-approved design): rolls 1-3 attacks back to back at full
@@ -239,8 +246,33 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            if (Main.netMode == NetmodeID.MultiplayerClient || Main.player[NPC.target].dead)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
+                return;
+            }
+
+            // STUCK-BOMB FIX. This used to be `|| Main.player[NPC.target].dead` on the return above,
+            // which froze the ENTIRE state machine: ai[0]/ai[1] stopped advancing, so a knight that
+            // was mid-Bomb stayed in Committed forever, holding the bomb sprite in its hand and
+            // never firing or moving on. A stale NPC.target (e.g. the 255 sentinel, whose dummy
+            // player reads as dead) made that permanent rather than lasting until a respawn.
+            // Now: re-acquire first, and if there is genuinely no target, abandon the attack into
+            // Recovery instead of holding the pose.
+            if (NPC.target < 0 || NPC.target >= Main.maxPlayers || !player.active || player.dead)
+            {
+                NPC.TargetClosest(true);
+            }
+            if (!player.active || player.dead)
+            {
+                if (phase != Phase.Neutral)
+                {
+                    NPC.ai[0] = (float)Phase.Recovery;
+                    NPC.ai[1] = 0f;
+                    NPC.ai[3] = 0f;
+                    currentRecoveryTicks = BaseRecoveryTicks;
+                    losStuckTimer = 0;
+                    NPC.netUpdate = true;
+                }
                 return;
             }
 
@@ -337,7 +369,10 @@ namespace tsorcRevamp.NPCs.Enemies
         private AttackKind PickNextAttack(float distanceToPlayer)
         {
             bool spearEligible = distanceToPlayer >= 120f;
-            bool flailEligible = distanceToPlayer <= 260f; // the chain has real reach, but it's still a melee weapon
+            // 30 tiles — the chain genuinely reaches that far now. !HasActiveFlail() enforces one
+            // ball-and-chain out at a time: with 30-tile reach and a fast retract, back-to-back
+            // throws otherwise read as the knight juggling two flails at once.
+            bool flailEligible = distanceToPlayer <= FlailReach && !HasActiveFlail();
             bool ultrakillEligible = NPC.life <= NPC.lifeMax / 2;
             // Complements the throw rather than competing with it: the jab covers exactly the band
             // where the spear throw is ineligible, so closing the distance steers the knight into
@@ -680,6 +715,23 @@ namespace tsorcRevamp.NPCs.Enemies
             EndAttack();
         }
 
+        /// <summary>True while this knight already has a GreatBlackKnightFlail head out. Gates both
+        /// selection (PickNextAttack) and the actual throw below — only one ball-and-chain at a time;
+        /// the next one can't launch until this one retracts to the hand and self-destructs.</summary>
+        private bool HasActiveFlail()
+        {
+            int flailType = ModContent.ProjectileType<Projectiles.Enemy.Weapons.GreatBlackKnightFlail>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile p = Main.projectile[i];
+                if (p.active && p.type == flailType && (int)p.ai[0] == NPC.whoAmI)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>Ball-and-chain flail (see Projectiles.Enemy.Weapons.EnemyFlailProjectileBase) — anchored to
         /// this NPC's rigged hand via IFlailAnchor, so no arm-swing animation is needed: the chain+head projectile
         /// owns the entire visual. Aims live (no predicted position) and occasionally spins in place instead of
@@ -693,6 +745,15 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (WaitOnLos(hasPlayerLOS)) return;
 
+            // Defensive: PickNextAttack already excludes Flail while one is active, so this should
+            // never actually trigger — but if it somehow does, abandon the throw rather than let two
+            // heads exist at once.
+            if (HasActiveFlail())
+            {
+                EndAttack();
+                return;
+            }
+
             NPC.TargetClosest(true);
             Vector2 anchor = CurrentHandWorld();
             Vector2 toPlayer = player.Center - anchor;
@@ -703,7 +764,7 @@ namespace tsorcRevamp.NPCs.Enemies
             toPlayer.Normalize();
 
             bool spin = Main.rand.NextBool(3); // occasional windmill instead of a straight throw
-            Vector2 velocity = spin ? Vector2.Zero : toPlayer * 11f;
+            Vector2 velocity = spin ? Vector2.Zero : toPlayer * FlailLaunchSpeed;
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -819,10 +880,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // constant is the honest representation. Frame 1 (the crouched jump) is the only real
         // outlier and the spear is never thrown mid-jump.
         static readonly Vector2 HandPixel = new Vector2(40f, 37f);
-        // Lift from the hand up into the cocked overhand throwing pose, matching the Black Knight's
-        // approved throw telegraph (which lifts 21f on a 56-tall frame). PRIMARY TUNING DIAL if the
-        // held spear sits wrong in game.
-        const float SpearGripLift = 22f;
+        // The spear now sits AT the measured hand. This was 22f — a lift into a cocked overhand
+        // pose copied from the Black Knight — which put the shaft up by his head instead of in his
+        // fist, ~20px too high. The Black Knight needs that lift because its HandPixel table maps
+        // the fist at chest height; this knight's (40, 37) is already the grip.
+        const float SpearGripLift = 0f;
         static readonly Vector2 SpearGripOrigin = new Vector2(8f, 38f);
         static readonly Vector2 BombGripOrigin = new Vector2(14f, 4f);
 
@@ -958,9 +1020,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 float fuseProgress = phase == Phase.Telegraph
                     ? MathHelper.Clamp(NPC.ai[1] / TelegraphTicksByAttack[(int)AttackKind.Bomb], 0f, 1f)
                     : 1f;
-                Projectiles.Enemy.EnemyVFX.DrawBlackKnightMoonfury(
-                    handWorld + Main.screenPosition, Vector2.Zero, fuseProgress, phase == Phase.Committed);
+                // The Moonfury shader used to be drawn here and sat visibly offset from the bomb
+                // sprite. Replaced with a red fuse spark at the bomb's own fuse, which needs no
+                // alignment between a quad and a sprite to read correctly.
                 spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
+                Projectiles.Enemy.EnemyVFX.SpawnBombFuseSparks(handWorld + Main.screenPosition, fuseProgress);
             }
 
             DrawGreatBlackKnightMagicOverlays(phase, currentAttack);

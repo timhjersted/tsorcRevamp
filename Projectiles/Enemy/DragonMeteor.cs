@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -21,10 +22,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.hostile = true;
         }
 
-        public override bool PreKill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
-            Projectile.type = 30;
-            return true;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
+                    ModContent.ProjectileType<DragonMeteorExplosion>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            }
         }
 
         public override bool PreAI()
