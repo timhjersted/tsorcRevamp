@@ -82,7 +82,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Dust TornadoReady = Dust.NewDustDirect(player.VisualPosition, player.width, player.height, TornadoReadyDustID);
                 if (Tier == 3)
                 {
-                    TornadoReady.scale = 2;
+                    TornadoReady.scale = 1.25f;
                 }
             }
             if (Tier > 1)

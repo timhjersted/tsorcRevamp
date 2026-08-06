@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -99,6 +100,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             {
                 Projectile.frame = 0;
             }
+            Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3() * 0.78f);
         }
         public override bool ShouldUpdatePosition()
         {
@@ -122,6 +124,30 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Vector2 end = start + Projectile.velocity * 17f * player.GetAdjustedItemScale(player.HeldItem);
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
+        }        
+        public static Texture2D texture;
+        public static Texture2D glowTexture;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+
+            if (Main.player[Projectile.owner].direction == 1)
+            {
+            }
+            else
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+            texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            glowTexture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
+            int startY = frameHeight * Projectile.frame;
+            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), sourceRectangle, lightColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+
+
+            return false;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

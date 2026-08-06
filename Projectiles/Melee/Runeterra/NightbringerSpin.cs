@@ -192,6 +192,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                     Projectile.frame = 0;
                 }
             }
+            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 4f);
         }
         public override void CutTiles()
         {
