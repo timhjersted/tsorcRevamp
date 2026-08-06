@@ -83,6 +83,8 @@ using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
 using System.Linq;
 using Terraria.Net;
+using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp
 {
@@ -352,6 +354,10 @@ namespace tsorcRevamp
 
 
             ApplyMethodSwaps();
+            
+            WeaponPrefixEdits.ApplyWeaponPrefixEdits();
+            AccessoryPrefixEditsStats.ApplyAccessoryPrefixEdits();
+            
             ApplyILs();
             PopulateArrays();
 

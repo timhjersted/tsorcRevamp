@@ -29,6 +29,16 @@ Mods: {
 		}
 
 		CommonItemTooltip: {
+			AccessoryPrefixes: {
+				Arcane:
+					'''
+					[c/6cac6c:+{0} mana]
+					[c/6cac6c:-{1}% mana cost]
+					'''
+				Hard: "[c/6cac6c:+{0} resistance]"
+				Guarding: "[c/6cac6c:+{0} resistance]"
+			}
+
 			Details: Hold Left Shift to reveal details
 			AggroBoost: Enemies are more likely to target you
 			AggroDecrease: Enemies are less likely to target you
@@ -11020,6 +11030,7 @@ Mods: {
 			BlackKnightSpearBlightSwarm.DisplayName: Black Knight Spear Blight Swarm
 			DragonMeteorExplosion.DisplayName: Dragon Meteor Explosion
 			FireLurkerFireBurst.DisplayName: Fire Lurker Fire Burst
+
 		}
 
 		NPCs: {
