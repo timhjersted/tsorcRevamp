@@ -47,11 +47,13 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             var KrakensCastKey = tsorcRevamp.KrakensCast.GetAssignedKeys();
             string KrakensCastString = KrakensCastKey.Count > 0 ? KrakensCastKey[0] : LangUtils.GetTextValue("Keybinds.Krakens Cast.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
+            string ArmorSetBonusKeybind = LangUtils.GetTextValue(Main.ReversedUpDownArmorSetBonuses ? "CommonItemTooltip.UpKeybind" : "CommonItemTooltip.DownKeybind") ;
             int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip2");
             if (ttindex1 != -1)
             {
                 tooltips.RemoveAt(ttindex1);
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", LangUtils.GetTextValue("Items.KrakenCarcass.Keybind1") + KrakensCastString + LangUtils.GetTextValue("Items.KrakenCarcass.Keybind2")));
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", LangUtils.GetTextValue("Items.KrakenCarcass.Keybind1") + ArmorSetBonusKeybind 
+                    + LangUtils.GetTextValue("Items.KrakenCarcass.Keybind2") + KrakensCastString + LangUtils.GetTextValue("Items.KrakenCarcass.Keybind3")));
             }
             int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip3");
             if (ttindex2 != -1)

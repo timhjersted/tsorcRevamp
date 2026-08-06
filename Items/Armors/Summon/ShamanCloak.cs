@@ -42,15 +42,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            Player player = Main.LocalPlayer;
-            var ShunpoKeybind = tsorcRevamp.Shunpo.GetAssignedKeys();
-            string ShunpoString = ShunpoKeybind.Count > 0 ? ShunpoKeybind[0] : LangUtils.GetTextValue("Keybinds.Shunpo.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
-            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
-            if (ttindex1 != -1)
-            {
-                tooltips.RemoveAt(ttindex1);
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind1") + ShunpoString + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind2")));
-            }
+            var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.ShunpoTooltip(tooltips);
         }
         public override void AddRecipes()
         {

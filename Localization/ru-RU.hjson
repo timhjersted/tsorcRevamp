@@ -162,8 +162,11 @@ Mods: {
 			NoFallDmg: Даёт иммунитет к урону от падения
 			HolyDodge: Даёт святое уклонение. Характеристики, получаемые от этого комплекта брони, удваиваются, пока святое уклонение активно
 			TitaniumBonus: При атаке создаёт защитный барьер из титановых осколков, который усиливается от всех типов урона
+			// UpKeybind: Double tap UP
+			// DownKeybind: Double tap DOWN
 			ShunpoKeybind1: "Нажмите "
 			ShunpoKeybind2: " наведите курсор на врага, чтобы переместиться к нему и ненадолго стать неуязвимым"
+			// ShunpoKeybind3: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
 			ShunpoCD:
 				'''
 				Поступь имеет {$CommonItemTooltip.Cooldown}
@@ -2248,6 +2251,7 @@ Mods: {
 					'''
 				Keybind1: "{$CommonItemTooltip.SetBonus}Нажмите "
 				Keybind2: " чтобы создать плавающее цунами в месте расположения вашего курсора"
+				// Keybind3: " to cast a floating Tsunami at your cursor position"
 				Tooltip1: Оно также вызовет дружелюбную акулу, которая нацелится на ближайшего врага, нанося {0} урона в дальнем бою. (только 3 акулы в секунду)
 			}
 
@@ -3485,6 +3489,7 @@ Mods: {
 					'''
 				Keybind1: "Нажмите "
 				Keybind2: " , чтобы издать ужасающий крик, поражающий врагов в радиусе действия"
+				// Keybind3: " to let out a terrifying scream that affects and confuses enemies in a radius"
 			}
 
 			SymbolOfAvarice: {

@@ -10,6 +10,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
@@ -1803,33 +1804,48 @@ namespace tsorcRevamp
             }
         }
 
-        public override void ProcessTriggers(TriggersSet triggersSet)
+        public override void ArmorSetBonusActivated()
         {
             Player player = Main.player[Main.myPlayer];
-            Vector2 unitVectorTowardsMouse = player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * player.direction);
-
-            if (tsorcRevamp.PrintPosition.JustPressed && ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            if (Shunpo)
             {
-                string text = "Player position: X = " + ((int)Player.position.X / 16).ToString() + ", Y = " + ((int)Player.position.Y / 16).ToString();
-                UsefulFunctions.BroadcastText(text);
+                DoShunpo(player);
             }
-
-            if (tsorcRevamp.toggleDragoonBoots.JustPressed)
+            
+            if (Kraken)
             {
-                DragoonBootsEnable = !DragoonBootsEnable;
+                DoKrakenCast(player);
             }
-
-            // Guard against the toggle firing while typing into the Storage search bar (default key is 'T').
-            if (tsorcRevamp.StorageKey.JustPressed && !Main.blockInput && !Main.drawingPlayerChat)
+            
+            if (!Player.HasBuff(ModContent.BuffType<WitchkingScreamCooldown>()) && Witch)
             {
-                ToggleStorage();
+                DoWitchScream(player);
             }
+        }
+
+        public void ShunpoTooltip(List<TooltipLine> tooltips)
+        {
+            var ShunpoKeybind = tsorcRevamp.Shunpo.GetAssignedKeys();
+            string ShunpoString = ShunpoKeybind.Count > 0 ? ShunpoKeybind[0] : LangUtils.GetTextValue("Keybinds.Shunpo.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
+            string ArmorSetBonusKeybind = LangUtils.GetTextValue(Main.ReversedUpDownArmorSetBonuses ? "CommonItemTooltip.UpKeybind" : "CommonItemTooltip.DownKeybind") ;
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
+            if (ttindex1 != -1)
+            {
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", ArmorSetBonusKeybind 
+                    + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind2") + ShunpoString + LangUtils.GetTextValue("CommonItemTooltip.ShunpoKeybind3")));
+            }
+        }
+
+
+        public void DoShunpo(Player player)
+        {
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC other = Main.npc[i];
                 Vector2 MouseHitboxSize = new Vector2(100, 100);
 
-                if (tsorcRevamp.Shunpo.JustReleased && other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && player.GetModPlayer<tsorcRevampPlayer>().Shunpo && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
+                if (other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
                 {
                     player.immune = true;
                     player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
@@ -1847,40 +1863,17 @@ namespace tsorcRevamp
                     ShunpoTimer = 3;
                 }
             }
-            if (tsorcRevamp.reflectionShiftKey.JustPressed)
+        }
+        public void DoKrakenCast(Player player)
+        {
+            if (Main.myPlayer == player.whoAmI)
             {
-                if (ReflectionShiftEnabled)
-                {
-                    if (Player.controlUp)
-                    {
-                        ReflectionShiftState.Y = -1;
-                    }
-                    if (Player.controlLeft)
-                    {
-                        ReflectionShiftState.X = -1;
-                    }
-                    if (Player.controlRight)
-                    {
-                        ReflectionShiftState.X = 1;
-                    }
-                    if (Player.controlDown)
-                    {
-                        ReflectionShiftState.Y = 1;
-                    }
-                }
+                Projectile Tsunami = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<KrakenTsunami>(), (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseDmg), player.GetTotalKnockback(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseKnockback), player.whoAmI);
             }
-            if (tsorcRevamp.WolfRing.JustReleased)
-            {
-                if (Player.GetModPlayer<tsorcRevampPlayer>().WolfRing && !Player.HasBuff(ModContent.BuffType<RejuvenationCooldown>()))
-                {
-                    Player.AddBuff(ModContent.BuffType<Rejuvenation>(), 5 * 60);
-                    Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 25 * 60);
-                }
-            }
-            if (tsorcRevamp.WitchScream.JustReleased && !Player.HasBuff(ModContent.BuffType<WitchkingScreamCooldown>()))
-                {
-                    if (Witch)
-                    {
+        }
+
+        public void DoWitchScream(Player player)
+        {
                         player.AddBuff(ModContent.BuffType<WitchkingScreamCooldown>(), 20 * 60);
                         
                         if (Main.myPlayer == Player.whoAmI)
@@ -1944,18 +1937,90 @@ namespace tsorcRevamp
                                 }
                             }
                         }
+        }
+
+        public override void ProcessTriggers(TriggersSet triggersSet)
+        {
+            Player player = Main.player[Main.myPlayer];
+            Vector2 unitVectorTowardsMouse = player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * player.direction);
+
+            if (tsorcRevamp.PrintPosition.JustPressed && ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            {
+                string text = "Player position: X = " + ((int)Player.position.X / 16).ToString() + ", Y = " + ((int)Player.position.Y / 16).ToString();
+                UsefulFunctions.BroadcastText(text);
+            }
+
+            if (tsorcRevamp.toggleDragoonBoots.JustPressed)
+            {
+                DragoonBootsEnable = !DragoonBootsEnable;
+            }
+
+            // Guard against the toggle firing while typing into the Storage search bar (default key is 'T').
+            if (tsorcRevamp.StorageKey.JustPressed && !Main.blockInput && !Main.drawingPlayerChat)
+            {
+                ToggleStorage();
+            }
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC other = Main.npc[i];
+                Vector2 MouseHitboxSize = new Vector2(100, 100);
+
+                if ((tsorcRevamp.Shunpo.JustReleased) && other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && player.GetModPlayer<tsorcRevampPlayer>().Shunpo && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
+                {
+                    player.immune = true;
+                    player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
+                    ShunpoVelocity = player.DirectionTo(other.Center) * other.Center.Distance(player.Center);
+                    player.AddBuff(ModContent.BuffType<ShunpoBlink>(), (int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60 * 2 + 2));
+                    player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown * 60);
+                    if (Main.rand.NextBool(2))
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f });
                     }
+                    else
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo2") with { Volume = 1f });
+                    }
+                    ShunpoTimer = 3;
+                }
+            }
+            if (tsorcRevamp.reflectionShiftKey.JustPressed)
+            {
+                if (ReflectionShiftEnabled)
+                {
+                    if (Player.controlUp)
+                    {
+                        ReflectionShiftState.Y = -1;
+                    }
+                    if (Player.controlLeft)
+                    {
+                        ReflectionShiftState.X = -1;
+                    }
+                    if (Player.controlRight)
+                    {
+                        ReflectionShiftState.X = 1;
+                    }
+                    if (Player.controlDown)
+                    {
+                        ReflectionShiftState.Y = 1;
+                    }
+                }
+            }
+            if (tsorcRevamp.WolfRing.JustReleased)
+            {
+                if (Player.GetModPlayer<tsorcRevampPlayer>().WolfRing && !Player.HasBuff(ModContent.BuffType<RejuvenationCooldown>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<Rejuvenation>(), 5 * 60);
+                    Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 25 * 60);
+                }
+            }
+            if (tsorcRevamp.WitchScream.JustReleased && !Player.HasBuff(ModContent.BuffType<WitchkingScreamCooldown>()) && Witch)
+                {
+                    DoWitchScream(player);
                 }
 
-            if (tsorcRevamp.KrakensCast.JustReleased)
+            if (tsorcRevamp.KrakensCast.JustReleased && Kraken)
             {
-                if (Kraken)
-                {
-                    if (Main.myPlayer == player.whoAmI)
-                    {
-                        Projectile Tsunami = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<KrakenTsunami>(), (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseDmg), player.GetTotalKnockback(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseKnockback), player.whoAmI);
-                    }
-                }
+                DoKrakenCast(player);
             }
 
             if (tsorcRevamp.specialAbility.JustReleased)

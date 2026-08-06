@@ -162,8 +162,11 @@ Mods: {
 			NoFallDmg: 对坠落伤害免疫
 			HolyDodge: 赋予神圣闪避效果，当神圣闪避激活时，此盔甲套装提供的属性加倍
 			TitaniumBonus: 造成伤害会生成一个全职业伤害的钛金防御碎片
+			// UpKeybind: Double tap UP
+			// DownKeybind: Double tap DOWN
 			ShunpoKeybind1: "按 "
 			ShunpoKeybind2: " 冲向鼠标悬停处所指的敌人并获得短暂的无敌帧"
+			// ShunpoKeybind3: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
 			ShunpoCD:
 				'''
 				瞬步有 {$CommonItemTooltip.Cooldown}
@@ -2288,6 +2291,7 @@ Mods: {
 					'''
 				Keybind1: "{$CommonItemTooltip.SetBonus}按 "
 				Keybind2: " 在光标位置生成一个浮空的海妖旋风"
+				// Keybind3: " to cast a floating Tsunami at your cursor position"
 				Tooltip1: 每秒最多同时生成三只鲨鱼追踪攻击最近的敌人，造成 {0} 远程伤害
 			}
 
@@ -3525,6 +3529,7 @@ Mods: {
 					'''
 				Keybind1: "按 "
 				Keybind2: " 释放巫师尖啸来削弱附近的敌人"
+				// Keybind3: " to let out a terrifying scream that affects and confuses enemies in a radius"
 			}
 
 			SymbolOfAvarice: {

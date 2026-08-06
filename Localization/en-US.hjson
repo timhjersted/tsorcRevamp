@@ -162,8 +162,11 @@ Mods: {
 			NoFallDmg: Grants immunity to fall damage
 			HolyDodge: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
 			TitaniumBonus: Attacking generates a defensive barrier of titanium shards, scaling with all damage types
-			ShunpoKeybind1: "Press "
-			ShunpoKeybind2: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
+			UpKeybind: Double tap UP
+			DownKeybind: Double tap DOWN
+			ShunpoKeybind1: "press "
+			ShunpoKeybind2: " or press "
+			ShunpoKeybind3: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
 			ShunpoCD:
 				'''
 				Shunpo has {$CommonItemTooltip.Cooldown}
@@ -2285,8 +2288,9 @@ Mods: {
 					{$Items.KrakenCarcass.Keybind1}KrakensCast{$Items.KrakenCarcass.Keybind2}
 					The Tsunami will increase the damage of ranged projectiles that pass through it by {2}%
 					'''
-				Keybind1: "{$CommonItemTooltip.SetBonus}Press "
-				Keybind2: " to cast a floating Tsunami at your cursor position"
+				Keybind1: "{$CommonItemTooltip.SetBonus}"
+				Keybind2: " or press "
+				Keybind3: " to cast a floating Tsunami at your cursor position"
 				Tooltip1: It will also spawn a friendly shark which homes in on the closest enemy, dealing {0} ranged damage (Only 3 sharks per second)
 			}
 
@@ -2600,7 +2604,6 @@ Mods: {
 					{$CommonItemTooltip.PercentReducedManaCost}
 					{$CommonItemTooltip.Magic.ManaRegen@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
-					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
 					{$CommonItemTooltip.ShunpoCD@2}
 					'''
 			}
@@ -3523,8 +3526,9 @@ Mods: {
 					Affected enemies deal less damage, have reduced defense and speed, and take significant damage over time for a short moment
 					{$CommonItemTooltip.AggroDecrease}
 					'''
-				Keybind1: "{$CommonItemTooltip.SetBonus}Press "
-				Keybind2: " to let out a terrifying scream that affects and confuses enemies in a radius"
+				Keybind1: "{$CommonItemTooltip.SetBonus}"
+				Keybind2: " or press "
+				Keybind3: " to let out a terrifying scream that affects and confuses enemies in a radius"
 			}
 
 			SymbolOfAvarice: {
