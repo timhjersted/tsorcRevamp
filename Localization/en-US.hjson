@@ -164,9 +164,8 @@ Mods: {
 			TitaniumBonus: Attacking generates a defensive barrier of titanium shards, scaling with all damage types
 			UpKeybind: Double tap UP
 			DownKeybind: Double tap DOWN
-			ShunpoKeybind1: "press "
-			ShunpoKeybind2: " or press "
-			ShunpoKeybind3: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
+			ShunpoKeybind1: " or press "
+			ShunpoKeybind2: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
 			ShunpoCD:
 				'''
 				Shunpo has {$CommonItemTooltip.Cooldown}

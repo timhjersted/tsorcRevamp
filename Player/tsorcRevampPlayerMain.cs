@@ -1833,7 +1833,7 @@ namespace tsorcRevamp
             {
                 tooltips.RemoveAt(ttindex1);
                 tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", ArmorSetBonusKeybind 
-                    + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind2") + ShunpoString + LangUtils.GetTextValue("CommonItemTooltip.ShunpoKeybind3")));
+                    + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind1") + ShunpoString + LangUtils.GetTextValue("CommonItemTooltip.ShunpoKeybind2")));
             }
         }
 
