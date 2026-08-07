@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -14,11 +13,8 @@ namespace tsorcRevamp.Projectiles.Enemy
     // curse buildup instead of the basilisk's HP drain. Fully generic (works for any owner NPC, not
     // just Artorias).
     //
-    // The shaft is drawn as three overlapping wavy strands (same technique as
-    // BasiliskLeechTongue.DrawTendril) using AbyssTendrilChain.png (a copy of BasiliskTonque.png,
-    // to be recolored black), plus a sparse black/white dust trail layered on top. The tip reuses
-    // AbyssSucker.png (a copy of BasiliskSucker.png, recolored dark via GetAlpha) as a placeholder
-    // until a dedicated sprite exists.
+    // The shaft and directional grab tip are shader-built from moving black, violet, and pale
+    // filaments. Sparse dust only breaks up their edges; it no longer carries the whole effect.
     class ArtoriasAbyssTendril : ModProjectile
     {
         const int StateFlying     = 0;
@@ -28,7 +24,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float MaxLength      = 550f;
         const int   MaxFlightTicks = 70;
         const int   YankTicks      = 24;
-        const float YankPullSpeed  = 3.2f; // gentle - not a hard/fast yank
+        const float YankPullSpeed  = 7.5f;
+        const float ReleaseHorizontalSpeed = 15f;
+        const float ReleaseVerticalSpeed = -10f;
         const int   GrabPadding    = 16;
 
         int targetWho = -1;
@@ -104,9 +102,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (Main.rand.NextBool(2))
             {
-                Color tint = Main.rand.NextBool() ? Color.Black : Color.White;
+                bool bright = Main.rand.NextBool(6);
+                int type = bright ? DustID.SilverFlame
+                    : Main.rand.NextBool(3) ? DustID.ShadowbeamStaff : DustID.Smoke;
+                Color tint = bright ? new Color(224, 216, 248)
+                    : type == DustID.Smoke ? new Color(10, 7, 18) : new Color(102, 38, 164);
                 Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(4f, 4f),
-                    DustID.Smoke, -Projectile.velocity * 0.05f, 120, tint, 0.9f);
+                    type, -Projectile.velocity * 0.05f, 120, tint,
+                    Main.rand.NextFloat(0.68f, 0.94f));
                 d.noGravity = true;
             }
 
@@ -136,21 +139,34 @@ namespace tsorcRevamp.Projectiles.Enemy
                 player.velocity = Vector2.Lerp(player.velocity, pullDir * YankPullSpeed, 0.12f);
             }
 
-            // Keep the tendril visually stretched between the owner's hand and the target.
-            Projectile.Center = Vector2.Lerp(GetOriginPosition(owner), player.Center, 0.85f);
+            // Keep the three-pronged tip visibly embedded at the target throughout the grab.
+            Projectile.Center = player.Center;
             Projectile.velocity = Vector2.Zero;
 
-            if (Main.rand.NextBool(3))
+            if (!Main.dedServ && Main.rand.NextBool(2))
             {
-                Color tint = Main.rand.NextBool() ? Color.Black : Color.White;
-                Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(6f, 6f),
-                    DustID.Smoke, Vector2.Zero, 120, tint, 1f);
+                bool bright = Main.rand.NextBool(7);
+                int type = bright ? DustID.SilverFlame
+                    : Main.rand.NextBool(3) ? DustID.ShadowbeamStaff : DustID.Smoke;
+                Color tint = bright ? new Color(226, 220, 252)
+                    : type == DustID.Smoke ? new Color(8, 6, 14) : new Color(110, 38, 174);
+                Vector2 stabVelocity = (player.Center - owner.Center).SafeNormalize(Vector2.UnitX)
+                    .RotatedByRandom(0.75f) * Main.rand.NextFloat(1.2f, 3.4f);
+                Dust d = Dust.NewDustPerfect(player.Center + Main.rand.NextVector2Circular(7f, 9f),
+                    type, stabVelocity, 120, tint, 0.92f);
                 d.noGravity = true;
             }
 
             yankTimer++;
             if (yankTimer >= YankTicks)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float outward = player.Center.X < owner.Center.X ? -1f : 1f;
+                    player.velocity = new Vector2(outward * ReleaseHorizontalSpeed, ReleaseVerticalSpeed);
+                }
                 StartRetract();
+            }
         }
 
         void RetractAI(NPC owner)
@@ -247,16 +263,21 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Vector2 origin = GetOriginPosition(owner);
             Vector2 tip = Projectile.Center;
-            int segments = (int)MathHelper.Clamp(Vector2.Distance(origin, tip) / 20f, 1, 30);
+            int segments = (int)MathHelper.Clamp(Vector2.Distance(origin, tip) / 48f, 1, 10);
 
             for (int i = 0; i <= segments; i++)
             {
-                if (!Main.rand.NextBool(2))
+                if (!Main.rand.NextBool(7))
                     continue;
 
                 Vector2 pos = Vector2.Lerp(origin, tip, i / (float)segments);
-                Color tint = Main.rand.NextBool() ? Color.Black : Color.White;
-                Dust d = Dust.NewDustPerfect(pos, DustID.Smoke, Vector2.Zero, 130, tint, 0.75f);
+                bool bright = Main.rand.NextBool(9);
+                int type = bright ? DustID.SilverFlame
+                    : Main.rand.NextBool(4) ? DustID.ShadowbeamStaff : DustID.Smoke;
+                Color tint = bright ? new Color(230, 224, 255)
+                    : type == DustID.Smoke ? new Color(7, 5, 13) : new Color(94, 30, 154);
+                Dust d = Dust.NewDustPerfect(pos + Main.rand.NextVector2Circular(3f, 3f),
+                    type, Main.rand.NextVector2Circular(0.35f, 0.35f), 130, tint, 0.72f);
                 d.noGravity = true;
             }
         }
@@ -265,58 +286,24 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (TryGetOwner(out NPC owner))
             {
-                DrawChain(GetOriginPosition(owner), Projectile.Center);
+                int state = (int)Projectile.ai[1];
+                float tension = state == StateYanking
+                    ? 1f
+                    : state == StateFlying
+                        ? MathHelper.Clamp(launchTimer / (float)MaxFlightTicks, 0f, 0.72f)
+                        : 0.28f;
+                ArtoriasVFX.DrawTendril(GetOriginPosition(owner), Projectile.Center,
+                    tension, state == StateRetracting ? 0.48f : 0.88f,
+                    state == StateFlying || state == StateYanking);
             }
-            return true; // let vanilla's default draw still render the tip sprite/frame on top
-        }
-
-        // Three overlapping wavy strands, same technique as BasiliskLeechTongue.DrawTendril -
-        // each offset a few pixels either side of the straight line and phase-shifted so they
-        // undulate independently, reading as a single thicker, living chain rather than one line.
-        void DrawChain(Vector2 start, Vector2 end)
-        {
-            Texture2D segmentTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/AbyssTendrilChain").Value;
-            Vector2 direction = end - start;
-            Vector2 normal = direction.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
-
-            DrawStrand(segmentTexture, start, end, normal, -5f, 0.00f, Color.White);
-            DrawStrand(segmentTexture, start, end, normal, 0f, 1.75f, Color.White);
-            DrawStrand(segmentTexture, start, end, normal, 5f, 3.45f, Color.White);
-        }
-
-        void DrawStrand(Texture2D segmentTexture, Vector2 start, Vector2 end, Vector2 normal, float offset, float phase, Color color)
-        {
-            const float SegmentSpacing = 8f;
-            float distance = Vector2.Distance(start, end);
-            int segments = System.Math.Clamp((int)(distance / SegmentSpacing), 2, 90);
-            Vector2 origin = segmentTexture.Size() / 2f;
-            Vector2 previous = GetStrandPoint(start, end, normal, offset, phase, 0f);
-
-            for (int i = 1; i <= segments; i++)
-            {
-                float progress = i / (float)segments;
-                Vector2 point = GetStrandPoint(start, end, normal, offset, phase, progress);
-                Vector2 tangent = point - previous;
-                if (tangent.LengthSquared() > 0.01f)
-                {
-                    float rotation = tangent.ToRotation() + MathHelper.PiOver2;
-                    float scale = 0.95f + 0.08f * (float)System.Math.Sin(progress * MathHelper.TwoPi + phase);
-                    Main.EntitySpriteDraw(segmentTexture, point - Main.screenPosition, null, color * 0.95f, rotation, origin, scale, SpriteEffects.None, 0f);
-                }
-                previous = point;
-            }
-        }
-
-        Vector2 GetStrandPoint(Vector2 start, Vector2 end, Vector2 normal, float offset, float phase, float progress)
-        {
-            float pulse = Main.GlobalTimeWrappedHourly * 11f + Projectile.identity * 0.09f + phase;
-            float taper = (float)System.Math.Sin(progress * MathHelper.Pi);
-            float wave = (float)System.Math.Sin(progress * MathHelper.TwoPi * 2.25f + pulse) * 5f * taper;
-            return Vector2.Lerp(start, end, progress) + normal * (offset + wave);
+            return false;
         }
 
         static Vector2 GetOriginPosition(NPC npc)
         {
+            if (npc.ModNPC is global::tsorcRevamp.NPCs.Bosses.SuperHardMode.Artorias artorias)
+                return artorias.TendrilHandPosition;
+
             int direction = npc.spriteDirection == 0 ? npc.direction : npc.spriteDirection;
             return npc.Center + new Vector2(direction * (npc.width * 0.5f + 10f), -npc.height * 0.3f);
         }

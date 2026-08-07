@@ -16,6 +16,9 @@ namespace tsorcRevamp.Items
         public float refreshing;
         public Color slashColor = Color.DarkGray;
         public float slashIntensity = 1;
+        /// <summary>Visual-only scale for both BroadswordRework slash renderers. It does not alter
+        /// the item's melee collision, reach, damage, or use timing.</summary>
+        public float slashVisualScale = 1f;
         public tsorcSlashStyle slashStyle;
 
         // Per-weapon poise-damage lever: multiplies the knockback-derived poise damage this weapon deals (see
@@ -36,6 +39,10 @@ namespace tsorcRevamp.Items
         {
             tsorcInstancedGlobalItem myClone = (tsorcInstancedGlobalItem)base.Clone(item, itemClone);
             myClone.blessed = blessed;
+            myClone.slashColor = slashColor;
+            myClone.slashIntensity = slashIntensity;
+            myClone.slashVisualScale = slashVisualScale;
+            myClone.slashStyle = slashStyle;
             return myClone;
         }
 

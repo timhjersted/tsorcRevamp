@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     targetSet = true;
                     targetPos = Main.player[(int)Projectile.ai[0]].Center;
                 }
-                if (Main.GameUpdateCount % 5 == 0)
+                if (Main.GameUpdateCount % 5 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 projVelocity = UsefulFunctions.Aim(Projectile.Center, targetPos, 12);
                     projVelocity = projVelocity.RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f));
@@ -44,18 +44,17 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
-            //Core swirl (shader kept here only — it reads as ink without needing a hundred edge dusts)
+            //Core swirl
             for (int j = 0; j < 6f * (timer / 120f); j++)
             {
                 Vector2 dir = Main.rand.NextVector2Circular(64, 64);
                 Vector2 dustPos = Projectile.Center + dir;
-                Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 1.3f);
-                dustVel /= 16f;
-                Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.Asphalt, dustVel, 0, default, 2f);
+                Vector2 dustVel = new Vector2(5, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
+                Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.Asphalt, dustVel, 0, default, 1.2f);
                 thisDust.noGravity = true;
                 thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.BlackDye), Main.LocalPlayer);
             }
-            //Edge ring: was 100/tick (a slideshow with two casters on screen) — 16 sells the same circle
+            //Edge ring
             for (int j = 0; j < 16; j++)
             {
                 Vector2 dir = Main.rand.NextVector2CircularEdge(65, 65);
@@ -68,6 +67,32 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
                 Dust.NewDustPerfect(dustPos, DustType, dustVel, 0, default, 1).noGravity = true;
             }
+        }
+
+        public override bool? CanDamage() => timer >= 120f;
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            const float radius = 40f;
+            Vector2 closest = Vector2.Clamp(Projectile.Center,
+                new Vector2(targetHitbox.Left, targetHitbox.Top),
+                new Vector2(targetHitbox.Right, targetHitbox.Bottom));
+            return Vector2.DistanceSquared(Projectile.Center, closest) <= radius * radius;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            bool active = timer >= 120f;
+            float progress = active
+                ? MathHelper.Clamp(1f - Projectile.timeLeft / 120f, 0f, 1f)
+                : MathHelper.Clamp(timer / 120f, 0f, 1f);
+            EnemyVFX.DrawQuaraInkGeyser(Projectile.Center, progress, active);
+            return true;
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.QuaraInkBurst);
         }
 
 

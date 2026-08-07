@@ -1,21 +1,24 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
     public class SteelTempestThrust : ModProjectile
     {
+        public bool AppliedOnSpawn = false;
         public bool Hit = false;
         public const int FadeInDuration = 7;
         public const int FadeOutDuration = 4;
 
         public const int TotalDuration = 32;
 
-        public float CollisionWidth => 10f * Projectile.scale;
+        public float CollisionWidth = 20f;
 
         public int Timer
         {
@@ -27,7 +30,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Main.projFrames[Projectile.type] = 6;
         }
 
-
         public override void SetDefaults()
         {
             Projectile.Size = new Vector2(18);
@@ -35,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.scale = 0.7f;
+            Projectile.scale = SteelTempest.BaseScale;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.ownerHitCheck = true;
             Projectile.usesLocalNPCImmunity = true;
@@ -46,6 +48,12 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.width = 110;
             Projectile.height = 104;
         }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+        }
+
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage *= 2;
@@ -53,6 +61,14 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+
+            if (!AppliedOnSpawn)
+            {
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
+                Projectile.Resize((int)(Projectile.width / SteelTempest.BaseScale * Projectile.scale), (int)(Projectile.height / SteelTempest.BaseScale * Projectile.scale));
+                CollisionWidth *= Projectile.scale;
+                AppliedOnSpawn = true;
+            }
 
             Timer += 1;
             if (Timer >= TotalDuration)
@@ -96,17 +112,19 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
         public override void CutTiles()
         {
+            Player player = Main.player[Projectile.owner];
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             DelegateMethods.tileCutIgnore = Terraria.ID.TileID.Sets.TileCutIgnore.None;
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
+            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 12f * player.GetAdjustedItemScale(player.HeldItem);
             Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            Player player = Main.player[Projectile.owner];
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity * 6f;
+            Vector2 end = start + Projectile.velocity * 12f * player.GetAdjustedItemScale(player.HeldItem);
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
         }

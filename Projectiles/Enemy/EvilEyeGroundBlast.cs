@@ -58,7 +58,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            return false;
+            float progress = MathHelper.Clamp(Projectile.ai[0] / TelegraphTicks, 0f, 1f);
+            bool active = Projectile.ai[0] >= TelegraphTicks;
+            EnemyVFX.DrawEvilEyeGroundGlyph(Projectile.Center, progress, active);
+            return true;
         }
     }
 }

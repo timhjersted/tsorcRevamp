@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -14,15 +16,68 @@ using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class BlackKnight : ModNPC, IHumanoidMeleeHitEffects
+    class BlackKnight : ModNPC, IHumanoidMeleeHitEffects, IDebugAttackLabel
     {
         public int redKnightsSpearDamage = 15;
         const int HomingComboMoveKey = -10;
         const int BombComboMoveKey = -11;
+
+        /// <summary>
+        /// DebugMode above-head readout (see IDebugAttackLabel). This enemy has no attack enum - its
+        /// moves are windows on the ai[1]/ai[2] clocks - so the ranges below mirror the firing points
+        /// in AI(). Keep them in sync if those timings move.
+        /// </summary>
+        public string DebugAttackLabel
+        {
+            get
+            {
+                tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                if (globalNPC.StaggerTimer > 0)
+                {
+                    return "Staggered";
+                }
+                if (globalNPC.CombatMeleeActive)
+                {
+                    return "Melee Combo";
+                }
+                // ai[2] clock: the half-health Ultrakill channel and the air-dropped death waves.
+                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 235f)
+                {
+                    return NPC.ai[2] < 200f ? "Ultrakill (Telegraph)" : "Ultrakill Barrage";
+                }
+                if ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f))
+                {
+                    return "Death From Above";
+                }
+                // ai[1] clock: spear 155->180, homing 300->375, bomb 900->925 (windups precede each).
+                if (NPC.ai[1] >= 120f && NPC.ai[1] <= 200f)
+                {
+                    return NPC.ai[1] < 155f ? "Spear Throw (Windup)" : "Spear Throw";
+                }
+                if (NPC.ai[1] >= 270f && NPC.ai[1] <= 400f)
+                {
+                    return NPC.ai[1] < 300f ? "Homing Volley (Windup)" : "Homing Volley";
+                }
+                if (NPC.ai[1] >= 865f && NPC.ai[1] <= 950f)
+                {
+                    return NPC.ai[1] < 900f ? "Bomb Throw (Windup)" : "Bomb Throw";
+                }
+                return "Idle";
+            }
+        }
         public int redMagicDamage = 14;
         public int redKnightsGreatDamage = 18;
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
+
+        // Black rain barrage state — see StartGravefallBarrage. Self-contained on its own 90-tick
+        // timer rather than the big ai[2] numeric cycle, so a barrage can run 2-3 waves independent
+        // of whatever else that cycle is doing.
+        int gravefallWavesRemaining;
+        int gravefallWaveTimer;
+        int gravefallWaveIndex;
+        bool gravefallWide;
+        const int GravefallWaveCooldown = 90;
 
 
         NPCDespawnHandler despawnHandler;
@@ -97,9 +152,12 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.DoubleJumpPower = 7f;
             // Item/close-range hits restore this anti-melee spacing band. Distant projectile hits temporarily
             // collapse it to zero so the knight closes in; the attack pool remains distance-aware in both postures.
-            blackKnightGlobalNPC.KiteRangeMin = 8f;
+            // Min dropped 8->2 and looseness pushed way up (0.28->0.9): the old values read as rigidly
+            // holding a fixed distance band. At 0.9 the knight backs off far less often per re-roll
+            // window, so melee can actually close and the spacing feels like a preference, not a wall.
+            blackKnightGlobalNPC.KiteRangeMin = 2f;
             blackKnightGlobalNPC.KiteRangeMax = 15f;
-            blackKnightGlobalNPC.KiteLooseness = 0.28f;
+            blackKnightGlobalNPC.KiteLooseness = 0.9f;
 
             int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>();
             HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Elite(
@@ -147,6 +205,17 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             get => Main.player[NPC.target];
         }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(storedPlayerPosition.X);
+            writer.Write(storedPlayerPosition.Y);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            storedPlayerPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+        }
         #endregion
 
         private void SpawnSpearProjectile(Vector2 velocity, tsorcRevampGlobalNPC globalNPC)
@@ -167,6 +236,93 @@ namespace tsorcRevamp.NPCs.Enemies
             else
             {
                 TryQueueComboFollowup(globalNPC, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>());
+            }
+        }
+
+        /// <summary>
+        /// Black rain barrage. Replaces the old two-step Prepare(ground-tear)/Release(drop) dance: each
+        /// drop now carries its OWN telegraph (EnemyBlackCursedBreath freezes and spins in place for
+        /// 45 ticks before falling), so a single call fires wave 1 immediately and schedules 1-2 more,
+        /// GravefallWaveCooldown ticks apart, ticked from AI(). Up to 2 nearby players each get their
+        /// own batch when more than one is around.
+        /// </summary>
+        private void StartGravefallBarrage(bool wideWave)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            gravefallWide = wideWave;
+            gravefallWaveIndex = 0;
+            gravefallWaveTimer = 0;
+            gravefallWavesRemaining = Main.rand.Next(1, 3); // 1 or 2 MORE waves after this one = 2-3 total
+            FireGravefallWave();
+        }
+
+        /// <summary>Up to 2 nearby players, closest first.</summary>
+        private List<Player> GetGravefallTargets()
+        {
+            List<Player> targets = new List<Player>();
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player candidate = Main.player[i];
+                if (candidate.active && !candidate.dead && NPC.Distance(candidate.Center) < 2000f)
+                {
+                    targets.Add(candidate);
+                }
+            }
+            targets.Sort((a, b) => NPC.Distance(a.Center).CompareTo(NPC.Distance(b.Center)));
+            if (targets.Count > 2)
+            {
+                targets.RemoveRange(2, targets.Count - 2);
+            }
+            return targets;
+        }
+
+        private void FireGravefallWave()
+        {
+            List<Player> targets = GetGravefallTargets();
+            if (targets.Count == 0)
+            {
+                return;
+            }
+
+            // Escalates a little each wave — more drops, wider spread — so a 2-3 wave barrage doesn't
+            // just repeat the same shape.
+            int count = (gravefallWide ? 6 : 4) + gravefallWaveIndex;
+            float spreadDeg = 45f + gravefallWaveIndex * 12f;
+            float radius = 260f + gravefallWaveIndex * 25f;
+
+            foreach (Player target in targets)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    // Fan above AND to the sides rather than a uniform scatter directly overhead.
+                    float t = count == 1 ? 0f : (i / (float)(count - 1)) - 0.5f; // -0.5..0.5
+                    float angleRad = MathHelper.ToRadians(t * spreadDeg + Main.rand.NextFloat(-6f, 6f));
+                    Vector2 offset = new Vector2((float)Math.Sin(angleRad), -(float)Math.Cos(angleRad))
+                        * (radius + Main.rand.NextFloat(-20f, 20f));
+                    Vector2 spawnPosition = target.Center + offset;
+
+                    // Converges back toward roughly where the target is, so the fan visually rains
+                    // inward instead of every drop falling straight down in its own lane.
+                    Vector2 aimPoint = target.Center + new Vector2(Main.rand.NextFloat(-40f, 40f), 40f);
+                    Vector2 fallVelocity = (aimPoint - spawnPosition).SafeNormalize(Vector2.UnitY)
+                        * Main.rand.NextFloat(4.5f, 6.5f);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, fallVelocity,
+                            ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage,
+                            gravefallWide ? 4f : 3f, Main.myPlayer, 1f);
+
+                        // Brief "portal opening" flash at the same spawn point — a fast pre-cue riding
+                        // on top of the drop's own longer frozen-spin windup.
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, Vector2.Zero,
+                            ModContent.ProjectileType<Projectiles.Enemy.BlackKnightGravefallTelegraph>(), 0, 0f, Main.myPlayer);
+                    }
+                }
             }
         }
 
@@ -455,6 +611,9 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                         {
                             storedPlayerPosition = Main.player[targetPlayer].Center;
+                            NPC.netUpdate = true;
+                            NPC.netUpdate = true;
+                            NPC.netUpdate = true;
                         }
                     }
                 }
@@ -510,6 +669,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 180f && !hasPlayerLOS)
                 {
                     globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
+                    // STUCK-HELD-WEAPON FIX: this used to leave ai[1] sitting at 180 with nothing to
+                    // reset it. Since ai[1] then just kept climbing past every range check below
+                    // (they're all exact-tick `==` matches), the knight stayed frozen holding the
+                    // spear pose indefinitely — only rescued by an unrelated teleport/dodge/flee
+                    // event, which is why it eventually "resolved" after several random seconds.
+                    NPC.ai[1] = 0f;
+                    NPC.netUpdate = true;
                 }
 
                 #endregion
@@ -637,6 +803,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 375f && !hasPlayerLOS)
                 {
                     globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
+                    // Same stuck-timer fix as the spear/bomb LOS-abandon branches — see that comment.
+                    NPC.ai[1] = 0f;
+                    NPC.netUpdate = true;
                 }
 
                 #endregion
@@ -728,44 +897,44 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 925f && !hasPlayerLOS)
                 {
                     globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
+                    // STUCK-BOMB FIX. Same class of bug as the spear/homing LOS-abandon branches
+                    // above: this used to leave ai[1] sitting at 925 with nothing to reset it, and
+                    // the bomb draw condition (`NPC.ai[1] >= 865`) has no upper bound, so the knight
+                    // kept climbing ai[1] forever while still visibly holding the bomb. The only thing
+                    // that ever rescued it was an unrelated teleport/dodge/flee event resetting ai[1]
+                    // to 60 as a side effect — which is why it "eventually cycled" after several
+                    // random seconds instead of never.
+                    NPC.ai[1] = 0f;
+                    NPC.netUpdate = true;
                 }
 
                 #endregion
 
                 #region AI 2 Attacks
-                // Air attack targeting indicator — shadow dust appears above drop zone 3 frames before each wave
+                // Black rain barrage. Each drop now carries its own frozen-and-spinning windup
+                // (EnemyBlackCursedBreath), so a single call here fires wave 1 immediately and
+                // schedules 1-2 more waves internally (ticked below, GravefallWaveCooldown apart) —
+                // the separate "release 3-25 ticks later" event this used to need is gone.
                 if ((NPC.ai[2] == 72 || NPC.ai[2] == 97 || NPC.ai[2] == 522 || NPC.ai[2] == 547 || NPC.ai[2] == 572 || NPC.ai[2] == 597) && !inActiveAttack && NPC.Distance(player.Center) > 250 && hasPlayerLOS)
                 {
-                    for (int i = 0; i < 6; i++)
-                        Dust.NewDust(new Vector2(player.position.X - 10 + Main.rand.Next(player.width + 20), player.position.Y - 290f), 4, 4, DustID.ShadowbeamStaff, 0f, 3f, 100, default, 1.2f);
-                }
-
-                // Death Attack from Air
-                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && !inActiveAttack && NPC.Distance(player.Center) > 250 && hasPlayerLOS)
-                {
-                    for (int pcy = 0; pcy < 4; pcy++)
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 300f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 3f, Main.myPlayer);
-                        }
-                    }
+                    bool wideWave = NPC.ai[2] == 97 || NPC.ai[2] == 547 || NPC.ai[2] == 597;
+                    StartGravefallBarrage(wideWave);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
                     NPC.netUpdate = true;
                 }
 
-                // Slightly Delayed Death Attack From Air
-                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && !inActiveAttack && NPC.Distance(player.Center) > 270 && hasPlayerLOS)
+                // Scheduled follow-up waves for whatever barrage StartGravefallBarrage began above.
+                if (gravefallWavesRemaining > 0)
                 {
-                    for (int pcy = 0; pcy < 6; pcy++)
+                    gravefallWaveTimer++;
+                    if (gravefallWaveTimer >= GravefallWaveCooldown)
                     {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(1000), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 3.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 4f, Main.myPlayer);
-                        }
+                        gravefallWaveTimer = 0;
+                        gravefallWaveIndex++;
+                        gravefallWavesRemaining--;
+                        FireGravefallWave();
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-                    NPC.netUpdate = true;
                 }
 
                 // Breather before reset
@@ -783,8 +952,14 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     NPC.knockBackResist = 0f;
                     NPC.ai[1] = -130;
-                    UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((200 - NPC.ai[2]) / 20)), DustID.BoneTorch, 48, 4);
-                    Lighting.AddLight(NPC.Center * 2, Color.WhiteSmoke.ToVector3() * 5);
+                    if (Main.rand.NextBool(4))
+                    {
+                        float collapse = MathHelper.Clamp((200f - NPC.ai[2]) / 100f, 0f, 1f);
+                        Vector2 offset = Main.rand.NextVector2CircularEdge(240f, 240f) * collapse;
+                        Dust mote = Dust.NewDustPerfect(NPC.Center + offset, DustID.BoneTorch, -offset * 0.025f, 120, default, 0.9f);
+                        mote.noGravity = true;
+                    }
+                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1.2f);
                     NPC.velocity.X *= 0.85f;
                 }
                 // Ultrakill Telegraph: Flash
@@ -828,7 +1003,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speed += Main.rand.NextVector2Circular(1, 5);//was -12, -16
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer, 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center); //Play flame sound
 
@@ -837,7 +1012,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speed2 += Main.rand.NextVector2Circular(-5, 5);//was -4, -2, then -12, -16
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer, 2f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.9f, PitchVariance = 2f }, NPC.Center);
                     NPC.netUpdate = true;
@@ -945,59 +1120,124 @@ namespace tsorcRevamp.NPCs.Enemies
         static readonly Vector2 SpearGripOrigin = new Vector2(8f, 38f);
         static readonly Vector2 BombGripOrigin = new Vector2(14f, 4f);
 
-        Vector2 CurrentHandWorld()
+        // Lift from the idle frame's hand pixel up to the authored OVERHEAD THROWING pose (cocked
+        // back near the shoulder, like the reference screenshot of the throw telegraph). This is
+        // ONLY correct for that stand-and-throw pose — applying it to melee put the jab up near the
+        // knight's head. Melee uses the raw per-frame hand pixel instead (CurrentHandWorld), exactly
+        // like the bomb and hand overlay already do.
+        const float IdleGripLift = 21f;
+
+        // One frame-index helper so the hand and the spear can never disagree about which frame
+        // they are on.
+        int CurrentFrameIndex()
         {
             int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame < 0 || frame >= HandPixel.Length)
-            {
-                frame = 0;
-            }
+            return frame < 0 || frame >= HandPixel.Length ? 0 : frame;
+        }
 
-            Vector2 fp = HandPixel[frame];
-            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
+        // Single frame-pixel -> world mapping. Everything that attaches to the body goes through it,
+        // so a held prop's draw position and the occlusion mask's lookup cannot drift apart.
+        // facingDirection is explicit because a melee attack locks its own direction: rotating the
+        // spear by the locked direction while mirroring its anchor by NPC.spriteDirection put the
+        // shaft on the far side of the body whenever the two disagreed.
+        Vector2 FramePixelToWorld(Vector2 fp, int facingDirection)
+        {
+            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -facingDirection;
             float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
             return new Vector2(x, y);
         }
 
-        Vector2 CurrentSpearWorld()
+        // The RANGED-THROW grip only: a fixed idle-based Y so the overhead cocked pose reads
+        // consistently regardless of which walk frame happens to be active (it must not pop when the
+        // frame changes mid-windup). Do NOT use this for melee — see CurrentHandWorld for that.
+        Vector2 CurrentThrowSpearFramePixel()
         {
-            Vector2 handWorld = CurrentHandWorld();
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame == 0)
-            {
-                handWorld.Y -= 21f;
-            }
-            return handWorld;
+            return new Vector2(HandPixel[CurrentFrameIndex()].X, HandPixel[0].Y - IdleGripLift / NPC.scale);
         }
 
+        Vector2 CurrentHandWorld(int facingDirection) => FramePixelToWorld(HandPixel[CurrentFrameIndex()], facingDirection);
+
+        Vector2 CurrentHandWorld() => CurrentHandWorld(NPC.spriteDirection);
+
+        // Ranged spear-throw telegraph/hold only (overhead cocked pose).
+        Vector2 CurrentThrowSpearWorld(int facingDirection) => FramePixelToWorld(CurrentThrowSpearFramePixel(), facingDirection);
+
+        Vector2 CurrentThrowSpearWorld() => CurrentThrowSpearWorld(NPC.spriteDirection);
+
+        // 0 disables the body mask and falls back to a plain draw — the A/B switch for judging the
+        // occlusion in game without a rebuild-per-guess.
+        const float SpearMaskStrength = 1f;
+
+        // gripFramePixel MUST be whichever frame-pixel the caller used to compute screenPosition
+        // (CurrentHandWorld for melee, CurrentThrowSpearWorld for the ranged throw) — the occlusion
+        // mask samples the body sheet at that same pixel, and a mismatch desyncs the mask from
+        // where the spear actually sits.
         void DrawHeldSpear(SpriteBatch spriteBatch, Vector2 screenPosition, float rotation, Color drawColor,
-            tsorcRevampGlobalNPC globalNPC, float spriteScale, float gripSlide = 0f)
+            tsorcRevampGlobalNPC globalNPC, float spriteScale, Vector2 gripFramePixel,
+            float gripSlide = 0f, int facingDirection = 0)
         {
             Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, gripSlide);
             if (globalNPC.ActiveAttackBypassesShield)
             {
                 Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
                 Vector2 auraCenter = screenPosition + forward * gripSlide;
+                // The aura is a silhouette glow, deliberately drawn unmasked so the unblockable tell
+                // stays legible even where the body would cover the shaft.
                 AttackTelegraphDraw.DrawUnblockableWeaponAura(
                     spriteBatch, spearTexture, screenPosition, null, rotation, gripOrigin, NPC.scale * spriteScale);
                 drawColor = Color.Lerp(drawColor, new Color(255, 55, 55), 0.8f);
                 Lighting.AddLight(auraCenter + Main.screenPosition, Color.Red.ToVector3() * 0.75f);
             }
 
-            spriteBatch.Draw(spearTexture, screenPosition, null, drawColor, rotation,
-                gripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0f);
+            if (facingDirection == 0)
+            {
+                facingDirection = NPC.spriteDirection;
+            }
+
+            // Punch the knight's own silhouette out of the shaft so it reads as gripped rather than
+            // laid over the sprite. The mask is the body sheet, not BlackKnight_Hand: that overlay is
+            // only a 14x8 fist on the walk frames and hides almost nothing.
+            HeldPropDraw.DrawOccluded(
+                spriteBatch, spearTexture, screenPosition, drawColor, rotation, gripOrigin,
+                NPC.scale * spriteScale,
+                Terraria.GameContent.TextureAssets.Npc[NPC.type].Value,
+                new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH),
+                gripFramePixel, facingDirection, NPC.scale, SpearMaskStrength);
         }
-        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
+        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor) => DrawHandOverlay(spriteBatch, drawColor, NPC.spriteDirection);
+
+        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor, int facingDirection)
         {
             if (handTexture == null)
             {
                 return;
             }
 
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            SpriteEffects effects = facingDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
             Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
             spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
+        }
+
+        void DrawBlackKnightMagicOverlays()
+        {
+            if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
+            {
+                float progress = MathHelper.Clamp((NPC.ai[2] - 100f) / 100f, 0f, 1f);
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center, progress);
+                if (NPC.ai[2] >= 165f && storedPlayerPosition != Vector2.Zero)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition,
+                        MathHelper.Clamp((NPC.ai[2] - 165f) / 35f, 0f, 1f));
+                }
+            }
+
+            ulong stormCycle = Main.GameUpdateCount % 420;
+            if (NPC.life <= NPC.lifeMax / 3 && stormCycle >= 400)
+            {
+                float stormProgress = MathHelper.Clamp((stormCycle - 400f) / 20f, 0f, 1f);
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightHexCrystal(NPC.Center, Vector2.Zero, stormProgress, false);
+            }
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -1024,10 +1264,24 @@ namespace tsorcRevamp.NPCs.Enemies
                 int meleeDirection = globalNPC.ActiveCombatMeleeDirection;
                 float maximumExtension = globalNPC.ActiveCombatMeleeKey == CombatComboMoveKey.LongHopMelee ? 22f : 14f;
                 float thrustOffset = globalNPC.CombatMeleeThrustProgress * maximumExtension;
-                Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
+                // Melee grips at the RAW per-frame hand pixel (same as the bomb/hand overlay), not
+                // the ranged-throw's overhead-cocked lift — that lift was designed for a stand-and-
+                // throw pose and put the jab up near the knight's head when applied to a melee swing.
+                Vector2 handWorld = CurrentHandWorld(meleeDirection) - Main.screenPosition;
                 float rotation = new Vector2(meleeDirection, 0f).ToRotation() + MathHelper.PiOver2;
-                DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale, thrustOffset);
-                DrawHandOverlay(spriteBatch, drawColor);
+                if (globalNPC.InCombatMeleeHitWindow)
+                {
+                    Vector2 forward = new Vector2(meleeDirection, 0f);
+                    // Anchored ahead of the tip, which sits 30px out from the grip (the 14x84 spear
+                    // is gripped at y=38 and drawn at 0.8 scale), plus however far the jab extends.
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                        handWorld + Main.screenPosition + forward * (38f + thrustOffset),
+                        forward.ToRotation(), new Vector2(82f, 18f), 0.62f);
+                }
+                DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale,
+                    HandPixel[CurrentFrameIndex()], thrustOffset, meleeDirection);
+                DrawHandOverlay(spriteBatch, drawColor, meleeDirection);
+                DrawBlackKnightMagicOverlays();
                 return;
             }
 
@@ -1037,8 +1291,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 float spriteScale = 0.8f;
                 Vector2 spearAim = NPC.ai[1] >= 155f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
-                Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
-                DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale);
+                Vector2 handWorld = CurrentThrowSpearWorld() - Main.screenPosition;
+                DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale,
+                    CurrentThrowSpearFramePixel());
                 DrawHandOverlay(spriteBatch, drawColor);
             }
             // Bomb
@@ -1047,9 +1302,15 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 bombAim = NPC.ai[1] >= 900f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                float fuseProgress = MathHelper.Clamp((NPC.ai[1] - 865f) / 60f, 0f, 1f);
+                // The Moonfury shader used to be drawn here and sat visibly offset from the bomb
+                // sprite. Replaced with a red fuse spark, which cannot drift out of alignment.
                 spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
+                Projectiles.Enemy.EnemyVFX.SpawnBombFuseSparks(handWorld + Main.screenPosition, fuseProgress);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
+
+            DrawBlackKnightMagicOverlays();
 
         }
         #endregion

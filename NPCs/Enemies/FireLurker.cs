@@ -47,10 +47,9 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.FireLurkerBanner>();
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.NavSearchRadius = 60; // Phase 2: SmartFighter4AI movement
-            globalNPC.KiteRangeMin = 10f;
+            globalNPC.KiteRangeMin = 5f;
             globalNPC.KiteRangeMax = 25f;
-            globalNPC.KiteLooseness = 0.5f;
-            UsefulFunctions.AddAttack(NPC, 6 * 60, ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>(), lostSoulDamage, 2.1f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Orange, telegraphTime: 25);
+            globalNPC.KiteLooseness = 0.9f;
 
             if (Main.hardMode)
             {
@@ -70,8 +69,24 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 65;
                 lostSoulDamage = 35;
                 NPC.knockBackResist = 0.05f;
-
             }
+
+            // AddAttack calls placed after hardmode blocks so lostSoulDamage and NPC.damage are final values.
+            UsefulFunctions.AddAttack(NPC, 6 * 60, ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>(), lostSoulDamage, 2.1f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Orange, telegraphTime: 25);
+
+            // Close-range melee fire burst: only fires when the player is within ~6 tiles.
+            int npcIndex = NPC.whoAmI;
+            UsefulFunctions.AddAttack(NPC, 5 * 60,
+                ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFireBurst>(),
+                NPC.damage, 0f,
+                ai0: npcIndex,
+                stopBeforeFiring: true,
+                condition: (npc) =>
+                {
+                    if (npc.target < 0 || npc.target >= Main.maxPlayers) return false;
+                    Player t = Main.player[npc.target];
+                    return t.active && !t.dead && npc.Distance(t.Center) < 6 * 16f;
+                });
         }
 
 
@@ -136,6 +151,8 @@ namespace tsorcRevamp.NPCs.Enemies
             int slot = GetOpenFlameOrbSlot();
             if (slot == -1)
             {
+                // All slots charged — launch every held orb at the player.
+                ReleaseFlameOrbs();
                 return;
             }
 

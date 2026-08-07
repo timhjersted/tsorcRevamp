@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
     // Combo chains: some attacks roll into a designated follow-up with a HALVED telegraph. Above 50%
     // health a combo is at most 2 moves; below 50% ("Cracked") the chance rises and chains run 3-4
     // moves — but every extra move adds +15 ticks of exhausted, punishable recovery at the end.
-    public class IceGigas : ModNPC, IStaggerable
+    public class IceGigas : ModNPC, IStaggerable, IDebugAttackLabel
     {
         enum AttackState : byte
         {
@@ -110,6 +110,12 @@ namespace tsorcRevamp.NPCs.Enemies
         int ScaleDamage(int baseDamage) => SHM ? (int)(baseDamage * 1.3f * tsorcRevampWorld.SHMScale) : baseDamage;
 
         AttackState State = AttackState.None;
+
+        /// <summary>DebugMode above-head readout (see IDebugAttackLabel).</summary>
+        public string DebugAttackLabel => NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0
+            ? "Staggered"
+            : State == AttackState.None ? "Idle" : DebugLabels.Humanize(State.ToString());
+
         AttackState LastAttack = AttackState.None;
         int AttackTimer;
         int AttackCooldown = 150;

@@ -26,6 +26,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Color.DarkViolet;
+            // This weapon's 105x105 gameplay dimensions are much larger than its 70x70 art.
+            // Keep collision intact while fitting both visual slash layers to the visible blade.
+            instancedGlobal.slashVisualScale = 0.5f;
         }
     }
 }

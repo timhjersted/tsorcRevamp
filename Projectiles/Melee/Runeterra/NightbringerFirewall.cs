@@ -11,6 +11,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
     public class NightbringerFirewall : ModProjectile
     {
+        public bool AppliedOnSpawn = false;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 8;
@@ -27,7 +28,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.DamageType = DamageClass.Melee;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
-            Projectile.ContinuouslyUpdateDamageStats = true;
         }
         SlotId SoundSlotID;
         bool soundPaused;
@@ -39,12 +39,19 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Vector2 unitVectorTowardsMouse = player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * player.direction);
             player.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallCast") with { Volume = 1f });
-            Projectile.OriginalCritChance = SteelTempest.BaseCritChanceBonus;
+            Projectile.CritChance = player.GetWeaponCrit(player.HeldItem);
         }
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.CritChance *= 2;
+
+            if (!AppliedOnSpawn)
+            {
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
+                Projectile.Resize((int)(Projectile.width / Nightbringer.BaseScale * Projectile.scale), (int)(Projectile.height / Nightbringer.BaseScale * Projectile.scale));
+                AppliedOnSpawn = true;
+            }
+            
             if (!playedSound)
             {
                 playedSound = true;

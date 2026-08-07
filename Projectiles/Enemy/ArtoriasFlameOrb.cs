@@ -61,12 +61,25 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             FaceVelocity();
 
-            if (Main.rand.NextBool(2))
+            if (!Main.dedServ && Main.rand.NextBool(5))
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkTorch,
                     Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1.4f);
                 Main.dust[dust].noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float elapsed = Projectile.ai[0];
+            bool homing = elapsed > FanOutTicks && elapsed <= FanOutTicks + HomingTicks;
+            float state = homing ? 1f : elapsed > FanOutTicks + HomingTicks ? 0.55f : 0.12f;
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+            ArtoriasVFX.DrawProjectileTrail(Projectile.Center - direction * 28f, direction.ToRotation(),
+                new Vector2(homing ? 72f : 58f, 22f), state, homing ? 0.78f : 0.54f);
+            ArtoriasVFX.DrawOrb(Projectile.Center, new Vector2(38f, 38f), Projectile.rotation,
+                state, 0.90f);
+            return false;
         }
 
         void Animate()
@@ -91,7 +104,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false);
-            SpawnFlameDust(25, 4.6f, 1.9f);
+            SpawnFlameDust(8, 4.6f, 1.35f);
 
             // ai[1] is the firing NPC's whoAmI, offset by +1 (0 = "no owner" - ArtoriasAbyssBlast's
             // own orb fan spawns this projectile anonymously) so the dodge-punish-chain system knows
@@ -106,7 +119,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
-            SpawnFlameDust(15, 3.2f, 1.7f);
+            SpawnFlameDust(5, 3.2f, 1.2f);
         }
 
         void SpawnFlameDust(int count, float speed, float scale)
@@ -119,7 +132,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Vector2 velocity = Main.rand.NextVector2Circular(speed, speed);
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkTorch,
-                    velocity.X, velocity.Y, 80, new Color(255, 135, 35), scale);
+                    velocity.X, velocity.Y, 100, new Color(158, 77, 220), scale);
                 Main.dust[dust].noGravity = true;
             }
         }

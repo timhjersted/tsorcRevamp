@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private const float FireBreathTriggerRange = 620f;
 
         // Rain of fire: 2 s purple-glow windup (with Darkness), then 20 fireballs 25 t apart, each
-        // aimed at where the player WAS 25 t earlier, falling from a wide band 15-20 tiles up.
+        // targeting nearby players in MP with predictive velocity leading, falling from a wide band 15-20 tiles up.
         private int _rainCooldown;
         private int _glowTimer; // > 0 = draw the purple pre-attack glow
         private int _rainShotsRemaining;
@@ -47,10 +47,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private const int RainCooldownTicks = 720;   // 12 s minimum between casts
         private const int RainFireballDamage = 33;
         private const float RainTriggerRange = 900f;
-
-        // Ring buffer of the target's recent positions for the 25-tick-delayed rain targeting.
-        private readonly Vector2[] _playerHistory = new Vector2[30];
-        private int _historyIndex;
 
         // Mouth: ~70 px forward of center (facing-relative) and 5 px up.
         private Vector2 MouthPosition => NPC.Center + new Vector2(NPC.spriteDirection * 70f, -5f);
@@ -190,10 +186,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             Player target = Main.player[NPC.target];
 
-            // Record the target's position each tick for the rain's 25-tick-delayed aim.
-            _playerHistory[_historyIndex % _playerHistory.Length] = target.Center;
-            _historyIndex++;
-
             bool canAttack = !target.dead && NPC.HasValidTarget;
 
             switch (_attackState)
@@ -254,7 +246,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 case MassacreAttackState.RainWindup:
                     NPC.velocity.X *= 0.6f; // plant + charge up (purple glow drawn in PreDraw)
-                    ApplyDarkness(target);
+                    ApplyDarkness();
                     if (--_attackTimer <= 0)
                     {
                         _attackState = MassacreAttackState.Raining;
@@ -265,7 +257,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 case MassacreAttackState.Raining:
                     NPC.velocity.X *= 0.9f;
-                    ApplyDarkness(target);
+                    ApplyDarkness();
                     if (--_attackTimer <= 0)
                     {
                         SpawnRainFireball();
@@ -277,29 +269,62 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        // Keep refreshing Darkness on the target for the windup + the whole rain.
-        private void ApplyDarkness(Player target)
+        // Keep refreshing Darkness on nearby targets for the windup + the whole rain.
+        private void ApplyDarkness()
         {
-            if (target.active && !target.dead)
-                target.AddBuff(BuffID.Darkness, 40);
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player p = Main.player[i];
+                if (p.active && !p.dead && NPC.Distance(p.Center) < RainTriggerRange + 300f)
+                {
+                    p.AddBuff(BuffID.Darkness, 40);
+                }
+            }
         }
 
-        // One rain fireball: falls from a random spot in a 30-tile-wide, 5-tile-tall band 15-20 tiles
-        // up, aimed at where the player was ~25 ticks ago (so a moving player can outrun the volley).
+        // One rain fireball: falls from a random spot in a 30-tile-wide, 5-tile-tall band 15-20 tiles up.
+        // Targets any nearby active player in MP, using their velocity to lead the angle of attack.
         private void SpawnRainFireball()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int delayedIdx = ((_historyIndex - 1 - RainShotSpacing) % _playerHistory.Length + _playerHistory.Length) % _playerHistory.Length;
-            Vector2 targetPos = _playerHistory[delayedIdx];
-            if (targetPos == Vector2.Zero)
-                targetPos = Main.player[NPC.target].Center;
+            List<Player> nearbyPlayers = new List<Player>();
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player p = Main.player[i];
+                if (p.active && !p.dead && NPC.Distance(p.Center) < RainTriggerRange + 300f)
+                {
+                    nearbyPlayers.Add(p);
+                }
+            }
+
+            Player targetPlayer = null;
+            if (nearbyPlayers.Count > 0)
+            {
+                targetPlayer = nearbyPlayers[Main.rand.Next(nearbyPlayers.Count)];
+            }
+            else if (NPC.HasValidTarget && !Main.player[NPC.target].dead)
+            {
+                targetPlayer = Main.player[NPC.target];
+            }
+
+            if (targetPlayer == null)
+                return;
 
             float spawnX = NPC.Center.X + Main.rand.NextFloat(-240f, 240f);          // 30-tile width
             float spawnY = NPC.Center.Y - Main.rand.NextFloat(15f * 16f, 20f * 16f); // 15-20 tiles up
             Vector2 spawn = new Vector2(spawnX, spawnY);
-            Vector2 vel = UsefulFunctions.Aim(spawn, targetPos, 9f);
+
+            // Calculate predictive lead targeting based on player velocity and travel distance
+            float projSpeed = 9.5f;
+            float dist = Vector2.Distance(spawn, targetPlayer.Center);
+            float timeToTarget = dist / projSpeed;
+
+            Vector2 predictedOffset = Vector2.Clamp(targetPlayer.velocity * timeToTarget, new Vector2(-350f, -200f), new Vector2(350f, 200f));
+            Vector2 predictedTarget = targetPlayer.Center + predictedOffset;
+
+            Vector2 vel = UsefulFunctions.Aim(spawn, predictedTarget, projSpeed);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, vel,
                 ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), RainFireballDamage, 2f, Main.myPlayer);
         }

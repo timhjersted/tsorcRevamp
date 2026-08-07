@@ -45,8 +45,23 @@ namespace tsorcRevamp.Projectiles.Enemy
             target.AddBuff(BuffID.Poisoned, 6 * 60, false);
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // Short + fat: was 54x18, which read as a thin green line rather than a blob of poison liquid.
+            EnemyVFX.DrawElandVenomProjectile(Projectile.Center, Projectile.velocity, new Vector2(30f, 24f));
+            return true;
+        }
+
         public override void OnKill(int timeLeft)
         {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.ElandVenomImpact);
+            // The splat visual is 92px wide but used to deal no damage whatsoever. Give it a matching
+            // hitbox so the whole visible splash actually connects.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                    ModContent.ProjectileType<ElandVenomSplash>(), Projectile.damage, 0f, Projectile.owner);
+            }
             for (int i = 0; i < 8; i++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Poisoned, 0f, 0f, 100, default, 1.3f);

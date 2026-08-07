@@ -23,6 +23,8 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 4;
+            ProjectileID.Sets.TrailCacheLength[Type] = 12;
+            ProjectileID.Sets.TrailingMode[Type] = 0;
         }
 
         public override void SetDefaults()
@@ -40,6 +42,32 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
 
         public override void AI()
         {
+            // Initial velocity 30% slower on spawn, ramping up to full speed over the first 30 ticks
+            if (Projectile.localAI[1] == 0f)
+            {
+                float initialSpeed = Projectile.velocity.Length();
+                if (initialSpeed > 0.001f)
+                {
+                    Projectile.localAI[1] = initialSpeed; // full target speed
+                    Projectile.velocity *= 0.7f;          // 30% slower initial velocity
+                }
+                else
+                {
+                    Projectile.localAI[1] = 1f;
+                }
+            }
+
+            if (Projectile.timeLeft > 330) // first 30 ticks of lifetime
+            {
+                float targetSpeed = Projectile.localAI[1];
+                float currentSpeed = Projectile.velocity.Length();
+                if (currentSpeed > 0.001f && currentSpeed < targetSpeed)
+                {
+                    float nextSpeed = MathHelper.Lerp(currentSpeed, targetSpeed, 0.08f);
+                    Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * nextSpeed;
+                }
+            }
+
             // Spin animation
             if (++Projectile.frameCounter >= 6)
             {
@@ -62,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
             Projectile.rotation = 0f; // the skull sprite is upright; flip (not rotate) so it never inverts
 
             // Purple soul-trail
-            if (Main.rand.NextBool(2))
+            if (!Main.dedServ && Main.rand.NextBool(6))
             {
                 int d = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PurpleTorch, 0f, 0f, 120, default, 1f);
                 Main.dust[d].noGravity = true;
@@ -74,6 +102,7 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
         // Drawn UPRIGHT (no rotation) so it never appears upside down; just mirrored to face travel L/R.
         public override bool PreDraw(ref Color lightColor)
         {
+            VesselVFX.DrawSoulTrail(Projectile, 0.78f);
             Texture2D tex = TextureAssets.Projectile[Type].Value;
             int frameH = tex.Height / Main.projFrames[Type];
             Rectangle src = new Rectangle(0, Projectile.frame * frameH, tex.Width, frameH);

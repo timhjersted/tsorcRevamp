@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -27,11 +29,46 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            for (int i = 0; i < 2; i++)
+            if (Projectile.ai[2] == 1f)
+            {
+                if (Main.rand.NextBool(3))
+                {
+                    Dust mote = Dust.NewDustPerfect(Projectile.Center, DustID.CursedTorch,
+                        -Projectile.velocity * 0.05f + Main.rand.NextVector2Circular(0.2f, 0.2f),
+                        130, new Color(128, 190, 22), Main.rand.NextFloat(0.55f, 0.78f));
+                    mote.noGravity = true;
+                }
+                for (int i = 0; i < 2; i++)
+                {
+                    Dust oldMote = Dust.NewDustPerfect(
+                        Projectile.Center + Main.rand.NextVector2Circular(8f, 8f),
+                        DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f),
+                        120, default, 1.3f);
+                    oldMote.noGravity = true;
+                }
+                return;
+            }
+
+            const int dustCount = 2;
+            for (int i = 0; i < dustCount; i++)
             {
                 Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(8f, 8f), DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120, default, 1.3f);
                 dust.noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Projectile.ai[2] == 1f)
+            {
+                RedKnightVFX.DrawPoisonOrb(Projectile.Center, Projectile.velocity, 0.96f);
+                Texture2D texture = TextureAssets.Projectile[Type].Value;
+                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null,
+                    Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() * 0.5f,
+                    Projectile.scale, SpriteEffects.None, 0f);
+                return false;
+            }
+            return true;
         }
 
         public override bool PreKill(int timeLeft)

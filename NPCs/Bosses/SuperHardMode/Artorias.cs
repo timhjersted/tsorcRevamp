@@ -1,20 +1,23 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
-using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles.Melee.Shortswords;
+using tsorcRevamp.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -29,19 +32,35 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override string InvaderTitle => "Artorias";
 
-        // ── Loadout: ArtoriasOfTheAbyss (Abysswalker) armor set ─────────────────────
-        protected override int HeadArmorItemType => ModContent.ItemType<ArtoriasOfTheAbyssHelm>();
-        protected override int BodyArmorItemType => ModContent.ItemType<ArtoriasOfTheAbyssArmor>();
-        protected override int LegsArmorItemType => ModContent.ItemType<ArtoriasOfTheAbyssGreaves>();
+        // ── Loadout: original dark-blue Artorias armor set ──────────────────────────
+        protected override int HeadArmorItemType => ModContent.ItemType<ArtoriasHelmet>();
+        protected override int BodyArmorItemType => ModContent.ItemType<ArtoriasArmor>();
+        protected override int LegsArmorItemType => ModContent.ItemType<ArtoriasGreaves>();
+        protected override float PuppetDrawScale => 1.2f;
+        protected override Color PuppetSkinColor => new Color(20, 23, 38);
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyArtoriasGreatsword>();
         protected override int RangedWeaponItemType => -1; // melee-only
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
-        protected override bool HasSlashVFX => true;
-        protected override Color SlashVFXColor => Color.DarkViolet;
-        protected override float SlashVFXOpacity => 0.22f;
-        protected override float SlashVFXScale => 0.72f;
+        protected override bool UseCompositeArmSwing => true;
+        protected override bool MirrorMeleeSwingRotationByFacing => true;
+        protected override int AfterimageSampleStep => Phase == AttackPhase.PierceDash ? 1 : 2;
+        protected override float AfterimageOpacity => Phase == AttackPhase.PierceDash ? 0.58f : 0.4f;
+
+        protected override bool UseCompositeArmForAdditionalPhase =>
+            Phase == AttackPhase.StabTelegraph || Phase == AttackPhase.StabAttack ||
+            Phase == AttackPhase.StabRecovery || Phase == AttackPhase.PierceTelegraph ||
+            Phase == AttackPhase.PierceDash || Phase == AttackPhase.PierceStabHold ||
+            Phase == AttackPhase.PierceStabFlick || Phase == AttackPhase.JumpSlashDodgeback ||
+            Phase == AttackPhase.JumpSlashRise || Phase == AttackPhase.JumpSlashAttack ||
+            Phase == AttackPhase.FlipSlashRise || Phase == AttackPhase.FlipSlashLand ||
+            Phase == AttackPhase.AbyssSlashTelegraph || Phase == AttackPhase.AbyssSlashSwipe ||
+            Phase == AttackPhase.AbyssSlashPause || Phase == AttackPhase.HomingVolleyDodgeback ||
+            Phase == AttackPhase.HomingVolleySwingTelegraph || Phase == AttackPhase.HomingVolleySwing ||
+            Phase == AttackPhase.SwordLaunchReposition || Phase == AttackPhase.SpiralFanSwingTelegraph ||
+            Phase == AttackPhase.SpiralFanSwing || Phase == AttackPhase.SpiralFanBurst ||
+            Phase == AttackPhase.SpiralFanPause;
 
         protected override int MeleeDamage => 55;
         protected override int RangedDamage => 0; // unused, no ranged weapon
@@ -90,7 +109,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         // ── Umbral Echo Step ─────────────────────────────────────────────────────
         // Rides along on Piercing Dash and Forward Flip Slash (see TryArmEchoStep call sites).
-        protected override bool CanEchoStep => true;
+        protected override bool CanEchoStep => NPC.life <= NPC.lifeMax * 0.50f;
+        protected override int EchoStepStrikeCount => 3;
+        protected override int EchoStepInterStrikeRecoveryTicks => 24;
+        protected override int EchoStepChance => 80;
+        protected override int EchoStepWalkTicks => 60;
+        protected override int EchoStepLeapTicks => 30;
+        protected override int EchoStepSwingTicks => 18;
+        protected override int EchoStepFadeTicks => 60;
+        protected override int EchoStepDelayMin => EchoStepTellTicks + 12;
+        protected override int EchoStepDelayMax => EchoStepTellTicks + 22;
+        protected override float EchoStepWalkTopSpeed => 2.1f;
+        protected override float EchoStepReach => 96f;
+        protected override float EchoStepOpacity => 0.92f;
+        protected override float EchoStepLeapHeight => 78f;
+        protected override float EchoStepLeapTopSpeed => 4.8f;
+        protected override float EchoStepMinPursuitDistance => 132f;
+        protected override float EchoStepMaxPursuitDistance => 260f;
+        protected override float EchoStepOwnerAdvanceSpeedMult => 0.5f;
 
         // ── Abyss Tendril Grab ───────────────────────────────────────────────────
         protected override bool  CanTendrilGrab          => true;
@@ -100,6 +136,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   TendrilCooldownAfterUse  => 480;
 
         const int TendrilGrabDamage = 30;
+        internal Vector2 TendrilHandPosition => PuppetHandPosition;
+
+        protected override bool DrawSpecialHeldWeapon(ref PlayerDrawSet drawInfo)
+        {
+            // During the grab Artorias's sword arm is replaced by the abyss-charged bare hand.
+            // Returning true suppresses the ordinary greatsword without disturbing its later
+            // reappearance for the authored finishing swing.
+            return Phase == AttackPhase.TendrilTelegraph || Phase == AttackPhase.TendrilReach;
+        }
 
         const int PierceContactDamage   = 75;
         const int PierceStabBonusDamage = 125;
@@ -108,7 +153,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float ImpaleSwordReach    = 70f;
 
         private int _impaleSwordProjIndex = -1;
-
+        private int _impaleTargetIndex = -1;
+        private int _slashTrailSwingSequence;
+        private bool _slashTrailWasActive;
         NPCDespawnHandler despawnHandler;
 
         // Only a fabled blade can pierce Artorias's protective shield: the Barrow Blade
@@ -117,42 +164,48 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool defenseBroken = false;
         int textCooldown;
 
-        // Fixed damage ring: captured at spawn, never moves. 100 tiles wide (radius 800px),
-        // ~5 tile band. Anyone who touches/crosses the band takes lethal damage. Public so
-        // MethodSwaps' screen-darkening overlay (outside the ring) can read the same geometry.
+        // Fixed-center arena boundary: captured at spawn and permanently contracts as Artorias
+        // weakens. Crossing into the visible exterior inflicts one survivable 50-damage pulse per
+        // second and pushes the player inward, rather than delivering the old unavoidable instant kill.
         public const float RingRadius = 50 * 16f;      // 100-tile diameter
         const float RingBandHalfWidth = 40f;
         Vector2 _ringCenter;
         public Vector2 RingCenter => _ringCenter;
+        public float RingBandHalfWidthPixels => RingBandHalfWidth;
         int _ringVfxTimer;
+        readonly int[] _ringDamageCooldown = new int[Main.maxPlayers];
 
-        // Live effective radius - equal to RingRadius except during a Ring Collapse (below), which
-        // temporarily shrinks it. Everything that used to read the RingRadius const directly (the
-        // boundary check, the dust ring, the screen-darkening overlay in MethodSwaps) now reads this
-        // instead, so the darkness/lethal-boundary always track the contraction live.
+        // Live effective radius. Everything that used to read RingRadius directly (damage, dust,
+        // boundary shader, and phase-two presentation) reads this value so visuals and gameplay
+        // remain locked together through both permanent contractions.
         float _currentRingRadius = RingRadius;
         public float EffectiveRingRadius => _currentRingRadius;
 
-        // ── Ring Collapse: twice per fight (60% and 30% HP), the fixed ring briefly squeezes in,
-        // holds, then releases back to its normal radius. A preview dust ring appears at the NEW
-        // (contracted) radius for RingCollapseTelegraphTicks before the boundary actually starts
-        // moving there, so players get a clean warning before the arena shrinks under them.
-        enum RingCollapseState { Inactive, Telegraph, Contracting, Holding, Expanding }
+        // ── Ring Collapse: at 50% and 30% HP the fixed ring warns, then permanently contracts.
+        // A preview dust/fire ring appears at the new radius before it moves, giving the player a
+        // readable two-stage warning instead of silently shrinking the safe area under them.
+        enum RingCollapseState { Inactive, Telegraph, Contracting }
         RingCollapseState _ringCollapseState = RingCollapseState.Inactive;
         int _ringCollapseTimer;
         float _ringCollapseFrom;
         float _ringCollapseTo;
-        bool _ringCollapseDone60;
+        bool _ringCollapseDone50;
         bool _ringCollapseDone30;
 
-        const float RingCollapseContractFrac  = 0.30f;      // shrink to 70% of normal radius
+        const float PhaseTwoRingRadius = RingRadius * 0.70f;
+        const float FinalPhaseRingRadius = RingRadius * 0.50f;
         const int   RingCollapseTelegraphTicks = 30;
         const int   RingCollapseMoveTicks      = 120;       // 2s each way - "slowly"
-        const int   RingCollapseHoldTicks      = 10 * 60;   // 10s held at the contracted radius
+        public bool RingCollapseWarningActive => _ringCollapseState == RingCollapseState.Telegraph;
+        public float RingCollapseWarningRadius => _ringCollapseTo > 0f ? _ringCollapseTo : _currentRingRadius;
 
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 1;
+            // Artorias normally uses the same short puppet cache as other humanoids. Pierce Dash
+            // deliberately keeps twenty poses so its body reads as a sustained, lethal thrust.
+            NPCID.Sets.TrailCacheLength[NPC.type] = 20;
+            NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
@@ -197,6 +250,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void OnSpawn(IEntitySource source)
         {
             _ringCenter = NPC.Center;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), _ringCenter, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasBoundaryVFX>(), 0, 0f,
+                    Main.myPlayer, NPC.whoAmI);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasSwordSlashTrail>(), 0, 0f,
+                    Main.myPlayer, NPC.whoAmI, 0f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasSwordSlashTrail>(), 0, 0f,
+                    Main.myPlayer, NPC.whoAmI, 1f);
+            }
             NPC.netUpdate = true;
         }
 
@@ -226,7 +291,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             base.AI();
+            UpdateSlashTrailSequence();
             TickProjectileSwordTelegraphs();
+            UpdateArtoriasDashAfterimages();
 
             // The puppet body and hand-drawn greatsword both sample the normal light map, so this
             // shared white light keeps the whole silhouette readable when the abyss-space scene is up.
@@ -245,6 +312,168 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 _abyssShardUnlocked = true;
             }
+        }
+
+        void UpdateArtoriasDashAfterimages()
+        {
+            bool largeMovement = Math.Abs(NPC.velocity.X) >= 4.5f || Math.Abs(NPC.velocity.Y) >= 5.5f;
+            bool dashPhase = Phase == AttackPhase.PierceDash
+                || Phase == AttackPhase.JumpSlashRise
+                || Phase == AttackPhase.JumpSlashAttack
+                || Phase == AttackPhase.FlipSlashRise
+                || Phase == AttackPhase.HomingVolleyDodgeback
+                || Phase == AttackPhase.SwordLaunchReposition;
+            if (largeMovement && dashPhase)
+                AfterimageTicks = Phase == AttackPhase.PierceDash ? 24 : 10;
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            DrawArtoriasAttackVFX();
+            return base.PreDraw(spriteBatch, screenPos, drawColor);
+        }
+
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            // This layer must sit over the puppet arm so it genuinely looks consumed by the
+            // Abyss instead of reading as a detached aura behind Artorias.
+            DrawTendrilHandVFX();
+            base.PostDraw(spriteBatch, screenPos, drawColor);
+            DrawPierceUnblockableWeaponAura(spriteBatch);
+        }
+
+        void DrawArtoriasAttackVFX()
+        {
+            if (_novaStageIndex >= 0 && Phase == AttackPhase.NovaCharge)
+            {
+                float chargeProgress = MathHelper.Clamp(1f - PhaseTimer / (float)NovaChargeTicks, 0f, 1f);
+                float radius = NovaStages[_novaStageIndex].radius;
+                Projectiles.Enemy.ArtoriasVFX.DrawDetonation(NPC.Center, radius, chargeProgress,
+                    MathHelper.Lerp(0.20f, 0.62f, chargeProgress), active: false);
+                Projectiles.Enemy.ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -16f),
+                    new Vector2(190f, 240f), 0.40f + chargeProgress * 0.32f,
+                    0.8f + chargeProgress * 0.55f, -1f);
+            }
+
+            bool majorCast = Phase == AttackPhase.AbyssSlashTelegraph
+                || Phase == AttackPhase.AbyssSlashPause
+                || Phase == AttackPhase.TendrilTelegraph
+                || Phase == AttackPhase.TendrilReach
+                || Phase == AttackPhase.HomingVolleySwingTelegraph
+                || Phase == AttackPhase.SpiralFanSwingTelegraph;
+            if (majorCast && !AbyssSurgeActive)
+            {
+                Projectiles.Enemy.ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -14f),
+                    new Vector2(150f, 205f), 0.34f, 0.72f, 1f);
+            }
+            if (Phase == AttackPhase.BoomerangSwingTelegraph)
+            {
+                float progress = MathHelper.Clamp(
+                    1f - PhaseTimer / (float)Math.Max(1, BoomerangSwingTelegraphTicks), 0f, 1f);
+                Vector2 hand = PuppetHandPosition;
+                Vector2 tip = PuppetWeaponTipPosition(62f);
+                Vector2 bladeDirection = (tip - hand).SafeNormalize(new Vector2(NPC.direction, -1f));
+                Projectiles.Enemy.ArtoriasVFX.DrawBoomerangCharge(
+                    tip, bladeDirection, progress, MathHelper.Lerp(0.66f, 1f, progress));
+            }
+            if (PuppetEchoStepVisible)
+            {
+                float intensity = PuppetEchoStepSwinging ? 1.2f : 0.88f;
+                Projectiles.Enemy.ArtoriasVFX.DrawMantle(PuppetEchoStepPosition + new Vector2(0f, -12f),
+                    new Vector2(148f, 190f),
+                    (PuppetEchoStepSwinging ? 0.52f : 0.38f) * PuppetEchoStepVisualOpacity,
+                    intensity, -1f);
+            }
+
+            if (Phase == AttackPhase.PierceStabHold && _impaleTargetIndex >= 0
+                && _impaleTargetIndex < Main.maxPlayers)
+            {
+                Player impaled = Main.player[_impaleTargetIndex];
+                if (impaled.active && !impaled.dead)
+                {
+                    float raise = GetImpaleRaiseProgress01();
+                    Projectiles.Enemy.ArtoriasVFX.DrawImpaleTendrils(
+                        impaled.Center, raise, 0.86f);
+                }
+            }
+
+        }
+
+        void DrawPierceUnblockableWeaponAura(SpriteBatch spriteBatch)
+        {
+            if ((Phase != AttackPhase.PierceTelegraph && Phase != AttackPhase.PierceDash)
+                || DebugHeldItemType < 0 || DebugHeldItemType >= TextureAssets.Item.Length)
+            {
+                return;
+            }
+
+            Texture2D weapon = TextureAssets.Item[DebugHeldItemType].Value;
+            SpriteEffects effects = DebugDirection == -1
+                ? SpriteEffects.FlipHorizontally
+                : SpriteEffects.None;
+            AttackTelegraphDraw.DrawUnblockableWeaponAura(
+                spriteBatch, weapon, DebugHandPos - Main.screenPosition, null,
+                MathHelper.ToRadians(DebugDrawRotationDeg), DebugOrigin,
+                NPC.scale * MeleeWeaponDrawScale, effects);
+            Lighting.AddLight(DebugHandPos, new Vector3(0.78f, 0.035f, 0.02f));
+        }
+
+        void DrawTendrilHandVFX()
+        {
+            if (Phase != AttackPhase.TendrilTelegraph && Phase != AttackPhase.TendrilReach)
+                return;
+
+            float charge = Phase == AttackPhase.TendrilTelegraph
+                ? MathHelper.Clamp(1f - PhaseTimer / (float)TendrilTelegraphTicks, 0f, 1f)
+                : 1f;
+            Vector2 hand = PuppetHandPosition;
+            Projectiles.Enemy.ArtoriasVFX.DrawTendrilHand(
+                hand - new Vector2(NPC.direction * 8f, 1f), new Vector2(94f, 108f),
+                charge, Phase == AttackPhase.TendrilReach, 0.92f);
+        }
+
+        void UpdateSlashTrailSequence()
+        {
+            bool active = IsMainSwordSlashActive;
+            if (active && !_slashTrailWasActive)
+                _slashTrailSwingSequence++;
+            _slashTrailWasActive = active;
+        }
+
+        bool IsMainSwordSlashActive =>
+            Phase == AttackPhase.MeleeAttack || Phase == AttackPhase.StabAttack ||
+            Phase == AttackPhase.MeleeComboAttack || Phase == AttackPhase.PierceDash ||
+            Phase == AttackPhase.JumpSlashAttack || Phase == AttackPhase.FlipSlashRise ||
+            Phase == AttackPhase.FlipSlashLand || Phase == AttackPhase.AbyssSlashSwipe ||
+            Phase == AttackPhase.TendrilSwing || Phase == AttackPhase.HomingVolleySwing ||
+            Phase == AttackPhase.BoomerangSwing || Phase == AttackPhase.SpiralFanSwing;
+
+        internal bool TryGetSwordSlashTrailPose(bool phantom, out Vector2 pivot,
+            out Vector2 direction, out float reach, out float progress, out int sequence)
+        {
+            if (phantom)
+            {
+                pivot = PuppetEchoStepHandPosition;
+                reach = EchoStepReach;
+                progress = PuppetEchoStepSwingProgress;
+                sequence = PuppetEchoStepSequence;
+                int facing = PuppetEchoStepDirection;
+                float drawRotation = facing * (PuppetEchoStepWeaponRotation
+                    + MeleeWeaponRotationOffset * facing);
+                float naturalRotation = facing == 1 ? -MathHelper.PiOver4 : -3f * MathHelper.PiOver4;
+                direction = (naturalRotation + drawRotation).ToRotationVector2();
+                return PuppetEchoStepSwinging;
+            }
+
+            pivot = PuppetHandPosition;
+            direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
+            // The 70x70 greatsword's authored handle-to-tip diagonal is about 87px. Ordinary
+            // collision reaches can be shorter, but the visual ribbon must still meet the blade
+            // that is visibly sweeping through the frame instead of ending around its midpoint.
+            reach = Math.Max(86f, PuppetActiveBladeReach);
+            progress = PuppetWeaponAnimationProgress;
+            sequence = _slashTrailSwingSequence;
+            return IsMainSwordSlashActive;
         }
 
         void TickProjectileSwordTelegraphs()
@@ -267,7 +496,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             Vector2 hand = PuppetHandPosition;
             Vector2 tip = PuppetWeaponTipPosition(54f);
-            for (int i = 0; i < 2; i++)
+            if (Phase == AttackPhase.BoomerangSwingTelegraph)
+            {
+                Vector2 bladeDirection = (tip - hand).SafeNormalize(new Vector2(NPC.direction, -1f));
+                Vector2 tangent = bladeDirection.RotatedBy(MathHelper.PiOver2);
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 position = tip + Main.rand.NextVector2Circular(32f, 32f);
+                    Vector2 velocity = (tip - position).SafeNormalize(Vector2.Zero)
+                        * Main.rand.NextFloat(0.9f, 2.1f)
+                        + tangent * Main.rand.NextFloat(-0.45f, 0.45f);
+                    bool silver = Main.rand.NextBool(6);
+                    Dust dust = Dust.NewDustPerfect(position,
+                        silver ? DustID.SilverFlame : DustID.ShadowbeamStaff,
+                        velocity, 100,
+                        silver ? new Color(230, 220, 255) : new Color(144, 50, 225),
+                        Main.rand.NextFloat(0.68f, 1.02f));
+                    dust.noGravity = true;
+                }
+                return;
+            }
+
+            for (int i = 0; i < 1; i++)
             {
                 Vector2 position = Vector2.Lerp(hand, tip, Main.rand.NextFloat(0.45f, 1f))
                     + Main.rand.NextVector2Circular(5f, 5f);
@@ -365,8 +615,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             else
             {
-                _ringVfxTimer = 4;
-                UsefulFunctions.DustRingPrecise(_ringCenter, _currentRingRadius, DustID.BlueTorch, 90, alpha: 40, scale: 1.6f);
+                _ringVfxTimer = 10;
+                UsefulFunctions.DustRingPrecise(_ringCenter,
+                    _currentRingRadius - RingBandHalfWidth,
+                    DustID.ShadowbeamStaff, 28, alpha: 105, scale: 0.86f);
                 SpawnAbyssRingFlames();
             }
 
@@ -384,10 +636,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 float dist = Vector2.Distance(player.Center, _ringCenter);
-                if (Math.Abs(dist - _currentRingRadius) <= RingBandHalfWidth)
+                if (_ringDamageCooldown[i] > 0)
+                    _ringDamageCooldown[i]--;
+
+                float safeRadius = _currentRingRadius - RingBandHalfWidth;
+                if (dist >= safeRadius && _ringDamageCooldown[i] <= 0)
                 {
-                    int hitDir = player.Center.X < _ringCenter.X ? -1 : 1;
-                    player.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), 9999, hitDir, dodgeable: false);
+                    Vector2 inward = (_ringCenter - player.Center).SafeNormalize(Vector2.UnitY);
+                    int hitDir = inward.X < 0f ? -1 : 1;
+                    player.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), 50, hitDir, dodgeable: false);
+                    player.velocity = Vector2.Lerp(player.velocity,
+                        inward * 7f + new Vector2(0f, -2.5f), 0.45f);
+                    _ringDamageCooldown[i] = 60;
                 }
 
                 if (dist <= _currentRingRadius)
@@ -404,13 +664,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            const int flameCount = 12;
+            const int flameCount = 4;
             for (int i = 0; i < flameCount; i++)
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-                Vector2 ringPosition = _ringCenter + angle.ToRotationVector2() * _currentRingRadius;
-                Vector2 velocity = new Vector2(Main.rand.NextFloat(-0.35f, 0.35f), Main.rand.NextFloat(-2.8f, -1.2f));
-                Dust flame = Dust.NewDustPerfect(ringPosition, DustID.BlueTorch, velocity, 40, new Color(125, 190, 255), Main.rand.NextFloat(1.35f, 1.8f));
+                float visibleDamageRadius = _currentRingRadius - RingBandHalfWidth;
+                Vector2 ringPosition = _ringCenter + angle.ToRotationVector2() * visibleDamageRadius;
+                Vector2 velocity = new Vector2(Main.rand.NextFloat(-0.35f, 0.35f),
+                    Main.rand.NextFloat(-2.1f, -0.8f));
+                bool pale = Main.rand.NextBool(7);
+                Dust flame = Dust.NewDustPerfect(ringPosition,
+                    pale ? DustID.SilverFlame : DustID.ShadowbeamStaff, velocity, 80,
+                    pale ? new Color(218, 210, 242) : new Color(102, 34, 164),
+                    Main.rand.NextFloat(0.72f, 1.08f));
                 flame.noGravity = true;
             }
         }
@@ -422,15 +688,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (_ringCollapseState == RingCollapseState.Inactive)
             {
-                if (!_ringCollapseDone60 && hpFrac <= 0.60f)
+                if (!_ringCollapseDone50 && hpFrac <= 0.50f)
                 {
-                    _ringCollapseDone60 = true;
-                    StartRingCollapse();
+                    _ringCollapseDone50 = true;
+                    StartRingCollapse(PhaseTwoRingRadius);
                 }
                 else if (!_ringCollapseDone30 && hpFrac <= 0.30f)
                 {
                     _ringCollapseDone30 = true;
-                    StartRingCollapse();
+                    StartRingCollapse(FinalPhaseRingRadius);
                 }
                 return;
             }
@@ -438,9 +704,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             switch (_ringCollapseState)
             {
                 case RingCollapseState.Telegraph:
-                    if (!Main.dedServ && Main.rand.NextBool(2))
+                    if (!Main.dedServ && Main.rand.NextBool(6))
                     {
-                        UsefulFunctions.DustRingPrecise(_ringCenter, _ringCollapseTo, DustID.PurpleTorch, 60, alpha: 60, scale: 1.4f);
+                        UsefulFunctions.DustRingPrecise(_ringCenter,
+                            _ringCollapseTo - RingBandHalfWidth,
+                            DustID.PurpleTorch, 20, alpha: 100, scale: 1.1f);
                     }
                     if (--_ringCollapseTimer <= 0)
                     {
@@ -456,43 +724,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (--_ringCollapseTimer <= 0)
                     {
                         _currentRingRadius = _ringCollapseTo;
-                        _ringCollapseState = RingCollapseState.Holding;
-                        _ringCollapseTimer = RingCollapseHoldTicks;
-                    }
-                    break;
-                }
-
-                case RingCollapseState.Holding:
-                    _currentRingRadius = _ringCollapseTo;
-                    if (--_ringCollapseTimer <= 0)
-                    {
-                        _ringCollapseState = RingCollapseState.Expanding;
-                        _ringCollapseTimer = RingCollapseMoveTicks;
-                        _ringCollapseFrom = _ringCollapseTo;
-                        _ringCollapseTo = RingRadius;
-                    }
-                    break;
-
-                case RingCollapseState.Expanding:
-                {
-                    float t = 1f - _ringCollapseTimer / (float)RingCollapseMoveTicks;
-                    _currentRingRadius = MathHelper.Lerp(_ringCollapseFrom, _ringCollapseTo, EaseInOut(t));
-                    if (--_ringCollapseTimer <= 0)
-                    {
-                        _currentRingRadius = RingRadius;
                         _ringCollapseState = RingCollapseState.Inactive;
+                        NPC.netUpdate = true;
                     }
                     break;
                 }
             }
         }
 
-        void StartRingCollapse()
+        void StartRingCollapse(float targetRadius)
         {
-            _ringCollapseFrom = _currentRingRadius; // should already be RingRadius
-            _ringCollapseTo = RingRadius * (1f - RingCollapseContractFrac);
+            _ringCollapseFrom = _currentRingRadius;
+            _ringCollapseTo = targetRadius;
             _ringCollapseState = RingCollapseState.Telegraph;
             _ringCollapseTimer = RingCollapseTelegraphTicks;
+            NPC.netUpdate = true;
         }
 
         static float EaseInOut(float t) => t * t * (3f - 2f * t);
@@ -550,7 +796,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             // Keeps the shared afterimage trail alive every tick of the dash; it decays on its own
             // once this stops being called (dash ends).
-            AfterimageTicks = 10;
+            AfterimageTicks = 24;
 
             if (Main.dedServ || !Main.rand.NextBool(3))
             {
@@ -571,7 +817,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             int damage = PierceContactDamage + (isStab ? PierceStabBonusDamage : 0);
             int hitDir = NPC.direction;
-            target.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), damage, hitDir, dodgeable: true, knockback: isStab ? 0f : 6f);
+            int hitboxIndex = Projectile.NewProjectile(
+                NPC.GetSource_FromThis(),
+                target.Center,
+                new Vector2(hitDir * 0.01f, 0f),
+                ModContent.ProjectileType<PuppetMeleeHitbox>(),
+                damage,
+                isStab ? 0f : 6f,
+                Main.myPlayer,
+                target.width + 12f,
+                target.height + 8f);
+            Projectiles.tsorcGlobalProjectile.SetDefenseTraits(
+                hitboxIndex, AttackDefenseTraits.BypassesActiveShield);
 
             if (!isStab)
             {
@@ -595,6 +852,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.ImpaleFreezeTimer = 10;
             modPlayer.ImpaleWorldPosition = GetSwordTipWorldPosition();
+
+            if (!Main.dedServ && Main.GameUpdateCount % 3 == 0)
+            {
+                Vector2 sprayDirection = new Vector2(NPC.direction, -0.25f)
+                    .SafeNormalize(Vector2.UnitX);
+                Dust blood = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Circular(7f, 10f),
+                    DustID.Blood, sprayDirection.RotatedByRandom(0.55f) * Main.rand.NextFloat(1.8f, 4.8f),
+                    70, new Color(120, 10, 24), Main.rand.NextFloat(0.85f, 1.25f));
+                blood.noGravity = false;
+
+                Dust abyss = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Circular(10f, 14f),
+                    Main.rand.NextBool(4) ? DustID.SilverFlame : DustID.ShadowbeamStaff,
+                    Main.rand.NextVector2Circular(1.6f, 1.6f), 100,
+                    new Color(154, 48, 218), Main.rand.NextFloat(0.72f, 1.02f));
+                abyss.noGravity = true;
+            }
+
+            _impaleTargetIndex = target.whoAmI;
         }
 
         protected override void OnPierceFlick(Player target)
@@ -605,13 +880,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Vector2 away = new Vector2(NPC.direction, -0.3f);
             away.Normalize();
             target.Center += away * PierceFlickDistance;
-            target.velocity = away * 8f;
+            target.velocity = away * 24f;
 
             if (_impaleSwordProjIndex >= 0 && _impaleSwordProjIndex < Main.maxProjectiles)
             {
                 Main.projectile[_impaleSwordProjIndex].Kill();
                 _impaleSwordProjIndex = -1;
             }
+            _impaleTargetIndex = -1;
         }
 
         /// <summary>Progress (0-1) through the PierceStabHold raise, or 1 once past it; 0 outside the sequence.</summary>
@@ -688,6 +964,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
+            SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
         }
 
         // ── Forward Flip Slash hooks ─────────────────────────────────────────────
@@ -739,6 +1016,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void OnFlipSlashLand()
         {
+            SpawnLandingImpactVFX(NPC.Bottom, 96f, 78f);
             switch (_flipVariant)
             {
                 case FlipVariant.PurpleOrbBlast:
@@ -753,6 +1031,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        void SpawnLandingImpactVFX(Vector2 position, float width, float height)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasLandingImpactVFX>(), 0, 0f,
+                Main.myPlayer, width, height);
+        }
+
         void OnFlipSlashLandBasic()
         {
             UsefulFunctions.ScreenShake(NPC.Center, strength: 4f, frames: 10);
@@ -762,7 +1051,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            for (int i = 0; i < 18; i++)
+            for (int i = 0; i < 8; i++)
             {
                 float spawnX = Main.rand.NextFloat(-24f, 24f);
                 Vector2 spawnPos = NPC.Bottom + new Vector2(spawnX, -4f);
@@ -897,15 +1186,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            // The arm "dissolving into shadow" - heavy, gravity-less black/white dust building at
-            // the hand, growing denser as the wind-up progresses.
-            Vector2 handPos = NPC.Center + new Vector2(NPC.direction * 18f, -6f);
-            int count = 1 + elapsed / 6;
+            // The shader supplies the mass; these few particles provide physical edge breakup.
+            Vector2 handPos = PuppetHandPosition;
+            int count = elapsed > TendrilTelegraphTicks * 0.65f ? 2 : 1;
             for (int i = 0; i < count; i++)
             {
-                Color tint = Main.rand.NextBool() ? Color.Black : Color.White;
-                Dust d = Dust.NewDustPerfect(handPos + Main.rand.NextVector2Circular(10f, 10f), DustID.Smoke,
-                    Main.rand.NextVector2Circular(1.2f, 1.2f), 130, tint, Main.rand.NextFloat(0.8f, 1.2f));
+                bool bright = Main.rand.NextBool(8);
+                int type = bright ? DustID.SilverFlame
+                    : Main.rand.NextBool(3) ? DustID.ShadowbeamStaff : DustID.Smoke;
+                Color tint = bright ? new Color(230, 224, 255)
+                    : type == DustID.Smoke ? new Color(8, 5, 14) : new Color(108, 34, 172);
+                Vector2 offset = Main.rand.NextVector2Circular(18f, 24f);
+                Dust d = Dust.NewDustPerfect(handPos + offset, type,
+                    -offset * Main.rand.NextFloat(0.035f, 0.075f), 130, tint,
+                    Main.rand.NextFloat(0.68f, 1f));
                 d.noGravity = true;
             }
         }
@@ -920,7 +1214,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             Player target = Main.player[NPC.target];
-            Vector2 origin = NPC.Center + new Vector2(NPC.direction * (NPC.width * 0.5f + 10f), -NPC.height * 0.3f);
+            Vector2 origin = PuppetHandPosition;
             Vector2 vel = UsefulFunctions.Aim(origin, target.Center, 12f);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
                 ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssTendril>(), TendrilGrabDamage, 0f, Main.myPlayer, NPC.whoAmI);
@@ -933,9 +1227,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            Vector2 handPos = NPC.Center + new Vector2(NPC.direction * 18f, -6f);
-            Color tint = Main.rand.NextBool() ? Color.Black : Color.White;
-            Dust d = Dust.NewDustPerfect(handPos, DustID.Smoke, Vector2.Zero, 130, tint, 0.9f);
+            Vector2 handPos = PuppetHandPosition;
+            int type = Main.rand.NextBool(4) ? DustID.ShadowbeamStaff : DustID.Smoke;
+            Color tint = type == DustID.Smoke ? new Color(7, 5, 13) : new Color(104, 34, 170);
+            Dust d = Dust.NewDustPerfect(handPos + Main.rand.NextVector2Circular(12f, 16f),
+                type, Main.rand.NextVector2Circular(0.4f, 0.4f), 130, tint, 0.78f);
             d.noGravity = true;
         }
 
@@ -985,26 +1281,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             float innerT = elapsed / (float)total;                     // 0 -> 1 over the full charge
-            float outerT = Math.Min(innerT * 1.6f, 1f);                 // outer ring races out ahead
-
             float radius = NovaStages[_novaStageIndex].radius;
 
-            // Heavy engulfing dust thickening around Artorias, radius growing with innerT.
-            int count = 2 + elapsed / 8;
+            // Sparse physical motes complement the shader without obscuring its exact disc.
+            int count = elapsed % 5 == 0 ? 2 : 0;
             for (int i = 0; i < count; i++)
             {
-                float r = MathHelper.Lerp(20f, radius * 0.35f, innerT);
+                float r = MathHelper.Lerp(20f, radius * 0.24f, innerT);
                 Vector2 pos = NPC.Center + Main.rand.NextVector2Circular(r, r);
                 Color tint = Main.rand.NextBool(3) ? (Main.rand.NextBool() ? Color.Black : Color.White) : default;
                 Dust d = Dust.NewDustPerfect(pos, DustID.PurpleTorch, Vector2.Zero, 60, tint, Main.rand.NextFloat(1.3f, 2f));
                 d.noGravity = true;
             }
 
-            // Thin outer telegraph ring, expanding faster than the inner dust cloud.
-            if (elapsed % 3 == 0)
-            {
-                UsefulFunctions.DustRingPrecise(NPC.Center, radius * outerT, DustID.PurpleTorch, 40, alpha: 70, scale: 1.3f);
-            }
         }
 
         protected override void DoNovaBlast()
@@ -1041,7 +1330,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int AbyssShardDamage = 35;
         const int AbyssShardDominoGapTicks = 10;
         const int AbyssShardWaveGapTicks = 60;
-        const float AbyssShardSpacing = 4 * 16f; // 4 tiles
+        const float AbyssShardSpacing = 48f;
 
         protected override bool CanAbyssShard => _abyssShardUnlocked;
         protected override float AbyssShardMinRange => 80f;
@@ -1069,17 +1358,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         SpawnShardCluster(target.Center, 3, AbyssShardSpacing);
                     break;
 
-                // 6 shards marching left-or-right from the player, adjacent tiles, one every 10 ticks.
+                // 6 shards marching left-or-right from the player, one every 10 ticks.
                 case AbyssShardVariant.Domino6:
-                    SpawnShardAt(_abyssShardAnchor + new Vector2(_abyssShardDominoDir * 16f * fireIndex, 0f));
+                    SpawnShardAt(_abyssShardAnchor + new Vector2(_abyssShardDominoDir * AbyssShardSpacing * fireIndex, 0f));
                     break;
 
                 // 4 marching one way from a fixed point, then 4 more marching back the other way.
                 case AbyssShardVariant.DominoPulse4x2:
                     if (fireIndex < 4)
-                        SpawnShardAt(_abyssShardAnchor + new Vector2(16f * fireIndex, 0f));
+                        SpawnShardAt(_abyssShardAnchor + new Vector2(AbyssShardSpacing * fireIndex, 0f));
                     else
-                        SpawnShardAt(_abyssShardAnchor - new Vector2(16f * (fireIndex - 4), 0f));
+                        SpawnShardAt(_abyssShardAnchor - new Vector2(AbyssShardSpacing * (fireIndex - 4), 0f));
                     break;
 
                 // Escalating spaced volleys: 3, then 5, then 7 - each re-centered on the player.
@@ -1179,7 +1468,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             Player target = Main.player[NPC.target];
-            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 30f, -20f);
+            Vector2 origin = PuppetWeaponTipPosition(54f);
 
             switch (_homingVolleyVariant)
             {
@@ -1296,7 +1585,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             Player target = Main.player[NPC.target];
-            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 30f, -20f);
+            Vector2 origin = PuppetWeaponTipPosition(54f);
             float baseAngle = (target.Center - origin).ToRotation();
 
             if (Main.rand.NextBool())
@@ -1324,6 +1613,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Projectile.NewProjectile(NPC.GetSource_FromThis(), position, velocity,
                 ModContent.ProjectileType<Projectiles.Enemy.BoomerangCrescent>(), BoomerangDamage, 0f,
                 Main.myPlayer, curveDir, NPC.whoAmI);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasFanSourceVFX>(), 0, 0f,
+                Main.myPlayer, velocity.ToRotation(), curveDir);
         }
 
         // ── Spiral Fan: 3 variants, a rotating-angle burst reusing the AbyssSlash crescent ───────
@@ -1430,11 +1722,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             Vector2 vel = angle.ToRotationVector2() * SpiralFanShotSpeed;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(), SpiralFanShotDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(), SpiralFanShotDamage, 0f,
+                Main.myPlayer, 0f, 1f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasFanSourceVFX>(), 0, 0f,
+                Main.myPlayer, angle, _spiralFanDir);
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            base.SendExtraAI(writer);
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
             {
                 defenseBroken = true;
@@ -1443,10 +1740,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write(_ringCenter.X);
             writer.Write(_ringCenter.Y);
             writer.Write(_abyssSurgeTimer);
+            writer.Write(_currentRingRadius);
+            writer.Write((byte)_ringCollapseState);
+            writer.Write(_ringCollapseTimer);
+            writer.Write(_ringCollapseFrom);
+            writer.Write(_ringCollapseTo);
+            writer.Write(_ringCollapseDone50);
+            writer.Write(_ringCollapseDone30);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            base.ReceiveExtraAI(reader);
             bool receivedBrokenDef = reader.ReadBoolean();
             if (receivedBrokenDef)
             {
@@ -1455,6 +1760,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             _ringCenter = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             _abyssSurgeTimer = reader.ReadInt32();
+            _currentRingRadius = reader.ReadSingle();
+            _ringCollapseState = (RingCollapseState)reader.ReadByte();
+            _ringCollapseTimer = reader.ReadInt32();
+            _ringCollapseFrom = reader.ReadSingle();
+            _ringCollapseTo = reader.ReadSingle();
+            _ringCollapseDone50 = reader.ReadBoolean();
+            _ringCollapseDone30 = reader.ReadBoolean();
         }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)

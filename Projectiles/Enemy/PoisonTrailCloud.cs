@@ -25,27 +25,59 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.hide = true; // dust-only visual, no sprite
+            Projectile.hide = false; //transparent placeholder; shader is drawn in PreDraw
             Projectile.light = 0.4f;
             Projectile.timeLeft = 6 * 60;
+        }
+
+        // Per-puff quad rotation, rolled once on spawn. The fog shader samples its noise in local UV
+        // space, so without this every puff samples the identical pattern and a row of them reads as
+        // the same stamp repeated - which is exactly why the trail looked like separate pieces rather
+        // than one gas cloud. Rotating the quad rotates the sampled noise; the fog is radially
+        // symmetric so nothing else changes. Stored in ai[1] so it survives multiplayer sync.
+        float PuffRotation => Projectile.ai[1];
+
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            if (Projectile.ai[1] == 0f)
+            {
+                Projectile.ai[1] = Main.rand.NextFloat(MathHelper.TwoPi);
+                Projectile.netUpdate = true;
+            }
         }
 
         public override void AI()
         {
             // Fill the box with lazily-drifting toxic dust; fades in/out with remaining lifetime.
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(5))
             {
-                Vector2 spot = Projectile.position + new Vector2(Main.rand.NextFloat(Projectile.width), Main.rand.NextFloat(Projectile.height));
-                int dust = Dust.NewDust(spot, 1, 1, DustID.Poisoned, 0f, 0f, 150, default, 1.4f);
-                Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity = new Vector2(Main.rand.NextFloat(-0.3f, 0.3f), Main.rand.NextFloat(-0.5f, -0.1f));
-                if (Projectile.timeLeft < 60)
+                for (int i = 0; i < 2; i++)
                 {
-                    Main.dust[dust].alpha = 255 - (int)(255 * (Projectile.timeLeft / 60f));
+                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Poisoned, 0f, 0f, 100, default, 2f);
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity *= 0.3f;
                 }
             }
 
+            // Gentle rise + sway so the puff is never static; neighbouring puffs drift apart slightly
+            // and their soft edges knit together instead of sitting as a rigid row of discs.
+            Projectile.position.Y -= 0.09f;
+            Projectile.position.X += (float)System.Math.Sin((Projectile.whoAmI * 0.7f)
+                + Main.GlobalTimeWrappedHourly * 0.8f) * 0.10f;
+
             Lighting.AddLight(Projectile.Center, 0.05f, 0.3f, 0.05f);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // Divisor must match the 6*60 lifetime set in SetDefaults. It was 180f, so progress
+            // started at -1 and the shader's fade curve rendered the cloud completely INVISIBLE for
+            // its first ~1.5s - it only became visible during its back half.
+            float progress = 1f - Projectile.timeLeft / (6f * 60f);
+            // Drawn well wider than the 48px hitbox so consecutive puffs physically overlap and blend
+            // into a continuous bank of gas; the shader's circular cutoff keeps the extra size soft.
+            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 92f, progress, true, PuffRotation);
+            return true;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

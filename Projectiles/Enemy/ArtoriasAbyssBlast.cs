@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -34,13 +33,31 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.25f);
+            Lighting.AddLight(Projectile.Center, new Vector3(0.54f, 0.14f, 0.72f));
 
-            float t = 1f - Projectile.timeLeft / (float)Lifetime;
-            if (Projectile.timeLeft % 2 == 0)
+            if (!Main.dedServ && Projectile.timeLeft % 2 == 0)
             {
-                UsefulFunctions.DustRingPrecise(Projectile.Center, Radius * t, DustID.PurpleTorch, 24, alpha: 40, scale: 1.4f);
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 direction = Main.rand.NextVector2Unit();
+                    Vector2 position = Projectile.Center + direction * Main.rand.NextFloat(8f, Radius * 0.70f);
+                    Vector2 velocity = direction * Main.rand.NextFloat(1.6f, 4.2f)
+                        + Main.rand.NextVector2Circular(0.5f, 0.5f);
+                    int type = Main.rand.NextBool(5) ? DustID.SilverFlame : DustID.ShadowbeamStaff;
+                    Dust dust = Dust.NewDustPerfect(position, type, velocity, 90,
+                        type == DustID.SilverFlame ? new Color(224, 214, 255) : new Color(132, 46, 210),
+                        Main.rand.NextFloat(0.72f, 1.08f));
+                    dust.noGravity = true;
+                }
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = 1f - Projectile.timeLeft / (float)Lifetime;
+            float fade = MathHelper.Clamp(Projectile.timeLeft / 5f, 0f, 1f);
+            ArtoriasVFX.DrawImpactBlast(Projectile.Center, Radius, progress, 0.94f * fade);
+            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -55,11 +72,16 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < 14; i++)
             {
-                Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PurpleTorch, vel.X, vel.Y, 60, default, 1.6f);
-                Main.dust[dust].noGravity = true;
+                Vector2 direction = Main.rand.NextVector2Unit();
+                Vector2 velocity = direction * Main.rand.NextFloat(2.5f, 6.5f);
+                int type = i % 5 == 0 ? DustID.SilverFlame : DustID.ShadowbeamStaff;
+                Dust dust = Dust.NewDustPerfect(Projectile.Center + direction * Main.rand.NextFloat(4f, 32f),
+                    type, velocity, 70,
+                    type == DustID.SilverFlame ? new Color(230, 220, 255) : new Color(139, 48, 220),
+                    Main.rand.NextFloat(0.8f, 1.25f));
+                dust.noGravity = true;
             }
 
             if (Main.netMode == NetmodeID.MultiplayerClient)

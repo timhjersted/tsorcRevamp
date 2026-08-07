@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -46,6 +47,11 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.velocity.X *= 1.01f;
                 Projectile.velocity.Y *= 1.01f;
             }
+        }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawDemonSpiritCrush(Projectile.Center, Projectile.velocity);
+            return true;
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {

@@ -40,6 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreKill(int timeLeft)
         {
             Vector2 explosionCenter = Projectile.Center;
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), explosionCenter, EnemyVFXBurstKind.DemonSpiritSoulBurst);
             Projectile.position = explosionCenter - new Vector2(ExplosionDamageRadius);
             Projectile.width = (int)(ExplosionDamageRadius * 2f);
             Projectile.height = (int)(ExplosionDamageRadius * 2f);
@@ -126,7 +127,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 move = Vector2.Zero;
             float distance = 900f;
             bool target = false;
-            float speed = 2.25f;
+            float speed = 4.5f; // was 2.25f — doubled, the homing spirit read as non-threatening at the old speed
             if (!target)
             {
                 int targetIndex = GetClosestPlayer();
@@ -157,6 +158,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.velocity.Y = (move.Y / distance) * speed;
             }
             #endregion
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float expiryProgress = Projectile.timeLeft <= 30
+                ? MathHelper.Clamp((30f - Projectile.timeLeft) / 30f, 0f, 1f)
+                : 0f;
+            EnemyVFX.DrawDemonSpiritSoulComet(Projectile.Center, Projectile.velocity, expiryProgress);
+            return true;
         }
 
         void Animate()

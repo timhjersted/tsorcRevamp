@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -23,6 +24,30 @@ namespace tsorcRevamp.Projectiles.Enemy
             DrawOffsetX = -5;
             DrawOriginOffsetY = -5;
         }
+        /// <summary>
+        /// Explosion damage. THIS WAS THE BUG behind "the Great Red Knight's bomb hits like a
+        /// prehardmode projectile": the explosion used to OVERWRITE Projectile.damage with a flat
+        /// 18 / 28 / 38 by world tier, discarding whatever the thrower spawned it with entirely —
+        /// so a Super Hard Mode boss's bomb did 38 no matter how the boss was scaled, while its
+        /// spear (45+) and great attack (50+) both went through SHMScale.
+        ///
+        /// The tier values are kept as a FLOOR so every other user of this projectile (and any
+        /// caller that passes 0) behaves exactly as before; a thrower that asks for more now gets it.
+        /// </summary>
+        static int ExplosionDamage(int requestedDamage)
+        {
+            int floor = 18;
+            if (Main.hardMode)
+            {
+                floor = 28;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                floor = 38;
+            }
+            return System.Math.Max(requestedDamage, floor);
+        }
+
         public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
         {
             Projectile.timeLeft = 2; //sets it to 2 frames, to let the explosion ai kick in. Setdefaults is -1 pen, this allows it to only hit one npc, then run explosion ai.
@@ -42,7 +67,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.height = 120;
                 Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
                 Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
-                Projectile.damage = 18;
+                Projectile.damage = ExplosionDamage(Projectile.damage);
                 Projectile.knockBack = 9f;
                 Projectile.DamageType = DamageClass.Throwing;
                 Projectile.netUpdate = true;
@@ -64,6 +89,17 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 2;
             return false;
         }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Projectile.ai[2] == 1f && Projectile.timeLeft > 2)
+            {
+                float progress = MathHelper.Clamp((240f - Projectile.timeLeft) / 210f, 0f, 1f);
+                Vector2 fusePoint = Projectile.Center + new Vector2(3f, -8f).RotatedBy(Projectile.rotation);
+                RedKnightVFX.DrawBombFuse(fusePoint, progress, planted: false);
+            }
+            return true;
+        }
         public override void AI()
         {
             if (/*projectile.owner == Main.myPlayer &&*/ Projectile.timeLeft <= 2)
@@ -78,22 +114,14 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.height = 120;
                 Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
                 Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
-                Projectile.damage = 18; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
-                if (Main.hardMode)
-                {
-                    Projectile.damage = 28;
-                }
-                if (tsorcRevampWorld.SuperHardMode)
-                {
-                    Projectile.damage = 38;
-                }
+                Projectile.damage = ExplosionDamage(Projectile.damage);
                 Projectile.knockBack = 9f;
                 Projectile.DamageType = DamageClass.Throwing;
             }
             else
             {
                 // Smoke and fuse dust spawn.
-                if (Main.rand.NextBool(2))
+                if (Projectile.ai[2] != 1f && Main.rand.NextBool(2))
                 {
                     int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, default(Color), 1f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
@@ -142,15 +170,86 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Play explosion sound
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
 
-            // Fire Dust spawn
-            for (int i = 0; i < 200; i++)
+            if (Projectile.ai[2] == 1f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 2f);
-                Main.dust[dustIndex].noGravity = true;
-                Main.dust[dustIndex].velocity *= 3.5f;
+                Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                    ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
+                    (float)RedKnightBurstKind.BombExplosionLayered, 1f);
             }
-            // Large Smoke Gore spawn
-            for (int g = 0; g < 2; g++)
+
+            bool knightBomb = Projectile.ai[2] == 1f;
+
+            // Knight bombs use a shader burst with a 120px footprint, matching their actual explosion hitbox.
+            // Count up / scale down for knight bombs (28 @ 2.0 -> 52 @ 1.45): the same amount of ink,
+            // but small enough that the cloud stops reading as 16px blocks. Non-knight firebombs keep
+            // their original 200 @ 2.0 so every other enemy that throws one is unaffected.
+            int dustCount = knightBomb ? 52 : 200;
+            float dustScale = knightBomb ? 1.45f : 2f;
+            for (int i = 0; i < dustCount; i++)
+            {
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), dustScale);
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity *= knightBomb ? 2.4f : 3.5f;
+            }
+
+            // Knight bombs only: red/soot fire on top of the grey smoke above, built as the three
+            // distinct layers a blast needs (§20) rather than one pass of identical motes.
+            if (knightBomb && !Main.dedServ)
+            {
+                // MIDGROUND — the body of the fireball. 40 -> 64 motes, reach 54px -> 68px, and the
+                // scale band drops 0.9-1.9 -> 0.75-1.5 so density comes from count, not chunk size.
+                for (int i = 0; i < 64; i++)
+                {
+                    Vector2 direction = Main.rand.NextVector2Unit();
+                    bool soot = i % 4 == 0;
+                    Dust ember = Dust.NewDustPerfect(
+                        Projectile.Center + direction * Main.rand.NextFloat(4f, 68f),
+                        soot ? DustID.Shadowflame : DustID.RedTorch,
+                        direction * Main.rand.NextFloat(1.6f, 6.8f),
+                        soot ? 150 : 90,
+                        soot ? new Color(16, 3, 8) : new Color(214, 22, 42),
+                        Main.rand.NextFloat(0.75f, 1.5f));
+                    ember.noGravity = true;
+                }
+
+                // FOREGROUND — 22 tiny fast sparks that outrun the body and die quickly. These are
+                // what give the blast a sharp leading edge; they are deliberately the smallest and
+                // fastest thing in the effect.
+                for (int i = 0; i < 22; i++)
+                {
+                    Vector2 direction = Main.rand.NextVector2Unit();
+                    Dust spark = Dust.NewDustPerfect(
+                        Projectile.Center + direction * Main.rand.NextFloat(6f, 26f),
+                        DustID.Torch,
+                        direction * Main.rand.NextFloat(7f, 12.5f),
+                        60, new Color(255, 176, 96),
+                        Main.rand.NextFloat(0.45f, 0.85f));
+                    spark.noGravity = true;
+                    // NO fadeIn here on purpose: fadeIn is a GROW-TO-SCALE target, not an alpha
+                    // ramp, and a spark should be at full size on frame 1.
+                }
+
+                // BACKGROUND — 16 slow, dark, gravity-bound smoke motes that linger after the fire
+                // has gone. They outlive the 44t shader and stop the blast ending on a hard cut.
+                for (int i = 0; i < 16; i++)
+                {
+                    Vector2 direction = Main.rand.NextVector2Unit();
+                    Dust smoke = Dust.NewDustPerfect(
+                        Projectile.Center + direction * Main.rand.NextFloat(10f, 46f),
+                        DustID.Smoke,
+                        direction * Main.rand.NextFloat(0.6f, 2.2f) - Vector2.UnitY * 0.7f,
+                        170, new Color(38, 30, 32),
+                        Main.rand.NextFloat(0.5f, 0.8f));
+                    // fadeIn > spawn scale, so these genuinely BILLOW: they grow at +0.03/tick up
+                    // to ~1.5 and only then start shrinking. (fadeIn <= scale is a silent no-op.)
+                    smoke.fadeIn = Main.rand.NextFloat(1.3f, 1.7f);
+                }
+            }
+
+            // Large Smoke Gore spawn. Knight bombs get two more cloud sprites than before (1 -> 3
+            // bursts, i.e. 6 clouds) so the longer-lived shader has smoke to sit inside.
+            int smokeBursts = knightBomb ? 3 : 2;
+            for (int g = 0; g < smokeBursts; g++)
             {
                 if (!Main.dedServ)
                 {

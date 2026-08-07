@@ -49,6 +49,15 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         #endregion
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Projectile.ai[0] == 1f)
+            {
+                EnemyVFX.DrawBlackKnightDeathTrail(Projectile.Center, Projectile.velocity, new Vector2(92f, 34f), 0.76f);
+            }
+            return true;
+        }
+
         public override void OnKill(int timeLeft)
         {
             //Expiry puff so a whiffed sigil still reads as a near miss

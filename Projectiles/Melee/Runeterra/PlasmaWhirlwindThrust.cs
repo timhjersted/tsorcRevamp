@@ -1,20 +1,24 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
     public class PlasmaWhirlwindThrust : ModProjectile
     {
+        public bool AppliedOnSpawn = false;
         public bool Hit = false;
         public const int FadeInDuration = 7;
         public const int FadeOutDuration = 4;
 
         public const int TotalDuration = 32;
 
-        public float CollisionWidth => 10f * Projectile.scale;
+        public float CollisionWidth = 20f;
 
         public int Timer
         {
@@ -32,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.scale = 0.85f;
+            Projectile.scale = PlasmaWhirlwind.BaseScale;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.ownerHitCheck = true;
             Projectile.usesOwnerMeleeHitCD = true;
@@ -42,6 +46,10 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.width = 140;
             Projectile.height = 136;
         }
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+        }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage *= 2;
@@ -49,6 +57,14 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+
+            if (!AppliedOnSpawn)
+            {
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem) * 1.1f;
+                Projectile.Resize((int)(Projectile.width / PlasmaWhirlwind.BaseScale * Projectile.scale), (int)(Projectile.height / PlasmaWhirlwind.BaseScale * Projectile.scale));
+                CollisionWidth *= Projectile.scale;
+                AppliedOnSpawn = true;
+            }
 
             Timer += 1;
             if (Timer >= TotalDuration)
@@ -84,6 +100,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             {
                 Projectile.frame = 0;
             }
+            Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3() * 0.78f);
         }
         public override bool ShouldUpdatePosition()
         {
@@ -92,19 +109,45 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
         public override void CutTiles()
         {
+            Player player = Main.player[Projectile.owner];
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             DelegateMethods.tileCutIgnore = Terraria.ID.TileID.Sets.TileCutIgnore.None;
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
+            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 17f * player.GetAdjustedItemScale(player.HeldItem);
             Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            Player player = Main.player[Projectile.owner];
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity * 12f;
+            Vector2 end = start + Projectile.velocity * 17f * player.GetAdjustedItemScale(player.HeldItem);
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
+        }        
+        public static Texture2D texture;
+        public static Texture2D glowTexture;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+
+            if (Main.player[Projectile.owner].direction == 1)
+            {
+            }
+            else
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+            texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            glowTexture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
+            int startY = frameHeight * Projectile.frame;
+            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), sourceRectangle, lightColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+
+
+            return false;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

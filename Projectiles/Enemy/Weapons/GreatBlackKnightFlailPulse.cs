@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.tileCollide = false;
             Projectile.timeLeft = 3;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.hide = true;
+            Projectile.hide = false; //transparent placeholder; shader is drawn in PreDraw
             Projectile.ignoreWater = true;
         }
 
@@ -47,6 +47,21 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 Dust d = Dust.NewDustPerfect(pos, DustID.ShadowbeamStaff, Vector2.Zero, 100, Color.DarkSlateGray, 1.2f);
                 d.noGravity = true;
             }
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            const float radius = 55f;
+            Vector2 closest = Vector2.Clamp(Projectile.Center,
+                new Vector2(targetHitbox.Left, targetHitbox.Top),
+                new Vector2(targetHitbox.Right, targetHitbox.Bottom));
+            return Vector2.DistanceSquared(Projectile.Center, closest) <= radius * radius;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawGreatBlackKnightFlailPulse(Projectile.Center, MathHelper.Clamp((3f - Projectile.timeLeft) / 3f, 0f, 1f));
+            return false;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

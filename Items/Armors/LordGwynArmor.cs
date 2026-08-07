@@ -8,6 +8,14 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class LordGwynArmor : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
+            ArmorIDs.Body.Sets.HidesTopSkin[equipSlot] = true;
+            ArmorIDs.Body.Sets.HidesArms[equipSlot] = true;
+            ArmorIDs.Body.Sets.HidesHands[equipSlot] = true;
+        }
+
         public override void SetDefaults()
         {
             Item.width = 18;

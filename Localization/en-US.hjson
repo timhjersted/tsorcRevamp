@@ -29,6 +29,79 @@ Mods: {
 		}
 
 		CommonItemTooltip: {
+			AccessoryPrefixes: {
+				Hard:
+					'''
+					[c/6cac6c:+{0} defense]
+					[c/6cac6c:+{1}% thorns]
+					'''
+				Guarding:
+					'''
+					[c/6cac6c:+{0} defense]
+					[c/6cac6c:+{1}% stamina recovery speed]
+					'''
+				Armored: "[c/6cac6c:+{0} resistance]"
+				Jagged: "[c/6cac6c:+{0} flat crit damage]"
+				Spiked:
+					'''
+					[c/6cac6c:+{0}% thorns]
+					[c/9b6263:-{1} defense]
+					'''
+				Angry:
+					'''
+					[c/6cac6c:+{0}% damage]
+					[c/6cac6c:+{1}% stamina recovery speed]
+					'''
+				Precise: "[c/6cac6c:+{0}% ranged crit chance]"
+				Lucky:
+					'''
+					[c/6cac6c:+{0}% crit chance]
+					[c/6cac6c:+{1}% luck]
+					'''
+				Brisk:
+					'''
+					[c/6cac6c:+{0}% movement speed]
+					[c/6cac6c:+{1}% damage]
+					'''
+				Fleeting:
+					'''
+					[c/6cac6c:+{0}% movement speed]
+					[c/9b6263:-{1} resistance]
+					'''
+				Hasty:
+					'''
+					[c/6cac6c:+{0}% movement speed]
+					[c/9b6263:-{1} crit chance]
+					'''
+				Quick: "[c/6cac6c:+{0}% movement speed]"
+				Wild:
+					'''
+					[c/6cac6c:+{0}% attack speed]
+					[c/9b6263:-{1} resistance]
+					'''
+				Rash:
+					'''
+					[c/6cac6c:+{0}% attack speed]
+					[c/9b6263:-{1} life regen]
+					'''
+				Intrepid:
+					'''
+					[c/6cac6c:+{0}% attack speed]
+					[c/6cac6c:+{1} defense]
+					'''
+				Arcane:
+					'''
+					[c/6cac6c:+{0} mana]
+					[c/6cac6c:-{1}% mana cost]
+					'''
+				Encouraging:
+					'''
+					[c/6cac6c:+{0} summon tag damage]
+					[c/6cac6c:+{1}% summon tag strength]
+					'''
+				Blessed: "[c/6cac6c:+{0}% luck]"
+			}
+
 			Details: Hold Left Shift to reveal details
 			AggroBoost: Enemies are more likely to target you
 			AggroDecrease: Enemies are less likely to target you
@@ -89,7 +162,9 @@ Mods: {
 			NoFallDmg: Grants immunity to fall damage
 			HolyDodge: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
 			TitaniumBonus: Attacking generates a defensive barrier of titanium shards, scaling with all damage types
-			ShunpoKeybind1: "Press "
+			UpKeybind: Double tap UP
+			DownKeybind: Double tap DOWN
+			ShunpoKeybind1: " or press "
 			ShunpoKeybind2: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
 			ShunpoCD:
 				'''
@@ -2212,8 +2287,9 @@ Mods: {
 					{$Items.KrakenCarcass.Keybind1}KrakensCast{$Items.KrakenCarcass.Keybind2}
 					The Tsunami will increase the damage of ranged projectiles that pass through it by {2}%
 					'''
-				Keybind1: "{$CommonItemTooltip.SetBonus}Press "
-				Keybind2: " to cast a floating Tsunami at your cursor position"
+				Keybind1: "{$CommonItemTooltip.SetBonus}"
+				Keybind2: " or press "
+				Keybind3: " to cast a floating Tsunami at your cursor position"
 				Tooltip1: It will also spawn a friendly shark which homes in on the closest enemy, dealing {0} ranged damage (Only 3 sharks per second)
 			}
 
@@ -2527,7 +2603,6 @@ Mods: {
 					{$CommonItemTooltip.PercentReducedManaCost}
 					{$CommonItemTooltip.Magic.ManaRegen@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
-					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
 					{$CommonItemTooltip.ShunpoCD@2}
 					'''
 			}
@@ -3450,8 +3525,9 @@ Mods: {
 					Affected enemies deal less damage, have reduced defense and speed, and take significant damage over time for a short moment
 					{$CommonItemTooltip.AggroDecrease}
 					'''
-				Keybind1: "{$CommonItemTooltip.SetBonus}Press "
-				Keybind2: " to let out a terrifying scream that affects and confuses enemies in a radius"
+				Keybind1: "{$CommonItemTooltip.SetBonus}"
+				Keybind2: " or press "
+				Keybind3: " to let out a terrifying scream that affects and confuses enemies in a radius"
 			}
 
 			SymbolOfAvarice: {
@@ -8382,8 +8458,7 @@ Mods: {
 					Minion Slots: {5}
 					Turret Slots: {6}
 					Whip Range: {7}%
-					Tips: Hitting enemies with the tip of a whip always results in a crit
-					Whip tip critical strike damage is {8}%
+					Tips: Hitting enemies with the tip of a whip increases damage dealt by {8}%
 					Minions can crit based on your summon critical strike chance
 					'''
 			}
@@ -9154,6 +9229,11 @@ Mods: {
 			TornWings: {
 				DisplayName: Torn Wings
 				Description: You cannot fly!
+			}
+
+			DestinedDeath: {
+				DisplayName: Destined Death
+				Description: Maximum life is reduced by 10% on hit (up to 60%). At 60% loss, you gain 15% increased damage.
 			}
 
 			Tired: {
@@ -10997,6 +11077,35 @@ Mods: {
 			HumanoidMeleeHitbox.DisplayName: Humanoid Melee Hitbox
 			GwynCinderNovaTelegraph.DisplayName: Gwyn Cinder Nova Telegraph
 			GwynGroundFireWave.DisplayName: Gwyn Ground Fire Wave
+			ArtoriasBoundaryVFX.DisplayName: Artorias Boundary V F X
+			ArtoriasLandingImpactVFX.DisplayName: Artorias Landing Impact V F X
+			VesselSoulRuptureVFX.DisplayName: Vessel Soul Rupture V F X
+			SwordOfLordGwynImpactLightning.DisplayName: Sword Of Lord Gwyn Impact Lightning
+			BlackKnightGravefallTelegraph.DisplayName: Black Knight Gravefall Telegraph
+			EnemyShaderBurst.DisplayName: Enemy Shader Burst
+			CrimsonDominionController.DisplayName: Crimson Dominion Controller
+			RedKnightDelayedBomb.DisplayName: Red Knight Delayed Bomb
+			RedKnightGroundWave.DisplayName: Red Knight Ground Wave
+			RedKnightLightningLane.DisplayName: Red Knight Lightning Lane
+			RedKnightLungeHitbox.DisplayName: Red Knight Lunge Hitbox
+			RedKnightStandard.DisplayName: Red Knight Standard
+			RedKnightVFXBurst.DisplayName: Red Knight V F X Burst
+			ArtoriasSwordSlashTrail.DisplayName: Artorias Sword Slash Trail
+			ArtoriasFanSourceVFX.DisplayName: Artorias Fan Source V F X
+			CrimsonDominionExecutionLane.DisplayName: Crimson Dominion Execution Lane
+			EvilEyeTeleportBlast.DisplayName: Evil Eye Teleport Blast
+			ElandVenomSplash.DisplayName: Eland Venom Splash
+			GreatBlackKnightSpearHitbox.DisplayName: Great Black Knight Spear Hitbox
+			NitoPyreFire.DisplayName: Nito Pyre Fire
+			BlackKnightBombExplosionSprite.DisplayName: Black Knight Bomb Explosion Sprite
+			BlackKnightSpearBlightSwarm.DisplayName: Black Knight Spear Blight Swarm
+			DragonMeteorExplosion.DisplayName: Dragon Meteor Explosion
+			FireLurkerFireBurst.DisplayName: Fire Lurker Fire Burst
+			DestinedDeathBlaze.DisplayName: Destined Death Blaze
+			DestinedDeathExplosion.DisplayName: Destined Death Explosion
+			GreatRedKnightHandBeam.DisplayName: Great Red Knight Hand Beam
+			GreatRedKnightUltrakillHand.DisplayName: Great Red Knight Ultrakill Hand
+			EnemyShadowflameArrow.DisplayName: Enemy Shadowflame Arrow
 		}
 
 		NPCs: {
@@ -12666,6 +12775,7 @@ Mods: {
 			DarkCloudShadow.DisplayName: Dark Cloud Shadow
 			AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
 			StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
+			Blaidd.DisplayName: Blaidd
 			ShadowNinja.DisplayName: Shadow Ninja
 			BlackNinja.DisplayName: Black Ninja
 			TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
@@ -12789,6 +12899,8 @@ Mods: {
 			Sadistic.DisplayName: Sadistic
 			Tenacious.DisplayName: Tenacious
 			Undisciplined.DisplayName: Undisciplined
+			Encouraging.DisplayName: Encouraging
+			Blessed2.DisplayName: Blessed
 		}
 
 		Tiles: {

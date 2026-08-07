@@ -1,9 +1,12 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
@@ -145,13 +148,70 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override float RangedRange    => 480f;
         protected override float MinRangedRange => 280f;  // close range → prefer melee/stab
 
-        // Melee/stab telegraphs raised to satisfy the 30-tick fair-wind-up floor.
-        // Slash: 35 ticks lets the sword-raise + apex-hold animation read clearly.
-        // Stab: 40 ticks for the dipped-sword "cocked thrust" pose with brief hold.
+        // Melee/stab telegraphs remain at fair windup floor (35t slash, 40t stab).
+        // Actual attack swing speeds are increased for snappy, fast ninja blade attacks (12t slash, 5t stab).
         protected override int MeleeTelegraphTicks  => 35;
+        protected override int MeleeAttackTicks     => 12; // increased swing speed (12t vs 25t default)
         protected override int StabTelegraphTicks   => 40;
-        protected override int StabAttackTicks      => 9;
+        protected override int StabAttackTicks      => 5;  // increased thrust speed (5t vs 9t original)
         protected override int StabRecoveryTicks    => 36;
+
+        private static Effect _auraEffect;
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            DrawShaderAura(spriteBatch, screenPos);
+            return base.PreDraw(spriteBatch, screenPos, drawColor);
+        }
+
+        private void DrawShaderAura(SpriteBatch spriteBatch, Vector2 screenPos)
+        {
+            if (!NPC.active || NPC.life <= 0)
+                return;
+
+            _auraEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", AssetRequestMode.ImmediateLoad).Value;
+            if (_auraEffect == null || tsorcRevamp.NoiseWavy == null)
+                return;
+
+            float targetRadius = 800f;
+            // CatAura.fx ring sits at 0.7 progress inside the quad; auraSize scales quad so the 0.7 ring lands exactly at 800px radius
+            int auraSize = (int)((targetRadius * 2f) / 0.7f);
+            Rectangle sourceRectangle = new Rectangle(0, 0, auraSize, auraSize);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            // Smooth hot pink aura color tint
+            Color pinkTint = new Color(255, 105, 180) * 0.85f;
+
+            UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            _auraEffect.Parameters["textureSize"]?.SetValue((float)tsorcRevamp.NoiseWavy.Width);
+            _auraEffect.Parameters["effectSize"]?.SetValue(sourceRectangle.Size());
+            _auraEffect.Parameters["effectColor"]?.SetValue(pinkTint.ToVector4());
+            _auraEffect.Parameters["ringProgress"]?.SetValue(1.0f);
+            _auraEffect.Parameters["fadePercent"]?.SetValue(0f);
+            _auraEffect.Parameters["time"]?.SetValue(Main.GlobalTimeWrappedHourly * 0.8f);
+            _auraEffect.Parameters["scaleFactor"]?.SetValue(2.5f);
+
+            _auraEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, NPC.Center - screenPos, sourceRectangle, Color.White, 0f, origin, 1f, SpriteEffects.None, 0);
+
+            UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+        }
+
+        public override void PostAI()
+        {
+            base.PostAI();
+
+            // 800-unit proximity aura: applies TornWings + Suppressed when player is inside the circle
+            Player player = Main.player[NPC.target];
+            if (player != null && player.active && !player.dead && NPC.Distance(player.Center) < 800f)
+            {
+                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
+                player.AddBuff(ModContent.BuffType<Suppressed>(), 60, false);
+            }
+        }
         protected override int RangedTelegraphTicks  => 45;  // 45-frame arm-raise before each throw (+10 over original 35)
         protected override int RangedCooldownAfterUse => 180; // 3 s of forced melee/stab first
         protected override int MaxRangedBurst        => 3;

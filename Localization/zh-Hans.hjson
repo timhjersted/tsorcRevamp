@@ -29,6 +29,79 @@ Mods: {
 		}
 
 		CommonItemTooltip: {
+			AccessoryPrefixes: {
+				/* Hard:
+					'''
+					[c/6cac6c:+{0} defense]
+					[c/6cac6c:+{1}% thorns]
+					''' */
+				/* Guarding:
+					'''
+					[c/6cac6c:+{0} defense]
+					[c/6cac6c:+{1}% stamina recovery speed]
+					''' */
+				// Armored: "[c/6cac6c:+{0} resistance]"
+				// Jagged: "[c/6cac6c:+{0} flat crit damage]"
+				/* Spiked:
+					'''
+					[c/6cac6c:+{0}% thorns]
+					[c/9b6263:-{1} defense]
+					''' */
+				/* Angry:
+					'''
+					[c/6cac6c:+{0}% damage]
+					[c/6cac6c:+{1}% stamina recovery speed]
+					''' */
+				// Precise: "[c/6cac6c:+{0}% ranged crit chance]"
+				/* Lucky:
+					'''
+					[c/6cac6c:+{0}% crit chance]
+					[c/6cac6c:+{1}% luck]
+					''' */
+				/* Brisk:
+					'''
+					[c/6cac6c:+{0}% movement speed]
+					[c/6cac6c:+{1}% damage]
+					''' */
+				/* Fleeting:
+					'''
+					[c/6cac6c:+{0}% movement speed]
+					[c/9b6263:-{1} resistance]
+					''' */
+				/* Hasty:
+					'''
+					[c/6cac6c:+{0}% movement speed]
+					[c/9b6263:-{1} crit chance]
+					''' */
+				// Quick: "[c/6cac6c:+{0}% movement speed]"
+				/* Wild:
+					'''
+					[c/6cac6c:+{0}% attack speed]
+					[c/9b6263:-{1} resistance]
+					''' */
+				/* Rash:
+					'''
+					[c/6cac6c:+{0}% attack speed]
+					[c/9b6263:-{1} life regen]
+					''' */
+				/* Intrepid:
+					'''
+					[c/6cac6c:+{0}% attack speed]
+					[c/6cac6c:+{1} defense]
+					''' */
+				/* Arcane:
+					'''
+					[c/6cac6c:+{0} mana]
+					[c/6cac6c:-{1}% mana cost]
+					''' */
+				/* Encouraging:
+					'''
+					[c/6cac6c:+{0} summon tag damage]
+					[c/6cac6c:+{1}% summon tag strength]
+					''' */
+				// Blessed: "[c/6cac6c:+{0}% luck]"
+			}
+
 			Details: 按住 左Shift 以显示详细信息
 			AggroBoost: 敌人更可能瞄准你
 			// AggroDecrease: Enemies are less likely to target you
@@ -89,8 +162,11 @@ Mods: {
 			NoFallDmg: 对坠落伤害免疫
 			HolyDodge: 赋予神圣闪避效果，当神圣闪避激活时，此盔甲套装提供的属性加倍
 			TitaniumBonus: 造成伤害会生成一个全职业伤害的钛金防御碎片
+			// UpKeybind: Double tap UP
+			// DownKeybind: Double tap DOWN
 			ShunpoKeybind1: "按 "
 			ShunpoKeybind2: " 冲向鼠标悬停处所指的敌人并获得短暂的无敌帧"
+			// ShunpoKeybind3: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
 			ShunpoCD:
 				'''
 				瞬步有 {$CommonItemTooltip.Cooldown}
@@ -2215,6 +2291,7 @@ Mods: {
 					'''
 				Keybind1: "{$CommonItemTooltip.SetBonus}按 "
 				Keybind2: " 在光标位置生成一个浮空的海妖旋风"
+				// Keybind3: " to cast a floating Tsunami at your cursor position"
 				Tooltip1: 每秒最多同时生成三只鲨鱼追踪攻击最近的敌人，造成 {0} 远程伤害
 			}
 
@@ -3452,6 +3529,7 @@ Mods: {
 					'''
 				Keybind1: "按 "
 				Keybind2: " 释放巫师尖啸来削弱附近的敌人"
+				// Keybind3: " to let out a terrifying scream that affects and confuses enemies in a radius"
 			}
 
 			SymbolOfAvarice: {
@@ -9129,6 +9207,11 @@ Mods: {
 				Description: 你不能飞行！
 			}
 
+			DestinedDeath: {
+				// DisplayName: Destined Death
+				// Description: Maximum life is reduced by 10% on hit (up to 60%). At 60% loss, you gain 15% increased damage.
+			}
+
 			Tired: {
 				// DisplayName: Tired
 				// Description: Increases stamina use by 25%
@@ -10970,6 +11053,35 @@ Mods: {
 			// HumanoidMeleeHitbox.DisplayName: Humanoid Melee Hitbox
 			// GwynCinderNovaTelegraph.DisplayName: Gwyn Cinder Nova Telegraph
 			// GwynGroundFireWave.DisplayName: Gwyn Ground Fire Wave
+			// ArtoriasBoundaryVFX.DisplayName: Artorias Boundary V F X
+			// ArtoriasLandingImpactVFX.DisplayName: Artorias Landing Impact V F X
+			// VesselSoulRuptureVFX.DisplayName: Vessel Soul Rupture V F X
+			// SwordOfLordGwynImpactLightning.DisplayName: Sword Of Lord Gwyn Impact Lightning
+			// BlackKnightGravefallTelegraph.DisplayName: Black Knight Gravefall Telegraph
+			// EnemyShaderBurst.DisplayName: Enemy Shader Burst
+			// CrimsonDominionController.DisplayName: Crimson Dominion Controller
+			// RedKnightDelayedBomb.DisplayName: Red Knight Delayed Bomb
+			// RedKnightGroundWave.DisplayName: Red Knight Ground Wave
+			// RedKnightLightningLane.DisplayName: Red Knight Lightning Lane
+			// RedKnightLungeHitbox.DisplayName: Red Knight Lunge Hitbox
+			// RedKnightStandard.DisplayName: Red Knight Standard
+			// RedKnightVFXBurst.DisplayName: Red Knight V F X Burst
+			// ArtoriasSwordSlashTrail.DisplayName: Artorias Sword Slash Trail
+			// ArtoriasFanSourceVFX.DisplayName: Artorias Fan Source V F X
+			// CrimsonDominionExecutionLane.DisplayName: Crimson Dominion Execution Lane
+			// EvilEyeTeleportBlast.DisplayName: Evil Eye Teleport Blast
+			// ElandVenomSplash.DisplayName: Eland Venom Splash
+			// GreatBlackKnightSpearHitbox.DisplayName: Great Black Knight Spear Hitbox
+			// NitoPyreFire.DisplayName: Nito Pyre Fire
+			// BlackKnightBombExplosionSprite.DisplayName: Black Knight Bomb Explosion Sprite
+			// BlackKnightSpearBlightSwarm.DisplayName: Black Knight Spear Blight Swarm
+			// DragonMeteorExplosion.DisplayName: Dragon Meteor Explosion
+			// FireLurkerFireBurst.DisplayName: Fire Lurker Fire Burst
+			// DestinedDeathBlaze.DisplayName: Destined Death Blaze
+			// DestinedDeathExplosion.DisplayName: Destined Death Explosion
+			// GreatRedKnightHandBeam.DisplayName: Great Red Knight Hand Beam
+			// GreatRedKnightUltrakillHand.DisplayName: Great Red Knight Ultrakill Hand
+			// EnemyShadowflameArrow.DisplayName: Enemy Shadowflame Arrow
 		}
 
 		NPCs: {
@@ -12640,6 +12752,7 @@ Mods: {
 			// DarkCloudShadow.DisplayName: Dark Cloud Shadow
 			// AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
 			// StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
+			// Blaidd.DisplayName: Blaidd
 			// ShadowNinja.DisplayName: Shadow Ninja
 			// BlackNinja.DisplayName: Black Ninja
 			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
@@ -12763,6 +12876,8 @@ Mods: {
 			Sadistic.DisplayName: 悲伤的
 			Tenacious.DisplayName: 坚韧的
 			Undisciplined.DisplayName: 涣散的
+			// Encouraging.DisplayName: Encouraging
+			// Blessed2.DisplayName: Blessed
 		}
 
 		Tiles: {

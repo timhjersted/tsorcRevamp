@@ -8,7 +8,7 @@ using System;
 
 namespace tsorcRevamp.NPCs.Enemies{
     // Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
-    public class EvilEye : ModNPC
+    public class EvilEye : ModNPC, IDebugAttackLabel
     {
         // ── Attack rotation state machine ──────────────────────────────────────
         // NPC.ai[0] = current State, NPC.ai[1] = ticks spent in current state,
@@ -29,8 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         const string DashTeleportEventID = "EvilEyeDashTeleport";
 
-        const int FrameWidth = 80;
-        const int FrameHeight = 40;
+        const int FrameWidth = 126;
+        const int FrameHeight = 156;
 
         const float BaseContactDamage = 50f;
         const float ChargeContactDamage = 80f;
@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         const float BurstShotInterval = 12f;
         const float FlankTeleportDistance = 250f;
+        const int TeleportBlastDamage = 35;
 
         const float HoverShotInterval = 45f;
         const int HoverTicks = 200;
@@ -79,6 +80,14 @@ namespace tsorcRevamp.NPCs.Enemies{
         int groundBlastCooldown;
         bool enraged;
         int commitFlashTimer;
+        int enrageHaloTimer;
+
+        /// <summary>
+        /// DebugMode above-head readout (see IDebugAttackLabel). Enrage is flagged because it
+        /// silently retimes every interval, so "why is it suddenly faster" is answerable at a glance.
+        /// </summary>
+        public string DebugAttackLabel =>
+            (enraged ? "Enraged " : "") + DebugLabels.Humanize(((State)NPC.ai[0]).ToString());
 
         public override void SetDefaults()
         {
@@ -116,6 +125,19 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         void TeleportEffect(Vector2 position)
         {
+            // Prismatic space-distortion burst + a brief damaging blast - both networked (real
+            // projectiles) so every player sees/feels it, not just whoever's client happens to run
+            // this. Must run before the server-only early return below, which exists only to skip
+            // the purely-local dust that follows on a dedicated server.
+            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_FromThis(), position,
+                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeTeleportBurst);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.EvilEyeTeleportBlast>(),
+                    TeleportBlastDamage, 0f, Main.myPlayer);
+            }
+
             if (Main.netMode == NetmodeID.Server)
             {
                 return;
@@ -185,6 +207,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 return;
             }
             enraged = true;
+            enrageHaloTimer = 65;
             NPC.netUpdate = true;
             SoundEngine.PlaySound(SoundID.Item72 with { Volume = 1f, Pitch = 0.5f }, NPC.Center);
             UsefulFunctions.ScreenShake(NPC.Center, 10f, 20);
@@ -476,6 +499,10 @@ namespace tsorcRevamp.NPCs.Enemies{
             {
                 commitFlashTimer--;
             }
+            if (enrageHaloTimer > 0)
+            {
+                enrageHaloTimer--;
+            }
 
             // Idle ambiance - a faint constant glow and drifting motes even when it isn't
             // doing anything special, so it reads as magical at rest rather than inert.
@@ -558,6 +585,13 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         void TeleportPlayerAway(Player target)
         {
+            // Prismatic space-distortion burst at both ends of this forced relocation - visual only
+            // here (the player is being displaced, not attacked, unlike TeleportEffect's combat
+            // teleport, so no damage hitbox). Networked spawn, so runs unconditionally rather than
+            // inside the client-only dust blocks below.
+            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_FromThis(), target.Center,
+                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeTeleportBurst);
+
             if (Main.netMode != NetmodeID.Server)
             {
                 // Departure burst - player's current position, right before they vanish.
@@ -574,6 +608,9 @@ namespace tsorcRevamp.NPCs.Enemies{
             }
 
             target.SafeTeleport(new Vector2(6982f * 16f, 531f * 16f));
+
+            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_FromThis(), target.Center,
+                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeTeleportBurst);
 
             if (Main.netMode != NetmodeID.Server)
             {
@@ -593,13 +630,20 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         void DespawnAfterTeleport()
         {
+            // Same "3 Cloud Gore" pattern as the old OnKill() (this path bypasses OnKill entirely -
+            // see the comment above the call site) - replaced with the same ghostly wisp burst.
+            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_Death(), NPC.Center,
+                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeGhostBurst);
+
             if (Main.netMode != NetmodeID.Server)
             {
                 SoundEngine.PlaySound(SoundID.NPCDeath5, NPC.Center);
                 UsefulFunctions.DustRingPrecise(NPC.Center, 10f, DustID.BlueTorch, 30, 2.5f, 120, 1.4f);
-                for (int i = 1; i <= 3; i++)
+                for (int i = 0; i < 16; i++)
                 {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2(Main.rand.Next(-20, 21) * 0.1f, Main.rand.Next(-40, -10) * 0.1f), Mod.Find<ModGore>($"Cloud Gore {i}").Type, 1f);
+                    Vector2 dustVelocity = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(0.6f, 2f);
+                    Dust ghost = Dust.NewDustPerfect(NPC.Center, DustID.Ghost, dustVelocity, 60, default, Main.rand.NextFloat(0.9f, 1.4f));
+                    ghost.noGravity = true;
                 }
             }
             NPC.active = false;
@@ -607,11 +651,19 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         public override void OnKill()
         {
+            // Ghostly departure burst - a real (networked) projectile so every player sees it, not
+            // just whoever's client happened to land the kill. EnemyShaderBurst.Spawn() is itself
+            // netmode-gated (authoritative spawn on server/singleplayer, synced to clients from
+            // there), so this must run before the server-only early return below, which exists
+            // purely to skip the local-only dust/gore that follows on a dedicated server.
+            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_Death(), NPC.Center,
+                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeGhostBurst);
+
             if (Main.netMode == NetmodeID.Server)
             {
                 return;
             }
-            // Shatter beat - it's an eye, so it "breaks" before the smoke puffs cover the exit.
+            // Shatter beat - it's an eye, so it "breaks" before the ghostly wisps carry it off.
             SoundEngine.PlaySound(SoundID.Shatter, NPC.position);
             for (int i = 0; i < 15; i++)
             {
@@ -628,9 +680,34 @@ namespace tsorcRevamp.NPCs.Enemies{
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= Main.rand.NextFloat(1f, 3f);
             }
-            for (int i = 1; i <= 3; i++)
+
+            // Replaces the old 3 generic "Cloud Gore" sprites (which read as nothing in particular)
+            // with a spectral wisp burst that actually matches "an eye's soul departing."
+            SoundEngine.PlaySound(SoundID.DD2_GhastlyGlaiveImpactGhost with { Volume = 0.6f, Pitch = 0.3f }, NPC.position);
+            for (int i = 0; i < 26; i++)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-40, -10) * 0.2f), Mod.Find<ModGore>($"Cloud Gore {i}").Type, 1f);
+                Vector2 dustVelocity = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(0.6f, 2.2f);
+                Dust ghost = Dust.NewDustPerfect(NPC.Center, DustID.Ghost, dustVelocity, 60, default, Main.rand.NextFloat(1f, 1.6f));
+                ghost.noGravity = true;
+            }
+        }
+
+        // Measured centroid of the purple iris in the 126x156 frame is (60.5, 55.9); PreDraw maps the
+        // frame's centre (63, 78) onto NPC.Center, so the eye itself sits 22px ABOVE centre (the
+        // centre lands in the mouth). Telegraphs emit from here instead so the aim line visibly
+        // connects to the eye rather than sprouting from the middle of the sprite.
+        static readonly Vector2 IrisFrameOffset = new Vector2(-2.5f, -22.1f);
+
+        Vector2 IrisWorld
+        {
+            get
+            {
+                // PreDraw flips the sheet when spriteDirection == -1, which mirrors the iris's
+                // horizontal offset with it.
+                float horizontal = IrisFrameOffset.X * (NPC.spriteDirection == -1 ? -1f : 1f);
+                return NPC.Center
+                    + new Vector2(horizontal, IrisFrameOffset.Y) * NPC.scale
+                    + new Vector2(0f, NPC.gfxOffY);
             }
         }
 
@@ -642,6 +719,29 @@ namespace tsorcRevamp.NPCs.Enemies{
             Vector2 origin = new Vector2(FrameWidth / 2f, FrameHeight / 2f);
             Rectangle sourceRect = new Rectangle(NPC.frame.X, NPC.frame.Y, FrameWidth, FrameHeight);
             Vector2 drawCenter = NPC.Center - screenPos + new Vector2(0f, NPC.gfxOffY);
+
+            if (state == State.NovaRing && NPC.ai[1] <= NovaTelegraphTicks + 5f)
+            {
+                float novaProgress = MathHelper.Clamp(NPC.ai[1] / NovaTelegraphTicks, 0f, 1f);
+                Projectiles.Enemy.EnemyVFX.DrawEvilEyeNova(NPC.Center, novaProgress, enrageHaloTimer > 0);
+            }
+
+            if (state == State.ChargeTelegraph || state == State.ChargeDash)
+            {
+                float telegraphDuration = enraged ? ChargeTelegraphTicks * 0.7f : ChargeTelegraphTicks;
+                bool activeCharge = state == State.ChargeDash;
+                float chargeProgress = activeCharge
+                    ? MathHelper.Clamp(NPC.ai[1] / DashTicks, 0f, 1f)
+                    : MathHelper.Clamp(NPC.ai[1] / telegraphDuration, 0f, 1f);
+                // Aim from the iris, not NPC.Center, so the telegraph line is both anchored to and
+                // aimed from the eye itself.
+                Vector2 irisWorld = IrisWorld;
+                Vector2 chargeAim = activeCharge
+                    ? dashDirection
+                    : Main.player[NPC.target].Center - irisWorld;
+                Projectiles.Enemy.EnemyVFX.DrawEvilEyeCharge(irisWorld, chargeAim,
+                    chargeProgress, activeCharge, enraged);
+            }
 
             if (state == State.ChargeTelegraph || state == State.ChargeDash)
             {

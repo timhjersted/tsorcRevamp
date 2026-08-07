@@ -1,0 +1,17 @@
+<!-- Standalone. NOT part of the mod build: it lives under .agents/, which MSBuild's default
+     compile globs skip (verified with a deliberately-broken probe file that produced no errors). -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>disable</Nullable>
+    <AssemblyName>ShaderPreview</AssemblyName>
+    <RootNamespace>ShaderPreview</RootNamespace>
+    <!-- System.Drawing is Windows-only; this tool is Windows-only by design. -->
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+</Project>

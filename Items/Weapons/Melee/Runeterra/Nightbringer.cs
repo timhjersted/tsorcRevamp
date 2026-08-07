@@ -18,10 +18,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public override float SwingSoundVolume => 0.3f;
         public override int RarityID => ModContent.RarityType<DarkBlue>();
         public override int Value => Item.buyPrice(1, 0, 0, 0);
-        public override int BaseDamage => 250;
+        public override int BaseDamage => 400;
         public override int ItemWidth => 94;
         public override int ItemHeight => 110;
-        public override float ItemScale => 1f;
+        public const float BaseScale = 1f; public override float ItemScale => BaseScale;
         public override float ItemKnockback => 5f;
         public override Color SlashColor => Color.DarkOrange;
         public override int TornadoReadyDustID => DustID.DesertTorch;

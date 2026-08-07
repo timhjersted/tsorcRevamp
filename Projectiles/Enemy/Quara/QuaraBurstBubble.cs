@@ -48,9 +48,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
                 Vector2 pos = Projectile.Center + angle.ToRotationVector2() * 17f;
-                int shell = Dust.NewDust(pos, 2, 2, DustID.Water, 0f, 0f, 80, default, 1f);
-                Main.dust[shell].noGravity = true;
-                Main.dust[shell].velocity = Projectile.velocity * 0.5f;
+                int dust = Dust.NewDust(pos, 2, 2, DustID.Water, 0f, 0f, 60, default, 1f);
+                Main.dust[dust].noGravity = true;
+                Main.dust[dust].velocity *= 0.1f;
             }
             if (Main.rand.NextBool(4))
             {
@@ -61,6 +61,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             Lighting.AddLight(Projectile.Center, 0.2f, 0.35f, 0.55f);
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = 1f - Projectile.timeLeft / 240f;
+            EnemyVFX.DrawQuaraBubble(Projectile.Center, Vector2.One * 38f, progress, true);
+            return true;
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Wet, 5 * 60);
@@ -68,6 +75,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.QuaraWaterBurst);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item54 with { Volume = 0.7f, Pitch = 0.2f }, Projectile.Center);
             for (int i = 0; i < 16; i++)
             {
@@ -75,15 +83,14 @@ namespace tsorcRevamp.Projectiles.Enemy
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Water, vel.X, vel.Y, 50, default, 1.3f);
                 Main.dust[dust].noGravity = true;
             }
-            //The burst: six droplets radially, biased upward so they rain back down
+            //The burst: 5 soaking wavy bubbles in 5 radial directions
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    Vector2 vel = (MathHelper.TwoPi * i / 6f + Main.rand.NextFloat(0.3f)).ToRotationVector2() * 5f;
-                    vel.Y -= 1.5f;
+                    Vector2 vel = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 5f;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel,
-                        ModContent.ProjectileType<QuaraDroplet>(), (int)(Projectile.damage * 0.6f), 1f, Main.myPlayer, 0.15f);
+                        ModContent.ProjectileType<Bubble>(), (int)(Projectile.damage * 0.6f), 1f, Main.myPlayer, 0f, 1f);
                 }
             }
         }

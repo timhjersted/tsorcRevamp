@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -283,6 +283,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
         public RenderTarget2D tempTarget;
         public RenderTarget2D lightningTarget;
+        // Leave the original LightningLine + BlurEffect route available for quick A/B comparisons.
+        // Restored to true for the original blue lightning visual effect.
+        private const bool UseLegacyLightningVisuals = true;
         public override bool PreDraw(ref Color lightColor)
         {
             //Don't draw anything if it hasn't generated the branches
@@ -308,10 +311,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Apply the shader, caching it as well
             if (lightningEffect == null)
             {
-                lightningEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/LightningLine", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                string effectPath = UseLegacyLightningVisuals ? "tsorcRevamp/Effects/LightningLine" : "tsorcRevamp/Effects/MarilithLightningLine";
+                lightningEffect = ModContent.Request<Effect>(effectPath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
-            lightningEffect.Parameters["shaderColor"].SetValue(Color.Blue.ToVector3());
+            if (UseLegacyLightningVisuals)
+            {
+                lightningEffect.Parameters["shaderColor"].SetValue(Color.Blue.ToVector3());
+            }
             if (IsAtMaxCharge)
             {
                 lightningEffect.Parameters["active"].SetValue(1);
@@ -324,6 +331,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
             lightningEffect.Parameters["noiseTex"].SetValue(tsorcRevamp.NoiseVoronoi);
             lightningEffect.Parameters["mulColor"].SetValue(color.R / 255f);
+            if (!UseLegacyLightningVisuals)
+            {
+                lightningEffect.Parameters["texelSize"].SetValue(new Vector2(1f / lightningTarget.Width, 1f / lightningTarget.Height));
+            }
 
             lightningEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -384,7 +395,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Activate the shader to draw it properly
             if (lightningEffect == null)
             {
-                lightningEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/LightningLine", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                string effectPath = UseLegacyLightningVisuals ? "tsorcRevamp/Effects/LightningLine" : "tsorcRevamp/Effects/MarilithLightningLine";
+                lightningEffect = ModContent.Request<Effect>(effectPath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
             lightningEffect.Parameters["active"].SetValue(-2);
             lightningEffect.CurrentTechnique.Passes[0].Apply();
@@ -398,7 +410,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Re-set the old bindings
             device.SetRenderTarget(null);
 
-            //Then draw it to a second rendertarget to blur it by applying a second shader in the process
+            if (!UseLegacyLightningVisuals)
+            {
+                // The new Marilith shader builds its controlled aura from this sharp mask at draw time.
+                // Keeping the unblurred target also lets its white-blue core accurately show the 10px collision line.
+                lightningTarget = tempTarget;
+                tempTarget = null;
+                return;
+            }
+
+            // Legacy comparison path: draw it to a second render target and apply the old broad blur.
             lightningTarget = new RenderTarget2D(device, (int)lightningMaxDimensions.X, (int)lightningMaxDimensions.Y, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
             device.SetRenderTarget(lightningTarget);
             device.Clear(Color.Transparent);
@@ -552,7 +573,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             start.X += lightningXOffset;
             start.Y += lightningMaxDimensions.Y / 2;
 
-            float drawScale = 1.5f;
+            float drawScale = UseLegacyLightningVisuals ? 1.5f : 1f;
             Rectangle drawRect = new Rectangle(0, 0, (int)(distance * 1.4f / drawScale), 12);
             Vector2 drawOrigin = drawRect.Size() / 2;
             drawOrigin.X = distance / drawScale;

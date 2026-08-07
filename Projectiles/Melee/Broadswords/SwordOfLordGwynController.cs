@@ -144,10 +144,13 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             Projectile.hide = false;
             Vector2 hand = SwordOfLordGwynPlayerAnimation.SetUseFrame(player, 0);
 
-            // Gentle charge shimmer around the raised hand so the hold reads as "powering up".
+            // Keep the sunlight-spear branch visually electric rather than borrowing fire from
+            // the sword's normal cinder attacks.
             if (Main.rand.NextBool(3))
             {
-                int dust = Dust.NewDust(hand - new Vector2(4f), 8, 8, DustID.GoldFlame, 0f, -1.2f, 120, default, 1.05f);
+                Vector2 velocity = Main.rand.NextVector2Circular(1.4f, 1.4f) - Vector2.UnitY * 0.65f;
+                int dust = Dust.NewDust(hand - new Vector2(4f), 8, 8, DustID.Electric,
+                    velocity.X, velocity.Y, 90, new Color(255, 226, 116), Main.rand.NextFloat(0.65f, 0.95f));
                 Main.dust[dust].noGravity = true;
             }
         }

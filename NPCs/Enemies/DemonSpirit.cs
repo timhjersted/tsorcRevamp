@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -47,6 +49,7 @@ namespace tsorcRevamp.NPCs.Enemies
         int attackDelay = AttackIdleTime;
         int queuedAttackPatterns;
         int lastAttackPattern = -1;
+        int plannedAttackPattern = -1;
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -88,12 +91,12 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
 
-            if (NPC.life > NPC.lifeMax / 2)
+            if (Main.rand.NextBool(3) && NPC.life > NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 2f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= NPC.lifeMax / 2)
+            else if (Main.rand.NextBool(3) && NPC.life <= NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 3f);
                 Main.dust[dust].noGravity = true;
@@ -379,6 +382,10 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
+                if (plannedAttackPattern >= 0 && attackDelay > 0)
+                {
+                    attackDelay--;
+                }
                 return;
             }
 
@@ -392,6 +399,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (attackDelay > 0)
             {
+                if (attackDelay == 30 && plannedAttackPattern < 0)
+                {
+                    plannedAttackPattern = SelectAttackPattern();
+                    NPC.netUpdate = true;
+                }
                 attackDelay--;
                 return;
             }
@@ -402,13 +414,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 queuedAttackPatterns = enraged ? Main.rand.Next(2, 4) : Main.rand.Next(1, 3);
             }
 
-            FireRandomAttackPattern(target);
+            if (plannedAttackPattern < 0)
+            {
+                plannedAttackPattern = SelectAttackPattern();
+            }
+            FireAttackPattern(target, plannedAttackPattern);
+            plannedAttackPattern = -1;
             queuedAttackPatterns--;
             attackDelay = queuedAttackPatterns > 0 ? AttackComboGapTime : AttackIdleTime;
             NPC.netUpdate = true;
         }
 
-        void FireRandomAttackPattern(Player target)
+        int SelectAttackPattern()
         {
             int pattern = Main.rand.Next(6);
             if (pattern == lastAttackPattern)
@@ -416,7 +433,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 pattern = (pattern + Main.rand.Next(1, 6)) % 6;
             }
             lastAttackPattern = pattern;
+            return pattern;
+        }
 
+        void FireAttackPattern(Player target, int pattern)
+        {
             switch (pattern)
             {
                 case 0:
@@ -438,6 +459,18 @@ namespace tsorcRevamp.NPCs.Enemies
                     FirePurpleCrushCage(target);
                     break;
             }
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write((sbyte)plannedAttackPattern);
+            writer.Write((short)attackDelay);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            plannedAttackPattern = reader.ReadSByte();
+            attackDelay = reader.ReadInt16();
         }
 
         void FireDemonSpiritNeedle(Player target)
@@ -549,6 +582,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
                 if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            }
+        }
+
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (plannedAttackPattern >= 0 && attackDelay > 0 && attackDelay <= 30)
+            {
+                float progress = MathHelper.Clamp(1f - attackDelay / 30f, 0f, 1f);
+                Vector2 aimDirection = Main.player[NPC.target].Center - NPC.Center;
+                Projectiles.Enemy.EnemyVFX.DrawDemonSpiritCastSigil(NPC.Center, plannedAttackPattern, progress, aimDirection);
             }
         }
         #endregion

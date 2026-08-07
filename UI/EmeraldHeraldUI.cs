@@ -24,7 +24,7 @@ namespace tsorcRevamp.UI
             {
                 Left = { Pixels = 50 },
                 Top = { Pixels = 270 },
-                ValidItemFunc = item => item.IsAir || !item.IsAir && item.Prefix(-3) && !item.accessory
+                ValidItemFunc = item => item.IsAir || !item.IsAir && item.Prefix(-3)
             };
             // Here we limit the items that can be placed in the slot. We are fine with placing an empty item in or a non-empty item that can be prefixed. Calling Prefix(-3) is the way to know if the item in question can take a prefix or not.
             Append(_vanillaItemSlot);
@@ -129,7 +129,14 @@ namespace tsorcRevamp.UI
                         //reforgeItem = reforgeItem.CloneWithModdedDataFrom(_vanillaItemSlot.Item)/* tModPorter Note: Removed. Use Clone, ResetPrefix or Refresh */;
                         // This is the main effect of this slot. Giving the Blessed prefix 100% of the time. All for a constant 1 gold. Useless, but informative.
 
-                        reforgeItem.Prefix(ModContent.PrefixType<Prefixes.Blessed>());
+                        if (!reforgeItem.accessory)
+                        {
+                            reforgeItem.Prefix(ModContent.PrefixType<Prefixes.Blessed>());
+                        }
+                        else
+                        {
+                            reforgeItem.Prefix(ModContent.PrefixType<Prefixes.Blessed2>());
+                        }
 
                         _vanillaItemSlot.Item = reforgeItem.Clone();
                         _vanillaItemSlot.Item.position.X = Main.LocalPlayer.position.X + (float)(Main.LocalPlayer.width / 2) - (float)(_vanillaItemSlot.Item.width / 2);

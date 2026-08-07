@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -137,31 +137,50 @@ namespace tsorcRevamp.Projectiles.Enemy
             return;
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float fuseProgress = MathHelper.Clamp(1f - Projectile.timeLeft / 240f, 0f, 1f);
+            EnemyVFX.DrawBlackKnightMoonfury(Projectile.Center, Projectile.velocity, fuseProgress, Projectile.timeLeft <= 2);
+            return true;
+        }
+
         public override void OnKill(int timeLeft)
         {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightMoonfuryBlast);
+            // Animated sprite explosion layered on top of the shader above — shared by both knights
+            // since this is the one bomb projectile class both throw.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                    ModContent.ProjectileType<BlackKnightBombExplosionSprite>(), 0, 0f, Main.myPlayer);
+            }
             // Play explosion sound
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath55 with { PitchVariance = 2f }, Projectile.Center);
 
 
-            // Fire Dust spawn
+            // Purple dust spawn. No custom purple smoke gore art exists in the repo (checked Gores/ —
+            // only white/grey vanilla Smoke1-3, ids 61-63), so per the fallback: dispersion +30%
+            // (velocity range ±6 -> ±8) to carry the purple further, and the white gore puff below
+            // is scaled back so the dust reads as the dominant colour of the cloud.
             for (int i = 0; i < 200; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, DustID.ShadowbeamStaff, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, Color.Purple, 2.1f);
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, DustID.ShadowbeamStaff, Main.rand.Next(-8, 8), Main.rand.Next(-8, 8), 100, Color.Purple, 2.1f);
                 Main.dust[dustIndex].noGravity = true;
                 Main.dust[dustIndex].velocity *= 1f;
             }
 
-            // Large Smoke Gore spawn
-            for (int g = 0; g < 10; g++)
+            // White/grey smoke gore puff — reduced from 10 pairs (20 gores) to 6 pairs (12 gores) at a
+            // smaller scale, so the (now further-flung) purple dust reads as the dominant colour.
+            for (int g = 0; g < 6; g++)
             {
                 if (!Main.dedServ)
                 {
                     int goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), .8f);
-                    Main.gore[goreIndex].scale = 1f;
+                    Main.gore[goreIndex].scale = 0.75f;
                     Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1f;
                     Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
                     goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), .8f);
-                    Main.gore[goreIndex].scale = 1f;
+                    Main.gore[goreIndex].scale = 0.75f;
                     Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1f;
                     Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
                 }

@@ -9,10 +9,11 @@ using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor
+    public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor, IDebugAttackLabel, IHumanoidMeleeHitEffects
     {
         public int redKnightsSpearDamage = 45;
         public int redMagicDamage = 40;
@@ -42,11 +43,51 @@ namespace tsorcRevamp.NPCs.Enemies
         // cooldown — movement/pathing (FighterAI, called unconditionally at the top of AI()) keeps running, it
         // just can't start a new attack — before returning to Neutral.
         private enum Phase { Neutral = 0, Telegraph = 1, Committed = 2, Recovery = 3 }
-        private enum AttackKind { Spear = 0, Homing = 1, Bomb = 2, Ultrakill = 3, Flail = 4 }
+        private enum AttackKind { Spear = 0, Homing = 1, Bomb = 2, Ultrakill = 3, Flail = 4, SpearMelee = 5 }
 
-        private static readonly int[] TelegraphTicksByAttack = { 30, 30, 30, 65, 20 };   // Spear, Homing, Bomb, Ultrakill, Flail
-        private static readonly int[] CommitTicksByAttack = { 25, 25, 25, 70, 20 };
-        private static readonly int[] BaseWeightByAttack = { 40, 35, 25, 30, 35 };
+        /// <summary>
+        /// DebugMode above-head readout (see IDebugAttackLabel). Includes the phase because the
+        /// telegraph/committed/recovery split is what decides whether a hit staggers or bounces.
+        /// </summary>
+        public string DebugAttackLabel
+        {
+            get
+            {
+                if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0)
+                {
+                    return "Staggered";
+                }
+                Phase phase = (Phase)(int)NPC.ai[0];
+                if (phase == Phase.Neutral)
+                {
+                    return "Idle";
+                }
+                AttackKind attack = (AttackKind)(int)NPC.ai[2];
+                return $"{attack} ({phase})";
+            }
+        }
+
+        // All three are indexed by AttackKind and MUST stay the same length as the enum.
+        private static readonly int[] TelegraphTicksByAttack = { 30, 30, 30, 65, 20, 40 };   // Spear, Homing, Bomb, Ultrakill, Flail, SpearMelee
+        private static readonly int[] CommitTicksByAttack = { 25, 25, 25, 70, 20, 26 };
+        // Flail is this knight's signature weapon and was barely showing up: it needed melee range
+        // AND had to win a roll against four other attacks. Now it is the heaviest weight in the
+        // table and eligible out to 30 tiles, so it reads as the thing he actually fights with.
+        private static readonly int[] BaseWeightByAttack = { 30, 25, 20, 30, 110, 40 };
+
+        // Spear jab. The 40-tick telegraph sits inside the 30-60 tick band that matches the player's
+        // dodge-roll window, so the windup is something to react to rather than a surprise.
+        private const int SpearMeleeStrikeTick = 6;     // commit tick the hitbox arms on
+        private const int SpearMeleeHitTicks = 10;      // how long it stays live
+        private const float SpearMeleeExtension = 26f;  // how far the shaft slides forward on the thrust
+        private const float SpearMeleeWindup = 7f;      // pull-back during the telegraph
+        private const float SpearMeleeReach = 92f;      // hitbox width; the visual thrust must not outrun it
+        private const float SpearMeleeHeight = 40f;
+        private const float SpearMeleeRange = 110f;     // Spear THROW needs >= 120f, so the jab fills the gap
+        // 30 tiles. Must stay in step with GreatBlackKnightFlail's OutwardTicks * the launch speed
+        // in RunFlailCommit, or he throws the flail at players it cannot physically reach.
+        private const float FlailReach = 480f;
+        private const float FlailLaunchSpeed = 16f;
         private const int UltrakillChannelTicks = 35; // trailing slice of Ultrakill's commit window that actually fires
 
         // Combo/recovery tuning (see the AskUserQuestion-approved design): rolls 1-3 attacks back to back at full
@@ -205,8 +246,33 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            if (Main.netMode == NetmodeID.MultiplayerClient || Main.player[NPC.target].dead)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
+                return;
+            }
+
+            // STUCK-BOMB FIX. This used to be `|| Main.player[NPC.target].dead` on the return above,
+            // which froze the ENTIRE state machine: ai[0]/ai[1] stopped advancing, so a knight that
+            // was mid-Bomb stayed in Committed forever, holding the bomb sprite in its hand and
+            // never firing or moving on. A stale NPC.target (e.g. the 255 sentinel, whose dummy
+            // player reads as dead) made that permanent rather than lasting until a respawn.
+            // Now: re-acquire first, and if there is genuinely no target, abandon the attack into
+            // Recovery instead of holding the pose.
+            if (NPC.target < 0 || NPC.target >= Main.maxPlayers || !player.active || player.dead)
+            {
+                NPC.TargetClosest(true);
+            }
+            if (!player.active || player.dead)
+            {
+                if (phase != Phase.Neutral)
+                {
+                    NPC.ai[0] = (float)Phase.Recovery;
+                    NPC.ai[1] = 0f;
+                    NPC.ai[3] = 0f;
+                    currentRecoveryTicks = BaseRecoveryTicks;
+                    losStuckTimer = 0;
+                    NPC.netUpdate = true;
+                }
                 return;
             }
 
@@ -303,8 +369,15 @@ namespace tsorcRevamp.NPCs.Enemies
         private AttackKind PickNextAttack(float distanceToPlayer)
         {
             bool spearEligible = distanceToPlayer >= 120f;
-            bool flailEligible = distanceToPlayer <= 260f; // the chain has real reach, but it's still a melee weapon
+            // 30 tiles — the chain genuinely reaches that far now. !HasActiveFlail() enforces one
+            // ball-and-chain out at a time: with 30-tile reach and a fast retract, back-to-back
+            // throws otherwise read as the knight juggling two flails at once.
+            bool flailEligible = distanceToPlayer <= FlailReach && !HasActiveFlail();
             bool ultrakillEligible = NPC.life <= NPC.lifeMax / 2;
+            // Complements the throw rather than competing with it: the jab covers exactly the band
+            // where the spear throw is ineligible, so closing the distance steers the knight into
+            // melee instead of leaving it with nothing to do with the weapon it is holding.
+            bool spearMeleeEligible = distanceToPlayer <= SpearMeleeRange;
 
             int[] weights = new int[BaseWeightByAttack.Length];
             weights[(int)AttackKind.Homing] = BaseWeightByAttack[(int)AttackKind.Homing];
@@ -312,6 +385,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spearEligible) weights[(int)AttackKind.Spear] = BaseWeightByAttack[(int)AttackKind.Spear];
             if (flailEligible) weights[(int)AttackKind.Flail] = BaseWeightByAttack[(int)AttackKind.Flail];
             if (ultrakillEligible) weights[(int)AttackKind.Ultrakill] = BaseWeightByAttack[(int)AttackKind.Ultrakill];
+            if (spearMeleeEligible) weights[(int)AttackKind.SpearMelee] = BaseWeightByAttack[(int)AttackKind.SpearMelee];
 
             int total = 0;
             for (int i = 0; i < weights.Length; i++) total += weights[i];
@@ -470,6 +544,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 case AttackKind.Flail:
                     RunFlailCommit(t, duration, hasPlayerLOS);
                     break;
+                case AttackKind.SpearMelee:
+                    RunSpearMeleeCommit(t, duration);
+                    break;
             }
         }
 
@@ -515,6 +592,73 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
             EndAttack();
+        }
+
+        /// <summary>True while the spear jab is committed — the hitbox stays alive for exactly this window.</summary>
+        public bool SpearMeleeActive =>
+            (Phase)(int)NPC.ai[0] == Phase.Committed && (AttackKind)(int)NPC.ai[2] == AttackKind.SpearMelee;
+
+        /// <summary>True only during the strike itself, so the hitbox cannot damage on the wind-up or the recovery.</summary>
+        public bool SpearMeleeHitWindow =>
+            SpearMeleeActive && NPC.ai[1] >= SpearMeleeStrikeTick && NPC.ai[1] < SpearMeleeStrikeTick + SpearMeleeHitTicks;
+
+        /// <summary>
+        /// How far along its own axis the shaft sits: pulled back through the telegraph, driven out
+        /// fast, held, then withdrawn. Shared by the draw so the visual thrust and the live hitbox
+        /// window describe the same motion.
+        /// </summary>
+        private float SpearMeleeGripSlide(Phase phase, int t)
+        {
+            if (phase == Phase.Telegraph)
+            {
+                float windupDuration = Math.Max(1, TelegraphTicksByAttack[(int)AttackKind.SpearMelee] - 1);
+                return -SpearMeleeWindup * MathHelper.Clamp(t / windupDuration, 0f, 1f);
+            }
+
+            float commitDuration = Math.Max(1, CommitTicksByAttack[(int)AttackKind.SpearMelee]);
+            float p = MathHelper.Clamp(t / commitDuration, 0f, 1f);
+            if (p < 0.30f)
+            {
+                return MathHelper.Lerp(-SpearMeleeWindup, SpearMeleeExtension, p / 0.30f);
+            }
+            if (p < 0.62f)
+            {
+                return SpearMeleeExtension;
+            }
+            return MathHelper.Lerp(SpearMeleeExtension, 0f, (p - 0.62f) / 0.38f);
+        }
+
+        /// <summary>
+        /// The jab. Unlike the ranged attacks this does NOT wait on line of sight: it is only ever
+        /// selected inside SpearMeleeRange, and freezing mid-thrust for up to two seconds waiting for
+        /// a clear shot would read as a bug rather than as a held attack.
+        /// </summary>
+        private void RunSpearMeleeCommit(int t, int duration)
+        {
+            NPC.knockBackResist = 0f;
+
+            if (t == SpearMeleeStrikeTick && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int direction = Math.Sign(player.Center.X - NPC.Center.X);
+                if (direction == 0)
+                {
+                    direction = NPC.spriteDirection;
+                }
+                int projectileIndex = Projectile.NewProjectile(
+                    NPC.GetSource_FromThis(), NPC.Center, new Vector2(direction, 0f),
+                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.GreatBlackKnightSpearHitbox>(),
+                    redKnightsGreatDamage, 4f, Main.myPlayer, SpearMeleeReach, SpearMeleeHeight);
+                tsorcGlobalProjectile.SetDefenseTraits(projectileIndex,
+                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ActiveAttackDefenseTraits);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, PitchVariance = 0.1f }, NPC.Center);
+            }
+
+            if (t >= duration - 1)
+            {
+                EndAttack();
+                return;
+            }
+            NPC.ai[1] = t + 1;
         }
 
         private void RunHomingCommit(int t, int duration, bool hasPlayerLOS)
@@ -571,6 +715,23 @@ namespace tsorcRevamp.NPCs.Enemies
             EndAttack();
         }
 
+        /// <summary>True while this knight already has a GreatBlackKnightFlail head out. Gates both
+        /// selection (PickNextAttack) and the actual throw below — only one ball-and-chain at a time;
+        /// the next one can't launch until this one retracts to the hand and self-destructs.</summary>
+        private bool HasActiveFlail()
+        {
+            int flailType = ModContent.ProjectileType<Projectiles.Enemy.Weapons.GreatBlackKnightFlail>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile p = Main.projectile[i];
+                if (p.active && p.type == flailType && (int)p.ai[0] == NPC.whoAmI)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>Ball-and-chain flail (see Projectiles.Enemy.Weapons.EnemyFlailProjectileBase) — anchored to
         /// this NPC's rigged hand via IFlailAnchor, so no arm-swing animation is needed: the chain+head projectile
         /// owns the entire visual. Aims live (no predicted position) and occasionally spins in place instead of
@@ -584,6 +745,15 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (WaitOnLos(hasPlayerLOS)) return;
 
+            // Defensive: PickNextAttack already excludes Flail while one is active, so this should
+            // never actually trigger — but if it somehow does, abandon the throw rather than let two
+            // heads exist at once.
+            if (HasActiveFlail())
+            {
+                EndAttack();
+                return;
+            }
+
             NPC.TargetClosest(true);
             Vector2 anchor = CurrentHandWorld();
             Vector2 toPlayer = player.Center - anchor;
@@ -594,7 +764,7 @@ namespace tsorcRevamp.NPCs.Enemies
             toPlayer.Normalize();
 
             bool spin = Main.rand.NextBool(3); // occasional windmill instead of a straight throw
-            Vector2 velocity = spin ? Vector2.Zero : toPlayer * 11f;
+            Vector2 velocity = spin ? Vector2.Zero : toPlayer * FlailLaunchSpeed;
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -675,6 +845,17 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
+            ApplyHitDebuffs(target);
+        }
+
+        /// <summary>Spear-jab hits route here so the jab applies the same debuffs as a body hit.</summary>
+        public void OnHumanoidMeleeHit(Player target)
+        {
+            ApplyHitDebuffs(target);
+        }
+
+        private static void ApplyHitDebuffs(Player target)
+        {
             target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 600, false);
             target.AddBuff(36, 600, false); //broken armor
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
@@ -685,67 +866,88 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Draw Attack Sprites
         static Texture2D spearTexture;
         static Texture2D bombTexture;
-        static Texture2D handTexture;
-        const float FrameW = 70f;
-        const float FrameH = 56f;
-        static readonly Vector2[] HandPixel = new Vector2[16]
-        {
-            new Vector2(47, 30), // 0 idle
-            new Vector2(47, 25), // 1 jump
-            new Vector2(48, 33), // 2
-            new Vector2(50, 31), // 3
-            new Vector2(50, 31), // 4
-            new Vector2(50, 31), // 5
-            new Vector2(50, 33), // 6
-            new Vector2(48, 33), // 7
-            new Vector2(48, 33), // 8
-            new Vector2(48, 33), // 9
-            new Vector2(46, 31), // 10
-            new Vector2(44, 31), // 11
-            new Vector2(44, 31), // 12
-            new Vector2(45, 32), // 13
-            new Vector2(48, 33), // 14
-            new Vector2(48, 33), // 15
-        };
+        // GreatBlackKnight.png is 90x928 = 16 frames of 90x58. This used to declare 70x56 (Black
+        // Knight's geometry, copied wholesale) which put every held prop in the wrong place, and it
+        // drew BlackKnight_Hand.png — a 70x56 sheet — as an arm overlay with a source rect stepping
+        // by 58, so the rect walked off the frame grid and past the texture on late frames. The
+        // overlay is gone entirely: this knight's arm is already part of its body sprite and there
+        // is no GreatBlackKnight_Hand.png to draw.
+        const float FrameW = 90f;
+        const float FrameH = 58f;
+        // Measured off GreatBlackKnight.png: the flail handle meets the body at roughly (40, 37) in
+        // frame space. The art is 2x-doubled (45x29 logical), and the gripping arm barely moves
+        // across the walk cycle, so a 16-entry table would encode noise rather than motion — one
+        // constant is the honest representation. Frame 1 (the crouched jump) is the only real
+        // outlier and the spear is never thrown mid-jump.
+        static readonly Vector2 HandPixel = new Vector2(40f, 37f);
+        // The spear now sits AT the measured hand. This was 22f — a lift into a cocked overhand
+        // pose copied from the Black Knight — which put the shaft up by his head instead of in his
+        // fist, ~20px too high. The Black Knight needs that lift because its HandPixel table maps
+        // the fist at chest height; this knight's (40, 37) is already the grip.
+        const float SpearGripLift = 0f;
         static readonly Vector2 SpearGripOrigin = new Vector2(8f, 38f);
         static readonly Vector2 BombGripOrigin = new Vector2(14f, 4f);
 
-        Vector2 CurrentHandWorld()
-        {
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame < 0 || frame >= HandPixel.Length)
-            {
-                frame = 0;
-            }
+        // facingDirection is explicit so a held prop always mirrors to the same side of the body as
+        // the rotation it is drawn with.
+        // 0 disables the body mask and falls back to a plain draw — the in-game A/B switch.
+        const float SpearMaskStrength = 1f;
 
-            Vector2 fp = HandPixel[frame];
-            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
+        // Single frame-pixel -> world mapping, so a held prop's draw position and the occlusion
+        // mask's lookup are derived from the same definition and cannot drift apart.
+        Vector2 FramePixelToWorld(Vector2 fp, int facingDirection)
+        {
+            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -facingDirection;
             float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
             return new Vector2(x, y);
         }
 
-        Vector2 CurrentSpearWorld()
-        {
-            Vector2 handWorld = CurrentHandWorld();
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame == 0)
-            {
-                handWorld.Y -= 21f;
-            }
-            return handWorld;
-        }
+        Vector2 CurrentSpearFramePixel() => new Vector2(HandPixel.X, HandPixel.Y - SpearGripLift / NPC.scale);
 
-        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
+        Vector2 CurrentHandWorld(int facingDirection) => FramePixelToWorld(HandPixel, facingDirection);
+
+        Vector2 CurrentHandWorld() => CurrentHandWorld(NPC.spriteDirection);
+
+        Vector2 CurrentSpearWorld(int facingDirection) => FramePixelToWorld(CurrentSpearFramePixel(), facingDirection);
+
+        Vector2 CurrentSpearWorld() => CurrentSpearWorld(NPC.spriteDirection);
+
+        void DrawGreatBlackKnightMagicOverlays(Phase phase, AttackKind currentAttack)
         {
-            if (handTexture == null)
+            bool active = phase == Phase.Telegraph || phase == Phase.Committed;
+            if (active)
             {
-                return;
+                int duration = phase == Phase.Telegraph
+                    ? TelegraphTicksByAttack[(int)currentAttack]
+                    : CommitTicksByAttack[(int)currentAttack];
+                float progress = MathHelper.Clamp(NPC.ai[1] / Math.Max(1f, duration - 1f), 0f, 1f);
+                Vector2 hand = CurrentHandWorld();
+
+                if (currentAttack == AttackKind.Homing)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightHexCrystal(hand, Vector2.Zero, progress, phase == Phase.Committed);
+                }
+                else if (currentAttack == AttackKind.Ultrakill)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center,
+                        phase == Phase.Telegraph ? progress : 1f);
+                    if (phase == Phase.Committed && storedPlayerPosition != Vector2.Zero)
+                    {
+                        Projectiles.Enemy.EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition, progress);
+                    }
+                }
+                else if (currentAttack == AttackKind.Flail)
+                {
+                    Projectiles.Enemy.EnemyVFX.DrawGreatBlackKnightFlail(hand, Vector2.Zero, phase == Phase.Committed);
+                }
             }
 
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
-            Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
-            spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
+            ulong stormCycle = Main.GameUpdateCount % 420;
+            if (NPC.life <= NPC.lifeMax / 3 && stormCycle >= 400)
+            {
+                float stormProgress = MathHelper.Clamp((stormCycle - 400f) / 20f, 0f, 1f);
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightHexCrystal(NPC.Center, Vector2.Zero, stormProgress, false);
+            }
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -760,24 +962,54 @@ namespace tsorcRevamp.NPCs.Enemies
                 bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyMoonfuryBomb");
             }
 
-            if (handTexture == null || handTexture.IsDisposed)
-            {
-                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/BlackKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            }
-
             Phase phase = (Phase)(int)NPC.ai[0];
             AttackKind currentAttack = (AttackKind)(int)NPC.ai[2];
             bool active = phase == Phase.Telegraph || phase == Phase.Committed;
 
-            // Spear
+            // Spear jab: held through the whole telegraph AND the strike, sliding along its own axis
+            // so the thrust is the weapon moving rather than the knight teleporting it forward.
+            if (active && currentAttack == AttackKind.SpearMelee)
+            {
+                const float spriteScale = 0.8f;
+                int facing = NPC.spriteDirection;
+                float gripSlide = SpearMeleeGripSlide(phase, (int)NPC.ai[1]);
+                float rotation = new Vector2(facing, 0f).ToRotation() + MathHelper.PiOver2;
+                Vector2 handWorld = CurrentSpearWorld(facing) - Main.screenPosition;
+                if (SpearMeleeHitWindow)
+                {
+                    Vector2 forward = new Vector2(facing, 0f);
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                        handWorld + Main.screenPosition + forward * (34f + gripSlide),
+                        forward.ToRotation(), new Vector2(86f, 18f), 0.6f);
+                }
+                HeldPropDraw.DrawOccluded(
+                    spriteBatch, spearTexture, handWorld, drawColor, rotation,
+                    SpearGripOrigin + new Vector2(0f, gripSlide), NPC.scale * spriteScale,
+                    Terraria.GameContent.TextureAssets.Npc[NPC.type].Value,
+                    new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH),
+                    CurrentSpearFramePixel(), facing, NPC.scale, SpearMaskStrength);
+            }
+            // Spear (thrown)
             if (active && currentAttack == AttackKind.Spear)
             {
                 float spriteScale = 0.8f;
                 Vector2 spearAim = phase == Phase.Committed ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
-                spriteBatch.Draw(spearTexture, handWorld, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, SpearGripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0);
-                DrawHandOverlay(spriteBatch, drawColor);
+                if (phase == Phase.Committed)
+                {
+                    Vector2 forward = spearAim.SafeNormalize(new Vector2(NPC.spriteDirection, 0f));
+                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                        handWorld + Main.screenPosition + forward * 34f,
+                        forward.ToRotation(), new Vector2(74f, 16f), 0.52f);
+                }
+                // Body-masked so the shaft disappears where the knight covers it (see HeldPropDraw).
+                HeldPropDraw.DrawOccluded(
+                    spriteBatch, spearTexture, handWorld, drawColor, rotation, SpearGripOrigin,
+                    NPC.scale * spriteScale,
+                    Terraria.GameContent.TextureAssets.Npc[NPC.type].Value,
+                    new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH),
+                    CurrentSpearFramePixel(), NPC.spriteDirection, NPC.scale, SpearMaskStrength);
             }
             // Bomb
             if (active && currentAttack == AttackKind.Bomb)
@@ -785,9 +1017,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 bombAim = phase == Phase.Committed ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
+                float fuseProgress = phase == Phase.Telegraph
+                    ? MathHelper.Clamp(NPC.ai[1] / TelegraphTicksByAttack[(int)AttackKind.Bomb], 0f, 1f)
+                    : 1f;
+                // The Moonfury shader used to be drawn here and sat visibly offset from the bomb
+                // sprite. Replaced with a red fuse spark at the bomb's own fuse, which needs no
+                // alignment between a quad and a sprite to read correctly.
                 spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
-                DrawHandOverlay(spriteBatch, drawColor);
+                Projectiles.Enemy.EnemyVFX.SpawnBombFuseSparks(handWorld + Main.screenPosition, fuseProgress);
             }
+
+            DrawGreatBlackKnightMagicOverlays(phase, currentAttack);
         }
         #endregion
 

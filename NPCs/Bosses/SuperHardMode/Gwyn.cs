@@ -94,10 +94,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool UseAlternateFlip => false;
         protected override bool UseAimAdaptiveArc => true;
         protected override bool UseLogicalMeleeTelegraphs => true;
-        // Gwyn's armor sheet authors the straight Use1-Use4 swing arms, like Abyssal Ninja.
-        // Composite arms select the bent elbow pieces instead, which is the wrong silhouette.
-        protected override bool UseCompositeArmSwing => false;
-        protected override bool UseTwoHandedCompositeSwing => false;
+        // The repaired armor sheet now supplies complete front and back composite-arm frames,
+        // allowing the greatsword pose to retain smooth rotation without exposing player skin.
+        protected override bool UseCompositeArmSwing => true;
+        protected override bool UseTwoHandedCompositeSwing => true;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
         protected override bool HasSlashVFX => false; // Gwyn draws a dedicated shader-lit fire slash in PostDraw.
         protected override float WalkAnimationSpeedMultiplier => 0.35f;

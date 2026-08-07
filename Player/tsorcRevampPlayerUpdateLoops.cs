@@ -93,13 +93,17 @@ namespace tsorcRevamp
         public bool NecromanticScroll = false;
         public bool PapyrusScarab = false;
 
-        public float WhipCritDamage = 135f;
+        public float WhipTipCritBonusDamage = 35f;
         public bool FinishedChargingWhip = false;
 
         public int CurseLevel = 1;
         public int PowerfulCurseLevel = 1;
         public int curseDecayTimer = 0;
         public int powerfulCurseDecayTimer = 0;
+
+        public int DestinedDeathStacks = 0;
+        public float DestinedDeathCurrentHPLoss = 0f;
+        public bool DestinedDeathActive = false;
 
         public bool BrokenSpirit;
 
@@ -201,6 +205,10 @@ namespace tsorcRevamp
         public float FallDist;
         public float fallStartY;
         public int fallStart_old = -1;
+
+        public int JaggedFlatCritDmgBonus = 0;
+        public int RashBadLifeRegenPerSec = 0;
+        public float EncouragingSummonTagDmg = 0f;
 
         public bool MeleeArmorVamp10 = false;
 
@@ -569,6 +577,12 @@ namespace tsorcRevamp
             SlowfallWingActive = false;
             Suppressed = false;
             Tired = false;
+            DestinedDeathActive = false;
+            if (Player.dead)
+            {
+                DestinedDeathStacks = 0;
+                DestinedDeathCurrentHPLoss = 0f;
+            }
             BeastMode1 = false;
             SilverSerpentRing = false;
             SoulSerpentRing = false;
@@ -588,6 +602,10 @@ namespace tsorcRevamp
             InfinityEdge = false;
             LudensTempest = false;
             Goredrinker = false;
+
+            JaggedFlatCritDmgBonus = 0;
+            RashBadLifeRegenPerSec = 0;
+            EncouragingSummonTagDmg = 0f;
 
             MaskOfTheFather = false;
             BoneRing = false;
@@ -2451,6 +2469,8 @@ namespace tsorcRevamp
             // BotC sat on 50% — the gentler tier was punished harder than the harsh one, the opposite of
             // the intent. Removing the extra penalty is what puts them on parity; do not re-add a
             // class-specific multiplier here without first making the halving above class-gated.
+
+            Player.lifeRegen -= RashBadLifeRegenPerSec * 2;
         }
 
 
@@ -3612,6 +3632,39 @@ namespace tsorcRevamp
             Player.GetDamage(DamageClass.Generic) += ((CurseDamageBonus * ((CurseDamageBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseDamageBonus * ((powerfulCurseDamageBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
             Player.GetAttackSpeed(DamageClass.Generic) += ((CurseAttackSpeedBonus * ((CurseAttackSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseAttackSpeedBonus * ((powerfulCurseAttackSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
             Player.moveSpeed += ((CurseMovementSpeedBonus * ((CurseMovementSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseMovementSpeedBonus * ((powerfulCurseMovementSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
+
+            // Destined Death debuff logic
+            if (DestinedDeathActive)
+            {
+                float targetLoss = DestinedDeathStacks * 0.10f; // 10% per stack, up to 60%
+                if (DestinedDeathCurrentHPLoss < targetLoss)
+                {
+                    // Drain max HP by 5% per second (0.05f / 60f per tick)
+                    DestinedDeathCurrentHPLoss = Math.Min(targetLoss, DestinedDeathCurrentHPLoss + (0.05f / 60f));
+                }
+            }
+            else if (DestinedDeathCurrentHPLoss > 0f)
+            {
+                // Debuff expired — recover life at 10% per second (0.10f / 60f per tick)
+                DestinedDeathCurrentHPLoss = Math.Max(0f, DestinedDeathCurrentHPLoss - (0.10f / 60f));
+                if (DestinedDeathCurrentHPLoss <= 0f)
+                {
+                    DestinedDeathStacks = 0;
+                }
+            }
+
+            if (DestinedDeathCurrentHPLoss > 0f)
+            {
+                // Apply max HP reduction
+                Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f - DestinedDeathCurrentHPLoss));
+                Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
+
+                // At 60% max HP loss cap, gain 15% extra damage (additive)
+                if (DestinedDeathCurrentHPLoss >= 0.60f)
+                {
+                    Player.GetDamage(DamageClass.Generic) += 0.15f;
+                }
+            }
         }
     }
 }

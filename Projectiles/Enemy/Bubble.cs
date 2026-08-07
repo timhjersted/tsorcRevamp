@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -22,22 +22,21 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 360;
         }
 
-        //ai[1] == 1: the Hydromancer's upgraded barrage — collides with tiles and soaks the target (Wet).
-        //Default (0) keeps the legacy wall-piercing behavior for other users (Archdeacon).
+        //ai[1] == 1: the Hydromancer's upgraded barrage — soaks the target (Wet).
         bool Soaking => Projectile.ai[1] == 1f;
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            if (Soaking)
-            {
-                Projectile.tileCollide = true;
-            }
+            Projectile.tileCollide = false;
         }
 
         Vector2 initialVelocity;
         public override void AI()
         {
-            Dust.NewDustPerfect(Projectile.Center, 29, null, 200, default, 3).noGravity = true;
+            if (Main.rand.NextBool(4))
+            {
+                Dust.NewDustPerfect(Projectile.Center, 29, null, 200, default, 1.4f).noGravity = true;
+            }
 
             if (initialVelocity == Vector2.Zero)
             {
@@ -62,6 +61,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 target.AddBuff(BuffID.Wet, 5 * 60); //soaked — ink sticks to a wet target
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawQuaraBubble(Projectile.Center, Vector2.One * 24f, 0.5f, Soaking);
+            return true;
         }
 
         public override bool PreKill(int timeLeft)

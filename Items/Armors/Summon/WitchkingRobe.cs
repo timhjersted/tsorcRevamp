@@ -48,11 +48,13 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             var WitchScreamKey = tsorcRevamp.WitchScream.GetAssignedKeys();
             string WitchScreamString = WitchScreamKey.Count > 0 ? WitchScreamKey[0] : LangUtils.GetTextValue("Keybinds.Witchking Scream.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
+            string ArmorSetBonusKeybind = LangUtils.GetTextValue(Main.ReversedUpDownArmorSetBonuses ? "CommonItemTooltip.UpKeybind" : "CommonItemTooltip.DownKeybind") ;
             int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip2");
             if (ttindex1 != -1)
             {
                 tooltips.RemoveAt(ttindex1);
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", LangUtils.GetTextValue("Items.WitchkingRobe.Keybind1") + WitchScreamString + LangUtils.GetTextValue("Items.WitchkingRobe.Keybind2")));
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", LangUtils.GetTextValue("Items.WitchkingRobe.Keybind1") + ArmorSetBonusKeybind 
+                    + LangUtils.GetTextValue("Items.WitchkingRobe.Keybind2") + WitchScreamString + LangUtils.GetTextValue("Items.WitchkingRobe.Keybind3")));
             }
         }
         public override void AddRecipes()

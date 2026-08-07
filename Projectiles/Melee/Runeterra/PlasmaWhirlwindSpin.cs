@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
@@ -9,6 +10,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
     public class PlasmaWhirlwindSpin : ModProjectile
     {
+        public bool AppliedOnSpawn = false;
         public bool Hit = false;
         public override void SetStaticDefaults()
         {
@@ -20,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.scale = 1f;
+            Projectile.scale = PlasmaWhirlwind.BaseScale;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.ownerHitCheck = true;
             Projectile.usesOwnerMeleeHitCD = true;
@@ -29,6 +31,10 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.ignoreWater = true;
             Projectile.width = 328;
             Projectile.height = 320;
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
@@ -58,6 +64,14 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+
+            if (!AppliedOnSpawn)
+            {
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
+                //Projectile.Resize((int)(Projectile.width / PlasmaWhirlwind.BaseScale * Projectile.scale), (int)(Projectile.height / PlasmaWhirlwind.BaseScale * Projectile.scale));
+                AppliedOnSpawn  = true;
+            }
+            
             Vector2 mountedCenter = player.MountedCenter;
             float num = 50f;
             float num9 = 2f;
@@ -178,6 +192,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                     Projectile.frame = 0;
                 }
             }
+            Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3() * 3f);
         }
         public override void CutTiles()
         {
@@ -196,7 +211,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             }*/
             Player owner = Main.player[Projectile.owner];
             float distance = Vector2.Distance(owner.MountedCenter, targetHitbox.Center.ToVector2());
-            if (distance <= (190))
+            if (distance <= (190 * Projectile.scale))
             {
                 return true;
             }

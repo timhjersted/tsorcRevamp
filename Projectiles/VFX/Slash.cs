@@ -65,6 +65,8 @@ namespace tsorcRevamp.Projectiles.VFX
                 trailWidth = Math.Max(trailWidth, 50);
                 Projectile.timeLeft = owner.itemAnimationMax + 10;
                 tsorcInstancedGlobalItem instancedGlobal = owner.HeldItem.GetGlobalItem<tsorcInstancedGlobalItem>();
+                float visualScale = Math.Max(0.05f, instancedGlobal.slashVisualScale);
+                trailWidth = Math.Max(1, (int)(trailWidth * visualScale));
                 slashColor = instancedGlobal.slashColor;
                 slashStyle = instancedGlobal.slashStyle;
                 initializedSlash = true;

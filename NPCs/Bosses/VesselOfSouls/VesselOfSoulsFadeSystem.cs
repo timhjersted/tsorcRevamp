@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
@@ -90,15 +89,13 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
     }
 
     /// <summary>
-    /// Drawn at Terraria's wall layer: after the abyss background but before tiles, NPCs, players, and
-    /// projectiles. This is the ringless purple fog pass used by Artorias, without the retired flesh mask.
+    /// Drawn at Terraria's wall layer: after the interior background but before tiles, NPCs, players,
+    /// and projectiles. VesselVoidSpace supplies slow organic currents without tinting the UI.
     /// </summary>
     internal sealed class VesselInteriorOverlay : Overlay
     {
-        private static Asset<Effect> artoriasFogEffect;
         private static bool backgroundFailureLogged;
         private static bool fogFailureLogged;
-        private Vector2 fogOffset;
 
         public VesselInteriorOverlay() : base(EffectPriority.VeryHigh, RenderLayers.Walls) { }
 
@@ -126,7 +123,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
                 try
                 {
-                    DrawArtoriasFog(spriteBatch, opacity);
+                    DrawVesselVoidSpace(spriteBatch, opacity);
                 }
                 catch (System.Exception exception)
                 {
@@ -172,53 +169,17 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             }
         }
 
-        private void DrawArtoriasFog(SpriteBatch spriteBatch, float opacity)
+        private static void DrawVesselVoidSpace(SpriteBatch spriteBatch, float opacity)
         {
-            artoriasFogEffect ??= ModContent.Request<Effect>(
-                "tsorcRevamp/Effects/MarilithFireAura", AssetRequestMode.ImmediateLoad);
-            Effect effect = artoriasFogEffect.Value;
-            if (effect?.CurrentTechnique == null)
-                return;
-
-            effect.Parameters["uColor"]?.SetValue(new Vector3(0f, 0f, fogOffset.X));
-            effect.Parameters["uOpacity"]?.SetValue(fogOffset.Y);
-            effect.Parameters["uSaturation"]?.SetValue(1f);
-
-            spriteBatch.End();
-            bool customBatchBegun = false;
-            try
-            {
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp,
-                    DepthStencilState.None, RasterizerState.CullNone, effect, Main.Transform);
-                customBatchBegun = true;
-
-                // Marilith's compiled effect contains both the radial ring and the scrolling outer fog.
-                // Sample only the upper-left 40% of the noise UVs: those coordinates never approach
-                // the shader's (0.5, 0.5) ring center, while the ringless scrolling fog remains intact.
-                Texture2D noise = tsorcRevamp.NoiseTurbulent;
-                Rectangle source = new Rectangle(0, 0,
-                    System.Math.Max(1, (int)(noise.Width * 0.4f)),
-                    System.Math.Max(1, (int)(noise.Height * 0.4f)));
-                // Keep the shader's RGB at full strength so its hue stays identical to Artorias.
-                // Vessel uses 65% source alpha so the fog reads clearly over the illustrated background.
-                Color fogColor = new Color(255, 255, 255,
-                    (byte)(255f * MathHelper.Clamp(opacity * 0.65f, 0f, 1f)));
-                spriteBatch.Draw(noise, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight),
-                    source, fogColor);
-            }
-            finally
-            {
-                if (customBatchBegun)
-                    spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
-                    DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
-            }
+            // Full opacity: the shader now owns the whole density profile (near-transparent at the
+            // centre so the interior background reads through, weight carried at the edges and
+            // corners). The old 0.76 scale-down existed only because the fog was a flat wash.
+            Projectiles.Enemy.VesselOfSouls.VesselVFX.DrawVoidSpace(
+                spriteBatch, MathHelper.Clamp(opacity, 0f, 1f));
         }
 
         public override void Update(GameTime gameTime)
         {
-            // Artorias advances by (-0.5, +0.1) per tick; Vessel moves at exactly half that speed.
-            fogOffset -= new Vector2(0.25f, -0.05f);
         }
 
         public override void Activate(Vector2 position, params object[] args)

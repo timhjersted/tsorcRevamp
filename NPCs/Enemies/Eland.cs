@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs.Enemies
 {
     // Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
-    public class Eland : ModNPC
+    public class Eland : ModNPC, IDebugAttackLabel
     {
         float npcAcSPD = 0.7f; //How fast they accelerate.
         float npcSPD = 2.3f; //Max speed
@@ -100,6 +101,46 @@ namespace tsorcRevamp.NPCs.Enemies
 
             UpdatePoisonTrail();
             UpdateSpitAttacks();
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write((byte)spitState);
+            writer.Write((byte)activeSpit);
+            writer.Write(spitTimer);
+            writer.Write(recoveryTimer);
+            writer.Write(volleyIndex);
+            writer.Write(frozenTarget.X);
+            writer.Write(frozenTarget.Y);
+            writer.Write(chargeLaunched);
+            writer.Write(chargeBurstDone);
+            writer.Write(comboACooldown);
+            writer.Write(comboBCooldown);
+            writer.Write(comboCCooldown);
+            writer.Write(stickySpitCooldown);
+            writer.Write(novaCooldown);
+            writer.Write(chargeCooldown);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            spitState = (SpitState)reader.ReadByte();
+            activeSpit = (SpitAttack)reader.ReadByte();
+            spitTimer = reader.ReadInt32();
+            recoveryTimer = reader.ReadInt32();
+            volleyIndex = reader.ReadInt32();
+            frozenTarget = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            chargeLaunched = reader.ReadBoolean();
+            chargeBurstDone = reader.ReadBoolean();
+            comboACooldown = reader.ReadInt32();
+            comboBCooldown = reader.ReadInt32();
+            comboCCooldown = reader.ReadInt32();
+            stickySpitCooldown = reader.ReadInt32();
+            novaCooldown = reader.ReadInt32();
+            chargeCooldown = reader.ReadInt32();
+            schedule = activeSpit == SpitAttack.ToxicGasNova || activeSpit == SpitAttack.ChargeJump
+                ? null
+                : BuildSchedule(activeSpit);
         }
 
         // Pre-hardmode / hardmode / super-hardmode tiered value, used for every attack's damage below.
@@ -208,6 +249,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
         SpitState spitState = SpitState.Idle;
         SpitAttack activeSpit;
+
+        /// <summary>
+        /// DebugMode above-head readout (see IDebugAttackLabel). Shows both the chosen attack and
+        /// which half of it is running, since the telegraph/fire split is the whole counterplay.
+        /// </summary>
+        public string DebugAttackLabel => spitState == SpitState.Idle
+            ? "Idle"
+            : $"{DebugLabels.Humanize(activeSpit.ToString())} ({spitState})";
+
         int spitTimer;
         int recoveryTimer; // shared FSM lockout after any attack finishes
         int volleyIndex;
@@ -247,6 +297,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (NPC.velocity.Y != 0f)
                         return; // don't start a windup mid-air
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                        return; //the server owns random attack selection; SendExtraAI mirrors the chosen state
 
                     float distance = NPC.Distance(target.Center);
                     bool lowHp = NPC.life < NPC.lifeMax * 0.5f;
@@ -290,14 +342,18 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         // Ring pulses AT the true detonation radius the whole telegraph (doesn't grow into it) —
                         // shows exactly where the blast will land. Matches ToxicGasNovaGlow's own pulse.
-                        float pulse = 0.85f + 0.15f * (float)Math.Sin(spitTimer * 0.3f);
-                        UsefulFunctions.DustRingPrecise(NPC.Center, NovaRadius, DustID.Poisoned, 48, 0f, 120, pulse * 1.3f);
+                        if (spitTimer % 4 == 0)
+                        {
+                            float pulse = 0.85f + 0.15f * (float)Math.Sin(spitTimer * 0.3f);
+                            UsefulFunctions.DustRingPrecise(NPC.Center, NovaRadius, DustID.Poisoned, 24, 0f, 120, pulse * 1.3f);
+                        }
                     }
                     if (spitTimer >= TelegraphTicks(activeSpit))
                     {
                         spitState = SpitState.Firing;
                         spitTimer = 0;
                         volleyIndex = 0;
+                        NPC.netUpdate = true;
                     }
                     break;
 
@@ -328,6 +384,7 @@ namespace tsorcRevamp.NPCs.Enemies
             schedule = null;
             chargeLaunched = false;
             chargeBurstDone = false;
+            NPC.netUpdate = true;
 
             // Damage bypasses the AddAttack/SimpleProjectile framework entirely (direct Projectile.NewProjectile
             // calls below), so these numbers land exactly as written — tiered by difficulty ourselves.
@@ -462,6 +519,7 @@ namespace tsorcRevamp.NPCs.Enemies
             recoveryTimer = RecoveryTicks(activeSpit);
             spitState = SpitState.Idle;
             spitTimer = 0;
+            NPC.netUpdate = true;
         }
 
         void UpdateVolleyFiring()
@@ -506,11 +564,15 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (NPC.Distance(target.Center) <= NovaRadius + 20f)
+                    for (int i = 0; i < Main.maxPlayers; i++)
                     {
-                        int hitDir = target.Center.X < NPC.Center.X ? -1 : 1;
-                        target.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), Tiered(30, 50, 70), hitDir, dodgeable: true);
-                        target.AddBuff(BuffID.Poisoned, 12 * 60, false);
+                        Player blastTarget = Main.player[i];
+                        if (!blastTarget.active || blastTarget.dead || NPC.Distance(blastTarget.Center) > NovaRadius + 20f)
+                            continue;
+
+                        int hitDir = blastTarget.Center.X < NPC.Center.X ? -1 : 1;
+                        blastTarget.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), Tiered(30, 50, 70), hitDir, dodgeable: true);
+                        blastTarget.AddBuff(BuffID.Poisoned, 12 * 60, false);
                     }
 
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
@@ -518,7 +580,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Instant "boom": dust scattered across the WHOLE disc, not just the ring edge.
-                for (int i = 0; i < 120; i++)
+                for (int i = 0; i < 48; i++)
                 {
                     Vector2 spot = NPC.Center + Main.rand.NextVector2Circular(NovaRadius, NovaRadius);
                     int dust = Dust.NewDust(spot, 1, 1, DustID.Poisoned, 0f, 0f, 100, default, 1.5f);
@@ -600,6 +662,15 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.velocity.X = (float)Math.Cos(rotation) * chargeSpeed;
             NPC.velocity.Y = (float)Math.Sin(rotation) * chargeSpeed - 3f; // extra pop so it arcs like a leap
             NPC.netUpdate = true;
+        }
+
+        public override void PostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (spitState == SpitState.Firing && activeSpit == SpitAttack.ChargeJump && chargeLaunched && NPC.velocity.Y != 0f)
+            {
+                Projectiles.Enemy.EnemyVFX.DrawElandVenomProjectile(
+                    NPC.Center, NPC.velocity, new Vector2(116f, 42f), 0.58f);
+            }
         }
 
         // Shared by Charge Jump's landing/contact burst and the on-death burst below.

@@ -224,15 +224,17 @@ namespace tsorcRevamp.Projectiles
                 WeaponStaminaSourceItemType = itemUse.Item.type;
                 WeaponStaminaSourceIsSummon = itemUse.Item.DamageType == DamageClass.Summon;
             }
-            else if (source is EntitySource_Parent { Entity: Projectile parent })
+            else if (source is EntitySource_Parent { Entity: Projectile parent }
+                && parent.TryGetGlobalProjectile(out tsorcGlobalProjectile parentData))
             {
-                tsorcGlobalProjectile parentData = parent.GetGlobalProjectile<tsorcGlobalProjectile>();
                 WeaponStaminaSourceItemType = parentData.WeaponStaminaSourceItemType;
                 WeaponStaminaSourceIsSummon = parentData.WeaponStaminaSourceIsSummon;
                 SourceNPCIndex = parentData.SourceNPCIndex;
                 SourceNPCType = parentData.SourceNPCType;
                 DefenseTraits = parentData.DefenseTraits;
             }
+            // Some legacy projectiles change their type during PreKill. Their children still spawn normally,
+            // but the retired parent no longer has a valid per-entity GlobalProjectile instance to inherit.
 
             WeaponStaminaSourceIsSummon |= projectile.minion
                 || projectile.sentry

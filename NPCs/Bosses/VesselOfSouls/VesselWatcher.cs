@@ -305,7 +305,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.7f, Pitch = -0.2f }, NPC.Center);
                 for (int i = 0; i < 6; i++) // +40% gores (was ~4), bigger
                     Gore.NewGore(NPC.GetSource_Death(), NPC.Center - new Vector2(8f), Main.rand.NextVector2Circular(3.2f, 3.2f), GoreID.Smoke1 + Main.rand.Next(3), 1.35f);
-                for (int i = 0; i < 46; i++) // more explosion dust
+                for (int i = 0; i < 46; i++)
                 {
                     Vector2 vel = Main.rand.NextVector2Circular(7f, 7f);
                     int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, vel.X, vel.Y, 70, default, Main.rand.NextFloat(1.4f, 2.2f));
@@ -321,7 +321,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             // Damage radius: a dense radial skull burst (~40% bigger than a normal volley).
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int n = 16;
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselSoulRuptureVFX>(),
+                    0, 0f, Main.myPlayer, 105f, 1f, 20f);
+                int n = 12;
                 for (int i = 0; i < n; i++)
                 {
                     // Timed-out Watcher death burst: 25% slower than before (6-8.5 -> 4.5-6.375).
@@ -351,6 +354,35 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         // Leonhard-style cached afterimage trail behind the eye.
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            int despawnAge = Mode == 1 ? 360 : 1200;
+            bool detonating = age >= despawnAge - DetonateWindup;
+            float chargeProgress = 0f;
+            if (detonating)
+            {
+                chargeProgress = MathHelper.Clamp((age - (despawnAge - DetonateWindup))
+                    / (float)DetonateWindup, 0f, 1f);
+            }
+            else if (Mode == 1)
+            {
+                chargeProgress = MathHelper.Clamp((fireTimer - (SentinelFire - 18)) / 18f, 0f, 1f);
+            }
+            else
+            {
+                ComputeRank(out int alive, out int rank);
+                int window = (int)(Main.GameUpdateCount / ServantFire);
+                int windowPos = (int)(Main.GameUpdateCount % ServantFire);
+                bool myTurn = alive <= 1 || (rank % 2) == (window % 2);
+                if (myTurn)
+                    chargeProgress = MathHelper.Clamp((windowPos - (ServantFire - 18)) / 18f, 0f, 1f);
+            }
+
+            Player target = NPC.target >= 0 && NPC.target < Main.maxPlayers
+                ? Main.player[NPC.target]
+                : Main.LocalPlayer;
+            Vector2 aim = target != null && target.active ? target.Center : NPC.Center + Vector2.UnitY * 80f;
+            Projectiles.Enemy.VesselOfSouls.VesselVFX.DrawWatcherGaze(
+                NPC.Center, aim, chargeProgress, detonating);
+
             Texture2D tex = TextureAssets.Npc[NPC.type].Value;
             Vector2 origin = NPC.frame.Size() / 2f;
             for (int k = NPC.oldPos.Length - 1; k > 0; k--)
