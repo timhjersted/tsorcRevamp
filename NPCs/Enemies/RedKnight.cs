@@ -198,7 +198,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     return "Ultrakill Barrage";
                 }
-                if ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f))
+                if (((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f)) && NPC.HasValidTarget && NPC.Distance(Main.player[NPC.target].Center) > 350f)
                 {
                     return "Abyssal Rain";
                 }
@@ -815,14 +815,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 #region AI 2 Attacks
                 // Air attack targeting indicator — dust appears above drop zone 3 frames before each wave
-                if ((NPC.ai[2] == 72 || NPC.ai[2] == 97 || NPC.ai[2] == 522 || NPC.ai[2] == 547 || NPC.ai[2] == 572 || NPC.ai[2] == 597) && !inActiveAttack && NPC.Distance(player.Center) > 350 && hasPlayerLOS)
+                if ((NPC.ai[2] == 72 || NPC.ai[2] == 97 || NPC.ai[2] == 522 || NPC.ai[2] == 547 || NPC.ai[2] == 572 || NPC.ai[2] == 597) && NPC.Distance(player.Center) > 350)
                 {
                     for (int i = 0; i < 6; i++)
                         Dust.NewDust(new Vector2(player.position.X - 10 + Main.rand.Next(player.width + 20), player.position.Y - 340f), 4, 4, DustID.Torch, 0f, 3f, 100, default, 1.2f);
                 }
 
                 // Fire Attack from Air
-                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && !inActiveAttack && NPC.Distance(player.Center) > 350 && hasPlayerLOS)
+                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && NPC.Distance(player.Center) > 350)
                 {
                     for (int pcy = 0; pcy < 3; pcy++)
                     {
@@ -835,7 +835,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Slightly Delayed Fire Attack From Air
-                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && !inActiveAttack && NPC.Distance(player.Center) > 370 && hasPlayerLOS)
+                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && NPC.Distance(player.Center) > 370)
                 {
                     for (int pcy = 0; pcy < 4; pcy++)
                     {
@@ -1119,7 +1119,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else if (frame >= 2)
             {
-                handWorld.Y += 12f;
+                handWorld.Y += 7f;
             }
             return handWorld;
         }

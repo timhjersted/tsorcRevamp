@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
@@ -1522,13 +1522,16 @@ namespace tsorcRevamp.NPCs
             int sinkCap = Math.Max(0, g.BeastSinkMaxTiles);
             if (sinkCap == 0) return;
 
-            // Deepest ground under the full footprint, measured in tiles BELOW the resting floor (capped). On flat
-            // ground every column is solid at restRow → drop 0 → no sink. Where the ground steps down (a slope/hill),
+            // Deepest ground under the footprint, measured in tiles BELOW the resting floor (capped). On flat
+            // ground every column is solid at restRow → drop 0 → no sink. Where the ground steps down on a slope,
             // the sprite sinks toward the lowest foot so the higher body clips into the terrain instead of floating.
-            // Columns with NO ground within the cap (a true cliff edge / air) don't pull the sink down.
+            // Open-air cliff drops (columns where restRow and restRow-1 are both air) do NOT pull the sink down.
             int deepest = 0;
             for (int x = leftX; x <= rightX; x++)
             {
+                // Skip open-air cliff overhangs (no terrain at or above feet level)
+                if (!IsNavigationSolid(x, restRow) && !IsNavigationSolid(x, restRow - 1)) continue;
+
                 for (int d = 0; d <= sinkCap; d++)
                 {
                     if (IsNavigationSolid(x, restRow + d)) { if (d > deepest) deepest = d; break; }

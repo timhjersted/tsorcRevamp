@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,6 +15,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         private static ReLogic.Content.Asset<Texture2D> neckTexture;
         private static ReLogic.Content.Asset<Texture2D> headTexture;
+
+        public Vector2 FrontHeadWorldPosition = Vector2.Zero;
 
         float npcAcSPD = 0.6f; // How fast they accelerate.
         float npcSPD = 2.2f; // Max speed
@@ -75,7 +78,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.1f;
             Main.npcFrameCount[NPC.type] = 16;
-            AnimationType = 28;
             NPC.lavaImmune = true;
             NPC.buffImmune[BuffID.Venom] = true;
             NPC.buffImmune[BuffID.Confused] = true;
@@ -86,12 +88,44 @@ namespace tsorcRevamp.NPCs.Enemies
             g.NavSearchRadius = 24;
             g.MaxJumpPower = 10f;
             g.MaxJumpBoost = 6f;
+            g.BeastSinkMaxTiles = 2;
             EvasiveProfile.HeavyBeast(g);
             g.KiteRangeMin = 12f;
             g.KiteRangeMax = 30f;
             g.PatrolMode = NPCs.PatrolMode.Wander;
 
             attackCooldown = 120;
+        }
+
+        public override void FindFrame(int frameHeight)
+        {
+            if (NPC.velocity.Y == 0f && Math.Abs(NPC.velocity.X) > 0.1f)
+            {
+                // 2x slower walking animation cycle
+                NPC.frameCounter += 0.25;
+                if (NPC.frameCounter >= 6.0)
+                {
+                    NPC.frameCounter = 0;
+                    int currentFrame = NPC.frame.Y / frameHeight;
+                    int nextFrame = (currentFrame + 1) % Main.npcFrameCount[NPC.type];
+                    NPC.frame.Y = nextFrame * frameHeight;
+
+                    // Footfall screen shake & footstep sound on ground impact frames (frames 3 and 11)
+                    if (nextFrame == 3 || nextFrame == 11)
+                    {
+                        SoundEngine.PlaySound(SoundID.DeerclopsStep with { Volume = 0.4f, Pitch = -0.2f }, NPC.Bottom);
+                        UsefulFunctions.ScreenShake(NPC.Bottom, 1.2f, 6, 4f, 300f);
+                    }
+                }
+            }
+            else if (NPC.velocity.Y != 0f)
+            {
+                NPC.frame.Y = 2 * frameHeight; // Jump/air frame
+            }
+            else
+            {
+                NPC.frame.Y = 0; // Idle standing frame
+            }
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -194,7 +228,8 @@ namespace tsorcRevamp.NPCs.Enemies
             switch (currentAttack)
             {
                 case AttackID.ConsecratedLight:
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.UnitY, ModContent.ProjectileType<Projectiles.Enemy.EnemyConsecratedLight>(), 35, 0f, Main.myPlayer, 0f, NPC.whoAmI);
+                    Vector2 spawnPos = FrontHeadWorldPosition != Vector2.Zero ? FrontHeadWorldPosition : NPC.Center;
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, Vector2.UnitY, ModContent.ProjectileType<Projectiles.Enemy.EnemyConsecratedLight>(), 35, 0f, Main.myPlayer, 0f, NPC.whoAmI);
                     break;
             }
         }
@@ -266,14 +301,20 @@ namespace tsorcRevamp.NPCs.Enemies
 
         void SpawnSmiteMarkDust(Vector2 position, float progress)
         {
-            if (Main.netMode == NetmodeID.Server || Main.rand.NextFloat() >= 0.3f + progress * 0.5f)
+            if (Main.netMode == NetmodeID.Server || Main.rand.NextFloat() >= 0.36f + progress * 0.6f)
             {
                 return;
             }
             Vector2 edge = Main.rand.NextVector2CircularEdge(40f, 40f) * (1f - progress * 0.4f);
-            int dust = Dust.NewDust(position + edge, 2, 2, DustID.GoldFlame, 0f, 0f, 100, default, 1f + progress);
+            int dust = Dust.NewDust(position + edge, 2, 2, DustID.GoldFlame, 0f, 0f, 100, default, 1.2f + progress * 0.2f);
             Main.dust[dust].noGravity = true;
-            Main.dust[dust].velocity = -edge * 0.03f;
+            Main.dust[dust].velocity = -edge * 0.035f;
+
+            if (Main.rand.NextBool(4))
+            {
+                int spark = Dust.NewDust(position + edge, 2, 2, DustID.WhiteTorch, 0f, 0f, 100, default, 1.1f);
+                Main.dust[spark].noGravity = true;
+            }
         }
 
         void FireConsecratedLightning(Vector2 position)
@@ -282,7 +323,8 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 return;
             }
-            Vector2 spawnPosition = position - new Vector2(0f, 236f);
+            // Shifted 32px lower (204f Y offset instead of 236f) so the bottom edge of lightning animation hits the ground
+            Vector2 spawnPosition = position - new Vector2(0f, 204f);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.ConsecratedLightning>(), SmiteDamage, 0f, Main.myPlayer);
         }
 
@@ -354,15 +396,15 @@ namespace tsorcRevamp.NPCs.Enemies
             neckTexture ??= ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/Hydra_Neck");
             headTexture ??= ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/Hydra_Head");
 
-            // Base neck anchor offsets on body frame 0 (relative to center, facing left)
-            // Neck 0 (Purple / Back): offset (-13, -34)
-            // Neck 1 (Red / Middle): offset (-7, -36)
-            // Neck 2 (Orange / Front): offset (-1, -36)
+            // Base neck anchor offsets on body frame 0 (relative to NPC.Bottom, facing left)
+            // Neck 0 (Purple / Back): offset (-15, -122)
+            // Neck 1 (Red / Middle): offset (-9, -124)
+            // Neck 2 (Orange / Front): offset (-3, -124)
             Vector2[] neckBaseOffsetsLeft = new Vector2[]
             {
-                new Vector2(-13f, -34f),
-                new Vector2(-7f, -36f),
-                new Vector2(-1f, -36f)
+                new Vector2(-15f, -122f),
+                new Vector2(-9f, -124f),
+                new Vector2(-3f, -124f)
             };
 
             // 1. Draw Purple Neck & Head (Back layer)
@@ -371,7 +413,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // 2. Draw Red Neck & Head (Middle layer)
             DrawNeckAndHead(spriteBatch, screenPos, drawColor, neckIndex: 1, neckBaseOffsetsLeft[1]);
 
-            // 3. Draw Hydra_Headless Body (Center layer)
+            // 3. Draw Hydra_Headless Body (Center layer, aligned to NPC.Bottom)
             DrawBody(spriteBatch, screenPos, drawColor);
 
             // 4. Draw Orange Neck & Head (Front layer)
@@ -385,10 +427,12 @@ namespace tsorcRevamp.NPCs.Enemies
             Texture2D bodyTex = ModContent.Request<Texture2D>(Texture).Value;
             int frameHeight = bodyTex.Height / Main.npcFrameCount[NPC.type];
             Rectangle sourceRect = new Rectangle(0, NPC.frame.Y, bodyTex.Width, frameHeight);
-            Vector2 origin = new Vector2(bodyTex.Width / 2f, frameHeight / 2f);
+            
+            // Align feet to NPC.Bottom (Y = 177 in 180px frame height)
+            Vector2 origin = new Vector2(bodyTex.Width / 2f, 177f);
 
             SpriteEffects effects = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Vector2 drawPos = NPC.Center - screenPos + new Vector2(0f, NPC.gfxOffY);
+            Vector2 drawPos = NPC.Bottom - screenPos + new Vector2(0f, NPC.gfxOffY);
 
             spriteBatch.Draw(bodyTex, drawPos, sourceRect, drawColor, NPC.rotation, origin, NPC.scale, effects, 0f);
         }
@@ -400,11 +444,10 @@ namespace tsorcRevamp.NPCs.Enemies
             Texture2D neckTex = neckTexture.Value;
             Texture2D headTex = headTexture.Value;
 
-            // Facing direction adjustments
             bool facingRight = NPC.spriteDirection == 1;
             Vector2 baseOffset = facingRight ? new Vector2(-baseOffsetLeft.X, baseOffsetLeft.Y) : baseOffsetLeft;
 
-            Vector2 currentPos = NPC.Center + baseOffset;
+            Vector2 currentPos = NPC.Bottom + baseOffset + new Vector2(0f, NPC.gfxOffY);
             float time = (float)Main.timeForVisualEffects;
 
             // Independent idle sway per neck
@@ -412,24 +455,20 @@ namespace tsorcRevamp.NPCs.Enemies
             float[] swayPhase = { 0.0f, 2.1f, 4.2f };
             float swayAngle = MathF.Sin(time * swayFreq[neckIndex] + swayPhase[neckIndex]) * 0.08f;
 
-            // Initial direction extending horizontally rightward (if facing left) or leftward (if facing right)
-            // Facing left (spriteDirection == -1): starts pointing right (+X = 0 rad), curves counterclockwise/upward (-rad)
-            // Facing right (spriteDirection == 1): starts pointing left (-X = PI rad), curves clockwise/upward (+rad)
+            // Initial direction extending rightward (+X) if facing left, or leftward (-X) if facing right
             float baseAngle = facingRight ? MathHelper.Pi : 0f;
             float currentAngle = baseAngle + swayAngle;
 
-            const int segmentCount = 22;
-            const float segmentLength = 5.5f;
-            const float maxBendStep = 0.0872665f; // 5 degrees max bend per segment step
+            const int segmentCount = 32;
+            const float segmentLength = 8.5f; // Step distance between 18px long neck segments
 
-            // Curve progress: angle steps smoothly toward backwards "C" target angle
-            // Target total bend is ~160-180 degrees (Pi radians)
-            float totalTargetBend = facingRight ? MathHelper.Pi : -MathHelper.Pi;
-            float bendPerStep = MathHelper.Clamp(totalTargetBend / segmentCount, -maxBendStep, maxBendStep);
+            // Total backwards "C" curve arc: ~245 degrees
+            float totalTargetBend = facingRight ? MathHelper.ToRadians(245f) : -MathHelper.ToRadians(245f);
+            float bendPerStep = totalTargetBend / segmentCount;
 
             Vector2 lastPos = currentPos;
 
-            // Render neck segments
+            // Render neck segments with tangent rotation (no distortion / no twisting)
             for (int i = 0; i < segmentCount; i++)
             {
                 currentAngle += bendPerStep;
@@ -439,10 +478,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 drawPos = currentPos - screenPos;
                 Vector2 neckOrigin = new Vector2(neckTex.Width / 2f, neckTex.Height / 2f);
 
-                // Draw neck segment without individual rotation so top/bottom black borders remain horizontal
-                spriteBatch.Draw(neckTex, drawPos, null, drawColor, 0f, neckOrigin, NPC.scale, SpriteEffects.None, 0f);
+                // Rotate neck segment by currentAngle + Pi/2 so the 18px height aligns with curve tangent
+                float neckRotation = currentAngle + MathHelper.PiOver2;
+
+                spriteBatch.Draw(neckTex, drawPos, null, drawColor, neckRotation, neckOrigin, NPC.scale, SpriteEffects.None, 0f);
 
                 lastPos = currentPos;
+            }
+
+            // Record Front Head (Neck 2) position for attack beam origin
+            if (neckIndex == 2)
+            {
+                FrontHeadWorldPosition = lastPos;
             }
 
             // Head frame selection: 0 = closed, 1 = half open, 2 = wide open
@@ -457,9 +504,10 @@ namespace tsorcRevamp.NPCs.Enemies
             int headFrameHeight = headTex.Height / 3;
             Rectangle headSourceRect = new Rectangle(0, headFrame * headFrameHeight, headTex.Width, headFrameHeight);
 
-            // Head attaches to last neck position, oriented following current terminal neck angle or target
             SpriteEffects headEffects = facingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Vector2 headOrigin = facingRight ? new Vector2(headTex.Width - 6f, headFrameHeight / 2f) : new Vector2(6f, headFrameHeight / 2f);
+            
+            // Rotate head to align with front-facing terminal angle of the neck arch
             float headRotation = facingRight ? currentAngle - MathHelper.Pi : currentAngle;
 
             Vector2 headDrawPos = lastPos - screenPos;

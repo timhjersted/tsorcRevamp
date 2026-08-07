@@ -51,11 +51,11 @@ namespace tsorcRevamp.Projectiles.Enemy
                     }
                 }
             }
-            if (Projectile.timeLeft > 60)
+            if (Projectile.timeLeft <= 30)
             {
-                Projectile.timeLeft = 60;
+                Projectile.alpha += 9;
             }
-            Projectile.rotation += 0.3f * (float)Projectile.direction;
+            Projectile.rotation += 0.35f * (float)Projectile.direction;
             return;
         }
         #endregion

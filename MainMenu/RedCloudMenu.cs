@@ -21,7 +21,7 @@ namespace tsorcRevamp.MainMenu
 
         public override string DisplayName => "The Story of Red Cloud";
 
-        public override Asset<Texture2D> Logo => logo ??= ModContent.Request<Texture2D>("tsorcRevamp/MainMenu/tsorc_logo", AssetRequestMode.ImmediateLoad);
+        public override Asset<Texture2D> Logo => logo ??= ModContent.Request<Texture2D>("tsorcRevamp/MainMenu/tsorc_simple_logo", AssetRequestMode.ImmediateLoad);
 
         public override int Music => MusicLoader.GetMusicSlot(Mod, BundledMenuTrack);
 
@@ -48,11 +48,12 @@ namespace tsorcRevamp.MainMenu
             DrawMenuBackground(spriteBatch);
 
             Texture2D logoTexture = Logo.Value;
-            float maxLogoWidth = Main.screenWidth * 0.58f;
-            float maxLogoHeight = Main.screenHeight * 0.42f;
+            float maxLogoWidth = Main.screenWidth * 0.3016f;
+            float maxLogoHeight = Main.screenHeight * 0.2184f;
             logoScale = MathHelper.Min(maxLogoWidth / logoTexture.Width, maxLogoHeight / logoTexture.Height);
             logoRotation = 0f;
-            logoDrawCenter = new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.18f);
+            logoDrawCenter = new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.126f);
+            // drawColor = Color.White;
 
             return true;
         }

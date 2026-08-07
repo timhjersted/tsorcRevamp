@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -192,13 +192,29 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Main.dust[dustIndex].velocity *= knightBomb ? 2.4f : 3.5f;
             }
 
+            if (knightBomb && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int blazeDamage = ExplosionDamage(Projectile.damage);
+                for (int i = 0; i < 8; i++)
+                {
+                    float angle = i * (MathHelper.TwoPi / 8f);
+                    Vector2 dir = angle.ToRotationVector2();
+                    Vector2 blazeVel = dir * 0.56f;
+                    int proj = Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, blazeVel,
+                        ModContent.ProjectileType<EnemySpellBlaze>(), blazeDamage, 5f, Main.myPlayer);
+                    if (proj >= 0 && proj < Main.maxProjectiles)
+                    {
+                        Main.projectile[proj].timeLeft = 90;
+                    }
+                }
+            }
+
             // Knight bombs only: red/soot fire on top of the grey smoke above, built as the three
             // distinct layers a blast needs (§20) rather than one pass of identical motes.
             if (knightBomb && !Main.dedServ)
             {
-                // MIDGROUND — the body of the fireball. 40 -> 64 motes, reach 54px -> 68px, and the
-                // scale band drops 0.9-1.9 -> 0.75-1.5 so density comes from count, not chunk size.
-                for (int i = 0; i < 64; i++)
+                // MIDGROUND — the body of the fireball. 80 motes of RedTorch, reach 68px, scale 0.75-1.5, noGravity.
+                for (int i = 0; i < 80; i++)
                 {
                     Vector2 direction = Main.rand.NextVector2Unit();
                     bool soot = i % 4 == 0;
@@ -212,10 +228,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                     ember.noGravity = true;
                 }
 
-                // FOREGROUND — 22 tiny fast sparks that outrun the body and die quickly. These are
-                // what give the blast a sharp leading edge; they are deliberately the smallest and
-                // fastest thing in the effect.
-                for (int i = 0; i < 22; i++)
+                // FOREGROUND — 35 tiny fast sparks that outrun the body and die quickly.
+                for (int i = 0; i < 35; i++)
                 {
                     Vector2 direction = Main.rand.NextVector2Unit();
                     Dust spark = Dust.NewDustPerfect(
@@ -225,8 +239,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                         60, new Color(255, 176, 96),
                         Main.rand.NextFloat(0.45f, 0.85f));
                     spark.noGravity = true;
-                    // NO fadeIn here on purpose: fadeIn is a GROW-TO-SCALE target, not an alpha
-                    // ramp, and a spark should be at full size on frame 1.
                 }
 
                 // BACKGROUND — 16 slow, dark, gravity-bound smoke motes that linger after the fire
@@ -240,8 +252,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                         direction * Main.rand.NextFloat(0.6f, 2.2f) - Vector2.UnitY * 0.7f,
                         170, new Color(38, 30, 32),
                         Main.rand.NextFloat(0.5f, 0.8f));
-                    // fadeIn > spawn scale, so these genuinely BILLOW: they grow at +0.03/tick up
-                    // to ~1.5 and only then start shrinking. (fadeIn <= scale is a silent no-op.)
                     smoke.fadeIn = Main.rand.NextFloat(1.3f, 1.7f);
                 }
             }

@@ -176,7 +176,7 @@ namespace tsorcRevamp.NPCs
             {
                 candidates[count++] = KnightSpecialAttack.VenomWake;
             }
-            if (distance >= 120f && TryFindGround(target.Bottom, 10, 28, out Vector2 standardGround))
+            if (tsorcRevampWorld.SuperHardMode && distance >= 120f && TryFindGround(target.Bottom, 10, 28, out Vector2 standardGround))
             {
                 candidates[count++] = KnightSpecialAttack.CrimsonStandard;
                 LockedTarget = standardGround;
@@ -615,9 +615,9 @@ namespace tsorcRevamp.NPCs
 
         // Ticks between the three Royal Standard throws. Deliberately shorter than a standard's own
         // flight (30t) + telegraph (26t), so spear N+1 is already in the air before spear N's flame
-        // resolves — the three read as one continuous cascade rather than three discrete beats.
-        const int RoyalThrowInterval = 20;
         const int RoyalFirstThrow = 75;
+        const int RoyalThrowInterval1 = 30;
+        const int RoyalThrowInterval2 = 60;
 
         void TickRoyalStandard(NPC npc, KnightAttackStats stats)
         {
@@ -647,13 +647,13 @@ namespace tsorcRevamp.NPCs
             {
                 ThrowRoyalSpear(npc, nearMark, stats.MagicDamage, nearMode, -0.2f);
             }
-            else if (Timer == RoyalFirstThrow + RoyalThrowInterval)
+            else if (Timer == RoyalFirstThrow + RoyalThrowInterval1)
             {
                 // The centre mark keeps GreatCenter: it is the one with a damaging spear in flight
                 // and the heavier damage, and it lands on the player's own position.
                 ThrowRoyalSpear(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter, -0.05f);
             }
-            else if (Timer == RoyalFirstThrow + RoyalThrowInterval * 2)
+            else if (Timer == RoyalFirstThrow + RoyalThrowInterval1 + RoyalThrowInterval2)
             {
                 ThrowRoyalSpear(npc, farMark, stats.MagicDamage, farMode, 0.1f);
                 // Only release the knight once the LAST spear is away, not after the first.
@@ -1008,7 +1008,7 @@ namespace tsorcRevamp.NPCs
                 KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 203,
                 // Extended to cover all three back-to-back throws (75 / 95 / 115), not just the
                 // first — the knight is committed for the whole cascade now.
-                KnightSpecialAttack.RoyalStandard => Timer >= 69 && Timer < 123,
+                KnightSpecialAttack.RoyalStandard => Timer >= 69 && Timer < 173,
                 KnightSpecialAttack.StormbreakerEdict => Timer >= 60 && Timer < 76,
                 // Hyper-armored from the moment the spear is planted until it starts retracting,
                 // so the hold cannot simply be staggered out of. Rescaled to the 300t hold.
@@ -1106,7 +1106,7 @@ namespace tsorcRevamp.NPCs
             KnightSpecialAttack.FurnacePincer when Timer < 60 => KnightHeldProp.Bomb,
             KnightSpecialAttack.FurnacePincer when Timer >= 105 && Timer < 205 => KnightHeldProp.Spear,
             // Holds a spear through all THREE back-to-back throws now, not just the first.
-            KnightSpecialAttack.RoyalStandard when Timer < RoyalFirstThrow + RoyalThrowInterval * 2 => KnightHeldProp.Spear,
+            KnightSpecialAttack.RoyalStandard when Timer < RoyalFirstThrow + RoyalThrowInterval1 + RoyalThrowInterval2 => KnightHeldProp.Spear,
             KnightSpecialAttack.StormbreakerEdict when Timer < 122 => KnightHeldProp.Spear,
             KnightSpecialAttack.CrimsonDominion => KnightHeldProp.Spear,
             _ => KnightHeldProp.None
@@ -1193,7 +1193,7 @@ namespace tsorcRevamp.NPCs
                     KnightSpecialAttack.CrimsonAdvance => Timer < 60 ? 60 : 135,
                     KnightSpecialAttack.FurnacePincer => Timer < 60 ? 60 : 165,
                     // Ramps across the whole three-throw cascade rather than stopping at the first.
-                    KnightSpecialAttack.RoyalStandard => RoyalFirstThrow + RoyalThrowInterval * 2,
+                    KnightSpecialAttack.RoyalStandard => RoyalFirstThrow + RoyalThrowInterval1 + RoyalThrowInterval2,
                     KnightSpecialAttack.StormbreakerEdict => 60,
                     KnightSpecialAttack.CrimsonDominion => 90,
                     KnightSpecialAttack.FurnaceHerald or KnightSpecialAttack.StormHerald => 150,

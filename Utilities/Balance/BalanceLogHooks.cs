@@ -44,11 +44,9 @@ namespace tsorcRevamp.Utilities.Balance
                 return;
             }
 
-            // Projectiles spawned by other projectiles — minion attacks, explosion shrapnel, split
-            // shots — inherit the original weapon rather than resolving to nothing.
-            if (source is EntitySource_Parent { Entity: Projectile parent })
+            if (source is EntitySource_Parent { Entity: Projectile parent }
+                && parent.TryGetGlobalProjectile<BalanceSourceProjectile>(out var inherited))
             {
-                BalanceSourceProjectile inherited = parent.GetGlobalProjectile<BalanceSourceProjectile>();
                 SourceItemType = inherited.SourceItemType;
                 SourceAmmoType = inherited.SourceAmmoType;
                 SourceAttackMode = inherited.SourceAttackMode;

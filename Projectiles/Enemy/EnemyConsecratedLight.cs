@@ -57,14 +57,20 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            // Origin tracks near the head - offset forward/up from center, roughly where the
-            // mouth is regardless of exactly how the long neck happens to be swaying that frame.
-            LaserOffset = new Vector2(owner.direction * owner.width * 0.35f, -owner.height * 0.3f);
+            if (owner.ModNPC is NPCs.Enemies.Hydra hydra && hydra.FrontHeadWorldPosition != Vector2.Zero)
+            {
+                LaserOffset = hydra.FrontHeadWorldPosition - owner.Center;
+            }
+            else
+            {
+                LaserOffset = new Vector2(owner.direction * owner.width * 0.35f, -owner.height * 0.3f);
+            }
 
             if (!initializedDirection)
             {
                 sweepDirection = owner.direction;
-                baseDirection = Vector2.UnitY.RotatedBy(MathHelper.ToRadians(-StartLeanDegrees * sweepDirection));
+                // Start leaning backward under the chest/feet, then sweep forward towards the player
+                baseDirection = Vector2.UnitY.RotatedBy(MathHelper.ToRadians(StartLeanDegrees * sweepDirection));
                 initializedDirection = true;
             }
 
@@ -84,12 +90,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             else
             {
-                // Firing: sweep the full 160 degrees with an ease-in curve, so the rotation
-                // starts slow and visibly accelerates as it goes.
+                // Firing: sweep forward towards the player
                 float t = FiringDuration > 0 ? 1f - (float)FiringTimeLeft / FiringDuration : 1f;
                 t = MathHelper.Clamp(t, 0f, 1f);
                 float eased = t * t;
-                float angle = MathHelper.ToRadians(TotalSweepDegrees) * eased * sweepDirection;
+                float angle = -MathHelper.ToRadians(TotalSweepDegrees) * eased * sweepDirection;
                 Projectile.velocity = baseDirection.RotatedBy(angle);
 
                 Vector2 mouthPos = GetOrigin();
