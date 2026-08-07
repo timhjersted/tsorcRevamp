@@ -9,7 +9,6 @@ Xelvaa / a massive expansion on top of the 2024 original
 MOD REVAMP (2018-2026)
 -------------------------------
 Zeodexic / programmer
-RecursiveCollapse / programmer
 Chroma Equinox / programmer + spriter
 Vibrent / mod founder, programmer + spriter
 MarfMasterofDesaster / programmer + beta testing
