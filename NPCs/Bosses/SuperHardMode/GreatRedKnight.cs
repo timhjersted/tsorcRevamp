@@ -276,24 +276,39 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            if (specialAttacks.TryStartGreat(NPC, player, globalNPC))
+            // DOMINION IS MELEE-ONLY (gate 1 of 3). Once the phase latches, the knight stops
+            // selecting NEW special attacks: no Crimson Advance, no Royal Standard, no Furnace
+            // Pincer, no Stormbreaker Edict. Both heralds and Dominion itself are already behind it
+            // by construction (50% / 33% / 30% gates), so nothing this call could still start is
+            // wanted. The lightning pressure in phase 2 comes from TickDominionSequence alone.
+            if (!specialAttacks.DominionEngaged && specialAttacks.TryStartGreat(NPC, player, globalNPC))
             {
                 specialAttacks.Tick(NPC, player, attackStats);
                 return;
             }
 
-            // Hyper-armor window: FLASH telegraph → fire only. Windup excluded so a stagger can interrupt it.
-            // Spear 180→210, poison 300→375, attack4 450→485, DD2/bomb 725→955.
-            globalNPC.AttackCommitted = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
-                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
-                                        (NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
-                                        (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f);
+            if (specialAttacks.DominionEngaged)
+            {
+                // ai[1] keeps ticking for the ambient jump/dash-step flavour below, but it no longer
+                // corresponds to any attack, so its hyper-armor / windup windows must not apply.
+                globalNPC.AttackCommitted = false;
+                globalNPC.AttackTelegraphing = false;
+            }
+            else
+            {
+                // Hyper-armor window: FLASH telegraph → fire only. Windup excluded so a stagger can interrupt it.
+                // Spear 180→210, poison 300→375, attack4 450→485, DD2/bomb 725→955.
+                globalNPC.AttackCommitted = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
+                                            (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                            (NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
+                                            (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f);
 
-            // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
-            globalNPC.AttackTelegraphing = (NPC.ai[1] >= 150f && NPC.ai[1] < 180f) ||
-                                           (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
-                                           (NPC.ai[1] >= 420f && NPC.ai[1] < 450f) ||
-                                           (NPC.ai[1] >= 695f && NPC.ai[1] < 725f);
+                // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
+                globalNPC.AttackTelegraphing = (NPC.ai[1] >= 150f && NPC.ai[1] < 180f) ||
+                                               (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
+                                               (NPC.ai[1] >= 420f && NPC.ai[1] < 450f) ||
+                                               (NPC.ai[1] >= 695f && NPC.ai[1] < 725f);
+            }
 
             if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
@@ -325,7 +340,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 // Gate projectile firing on LOS — prevents shooting through floors/ceilings
                 bool hasPlayerLOS = Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1);
-                if (hasPlayerLOS && (NPC.ai[1] == 210f || NPC.ai[1] == 325f || NPC.ai[1] == 375f || NPC.ai[1] == 480f || NPC.ai[1] == 750f || NPC.ai[1] == 850f || NPC.ai[1] == 955f))
+                // Gate 2 of 3: with the legacy machine inert, these ai[1] marks no longer fire
+                // anything, so registering a fighter attack on them would be a phantom.
+                if (!specialAttacks.DominionEngaged && hasPlayerLOS && (NPC.ai[1] == 210f || NPC.ai[1] == 325f || NPC.ai[1] == 375f || NPC.ai[1] == 480f || NPC.ai[1] == 750f || NPC.ai[1] == 850f || NPC.ai[1] == 955f))
                 {
                     tsorcRevampAIs.RegisterFighterAttack(NPC);
                 }
@@ -369,6 +386,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.netUpdate = true;
                 }
                 #endregion
+
+                // ---------------------------------------------------------------------------
+                // DOMINION IS MELEE-ONLY (gate 3 of 3) — the hard stop.
+                //
+                // Everything BELOW this line is the legacy ai[1]/ai[2] special-attack machine:
+                // spear throw, the three poison salvos, the DD2 drakin bombardment, the firebomb
+                // throw, abyssal rain, the Ultrakill telegraph + hand barrage, jellyfish lightning
+                // and the cursed-flame rain. None of it ever checked DominionEngaged, and the
+                // Ultrakill / DD2 windows are gated only on `HalfHeraldComplete && life <= 50%`,
+                // which stays true forever — so once Dominion latched at 30% the knight kept
+                // spamming the whole ranged kit on top of the Dominion lightning loop.
+                //
+                // The line is drawn here, AFTER the Sounds & Jumps region, deliberately: the ai[1]
+                // increment, the ambient creature sounds and the random jump / dash-step flavour
+                // above are movement colour, not attacks, and phase 2 wants the knight moving MORE,
+                // not less. Everything from here down spawns a projectile.
+                //
+                // TickDominionSequence (called at the top of AI) is unaffected — it is the phase's
+                // own lightning pressure and runs independently of this method's state machine.
+                // ---------------------------------------------------------------------------
+                if (specialAttacks.DominionEngaged)
+                {
+                    return;
+                }
 
                 // Skip spear if player is at melee range — it's a ranged weapon
                 if (NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f)
@@ -800,7 +841,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.velocity.X *= 0.85f;
                 }
                 // Ultrakill Telegraph: Flash
-                if (specialAttacks.HalfHeraldComplete && NPC.ai[2] == 165f)
+                // The `life <= lifeMax / 2` term is NOT redundant and must not be trimmed: this was
+                // the one place that leaned on HalfHeraldComplete as a proxy for "boss is at or
+                // below 50%". Now that Furnace Herald unlocks at 70%, without it the knight would
+                // flash a white Ultrakill telegraph between 70% and 50% for a barrage that cannot
+                // fire (the barrage below still requires 50%) — a lie to the player. This restores
+                // the pre-change behaviour exactly.
+                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] == 165f)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -828,9 +875,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // "Exlosives" EnemyGreatAttack spawn was cut: it only existed to trigger a pink
                 // RedKnightVFXBurst explosion + vanilla BombSkeletronPrime bomb-smoke dust on death,
                 // neither of which reads as "hands" and both just cluttered the screen.
-                // Ultrakill Attack — 30 hand barrage. Each hand projectile slow-drifts and fires a
-                // red lightning beam telegraph and attack.
-                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 229f)
+                // Ultrakill Attack — 15 hand barrage. Each hand projectile slow-drifts and fires a
+                // RedKnightLightningLane (the kit's shader lightning) after its own staggered delay.
+                // Halved from 30 hands by spawning on every OTHER tick across the SAME 200->228
+                // window, so the attack's footprint in the ai[2] timeline is unchanged — only the
+                // density comes down. handIndex stays a 0-based SEQUENTIAL count (0..14), not the
+                // raw tick offset, because the hand's own AI multiplies it by StaggerTicks.
+                if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
+                    && NPC.ai[2] >= 200f && NPC.ai[2] <= 228f && ((int)NPC.ai[2] - 200) % 2 == 0)
                 {
                     NPC.velocity.X *= 0.25f;
 
@@ -845,7 +897,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     speed2 += Main.rand.NextVector2Circular(-4, 4);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float handIndex = NPC.ai[2] - 200f;
+                        float handIndex = ((int)NPC.ai[2] - 200) / 2;
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y,
                             ModContent.ProjectileType<Projectiles.Enemy.GreatRedKnightUltrakillHand>(),
                             redKnightsGreatDamage, 0f, Main.myPlayer, ai0: handIndex);
@@ -873,8 +925,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
 
-                // Rain of Cursed Flame at 1/3 life
-                if (specialAttacks.ThirdHeraldComplete && NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 60 == 0)
+                // Rain of Cursed Flame — moved 1/3 life -> 70%, matching the Storm Herald unlock
+                // that gates it (RedKnightAttackController.TryStartGreat). Both halves had to move:
+                // the herald makes ThirdHeraldComplete reachable earlier, and this check is what
+                // keeps the rain FIRING from there on down rather than only at whatever HP the
+                // herald happened to finish at. Its sibling Jellyfish Lightning above deliberately
+                // keeps its own 1/3 gate, so that one still only starts below 33%.
+                if (specialAttacks.ThirdHeraldComplete && NPC.life <= NPC.lifeMax * 0.7f && Main.GameUpdateCount % 60 == 0)
                 {
                     Player nT = Main.player[NPC.target];
 

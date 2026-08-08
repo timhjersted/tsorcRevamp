@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -11,9 +12,33 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.InsanityShadowHostile;
 
+        // Vanilla InsanityShadowHostile (ProjectileID 734) is an EIGHT-frame sheet
+        // (Terraria.Main.SetupProjFrames: Main.projFrames[734] = 8). Slicing it as four frames
+        // grabbed two real frames per rectangle, which is what made the hand look clipped/split.
+        public const int FrameCount = 8;
+
+        /// <summary>Ticks each hand lives. Has to outlast the LAST hand's staggered bolt:
+        /// index 14 fires at <see cref="TriggerTick"/> = 30 + 14*41 = 604, plus the bolt tail and
+        /// the alpha fade-out.</summary>
+        public const int Lifetime = 720;
+
+        /// <summary>Ticks between consecutive hands firing their bolt (was 11).</summary>
+        public const int StaggerTicks = 41;
+
+        // The bolt is now RedKnightLightningLane, the kit's shader lightning, instead of the old
+        // GenericLaser-based GreatRedKnightHandBeam. 30t telegraph rather than Stage D's 40t or
+        // Stormbreaker's 46t: those are sky columns that appear out of nowhere, whereas the hand
+        // itself has already been drifting on screen as the telegraph, and fifteen staggered
+        // single shots need to read snappy rather than ponderous. Active window matches the rest
+        // of the kit (12t). Length 900 > Stage D's 640 because this is one aimed shot that has to
+        // reach the player from wherever the hand drifted to, not a fixed ground-anchored pattern.
+        public const int BoltTelegraphTicks = 30;
+        public const int BoltActiveTicks = 12;
+        public const float BoltLength = 900f;
+
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Type] = 4;
+            Main.projFrames[Type] = FrameCount;
         }
 
         public override void SetDefaults()
@@ -24,30 +49,33 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 520;
+            Projectile.timeLeft = Lifetime;
         }
 
         public override void AI()
         {
-            // Animated 4-frame hand sprite
+            // Animated 8-frame hand sprite
             Projectile.frameCounter++;
             if (Projectile.frameCounter >= 6)
             {
                 Projectile.frameCounter = 0;
-                Projectile.frame = (Projectile.frame + 1) % 4;
+                Projectile.frame = (Projectile.frame + 1) % FrameCount;
             }
 
+            int currentAge = Lifetime - Projectile.timeLeft;
+
             // Slow down to a very slow drift after initial launch trajectory
-            if (Projectile.timeLeft < 490)
+            if (currentAge > 30)
             {
                 Projectile.velocity *= 0.93f;
             }
 
             int index = (int)Projectile.ai[0];
-            int triggerTick = 30 + index * 11;
-            int currentAge = 520 - Projectile.timeLeft;
+            int triggerTick = 30 + index * StaggerTicks;
 
-            // Spawn the red lightning beam telegraph at assigned staggered tick
+            // Fire the shader lightning lane at this hand's assigned staggered tick. The lane is a
+            // STATIC line (ShouldUpdatePosition() => false), so the aim is baked in here rather
+            // than tracked like the old beam did.
             if (currentAge == triggerTick && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -57,16 +85,18 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Projectile.GetSource_FromThis(),
                     Projectile.Center,
                     aimDir,
-                    ModContent.ProjectileType<GreatRedKnightHandBeam>(),
+                    ModContent.ProjectileType<RedKnightLightningLane>(),
                     Projectile.damage,
                     0f,
                     Main.myPlayer,
-                    ai0: Projectile.whoAmI
+                    ai0: BoltTelegraphTicks,
+                    ai1: BoltActiveTicks,
+                    ai2: BoltLength
                 );
             }
 
-            // After beam sequence completes (60t telegraph + 25t beam = 85t), fade out and die
-            int dieTick = triggerTick + 85;
+            // Linger until the lane has finished its telegraph + strike + 12t fade, then fade out.
+            int dieTick = triggerTick + BoltTelegraphTicks + BoltActiveTicks + 18;
             if (currentAge >= dieTick)
             {
                 Projectile.alpha += 15;

@@ -210,12 +210,28 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
 
-            if (!HalfHeraldComplete && npc.life <= npc.lifeMax / 2)
+            // Furnace Herald ("Half Herald") moved 50% -> 70%. This is the head of the herald chain,
+            // so it is what actually lets the whole chain start earlier: Storm Herald below is
+            // gated on HalfHeraldComplete, and everything else hangs off those two flags.
+            //
+            // IMPORTANT: HalfHeraldComplete no longer implies "the boss is at or below 50% HP".
+            // Every reader that wants the 50% behaviour must carry its own explicit life check —
+            // see the audit note in GreatRedKnight.AI's Ultrakill telegraph.
+            if (!HalfHeraldComplete && npc.life <= npc.lifeMax * 0.7f)
             {
                 Begin(npc, target, globalNPC, KnightSpecialAttack.FurnaceHerald);
                 return true;
             }
-            if (HalfHeraldComplete && !ThirdHeraldComplete && npc.life <= npc.lifeMax / 3)
+            // Storm Herald ("Third Herald") moved 33% -> 70%. It is the unlock for everything gated
+            // behind ThirdHeraldComplete — Stormbreaker Edict as a candidate below, and Rain of
+            // Cursed Flame / Jellyfish Lightning in GreatRedKnight's AI — so pulling it earlier is
+            // what makes those reachable sooner. It is still ORDERED behind HalfHeraldComplete
+            // directly above — Furnace must complete before Storm becomes eligible — but both now
+            // share the same 70% number, so the chain is: cross 70% -> Furnace Herald fires ->
+            // Storm Herald becomes eligible on the next selection window -> everything gated on
+            // ThirdHeraldComplete unlocks. The gap between the two heralds is now just the attack
+            // cooldown rather than another 37% of the health bar.
+            if (HalfHeraldComplete && !ThirdHeraldComplete && npc.life <= npc.lifeMax * 0.7f)
             {
                 Begin(npc, target, globalNPC, KnightSpecialAttack.StormHerald);
                 return true;
@@ -748,11 +764,18 @@ namespace tsorcRevamp.NPCs
         /// <summary>
         /// Dominion PHASE 1 — plant &amp; hold, <see cref="DominionHoldTicks"/> (300t / 5s).
         ///
-        /// The knight hops, slams its spear into the ground and holds it there, engulfed. It no
-        /// longer spawns <see cref="CrimsonDominionController"/> — the containment ring and its
-        /// escape-nova are gone; that nova is now the death animation instead
-        /// (GreatRedKnight.CheckDead). The lightning sequence is already running by this point (it
-        /// starts at Begin), so the first two or three Stage A bolts land during the hold.
+        /// The knight hops, slams its spear into the ground and holds it there, engulfed. On the
+        /// beat the plant lands it spawns <see cref="CrimsonDominionController"/> in its CONTAINMENT
+        /// mode: the arena-wide damaging "stay inside the safe zone" field builds in and then holds
+        /// INDEFINITELY — through the rest of this hold and through all of phase 2's melee. It is
+        /// not scoped to phase 1 and has no end time; the death finale is the only thing that takes
+        /// it down (the projectile polls GreatRedKnight.InDominionDeathSequence and fades itself).
+        /// That mode deliberately does NOT fire the old twelve arena-edge strikes (the Stage A-D
+        /// lightning loop already running underneath supersedes them, and both together would
+        /// double up the lightning) and does NOT run the escape / nova / fade tail — that drama is
+        /// now the death animation (GreatRedKnight.CheckDead). The lightning sequence is already
+        /// running by this point (it starts at Begin), so the first two or three Stage A bolts land
+        /// during the hold.
         /// </summary>
         void TickCrimsonDominion(NPC npc, KnightAttackStats stats)
         {
@@ -766,10 +789,21 @@ namespace tsorcRevamp.NPCs
             {
                 npc.velocity.Y = Math.Max(npc.velocity.Y, 4.5f);
             }
-            if (Timer == 60)
+            if (Timer == CrimsonDominionController.Phase1SpawnBeat)
             {
                 PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.65f }, npc.Center);
                 tsorcRevampAIs.SpawnTelegraphFlash(npc, new Color(206, 16, 34));
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    // |ai[0]| == 1 selects containment mode (2 would be the finale); its sign
+                    // carries the ring's rotation direction, ai[1] the base rotation, and ai[2] the
+                    // host index — which containment MUST have, because it polls the host for
+                    // InDominionDeathSequence to know when to fade. It runs until then.
+                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                        ModContent.ProjectileType<CrimsonDominionController>(),
+                        stats.GreatDamage, 0f, Main.myPlayer,
+                        ArenaRotationDirection, ArenaBaseRotation, npc.whoAmI);
+                }
             }
             if (Timer >= 60)
             {
@@ -1046,9 +1080,10 @@ namespace tsorcRevamp.NPCs
             if (completed == KnightSpecialAttack.CrimsonDominion)
             {
                 // PHASE 1 -> PHASE 2. The hold is over: the knight retracts its spear and goes back
-                // to normal (faster, more evasive) melee combat. DominionEngaged stays true, so the
-                // lightning loop keeps running and Dominion can never be re-selected — no cooldown
-                // is needed or wanted. Give it a short leash so it re-engages promptly.
+                // to melee combat — and ONLY melee. GreatRedKnight.AI gates TryStartGreat off once
+                // DominionEngaged, so no further special attack can start and this cooldown is now
+                // inert for this boss; it is left set for the Red Knight family's shared code path
+                // and in case a future caller runs Dominion without that gate.
                 attackCooldown = 90;
             }
             npc.netUpdate = true;
