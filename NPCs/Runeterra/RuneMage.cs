@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
@@ -24,7 +25,7 @@ class RuneMage : ModNPC
         NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
     }
 
-    public const int ContactDmg = 20;
+    public const int ContactDmg = 0;
     public const int Defense = 10;
     public const int BaseMaxHP = 5000;
     public float HealthScale;
@@ -62,16 +63,35 @@ class RuneMage : ModNPC
     public ref float AiTimer2 => ref NPC.ai[2];
     public ref float AiTimer3 => ref NPC.ai[3];
     
-    
+    public Vector2 WorldRunePosition = new Vector2(63240, 19400);
+    public Vector2 WarningPosition = new Vector2(63240, 19400);
+    public Vector2 SpawnPosition;
+    public bool AppliedOnSpawn = false;
+    public bool ShouldDrawWorldRune = true;
     public override void AI()
     {
         var target = Main.player[NPC.target];
+
+        if (!AppliedOnSpawn)
+        {
+            SpawnPosition = NPC.position;
+            AppliedOnSpawn = true;
+        }
+        //Main.NewText(NPC.position.Distance(WorldRunePosition));
+        WorldRunePosition = new Vector2(63600, 19400);
+        WarningPosition = new Vector2(63240, 19400);
+        
         
         switch (AiState)
         {
             case (float)ActionState.IdlePatrolling:
             {
-                IdlePatrolling(target);
+                IdlePatrolling();
+                break;
+            }
+            case (float)ActionState.IsWarning:
+            {
+                IsWarning(target);
                 break;
             }
             case (float)ActionState.WalkingPhase1:
@@ -110,6 +130,25 @@ class RuneMage : ModNPC
                 break;
             }
         }
+    }
+
+    public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+    {
+        if (ShouldDrawWorldRune)
+        {
+            DrawWorldRune(spriteBatch, screenPos, drawColor);
+        }
+        return base.PreDraw(spriteBatch, screenPos, drawColor);
+    }
+
+    Texture2D WorldRuneSprite;
+    public void DrawWorldRune(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+    {
+        WorldRuneSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Materials/WorldRune"); 
+        Rectangle WorldRuneSourceRectangle = new Rectangle(0, 0, WorldRuneSprite.Width, WorldRuneSprite.Height); 
+        Main.EntitySpriteDraw(WorldRuneSprite, WorldRunePosition - screenPos, WorldRuneSourceRectangle,
+            Color.White, 0, WorldRuneSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
+        Lighting.AddLight(WorldRunePosition, Color.DarkRed.ToVector3() * 1f);
     }
 
     public override void OnSpawn(IEntitySource source)
@@ -162,6 +201,29 @@ class RuneMage : ModNPC
             {
                 if (AiTimer1 < 0) NPC.frame.Y = (int)FrameState.Idle * frameHeight;
                 FrameDuration = 5;
+                if (NPC.velocity.X != 0)
+                {
+                    NPC.frameCounter++;
+                    if (NPC.frameCounter >= FrameDuration)
+                    {
+                        NPC.frame.Y += frameHeight;
+                        NPC.frameCounter = 0;
+
+                        if (NPC.frame.Y >= ((int)FrameState.Walking14 + 1) * frameHeight)
+                            NPC.frame.Y = (int)FrameState.Walking1 * frameHeight;
+                    }
+                }
+                else
+                {
+                    NPC.frame.Y = (int)FrameState.Idle * frameHeight;
+                }
+
+                break;
+            }
+            case (float)ActionState.IsWarning:
+            {
+                if (AiTimer1 < 0) NPC.frame.Y = (int)FrameState.Idle * frameHeight;
+                FrameDuration = 3;
                 if (NPC.velocity.X != 0)
                 {
                     NPC.frameCounter++;
@@ -262,11 +324,10 @@ class RuneMage : ModNPC
             }
         }*/
     }
-    private int ChatTimer = 0;
-    private const float WalkSpeed = 1.25f;
-    private void IdlePatrolling(Player target)
+    private const float IdleWalkSpeed = 1.25f;
+    private void IdlePatrolling()
     {
-        DialogueHandler();
+        DialogueHandler(Main.netMode != NetmodeID.MultiplayerClient);
         if (AiTimer1 == 60) //roll a second in advance to decide what it does next
         {
             //roll some random action, decide whether he walks again or keeps standing still, maybe turn around
@@ -285,7 +346,7 @@ class RuneMage : ModNPC
             AiTimer2 = 0;
             if (IdlePatrolRoll > 0)
             {
-                NPC.velocity.X = WalkSpeed * NPC.direction; //walk into direction it is facing
+                NPC.velocity.X = IdleWalkSpeed * NPC.direction; //walk into direction it is facing
             }
         }
         else if (AiTimer1 > 0) //if positive
@@ -301,7 +362,7 @@ class RuneMage : ModNPC
             {
                 NPC.velocity.X *= -1f; //turn back
                 SetDirection();
-                NPC.velocity.X = WalkSpeed * NPC.direction; //walk into direction it is facing
+                NPC.velocity.X = IdleWalkSpeed * NPC.direction; //walk into direction it is facing
                 AiTimer2 = 0;
             }
             
@@ -320,26 +381,115 @@ class RuneMage : ModNPC
                 AiTimer2 = 0;
             }
         }
+        foreach (Player player in Main.ActivePlayers)
+        {
+            if (player.position.Distance(WarningPosition) < 500 && Collision.CanHitLine(WarningPosition, 2, 2, player.position, player.width, player.height))
+            {
+                NPC.target = player.whoAmI;
+                AiState = (float)ActionState.IsWarning;
+                AiTimer1 = 0;
+                AiTimer2 = 0;
+                AiTimer3 = 0;
+                break;
+            }
+        }
     }
 
-    private void DialogueHandler()
+    public float HurryingWalkSpeed = 1.75f;
+    public int WarningZoneTimer = 0;
+    public void IsWarning(Player target)
     {
-        if (Main.netMode != NetmodeID.MultiplayerClient)
+        DialogueHandler(Main.netMode != NetmodeID.MultiplayerClient);
+        if (NPC.position.Distance(WarningPosition) > 20)
         {
-            ChatTimer++;
-            if (ChatTimer > 120)
-            {
-                int speechRoll = Main.rand.Next(3) + 1;
-                
-                foreach (Player player in Main.ActivePlayers)
-                {
-                    if (player.position.Distance(NPC.position) < 500)
-                    {
-                        ChatHelper.SendChatMessageToClient(NetworkText.FromKey("LocationinLangFile" + speechRoll), Color.Aqua, player.whoAmI);
-                    }
-                }
+            HurryingWalkSpeed = 3.25f;
+            NPC.velocity.X = NPC.DirectionTo(WarningPosition).X * HurryingWalkSpeed;
+            SetDirection();
+            
+            Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed,
+                ref NPC.gfxOffY,
+                (int)Main.LocalPlayer.gravDir);
+        }
+        else
+        {
+            NPC.velocity *= 0;
+            NPC.TargetClosest(true);
+            //Main.NewText("TargetClose");
+        }
 
-                ChatTimer = 0;
+        if (target.position.Distance(WarningPosition) > 600)
+        {
+            WarningZoneTimer++;
+        }
+        else
+        {
+            WarningZoneTimer--;
+        }
+
+        if (WarningZoneTimer >= 300)
+        {
+            NPC.target = target.whoAmI;
+            AiState = (float)ActionState.IdlePatrolling;
+            AiTimer1 = 0;
+            AiTimer2 = 0;
+            AiTimer3 = 0;
+        }
+    }
+
+    private int ChatTimer = 0;
+    private int ChatWarningTimer = 0;
+    private int WarningsCount = 0;
+    private int TotalWarnings = 0;
+    private void DialogueHandler(bool isNotMpClient)
+    {
+        if (isNotMpClient)
+        {
+            switch (AiState)
+            {
+                case (float)ActionState.IdlePatrolling:
+                {
+                    ChatTimer++;
+                    if (ChatTimer > 240)
+                    {
+                        int speechRoll = Main.rand.Next(3) + 1;
+                
+                        foreach (Player player in Main.ActivePlayers)
+                        {
+                            if (Collision.CanHitLine(NPC.position, NPC.width, NPC.height, player.position, player.width, player.height))
+                            {
+                                ChatHelper.SendChatMessageToClient(NetworkText.FromKey("LocationinLangFile" + speechRoll), Color.Aqua, player.whoAmI);
+                            }
+                        }
+
+                        ChatTimer = 0;
+                    }
+                    break;
+                }
+                case (float)ActionState.IsWarning:
+                {
+                    foreach (Player player in Main.ActivePlayers)
+                    {
+                        if (player.position.Distance(WorldRunePosition) < 650)
+                        {
+                            ChatWarningTimer++;
+                            break;
+                        }
+                    }
+
+                    if (ChatWarningTimer > 240)
+                    {
+                        foreach (Player player in Main.ActivePlayers)
+                        {
+                            if (player.position.Distance(NPC.position) < 500)
+                            {
+                                ChatHelper.SendChatMessageToClient(NetworkText.FromKey("Warning" + TotalWarnings), Color.Red, player.whoAmI);
+                            }
+                        }
+                        TotalWarnings++;
+                        ChatWarningTimer = 0;
+                    }
+                    break;
+                }
             }
         }
     }
@@ -417,6 +567,7 @@ class RuneMage : ModNPC
     private enum ActionState
     {
         IdlePatrolling,
+        IsWarning,
         WalkingPhase1,
         JumpingPhase1,
         PhaseTransition,

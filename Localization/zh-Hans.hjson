@@ -166,7 +166,6 @@ Mods: {
 			// DownKeybind: Double tap DOWN
 			ShunpoKeybind1: "按 "
 			ShunpoKeybind2: " 冲向鼠标悬停处所指的敌人并获得短暂的无敌帧"
-			// ShunpoKeybind3: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
 			ShunpoCD:
 				'''
 				瞬步有 {$CommonItemTooltip.Cooldown}
