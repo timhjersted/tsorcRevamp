@@ -53,7 +53,7 @@ namespace tsorcRevamp.MainMenu
             logoScale = MathHelper.Min(maxLogoWidth / logoTexture.Width, maxLogoHeight / logoTexture.Height);
             logoRotation = 0f;
             logoDrawCenter = new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.126f);
-            // drawColor = Color.White;
+            drawColor = Color.White;
 
             return true;
         }

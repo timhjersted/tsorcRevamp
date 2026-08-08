@@ -495,13 +495,18 @@ namespace tsorcRevamp.NPCs
                                     else npc.velocity.X *= 0.6f;
                                     actionLabel = "hold-aligned"; reasonLabel = "under/over-player,no-path";
                                 }
-                                else if (IsCliffAhead(npc, dir) && !playerBelow)
-                                {
-                                    npc.velocity.X *= 0.6f;
-                                    actionLabel = "halt-cliff"; reasonLabel = "no-plan,drop-ahead";
-                                }
                                 else
                                 {
+                                    // NOTE: this used to re-check IsCliffAhead(dir) here and halt on any
+                                    // drop>=4 ahead. That was a SECOND, gap-unaware cliff gate duplicating
+                                    // TryLocalTerrain's own drop>=4 cliff-halt (same threshold) — harmless
+                                    // when the two always agreed, but TryLocalTerrain now deliberately
+                                    // returns false (walk it, no jump needed) for a makeable width-1 gap
+                                    // EVEN THOUGH the local drop right at the missing tile is deep. Reaching
+                                    // this point already means TryLocalTerrain looked at the terrain ahead
+                                    // (walls, gaps, ledges) and found nothing that needs handling — trust
+                                    // that verdict instead of re-deriving a cruder one, same as ExecWalk
+                                    // does after its own TryLocalTerrain call (SmartFighter4AI.cs:2149).
                                     ApplyChase(npc, dir, topSpeed, acceleration);
                                     actionLabel = "chase"; reasonLabel = "no-plan";
                                 }
@@ -2620,10 +2625,21 @@ namespace tsorcRevamp.NPCs
             // that case DROP IN rather than jumping ACROSS — otherwise the NPC vaults over a pit the player is sitting
             // in (e.g. a wide enemy skips the 3-wide pit). Only suppresses the gap-jump for the below-player case;
             // horizontal pursuit (allowCliffDrop false) still jumps gaps normally.
-            if (drop >= 2 && !allowCliffDrop && TryMeasureGap(frontX, feetY, direction, out int gap, out int landDrop, out int landX))
+            string gapDiag = null;
+            if (drop >= 2 && !allowCliffDrop)
             {
+                bool gapFound = TryMeasureGap(frontX, feetY, direction, out int gap, out int landDrop, out int landX, out gapDiag);
+                if (gapFound && gap == 1 && landDrop <= 1)
+                {
+                    // A single missing tile with a flush (or near-flush) landing needs no jump at all — normal
+                    // walking momentum carries the body across it, same as a player strolling over a 1-block
+                    // notch. Requiring gap>=2 here used to fall through every width-1 gap straight to the
+                    // ledge self-catch below, freezing the NPC dead at the edge of the easiest gap there is.
+                    // Just don't brake; let the caller's ApplyChase keep walking it forward.
+                    action = ""; reason = ""; return false;
+                }
                 // Physics gates the gap now (not a hardcoded <=5 cap): jump only if makeable.
-                if (gap >= 2 && gap <= 7 && landDrop <= 2)
+                if (gapFound && gap >= 1 && gap <= 7 && landDrop <= 2)
                 {
                     if (ComputeJumpArc(gap, -landDrop, npc.gravity, jumpCeil, maxLaunchVx, out float gp, out float gvx))
                     {
@@ -2653,7 +2669,9 @@ namespace tsorcRevamp.NPCs
             {
                 npc.velocity.X *= 0.3f;
                 if (Math.Abs(npc.velocity.X) < 1f) npc.velocity.X = 0f;
-                action = "cliff-halt"; reason = $"drop={drop} edge={edgeDrop} la={lookahead}";
+                action = "cliff-halt";
+                reason = gapDiag != null ? $"drop={drop} edge={edgeDrop} la={lookahead} gapscan=[{gapDiag}]"
+                                          : $"drop={drop} edge={edgeDrop} la={lookahead}";
                 return true;
             }
             action = ""; reason = "";
@@ -2896,20 +2914,31 @@ namespace tsorcRevamp.NPCs
         }
 
         private static bool TryMeasureGap(int frontX, int feetY, int direction,
-            out int gapTiles, out int landingDrop, out int landingX)
+            out int gapTiles, out int landingDrop, out int landingX, out string diag)
         {
             gapTiles = 0; landingDrop = 0; landingX = frontX;
+            // Diagnostic trail so a cliff-halt caused by this scan finding NOTHING within 7 tiles can be
+            // told apart (in the log) from one where a landing existed but got rejected downstream — every
+            // offset's (drop, clearance) is recorded regardless of pass/fail. Cheap: at most 7 iterations.
+            var sb = new System.Text.StringBuilder();
             for (int o = 1; o <= 7; o++)
             {
                 int cx = frontX + direction * o;
                 int d = GetDropDepth(cx, feetY, 5);
-                if (d <= 2 && HasBodyClearanceAtRow(cx, feetY + d))
-                {
-                    gapTiles = o; landingDrop = d; landingX = cx;
-                    return true;
-                }
+                // HasBodyClearanceAtRow expects the row ABOVE the landing floor (see its other call sites
+                // at BuildSpans/867 and 1114: "IsStandableTile(x, y+1) && HasBodyClearanceAtRow(x, y)").
+                // GetDropDepth/IsStandableTile's own convention makes feetY+d the FLOOR tile's row itself,
+                // so passing that straight through made the clearance scan include the solid landing tile
+                // as its own top row — genuine solid ground (anything that isn't a jump-through platform)
+                // then always "failed clearance" no matter how much headroom actually existed. This is why
+                // gap-jump/gap-halt never fired for any gap width: -1 aligns it to the body row above the
+                // floor, matching every other clearance check in this file.
+                bool clear = d <= 2 && HasBodyClearanceAtRow(cx, feetY + d - 1);
+                sb.Append(o).Append(':').Append(d).Append(clear ? "c" : "x").Append(' ');
+                if (clear && gapTiles == 0) { gapTiles = o; landingDrop = d; landingX = cx; }
             }
-            return false;
+            diag = sb.ToString().TrimEnd();
+            return gapTiles > 0;
         }
 
         private static bool HasBodyClearanceAtRow(int x, int feetY)
