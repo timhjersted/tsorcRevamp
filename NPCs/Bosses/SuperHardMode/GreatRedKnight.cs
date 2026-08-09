@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.boss = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GreatRedKnightBanner>();
-            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.RedKnight.DespawnHandler"), Color.Red, DustID.RedTorch);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.GreatRedKnight.DespawnHandler"), Color.Red, DustID.RedTorch);
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             redKnightGlobalNPC.Agility = 0.45f;
@@ -159,15 +159,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     return "Ultrakill Barrage";
                 }
-                if ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f))
+                // The four base-kit attacks retire at 60% HP, so their labels have to carry the same
+                // floor as their firing conditions — otherwise the debug readout announces attacks
+                // that can no longer happen and stops being usable for tuning.
+                bool baseKitActive = NPC.life > NPC.lifeMax * 0.6f;
+                if (baseKitActive && ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f)))
                 {
                     return "Abyssal Rain";
                 }
-                if (NPC.ai[1] >= 120f && NPC.ai[1] <= 230f)
+                if (baseKitActive && NPC.ai[1] >= 120f && NPC.ai[1] <= 230f)
                 {
                     return "Spear Throw";
                 }
-                if (NPC.ai[1] >= 270f && NPC.ai[1] <= 525f)
+                if (baseKitActive && NPC.ai[1] >= 270f && NPC.ai[1] <= 525f)
                 {
                     return "Poison Salvo";
                 }
@@ -176,7 +180,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     return "Drakin Bombardment";
                 }
-                if (NPC.ai[1] >= 865f)
+                if (baseKitActive && NPC.ai[1] >= 865f)
                 {
                     return "Firebomb Throw";
                 }
@@ -221,6 +225,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            if (!NPC.active || despawnHandler.IsDespawning)
+            {
+                return;
+            }
+
             // Proximity Debuffs
             if (NPC.Distance(player.Center) < 700)
             {
@@ -279,13 +289,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // DOMINION IS MELEE-ONLY (gate 1 of 3). Once the phase latches, the knight stops
             // selecting NEW special attacks: no Crimson Advance, no Royal Standard, no Furnace
             // Pincer, no Stormbreaker Edict. Both heralds and Dominion itself are already behind it
-            // by construction (50% / 33% / 30% gates), so nothing this call could still start is
+            // by construction (80% / 60% / 30% gates), so nothing this call could still start is
             // wanted. The lightning pressure in phase 2 comes from TickDominionSequence alone.
             if (!specialAttacks.DominionEngaged && specialAttacks.TryStartGreat(NPC, player, globalNPC))
             {
                 specialAttacks.Tick(NPC, player, attackStats);
                 return;
             }
+
+            // ---------------------------------------------------------------------------------
+            // BASE KIT 60% RETIREMENT. Spear Throw, Poison Salvo, Firebomb Throw and Abyssal Rain
+            // are the four always-on opening attacks; they now go silent for good at 60% HP, so the
+            // second half of the fight belongs to the herald chain and Dominion instead.
+            //
+            // A live `life > 60%` test rather than a latched flag: HP never climbs back mid-fight,
+            // so this is one-way in practice and needs no extra state to sync.
+            //
+            // This flag is load-bearing well beyond the spawn sites. Each of those attacks owns
+            // ai[1] windows that are ALSO read by AttackCommitted (hyper-armor), AttackTelegraphing
+            // (windup), inProtectedAttack (teleport/flee reset guard), inActiveAttack (air-attack
+            // suppression) and RegisterFighterAttack. If the windows kept reporting true after the
+            // attacks stopped firing, the knight would sit in hyper-armor for attacks that never
+            // come. Every one of those five is gated below.
+            // ---------------------------------------------------------------------------------
+            bool baseKitActive = NPC.life > NPC.lifeMax * 0.6f;
 
             if (specialAttacks.DominionEngaged)
             {
@@ -297,25 +324,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             else
             {
                 // Hyper-armor window: FLASH telegraph → fire only. Windup excluded so a stagger can interrupt it.
-                // Spear 180→210, poison 300→375, attack4 450→485, DD2/bomb 725→955.
-                globalNPC.AttackCommitted = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
-                                            (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
-                                            (NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
-                                            (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f);
+                // Spear 180→210, poison 300→375, attack4 450→485, DD2 725→900, bomb 925→955.
+                // The old single 725→955 term was split: DD2 Drakin Bombardment and the Firebomb
+                // Throw share that stretch but retire on different gates (Drakin keeps its own 50%
+                // check, the bomb is base kit), so they can no longer share one boolean.
+                globalNPC.AttackCommitted = (baseKitActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
+                                            (baseKitActive && NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                            (baseKitActive && NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
+                                            (NPC.ai[1] >= 725f && NPC.ai[1] <= 900f) ||
+                                            (baseKitActive && NPC.ai[1] >= 925f && NPC.ai[1] <= 955f);
 
                 // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
-                globalNPC.AttackTelegraphing = (NPC.ai[1] >= 150f && NPC.ai[1] < 180f) ||
-                                               (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
-                                               (NPC.ai[1] >= 420f && NPC.ai[1] < 450f) ||
+                // 695→725 is DD2 Drakin's windup, not the bomb's, so it keeps its existing behaviour.
+                globalNPC.AttackTelegraphing = (baseKitActive && NPC.ai[1] >= 150f && NPC.ai[1] < 180f) ||
+                                               (baseKitActive && NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
+                                               (baseKitActive && NPC.ai[1] >= 420f && NPC.ai[1] < 450f) ||
                                                (NPC.ai[1] >= 695f && NPC.ai[1] < 725f);
             }
 
             if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
-                bool inProtectedAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
-                                          (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
-                                          (NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
-                                          (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f) ||
+                bool inProtectedAttack = (baseKitActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
+                                          (baseKitActive && NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                          (baseKitActive && NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
+                                          (NPC.ai[1] >= 725f && NPC.ai[1] <= 900f) ||
+                                          (baseKitActive && NPC.ai[1] >= 925f && NPC.ai[1] <= 955f) ||
                                           (NPC.ai[2] >= 165f && NPC.ai[2] <= 249f);
                 if (!inProtectedAttack)
                 {
@@ -333,16 +366,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.ai[2]++;
                 }
 
-                bool inActiveAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
-                                       (NPC.ai[1] >= 300f && NPC.ai[1] <= 485f) ||
-                                       (NPC.ai[1] >= 725f && NPC.ai[1] <= 955f) ||
+                bool inActiveAttack = (baseKitActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
+                                       (baseKitActive && NPC.ai[1] >= 300f && NPC.ai[1] <= 485f) ||
+                                       (NPC.ai[1] >= 725f && NPC.ai[1] <= 900f) ||
+                                       (baseKitActive && NPC.ai[1] >= 925f && NPC.ai[1] <= 955f) ||
                                        (NPC.ai[2] >= 165f && NPC.ai[2] <= 249f);
 
                 // Gate projectile firing on LOS — prevents shooting through floors/ceilings
                 bool hasPlayerLOS = Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1);
                 // Gate 2 of 3: with the legacy machine inert, these ai[1] marks no longer fire
-                // anything, so registering a fighter attack on them would be a phantom.
-                if (!specialAttacks.DominionEngaged && hasPlayerLOS && (NPC.ai[1] == 210f || NPC.ai[1] == 325f || NPC.ai[1] == 375f || NPC.ai[1] == 480f || NPC.ai[1] == 750f || NPC.ai[1] == 850f || NPC.ai[1] == 955f))
+                // anything, so registering a fighter attack on them would be a phantom. Same reason
+                // the base-kit marks (210 spear, 325/375/480 poison, 955 bomb) drop out below 60%
+                // while DD2 Drakin's (750, 850) stay — that attack retires on its own 50% gate.
+                bool baseKitFighterMark = baseKitActive && (NPC.ai[1] == 210f || NPC.ai[1] == 325f
+                    || NPC.ai[1] == 375f || NPC.ai[1] == 480f || NPC.ai[1] == 955f);
+                bool drakinFighterMark = NPC.ai[1] == 750f || NPC.ai[1] == 850f;
+                if (!specialAttacks.DominionEngaged && hasPlayerLOS && (baseKitFighterMark || drakinFighterMark))
                 {
                     tsorcRevampAIs.RegisterFighterAttack(NPC);
                 }
@@ -412,7 +451,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Skip spear if player is at melee range — it's a ranged weapon
-                if (NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f)
+                if (baseKitActive && NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f)
                 {
                     NPC.ai[1] = 230f;
                     NPC.netUpdate = true;
@@ -421,8 +460,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
 
-                // Spear Attack: Get targetPosition 
-                if (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f)
+                // SPEAR THROW — base kit, retires at 60% HP (see baseKitActive). Telegraph, aim and
+                // both throw variants all carry the gate so no half-attack can leak through.
+                // Spear Attack: Get targetPosition
+                if (baseKitActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f)
                 {
                     NPC.knockBackResist = 0f;
                     // Calculate the direction towards the stored player position.
@@ -433,7 +474,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Spear Telegraph
-                if (NPC.ai[1] == 180f)
+                if (baseKitActive && NPC.ai[1] == 180f)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -458,7 +499,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Spear Attack Far
-                if (NPC.ai[1] == 210f && NPC.Distance(player.Center) > 400)
+                if (baseKitActive && NPC.ai[1] == 210f && NPC.Distance(player.Center) > 400)
                 {
                     NPC.TargetClosest(true);
                     float spearProjectileSpeed = Main.rand.NextFloat(16, 19f);
@@ -487,7 +528,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 // Spear Attack Close
-                if (NPC.ai[1] == 210f && NPC.Distance(player.Center) <= 400)
+                if (baseKitActive && NPC.ai[1] == 210f && NPC.Distance(player.Center) <= 400)
                 {
                     NPC.TargetClosest(true);
                     float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
@@ -516,8 +557,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
 
-                // Poison Attack 1 Telegraph 
-                if (NPC.ai[1] == 300)
+                // POISON SALVO (all three volleys) — base kit, retires at 60% HP. Each telegraph is
+                // gated alongside its own volley so a flash never fires without the salvo behind it.
+                // Poison Attack 1 Telegraph
+                if (baseKitActive && NPC.ai[1] == 300)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -531,7 +574,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Poison Attack 1
-                if (NPC.ai[1] == 325 && hasPlayerLOS)
+                if (baseKitActive && NPC.ai[1] == 325 && hasPlayerLOS)
                 {
                     float projectileSpeed = 6f;
                     float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
@@ -568,7 +611,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Poison Attack 2 Telegraph
-                if (NPC.ai[1] == 350)
+                if (baseKitActive && NPC.ai[1] == 350)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -582,7 +625,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Poison Attack 2
-                if (NPC.ai[1] == 375 && hasPlayerLOS)
+                if (baseKitActive && NPC.ai[1] == 375 && hasPlayerLOS)
                 {
                     float projectileSpeed = 7f;
                     float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
@@ -614,7 +657,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 }
                 // Poison Attack 3 Telegraph
-                if (NPC.ai[1] == 450)
+                if (baseKitActive && NPC.ai[1] == 450)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -628,7 +671,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Poison Attack 3 — fixed 4-shot burst with slight speed variation
-                if (NPC.ai[1] == 480)
+                if (baseKitActive && NPC.ai[1] == 480)
                 {
                     NPC.TargetClosest(true);
                     if (Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
@@ -707,8 +750,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
 
-                // Code for Bomb Telegraph & Attack: 
-                if (NPC.ai[1] >= 925f && NPC.ai[1] <= 955f)
+                // FIREBOMB THROW — base kit, retires at 60% HP. Note this attack is what normally
+                // resets ai[1] to 0 and closes the loop; see the explicit reset after it for what
+                // keeps DD2 Drakin Bombardment alive once the bomb stops running.
+                // Code for Bomb Telegraph & Attack:
+                if (baseKitActive && NPC.ai[1] >= 925f && NPC.ai[1] <= 955f)
                 {
                     NPC.knockBackResist = 0f;
                     // Calculate the direction towards the stored player position.
@@ -718,7 +764,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Bomb Telegraph
-                if (NPC.ai[1] == 925f)
+                if (baseKitActive && NPC.ai[1] == 925f)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center); // lit fuse
                     Vector2 spawnPosition = NPC.position;
@@ -745,7 +791,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 }
                 // Bomb Attack Far
-                if (NPC.ai[1] == 955f && NPC.Distance(player.Center) > 400)
+                if (baseKitActive && NPC.ai[1] == 955f && NPC.Distance(player.Center) > 400)
                 {
                     float bombProjectileSpeed = 14f;
 
@@ -774,7 +820,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 // Bomb Attack Close
-                if (NPC.ai[1] == 955f && NPC.Distance(player.Center) <= 400)
+                if (baseKitActive && NPC.ai[1] == 955f && NPC.Distance(player.Center) <= 400)
                 {
                     float bombProjectileSpeed = 9f;
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
@@ -800,17 +846,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
 
+                // ai[1] LOOP CLOSER. The two Bomb Attack blocks above are the ONLY thing that
+                // normally resets ai[1] to 0, so once the firebomb retires at 60% the timer would
+                // climb past 955 forever — and take DD2 Drakin Bombardment (ai[1] 750-900, which
+                // retires on its own separate 50% gate) permanently silent with it after a single
+                // pass. Close the loop explicitly instead.
+                if (!baseKitActive && NPC.ai[1] >= 955f)
+                {
+                    NPC.ai[1] = 0f;
+                    NPC.netUpdate = true;
+                }
+
                 #region AI 2 Attacks
+                // ABYSSAL RAIN — base kit, retires at 60% HP. The dust targeting indicator carries
+                // the same gate as the volleys it warns about, so it can never mark a drop zone
+                // nothing falls into.
                 // Air attack targeting indicator — dust appears above drop zone 3 frames before each wave
                 // (telegraph still shows without LOS so the player gets fair warning when the knight IS above them)
-                if ((NPC.ai[2] == 68 || NPC.ai[2] == 93 || NPC.ai[2] == 518 || NPC.ai[2] == 543 || NPC.ai[2] == 568 || NPC.ai[2] == 593) && !inActiveAttack)
+                if (baseKitActive && (NPC.ai[2] == 68 || NPC.ai[2] == 93 || NPC.ai[2] == 518 || NPC.ai[2] == 543 || NPC.ai[2] == 568 || NPC.ai[2] == 593) && !inActiveAttack)
                 {
                     for (int i = 0; i < 6; i++)
                         Dust.NewDust(new Vector2(player.Center.X - 130f + Main.rand.Next(260), player.Top.Y - 250f), 4, 4, DustID.CursedTorch, 0f, 2f, 100, new Color(130, 205, 28), 1.05f);
                 }
 
                 // Fire Attack from Air
-                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && !inActiveAttack)
+                if (baseKitActive && (NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && !inActiveAttack)
                 {
                     SpawnAbyssalRainVolley(player, 3, 190f, 250f, 5.4f);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -818,7 +878,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Slightly Delayed Fire Attack From Air
-                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && !inActiveAttack)
+                if (baseKitActive && (NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && !inActiveAttack)
                 {
                     SpawnAbyssalRainVolley(player, 4, 420f, 280f, 4.8f);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -914,8 +974,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 #endregion
 
-                // Jellyfish Lightning Attack at 1/3 life
-                if (specialAttacks.ThirdHeraldComplete && NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 300 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                // Jellyfish Lightning — 1/3 life -> 40%. Deliberately NOT the same number as its
+                // sibling Rain of Cursed Flame (70%): the two share the ThirdHeraldComplete unlock
+                // but keep independent HP floors. Like every attack below the Dominion gate above,
+                // this stops entirely once DominionEngaged latches at 30%.
+                if (specialAttacks.ThirdHeraldComplete && NPC.life <= NPC.lifeMax * 0.4f && Main.GameUpdateCount % 300 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Player closestPlayer = UsefulFunctions.GetClosestPlayer(NPC.Center);
                     if (closestPlayer != null)
@@ -925,12 +988,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
 
-                // Rain of Cursed Flame — moved 1/3 life -> 70%, matching the Storm Herald unlock
-                // that gates it (RedKnightAttackController.TryStartGreat). Both halves had to move:
-                // the herald makes ThirdHeraldComplete reachable earlier, and this check is what
-                // keeps the rain FIRING from there on down rather than only at whatever HP the
-                // herald happened to finish at. Its sibling Jellyfish Lightning above deliberately
-                // keeps its own 1/3 gate, so that one still only starts below 33%.
+                // Rain of Cursed Flame — own gate moved 1/3 life -> 70%. Note the EFFECTIVE unlock
+                // is now ~60%, not 70%: this check only matters once ThirdHeraldComplete is set,
+                // and Storm Herald cannot complete until 60% (RedKnightAttackController). The 70%
+                // here is deliberately loose so the rain fires continuously from the moment the
+                // herald lands rather than waiting for a second, lower threshold. Its sibling
+                // Jellyfish Lightning above keeps an independent 40% floor.
                 if (specialAttacks.ThirdHeraldComplete && NPC.life <= NPC.lifeMax * 0.7f && Main.GameUpdateCount % 60 == 0)
                 {
                     Player nT = Main.player[NPC.target];

@@ -210,14 +210,14 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
 
-            // Furnace Herald ("Half Herald") moved 50% -> 70%. This is the head of the herald chain,
-            // so it is what actually lets the whole chain start earlier: Storm Herald below is
-            // gated on HalfHeraldComplete, and everything else hangs off those two flags.
+            // Furnace Herald ("Half Herald") — 80%. Head of the herald chain and the first phase
+            // marker in the fight: it fires early, then Storm Herald follows at its own lower
+            // number (60%, below). The two are deliberately NOT the same threshold any more.
             //
             // IMPORTANT: HalfHeraldComplete no longer implies "the boss is at or below 50% HP".
             // Every reader that wants the 50% behaviour must carry its own explicit life check —
             // see the audit note in GreatRedKnight.AI's Ultrakill telegraph.
-            if (!HalfHeraldComplete && npc.life <= npc.lifeMax * 0.7f)
+            if (!HalfHeraldComplete && npc.life <= npc.lifeMax * 0.8f)
             {
                 Begin(npc, target, globalNPC, KnightSpecialAttack.FurnaceHerald);
                 return true;
@@ -225,13 +225,15 @@ namespace tsorcRevamp.NPCs
             // Storm Herald ("Third Herald") moved 33% -> 70%. It is the unlock for everything gated
             // behind ThirdHeraldComplete — Stormbreaker Edict as a candidate below, and Rain of
             // Cursed Flame / Jellyfish Lightning in GreatRedKnight's AI — so pulling it earlier is
-            // what makes those reachable sooner. It is still ORDERED behind HalfHeraldComplete
-            // directly above — Furnace must complete before Storm becomes eligible — but both now
-            // share the same 70% number, so the chain is: cross 70% -> Furnace Herald fires ->
-            // Storm Herald becomes eligible on the next selection window -> everything gated on
-            // ThirdHeraldComplete unlocks. The gap between the two heralds is now just the attack
-            // cooldown rather than another 37% of the health bar.
-            if (HalfHeraldComplete && !ThirdHeraldComplete && npc.life <= npc.lifeMax * 0.7f)
+            // what makes those reachable sooner. Storm Herald sits at 60%, a full 20% below Furnace
+            // Herald's 80% — the two heralds are separate beats, not one. Ordering is safe by
+            // construction: it still requires HalfHeraldComplete, and since Furnace becomes
+            // eligible at 80% it will always have had its chance long before HP reaches 60%.
+            //
+            // Knock-on: because Storm cannot COMPLETE until HP is at or below 60%, everything
+            // chained behind ThirdHeraldComplete (Rain of Cursed Flame, Stormbreaker Edict) is now
+            // realistically a ~60% unlock rather than the ~70% it was.
+            if (HalfHeraldComplete && !ThirdHeraldComplete && npc.life <= npc.lifeMax * 0.6f)
             {
                 Begin(npc, target, globalNPC, KnightSpecialAttack.StormHerald);
                 return true;
@@ -270,8 +272,8 @@ namespace tsorcRevamp.NPCs
             }
 
             bool hasRoyalCenter = TryFindGround(target.Bottom, 10, 30, out Vector2 royalCenter);
-            bool hasRoyalLeft = TryFindGround(target.Bottom + new Vector2(-RoyalSpearSpacing, 0f), 10, 30, out Vector2 royalLeft);
-            bool hasRoyalRight = TryFindGround(target.Bottom + new Vector2(RoyalSpearSpacing, 0f), 10, 30, out Vector2 royalRight);
+            bool hasRoyalLeft = TryFindGround(target.Bottom + new Vector2(-240f, 0f), 10, 30, out Vector2 royalLeft);
+            bool hasRoyalRight = TryFindGround(target.Bottom + new Vector2(160f, 0f), 10, 30, out Vector2 royalRight);
             bool hasRoyalGround = hasRoyalCenter && hasRoyalLeft && hasRoyalRight;
             if (hasRoyalGround)
             {
@@ -424,7 +426,7 @@ namespace tsorcRevamp.NPCs
                     TickFurnacePincer(npc, target, stats);
                     break;
                 case KnightSpecialAttack.RoyalStandard:
-                    TickRoyalStandard(npc, stats);
+                    TickRoyalStandard(npc, target, stats);
                     break;
                 case KnightSpecialAttack.StormbreakerEdict:
                     TickStormbreaker(npc, target, stats);
@@ -635,7 +637,7 @@ namespace tsorcRevamp.NPCs
         const int RoyalThrowInterval1 = 30;
         const int RoyalThrowInterval2 = 60;
 
-        void TickRoyalStandard(NPC npc, KnightAttackStats stats)
+        void TickRoyalStandard(NPC npc, Player target, KnightAttackStats stats)
         {
             if (Timer == 45)
             {
@@ -646,32 +648,49 @@ namespace tsorcRevamp.NPCs
                 npc.netUpdate = true;
             }
 
-            // One spear per throw, back to back, instead of all three at once. The order SWEEPS
-            // away from the knight — nearest mark first, far side last — so the cascade of flame
-            // walls reads as a wave rolling across the arena rather than three unrelated beats.
-            // AuxiliaryTargetA is the left mark and B the right, so which of the two is "near"
-            // depends on which way the knight is facing. Each standard carries its own short
-            // telegraph and fires its own shockwave when it lands (RedKnightStandard.ChargeTicks),
-            // which is what keeps the sequence gapless: spear 2 is airborne before spear 1 erupts.
-            bool facingRight = Direction >= 0;
-            Vector2 nearMark = facingRight ? AuxiliaryTargetA : AuxiliaryTargetB;
-            Vector2 farMark = facingRight ? AuxiliaryTargetB : AuxiliaryTargetA;
-            KnightStandardMode nearMode = facingRight ? KnightStandardMode.GreatLeft : KnightStandardMode.GreatRight;
-            KnightStandardMode farMode = facingRight ? KnightStandardMode.GreatRight : KnightStandardMode.GreatLeft;
+            // Update LockedTarget dynamically based on the current throw phase:
+            // 1st throw (Timer < 75): First at player
+            // 2nd throw (75 <= Timer < 105): 15 tiles to left of player (-240px)
+            // 3rd throw (105 <= Timer < 165): 10 tiles to right of player (+160px)
+            Vector2 desiredTarget;
+            if (Timer < RoyalFirstThrow)
+            {
+                if (!TryFindGround(target.Bottom, 10, 30, out desiredTarget))
+                {
+                    desiredTarget = target.Bottom;
+                }
+            }
+            else if (Timer < RoyalFirstThrow + RoyalThrowInterval1)
+            {
+                if (!TryFindGround(target.Bottom + new Vector2(-240f, 0f), 10, 30, out desiredTarget))
+                {
+                    desiredTarget = target.Bottom + new Vector2(-240f, 0f);
+                }
+            }
+            else
+            {
+                if (!TryFindGround(target.Bottom + new Vector2(160f, 0f), 10, 30, out desiredTarget))
+                {
+                    desiredTarget = target.Bottom + new Vector2(160f, 0f);
+                }
+            }
+            LockedTarget = desiredTarget;
+            Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
 
             if (Timer == RoyalFirstThrow)
             {
-                ThrowRoyalSpear(npc, nearMark, stats.MagicDamage, nearMode, -0.2f);
+                // Throw 1: First at the player (Center mode, erupts waves both ways)
+                ThrowRoyalSpear(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter, -0.05f);
             }
             else if (Timer == RoyalFirstThrow + RoyalThrowInterval1)
             {
-                // The centre mark keeps GreatCenter: it is the one with a damaging spear in flight
-                // and the heavier damage, and it lands on the player's own position.
-                ThrowRoyalSpear(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter, -0.05f);
+                // Throw 2: 15 tiles to left of player (Left mode, wave travels right towards player)
+                ThrowRoyalSpear(npc, LockedTarget, stats.MagicDamage, KnightStandardMode.GreatLeft, -0.2f);
             }
             else if (Timer == RoyalFirstThrow + RoyalThrowInterval1 + RoyalThrowInterval2)
             {
-                ThrowRoyalSpear(npc, farMark, stats.MagicDamage, farMode, 0.1f);
+                // Throw 3: 10 tiles to right of player (Right mode, wave travels left towards player)
+                ThrowRoyalSpear(npc, LockedTarget, stats.MagicDamage, KnightStandardMode.GreatRight, 0.1f);
                 // Only release the knight once the LAST spear is away, not after the first.
                 ReleaseDetachedStandard(npc);
             }

@@ -11041,7 +11041,6 @@ Mods: {
 			// FireLurkerFireBurst.DisplayName: Fire Lurker Fire Burst
 			// DestinedDeathBlaze.DisplayName: Destined Death Blaze
 			// DestinedDeathExplosion.DisplayName: Destined Death Explosion
-			// GreatRedKnightHandBeam.DisplayName: Great Red Knight Hand Beam
 			// GreatRedKnightUltrakillHand.DisplayName: Great Red Knight Ultrakill Hand
 			// EnemyShadowflameArrow.DisplayName: Enemy Shadowflame Arrow
 		}
@@ -11608,6 +11607,7 @@ Mods: {
 				DisplayName: Великий красный рыцарь
 				Hunt: Великий Красный рыцарь бездны теперь охотится на тебя...
 				Destroy: Великий красный рыцарь бездны пришёл, чтобы уничтожить тебя..
+				// DespawnHandler: The Great Red Knight stands victorious...
 			}
 
 			// GreatRedKnightTest.DisplayName: Great Red Knight Test

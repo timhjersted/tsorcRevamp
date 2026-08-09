@@ -421,7 +421,7 @@ namespace tsorcRevamp
         [DefaultValue(false)]
         public bool DisableLocationBanner { get; set; }
 
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         public bool OnlyShowMapWhenInventoryIsOpen { get; set; }
 
         [DefaultValue(false)]

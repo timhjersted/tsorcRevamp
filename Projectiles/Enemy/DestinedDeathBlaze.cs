@@ -94,11 +94,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Fire-like particles: DustID.Blood (5) and DustID.Wraith (54) rising from the flames
             if (!Main.dedServ && Main.rand.NextBool(2))
             {
-                int dustType = Main.rand.NextBool(2) ? DustID.Blood : DustID.Wraith;
-                Vector2 dustPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-14f, 14f) * Projectile.scale, Main.rand.NextFloat(-18f, -2f) * Projectile.scale);
-                Vector2 dustVel = new Vector2(Projectile.velocity.X * 0.2f + Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(-2.8f, -1.0f));
-                Dust dust = Dust.NewDustPerfect(dustPos, dustType, dustVel, 100, default, Main.rand.NextFloat(0.9f, 1.4f));
-                dust.noGravity = true;
+                for (int i = 0; i < 2; i++)
+                {
+                    int dustType = Main.rand.NextBool(2) ? DustID.Blood : DustID.Wraith;
+                    Vector2 dustPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-14f, 14f) * Projectile.scale, Main.rand.NextFloat(-18f, -2f) * Projectile.scale);
+                    Vector2 dustVel = new Vector2(Projectile.velocity.X * 0.2f + Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(-2.8f, -1.0f));
+                    Dust dust = Dust.NewDustPerfect(dustPos, dustType, dustVel, 100, default, Main.rand.NextFloat(0.9f, 1.4f));
+                    dust.noGravity = true;
+                }
             }
 
             Lighting.AddLight(Projectile.Center, new Vector3(0.42f, 0.03f, 0.04f) * Projectile.scale);

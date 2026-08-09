@@ -11669,6 +11669,7 @@ Mods: {
 				DisplayName: Great Red Knight
 				Hunt: A Great Red Knight of the Abyss is now hunting you...
 				Destroy: A Great Red Knight of the Abyss has come to destroy you..
+				DespawnHandler: The Great Red Knight stands victorious...
 			}
 
 			GreatRedKnightTest.DisplayName: Great Red Knight Test

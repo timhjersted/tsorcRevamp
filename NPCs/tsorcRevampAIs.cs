@@ -640,6 +640,10 @@ namespace tsorcRevamp.NPCs
 
                 if (fsmState == PursuitState.Flee)
                 {
+                    if (globalNPC.NavSearchRadius > 0)
+                    {
+                        SmartFighter4AI.ReleaseRopeTraversal(npc);
+                    }
                     // No teleport-mid-blink guard needed here — Flee is only ever entered when
                     // !globalNPC.CanTeleport (see the justHit handling above).
                     NavBehavior.RunFlee(npc, globalNPC, topSpeed, acceleration);
@@ -657,6 +661,10 @@ namespace tsorcRevamp.NPCs
 
                 if (fsmState == PursuitState.Patrol)
                 {
+                    if (globalNPC.NavSearchRadius > 0)
+                    {
+                        SmartFighter4AI.ReleaseRopeTraversal(npc);
+                    }
                     // Mid-blink (a teleport was just queued, counting down, or appearance is pending) → hold; otherwise patrol.
                     if (globalNPC.TeleportCountdown == 0 && globalNPC.TeleportAppearanceTimer == 0)
                     {
@@ -753,7 +761,9 @@ namespace tsorcRevamp.NPCs
             //   NavSearchRadius  > 0  → SmartFighter4AI A* pathing in movementOnly mode (FSM + attacks already
             //                           done here, so it ONLY moves). Combat (attacks/pounce/dodge/teleport/aim)
             //                           is unchanged either way — it lives above this line.
-            bool lineOfSight = Main.player[npc.target].CanHit(npc);
+            bool lineOfSight = globalNPC.NavSearchRadius > 0
+                ? FighterHasLineOfSight(npc, Main.player[npc.target])
+                : Main.player[npc.target].CanHit(npc);
             intent.HoldForAttack = SenseHoldForAttack(npc, globalNPC, lineOfSight);
             bool advanceAndShootActive = globalNPC.IsAdvanceAndShootActive(npc, Main.player[npc.target]);
             bool fireWhileAdvancing = globalNPC.CanUseMovingFireDuringAdvance(npc, Main.player[npc.target]);
@@ -778,7 +788,7 @@ namespace tsorcRevamp.NPCs
                 // SeizesBody guard: combat/teleport owns the body this frame, so don't let A* pathing fight it.
                 if (!intent.SeizesBody)
                     SmartFighter4AI.Run(npc, topSpeed, acceleration, doorBreakingDamage, 700f, movementOnly: true, holdForAttack: sf4Hold, brakingPower: brakingPower);
-                lineOfSight = Main.player[npc.target].CanHit(npc); // refresh for the log + triggers
+                lineOfSight = FighterHasLineOfSight(npc, Main.player[npc.target]); // refresh for the log + triggers
             }
             else
             {
@@ -896,6 +906,10 @@ namespace tsorcRevamp.NPCs
             //Stop moving when teleporting, and handle the logic to execute it
             if (globalNPC.TeleportCountdown > 0)
             {
+                if (globalNPC.NavSearchRadius > 0)
+                {
+                    SmartFighter4AI.ReleaseRopeTraversal(npc);
+                }
                 npc.velocity *= 0.1f;
                 if (npc.velocity.LengthSquared() < 0.01f)
                 {
@@ -916,6 +930,10 @@ namespace tsorcRevamp.NPCs
             // Smoke/fire/plague: NPC is still hidden during snap delay; revealed at destination.
             if (globalNPC.TeleportAppearanceTimer > 0)
             {
+                if (globalNPC.NavSearchRadius > 0)
+                {
+                    SmartFighter4AI.ReleaseRopeTraversal(npc);
+                }
                 npc.velocity *= 0.1f;
                 if (npc.velocity.LengthSquared() < 0.01f)
                 {
@@ -1138,8 +1156,14 @@ namespace tsorcRevamp.NPCs
         private static bool SenseHoldForAttack(NPC npc, tsorcRevampGlobalNPC globalNPC, bool lineOfSight)
         {
             if (globalNPC.FighterPostAttackPauseTimer > 0) globalNPC.FighterPostAttackPauseTimer--;
+            bool sf4TelegraphRequestsHold = globalNPC.NavSearchRadius > 0
+                && globalNPC.AttackList.Count > 0
+                && globalNPC.CurrentAttack.stopBefore
+                && globalNPC.AttackTelegraphing;
             return globalNPC.CanStopToFire && !globalNPC.CanPassThroughWalls
-                && (globalNPC.FighterPostAttackPauseTimer > 0 || globalNPC.FighterRangedStandShotsRemaining > 0)
+                && (globalNPC.FighterPostAttackPauseTimer > 0
+                    || globalNPC.FighterRangedStandShotsRemaining > 0
+                    || sf4TelegraphRequestsHold)
                 && lineOfSight && npc.velocity.Y == 0f && !globalNPC.Fleeing;
         }
 
@@ -1410,7 +1434,7 @@ namespace tsorcRevamp.NPCs
                 // frames where the SF4 mover is skipped). The `[fsm]` tag distinguishes the two line formats.
                 string logPath = logDir + separator + (globalNPC.NavSearchRadius > 0 ? "tsorcRevamp-smartfighter4.log" : "tsorcRevamp-nav.log");
                 Player player = Main.player[npc.target];
-                string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI} [fsm] pos=({npc.Center.X / 16f:F1},{npc.Center.Y / 16f:F1}) player=({player.Center.X / 16f:F1},{player.Center.Y / 16f:F1}) vel=({npc.velocity.X:F2},{npc.velocity.Y:F2}) g={!airborne} cx={npc.collideX} cy={npc.collideY} dist={npc.Distance(player.Center):F0} los={lineOfSight} yDiff={player.Center.Y - npc.Center.Y:F0} pursuit={globalNPC.PursuitState} disengage={globalNPC.DisengageTimer}/{globalNPC.NavGiveUpTicks} immobile={globalNPC.StuckTimer} tp={(globalNPC.CanTeleport ? $"{globalNPC.TeleportStyle}/ch{(globalNPC.TeleportChargesRemaining == int.MaxValue ? "inf" : globalNPC.TeleportChargesRemaining.ToString())}/cd{globalNPC.TeleportCooldownTimer}/cnt{globalNPC.TeleportCountdown}" : "off")} stopFire={globalNPC.CanStopToFire}";
+                string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI} [fsm] pos=({npc.Center.X / 16f:F1},{npc.Center.Y / 16f:F1}) player=({player.Center.X / 16f:F1},{player.Center.Y / 16f:F1}) vel=({npc.velocity.X:F2},{npc.velocity.Y:F2}) g={!airborne} cx={npc.collideX} cy={npc.collideY} dist={npc.Distance(player.Center):F0} los={lineOfSight} yDiff={player.Center.Y - npc.Center.Y:F0} pursuit={globalNPC.PursuitState} disengage={globalNPC.DisengageTimer}/{globalNPC.NavGiveUpTicks} patrol={globalNPC.PatrolMode}/idle{globalNPC.PatrolIdleTimer}/leg{globalNPC.PatrolLegRemaining}/dir{globalNPC.PatrolDirection}/elapsed{globalNPC.PatrolElapsed} immobile={globalNPC.StuckTimer} tp={(globalNPC.CanTeleport ? $"{globalNPC.TeleportStyle}/ch{(globalNPC.TeleportChargesRemaining == int.MaxValue ? "inf" : globalNPC.TeleportChargesRemaining.ToString())}/cd{globalNPC.TeleportCooldownTimer}/cnt{globalNPC.TeleportCountdown}" : "off")} stopFire={globalNPC.CanStopToFire}";
                 File.AppendAllText(logPath, line + Environment.NewLine);
             }
             catch
@@ -1562,8 +1586,13 @@ namespace tsorcRevamp.NPCs
 
                 if (inTelegraphWindow && Main.rand.NextFloat() < stopBeforeChance)
                 {
-                    npc.velocity.X = 0;
-                    npc.velocity.Y = 0f; // suppress jump-frame animation while aiming
+                    // SF4 owns its movement decision and applies this request only at a navigation hazard.
+                    // LocalMover enemies retain the legacy immediate stop behavior.
+                    if (globalNPC.NavSearchRadius <= 0)
+                    {
+                        npc.velocity.X = 0;
+                        npc.velocity.Y = 0f; // suppress jump-frame animation while aiming
+                    }
 
                     // Standing-fire roll: on the first frame of the telegraph window, tier-2 NPCs
                     // may commit to firing N shots in a row without resuming movement.

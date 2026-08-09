@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -12,7 +12,6 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {

@@ -159,6 +159,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 7f, ref collisionPoint);
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+        }
+
         public override void AI()
         {
             if (!initialized)
@@ -329,6 +334,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.netImportant = true;
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+        }
+
         public override void AI()
         {
             float travelLimit = Math.Max(64f, Projectile.ai[0]);
@@ -380,17 +390,20 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 return;
             }
 
-            int direction = Projectile.velocity.X < 0f ? -1 : 1;
-            // Lift-off only near the end of the run, and only for some of them.
-            bool lifting = travelProgress > 0.65f && Main.rand.NextBool(2);
-            Vector2 spawn = Projectile.Bottom
-                + new Vector2(Main.rand.NextFloat(-26f, 26f), Main.rand.NextFloat(-4f, 3f));
-            Vector2 velocity = new(Projectile.velocity.X * Main.rand.NextFloat(0.55f, 0.95f),
-                Main.rand.NextFloat(-0.6f, 0.2f));
+            for (int i = 0; i < 2; i++)
+            {
+                int direction = Projectile.velocity.X < 0f ? -1 : 1;
+                // Lift-off only near the end of the run, and only for some of them.
+                bool lifting = travelProgress > 0.65f && Main.rand.NextBool(2);
+                Vector2 spawn = Projectile.Bottom
+                    + new Vector2(Main.rand.NextFloat(-26f, 26f), Main.rand.NextFloat(-4f, 3f));
+                Vector2 velocity = new(Projectile.velocity.X * Main.rand.NextFloat(0.55f, 0.95f),
+                    Main.rand.NextFloat(-0.6f, 0.2f));
 
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, velocity,
-                ModContent.ProjectileType<DestinedDeathBlaze>(), 0, 0f, Main.myPlayer,
-                direction, lifting ? 1f : 0f);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, velocity,
+                    ModContent.ProjectileType<DestinedDeathBlaze>(), 0, 0f, Main.myPlayer,
+                    direction, lifting ? 1f : 0f);
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
