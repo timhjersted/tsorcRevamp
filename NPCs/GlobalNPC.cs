@@ -1735,6 +1735,10 @@ namespace tsorcRevamp.NPCs
                 UpdateInvisibilityTrail(npc);
             }
 
+            // Committed jumps keep their takeoff facing and travel direction through the first landing,
+            // then decelerate before normal pursuit is permitted to turn the fighter around.
+            UpdateCommittedJumpFacing(npc);
+
             // Stagger freeze: override the AI's movement so a staggered enemy is stunned in place. Last write to
             // velocity in the common PostAI path so it wins over pursuit/confusion/standoff set above.
             ApplyStaggerMovement(npc);

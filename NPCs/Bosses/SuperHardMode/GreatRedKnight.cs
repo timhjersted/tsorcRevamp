@@ -100,6 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             redKnightGlobalNPC.Agility = 0.45f;
+            redKnightGlobalNPC.PreserveJumpFacingUntilLanding = true;
             EvasiveProfile.RedKnight(redKnightGlobalNPC); // hop/leap/dash away, or blink away when able
 
             // Poise: boss-tier — many hits to stagger, and the impulse is halved for bosses. Tunable lever.
@@ -265,7 +266,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             specialAttacks.TickCooldowns();
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            KnightAttackStats attackStats = new KnightAttackStats(redKnightsSpearDamage, redMagicDamage, redKnightsGreatDamage);
+            KnightAttackStats attackStats = new KnightAttackStats(
+                redKnightsSpearDamage, redMagicDamage, redKnightsGreatDamage, redKnightsBombDamage);
 
             // DEATH FINALE owns the knight completely — no movement, no attacks, no new lightning.
             if (dominionDeathTimer >= 0)
@@ -1008,6 +1010,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
+        }
+
+        public override void FindFrame(int frameHeight)
+        {
+            if (specialAttacks.UsesStableMeleeFrame)
+            {
+                // Match Red Knight's upright mid-stride attack pose. This sheet is identical and
+                // frame 8 carries the same stable (48,33) hand anchor at GRK's 1.15 scale.
+                NPC.frame.Y = 8 * frameHeight;
+                NPC.frameCounter = 0d;
+            }
         }
 
 

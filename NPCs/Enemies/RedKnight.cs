@@ -22,6 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public int redKnightsSpearDamage = 20;
         public int redMagicDamage = 15;
         public int redKnightsGreatDamage = 18;
+        public int redKnightsBombDamage = 26;
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
         readonly RedKnightAttackController specialAttacks = new RedKnightAttackController();
@@ -67,6 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 redKnightsGreatDamage = 9;
                 redKnightsSpearDamage = 12;
                 redMagicDamage = 7;
+                redKnightsBombDamage = 15;
                 NPC.boss = true;
             }
             if (tsorcRevampWorld.SuperHardMode)
@@ -78,6 +80,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 redKnightsGreatDamage = 38;
                 redKnightsSpearDamage = 32;
                 redMagicDamage = 26;
+                redKnightsBombDamage = 40;
             }
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
@@ -90,6 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //redKnightGlobalNPC.Strength = Main.rand.NextFloat(0.7f, 1.4f);
 
             redKnightGlobalNPC.Agility = 0.3f;
+            redKnightGlobalNPC.PreserveJumpFacingUntilLanding = true;
 
             // Poise: needs sustained pressure to stagger (poise damage = weapon knockback). Tunable lever.
             redKnightGlobalNPC.PoiseMax = 40f;
@@ -383,7 +387,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             specialAttacks.TickCooldowns();
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            KnightAttackStats attackStats = new KnightAttackStats(redKnightsSpearDamage, redMagicDamage, redKnightsGreatDamage);
+            KnightAttackStats attackStats = new KnightAttackStats(
+                redKnightsSpearDamage, redMagicDamage, redKnightsGreatDamage, redKnightsBombDamage);
             if (specialAttacks.Active)
             {
                 specialAttacks.Tick(NPC, player, attackStats);
@@ -779,7 +784,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, target, bombProjectileSpeed, 0.2f, highAngle: false, fallback: true);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsBombDamage, 0f, Main.myPlayer, ai2: 1f);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                     }
@@ -929,6 +934,18 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
+            }
+        }
+
+        public override void FindFrame(int frameHeight)
+        {
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (globalNPC.CombatMeleeActive || specialAttacks.UsesStableMeleeFrame)
+            {
+                // Frame 8 is an upright mid-stride pose with a stable (48,33) overlay grip.
+                // Holding it prevents both the idle pose and the raised-hand jump-frame spear pop.
+                NPC.frame.Y = 8 * frameHeight;
+                NPC.frameCounter = 0d;
             }
         }
         #endregion
