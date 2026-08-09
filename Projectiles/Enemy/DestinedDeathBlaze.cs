@@ -38,9 +38,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            Projectile.width = 2;
-            Projectile.height = 2;
-            Projectile.hostile = false;
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
@@ -49,7 +49,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.scale = 1f;
         }
 
-        public override bool? CanDamage() => false;
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+        }
 
         public override void OnSpawn(IEntitySource source)
         {
@@ -79,8 +82,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (Lifting)
             {
-                Projectile.velocity.Y = Math.Max(Projectile.velocity.Y - 0.06f, -4.2f);
-                Projectile.velocity.X *= 0.94f;
+                Projectile.velocity = Projectile.velocity.RotatedBy(0.04f);
+                Projectile.velocity *= 0.98f;
             }
             else
             {

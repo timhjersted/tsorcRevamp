@@ -11105,6 +11105,7 @@ Mods: {
 			DestinedDeathExplosion.DisplayName: Destined Death Explosion
 			GreatRedKnightUltrakillHand.DisplayName: Great Red Knight Ultrakill Hand
 			EnemyShadowflameArrow.DisplayName: Enemy Shadowflame Arrow
+			EnemyAncientBloodLanceProj.DisplayName: Enemy Ancient Blood Lance Proj
 		}
 
 		NPCs: {

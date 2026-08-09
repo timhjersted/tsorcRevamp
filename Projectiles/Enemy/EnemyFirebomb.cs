@@ -75,17 +75,16 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            //IF (NEW DIFFICULTY MODE) MAKE BOUNCE
-            // This code makes the projectile bouncy.
-            /*if (projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 1f)
+            // If colliding with a ceiling (moving upward and Y velocity was stopped/reversed by tile collision), bounce off ceiling rather than exploding
+            if (oldVelocity.Y < -0.5f && Projectile.velocity.Y != oldVelocity.Y)
             {
-                projectile.velocity.X = oldVelocity.X * -0.5f;
+                Projectile.velocity.Y = System.Math.Abs(oldVelocity.Y) * 0.4f;
+                if (Projectile.velocity.X != oldVelocity.X)
+                {
+                    Projectile.velocity.X = oldVelocity.X * 0.8f;
+                }
+                return false;
             }
-            if (projectile.velocity.Y != oldVelocity.Y && Math.Abs(oldVelocity.Y) > 1f)
-            {
-                projectile.velocity.Y = oldVelocity.Y * -0.5f;
-            }
-            return false;*/
             Projectile.timeLeft = 2;
             return false;
         }

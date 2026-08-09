@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -93,22 +94,67 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     {
         Vector2 startPosition;
         bool initialized;
+        int dynamicFlightTicks;
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/BlackKnightSpear";
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/EnemyAncientBloodLanceProj";
 
         KnightStandardMode Mode => (KnightStandardMode)(int)Projectile.ai[2];
         int FlightTicks => Mode == KnightStandardMode.RedKnight ? 24 : 30;
-        // The Great modes are now thrown BACK TO BACK (see RedKnightAttackController.TickRoyalStandard)
-        // rather than all three at once, so each spear only gets a SHORT telegraph before its own
-        // shockwave rather than a long shared charge — otherwise the sequence reintroduces exactly
-        // the dead air the sequencing was meant to remove. RedKnight's single spear is unchanged.
-        int ChargeTicks => Mode == KnightStandardMode.RedKnight ? 60 : 26;
+        int ResolvedFlightTicks => dynamicFlightTicks > 0
+            ? dynamicFlightTicks
+            : FlightTicks;
+        // Great mode is Royal Standard's stronger centre throw; the ordinary Red Knight keeps the
+        // shorter charge used by Crimson Standard.
+        int ChargeTicks => Mode == KnightStandardMode.RedKnight ? 60 : 120;
         Vector2 GroundPoint => new Vector2(Projectile.ai[0], Projectile.ai[1]);
         // +5px versus the first pass: the spear was reading as hovering just above the floor
         // instead of driven into it.
         Vector2 PlantedCenter => GroundPoint - new Vector2(0f, 10f);
         /// <summary>Where the flame's ground band sits — the same +5px down as the spear.</summary>
         Vector2 FlameAnchor => GroundPoint + new Vector2(0f, 5f);
+
+        const float RoyalGravityPerTick = 0.28f;
+
+        static float CalculateArcHeight(Vector2 source, Vector2 plantedCenter)
+            => MathHelper.Clamp(Vector2.Distance(source, plantedCenter) * 0.35f, 64f, 320f);
+
+        static int CalculateFlightTicks(Vector2 source, Vector2 plantedCenter, bool weightyRoyalArc)
+        {
+            float distance = Vector2.Distance(source, plantedCenter);
+            if (!weightyRoyalArc)
+            {
+                return Math.Max(20, (int)(distance / 13f));
+            }
+
+            // y = lerpY - 4H*p*(1-p) has constant acceleration 8H/T^2. Solve T from
+            // the desired Terraria-like gravity, then also cap horizontal travel near 9px/tick.
+            float gravityTicks = MathF.Sqrt(8f * CalculateArcHeight(source, plantedCenter) / RoyalGravityPerTick);
+            float horizontalTicks = MathF.Abs(plantedCenter.X - source.X) / 9f;
+            return (int)MathHelper.Clamp(MathF.Ceiling(MathF.Max(gravityTicks, horizontalTicks)), 36f, 150f);
+        }
+
+        static Vector2 CalculateFlightPosition(Vector2 source, Vector2 plantedCenter, float progress,
+            bool weightyRoyalArc)
+        {
+            float arcHeight = CalculateArcHeight(source, plantedCenter);
+            Vector2 position = Vector2.Lerp(source, plantedCenter, progress);
+            float arcEnvelope = weightyRoyalArc
+                ? 4f * progress * (1f - progress)
+                : System.MathF.Sin(progress * MathHelper.Pi);
+            position.Y -= arcEnvelope * arcHeight;
+            return position;
+        }
+
+        // Used by the held Royal/Crimson Standard pose. It samples the same first segment the
+        // projectile will traverse, so the lance previews its true upward launch tangent.
+        internal static Vector2 InitialFlightDirection(Vector2 source, Vector2 groundPoint,
+            bool weightyRoyalArc)
+        {
+            Vector2 plantedCenter = groundPoint - new Vector2(0f, 10f);
+            int flightTicks = CalculateFlightTicks(source, plantedCenter, weightyRoyalArc);
+            return (CalculateFlightPosition(source, plantedCenter, 1f / flightTicks, weightyRoyalArc) - source)
+                .SafeNormalize(Vector2.UnitY);
+        }
 
         public override void SetDefaults()
         {
@@ -117,7 +163,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 240;
+            Projectile.timeLeft = FlightTicks + ChargeTicks + 40;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
@@ -147,12 +193,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         {
             int age = (int)Projectile.localAI[0];
             bool physicalSpear = Mode == KnightStandardMode.RedKnight || Mode == KnightStandardMode.GreatCenter;
-            return physicalSpear && age < FlightTicks;
+            return physicalSpear && age < ResolvedFlightTicks;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            Vector2 direction = (PlantedCenter - startPosition).SafeNormalize(Vector2.UnitY);
+            // Match the visible lance's instantaneous tangent, not the straight start-to-impact
+            // chord underneath its high arc.
+            Vector2 direction = Projectile.velocity.SafeNormalize(
+                (PlantedCenter - startPosition).SafeNormalize(Vector2.UnitY));
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
                 Projectile.Center - direction * 24f, Projectile.Center + direction * 24f,
@@ -170,25 +219,59 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             {
                 initialized = true;
                 startPosition = Projectile.Center;
+                dynamicFlightTicks = CalculateFlightTicks(
+                    startPosition, PlantedCenter, Mode != KnightStandardMode.RedKnight);
+                // ai[1] is GroundPoint.Y. Overwriting it with the flight duration retargeted the
+                // lance to world Y ~= 20-30 on the very next tick, so Royal Standard appeared to
+                // telegraph and then never execute. Keep duration separate and sync it below.
+                Projectile.timeLeft = dynamicFlightTicks + ChargeTicks + 80;
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    Projectile.netUpdate = true;
+                }
             }
 
+            int flightDuration = ResolvedFlightTicks;
             int age = (int)Projectile.localAI[0]++;
-            if (age < FlightTicks)
+            if (age < flightDuration)
             {
-                float progress = MathHelper.SmoothStep(0f, 1f, (age + 1f) / FlightTicks);
-                Projectile.Center = Vector2.Lerp(startPosition, PlantedCenter, progress);
-                Vector2 direction = PlantedCenter - startPosition;
-                Projectile.rotation = direction.ToRotation() + MathHelper.PiOver2;
+                bool weightyRoyalArc = Mode != KnightStandardMode.RedKnight;
+                float progress = (float)age / flightDuration;
+                Vector2 currentPos = CalculateFlightPosition(
+                    startPosition, PlantedCenter, progress, weightyRoyalArc);
+                Projectile.Center = currentPos;
+
+                float nextProgress = System.Math.Min(1f, (float)(age + 1) / flightDuration);
+                Vector2 nextPos = CalculateFlightPosition(
+                    startPosition, PlantedCenter, nextProgress, weightyRoyalArc);
+
+                Vector2 flightDir = nextPos - currentPos;
+                if (flightDir.LengthSquared() > 0.001f)
+                {
+                    Projectile.velocity = flightDir;
+                    Projectile.rotation = flightDir.ToRotation() + MathHelper.PiOver2;
+                }
                 return;
             }
 
             Projectile.Center = PlantedCenter;
-            Projectile.rotation = MathHelper.Pi;
-            int plantedAge = age - FlightTicks;
+            int plantedAge = age - flightDuration;
             if (plantedAge == 0)
             {
                 PlaySound(SoundID.Dig with { Volume = 0.65f, Pitch = -0.15f }, GroundPoint);
                 float impactScale = Mode == KnightStandardMode.RedKnight ? 0.75f : 1f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 16; i++)
+                    {
+                        float angle = i * (MathHelper.TwoPi / 16f);
+                        Vector2 velocity = angle.ToRotationVector2() * 2.6f;
+                        float dir = System.MathF.Cos(angle) < 0f ? -1f : 1f;
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), GroundPoint, velocity,
+                            ModContent.ProjectileType<DestinedDeathBlaze>(), 0, 0f, Main.myPlayer,
+                            dir, 1f);
+                    }
+                }
                 // Hardmode gets the DestinedDeathExplosion sheet + red/black dust; pre-hardmode
                 // keeps the original burst untouched.
                 if (!DestinedDeathExplosion.TrySpawn(Projectile.GetSource_FromThis(),
@@ -206,6 +289,21 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             {
                 Projectile.Kill();
             }
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(initialized);
+            writer.Write(startPosition.X);
+            writer.Write(startPosition.Y);
+            writer.Write(dynamicFlightTicks);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            initialized = reader.ReadBoolean();
+            startPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            dynamicFlightTicks = reader.ReadInt32();
         }
 
         void FireWaves()
@@ -284,8 +382,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         void DrawSpearSprite(Color lightColor)
         {
             Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+            float rotation = Projectile.rotation + MathHelper.PiOver4;
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null,
-                Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() * 0.5f,
+                Projectile.GetAlpha(lightColor), rotation, texture.Size() * 0.5f,
                 Projectile.scale, SpriteEffects.None, 0f);
         }
 
@@ -381,9 +480,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 return;
             }
 
-            // 1-in-9 at the start rising to 1-in-3 at full extent. Deliberately not denser than
-            // that: Royal Standard now fires up to six of these waves, and at a 46t blaze lifetime
-            // a 1-in-2 rate put ~140 decorative projectiles on screen at once.
+            // 1-in-9 at the start rising to 1-in-3 at full extent. Keep the decorative layer
+            // subordinate to the two damaging waves and their safe-space readability.
             int chance = Math.Max(3, (int)MathHelper.Lerp(9f, 3f, travelProgress));
             if (!Main.rand.NextBool(chance))
             {
@@ -491,21 +589,69 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void OnKill(int timeLeft)
         {
-            PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = -0.25f }, Projectile.Center);
+            PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
                     ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
-                    (float)RedKnightBurstKind.BombExplosion, 1f);
+                    (float)RedKnightBurstKind.BombExplosionLayered, 1f);
             }
+
+            int dustCount = 52;
+            float dustScale = 1.45f;
+            for (int i = 0; i < dustCount; i++)
+            {
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), dustScale);
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity *= 2.4f;
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int blazeDamage = Projectile.damage;
+                for (int i = 0; i < 8; i++)
+                {
+                    float angle = i * (MathHelper.TwoPi / 8f);
+                    Vector2 dir = angle.ToRotationVector2();
+                    Vector2 blazeVel = dir * 0.56f;
+                    int proj = Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, blazeVel,
+                        ModContent.ProjectileType<EnemySpellBlaze>(), blazeDamage, 5f, Main.myPlayer);
+                    if (proj >= 0 && proj < Main.maxProjectiles)
+                    {
+                        Main.projectile[proj].timeLeft = 90;
+                    }
+                }
+            }
+
             if (!Main.dedServ)
             {
-                for (int i = 0; i < 28; i++)
+                // MIDGROUND — the body of the fireball. 80 motes of RedTorch, reach 68px, scale 0.75-1.5, noGravity.
+                for (int i = 0; i < 80; i++)
                 {
-                    Vector2 velocity = Main.rand.NextVector2Circular(5.5f, 5.5f);
-                    Dust ember = Dust.NewDustPerfect(Projectile.Center, DustID.Torch, velocity, 80,
-                        new Color(255, 65, 25), Main.rand.NextFloat(1f, 1.8f));
+                    Vector2 direction = Main.rand.NextVector2Unit();
+                    bool soot = i % 4 == 0;
+                    Dust ember = Dust.NewDustPerfect(
+                        Projectile.Center + direction * Main.rand.NextFloat(4f, 68f),
+                        soot ? DustID.Shadowflame : DustID.RedTorch,
+                        direction * Main.rand.NextFloat(1.6f, 6.8f),
+                        soot ? 150 : 90,
+                        soot ? new Color(16, 3, 8) : new Color(214, 22, 42),
+                        Main.rand.NextFloat(0.75f, 1.5f));
                     ember.noGravity = true;
+                }
+
+                // FOREGROUND — 35 tiny fast sparks that outrun the body and die quickly.
+                for (int i = 0; i < 35; i++)
+                {
+                    Vector2 direction = Main.rand.NextVector2Unit();
+                    Dust spark = Dust.NewDustPerfect(
+                        Projectile.Center + direction * Main.rand.NextFloat(6f, 26f),
+                        DustID.Torch,
+                        direction * Main.rand.NextFloat(7f, 12.5f),
+                        60, new Color(255, 176, 96),
+                        Main.rand.NextFloat(0.45f, 0.85f));
+                    spark.noGravity = true;
                 }
             }
         }

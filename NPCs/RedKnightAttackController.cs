@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs
     {
         None,
         EmberReversal,
-        VenomWake,
+        PoisonWake,
         CrimsonStandard,
         CrimsonAdvance,
         FurnacePincer,
@@ -100,7 +100,8 @@ namespace tsorcRevamp.NPCs
         public string DebugAttackName => Attack switch
         {
             KnightSpecialAttack.EmberReversal => "Ember Reversal",
-            KnightSpecialAttack.VenomWake => "Venom Wake",
+            KnightSpecialAttack.PoisonWake when Timer < 60 => "Spear Throw",
+            KnightSpecialAttack.PoisonWake => "Poison Wake",
             KnightSpecialAttack.CrimsonStandard => "Crimson Standard",
             KnightSpecialAttack.CrimsonAdvance => "Crimson Advance",
             KnightSpecialAttack.FurnacePincer => "Furnace Pincer",
@@ -174,7 +175,7 @@ namespace tsorcRevamp.NPCs
             }
             if (hasLineOfSight && distance >= 150f && distance <= 620f)
             {
-                candidates[count++] = KnightSpecialAttack.VenomWake;
+                candidates[count++] = KnightSpecialAttack.PoisonWake;
             }
             if (tsorcRevampWorld.SuperHardMode && distance >= 120f && TryFindGround(target.Bottom, 10, 28, out Vector2 standardGround))
             {
@@ -271,11 +272,9 @@ namespace tsorcRevamp.NPCs
                 candidates[count++] = KnightSpecialAttack.CrimsonAdvance;
             }
 
-            bool hasRoyalCenter = TryFindGround(target.Bottom, 10, 30, out Vector2 royalCenter);
-            bool hasRoyalLeft = TryFindGround(target.Bottom + new Vector2(-240f, 0f), 10, 30, out Vector2 royalLeft);
-            bool hasRoyalRight = TryFindGround(target.Bottom + new Vector2(160f, 0f), 10, 30, out Vector2 royalRight);
-            bool hasRoyalGround = hasRoyalCenter && hasRoyalLeft && hasRoyalRight;
-            if (hasRoyalGround)
+            // Royal Standard now throws one centre lance. Requiring two obsolete side-lance
+            // landing points made a valid centre throw unavailable near arena walls.
+            if (TryFindGround(target.Bottom, 10, 30, out Vector2 royalCenter))
             {
                 candidates[count++] = KnightSpecialAttack.RoyalStandard;
             }
@@ -304,8 +303,6 @@ namespace tsorcRevamp.NPCs
             if (selected == KnightSpecialAttack.RoyalStandard)
             {
                 LockedTarget = royalCenter;
-                AuxiliaryTargetA = royalLeft;
-                AuxiliaryTargetB = royalRight;
             }
             else if (selected == KnightSpecialAttack.FurnacePincer)
             {
@@ -318,6 +315,44 @@ namespace tsorcRevamp.NPCs
             }
 
             Begin(npc, target, globalNPC, selected);
+            return true;
+        }
+
+        /// <summary>
+        /// Dominion's deliberately narrow authored pool. Crimson Advance is entered three times
+        /// so it remains the phase's primary answer; Ember Reversal is the occasional close-range
+        /// mix-up. The ordinary spear throw remains on GreatRedKnight's legacy ai[1] clock.
+        /// </summary>
+        public bool TryStartDominion(NPC npc, Player target, tsorcRevampGlobalNPC globalNPC)
+        {
+            if (!DominionEngaged || !CanStart(npc, target, globalNPC) || attackCooldown > 0)
+            {
+                return false;
+            }
+
+            float distance = npc.Distance(target.Center);
+            bool hasLineOfSight = Collision.CanHitLine(npc.Center, 1, 1, target.Center, 1, 1);
+            KnightSpecialAttack[] candidates = new KnightSpecialAttack[4];
+            int count = 0;
+
+            if (hasLineOfSight && distance <= 620f)
+            {
+                candidates[count++] = KnightSpecialAttack.CrimsonAdvance;
+                candidates[count++] = KnightSpecialAttack.CrimsonAdvance;
+                candidates[count++] = KnightSpecialAttack.CrimsonAdvance;
+            }
+            if (hasLineOfSight && distance <= 230f)
+            {
+                candidates[count++] = KnightSpecialAttack.EmberReversal;
+            }
+
+            if (count == 0)
+            {
+                attackCooldown = 30;
+                return false;
+            }
+
+            Begin(npc, target, globalNPC, candidates[Main.rand.Next(count)]);
             return true;
         }
 
@@ -379,7 +414,7 @@ namespace tsorcRevamp.NPCs
         {
             return attack switch
             {
-                KnightSpecialAttack.VenomWake => Color.GreenYellow,
+                KnightSpecialAttack.PoisonWake => Color.GreenYellow,
                 // Stormbreaker and the Storm Herald both used a cyan/ice-blue accent that no longer
                 // matches anything they draw — every lightning in the kit is crimson now.
                 KnightSpecialAttack.StormbreakerEdict => new Color(226, 40, 52),
@@ -413,8 +448,8 @@ namespace tsorcRevamp.NPCs
                 case KnightSpecialAttack.EmberReversal:
                     TickEmberReversal(npc, target, stats);
                     break;
-                case KnightSpecialAttack.VenomWake:
-                    TickVenomWake(npc, target, stats);
+                case KnightSpecialAttack.PoisonWake:
+                    TickPoisonWake(npc, target, stats);
                     break;
                 case KnightSpecialAttack.CrimsonStandard:
                     TickCrimsonStandard(npc, stats);
@@ -486,14 +521,14 @@ namespace tsorcRevamp.NPCs
             }
             if (Timer == 120 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Vector2 velocity = UsefulFunctions.BallisticTrajectory(npc.Center, LockedTarget, 9f, fallback: true);
+                Vector2 velocity = UsefulFunctions.BallisticTrajectory(npc.Center, LockedTarget, 15f, 0.2f, highAngle: false, fallback: true);
                 Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, velocity,
                     ModContent.ProjectileType<EnemyFirebomb>(), stats.SpearDamage, 0f, Main.myPlayer, ai2: 1f);
                 PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.35f }, npc.Center);
             }
         }
 
-        void TickVenomWake(NPC npc, Player target, KnightAttackStats stats)
+        void TickPoisonWake(NPC npc, Player target, KnightAttackStats stats)
         {
             npc.velocity.X *= 0.8f;
             if (Timer == 30)
@@ -562,8 +597,9 @@ namespace tsorcRevamp.NPCs
             }
             if (Timer == 60)
             {
-                Vector2 firstTarget = Vector2.Lerp(npc.Center, LockedTarget, 0.62f);
-                LockedVelocity = GuidedLeapVelocity(npc.Center, firstTarget, 18);
+                // Leonhard-style dash: a committed horizontal burst with a small hop, rather than
+                // a ballistic solve that continuously changes shape with target height/distance.
+                LockedVelocity = LeonhardDashVelocity(npc.Center, LockedTarget);
                 SpawnLunge(npc, stats.SpearDamage, 108f, 52f, 20, 5f);
                 npc.velocity = LockedVelocity;
                 PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.15f }, npc.Center);
@@ -581,7 +617,7 @@ namespace tsorcRevamp.NPCs
             }
             if (Timer == 135)
             {
-                LockedVelocity = GuidedLeapVelocity(npc.Center, LockedTarget, 20);
+                LockedVelocity = LeonhardDashVelocity(npc.Center, LockedTarget);
                 SpawnLunge(npc, stats.GreatDamage, 96f, 54f, 22, 5.5f);
                 npc.velocity = LockedVelocity;
                 PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = 0.05f }, npc.Center);
@@ -626,16 +662,7 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        // Horizontal offset of the outer two Royal Standard spears from the centre one. Was 180px;
-        // +10 tiles (160px) as requested, which also stops the three overlapping flame walls from
-        // merging into one continuous sheet of fire with no gaps to stand in.
-        const float RoyalSpearSpacing = 340f;
-
-        // Ticks between the three Royal Standard throws. Deliberately shorter than a standard's own
-        // flight (30t) + telegraph (26t), so spear N+1 is already in the air before spear N's flame
         const int RoyalFirstThrow = 75;
-        const int RoyalThrowInterval1 = 30;
-        const int RoyalThrowInterval2 = 60;
 
         void TickRoyalStandard(NPC npc, Player target, KnightAttackStats stats)
         {
@@ -648,51 +675,39 @@ namespace tsorcRevamp.NPCs
                 npc.netUpdate = true;
             }
 
-            // Update LockedTarget dynamically based on the current throw phase:
-            // 1st throw (Timer < 75): First at player
-            // 2nd throw (75 <= Timer < 105): 15 tiles to left of player (-240px)
-            // 3rd throw (105 <= Timer < 165): 10 tiles to right of player (+160px)
-            Vector2 desiredTarget;
-            if (Timer < RoyalFirstThrow)
+            if (Timer == RoyalFirstThrow)
             {
-                if (!TryFindGround(target.Bottom, 10, 30, out desiredTarget))
+                // Capture the landing point on the actual fire tick. RedKnightStandard owns a
+                // deterministic ballistic parabola, so this exact point is also its impact.
+                if (!TryFindGround(target.Bottom, 10, 30, out Vector2 fireTarget))
                 {
-                    desiredTarget = target.Bottom;
+                    fireTarget = target.Bottom;
                 }
-            }
-            else if (Timer < RoyalFirstThrow + RoyalThrowInterval1)
-            {
-                if (!TryFindGround(target.Bottom + new Vector2(-240f, 0f), 10, 30, out desiredTarget))
+                else
                 {
-                    desiredTarget = target.Bottom + new Vector2(-240f, 0f);
+                    // Ground search supplies only the plant height; do not quantize the fire-time
+                    // player X coordinate to the centre of a 16px tile.
+                    fireTarget.X = target.Bottom.X;
                 }
+                LockedTarget = fireTarget;
+                Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
+                ThrowRoyalSpear(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter, -0.05f);
+                ReleaseDetachedStandard(npc);
             }
             else
             {
-                if (!TryFindGround(target.Bottom + new Vector2(160f, 0f), 10, 30, out desiredTarget))
+                // The held lance tracks during windup, but this is presentation-only; the
+                // authoritative target is captured above when the projectile is released.
+                if (!TryFindGround(target.Bottom, 10, 30, out Vector2 telegraphTarget))
                 {
-                    desiredTarget = target.Bottom + new Vector2(160f, 0f);
+                    telegraphTarget = target.Bottom;
                 }
-            }
-            LockedTarget = desiredTarget;
-            Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
-
-            if (Timer == RoyalFirstThrow)
-            {
-                // Throw 1: First at the player (Center mode, erupts waves both ways)
-                ThrowRoyalSpear(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter, -0.05f);
-            }
-            else if (Timer == RoyalFirstThrow + RoyalThrowInterval1)
-            {
-                // Throw 2: 15 tiles to left of player (Left mode, wave travels right towards player)
-                ThrowRoyalSpear(npc, LockedTarget, stats.MagicDamage, KnightStandardMode.GreatLeft, -0.2f);
-            }
-            else if (Timer == RoyalFirstThrow + RoyalThrowInterval1 + RoyalThrowInterval2)
-            {
-                // Throw 3: 10 tiles to right of player (Right mode, wave travels left towards player)
-                ThrowRoyalSpear(npc, LockedTarget, stats.MagicDamage, KnightStandardMode.GreatRight, 0.1f);
-                // Only release the knight once the LAST spear is away, not after the first.
-                ReleaseDetachedStandard(npc);
+                else
+                {
+                    telegraphTarget.X = target.Bottom.X;
+                }
+                LockedTarget = telegraphTarget;
+                Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
             }
         }
 
@@ -1055,13 +1070,12 @@ namespace tsorcRevamp.NPCs
             bool committed = Attack switch
             {
                 KnightSpecialAttack.EmberReversal => Timer >= 45 && Timer < 57,
-                KnightSpecialAttack.VenomWake => (Timer >= 60 && Timer < 67) || (Timer >= 120 && Timer < 126),
+                KnightSpecialAttack.PoisonWake => (Timer >= 60 && Timer < 67) || (Timer >= 120 && Timer < 126),
                 KnightSpecialAttack.CrimsonStandard => Timer >= 69 && Timer < 81,
                 KnightSpecialAttack.CrimsonAdvance => (Timer >= 60 && Timer < 80) || (Timer >= 135 && Timer < 157),
                 KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 203,
-                // Extended to cover all three back-to-back throws (75 / 95 / 115), not just the
-                // first — the knight is committed for the whole cascade now.
-                KnightSpecialAttack.RoyalStandard => Timer >= 69 && Timer < 173,
+                // Brief release commitment around the single fire tick at 75.
+                KnightSpecialAttack.RoyalStandard => Timer >= 69 && Timer < 78,
                 KnightSpecialAttack.StormbreakerEdict => Timer >= 60 && Timer < 76,
                 // Hyper-armored from the moment the spear is planted until it starts retracting,
                 // so the hold cannot simply be staggered out of. Rescaled to the 300t hold.
@@ -1099,11 +1113,15 @@ namespace tsorcRevamp.NPCs
             if (completed == KnightSpecialAttack.CrimsonDominion)
             {
                 // PHASE 1 -> PHASE 2. The hold is over: the knight retracts its spear and goes back
-                // to melee combat — and ONLY melee. GreatRedKnight.AI gates TryStartGreat off once
-                // DominionEngaged, so no further special attack can start and this cooldown is now
-                // inert for this boss; it is left set for the Red Knight family's shared code path
-                // and in case a future caller runs Dominion without that gate.
+                // to its narrow Dominion pool. GreatRedKnight gates the full special set and permits
+                // only Crimson Advance, Ember Reversal and its ordinary spear throw.
                 attackCooldown = 90;
+            }
+            else if (DominionEngaged)
+            {
+                // Dominion is an aggressive closing phase. Keep its narrow authored pool cycling
+                // without inheriting the much longer phase-one special cooldowns.
+                attackCooldown = Main.rand.Next(90, 151);
             }
             npc.netUpdate = true;
         }
@@ -1132,11 +1150,11 @@ namespace tsorcRevamp.NPCs
             return attack switch
             {
                 KnightSpecialAttack.EmberReversal => 155,
-                KnightSpecialAttack.VenomWake => 170,
+                KnightSpecialAttack.PoisonWake => 170,
                 KnightSpecialAttack.CrimsonStandard => 210,
                 KnightSpecialAttack.CrimsonAdvance => 195,
                 KnightSpecialAttack.FurnacePincer => 230,
-                KnightSpecialAttack.RoyalStandard => 330,
+                KnightSpecialAttack.RoyalStandard => 200,
                 KnightSpecialAttack.StormbreakerEdict => 200,
                 // Dominion's BLOCKING part is now only the plant-and-hold. Everything that used to
                 // fill the other 420 ticks (containment ring, arena-edge barrage, escape nova) is
@@ -1153,32 +1171,34 @@ namespace tsorcRevamp.NPCs
         {
             KnightSpecialAttack.EmberReversal when Timer < 65 => KnightHeldProp.Spear,
             KnightSpecialAttack.EmberReversal when Timer < 120 => KnightHeldProp.Bomb,
-            KnightSpecialAttack.VenomWake when Timer < 60 => KnightHeldProp.Spear,
-            KnightSpecialAttack.VenomWake when Timer < 120 => KnightHeldProp.Magic,
-            KnightSpecialAttack.CrimsonStandard when Timer < 75 => KnightHeldProp.Spear,
+            KnightSpecialAttack.PoisonWake when Timer < 60 => KnightHeldProp.Spear,
+            KnightSpecialAttack.PoisonWake when Timer < 120 => KnightHeldProp.Magic,
+            // Tick() processes the attack before incrementing Timer, so state 75 is still the
+            // final pre-release draw frame. Keep the spear visible until that fire tick executes.
+            KnightSpecialAttack.CrimsonStandard when Timer <= 75 => KnightHeldProp.Spear,
             KnightSpecialAttack.CrimsonAdvance => KnightHeldProp.Spear,
             KnightSpecialAttack.FurnacePincer when Timer < 60 => KnightHeldProp.Bomb,
             KnightSpecialAttack.FurnacePincer when Timer >= 105 && Timer < 205 => KnightHeldProp.Spear,
-            // Holds a spear through all THREE back-to-back throws now, not just the first.
-            KnightSpecialAttack.RoyalStandard when Timer < RoyalFirstThrow + RoyalThrowInterval1 + RoyalThrowInterval2 => KnightHeldProp.Spear,
+            KnightSpecialAttack.RoyalStandard when Timer <= RoyalFirstThrow => KnightHeldProp.Spear,
             KnightSpecialAttack.StormbreakerEdict when Timer < 122 => KnightHeldProp.Spear,
             KnightSpecialAttack.CrimsonDominion => KnightHeldProp.Spear,
             _ => KnightHeldProp.None
         };
 
-        public float GetSpearRotation(Vector2 handWorld)
+        public float GetSpearRotation(Vector2 handWorld, Vector2 launchSource)
         {
             Vector2 direction = new Vector2(Direction, 0f);
             if ((Attack == KnightSpecialAttack.CrimsonStandard || Attack == KnightSpecialAttack.RoyalStandard)
                     && Timer >= 45)
             {
-                direction = LockedTarget - handWorld;
+                direction = RedKnightStandard.InitialFlightDirection(
+                    launchSource, LockedTarget, Attack == KnightSpecialAttack.RoyalStandard);
             }
             else if (Attack == KnightSpecialAttack.CrimsonDominion)
             {
                 direction = Vector2.UnitY;
             }
-            else if (Attack == KnightSpecialAttack.VenomWake && LockedTarget != Vector2.Zero && Timer >= 20)
+            else if (Attack == KnightSpecialAttack.PoisonWake && LockedTarget != Vector2.Zero && Timer >= 20)
             {
                 direction = LockedVelocity.LengthSquared() > 0.1f
                     ? LockedVelocity
@@ -1242,12 +1262,11 @@ namespace tsorcRevamp.NPCs
                 int telegraph = Attack switch
                 {
                     KnightSpecialAttack.EmberReversal => 45,
-                    KnightSpecialAttack.VenomWake => Timer < 60 ? 60 : 120,
+                    KnightSpecialAttack.PoisonWake => Timer < 60 ? 60 : 120,
                     KnightSpecialAttack.CrimsonStandard => 75,
                     KnightSpecialAttack.CrimsonAdvance => Timer < 60 ? 60 : 135,
                     KnightSpecialAttack.FurnacePincer => Timer < 60 ? 60 : 165,
-                    // Ramps across the whole three-throw cascade rather than stopping at the first.
-                    KnightSpecialAttack.RoyalStandard => RoyalFirstThrow + RoyalThrowInterval1 + RoyalThrowInterval2,
+                    KnightSpecialAttack.RoyalStandard => 75,
                     KnightSpecialAttack.StormbreakerEdict => 60,
                     KnightSpecialAttack.CrimsonDominion => 90,
                     KnightSpecialAttack.FurnaceHerald or KnightSpecialAttack.StormHerald => 150,
@@ -1255,7 +1274,7 @@ namespace tsorcRevamp.NPCs
                 };
                 int start = Attack switch
                 {
-                    KnightSpecialAttack.VenomWake when Timer >= 60 => 60,
+                    KnightSpecialAttack.PoisonWake when Timer >= 60 => 60,
                     KnightSpecialAttack.CrimsonAdvance when Timer >= 60 => 105,
                     KnightSpecialAttack.FurnacePincer when Timer >= 60 => 105,
                     _ => 0
@@ -1282,6 +1301,14 @@ namespace tsorcRevamp.NPCs
             float gravityDrop = gravityPerTick * (ticks - 1f) * ticks * 0.5f;
             return new Vector2(delta.X / ticks,
                 MathHelper.Clamp((delta.Y - gravityDrop) / ticks, -14f, 8f));
+        }
+
+        static Vector2 LeonhardDashVelocity(Vector2 source, Vector2 target)
+        {
+            int direction = target.X >= source.X ? 1 : -1;
+            // Leonhard Phase 2 uses 16 px/t beyond 26 tiles and 10 px/t for the shorter hop-dash.
+            float speed = Math.Abs(target.X - source.X) >= 26f * 16f ? 16f : 10f;
+            return new Vector2(direction * speed, -3f);
         }
 
         static void SpawnLunge(NPC npc, int damage, float reach, float height, int duration, float knockback)

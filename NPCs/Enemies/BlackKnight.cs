@@ -305,11 +305,19 @@ namespace tsorcRevamp.NPCs.Enemies
                         * (radius + Main.rand.NextFloat(-20f, 20f));
                     Vector2 spawnPosition = target.Center + offset;
 
-                    // Converges back toward roughly where the target is, so the fan visually rains
-                    // inward instead of every drop falling straight down in its own lane.
-                    Vector2 aimPoint = target.Center + new Vector2(Main.rand.NextFloat(-40f, 40f), 40f);
-                    Vector2 fallVelocity = (aimPoint - spawnPosition).SafeNormalize(Vector2.UnitY)
-                        * Main.rand.NextFloat(4.5f, 6.5f);
+                    // Fan outward as well as straight down (left projectiles drift left, center fall straight down, right drift right).
+                    Vector2 dir = new Vector2(t * 0.75f, 1f).SafeNormalize(Vector2.UnitY);
+                    Vector2 fallVelocity = dir * Main.rand.NextFloat(4.5f, 6.5f);
+
+                    if (!Main.dedServ)
+                    {
+                        for (int d = 0; d < 30; d++)
+                        {
+                            Vector2 vel = Main.rand.NextVector2Circular(3.5f, 3.5f);
+                            Dust dust = Dust.NewDustPerfect(spawnPosition, DustID.Wraith, vel, 100, default, Main.rand.NextFloat(1.0f, 1.5f));
+                            dust.noGravity = true;
+                        }
+                    }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -1117,15 +1125,17 @@ namespace tsorcRevamp.NPCs.Enemies
             new Vector2(48, 33), // 14
             new Vector2(48, 33), // 15
         };
-        static readonly Vector2 SpearGripOrigin = new Vector2(8f, 38f);
+        // BlackThrowingSpear is 14px wide, so x=7 is its exact rotation center. The old x=8
+        // became a vertical offset once the upright texture was rotated horizontal: 0.8px high
+        // while facing right (and low while facing left), plus the melee-only -3px lift below.
+        static readonly Vector2 SpearGripOrigin = new Vector2(7f, 38f);
         static readonly Vector2 BombGripOrigin = new Vector2(14f, 4f);
+        const float PreviousHeldSpearScale = 0.8f;
+        const float HeldSpearScale = 0.9f;
+        const float SpearTipForwardCorrection = 5f;
 
-        // Lift from the idle frame's hand pixel up to the authored OVERHEAD THROWING pose (cocked
-        // back near the shoulder, like the reference screenshot of the throw telegraph). This is
-        // ONLY correct for that stand-and-throw pose — applying it to melee put the jab up near the
-        // knight's head. Melee uses the raw per-frame hand pixel instead (CurrentHandWorld), exactly
-        // like the bomb and hand overlay already do.
-        const float IdleGripLift = 21f;
+        // Lowered to 0f so the spear sits dead center in the hand for the throw telegraph.
+        const float IdleGripLift = 0f;
 
         // One frame-index helper so the hand and the spear can never disagree about which frame
         // they are on.
@@ -1164,9 +1174,19 @@ namespace tsorcRevamp.NPCs.Enemies
 
         Vector2 CurrentThrowSpearWorld() => CurrentThrowSpearWorld(NPC.spriteDirection);
 
-        // 0 disables the body mask and falls back to a plain draw — the A/B switch for judging the
-        // occlusion in game without a rebuild-per-guess.
-        const float SpearMaskStrength = 1f;
+        // 0 disables the body mask and draws the spear on top of the body NPC sheet.
+        const float SpearMaskStrength = 0f;
+
+        // Changing 0.8 -> 0.9 already lengthens the grip-to-tip distance. Convert only the
+        // REMAINDER of the requested 5-world-pixel correction back into spear-texture pixels so
+        // the fixed hand anchor stays put and the shaft slides through the fist by exactly 5px.
+        float BaseSpearGripSlide(float spriteScale)
+        {
+            float drawScale = NPC.scale * spriteScale;
+            float oldTipReach = SpearGripOrigin.Y * NPC.scale * PreviousHeldSpearScale;
+            float targetTipReach = oldTipReach + SpearTipForwardCorrection;
+            return targetTipReach / drawScale - SpearGripOrigin.Y;
+        }
 
         // gripFramePixel MUST be whichever frame-pixel the caller used to compute screenPosition
         // (CurrentHandWorld for melee, CurrentThrowSpearWorld for the ranged throw) — the occlusion
@@ -1176,7 +1196,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC globalNPC, float spriteScale, Vector2 gripFramePixel,
             float gripSlide = 0f, int facingDirection = 0)
         {
-            Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, gripSlide);
+            Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, BaseSpearGripSlide(spriteScale) + gripSlide);
             if (globalNPC.ActiveAttackBypassesShield)
             {
                 Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
@@ -1260,7 +1280,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (globalNPC.CombatMeleeActive)
             {
-                const float spriteScale = 0.8f;
+                const float spriteScale = HeldSpearScale;
                 int meleeDirection = globalNPC.ActiveCombatMeleeDirection;
                 float maximumExtension = globalNPC.ActiveCombatMeleeKey == CombatComboMoveKey.LongHopMelee ? 22f : 14f;
                 float thrustOffset = globalNPC.CombatMeleeThrustProgress * maximumExtension;
@@ -1272,10 +1292,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (globalNPC.InCombatMeleeHitWindow)
                 {
                     Vector2 forward = new Vector2(meleeDirection, 0f);
-                    // Anchored ahead of the tip, which sits 30px out from the grip (the 14x84 spear
-                    // is gripped at y=38 and drawn at 0.8 scale), plus however far the jab extends.
+                    float tipReach = (SpearGripOrigin.Y + BaseSpearGripSlide(spriteScale) + thrustOffset)
+                        * NPC.scale * spriteScale;
                     Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
-                        handWorld + Main.screenPosition + forward * (38f + thrustOffset),
+                        handWorld + Main.screenPosition + forward * tipReach,
                         forward.ToRotation(), new Vector2(82f, 18f), 0.62f);
                 }
                 DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale,
@@ -1288,7 +1308,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // Spear
             if (NPC.ai[1] >= (globalNPC.ActiveAttackBypassesShield ? 90f : 120f) && NPC.ai[1] <= 180f)
             {
-                float spriteScale = 0.8f;
+                float spriteScale = HeldSpearScale;
                 Vector2 spearAim = NPC.ai[1] >= 155f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentThrowSpearWorld() - Main.screenPosition;

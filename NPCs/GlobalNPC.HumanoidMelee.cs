@@ -293,7 +293,7 @@ namespace tsorcRevamp.NPCs
 
             if (CombatMeleeTimer < activeStart)
             {
-                npc.velocity.X *= 0.72f;
+                RunHumanoidMeleeTelegraph(npc, Main.player[npc.target], move, activeStart);
             }
             else if (CombatMeleeTimer == activeStart)
             {
@@ -320,6 +320,44 @@ namespace tsorcRevamp.NPCs
             {
                 FinishHumanoidMelee(npc, move);
             }
+        }
+
+        private void RunHumanoidMeleeTelegraph(NPC npc, Player target, HumanoidMeleeMove move, int activeStart)
+        {
+            if (move.TelegraphRunUpTicks <= 0)
+            {
+                npc.velocity.X *= 0.72f;
+                return;
+            }
+
+            float signedDistance = (target.Center.X - npc.Center.X) * CombatMeleeLockedDirection;
+            float stopDistance = GetHumanoidMeleeStopDistance(npc, target, move);
+            if (signedDistance <= stopDistance)
+            {
+                // Do not run through the target during the non-damaging tell. This is a gradual deceleration,
+                // not the old 0.72-per-tick hard stop, and the launch still occurs on the authored release frame.
+                npc.velocity.X = Approach(npc.velocity.X, 0f, move.TelegraphRunUpAcceleration);
+                return;
+            }
+
+            int runUpStart = Math.Max(1, activeStart - move.TelegraphRunUpTicks);
+            float approachSpeed = CombatMeleeTimer < runUpStart
+                ? Math.Min(1f, move.TelegraphRunUpTopSpeed)
+                : move.TelegraphRunUpTopSpeed;
+            float acceleration = CombatMeleeTimer < runUpStart
+                ? Math.Min(0.06f, move.TelegraphRunUpAcceleration)
+                : move.TelegraphRunUpAcceleration;
+            float targetVelocity = CombatMeleeLockedDirection * approachSpeed;
+            npc.velocity.X = Approach(npc.velocity.X, targetVelocity, acceleration);
+        }
+
+        private static float Approach(float value, float target, float maximumChange)
+        {
+            if (value < target)
+            {
+                return Math.Min(value + maximumChange, target);
+            }
+            return Math.Max(value - maximumChange, target);
         }
 
         private Vector2 GetHumanoidMeleeLaunchVelocity(NPC npc, Player target, HumanoidMeleeMove move)

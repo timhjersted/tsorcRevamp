@@ -6,41 +6,32 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.NPCs.AI;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
-    /// PROTOTYPE invader puppet — gear/dye pass only.
-    ///
-    /// The visual loadout (Wolf Mask + Plaguebringer's Cloak + Jim's Leggings, silver/brown dyes,
-    /// Yoraiz0r's Scowl for the glowing scowl) is the finished part.  Weapons are now final: a
-    /// vanilla Titanium Sword swung as a Greatsword, plus a vanilla Shadowflame Bow ranged phase.
-    /// Still no bespoke combos or special-attack templates — the kit runs on the base slash/stab/
-    /// archetype-combo loop.  Everything else (rendering, dye slots, accessory slots, movement,
-    /// telegraphs) comes free from <see cref="PuppetNPC"/>.
+    /// Invader puppet — Blaidd (Wolf Mask + Plaguebringer's Cloak + Jim's Leggings + Yoraiz0r's Scowl).
+    /// Uses vanilla Titanium Sword (two-handed greatsword swings matching StuddedLeatherWarrior's smooth arcs)
+    /// and vanilla Shadowflame Bow (player-style bow holding and firing).
     /// </summary>
     [AutoloadBossHead]
     public class Blaidd : PuppetNPC
     {
-        // PLACEHOLDER sprite (copy of StuddedLeatherWarrior_Head_Boss.png) — replace with bespoke art.
-        // The body itself is fully puppet-rendered off the armor items, so no Blaidd.png is needed
-        // (PuppetNPC.Texture already points at NPCs/Puppets/PuppetPlaceholder).
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/Blaidd_Head_Boss";
 
         protected override string InvaderTitle => "Blaidd";
 
         // ── Loadout (all vanilla) ─────────────────────────────────────────────────
-        // Wolf Mask (1841), Plaguebringer's Cloak (5046, bodySlot 235), Jim's Leggings (1565).
         protected override int HeadArmorItemType => ItemID.WolfMask;
-        protected override int BodyArmorItemType => ItemID.PlaguebringerChestplate; // display name: "Plaguebringer's Cloak"
+        protected override int BodyArmorItemType => ItemID.PlaguebringerChestplate; // "Plaguebringer's Cloak"
         protected override int LegsArmorItemType => ItemID.JimsLeggings;
 
         protected override int HeadArmorDyeItemType => ItemID.BrightBrownDye;
         protected override int BodyArmorDyeItemType => ItemID.SilverDye;
         protected override int LegsArmorDyeItemType => ItemID.SilverDye;
 
-        // Yoraiz0r's Scowl — the glowing-eye vanity accessory (ItemID.Yoraiz0rDarkness, 3581).
-        // Left undyed per the reference sheet.
+        // Yoraiz0r's Scowl — glowing-eye vanity accessory
         protected override int[] AccessoryItemTypes => new int[]
         {
             ItemID.Yoraiz0rDarkness,
@@ -50,25 +41,152 @@ namespace tsorcRevamp.NPCs.Puppets
             0,
         };
 
-        // ── Weapons (both vanilla) ────────────────────────────────────────────────
-        // Titanium Sword (1199) — useStyle Swing, damage 61, useTime 20.  Under
-        // WeaponArchetypeTables.DetectMelee that auto-detects as Broadsword (the Greatsword rule
-        // needs damage >= 70 AND useTime >= 28), so the archetype is force-overridden below.
+        // ── Weapons ───────────────────────────────────────────────────────────────
         protected override int MeleeWeaponItemType => ItemID.TitaniumSword;
-        // Shadowflame Bow (3052, ItemID.ShadowFlameBow) — useStyle Shoot + useAmmo Arrow, so
-        // DetectRanged returns WeaponArchetype.Bow naturally; no ranged override needed.
         protected override int RangedWeaponItemType => ItemID.ShadowFlameBow;
+        protected override RangedStyle RangedAnimStyle => RangedStyle.Bow;
 
-        /// <summary>Blaidd swings the Titanium Sword as a two-handed greatsword.  The base's
-        /// auto-detection would call it a Broadsword (see MeleeWeaponItemType note), so this uses
-        /// the documented per-puppet escape hatch on <see cref="PuppetNPC.MeleeArchetype"/> to
-        /// force the heavier combo pool.</summary>
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
 
         protected override int MeleeDamage => 70;
-        // ~0.7x melee, matching the ratios on the other mixed-kit puppets
-        // (AbyssalNinjaInvader 80/55, ShadowNinja 48/34).
         protected override int RangedDamage => 50;
+
+        // ── Melee Swing Polish & Offsets ──────────────────────────────────────────
+        protected override Vector2 MeleeHandleNorm => new Vector2(0.12f, 0.88f);
+        protected override float ComboReachBase => 96f;
+        protected override float MeleeWeaponRotationOffset => 1.0f;
+        protected override bool MirrorMeleeSwingRotationByFacing => true;
+        protected override bool UseSwingEasing => true;
+        protected override bool UseAimAdaptiveArc => true;
+        protected override bool HasSlashVFX => true;
+        protected override Color SlashVFXColor => new Color(200, 220, 255);
+
+        // ── Melee Combos (Upperhand & Overhand Swings, 2-5 Swings, Recovery up to 150 ticks) ──
+        private static MeleeComboStep BlaiddSwing(
+            ComboMotion motion,
+            int telegraphTicks,
+            int attackTicks,
+            int pauseAfter = 0,
+            float damageMult = 1.0f,
+            float forwardPushMult = 0.5f,
+            float reachMult = 1.1f)
+            => new MeleeComboStep
+            {
+                Motion = motion,
+                TelegraphTicks = telegraphTicks,
+                AttackTicks = attackTicks,
+                PostStepPause = pauseAfter,
+                DamageMult = damageMult,
+                ReachMult = reachMult,
+                ForwardPushMult = forwardPushMult,
+                SwingSpeedMult = 1f,
+                Ease = SwingEaseStyle.Smooth,
+            };
+
+        private static readonly MeleeCombo[] BlaiddCombos = new[]
+        {
+            // 2-Swing Combos (60 ticks / 1.0s recovery)
+            new MeleeCombo
+            {
+                Name = "Down-Up Slash",
+                BaseWeight = 100,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.White,
+                CooldownAfterUse = 60,
+                MoveBrake = 0.15f,
+                Steps = new[]
+                {
+                    BlaiddSwing(ComboMotion.OverheadArc, 28, 22, pauseAfter: 8, damageMult: 0.90f, forwardPushMult: 0.50f),
+                    BlaiddSwing(ComboMotion.UnderhandArc, 0, 24, pauseAfter: 0, damageMult: 1.10f, forwardPushMult: 0.60f),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = "Up-Down Slash",
+                BaseWeight = 100,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.LightYellow,
+                CooldownAfterUse = 60,
+                MoveBrake = 0.15f,
+                Steps = new[]
+                {
+                    BlaiddSwing(ComboMotion.UnderhandArc, 28, 22, pauseAfter: 8, damageMult: 0.90f, forwardPushMult: 0.50f),
+                    BlaiddSwing(ComboMotion.OverheadArc, 0, 24, pauseAfter: 0, damageMult: 1.10f, forwardPushMult: 0.60f),
+                },
+            },
+
+            // 3-Swing Combos (90 ticks / 1.5s recovery)
+            new MeleeCombo
+            {
+                Name = "Triple Slash (Down-Up-Down)",
+                BaseWeight = 90,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan,
+                CooldownAfterUse = 90,
+                MoveBrake = 0.12f,
+                Steps = new[]
+                {
+                    BlaiddSwing(ComboMotion.OverheadArc, 28, 20, pauseAfter: 6, damageMult: 0.85f, forwardPushMult: 0.45f),
+                    BlaiddSwing(ComboMotion.UnderhandArc, 0, 20, pauseAfter: 6, damageMult: 0.95f, forwardPushMult: 0.55f),
+                    BlaiddSwing(ComboMotion.OverheadArc, 0, 24, pauseAfter: 0, damageMult: 1.20f, forwardPushMult: 0.65f, reachMult: 1.15f),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = "Triple Slash (Up-Down-Up)",
+                BaseWeight = 90,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.LightCyan,
+                CooldownAfterUse = 90,
+                MoveBrake = 0.12f,
+                Steps = new[]
+                {
+                    BlaiddSwing(ComboMotion.UnderhandArc, 28, 20, pauseAfter: 6, damageMult: 0.85f, forwardPushMult: 0.45f),
+                    BlaiddSwing(ComboMotion.OverheadArc, 0, 20, pauseAfter: 6, damageMult: 0.95f, forwardPushMult: 0.55f),
+                    BlaiddSwing(ComboMotion.UnderhandArc, 0, 24, pauseAfter: 0, damageMult: 1.20f, forwardPushMult: 0.65f, reachMult: 1.15f),
+                },
+            },
+
+            // 4-Swing Combos (120 ticks / 2.0s recovery)
+            new MeleeCombo
+            {
+                Name = "Relentless Four-Swing Flurry",
+                BaseWeight = 80,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.LightGreen,
+                CooldownAfterUse = 120,
+                MoveBrake = 0.10f,
+                Steps = new[]
+                {
+                    BlaiddSwing(ComboMotion.OverheadArc, 26, 18, pauseAfter: 5, damageMult: 0.80f, forwardPushMult: 0.45f),
+                    BlaiddSwing(ComboMotion.UnderhandArc, 0, 18, pauseAfter: 5, damageMult: 0.85f, forwardPushMult: 0.50f),
+                    BlaiddSwing(ComboMotion.OverheadArc, 0, 18, pauseAfter: 5, damageMult: 0.95f, forwardPushMult: 0.55f),
+                    BlaiddSwing(ComboMotion.UnderhandArc, 0, 22, pauseAfter: 0, damageMult: 1.25f, forwardPushMult: 0.70f, reachMult: 1.18f),
+                },
+            },
+
+            // 5-Swing Combos (150 ticks / 2.5s max recovery)
+            new MeleeCombo
+            {
+                Name = "Master Five-Swing Flurry",
+                BaseWeight = 70,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold,
+                CooldownAfterUse = 150,
+                MoveBrake = 0.08f,
+                HeavyCommit = true,
+                Steps = new[]
+                {
+                    BlaiddSwing(ComboMotion.OverheadArc, 26, 16, pauseAfter: 4, damageMult: 0.75f, forwardPushMult: 0.40f),
+                    BlaiddSwing(ComboMotion.UnderhandArc, 0, 16, pauseAfter: 4, damageMult: 0.80f, forwardPushMult: 0.45f),
+                    BlaiddSwing(ComboMotion.OverheadArc, 0, 16, pauseAfter: 4, damageMult: 0.85f, forwardPushMult: 0.50f),
+                    BlaiddSwing(ComboMotion.UnderhandArc, 0, 16, pauseAfter: 4, damageMult: 0.95f, forwardPushMult: 0.55f),
+                    BlaiddSwing(ComboMotion.OverheadArc, 0, 24, pauseAfter: 0, damageMult: 1.35f, forwardPushMult: 0.75f, reachMult: 1.20f),
+                },
+            },
+        };
+
+        protected override MeleeCombo[] MeleeComboPoolOverride => BlaiddCombos;
 
         // ── Ranged tuning (bow: long reach, deliberate draw) ──────────────────────
         protected override float RangedRange => 560f;
@@ -78,7 +196,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int RangedCooldownAfterUse => 240;
         protected override Color RangedTelegraphFlashColor => new Color(170, 90, 220);
 
-        // ── Combat tuning (minimal, mid-tier SHM band) ────────────────────────────
+        // ── Combat tuning ─────────────────────────────────────────────────────────
         protected override float TopSpeed => 2.8f;
         protected override float Acceleration => 0.10f;
         protected override float MeleeRange => 88f;
@@ -98,7 +216,6 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int TeleportDustCount => 22;
         protected override Color TeleportDustTint => new Color(185, 185, 195);
 
-        // Prototype is a melee pursuer: recover, then immediately resume the chase.
         protected override int CasualStrollChance => 0;
 
         protected override float PuppetJumpPower => 10f;
@@ -124,8 +241,6 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void SetDefaults()
         {
-            // Mid-tier SHM band for reference: DarkKnight 3000 hp / 30 def,
-            // CrystalKnight 2800 / 50, DarkBloodKnight 3200 / 67.  Blaidd sits mid-pack.
             NPC.width = 20;
             NPC.height = 42;
             NPC.lifeMax = 3000;
@@ -136,7 +251,7 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.value = 12000f;
-            NPC.boss = true; // matches every sibling puppet: HP bar + no distance despawn while prototyping
+            NPC.boss = true;
             NPC.npcSlots = 5f;
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -149,7 +264,6 @@ namespace tsorcRevamp.NPCs.Puppets
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
         }
 
-        // Placeholder drop table — no bespoke rewards until the kit is designed.
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 400, 600));
@@ -187,12 +301,6 @@ namespace tsorcRevamp.NPCs.Puppets
             TryMeleeHit(reach: StabRange * 0.55f);
         }
 
-        /// <summary>
-        /// Shadowflame Bow shot.  Puppet ranged attacks don't fire the backing vanilla item's real
-        /// projectile — the held bow only drives archetype detection and the draw animation — so this
-        /// spawns the mod's hostile <see cref="Projectiles.Enemy.Weapons.EnemyShadowflameArrow"/>
-        /// (same pattern as ShadowNinja's EnemyTaintedArrow bow shot).
-        /// </summary>
         protected override void DoRangedAttack()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)

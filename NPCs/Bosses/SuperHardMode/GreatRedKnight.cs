@@ -30,6 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public int redKnightsBombDamage = 62;
 
         Vector2 storedPlayerPosition = Vector2.Zero;
+        float spearThrowSpeed;
         readonly RedKnightAttackController specialAttacks = new RedKnightAttackController();
 
         // --- Crimson Dominion death finale ----------------------------------------------------
@@ -133,6 +134,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             get => Main.player[NPC.target];
         }
 
+        Vector2 StoredSpearTarget()
+        {
+            Vector2 target = storedPlayerPosition != Vector2.Zero ? storedPlayerPosition : player.Center;
+            int direction = target.X > NPC.Center.X ? 1 : -1;
+            return target + new Vector2(10f * direction, 0f);
+        }
+
+        Vector2 SpearThrowLaunchVelocity()
+        {
+            float speed = spearThrowSpeed;
+            if (speed <= 0f)
+            {
+                speed = NPC.Distance(player.Center) > 400f ? 13.125f : 9f;
+            }
+            return UsefulFunctions.BallisticTrajectory(
+                NPC.Center, StoredSpearTarget(), speed, 0.2f, highAngle: false, fallback: true);
+        }
+
         public string DebugAttackLabel
         {
             get
@@ -152,6 +171,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // otherwise the readout says "nothing" for the entire second half of the fight.
                 if (specialAttacks.DominionEngaged)
                 {
+                    if (NPC.ai[1] >= 120f && NPC.ai[1] <= 230f)
+                    {
+                        return "Dominion — Spear Throw | " + specialAttacks.DominionStageName;
+                    }
                     return "Dominion — " + specialAttacks.DominionStageName;
                 }
                 if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
@@ -192,6 +215,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             writer.Write(storedPlayerPosition.X);
             writer.Write(storedPlayerPosition.Y);
+            writer.Write(spearThrowSpeed);
             specialAttacks.Send(writer);
             // CheckDead only ever runs server-side, so without this a multiplayer client would see
             // the knight freeze with its spear in hand and no flames while the finale played.
@@ -201,6 +225,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             storedPlayerPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            spearThrowSpeed = reader.ReadSingle();
             specialAttacks.Receive(reader);
             dominionDeathTimer = reader.ReadInt32();
         }
@@ -260,20 +285,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            // Dominion phase 2: "retract & fight". Slightly faster, and the knight stops being a
-            // purely reactive retreater — EvasiveLeapForward and EvasiveRunningDash are the two
-            // AGGRESSIVE gap-closers in the existing Evasive System (the LothricKnight profile uses
-            // them; see EvasiveProfile.cs). Turning them on alongside the RedKnight retreat set is
-            // what "melee hops and dashes" concretely maps to: no new movement code, just the
-            // existing behaviours enabled. Agility up so it rolls/hops through fire more often, and
-            // LeapAtPlayer's hop range widened so it closes with a jump rather than a walk.
+            // Dominion phase 2 owns a narrow vocabulary: Crimson Advance, Ember Reversal and the
+            // ordinary spear throw. Generic evasive dashes, fallback hops and teleports are shut
+            // down so their independent tells cannot compete with the authored attacks.
             if (specialAttacks.DominionEngaged)
             {
-                globalNPC.EvasiveLeapForward = true;
-                globalNPC.EvasiveRunningDash = true;
+                globalNPC.EvasiveRetreatJump = false;
+                globalNPC.EvasiveRetreatDash = false;
+                globalNPC.EvasiveTeleportAway = false;
+                globalNPC.EvasiveLeapForward = false;
+                globalNPC.EvasiveRunningDash = false;
+                globalNPC.InSustainedEvasion = false;
+                globalNPC.EvasiveTelegraphing = false;
+                globalNPC.EvasiveTimer = 0;
+                globalNPC.CanTeleport = false;
                 globalNPC.Agility = 0.58f;   // was 0.45f
-                tsorcRevampAIs.FighterAI(NPC, 2.6f, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 5, canDodgeroll: true);
-                tsorcRevampAIs.LeapAtPlayer(NPC, 8, 5.5f, 1.4f, 180);
+
+                if (specialAttacks.TryStartDominion(NPC, player, globalNPC))
+                {
+                    specialAttacks.Tick(NPC, player, attackStats);
+                    return;
+                }
+
+                tsorcRevampAIs.FighterAI(NPC, 2.6f, canTeleport: false, enragePercent: 0.5f, enrageTopSpeed: 5, canDodgeroll: true);
             }
             else
             {
@@ -286,11 +320,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            // DOMINION IS MELEE-ONLY (gate 1 of 3). Once the phase latches, the knight stops
-            // selecting NEW special attacks: no Crimson Advance, no Royal Standard, no Furnace
-            // Pincer, no Stormbreaker Edict. Both heralds and Dominion itself are already behind it
-            // by construction (80% / 60% / 30% gates), so nothing this call could still start is
-            // wanted. The lightning pressure in phase 2 comes from TickDominionSequence alone.
+            // The full Great Knight pool is phase-one only. Dominion's narrow pool gets first
+            // refusal above, before FighterAI can begin a competing shared action.
             if (!specialAttacks.DominionEngaged && specialAttacks.TryStartGreat(NPC, player, globalNPC))
             {
                 specialAttacks.Tick(NPC, player, attackStats);
@@ -298,9 +329,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             // ---------------------------------------------------------------------------------
-            // BASE KIT 60% RETIREMENT. Spear Throw, Poison Salvo, Firebomb Throw and Abyssal Rain
-            // are the four always-on opening attacks; they now go silent for good at 60% HP, so the
-            // second half of the fight belongs to the herald chain and Dominion instead.
+            // BASE KIT 60% RETIREMENT. Poison Salvo, Firebomb Throw and Abyssal Rain go silent at
+            // 60% HP. The ordinary Spear Throw is later re-enabled as one of Dominion's three
+            // intentional attacks.
             //
             // A live `life > 60%` test rather than a latched flag: HP never climbs back mid-fight,
             // so this is one-way in practice and needs no extra state to sync.
@@ -313,13 +344,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // come. Every one of those five is gated below.
             // ---------------------------------------------------------------------------------
             bool baseKitActive = NPC.life > NPC.lifeMax * 0.6f;
+            bool standardSpearActive = baseKitActive || specialAttacks.DominionEngaged;
 
             if (specialAttacks.DominionEngaged)
             {
-                // ai[1] keeps ticking for the ambient jump/dash-step flavour below, but it no longer
-                // corresponds to any attack, so its hyper-armor / windup windows must not apply.
-                globalNPC.AttackCommitted = false;
-                globalNPC.AttackTelegraphing = false;
+                globalNPC.AttackCommitted = NPC.ai[1] >= 180f && NPC.ai[1] <= 210f;
+                globalNPC.AttackTelegraphing = NPC.ai[1] >= 150f && NPC.ai[1] < 180f;
             }
             else
             {
@@ -344,7 +374,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
-                bool inProtectedAttack = (baseKitActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
+                bool inProtectedAttack = (standardSpearActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
                                           (baseKitActive && NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
                                           (baseKitActive && NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
                                           (NPC.ai[1] >= 725f && NPC.ai[1] <= 900f) ||
@@ -366,7 +396,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.ai[2]++;
                 }
 
-                bool inActiveAttack = (baseKitActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
+                bool inActiveAttack = (standardSpearActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
                                        (baseKitActive && NPC.ai[1] >= 300f && NPC.ai[1] <= 485f) ||
                                        (NPC.ai[1] >= 725f && NPC.ai[1] <= 900f) ||
                                        (baseKitActive && NPC.ai[1] >= 925f && NPC.ai[1] <= 955f) ||
@@ -378,10 +408,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // anything, so registering a fighter attack on them would be a phantom. Same reason
                 // the base-kit marks (210 spear, 325/375/480 poison, 955 bomb) drop out below 60%
                 // while DD2 Drakin's (750, 850) stay — that attack retires on its own 50% gate.
-                bool baseKitFighterMark = baseKitActive && (NPC.ai[1] == 210f || NPC.ai[1] == 325f
+                bool baseKitFighterMark = baseKitActive && (NPC.ai[1] == 325f
                     || NPC.ai[1] == 375f || NPC.ai[1] == 480f || NPC.ai[1] == 955f);
+                bool spearFighterMark = standardSpearActive && NPC.ai[1] == 210f;
                 bool drakinFighterMark = NPC.ai[1] == 750f || NPC.ai[1] == 850f;
-                if (!specialAttacks.DominionEngaged && hasPlayerLOS && (baseKitFighterMark || drakinFighterMark))
+                if (hasPlayerLOS && (spearFighterMark
+                    || (!specialAttacks.DominionEngaged && (baseKitFighterMark || drakinFighterMark))))
                 {
                     tsorcRevampAIs.RegisterFighterAttack(NPC);
                 }
@@ -393,7 +425,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ominous-creature2") with { Volume = 0.8f }, NPC.Center);
                 }
                 // Chance to jump forward
-                if (NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(500) && (NPC.ai[1] <= 150f || NPC.ai[1] >= 476f))
+                if (!specialAttacks.DominionEngaged && NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(500) && (NPC.ai[1] <= 150f || NPC.ai[1] >= 476f))
                 {
                     NPC.velocity.Y = Main.rand.NextFloat(-4, -8f);
                     NPC.TargetClosest(true);
@@ -403,7 +435,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.netUpdate = true;
                 }
                 // Chance to dash step forward
-                if (NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(140) && (NPC.ai[1] <= 220f || NPC.ai[1] >= 276f))
+                if (!specialAttacks.DominionEngaged && NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(140) && (NPC.ai[1] <= 220f || NPC.ai[1] >= 276f))
                 {
                     NPC.velocity.Y = -4f;
                     NPC.velocity.X = NPC.velocity.X * 4f; // burst forward
@@ -419,7 +451,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.netUpdate = true;
                 }
                 // Offensive jump before 3 attacks
-                if ((NPC.ai[1] == 145 || NPC.ai[1] == 275 || NPC.ai[1] == 890) && NPC.velocity.Y <= 0f && Main.rand.NextBool(4))
+                if (!specialAttacks.DominionEngaged && (NPC.ai[1] == 145 || NPC.ai[1] == 275 || NPC.ai[1] == 890) && NPC.velocity.Y <= 0f && Main.rand.NextBool(4))
                 {
                     NPC.velocity.Y = Main.rand.NextFloat(-6, -10f);
                     NPC.netUpdate = true;
@@ -427,31 +459,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 #endregion
 
                 // ---------------------------------------------------------------------------
-                // DOMINION IS MELEE-ONLY (gate 3 of 3) — the hard stop.
-                //
-                // Everything BELOW this line is the legacy ai[1]/ai[2] special-attack machine:
-                // spear throw, the three poison salvos, the DD2 drakin bombardment, the firebomb
-                // throw, abyssal rain, the Ultrakill telegraph + hand barrage, jellyfish lightning
-                // and the cursed-flame rain. None of it ever checked DominionEngaged, and the
-                // Ultrakill / DD2 windows are gated only on `HalfHeraldComplete && life <= 50%`,
-                // which stays true forever — so once Dominion latched at 30% the knight kept
-                // spamming the whole ranged kit on top of the Dominion lightning loop.
-                //
-                // The line is drawn here, AFTER the Sounds & Jumps region, deliberately: the ai[1]
-                // increment, the ambient creature sounds and the random jump / dash-step flavour
-                // above are movement colour, not attacks, and phase 2 wants the knight moving MORE,
-                // not less. Everything from here down spawns a projectile.
-                //
-                // TickDominionSequence (called at the top of AI) is unaffected — it is the phase's
-                // own lightning pressure and runs independently of this method's state machine.
-                // ---------------------------------------------------------------------------
-                if (specialAttacks.DominionEngaged)
-                {
-                    return;
-                }
-
+                // Dominion reaches only the ordinary spear portion of this legacy clock.
+                // A hard return immediately after it prevents every later legacy attack and tell.
                 // Skip spear if player is at melee range — it's a ranged weapon
-                if (baseKitActive && NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f)
+                if (standardSpearActive && NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f)
                 {
                     NPC.ai[1] = 230f;
                     NPC.netUpdate = true;
@@ -463,7 +474,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // SPEAR THROW — base kit, retires at 60% HP (see baseKitActive). Telegraph, aim and
                 // both throw variants all carry the gate so no half-attack can leak through.
                 // Spear Attack: Get targetPosition
-                if (baseKitActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f)
+                if (standardSpearActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f)
                 {
                     NPC.knockBackResist = 0f;
                     // Calculate the direction towards the stored player position.
@@ -474,7 +485,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Spear Telegraph
-                if (baseKitActive && NPC.ai[1] == 180f)
+                if (standardSpearActive && NPC.ai[1] == 180f)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -496,26 +507,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             storedPlayerPosition = Main.player[targetPlayer].Center;
                         }
                     }
+
+                    // Preselect and sync the launch speed now so PostDraw can solve the exact same
+                    // ballistic vector that will be passed to the projectile on tick 210.
+                    spearThrowSpeed = NPC.Distance(player.Center) > 400f
+                        ? Main.rand.NextFloat(12f, 14.25f)
+                        : Main.rand.NextFloat(8.25f, 9.75f);
+                    NPC.netUpdate = true;
                 }
 
                 // Spear Attack Far
-                if (baseKitActive && NPC.ai[1] == 210f && NPC.Distance(player.Center) > 400)
+                if (standardSpearActive && NPC.ai[1] == 210f && NPC.Distance(player.Center) > 400)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(16, 19f);
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
-                    //speed += Main.rand.NextVector2Circular(-6, -2);
-                    speed.Y += Main.rand.NextFloat(-2f, 2f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
+                    Vector2 speed = SpearThrowLaunchVelocity();
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyAncientBloodLanceProj>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
                     // Reset the targetPosition 
                     targetPosition = Vector2.Zero;
+                    spearThrowSpeed = 0f;
 
                     // Move closer to next attack
                     NPC.ai[1] = 230f;
@@ -528,23 +542,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 // Spear Attack Close
-                if (baseKitActive && NPC.ai[1] == 210f && NPC.Distance(player.Center) <= 400)
+                if (standardSpearActive && NPC.ai[1] == 210f && NPC.Distance(player.Center) <= 400)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
-                    //speed += Main.rand.NextVector2Circular(-6, -2);
-                    speed += Main.player[NPC.target].velocity;
-                    speed.Y += Main.rand.NextFloat(-1f, 1f); //adds random variation from -1 to 2
+                    Vector2 speed = SpearThrowLaunchVelocity();
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyAncientBloodLanceProj>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
                     // Reset the targetPosition 
                     targetPosition = Vector2.Zero;
+                    spearThrowSpeed = 0f;
 
                     // Move closer to next attack
                     NPC.ai[1] = 230f;
@@ -555,6 +565,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NPC.ai[1] = 90f;
                         NPC.netUpdate = true;
                     }
+                }
+
+                // Dominion permits the ordinary spear throw above, but no later legacy ai[1]/ai[2]
+                // attacks. Loop back before poison, Drakin, firebomb, Ultrakill or their orphaned
+                // telegraphs can enter a visible state.
+                if (specialAttacks.DominionEngaged)
+                {
+                    if (NPC.ai[1] >= 230f)
+                    {
+                        NPC.ai[1] = 60f;
+                        NPC.ai[2] = -100f;
+                        NPC.netUpdate = true;
+                    }
+                    return;
                 }
 
                 // POISON SALVO (all three volleys) — base kit, retires at 60% HP. Each telegraph is
@@ -790,15 +814,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                 }
-                // Bomb Attack Far
-                if (baseKitActive && NPC.ai[1] == 955f && NPC.Distance(player.Center) > 400)
+                // Bomb Attack
+                if (baseKitActive && NPC.ai[1] == 955f)
                 {
-                    float bombProjectileSpeed = 14f;
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    //speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
+                    Vector2 target = targetPosition != Vector2.Zero ? targetPosition : (storedPlayerPosition != Vector2.Zero ? storedPlayerPosition : player.Center);
+                    float bombProjectileSpeed = 15f;
+                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, target, bombProjectileSpeed, 0.2f, highAngle: false, fallback: true);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -814,32 +835,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     // Chance to throw again
                     if (Main.rand.NextBool(2))
-                    {
-                        NPC.ai[1] = 830f;
-                        NPC.netUpdate = true;
-                    }
-                }
-                // Bomb Attack Close
-                if (baseKitActive && NPC.ai[1] == 955f && NPC.Distance(player.Center) <= 400)
-                {
-                    float bombProjectileSpeed = 9f;
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsBombDamage, 0f, Main.myPlayer, ai2: 1f);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
-
-                    // Reset targetPosition 
-                    targetPosition = Vector2.Zero;
-
-                    NPC.ai[1] = 0f;
-
-                    // Chance to throw again
-                    if (Main.rand.NextBool(3))
                     {
                         NPC.ai[1] = 830f;
                         NPC.netUpdate = true;
@@ -1268,7 +1263,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NPC.Bottom - new Vector2(0f, NPC.gfxOffY), NPC.scale,
                         DominionEngulfOpacity * 0.95f, front: false);
                 }
-                else if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
+                else if (!specialAttacks.DominionEngaged
+                    && specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
                     && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
                 {
                     Projectiles.Enemy.RedKnightVFX.DrawUltrakillSeal(NPC.Center,
@@ -1326,7 +1322,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         };
         static readonly Vector2[] OverlayHandPixel = new Vector2[16]
         {
-            new Vector2(48, 47), // 0 idle
+            // Idle overlay ends at y=41 and the measured body grip is y=42. The old y=47 was
+            // five source pixels below the fist; walk/jump entries already match their artwork.
+            new Vector2(48, 42), // 0 idle
             new Vector2(49, 26), // 1 jump
             new Vector2(48, 33), // 2
             new Vector2(50, 31), // 3
@@ -1347,7 +1345,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static readonly Vector2 OverlayFudge = new Vector2(0f, 0f);
 
         // Grip pixel ON each sprite = the point that should land on the knight's hand (rotation pivot for the weapon).
-        static readonly Vector2 SpearGripOrigin = new Vector2(7f, 31f);  // BlackKnightSpear (Valkyrie's spear) is 14x62, tip up — grip the MIDDLE (was 7,70 = the butt of the old 14x84 BlackThrowingSpear)
+        static readonly Vector2 SpearGripOrigin = new Vector2(54f, 54f);  // EnemyAncientBloodLanceProj is 108x108, grip at center (54, 54)
+        // EnemyAncientBloodLanceProj is authored from top-left to bottom-right. A thrust must move
+        // its origin along this normalized shaft axis; adding slide to texture Y alone introduces
+        // an equal perpendicular component after the texture's 45-degree rotation.
+        static readonly Vector2 SpearTextureAxis = new Vector2(0.70710678f, 0.70710678f);
         static readonly Vector2 BombGripOrigin = new Vector2(11f, 18f);  // EnemyFirebomb is 22x24, hand near the bottom
         static readonly Vector2 MagicBallGripOrigin = new Vector2(8f, 8f);
         const float MagicBallBodyInset = 8f;
@@ -1381,18 +1383,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         Vector2 CurrentSpearWorld(int facingDirection)
         {
-            // Preserve the authored spear grip used by the original throw telegraph.
-            Vector2 handWorld = CurrentHandWorld(facingDirection);
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame == 0)
-            {
-                handWorld.Y -= 16f;
-            }
-            else if (frame >= 2)
-            {
-                handWorld.Y -= 5f;
-            }
-            return handWorld;
+            return CurrentHandWorld(facingDirection);
         }
 
         Vector2 CurrentSpearWorld()
@@ -1403,9 +1394,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void DrawHeldSpear(SpriteBatch spriteBatch, Vector2 screenPosition, float rotation,
             Color drawColor, float gripSlide = 0f)
         {
-            Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, gripSlide);
-            spriteBatch.Draw(spearTexture, screenPosition, null, drawColor, rotation,
-                gripOrigin, NPC.scale, SpriteEffects.None, 0f);
+            Vector2 gripOrigin = SpearGripOrigin + SpearTextureAxis * gripSlide;
+            spriteBatch.Draw(spearTexture, screenPosition, null, drawColor, rotation + MathHelper.PiOver4,
+                gripOrigin, 0.8f * NPC.scale, SpriteEffects.None, 0f);
         }
 
         void DrawArmOverlay(SpriteBatch spriteBatch, Color drawColor, int facingDirection)
@@ -1436,7 +1427,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (spearTexture == null)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightSpear"); // the spear Tibian Valkyrie uses (14x62), held gripped at its middle
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyAncientBloodLanceProj");
             }
 
             if (bombTexture == null)
@@ -1485,26 +1476,39 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             DrawDominionEngulfFront();
 
+            bool baseKitVisible = NPC.life > NPC.lifeMax * 0.6f;
+
             // Spear
-            if (NPC.ai[1] >= 120 && NPC.ai[1] < 210f)
+            if ((baseKitVisible || specialAttacks.DominionEngaged)
+                && NPC.ai[1] >= 120 && NPC.ai[1] < 210f)
             {
                 Vector2 handWorld = CurrentSpearWorld() - Main.screenPosition;
-                Vector2 spearAim = NPC.ai[1] >= 180f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
+                Vector2 spearAim = NPC.ai[1] >= 180f
+                    ? SpearThrowLaunchVelocity().SafeNormalize(new Vector2(NPC.spriteDirection, 0f))
+                    : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
 
                 // Weapon behind the hand, pivoting on the grip so it aims at the throw target.
                 DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor);
                 DrawArmOverlay(spriteBatch, drawColor);
             }
+
+            // Dominion's legacy clock stops after its permitted spear window. Returning here also
+            // guarantees no poison orb, bomb fuse or retired barrage prop can leak into the phase.
+            if (specialAttacks.DominionEngaged)
+            {
+                return;
+            }
+
             // Magic ball
-            if (magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] >= 350 && NPC.ai[1] <= 375f) || (NPC.ai[1] >= 400 && NPC.ai[1] <= 480f)))
+            if (baseKitVisible && magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] >= 350 && NPC.ai[1] <= 375f) || (NPC.ai[1] >= 400 && NPC.ai[1] <= 480f)))
             {
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
                 Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 3, 0.78f, 20f);
                 DrawArmOverlay(spriteBatch, drawColor);
             }
             // Bomb
-            if (NPC.ai[1] >= 865)
+            if (baseKitVisible && NPC.ai[1] >= 865)
             {
                 Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
                 Vector2 bombAim = NPC.ai[1] >= 925f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
@@ -1543,11 +1547,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (heldProp == KnightHeldProp.Spear)
             {
                 Vector2 handWorld = CurrentSpearWorld(specialAttacks.Direction);
-                if (specialAttacks.Attack == KnightSpecialAttack.CrimsonAdvance)
+                int bodyFrame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
+                if (specialAttacks.Attack == KnightSpecialAttack.CrimsonAdvance && bodyFrame == 0)
                 {
-                    handWorld.Y += 5f;
+                    // This is a world-space correction: GRK is drawn at 1.15x, so changing the
+                    // sheet anchor by three pixels would overshoot to 3.45 visible pixels.
+                    handWorld.Y -= 3f;
                 }
-                float rotation = specialAttacks.GetSpearRotation(handWorld);
+                float rotation = specialAttacks.GetSpearRotation(handWorld, NPC.Center);
                 float gripSlide = specialAttacks.SpearGripSlide;
                 if (specialAttacks.SpearDamageWake)
                 {

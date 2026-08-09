@@ -124,11 +124,12 @@ namespace tsorcRevamp.NPCs.Enemies
             HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Elite(
                 redKnightsSpearDamage,
                 (int)(redKnightsSpearDamage * 1.3f),
-                closeTelegraphTicks: 60,
-                longTelegraphTicks: 60,
+                closeTelegraphTicks: 36,
+                longTelegraphTicks: 45,
                 guardPressureUnblockable: true,
                 guardPressureTelegraphTicks: 90,
-                openerCondition: npc => npc.ai[1] >= 60f && npc.ai[1] < 90f);
+                openerCondition: npc => npc.ai[1] >= 60f && npc.ai[1] < 90f,
+                leonhardRunUp: true);
             redKnightGlobalNPC.ConfigureHumanoidMelee(meleeProfile);
             CombatTempoProfile.Elite(redKnightGlobalNPC,
                 new CombatComboMove(spearProjectileType, 120f, float.MaxValue, canRepeat: true, weight: 1.25f),
@@ -773,26 +774,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (hasPlayerLOS)
                     {
-                        float distance = NPC.Distance(player.Center);
-                        if (distance > 400f)
+                        Vector2 target = targetPosition != Vector2.Zero ? targetPosition : (storedPlayerPosition != Vector2.Zero ? storedPlayerPosition : player.Center);
+                        float bombProjectileSpeed = 15f;
+                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, target, bombProjectileSpeed, 0.2f, highAngle: false, fallback: true);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            float bombProjectileSpeed = 14f;
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-                            speed += Main.player[NPC.target].velocity;
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
-                            }
-                        }
-                        else
-                        {
-                            float bombProjectileSpeed = 9f;
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-                            speed.Y += Main.rand.NextFloat(-1f, -2f);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
-                            }
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                     }
@@ -1056,7 +1043,7 @@ namespace tsorcRevamp.NPCs.Enemies
         };
         static readonly Vector2[] OverlayHandPixel = new Vector2[16]
         {
-            new Vector2(48, 47), // 0 idle
+            new Vector2(48, 42), // 0 idle — measured body grip; 5 source px = 5.5 world px at 1.1 scale
             new Vector2(49, 26), // 1 jump
             new Vector2(48, 33), // 2
             new Vector2(50, 31), // 3
@@ -1109,19 +1096,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         Vector2 CurrentSpearWorld(int facingDirection)
         {
-            // Preserve the authored spear grip used by the original throw telegraph. Melee and
-            // special attacks share this method so every held-spear state uses the same placement.
-            Vector2 handWorld = CurrentHandWorld(facingDirection);
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame == 0)
-            {
-                handWorld.Y -= 9f;
-            }
-            else if (frame >= 2)
-            {
-                handWorld.Y += 7f;
-            }
-            return handWorld;
+            return CurrentHandWorld(facingDirection);
         }
 
         Vector2 CurrentSpearWorld()
@@ -1267,7 +1242,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (heldProp == KnightHeldProp.Spear)
             {
                 Vector2 handWorld = CurrentSpearWorld(specialAttacks.Direction);
-                float rotation = specialAttacks.GetSpearRotation(handWorld);
+                float rotation = specialAttacks.GetSpearRotation(handWorld, NPC.Center);
                 float gripSlide = specialAttacks.SpearGripSlide;
                 if (specialAttacks.SpearDamageWake)
                 {

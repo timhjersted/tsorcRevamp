@@ -12,11 +12,6 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.InsanityShadowHostile;
 
-        // Vanilla InsanityShadowHostile (ProjectileID 734) is an EIGHT-frame sheet
-        // (Terraria.Main.SetupProjFrames: Main.projFrames[734] = 8). Slicing it as four frames
-        // grabbed two real frames per rectangle, which is what made the hand look clipped/split.
-        public const int FrameCount = 8;
-
         /// <summary>Ticks each hand lives. Has to outlast the LAST hand's staggered bolt:
         /// index 14 fires at <see cref="TriggerTick"/> = 30 + 14*41 = 604, plus the bolt tail and
         /// the alpha fade-out.</summary>
@@ -38,7 +33,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Type] = FrameCount;
+            // Mirror the source projectile's live metadata instead of a numeric-ID-era hardcode.
+            // In the current Terraria build InsanityShadowHostile is ID 965 and has one frame;
+            // treating it as the old ID 734's eight-frame sheet sliced the hand into thin strips.
+            Main.projFrames[Type] = Main.projFrames[ProjectileID.InsanityShadowHostile];
         }
 
         public override void SetDefaults()
@@ -54,12 +52,20 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            // Animated 8-frame hand sprite
-            Projectile.frameCounter++;
-            if (Projectile.frameCounter >= 6)
+            int sourceFrameCount = System.Math.Max(1,
+                Main.projFrames[ProjectileID.InsanityShadowHostile]);
+            if (sourceFrameCount > 1)
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame = (Projectile.frame + 1) % FrameCount;
+                Projectile.frameCounter++;
+                if (Projectile.frameCounter >= 6)
+                {
+                    Projectile.frameCounter = 0;
+                    Projectile.frame = (Projectile.frame + 1) % sourceFrameCount;
+                }
+            }
+            else
+            {
+                Projectile.frame = 0;
             }
 
             int currentAge = Lifetime - Projectile.timeLeft;
@@ -110,8 +116,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = TextureAssets.Projectile[ProjectileID.InsanityShadowHostile].Value;
-            int frameHeight = tex.Height / Main.projFrames[Type];
-            Rectangle src = new Rectangle(0, Projectile.frame * frameHeight, tex.Width, frameHeight);
+            int sourceFrameCount = System.Math.Max(1,
+                Main.projFrames[ProjectileID.InsanityShadowHostile]);
+            int sourceFrame = Utils.Clamp(Projectile.frame, 0, sourceFrameCount - 1);
+            int frameHeight = tex.Height / sourceFrameCount;
+            Rectangle src = new Rectangle(0, sourceFrame * frameHeight, tex.Width, frameHeight);
             Vector2 origin = src.Size() / 2f;
             Color color = lightColor * ((255 - Projectile.alpha) / 255f);
 

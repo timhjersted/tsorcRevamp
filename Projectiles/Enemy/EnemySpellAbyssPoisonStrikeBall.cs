@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(20, 600, false);
+            target.AddBuff(BuffID.Poisoned, 5 * 60, false);
             target.AddBuff(22, 600, false);
         }
 
