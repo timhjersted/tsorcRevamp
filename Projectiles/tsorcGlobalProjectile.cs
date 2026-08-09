@@ -203,24 +203,6 @@ namespace tsorcRevamp.Projectiles
                     projectile.localNPCHitCooldown = 12;
                 }
 
-                if (projectile.type == ProjectileID.DangerousSpider)
-                {
-                    projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = 18;
-                }
-
-                if (projectile.type == ProjectileID.JumperSpider)
-                {
-                    projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = 18;
-                }
-
-                if (projectile.type == ProjectileID.VenomSpider)
-                {
-                    projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = 18;
-                }
-
                 if (projectile.type == ProjectileID.Bee)
                 {
                     projectile.usesIDStaticNPCImmunity = true;
@@ -292,7 +274,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     projectile.penetrate = 6;
                     projectile.usesIDStaticNPCImmunity = false;
-                    projectile.localNPCHitCooldown = 100;
+                    projectile.localNPCHitCooldown = -1;
                     projectile.usesLocalNPCImmunity = true;
                     projectile.extraUpdates = 3;
                 }
