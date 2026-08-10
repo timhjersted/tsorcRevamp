@@ -63,14 +63,16 @@ class RuneMage : ModNPC
     public ref float AiTimer2 => ref NPC.ai[2];
     public ref float AiTimer3 => ref NPC.ai[3];
     
-    public Vector2 WorldRunePosition = new Vector2(63240, 19400);
+    public Vector2 WorldRunePosition = new Vector2(63600, 19400);
     public Vector2 WarningPosition = new Vector2(63240, 19400);
     public Vector2 SpawnPosition;
     public bool AppliedOnSpawn = false;
     public bool ShouldDrawWorldRune = true;
     public override void AI()
     {
+        NPC.TargetClosest(false);
         var target = Main.player[NPC.target];
+        NPC.chaseable = true;
 
         if (!AppliedOnSpawn)
         {
@@ -78,20 +80,25 @@ class RuneMage : ModNPC
             AppliedOnSpawn = true;
         }
         //Main.NewText(NPC.position.Distance(WorldRunePosition));
-        WorldRunePosition = new Vector2(63600, 19400);
-        WarningPosition = new Vector2(63240, 19400);
+        //WorldRunePosition = new Vector2(63600, 19400);
+        //WarningPosition = new Vector2(63240, 19400);
         
         
         switch (AiState)
         {
             case (float)ActionState.IdlePatrolling:
             {
-                IdlePatrolling();
+                IdlePatrolling(target);
                 break;
             }
             case (float)ActionState.IsWarning:
             {
                 IsWarning(target);
+                break;
+            }
+            case (float)ActionState.StartingFight:
+            {
+                StartFight(target);
                 break;
             }
             case (float)ActionState.WalkingPhase1:
@@ -130,6 +137,9 @@ class RuneMage : ModNPC
                 break;
             }
         }
+        //Player player = Main.player[NPC.target];
+        //player.position.Distance(WarningPosition);
+        //Main.NewText(AiState);
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -218,11 +228,15 @@ class RuneMage : ModNPC
                     NPC.frame.Y = (int)FrameState.Idle * frameHeight;
                 }
 
+                if (NPC.velocity.Y > 0 | NPC.velocity.Y < 0)
+                {
+                    NPC.frame.Y = (int)FrameState.Jumping * frameHeight;
+                }
+
                 break;
             }
             case (float)ActionState.IsWarning:
             {
-                if (AiTimer1 < 0) NPC.frame.Y = (int)FrameState.Idle * frameHeight;
                 FrameDuration = 3;
                 if (NPC.velocity.X != 0)
                 {
@@ -239,6 +253,11 @@ class RuneMage : ModNPC
                 else
                 {
                     NPC.frame.Y = (int)FrameState.Idle * frameHeight;
+                }
+                
+                if (NPC.velocity.Y > 0 | NPC.velocity.Y < 0)
+                {
+                    NPC.frame.Y = (int)FrameState.Jumping * frameHeight;
                 }
 
                 break;
@@ -325,9 +344,20 @@ class RuneMage : ModNPC
         }*/
     }
     private const float IdleWalkSpeed = 1.25f;
-    private void IdlePatrolling()
+    /// <summary>
+    /// Patrols the area around the World Rune. Will also talk to the player occasionally, if he can see them.
+    /// AiTimer1 determines when he will walk around or idle and look around.
+    /// AiTimer2 determines whether he should turn around while idling.
+    /// AiTimer3 is just a cooldown for turning around when running into a solid tile.
+    /// </summary>
+    /// <param name="target"></param>
+    private void IdlePatrolling(Player target)
     {
-        DialogueHandler(Main.netMode != NetmodeID.MultiplayerClient);
+        if (Collision.CanHitLine(NPC.position, NPC.width, NPC.height, target.position, target.width, target.height))
+        {
+            DialogueHandler(Main.netMode != NetmodeID.MultiplayerClient);
+        }
+        NPC.chaseable = false;
         if (AiTimer1 == 60) //roll a second in advance to decide what it does next
         {
             //roll some random action, decide whether he walks again or keeps standing still, maybe turn around
@@ -348,22 +378,29 @@ class RuneMage : ModNPC
             {
                 NPC.velocity.X = IdleWalkSpeed * NPC.direction; //walk into direction it is facing
             }
+
+            if (TotalWarnings > 1)
+            {
+                TotalWarnings--;
+            }
         }
         else if (AiTimer1 > 0) //if positive
         {
             AiTimer1--;
-            AiTimer2++;
+            AiTimer3++;
 
             Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed,
-                ref NPC.gfxOffY,
-                (int)Main.LocalPlayer.gravDir);
+                ref NPC.gfxOffY, (int)Main.LocalPlayer.gravDir);
             
-            if (NPC.collideX && AiTimer2 > 1) //if colliding with a wall
+            Collision.StepDown(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, 
+                ref NPC.gfxOffY, (int)Main.LocalPlayer.gravDir);
+            
+            if (NPC.collideX && AiTimer3 > 1) //if colliding with a wall
             {
                 NPC.velocity.X *= -1f; //turn back
                 SetDirection();
                 NPC.velocity.X = IdleWalkSpeed * NPC.direction; //walk into direction it is facing
-                AiTimer2 = 0;
+                AiTimer3 = 0;
             }
             
         }
@@ -381,67 +418,153 @@ class RuneMage : ModNPC
                 AiTimer2 = 0;
             }
         }
-        foreach (Player player in Main.ActivePlayers)
+        if (Main.netMode != NetmodeID.MultiplayerClient)
         {
-            if (player.position.Distance(WarningPosition) < 500 && Collision.CanHitLine(WarningPosition, 2, 2, player.position, player.width, player.height))
+            foreach (Player player in Main.ActivePlayers)
             {
-                NPC.target = player.whoAmI;
-                AiState = (float)ActionState.IsWarning;
+                if (player.position.Distance(WarningPosition) < 470) //476 is the closest distance between player and warningpos through blocks outside of the room
+                {
+                    NPC.target = player.whoAmI;
+                    AiState = (float)ActionState.IsWarning;
+                    AiTimer1 = 0;
+                    AiTimer2 = 0;
+                    AiTimer3 = 0;
+                    break;
+                }
+            }
+            if (TotalOnHitWarnings > 3)
+            {
+                AiState = (float)ActionState.StartingFight;
                 AiTimer1 = 0;
                 AiTimer2 = 0;
                 AiTimer3 = 0;
-                break;
+                NPC.netUpdate = true;
             }
         }
     }
 
     public float HurryingWalkSpeed = 1.75f;
-    public int WarningZoneTimer = 0;
+    /// <summary>
+    /// Runs towards the World Rune and positions himself in front of it, warning the player that he'll have to fight the player
+    /// if they won't step away form the World Rune. If the player ignores the warnings by getting too close to the World Rune
+    /// or hitting him too often, he traps the player in a Rune Prison and picks up the World Rune, then starts the boss fight.
+    /// AiTimer1 is just a timer for whether the player is still in the Warning Zone or not and whether he should aggro or not. 
+    /// </summary>
+    /// <param name="target"></param>
     public void IsWarning(Player target)
     {
-        DialogueHandler(Main.netMode != NetmodeID.MultiplayerClient);
-        if (NPC.position.Distance(WarningPosition) > 20)
+        NPC.chaseable = false;
+        if (NPC.position.Distance(WarningPosition) > 19.1f)
         {
             HurryingWalkSpeed = 3.25f;
             NPC.velocity.X = NPC.DirectionTo(WarningPosition).X * HurryingWalkSpeed;
-            SetDirection();
             
             Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed,
-                ref NPC.gfxOffY,
-                (int)Main.LocalPlayer.gravDir);
+                ref NPC.gfxOffY, (int)Main.LocalPlayer.gravDir);
+            
+            Collision.StepDown(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, 
+                ref NPC.gfxOffY, (int)Main.LocalPlayer.gravDir);
+            
+            SetDirection();
         }
         else
         {
-            NPC.velocity *= 0;
-            NPC.TargetClosest(true);
-            //Main.NewText("TargetClose");
+            NPC.velocity = Vector2.Zero;
+            NPC.TargetClosest();
         }
 
-        if (target.position.Distance(WarningPosition) > 600)
+        if (target.position.Distance(WarningPosition) > 470)
         {
-            WarningZoneTimer++;
+            AiTimer1++;
         }
         else
         {
-            WarningZoneTimer--;
+            DialogueHandler(Main.netMode != NetmodeID.MultiplayerClient);
+            AiTimer1--;
         }
-
-        if (WarningZoneTimer >= 300)
+        if (AiTimer1 >= 180)
         {
             NPC.target = target.whoAmI;
             AiState = (float)ActionState.IdlePatrolling;
-            AiTimer1 = 0;
+            AiTimer1 = -61;
             AiTimer2 = 0;
             AiTimer3 = 0;
         }
+
+        if (Main.netMode != NetmodeID.MultiplayerClient)
+        {
+            foreach (Player player in Main.ActivePlayers)
+            {
+                if (player.position.X > WarningPosition.X + 40 & Collision.CanHitLine(NPC.Center, 2, 2, player.Center, 2, 2))
+                {
+                    AiState = (float)ActionState.StartingFight;
+                    AiTimer1 = 0;
+                    AiTimer2 = 0;
+                    AiTimer3 = 0;
+                    NPC.netUpdate = true;
+                    break;
+                }
+            }
+
+            if (TotalWarnings > 5 | TotalOnHitWarnings > 3)
+            {
+                AiState = (float)ActionState.StartingFight;
+                AiTimer1 = 0;
+                AiTimer2 = 0;
+                AiTimer3 = 0;
+                NPC.netUpdate = true;
+            }
+        }
+    }
+
+    public void StartFight(Player target)
+    {
+        Dust.NewDust(NPC.Center, NPC.width, NPC.height, DustID.Torch);
+        //Main.NewText(target.Distance(WarningPosition));
+    }
+
+    public override void HitEffect(NPC.HitInfo hit)
+    {
+        if (Main.netMode != NetmodeID.MultiplayerClient)
+        {
+            switch (AiState)
+            {
+                case (float)ActionState.IdlePatrolling:
+                {
+                    AiTimer1 = -61;
+                    AiTimer2 = 0;
+                    NPC.FaceTarget();
+                    NPC.netUpdate = true;
+                    DialogueHandler(Main.netMode != NetmodeID.MultiplayerClient, true);
+                    break;
+                }
+                case (float)ActionState.IsWarning:
+                {
+                    DialogueHandler(Main.netMode != NetmodeID.MultiplayerClient, true);
+                    break;
+                }
+            }
+        }
+        TotalOnHitWarnings++;
+        ChatTimer = 0;
+    }
+
+    public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+    {
     }
 
     private int ChatTimer = 0;
+    private int ChatTimerRequirement = 120;
     private int ChatWarningTimer = 0;
-    private int WarningsCount = 0;
-    private int TotalWarnings = 0;
-    private void DialogueHandler(bool isNotMpClient)
+    private int MonologueProgress = 1;
+    private int TotalOnHitWarnings = 1;
+    private int TotalWarnings = 1;
+    private void DialogueHandler(bool isNotMpClient, bool warnImmediately = false)
     {
+        bool SendText = false;
+        string TextAddon = "";
+        Color TextColor = Color.White;
+        int TextNumber = 0;
         if (isNotMpClient)
         {
             switch (AiState)
@@ -449,46 +572,61 @@ class RuneMage : ModNPC
                 case (float)ActionState.IdlePatrolling:
                 {
                     ChatTimer++;
-                    if (ChatTimer > 240)
+                    if (ChatTimer >= ChatTimerRequirement && MonologueProgress < 4)
                     {
-                        int speechRoll = Main.rand.Next(3) + 1;
-                
-                        foreach (Player player in Main.ActivePlayers)
-                        {
-                            if (Collision.CanHitLine(NPC.position, NPC.width, NPC.height, player.position, player.width, player.height))
-                            {
-                                ChatHelper.SendChatMessageToClient(NetworkText.FromKey("LocationinLangFile" + speechRoll), Color.Aqua, player.whoAmI);
-                            }
-                        }
-
+                        SendText = true;
+                        TextAddon = "Monologue";
+                        TextColor = Color.Blue;
+                        TextNumber = MonologueProgress;
+                        MonologueProgress++;
                         ChatTimer = 0;
+                        ChatTimerRequirement = 120 * MonologueProgress;
                     }
                     break;
                 }
                 case (float)ActionState.IsWarning:
                 {
-                    foreach (Player player in Main.ActivePlayers)
-                    {
-                        if (player.position.Distance(WorldRunePosition) < 650)
-                        {
-                            ChatWarningTimer++;
-                            break;
-                        }
-                    }
+                    ChatWarningTimer++;
 
                     if (ChatWarningTimer > 240)
                     {
-                        foreach (Player player in Main.ActivePlayers)
-                        {
-                            if (player.position.Distance(NPC.position) < 500)
-                            {
-                                ChatHelper.SendChatMessageToClient(NetworkText.FromKey("Warning" + TotalWarnings), Color.Red, player.whoAmI);
-                            }
-                        }
+                        SendText = true;
+                        TextAddon = "Warning";
+                        TextColor = Color.Red;
+                        TextNumber = TotalWarnings;
                         TotalWarnings++;
                         ChatWarningTimer = 0;
                     }
                     break;
+                }
+            }
+            if (warnImmediately)
+            {
+                switch (AiState)
+                {
+                    case (float)ActionState.IdlePatrolling:
+                    {
+                        TextAddon = "IdleOnHitWarning";
+                        break;
+                    }
+                    case (float)ActionState.IsWarning:
+                    {
+                        TextAddon = "AgitatedOnHitWarning";
+                        break;
+                    }
+                }
+                SendText = true;
+                TextColor = Color.Red;
+                TextNumber = TotalOnHitWarnings;
+            }
+        }
+        if (SendText)
+        {
+            foreach (Player player in Main.ActivePlayers)
+            {
+                if (Collision.CanHitLine(NPC.Center, 2, 2, player.Center, 2, 2) | NPC.Distance(player.position) < 520)
+                {
+                    ChatHelper.SendChatMessageToClient(NetworkText.FromKey(LangUtils.GetTextValue("NPCs.Runeterra.RuneMage." + TextAddon + TextNumber)), TextColor, player.whoAmI);
                 }
             }
         }
@@ -568,6 +706,7 @@ class RuneMage : ModNPC
     {
         IdlePatrolling,
         IsWarning,
+        StartingFight,
         WalkingPhase1,
         JumpingPhase1,
         PhaseTransition,

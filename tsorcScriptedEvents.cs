@@ -401,7 +401,7 @@ namespace tsorcRevamp
             FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 3, 4 });
 
             //RUNE MAGE IN PATH OF PAIN
-            ScriptedEvent RuneMage = new ScriptedEvent(new Vector2(3897, 1219), 50, ModContent.NPCType<RuneMage>(), 27, true, true, true, "lol black knight", Color.Blue, false, default);
+            ScriptedEvent RuneMage = new ScriptedEvent(new Vector2(3897, 1219), 100, ModContent.NPCType<RuneMage>(), 27, true, false, true);
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
