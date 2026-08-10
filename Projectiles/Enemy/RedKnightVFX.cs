@@ -167,14 +167,24 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         /// <param name="finale">
-        /// True when this is Great Red Knight's DEATH sequence rather than the mid-fight
-        /// containment attack. The seal-fill and blast below are drawn identically (the finale
-        /// replays exactly the same `age` window, SealStart→TotalTicks, so every Progress and fade
-        /// value the shader sees is unchanged) — but the containment FIELD and EDGE must not draw,
-        /// or a half-opaque arena wall would appear out of nowhere for the finale's first 90 ticks.
+        /// True when this is Great Red Knight's DEATH sequence; false when it is Dominion's ongoing
+        /// containment field. Those are now the only two states this draws — the old "normal
+        /// mid-fight containment attack" that ran the whole 600-tick build→sweep→escape→nova
+        /// timeline no longer exists, so the two branches below are exhaustive.
+        ///
+        /// Finale replays exactly the `age` window SealStart→TotalTicks (its Age property offsets
+        /// forward to SealStart), so every progress and fade value the shader sees is unchanged, and
+        /// the containment FIELD and EDGE must not draw or a half-opaque arena wall would appear out
+        /// of nowhere for the finale's first 90 ticks.
+        /// </param>
+        /// <param name="containmentFade">
+        /// Containment state only: 0 while the field is up, ramping to 1 as it fades out once the
+        /// death finale latches. This is the ONLY thing that ends the containment draw — after the
+        /// build ramp its `age` no longer drives anything, because the field holds indefinitely and
+        /// the shader animates itself off Main.GlobalTimeWrappedHourly (see DrawDominionQuad).
         /// </param>
         internal static void DrawCrimsonDominion(Vector2 center, int age, float baseRotation,
-            int rotationDirection, bool finale = false)
+            int rotationDirection, bool finale = false, float containmentFade = 0f)
         {
             LoadAssets();
             if (Main.dedServ || dominionEffect == null)
@@ -185,38 +195,43 @@ namespace tsorcRevamp.Projectiles.Enemy
             const float arenaRadius = CrimsonDominionController.Radius;
             float coverage = 2f * (arenaRadius + Math.Max(Main.screenWidth, Main.screenHeight));
             float radiusRatio = arenaRadius / coverage;
-            float fieldOpacity;
-            float edgeOpacity;
 
-            if (age < CrimsonDominionController.BuildTicks)
+            if (!finale)
             {
-                float build = MathHelper.Clamp(age / (float)CrimsonDominionController.BuildTicks, 0f, 1f);
-                fieldOpacity = MathHelper.Lerp(0f, 1f, build);
-                edgeOpacity = MathHelper.Lerp(0.08f, 0.95f, build);
-                DrawDestinedDeathBlast(center, MathHelper.Lerp(96f, 188f, build),
-                    1f - build * 0.5f, 0.30f * build);
-            }
-            else if (age < CrimsonDominionController.EscapeStart)
-            {
-                // Fully opaque black wall once containment locks in — no more see-through arena
-                // boundary; the red energy waves (DominionEdge, additive) render on top of it.
-                fieldOpacity = 1f;
-                edgeOpacity = 1f;
-            }
-            else
-            {
-                float escape = MathHelper.Clamp((age - CrimsonDominionController.EscapeStart) /
-                    (float)CrimsonDominionController.EscapeTicks, 0f, 1f);
-                fieldOpacity = 1f - escape;
-                edgeOpacity = MathHelper.Lerp(0.9f, 0.22f, escape);
-            }
+                // CONTAINMENT — build the wall in over BuildTicks, then hold it opaque for the rest
+                // of the fight. No seal and no nova: that escape-and-detonate beat belongs
+                // exclusively to the death finale, which is also the only thing that takes this
+                // field down (via containmentFade).
+                float fieldOpacity;
+                float edgeOpacity;
+                if (age < CrimsonDominionController.BuildTicks)
+                {
+                    float build = MathHelper.Clamp(age / (float)CrimsonDominionController.BuildTicks, 0f, 1f);
+                    fieldOpacity = build;
+                    edgeOpacity = MathHelper.Lerp(0.08f, 0.95f, build);
+                    DrawDestinedDeathBlast(center, MathHelper.Lerp(96f, 188f, build),
+                        1f - build * 0.5f, 0.30f * build);
+                }
+                else
+                {
+                    // Fully opaque black wall once containment locks in — no more see-through arena
+                    // boundary; the red energy waves (DominionEdge, additive) render on top of it.
+                    // Held forever; the shader's own Time-driven noise is what keeps it alive.
+                    fieldOpacity = 1f;
+                    edgeOpacity = 1f;
+                }
 
-            if (!finale && age < CrimsonDominionController.NovaStart)
-            {
+                // Handoff to the death finale. Same shape as the old escape fade, retriggered on
+                // the short tail instead of on a countdown the player would have to react to.
+                float fade = MathHelper.Clamp(containmentFade, 0f, 1f);
+                fieldOpacity *= 1f - fade;
+                edgeOpacity *= MathHelper.Lerp(1f, 0f, fade);
+
                 DrawDominionQuad("DominionField", center, Vector2.One * coverage, 0f,
                     fieldOpacity, 1f, 0f, 0.88f, radiusRatio, rotationDirection, BlendState.NonPremultiplied);
                 DrawDominionQuad("DominionEdge", center, Vector2.One * coverage, 0f,
                     edgeOpacity, 1f, 0f, 1.08f, radiusRatio, rotationDirection, BlendState.Additive);
+                return;
             }
 
             // The finishing "get out of the circle" sequence. Replaces the old DominionNova pair,

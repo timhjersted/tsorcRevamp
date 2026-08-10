@@ -23,8 +23,7 @@ namespace tsorcRevamp.NPCs
 
         // -- Patrol tunables (from design) --
         private const float PatrolSpeedMult = 0.6f;   // patrol ambles, doesn't sprint
-        private const int IdleStandTicksMin = 120;    // 2s
-        private const int IdleStandTicksMax = 240;    // 4s
+        private const int IdleStandTicks = 60;        // 1s readable pause; movement is guaranteed afterward
         private const int IdleWalkTilesMin = 3;
         private const int IdleWalkTilesMax = 6;
         private const int WanderCommitFramesMin = 240; // ~4s committed to a wander direction (anti-jitter)
@@ -156,7 +155,9 @@ namespace tsorcRevamp.NPCs
 
             g.PatrolDirection = npc.direction != 0 ? npc.direction : 1;
             g.PatrolLegRemaining = 0;
-            g.PatrolIdleTimer = 0;
+            // Idle gets one short, readable "gave up" beat before resuming movement. Pace/Wander move
+            // immediately, and ReturnToSpawn should start walking back to its anchor immediately.
+            g.PatrolIdleTimer = g.PatrolMode == PatrolMode.Idle ? IdleStandTicks : 0;
             g.PatrolElapsed = 0;
         }
 
@@ -206,28 +207,61 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        // Idle: mostly stand; occasionally take a short walk (frame-timed), then idle again.
+        // Idle: pause for one second, then ALWAYS take a short walk. The previous 50/50 roll could select
+        // another 2-4 second pause indefinitely, which made a healthy patrol look frozen. When a chosen
+        // direction is blocked, try the other side immediately before settling into the next short pause.
         private static void RunIdle(NPC npc, tsorcRevampGlobalNPC g, float topSpeed, float acceleration)
         {
             if (g.PatrolLegRemaining > 0)
             {
                 g.PatrolLegRemaining--; // frame timer for the short walk
-                if (!StepAlong(npc, g.PatrolDirection, topSpeed, acceleration)) g.PatrolLegRemaining = 0;
+                if (!StepAlong(npc, g.PatrolDirection, topSpeed, acceleration))
+                {
+                    g.PatrolLegRemaining = 0;
+                    if (!TryStartIdleLeg(npc, g, topSpeed, acceleration, -g.PatrolDirection))
+                        g.PatrolIdleTimer = IdleStandTicks;
+                }
+                else if (g.PatrolLegRemaining == 0)
+                {
+                    g.PatrolIdleTimer = IdleStandTicks;
+                }
             }
             else
             {
                 Brake(npc);
-                if (g.PatrolIdleTimer > 0) { g.PatrolIdleTimer--; }
-                else if (Main.rand.NextBool(2))
+                if (g.PatrolIdleTimer > 0)
                 {
-                    g.PatrolDirection = Main.rand.NextBool() ? 1 : -1;
-                    g.PatrolLegRemaining = Main.rand.Next(IdleWalkTilesMin, IdleWalkTilesMax + 1) * FramesPerTile;
+                    g.PatrolIdleTimer--;
                 }
-                else
+                else if (!TryStartIdleLeg(npc, g, topSpeed, acceleration, Main.rand.NextBool() ? 1 : -1))
                 {
-                    g.PatrolIdleTimer = Main.rand.Next(IdleStandTicksMin, IdleStandTicksMax + 1);
+                    // Neither side is safe (for example, a roof with deep drops on both sides). Retry after a
+                    // bounded pause instead of rerolling an arbitrarily long stationary chain every frame.
+                    g.PatrolIdleTimer = IdleStandTicks;
                 }
             }
+        }
+
+        private static bool TryStartIdleLeg(NPC npc, tsorcRevampGlobalNPC g, float topSpeed, float acceleration,
+            int preferredDirection)
+        {
+            int firstDirection = preferredDirection != 0 ? Math.Sign(preferredDirection) : 1;
+            int secondDirection = -firstDirection;
+            int walkFrames = Main.rand.Next(IdleWalkTilesMin, IdleWalkTilesMax + 1) * FramesPerTile;
+
+            if (StepAlong(npc, firstDirection, topSpeed, acceleration))
+            {
+                g.PatrolDirection = firstDirection;
+                g.PatrolLegRemaining = Math.Max(0, walkFrames - 1); // StepAlong already moved this first frame.
+                return true;
+            }
+            if (StepAlong(npc, secondDirection, topSpeed, acceleration))
+            {
+                g.PatrolDirection = secondDirection;
+                g.PatrolLegRemaining = Math.Max(0, walkFrames - 1);
+                return true;
+            }
+            return false;
         }
 
         // Pace: sweep BOTH sides of the anchor — walk out to PatrolRange tiles, turn at the reach limit OR

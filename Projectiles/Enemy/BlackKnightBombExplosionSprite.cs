@@ -64,12 +64,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             int frameHeight = tex.Height / Main.projFrames[Type];
             Rectangle src = new Rectangle(0, Projectile.frame * frameHeight, tex.Width, frameHeight);
 
-            // Origin at bottom-center of the frame (49, 98)
-            Vector2 origin = new Vector2(tex.Width / 2f, frameHeight);
+            // Origin at exact center of the frame (49, 49)
+            Vector2 origin = new Vector2(tex.Width / 2f, frameHeight / 2f);
 
-            // Bomb sprite is 34x34 (radius 17px).
-            // Position bottom-center of explosion frame at exact bottom edge of the bomb sprite (Center.Y + 17).
-            Vector2 drawPos = Projectile.Center + new Vector2(0f, 17f) - Main.screenPosition;
+            // Draw centered dead-center on the explosion center.
+            Vector2 drawPos = Projectile.Center - Main.screenPosition;
 
             Main.EntitySpriteDraw(
                 tex,

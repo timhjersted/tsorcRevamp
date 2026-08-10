@@ -18,7 +18,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 14;
             Projectile.penetrate = 1;
             Projectile.DamageType = DamageClass.Ranged;
-            Projectile.scale = 1.0f;
+            // Match BlackKnight's held spear exactly; previously the flying version was 0.1 larger.
+            Projectile.scale = 0.9f;
             Projectile.tileCollide = true;
             Projectile.width = 14;
             Projectile.alpha = 0;
@@ -171,5 +172,4 @@ namespace tsorcRevamp.Projectiles.Enemy
         #endregion
     }
 }
-
 

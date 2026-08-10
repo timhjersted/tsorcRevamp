@@ -38,9 +38,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            Projectile.width = 2;
-            Projectile.height = 2;
-            Projectile.hostile = false;
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
@@ -49,7 +49,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.scale = 1f;
         }
 
-        public override bool? CanDamage() => false;
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+        }
 
         public override void OnSpawn(IEntitySource source)
         {
@@ -74,23 +77,34 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.frame = (Projectile.frame + 1) % FrameCount;
             }
 
-            // Tip BACKWARD, away from the direction of travel, as if the blaze is being blown over
-            // by the wave's own motion: counterclockwise when moving right, clockwise when moving
-            // left. Terraria's Y axis points down, so a NEGATIVE rotation delta reads as
-            // counterclockwise on screen.
+            // Tip BACKWARD, away from the direction of travel
             Projectile.rotation -= Direction * 0.026f;
 
-            // Drag on the horizontal run so blazes fall behind the wave front rather than pacing it
-            // forever; lifting ones keep rising and slow down faster.
-            Projectile.velocity.X *= 0.965f;
             if (Lifting)
             {
-                Projectile.velocity.Y = Math.Max(Projectile.velocity.Y - 0.06f, -4.2f);
-                Projectile.velocity.X *= 0.94f;
+                Projectile.velocity = Projectile.velocity.RotatedBy(0.04f);
+                Projectile.velocity *= 0.98f;
             }
             else
             {
-                Projectile.velocity.Y *= 0.9f;
+                // Keep ground blazes hugging terrain and moving locked with the ground wave
+                float groundY = Weapons.PuppetGroundDustWave.FindGroundY(Projectile.Center.X, Projectile.Center.Y + 6f);
+                Projectile.Center = new Vector2(Projectile.Center.X, groundY);
+                Projectile.velocity.Y = 0f;
+                Projectile.velocity.X *= 0.985f;
+            }
+
+            // Fire-like particles: DustID.Blood (5) and DustID.Wraith (54) rising from the flames
+            if (!Main.dedServ && Main.rand.NextBool(2))
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    int dustType = Main.rand.NextBool(2) ? DustID.Blood : DustID.Wraith;
+                    Vector2 dustPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-14f, 14f) * Projectile.scale, Main.rand.NextFloat(-18f, -2f) * Projectile.scale);
+                    Vector2 dustVel = new Vector2(Projectile.velocity.X * 0.2f + Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(-2.8f, -1.0f));
+                    Dust dust = Dust.NewDustPerfect(dustPos, dustType, dustVel, 100, default, Main.rand.NextFloat(0.9f, 1.4f));
+                    dust.noGravity = true;
+                }
             }
 
             Lighting.AddLight(Projectile.Center, new Vector3(0.42f, 0.03f, 0.04f) * Projectile.scale);
@@ -106,22 +120,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             float life = 1f - Projectile.timeLeft / (float)Lifetime;
             float fade = Utils.Clamp(life * 4.5f, 0f, 1f) * Utils.Clamp((1f - life) * 2.2f, 0f, 1f);
 
-            // Additive: this is a bright flame licking over the shockwave the shader already drew,
-            // and it is meant to STACK with it, so it is honestly just light (§43's exception).
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp,
-                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            try
-            {
-                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame,
-                    Color.White * fade * 0.85f, Projectile.rotation,
-                    new Vector2(frame.Width * 0.5f, frame.Height), Projectile.scale,
-                    Direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
-            }
-            finally
-            {
-                UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
-            }
+            // AlphaBlend: renders solid opaque black and rich crimson pixels matching the authored PNG texture
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame,
+                Color.White * fade, Projectile.rotation,
+                new Vector2(frame.Width * 0.5f, frame.Height), Projectile.scale,
+                Direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
             return false;
         }
     }

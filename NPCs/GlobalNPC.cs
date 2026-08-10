@@ -1184,7 +1184,7 @@ namespace tsorcRevamp.NPCs
 
         // -- Patrol working state (managed by NavBehavior) --
         public int PatrolDirection = 0;     // current patrol facing (-1 / +1)
-        public int PatrolLegRemaining = 0;  // tiles left on the current leg before reconsidering direction
+        public int PatrolLegRemaining = 0;  // frames left on the current walking leg before pausing/reconsidering
         public int PatrolIdleTimer = 0;     // sub-timer driving the idle stand/walk routine
         public int PatrolElapsed = 0;       // frames spent in the current Patrol stint (drives Relaxed-teleport delay)
         // Last frame's distance to the pursuit target; drives the FSM "made progress" (closing distance) test.
@@ -1734,6 +1734,10 @@ namespace tsorcRevamp.NPCs
             {
                 UpdateInvisibilityTrail(npc);
             }
+
+            // Committed jumps keep their takeoff facing and travel direction through the first landing,
+            // then decelerate before normal pursuit is permitted to turn the fighter around.
+            UpdateCommittedJumpFacing(npc);
 
             // Stagger freeze: override the AI's movement so a staggered enemy is stunned in place. Last write to
             // velocity in the common PostAI path so it wins over pursuit/confusion/standoff set above.

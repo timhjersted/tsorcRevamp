@@ -11103,9 +11103,9 @@ Mods: {
 			FireLurkerFireBurst.DisplayName: Fire Lurker Fire Burst
 			DestinedDeathBlaze.DisplayName: Destined Death Blaze
 			DestinedDeathExplosion.DisplayName: Destined Death Explosion
-			GreatRedKnightHandBeam.DisplayName: Great Red Knight Hand Beam
 			GreatRedKnightUltrakillHand.DisplayName: Great Red Knight Ultrakill Hand
 			EnemyShadowflameArrow.DisplayName: Enemy Shadowflame Arrow
+			EnemyAncientBloodLanceProj.DisplayName: Enemy Ancient Blood Lance Proj
 		}
 
 		NPCs: {
@@ -11670,6 +11670,7 @@ Mods: {
 				DisplayName: Great Red Knight
 				Hunt: A Great Red Knight of the Abyss is now hunting you...
 				Destroy: A Great Red Knight of the Abyss has come to destroy you..
+				DespawnHandler: The Great Red Knight stands victorious...
 			}
 
 			GreatRedKnightTest.DisplayName: Great Red Knight Test

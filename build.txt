@@ -1,6 +1,6 @@
 displayName = The Story of Red Cloud
-author = Zeodexic, RecursiveCollapse, Vibrent, MarfMaster, Urgiv, Xelvaa
-version = 0.17.1
+author = Vibrent, Zeodexic, MarfMaster, Xelvaa, Urgiv 
+version = 0.17.3
 homepage = https://discord.gg/kSptDbe
 buildIgnore = Projectiles\Enemy\UnusedAssets\*
 

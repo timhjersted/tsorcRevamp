@@ -22,6 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public int redKnightsSpearDamage = 20;
         public int redMagicDamage = 15;
         public int redKnightsGreatDamage = 18;
+        public int redKnightsBombDamage = 26;
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
         readonly RedKnightAttackController specialAttacks = new RedKnightAttackController();
@@ -67,6 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 redKnightsGreatDamage = 9;
                 redKnightsSpearDamage = 12;
                 redMagicDamage = 7;
+                redKnightsBombDamage = 15;
                 NPC.boss = true;
             }
             if (tsorcRevampWorld.SuperHardMode)
@@ -78,6 +80,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 redKnightsGreatDamage = 38;
                 redKnightsSpearDamage = 32;
                 redMagicDamage = 26;
+                redKnightsBombDamage = 40;
             }
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
@@ -90,6 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //redKnightGlobalNPC.Strength = Main.rand.NextFloat(0.7f, 1.4f);
 
             redKnightGlobalNPC.Agility = 0.3f;
+            redKnightGlobalNPC.PreserveJumpFacingUntilLanding = true;
 
             // Poise: needs sustained pressure to stagger (poise damage = weapon knockback). Tunable lever.
             redKnightGlobalNPC.PoiseMax = 40f;
@@ -124,11 +128,12 @@ namespace tsorcRevamp.NPCs.Enemies
             HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Elite(
                 redKnightsSpearDamage,
                 (int)(redKnightsSpearDamage * 1.3f),
-                closeTelegraphTicks: 60,
-                longTelegraphTicks: 60,
+                closeTelegraphTicks: 36,
+                longTelegraphTicks: 45,
                 guardPressureUnblockable: true,
                 guardPressureTelegraphTicks: 90,
-                openerCondition: npc => npc.ai[1] >= 60f && npc.ai[1] < 90f);
+                openerCondition: npc => npc.ai[1] >= 60f && npc.ai[1] < 90f,
+                leonhardRunUp: true);
             redKnightGlobalNPC.ConfigureHumanoidMelee(meleeProfile);
             CombatTempoProfile.Elite(redKnightGlobalNPC,
                 new CombatComboMove(spearProjectileType, 120f, float.MaxValue, canRepeat: true, weight: 1.25f),
@@ -198,7 +203,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     return "Ultrakill Barrage";
                 }
-                if ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f))
+                if (((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f)) && NPC.HasValidTarget && NPC.Distance(Main.player[NPC.target].Center) > 350f)
                 {
                     return "Abyssal Rain";
                 }
@@ -382,7 +387,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             specialAttacks.TickCooldowns();
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            KnightAttackStats attackStats = new KnightAttackStats(redKnightsSpearDamage, redMagicDamage, redKnightsGreatDamage);
+            KnightAttackStats attackStats = new KnightAttackStats(
+                redKnightsSpearDamage, redMagicDamage, redKnightsGreatDamage, redKnightsBombDamage);
             if (specialAttacks.Active)
             {
                 specialAttacks.Tick(NPC, player, attackStats);
@@ -773,26 +779,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (hasPlayerLOS)
                     {
-                        float distance = NPC.Distance(player.Center);
-                        if (distance > 400f)
+                        Vector2 target = targetPosition != Vector2.Zero ? targetPosition : (storedPlayerPosition != Vector2.Zero ? storedPlayerPosition : player.Center);
+                        float bombProjectileSpeed = 15f;
+                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, target, bombProjectileSpeed, 0.2f, highAngle: false, fallback: true);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            float bombProjectileSpeed = 14f;
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-                            speed += Main.player[NPC.target].velocity;
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
-                            }
-                        }
-                        else
-                        {
-                            float bombProjectileSpeed = 9f;
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-                            speed.Y += Main.rand.NextFloat(-1f, -2f);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
-                            }
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsBombDamage, 0f, Main.myPlayer, ai2: 1f);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                     }
@@ -815,14 +807,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 #region AI 2 Attacks
                 // Air attack targeting indicator — dust appears above drop zone 3 frames before each wave
-                if ((NPC.ai[2] == 72 || NPC.ai[2] == 97 || NPC.ai[2] == 522 || NPC.ai[2] == 547 || NPC.ai[2] == 572 || NPC.ai[2] == 597) && !inActiveAttack && NPC.Distance(player.Center) > 350 && hasPlayerLOS)
+                if ((NPC.ai[2] == 72 || NPC.ai[2] == 97 || NPC.ai[2] == 522 || NPC.ai[2] == 547 || NPC.ai[2] == 572 || NPC.ai[2] == 597) && NPC.Distance(player.Center) > 350)
                 {
                     for (int i = 0; i < 6; i++)
                         Dust.NewDust(new Vector2(player.position.X - 10 + Main.rand.Next(player.width + 20), player.position.Y - 340f), 4, 4, DustID.Torch, 0f, 3f, 100, default, 1.2f);
                 }
 
                 // Fire Attack from Air
-                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && !inActiveAttack && NPC.Distance(player.Center) > 350 && hasPlayerLOS)
+                if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && NPC.Distance(player.Center) > 350)
                 {
                     for (int pcy = 0; pcy < 3; pcy++)
                     {
@@ -835,7 +827,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Slightly Delayed Fire Attack From Air
-                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && !inActiveAttack && NPC.Distance(player.Center) > 370 && hasPlayerLOS)
+                if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && NPC.Distance(player.Center) > 370)
                 {
                     for (int pcy = 0; pcy < 4; pcy++)
                     {
@@ -942,6 +934,18 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
+            }
+        }
+
+        public override void FindFrame(int frameHeight)
+        {
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (globalNPC.CombatMeleeActive || specialAttacks.UsesStableMeleeFrame)
+            {
+                // Frame 8 is an upright mid-stride pose with a stable (48,33) overlay grip.
+                // Holding it prevents both the idle pose and the raised-hand jump-frame spear pop.
+                NPC.frame.Y = 8 * frameHeight;
+                NPC.frameCounter = 0d;
             }
         }
         #endregion
@@ -1056,7 +1060,7 @@ namespace tsorcRevamp.NPCs.Enemies
         };
         static readonly Vector2[] OverlayHandPixel = new Vector2[16]
         {
-            new Vector2(48, 47), // 0 idle
+            new Vector2(48, 42), // 0 idle — measured body grip; 5 source px = 5.5 world px at 1.1 scale
             new Vector2(49, 26), // 1 jump
             new Vector2(48, 33), // 2
             new Vector2(50, 31), // 3
@@ -1109,19 +1113,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         Vector2 CurrentSpearWorld(int facingDirection)
         {
-            // Preserve the authored spear grip used by the original throw telegraph. Melee and
-            // special attacks share this method so every held-spear state uses the same placement.
-            Vector2 handWorld = CurrentHandWorld(facingDirection);
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame == 0)
-            {
-                handWorld.Y -= 9f;
-            }
-            else if (frame >= 2)
-            {
-                handWorld.Y += 12f;
-            }
-            return handWorld;
+            return CurrentHandWorld(facingDirection);
         }
 
         Vector2 CurrentSpearWorld()
@@ -1267,7 +1259,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (heldProp == KnightHeldProp.Spear)
             {
                 Vector2 handWorld = CurrentSpearWorld(specialAttacks.Direction);
-                float rotation = specialAttacks.GetSpearRotation(handWorld);
+                float rotation = specialAttacks.GetSpearRotation(handWorld, NPC.Center);
                 float gripSlide = specialAttacks.SpearGripSlide;
                 if (specialAttacks.SpearDamageWake)
                 {

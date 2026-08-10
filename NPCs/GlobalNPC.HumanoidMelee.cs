@@ -20,6 +20,12 @@ namespace tsorcRevamp.NPCs
         private int CombatMeleeOpenerCooldownTimer;
         private int PendingCombatComboMoveKey;
         private int PendingCombatComboGapTimer;
+        public bool PreserveJumpFacingUntilLanding;
+        private int CommittedJumpFacingDirection;
+        private int CommittedJumpFacingTimeout;
+        private bool CommittedJumpWasAirborne;
+        private int CommittedJumpLandingTicks;
+        private float CommittedJumpVelocityX;
 
         public bool CombatMeleeActive => CombatMeleeProfile != null && CombatMeleeActiveKey != 0;
         public bool HasPendingCombatComboMove => PendingCombatComboMoveKey != 0;
@@ -262,6 +268,14 @@ namespace tsorcRevamp.NPCs
             CombatMeleeLockedDirection = target.Center.X >= npc.Center.X ? 1 : -1;
             npc.direction = CombatMeleeLockedDirection;
             npc.spriteDirection = CombatMeleeLockedDirection;
+            if (move.TelegraphRunUpTicks > 0 && Math.Abs(npc.velocity.X) < 0.75f)
+            {
+                float signedDistance = (target.Center.X - npc.Center.X) * CombatMeleeLockedDirection;
+                int openingDirection = signedDistance <= GetHumanoidMeleeStopDistance(npc, target, move)
+                    ? -CombatMeleeLockedDirection
+                    : CombatMeleeLockedDirection;
+                npc.velocity.X = openingDirection * 0.75f;
+            }
             ProjectileTimer = 0f;
             AttackTelegraphing = true;
             AttackCommitted = false;
@@ -293,7 +307,7 @@ namespace tsorcRevamp.NPCs
 
             if (CombatMeleeTimer < activeStart)
             {
-                npc.velocity.X *= 0.72f;
+                RunHumanoidMeleeTelegraph(npc, Main.player[npc.target], move, activeStart);
             }
             else if (CombatMeleeTimer == activeStart)
             {
@@ -312,7 +326,15 @@ namespace tsorcRevamp.NPCs
                 BrakeHumanoidMeleeBeforeOverlap(npc, Main.player[npc.target], move);
                 if (CombatMeleeTimer >= activeEnd)
                 {
-                    npc.velocity.X *= 0.84f;
+                    if (move.TelegraphRunUpTicks > 0)
+                    {
+                        npc.velocity.X = Approach(npc.velocity.X,
+                            CombatMeleeLockedDirection * 0.8f, 0.16f);
+                    }
+                    else
+                    {
+                        npc.velocity.X *= 0.84f;
+                    }
                 }
             }
 
@@ -320,6 +342,139 @@ namespace tsorcRevamp.NPCs
             {
                 FinishHumanoidMelee(npc, move);
             }
+        }
+
+        private void RunHumanoidMeleeTelegraph(NPC npc, Player target, HumanoidMeleeMove move, int activeStart)
+        {
+            if (move.TelegraphRunUpTicks <= 0)
+            {
+                npc.velocity.X *= 0.72f;
+                return;
+            }
+
+            float signedDistance = (target.Center.X - npc.Center.X) * CombatMeleeLockedDirection;
+            float stopDistance = GetHumanoidMeleeStopDistance(npc, target, move);
+            if (signedDistance <= stopDistance)
+            {
+                // Use the windup to make room instead of braking into the idle frame. The retreat is
+                // deliberately slower than the coming launch, so forward acceleration remains the release cue.
+                npc.velocity.X = Approach(npc.velocity.X,
+                    -CombatMeleeLockedDirection * 0.75f, move.TelegraphRunUpAcceleration);
+                return;
+            }
+
+            int runUpStart = Math.Max(1, activeStart - move.TelegraphRunUpTicks);
+            float approachSpeed = CombatMeleeTimer < runUpStart
+                ? Math.Min(1f, move.TelegraphRunUpTopSpeed)
+                : move.TelegraphRunUpTopSpeed;
+            float acceleration = CombatMeleeTimer < runUpStart
+                ? Math.Min(0.06f, move.TelegraphRunUpAcceleration)
+                : move.TelegraphRunUpAcceleration;
+            float targetVelocity = CombatMeleeLockedDirection * approachSpeed;
+            npc.velocity.X = Approach(npc.velocity.X, targetVelocity, acceleration);
+        }
+
+        private static float Approach(float value, float target, float maximumChange)
+        {
+            if (value < target)
+            {
+                return Math.Min(value + maximumChange, target);
+            }
+            return Math.Max(value - maximumChange, target);
+        }
+
+        /// <summary>
+        /// Preserve the takeoff facing and horizontal travel direction through a jump, then bleed
+        /// landing momentum before normal pursuit is allowed to turn the NPC. Facing and travel are
+        /// tracked separately so authored backhops still face the player while moving away.
+        /// </summary>
+        private void UpdateCommittedJumpFacing(NPC npc)
+        {
+            if (!PreserveJumpFacingUntilLanding)
+            {
+                return;
+            }
+
+            // A takeoff tick can still carry collideY from the preceding grounded collision, so
+            // upward velocity wins that stale flag. At the apex, oldVelocity keeps the jump armed.
+            bool airborne = npc.velocity.Y < -0.01f || (!npc.collideY
+                && (Math.Abs(npc.velocity.Y) > 0.01f || Math.Abs(npc.oldVelocity.Y) > 0.01f));
+            if (CommittedJumpFacingDirection == 0)
+            {
+                if (!airborne)
+                {
+                    return;
+                }
+
+                CommittedJumpFacingDirection = npc.direction != 0
+                    ? npc.direction
+                    : npc.velocity.X >= 0f ? 1 : -1;
+                CommittedJumpFacingTimeout = 180;
+                CommittedJumpWasAirborne = true;
+                CommittedJumpLandingTicks = 0;
+                CommittedJumpVelocityX = npc.velocity.X;
+            }
+
+            npc.direction = CommittedJumpFacingDirection;
+            npc.spriteDirection = CommittedJumpFacingDirection;
+            CommittedJumpFacingTimeout--;
+
+            if (airborne)
+            {
+                CommittedJumpWasAirborne = true;
+                CommittedJumpLandingTicks = 0;
+                if (Math.Abs(CommittedJumpVelocityX) > 0.1f
+                    && npc.velocity.X * CommittedJumpVelocityX <= 0f)
+                {
+                    // FighterAI may retarget while airborne. It may slow the jump, but it may not
+                    // reverse the authored horizontal travel direction before landing.
+                    npc.velocity.X = CommittedJumpVelocityX;
+                }
+                else
+                {
+                    CommittedJumpVelocityX = npc.velocity.X;
+                }
+                return;
+            }
+
+            if (!CommittedJumpWasAirborne || CommittedJumpFacingTimeout <= 0)
+            {
+                ClearCommittedJumpFacing();
+                return;
+            }
+
+            CommittedJumpLandingTicks++;
+            if (npc.collideX)
+            {
+                CommittedJumpVelocityX = 0f;
+            }
+            else if (CommittedJumpVelocityX > 0f)
+            {
+                CommittedJumpVelocityX = Math.Max(0f, CommittedJumpVelocityX - 0.35f);
+            }
+            else if (CommittedJumpVelocityX < 0f)
+            {
+                CommittedJumpVelocityX = Math.Min(0f, CommittedJumpVelocityX + 0.35f);
+            }
+            npc.velocity.X = CommittedJumpVelocityX;
+
+            if (CommittedJumpLandingTicks >= 4 && Math.Abs(CommittedJumpVelocityX) <= 0.55f)
+            {
+                ClearCommittedJumpFacing();
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.netUpdate = true;
+                }
+            }
+        }
+
+        private void ClearCommittedJumpFacing()
+        {
+            CommittedJumpFacingDirection = 0;
+            CommittedJumpFacingTimeout = 0;
+            CommittedJumpWasAirborne = false;
+            CommittedJumpLandingTicks = 0;
+            CommittedJumpVelocityX = 0f;
         }
 
         private Vector2 GetHumanoidMeleeLaunchVelocity(NPC npc, Player target, HumanoidMeleeMove move)
@@ -358,10 +513,19 @@ namespace tsorcRevamp.NPCs
                 return;
             }
 
-            npc.velocity.X *= 0.35f;
-            if (Math.Abs(npc.velocity.X) < 0.5f)
+            if (move.TelegraphRunUpTicks > 0)
             {
-                npc.velocity.X = 0f;
+                float slowedForwardSpeed = Math.Max(0.65f,
+                    npc.velocity.X * CombatMeleeLockedDirection * 0.35f);
+                npc.velocity.X = CombatMeleeLockedDirection * slowedForwardSpeed;
+            }
+            else
+            {
+                npc.velocity.X *= 0.35f;
+                if (Math.Abs(npc.velocity.X) < 0.5f)
+                {
+                    npc.velocity.X = 0f;
+                }
             }
         }
 
@@ -529,6 +693,11 @@ namespace tsorcRevamp.NPCs
             writer.Write(CombatMeleeOpenerCooldownTimer);
             writer.Write(PendingCombatComboMoveKey);
             writer.Write(PendingCombatComboGapTimer);
+            writer.Write((sbyte)CommittedJumpFacingDirection);
+            writer.Write(CommittedJumpFacingTimeout);
+            writer.Write(CommittedJumpWasAirborne);
+            writer.Write(CommittedJumpLandingTicks);
+            writer.Write(CommittedJumpVelocityX);
         }
 
         private void ReceiveHumanoidMelee(BinaryReader reader)
@@ -541,6 +710,11 @@ namespace tsorcRevamp.NPCs
             CombatMeleeOpenerCooldownTimer = reader.ReadInt32();
             PendingCombatComboMoveKey = reader.ReadInt32();
             PendingCombatComboGapTimer = reader.ReadInt32();
+            CommittedJumpFacingDirection = reader.ReadSByte();
+            CommittedJumpFacingTimeout = reader.ReadInt32();
+            CommittedJumpWasAirborne = reader.ReadBoolean();
+            CommittedJumpLandingTicks = reader.ReadInt32();
+            CommittedJumpVelocityX = reader.ReadSingle();
         }
     }
 }

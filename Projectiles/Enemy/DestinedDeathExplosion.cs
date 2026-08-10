@@ -34,9 +34,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            Projectile.width = 2;
-            Projectile.height = 2;
-            Projectile.hostile = false;
+            Projectile.width = 32;
+            Projectile.height = 32;
+            Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
@@ -46,7 +46,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool? CanDamage() => false;
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+        }
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {

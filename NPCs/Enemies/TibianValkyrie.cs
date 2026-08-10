@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // "Throwing Spear" - calm aimed spear toss.
             int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();
-            UsefulFunctions.AddAttack(NPC, 190, spearProjectileType, spearDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, telegraphTime: 30, commitFraction: 0f);
+            UsefulFunctions.AddAttack(NPC, 190, spearProjectileType, spearDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, needsLineOfSight: true, telegraphTime: 30, commitFraction: 0f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Standard(
@@ -70,8 +70,10 @@ namespace tsorcRevamp.NPCs.Enemies
             globalNPC.NavSearchRadius = 80;  
             globalNPC.CanUseRopes = true;
             globalNPC.MaxJumpBoost   = 5f;
-            globalNPC.CanTeleport = true;       
-            globalNPC.TeleportMaxCharges = 2;    // 2 non-recharging charges, Normal style
+            globalNPC.CanTeleport = false;
+            globalNPC.TeleportMaxCharges = 0;
+            globalNPC.TeleportChargesRemaining = 0;
+            globalNPC.EvasiveTeleportAway = false;
 
             // Personality — calm fighter that prefers to hold ground and throw spears
             globalNPC.Aggression = 0.6f;   // moderate chase-aggression; rolls standing-fire fairly often

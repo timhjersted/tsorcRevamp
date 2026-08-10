@@ -57,14 +57,20 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            // Origin tracks near the head - offset forward/up from center, roughly where the
-            // mouth is regardless of exactly how the long neck happens to be swaying that frame.
-            LaserOffset = new Vector2(owner.direction * owner.width * 0.35f, -owner.height * 0.3f);
+            if (owner.ModNPC is NPCs.Enemies.Hydra hydra && hydra.FrontHeadWorldPosition != Vector2.Zero)
+            {
+                LaserOffset = hydra.FrontHeadWorldPosition - owner.Center;
+            }
+            else
+            {
+                LaserOffset = new Vector2(owner.direction * owner.width * 0.35f, -owner.height * 0.3f);
+            }
 
             if (!initializedDirection)
             {
                 sweepDirection = owner.direction;
-                baseDirection = Vector2.UnitY.RotatedBy(MathHelper.ToRadians(-StartLeanDegrees * sweepDirection));
+                // Start leaning backward under the chest/feet, then sweep forward towards the player
+                baseDirection = Vector2.UnitY.RotatedBy(MathHelper.ToRadians(StartLeanDegrees * sweepDirection));
                 initializedDirection = true;
             }
 
@@ -73,23 +79,31 @@ namespace tsorcRevamp.Projectiles.Enemy
                 // Telegraph: hold the starting mouth-to-ground aim steady so the landing spot is readable.
                 Projectile.velocity = baseDirection;
 
-                if (Main.rand.NextBool(3))
+                float progress = Charge / (float)MaxCharge;
+                Vector2 mouthPos = GetOrigin();
+                int dustCount = 1 + (int)(progress * 4f); // Grows steadily from 1 up to 5 particles per frame
+                for (int i = 0; i < dustCount; i++)
                 {
-                    Vector2 mouthPos = GetOrigin();
-                    int dust = Dust.NewDust(mouthPos, 4, 4, DustID.GoldFlame, 0f, 0f, 100, default, 1.1f);
+                    Vector2 ringOffset = Main.rand.NextVector2CircularEdge(32f, 32f) * (1f - progress * 0.4f);
+                    int dust = Dust.NewDust(mouthPos + ringOffset, 4, 4, DustID.GoldFlame, 0f, 0f, 100, default, 1.1f + progress * 0.9f);
                     Main.dust[dust].noGravity = true;
-                    dust = Dust.NewDust(mouthPos, 4, 4, DustID.WhiteTorch, 0f, 0f, 100, default, 0.9f);
-                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity = -ringOffset * 0.06f;
+
+                    if (Main.rand.NextBool(2))
+                    {
+                        int spark = Dust.NewDust(mouthPos + ringOffset, 4, 4, DustID.WhiteTorch, 0f, 0f, 100, default, 0.9f + progress * 0.7f);
+                        Main.dust[spark].noGravity = true;
+                        Main.dust[spark].velocity = -ringOffset * 0.06f;
+                    }
                 }
             }
             else
             {
-                // Firing: sweep the full 160 degrees with an ease-in curve, so the rotation
-                // starts slow and visibly accelerates as it goes.
+                // Firing: sweep forward towards the player
                 float t = FiringDuration > 0 ? 1f - (float)FiringTimeLeft / FiringDuration : 1f;
                 t = MathHelper.Clamp(t, 0f, 1f);
                 float eased = t * t;
-                float angle = MathHelper.ToRadians(TotalSweepDegrees) * eased * sweepDirection;
+                float angle = -MathHelper.ToRadians(TotalSweepDegrees) * eased * sweepDirection;
                 Projectile.velocity = baseDirection.RotatedBy(angle);
 
                 Vector2 mouthPos = GetOrigin();

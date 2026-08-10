@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             // "Throwing Knife" - quick aimed knife toss.
             int throwingKnifeType = ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>();
-            UsefulFunctions.AddAttack(NPC, 160, throwingKnifeType, throwingKnifeDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, telegraphTime: 25, commitFraction: 0f);
+            UsefulFunctions.AddAttack(NPC, 160, throwingKnifeType, throwingKnifeDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, needsLineOfSight: true, telegraphTime: 25, commitFraction: 0f);
 
             // paces around its post when it gives up.
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -60,6 +60,10 @@ namespace tsorcRevamp.NPCs.Enemies
             globalNPC.PatrolMode = NPCs.PatrolMode.Pace;
             globalNPC.NavSearchRadius = 70; // SmartFighter4AI movement
             globalNPC.CanUseRopes = true;
+            globalNPC.CanTeleport = false;
+            globalNPC.TeleportMaxCharges = 0;
+            globalNPC.TeleportChargesRemaining = 0;
+            globalNPC.EvasiveTeleportAway = false;
             // Poise (a stagger cancels the wind-up) + knockback flinch are tuned centrally in
             // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) - not here.
             globalNPC.EvasiveRetreatAndShoot = true;

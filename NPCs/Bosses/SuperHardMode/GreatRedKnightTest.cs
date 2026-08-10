@@ -252,7 +252,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (NPC.ai[1] == 210f && NPC.Distance(player.Center) > 400)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(16, 19f);
+                    float spearProjectileSpeed = Main.rand.NextFloat(12f, 14.25f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
@@ -260,7 +260,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     speed += Main.player[NPC.target].velocity;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyAncientBloodLanceProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
@@ -281,7 +281,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (NPC.ai[1] == 210f && NPC.Distance(player.Center) <= 400)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
+                    float spearProjectileSpeed = Main.rand.NextFloat(8.25f, 9.75f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
@@ -289,7 +289,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     speed.Y += Main.rand.NextFloat(-1f, 1f); //adds random variation from -1 to 2
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyAncientBloodLanceProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
@@ -534,15 +534,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                 }
-                // Bomb Attack Far
-                if (NPC.ai[1] == 955f && NPC.Distance(player.Center) > 400)
+                // Bomb Attack
+                if (NPC.ai[1] == 955f)
                 {
-                    float bombProjectileSpeed = 14f;
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    //speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
+                    Vector2 target = targetPosition != Vector2.Zero ? targetPosition : (storedPlayerPosition != Vector2.Zero ? storedPlayerPosition : player.Center);
+                    float bombProjectileSpeed = 15f;
+                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, target, bombProjectileSpeed, 0.2f, highAngle: false, fallback: true);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -558,32 +555,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     // Chance to throw again
                     if (Main.rand.NextBool(2))
-                    {
-                        NPC.ai[1] = 830f;
-                        NPC.netUpdate = true;
-                    }
-                }
-                // Bomb Attack Close
-                if (NPC.ai[1] == 955f && NPC.Distance(player.Center) <= 400)
-                {
-                    float bombProjectileSpeed = 9f;
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
-
-                    // Reset targetPosition 
-                    targetPosition = Vector2.Zero;
-
-                    NPC.ai[1] = 0f;
-
-                    // Chance to throw again
-                    if (Main.rand.NextBool(3))
                     {
                         NPC.ai[1] = 830f;
                         NPC.netUpdate = true;
@@ -850,7 +821,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static readonly Vector2 OverlayFudge = new Vector2(0f, 0f);
 
         // Grip pixel ON each sprite = the point that should land on the knight's hand (rotation pivot for the weapon).
-        static readonly Vector2 SpearGripOrigin = new Vector2(7f, 31f);  // BlackKnightSpear (Valkyrie's spear) is 14x62, tip up — grip the MIDDLE (was 7,70 = the butt of the old 14x84 BlackThrowingSpear)
+        static readonly Vector2 SpearGripOrigin = new Vector2(54f, 54f);  // EnemyAncientBloodLanceProj is 108x108, grip at center (54, 54)
         static readonly Vector2 BombGripOrigin = new Vector2(11f, 18f);  // EnemyFirebomb is 22x24, hand near the bottom
         static readonly Vector2 MagicBallGripOrigin = new Vector2(8f, 8f);
         static readonly Vector2 HandGripOrigin = new Vector2(7f, 4f);    // RedKnight_Hand is 14x8, centered on the grip
@@ -879,7 +850,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (spearTexture == null)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightSpear"); // the spear Tibian Valkyrie uses (14x62), held gripped at its middle
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyAncientBloodLanceProj");
             }
 
             if (bombTexture == null)

@@ -2025,6 +2025,8 @@ namespace tsorcRevamp.NPCs.Puppets
             if (_heldItemType <= 0)
                 return;
 
+            // Vanilla item textures are lazy-loaded; ensure they're in memory before drawing.
+            Main.instance.LoadItem(_heldItemType);
             var texAsset = TextureAssets.Item[_heldItemType];
             if (texAsset?.Value == null)
                 return;
@@ -5967,8 +5969,8 @@ namespace tsorcRevamp.NPCs.Puppets
                         _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.05f, 0.22f);
                         break;
                     case RangedStyle.Bow:
-                        // Arm gradually rises from hold → overhead as the bow draws back.
-                        _weaponRotation = MathHelper.Lerp(-0.30f, -1.10f, rangedT);
+                        // Arm extends level forward toward target for bow draw.
+                        _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.0f, 0.22f);
                         break;
                     default: // Throw
                         // Hold the hand high while lining up the throw.
@@ -5988,8 +5990,8 @@ namespace tsorcRevamp.NPCs.Puppets
                         _weaponRotation = MathHelper.Lerp(0.05f, 0.18f, rangedT);
                         break;
                     case RangedStyle.Bow:
-                        // Snap the arm forward from overhead as the arrow releases.
-                        _weaponRotation = MathHelper.Lerp(-1.10f, 0.35f, rangedT);
+                        // Small release recoil / snap
+                        _weaponRotation = MathHelper.Lerp(-0.08f, 0.05f, rangedT);
                         break;
                     default: // Throw
                         // Swing the arm forward as the projectile leaves the hand.
@@ -7097,9 +7099,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 bodyRow = _activeRangedStyle switch
                 {
                     RangedStyle.Crossbow => 3, // Use3 — arm level/forward for horizontal aim
-                    RangedStyle.Bow      =>    // Bow draws: arm rises from Use3 → Use2 → Use1 over the telegraph
-                        PhaseTimer > _activeRangedTelegraphTicks * 0.60f ? 3 :
-                        PhaseTimer > _activeRangedTelegraphTicks * 0.25f ? 2 : 1,
+                    RangedStyle.Bow      => 3, // Use3 â€” level arm extended forward for bow aim
                     _                    => 2, // Throw default — raised arm
                 };
             }
@@ -7629,6 +7629,8 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else
             {
+                // Vanilla item textures are lazy-loaded; ensure they're in memory before drawing.
+                Main.instance.LoadItem(_heldItemType);
                 var texAsset = TextureAssets.Item[_heldItemType];
                 if (texAsset?.Value == null) return;
                 tex = texAsset.Value;
@@ -7640,6 +7642,8 @@ namespace tsorcRevamp.NPCs.Puppets
                                || _heldItemType == MagicWeaponItemType;
             bool heldCrossbowLike = _heldItemType == _activeRangedItemType
                                  && _activeRangedStyle == RangedStyle.Crossbow;
+            bool heldBowLike = _heldItemType == _activeRangedItemType
+                            && _activeRangedStyle == RangedStyle.Bow;
             float scale = heldCrossbowLike ? 0.8f : (heldRangedLike ? GetHeldRangedDrawScale(_heldItemType) : MeleeWeaponDrawScale);
             Vector2 drawPos = GetHandPosition() - Main.screenPosition;
             if (heldCrossbowLike)
@@ -7669,6 +7673,12 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 float hx = NPC.direction == 1 ? tex.Width * 0.22f : tex.Width * 0.78f;
                 origin = new Vector2(hx, tex.Height * 0.58f);
+            }
+            else if (heldBowLike)
+            {
+                // Bow is held at the grip on the string side
+                float hx = NPC.direction == 1 ? tex.Width * 0.25f : tex.Width * 0.75f;
+                origin = new Vector2(hx, tex.Height * 0.50f);
             }
             else if (heldRangedLike)
             {

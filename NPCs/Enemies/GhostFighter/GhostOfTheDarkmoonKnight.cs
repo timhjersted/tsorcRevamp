@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
             // "Shadow Shot" — commitFraction 0.5: first half of the tell cancellable (by magic), second half hyperarmor.
             int shadowShotType = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();
-            UsefulFunctions.AddAttack(NPC, 170, shadowShotType, 20, 9, SoundID.Item17, stopBeforeFiring: false, commitFraction: 0f);
+            UsefulFunctions.AddAttack(NPC, 170, shadowShotType, 20, 9, SoundID.Item17, stopBeforeFiring: false, telegraphTime: 45, commitFraction: 0.5f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanPassThroughWalls = true;
@@ -158,17 +158,12 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 NPC.netUpdate = true;
             }
 
-            if (NPC.justHit && globalNPC.ProjectileTimer <= 140f && Main.rand.NextBool(4))
+            if (NPC.justHit && globalNPC.ProjectileTimer < globalNPC.ProjectileTelegraphStart && Main.rand.NextBool(4))
             {
                 globalNPC.ProjectileTimer = 90f;
                 NPC.netUpdate = true;
             }
 
-            if (globalNPC.ProjectileTimer >= 150 && Main.rand.NextBool(4))
-            {
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemDiamond, NPC.velocity.X, NPC.velocity.Y);
-                
-            }
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -283,19 +278,22 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     0);
             }
 
-            if (spearTexture == null || spearTexture.IsDisposed)
-            {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/ShadowShot");
-            }
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            int shadowShotType = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();
+            Texture2D heldProjTexture = TextureAssets.Projectile[shadowShotType].Value;
             if (handTexture == null || handTexture.IsDisposed)
             {
                 handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150)
+            if (!globalNPC.InCombatComboRecovery && globalNPC.ProjectileTimer >= globalNPC.ProjectileTelegraphStart)
             {
                 Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 1f); 
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-                spriteBatch.Draw(spearTexture, CurrentHandWorld() - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, spearTexture.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                int frameCount = Main.projFrames[shadowShotType] > 0 ? Main.projFrames[shadowShotType] : 6;
+                int frameHeight = heldProjTexture.Height / frameCount;
+                int projFrame = (int)((Main.GameUpdateCount / 6) % (ulong)frameCount);
+                Rectangle sourceRectangle = new Rectangle(0, projFrame * frameHeight, heldProjTexture.Width, frameHeight);
+                spriteBatch.Draw(heldProjTexture, CurrentHandWorld() - Main.screenPosition, sourceRectangle, drawColor, rotation, sourceRectangle.Size() / 2f, NPC.scale, SpriteEffects.None, 0);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
         }

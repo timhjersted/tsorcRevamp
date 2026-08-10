@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -93,22 +94,67 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     {
         Vector2 startPosition;
         bool initialized;
+        int dynamicFlightTicks;
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/BlackKnightSpear";
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/EnemyAncientBloodLanceProj";
 
         KnightStandardMode Mode => (KnightStandardMode)(int)Projectile.ai[2];
         int FlightTicks => Mode == KnightStandardMode.RedKnight ? 24 : 30;
-        // The Great modes are now thrown BACK TO BACK (see RedKnightAttackController.TickRoyalStandard)
-        // rather than all three at once, so each spear only gets a SHORT telegraph before its own
-        // shockwave rather than a long shared charge — otherwise the sequence reintroduces exactly
-        // the dead air the sequencing was meant to remove. RedKnight's single spear is unchanged.
-        int ChargeTicks => Mode == KnightStandardMode.RedKnight ? 60 : 26;
+        int ResolvedFlightTicks => dynamicFlightTicks > 0
+            ? dynamicFlightTicks
+            : FlightTicks;
+        // Great mode is Royal Standard's stronger centre throw; the ordinary Red Knight keeps the
+        // shorter charge used by Crimson Standard.
+        int ChargeTicks => Mode == KnightStandardMode.RedKnight ? 60 : 120;
         Vector2 GroundPoint => new Vector2(Projectile.ai[0], Projectile.ai[1]);
         // +5px versus the first pass: the spear was reading as hovering just above the floor
         // instead of driven into it.
         Vector2 PlantedCenter => GroundPoint - new Vector2(0f, 10f);
         /// <summary>Where the flame's ground band sits — the same +5px down as the spear.</summary>
         Vector2 FlameAnchor => GroundPoint + new Vector2(0f, 5f);
+
+        const float RoyalGravityPerTick = 0.28f;
+
+        static float CalculateArcHeight(Vector2 source, Vector2 plantedCenter)
+            => MathHelper.Clamp(Vector2.Distance(source, plantedCenter) * 0.35f, 64f, 320f);
+
+        static int CalculateFlightTicks(Vector2 source, Vector2 plantedCenter, bool weightyRoyalArc)
+        {
+            float distance = Vector2.Distance(source, plantedCenter);
+            if (!weightyRoyalArc)
+            {
+                return Math.Max(20, (int)(distance / 13f));
+            }
+
+            // y = lerpY - 4H*p*(1-p) has constant acceleration 8H/T^2. Solve T from
+            // the desired Terraria-like gravity, then also cap horizontal travel near 9px/tick.
+            float gravityTicks = MathF.Sqrt(8f * CalculateArcHeight(source, plantedCenter) / RoyalGravityPerTick);
+            float horizontalTicks = MathF.Abs(plantedCenter.X - source.X) / 9f;
+            return (int)MathHelper.Clamp(MathF.Ceiling(MathF.Max(gravityTicks, horizontalTicks)), 36f, 150f);
+        }
+
+        static Vector2 CalculateFlightPosition(Vector2 source, Vector2 plantedCenter, float progress,
+            bool weightyRoyalArc)
+        {
+            float arcHeight = CalculateArcHeight(source, plantedCenter);
+            Vector2 position = Vector2.Lerp(source, plantedCenter, progress);
+            float arcEnvelope = weightyRoyalArc
+                ? 4f * progress * (1f - progress)
+                : System.MathF.Sin(progress * MathHelper.Pi);
+            position.Y -= arcEnvelope * arcHeight;
+            return position;
+        }
+
+        // Used by the held Royal/Crimson Standard pose. It samples the same first segment the
+        // projectile will traverse, so the lance previews its true upward launch tangent.
+        internal static Vector2 InitialFlightDirection(Vector2 source, Vector2 groundPoint,
+            bool weightyRoyalArc)
+        {
+            Vector2 plantedCenter = groundPoint - new Vector2(0f, 10f);
+            int flightTicks = CalculateFlightTicks(source, plantedCenter, weightyRoyalArc);
+            return (CalculateFlightPosition(source, plantedCenter, 1f / flightTicks, weightyRoyalArc) - source)
+                .SafeNormalize(Vector2.UnitY);
+        }
 
         public override void SetDefaults()
         {
@@ -117,7 +163,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 240;
+            Projectile.timeLeft = FlightTicks + ChargeTicks + 40;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
@@ -147,16 +193,24 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         {
             int age = (int)Projectile.localAI[0];
             bool physicalSpear = Mode == KnightStandardMode.RedKnight || Mode == KnightStandardMode.GreatCenter;
-            return physicalSpear && age < FlightTicks;
+            return physicalSpear && age < ResolvedFlightTicks;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            Vector2 direction = (PlantedCenter - startPosition).SafeNormalize(Vector2.UnitY);
+            // Match the visible lance's instantaneous tangent, not the straight start-to-impact
+            // chord underneath its high arc.
+            Vector2 direction = Projectile.velocity.SafeNormalize(
+                (PlantedCenter - startPosition).SafeNormalize(Vector2.UnitY));
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
                 Projectile.Center - direction * 24f, Projectile.Center + direction * 24f,
                 7f, ref collisionPoint);
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
         }
 
         public override void AI()
@@ -165,25 +219,59 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             {
                 initialized = true;
                 startPosition = Projectile.Center;
+                dynamicFlightTicks = CalculateFlightTicks(
+                    startPosition, PlantedCenter, Mode != KnightStandardMode.RedKnight);
+                // ai[1] is GroundPoint.Y. Overwriting it with the flight duration retargeted the
+                // lance to world Y ~= 20-30 on the very next tick, so Royal Standard appeared to
+                // telegraph and then never execute. Keep duration separate and sync it below.
+                Projectile.timeLeft = dynamicFlightTicks + ChargeTicks + 80;
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    Projectile.netUpdate = true;
+                }
             }
 
+            int flightDuration = ResolvedFlightTicks;
             int age = (int)Projectile.localAI[0]++;
-            if (age < FlightTicks)
+            if (age < flightDuration)
             {
-                float progress = MathHelper.SmoothStep(0f, 1f, (age + 1f) / FlightTicks);
-                Projectile.Center = Vector2.Lerp(startPosition, PlantedCenter, progress);
-                Vector2 direction = PlantedCenter - startPosition;
-                Projectile.rotation = direction.ToRotation() + MathHelper.PiOver2;
+                bool weightyRoyalArc = Mode != KnightStandardMode.RedKnight;
+                float progress = (float)age / flightDuration;
+                Vector2 currentPos = CalculateFlightPosition(
+                    startPosition, PlantedCenter, progress, weightyRoyalArc);
+                Projectile.Center = currentPos;
+
+                float nextProgress = System.Math.Min(1f, (float)(age + 1) / flightDuration);
+                Vector2 nextPos = CalculateFlightPosition(
+                    startPosition, PlantedCenter, nextProgress, weightyRoyalArc);
+
+                Vector2 flightDir = nextPos - currentPos;
+                if (flightDir.LengthSquared() > 0.001f)
+                {
+                    Projectile.velocity = flightDir;
+                    Projectile.rotation = flightDir.ToRotation() + MathHelper.PiOver2;
+                }
                 return;
             }
 
             Projectile.Center = PlantedCenter;
-            Projectile.rotation = MathHelper.Pi;
-            int plantedAge = age - FlightTicks;
+            int plantedAge = age - flightDuration;
             if (plantedAge == 0)
             {
                 PlaySound(SoundID.Dig with { Volume = 0.65f, Pitch = -0.15f }, GroundPoint);
                 float impactScale = Mode == KnightStandardMode.RedKnight ? 0.75f : 1f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 16; i++)
+                    {
+                        float angle = i * (MathHelper.TwoPi / 16f);
+                        Vector2 velocity = angle.ToRotationVector2() * 2.6f;
+                        float dir = System.MathF.Cos(angle) < 0f ? -1f : 1f;
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), GroundPoint, velocity,
+                            ModContent.ProjectileType<DestinedDeathBlaze>(), 0, 0f, Main.myPlayer,
+                            dir, 1f);
+                    }
+                }
                 // Hardmode gets the DestinedDeathExplosion sheet + red/black dust; pre-hardmode
                 // keeps the original burst untouched.
                 if (!DestinedDeathExplosion.TrySpawn(Projectile.GetSource_FromThis(),
@@ -201,6 +289,21 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             {
                 Projectile.Kill();
             }
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(initialized);
+            writer.Write(startPosition.X);
+            writer.Write(startPosition.Y);
+            writer.Write(dynamicFlightTicks);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            initialized = reader.ReadBoolean();
+            startPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            dynamicFlightTicks = reader.ReadInt32();
         }
 
         void FireWaves()
@@ -279,8 +382,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         void DrawSpearSprite(Color lightColor)
         {
             Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+            float rotation = Projectile.rotation + MathHelper.PiOver4;
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null,
-                Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() * 0.5f,
+                Projectile.GetAlpha(lightColor), rotation, texture.Size() * 0.5f,
                 Projectile.scale, SpriteEffects.None, 0f);
         }
 
@@ -329,6 +433,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.netImportant = true;
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+        }
+
         public override void AI()
         {
             float travelLimit = Math.Max(64f, Projectile.ai[0]);
@@ -371,26 +480,28 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 return;
             }
 
-            // 1-in-9 at the start rising to 1-in-3 at full extent. Deliberately not denser than
-            // that: Royal Standard now fires up to six of these waves, and at a 46t blaze lifetime
-            // a 1-in-2 rate put ~140 decorative projectiles on screen at once.
+            // 1-in-9 at the start rising to 1-in-3 at full extent. Keep the decorative layer
+            // subordinate to the two damaging waves and their safe-space readability.
             int chance = Math.Max(3, (int)MathHelper.Lerp(9f, 3f, travelProgress));
             if (!Main.rand.NextBool(chance))
             {
                 return;
             }
 
-            int direction = Projectile.velocity.X < 0f ? -1 : 1;
-            // Lift-off only near the end of the run, and only for some of them.
-            bool lifting = travelProgress > 0.65f && Main.rand.NextBool(2);
-            Vector2 spawn = Projectile.Bottom
-                + new Vector2(Main.rand.NextFloat(-26f, 26f), Main.rand.NextFloat(-4f, 3f));
-            Vector2 velocity = new(Projectile.velocity.X * Main.rand.NextFloat(0.55f, 0.95f),
-                Main.rand.NextFloat(-0.6f, 0.2f));
+            for (int i = 0; i < 2; i++)
+            {
+                int direction = Projectile.velocity.X < 0f ? -1 : 1;
+                // Lift-off only near the end of the run, and only for some of them.
+                bool lifting = travelProgress > 0.65f && Main.rand.NextBool(2);
+                Vector2 spawn = Projectile.Bottom
+                    + new Vector2(Main.rand.NextFloat(-26f, 26f), Main.rand.NextFloat(-4f, 3f));
+                Vector2 velocity = new(Projectile.velocity.X * Main.rand.NextFloat(0.55f, 0.95f),
+                    Main.rand.NextFloat(-0.6f, 0.2f));
 
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, velocity,
-                ModContent.ProjectileType<DestinedDeathBlaze>(), 0, 0f, Main.myPlayer,
-                direction, lifting ? 1f : 0f);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, velocity,
+                    ModContent.ProjectileType<DestinedDeathBlaze>(), 0, 0f, Main.myPlayer,
+                    direction, lifting ? 1f : 0f);
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -478,21 +589,69 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void OnKill(int timeLeft)
         {
-            PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = -0.25f }, Projectile.Center);
+            PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
                     ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
-                    (float)RedKnightBurstKind.BombExplosion, 1f);
+                    (float)RedKnightBurstKind.BombExplosionLayered, 1f);
             }
+
+            int dustCount = 52;
+            float dustScale = 1.45f;
+            for (int i = 0; i < dustCount; i++)
+            {
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), dustScale);
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity *= 2.4f;
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int blazeDamage = Projectile.damage;
+                for (int i = 0; i < 8; i++)
+                {
+                    float angle = i * (MathHelper.TwoPi / 8f);
+                    Vector2 dir = angle.ToRotationVector2();
+                    Vector2 blazeVel = dir * 0.56f;
+                    int proj = Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, blazeVel,
+                        ModContent.ProjectileType<EnemySpellBlaze>(), blazeDamage, 5f, Main.myPlayer);
+                    if (proj >= 0 && proj < Main.maxProjectiles)
+                    {
+                        Main.projectile[proj].timeLeft = 90;
+                    }
+                }
+            }
+
             if (!Main.dedServ)
             {
-                for (int i = 0; i < 28; i++)
+                // MIDGROUND — the body of the fireball. 80 motes of RedTorch, reach 68px, scale 0.75-1.5, noGravity.
+                for (int i = 0; i < 80; i++)
                 {
-                    Vector2 velocity = Main.rand.NextVector2Circular(5.5f, 5.5f);
-                    Dust ember = Dust.NewDustPerfect(Projectile.Center, DustID.Torch, velocity, 80,
-                        new Color(255, 65, 25), Main.rand.NextFloat(1f, 1.8f));
+                    Vector2 direction = Main.rand.NextVector2Unit();
+                    bool soot = i % 4 == 0;
+                    Dust ember = Dust.NewDustPerfect(
+                        Projectile.Center + direction * Main.rand.NextFloat(4f, 68f),
+                        soot ? DustID.Shadowflame : DustID.RedTorch,
+                        direction * Main.rand.NextFloat(1.6f, 6.8f),
+                        soot ? 150 : 90,
+                        soot ? new Color(16, 3, 8) : new Color(214, 22, 42),
+                        Main.rand.NextFloat(0.75f, 1.5f));
                     ember.noGravity = true;
+                }
+
+                // FOREGROUND — 35 tiny fast sparks that outrun the body and die quickly.
+                for (int i = 0; i < 35; i++)
+                {
+                    Vector2 direction = Main.rand.NextVector2Unit();
+                    Dust spark = Dust.NewDustPerfect(
+                        Projectile.Center + direction * Main.rand.NextFloat(6f, 26f),
+                        DustID.Torch,
+                        direction * Main.rand.NextFloat(7f, 12.5f),
+                        60, new Color(255, 176, 96),
+                        Main.rand.NextFloat(0.45f, 0.85f));
+                    spark.noGravity = true;
                 }
             }
         }
@@ -573,6 +732,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
     public class CrimsonDominionController : ModProjectile
     {
+        // The original single 600-tick timeline. Nothing runs it end-to-end any more (see the two
+        // modes below), but the FINALE still replays its SealStart→TotalTicks tail verbatim, so
+        // these remain the constants that place the seal, the nova and the fade on the clock.
         public const int BuildTicks = 45;
         public const int SweepTicks = 300;
         // +120t over the original 90t so the pre-nova charge-up gives a real warning window
@@ -585,15 +747,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         public const int FadeStart = NovaStart + NovaTicks;
         public const int TotalTicks = FadeStart + FadeTicks;
         public const float Radius = 420f;
-        public const float InnerRadius = 58f;
-
-        // Twelve evenly-spaced lightning strikes, one every StrikeInterval ticks across the hold,
-        // each falling inward from the arena boundary. Replaces the old rotating dual-beam sweep
-        // and its 5-sector wave of centre-out execution lances.
-        public const int ArenaStrikeCount = 12;
-        public const int StrikeInterval = SweepTicks / ArenaStrikeCount;   // 25t apart
-        public const int StrikeTelegraphTicks = 30;
-        public const int StrikeActiveTicks = 10;
 
         // The finishing seal FILLS over the last SealFillTicks of the escape window, then blasts
         // over NovaTicks + FadeTicks — about two seconds of readable "circle fills, circle explodes".
@@ -603,32 +756,61 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         public const int SealStart = NovaStart - SealFillTicks;
 
         // -----------------------------------------------------------------------------------
-        // FINALE MODE (round 3). Crimson Dominion is now a permanent phase that ends only when
-        // the knight dies, so this controller has two jobs:
+        // TWO MODES. Crimson Dominion is a permanent phase that ends only when the knight dies,
+        // so this controller has exactly two jobs — the old "full 600-tick timeline" mode is gone
+        // because nothing spawned it any more:
         //
-        //   NORMAL mode  — unused by Great Red Knight now, but kept intact because the class is
-        //                  still a general containment-ring implementation and nothing about it
-        //                  had to change.
+        //   CONTAINMENT mode — spawned from RedKnightAttackController.TickCrimsonDominion on the
+        //                  beat the spear plant lands (Timer 60). Builds the arena-wide "stay
+        //                  inside the safe zone" field, then HOLDS it, damaging, INDEFINITELY:
+        //                  through the rest of the 300t plant-and-hold AND through all of phase 2's
+        //                  melee. There is no fixed duration and no escape countdown — the field is
+        //                  simply the arena for the rest of the fight. It does NOT run the old
+        //                  twelve-strike arena-edge barrage (superseded by the Dominion Stage A-D
+        //                  lightning loop) and it does NOT run the Escape/Nova/Fade tail — that
+        //                  escape-and-nova drama is reserved exclusively for the death finale.
+        //                  It ends exactly one way: the death finale starting.
         //   FINALE mode  — spawned from GreatRedKnight.CheckDead. Skips straight to the seal
         //                  fill, so the sequence the player sees is exactly "circle fills, circle
-        //                  explodes" with no ring, no wall, and no arena-edge barrage.
+        //                  explodes" with no ring and no wall.
         //
-        // The mode rides on the SIGN-vs-MAGNITUDE of ai[0]: |ai[0]| == 2 means finale, anything
-        // else means normal, and RotationDirection only ever reads the sign — so all three ai
-        // slots keep their existing meanings and the flag syncs for free. Documented at both ends.
+        // The mode rides on the MAGNITUDE of ai[0]: |ai[0]| == 2 means finale, anything else means
+        // containment, and RotationDirection only ever reads the SIGN — so all three ai slots keep
+        // their existing meanings and the flag syncs for free (netImportant).
+        //
+        // HANDOFF. Containment polls its host NPC (ai[2] = whoAmI) for
+        // GreatRedKnight.InDominionDeathSequence and begins its fade the instant that latches —
+        // i.e. on the tick CheckDead pins the knight at 1 HP, a full DominionDeathReplantTicks (60)
+        // BEFORE the finale controller spawns. Polling rather than having CheckDead hunt for the
+        // projectile slot is what makes it correct in multiplayer for free: dominionDeathTimer is
+        // already synced through Send/ReceiveExtraAI, so every client independently reaches the
+        // same conclusion on the same tick with no new packet and no owner bookkeeping. The 60t
+        // lead means the wall is fully down before the seal starts filling — no double field, and
+        // no lingering damage source once the death sequence owns the arena.
         // -----------------------------------------------------------------------------------
         public const int FinaleTotalTicks = SealFillTicks + NovaTicks + FadeTicks;
+
+        /// <summary>Dominion attack Timer on which phase 1 spawns this controller (the plant beat).</summary>
+        public const int Phase1SpawnBeat = 60;
+
+        /// <summary>Ticks the containment field takes to fade once the death finale latches. Must
+        /// stay comfortably under GreatRedKnight.DominionDeathReplantTicks (60) so the wall is gone
+        /// before the finale controller spawns its seal.</summary>
+        public const int ContainmentFadeTicks = 45;
 
         public override string Texture => "Terraria/Images/MagicPixel";
 
         bool FinaleMode => Math.Abs(Projectile.ai[0]) >= 1.5f;
 
-        /// <summary>Age in NORMAL-mode timeline units. In finale mode the projectile lives only
-        /// FinaleTotalTicks, so its age is offset forward to land on SealStart — every existing
-        /// phase comparison below (and the whole draw path) then works unmodified.</summary>
+        /// <summary>Finale mode replays the NORMAL-mode timeline window SealStart→TotalTicks, so
+        /// its age is offset forward to land on SealStart and every phase comparison below works
+        /// unmodified. Containment mode has no fixed duration, so it counts on its own clock.</summary>
         int Age => FinaleMode
             ? SealStart + (FinaleTotalTicks - Projectile.timeLeft)
-            : TotalTicks - Projectile.timeLeft;
+            : (int)Projectile.localAI[0];
+
+        /// <summary>Containment mode only: ticks spent fading out, 0 while the field is live.</summary>
+        int FadeProgress => (int)Projectile.localAI[1];
 
         int RotationDirection => Projectile.ai[0] < 0f ? -1 : 1;
         float BaseRotation => Projectile.ai[1];
@@ -639,14 +821,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.height = 2;
             Projectile.hostile = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = TotalTicks;
+            // Containment refreshes this every tick (see TickContainment); the value here only has
+            // to be large enough that it never expires between updates.
+            Projectile.timeLeft = 600;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
         }
 
-        // ai[] is not populated during SetDefaults, so finale mode's shorter lifetime has to be
-        // applied here.
+        // ai[] is not populated during SetDefaults, so finale mode's lifetime has to be applied here.
         public override void OnSpawn(IEntitySource source)
         {
             if (FinaleMode)
@@ -659,23 +842,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void AI()
         {
-            float intensity = Age < EscapeStart ? 0.72f
-                : Age < NovaStart ? 0.46f
+            if (!FinaleMode)
+            {
+                TickContainment();
+                return;
+            }
+
+            float intensity = Age < NovaStart ? 0.46f
                 : Age < FadeStart ? 1f : 0.28f;
             Lighting.AddLight(Projectile.Center, new Vector3(0.62f, 0.025f, 0.045f) * intensity);
 
-            if (Age >= BuildTicks && Age < EscapeStart
-                && (Age - BuildTicks) % StrikeInterval == 0
-                && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                SpawnArenaStrike((Age - BuildTicks) / StrikeInterval);
-            }
-
-            if (Age == EscapeStart)
-            {
-                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.8f, Pitch = -0.28f }, Projectile.Center);
-            }
-            else if (Age == NovaStart)
+            if (Age == NovaStart)
             {
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.38f }, Projectile.Center);
                 if (Main.netMode != NetmodeID.Server)
@@ -695,52 +872,93 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         }
 
         /// <summary>
-        /// One of the twelve arena-edge strikes. Instead of red lasers radiating out from the boss,
-        /// a bolt falls INWARD from the arena boundary, at twelve evenly-spaced angles, one every
-        /// StrikeInterval ticks — a steady rotating drumbeat the player can read and walk around.
-        /// It stops at InnerRadius, leaving a pocket around the knight itself.
-        ///
-        /// Deliberately the SAME projectile (and therefore the same shader) as Stormbreaker Edict's
-        /// bolts: the family gets one lightning look, not three.
+        /// The indefinite containment state. There is no timeline here on purpose: after the
+        /// BuildTicks ramp the field just HOLDS — the shader's own animation is driven by
+        /// Main.GlobalTimeWrappedHourly inside DrawDominionQuad, so its noise cycles forever with
+        /// no age input needed, and holding a constant opacity is the whole of "ongoing".
+        /// The only thing that advances is the fade, and only once the death finale latches.
         /// </summary>
-        void SpawnArenaStrike(int strikeIndex)
+        void TickContainment()
         {
-            float sectorStep = MathHelper.TwoPi / ArenaStrikeCount;
-            float angle = BaseRotation + RotationDirection * strikeIndex * sectorStep;
-            Vector2 outward = angle.ToRotationVector2();
+            // No fixed duration — top the lifetime up every tick and keep the age on the
+            // projectile's own counter so it can run for the rest of the fight.
+            Projectile.timeLeft = 600;
+            Projectile.localAI[0]++;
 
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(),
-                Projectile.Center + outward * Radius, -outward,
-                ModContent.ProjectileType<RedKnightLightningLane>(), Projectile.damage,
-                Projectile.knockBack, Main.myPlayer,
-                ai0: StrikeTelegraphTicks, ai1: StrikeActiveTicks, ai2: Radius - InnerRadius);
+            if (FadeProgress > 0)
+            {
+                Projectile.localAI[1]++;
+                if (FadeProgress > ContainmentFadeTicks)
+                {
+                    Projectile.Kill();
+                    return;
+                }
+            }
+            else if (ShouldYieldToFinale())
+            {
+                Projectile.localAI[1] = 1f;
+                // The wall coming down is its own audible beat: it tells the player the arena
+                // constraint is lifting because something worse is starting.
+                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.15f }, Projectile.Center);
+            }
+
+            float build = Age < BuildTicks ? Age / (float)BuildTicks : 1f;
+            Lighting.AddLight(Projectile.Center, new Vector3(0.62f, 0.025f, 0.045f)
+                * 0.72f * build * (1f - ContainmentFade));
         }
+
+        /// <summary>0 while the containment field is fully up, 1 once it has finished fading.</summary>
+        float ContainmentFade => FadeProgress <= 0 ? 0f
+            : MathHelper.Clamp(FadeProgress / (float)ContainmentFadeTicks, 0f, 1f);
+
+        /// <summary>
+        /// True the moment Great Red Knight's death finale takes the arena over — or if the host
+        /// NPC has gone away entirely, which must never leave an orphaned arena-wide hazard behind.
+        /// Polled rather than pushed; see the handoff note above.
+        /// </summary>
+        bool ShouldYieldToFinale()
+        {
+            int host = (int)Projectile.ai[2];
+            if (host < 0 || host >= Main.maxNPCs)
+            {
+                return true;
+            }
+            NPC hostNPC = Main.npc[host];
+            if (!hostNPC.active)
+            {
+                return true;
+            }
+            return hostNPC.ModNPC is NPCs.Bosses.SuperHardMode.GreatRedKnight knight
+                && knight.InDominionDeathSequence;
+        }
+
+        /// <summary>True while the containment wall is a live hazard: once it has built in, until
+        /// the death finale triggers its fade.</summary>
+        bool ContainmentActive => !FinaleMode && Age >= BuildTicks && FadeProgress <= 0;
 
         public override bool? CanDamage()
         {
-            // The finale nova DAMAGES, exactly as the mid-fight one does — reviewed and confirmed
+            // The finale nova DAMAGES, exactly as the mid-fight one did — reviewed and confirmed
             // as intended. It is Great Red Knight's genuine last attack, not a cosmetic parting
             // shot: the 90-tick seal fill is the telegraph, and getting clear of a 420px radius in
             // ~1.5s is meant to be tight. A player who reads it lives; one who stands in it does
-            // not. Nothing special-cases FinaleMode here, so the phase windows below govern both
-            // modes identically (in finale mode `Age` is offset so only the nova window is ever
-            // reached — the containment window is already behind it at spawn).
-            bool containmentActive = Age >= BuildTicks && Age < EscapeStart;
-            bool novaActive = Age >= NovaStart && Age < FadeStart;
-            return containmentActive || novaActive;
+            // not.
+            bool novaActive = FinaleMode && Age >= NovaStart && Age < FadeStart;
+            return ContainmentActive || novaActive;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (Age >= BuildTicks && Age < EscapeStart)
+            if (ContainmentActive)
             {
-                // The wall itself still hurts if a player presses against it; the actual offense
-                // inside the ring comes entirely from the twelve arena-edge lightning strikes
-                // rather than from a hazard owned by this controller.
+                // The wall itself hurts if a player presses against it; the actual offense inside
+                // the ring comes entirely from the Dominion lightning loop (Stages A-D, driven by
+                // RedKnightAttackController.TickDominionSequence) rather than from a hazard owned
+                // by this controller — which is why the old twelve arena-edge strikes are gone.
                 return FarthestCornerDistance(targetHitbox, Projectile.Center) >= Radius;
             }
 
-            if (Age >= NovaStart && Age < FadeStart)
+            if (FinaleMode && Age >= NovaStart && Age < FadeStart)
             {
                 return ClosestPointDistance(targetHitbox, Projectile.Center) <= Radius;
             }
@@ -749,7 +967,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override bool PreDraw(ref Color lightColor)
         {
-            RedKnightVFX.DrawCrimsonDominion(Projectile.Center, Age, BaseRotation, RotationDirection, FinaleMode);
+            RedKnightVFX.DrawCrimsonDominion(Projectile.Center, Age, BaseRotation, RotationDirection,
+                FinaleMode, ContainmentFade);
             return false;
         }
 
