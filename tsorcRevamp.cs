@@ -357,6 +357,7 @@ namespace tsorcRevamp
             
             WeaponPrefixEdits.ApplyWeaponPrefixEdits();
             AccessoryPrefixEditsStats.ApplyAccessoryPrefixEdits();
+            ManaStarDrawAmount.ApplyManaStarAmount();
             
             ApplyILs();
             PopulateArrays();
