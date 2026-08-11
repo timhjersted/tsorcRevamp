@@ -8968,6 +8968,11 @@ Mods: {
 				// DisplayName: Tenth Damage Tomb
 				// Tooltip: ""
 			}
+
+			BrokenDualBladedAxe: {
+				// DisplayName: Broken Dual Bladed Axe
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -11044,6 +11049,11 @@ Mods: {
 			// GreatRedKnightUltrakillHand.DisplayName: Great Red Knight Ultrakill Hand
 			// EnemyShadowflameArrow.DisplayName: Enemy Shadowflame Arrow
 			// EnemyAncientBloodLanceProj.DisplayName: Enemy Ancient Blood Lance Proj
+			// RedCourtLancePortal.DisplayName: Red Court Lance Portal
+			// RedKnightAdderSpear.DisplayName: Red Knight Adder Spear
+			// RedKnightPoisonCurtainController.DisplayName: Red Knight Poison Curtain Controller
+			// RedKnightPoisonRainController.DisplayName: Red Knight Poison Rain Controller
+			// RedKnightTeleportFeintBlast.DisplayName: Red Knight Teleport Feint Blast
 		}
 
 		NPCs: {

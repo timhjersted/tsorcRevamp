@@ -314,6 +314,30 @@ namespace tsorcRevamp.Projectiles.Enemy
             mote.noGravity = true;
         }
 
+        internal static void DrawCinderMotes(Vector2 center, float progress, float radius)
+        {
+            float pulse = 0.9f + 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 9f);
+            DrawCrimsonQuad("RedKnightPoisonOrb", center, 0f,
+                Vector2.One * (25f + progress * 7f), (0.65f + progress * 0.2f) * pulse,
+                new Color(22, 0, 12), new Color(198, 18, 58), new Color(255, 92, 142),
+                progress, 0.86f, 1f, 0f);
+
+            if (Main.dedServ || !Main.rand.NextBool(3))
+            {
+                return;
+            }
+
+            Vector2 dustPosition = center + Main.rand.NextVector2Circular(
+                Math.Min(radius, 9f), Math.Min(radius, 9f));
+            bool shadow = Main.rand.NextBool(4);
+            Dust mote = Dust.NewDustPerfect(dustPosition,
+                shadow ? DustID.Shadowflame : DustID.RedTorch,
+                (center - dustPosition).SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(0.3f, 0.8f),
+                shadow ? 150 : 95, new Color(238, 34, 92), Main.rand.NextFloat(0.5f, 0.85f));
+            mote.noGravity = true;
+            mote.noLight = shadow;
+        }
+
         internal static void DrawPoisonOrb(Vector2 center, Vector2 velocity, float opacity, float scale = 1f)
         {
             bool moving = velocity.LengthSquared() > 0.04f;
