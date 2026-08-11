@@ -11112,10 +11112,11 @@ Mods: {
 			EnemyShadowflameArrow.DisplayName: Enemy Shadowflame Arrow
 			EnemyAncientBloodLanceProj.DisplayName: Enemy Ancient Blood Lance Proj
 			RedCourtLancePortal.DisplayName: Red Court Lance Portal
-			RedKnightAdderSpear.DisplayName: Red Knight Adder Spear
-			RedKnightPoisonCurtainController.DisplayName: Red Knight Poison Curtain Controller
-			RedKnightPoisonRainController.DisplayName: Red Knight Poison Rain Controller
-			RedKnightTeleportFeintBlast.DisplayName: Red Knight Teleport Feint Blast
+			RedKnightAdderSpear.DisplayName: Red Knight's Adder Spear
+			RedKnightPoisonCurtainController.DisplayName: Red Knight's Poison Curtain
+			RedKnightPoisonRainController.DisplayName: Red Knight's Poison Rain
+			RedKnightTeleportFeintBlast.DisplayName: Red Knight's Teleport Feint Blast
+			CinderRainDrop.DisplayName: Cinder Rain Drop
 		}
 
 		NPCs: {

@@ -97,46 +97,22 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         {
             Player player = spawnInfo.Player;
 
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-            float chance = 0;
+            if (!BasiliskSpawnRules.MeetsSharedRequirements(spawnInfo, Type)) return 0f;
+            if (player.ZoneDungeon || player.ZoneJungle || player.ZoneHallow || player.ZoneMeteor) return 0f;
 
-            //Ensuring it can't spawn if two already exists.
-            int count = 0;
-            for (int i = 0; i < Main.npc.Length; i++)
-            {
-                if (Main.npc[i].type == NPC.type)
-                {
-                    count++;
-                    if (count > 1)
-                    {
-                        return 0;
-                    }
-                }
-            }
+            bool basiliskBiome = player.ZoneCorrupt || player.ZoneCrimson || player.ZoneDesert || player.ZoneUndergroundDesert;
+            bool belowSurface = player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight;
+            bool surfaceAtNight = player.ZoneOverworldHeight && !Main.dayTime;
 
-            if (spawnInfo.Water) return 0f;
+            if (!basiliskBiome) return 0f;
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (((player.ZoneMeteor || player.ZoneCorrupt || player.ZoneCrimson || player.ZoneUndergroundDesert) && (player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight)) && !player.ZoneDungeon)
-                {
-                    chance = 0.20f; // was .30
-                }
-                else
-                {
-                    if (player.ZoneOverworldHeight && (player.ZoneMeteor || player.ZoneCorrupt || player.ZoneCrimson || player.ZoneHallow) && !Ocean && !Main.dayTime)
-                    {
-                        chance = 0.10f;
-                    }
-                }
-            }
-            if (Main.bloodMoon)
-            {
-                chance *= 2;
+                if (belowSurface) return 0.15f;
+                if (surfaceAtNight) return 0.15f;
             }
 
-            return chance;
+            return 0f;
         }
         #endregion
 

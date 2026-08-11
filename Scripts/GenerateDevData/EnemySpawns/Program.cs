@@ -2214,6 +2214,11 @@ internal static class Program
             return phrase;
         }
 
+        if (code.StartsWith("BasiliskSpawnRules.MeetsSharedRequirements", StringComparison.Ordinal))
+        {
+            return "the spawn tile is dry, no town NPCs are nearby, and fewer than two basilisks of this type are active";
+        }
+
         Dictionary<string, string> zones = new(StringComparer.Ordinal)
         {
             ["ZoneCorrupt"] = "the player is in the Corruption",

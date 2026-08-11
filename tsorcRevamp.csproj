@@ -17,6 +17,8 @@
 	     (build.txt's buildIgnore excludes them from the in-game tModLoader build) -->
 	<ItemGroup>
 		<Compile Remove="Projectiles\Enemy\UnusedAssets\**" />
+		<!-- Standalone developer-data tools have their own projects and are not mod content. -->
+		<Compile Remove="Scripts\GenerateDevData\**\*.cs" />
 	</ItemGroup>
 
 </Project>
