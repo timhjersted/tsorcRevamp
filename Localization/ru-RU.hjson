@@ -11055,6 +11055,7 @@ Mods: {
 			// RedKnightPoisonRainController.DisplayName: Red Knight's Poison Rain
 			// RedKnightTeleportFeintBlast.DisplayName: Red Knight's Teleport Feint Blast
 			// CinderRainDrop.DisplayName: Cinder Rain Drop
+			// KahlrunFarronDart.DisplayName: Kahlrun Farron Dart
 		}
 
 		NPCs: {
@@ -12729,6 +12730,7 @@ Mods: {
 			// Blaidd.DisplayName: Blaidd
 			// ShadowNinja.DisplayName: Shadow Ninja
 			// BlackNinja.DisplayName: Black Ninja
+			// Kahlrun.DisplayName: Kahlrun of Falstrók
 			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
 			// TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
 			// RedKnightTest.DisplayName: Red Knight Test

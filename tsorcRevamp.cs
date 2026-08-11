@@ -1750,6 +1750,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<MindflayerKingServant>(),
                 ModContent.NPCType<MindflayerServant>(),
                 ModContent.NPCType<MindflayerIllusion>(),
+                ModContent.NPCType<NPCs.Puppets.Kahlrun>(),
             };
             #endregion
 
