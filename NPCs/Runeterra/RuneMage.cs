@@ -262,6 +262,84 @@ class RuneMage : ModNPC
 
                 break;
             }
+            case (float)ActionState.StartingFight:
+            {
+                var dividend = FirstRunePrisonCastTime / TotalRunePrisonFrames;
+                switch (AiTimer1)
+                {
+                    case float one when AiTimer1 < dividend:
+                    {
+                        NPC.frame.Y = (int)FrameState.RunePrison1 * frameHeight;
+                        Main.NewText(1);
+                        break;
+                    }
+                    case float two when AiTimer1 > dividend && AiTimer1 < dividend * 2f:
+                    {
+                        NPC.frame.Y = (int)FrameState.RunePrison2 * frameHeight;
+                        Main.NewText(2);
+                        break;
+                    }
+                    case float three when AiTimer1 > dividend * 2f && AiTimer1 < dividend * 3f:
+                    {
+                        NPC.frame.Y = (int)FrameState.RunePrison3 * frameHeight;
+                        Main.NewText(3);
+                        break;
+                    }
+                    case float four when AiTimer1 > dividend * 3f && AiTimer1 < dividend * 4f:
+                    {
+                        NPC.frame.Y = (int)FrameState.RunePrison4 * frameHeight;
+                        Main.NewText(4);
+                        break;
+                    }
+                }
+                FrameDuration = 3;
+                if (NPC.velocity.X != 0)
+                {
+                    NPC.frameCounter++;
+                    if (NPC.frameCounter >= FrameDuration)
+                    {
+                        NPC.frame.Y += frameHeight;
+                        NPC.frameCounter = 0;
+
+                        if (NPC.frame.Y >= ((int)FrameState.Walking14 + 1) * frameHeight)
+                            NPC.frame.Y = (int)FrameState.Walking1 * frameHeight;
+                    }
+                }
+                
+                if (NPC.velocity.Y > 0 | NPC.velocity.Y < 0)
+                {
+                    NPC.frame.Y = (int)FrameState.Jumping * frameHeight;
+                }
+
+                if (AiTimer2 > 0)
+                {
+                    var dividend2 = PickupDuration / TotalRunePrisonFrames;
+                    switch (AiTimer2)
+                    {
+                        case float one when AiTimer2 < dividend2:
+                        {
+                            NPC.frame.Y = (int)FrameState.RunePrison4 * frameHeight;
+                            break;
+                        }
+                        case float two when AiTimer2 > dividend2 && AiTimer2 < dividend2 * 2f:
+                        {
+                            NPC.frame.Y = (int)FrameState.RunePrison3 * frameHeight;
+                            break;
+                        }
+                        case float three when AiTimer2 > dividend2 * 2f && AiTimer2 < dividend2 * 3f:
+                        {
+                            NPC.frame.Y = (int)FrameState.RunePrison4 * frameHeight;
+                            break;
+                        }
+                        case float four when AiTimer2 > dividend2 * 3f && AiTimer2 < dividend2 * 4f:
+                        {
+                            NPC.frame.Y = (int)FrameState.RunePrison1 * frameHeight;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
         }
         NPC.spriteDirection = -NPC.direction;
         /*
@@ -517,10 +595,70 @@ class RuneMage : ModNPC
         }
     }
 
+    private int FirstRunePrisonCastTime = 60;
+    private int TotalRunePrisonFrames = 4;
+    private int PickupDuration = 60;
+    /// <summary>
+    /// Starts the fight by trapping the player in an undodgeable Rune Prison and then picking up the World Rune.
+    /// Then the player is let go and it goes into normal first phase AI.
+    /// </summary>
+    /// <param name="target"></param>
     public void StartFight(Player target)
     {
-        Dust.NewDust(NPC.Center, NPC.width, NPC.height, DustID.Torch);
-        //Main.NewText(target.Distance(WarningPosition));
+        switch (AiTimer1)
+        {
+            case float one when AiTimer1 <= FirstRunePrisonCastTime:
+            {
+                NPC.velocity = Vector2.Zero;
+                NPC.TargetClosest();
+                Main.NewText("ye");
+                break;
+            }
+            case 61:
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    foreach (Player player in Main.ActivePlayers)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), player.Center + new Vector2(0, -10), Vector2.Zero,
+                            ModContent.ProjectileType<FirstRunePrison>(), 0, 0, player.whoAmI, NPC.whoAmI);
+                    }
+                }
+                NPC.velocity = Vector2.Zero;
+                NPC.TargetClosest();
+                Main.NewText("stuck");
+                break;
+            }
+            case float three when AiTimer1 > FirstRunePrisonCastTime + 1:
+            {
+                if (NPC.position.Distance(WorldRunePosition) > 40f)
+                {
+                    HurryingWalkSpeed = 3.25f;
+                    NPC.velocity.X = NPC.DirectionTo(WorldRunePosition).X * HurryingWalkSpeed;
+            
+                    Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed,
+                        ref NPC.gfxOffY, (int)Main.LocalPlayer.gravDir);
+            
+                    Collision.StepDown(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, 
+                        ref NPC.gfxOffY, (int)Main.LocalPlayer.gravDir);
+            
+                    SetDirection();
+                }
+                else
+                {
+                    NPC.velocity = Vector2.Zero;
+                    NPC.TargetClosest(false);
+                    AiTimer2++;
+                }
+
+                break;
+            }
+        }
+        AiTimer1++;
+        if (AiTimer2 > 60)
+        {
+            Main.NewText("Done");
+        }
     }
 
     public override void HitEffect(NPC.HitInfo hit)
@@ -547,10 +685,6 @@ class RuneMage : ModNPC
         }
         TotalOnHitWarnings++;
         ChatTimer = 0;
-    }
-
-    public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-    {
     }
 
     private int ChatTimer = 0;
@@ -702,7 +836,7 @@ class RuneMage : ModNPC
         NPC.direction = NPC.velocity.X > 0f ? 1 : -1;
     }
 
-    private enum ActionState
+    public enum ActionState
     {
         IdlePatrolling,
         IsWarning,
