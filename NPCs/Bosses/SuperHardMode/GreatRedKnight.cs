@@ -67,6 +67,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public bool InDominionDeathSequence => dominionDeathTimer >= 0;
 
         public int framesSinceStoredPosition = 0;
+        const int FallbackAirborneMeleeFrame = 8;
+        int lastGroundedWalkFrame = FallbackAirborneMeleeFrame;
+        int airborneMeleeFrame = -1;
 
         NPCDespawnHandler despawnHandler;
 
@@ -100,8 +103,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             redKnightGlobalNPC.Agility = 0.45f;
+            redKnightGlobalNPC.DirectionalDodgeRolls = true;
             redKnightGlobalNPC.PreserveJumpFacingUntilLanding = true;
-            EvasiveProfile.RedKnight(redKnightGlobalNPC); // hop/leap/dash away, or blink away when able
+            EvasiveProfile.RedKnight(redKnightGlobalNPC);
+            redKnightGlobalNPC.EvasiveRetreatJump = false;
+            redKnightGlobalNPC.EvasiveRetreatDash = false;
+            redKnightGlobalNPC.EvasiveDodgeRoll = true;
+            redKnightGlobalNPC.EvasiveTeleportAway = false;
+            redKnightGlobalNPC.EvasiveOnHitChanceDenominator = 6;
+            redKnightGlobalNPC.EvasiveOnHitCooldownTicks = 120;
 
             // Poise: boss-tier — many hits to stagger, and the impulse is halved for bosses. Tunable lever.
             redKnightGlobalNPC.PoiseMax = 80f;
@@ -181,7 +191,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (specialAttacks.HalfHeraldComplete && NPC.life <= NPC.lifeMax / 2
                     && NPC.ai[2] >= 100f && NPC.ai[2] <= 249f)
                 {
-                    return "Ultrakill Barrage";
+                    return "Spectral Hand Barrage";
                 }
                 // The four base-kit attacks retire at 60% HP, so their labels have to carry the same
                 // floor as their firing conditions — otherwise the debug readout announces attacks
@@ -189,7 +199,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 bool baseKitActive = NPC.life > NPC.lifeMax * 0.6f;
                 if (baseKitActive && ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f)))
                 {
-                    return "Abyssal Rain";
+                    return "Poison Rain";
                 }
                 if (baseKitActive && NPC.ai[1] >= 120f && NPC.ai[1] <= 230f)
                 {
@@ -287,7 +297,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            // Dominion phase 2 owns a narrow vocabulary: Crimson Advance, Ember Reversal and the
+            // Dominion phase 2 owns a narrow vocabulary: Crimson Advance, Firebomb Reversal and the
             // ordinary spear throw. Generic evasive dashes, fallback hops and teleports are shut
             // down so their independent tells cannot compete with the authored attacks.
             if (specialAttacks.DominionEngaged)
@@ -314,7 +324,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             else
             {
                 tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4, canDodgeroll: true);
-                tsorcRevampAIs.LeapAtPlayer(NPC, 7, 5, 1.5f, 128);
             }
 
             Vector2 targetPosition = Vector2.Zero;
@@ -361,7 +370,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Throw share that stretch but retire on different gates (Drakin keeps its own 50%
                 // check, the bomb is base kit), so they can no longer share one boolean.
                 globalNPC.AttackCommitted = (baseKitActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
-                                            (baseKitActive && NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                            (baseKitActive && NPC.ai[1] >= 295f && NPC.ai[1] <= 325f) ||
+                                            (baseKitActive && NPC.ai[1] >= 345f && NPC.ai[1] <= 375f) ||
                                             (baseKitActive && NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
                                             (NPC.ai[1] >= 725f && NPC.ai[1] <= 900f) ||
                                             (baseKitActive && NPC.ai[1] >= 925f && NPC.ai[1] <= 955f);
@@ -369,15 +379,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Windup (~30t before each flash): poise can still break here, but the evasive on-hit reaction is suppressed.
                 // 695→725 is DD2 Drakin's windup, not the bomb's, so it keeps its existing behaviour.
                 globalNPC.AttackTelegraphing = (baseKitActive && NPC.ai[1] >= 150f && NPC.ai[1] < 180f) ||
-                                               (baseKitActive && NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
+                                               (baseKitActive && NPC.ai[1] >= 270f && NPC.ai[1] < 295f) ||
+                                               (baseKitActive && NPC.ai[1] > 325f && NPC.ai[1] < 345f) ||
                                                (baseKitActive && NPC.ai[1] >= 420f && NPC.ai[1] < 450f) ||
                                                (NPC.ai[1] >= 695f && NPC.ai[1] < 725f);
             }
 
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.DodgeRecoveryTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (standardSpearActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
-                                          (baseKitActive && NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
+                                          (baseKitActive && NPC.ai[1] >= 295f && NPC.ai[1] <= 375f) ||
                                           (baseKitActive && NPC.ai[1] >= 450f && NPC.ai[1] <= 485f) ||
                                           (NPC.ai[1] >= 725f && NPC.ai[1] <= 900f) ||
                                           (baseKitActive && NPC.ai[1] >= 925f && NPC.ai[1] <= 955f) ||
@@ -399,7 +410,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 bool inActiveAttack = (standardSpearActive && NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
-                                       (baseKitActive && NPC.ai[1] >= 300f && NPC.ai[1] <= 485f) ||
+                                       (baseKitActive && NPC.ai[1] >= 295f && NPC.ai[1] <= 485f) ||
                                        (NPC.ai[1] >= 725f && NPC.ai[1] <= 900f) ||
                                        (baseKitActive && NPC.ai[1] >= 925f && NPC.ai[1] <= 955f) ||
                                        (NPC.ai[2] >= 165f && NPC.ai[2] <= 249f);
@@ -586,7 +597,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // POISON SALVO (all three volleys) — base kit, retires at 60% HP. Each telegraph is
                 // gated alongside its own volley so a flash never fires without the salvo behind it.
                 // Poison Attack 1 Telegraph
-                if (baseKitActive && NPC.ai[1] == 300)
+                if (baseKitActive && NPC.ai[1] == 295)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -637,7 +648,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Poison Attack 2 Telegraph
-                if (baseKitActive && NPC.ai[1] == 350)
+                if (baseKitActive && NPC.ai[1] == 345)
                 {
                     Vector2 spawnPosition = NPC.position;
                     if (NPC.direction == 1)
@@ -1014,11 +1025,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void FindFrame(int frameHeight)
         {
+            int currentFrame = frameHeight > 0 ? NPC.frame.Y / frameHeight : 0;
+            bool airborne = NPC.velocity.Y < -0.01f || (!NPC.collideY
+                && (Math.Abs(NPC.velocity.Y) > 0.01f || Math.Abs(NPC.oldVelocity.Y) > 0.01f));
+
+            if (!airborne)
+            {
+                if (currentFrame >= 2 && currentFrame < Main.npcFrameCount[NPC.type])
+                {
+                    lastGroundedWalkFrame = currentFrame;
+                }
+
+                airborneMeleeFrame = -1;
+                return;
+            }
+
             if (specialAttacks.UsesStableMeleeFrame)
             {
-                // Match Red Knight's upright mid-stride attack pose. This sheet is identical and
-                // frame 8 carries the same stable (48,33) hand anchor at GRK's 1.15 scale.
-                NPC.frame.Y = 8 * frameHeight;
+                if (airborneMeleeFrame < 2 || airborneMeleeFrame >= Main.npcFrameCount[NPC.type])
+                {
+                    // Frame 8 is only a fallback if a client first observes the knight already airborne.
+                    airborneMeleeFrame = lastGroundedWalkFrame;
+                }
+
+                NPC.frame.Y = airborneMeleeFrame * frameHeight;
                 NPC.frameCounter = 0d;
             }
         }
@@ -1041,7 +1071,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     downwardSpeed + Main.rand.NextFloat(-0.25f, 0.35f));
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, velocity,
                     ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(),
-                    redMagicDamage, 1f, Main.myPlayer, ai2: 1f);
+                    redMagicDamage, 1f, Main.myPlayer, ai2: 2f);
             }
         }
 
@@ -1257,6 +1287,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if (specialAttacks.IsHerald)
                 {
+                    if (specialAttacks.Attack == KnightSpecialAttack.FurnaceHerald)
+                    {
+                        // The Royal Standard's planted black-and-red fire sits behind the boss while
+                        // the three Furnace Herald rings build and release.
+                        Projectiles.Enemy.RedKnightVFX.DrawStandardCharge(
+                            NPC.Bottom - new Vector2(0f, NPC.gfxOffY),
+                            specialAttacks.TelegraphProgress,
+                            Projectiles.Enemy.Weapons.KnightStandardMode.GreatCenter);
+                    }
                     Projectiles.Enemy.RedKnightVFX.DrawHerald(NPC.Center,
                         specialAttacks.TelegraphProgress,
                         specialAttacks.Attack == KnightSpecialAttack.StormHerald);
@@ -1514,7 +1553,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             // Magic ball
-            if (baseKitVisible && magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] >= 350 && NPC.ai[1] <= 375f) || (NPC.ai[1] >= 400 && NPC.ai[1] <= 480f)))
+            if (baseKitVisible && magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] > 325 && NPC.ai[1] <= 375f) || (NPC.ai[1] >= 400 && NPC.ai[1] <= 480f)))
             {
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
                 Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 3, 0.78f, 20f);

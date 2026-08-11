@@ -876,13 +876,32 @@ namespace tsorcRevamp.NPCs
 
             if (globalNPC.DodgeTimer > 0)
             {
-                npc.rotation += MathHelper.TwoPi / 30f * npc.direction;
-                npc.velocity.X = 5 * npc.direction;
+                int dodgeDirection = globalNPC.DodgeDirection == 0
+                    ? npc.direction
+                    : globalNPC.DodgeDirection;
+                npc.rotation += MathHelper.TwoPi / Math.Max(1, globalNPC.DodgeTotalTicks) * dodgeDirection;
+                npc.velocity.X = globalNPC.DodgeSpeed * dodgeDirection;
 
                 globalNPC.DodgeTimer--;
                 if (globalNPC.DodgeTimer == 0)
                 {
-                    npc.velocity.X = 0;
+                    globalNPC.DodgeRecoveryTimer = 15;
+                }
+            }
+            else if (globalNPC.DodgeRecoveryTimer > 0)
+            {
+                npc.rotation = 0f;
+                npc.direction = globalNPC.DodgeDirection;
+                npc.spriteDirection = globalNPC.DodgeDirection;
+                npc.velocity.X *= 0.75f;
+                globalNPC.DodgeRecoveryTimer--;
+                if (globalNPC.DodgeRecoveryTimer == 0)
+                {
+                    globalNPC.DodgeDirection = 0;
+                    if (Math.Abs(npc.velocity.X) < 0.2f)
+                    {
+                        npc.velocity.X = 0f;
+                    }
                 }
             }
             else
@@ -955,9 +974,9 @@ namespace tsorcRevamp.NPCs
 
             // Busy states can optionally reset attack timing after SimpleProjectile has run. Evasive moves choose
             // that policy in ShouldEvasionResetProjectileTimer, so individual moves can keep or reset shot progress.
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || globalNPC.InSustainedEvasion)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.DodgeRecoveryTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || globalNPC.InSustainedEvasion)
             {
-                bool nonEvasiveBusy = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0;
+                bool nonEvasiveBusy = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || fleeing || globalNPC.DodgeTimer > 0 || globalNPC.DodgeRecoveryTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0;
                 if (nonEvasiveBusy || ShouldEvasionResetProjectileTimer(globalNPC))
                 {
                     globalNPC.ProjectileTimer = 0;
@@ -994,7 +1013,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
-            intent.SeizesBody = combatMeleeSeizesBody || guardPressureRecoveryHold || teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
+            intent.SeizesBody = combatMeleeSeizesBody || guardPressureRecoveryHold || teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DodgeRecoveryTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
         }
 
         private static bool ShouldEvasionResetProjectileTimer(tsorcRevampGlobalNPC globalNPC)
@@ -1180,8 +1199,8 @@ namespace tsorcRevamp.NPCs
             //Dodging — only while actively pursuing (not searching/patrolling/fleeing/teleporting)
             if (globalNPC.PursuitState == PursuitState.Pursue && !fleeing && globalNPC.TeleportCountdown == 0 && globalNPC.TeleportAppearanceTimer == 0 && globalNPC.DodgeCooldown == 0)
             {
-                // Roll OR jump out of the way of an incoming aimed projectile. canDodgeroll grants both options (the
-                // original roll-or-jump 50/50); CanJumpToEvade is an additive opt-in so a non-rolling enemy can still pre-jump.
+                // Most fighters retain roll-or-jump. Directional duelists instead prefer a
+                // terrain-validated forward roll; jumping is only their blocked-route fallback.
                 if ((canDodgeroll || globalNPC.CanJumpToEvade) && npc.Distance(Main.player[npc.target].Center) > 160)
                 {
                     for (int i = 0; i < Main.maxProjectiles; i++)
@@ -1203,13 +1222,22 @@ namespace tsorcRevamp.NPCs
                                 if (canDodgeroll)
                                 {
                                     //Randomly choose whether to roll or jump (jump needs headroom, else roll) — unchanged
-                                    if (Main.rand.NextBool() && heightToJump)
+                                    if (globalNPC.DirectionalDodgeRolls)
+                                    {
+                                        if (!TryArmDirectionalDodgeRoll(npc, globalNPC,
+                                            meleeResponse: false, projectileThreat: true) && heightToJump)
+                                        {
+                                            npc.velocity.Y -= 8;
+                                        }
+                                    }
+                                    else if (Main.rand.NextBool() && heightToJump)
                                     {
                                         npc.velocity.Y -= 8;
                                     }
                                     else
                                     {
-                                        globalNPC.DodgeTimer = 30;
+                                        ArmFixedDodgeRoll(globalNPC, npc.direction, 5f, 30,
+                                            forward: false);
                                     }
                                 }
                                 else if (heightToJump) //CanJumpToEvade-only: jump when there's room, otherwise hold
@@ -2548,6 +2576,7 @@ namespace tsorcRevamp.NPCs
             AddEvasion(globalNPC.EvasiveRunningDash, EvasiveHitSource.Both, 1, EvasiveBehavior.RunningDash, melee);
             AddEvasion(globalNPC.EvasiveRetreatAndShoot, EvasiveHitSource.Melee, 1, EvasiveBehavior.RetreatAndShoot, melee);
             AddEvasion(globalNPC.EvasiveQuickStep, EvasiveHitSource.Both, 2, EvasiveBehavior.QuickStep, melee);
+            AddEvasion(globalNPC.EvasiveDodgeRoll, EvasiveHitSource.Both, 2, EvasiveBehavior.DodgeRoll, melee);
             float targetDistance = npc.Distance(Main.player[npc.target].Center);
             AddEvasion(globalNPC.EvasiveBasiliskWalkerCloseBackhop && targetDistance < 150f, EvasiveHitSource.Both, 1, EvasiveBehavior.BasiliskWalkerCloseBackhop, melee);
             AddEvasion(globalNPC.EvasiveBasiliskWalkerFarScrambleHop && targetDistance > 150f, EvasiveHitSource.Both, 1, EvasiveBehavior.BasiliskWalkerFarScrambleHop, melee);
@@ -2559,7 +2588,8 @@ namespace tsorcRevamp.NPCs
             }
 
             // Only react to a fraction of hits — keeps the enemy slippery without spasming.
-            if (!Main.rand.NextBool(5))
+            int chanceDenominator = Math.Max(1, globalNPC.EvasiveOnHitChanceDenominator);
+            if (!Main.rand.NextBool(chanceDenominator))
             {
                 return;
             }
@@ -2567,7 +2597,7 @@ namespace tsorcRevamp.NPCs
             npc.TargetClosest(true);
             ExecuteEvasion(npc, globalNPC, EvasionPool[Main.rand.Next(EvasionPool.Count)], melee);
 
-            globalNPC.FighterEvasionCooldown = 40; // ~0.66s before another reaction
+            globalNPC.FighterEvasionCooldown = Math.Max(1, globalNPC.EvasiveOnHitCooldownTicks);
             npc.netUpdate = true;
         }
 
@@ -2643,6 +2673,134 @@ namespace tsorcRevamp.NPCs
                 }
                 globalNPC.QuickStepRecoveryTimer--;
                 return true;
+            }
+            return false;
+        }
+
+        private const float DirectionalRollDistance = 150f;
+        private const float DirectionalRollClearance = 32f;
+        private const float DirectionalRollBaseSpeed = 5f;
+        private const int DirectionalRollBaseTicks = 30;
+        private const int DirectionalRollMaximumTicks = 36;
+        private const float DirectionalRollMaximumSpeed = 7f;
+
+        /// <summary>
+        /// Plans RK/GRK's real rotating roll. Projectile pressure advances toward the player without
+        /// crossing them; a melee counter may cross and lands one explicit clearance beyond both
+        /// body rectangles. Every plan includes the short post-roll coast in its terrain and spacing
+        /// test, so the visible recovery cannot drift into a wall or erase the promised gap.
+        /// </summary>
+        private static bool TryArmDirectionalDodgeRoll(NPC npc, tsorcRevampGlobalNPC globalNPC,
+            bool meleeResponse, bool projectileThreat)
+        {
+            if (npc.velocity.Y != 0f || npc.target < 0 || npc.target >= Main.maxPlayers)
+            {
+                return false;
+            }
+
+            Player target = Main.player[npc.target];
+            int toward = target.Center.X >= npc.Center.X ? 1 : -1;
+            int away = -toward;
+            float centerDistance = Math.Abs(target.Center.X - npc.Center.X);
+            float bodySeparation = (target.width + npc.width) * 0.5f;
+
+            bool forward = false;
+            float rollDistance = DirectionalRollDistance;
+            int rollTicks = DirectionalRollBaseTicks;
+            float rollSpeed = DirectionalRollBaseSpeed;
+
+            if (meleeResponse && !globalNPC.LastDodgeWasForward
+                && Main.rand.NextFloat() < 0.30f)
+            {
+                // Cross the complete current separation, both body radii, then another 32px.
+                // Speed is solved from the chosen integer duration rather than guessed.
+                rollDistance = centerDistance + bodySeparation + DirectionalRollClearance;
+                rollTicks = Math.Clamp((int)Math.Ceiling(rollDistance / DirectionalRollBaseSpeed),
+                    12, DirectionalRollMaximumTicks);
+                rollSpeed = rollDistance / rollTicks;
+                forward = rollSpeed <= DirectionalRollMaximumSpeed;
+            }
+            else if (projectileThreat)
+            {
+                // A projectile roll advances through the shot, not through the player. Account for
+                // the recovery coast and require at least 32px of body-to-body space afterward.
+                float recoveryCoast = RollRecoveryDistance(DirectionalRollBaseSpeed);
+                float requiredRoom = DirectionalRollDistance + recoveryCoast
+                    + bodySeparation + DirectionalRollClearance;
+                forward = centerDistance >= requiredRoom;
+            }
+
+            if (forward)
+            {
+                float completeTravel = rollDistance + RollRecoveryDistance(rollSpeed);
+                if (HasSafeDodgeRollPath(npc, toward, completeTravel))
+                {
+                    ArmFixedDodgeRoll(globalNPC, toward, rollSpeed, rollTicks, forward: true);
+                    return true;
+                }
+            }
+
+            float backwardTravel = DirectionalRollDistance
+                + RollRecoveryDistance(DirectionalRollBaseSpeed);
+            if (!HasSafeDodgeRollPath(npc, away, backwardTravel))
+            {
+                return false;
+            }
+
+            ArmFixedDodgeRoll(globalNPC, away, DirectionalRollBaseSpeed,
+                DirectionalRollBaseTicks, forward: false);
+            return true;
+        }
+
+        private static void ArmFixedDodgeRoll(tsorcRevampGlobalNPC globalNPC, int direction,
+            float speed, int ticks, bool forward)
+        {
+            globalNPC.DodgeDirection = direction;
+            globalNPC.DodgeSpeed = speed;
+            globalNPC.DodgeTotalTicks = ticks;
+            globalNPC.DodgeTimer = ticks;
+            globalNPC.DodgeRecoveryTimer = 0;
+            globalNPC.LastDodgeWasForward = forward;
+        }
+
+        private static float RollRecoveryDistance(float initialSpeed)
+        {
+            const float recoveryMultiplier = 0.75f;
+            const int recoveryTicks = 15;
+            return initialSpeed * recoveryMultiplier
+                * (1f - MathF.Pow(recoveryMultiplier, recoveryTicks))
+                / (1f - recoveryMultiplier);
+        }
+
+        private static bool HasSafeDodgeRollPath(NPC npc, int direction, float distance)
+        {
+            for (float offset = 8f; offset <= distance; offset += 8f)
+            {
+                Vector2 position = npc.position + new Vector2(direction * offset, 0f);
+                if (Collision.SolidCollision(position, npc.width, npc.height))
+                {
+                    return false;
+                }
+            }
+
+            float destinationCenterX = npc.Center.X + direction * distance;
+            int leftTile = Utils.Clamp((int)((destinationCenterX - npc.width * 0.5f) / 16f),
+                2, Main.maxTilesX - 3);
+            int rightTile = Utils.Clamp((int)((destinationCenterX + npc.width * 0.5f) / 16f),
+                2, Main.maxTilesX - 3);
+            int feetTile = Utils.Clamp((int)((npc.Bottom.Y + 4f) / 16f),
+                2, Main.maxTilesY - 4);
+            for (int x = leftTile; x <= rightTile; x++)
+            {
+                for (int y = feetTile; y <= feetTile + 2; y++)
+                {
+                    Tile tile = Framing.GetTileSafely(x, y);
+                    if (WorldGen.SolidOrSlopedTile(tile)
+                        || (tile.HasTile && TileID.Sets.Platforms[tile.TileType]))
+                    {
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -2734,6 +2892,10 @@ namespace tsorcRevamp.NPCs
                     break;
                 case EvasiveBehavior.QuickStep: // arm an i-frame standing dash step (no rotation)
                     ArmQuickStep(npc, globalNPC, allowForward: true);
+                    break;
+                case EvasiveBehavior.DodgeRoll:
+                    TryArmDirectionalDodgeRoll(npc, globalNPC,
+                        meleeResponse: melee, projectileThreat: !melee);
                     break;
                 case EvasiveBehavior.BasiliskWalkerCloseBackhop:
                     npc.velocity.Y = Main.rand.NextFloat(-6f, -3f);
@@ -2857,7 +3019,7 @@ namespace tsorcRevamp.NPCs
             if (globalNPC.CanDodgeroll && grounded)
             {
                 npc.spriteDirection = npc.direction;
-                globalNPC.DodgeTimer = 30; // BasicAI rolls at 5 * npc.direction → toward the player, out of the pin
+                ArmFixedDodgeRoll(globalNPC, toward, 5f, 30, forward: false);
                 globalNPC.DodgeCooldown = (int)(300 * (1 - globalNPC.Agility));
             }
             else if (globalNPC.CanTeleport && Main.rand.NextBool(2))

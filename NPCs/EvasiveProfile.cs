@@ -32,6 +32,7 @@ namespace tsorcRevamp.NPCs
         RunningDash,     // flash telegraph, then a grounded ~2s top-speed burst toward the player (hyper-armor) — sustained
         RetreatAndShoot, // back off (forced flee) for ~1-1.5s, then resume firing at range — sustained
         QuickStep,       // standing i-frame dash step (no rotation, can pass through the player) — sustained
+        DodgeRoll,       // rotating i-frame roll with a planned forward/backward landing
         BasiliskWalkerCloseBackhop,     // close-hit basilisk walker backhop; keeps its old proximity gate
         BasiliskWalkerFarScrambleHop,   // far-hit basilisk walker scramble hop; keeps its old proximity gate
         BasiliskShifterCloseBackhop,    // close-hit basilisk shifter backhop; keeps its old proximity gate

@@ -27,6 +27,12 @@ namespace tsorcRevamp.NPCs.Enemies
         public int framesSinceStoredPosition = 0;
         readonly RedKnightAttackController specialAttacks = new RedKnightAttackController();
         NPCDespawnHandler despawnHandler;
+        const int FallbackAirborneMeleeFrame = 8;
+        int lastGroundedWalkFrame = FallbackAirborneMeleeFrame;
+        int airborneMeleeFrame = -1;
+        // Kept as a migration switch until the dormant conveyor code is physically removed after
+        // the new bag has been playtested. False means ai[1]/ai[2] can no longer schedule attacks.
+        static readonly bool LegacyAttackConveyorEnabled = false;
 
 
         public override void SetStaticDefaults()
@@ -93,6 +99,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //redKnightGlobalNPC.Strength = Main.rand.NextFloat(0.7f, 1.4f);
 
             redKnightGlobalNPC.Agility = 0.3f;
+            redKnightGlobalNPC.DirectionalDodgeRolls = true;
             redKnightGlobalNPC.PreserveJumpFacingUntilLanding = true;
 
             // Poise: needs sustained pressure to stagger (poise damage = weapon knockback). Tunable lever.
@@ -121,10 +128,17 @@ namespace tsorcRevamp.NPCs.Enemies
             redKnightGlobalNPC.TeleportStyle = TeleportStyle.Aggressive;
             redKnightGlobalNPC.TeleportVisualStyle = TeleportVisualStyle.Fire;
 
-            // Evasive on-hit: hop/leap/dash away, or blink away when able (TeleportAway uses CanTeleport above).
+            // Start from the knight-family retreat profile, then remove its random on-hit blink below.
             EvasiveProfile.RedKnight(redKnightGlobalNPC);
+            redKnightGlobalNPC.EvasiveRetreatJump = false;
+            redKnightGlobalNPC.EvasiveRetreatDash = false;
+            redKnightGlobalNPC.EvasiveDodgeRoll = true;
+            // Teleport is now an authored sub-50% attack, never a random hit reaction. The remaining
+            // retreat reactions are deliberately infrequent so multihit weapons cannot make RK spasm.
+            redKnightGlobalNPC.EvasiveTeleportAway = false;
+            redKnightGlobalNPC.EvasiveOnHitChanceDenominator = 6;
+            redKnightGlobalNPC.EvasiveOnHitCooldownTicks = 120;
 
-            int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();
             HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Elite(
                 redKnightsSpearDamage,
                 (int)(redKnightsSpearDamage * 1.3f),
@@ -136,9 +150,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 leonhardRunUp: true);
             redKnightGlobalNPC.ConfigureHumanoidMelee(meleeProfile);
             CombatTempoProfile.Elite(redKnightGlobalNPC,
-                new CombatComboMove(spearProjectileType, 120f, float.MaxValue, canRepeat: true, weight: 1.25f),
-                new CombatComboMove(PoisonComboMoveKey, 120f, 900f, canRepeat: false, weight: 1f),
-                new CombatComboMove(BombComboMoveKey, 160f, 900f, canRepeat: false, weight: 1.1f),
                 new CombatComboMove(CombatComboMoveKey.CloseHopMelee, 0f, 90f, canRepeat: true, weight: 0.75f),
                 new CombatComboMove(CombatComboMoveKey.LongHopMelee, 112f, 280f, canRepeat: false, weight: 0.7f));
         }
@@ -196,16 +207,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (globalNPC.CombatMeleeActive)
                 {
                     return globalNPC.ActiveCombatMeleeKey == CombatComboMoveKey.LongHopMelee
-                        ? "Long Spear Dash"
-                        : "Close Spear Dash";
+                        ? "Charging Spear Thrust"
+                        : "Double Spear Lunge";
                 }
                 if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 235f)
                 {
-                    return "Ultrakill Barrage";
+                    return "Spectral Hand Barrage";
                 }
                 if (((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f)) && NPC.HasValidTarget && NPC.Distance(Main.player[NPC.target].Center) > 350f)
                 {
-                    return "Abyssal Rain";
+                    return "Poison Rain";
                 }
                 if (NPC.ai[1] >= 120f && NPC.ai[1] <= 230f)
                 {
@@ -213,7 +224,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (NPC.ai[1] >= 270f && NPC.ai[1] <= 420f)
                 {
-                    return "Poison Volley";
+                    return "Poison Arc Volley";
                 }
                 if (NPC.ai[1] >= 865f)
                 {
@@ -427,6 +438,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
+            if (!LegacyAttackConveyorEnabled)
+            {
+                // The shared melee foundation and RedKnightAttackController are now the only attack
+                // authors. Keep the old exact-frame clocks neutral so none of their conveyor events,
+                // rain, or threshold barrage can interleave with a bag card.
+                NPC.ai[1] = 60f;
+                NPC.ai[2] = -100f;
+                globalNPC.AttackTelegraphing = false;
+                globalNPC.AttackCommitted = false;
+                return;
+            }
+
             // Hyper-armor window: FLASH telegraph → fire only. Windup is intentionally excluded so a poise stagger can
             // interrupt during windup; once the flash fires the attack is uninterruptible (only the stagger breaks it).
             // Spear 180→210, poison1 300→325, poison2 375→405, bomb 925→955.
@@ -449,7 +472,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 TryCompressGuardPressureNeutral(globalNPC);
             }
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.DodgeRecoveryTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 bool inProtectedAttack = (NPC.ai[1] >= 180f && NPC.ai[1] <= 210f) ||
                                           (NPC.ai[1] >= 300f && NPC.ai[1] <= 405f) ||
@@ -820,7 +843,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 360f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 1f, Main.myPlayer, ai2: 1f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 360f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 1f, Main.myPlayer, ai2: 2f);
                         }
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -833,7 +856,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 400 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 1.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer, ai2: 1f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 400 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 1.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer, ai2: 2f);
                         }
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -940,11 +963,30 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void FindFrame(int frameHeight)
         {
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            int currentFrame = frameHeight > 0 ? NPC.frame.Y / frameHeight : 0;
+            bool airborne = NPC.velocity.Y < -0.01f || (!NPC.collideY
+                && (Math.Abs(NPC.velocity.Y) > 0.01f || Math.Abs(NPC.oldVelocity.Y) > 0.01f));
+
+            if (!airborne)
+            {
+                if (currentFrame >= 2 && currentFrame < Main.npcFrameCount[NPC.type])
+                {
+                    lastGroundedWalkFrame = currentFrame;
+                }
+
+                airborneMeleeFrame = -1;
+                return;
+            }
+
             if (globalNPC.CombatMeleeActive || specialAttacks.UsesStableMeleeFrame)
             {
-                // Frame 8 is an upright mid-stride pose with a stable (48,33) overlay grip.
-                // Holding it prevents both the idle pose and the raised-hand jump-frame spear pop.
-                NPC.frame.Y = 8 * frameHeight;
+                if (airborneMeleeFrame < 2 || airborneMeleeFrame >= Main.npcFrameCount[NPC.type])
+                {
+                    // Frame 8 is only a fallback if a client first observes the knight already airborne.
+                    airborneMeleeFrame = lastGroundedWalkFrame;
+                }
+
+                NPC.frame.Y = airborneMeleeFrame * frameHeight;
                 NPC.frameCounter = 0d;
             }
         }
@@ -1008,10 +1050,10 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (NPC.alpha < 255 && globalNPC.TeleportCountdown <= 0 && globalNPC.TeleportAppearanceTimer <= 0
-                && NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
+                && specialAttacks.IsSpectralHandBarrage)
             {
                 Projectiles.Enemy.RedKnightVFX.DrawUltrakillSeal(NPC.Center,
-                    MathHelper.Clamp((NPC.ai[2] - 100f) / 100f, 0f, 1f));
+                    specialAttacks.SpectralGatherProgress);
             }
 
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
@@ -1293,6 +1335,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
                 Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 2,
                     specialAttacks.TelegraphProgress, 16f);
+                DrawArmOverlay(spriteBatch, drawColor, globalNPC, specialAttacks.Direction);
+            }
+            else if (heldProp == KnightHeldProp.Spectral)
+            {
+                // The white gather is drawn behind the body in PreDraw. This state exists only to
+                // preserve the matching arm overlay without incorrectly adding the green poison orb.
                 DrawArmOverlay(spriteBatch, drawColor, globalNPC, specialAttacks.Direction);
             }
         }

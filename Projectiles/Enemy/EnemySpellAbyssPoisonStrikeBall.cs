@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            if (Projectile.ai[2] == 1f)
+            if (Projectile.ai[2] >= 1f)
             {
                 if (Main.rand.NextBool(3))
                 {
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Projectile.ai[2] == 1f)
+            if (Projectile.ai[2] >= 1f)
             {
                 RedKnightVFX.DrawPoisonOrb(Projectile.Center, Projectile.velocity, 0.96f);
                 Texture2D texture = TextureAssets.Projectile[Type].Value;
@@ -99,7 +99,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item100 with { Volume = 0.1f, Pitch = 0.09f }, Projectile.Center); // flame wall, lasts a bit longer than flame
                                                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 10);
-                if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<EnemySpellAbyssPoisonStrike>(), Projectile.damage, 1f, Projectile.owner);
+                // ai[2] == 1 is a direct knight cast: its pool loops for four seconds. ai[2] == 2
+                // is reserved for overhead rain and deliberately keeps the original short pool.
+                int impactType = Projectile.ai[2] == 1f
+                    ? ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeLong>()
+                    : ModContent.ProjectileType<EnemySpellAbyssPoisonStrike>();
+                if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, impactType, Projectile.damage, 1f, Projectile.owner);
                 Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int arg_1394_1 = Projectile.width;
                 int arg_1394_2 = Projectile.height;

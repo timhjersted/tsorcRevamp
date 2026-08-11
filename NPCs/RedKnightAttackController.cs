@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -8,22 +9,51 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs
 {
     internal enum KnightSpecialAttack : byte
     {
         None,
-        EmberReversal,
-        PoisonWake,
+        FirebombReversal,
+        PoisonSpearTether,
         CrimsonStandard,
+        SpearThrow,
+        PoisonArcVolley,
+        FirebombThrow,
+        SpectralHandBarrage,
+        PoisonRain,
+        PoisonCurtain,
+        CrimsonTeleportAmbush,
         CrimsonAdvance,
         FurnacePincer,
         RoyalStandard,
         StormbreakerEdict,
+        RedCourtProcession,
         CrimsonDominion,
         FurnaceHerald,
         StormHerald
+    }
+
+    [Flags]
+    internal enum KnightResponseTag : byte
+    {
+        None = 0,
+        GapClose = 1,
+        RetreatPunish = 2,
+        AreaDenial = 4,
+        DelayedThreat = 8,
+        SideSwitch = 16,
+        RollCatch = 32,
+        VerticalCheck = 64
+    }
+
+    internal enum KnightAttackDeck : byte
+    {
+        Red,
+        Great,
+        Dominion
     }
 
     internal enum KnightHeldProp : byte
@@ -31,7 +61,26 @@ namespace tsorcRevamp.NPCs
         None,
         Spear,
         Bomb,
-        Magic
+        Magic,
+        Spectral
+    }
+
+    internal enum RedTeleportPattern : byte
+    {
+        None,
+        Pincer,
+        RetreatThrow,
+        GapClose,
+        FeintPincer
+    }
+
+    internal enum RedThrowMovement : byte
+    {
+        None,
+        GroundAdvance,
+        RetreatHop,
+        AdvanceHop,
+        VerticalHop
     }
 
     internal readonly struct KnightAttackStats
@@ -69,6 +118,32 @@ namespace tsorcRevamp.NPCs
         public bool ThirdHeraldComplete { get; private set; }
         int emberBombProjectileIndex = -1;
         int emberReturnDashTimer = -1;
+        RedTeleportPattern redTeleportPattern;
+        RedThrowMovement redThrowMovement;
+        int redTeleportFakeCount;
+        bool redTeleportHidden;
+        Vector2 redTeleportDestination;
+        Vector2 redTeleportFakeA;
+        Vector2 redTeleportFakeB;
+        const int RedTeleportEntryTellTicks = 20;
+        const int RedTeleportCloseArrivalTellTicks = 60;
+        const int RedTeleportRetreatArrivalTellTicks = 24;
+        const int RedTeleportFeintIntervalTicks = 45;
+        const float RedTeleportFeintOffset = 68f;
+        const float RedTeleportFeintMinimumSeparation = 120f;
+        const int RedTeleportPincerActiveTicks = 18;
+        const float RedThrowHopSpeedY = 5.2f;
+        const float RedThrowGravity = 0.35f;
+        const float RedThrowRetreatSpeed = 3.2f;
+        const float RedThrowAdvanceSpeed = 3f;
+        const float RedThrowMinimumForwardClearance = 72f;
+        readonly List<KnightSpecialAttack> redAttackBag = new();
+        readonly List<KnightSpecialAttack> greatAttackBag = new();
+        readonly List<KnightSpecialAttack> dominionAttackBag = new();
+        KnightSpecialAttack lastRedAttack;
+        bool redBagBelowHalf;
+        readonly KnightSpecialAttack[] recentAttacks = new KnightSpecialAttack[3];
+        readonly KnightResponseTag[] recentResponseTags = new KnightResponseTag[2];
 
         // ---------------------------------------------------------------------------------------
         // CRIMSON DOMINION — no longer a timed attack, it is a one-way PHASE.
@@ -79,7 +154,8 @@ namespace tsorcRevamp.NPCs
         //
         //   Phase 1  "Plant & hold"  — DominionHoldTicks (300t) as a normal blocking special attack:
         //                              the knight plants its spear, is engulfed, and cannot move.
-        //                              Contact damage stays ON (this is a trap, not a free hit).
+        //                              The visible containment geometry remains dangerous; the
+        //                              humanoid body itself never deals passive contact damage.
         //   Phase 2  "Retract & fight" — the special attack ENDS and normal AI resumes, but
         //                              DominionEngaged stays true forever: faster, more evasive,
         //                              and the lightning sequence below runs on top of combat.
@@ -99,19 +175,34 @@ namespace tsorcRevamp.NPCs
         public int DominionSequenceTimer { get; private set; }
 
         int attackCooldown = 240;
+        int crimsonClearanceDelay;
 
         public bool Active => Attack != KnightSpecialAttack.None;
 
         public string DebugAttackName => Attack switch
         {
-            KnightSpecialAttack.EmberReversal => "Ember Reversal",
-            KnightSpecialAttack.PoisonWake when Timer < 60 => "Spear Throw",
-            KnightSpecialAttack.PoisonWake => "Poison Wake",
-            KnightSpecialAttack.CrimsonStandard => "Crimson Standard",
+            KnightSpecialAttack.FirebombReversal => "Firebomb Reversal",
+            KnightSpecialAttack.PoisonSpearTether => "Poison Spear Tether",
+            KnightSpecialAttack.CrimsonStandard => "Bloodlance Eruption",
+            KnightSpecialAttack.SpearThrow => $"Spear Throw — {RedThrowMovementName}",
+            KnightSpecialAttack.PoisonArcVolley => "Poison Arc Volley",
+            KnightSpecialAttack.FirebombThrow => $"Firebomb Throw — {RedThrowMovementName}",
+            KnightSpecialAttack.SpectralHandBarrage => "Spectral Hand Barrage",
+            KnightSpecialAttack.PoisonRain => "Poison Rain",
+            KnightSpecialAttack.PoisonCurtain => "Poison Curtain",
+            KnightSpecialAttack.CrimsonTeleportAmbush => redTeleportPattern switch
+            {
+                RedTeleportPattern.Pincer => "Crimson Teleport Ambush — Pincer",
+                RedTeleportPattern.RetreatThrow => "Crimson Teleport Ambush — Retreat Throw",
+                RedTeleportPattern.GapClose => "Crimson Teleport Ambush — Gap Close",
+                RedTeleportPattern.FeintPincer => $"Crimson Teleport Ambush — {redTeleportFakeCount} Feint",
+                _ => "Crimson Teleport Ambush"
+            },
             KnightSpecialAttack.CrimsonAdvance => "Crimson Advance",
             KnightSpecialAttack.FurnacePincer => "Furnace Pincer",
-            KnightSpecialAttack.RoyalStandard => "Royal Standard",
+            KnightSpecialAttack.RoyalStandard => "Royal Standard — Deathwave",
             KnightSpecialAttack.StormbreakerEdict => "Stormbreaker Edict",
+            KnightSpecialAttack.RedCourtProcession => "Red Court Procession",
             KnightSpecialAttack.CrimsonDominion => "Crimson Dominion",
             KnightSpecialAttack.FurnaceHerald => "Furnace Herald",
             KnightSpecialAttack.StormHerald => "Storm Herald",
@@ -124,11 +215,30 @@ namespace tsorcRevamp.NPCs
         /// mid-stride body frame instead of allowing vanilla airborne animation to select frame 1.</summary>
         public bool UsesStableMeleeFrame => Attack switch
         {
-            KnightSpecialAttack.EmberReversal => true,
+            KnightSpecialAttack.FirebombReversal => true,
+            KnightSpecialAttack.CrimsonTeleportAmbush when redTeleportPattern != RedTeleportPattern.RetreatThrow
+                && Timer >= RedTeleportSnapTick
+                && Timer < RedTeleportSnapTick + RedTeleportPincerActiveTicks => true,
             KnightSpecialAttack.CrimsonAdvance => true,
             KnightSpecialAttack.FurnacePincer when Timer >= 105 => true,
             KnightSpecialAttack.StormbreakerEdict => true,
+            // FindFrame only consults this while airborne. A throw hop freezes whichever walking
+            // frame was current at takeoff, then the walking cycle resumes naturally on landing.
+            KnightSpecialAttack.SpearThrow when IsRedThrowHop && Timer >= 15 && Timer <= 45 => true,
+            KnightSpecialAttack.FirebombThrow when IsRedThrowHop && Timer >= 30 && Timer <= 60 => true,
             _ => false
+        };
+
+        bool IsRedThrowHop => redThrowMovement is RedThrowMovement.RetreatHop
+            or RedThrowMovement.AdvanceHop or RedThrowMovement.VerticalHop;
+
+        string RedThrowMovementName => redThrowMovement switch
+        {
+            RedThrowMovement.GroundAdvance => "Ground Advance",
+            RedThrowMovement.RetreatHop => "Retreat Hop",
+            RedThrowMovement.AdvanceHop => "Advance Hop",
+            RedThrowMovement.VerticalHop => "Vertical Hop",
+            _ => "Ground"
         };
 
         /// <summary>Which stage of the permanent Dominion lightning loop is running, for the
@@ -182,21 +292,60 @@ namespace tsorcRevamp.NPCs
 
             bool hasLineOfSight = Collision.CanHitLine(npc.Center, 1, 1, target.Center, 1, 1);
             float distance = npc.Distance(target.Center);
-            KnightSpecialAttack[] candidates = new KnightSpecialAttack[3];
+            bool belowHalf = npc.life <= npc.lifeMax / 2;
+            KnightSpecialAttack[] candidates = new KnightSpecialAttack[9];
             int count = 0;
 
             if (hasLineOfSight && distance <= 210f)
             {
-                candidates[count++] = KnightSpecialAttack.EmberReversal;
+                candidates[count++] = KnightSpecialAttack.FirebombReversal;
             }
-            if (hasLineOfSight && distance >= 150f && distance <= 620f)
+            if (hasLineOfSight && distance >= 120f && distance <= 820f)
             {
-                candidates[count++] = KnightSpecialAttack.PoisonWake;
+                candidates[count++] = KnightSpecialAttack.SpearThrow;
             }
-            if (tsorcRevampWorld.SuperHardMode && distance >= 120f && TryFindGround(target.Bottom, 10, 28, out Vector2 standardGround))
+            if (hasLineOfSight && distance >= 140f && distance <= 650f)
             {
-                candidates[count++] = KnightSpecialAttack.CrimsonStandard;
-                LockedTarget = standardGround;
+                candidates[count++] = KnightSpecialAttack.PoisonArcVolley;
+            }
+            if (hasLineOfSight && distance >= 160f && distance <= 850f)
+            {
+                candidates[count++] = KnightSpecialAttack.FirebombThrow;
+            }
+            int targetDirection = target.Center.X >= npc.Center.X ? 1 : -1;
+            Vector2 threadPoint = target.Bottom + new Vector2(targetDirection * 165f, 0f);
+            if (belowHalf && hasLineOfSight && distance >= 150f && distance <= 620f
+                && TryFindGround(threadPoint, 10, 30, out Vector2 threadGround))
+            {
+                candidates[count++] = KnightSpecialAttack.PoisonSpearTether;
+                AuxiliaryTargetA = threadGround;
+            }
+            if (belowHalf && hasLineOfSight && distance >= 100f && distance <= 720f)
+            {
+                candidates[count++] = KnightSpecialAttack.SpectralHandBarrage;
+            }
+            if (belowHalf && distance >= 360f && distance <= 900f
+                && RedKnightPoisonRainController.HasUsableLane(npc.Center))
+            {
+                candidates[count++] = KnightSpecialAttack.PoisonRain;
+            }
+            if (belowHalf && distance <= 900f
+                && RedKnightPoisonCurtainController.HasUsableCurtain(target.Center))
+            {
+                candidates[count++] = KnightSpecialAttack.PoisonCurtain;
+            }
+            bool teleportRange = distance <= 260f || (distance >= 420f && distance <= 900f);
+            if (belowHalf && teleportRange
+                && TryPlanRedTeleport(npc, target, out RedTeleportPattern teleportPattern,
+                    out Vector2 teleportDestination, out Vector2 fakeA, out Vector2 fakeB,
+                    out int fakeCount))
+            {
+                candidates[count++] = KnightSpecialAttack.CrimsonTeleportAmbush;
+                redTeleportPattern = teleportPattern;
+                redTeleportDestination = teleportDestination;
+                redTeleportFakeA = fakeA;
+                redTeleportFakeB = fakeB;
+                redTeleportFakeCount = fakeCount;
             }
 
             if (count == 0)
@@ -205,19 +354,87 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
 
-            KnightSpecialAttack selected = candidates[Main.rand.Next(count)];
-            if (selected == KnightSpecialAttack.CrimsonStandard)
+            KnightSpecialAttack selected = ChooseSimpleRedAttack(candidates, count, belowHalf);
+            if (selected == KnightSpecialAttack.PoisonSpearTether)
             {
-                if (!TryFindGround(target.Bottom, 10, 28, out Vector2 lockedGround))
+                if (!TryFindGround(threadPoint, 10, 30, out Vector2 confirmedThreadGround))
                 {
                     attackCooldown = 30;
                     return false;
                 }
-                LockedTarget = lockedGround;
+                AuxiliaryTargetA = confirmedThreadGround;
+            }
+            else if (selected == KnightSpecialAttack.CrimsonTeleportAmbush
+                && redTeleportPattern == RedTeleportPattern.None)
+            {
+                attackCooldown = 30;
+                return false;
             }
 
             Begin(npc, target, globalNPC, selected);
             return true;
+        }
+
+        KnightSpecialAttack ChooseSimpleRedAttack(KnightSpecialAttack[] candidates, int count, bool belowHalf)
+        {
+            if (redAttackBag.Count == 0 || redBagBelowHalf != belowHalf)
+            {
+                FillSimpleRedBag(belowHalf);
+            }
+
+            Span<KnightSpecialAttack> eligible = stackalloc KnightSpecialAttack[count];
+            int eligibleCount = CollectRedEligible(candidates, count, eligible);
+            if (eligibleCount == 0)
+            {
+                FillSimpleRedBag(belowHalf);
+                eligibleCount = CollectRedEligible(candidates, count, eligible);
+            }
+
+            Span<KnightSpecialAttack> nonRepeat = stackalloc KnightSpecialAttack[eligibleCount];
+            int nonRepeatCount = 0;
+            for (int i = 0; i < eligibleCount; i++)
+            {
+                if (eligible[i] != lastRedAttack)
+                {
+                    nonRepeat[nonRepeatCount++] = eligible[i];
+                }
+            }
+            Span<KnightSpecialAttack> selection = nonRepeatCount > 0 ? nonRepeat[..nonRepeatCount] : eligible[..eligibleCount];
+            KnightSpecialAttack selected = selection[Main.rand.Next(selection.Length)];
+            redAttackBag.Remove(selected);
+            lastRedAttack = selected;
+            return selected;
+        }
+
+        int CollectRedEligible(KnightSpecialAttack[] candidates, int count, Span<KnightSpecialAttack> destination)
+        {
+            int result = 0;
+            for (int i = 0; i < count; i++)
+            {
+                if (redAttackBag.Contains(candidates[i]))
+                {
+                    destination[result++] = candidates[i];
+                }
+            }
+            return result;
+        }
+
+        void FillSimpleRedBag(bool belowHalf)
+        {
+            redAttackBag.Clear();
+            redBagBelowHalf = belowHalf;
+            redAttackBag.Add(KnightSpecialAttack.FirebombReversal);
+            redAttackBag.Add(KnightSpecialAttack.SpearThrow);
+            redAttackBag.Add(KnightSpecialAttack.PoisonArcVolley);
+            redAttackBag.Add(KnightSpecialAttack.FirebombThrow);
+            if (belowHalf)
+            {
+                redAttackBag.Add(KnightSpecialAttack.PoisonSpearTether);
+                redAttackBag.Add(KnightSpecialAttack.SpectralHandBarrage);
+                redAttackBag.Add(KnightSpecialAttack.CrimsonTeleportAmbush);
+                redAttackBag.Add(KnightSpecialAttack.PoisonRain);
+                redAttackBag.Add(KnightSpecialAttack.PoisonCurtain);
+            }
         }
 
         public bool TryStartGreat(NPC npc, Player target, tsorcRevampGlobalNPC globalNPC)
@@ -280,14 +497,14 @@ namespace tsorcRevamp.NPCs
 
             float distance = npc.Distance(target.Center);
             bool hasLineOfSight = Collision.CanHitLine(npc.Center, 1, 1, target.Center, 1, 1);
-            KnightSpecialAttack[] candidates = new KnightSpecialAttack[5];
+            KnightSpecialAttack[] candidates = new KnightSpecialAttack[6];
             int count = 0;
 
-            // Ember Reversal is a core Great Red Knight move, not a Dominion-only move. Dominion
+            // Firebomb Reversal is a core Great Red Knight move, not a Dominion-only move. Dominion
             // retains it in its narrow pool below, but phase one may select it at close range too.
             if (hasLineOfSight && distance <= 230f)
             {
-                candidates[count++] = KnightSpecialAttack.EmberReversal;
+                candidates[count++] = KnightSpecialAttack.FirebombReversal;
             }
             if (distance <= 330f)
             {
@@ -313,6 +530,11 @@ namespace tsorcRevamp.NPCs
             {
                 candidates[count++] = KnightSpecialAttack.StormbreakerEdict;
             }
+            if (HalfHeraldComplete && distance >= 140f && distance <= 760f
+                && TryFindCourtPortalOrigin(target.Center, 0f, out _))
+            {
+                candidates[count++] = KnightSpecialAttack.RedCourtProcession;
+            }
             // (CrimsonDominion is no longer a candidate — it is a forced phase transition above.)
 
             if (count == 0)
@@ -321,7 +543,7 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
 
-            KnightSpecialAttack selected = candidates[Main.rand.Next(count)];
+            KnightSpecialAttack selected = ChooseFromBag(npc, target, candidates, count, KnightAttackDeck.Great);
             if (selected == KnightSpecialAttack.RoyalStandard)
             {
                 LockedTarget = royalCenter;
@@ -341,9 +563,8 @@ namespace tsorcRevamp.NPCs
         }
 
         /// <summary>
-        /// Dominion's deliberately narrow authored pool. Crimson Advance is entered three times
-        /// so it remains the phase's primary answer; Ember Reversal is the occasional close-range
-        /// mix-up. The ordinary spear throw remains on GreatRedKnight's legacy ai[1] clock.
+        /// Dominion's deliberately narrow authored pool. The shuffle bag prevents the melee dash
+        /// from drowning out Firebomb Reversal while the ordinary spear throw remains on the legacy clock.
         /// </summary>
         public bool TryStartDominion(NPC npc, Player target, tsorcRevampGlobalNPC globalNPC)
         {
@@ -354,18 +575,16 @@ namespace tsorcRevamp.NPCs
 
             float distance = npc.Distance(target.Center);
             bool hasLineOfSight = Collision.CanHitLine(npc.Center, 1, 1, target.Center, 1, 1);
-            KnightSpecialAttack[] candidates = new KnightSpecialAttack[4];
+            KnightSpecialAttack[] candidates = new KnightSpecialAttack[2];
             int count = 0;
 
             if (hasLineOfSight && distance <= 620f)
             {
                 candidates[count++] = KnightSpecialAttack.CrimsonAdvance;
-                candidates[count++] = KnightSpecialAttack.CrimsonAdvance;
-                candidates[count++] = KnightSpecialAttack.CrimsonAdvance;
             }
             if (hasLineOfSight && distance <= 230f)
             {
-                candidates[count++] = KnightSpecialAttack.EmberReversal;
+                candidates[count++] = KnightSpecialAttack.FirebombReversal;
             }
 
             if (count == 0)
@@ -374,8 +593,159 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
 
-            Begin(npc, target, globalNPC, candidates[Main.rand.Next(count)]);
+            Begin(npc, target, globalNPC,
+                ChooseFromBag(npc, target, candidates, count, KnightAttackDeck.Dominion));
             return true;
+        }
+
+        KnightSpecialAttack ChooseFromBag(NPC npc, Player target, KnightSpecialAttack[] candidates,
+            int count, KnightAttackDeck deck)
+        {
+            List<KnightSpecialAttack> bag = deck switch
+            {
+                KnightAttackDeck.Red => redAttackBag,
+                KnightAttackDeck.Great => greatAttackBag,
+                _ => dominionAttackBag
+            };
+
+            if (bag.Count == 0)
+            {
+                FillAttackBag(bag, deck);
+            }
+
+            Span<KnightSpecialAttack> available = stackalloc KnightSpecialAttack[count];
+            int availableCount = 0;
+            for (int i = 0; i < count; i++)
+            {
+                if (bag.Contains(candidates[i]))
+                {
+                    available[availableCount++] = candidates[i];
+                }
+            }
+            if (availableCount == 0)
+            {
+                bag.Clear();
+                FillAttackBag(bag, deck);
+                for (int i = 0; i < count; i++)
+                {
+                    if (bag.Contains(candidates[i]))
+                    {
+                        available[availableCount++] = candidates[i];
+                    }
+                }
+            }
+
+            Span<KnightSpecialAttack> filtered = stackalloc KnightSpecialAttack[availableCount];
+            int filteredCount = FilterCandidates(available, availableCount, filtered,
+                avoidThreeAttacks: true, avoidTwoTags: true);
+            if (filteredCount == 0)
+            {
+                filteredCount = FilterCandidates(available, availableCount, filtered,
+                    avoidThreeAttacks: false, avoidTwoTags: true);
+            }
+            if (filteredCount == 0)
+            {
+                filteredCount = FilterCandidates(available, availableCount, filtered,
+                    avoidThreeAttacks: false, avoidTwoTags: false);
+            }
+
+            float totalWeight = 0f;
+            Span<float> weights = stackalloc float[filteredCount];
+            for (int i = 0; i < filteredCount; i++)
+            {
+                KnightResponseTag tags = ResponseTags(filtered[i]);
+                float weight = 1f;
+                bool retreating = target.velocity.X * (target.Center.X - npc.Center.X) > 0.8f;
+                if (retreating && (tags & KnightResponseTag.RetreatPunish) != 0) weight += 0.8f;
+                if (target.velocity.Y != 0f && (tags & KnightResponseTag.VerticalCheck) != 0) weight += 0.65f;
+                if (npc.Distance(target.Center) < 180f && (tags & KnightResponseTag.SideSwitch) != 0) weight += 0.45f;
+                weights[i] = weight;
+                totalWeight += weight;
+            }
+
+            float roll = Main.rand.NextFloat(totalWeight);
+            KnightSpecialAttack selected = filtered[filteredCount - 1];
+            for (int i = 0; i < filteredCount; i++)
+            {
+                roll -= weights[i];
+                if (roll <= 0f)
+                {
+                    selected = filtered[i];
+                    break;
+                }
+            }
+            bag.Remove(selected);
+            return selected;
+        }
+
+        static void FillAttackBag(List<KnightSpecialAttack> bag, KnightAttackDeck deck)
+        {
+            if (deck == KnightAttackDeck.Dominion)
+            {
+                bag.Add(KnightSpecialAttack.CrimsonAdvance);
+                bag.Add(KnightSpecialAttack.FirebombReversal);
+                return;
+            }
+            bag.Add(KnightSpecialAttack.FirebombReversal);
+            bag.Add(KnightSpecialAttack.CrimsonAdvance);
+            bag.Add(KnightSpecialAttack.RoyalStandard);
+            bag.Add(KnightSpecialAttack.FurnacePincer);
+            bag.Add(KnightSpecialAttack.StormbreakerEdict);
+            bag.Add(KnightSpecialAttack.RedCourtProcession);
+        }
+
+        int FilterCandidates(Span<KnightSpecialAttack> source, int count,
+            Span<KnightSpecialAttack> destination, bool avoidThreeAttacks, bool avoidTwoTags)
+        {
+            int resultCount = 0;
+            for (int i = 0; i < count; i++)
+            {
+                KnightSpecialAttack candidate = source[i];
+                if (avoidThreeAttacks && Array.IndexOf(recentAttacks, candidate) >= 0)
+                {
+                    continue;
+                }
+                KnightResponseTag tags = ResponseTags(candidate);
+                if (avoidTwoTags && ((tags & recentResponseTags[0]) != 0 || (tags & recentResponseTags[1]) != 0))
+                {
+                    continue;
+                }
+                if (!avoidThreeAttacks && !avoidTwoTags && candidate == recentAttacks[0] && count > 1)
+                {
+                    continue;
+                }
+                destination[resultCount++] = candidate;
+            }
+            return resultCount;
+        }
+
+        static KnightResponseTag ResponseTags(KnightSpecialAttack attack) => attack switch
+        {
+            KnightSpecialAttack.FirebombReversal => KnightResponseTag.GapClose | KnightResponseTag.SideSwitch | KnightResponseTag.DelayedThreat,
+            KnightSpecialAttack.PoisonSpearTether => KnightResponseTag.AreaDenial | KnightResponseTag.DelayedThreat | KnightResponseTag.RollCatch,
+            KnightSpecialAttack.PoisonRain => KnightResponseTag.AreaDenial | KnightResponseTag.DelayedThreat,
+            KnightSpecialAttack.PoisonCurtain => KnightResponseTag.AreaDenial | KnightResponseTag.DelayedThreat | KnightResponseTag.RollCatch,
+            KnightSpecialAttack.CrimsonTeleportAmbush => KnightResponseTag.GapClose | KnightResponseTag.SideSwitch | KnightResponseTag.RollCatch,
+            KnightSpecialAttack.CrimsonStandard => KnightResponseTag.AreaDenial | KnightResponseTag.RetreatPunish,
+            KnightSpecialAttack.CrimsonAdvance => KnightResponseTag.GapClose | KnightResponseTag.RollCatch,
+            KnightSpecialAttack.FurnacePincer => KnightResponseTag.GapClose | KnightResponseTag.AreaDenial | KnightResponseTag.DelayedThreat,
+            KnightSpecialAttack.RoyalStandard => KnightResponseTag.AreaDenial | KnightResponseTag.RetreatPunish | KnightResponseTag.VerticalCheck,
+            KnightSpecialAttack.StormbreakerEdict => KnightResponseTag.GapClose | KnightResponseTag.VerticalCheck,
+            KnightSpecialAttack.RedCourtProcession => KnightResponseTag.AreaDenial | KnightResponseTag.RetreatPunish | KnightResponseTag.VerticalCheck,
+            _ => KnightResponseTag.None
+        };
+
+        void RecordSelection(KnightSpecialAttack attack)
+        {
+            if (ResponseTags(attack) == KnightResponseTag.None)
+            {
+                return;
+            }
+            recentAttacks[2] = recentAttacks[1];
+            recentAttacks[1] = recentAttacks[0];
+            recentAttacks[0] = attack;
+            recentResponseTags[1] = recentResponseTags[0];
+            recentResponseTags[0] = ResponseTags(attack);
         }
 
         static bool CanStart(NPC npc, Player target, tsorcRevampGlobalNPC globalNPC)
@@ -393,15 +763,25 @@ namespace tsorcRevamp.NPCs
                 && globalNPC.TeleportCountdown <= 0
                 && globalNPC.TeleportAppearanceTimer <= 0
                 && globalNPC.DodgeTimer <= 0
+                && globalNPC.DodgeRecoveryTimer <= 0
                 && globalNPC.PounceTimer <= 0
                 && !globalNPC.Fleeing;
         }
 
         void Begin(NPC npc, Player target, tsorcRevampGlobalNPC globalNPC, KnightSpecialAttack attack)
         {
+            if (attack != KnightSpecialAttack.CrimsonTeleportAmbush)
+            {
+                ClearRedTeleportState(npc, restoreVisibility: false);
+            }
+            RecordSelection(attack);
             Attack = attack;
             Timer = 0;
             Direction = target.Center.X >= npc.Center.X ? 1 : -1;
+            redThrowMovement = npc.ModNPC is Enemies.RedKnight
+                && (attack == KnightSpecialAttack.SpearThrow || attack == KnightSpecialAttack.FirebombThrow)
+                ? ChooseRedThrowMovement(npc, target, Direction)
+                : RedThrowMovement.None;
             LockedTarget = attack == KnightSpecialAttack.CrimsonStandard || attack == KnightSpecialAttack.RoyalStandard
                 ? LockedTarget
                 : target.Center;
@@ -409,6 +789,7 @@ namespace tsorcRevamp.NPCs
             LockedVelocity = Vector2.Zero;
             emberBombProjectileIndex = -1;
             emberReturnDashTimer = -1;
+            crimsonClearanceDelay = 0;
             ArenaBaseRotation = Main.rand.NextFloat(MathHelper.Pi / 12f);
             ArenaRotationDirection = Main.rand.NextBool() ? 1 : -1;
             npc.direction = Direction;
@@ -438,7 +819,12 @@ namespace tsorcRevamp.NPCs
                 DominionEngaged = true;
                 DominionSequenceTimer = 0;
             }
-            tsorcRevampAIs.SpawnTelegraphFlash(npc, TelegraphColor(attack));
+            // Red Knight's universal flash is the commitment cue exactly 30 ticks before damage.
+            // Great Red Knight retains its existing attack-start cues until its deck is rebuilt.
+            if (npc.ModNPC is not Enemies.RedKnight)
+            {
+                tsorcRevampAIs.SpawnTelegraphFlash(npc, TelegraphColor(attack));
+            }
             npc.netUpdate = true;
         }
 
@@ -446,7 +832,11 @@ namespace tsorcRevamp.NPCs
         {
             return attack switch
             {
-                KnightSpecialAttack.PoisonWake => Color.GreenYellow,
+                KnightSpecialAttack.PoisonSpearTether => Color.GreenYellow,
+                KnightSpecialAttack.PoisonArcVolley => Color.GreenYellow,
+                KnightSpecialAttack.PoisonRain => Color.GreenYellow,
+                KnightSpecialAttack.PoisonCurtain => Color.GreenYellow,
+                KnightSpecialAttack.SpectralHandBarrage => Color.White,
                 // Stormbreaker and the Storm Herald both used a cyan/ice-blue accent that no longer
                 // matches anything they draw — every lightning in the kit is crimson now.
                 KnightSpecialAttack.StormbreakerEdict => new Color(226, 40, 52),
@@ -473,15 +863,41 @@ namespace tsorcRevamp.NPCs
             npc.spriteDirection = Direction;
             npc.knockBackResist = 0f;
             npc.velocity.Y = Math.Min(npc.velocity.Y + 0.35f, 10f);
-            SetCombatFlags(globalNPC);
+            SetCombatFlags(npc, globalNPC);
+            npc.knockBackResist = globalNPC.AttackCommitted ? 0f : globalNPC.BaseKnockBackResist;
+            if (npc.ModNPC is Enemies.RedKnight && Timer == RedCommitStart(Attack))
+            {
+                tsorcRevampAIs.SpawnTelegraphFlash(npc, TelegraphColor(Attack));
+            }
 
             switch (Attack)
             {
-                case KnightSpecialAttack.EmberReversal:
-                    TickEmberReversal(npc, target, stats);
+                case KnightSpecialAttack.FirebombReversal:
+                    TickFirebombReversal(npc, target, stats);
                     break;
-                case KnightSpecialAttack.PoisonWake:
-                    TickPoisonWake(npc, target, stats);
+                case KnightSpecialAttack.PoisonSpearTether:
+                    TickPoisonSpearTether(npc, target, stats);
+                    break;
+                case KnightSpecialAttack.SpearThrow:
+                    TickSpearThrow(npc, target, stats);
+                    break;
+                case KnightSpecialAttack.PoisonArcVolley:
+                    TickPoisonArcVolley(npc, target, stats);
+                    break;
+                case KnightSpecialAttack.FirebombThrow:
+                    TickFirebombThrow(npc, target, stats);
+                    break;
+                case KnightSpecialAttack.SpectralHandBarrage:
+                    TickSpectralHandBarrage(npc, target, stats);
+                    break;
+                case KnightSpecialAttack.PoisonRain:
+                    TickPoisonRain(npc, stats);
+                    break;
+                case KnightSpecialAttack.PoisonCurtain:
+                    TickPoisonCurtain(npc, target, stats);
+                    break;
+                case KnightSpecialAttack.CrimsonTeleportAmbush:
+                    TickCrimsonTeleportAmbush(npc, target, stats);
                     break;
                 case KnightSpecialAttack.CrimsonStandard:
                     TickCrimsonStandard(npc, stats);
@@ -498,12 +914,15 @@ namespace tsorcRevamp.NPCs
                 case KnightSpecialAttack.StormbreakerEdict:
                     TickStormbreaker(npc, target, stats);
                     break;
+                case KnightSpecialAttack.RedCourtProcession:
+                    TickRedCourtProcession(npc, target, stats);
+                    break;
                 case KnightSpecialAttack.CrimsonDominion:
                     TickCrimsonDominion(npc, stats);
                     break;
                 case KnightSpecialAttack.FurnaceHerald:
                 case KnightSpecialAttack.StormHerald:
-                    TickHerald(npc, Attack == KnightSpecialAttack.StormHerald);
+                    TickHerald(npc, Attack == KnightSpecialAttack.StormHerald, stats);
                     break;
             }
 
@@ -516,14 +935,15 @@ namespace tsorcRevamp.NPCs
             }
 
             Timer++;
-            if (Main.netMode != NetmodeID.MultiplayerClient && Timer % 60 == 0)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Timer % 60 == 0
+                && !(Attack == KnightSpecialAttack.CrimsonAdvance && crimsonClearanceDelay > 0))
             {
                 npc.netUpdate = true;
             }
 
             // The bomb impact owns the return dash. Once its 16-tick hit window and a short
             // punish window have elapsed, release the knight instead of idling until the safety cap.
-            if (Attack == KnightSpecialAttack.EmberReversal
+            if (Attack == KnightSpecialAttack.FirebombReversal
                 && emberReturnDashTimer >= 0
                 && Timer >= emberReturnDashTimer + 28)
             {
@@ -539,7 +959,7 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
-        void TickEmberReversal(NPC npc, Player target, KnightAttackStats stats)
+        void TickFirebombReversal(NPC npc, Player target, KnightAttackStats stats)
         {
             if (Timer < 45)
             {
@@ -614,37 +1034,335 @@ namespace tsorcRevamp.NPCs
             npc.netUpdate = true;
         }
 
-        void TickPoisonWake(NPC npc, Player target, KnightAttackStats stats)
+        void TickPoisonSpearTether(NPC npc, Player target, KnightAttackStats stats)
         {
-            npc.velocity.X *= 0.8f;
+            if (Timer < 55)
+            {
+                ApproachHorizontalSpeed(npc, Direction, 2.4f, 0.12f);
+            }
+            else if (Timer < 120)
+            {
+                ApproachHorizontalSpeed(npc, Direction, 1.1f, 0.08f);
+            }
+            else if (Timer < 148)
+            {
+                float gather = (Timer - 120f) / 28f;
+                ApproachHorizontalSpeed(npc, Direction, MathHelper.Lerp(1.6f, 5.2f, gather), 0.22f);
+            }
+
+            if (Timer == 30)
+            {
+                const float gravity = 0.26f;
+                const int flightTicks = 36;
+                Vector2 displacement = AuxiliaryTargetA - npc.Center;
+                LockedVelocity = new Vector2(displacement.X / flightTicks,
+                    (displacement.Y - 0.5f * gravity * flightTicks * flightTicks) / flightTicks);
+                npc.netUpdate = true;
+            }
+            if (Timer == 55)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, LockedVelocity,
+                        ModContent.ProjectileType<RedKnightAdderSpear>(), stats.MagicDamage, 0f, Main.myPlayer,
+                        npc.whoAmI, AuxiliaryTargetA.X, AuxiliaryTargetA.Y);
+                }
+                PlaySound(SoundID.Item1 with { Volume = 0.88f, Pitch = -0.15f }, npc.Center);
+                npc.netUpdate = true;
+            }
+            if (Timer >= 92 && Timer < 148 && Main.rand.NextBool(3))
+            {
+                Dust mote = Dust.NewDustPerfect(npc.Center + new Vector2(Direction * 22f, -8f),
+                    DustID.CursedTorch, Main.rand.NextVector2Circular(0.4f, 0.4f), 120,
+                    new Color(142, 210, 24), Main.rand.NextFloat(0.65f, 0.9f));
+                mote.noGravity = true;
+            }
+            if (Timer == 148)
+            {
+                npc.velocity = new Vector2(Direction * 7.5f, -2.4f);
+                SpawnLunge(npc, stats.SpearDamage, 84f, 50f, 18, 4f);
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackCommitted = true;
+                PlaySound(SoundID.Item1 with { Volume = 0.95f, Pitch = 0.08f }, npc.Center);
+                npc.netUpdate = true;
+            }
+        }
+
+        void TickSpearThrow(NPC npc, Player target, KnightAttackStats stats)
+        {
+            if (Timer == 15)
+            {
+                LockedTarget = target.Center;
+                Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
+                npc.netUpdate = true;
+            }
+            RunRedThrowMovement(npc, LockedTarget, 15, 45, 1.5f, 2.1f, 0.1f);
+            if (Timer >= 15 && Timer <= 45)
+            {
+                // The knight is allowed to move after committing its aim. Re-solving from its
+                // actual position keeps both the held-spear angle and the release trajectory exact.
+                LockedVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, LockedTarget, 12.5f,
+                    fallback: true);
+            }
+            if (Timer == 45 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, LockedVelocity,
+                    ModContent.ProjectileType<BlackKnightSpear>(), stats.SpearDamage, 0f,
+                    Main.myPlayer, ai2: 1f);
+                tsorcRevampAIs.RegisterFighterAttack(npc);
+                PlaySound(SoundID.Item1 with { Volume = 0.82f, PitchVariance = 0.08f }, npc.Center);
+            }
+        }
+
+        void TickPoisonArcVolley(NPC npc, Player target, KnightAttackStats stats)
+        {
+            ApproachHorizontalSpeed(npc, Direction, Timer < 60 ? 1.15f : 2f, 0.08f);
             if (Timer == 30)
             {
                 LockedTarget = target.Center;
                 Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
                 npc.netUpdate = true;
             }
-            if (Timer == 60)
+            if (Timer == 60 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                LockedVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, LockedTarget, 13f, fallback: true);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                const int projectileCount = 4;
+                const float spread = MathHelper.Pi / 6f;
+                Vector2 baseVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, LockedTarget,
+                    4.6f, 1.1f, highAngle: true, fallback: true);
+                for (int i = 0; i < projectileCount; i++)
                 {
-                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, LockedVelocity,
-                        ModContent.ProjectileType<BlackKnightSpear>(), stats.SpearDamage, 0f, Main.myPlayer, ai2: 1f);
+                    float angle = i * spread - spread * (projectileCount - 1) * 0.5f;
+                    Vector2 velocity = baseVelocity.RotatedBy(angle);
+                    if (Math.Sign(velocity.X) == Direction)
+                    {
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, velocity,
+                            ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), stats.MagicDamage,
+                            0f, Main.myPlayer, ai2: 1f);
+                    }
                 }
-                PlaySound(SoundID.Item1 with { Volume = 0.8f }, npc.Center);
+                tsorcRevampAIs.RegisterFighterAttack(npc);
+                PlaySound(SoundID.Item20 with { Volume = 0.62f, Pitch = 0.08f }, npc.Center);
+            }
+        }
+
+        void TickFirebombThrow(NPC npc, Player target, KnightAttackStats stats)
+        {
+            if (Timer == 30)
+            {
+                LockedTarget = target.Center;
+                Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
+                PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, npc.Center);
                 npc.netUpdate = true;
             }
-            if (Timer == 120 && Main.netMode != NetmodeID.MultiplayerClient)
+            RunRedThrowMovement(npc, LockedTarget, 30, 60, 1.3f, 2.2f, 0.09f);
+            if (Timer >= 30 && Timer <= 60)
             {
-                Vector2 baseVelocity = LockedVelocity.SafeNormalize(new Vector2(Direction, 0f)) * 7f;
-                for (int side = -1; side <= 1; side += 2)
+                LockedVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, LockedTarget,
+                    15f, 0.2f, highAngle: false, fallback: true);
+            }
+            if (Timer == 60 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, LockedVelocity,
+                    ModContent.ProjectileType<EnemyFirebomb>(), stats.BombDamage, 0f,
+                    Main.myPlayer, ai2: 1f);
+                tsorcRevampAIs.RegisterFighterAttack(npc);
+                PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.4f }, npc.Center);
+            }
+        }
+
+        void TickSpectralHandBarrage(NPC npc, Player target, KnightAttackStats stats)
+        {
+            ApproachHorizontalSpeed(npc, Direction, Timer < 90 ? 0.9f : 1.8f, 0.08f);
+            Lighting.AddLight(npc.Center, Color.WhiteSmoke.ToVector3() * 1.25f);
+            if (Timer == 30)
+            {
+                LockedTarget = target.Center;
+                Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
+                npc.netUpdate = true;
+            }
+            if (Timer >= 60 && Timer < 90 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Vector2 velocity = UsefulFunctions.BallisticTrajectory(npc.Center, LockedTarget, 6f,
+                    fallback: true) + Main.rand.NextVector2Circular(4f, 4f);
+                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, velocity,
+                    ProjectileID.InsanityShadowHostile, stats.GreatDamage, 0f, Main.myPlayer);
+                if (Timer == 60)
                 {
-                    Vector2 velocity = baseVelocity.RotatedBy(side * 0.22f);
-                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, velocity,
-                        ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), stats.MagicDamage,
-                        0f, Main.myPlayer, ai2: 1f);
+                    tsorcRevampAIs.RegisterFighterAttack(npc);
                 }
-                PlaySound(SoundID.Item20 with { Volume = 0.65f, Pitch = 0.15f }, npc.Center);
+                if (Timer % 5 == 0)
+                {
+                    PlaySound(SoundID.Item69 with { Volume = 0.45f, PitchVariance = 0.35f }, npc.Center);
+                }
+            }
+        }
+
+        void TickPoisonRain(NPC npc, KnightAttackStats stats)
+        {
+            ApproachHorizontalSpeed(npc, Direction, Timer < 60 ? 1f : 1.8f, 0.08f);
+
+            if (Timer < 60 && Main.rand.NextBool(3))
+            {
+                Vector2 gatherPoint = npc.Center + new Vector2(Direction * 18f, -8f);
+                Dust mote = Dust.NewDustPerfect(gatherPoint + Main.rand.NextVector2Circular(10f, 10f),
+                    DustID.CursedTorch, Main.rand.NextVector2Circular(0.3f, 0.3f), 120,
+                    new Color(132, 196, 24), Main.rand.NextFloat(0.65f, 0.95f));
+                mote.noGravity = true;
+            }
+
+            if (Timer == 60)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                        ModContent.ProjectileType<RedKnightPoisonRainController>(), stats.MagicDamage,
+                        0f, Main.myPlayer);
+                    tsorcRevampAIs.RegisterFighterAttack(npc);
+                }
+                PlaySound(SoundID.Item20 with { Volume = 0.72f, Pitch = -0.18f }, npc.Center);
+                npc.netUpdate = true;
+            }
+        }
+
+        void TickPoisonCurtain(NPC npc, Player target, KnightAttackStats stats)
+        {
+            ApproachHorizontalSpeed(npc, Direction, Timer < 60 ? 1.1f : 1.9f, 0.08f);
+
+            if (Timer == 30)
+            {
+                LockedTarget = target.Center;
+                Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
+                npc.netUpdate = true;
+            }
+
+            if (Timer < 60 && Main.rand.NextBool(3))
+            {
+                Vector2 gatherPoint = npc.Center + new Vector2(Direction * 18f, -8f);
+                Dust mote = Dust.NewDustPerfect(gatherPoint + Main.rand.NextVector2Circular(10f, 10f),
+                    DustID.CursedTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120,
+                    new Color(146, 204, 26), Main.rand.NextFloat(0.7f, 1f));
+                mote.noGravity = true;
+            }
+
+            if (Timer == 60)
+            {
+                // Fire-time lock: the sweep is thereafter fixed and cannot follow the player.
+                LockedTarget = target.Center;
+                if (Main.netMode != NetmodeID.MultiplayerClient
+                    && RedKnightPoisonCurtainController.HasUsableCurtain(LockedTarget))
+                {
+                    int sweepDirection = Main.rand.NextBool() ? 1 : -1;
+                    Projectile.NewProjectile(npc.GetSource_FromThis(), LockedTarget, Vector2.Zero,
+                        ModContent.ProjectileType<RedKnightPoisonCurtainController>(), stats.MagicDamage,
+                        0f, Main.myPlayer, ai0: sweepDirection);
+                    tsorcRevampAIs.RegisterFighterAttack(npc);
+                }
+                PlaySound(SoundID.Item20 with { Volume = 0.74f, Pitch = -0.08f }, npc.Center);
+                npc.netUpdate = true;
+            }
+        }
+
+        void TickCrimsonTeleportAmbush(NPC npc, Player target, KnightAttackStats stats)
+        {
+            int actualMarkerTick = RedTeleportActualMarkerTick;
+            int snapTick = RedTeleportSnapTick;
+
+            if (Timer == 0)
+            {
+                // Departure is deliberately brief. The destination supplies the meaningful dodge
+                // information, especially for a melee arrival beside the player.
+                SpawnRedTeleportMarker(npc, npc.Center, RedTeleportEntryTellTicks, burst: true);
+                PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.45f }, npc.Center);
+            }
+
+            if (Timer == RedTeleportEntryTellTicks)
+            {
+                redTeleportHidden = true;
+                npc.alpha = 255;
+                npc.dontTakeDamage = true;
+                npc.velocity = Vector2.Zero;
+                npc.netUpdate = true;
+            }
+
+            if (redTeleportHidden)
+            {
+                npc.velocity = Vector2.Zero;
+            }
+
+            if (Timer >= RedTeleportEntryTellTicks
+                && (Timer - RedTeleportEntryTellTicks) % RedTeleportFeintIntervalTicks == 0)
+            {
+                int markerIndex = (Timer - RedTeleportEntryTellTicks) / RedTeleportFeintIntervalTicks;
+                if (markerIndex <= redTeleportFakeCount)
+                {
+                    bool actual = markerIndex == redTeleportFakeCount;
+                    Vector2 markerPosition = actual
+                        ? redTeleportDestination
+                        : markerIndex == 0 ? redTeleportFakeA : redTeleportFakeB;
+                    int markerLifetime = actual ? RedTeleportArrivalTellTicks : RedTeleportFeintIntervalTicks;
+                    SpawnRedTeleportMarker(npc, markerPosition, markerLifetime, burst: actual);
+                    if (!actual && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), markerPosition, Vector2.Zero,
+                            ModContent.ProjectileType<RedKnightTeleportFeintBlast>(),
+                            Math.Max(1, (int)(stats.MagicDamage * 0.75f)), 2f, Main.myPlayer);
+                    }
+                    PlaySound(SoundID.Item74 with
+                    {
+                        Volume = actual ? 0.82f : 0.58f,
+                        Pitch = actual ? -0.1f : 0.18f
+                    }, markerPosition);
+
+                    if (actual)
+                    {
+                        // Aim is committed when the true destination appears, not when RK vanishes.
+                        // Close arrivals therefore expose the complete 60-tick attack line.
+                        LockedTarget = target.Center;
+                        Direction = LockedTarget.X >= redTeleportDestination.X ? 1 : -1;
+                        npc.netUpdate = true;
+                    }
+                }
+            }
+
+            if (Timer == snapTick)
+            {
+                Vector2 oldCenter = npc.Center;
+                npc.Center = redTeleportDestination;
+                redTeleportHidden = false;
+                npc.alpha = 0;
+                npc.dontTakeDamage = false;
+                Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
+                npc.direction = Direction;
+                npc.spriteDirection = Direction;
+                SpawnRedTeleportMarker(npc, oldCenter, 14, burst: false);
+                SpawnRedTeleportMarker(npc, npc.Center, 18, burst: false);
+                PlaySound(SoundID.Item8 with { Volume = 0.9f, Pitch = -0.15f }, npc.Center);
+
+                if (redTeleportPattern == RedTeleportPattern.RetreatThrow)
+                {
+                    LockedVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, LockedTarget,
+                        12.5f, fallback: true);
+                    npc.velocity = new Vector2(Direction * 0.8f, -1.4f);
+                }
+                else
+                {
+                    npc.velocity = new Vector2(Direction * 7.5f, -2.6f);
+                    SpawnLunge(npc, stats.SpearDamage, 82f, 50f,
+                        RedTeleportPincerActiveTicks, 4f);
+                    tsorcRevampAIs.RegisterFighterAttack(npc);
+                    PlaySound(SoundID.Item1 with { Volume = 0.95f, Pitch = 0.08f }, npc.Center);
+                }
+                npc.netUpdate = true;
+            }
+
+            if (redTeleportPattern == RedTeleportPattern.RetreatThrow
+                && Timer == RedTeleportDamageTick
+                && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, LockedVelocity,
+                    ModContent.ProjectileType<BlackKnightSpear>(), stats.SpearDamage, 0f,
+                    Main.myPlayer, ai2: 1f);
+                tsorcRevampAIs.RegisterFighterAttack(npc);
+                PlaySound(SoundID.Item1 with { Volume = 0.88f, Pitch = -0.08f }, npc.Center);
             }
         }
 
@@ -683,8 +1401,32 @@ namespace tsorcRevamp.NPCs
                 Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
                 npc.netUpdate = true;
             }
+            if (Timer < 60)
+            {
+                TryGainCrimsonAdvanceClearance(npc, Direction);
+            }
             if (Timer == 60)
             {
+                if (!HasLungeClearance(npc, Direction, 108f))
+                {
+                    ApproachHorizontalSpeed(npc, Direction, 4.5f, 0.24f);
+                    TryGainCrimsonAdvanceClearance(npc, Direction);
+                    if (++crimsonClearanceDelay <= 45)
+                    {
+                        // Tick() increments after this method; stepping back holds the strike frame
+                        // until the body-width corridor clears without freezing locomotion.
+                        Timer--;
+                    }
+                    else
+                    {
+                        // An actual wall is not a valid lunge. Skip this hit and let the combo move on.
+                        Timer = 79;
+                        crimsonClearanceDelay = 0;
+                    }
+                    return;
+                }
+
+                crimsonClearanceDelay = 0;
                 // Leonhard-style dash: a committed horizontal burst with a small hop, rather than
                 // a ballistic solve that continuously changes shape with target height/distance.
                 LockedVelocity = LeonhardDashVelocity(npc.Center, LockedTarget);
@@ -701,6 +1443,7 @@ namespace tsorcRevamp.NPCs
             {
                 Direction = target.Center.X >= npc.Center.X ? 1 : -1;
                 LockedTarget = target.Center;
+                crimsonClearanceDelay = 0;
                 npc.netUpdate = true;
             }
             if (Timer > 105 && Timer < 135)
@@ -708,9 +1451,27 @@ namespace tsorcRevamp.NPCs
                 float progress = MathHelper.Clamp((Timer - 105f) / 29f, 0f, 1f);
                 ApproachHorizontalSpeed(npc, Direction, MathHelper.Lerp(1.2f, 4.5f, progress),
                     MathHelper.Lerp(0.12f, 0.22f, progress));
+                TryGainCrimsonAdvanceClearance(npc, Direction);
             }
             if (Timer == 135)
             {
+                if (!HasLungeClearance(npc, Direction, 96f))
+                {
+                    ApproachHorizontalSpeed(npc, Direction, 4.2f, 0.22f);
+                    TryGainCrimsonAdvanceClearance(npc, Direction);
+                    if (++crimsonClearanceDelay <= 45)
+                    {
+                        Timer--;
+                    }
+                    else
+                    {
+                        Timer = 156;
+                        crimsonClearanceDelay = 0;
+                    }
+                    return;
+                }
+
+                crimsonClearanceDelay = 0;
                 LockedVelocity = LeonhardDashVelocity(npc.Center, LockedTarget);
                 SpawnLunge(npc, stats.GreatDamage, 96f, 54f, 22, 5.5f);
                 npc.velocity = LockedVelocity;
@@ -763,6 +1524,17 @@ namespace tsorcRevamp.NPCs
         }
 
         const int RoyalFirstThrow = 75;
+        const int StormHeraldLaneCountPerSide = 8;
+        const int StormHeraldLaneSpacing = 48;
+        const int StormHeraldInnermostOffset = 72;
+        const int StormHeraldFirstPairTick = 20;
+        const int StormHeraldPairInterval = 20;
+        const int StormHeraldLaneTelegraphTicks = 20;
+        const int StormHeraldLaneActiveTicks = 12;
+        const int RedCourtLanceCount = 7;
+        const int RedCourtLaneSpacing = 72;
+        const int RedCourtFirstPortalTick = 24;
+        const int RedCourtPortalInterval = 18;
 
         void TickRoyalStandard(NPC npc, Player target, KnightAttackStats stats)
         {
@@ -945,21 +1717,8 @@ namespace tsorcRevamp.NPCs
             {
                 npc.velocity.X = 0f;
             }
-            // The spear is planted, but the knight is NOT a free hit: touching it during the hold
-            // has to hurt. GlobalNPC.CanHitPlayer (NPCs/GlobalNPC.cs:2645) is the ONLY thing that
-            // suppresses contact damage, via DodgeTimer / QuickStepTimer / CombatMeleeActive /
-            // InGuardPressureRecovery. Nothing zeroes NPC.damage anywhere in this kit, so contact
-            // damage just needs those four to be clear.
-            //   - CombatMeleeActive and the guard-pressure recovery are both cleared by the
-            //     ResetCombatTempoSequence(clearRecovery: true) that Begin() already performs, and
-            //     neither can restart while a special attack owns the knight. They are also both
-            //     read-only properties, so they cannot be forced from here.
-            //   - DodgeTimer / QuickStepTimer are settable, so clear them defensively every tick:
-            //     an evasive reaction landing on the same frame as the plant would otherwise make
-            //     the knight briefly intangible in the middle of its own trap.
-            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.DodgeTimer = 0;
-            globalNPC.QuickStepTimer = 0;
+            // RK/GRK bodies no longer deal passive contact damage. Dominion's visible containment
+            // geometry is the trap; touching the planted humanoid sprite itself is safe and honest.
         }
 
         // -------------------------------------------------------------------------------------
@@ -1142,7 +1901,7 @@ namespace tsorcRevamp.NPCs
             PlaySound(SoundID.Item122 with { Volume = 0.7f, Pitch = -0.2f }, npc.Center);
         }
 
-        void TickHerald(NPC npc, bool storm)
+        void TickHerald(NPC npc, bool storm, KnightAttackStats stats)
         {
             npc.velocity.X *= 0.82f;
             Lighting.AddLight(npc.Center,
@@ -1152,31 +1911,97 @@ namespace tsorcRevamp.NPCs
             if (Timer == 0)
             {
                 PlaySound(SoundID.Item74 with { Volume = 0.72f, Pitch = storm ? 0.25f : -0.55f }, npc.Center);
+                if (storm)
+                {
+                    // Lock the pincer grid at cast start so slowing or knockback cannot slide an
+                    // already-readable sequence under the player.
+                    AuxiliaryTargetA = TryFindGround(npc.Bottom, 8, 30, out Vector2 stormGround)
+                        ? stormGround
+                        : npc.Bottom;
+                    npc.netUpdate = true;
+                }
             }
-            else if (Timer == 75)
+            if (!storm && Timer >= 30 && Timer <= 120 && (Timer - 30) % 45 == 0)
             {
-                PlaySound(storm
-                    ? SoundID.Item122 with { Volume = 0.72f, Pitch = -0.15f }
-                    : SoundID.Item20 with { Volume = 0.78f, Pitch = -0.35f }, npc.Center);
+                int wave = (Timer - 30) / 45;
+                SpawnFurnaceHeraldWave(npc, stats.GreatDamage, wave);
+            }
+            if (storm && Timer >= StormHeraldFirstPairTick
+                && Timer < StormHeraldFirstPairTick + StormHeraldLaneCountPerSide * StormHeraldPairInterval
+                && (Timer - StormHeraldFirstPairTick) % StormHeraldPairInterval == 0)
+            {
+                int pair = (Timer - StormHeraldFirstPairTick) / StormHeraldPairInterval;
+                SpawnStormHeraldLanePair(npc, AuxiliaryTargetA, stats.MagicDamage, pair);
+            }
+            if ((!storm && Timer == 75) || (storm && Timer == 80))
+            {
+                if (storm)
+                {
+                    PlaySound(SoundID.Item122 with { Volume = 0.72f, Pitch = -0.15f }, npc.Center);
+                }
                 tsorcRevampAIs.SpawnTelegraphFlash(npc,
                     storm ? new Color(226, 40, 52) : new Color(255, 75, 25));
             }
-            else if (Timer == 135)
+            else if ((!storm && Timer == 135) || (storm && Timer == 160))
             {
                 PlaySound(SoundID.Item1 with { Volume = 0.95f, Pitch = -0.45f }, npc.Center);
             }
         }
 
-        void SetCombatFlags(tsorcRevampGlobalNPC globalNPC)
+        void TickRedCourtProcession(NPC npc, Player target, KnightAttackStats stats)
+        {
+            // Keep the cast mobile. The fixed rig can carry the magic overlay while walking, and
+            // the procession owns its sky geometry independently once it is locked.
+            ApproachHorizontalSpeed(npc, Direction, Timer < 145 ? 1.35f : 2.2f, 0.09f);
+
+            if (Timer == 0)
+            {
+                LockedTarget = target.Center;
+                int sweepDirection = Math.Abs(target.velocity.X) >= 1.2f
+                    ? Math.Sign(target.velocity.X)
+                    : Direction;
+                AuxiliaryTargetB = new Vector2(sweepDirection, 0f);
+                PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.32f }, npc.Center);
+                npc.netUpdate = true;
+            }
+
+            if (Timer >= RedCourtFirstPortalTick
+                && Timer < RedCourtFirstPortalTick + RedCourtLanceCount * RedCourtPortalInterval
+                && (Timer - RedCourtFirstPortalTick) % RedCourtPortalInterval == 0)
+            {
+                int index = (Timer - RedCourtFirstPortalTick) / RedCourtPortalInterval;
+                int sweepDirection = AuxiliaryTargetB.X < 0f ? -1 : 1;
+                float laneOffset = sweepDirection * (index - (RedCourtLanceCount - 1) * 0.5f)
+                    * RedCourtLaneSpacing;
+                if (TryFindCourtPortalOrigin(LockedTarget, laneOffset, out Vector2 origin)
+                    && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    // A slight drift in the procession direction stops the pattern reading as rain
+                    // while retaining a clear vertical dodge lane.
+                    Vector2 lanceVelocity = new Vector2(sweepDirection * 0.45f, 10.5f);
+                    Projectile.NewProjectile(npc.GetSource_FromThis(), origin, lanceVelocity,
+                        ModContent.ProjectileType<RedCourtLancePortal>(), stats.GreatDamage, 0f,
+                        Main.myPlayer, ai0: npc.whoAmI, ai1: index);
+                }
+            }
+
+            if (Timer == RedCourtFirstPortalTick + RedCourtLanceCount * RedCourtPortalInterval)
+            {
+                PlaySound(SoundID.Item1 with { Volume = 0.78f, Pitch = -0.48f }, npc.Center);
+            }
+        }
+
+        void SetCombatFlags(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
             bool committed = Attack switch
             {
-                KnightSpecialAttack.EmberReversal => (Timer >= 45 && Timer < 57)
+                KnightSpecialAttack.FirebombReversal => (Timer >= 45 && Timer < 57)
                     || (Timer >= 115 && Timer <= 122)
                     || (emberReturnDashTimer >= 0 && Timer >= emberReturnDashTimer && Timer < emberReturnDashTimer + 16),
-                KnightSpecialAttack.PoisonWake => (Timer >= 60 && Timer < 67) || (Timer >= 120 && Timer < 126),
+                KnightSpecialAttack.PoisonSpearTether => (Timer >= 55 && Timer < 63) || (Timer >= 148 && Timer < 166),
                 KnightSpecialAttack.CrimsonStandard => Timer >= 69 && Timer < 81,
-                KnightSpecialAttack.CrimsonAdvance => (Timer >= 60 && Timer < 80) || (Timer >= 135 && Timer < 157),
+                KnightSpecialAttack.CrimsonAdvance => crimsonClearanceDelay == 0
+                    && ((Timer >= 60 && Timer < 80) || (Timer >= 135 && Timer < 157)),
                 KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 203,
                 // Brief release commitment around the single fire tick at 75.
                 KnightSpecialAttack.RoyalStandard => Timer >= 69 && Timer < 78,
@@ -1190,7 +2015,49 @@ namespace tsorcRevamp.NPCs
                 && Timer >= DominionHoldTicks - 50;
             globalNPC.AttackCommitted = committed;
             globalNPC.AttackTelegraphing = !committed && !dominionRecovery && !IsHerald && Timer < Duration(Attack) - 20;
+
+            if (npc.ModNPC is Enemies.RedKnight)
+            {
+                int commitStart = RedCommitStart(Attack);
+                int commitEnd = RedCommitEnd(Attack);
+                globalNPC.AttackTelegraphing = Timer < commitStart;
+                globalNPC.AttackCommitted = Timer >= commitStart && Timer < commitEnd;
+            }
         }
+
+        int RedCommitStart(KnightSpecialAttack attack)
+        {
+            int firstDamageTick = attack switch
+            {
+                KnightSpecialAttack.FirebombReversal => 45,
+                KnightSpecialAttack.PoisonSpearTether => 55,
+                KnightSpecialAttack.SpearThrow => 45,
+                KnightSpecialAttack.PoisonArcVolley => 60,
+                KnightSpecialAttack.FirebombThrow => 60,
+                KnightSpecialAttack.SpectralHandBarrage => 60,
+                KnightSpecialAttack.PoisonRain => 60,
+                KnightSpecialAttack.PoisonCurtain => 60,
+                KnightSpecialAttack.CrimsonTeleportAmbush => RedTeleportDamageTick,
+                _ => 30
+            };
+            return Math.Max(0, firstDamageTick - 30);
+        }
+
+        int RedCommitEnd(KnightSpecialAttack attack) => attack switch
+        {
+            KnightSpecialAttack.FirebombReversal => emberReturnDashTimer >= 0
+                ? emberReturnDashTimer + 16
+                : 190,
+            KnightSpecialAttack.PoisonSpearTether => 166,
+            KnightSpecialAttack.SpearThrow => 46,
+            KnightSpecialAttack.PoisonArcVolley => 61,
+            KnightSpecialAttack.FirebombThrow => 61,
+            KnightSpecialAttack.SpectralHandBarrage => 90,
+            KnightSpecialAttack.PoisonRain => 61,
+            KnightSpecialAttack.PoisonCurtain => 61,
+            KnightSpecialAttack.CrimsonTeleportAmbush => RedTeleportDamageTick + RedTeleportPincerActiveTicks,
+            _ => RedCommitStart(attack) + 1
+        };
 
         void Finish(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
@@ -1204,11 +2071,15 @@ namespace tsorcRevamp.NPCs
                 ThirdHeraldComplete = true;
             }
 
+            ClearRedTeleportState(npc, restoreVisibility: true);
+            redThrowMovement = RedThrowMovement.None;
+
             Attack = KnightSpecialAttack.None;
             Timer = 0;
             LockedVelocity = Vector2.Zero;
             emberBombProjectileIndex = -1;
             emberReturnDashTimer = -1;
+            crimsonClearanceDelay = 0;
             globalNPC.AttackTelegraphing = false;
             globalNPC.AttackCommitted = false;
             globalNPC.SetActiveAttackDefenseTraits(npc, AttackDefenseTraits.None);
@@ -1221,7 +2092,7 @@ namespace tsorcRevamp.NPCs
             {
                 // PHASE 1 -> PHASE 2. The hold is over: the knight retracts its spear and goes back
                 // to its narrow Dominion pool. GreatRedKnight gates the full special set and permits
-                // only Crimson Advance, Ember Reversal and its ordinary spear throw.
+                // only Crimson Advance, Firebomb Reversal and its ordinary spear throw.
                 attackCooldown = 90;
             }
             else if (DominionEngaged)
@@ -1235,11 +2106,14 @@ namespace tsorcRevamp.NPCs
 
         void Cancel(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
+            ClearRedTeleportState(npc, restoreVisibility: true);
+            redThrowMovement = RedThrowMovement.None;
             Attack = KnightSpecialAttack.None;
             Timer = 0;
             LockedVelocity = Vector2.Zero;
             emberBombProjectileIndex = -1;
             emberReturnDashTimer = -1;
+            crimsonClearanceDelay = 0;
             globalNPC.AttackTelegraphing = false;
             globalNPC.AttackCommitted = false;
             globalNPC.SetActiveAttackDefenseTraits(npc, AttackDefenseTraits.None);
@@ -1249,40 +2123,92 @@ namespace tsorcRevamp.NPCs
             npc.netUpdate = true;
         }
 
+        void ClearRedTeleportState(NPC npc, bool restoreVisibility)
+        {
+            if (restoreVisibility && redTeleportHidden)
+            {
+                npc.alpha = 0;
+                npc.dontTakeDamage = false;
+                npc.netUpdate = true;
+            }
+            redTeleportPattern = RedTeleportPattern.None;
+            redTeleportFakeCount = 0;
+            redTeleportHidden = false;
+            redTeleportDestination = Vector2.Zero;
+            redTeleportFakeA = Vector2.Zero;
+            redTeleportFakeB = Vector2.Zero;
+        }
+
         static bool IsGreatAttack(KnightSpecialAttack attack)
         {
             return attack >= KnightSpecialAttack.CrimsonAdvance;
         }
 
-        static int Duration(KnightSpecialAttack attack)
+        int RedTeleportActualMarkerTick => RedTeleportEntryTellTicks
+            + redTeleportFakeCount * RedTeleportFeintIntervalTicks;
+
+        int RedTeleportArrivalTellTicks => redTeleportPattern == RedTeleportPattern.RetreatThrow
+            ? RedTeleportRetreatArrivalTellTicks
+            : RedTeleportCloseArrivalTellTicks;
+
+        int RedTeleportSnapTick => RedTeleportActualMarkerTick + RedTeleportArrivalTellTicks;
+
+        int RedTeleportDamageTick => redTeleportPattern == RedTeleportPattern.RetreatThrow
+            ? RedTeleportSnapTick + 18
+            : RedTeleportSnapTick;
+
+        int RedTeleportFinishTick => RedTeleportDamageTick + 34;
+
+        int Duration(KnightSpecialAttack attack)
         {
             return attack switch
             {
-                KnightSpecialAttack.EmberReversal => 220,
-                KnightSpecialAttack.PoisonWake => 170,
+                KnightSpecialAttack.FirebombReversal => 220,
+                KnightSpecialAttack.PoisonSpearTether => 190,
+                KnightSpecialAttack.SpearThrow => 75,
+                KnightSpecialAttack.PoisonArcVolley => 95,
+                KnightSpecialAttack.FirebombThrow => 100,
+                KnightSpecialAttack.SpectralHandBarrage => 120,
+                KnightSpecialAttack.PoisonRain => 90,
+                KnightSpecialAttack.PoisonCurtain => 90,
+                KnightSpecialAttack.CrimsonTeleportAmbush => RedTeleportFinishTick,
                 KnightSpecialAttack.CrimsonStandard => 210,
                 KnightSpecialAttack.CrimsonAdvance => 195,
                 KnightSpecialAttack.FurnacePincer => 230,
                 KnightSpecialAttack.RoyalStandard => 200,
                 KnightSpecialAttack.StormbreakerEdict => 200,
+                KnightSpecialAttack.RedCourtProcession => 220,
                 // Dominion's BLOCKING part is now only the plant-and-hold. Everything that used to
                 // fill the other 420 ticks (containment ring, arena-edge barrage, escape nova) is
                 // either gone or moved: the lightning is an ongoing loop and the nova is the death
                 // animation. See the phase notes at the top of this class.
                 KnightSpecialAttack.CrimsonDominion => DominionHoldTicks,
                 KnightSpecialAttack.FurnaceHerald => 150,
-                KnightSpecialAttack.StormHerald => 150,
+                // 20t opening charge; pair telegraphs begin every 20t through tick 160, the last
+                // pair detonates at 180, then the boss has 30t of readable recovery.
+                KnightSpecialAttack.StormHerald => 210,
                 _ => 1
             };
         }
 
         public KnightHeldProp HeldProp => Attack switch
         {
-            KnightSpecialAttack.EmberReversal when Timer < 65 => KnightHeldProp.Spear,
-            KnightSpecialAttack.EmberReversal when Timer <= 120 => KnightHeldProp.Bomb,
-            KnightSpecialAttack.EmberReversal => KnightHeldProp.Spear,
-            KnightSpecialAttack.PoisonWake when Timer < 60 => KnightHeldProp.Spear,
-            KnightSpecialAttack.PoisonWake when Timer < 120 => KnightHeldProp.Magic,
+            KnightSpecialAttack.FirebombReversal when Timer < 65 => KnightHeldProp.Spear,
+            KnightSpecialAttack.FirebombReversal when Timer <= 120 => KnightHeldProp.Bomb,
+            KnightSpecialAttack.FirebombReversal => KnightHeldProp.Spear,
+            KnightSpecialAttack.PoisonSpearTether when Timer <= 55 => KnightHeldProp.Spear,
+            KnightSpecialAttack.PoisonSpearTether when Timer < 148 => KnightHeldProp.Magic,
+            KnightSpecialAttack.PoisonSpearTether => KnightHeldProp.Spear,
+            KnightSpecialAttack.SpearThrow when Timer <= 45 => KnightHeldProp.Spear,
+            KnightSpecialAttack.PoisonArcVolley when Timer <= 60 => KnightHeldProp.Magic,
+            KnightSpecialAttack.FirebombThrow when Timer <= 60 => KnightHeldProp.Bomb,
+            KnightSpecialAttack.SpectralHandBarrage when Timer < 90 => KnightHeldProp.Spectral,
+            KnightSpecialAttack.PoisonRain when Timer <= 60 => KnightHeldProp.Magic,
+            KnightSpecialAttack.PoisonCurtain when Timer <= 60 => KnightHeldProp.Magic,
+            KnightSpecialAttack.CrimsonTeleportAmbush when Timer >= RedTeleportActualMarkerTick
+                && Timer <= (redTeleportPattern == RedTeleportPattern.RetreatThrow
+                    ? RedTeleportDamageTick
+                    : RedTeleportDamageTick + RedTeleportPincerActiveTicks) => KnightHeldProp.Spear,
             // Tick() processes the attack before incrementing Timer, so state 75 is still the
             // final pre-release draw frame. Keep the spear visible until that fire tick executes.
             KnightSpecialAttack.CrimsonStandard when Timer <= 75 => KnightHeldProp.Spear,
@@ -1291,6 +2217,7 @@ namespace tsorcRevamp.NPCs
             KnightSpecialAttack.FurnacePincer when Timer >= 105 && Timer < 205 => KnightHeldProp.Spear,
             KnightSpecialAttack.RoyalStandard when Timer <= RoyalFirstThrow => KnightHeldProp.Spear,
             KnightSpecialAttack.StormbreakerEdict when Timer < 122 => KnightHeldProp.Spear,
+            KnightSpecialAttack.RedCourtProcession when Timer < 170 => KnightHeldProp.Magic,
             KnightSpecialAttack.CrimsonDominion => KnightHeldProp.Spear,
             _ => KnightHeldProp.None
         };
@@ -1308,7 +2235,20 @@ namespace tsorcRevamp.NPCs
             {
                 direction = Vector2.UnitY;
             }
-            else if (Attack == KnightSpecialAttack.PoisonWake && LockedTarget != Vector2.Zero && Timer >= 20)
+            else if (Attack == KnightSpecialAttack.PoisonSpearTether && AuxiliaryTargetA != Vector2.Zero && Timer >= 20)
+            {
+                direction = LockedVelocity.LengthSquared() > 0.1f
+                    ? LockedVelocity
+                    : AuxiliaryTargetA - handWorld;
+            }
+            else if (Attack == KnightSpecialAttack.SpearThrow && Timer >= 15)
+            {
+                direction = LockedVelocity.LengthSquared() > 0.1f
+                    ? LockedVelocity
+                    : LockedTarget - handWorld;
+            }
+            else if (Attack == KnightSpecialAttack.CrimsonTeleportAmbush
+                && Timer >= RedTeleportActualMarkerTick)
             {
                 direction = LockedVelocity.LengthSquared() > 0.1f
                     ? LockedVelocity
@@ -1333,7 +2273,7 @@ namespace tsorcRevamp.NPCs
                 {
                     return PulseWindow(Timer, 60, 76, 24f);
                 }
-                if (Attack == KnightSpecialAttack.EmberReversal)
+                if (Attack == KnightSpecialAttack.FirebombReversal)
                 {
                     float openingThrust = PulseWindow(Timer, 45, 57, 14f);
                     float returnThrust = emberReturnDashTimer >= 0
@@ -1362,13 +2302,21 @@ namespace tsorcRevamp.NPCs
 
         public bool SpearDamageWake => Attack switch
         {
-            KnightSpecialAttack.EmberReversal => (Timer >= 45 && Timer < 57)
+            KnightSpecialAttack.FirebombReversal => (Timer >= 45 && Timer < 57)
                 || (emberReturnDashTimer >= 0 && Timer >= emberReturnDashTimer && Timer < emberReturnDashTimer + 16),
             KnightSpecialAttack.CrimsonAdvance => (Timer >= 60 && Timer < 80) || (Timer >= 135 && Timer < 157),
             KnightSpecialAttack.FurnacePincer => Timer >= 165 && Timer < 203,
             KnightSpecialAttack.StormbreakerEdict => Timer >= 60 && Timer < 76,
+            KnightSpecialAttack.CrimsonTeleportAmbush when redTeleportPattern != RedTeleportPattern.RetreatThrow
+                => Timer >= RedTeleportSnapTick
+                    && Timer < RedTeleportSnapTick + RedTeleportPincerActiveTicks,
             _ => false
         };
+
+        public bool IsSpectralHandBarrage => Attack == KnightSpecialAttack.SpectralHandBarrage;
+        public float SpectralGatherProgress => IsSpectralHandBarrage
+            ? MathHelper.Clamp(Timer / 60f, 0f, 1f)
+            : 0f;
 
         public float TelegraphProgress
         {
@@ -1376,20 +2324,29 @@ namespace tsorcRevamp.NPCs
             {
                 int telegraph = Attack switch
                 {
-                    KnightSpecialAttack.EmberReversal => 45,
-                    KnightSpecialAttack.PoisonWake => Timer < 60 ? 60 : 120,
+                    KnightSpecialAttack.FirebombReversal => 45,
+                    KnightSpecialAttack.PoisonSpearTether => Timer < 55 ? 55 : 148,
+                    KnightSpecialAttack.SpearThrow => 45,
+                    KnightSpecialAttack.PoisonArcVolley => 60,
+                    KnightSpecialAttack.FirebombThrow => 60,
+                    KnightSpecialAttack.SpectralHandBarrage => 60,
+                    KnightSpecialAttack.PoisonRain => 60,
+                    KnightSpecialAttack.PoisonCurtain => 60,
+                    KnightSpecialAttack.CrimsonTeleportAmbush => RedTeleportDamageTick,
                     KnightSpecialAttack.CrimsonStandard => 75,
                     KnightSpecialAttack.CrimsonAdvance => Timer < 60 ? 60 : 135,
                     KnightSpecialAttack.FurnacePincer => Timer < 60 ? 60 : 165,
                     KnightSpecialAttack.RoyalStandard => 75,
                     KnightSpecialAttack.StormbreakerEdict => 60,
+                    KnightSpecialAttack.RedCourtProcession => RedCourtFirstPortalTick,
                     KnightSpecialAttack.CrimsonDominion => 90,
-                    KnightSpecialAttack.FurnaceHerald or KnightSpecialAttack.StormHerald => 150,
+                    KnightSpecialAttack.FurnaceHerald => 150,
+                    KnightSpecialAttack.StormHerald => 210,
                     _ => 1
                 };
                 int start = Attack switch
                 {
-                    KnightSpecialAttack.PoisonWake when Timer >= 60 => 60,
+                    KnightSpecialAttack.PoisonSpearTether when Timer >= 55 => 55,
                     KnightSpecialAttack.CrimsonAdvance when Timer >= 60 => 105,
                     KnightSpecialAttack.FurnacePincer when Timer >= 60 => 105,
                     _ => 0
@@ -1426,9 +2383,399 @@ namespace tsorcRevamp.NPCs
             return new Vector2(direction * speed, -3f);
         }
 
+        /// <summary>
+        /// Crimson Advance owns movement while active, so the shared pathfinder cannot supply its
+        /// usual step jump. Measure a short obstacle directly in the committed direction and use
+        /// v = sqrt(2gh) to request only enough lift to clear it under this controller's 0.35 gravity.
+        /// </summary>
+        static void TryGainCrimsonAdvanceClearance(NPC npc, int direction)
+        {
+            // Tick() has already applied this attack controller's 0.35 gravity, so a grounded NPC
+            // arrives here with +0.35 Y velocity and collideY still carrying the ground contact.
+            if (!npc.collideY || npc.velocity.Y < -0.01f)
+            {
+                return;
+            }
+
+            int frontTileX = (int)((direction > 0 ? npc.Right.X + 6f : npc.Left.X - 6f) / 16f);
+            int feetTileY = (int)((npc.Bottom.Y - 2f) / 16f);
+            int obstacleTiles = 0;
+            for (int y = feetTileY; y >= feetTileY - 2; y--)
+            {
+                if (!WorldGen.InWorld(frontTileX, y) || !WorldGen.SolidTile(frontTileX, y))
+                {
+                    break;
+                }
+                obstacleTiles++;
+            }
+
+            if (obstacleTiles == 0)
+            {
+                return;
+            }
+
+            const float gravityPerTick = 0.35f;
+            float clearanceHeight = obstacleTiles * 16f + 8f;
+            float requiredSpeed = MathF.Sqrt(2f * gravityPerTick * clearanceHeight) + gravityPerTick;
+            float maxJumpPower = npc.GetGlobalNPC<tsorcRevampGlobalNPC>().MaxJumpPower;
+            if (requiredSpeed <= maxJumpPower)
+            {
+                npc.velocity.Y = -requiredSpeed;
+                npc.netUpdate = true;
+            }
+        }
+
+        static bool HasLungeClearance(NPC npc, int direction, float distance)
+        {
+            for (float offset = 8f; offset <= distance; offset += 8f)
+            {
+                // Lift the probe two pixels so ordinary floor contact is not mistaken for a wall.
+                Vector2 probe = npc.position + new Vector2(direction * offset, -2f);
+                if (Collision.SolidCollision(probe, npc.width, npc.height))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        bool TryPlanRedTeleport(NPC npc, Player target, out RedTeleportPattern pattern,
+            out Vector2 destination, out Vector2 fakeA, out Vector2 fakeB, out int fakeCount)
+        {
+            pattern = RedTeleportPattern.None;
+            destination = Vector2.Zero;
+            fakeA = Vector2.Zero;
+            fakeB = Vector2.Zero;
+            fakeCount = 0;
+
+            float distance = npc.Distance(target.Center);
+            int currentSide = npc.Center.X < target.Center.X ? -1 : 1;
+            if (distance >= 420f)
+            {
+                pattern = RedTeleportPattern.GapClose;
+                return TryFindAuthoredTeleportLanding(npc, target,
+                    target.Center.X + currentSide * 84f, out destination);
+            }
+
+            float roll = Main.rand.NextFloat();
+            if (roll < 0.14f)
+            {
+                pattern = RedTeleportPattern.FeintPincer;
+                int arrivalSide = -currentSide;
+                if (!TryFindAuthoredTeleportLanding(npc, target,
+                    target.Center.X + arrivalSide * 78f, out destination))
+                {
+                    pattern = RedTeleportPattern.None;
+                    return false;
+                }
+
+                // Fake markers alternate sides and are themselves terrain-valid, so the visual
+                // never promises an impossible emergence inside a wall. The true marker still
+                // receives the full close-arrival tell after the second 45-tick blast cadence.
+                fakeCount = 2;
+                int firstFakeSide = currentSide;
+                if (!TryFindAuthoredTeleportLanding(npc, target,
+                    target.Center.X + firstFakeSide * RedTeleportFeintOffset, out fakeA)
+                    || Vector2.Distance(fakeA, target.Center) > RedKnightTeleportFeintBlast.Radius)
+                {
+                    fakeCount = 0;
+                    pattern = RedTeleportPattern.Pincer;
+                    return true;
+                }
+                if (!TryFindAuthoredTeleportLanding(npc, target,
+                    target.Center.X - firstFakeSide * RedTeleportFeintOffset, out fakeB)
+                    || Vector2.Distance(fakeB, target.Center) > RedKnightTeleportFeintBlast.Radius
+                    || Vector2.Distance(fakeA, fakeB) < RedTeleportFeintMinimumSeparation)
+                {
+                    fakeCount = 0;
+                    pattern = RedTeleportPattern.Pincer;
+                }
+                return true;
+            }
+
+            if (roll < 0.46f)
+            {
+                pattern = RedTeleportPattern.RetreatThrow;
+                if (TryFindAuthoredTeleportLanding(npc, target,
+                    target.Center.X + currentSide * 270f, out destination))
+                {
+                    return true;
+                }
+            }
+
+            pattern = RedTeleportPattern.Pincer;
+            if (TryFindAuthoredTeleportLanding(npc, target,
+                target.Center.X - currentSide * 78f, out destination))
+            {
+                return true;
+            }
+
+            // If the arena cannot support a safe crossover, retain the authored card but turn it
+            // into a same-side gap close. Never materialize inside tiles or overlap the player.
+            pattern = RedTeleportPattern.GapClose;
+            return TryFindAuthoredTeleportLanding(npc, target,
+                target.Center.X + currentSide * 84f, out destination);
+        }
+
+        static bool TryFindAuthoredTeleportLanding(NPC npc, Player target, float desiredX,
+            out Vector2 destination)
+        {
+            int desiredSide = desiredX < target.Center.X ? -1 : 1;
+            for (int radius = 0; radius <= 4; radius++)
+            {
+                for (int signIndex = 0; signIndex < (radius == 0 ? 1 : 2); signIndex++)
+                {
+                    int sign = signIndex == 0 ? 1 : -1;
+                    float x = desiredX + sign * radius * 16f;
+                    if ((x - target.Center.X) * desiredSide < 52f)
+                    {
+                        continue;
+                    }
+                    if (!TryFindGround(new Vector2(x, target.Bottom.Y), 10, 26,
+                        out Vector2 surface))
+                    {
+                        continue;
+                    }
+
+                    Vector2 center = new Vector2(surface.X, surface.Y - npc.height * 0.5f);
+                    Vector2 topLeft = center - new Vector2(npc.width, npc.height) * 0.5f;
+                    if (Collision.SolidCollision(topLeft, npc.width, npc.height)
+                        || Math.Abs(center.Y - target.Center.Y) > 128f
+                        || !Collision.CanHitLine(center, 2, 2, target.Center, 2, 2))
+                    {
+                        continue;
+                    }
+                    destination = center;
+                    return true;
+                }
+            }
+            destination = Vector2.Zero;
+            return false;
+        }
+
+        static void SpawnRedTeleportMarker(NPC npc, Vector2 position, int lifetime, bool burst)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            float radius = Math.Max(npc.width, npc.height) * 0.75f;
+            Projectile mist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), position,
+                Vector2.Zero, ModContent.ProjectileType<TeleportMistLinger>(),
+                0, 0f, Main.myPlayer, 1f, radius);
+            mist.timeLeft = Math.Max(4, lifetime);
+            mist.netUpdate = true;
+            if (burst)
+            {
+                Projectile.NewProjectile(npc.GetSource_FromThis(), position, Vector2.Zero,
+                    ModContent.ProjectileType<FireTeleportBlast>(),
+                    0, 0f, Main.myPlayer);
+            }
+        }
+
+        void SpawnFurnaceHeraldWave(NPC npc, int damage, int wave)
+        {
+            const int projectileCount = 16;
+            const float activeTravelTicks = 42f;
+            float travelDistance = 150f * (wave + 1);
+            float speed = travelDistance / activeTravelTicks;
+            float angleOffset = ArenaBaseRotation + wave * (MathHelper.Pi / projectileCount);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int i = 0; i < projectileCount; i++)
+                {
+                    float angle = angleOffset + i * MathHelper.TwoPi / projectileCount;
+                    Vector2 velocity = angle.ToRotationVector2() * speed;
+                    int spinDirection = (i + wave) % 2 == 0 ? 1 : -1;
+                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, velocity,
+                        ModContent.ProjectileType<DestinedDeathBlaze>(), damage, 1.5f, Main.myPlayer,
+                        ai0: spinDirection, ai1: 2f, ai2: travelDistance);
+                }
+            }
+
+            if (!Main.dedServ)
+            {
+                for (int i = 0; i < 24; i++)
+                {
+                    float angle = angleOffset + i * MathHelper.TwoPi / 24f;
+                    Vector2 outward = angle.ToRotationVector2();
+                    Dust dust = Dust.NewDustPerfect(npc.Center + outward * 24f,
+                        i % 2 == 0 ? DustID.Blood : DustID.Wraith,
+                        outward * Main.rand.NextFloat(2.2f, 4.4f), 100,
+                        new Color(198, 14, 30), Main.rand.NextFloat(0.9f, 1.35f));
+                    dust.noGravity = true;
+                }
+            }
+
+            PlaySound(SoundID.Item74 with
+            {
+                Volume = 0.72f,
+                Pitch = -0.35f + wave * 0.12f
+            }, npc.Center);
+        }
+
+        static void SpawnStormHeraldLanePair(NPC npc, Vector2 gridCenter, int damage, int pair)
+        {
+            int stepsFromCenter = StormHeraldLaneCountPerSide - 1 - pair;
+            float offset = StormHeraldInnermostOffset + stepsFromCenter * StormHeraldLaneSpacing;
+            Vector2 leftProbe = gridCenter - new Vector2(offset, 0f);
+            Vector2 rightProbe = gridCenter + new Vector2(offset, 0f);
+
+            // The pair is one combat beat. If terrain cannot support both halves, omit both rather
+            // than presenting an asymmetric pincer or anchoring a damaging line in mid-air.
+            if (!TryFindGround(leftProbe, 12, 30, out Vector2 leftGround)
+                || !TryFindGround(rightProbe, 12, 30, out Vector2 rightGround))
+            {
+                return;
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(npc.GetSource_FromThis(), leftGround, new Vector2(0f, -1f),
+                    ModContent.ProjectileType<RedKnightLightningLane>(), damage, 0f, Main.myPlayer,
+                    ai0: StormHeraldLaneTelegraphTicks, ai1: StormHeraldLaneActiveTicks, ai2: 620f);
+                // Negative active duration means "silent twin" to RedKnightLightningLane. Collision
+                // still uses its absolute value, but the simultaneous pair produces one impact cue.
+                Projectile.NewProjectile(npc.GetSource_FromThis(), rightGround, new Vector2(0f, -1f),
+                    ModContent.ProjectileType<RedKnightLightningLane>(), damage, 0f, Main.myPlayer,
+                    ai0: StormHeraldLaneTelegraphTicks, ai1: -StormHeraldLaneActiveTicks, ai2: 620f);
+            }
+        }
+
+        static RedThrowMovement ChooseRedThrowMovement(NPC npc, Player target, int facing)
+        {
+            float signedDistance = (target.Center.X - npc.Center.X) * facing;
+            bool canRetreat = HasSafeRedThrowHop(npc, target.Center, facing, -facing,
+                RedThrowRetreatSpeed, advancing: false);
+            bool canAdvance = HasSafeRedThrowHop(npc, target.Center, facing, facing,
+                RedThrowAdvanceSpeed, advancing: true);
+            bool canRise = HasSafeRedThrowHop(npc, target.Center, facing, facing, 0.8f,
+                advancing: false);
+
+            // Distance supplies the tactical bias, while the random branch keeps the same range
+            // from always announcing the same answer. Every airborne option has already passed a
+            // full predicted-body path and landing test.
+            if (signedDistance < 240f && canRetreat && Main.rand.NextFloat() < 0.72f)
+            {
+                return RedThrowMovement.RetreatHop;
+            }
+            if (signedDistance > 360f && canAdvance && Main.rand.NextFloat() < 0.72f)
+            {
+                return RedThrowMovement.AdvanceHop;
+            }
+
+            int airborneChoice = Main.rand.Next(4);
+            if (airborneChoice == 0 && canRise)
+            {
+                return RedThrowMovement.VerticalHop;
+            }
+            if (airborneChoice == 1 && canRetreat)
+            {
+                return RedThrowMovement.RetreatHop;
+            }
+            if (airborneChoice == 2 && canAdvance)
+            {
+                return RedThrowMovement.AdvanceHop;
+            }
+            return RedThrowMovement.GroundAdvance;
+        }
+
+        void RunRedThrowMovement(NPC npc, Vector2 target, int hopTick, int releaseTick,
+            float approachSpeed, float recoverySpeed, float acceleration)
+        {
+            if (redThrowMovement == RedThrowMovement.None
+                || redThrowMovement == RedThrowMovement.GroundAdvance)
+            {
+                ApproachHorizontalSpeed(npc, Direction,
+                    Timer < releaseTick ? approachSpeed : recoverySpeed, acceleration);
+                return;
+            }
+
+            int travelDirection = redThrowMovement == RedThrowMovement.RetreatHop ? -Direction : Direction;
+            float travelSpeed = redThrowMovement switch
+            {
+                RedThrowMovement.RetreatHop => RedThrowRetreatSpeed,
+                RedThrowMovement.AdvanceHop => RedThrowAdvanceSpeed,
+                _ => 0.8f
+            };
+
+            if (Timer < hopTick)
+            {
+                ApproachHorizontalSpeed(npc, Direction, approachSpeed, acceleration);
+                return;
+            }
+            if (Timer == hopTick)
+            {
+                if (npc.velocity.Y != 0f || !HasSafeRedThrowHop(npc, target, Direction,
+                    travelDirection, travelSpeed, redThrowMovement == RedThrowMovement.AdvanceHop))
+                {
+                    redThrowMovement = RedThrowMovement.GroundAdvance;
+                    ApproachHorizontalSpeed(npc, Direction, approachSpeed, acceleration);
+                    npc.netUpdate = true;
+                    return;
+                }
+
+                npc.velocity = new Vector2(travelDirection * travelSpeed, -RedThrowHopSpeedY);
+                npc.netUpdate = true;
+                return;
+            }
+
+            if (Timer <= releaseTick)
+            {
+                // Air control is intentionally absent: takeoff fixes the facing and horizontal
+                // commitment. If the terrain makes it land a beat early, it keeps coasting in the
+                // original direction instead of snapping around before release.
+                if (npc.velocity.Y == 0f)
+                {
+                    ApproachHorizontalSpeed(npc, travelDirection, Math.Max(0.8f, travelSpeed * 0.5f),
+                        acceleration * 0.5f);
+                }
+                return;
+            }
+
+            ApproachHorizontalSpeed(npc, Direction, recoverySpeed, acceleration);
+        }
+
+        static bool HasSafeRedThrowHop(NPC npc, Vector2 target, int facing, int travelDirection,
+            float horizontalSpeed, bool advancing)
+        {
+            int flightTicks = (int)Math.Ceiling(2f * RedThrowHopSpeedY / RedThrowGravity);
+            float landingX = npc.Center.X + travelDirection * horizontalSpeed * flightTicks;
+            if (advancing
+                && (target.X - landingX) * facing < RedThrowMinimumForwardClearance)
+            {
+                return false;
+            }
+
+            // Check the whole body along the predicted parabola, not just a headroom ray. This
+            // rejects low ceilings, walls and ledges that cannot actually receive the knight.
+            for (int tick = 4; tick < flightTicks; tick += 4)
+            {
+                float x = npc.Center.X + travelDirection * horizontalSpeed * tick;
+                float y = npc.Center.Y - RedThrowHopSpeedY * tick
+                    + 0.5f * RedThrowGravity * tick * tick;
+                Vector2 topLeft = new Vector2(x - npc.width * 0.5f, y - npc.height * 0.5f);
+                if (Collision.SolidCollision(topLeft, npc.width, npc.height))
+                {
+                    return false;
+                }
+            }
+
+            if (!TryFindGround(new Vector2(landingX, npc.Bottom.Y), 5, 8, out Vector2 surface)
+                || Math.Abs(surface.Y - npc.Bottom.Y) > 64f)
+            {
+                return false;
+            }
+            Vector2 landingTopLeft = new Vector2(landingX - npc.width * 0.5f,
+                surface.Y - npc.height - 2f);
+            return !Collision.SolidCollision(landingTopLeft, npc.width, npc.height);
+        }
+
         static bool IsMobileMeleeAttack(KnightSpecialAttack attack)
         {
-            return attack == KnightSpecialAttack.EmberReversal
+            return attack == KnightSpecialAttack.FirebombReversal
                 || attack == KnightSpecialAttack.CrimsonAdvance
                 || attack == KnightSpecialAttack.FurnacePincer
                 || attack == KnightSpecialAttack.StormbreakerEdict;
@@ -1471,6 +2818,31 @@ namespace tsorcRevamp.NPCs
             {
                 SoundEngine.PlaySound(sound, position);
             }
+        }
+
+        static bool TryFindCourtPortalOrigin(Vector2 lockedCenter, float horizontalOffset, out Vector2 origin)
+        {
+            Vector2 laneTarget = lockedCenter + new Vector2(horizontalOffset, 0f);
+            // Start high and walk downward until the entire lane to the locked player position is
+            // open. This puts the portal below low ceilings instead of materializing a lance in tile.
+            for (int step = 0; step <= 11; step++)
+            {
+                // About 300px above the locked player is still visibly "sky" at gameplay zoom,
+                // but unlike the old rain height it keeps the portal itself inside the camera.
+                Vector2 candidate = new Vector2(laneTarget.X, lockedCenter.Y - 300f + step * 16f);
+                if (candidate.Y > lockedCenter.Y - 120f)
+                {
+                    break;
+                }
+                if (!Collision.SolidCollision(candidate - new Vector2(10f), 20, 20)
+                    && Collision.CanHitLine(candidate, 2, 2, laneTarget, 2, 2))
+                {
+                    origin = candidate;
+                    return true;
+                }
+            }
+            origin = Vector2.Zero;
+            return false;
         }
 
         internal static bool TryFindGround(Vector2 around, int searchUpTiles, int searchDownTiles, out Vector2 surface)
@@ -1516,6 +2888,13 @@ namespace tsorcRevamp.NPCs
             writer.Write(DominionEngaged);
             writer.Write(DominionSequenceTimer);
             writer.Write(emberReturnDashTimer);
+            writer.Write((byte)redTeleportPattern);
+            writer.Write((byte)redThrowMovement);
+            writer.Write((byte)redTeleportFakeCount);
+            writer.Write(redTeleportHidden);
+            WriteVector(writer, redTeleportDestination);
+            WriteVector(writer, redTeleportFakeA);
+            WriteVector(writer, redTeleportFakeB);
         }
 
         public void Receive(BinaryReader reader)
@@ -1535,6 +2914,13 @@ namespace tsorcRevamp.NPCs
             DominionEngaged = reader.ReadBoolean();
             DominionSequenceTimer = reader.ReadInt32();
             emberReturnDashTimer = reader.ReadInt32();
+            redTeleportPattern = (RedTeleportPattern)reader.ReadByte();
+            redThrowMovement = (RedThrowMovement)reader.ReadByte();
+            redTeleportFakeCount = reader.ReadByte();
+            redTeleportHidden = reader.ReadBoolean();
+            redTeleportDestination = ReadVector(reader);
+            redTeleportFakeA = ReadVector(reader);
+            redTeleportFakeB = ReadVector(reader);
         }
 
         static void WriteVector(BinaryWriter writer, Vector2 value)
