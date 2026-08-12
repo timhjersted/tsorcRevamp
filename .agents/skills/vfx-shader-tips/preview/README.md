@@ -32,13 +32,16 @@ the single-tile sheet, and you certainly cannot tell from the filenames.
 
 ## 2. `Preview.cs` — render the shader before you ship it
 
-```bash
-cd .agents/skills/vfx-shader-tips/preview && dotnet run     # writes preview.png
+```powershell
+cd .agents/skills/vfx-shader-tips/preview
+$env:PREVIEW_NAME = 'GigasSunPillar'; dotnet run  # archives GigasSunPillar-YYYYMMDD-HHMMSS.png
 ```
 
 Port each pixel-shader function to C# (the helpers are named `sat` / `lerp` / `V2` / `V3` / `C(r,g,b)`
 so it is close to copy-paste), list it in `Panels()` with its **real** draw size and blend mode, and
-run. Each panel renders over a bright daytime sky **and** a dark cave, side by side.
+run. Set `PREVIEW_NAME` to the shader or effect family being examined: it is embedded in the sheet
+and filename, so each render is retained instead of overwriting `preview.png`. Each panel renders
+over a bright daytime sky **and** a dark cave, side by side.
 
 That two-background split is the point. See §42–§43 of `../SKILL.md` for why.
 

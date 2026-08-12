@@ -19,6 +19,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 
 static class Preview
 {
@@ -139,12 +140,16 @@ static class Preview
 
     // ---- Effects/RedKnightDestinedDeath.fx --------------------------------------------------
     // Sampler bindings must match RedKnightVFX.DrawDestinedDeathQuad exactly.
-    static Tex MacroSampler, DetailSampler;
+    static Tex MacroSampler, DetailSampler, SolarMacroSampler, SolarDetailSampler, SolarFlameSampler, LightHandSampler;
 
     static void LoadTextures()
     {
         MacroSampler = new Tex("T_Noise_6Yu1");
         DetailSampler = new Tex("Turbulence_07-512x512");
+        SolarMacroSampler = new Tex("SmoothNoise");
+        SolarDetailSampler = new Tex("Turbulence_06-512x512");
+        SolarFlameSampler = new Tex("T_FirePanningCyl45");
+        LightHandSampler = new Tex("T_NitoGraveHand");
         CrimsonFlowSampler = new Tex("Turbulence_05-512x512");
     }
 
@@ -300,6 +305,163 @@ static class Preview
         return (rgb, alpha);
     }
 
+    // ---- Effects/GigasSunPillar.fx -----------------------------------------------------------
+    static (V3, float) GigasSunPillar(V2 uv, float Time, float Progress, float Active, float Opacity)
+    {
+        float across = abs(uv.x - 0.5f);
+        float macro = MacroSampler.R(new V2(uv.x * 2.7f - Time * 0.06f, uv.y * 1.15f - Time * 0.46f));
+        float detail = DetailSampler.R(new V2(uv.x * 7.1f + Time * 0.19f, uv.y * 2.25f + Time * 0.92f));
+        float shape = sat(macro * 1.22f - 0.16f);
+        float shimmer = sat(macro * 0.68f + detail * 0.52f - 0.12f);
+        float reach = 0.240f + shape * 0.035f;
+        float body = sat((reach - across) * 8.5f);
+        float core = sat((0.052f - across) * 24.0f) * (0.70f + detail * 0.30f);
+        float halo = sat((reach + 0.055f - across) * 4.6f) * (0.45f + shimmer * 0.55f);
+        float telegraphReveal = sat((Progress - (1.0f - uv.y)) * 9.0f);
+        float activeReveal = telegraphReveal + (1.0f - telegraphReveal) * Active;
+        float axialFade = sat(uv.y * 18.0f) * sat((1.0f - uv.y) * 7.0f);
+        float telegraphHeat = body * (0.13f + shimmer * 0.13f) + halo * 0.07f;
+        float strikeHeat = body * (0.50f + shimmer * 0.42f) + core * 0.92f + halo * 0.17f;
+        float heat = (telegraphHeat + (strikeHeat - telegraphHeat) * Active) * activeReveal * axialFade;
+        V3 color = lerp(C(112, 69, 8), C(255, 180, 35), sat(body * 0.72f + shimmer * 0.28f));
+        color = lerp(color, C(255, 243, 172), core * Active);
+        float alpha = sat((body * 0.72f + halo * 0.23f + core * 0.48f) * activeReveal * axialFade) * Opacity;
+        V3 emission = C(255, 243, 172) * (core * Active * Opacity * 0.34f);
+        return (color * alpha + emission, alpha);
+    }
+
+    // ---- Effects/GigasSweepBeam.fx -----------------------------------------------------------
+    static (V3, float) GigasSweepBeam(V2 uv, float Time, float Progress, float Active, float Opacity, float Direction)
+    {
+        float along = uv.x;
+        float across = abs(uv.y - 0.5f);
+        float macro = MacroSampler.R(new V2(along * 1.15f - Time * 0.82f * Direction, uv.y * 2.55f + Time * 0.10f));
+        float detail = DetailSampler.R(new V2(along * 5.30f + Time * 2.10f * Direction, uv.y * 6.40f - Time * 0.34f));
+        float shimmer = sat(macro * 0.66f + detail * 0.58f - 0.12f);
+        float body = sat((0.333f - across) * 7.8f) * (0.62f + shimmer * 0.38f);
+        float coreOffset = (macro - 0.5f) * 0.050f;
+        float core = sat((0.075f - abs(uv.y - 0.5f - coreOffset)) * 19.0f);
+        float halo = sat((0.460f - across) * 5.0f) * (0.34f + shimmer * 0.66f);
+        float endLimit = 0.4787f - across * across * 0.24f;
+        float endFade = sat((endLimit - abs(along - 0.5f)) * 72.0f);
+        body *= endFade;
+        core *= endFade;
+        halo *= endFade;
+        float gather = Progress;
+        float telegraphHeat = halo * 0.08f + core * 0.18f;
+        float strikeHeat = body * (0.56f + shimmer * 0.46f) + core * 0.94f + halo * 0.15f;
+        float heat = (telegraphHeat + (strikeHeat - telegraphHeat) * Active) * gather;
+        V3 color = lerp(C(105, 61, 5), C(255, 174, 21), sat(body * 0.73f + shimmer * 0.27f));
+        color = lerp(color, C(255, 244, 183), core * Active);
+        float alpha = sat((body * (0.70f + Active * 0.22f) + halo * 0.18f + core * 0.45f) * gather) * Opacity;
+        V3 emission = C(255, 244, 183) * (core * Active * Opacity * 0.32f);
+        return (color * (heat * Opacity) + emission, alpha);
+    }
+
+    // ---- Effects/GigasNovaRing.fx ------------------------------------------------------------
+    static (V3, float) GigasNovaSun(V2 uv, float Time, float Opacity)
+    {
+        float radius = length((uv - 0.5f) * 616f);
+        float macro = SolarMacroSampler.R(uv * 1.75f + new V2(-Time * 0.10f, Time * 0.14f));
+        float detail = SolarDetailSampler.R(uv * 5.20f + new V2(Time * 0.23f, -Time * 0.31f));
+        float flame = sat(macro * 0.68f + detail * 0.56f - 0.12f);
+        float safeField = sat((270f - radius) / 12f) * (0.26f + flame * 0.58f);
+        float solarReach = 270f + (macro - 0.48f) * 74f;
+        float solarField = sat((solarReach - radius) / 13f) * (0.18f + flame * 0.62f);
+        float corona = solarField * sat((radius - 270f + 11f) / 26f);
+        float edge = sat((8f - abs(radius - 270f)) / 5f) * (0.34f + flame * 0.36f);
+        float hotPockets = safeField * sat(flame * 1.32f - 0.16f);
+        V3 color = lerp(C(105, 61, 5), C(255, 176, 25), sat(safeField * 0.70f + flame * 0.30f));
+        color = lerp(color, C(255, 245, 190), hotPockets * 0.48f);
+        float alpha = sat(safeField * 0.68f + corona * 0.38f + edge * 0.28f) * Opacity;
+        return (color * alpha + C(255, 245, 190) * (hotPockets * 0.17f + edge * 0.04f) * Opacity, alpha);
+    }
+
+    static (V3, float) GigasNovaCorona(V2 uv, float Time, float Opacity)
+    {
+        float radius = length((uv - 0.5f) * 768f);
+        float macro = SolarMacroSampler.R(uv * 1.18f + new V2(Time * 0.045f, -Time * 0.072f));
+        float flame = SolarFlameSampler.R(uv * 0.94f + new V2(-Time * 0.035f, Time * 0.235f));
+        float tongues = sat(flame * 1.24f + macro * 0.46f - 0.23f);
+        float reach = 270f + 18f + tongues * 74f;
+        float crown = sat((reach - radius) / 10f) * sat((radius - 270f + 18f) / 14f);
+        float rim = sat((10f - abs(radius - 270f)) / 6f);
+        float heat = sat(tongues * 1.32f - 0.12f);
+        V3 color = lerp(C(105, 61, 5), C(255, 176, 25), heat);
+        color = lerp(color, C(255, 245, 190), heat * heat * 0.42f);
+        float alpha = sat(crown * (0.22f + heat * 0.36f) + rim * 0.10f) * Opacity;
+        return (color * alpha + C(255, 245, 190) * crown * heat * 0.11f * Opacity, alpha);
+    }
+
+    static (V3, float) GigasNovaField(V2 uv, float Time, float Progress, float Active, float Opacity)
+    {
+        if (Active == 0f)
+        {
+            float radius = length((uv - 0.5f) * 572f);
+            float edge = sat((8f - abs(radius - 270f * Progress)) / 5f);
+            float fill = sat((270f * Progress - radius) / 16f) * 0.09f;
+            float alpha = (fill + edge * 0.42f) * Opacity;
+            return (C(238, 161, 24) * alpha, alpha);
+        }
+
+        V2 bodyUV = new((uv.x - 0.5f) / (616f / 768f) + 0.5f, (uv.y - 0.5f) / (616f / 768f) + 0.5f);
+        var (coronaRgb, coronaAlpha) = GigasNovaCorona(uv, Time, Opacity);
+        if (bodyUV.x < 0f || bodyUV.x > 1f || bodyUV.y < 0f || bodyUV.y > 1f) return (coronaRgb, coronaAlpha);
+        var (bodyRgb, bodyAlpha) = GigasNovaSun(bodyUV, Time, Opacity);
+        return (coronaRgb + bodyRgb * (1f - coronaAlpha), coronaAlpha + bodyAlpha * (1f - coronaAlpha));
+    }
+
+    // ---- Candidate: GigasLightHand ------------------------------------------------------------
+    // Offline-only design study. Two fluted slabs rise from the ground and close toward the
+    // future seam; the white compression core only appears on the actual clap frame.
+    static (V3, float) GigasLightHand(V2 uv, float Time, float Progress, float Active)
+    {
+        const float panelW = 320f, panelH = 180f, bottom = 150f, fullHeight = 130f;
+        float x = (uv.x - 0.5f) * panelW;
+        float rise = MathF.Min(1f, Progress * 2f);
+        float height = fullHeight * rise;
+        float offset = 100f + (12f - 100f) * Progress * Progress;
+        V3 rgb = new(0, 0, 0); float alpha = 0f;
+
+        if (Active == 0f)
+        {
+            for (int side = -1; side <= 1; side += 2)
+            {
+                float vertical = bottom - uv.y * panelH;
+                float handU = (x - side * offset) / 74f + 0.5f;
+                if (side > 0) handU = 1f - handU;
+                float handV = 1f - vertical / MathF.Max(height, 1f);
+                float shape = handU < 0f || handU > 1f || handV < 0f || handV > 1f ? 0f : LightHandSampler.T(handU, handV).a;
+                shape *= sat((height - vertical) / 4f) * sat((vertical + 3f) / 4f);
+                float flow = SolarMacroSampler.R(new V2(handU * 1.45f + Time * 0.08f, handV * 1.35f - Time * 0.34f));
+                float fireDetail = SolarFlameSampler.R(new V2(handU * 0.88f - Time * 0.035f, handV + Time * 0.24f));
+                float edge = shape * sat(fireDetail * 1.30f - 0.08f);
+                float dx = x - side * offset;
+                float innerFace = sat((-dx * side - 7f) / 9f) * shape;
+                float material = sat(flow * 0.64f + fireDetail * 0.54f - 0.18f);
+                float hot = shape * sat(material * 1.34f - 0.18f);
+                V3 color = lerp(C(91, 51, 5), C(255, 178, 26), sat(material * 0.82f + innerFace * 0.28f));
+                color = lerp(color, C(255, 245, 190), hot * (0.20f + innerFace * 0.55f));
+                float a = shape * (0.27f + material * 0.39f + edge * 0.12f);
+                rgb = color * a + rgb * (1f - a);
+                alpha = a + alpha * (1f - a);
+            }
+        }
+
+        if (Active > 0f)
+        {
+            float vertical = bottom - uv.y * panelH;
+            float seamFlow = SolarFlameSampler.R(new V2(uv.x * 1.7f + Time * 0.08f, 1f - vertical / fullHeight + Time * 0.32f));
+            float seam = sat((13f - abs(x)) / 5f) * sat((fullHeight - vertical) / 7f) * sat((vertical + 2f) / 4f);
+            float flare = sat((31f - abs(x)) / 9f) * sat((fullHeight - vertical) / 12f) * 0.32f;
+            float a = sat((seam * (0.74f + seamFlow * 0.22f) + flare) * Active);
+            V3 color = lerp(C(255, 184, 30), C(255, 250, 208), seam * (0.55f + seamFlow * 0.45f));
+            rgb = color * a + rgb * (1f - a);
+            alpha = a + alpha * (1f - a);
+        }
+        return (rgb, alpha);
+    }
+
     // ---- Effects/RedKnightCrimsonVFX.fx : BombBlastPixel ------------------------------------
     // Samplers per RedKnightVFX.DrawCrimsonQuad: s1 = Turbulence_05-512x512 (FlowSampler),
     // s2 = Grainy_07-512x512 (DetailSampler). BombBlastPixel only uses FlowSampler.
@@ -440,10 +602,15 @@ static class Preview
     const int Zoom = 2;          // effects are small; nobody can judge a 74px puff at 1:1
     const int CellPad = 14;
     const int LabelH = 18;
+    const int SheetTitleH = 22;
 
     static void Main()
     {
         LoadTextures();
+        string previewName = Environment.GetEnvironmentVariable("PREVIEW_NAME") ?? "shader-preview";
+        string safePreviewName = string.Concat(previewName.Select(c =>
+            char.IsLetterOrDigit(c) || c == '-' || c == '_' ? c : '-')).Trim('-');
+        if (string.IsNullOrWhiteSpace(safePreviewName)) safePreviewName = "shader-preview";
         if (Environment.GetEnvironmentVariable("FOCUS") == "wall")
         {
             // The wall/shockwave sizes after the widening that the softer end-taper needs.
@@ -498,6 +665,48 @@ static class Preview
                     c => StormHerald(c, 8.0f, 1.00f, 0.98f)),
             };
         }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_pillar")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Telegraph P=0.25", 80, 520, Blend.PremultipliedAlpha,
+                    c => GigasSunPillar(c, 2.4f, 0.25f, 0f, 0.70f)),
+                new Panel("Telegraph P=0.70", 80, 520, Blend.PremultipliedAlpha,
+                    c => GigasSunPillar(c, 3.6f, 0.70f, 0f, 0.70f)),
+                new Panel("Strike P=1.00", 80, 520, Blend.PremultipliedAlpha,
+                    c => GigasSunPillar(c, 4.8f, 1.00f, 1f, 0.92f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_sweep")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Telegraph P=0.25", 752, 72, Blend.PremultipliedAlpha,
+                    c => GigasSweepBeam(c, 2.4f, 0.25f, 0f, 0.58f, 1f)),
+                new Panel("Telegraph P=0.80", 752, 72, Blend.PremultipliedAlpha,
+                    c => GigasSweepBeam(c, 3.6f, 0.80f, 0f, 0.58f, 1f)),
+                new Panel("Strike P=1.00", 752, 72, Blend.PremultipliedAlpha,
+                    c => GigasSweepBeam(c, 4.8f, 1.00f, 1f, 0.94f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_nova")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Telegraph P=0.35", 572, 572, Blend.PremultipliedAlpha, c => GigasNovaField(c, 2.5f, .35f, 0f, .58f)),
+                new Panel("Telegraph P=0.80", 572, 572, Blend.PremultipliedAlpha, c => GigasNovaField(c, 3.7f, .80f, 0f, .58f)),
+                new Panel("Layered molten sun", 768, 768, Blend.PremultipliedAlpha, c => GigasNovaField(c, 4.9f, 1f, 1f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_light_hand")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Hands emerge P=.25", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 2.4f, .25f, 0f)),
+                new Panel("Hands close P=.72", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 3.8f, .72f, 0f)),
+                new Panel("Clap seam", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 4.9f, 1f, 1f)),
+            };
+        }
         var panels = Panels();
 
         // Every panel is drawn over BOTH a bright daytime sky and a dark cave. This is the single
@@ -512,15 +721,17 @@ static class Preview
         int cols = Math.Max(1, (int)Math.Ceiling(Math.Sqrt(panels.Length)));
         int rows = (panels.Length + cols - 1) / cols;
 
-        using var sheet = new Bitmap(cols * cellW, rows * cellH);
+        using var sheet = new Bitmap(cols * cellW, rows * cellH + SheetTitleH);
         using var g = Graphics.FromImage(sheet);
         using var font = new Font("Consolas", 10);
         g.Clear(Color.FromArgb(24, 24, 30));
+        g.DrawString($"{previewName} — sky | cave — {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            font, Brushes.Gold, 4, 3);
 
         for (int i = 0; i < panels.Length; i++)
         {
             var panel = panels[i];
-            int ox = (i % cols) * cellW, oy = (i / cols) * cellH + LabelH;
+            int ox = (i % cols) * cellW, oy = SheetTitleH + (i / cols) * cellH + LabelH;
 
             for (int side = 0; side < 2; side++)
             {
@@ -566,7 +777,8 @@ static class Preview
             g.DrawRectangle(Pens.DimGray, ox, oy - LabelH, cellW - 1, cellH - 1);
         }
 
-        sheet.Save("preview.png", ImageFormat.Png);
-        Console.WriteLine($"wrote preview.png ({panels.Length} panels)");
+        string outputName = $"{safePreviewName}-{DateTime.Now:yyyyMMdd-HHmmss}.png";
+        sheet.Save(outputName, ImageFormat.Png);
+        Console.WriteLine($"wrote {outputName} ({panels.Length} panels)");
     }
 }

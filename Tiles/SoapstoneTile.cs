@@ -155,14 +155,6 @@ namespace tsorcRevamp.Tiles
 
                     if (walkedAway || movedMouse)
                     {
-                        // TEMP DEBUG — remove alongside the other soapstone debug prints once fixed.
-                        if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
-                        {
-                            Main.NewText($"[Soapstone DEBUG] manuallyOpened->false: walkedAway={walkedAway} walkDelta={walkDelta:F2} " +
-                                $"(limit={SoapstoneTileEntity.MANUAL_DISMISS_WALK_DISTANCE}) movedMouse={movedMouse} " +
-                                $"cumulativeMouseTravel={entity.cumulativeMouseTravel:F1} (limit={Main.screenWidth * SoapstoneTileEntity.MANUAL_DISMISS_SCREEN_FRACTION:F1}) " +
-                                $"frameDelta={frameDelta:F1} grace={entity.manualOpenGraceTimer}", Color.Yellow);
-                        }
                         entity.manuallyOpened = false;
                         entity.cumulativeMouseTravel = 0f;
                     }

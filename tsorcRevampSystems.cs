@@ -785,17 +785,6 @@ namespace tsorcRevamp
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.Draw(spriteBatch);
 
-            // TEMP DEBUG — catches the case where NearbySoapstone itself gets nulled out (e.g. the
-            // 600px-away cleanup in tsorcRevampWorld.PostUpdateEverything), which would otherwise
-            // skip the block below entirely and never explain why the box vanished.
-            if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode
-                && _debugWasShowing && tsorcRevamp.NearbySoapstone == null)
-            {
-                Main.NewText("[Soapstone DEBUG] CLOSED — NearbySoapstone was nulled out externally", Color.Red);
-                _debugWasShowing = false;
-                _debugLastShownSoapstone = null;
-            }
-
             // Suppress soapstone message bubbles while the Storage pop-up is open so they don't draw over it.
             if (tsorcRevamp.NearbySoapstone != null && !UI.StorageUIState.Visible)
             {
@@ -813,29 +802,6 @@ namespace tsorcRevamp
                 // timer alive via proximity (selectedSoapstone), so without this gate a dismissed
                 // message stays frozen on screen when the player is right on top of the sign.
                 bool keepBubbleOpen = ModContent.GetInstance<tsorcRevampConfig>().AutoOpenSoapstones || soapstone.manuallyOpened;
-
-                // TEMP DEBUG — remove once the "message closes with no input" bug is confirmed fixed.
-                // Prints the exact moment (and reason) the box stops showing for the tracked soapstone,
-                // regardless of which path caused it (manual dismiss, timer decay, category disable...).
-                bool nowShowing = keepBubbleOpen && soapstone.timer > 0 && !soapstone.hidden;
-                if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
-                {
-                    if (_debugLastShownSoapstone == soapstone && _debugWasShowing && !nowShowing)
-                    {
-                        float dist = Vector2.Distance(Main.LocalPlayer.Center,
-                            new Vector2(soapstone.Position.X * 16 + 8, soapstone.Position.Y * 16 + 8));
-                        Main.NewText($"[Soapstone DEBUG] CLOSED — autoOpen={ModContent.GetInstance<tsorcRevampConfig>().AutoOpenSoapstones} " +
-                            $"manuallyOpened={soapstone.manuallyOpened} timer={soapstone.timer} hidden={soapstone.hidden} " +
-                            $"nearPlayer={soapstone.nearPlayer} dist={dist:F1} graceTimer={soapstone.manualOpenGraceTimer} " +
-                            $"NearbySoapstone==this:{tsorcRevamp.NearbySoapstone == soapstone}", Color.OrangeRed);
-                    }
-                    else if (soapstone != _debugLastShownSoapstone && nowShowing)
-                    {
-                        Main.NewText($"[Soapstone DEBUG] OPENED — manuallyOpened={soapstone.manuallyOpened}", Color.LightGreen);
-                    }
-                }
-                _debugLastShownSoapstone = soapstone;
-                _debugWasShowing = nowShowing;
 
                 if (keepBubbleOpen && soapstone.timer > 0 && !soapstone.hidden)
                 {
@@ -955,11 +921,6 @@ namespace tsorcRevamp
         private static List<string> _debugDetailLinesCache = new();
         private static int _debugDetailCacheTick = -9999;
         private const int DebugDetailRefreshTicks = 10; // ~6x/sec at 60fps
-
-        // TEMP DEBUG state for the soapstone "closes with no input" investigation — remove alongside
-        // the debug prints in PostDrawInterface once the bug is confirmed fixed.
-        private static Tiles.SoapstoneTileEntity _debugLastShownSoapstone;
-        private static bool _debugWasShowing;
 
         private static void DrawPuppetAttackDebug(SpriteBatch spriteBatch)
         {

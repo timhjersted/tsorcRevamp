@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,6 +19,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         public const int PillarWidth = 44;
         public const int PillarHeight = 480;
         const int StrikeTicks = 25;
+        const string TextureRoot = "tsorcRevamp/Textures/Noise/";
+
+        static Asset<Effect> pillarEffect;
+        static Asset<Texture2D> macroNoise;
+        static Asset<Texture2D> detailNoise;
 
         int TelegraphTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 45;
         bool Striking => Projectile.localAI[0] > TelegraphTicks;
@@ -40,6 +47,13 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool? CanDamage()
         {
             return Striking;
+        }
+
+        static void LoadAssets()
+        {
+            pillarEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GigasSunPillar", AssetRequestMode.ImmediateLoad);
+            macroNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_Noise_6Yu1", AssetRequestMode.ImmediateLoad);
+            detailNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_07-512x512", AssetRequestMode.ImmediateLoad);
         }
 
         public override void AI()
@@ -101,6 +115,55 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Lighting.AddLight(new Vector2(Projectile.Center.X, Projectile.position.Y + PillarHeight * (seg + 0.5f) / 4f), 1f, 0.9f, 0.4f);
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            LoadAssets();
+
+            float progress = MathHelper.Clamp(Projectile.localAI[0] / TelegraphTicks, 0f, 1f);
+            float active = Striking ? 1f : 0f;
+            float fadeOut = Striking ? MathHelper.Clamp(Projectile.timeLeft / 5f, 0f, 1f) : 1f;
+            float opacity = (Striking ? 0.92f : 0.70f) * fadeOut;
+            Texture2D primary = macroNoise.Value;
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+            try
+            {
+                graphicsDevice.Textures[1] = detailNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                Effect effect = pillarEffect.Value;
+                effect.CurrentTechnique = effect.Techniques["GigasSunPillar"];
+                effect.Parameters["OuterColor"].SetValue(new Color(112, 69, 8).ToVector3());
+                effect.Parameters["MiddleColor"].SetValue(new Color(255, 180, 35).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 243, 172).ToVector3());
+                effect.Parameters["Opacity"].SetValue(opacity);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["Progress"].SetValue(progress);
+                effect.Parameters["Active"].SetValue(active);
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                // 80px shell gives the soft halo room; the shader's 44px gold body is contained in
+                // PillarWidth, so the brightest broad band remains the actual damage lane.
+                Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White,
+                    0f, primary.Size() * 0.5f, new Vector2(80f / primary.Width, 520f / primary.Height),
+                    SpriteEffects.None, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+            }
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            return false;
         }
     }
 }

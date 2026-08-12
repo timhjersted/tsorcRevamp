@@ -581,6 +581,11 @@ namespace tsorcRevamp.NPCs.Enemies{
                 if (AttackTimer == 1)
                 {
                     SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.8f, Pitch = -0.6f }, NPC.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                            ModContent.ProjectileType<GigasNovaTelegraph>(), 0, 0f, Main.myPlayer, 270f, NPC.whoAmI);
+                    }
                 }
                 if (AttackTimer == WrathStaggerableTicks)
                 {

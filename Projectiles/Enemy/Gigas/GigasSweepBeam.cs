@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -18,6 +20,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         public const int BeamLength = 720; //45 tiles
         public const int BeamHeight = 48;  //3 tiles — jumpable
         const int StrikeTicks = 12;
+        const string TextureRoot = "tsorcRevamp/Textures/Noise/";
+
+        static Asset<Effect> sweepEffect;
+        static Asset<Texture2D> macroNoise;
+        static Asset<Texture2D> detailNoise;
 
         int TelegraphTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 40;
         int Direction => (int)Projectile.ai[1] >= 0 ? 1 : -1;
@@ -42,6 +49,13 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool? CanDamage()
         {
             return Striking;
+        }
+
+        static void LoadAssets()
+        {
+            sweepEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GigasSweepBeam", AssetRequestMode.ImmediateLoad);
+            macroNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_Noise_6Yu1", AssetRequestMode.ImmediateLoad);
+            detailNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_07-512x512", AssetRequestMode.ImmediateLoad);
         }
 
         public override void AI()
@@ -87,6 +101,56 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Lighting.AddLight(new Vector2(Projectile.position.X + BeamLength * (seg + 0.5f) / 6f, Projectile.Center.Y), 1f, 0.9f, 0.4f);
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            LoadAssets();
+
+            float progress = MathHelper.Clamp(Projectile.localAI[0] / TelegraphTicks, 0f, 1f);
+            float active = Striking ? 1f : 0f;
+            float fadeOut = Striking ? MathHelper.Clamp(Projectile.timeLeft / 3f, 0f, 1f) : 1f;
+            float opacity = (Striking ? 0.94f : 0.58f) * fadeOut;
+            Texture2D primary = macroNoise.Value;
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+            try
+            {
+                graphicsDevice.Textures[1] = detailNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                Effect effect = sweepEffect.Value;
+                effect.CurrentTechnique = effect.Techniques["GigasSweepBeam"];
+                effect.Parameters["OuterColor"].SetValue(new Color(105, 61, 5).ToVector3());
+                effect.Parameters["MiddleColor"].SetValue(new Color(255, 174, 21).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 244, 183).ToVector3());
+                effect.Parameters["Opacity"].SetValue(opacity);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["Progress"].SetValue(progress);
+                effect.Parameters["Active"].SetValue(active);
+                effect.Parameters["Direction"].SetValue(Direction);
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                // The 72px visual shell permits a soft halo; the 48px gold body is kept within
+                // BeamHeight so the readable attack width remains mechanically honest.
+                Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White,
+                    0f, primary.Size() * 0.5f, new Vector2(752f / primary.Width, 72f / primary.Height),
+                    SpriteEffects.None, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+            }
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            return false;
         }
     }
 }
