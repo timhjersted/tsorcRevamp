@@ -609,12 +609,11 @@ namespace tsorcRevamp.Items
             // ever pays the swing cost.
             //
             // Skipped entirely for weapon-classified tools (tsorcRevamp.WeaponClassifiedTools) — those
-            // already paid the correct DPS-aware cost in PreItemCheck via UsesOutputBasedWeaponCost, and
-            // this surcharge exists specifically to compensate the FLAT tool rate for not knowing about
-            // combat; a weapon on the smart system doesn't need that compensation and would just be
-            // double-charged by it.
+            // already pay the plain legacy weapon cost in PreItemCheck, same as any sword, and this
+            // surcharge exists specifically to compensate the FLAT tool rate for not knowing about
+            // combat; a real weapon doesn't need that compensation and would just be double-charged by it.
             if (modPlayer.UsesWeaponStamina && (item.pick != 0 || item.axe != 0 || item.hammer != 0)
-                && !tsorcRevampStaminaPlayer.UsesOutputBasedWeaponCost(item))
+                && (tsorcRevamp.WeaponClassifiedTools == null || !tsorcRevamp.WeaponClassifiedTools.Contains(item.type)))
             {
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -=
                     tsorcRevampStaminaPlayer.ToolCombatHitSurcharge * modPlayer.WeaponStaminaMult;

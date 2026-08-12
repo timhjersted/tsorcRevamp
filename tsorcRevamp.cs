@@ -201,11 +201,13 @@ namespace tsorcRevamp
         /// Invigorating). See Prefixes/Refreshing.cs — CanRoll gates on membership here.</summary>
         public static HashSet<int> StaminaPrefixAccessories;
 
-        /// <summary>Axe/pick/hammer-flagged items that should be priced as real weapons (the DPS-aware
-        /// output-based stamina system) rather than as utility tools (the flat ToolSwingStaminaMult /
-        /// ToolCombatHitSurcharge rate). See tsorcRevampStaminaPlayer.UsesOutputBasedWeaponCost — this
-        /// registry is consulted there, which is the single choke point every stamina cost site reads
-        /// from, so nothing else needs to know this list exists.</summary>
+        /// <summary>Axe/pick/hammer-flagged items that should be priced as real weapons (the plain legacy
+        /// swing-speed stamina formula, same as any sword) rather than as utility tools (the flat
+        /// ToolSwingStaminaMult / ToolCombatHitSurcharge rate). Consulted directly at each stamina cost/
+        /// gate/tooltip site that checks item.pick/axe/hammer — see
+        /// Documentation/StaminaSystem_DPSPricingRetro.md for why this is no longer centralized behind
+        /// UsesOutputBasedWeaponCost (that function used to double as the tool-vs-weapon router before
+        /// DPS-aware pricing was reverted; now it only distinguishes CoinGun, so it can't do this job too).</summary>
         public static HashSet<int> WeaponClassifiedTools;
 
         internal BonfireUIState BonfireUIState;
@@ -579,11 +581,17 @@ namespace tsorcRevamp
             // assumption that tool power means "this is primarily for chopping/mining." A roster audit
             // showed that assumption is wrong for almost everything here: every mod axe/hammer except the
             // two genuine tools below deals real combat damage (8-325) and lives under Items/Weapons/ —
-            // they're weapons that happen to chop wood, not tools that happen to deal damage. Being excluded
-            // from the DPS-aware pricing meant a strong axe paid the SAME flat rate as a weak one, and a
-            // weak-but-correctly-measured vanilla weapon like Starfury (whose falling star IS seen by the
-            // output system) could come out cheaper than a much harder-hitting axe purely because of this
-            // misclassification.
+            // they're weapons that happen to chop wood, not tools that happen to deal damage. Being priced
+            // like a utility tool meant a strong axe paid the SAME flat rate as a weak one, with no regard
+            // for how hard either one actually hits.
+            //
+            // This registry originally routed weapon-classified items into DPS-aware output-based pricing
+            // instead; that system was reverted for the general roster (see
+            // Documentation/StaminaSystem_DPSPricingRetro.md — reported as inconsistent and punishing for
+            // high damage/DPS builds, confirmed mechanically). The registry's actual finding — which items
+            // here are real weapons vs. genuine tools — was never the problem, so it stayed: items on this
+            // list now just fall through to the plain legacy swing-speed cost, same as any sword, instead
+            // of the flat tool rate.
             //
             // Left OFF this list deliberately — genuine utility tools, priced flat on purpose:
             //   - DiamondPickaxe (0 damage, pure mining tool)

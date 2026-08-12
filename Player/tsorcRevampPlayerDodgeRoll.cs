@@ -209,7 +209,13 @@ namespace tsorcRevamp
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult;
                 }
 
-                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                // Weapon-classified tools (tsorcRevamp.WeaponClassifiedTools — most of the mod's axes and
+                // hammers, which deal real combat damage despite also having chop/dig power) are excluded
+                // here so they fall through to the plain legacy weapon cost below instead, same as any
+                // sword. Only genuine utility tools (Diamond Pickaxe, Heaven Piercer, vanilla picks/hamaxes)
+                // still hit this branch.
+                else if ((item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                    && (tsorcRevamp.WeaponClassifiedTools == null || !tsorcRevamp.WeaponClassifiedTools.Contains(item.type)))
                 {
                     // Paid on every swing now (hit, miss, tile, or air) instead of only on a landed NPC
                     // hit — see ToolSwingStaminaMult for why this is its own knob and not WeaponStaminaMult

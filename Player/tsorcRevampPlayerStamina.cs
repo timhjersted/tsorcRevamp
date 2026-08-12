@@ -125,6 +125,24 @@ namespace tsorcRevamp
         public static float LegacyWeaponStaminaCost(int scaledUseAnimation)
             => tsorcRevampPlayer.ReduceStamina(scaledUseAnimation);
 
+        /// <summary>
+        /// Whether this item prices its stamina cost off the live, DPS-relative output system rather than
+        /// the flat swing-speed formula (ReduceStamina).
+        ///
+        /// DPS-aware pricing was reverted as the general-roster default 
+        /// (in short: cost fluctuating with live measured damage output, including ammo swaps and piercing hits summing
+        /// multiple targets into one activation, was reported as inconsistent and punishing for high
+        /// damage/DPS builds, and independent verification confirmed the mechanism). CoinGun is the one
+        /// deliberate carve-out: it deals 0 base damage but still deals real damage via its own mechanic,
+        /// so ReduceStamina has nothing sane to scale against.
+        ///
+        /// The output-based machinery itself (BeginOutputBasedWeaponUse, GetExpectedOutputBasedWeaponCost,
+        /// the EMA tracking) is NOT dead code — GaeBolg/Longinus/DarkTrident call
+        /// GetExpectedOutputBasedWeaponCost directly for their own charge-up affordability checks
+        /// (never gated behind this switch), Dragon Crest Shield reads PlayerDamagePerSecondEma to scale
+        /// its fire breath, and the balance-log telemetry records both EMAs. Keep it running; this
+        /// function just stops being what routes the general weapon roster into it.
+        /// </summary>
         public static bool UsesOutputBasedWeaponCost(Item item)
         {
             if (item == null || item.IsAir || item.ammo != AmmoID.None || item.consumable)
@@ -132,33 +150,7 @@ namespace tsorcRevamp
                 return false;
             }
 
-            if (item.type == ItemID.CoinGun)
-            {
-                return true;
-            }
-
-            // Pick/axe/hammer items are utility tools by default (flat ToolSwingStaminaMult rate) UNLESS
-            // explicitly weapon-classified in tsorcRevamp.WeaponClassifiedTools — see that registry's
-            // comment for why most of this mod's axes/hammers belong there. This is THE routing decision:
-            // every stamina cost/gate/tooltip site reads UsesOutputBasedWeaponCost rather than checking
-            // item.pick/axe/hammer directly, so nothing else needs to know this carve-out exists.
-            bool isUtilityTool = (item.pick != 0 || item.axe != 0 || item.hammer != 0)
-                && (tsorcRevamp.WeaponClassifiedTools == null || !tsorcRevamp.WeaponClassifiedTools.Contains(item.type));
-
-            if (item.damage <= 1 || isUtilityTool || item.type == ItemID.EoCShield)
-            {
-                return false;
-            }
-
-            return item.type != ItemID.PiranhaGun
-                && item.type != ItemID.Harpoon
-                && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>()
-                && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()
-                && item.type != ModContent.ItemType<Items.Weapons.Magic.DivineSpark>()
-                && item.type != ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()
-                && item.type != ModContent.ItemType<Items.Weapons.Ranged.Specialist.GlaiveBeam>()
-                && item.type != ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>()
-                && item.type != ModContent.ItemType<Items.Debug.DebugTome>();
+            return item.type == ItemID.CoinGun;
         }
 
         public float BeginOutputBasedWeaponUse(Item item, int scaledUseAnimation)
@@ -850,12 +842,13 @@ namespace tsorcRevamp
                 if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
                 if (item.type == ItemID.EoCShield) return;
                 StringBuilder tipToAdd = new();
-                // NOT the raw item.pick/axe/hammer check — a weapon-classified tool (tsorcRevamp.
-                // WeaponClassifiedTools, e.g. the mod's axes) reads UsesOutputBasedWeaponCost as false
-                // here for the same reason it does everywhere else the routing decision is made: it's a
-                // real weapon on the DPS-aware system, not a flat-rate utility tool.
+                // Checked against WeaponClassifiedTools directly, NOT UsesOutputBasedWeaponCost — that
+                // function now only distinguishes CoinGun from everything else, so it can't be used to
+                // tell a real weapon-classified axe (tsorcRevamp.WeaponClassifiedTools) apart from a
+                // genuine utility tool any more. A weapon-classified axe should show the plain "Stamina
+                // Use: " legacy number here, same as any sword — not the tool label/surcharge.
                 bool isToolWeapon = (item.pick != 0 || item.axe != 0 || item.hammer != 0)
-                    && !UsesOutputBasedWeaponCost(item);
+                    && (tsorcRevamp.WeaponClassifiedTools == null || !tsorcRevamp.WeaponClassifiedTools.Contains(item.type));
                 if (isToolWeapon)
                 {
                     // No longer "on-hit only" — pick/axe/hammer now pay this per swing, same as every
