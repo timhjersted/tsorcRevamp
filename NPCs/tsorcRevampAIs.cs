@@ -1977,8 +1977,20 @@ namespace tsorcRevamp.NPCs
                     {
                         //Skip to the next tile if any of the following is true:
 
+                        // Check the NPC's full destination hitbox instead of assuming every teleporter fits
+                        // inside a 3x4-tile space. The old fixed clearance could embed tall or wide NPCs in
+                        // ceilings and neighboring terrain immediately after teleporting.
+                        int landingTileX = (int)teleportTarget.X;
+                        int landingTileY = (int)teleportTarget.Y + y;
+                        float destinationLeft = landingTileX * 16f - npc.width / 2f;
+                        float destinationTop = landingTileY * 16f - npc.height;
+                        int clearanceLeft = (int)Math.Floor(destinationLeft / 16f);
+                        int clearanceRight = (int)Math.Floor((destinationLeft + npc.width - 0.01f) / 16f);
+                        int clearanceTop = (int)Math.Floor(destinationTop / 16f);
+                        int clearanceBottom = (int)Math.Floor((destinationTop + npc.height - 0.01f) / 16f);
+
                         // If there are solid blocks in the way, leaving no room to teleport to
-                        if (Collision.SolidTiles((int)teleportTarget.X - 1, (int)teleportTarget.X + 1, (int)teleportTarget.Y + y - 4, (int)teleportTarget.Y + y - 1))
+                        if (Collision.SolidTiles(clearanceLeft, clearanceRight, clearanceTop, clearanceBottom))
                         {
                             //Main.NewText("Fail 1");
                             continue;

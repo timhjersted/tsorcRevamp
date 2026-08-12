@@ -28,6 +28,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
+using tsorcRevamp.NPCs.Runeterra;
 
 namespace tsorcRevamp
 {
@@ -1959,7 +1960,7 @@ namespace tsorcRevamp
                 BossAliveInternal = false;
                 foreach (NPC npc in Main.ActiveNPCs)
                 {
-                    if (npc.boss)
+                    if (npc.boss && npc.type != ModContent.NPCType<RuneMage>())
                     {
                         BossAliveInternal = true;
                         break;

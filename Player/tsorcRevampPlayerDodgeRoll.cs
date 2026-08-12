@@ -580,6 +580,11 @@ namespace tsorcRevamp
 
             noDodge |= Player.mount.Active;
 
+            if (Player.CCed)
+            {
+                noDodge = true;
+            }
+
             if (noDodge)
             {
                 isDodging = false;

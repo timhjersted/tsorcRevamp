@@ -10122,6 +10122,16 @@ Mods: {
 				// DisplayName: Lesser Vessel Buff
 				// Description: Mods.tsorcRevamp.Buffs.LesserVesselBuff.Description
 			}
+
+			RunePrisonDebuff: {
+				// DisplayName: Rune Prison Debuff
+				// Description: Mods.tsorcRevamp.Buffs.RunePrisonDebuff.Description
+			}
+
+			SpellFluxDebuff: {
+				// DisplayName: Spell Flux Debuff
+				// Description: Mods.tsorcRevamp.Buffs.SpellFluxDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -11049,12 +11059,15 @@ Mods: {
 			// GreatRedKnightUltrakillHand.DisplayName: Great Red Knight Ultrakill Hand
 			// EnemyShadowflameArrow.DisplayName: Enemy Shadowflame Arrow
 			// EnemyAncientBloodLanceProj.DisplayName: Enemy Ancient Blood Lance Proj
-			// RedCourtLancePortal.DisplayName: Red Court Lance Portal
-			// RedKnightAdderSpear.DisplayName: Red Knight's Adder Spear
-			// RedKnightPoisonCurtainController.DisplayName: Red Knight's Poison Curtain
-			// RedKnightPoisonRainController.DisplayName: Red Knight's Poison Rain
-			// RedKnightTeleportFeintBlast.DisplayName: Red Knight's Teleport Feint Blast
+			// RunePrison.DisplayName: Rune Prison
+			// FirstRunePrison.DisplayName: First Rune Prison
 			// CinderRainDrop.DisplayName: Cinder Rain Drop
+			// KahlrunFarronDart.DisplayName: Kahlrun Farron Dart
+			// RedCourtLancePortal.DisplayName: Red Court Lance Portal
+			// RedKnightAdderSpear.DisplayName: Red Knight Adder Spear
+			// RedKnightPoisonCurtainController.DisplayName: Red Knight Poison Curtain Controller
+			// RedKnightPoisonRainController.DisplayName: Red Knight Poison Rain Controller
+			// RedKnightTeleportFeintBlast.DisplayName: Red Knight Teleport Feint Blast
 		}
 
 		NPCs: {
@@ -12729,6 +12742,7 @@ Mods: {
 			// Blaidd.DisplayName: Blaidd
 			// ShadowNinja.DisplayName: Shadow Ninja
 			// BlackNinja.DisplayName: Black Ninja
+			// Kahlrun.DisplayName: Kahlrun of Falstrók
 			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
 			// TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
 			// RedKnightTest.DisplayName: Red Knight Test
@@ -12826,6 +12840,26 @@ Mods: {
 			// SpiritOfKhaios.DisplayName: Spirit Of Khaios
 			// KhaiosTransitionOrb.DisplayName: Khaios Transition Orb
 			// Khaios.DisplayName: Khaios
+
+			Runeterra: {
+				RuneMage: {
+					// DisplayName: Rune Mage
+					// Monologue1: What brings you here?
+					// Monologue2: I'm guarding something here. Don't go too far into this room.
+					// Monologue3: I appreciate the company, but I'm afraid you'll lose yourself if you stay here too long. You should get going.
+					// Warning1: Don't come any closer!
+					// Warning2: Turn back now!
+					// Warning3: This conflict is unnecessary. If you wish to live, stay away from the World Rune.
+					// Warning4: Even if you defeat me, you cannot possibly handle the power of the World Rune without losing yourself!
+					// Warning5: I'm sorry it had to come to this. I should've sent you away before the World Rune could tempt you.
+					// IdleOnHitWarning1: Hey! Watch it!
+					// IdleOnHitWarning2: Try that again and I'll consider you an enemy.
+					// IdleOnHitWarning3: You've made your intentions clear!
+					// AgitatedOnHitWarning1: Stop! Listen to me!
+					// AgitatedOnHitWarning2: I'm giving you one last chance to reconsider.
+					// AgitatedOnHitWarning3: I tried to warn you!
+				}
+			}
 		}
 
 		Prefixes: {
