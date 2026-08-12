@@ -9,10 +9,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy
 {
     /// <summary>
-    /// Decorative flame sprite that rides the Red Knight standards' ground shockwave
+    /// Flame sprite used decoratively by Red Knight standards and as a damaging radial projectile
     /// (<see cref="Weapons.RedKnightGroundWave"/>), which spawns these at an increasing rate as it
-    /// travels. Same "spawn a short-lived sprite alongside the damaging projectile" pattern the
-    /// knight's other secondary VFX use; it carries no hitbox of its own so it cannot change the
+    /// travels. Standard callers pass zero damage, while Furnace Herald supplies damage and uses
+    /// the compact contact hitbox plus this sprite's normal Destined Death debuff. Decorative mode
+    /// does not expand the parent
     /// attack's damage footprint (§39).
     ///
     /// Sheet is 86x410 = FrameCount frames of 86x82 — MEASURED, not assumed: scanning for content
@@ -20,7 +21,9 @@ namespace tsorcRevamp.Projectiles.Enemy
     /// inside each 82px slice. 410 does not divide by 4, so the "4-frame" description was wrong.
     ///
     /// ai[0] = travel direction (-1 / +1)
-    /// ai[1] = 0 for a ground-hugging blaze, 1 for one that lifts off near the end of the wave's run
+    /// ai[1] = 0 for a ground-hugging blaze, 1 for one that lifts off near the end of the wave's run,
+    ///         and 2 for a spinning Furnace Herald projectile
+    /// ai[2] = exact travel distance for Furnace Herald; unused by the decorative modes
     /// </summary>
     public class DestinedDeathBlaze : ModProjectile
     {
@@ -30,6 +33,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         int Direction => Projectile.ai[0] < 0f ? -1 : 1;
         bool Lifting => Projectile.ai[1] > 0.5f;
+        bool HeraldWave => Projectile.ai[1] > 1.5f;
+        float HeraldTravelDistance => Projectile.ai[2];
 
         public override void SetStaticDefaults()
         {
@@ -62,7 +67,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.frameCounter = Main.rand.Next(TicksPerFrame);
             Projectile.scale = Main.rand.NextFloat(0.42f, 0.78f);
             Projectile.rotation = Main.rand.NextFloat(-0.16f, 0.16f);
-            if (Lifting)
+            if (HeraldWave)
+            {
+                Vector2 center = Projectile.Center;
+                Projectile.width = 24;
+                Projectile.height = 24;
+                Projectile.Center = center;
+                Projectile.scale = Main.rand.NextFloat(0.72f, 1.02f);
+                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            }
+            else if (Lifting)
             {
                 Projectile.velocity.Y -= Main.rand.NextFloat(1.4f, 3.1f);
             }
@@ -77,16 +91,34 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.frame = (Projectile.frame + 1) % FrameCount;
             }
 
-            // Tip BACKWARD, away from the direction of travel
-            Projectile.rotation -= Direction * 0.026f;
-
-            if (Lifting)
+            if (HeraldWave)
             {
+                Projectile.rotation += Direction * 0.14f;
+                float remaining = Math.Max(0f, HeraldTravelDistance - Projectile.localAI[0]);
+                float speed = Projectile.velocity.Length();
+                if (remaining <= 0f || speed <= 0.001f)
+                {
+                    Projectile.velocity = Vector2.Zero;
+                }
+                else
+                {
+                    if (speed > remaining)
+                    {
+                        Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * remaining;
+                    }
+                    Projectile.localAI[0] += Projectile.velocity.Length();
+                }
+            }
+            else if (Lifting)
+            {
+                // Tip backward, away from the direction of travel.
+                Projectile.rotation -= Direction * 0.026f;
                 Projectile.velocity = Projectile.velocity.RotatedBy(0.04f);
                 Projectile.velocity *= 0.98f;
             }
             else
             {
+                Projectile.rotation -= Direction * 0.026f;
                 // Keep ground blazes hugging terrain and moving locked with the ground wave
                 float groundY = Weapons.PuppetGroundDustWave.FindGroundY(Projectile.Center.X, Projectile.Center.Y + 6f);
                 Projectile.Center = new Vector2(Projectile.Center.X, groundY);
@@ -95,9 +127,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             // Fire-like particles: DustID.Blood (5) and DustID.Wraith (54) rising from the flames
-            if (!Main.dedServ && Main.rand.NextBool(2))
+            if (!Main.dedServ && Main.rand.NextBool(HeraldWave ? 5 : 2))
             {
-                for (int i = 0; i < 2; i++)
+                int dustCount = HeraldWave ? 1 : 2;
+                for (int i = 0; i < dustCount; i++)
                 {
                     int dustType = Main.rand.NextBool(2) ? DustID.Blood : DustID.Wraith;
                     Vector2 dustPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-14f, 14f) * Projectile.scale, Main.rand.NextFloat(-18f, -2f) * Projectile.scale);
@@ -121,9 +154,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             float fade = Utils.Clamp(life * 4.5f, 0f, 1f) * Utils.Clamp((1f - life) * 2.2f, 0f, 1f);
 
             // AlphaBlend: renders solid opaque black and rich crimson pixels matching the authored PNG texture
+            Vector2 origin = HeraldWave ? frame.Size() * 0.5f : new Vector2(frame.Width * 0.5f, frame.Height);
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame,
                 Color.White * fade, Projectile.rotation,
-                new Vector2(frame.Width * 0.5f, frame.Height), Projectile.scale,
+                origin, Projectile.scale,
                 Direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
             return false;
         }

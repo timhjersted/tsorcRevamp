@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 22;
             Item.useTime = 22;
-            Item.scale = 1.8f;
+            Item.scale = 1.5f;
             Item.axe = 150 / 5; // Same as Vortex hamaxe
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;

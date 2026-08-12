@@ -80,55 +80,32 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            Player P = spawnInfo.Player; //These are mostly redundant with the new zone definitions, but it still works.
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool AboveEarth = P.ZoneOverworldHeight;
-            bool InBrownLayer = P.ZoneDirtLayerHeight;
-            bool InGrayLayer = P.ZoneRockLayerHeight;
-            // P.townNPCs > 0f // is no town NPCs nearby
+            Player player = spawnInfo.Player;
 
-            if (spawnInfo.Invasion)
+            if (!BasiliskSpawnRules.MeetsSharedRequirements(spawnInfo, Type)) return 0f;
+
+            // Basilisks are restricted to evil biomes and the desert. Explicit exclusions keep
+            // overlapping biome zones from introducing them into unrelated themed pools.
+            if (player.ZoneDungeon || player.ZoneJungle || player.ZoneHallow || player.ZoneMeteor) return 0f;
+
+            bool basiliskBiome = player.ZoneCorrupt || player.ZoneCrimson || player.ZoneDesert || player.ZoneUndergroundDesert;
+            bool belowSurface = player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight;
+            bool surfaceAtNight = player.ZoneOverworldHeight && !Main.dayTime;
+
+            if (!basiliskBiome) return 0f;
+
+            if (!Main.hardMode)
             {
-                return 0;
+                if (belowSurface) return 0.15f;
+                if (surfaceAtNight) return 0.15f;
+            }
+            else if (!tsorcRevampWorld.SuperHardMode)
+            {
+                if (belowSurface) return 0.05f;
+                if (surfaceAtNight) return 0.05f;
             }
 
-            if (spawnInfo.Water) return 0f;
-
-            if (!Main.hardMode && !Main.dayTime && (Corruption || Jungle) && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)) && Main.rand.NextBool(24)) return 1;
-
-
-            //new chance to spawn in the corruption or crimson below ground (poison and cursed aren't activated until EoW and Skeletron respectively for balance; now we'll finally have a unique mod npc that fits well in these zones)
-            if (!Main.hardMode && P.ZoneCorrupt && !Main.dayTime && !AboveEarth && Main.rand.NextBool(10)) return 1;
-
-            if (!Main.hardMode && P.ZoneCorrupt && Main.dayTime && !AboveEarth && Main.rand.NextBool(20)) return 1;
-
-            //higher chance to spawn in the crimson 
-            if (!Main.hardMode && P.ZoneCrimson && !Main.dayTime && Main.rand.NextBool(5)) return 1;
-
-            if (!Main.hardMode && P.ZoneCrimson && Main.dayTime && Main.rand.NextBool(10)) return 1;//10 is 3%, 5 is 6%
-
-            //meteor not desert
-            if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && !P.ZoneUndergroundDesert && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(5)) return 1;
-
-            if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && !P.ZoneUndergroundDesert && InGrayLayer && Main.rand.NextBool(10)) return 1;
-            //meteor and desert
-            if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && P.ZoneUndergroundDesert && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(12)) return 1;
-
-            if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && P.ZoneUndergroundDesert && InGrayLayer && Main.rand.NextBool(24)) return 1;
-            //jungle
-            if (!Main.hardMode && Jungle && Main.dayTime && !Dungeon && InGrayLayer && Main.rand.NextBool(80)) return 1; //was 200
-
-            if (!Main.hardMode && Jungle && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.NextBool(60)) return 1; //was 850
-
-            //hard mode
-            if (Main.hardMode && P.townNPCs <= 0f && !Main.dayTime && (Meteor || Jungle || Corruption) && !Dungeon && (AboveEarth || InBrownLayer || InGrayLayer) && Main.rand.NextBool(45)) return 1;
-
-            if (Main.hardMode && P.townNPCs <= 0f && Main.dayTime && (Meteor || Jungle || Corruption) && !Dungeon && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(55)) return 1;
-
-            return 0;
+            return 0f;
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)

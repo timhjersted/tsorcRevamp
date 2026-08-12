@@ -1,0 +1,1426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tsorcRevamp Biome Spawn Pools</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #0d1117;
+      --panel: #161b22;
+      --panel-raised: #1c222b;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #9da7b3;
+      --accent: #58a6ff;
+      --weight: #d2a8ff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace; }
+    .page { width: 100%; padding: clamp(16px, 2.5vw, 40px); }
+    .intro { max-width: 1050px; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 3vw, 2.6rem); }
+    .muted { color: var(--muted); }
+    .phase-nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 14px 0;
+      background: rgb(13 17 23 / 94%);
+      backdrop-filter: blur(8px);
+    }
+    .phase-nav a {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel);
+      font-weight: 650;
+    }
+    .phase { margin-top: 34px; scroll-margin-top: 72px; }
+    .phase-heading {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .phase-heading h2 { margin: 0; font-size: 1.65rem; }
+    .biome-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    .biome {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+    }
+    .biome h3 {
+      margin: 0;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel-raised);
+      font-size: 1.08rem;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 9px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    tr:last-child td { border-bottom: 0; }
+    th {
+      color: var(--muted);
+      font-size: .72rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    th:last-child, td:last-child { width: 42%; }
+    .weight-set { display: flex; flex-wrap: wrap; gap: 5px; }
+    .weight {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: flex-start;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgb(210 168 255 / 12%);
+      color: var(--weight);
+      white-space: nowrap;
+    }
+    .calculation { color: var(--muted); font-size: .72rem; }
+    @media (max-width: 520px) {
+      .page { padding: 12px; }
+      th, td { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <h1>Biome Spawn Pools</h1>
+      <p>Enemies grouped only by progression phase and biome, with their gate-adjusted average weights.</p>
+      <p class="muted">A rule returning weight <code>1</code> behind <code>NextBool(5)</code> is shown as <code>0.2</code>, with <code>1 × 1/5</code> beneath it. These are average pool contributions, not final spawn percentages. Exact conditions remain available in <a href="enemy_spawns_inventory.html">the full enemy inventory</a>.</p>
+    </header>
+    <nav class="phase-nav" aria-label="Progression phases">
+      <a href="#pre-hardmode">Pre-Hardmode</a>
+      <a href="#hardmode">Hardmode</a>
+      <a href="#superhardmode">Super Hardmode</a>
+    </nav>
+    <section class="phase" id="pre-hardmode">
+      <div class="phase-heading"><h2>Pre-Hardmode</h2><span class="muted">76 enemies</span></div>
+      <div class="biome-grid">
+        <article class="biome">
+          <h3>Neutral Overworld (Forest) <span class="muted">(7)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/BlackKnight.cs#L183">Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.004</code><span class="calculation">1 × 1/250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dunlending.cs#L117">Dunlending</a></td><td><div class="weight-set"><span class="weight"><code>0.067f</code></span><span class="weight"><code>0.1f</code></span><span class="weight"><code>0.125f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnight.cs#L598">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnight.cs#L742">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnightOriginal.cs#L708">Old Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnightOriginal.cs#L1070">Old Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianValkyrie.cs#L138">Tibian Valkyrie</a></td><td><div class="weight-set"><span class="weight"><code>0.038f</code></span><span class="weight"><code>0.0427f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Neutral Underground / Caverns <span class="muted">(4)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/CosmicCrystalLizard.cs#L58">Cosmic Crystal Lizard</a></td><td><div class="weight-set"><span class="weight"><code>0.02f * (1f + spawnInfo.Player.luck)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L108">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianValkyrie.cs#L143">Tibian Valkyrie</a></td><td><div class="weight-set"><span class="weight"><code>0.0433f</code></span><span class="weight"><code>0.0555f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/UndeadCaster.cs#L58">Undead Caster</a></td><td><div class="weight-set"><span class="weight"><code>0.0285f</code></span><span class="weight"><code>0.033f</code></span><span class="weight"><code>0.05f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption <span class="muted">(3)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2115">Cochineal Beetle</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2116">Giant Shelly</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2121">Squid</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Crimson <span class="muted">(4)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2128">Blood Crawler</a></td><td><div class="weight-set"><span class="weight"><code>0.002f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2129">Blood Crawler Wall</a></td><td><div class="weight-set"><span class="weight"><code>0.002f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2127">Drippler</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2126">Lac Beetle</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Hallow <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Parasprite.cs#L85">Parasprite</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Jungle <span class="muted">(9)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/CosmicCrystalLizard.cs#L62">Cosmic Crystal Lizard</a></td><td><div class="weight-set"><span class="weight"><code>0.02f * (1f + spawnInfo.Player.luck)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcFleshhunter.cs#L84">Dworc Fleshhunter</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span><span class="weight"><code>0.265f</code></span><span class="weight"><code>0.37f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcVenomsniper.cs#L84">Dworc Venomsniper</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span><span class="weight"><code>0.345f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Eland.cs#L56">Eland</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/JungleSentree.cs#L72">Jungle Sentree</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2109">Lost Girl</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ManHunter.cs#L100">Man Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.03f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MutantToad.cs#L86">Mutant Toad</a></td><td><div class="weight-set"><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2110">Salamander2</a></td><td><div class="weight-set"><span class="weight"><code>0.03f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Snow <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/UndeadCaster.cs#L62">Undead Caster</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Desert <span class="muted">(4)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/MountedSandsprog.cs#L59">Mounted Sandsprog</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MountedSandsprogMage.cs#L63">Mounted Sandsprog Mage</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Sandsprog.cs#L250">Sandsprog</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SandsprogMage.cs#L239">Sandsprog Mage</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Ocean <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/QuaraPincher.cs#L145">Quara Pincher</a></td><td><div class="weight-set"><span class="weight"><code>0.00714286</code><span class="calculation">1f × 1/140</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Dungeon <span class="muted">(16)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/AttraidiesIllusion.cs#L66">Attraidies Illusion</a></td><td><div class="weight-set"><span class="weight"><code>.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/AttraidiesManifestation.cs#L75">Attraidies Manifestation</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BarrowWight.cs#L52">Barrow Wight</a></td><td><div class="weight-set"><span class="weight"><code>.00833f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DungeonMage.cs#L57">Dungeon Mage</a></td><td><div class="weight-set"><span class="weight"><code>(0) + (0.05f)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight.cs#L97">Ghost Of The Forgotten Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.16f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenWarrior.cs#L102">Ghost of the Forgotten Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnight.cs#L633">Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.001f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnight.cs#L590">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnight.cs#L733">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L118">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.00033333</code><span class="calculation">1 × 1/3000</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnightOriginal.cs#L997">Old Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.001f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnightOriginal.cs#L701">Old Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnightOriginal.cs#L1061">Old Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L104">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L108">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianValkyrie.cs#L145">Tibian Valkyrie</a></td><td><div class="weight-set"><span class="weight"><code>0.03857f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Meteor <span class="muted">(4)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2134">Granite Flyer</a></td><td><div class="weight-set"><span class="weight"><code>0.4f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2136">Meteor Head</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2135">Salamander4</a></td><td><div class="weight-set"><span class="weight"><code>0.4f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ArmoredWraith.cs#L51">Unarmored Wraith</a></td><td><div class="weight-set"><span class="weight"><code>.033f</code></span><span class="weight"><code>.04f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Graveyard <span class="muted">(9)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2141">Big Misassembled Skeleton</a></td><td><div class="weight-set"><span class="weight"><code>0.03f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2142">Bone Throwing Skeleton2</a></td><td><div class="weight-set"><span class="weight"><code>0.03f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/FirebombHollow.cs#L81">Firebomb Hollow</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight.cs#L105">Ghost Of The Forgotten Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfAHollowWarrior.cs#L710">Ghost of a Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrowned.cs#L852">Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>2.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenWarrior.cs#L114">Ghost of the Forgotten Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfAHollowWarriorOriginal.cs#L843">Old Ghost of a Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrownedOriginal.cs#L863">Old Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>2.5f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Underworld <span class="muted">(7)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/AttraidiesIllusion.cs#L66">Attraidies Illusion</a></td><td><div class="weight-set"><span class="weight"><code>.033f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CrazedDemonSpirit.cs#L112">Crazed Demon Spirit</a></td><td><div class="weight-set"><span class="weight"><code>0.00333333</code><span class="calculation">1 × 1/300</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DemonElemental.cs#L93">Demon Elemental</a></td><td><div class="weight-set"><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DemonSpirit.cs#L84">Demon Spirit</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/FireLurker.cs#L118">Fire Lurker</a></td><td><div class="weight-set"><span class="weight"><code>0.16666667</code><span class="calculation">1 × 1/6</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnightOriginal.cs#L1093">Old Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnight.cs#L679">Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Arazium&#39;s Mountain Caverns <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2102">Skeleton</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Machine Temple <span class="muted">(7)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/FirebombHollow.cs#L84">Firebomb Hollow</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.06f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSoldier.cs#L700">Hollow Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.03f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.06f</code></span><span class="weight"><code>0.075f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.12f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSpearman.cs#L694">Hollow Spearman</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowWarrior.cs#L696">Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSoldierOriginal.cs#L829">Old Hollow Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.03f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.06f</code></span><span class="weight"><code>0.075f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.12f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSpearmanOriginal.cs#L830">Old Hollow Spearman</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowWarriorOriginal.cs#L828">Old Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Origin of the Abyss <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/HumanityPhantom.cs#L78">Humanity Phantom</a></td><td><div class="weight-set"><span class="weight"><code>1.5f</code></span><span class="weight"><code>2f</code></span><span class="weight"><code>10f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Remix Obsidian Zone <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2325">Humanity Phantom</a></td><td><div class="weight-set"><span class="weight"><code>10f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L109">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.0534f</code></span><span class="weight"><code>0.055f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Desert <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Basilisk/BasiliskWalker.cs#L99">Basilisk Walker</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L109">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.0534f</code></span><span class="weight"><code>0.055f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Dungeon + Meteor <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L111">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.0725f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Meteor <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/ObsidianJellyfish.cs#L63">Obsidian Jellyfish</a></td><td><div class="weight-set"><span class="weight"><code>.35f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L111">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.0725f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Dungeon + Underworld <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/AttraidiesIllusion.cs#L66">Attraidies Illusion</a></td><td><div class="weight-set"><span class="weight"><code>.033f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Jungle + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/JungleWyvernJuvenile/JungleWyvernJuvenileHead.cs#L82">Jungle Wyvern Juvenile</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Jungle + Meteor <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcAlchemist.cs#L131">Dworc Alchemist</a></td><td><div class="weight-set"><span class="weight"><code>0.004f</code></span><span class="weight"><code>0.008f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.095f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>General / Custom <span class="muted">(23)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/AbandonedStump.cs#L80">Abandoned Stump</a></td><td><div class="weight-set"><span class="weight"><code>1.3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BarrowWight.cs#L51">Barrow Wight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CosmicCrystalLizard.cs#L66">Cosmic Crystal Lizard</a></td><td><div class="weight-set"><span class="weight"><code>0.02f * (1f + spawnInfo.Player.luck)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dunlending.cs#L117">Dunlending</a></td><td><div class="weight-set"><span class="weight"><code>0.067f</code></span><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSoldier.cs#L699">Hollow Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.12f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSpearman.cs#L693">Hollow Spearman</a></td><td><div class="weight-set"><span class="weight"><code>0.07f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowWarrior.cs#L695">Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.07f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LivingShroomThief.cs#L41">Living Shroom Thief</a></td><td><div class="weight-set"><span class="weight"><code>0.17f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnight.cs#L637">Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00003f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnight.cs#L594">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnight.cs#L738">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MushroomCreature.cs#L59">Mushroom Creature</a></td><td><div class="weight-set"><span class="weight"><code>0.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L119">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.0005</code><span class="calculation">1 × 1/2000</span></span><span class="weight"><code>0.002</code><span class="calculation">1 × 1/500</span></span><span class="weight"><code>0.005</code><span class="calculation">1 × 1/200</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSoldierOriginal.cs#L828">Old Hollow Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.12f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSpearmanOriginal.cs#L829">Old Hollow Spearman</a></td><td><div class="weight-set"><span class="weight"><code>0.07f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowWarriorOriginal.cs#L827">Old Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.07f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnightOriginal.cs#L1001">Old Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00003f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnightOriginal.cs#L705">Old Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnightOriginal.cs#L1066">Old Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SnowOwl.cs#L56">Snow Owl</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/StoneGolem.cs#L59">Stone Golem</a></td><td><div class="weight-set"><span class="weight"><code>Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/UndeadCaster.cs#L60">Undead Caster</a></td><td><div class="weight-set"><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Warlock.cs#L109">Warlock</a></td><td><div class="weight-set"><span class="weight"><code>0.00083333</code><span class="calculation">1 × 1/1200</span></span><span class="weight"><code>0.00232558</code><span class="calculation">1 × 1/430</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+    <section class="phase" id="hardmode">
+      <div class="phase-heading"><h2>Hardmode</h2><span class="muted">90 enemies</span></div>
+      <div class="biome-grid">
+        <article class="biome">
+          <h3>Neutral Overworld (Forest) <span class="muted">(8)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/BlackKnight.cs#L183">Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.004</code><span class="calculation">1 × 1/250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dunlending.cs#L111">Dunlending</a></td><td><div class="weight-set"><span class="weight"><code>(0.067f) / (2)</code></span><span class="weight"><code>(0.1f) / (2)</code></span><span class="weight"><code>(0.125f) / (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GreatBlackKnight.cs#L181">Great Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.004</code><span class="calculation">1 × 1/250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnight.cs#L598">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnight.cs#L742">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnightOriginal.cs#L708">Old Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnightOriginal.cs#L1070">Old Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianValkyrie.cs#L152">Tibian Valkyrie</a></td><td><div class="weight-set"><span class="weight"><code>0.018f</code></span><span class="weight"><code>0.025f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Neutral Underground / Caverns <span class="muted">(3)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/CosmicCrystalLizard.cs#L58">Cosmic Crystal Lizard</a></td><td><div class="weight-set"><span class="weight"><code>0.02f * (1f + spawnInfo.Player.luck)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L108">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianValkyrie.cs#L153">Tibian Valkyrie</a></td><td><div class="weight-set"><span class="weight"><code>0.022f</code></span><span class="weight"><code>0.032f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Crimson <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/DemonElemental.cs#L94">Demon Elemental</a></td><td><div class="weight-set"><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Hallow <span class="muted">(11)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/ClericOfSorrow.cs#L188">Cleric of Sorrow</a></td><td><div class="weight-set"><span class="weight"><code>0.025</code><span class="calculation">1 × 1/40</span></span><span class="weight"><code>0.02857143</code><span class="calculation">1 × 1/35</span></span><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/EvilEye.cs#L122">Evil Eye</a></td><td><div class="weight-set"><span class="weight"><code>0.002</code><span class="calculation">0.3f × 1/150</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2195">Gastropod</a></td><td><div class="weight-set"><span class="weight"><code>0.18f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L129">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.01111111</code><span class="calculation">1 × 1/90</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Parasprite.cs#L85">Parasprite</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2199">Pixie</a></td><td><div class="weight-set"><span class="weight"><code>0.40f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraHydromancer.cs#L112">Quara Hydromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.02857143</code><span class="calculation">1 × 1/35</span></span><span class="weight"><code>0.03333333</code><span class="calculation">1 × 1/30</span></span><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span><span class="weight"><code>0.1</code><span class="calculation">1 × 1/10</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2201">Rainbow Slime</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L107">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2200">Unicorn</a></td><td><div class="weight-set"><span class="weight"><code>0.09f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Willowisp.cs#L76">Willowisp</a></td><td><div class="weight-set"><span class="weight"><code>0.01176471</code><span class="calculation">1 × 1/85</span></span><span class="weight"><code>0.01818182</code><span class="calculation">1 × 1/55</span></span><span class="weight"><code>0.03333333</code><span class="calculation">1 × 1/30</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Jungle <span class="muted">(13)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Assassin.cs#L96">Assassin</a></td><td><div class="weight-set"><span class="weight"><code>0.00333333</code><span class="calculation">1f × 1/300</span></span><span class="weight"><code>0.005</code><span class="calculation">1f × 1/200</span></span><span class="weight"><code>0.00714286</code><span class="calculation">1f × 1/140</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CosmicCrystalLizard.cs#L62">Cosmic Crystal Lizard</a></td><td><div class="weight-set"><span class="weight"><code>0.02f * (1f + spawnInfo.Player.luck)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2211">Derpling</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcAlchemist.cs#L136">Dworc Alchemist</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcVoodooShaman.cs#L120">Dworc Shaman</a></td><td><div class="weight-set"><span class="weight"><code>0.045f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Eland.cs#L56">Eland</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2212">Giant Flying Fox</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/JungleSentree.cs#L72">Jungle Sentree</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MarilithSpiritTwin.cs#L53">Marilith Spirit Twin</a></td><td><div class="weight-set"><span class="weight"><code>0.00004999</code><span class="calculation">1 × 1/20005</span></span><span class="weight"><code>0.00007984</code><span class="calculation">1 × 1/12525</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MutantToad.cs#L86">Mutant Toad</a></td><td><div class="weight-set"><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ObsidianJellyfish.cs#L46">Obsidian Jellyfish</a></td><td><div class="weight-set"><span class="weight"><code>0.045f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L106">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Warlock.cs#L118">Warlock</a></td><td><div class="weight-set"><span class="weight"><code>0.00166667</code><span class="calculation">1 × 1/600</span></span><span class="weight"><code>0.00333333</code><span class="calculation">1 × 1/300</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Snow <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/BarrowWight.cs#L55">Barrow Wight</a></td><td><div class="weight-set"><span class="weight"><code>0.033f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Desert <span class="muted">(11)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Byakhee.cs#L57">Byakhee</a></td><td><div class="weight-set"><span class="weight"><code>0.0368f</code></span><span class="weight"><code>0.038f</code></span><span class="weight"><code>0.0627f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DemonElemental.cs#L95">Demon Elemental</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Bosses/HeroofLumelia.cs#L200">Hero of Lumelia</a></td><td><div class="weight-set"><span class="weight"><code>0.002</code><span class="calculation">1 × 1/500</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MountedSandsprog.cs#L59">Mounted Sandsprog</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MountedSandsprogMage.cs#L63">Mounted Sandsprog Mage</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnightOriginal.cs#L1097">Old Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraHydromancer.cs#L117">Quara Hydromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraPincher.cs#L150">Quara Pincher</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1f × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnight.cs#L683">Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Sandsprog.cs#L250">Sandsprog</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SandsprogMage.cs#L239">Sandsprog Mage</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Ocean <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/MarilithSpiritTwin.cs#L59">Marilith Spirit Twin</a></td><td><div class="weight-set"><span class="weight"><code>0.00012469</code><span class="calculation">1 × 1/8020</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraPincher.cs#L144">Quara Pincher</a></td><td><div class="weight-set"><span class="weight"><code>0.00714286</code><span class="calculation">1f × 1/140</span></span><span class="weight"><code>0.03333333</code><span class="calculation">1f × 1/30</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Dungeon <span class="muted">(18)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/AttraidiesIllusion.cs#L66">Attraidies Illusion</a></td><td><div class="weight-set"><span class="weight"><code>.00525f</code></span><span class="weight"><code>.0125f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BarrowWight.cs#L54">Barrow Wight</a></td><td><div class="weight-set"><span class="weight"><code>0.033f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BlackKnight.cs#L184">Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/DemonWheel.cs#L45">Demon Wheel</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DungeonMage.cs#L57">Dungeon Mage</a></td><td><div class="weight-set"><span class="weight"><code>(0) + (0.05f)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight.cs#L101">Ghost Of The Forgotten Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenWarrior.cs#L106">Ghost of the Forgotten Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.12f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GreatBlackKnight.cs#L182">Great Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnight.cs#L633">Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.001f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnight.cs#L590">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnight.cs#L733">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/ManOfWar.cs#L82">Man of War</a></td><td><div class="weight-set"><span class="weight"><code>0.5f</code></span><span class="weight"><code>(0.5f) * (4)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L128">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnightOriginal.cs#L997">Old Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.001f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnightOriginal.cs#L701">Old Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnightOriginal.cs#L1061">Old Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedKnight.cs#L165">Red Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00074074</code><span class="calculation">1 × 1/1350</span></span><span class="weight"><code>0.00083333</code><span class="calculation">1 × 1/1200</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L108">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Lihzahrd Temple <span class="muted">(6)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2150">Desert Djinn</a></td><td><div class="weight-set"><span class="weight"><code>0.075f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2151">Diabolist White</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2153">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.08f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2152">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.08f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraHydromancer.cs#L116">Quara Hydromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L110">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Meteor <span class="muted">(3)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/CrazedDemonSpirit.cs#L108">Crazed Demon Spirit</a></td><td><div class="weight-set"><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedKnight.cs#L167">Red Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.0008</code><span class="calculation">1 × 1/1250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ArmoredWraith.cs#L51">Unarmored Wraith</a></td><td><div class="weight-set"><span class="weight"><code>.033f</code></span><span class="weight"><code>.04f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Graveyard <span class="muted">(5)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/FirebombHollow.cs#L81">Firebomb Hollow</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight.cs#L105">Ghost Of The Forgotten Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrowned.cs#L852">Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span><span class="weight"><code>2.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenWarrior.cs#L114">Ghost of the Forgotten Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrownedOriginal.cs#L863">Old Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span><span class="weight"><code>2.5f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Underworld <span class="muted">(10)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/BlackKnight.cs#L186">Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00625</code><span class="calculation">1 × 1/160</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CrazedDemonSpirit.cs#L112">Crazed Demon Spirit</a></td><td><div class="weight-set"><span class="weight"><code>0.00333333</code><span class="calculation">1 × 1/300</span></span><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DemonElemental.cs#L96">Demon Elemental</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DemonSpirit.cs#L84">Demon Spirit</a></td><td><div class="weight-set"><span class="weight"><code>0.001</code><span class="calculation">1 × 1/1000</span></span><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/FireLurker.cs#L120">Fire Lurker</a></td><td><div class="weight-set"><span class="weight"><code>0.2</code><span class="calculation">1 × 1/5</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GreatBlackKnight.cs#L184">Great Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00625</code><span class="calculation">1 × 1/160</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MarilithSpiritTwin.cs#L57">Marilith Spirit Twin</a></td><td><div class="weight-set"><span class="weight"><code>0.00014225</code><span class="calculation">1 × 1/7030</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnightOriginal.cs#L1093">Old Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedKnight.cs#L171">Red Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00090909</code><span class="calculation">1 × 1/1100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnight.cs#L679">Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Sky <span class="muted">(3)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Archdeacon.cs#L49">Archdeacon</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2191">Goblin Summoner</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MarilithSpiritTwin.cs#L61">Marilith Spirit Twin</a></td><td><div class="weight-set"><span class="weight"><code>0.00012469</code><span class="calculation">1 × 1/8020</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Machine Temple <span class="muted">(10)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/FirebombHollow.cs#L87">Firebomb Hollow</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.06f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.1f</code></span><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2175">Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>2f</code></span><span class="weight"><code>3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2173">Green Jellyfish</a></td><td><div class="weight-set"><span class="weight"><code>10f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSoldier.cs#L701">Hollow Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.03f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.06f</code></span><span class="weight"><code>0.07f</code></span><span class="weight"><code>0.075f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.15f</code></span><span class="weight"><code>0.18f</code></span><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSpearman.cs#L695">Hollow Spearman</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.09f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowWarrior.cs#L697">Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.09f</code></span><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2174">Mutant Toad</a></td><td><div class="weight-set"><span class="weight"><code>1f</code></span><span class="weight"><code>2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSoldierOriginal.cs#L830">Old Hollow Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.03f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.06f</code></span><span class="weight"><code>0.07f</code></span><span class="weight"><code>0.075f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.15f</code></span><span class="weight"><code>0.18f</code></span><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSpearmanOriginal.cs#L831">Old Hollow Spearman</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.09f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowWarriorOriginal.cs#L829">Old Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.09f</code></span><span class="weight"><code>0.1f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Origin of the Abyss <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/HumanityPhantom.cs#L78">Humanity Phantom</a></td><td><div class="weight-set"><span class="weight"><code>1.5f</code></span><span class="weight"><code>2f</code></span><span class="weight"><code>10f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Remix Obsidian Zone <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2325">Humanity Phantom</a></td><td><div class="weight-set"><span class="weight"><code>10f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Remix Reef <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2285">Creature From The Deep</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2286">Shark</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/FireLurker.cs#L122">Fire Lurker</a></td><td><div class="weight-set"><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L109">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.0534f</code></span><span class="weight"><code>0.055f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Desert <span class="muted">(3)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Basilisk/BasiliskShifter.cs#L111">Basilisk Shifter</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Basilisk/BasiliskWalker.cs#L104">Basilisk Walker</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L130">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L109">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.0534f</code></span><span class="weight"><code>0.055f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Dungeon + Meteor <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/ObsidianJellyfish.cs#L63">Obsidian Jellyfish</a></td><td><div class="weight-set"><span class="weight"><code>.45f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L111">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.0725f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Jungle + Desert + Ocean <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L108">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.0125f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Meteor <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/TibianAmazon.cs#L111">Tibian Amazon</a></td><td><div class="weight-set"><span class="weight"><code>0.0725f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Underworld <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/ParasyticWorm/ParasyticWormHead.cs#L65">Parasytic Worm</a></td><td><div class="weight-set"><span class="weight"><code>0.005</code><span class="calculation">1 × 1/200</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Desert + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2160">Diabolist Red</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Desert + Ocean <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/QuaraPincher.cs#L150">Quara Pincher</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1f × 1/45</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Dungeon + Underworld <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/ShadowMage.cs#L58">Shadow Mage</a></td><td><div class="weight-set"><span class="weight"><code>0.025</code><span class="calculation">1 × 1/40</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Hallow + Snow + Desert + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Assassin.cs#L111">Assassin</a></td><td><div class="weight-set"><span class="weight"><code>0.005</code><span class="calculation">1f × 1/200</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Jungle + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/JungleWyvernJuvenile/JungleWyvernJuvenileHead.cs#L82">Jungle Wyvern Juvenile</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Jungle + Meteor <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcAlchemist.cs#L131">Dworc Alchemist</a></td><td><div class="weight-set"><span class="weight"><code>0.004f</code></span><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.008f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.095f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcVoodooShaman.cs#L115">Dworc Shaman</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.03f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.045f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>General / Custom <span class="muted">(33)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/AbandonedStump.cs#L80">Abandoned Stump</a></td><td><div class="weight-set"><span class="weight"><code>1.3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Assassin.cs#L116">Assassin</a></td><td><div class="weight-set"><span class="weight"><code>0.00333333</code><span class="calculation">1f × 1/300</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/AttraidiesIllusion.cs#L66">Attraidies Illusion</a></td><td><div class="weight-set"><span class="weight"><code>.00525f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/AttraidiesManifestation.cs#L67">Attraidies Manifestation</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BarrowWight.cs#L51">Barrow Wight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.0567f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BlackKnight.cs#L185">Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.004</code><span class="calculation">1 × 1/250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Byakhee.cs#L63">Byakhee</a></td><td><div class="weight-set"><span class="weight"><code>0.0433f</code></span><span class="weight"><code>0.0855f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ClericOfSorrow.cs#L191">Cleric of Sorrow</a></td><td><div class="weight-set"><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CloudBat.cs#L36">Cloud Bat</a></td><td><div class="weight-set"><span class="weight"><code>Terraria.ModLoader.Utilities.SpawnCondition.Sky.Chance * 0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CosmicCrystalLizard.cs#L66">Cosmic Crystal Lizard</a></td><td><div class="weight-set"><span class="weight"><code>0.02f * (1f + spawnInfo.Player.luck)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dunlending.cs#L111">Dunlending</a></td><td><div class="weight-set"><span class="weight"><code>(0.067f) / (2)</code></span><span class="weight"><code>(0.1f) / (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/FallenNecromancer.cs#L60">Fallen Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.00285714</code><span class="calculation">1 × 1/350</span></span><span class="weight"><code>0.00666667</code><span class="calculation">1 × 1/150</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrowned.cs#L852">Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GreatBlackKnight.cs#L183">Great Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.004</code><span class="calculation">1 × 1/250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/JungleWyvernJuvenile/JungleWyvernJuvenileHead.cs#L82">Jungle Wyvern Juvenile</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LivingShroomThief.cs#L41">Living Shroom Thief</a></td><td><div class="weight-set"><span class="weight"><code>0.17f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnight.cs#L637">Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00003f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnight.cs#L594">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnight.cs#L738">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ManHunter.cs#L104">Man Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/ManOfWar.cs#L82">Man of War</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span><span class="weight"><code>(0.25f) * (4)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MushroomCreature.cs#L59">Mushroom Creature</a></td><td><div class="weight-set"><span class="weight"><code>0.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MutantToad.cs#L62">Mutant Toad</a></td><td><div class="weight-set"><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L126">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.01666667</code><span class="calculation">1 × 1/60</span></span><span class="weight"><code>0.02857143</code><span class="calculation">1 × 1/35</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrownedOriginal.cs#L863">Old Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnightOriginal.cs#L1001">Old Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00003f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnightOriginal.cs#L705">Old Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnightOriginal.cs#L1066">Old Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2206">Sandshark Hallow</a></td><td><div class="weight-set"><span class="weight"><code>0.3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SnowOwl.cs#L56">Snow Owl</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/StoneGolem.cs#L51">Stone Golem</a></td><td><div class="weight-set"><span class="weight"><code>Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.07f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Tonberry.cs#L62">Tonberry</a></td><td><div class="weight-set"><span class="weight"><code>0.005</code><span class="calculation">1 × 1/200</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Willowisp.cs#L82">Willowisp</a></td><td><div class="weight-set"><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+    <section class="phase" id="superhardmode">
+      <div class="phase-heading"><h2>Super Hardmode</h2><span class="muted">131 enemies</span></div>
+      <div class="biome-grid">
+        <article class="biome">
+          <h3>Neutral Overworld (Forest) <span class="muted">(10)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/BarrowWightNemesis.cs#L84">Barrow Wight Nemesis</a></td><td><div class="weight-set"><span class="weight"><code>(0.02f) * (2)</code></span><span class="weight"><code>((0.02f) * (2)) * (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BlackKnight.cs#L183">Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.004</code><span class="calculation">1 × 1/250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dunlending.cs#L111">Dunlending</a></td><td><div class="weight-set"><span class="weight"><code>(0.067f) / (2)</code></span><span class="weight"><code>(0.1f) / (2)</code></span><span class="weight"><code>(0.125f) / (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDarkmoonKnight.cs#L93">Ghost of the Darkmoon Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GreatBlackKnight.cs#L181">Great Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.004</code><span class="calculation">1 × 1/250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnight.cs#L598">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnight.cs#L742">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnightOriginal.cs#L708">Old Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnightOriginal.cs#L1070">Old Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.015f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianValkyrie.cs#L152">Tibian Valkyrie</a></td><td><div class="weight-set"><span class="weight"><code>0.018f</code></span><span class="weight"><code>0.025f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Neutral Underground / Caverns <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/CosmicCrystalLizard.cs#L58">Cosmic Crystal Lizard</a></td><td><div class="weight-set"><span class="weight"><code>0.02f * (1f + spawnInfo.Player.luck)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/TibianValkyrie.cs#L153">Tibian Valkyrie</a></td><td><div class="weight-set"><span class="weight"><code>0.022f</code></span><span class="weight"><code>0.032f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/GuardianCorruptor.cs#L52">Guardian Corruptor</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span><span class="weight"><code>0.5f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Crimson <span class="muted">(4)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/CrazedDemonSpirit.cs#L120">Crazed Demon Spirit</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DemonElemental.cs#L94">Demon Elemental</a></td><td><div class="weight-set"><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/OolacileDemon.cs#L79">Ephemeral Oolacile Demon</a></td><td><div class="weight-set"><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2256">Vortex Larva</a></td><td><div class="weight-set"><span class="weight"><code>2f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Hallow <span class="muted">(11)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/ClericOfSorrow.cs#L188">Cleric of Sorrow</a></td><td><div class="weight-set"><span class="weight"><code>0.025</code><span class="calculation">1 × 1/40</span></span><span class="weight"><code>0.02857143</code><span class="calculation">1 × 1/35</span></span><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/EvilEye.cs#L122">Evil Eye</a></td><td><div class="weight-set"><span class="weight"><code>0.002</code><span class="calculation">0.3f × 1/150</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2195">Gastropod</a></td><td><div class="weight-set"><span class="weight"><code>0.18f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDarkmoonKnight.cs#L89">Ghost of the Darkmoon Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/HydrisNecromancer.cs#L69">Hydris Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span><span class="weight"><code>0.16666667</code><span class="calculation">1 × 1/6</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L129">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.01111111</code><span class="calculation">1 × 1/90</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Parasprite.cs#L85">Parasprite</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraHydromancer.cs#L112">Quara Hydromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.02857143</code><span class="calculation">1 × 1/35</span></span><span class="weight"><code>0.03333333</code><span class="calculation">1 × 1/30</span></span><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span><span class="weight"><code>0.1</code><span class="calculation">1 × 1/10</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L107">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/VampireBat.cs#L51">Vampire Bat</a></td><td><div class="weight-set"><span class="weight"><code>0.03f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Willowisp.cs#L76">Willowisp</a></td><td><div class="weight-set"><span class="weight"><code>0.01176471</code><span class="calculation">1 × 1/85</span></span><span class="weight"><code>0.01818182</code><span class="calculation">1 × 1/55</span></span><span class="weight"><code>0.03333333</code><span class="calculation">1 × 1/30</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Jungle <span class="muted">(18)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Assassin.cs#L96">Assassin</a></td><td><div class="weight-set"><span class="weight"><code>0.00333333</code><span class="calculation">1f × 1/300</span></span><span class="weight"><code>0.005</code><span class="calculation">1f × 1/200</span></span><span class="weight"><code>0.00714286</code><span class="calculation">1f × 1/140</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2218">Bone Lee</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CosmicCrystalLizard.cs#L62">Cosmic Crystal Lizard</a></td><td><div class="weight-set"><span class="weight"><code>0.02f * (1f + spawnInfo.Player.luck)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/CorruptedHornet.cs#L53">Defiled Hornet</a></td><td><div class="weight-set"><span class="weight"><code>0.5</code><span class="calculation">1 × 1/2</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2211">Derpling</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcAlchemist.cs#L136">Dworc Alchemist</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcVoodooShaman.cs#L120">Dworc Shaman</a></td><td><div class="weight-set"><span class="weight"><code>0.045f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Eland.cs#L56">Eland</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2212">Giant Flying Fox</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/JungleSentree.cs#L72">Jungle Sentree</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MutantToad.cs#L86">Mutant Toad</a></td><td><div class="weight-set"><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ObsidianJellyfish.cs#L46">Obsidian Jellyfish</a></td><td><div class="weight-set"><span class="weight"><code>0.045f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/OolacileKnight.cs#L94">Oolacile Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/Plaguesmith.cs#L52">Plaguesmith</a></td><td><div class="weight-set"><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L106">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/SlograII.cs#L65">Slogra</a></td><td><div class="weight-set"><span class="weight"><code>0.025</code><span class="calculation">1 × 1/40</span></span><span class="weight"><code>0.02857143</code><span class="calculation">1 × 1/35</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Tonberry.cs#L66">Tonberry</a></td><td><div class="weight-set"><span class="weight"><code>0.01333333</code><span class="calculation">1 × 1/75</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Warlock.cs#L118">Warlock</a></td><td><div class="weight-set"><span class="weight"><code>0.00166667</code><span class="calculation">1 × 1/600</span></span><span class="weight"><code>0.00333333</code><span class="calculation">1 × 1/300</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Snow <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/IceSkeleton.cs#L67">Adept of Seath</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BarrowWight.cs#L58">Barrow Wight</a></td><td><div class="weight-set"><span class="weight"><code>0.008f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Desert <span class="muted">(14)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Byakhee.cs#L57">Byakhee</a></td><td><div class="weight-set"><span class="weight"><code>0.0368f</code></span><span class="weight"><code>0.038f</code></span><span class="weight"><code>0.0627f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DemonElemental.cs#L95">Demon Elemental</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/OolacileDemon.cs#L81">Ephemeral Oolacile Demon</a></td><td><div class="weight-set"><span class="weight"><code>0.03333333</code><span class="calculation">1 × 1/30</span></span><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/HydrisNecromancer.cs#L71">Hydris Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MountedSandsprog.cs#L59">Mounted Sandsprog</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MountedSandsprogMage.cs#L63">Mounted Sandsprog Mage</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnightOriginal.cs#L1097">Old Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraHydromancer.cs#L117">Quara Hydromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraPincher.cs#L149">Quara Pincher</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1f × 1/45</span></span><span class="weight"><code>0.04545455</code><span class="calculation">1f × 1/22</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L114">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.13f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnight.cs#L683">Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Sandsprog.cs#L250">Sandsprog</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SandsprogMage.cs#L239">Sandsprog Mage</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/TaurusKnight.cs#L98">Taurus Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Ocean <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/QuaraPincher.cs#L143">Quara Pincher</a></td><td><div class="weight-set"><span class="weight"><code>0.00714286</code><span class="calculation">1f × 1/140</span></span><span class="weight"><code>0.03333333</code><span class="calculation">1f × 1/30</span></span><span class="weight"><code>0.05555556</code><span class="calculation">1f × 1/18</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Dungeon <span class="muted">(23)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/AttraidiesIllusion.cs#L66">Attraidies Illusion</a></td><td><div class="weight-set"><span class="weight"><code>.0125f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BarrowWight.cs#L57">Barrow Wight</a></td><td><div class="weight-set"><span class="weight"><code>0.008f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BlackKnight.cs#L184">Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/DemonWheel.cs#L43">Demon Wheel</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span><span class="weight"><code>0.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DungeonMage.cs#L57">Dungeon Mage</a></td><td><div class="weight-set"><span class="weight"><code>(0) + (0.05f)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight.cs#L101">Ghost Of The Forgotten Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDarkmoonKnight.cs#L73">Ghost of the Darkmoon Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span><span class="weight"><code>0.4f</code></span><span class="weight"><code>0.6f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenWarrior.cs#L106">Ghost of the Forgotten Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span><span class="weight"><code>0.12f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GreatBlackKnight.cs#L182">Great Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2244">Knight of Gwyn</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnight.cs#L633">Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.001f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnight.cs#L590">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnight.cs#L733">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/ManOfWar.cs#L82">Man of War</a></td><td><div class="weight-set"><span class="weight"><code>0.5f</code></span><span class="weight"><code>(0.5f) * (4)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L128">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnightOriginal.cs#L997">Old Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.001f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnightOriginal.cs#L701">Old Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnightOriginal.cs#L1061">Old Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/OolacileKnight.cs#L101">Oolacile Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02857143</code><span class="calculation">1 × 1/35</span></span><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L115">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedKnight.cs#L165">Red Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00074074</code><span class="calculation">1 × 1/1350</span></span><span class="weight"><code>0.00083333</code><span class="calculation">1 × 1/1200</span></span><span class="weight"><code>0.002</code><span class="calculation">1 × 1/500</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/TaurusKnight.cs#L105">Taurus Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.02</code><span class="calculation">1 × 1/50</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Tonberry.cs#L64">Tonberry</a></td><td><div class="weight-set"><span class="weight"><code>0.03333333</code><span class="calculation">1 × 1/30</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Lihzahrd Temple <span class="muted">(6)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2150">Desert Djinn</a></td><td><div class="weight-set"><span class="weight"><code>0.075f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2151">Diabolist White</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2153">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.08f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2152">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.08f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraHydromancer.cs#L116">Quara Hydromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L110">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Meteor <span class="muted">(5)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/CrazedDemonSpirit.cs#L108">Crazed Demon Spirit</a></td><td><div class="weight-set"><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/OolacileKnight.cs#L108">Oolacile Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedKnight.cs#L167">Red Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.0008</code><span class="calculation">1 × 1/1250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/Tetsujin.cs#L82">Tetsujin</a></td><td><div class="weight-set"><span class="weight"><code>.75f</code></span><span class="weight"><code>(.75f) * (2)</code></span><span class="weight"><code>((.75f) * (2)) * (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ArmoredWraith.cs#L51">Unarmored Wraith</a></td><td><div class="weight-set"><span class="weight"><code>.033f</code></span><span class="weight"><code>.04f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Glowing Mushroom <span class="muted">(8)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/HydrisNecromancer.cs#L70">Hydris Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/QuaraHydromancer.cs#L119">Quara Hydromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.2</code><span class="calculation">1 × 1/5</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2229">Shimmer Slime</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2225">Stardust Cell Big</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2226">Stardust Jellyfish Big</a></td><td><div class="weight-set"><span class="weight"><code>0.3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2228">Stardust Soldier</a></td><td><div class="weight-set"><span class="weight"><code>1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2227">Stardust Spider Big</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2224">Stardust Worm Head</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Graveyard <span class="muted">(5)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/FirebombHollow.cs#L81">Firebomb Hollow</a></td><td><div class="weight-set"><span class="weight"><code>0.05f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight.cs#L105">Ghost Of The Forgotten Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrowned.cs#L852">Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span><span class="weight"><code>2.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheForgottenWarrior.cs#L114">Ghost of the Forgotten Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrownedOriginal.cs#L863">Old Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span><span class="weight"><code>2.5f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Underworld <span class="muted">(20)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/AbyssLurker.cs#L83">Abyssal Strider</a></td><td><div class="weight-set"><span class="weight"><code>0.2</code><span class="calculation">1 × 1/5</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BlackKnight.cs#L186">Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00625</code><span class="calculation">1 × 1/160</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CrazedDemonSpirit.cs#L112">Crazed Demon Spirit</a></td><td><div class="weight-set"><span class="weight"><code>0.00333333</code><span class="calculation">1 × 1/300</span></span><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DemonElemental.cs#L96">Demon Elemental</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/DemonSpirit.cs#L84">Demon Spirit</a></td><td><div class="weight-set"><span class="weight"><code>0.001</code><span class="calculation">1 × 1/1000</span></span><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/DemonWheel.cs#L49">Demon Wheel</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/FireLurker.cs#L124">Fire Lurker</a></td><td><div class="weight-set"><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GreatBlackKnight.cs#L184">Great Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00625</code><span class="calculation">1 × 1/160</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/AncientDemonOfTheAbyss.cs#L98">Great Demon of the Abyss</a></td><td><div class="weight-set"><span class="weight"><code>0.001f</code></span><span class="weight"><code>(0.001f) * (2)</code></span><span class="weight"><code>((0.001f) * (2)) * (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/Massacre.cs#L112">Juggernaut</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1 × 1/45</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnightOriginal.cs#L1093">Old Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedKnight.cs#L171">Red Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00090909</code><span class="calculation">1 × 1/1100</span></span><span class="weight"><code>0.00333333</code><span class="calculation">1 × 1/300</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RingedKnight.cs#L679">Ringed Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/SerpentOfTheAbyss/SerpentOfTheAbyssHead.cs#L92">Serpent of the Abyss</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.067f</code></span><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2236">Solar Corite</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2234">Solar Crawltipede Head</a></td><td><div class="weight-set"><span class="weight"><code>0.002f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2238">Solar Drakomire</a></td><td><div class="weight-set"><span class="weight"><code>0.4f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2239">Solar Solenian</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2237">Solar Spearman</a></td><td><div class="weight-set"><span class="weight"><code>0.4f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2235">Solar Sroller</a></td><td><div class="weight-set"><span class="weight"><code>0.4f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Sky <span class="muted">(3)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Archdeacon.cs#L53">Archdeacon</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2191">Goblin Summoner</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/Tetsujin.cs#L82">Tetsujin</a></td><td><div class="weight-set"><span class="weight"><code>0.5f</code></span><span class="weight"><code>(0.5f) * (2)</code></span><span class="weight"><code>((0.5f) * (2)) * (2)</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Machine Temple <span class="muted">(10)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/FirebombHollow.cs#L87">Firebomb Hollow</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.06f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.1f</code></span><span class="weight"><code>0.13f</code></span><span class="weight"><code>0.15f</code></span><span class="weight"><code>0.17f</code></span><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2175">Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>2f</code></span><span class="weight"><code>3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2173">Green Jellyfish</a></td><td><div class="weight-set"><span class="weight"><code>10f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSoldier.cs#L701">Hollow Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.03f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.06f</code></span><span class="weight"><code>0.07f</code></span><span class="weight"><code>0.075f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.13f</code></span><span class="weight"><code>0.15f</code></span><span class="weight"><code>0.16f</code></span><span class="weight"><code>0.18f</code></span><span class="weight"><code>0.2f</code></span><span class="weight"><code>0.23f</code></span><span class="weight"><code>0.25f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSpearman.cs#L695">Hollow Spearman</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.09f</code></span><span class="weight"><code>0.115f</code></span><span class="weight"><code>0.13f</code></span><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowWarrior.cs#L697">Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.09f</code></span><span class="weight"><code>0.1f</code></span><span class="weight"><code>0.115f</code></span><span class="weight"><code>0.13f</code></span><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2174">Mutant Toad</a></td><td><div class="weight-set"><span class="weight"><code>1f</code></span><span class="weight"><code>2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSoldierOriginal.cs#L830">Old Hollow Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.03f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.06f</code></span><span class="weight"><code>0.07f</code></span><span class="weight"><code>0.075f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.13f</code></span><span class="weight"><code>0.15f</code></span><span class="weight"><code>0.16f</code></span><span class="weight"><code>0.18f</code></span><span class="weight"><code>0.2f</code></span><span class="weight"><code>0.23f</code></span><span class="weight"><code>0.25f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowSpearmanOriginal.cs#L831">Old Hollow Spearman</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.09f</code></span><span class="weight"><code>0.115f</code></span><span class="weight"><code>0.13f</code></span><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/HollowWarriorOriginal.cs#L829">Old Hollow Warrior</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span><span class="weight"><code>0.08f</code></span><span class="weight"><code>0.09f</code></span><span class="weight"><code>0.1f</code></span><span class="weight"><code>0.115f</code></span><span class="weight"><code>0.13f</code></span><span class="weight"><code>0.15f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Catacombs <span class="muted">(3)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2249">Nebula Brain</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2250">Nebula Headcrab</a></td><td><div class="weight-set"><span class="weight"><code>0.4f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2251">Nebula Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.4f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Molten Sky Temple <span class="muted">(4)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2264">Paladin</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2262">Vortex Hornet</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2261">Vortex Rifleman</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2263">Vortex Soldier</a></td><td><div class="weight-set"><span class="weight"><code>0.3f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Origin of the Abyss <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/HumanityPhantom.cs#L78">Humanity Phantom</a></td><td><div class="weight-set"><span class="weight"><code>1.5f</code></span><span class="weight"><code>2f</code></span><span class="weight"><code>10f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Remix Obsidian Zone <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2325">Humanity Phantom</a></td><td><div class="weight-set"><span class="weight"><code>10f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Remix Reef <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2285">Creature From The Deep</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2286">Shark</a></td><td><div class="weight-set"><span class="weight"><code>0.6f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson <span class="muted">(6)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/CorruptedElemental.cs#L51">Abyss Elemental</a></td><td><div class="weight-set"><span class="weight"><code>0.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/AbyssLurker.cs#L81">Abyssal Strider</a></td><td><div class="weight-set"><span class="weight"><code>0.1</code><span class="calculation">1 × 1/10</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/DemonWheel.cs#L47">Demon Wheel</a></td><td><div class="weight-set"><span class="weight"><code>0.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/HydrisElemental.cs#L62">Hydris Elemental</a></td><td><div class="weight-set"><span class="weight"><code>0.00066667</code><span class="calculation">1 × 1/1500</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L112">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.13f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/VampireBat.cs#L43">Vampire Bat</a></td><td><div class="weight-set"><span class="weight"><code>0.125f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Desert <span class="muted">(3)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Basilisk/BasiliskHunter.cs#L111">Basilisk Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Basilisk/BasiliskShifter.cs#L106">Basilisk Shifter</a></td><td><div class="weight-set"><span class="weight"><code>0.075f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L130">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Dungeon + Meteor <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/ObsidianJellyfish.cs#L63">Obsidian Jellyfish</a></td><td><div class="weight-set"><span class="weight"><code>.45f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Jungle <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L113">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Jungle + Desert + Ocean <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/RedCloudHunter.cs#L108">Red Cloud Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.0125f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Crimson + Underworld <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/ParasyticWorm/ParasyticWormHead.cs#L65">Parasytic Worm</a></td><td><div class="weight-set"><span class="weight"><code>0.005</code><span class="calculation">1 × 1/200</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/DarkKnight.cs#L87">Dark Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span><span class="weight"><code>(0.2f) * (2)</code></span><span class="weight"><code>((0.2f) * (2)) * (2)</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Corruption + Meteor + Sky <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2271">Solar Corite</a></td><td><div class="weight-set"><span class="weight"><code>0.35f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Crimson + Underworld <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/DarkBloodKnight.cs#L94">Demonic Blood Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span><span class="weight"><code>0.3f</code></span><span class="weight"><code>(0.25f) * (2)</code></span><span class="weight"><code>(0.3f) * (2)</code></span><span class="weight"><code>((0.25f) * (2)) * (2)</code></span><span class="weight"><code>((0.3f) * (2)) * (2)</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Desert + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2160">Diabolist Red</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Desert + Ocean <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/QuaraPincher.cs#L149">Quara Pincher</a></td><td><div class="weight-set"><span class="weight"><code>0.02222222</code><span class="calculation">1f × 1/45</span></span><span class="weight"><code>0.04545455</code><span class="calculation">1f × 1/22</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Dungeon + Underworld <span class="muted">(2)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDarkmoonKnight.cs#L77">Ghost of the Darkmoon Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ShadowMage.cs#L58">Shadow Mage</a></td><td><div class="weight-set"><span class="weight"><code>0.025</code><span class="calculation">1 × 1/40</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Hallow + Snow <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/CrystalKnight.cs#L87">Crystal Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span><span class="weight"><code>0.36f</code></span><span class="weight"><code>(0.2f) * (2)</code></span><span class="weight"><code>(0.36f) * (2)</code></span><span class="weight"><code>((0.2f) * (2)) * (2)</code></span><span class="weight"><code>((0.36f) * (2)) * (2)</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Hallow + Snow + Desert + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Assassin.cs#L111">Assassin</a></td><td><div class="weight-set"><span class="weight"><code>0.005</code><span class="calculation">1f × 1/200</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Jungle + Dungeon <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/JungleWyvernJuvenile/JungleWyvernJuvenileHead.cs#L82">Jungle Wyvern Juvenile</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span><span class="weight"><code>0.05f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Jungle + Meteor <span class="muted">(3)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcAbysswalker.cs#L113">Dworc Abysswalker</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span><span class="weight"><code>(0.1f) * (1.3f)</code></span><span class="weight"><code>(0.1f) * (1.5f)</code></span><span class="weight"><code>((0.1f) * (1.3f)) * (1.5f)</code></span><span class="weight"><code>(0.1f) * (2)</code></span><span class="weight"><code>((0.1f) * (1.3f)) * (2)</code></span><span class="weight"><code>((0.1f) * (1.5f)) * (2)</code></span><span class="weight"><code>(((0.1f) * (1.3f)) * (1.5f)) * (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcAlchemist.cs#L131">Dworc Alchemist</a></td><td><div class="weight-set"><span class="weight"><code>0.004f</code></span><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.008f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.095f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dworc/DworcVoodooShaman.cs#L115">Dworc Shaman</a></td><td><div class="weight-set"><span class="weight"><code>0.01f</code></span><span class="weight"><code>0.025f</code></span><span class="weight"><code>0.03f</code></span><span class="weight"><code>0.035f</code></span><span class="weight"><code>0.045f</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Meteor + Sky <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/Tetsujin.cs#L82">Tetsujin</a></td><td><div class="weight-set"><span class="weight"><code>.75f</code></span><span class="weight"><code>(.75f) * (2)</code></span><span class="weight"><code>((.75f) * (2)) * (2)</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>Snow + Dungeon + Sky <span class="muted">(1)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/BarrowWightNemesis.cs#L84">Barrow Wight Nemesis</a></td><td><div class="weight-set"><span class="weight"><code>0.17f</code></span><span class="weight"><code>(0.17f) * (2)</code></span><span class="weight"><code>((0.17f) * (2)) * (2)</code></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="biome">
+          <h3>General / Custom <span class="muted">(42)</span></h3>
+          <table>
+            <thead><tr><th>Enemy</th><th>Effective average weight</th></tr></thead>
+            <tbody>
+              <tr><td><a href="../../NPCs/Enemies/AbandonedStump.cs#L80">Abandoned Stump</a></td><td><div class="weight-set"><span class="weight"><code>1.3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/IceSkeleton.cs#L73">Adept of Seath</a></td><td><div class="weight-set"><span class="weight"><code>0.067f</code></span><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Assassin.cs#L116">Assassin</a></td><td><div class="weight-set"><span class="weight"><code>0.001f</code></span><span class="weight"><code>(0.001f) * (2)</code></span><span class="weight"><code>0.002f</code></span><span class="weight"><code>0.00333333</code><span class="calculation">1f × 1/300</span></span><span class="weight"><code>(0.002f) * (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BarrowWight.cs#L51">Barrow Wight</a></td><td><div class="weight-set"><span class="weight"><code>0.005f</code></span><span class="weight"><code>0.025f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/BlackKnight.cs#L185">Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.004</code><span class="calculation">1 × 1/250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Byakhee.cs#L63">Byakhee</a></td><td><div class="weight-set"><span class="weight"><code>0.0433f</code></span><span class="weight"><code>0.0855f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ClericOfSorrow.cs#L191">Cleric of Sorrow</a></td><td><div class="weight-set"><span class="weight"><code>0.04</code><span class="calculation">1 × 1/25</span></span><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CloudBat.cs#L36">Cloud Bat</a></td><td><div class="weight-set"><span class="weight"><code>Terraria.ModLoader.Utilities.SpawnCondition.Sky.Chance * 0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/CosmicCrystalLizard.cs#L66">Cosmic Crystal Lizard</a></td><td><div class="weight-set"><span class="weight"><code>0.02f * (1f + spawnInfo.Player.luck)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Dunlending.cs#L111">Dunlending</a></td><td><div class="weight-set"><span class="weight"><code>(0.067f) / (2)</code></span><span class="weight"><code>(0.1f) / (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/OolacileDemon.cs#L85">Ephemeral Oolacile Demon</a></td><td><div class="weight-set"><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span><span class="weight"><code>0.07692308</code><span class="calculation">1 × 1/13</span></span><span class="weight"><code>0.125</code><span class="calculation">1 × 1/8</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/FallenNecromancer.cs#L60">Fallen Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.00285714</code><span class="calculation">1 × 1/350</span></span><span class="weight"><code>0.00666667</code><span class="calculation">1 × 1/150</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrowned.cs#L852">Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GreatBlackKnight.cs#L183">Great Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.004</code><span class="calculation">1 × 1/250</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/AncientDemonOfTheAbyss.cs#L98">Great Demon of the Abyss</a></td><td><div class="weight-set"><span class="weight"><code>0.0005f</code></span><span class="weight"><code>(0.0005f) * (2)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2277">Hell Armored Bones</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2279">Hell Armored Bones Mace</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2278">Hell Armored Bones Spike Shield</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2280">Hell Armored Bones Sword</a></td><td><div class="weight-set"><span class="weight"><code>0.1f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/HydrisNecromancer.cs#L73">Hydris Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.01666667</code><span class="calculation">1 × 1/60</span></span><span class="weight"><code>0.03333333</code><span class="calculation">1 × 1/30</span></span><span class="weight"><code>0.05</code><span class="calculation">1 × 1/20</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/JungleWyvernJuvenile/JungleWyvernJuvenileHead.cs#L82">Jungle Wyvern Juvenile</a></td><td><div class="weight-set"><span class="weight"><code>0.04f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LivingShroomThief.cs#L41">Living Shroom Thief</a></td><td><div class="weight-set"><span class="weight"><code>0.17f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnight.cs#L631">Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00003f</code></span><span class="weight"><code>0.002f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnight.cs#L592">Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.03f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnight.cs#L735">Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/ManHunter.cs#L104">Man Hunter</a></td><td><div class="weight-set"><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/ManOfWar.cs#L82">Man of War</a></td><td><div class="weight-set"><span class="weight"><code>0.25f</code></span><span class="weight"><code>(0.25f) * (4)</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MushroomCreature.cs#L59">Mushroom Creature</a></td><td><div class="weight-set"><span class="weight"><code>0.5f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/MutantToad.cs#L62">Mutant Toad</a></td><td><div class="weight-set"><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Necromancer.cs#L126">Necromancer</a></td><td><div class="weight-set"><span class="weight"><code>0.01666667</code><span class="calculation">1 × 1/60</span></span><span class="weight"><code>0.02857143</code><span class="calculation">1 × 1/35</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/GhostFighter/GhostOfTheDrownedOriginal.cs#L863">Old Ghost of the Drowned</a></td><td><div class="weight-set"><span class="weight"><code>0.15f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricBlackKnightOriginal.cs#L995">Old Lothric Black Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.00003f</code></span><span class="weight"><code>0.002f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricKnightOriginal.cs#L703">Old Lothric Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span><span class="weight"><code>0.03f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/LothricSpearKnightOriginal.cs#L1063">Old Lothric Spear Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.003f</code></span><span class="weight"><code>0.02f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2206">Sandshark Hallow</a></td><td><div class="weight-set"><span class="weight"><code>0.3f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/SlograII.cs#L67">Slogra</a></td><td><div class="weight-set"><span class="weight"><code>0.0125</code><span class="calculation">1 × 1/80</span></span><span class="weight"><code>0.01666667</code><span class="calculation">1 × 1/60</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/GlobalNPC.cs#L2276">Solar Solenian</a></td><td><div class="weight-set"><span class="weight"><code>0.2f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/StoneGolem.cs#L51">Stone Golem</a></td><td><div class="weight-set"><span class="weight"><code>Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.07f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/TaurusKnight.cs#L112">Taurus Knight</a></td><td><div class="weight-set"><span class="weight"><code>0.03333333</code><span class="calculation">1 × 1/30</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Tonberry.cs#L62">Tonberry</a></td><td><div class="weight-set"><span class="weight"><code>0.005</code><span class="calculation">1 × 1/200</span></span><span class="weight"><code>0.01</code><span class="calculation">1 × 1/100</span></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/SuperHardMode/VampireBat.cs#L47">Vampire Bat</a></td><td><div class="weight-set"><span class="weight"><code>0.0167f</code></span></div></td></tr>
+              <tr><td><a href="../../NPCs/Enemies/Willowisp.cs#L82">Willowisp</a></td><td><div class="weight-set"><span class="weight"><code>0.06666667</code><span class="calculation">1 × 1/15</span></span></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

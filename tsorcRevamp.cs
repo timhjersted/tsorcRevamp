@@ -201,6 +201,13 @@ namespace tsorcRevamp
         /// Invigorating). See Prefixes/Refreshing.cs — CanRoll gates on membership here.</summary>
         public static HashSet<int> StaminaPrefixAccessories;
 
+        /// <summary>Axe/pick/hammer-flagged items that should be priced as real weapons (the DPS-aware
+        /// output-based stamina system) rather than as utility tools (the flat ToolSwingStaminaMult /
+        /// ToolCombatHitSurcharge rate). See tsorcRevampStaminaPlayer.UsesOutputBasedWeaponCost — this
+        /// registry is consulted there, which is the single choke point every stamina cost site reads
+        /// from, so nothing else needs to know this list exists.</summary>
+        public static HashSet<int> WeaponClassifiedTools;
+
         internal BonfireUIState BonfireUIState;
         internal UserInterface _bonfireUIState; //"but zeo!", you say
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
@@ -563,6 +570,39 @@ namespace tsorcRevamp
                 ItemID.TerrasparkBoots,
                 ItemID.AnkletoftheWind,
                 ItemID.Aglet,
+            };
+            #endregion
+            //--------
+            #region Weapon-classified pick/axe/hammer items
+            // Every pick/axe/hammer-flagged item defaults to the flat utility-tool stamina rate, on the
+            // assumption that tool power means "this is primarily for chopping/mining." A roster audit
+            // showed that assumption is wrong for almost everything here: every mod axe/hammer except the
+            // two genuine tools below deals real combat damage (8-325) and lives under Items/Weapons/ —
+            // they're weapons that happen to chop wood, not tools that happen to deal damage. Being excluded
+            // from the DPS-aware pricing meant a strong axe paid the SAME flat rate as a weak one, and a
+            // weak-but-correctly-measured vanilla weapon like Starfury (whose falling star IS seen by the
+            // output system) could come out cheaper than a much harder-hitting axe purely because of this
+            // misclassification.
+            //
+            // Left OFF this list deliberately — genuine utility tools, priced flat on purpose:
+            //   - DiamondPickaxe (0 damage, pure mining tool)
+            //   - HeavenPiercer (Items/Tools/, pick=999/axe=199 — a hamdrax-style tool-first item; its 42
+            //     damage is a side benefit of tool power, not the other way around, same as vanilla's
+            //     Drax/Picksaw/PickaxeAxe hamaxes, which are also left on the flat rate for consistency)
+            //
+            // TO ADD MORE: any future axe/hammer/pick WEAPON (real damage, lives under Items/Weapons/)
+            // belongs here. A genuine tool (built for mining/chopping, damage is incidental) should not.
+            WeaponClassifiedTools = new HashSet<int>
+            {
+                ModContent.ItemType<Items.Weapons.Melee.Axes.AncientFireAxe>(),
+                ModContent.ItemType<Items.Weapons.Melee.Axes.BrokenDualBladedAxe>(),
+                ModContent.ItemType<Items.Weapons.Melee.Axes.DualBladedAxe>(),
+                ModContent.ItemType<Items.Weapons.Melee.Axes.DunlendingAxe>(),
+                ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenPoisonAxe>(),
+                ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenRuneAxe>(),
+                ModContent.ItemType<Items.Weapons.Melee.Axes.GigantAxe>(),
+                ModContent.ItemType<Items.Weapons.Melee.Hammers.AncientWarhammer>(),
+                ModContent.ItemType<Items.Weapons.Melee.Hammers.Mjolnir>(),
             };
             #endregion
             //--------
@@ -1750,6 +1790,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<MindflayerKingServant>(),
                 ModContent.NPCType<MindflayerServant>(),
                 ModContent.NPCType<MindflayerIllusion>(),
+                ModContent.NPCType<NPCs.Puppets.Kahlrun>(),
             };
             #endregion
 

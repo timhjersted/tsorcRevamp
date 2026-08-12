@@ -33,12 +33,10 @@ namespace tsorcRevamp.NPCs.Enemies
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();
 
-            // Step 6: humanoid soldier — paces around its post when it gives up.
+            // humanoid soldier — paces around its post when it gives up.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PatrolMode = NPCs.PatrolMode.Pace;
-            // Phase 2 Step 4: mid-tier SmartFighter4AI movement test (radius 30 — routes local dead-ends/cliffs
-            // and short mazes; still smaller/cheaper than the 40-80 used by tougher enemies). Pure melee, so
-            // it exercises movement only.
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 30;
+            // low-tier SmartFighter4AI movement (radius 10 — routes local dead-ends/cliffs but can't do short mazes;  
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 10;
             
             if (tsorcRevampWorld.SuperHardMode)
             {

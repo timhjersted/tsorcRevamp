@@ -314,6 +314,15 @@ namespace tsorcRevamp.NPCs
         public bool DirectPounceAfterimages = true;
         public int DodgeTimer;
         public int DodgeCooldown;
+        // Planned rotating dodge-roll state. The server solves a safe direction, distance and
+        // integer duration once; clients receive these values and reproduce the same roll/recovery.
+        public int DodgeRecoveryTimer;
+        public int DodgeDirection;
+        public float DodgeSpeed;
+        public int DodgeTotalTicks;
+        public bool LastDodgeWasForward;
+        // Opt-in for the forward/backward terrain-aware roll planner used by RK/GRK.
+        public bool DirectionalDodgeRolls;
         public int FighterPostAttackPauseTimer;
         public int FighterAttacksSincePause;
         public bool FighterRangedHitInterruptedPause;
@@ -448,6 +457,9 @@ namespace tsorcRevamp.NPCs
         public bool EvasiveRunningDash;     // flash telegraph → grounded top-speed burst toward the player (sustained)
         public bool EvasiveRetreatAndShoot; // forced-flee back-off, then resume firing (sustained, melee-hit counter)
         public bool EvasiveQuickStep;       // i-frame quick step that passes through the player (sustained)
+        public bool EvasiveDodgeRoll;       // rotating i-frame roll with a planned safe landing
+        public int EvasiveOnHitChanceDenominator = 4;
+        public int EvasiveOnHitCooldownTicks = 45;
         public bool EvasiveBasiliskWalkerCloseBackhop;
         public bool EvasiveBasiliskWalkerFarScrambleHop;
         public bool EvasiveBasiliskShifterCloseBackhop;
@@ -477,7 +489,8 @@ namespace tsorcRevamp.NPCs
         // True while a behavior should draw the ghost afterimage trail (quick step, or the running-dash burst).
         public bool EvasiveAfterimagesActive => QuickStepTimer > 0 || (InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RunningDash && !EvasiveTelegraphing);
         /// <summary>True during any multi-tick evasive action — a parallel to <see cref="InAttack"/> for deference.</summary>
-        public bool InEvasion => InSustainedEvasion || QuickStepTimer > 0 || QuickStepRecoveryTimer > 0;
+        public bool InEvasion => InSustainedEvasion || QuickStepTimer > 0 || QuickStepRecoveryTimer > 0
+            || DodgeTimer > 0 || DodgeRecoveryTimer > 0;
         /// <summary>True during a RetreatAndShoot back-off — seizes the body so the driver can drive the retreat velocity.</summary>
         public bool EvasiveRetreating => InSustainedEvasion && CurrentEvasion == EvasiveBehavior.RetreatAndShoot;
 
@@ -1931,6 +1944,11 @@ namespace tsorcRevamp.NPCs
         {
             binaryWriter.Write(DoorBreakProgress);
             binaryWriter.Write(DodgeTimer);
+            binaryWriter.Write(DodgeRecoveryTimer);
+            binaryWriter.Write(DodgeDirection);
+            binaryWriter.Write(DodgeSpeed);
+            binaryWriter.Write(DodgeTotalTicks);
+            binaryWriter.Write(LastDodgeWasForward);
             binaryWriter.Write(ProjectileTimer);
             binaryWriter.Write(TeleportCountdown);
             binaryWriter.Write(TeleportAppearanceTimer);
@@ -1971,6 +1989,11 @@ namespace tsorcRevamp.NPCs
         {
             DoorBreakProgress = binaryReader.ReadInt32();
             DodgeTimer = binaryReader.ReadInt32();
+            DodgeRecoveryTimer = binaryReader.ReadInt32();
+            DodgeDirection = binaryReader.ReadInt32();
+            DodgeSpeed = binaryReader.ReadSingle();
+            DodgeTotalTicks = binaryReader.ReadInt32();
+            LastDodgeWasForward = binaryReader.ReadBoolean();
             ProjectileTimer = binaryReader.ReadSingle();
             TeleportCountdown = binaryReader.ReadInt32();
             TeleportAppearanceTimer = binaryReader.ReadInt32();

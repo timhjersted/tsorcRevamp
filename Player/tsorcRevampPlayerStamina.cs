@@ -76,8 +76,15 @@ namespace tsorcRevamp
         /// This constant is the base cost now paid on every swing instead (hit, miss, tile, or air),
         /// matching how every other weapon already works. See ToolCombatHitSurcharge for the small
         /// extra now added specifically when the swing lands on an NPC.
+        ///
+        /// 0.3, down from the original 0.6 — the first pass made pure mining/chopping (no combat
+        /// surcharge, ever, since trees/tiles never reach OnHitNPC) drain a full stamina pool in as
+        /// little as ~5-7 seconds of continuous swinging on a fast tool like Diamond Pickaxe. Mining
+        /// should barely register against the bar; combat is what's supposed to cost real stamina, and
+        /// real WEAPON-classified axes/hammers (tsorcRevamp.WeaponClassifiedTools) don't use this
+        /// constant at all any more — only genuine utility tools do.
         /// </summary>
-        public const float ToolSwingStaminaMult = 0.6f;
+        public const float ToolSwingStaminaMult = 0.3f;
 
         /// <summary>Extra flat stamina charged (before WeaponStaminaMult) on top of the swing cost when a
         /// pick/axe/hammer actually lands on an NPC — so fighting with one of these costs a bit more than
@@ -130,7 +137,15 @@ namespace tsorcRevamp
                 return true;
             }
 
-            if (item.damage <= 1 || item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.type == ItemID.EoCShield)
+            // Pick/axe/hammer items are utility tools by default (flat ToolSwingStaminaMult rate) UNLESS
+            // explicitly weapon-classified in tsorcRevamp.WeaponClassifiedTools — see that registry's
+            // comment for why most of this mod's axes/hammers belong there. This is THE routing decision:
+            // every stamina cost/gate/tooltip site reads UsesOutputBasedWeaponCost rather than checking
+            // item.pick/axe/hammer directly, so nothing else needs to know this carve-out exists.
+            bool isUtilityTool = (item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                && (tsorcRevamp.WeaponClassifiedTools == null || !tsorcRevamp.WeaponClassifiedTools.Contains(item.type));
+
+            if (item.damage <= 1 || isUtilityTool || item.type == ItemID.EoCShield)
             {
                 return false;
             }
@@ -835,7 +850,12 @@ namespace tsorcRevamp
                 if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
                 if (item.type == ItemID.EoCShield) return;
                 StringBuilder tipToAdd = new();
-                bool isToolWeapon = item.pick != 0 || item.axe != 0 || item.hammer != 0;
+                // NOT the raw item.pick/axe/hammer check — a weapon-classified tool (tsorcRevamp.
+                // WeaponClassifiedTools, e.g. the mod's axes) reads UsesOutputBasedWeaponCost as false
+                // here for the same reason it does everywhere else the routing decision is made: it's a
+                // real weapon on the DPS-aware system, not a flat-rate utility tool.
+                bool isToolWeapon = (item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                    && !UsesOutputBasedWeaponCost(item);
                 if (isToolWeapon)
                 {
                     // No longer "on-hit only" — pick/axe/hammer now pay this per swing, same as every

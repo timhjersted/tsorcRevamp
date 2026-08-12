@@ -279,7 +279,11 @@ namespace tsorcRevamp.NPCs
             ProjectileTimer = 0f;
             AttackTelegraphing = true;
             AttackCommitted = false;
-            tsorcRevampAIs.SpawnTelegraphFlash(npc, guardPressureUnblockable ? Color.Red : move.TelegraphColor);
+            if (!UsesKnightThirtyTickCommit(npc))
+            {
+                tsorcRevampAIs.SpawnTelegraphFlash(npc,
+                    guardPressureUnblockable ? Color.Red : move.TelegraphColor);
+            }
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -302,8 +306,16 @@ namespace tsorcRevamp.NPCs
 
             int activeStart = CombatMeleeTelegraphTicks + 1;
             int activeEnd = activeStart + move.ActiveTicks;
-            AttackTelegraphing = CombatMeleeTimer < activeStart;
-            AttackCommitted = CombatMeleeTimer >= activeStart && CombatMeleeTimer < activeEnd;
+            int commitStart = UsesKnightThirtyTickCommit(npc)
+                ? Math.Max(1, activeStart - 30)
+                : activeStart;
+            AttackTelegraphing = CombatMeleeTimer < commitStart;
+            AttackCommitted = CombatMeleeTimer >= commitStart && CombatMeleeTimer < activeEnd;
+            if (UsesKnightThirtyTickCommit(npc) && CombatMeleeTimer == commitStart)
+            {
+                tsorcRevampAIs.SpawnTelegraphFlash(npc,
+                    ActiveAttackBypassesShield ? Color.Red : move.TelegraphColor);
+            }
 
             if (CombatMeleeTimer < activeStart)
             {
@@ -342,6 +354,12 @@ namespace tsorcRevamp.NPCs
             {
                 FinishHumanoidMelee(npc, move);
             }
+        }
+
+        static bool UsesKnightThirtyTickCommit(NPC npc)
+        {
+            return npc.ModNPC is Enemies.RedKnight
+                || npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight;
         }
 
         private void RunHumanoidMeleeTelegraph(NPC npc, Player target, HumanoidMeleeMove move, int activeStart)

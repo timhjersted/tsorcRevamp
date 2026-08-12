@@ -314,6 +314,30 @@ namespace tsorcRevamp.Projectiles.Enemy
             mote.noGravity = true;
         }
 
+        internal static void DrawCinderMotes(Vector2 center, float progress, float radius)
+        {
+            float pulse = 0.9f + 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 9f);
+            DrawCrimsonQuad("RedKnightPoisonOrb", center, 0f,
+                Vector2.One * (25f + progress * 7f), (0.65f + progress * 0.2f) * pulse,
+                new Color(22, 0, 12), new Color(198, 18, 58), new Color(255, 92, 142),
+                progress, 0.86f, 1f, 0f);
+
+            if (Main.dedServ || !Main.rand.NextBool(3))
+            {
+                return;
+            }
+
+            Vector2 dustPosition = center + Main.rand.NextVector2Circular(
+                Math.Min(radius, 9f), Math.Min(radius, 9f));
+            bool shadow = Main.rand.NextBool(4);
+            Dust mote = Dust.NewDustPerfect(dustPosition,
+                shadow ? DustID.Shadowflame : DustID.RedTorch,
+                (center - dustPosition).SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(0.3f, 0.8f),
+                shadow ? 150 : 95, new Color(238, 34, 92), Main.rand.NextFloat(0.5f, 0.85f));
+            mote.noGravity = true;
+            mote.noLight = shadow;
+        }
+
         internal static void DrawPoisonOrb(Vector2 center, Vector2 velocity, float opacity, float scale = 1f)
         {
             bool moving = velocity.LengthSquared() > 0.04f;
@@ -368,6 +392,21 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
+        internal static void DrawTeleportFeintTell(Vector2 center, float radius, float progress)
+        {
+            float eased = progress * progress * (3f - 2f * progress);
+            float pulse = 0.9f + 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 10f);
+            float gatherScale = MathHelper.Lerp(1.22f, 0.92f, eased);
+            Vector2 size = new Vector2(radius * 2f, radius * 1.72f) * gatherScale;
+
+            // Dark, inward-moving portal body. The projectile's embers sit exactly on Radius and
+            // carry the authoritative boundary; this softer volume remains inside/around it only
+            // to communicate fire material and growing pressure before the active burst.
+            DrawVoidGather(center, size,
+                (0.24f + eased * 0.34f) * pulse,
+                new Color(8, 0, 4), new Color(138, 12, 18));
+        }
+
         internal static void DrawHerald(Vector2 center, float progress, bool storm)
         {
             float envelope = (float)Math.Sin(progress * MathHelper.Pi);
@@ -378,9 +417,18 @@ namespace tsorcRevamp.Projectiles.Enemy
                 // + a storm-blue radial band) that read as a different boss's attack and as a flat
                 // ring. It is now one dedicated crimson technique: a dark occluding storm body with
                 // branching crimson discharge crackling through it and a hot heart on the knight.
-                float diameter = MathHelper.Lerp(150f, 470f, MathHelper.Clamp(progress * 1.05f, 0f, 1f));
+                float growth = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(progress * 1.05f, 0f, 1f));
+                float diameter = MathHelper.Lerp(150f, 470f, growth);
+                float outerDiameter = MathHelper.Lerp(150f, 940f, growth);
+                float recoveryFade = MathHelper.Clamp((1f - progress) * 7f, 0f, 1f);
+
+                // A second copy of the same storm material expands behind the original to twice
+                // its final diameter. Lower opacity and a phase offset keep it a turbulent backdrop;
+                // the crisp lightning lanes remain the authoritative damaging geometry.
+                DrawStormHeraldGather(center, outerDiameter, progress,
+                    MathHelper.Clamp(0.16f + envelope * 0.36f, 0f, 1f) * recoveryFade, phase: 2.15f);
                 DrawStormHeraldGather(center, diameter, progress,
-                    MathHelper.Clamp(0.35f + envelope * 0.65f, 0f, 1f));
+                    MathHelper.Clamp(0.35f + envelope * 0.65f, 0f, 1f) * recoveryFade);
 
                 if (!Main.dedServ && envelope > 0.08f && Main.rand.NextBool(2))
                 {
@@ -910,11 +958,22 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         /// <summary>The Storm Herald gather, crimson rather than the old storm-blue.</summary>
         internal static void DrawStormHeraldGather(Vector2 center, float diameter,
-            float progress, float opacity)
+            float progress, float opacity, float phase = 0f)
         {
             DrawDestinedDeathQuad("RedKnightStormHerald", center, 0f, Vector2.One * diameter,
-                Vector2.One * 0.5f, opacity, progress, 1f, 0f, 0f,
+                Vector2.One * 0.5f, opacity, progress, 1f, 0f, phase,
                 DestinedSoot, DestinedFlame, DestinedCore);
+        }
+
+        /// <summary>A lance-sized Storm Herald aperture used by Red Court Procession.</summary>
+        internal static void DrawCourtPortal(Vector2 center, float progress, float opacity, float phase)
+        {
+            float eased = MathHelper.SmoothStep(0f, 1f, progress);
+            float pulse = 0.92f + 0.08f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 11f + phase);
+            DrawStormHeraldGather(center, MathHelper.Lerp(38f, 82f, eased), progress,
+                opacity * 0.72f * pulse, phase);
+            DrawStormHeraldGather(center, MathHelper.Lerp(22f, 48f, eased), progress,
+                opacity * pulse, phase + 1.7f);
         }
 
         /// <summary>

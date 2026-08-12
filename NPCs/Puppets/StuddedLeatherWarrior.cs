@@ -15,6 +15,7 @@ using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
 using tsorcRevamp.Items.Weapons.Melee.Axes;
+using tsorcRevamp.Items;
 namespace tsorcRevamp.NPCs.Puppets
 {
     [AutoloadBossHead]
@@ -80,8 +81,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int MeleeWeaponItemType => ModContent.ItemType<DualBladedAxe>();
         protected override int RangedWeaponItemType => ModContent.ItemType<EnemyFireFlask>();
 
-        protected override int MeleeDamage => 32;
+        protected override int MeleeDamage => 28;
         protected override int RangedDamage => 18;
+
+        protected override int EstusChargesMax => 3;
+        protected override int HealAnimationTicks => 180;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Axe;
 
@@ -709,7 +713,7 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.aiStyle = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
-            NPC.value = 14000f;
+            NPC.value = 15000f;
             NPC.boss = true;
             NPC.npcSlots = 5f;
 
@@ -736,9 +740,21 @@ namespace tsorcRevamp.NPCs.Puppets
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StuddedLeatherGreaves>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<IronShield>()));
 
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DualBladedAxe>(), 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BrokenDualBladedAxe>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ProudKnightSoul>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<global::tsorcRevamp.Items.Weapons.Throwing.FireFlask>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 500, 750));
+        }
+
+        public override void HitEffect(NPC.HitInfo hit)
+        {
+            if (NPC.life <= 0)
+            {
+                for (int i = 0; i < 150; i++)
+                {
+                    int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 100, default, Main.rand.NextFloat(1f, 2.2f));
+                    Main.dust[d].noGravity = true;
+                }
+            }
         }
 
         public override void OnKill()

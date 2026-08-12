@@ -9005,6 +9005,11 @@ Mods: {
 				// DisplayName: Tenth Damage Tomb
 				// Tooltip: ""
 			}
+
+			BrokenDualBladedAxe: {
+				// DisplayName: Broken Dual Bladed Axe
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -12767,6 +12772,7 @@ Mods: {
 			// Blaidd.DisplayName: Blaidd
 			// ShadowNinja.DisplayName: Shadow Ninja
 			// BlackNinja.DisplayName: Black Ninja
+			// Kahlrun.DisplayName: Kahlrun of Falstrók
 			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
 			// TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
 			// RedKnightTest.DisplayName: Red Knight Test

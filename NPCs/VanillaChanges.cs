@@ -1838,17 +1838,6 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
 
-                case (NPCID.DoctorBones): //this guy is very very rare
-                    {
-                        npc.GivenName = "Indiana Jones";
-                        npc.damage = 100;
-                        npc.lifeMax = 1500;
-                        npc.defense = 20;
-                        npc.knockBackResist = 0f;
-                        npc.scale = 1.2f;
-                        npc.value = 45490;
-                        break;
-                    }
 
                 case int nymph when (
                         nymph == NPCID.LostGirl ||
@@ -3020,11 +3009,11 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
 
-                case (NPCID.Eyezor):
-                    {
-                        npc.value = 4420;
-                        break;
-                    }
+                //case (NPCID.Eyezor):
+                //    {
+                //        npc.value = 4420;
+                //        break;
+                //    }
 
                 case int mothron when ((mothron >= NPCID.Mothron && mothron <= NPCID.MothronSpawn)):
                     {
@@ -3713,6 +3702,7 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.SmallFemaleZombie
                     || npc.type == NPCID.SmallRainZombie
                     || npc.type == NPCID.ZombieRaincoat
+                    || npc.type == NPCID.DoctorBones
                     || npc.type == NPCID.UmbrellaSlime
                     || npc.type == NPCID.BigHeadacheSkeleton
                     || npc.type == NPCID.SmallHeadacheSkeleton
@@ -3730,6 +3720,8 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.HeadacheSkeleton
                     || npc.type == NPCID.SkeletonSniper
                     || npc.type == NPCID.TacticalSkeleton
+                    || npc.type == NPCID.SkeletonCommando
+                    || npc.type == NPCID.SkeletonAlien
                     || npc.type == NPCID.HoppinJack
                     || npc.type == NPCID.SkeletonTopHat
                     || npc.type == NPCID.SkeletonAstonaut
@@ -3749,6 +3741,7 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.WindyBalloon
                     || npc.type == NPCID.ToxicSludge
                     || npc.type == NPCID.EmpressButterfly
+                    || npc.type == NPCID.Eyezor
                     || npc.type == NPCID.BoundGoblin
                     || npc.type == NPCID.BoundMechanic
                     || npc.type == NPCID.BoundWizard)

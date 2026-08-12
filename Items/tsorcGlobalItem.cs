@@ -607,7 +607,14 @@ namespace tsorcRevamp.Items
             // without reintroducing the old "only pay when you connect" behaviour that let the swing cost
             // be dodged entirely by whiffing. Trees/tiles never reach OnHitNPC, so pure wood-chopping only
             // ever pays the swing cost.
-            if (modPlayer.UsesWeaponStamina && (item.pick != 0 || item.axe != 0 || item.hammer != 0))
+            //
+            // Skipped entirely for weapon-classified tools (tsorcRevamp.WeaponClassifiedTools) — those
+            // already paid the correct DPS-aware cost in PreItemCheck via UsesOutputBasedWeaponCost, and
+            // this surcharge exists specifically to compensate the FLAT tool rate for not knowing about
+            // combat; a weapon on the smart system doesn't need that compensation and would just be
+            // double-charged by it.
+            if (modPlayer.UsesWeaponStamina && (item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                && !tsorcRevampStaminaPlayer.UsesOutputBasedWeaponCost(item))
             {
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -=
                     tsorcRevampStaminaPlayer.ToolCombatHitSurcharge * modPlayer.WeaponStaminaMult;

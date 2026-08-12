@@ -6,6 +6,7 @@ using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs;
@@ -87,6 +88,210 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             {
                 hitEffects.OnHumanoidMeleeHit(target);
             }
+        }
+    }
+
+    /// <summary>
+    /// Adder's Thread flies on a fixed 36-tick arc to the sampled ground point, plants there, then
+    /// recalls to its source knight. The visible poison thread and its collision use the same line.
+    /// </summary>
+    public class RedKnightAdderSpear : ModProjectile
+    {
+        const int FlightTicks = 36;
+        const int RecallStart = 93;
+        const int RecallTicks = 18;
+        int Age => (int)Projectile.localAI[0];
+        Vector2 PlantPoint => new(Projectile.ai[1], Projectile.ai[2]);
+
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/BlackKnightSpear";
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 12;
+            Projectile.height = 12;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = RecallStart + RecallTicks + 12;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
+            Projectile.scale = 0.8f;
+        }
+
+        public override void AI()
+        {
+            int sourceIndex = (int)Projectile.ai[0];
+            if (sourceIndex < 0 || sourceIndex >= Main.maxNPCs || !Main.npc[sourceIndex].active)
+            {
+                Projectile.Kill();
+                return;
+            }
+            NPC source = Main.npc[sourceIndex];
+
+            if (Age < FlightTicks)
+            {
+                Projectile.velocity.Y += 0.26f;
+                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            }
+            else if (Age < RecallStart)
+            {
+                Projectile.Center = PlantPoint;
+                Projectile.velocity = Vector2.Zero;
+                Projectile.rotation = 0f;
+                Lighting.AddLight(Projectile.Center, new Vector3(0.16f, 0.28f, 0.02f));
+                if (Main.rand.NextBool(3))
+                {
+                    Dust mote = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(10f, 8f),
+                        DustID.CursedTorch, Main.rand.NextVector2Circular(0.3f, 0.3f), 120,
+                        new Color(138, 204, 24), Main.rand.NextFloat(0.55f, 0.85f));
+                    mote.noGravity = true;
+                }
+            }
+            else
+            {
+                float progress = MathHelper.Clamp((Age - RecallStart + 1f) / RecallTicks, 0f, 1f);
+                Vector2 recallPoint = source.Center + new Vector2(source.direction * 18f, -7f);
+                Vector2 previous = Projectile.Center;
+                Projectile.Center = Vector2.Lerp(PlantPoint, recallPoint, progress * progress);
+                Projectile.velocity = Projectile.Center - previous;
+                Projectile.rotation = Projectile.velocity.SafeNormalize(new Vector2(source.direction, 0f)).ToRotation()
+                    + MathHelper.PiOver2;
+            }
+
+            Projectile.localAI[0]++;
+        }
+
+        public override bool? CanDamage() => Age < FlightTicks || (Age >= RecallStart && Age < RecallStart + RecallTicks);
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            if (Age < RecallStart)
+            {
+                return base.Colliding(projHitbox, targetHitbox);
+            }
+            NPC source = Main.npc[(int)Projectile.ai[0]];
+            float collisionPoint = 0f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
+                source.Center, Projectile.Center, 11f, ref collisionPoint);
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(BuffID.Poisoned, 5 * 60);
+            target.AddBuff(BuffID.Darkness, 10 * 60);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Age >= FlightTicks)
+            {
+                NPC source = Main.npc[(int)Projectile.ai[0]];
+                float charge = MathHelper.Clamp((Age - FlightTicks) / (float)(RecallStart - FlightTicks), 0f, 1f);
+                DrawThread(source.Center, Projectile.Center, charge, Age >= RecallStart);
+            }
+            return true;
+        }
+
+        static void DrawThread(Vector2 start, Vector2 end, float charge, bool active)
+        {
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Vector2 delta = end - start;
+            float length = delta.Length();
+            if (length < 2f) return;
+            float rotation = delta.ToRotation();
+            Vector2 origin = new(0f, 0.5f);
+            Color shadow = new Color(8, 18, 1) * (0.45f + charge * 0.35f);
+            Color body = (active ? new Color(190, 245, 45) : new Color(88, 142, 12)) * (0.35f + charge * 0.55f);
+            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, null, shadow, rotation, origin,
+                new Vector2(length, active ? 13f : 8f), SpriteEffects.None, 0f);
+            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, null, body, rotation, origin,
+                new Vector2(length, active ? 4f : 2f), SpriteEffects.None, 0f);
+        }
+    }
+
+    /// <summary>
+    /// A small Storm Herald aperture that materializes one blood lance. It owns both the warning
+    /// and the release so the portal, dust burst, and server-authored projectile cannot drift apart.
+    /// </summary>
+    public class RedCourtLancePortal : ModProjectile
+    {
+        const int MaterializeTicks = 24;
+        const int ReleaseFadeTicks = 12;
+        int Age => (int)Projectile.localAI[0];
+
+        public override string Texture => "Terraria/Images/MagicPixel";
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 2;
+            Projectile.height = 2;
+            Projectile.timeLeft = MaterializeTicks + ReleaseFadeTicks + 2;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
+        }
+
+        public override bool ShouldUpdatePosition() => false;
+        public override bool? CanDamage() => false;
+
+        public override void AI()
+        {
+            int sourceIndex = (int)Projectile.ai[0];
+            if (sourceIndex < 0 || sourceIndex >= Main.maxNPCs || !Main.npc[sourceIndex].active)
+            {
+                Projectile.Kill();
+                return;
+            }
+
+            if (Age < MaterializeTicks && Main.rand.NextBool(2))
+            {
+                Vector2 dustPosition = Projectile.Center + Main.rand.NextVector2CircularEdge(28f, 18f);
+                Dust gather = Dust.NewDustPerfect(dustPosition,
+                    Main.rand.NextBool(2) ? DustID.Blood : DustID.Wraith,
+                    (Projectile.Center - dustPosition).SafeNormalize(Vector2.Zero)
+                        * Main.rand.NextFloat(0.7f, 1.8f),
+                    105, default, Main.rand.NextFloat(0.75f, 1.12f));
+                gather.noGravity = true;
+            }
+
+            if (Age == MaterializeTicks)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center,
+                        Projectile.velocity, ModContent.ProjectileType<EnemyAncientBloodLanceProj>(),
+                        Projectile.damage, 0f, Main.myPlayer, ai2: 1f);
+                }
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.42f, Pitch = -0.5f }, Projectile.Center);
+                    for (int i = 0; i < 22; i++)
+                    {
+                        bool blood = i % 2 == 0;
+                        Vector2 velocity = Main.rand.NextVector2Circular(3.8f, 2.8f)
+                            - Projectile.velocity.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(0.2f, 1.2f);
+                        Dust burst = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(10f, 8f),
+                            blood ? DustID.Blood : DustID.Wraith, velocity, blood ? 80 : 120,
+                            default, Main.rand.NextFloat(0.9f, 1.38f));
+                        burst.noGravity = true;
+                    }
+                }
+            }
+
+            Lighting.AddLight(Projectile.Center, new Vector3(0.42f, 0.025f, 0.035f)
+                * (Age < MaterializeTicks ? 0.5f : 0.85f));
+            Projectile.localAI[0]++;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float progress = MathHelper.Clamp(Age / (float)MaterializeTicks, 0f, 1f);
+            float opacity = Age <= MaterializeTicks
+                ? MathHelper.Lerp(0.2f, 0.92f, progress)
+                : MathHelper.Clamp(1f - (Age - MaterializeTicks) / (float)ReleaseFadeTicks, 0f, 1f);
+            RedKnightVFX.DrawCourtPortal(Projectile.Center, progress, opacity,
+                Projectile.identity * 0.47f + Projectile.ai[1] * 0.31f);
+            return false;
         }
     }
 
@@ -671,7 +876,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         int Age => (int)Projectile.localAI[0];
         int TelegraphTicks => Math.Max(1, (int)Projectile.ai[0]);
-        int ActiveTicks => Math.Max(1, (int)Projectile.ai[1]);
+        int ActiveTicks => Math.Max(1, Math.Abs((int)Projectile.ai[1]));
+        bool SilentRelease => Projectile.ai[1] < 0f;
         float Length => Math.Max(64f, Projectile.ai[2]);
 
         public override void SetDefaults()
@@ -690,7 +896,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void AI()
         {
-            if (Age == TelegraphTicks && !Main.dedServ)
+            if (Age == TelegraphTicks && !SilentRelease && !Main.dedServ)
             {
                 SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.62f, Pitch = -0.42f }, Projectile.Center);
             }
@@ -1031,6 +1237,446 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             float progress = 1f - Projectile.timeLeft / (float)Lifetime;
             RedKnightVFX.DrawBurst(Kind, Projectile.Center,
                 progress, Projectile.ai[1] <= 0f ? 1f : Projectile.ai[1]);
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Fixed cast-time anchor for Red Knight's ten-second outer-lane poison rain. The controller
+    /// remains at the knight's release position, so later movement cannot drag the safe central
+    /// space or the rain bands around. Only the server samples lanes and creates damaging orbs.
+    /// </summary>
+    public class RedKnightPoisonRainController : ModProjectile
+    {
+        public const int RainDurationTicks = 10 * 60;
+        const float InnerLaneOffset = 400f;
+        const float OuterLaneOffset = 650f;
+        const float DesiredSpawnHeight = 340f;
+        const float MinimumSpawnHeight = 112f;
+        const int MinimumVolleyDelay = 18;
+        const int MaximumVolleyDelay = 31;
+
+        public override string Texture => "Terraria/Images/MagicPixel";
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 2;
+            Projectile.height = 2;
+            Projectile.hostile = false;
+            Projectile.friendly = false;
+            Projectile.timeLeft = RainDurationTicks;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
+        }
+
+        public override bool ShouldUpdatePosition() => false;
+        public override bool? CanDamage() => false;
+
+        public override void AI()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Projectile.localAI[0]--;
+            if (Projectile.localAI[0] > 0f)
+            {
+                return;
+            }
+
+            Projectile.localAI[0] = Main.rand.Next(MinimumVolleyDelay, MaximumVolleyDelay + 1);
+            int ballCount = Main.rand.NextFloat() < 0.38f ? 2 : 1;
+            int firstSide = Main.rand.NextBool() ? 1 : -1;
+            for (int i = 0; i < ballCount; i++)
+            {
+                // Two-ball beats use opposite outer lanes, keeping the center readable without
+                // making every beat perfectly mirrored or mechanically dense.
+                int preferredSide = i == 0 ? firstSide : -firstSide;
+                if (!TryChooseRainOrigin(Projectile.Center, preferredSide, out Vector2 origin))
+                {
+                    continue;
+                }
+
+                Vector2 velocity = new Vector2(0f, Main.rand.NextFloat(2.2f, 3.15f));
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin, velocity,
+                    ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), Projectile.damage,
+                    0f, Main.myPlayer, ai2: 2f);
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public static bool HasUsableLane(Vector2 anchor)
+        {
+            for (int side = -1; side <= 1; side += 2)
+            {
+                for (float offset = InnerLaneOffset; offset <= OuterLaneOffset; offset += 62.5f)
+                {
+                    if (TryFindRainOrigin(anchor, anchor.X + side * offset, out _))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        static bool TryChooseRainOrigin(Vector2 anchor, int preferredSide, out Vector2 origin)
+        {
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                int side = attempt < 3 ? preferredSide : -preferredSide;
+                float offset = Main.rand.NextFloat(InnerLaneOffset, OuterLaneOffset);
+                if (TryFindRainOrigin(anchor, anchor.X + side * offset, out origin))
+                {
+                    return true;
+                }
+            }
+            origin = Vector2.Zero;
+            return false;
+        }
+
+        static bool TryFindRainOrigin(Vector2 anchor, float x, out Vector2 origin)
+        {
+            // Start at the desired height, then walk downward. Requiring an unobstructed vertical
+            // line to the knight's elevation rejects sky above a roof and chooses open space below
+            // that roof instead; the 16x40 body check prevents materializing inside thin ceilings.
+            int steps = (int)((DesiredSpawnHeight - MinimumSpawnHeight) / 16f);
+            for (int step = 0; step <= steps; step++)
+            {
+                Vector2 candidate = new Vector2(x, anchor.Y - DesiredSpawnHeight + step * 16f);
+                Vector2 boxTopLeft = candidate - new Vector2(8f, 8f);
+                Vector2 laneEnd = new Vector2(x, anchor.Y);
+                if (!Collision.SolidCollision(boxTopLeft, 16, 40)
+                    && Collision.CanHitLine(candidate, 2, 2, laneEnd, 2, 2))
+                {
+                    origin = candidate;
+                    return true;
+                }
+            }
+            origin = Vector2.Zero;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Ten equally spaced poison drops sweep across a player-centered 600px curtain. The player
+    /// position and sweep direction are fixed at release; individual origins hug the underside of
+    /// valid ceilings where possible and never spawn with less than twelve tiles of headroom.
+    /// </summary>
+    public class RedKnightPoisonCurtainController : ModProjectile
+    {
+        public const int BallCount = 10;
+        public const int MaximumObstructedLanes = 4;
+        public const int BallIntervalTicks = 20;
+        public const float CurtainWidth = 600f;
+        public const float MinimumHeightAbovePlayer = 12f * 16f;
+        const float OpenSkySpawnHeight = 320f;
+        const int CeilingSearchTiles = 40;
+        const int Lifetime = (BallCount - 1) * BallIntervalTicks + 2;
+
+        int Age => Lifetime - Projectile.timeLeft;
+        int SweepDirection => Projectile.ai[0] >= 0f ? 1 : -1;
+
+        public override string Texture => "Terraria/Images/MagicPixel";
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 2;
+            Projectile.height = 2;
+            Projectile.hostile = false;
+            Projectile.friendly = false;
+            Projectile.timeLeft = Lifetime;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
+        }
+
+        public override bool ShouldUpdatePosition() => false;
+        public override bool? CanDamage() => false;
+
+        public override void AI()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient
+                || Age < 0 || Age > (BallCount - 1) * BallIntervalTicks
+                || Age % BallIntervalTicks != 0)
+            {
+                return;
+            }
+
+            int index = Age / BallIntervalTicks;
+            float spacing = CurtainWidth / (BallCount - 1);
+            float leftToRightOffset = -CurtainWidth * 0.5f + index * spacing;
+            float x = Projectile.Center.X + SweepDirection * leftToRightOffset;
+            if (!TryFindCurtainOrigin(Projectile.Center, x, out Vector2 origin))
+            {
+                return;
+            }
+
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin,
+                new Vector2(0f, 2.7f),
+                ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), Projectile.damage,
+                0f, Main.myPlayer, ai2: 2f);
+        }
+
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public static bool HasUsableCurtain(Vector2 playerAnchor)
+        {
+            float spacing = CurtainWidth / (BallCount - 1);
+            int usableLanes = 0;
+            for (int i = 0; i < BallCount; i++)
+            {
+                float x = playerAnchor.X - CurtainWidth * 0.5f + i * spacing;
+                if (TryFindCurtainOrigin(playerAnchor, x, out _))
+                {
+                    usableLanes++;
+                }
+            }
+
+            // The curtain may contain natural gaps, but it is not worth committing the bag card
+            // once half or more of its ten scheduled beats would be swallowed by terrain.
+            return usableLanes >= BallCount - MaximumObstructedLanes;
+        }
+
+        static bool TryFindCurtainOrigin(Vector2 playerAnchor, float x, out Vector2 origin)
+        {
+            float highestAllowedY = playerAnchor.Y - MinimumHeightAbovePlayer;
+            int tileX = Utils.Clamp((int)(x / 16f), 2, Main.maxTilesX - 3);
+            int startTileY = Utils.Clamp((int)(highestAllowedY / 16f),
+                CeilingSearchTiles + 2, Main.maxTilesY - 4);
+            bool foundCeiling = false;
+
+            // Search upward from the twelve-tile boundary. The first solid tile is the nearest
+            // eligible ceiling; its underside becomes the preferred spawn point.
+            for (int tileY = startTileY; tileY >= startTileY - CeilingSearchTiles; tileY--)
+            {
+                Tile tile = Framing.GetTileSafely(tileX, tileY);
+                bool solidCeiling = tile.HasTile && !tile.IsActuated
+                    && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType];
+                if (!solidCeiling)
+                {
+                    continue;
+                }
+
+                foundCeiling = true;
+                Vector2 candidate = new Vector2(x, (tileY + 1) * 16f + 10f);
+                if (candidate.Y <= highestAllowedY && IsClearCurtainLane(candidate, playerAnchor))
+                {
+                    origin = candidate;
+                    return true;
+                }
+
+                // A nearer obstruction already blocks the vertical lane. A higher ceiling cannot
+                // make that lane usable, so fail rather than spawning above solid terrain.
+                break;
+            }
+
+            if (!foundCeiling)
+            {
+                Vector2 openSkyCandidate = new Vector2(x, playerAnchor.Y - OpenSkySpawnHeight);
+                if (IsClearCurtainLane(openSkyCandidate, playerAnchor))
+                {
+                    origin = openSkyCandidate;
+                    return true;
+                }
+            }
+
+            origin = Vector2.Zero;
+            return false;
+        }
+
+        static bool IsClearCurtainLane(Vector2 candidate, Vector2 playerAnchor)
+        {
+            if (candidate.Y > playerAnchor.Y - MinimumHeightAbovePlayer
+                || Collision.SolidCollision(candidate - new Vector2(8f), 16, 24))
+            {
+                return false;
+            }
+
+            Vector2 laneEnd = new Vector2(candidate.X, playerAnchor.Y);
+            return Collision.CanHitLine(candidate, 2, 2, laneEnd, 2, 2);
+        }
+    }
+
+    /// <summary>
+    /// One false Crimson Teleport destination. The inward fire portal warns for exactly 45 ticks,
+    /// then the same cached center becomes an 84px circular blast for six ticks. The bright active
+    /// body is scaled from that radius, so presentation and collision describe the same space.
+    /// </summary>
+    public class RedKnightTeleportFeintBlast : ModProjectile
+    {
+        public const float Radius = 84f;
+        const int TelegraphTicks = 45;
+        const int ActiveTicks = 6;
+        const int ResidueTicks = 28;
+        const int Lifetime = TelegraphTicks + ActiveTicks + ResidueTicks;
+
+        int Age => Lifetime - Projectile.timeLeft;
+
+        public override string Texture => "Terraria/Images/MagicPixel";
+
+        public override void SetDefaults()
+        {
+            Projectile.width = (int)(Radius * 2f);
+            Projectile.height = (int)(Radius * 2f);
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = Lifetime;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
+        }
+
+        public override bool ShouldUpdatePosition() => false;
+
+        public override bool? CanDamage()
+            => Age >= TelegraphTicks && Age < TelegraphTicks + ActiveTicks;
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            float closestX = MathHelper.Clamp(Projectile.Center.X, targetHitbox.Left, targetHitbox.Right);
+            float closestY = MathHelper.Clamp(Projectile.Center.Y, targetHitbox.Top, targetHitbox.Bottom);
+            return Vector2.DistanceSquared(Projectile.Center, new Vector2(closestX, closestY))
+                <= Radius * Radius;
+        }
+
+        public override void AI()
+        {
+            if (Age < TelegraphTicks)
+            {
+                float progress = Age / (float)TelegraphTicks;
+                Lighting.AddLight(Projectile.Center,
+                    new Vector3(0.35f, 0.035f, 0.015f) * (0.35f + progress * 0.65f));
+                if (!Main.dedServ)
+                {
+                    int count = Age > TelegraphTicks - 12 ? 3 : 2;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Vector2 outward = Main.rand.NextVector2Unit();
+                        Vector2 position = Projectile.Center + outward * Radius;
+                        Dust ember = Dust.NewDustPerfect(position,
+                            Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.RedTorch,
+                            -outward * Main.rand.NextFloat(1.2f, 2.8f), 105,
+                            new Color(214, 28, 30), Main.rand.NextFloat(0.65f, 1f));
+                        ember.noGravity = true;
+                    }
+                }
+            }
+            else
+            {
+                Lighting.AddLight(Projectile.Center, new Vector3(0.9f, 0.16f, 0.04f));
+                if (Age == TelegraphTicks)
+                {
+                    SoundEngine.PlaySound(SoundID.Item74 with
+                    {
+                        Volume = 0.78f,
+                        Pitch = -0.25f,
+                        PitchVariance = 0.08f
+                    }, Projectile.Center);
+                    if (!Main.dedServ)
+                    {
+                        SpawnBombBreakup();
+                        for (int i = 0; i < 28; i++)
+                        {
+                            Vector2 outward = (MathHelper.TwoPi * i / 28f).ToRotationVector2();
+                            Dust flame = Dust.NewDustPerfect(
+                                Projectile.Center + outward * Main.rand.NextFloat(10f, 38f),
+                                i % 4 == 0 ? DustID.Shadowflame : DustID.RedTorch,
+                                outward * Main.rand.NextFloat(3.2f, 7.2f), 80,
+                                new Color(238, 45, 24), Main.rand.NextFloat(0.8f, 1.25f));
+                            flame.noGravity = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        void SpawnBombBreakup()
+        {
+            // Match EnemyFirebomb's three different particle jobs, trimmed modestly because this
+            // branch always detonates twice only 45 ticks apart. Count provides density; all scales
+            // stay below the blocky >2 range even after Terraria's built-in scale jitter.
+
+            // MIDGROUND: red flame body with a quarter dark soot.
+            for (int i = 0; i < 60; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                bool soot = i % 4 == 0;
+                Dust ember = Dust.NewDustPerfect(
+                    Projectile.Center + direction * Main.rand.NextFloat(4f, 68f),
+                    soot ? DustID.Shadowflame : DustID.RedTorch,
+                    direction * Main.rand.NextFloat(1.6f, 6.8f),
+                    soot ? 150 : 90,
+                    soot ? new Color(16, 3, 8) : new Color(214, 22, 42),
+                    Main.rand.NextFloat(0.75f, 1.45f));
+                ember.noGravity = true;
+                if (soot)
+                {
+                    ember.noLight = true;
+                }
+            }
+
+            // FOREGROUND: small fast sparks form the sharp leading edge.
+            for (int i = 0; i < 26; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                Dust spark = Dust.NewDustPerfect(
+                    Projectile.Center + direction * Main.rand.NextFloat(6f, 26f),
+                    DustID.Torch, direction * Main.rand.NextFloat(7f, 12.5f),
+                    60, new Color(255, 176, 96), Main.rand.NextFloat(0.45f, 0.85f));
+                spark.noGravity = true;
+            }
+
+            // BACKGROUND: slow smoke billows after both the hit window and shader core fade.
+            for (int i = 0; i < 14; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                Dust smoke = Dust.NewDustPerfect(
+                    Projectile.Center + direction * Main.rand.NextFloat(10f, 46f),
+                    DustID.Smoke,
+                    direction * Main.rand.NextFloat(0.6f, 2.2f) - Vector2.UnitY * 0.7f,
+                    170, new Color(38, 30, 32), Main.rand.NextFloat(0.5f, 0.8f));
+                smoke.fadeIn = Main.rand.NextFloat(1.3f, 1.7f);
+                smoke.noLight = true;
+            }
+
+            // Four vanilla smoke-gore puffs, using the same 61-63 family as EnemyFirebomb.
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 direction = (MathHelper.TwoPi * i / 4f + MathHelper.PiOver4)
+                    .ToRotationVector2();
+                int goreIndex = Gore.NewGore(Projectile.GetSource_FromThis(),
+                    Projectile.Center - new Vector2(24f),
+                    direction * Main.rand.NextFloat(1.1f, 2.3f) + Vector2.UnitY * 0.7f,
+                    Main.rand.Next(61, 64), Main.rand.NextFloat(0.78f, 0.94f));
+                Main.gore[goreIndex].scale = Main.rand.NextFloat(0.9f, 1.08f);
+            }
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(BuffID.OnFire3, 3 * 60);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (Age < TelegraphTicks)
+            {
+                RedKnightVFX.DrawTeleportFeintTell(Projectile.Center, Radius,
+                    Age / (float)TelegraphTicks);
+            }
+            else
+            {
+                float progress = (Age - TelegraphTicks) / (float)(ActiveTicks + ResidueTicks);
+                float scale = Radius * 2f / 132f;
+                RedKnightVFX.DrawBurst(RedKnightBurstKind.BombExplosion,
+                    Projectile.Center, MathHelper.Clamp(progress, 0f, 1f), scale);
+            }
             return false;
         }
     }

@@ -17,6 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
             Projectile.penetrate = 50;
+            Projectile.timeLeft = 4 * 60;
         }
 
         #region AI
@@ -28,12 +29,17 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.frame++;
                 Projectile.frameCounter = 0;
             }
-            if (Projectile.frame >= 60)
+            if (Projectile.frame >= Main.projFrames[Projectile.type])
             {
-                Projectile.Kill();
-                return;
+                Projectile.frame = 0;
             }
         }
         #endregion
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(Terraria.ID.BuffID.Poisoned, 5 * 60);
+            target.AddBuff(Terraria.ID.BuffID.Darkness, 10 * 60);
+        }
     }
 }
